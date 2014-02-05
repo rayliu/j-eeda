@@ -1,0 +1,61 @@
+# =======================
+# Shiro INI configuration
+# =======================
+#  ref to http://shiro.apache.org/configuration.html
+
+[main]
+# Objects and their properties are defined here, 
+# Such as the securityManager, Realms and anything
+# else needed to build the SecurityManager
+
+sessionManager = org.apache.shiro.web.session.mgt.DefaultWebSessionManager
+# configure properties (like session timeout) here if desired
+
+# Use the configured native session manager:
+securityManager.sessionManager = $sessionManager
+
+
+[users]
+# The 'users' section is for simple deployments
+# when you only need a small number of statically-defined 
+# set of User accounts.
+admin = 123456, admin
+jason = 123456, property_mananger
+
+d_user1=123456, property_internal_user
+d_user2=123456, property_external_user
+demo=123456, property_external_user
+
+kim = 123456, finacial_mananger
+
+
+[roles]
+# The 'roles' section is for simple deployments
+# when you only need a small number of statically-defined
+# roles.
+
+# 'admin' role has all permissions, indicated by the wildcard '*'
+admin = *
+property_mananger = *
+property_internal_user = *
+property_external_user = *
+
+finacial_mananger = *
+finacial_internal_user = *
+finacial_external_user = *
+
+# The 'schwartz' role can do anything (*) with any lightsaber:
+schwartz = lightsaber:*
+
+# The 'goodguy' role is allowed to 'drive' (action) the winnebago (type) with
+# license plate 'eagle5' (instance specific id)
+goodguy = winnebago:drive:eagle5
+
+#这里的规则，web.xml中的配置的ShiroFilter会使用到。
+[urls]
+# The 'urls' section is used for url-based security
+# in web applications.  We'll discuss this section in the
+# Web documentation
+/** = anon
+
+
