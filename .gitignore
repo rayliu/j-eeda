@@ -26,3 +26,8 @@ WebRoot/WEB-INF/app_config.txt
 sql/populate.sql
 
 demo
+
+doc
+
+misc
+php-version
