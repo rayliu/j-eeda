@@ -33,6 +33,27 @@
 					</div>
 
 					<div class="control-group">
+						<label class="control-label">客户等级</label>
+						<div class="controls">
+						      <select id="priority" name="priority">
+								<option></option>
+								<option <%if(leads.priority!''=='1重要紧急'){%>
+									selected
+									<%}%>>1重要紧急</option>
+								<option <%if(leads.priority!''=='2重要不紧急'){%>
+									selected
+									<%}%>>2重要不紧急</option>
+								<option <%if(leads.priority!''=='3不重要紧急'){%>
+									selected
+									<%}%>>3不重要紧急</option>
+								<option <%if(leads.priority!''=='4不重要不紧急'){%>
+									selected
+									<%}%>>4不重要不紧急</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="control-group">
 						<label class="control-label">租售状态</label>
 						<div class="controls">
 							<select id="status" name="status">

@@ -20,13 +20,13 @@ securityManager.sessionManager = $sessionManager
 # when you only need a small number of statically-defined 
 # set of User accounts.
 admin = 123456, admin
-jason = 123456, property_mananger
+jason = 123456, property_manager
 
 d_user1=123456, property_internal_user
 d_user2=123456, property_external_user
 demo=123456, property_external_user
 
-kim = 123456, finacial_mananger
+kim = 123456, finacial_manager
 
 
 [roles]
