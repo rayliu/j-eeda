@@ -31,10 +31,10 @@
 					<input id="leadsId" name="leadsId" type="hidden" value="${leads.id!''}">
 					<legend>资料单</legend>
 					<div class="control-group">
-						<label class="control-label" for="focusedInput">标题</label>
+						<label class="control-label" for="focusedInput">小区名称/大厦名称</label>
 						
 						<div class="controls">
-							<span class="input-xlarge uneditable-input">${leads.title!''}</span>
+							<span class="input-xlarge uneditable-input">${leads.building_name!''}</span>
 						</div>
 					</div>
 
@@ -87,15 +87,24 @@
 						<label class="control-label" >地址</label>
 						<div class="controls">
 							<span class="input-xlarge uneditable-input">${leads.addr!''}</span>
+栋数${leads.building_no!''} 
+房号${leads.room_no!''}
 					    </div>
 					</div>
 					<%}%>
 
 					<div class="control-group">
+						<label class="control-label" for="focusedInput">广告标题</label>
+						
+						<div class="controls">
+							<span class="input-xlarge uneditable-input">${leads.title!''}</span>
+						</div>
+					</div>
+					<div class="control-group">
 						<label class="control-label" for="textarea2">描述</label>
 						<div class="controls">
 						  
-							<textarea class="cleditor11 disabled" id="remark" name="intro" rows="10">
+							<textarea class="cleditor11 autogrow" id="remark" name="intro" rows="10">
 								<%if(leads.intro!''!=''){%>
 								${leads.intro}
 								<%}else{%>
@@ -117,7 +126,7 @@
 					<div class="control-group">
 						<label class="control-label" for="textarea2">跟进情况</label>
 						<div class="controls">
-							<textarea class="cleditor11" id="remark" name="remark" rows="5">${leads.remark!''}</textarea>
+							<textarea class="cleditor11 autogrow" id="remark" name="remark" rows="5">${leads.remark!''}</textarea>
 						</div>
 					</div>
 					

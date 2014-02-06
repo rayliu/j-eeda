@@ -25,10 +25,11 @@
 				<fieldset>
 					<input id="leadsId" name="leadsId" type="hidden" value="${leads.id!''}">
 					<legend>资料单</legend>
+					
 					<div class="control-group">
-						<label class="control-label" for="focusedInput">标题</label>
+						<label class="control-label" for="focusedInput">小区名称/大厦名称</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="title" name="title" type="text" value="${leads.title!''}">
+							<input class="input-xlarge focused" id="building_name" name="building_name" type="text" value="${leads.building_name!''}">
 						</div>
 					</div>
 
@@ -190,18 +191,28 @@
 						</div>
 					</div>
 
-					<% if(shiro.hasAnyRole("admin,property_mananger,property_internal_user")){ %>
+					<% if(shiro.hasAnyRole("admin,property_manager,property_internal_user")){ %>
 					<div class="control-group">
 						<label class="control-label" >地址</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="addr" name="addr" type="text" value="${leads.addr!''}"></div>
+							<input class="input-xlarge focused" id="addr" name="addr" type="text" value="${leads.addr!''}">
+栋数<input class="input-mini focused" id="building_no" name="building_no" type="text" value="${leads.building_no!''}">
+房号<input class="input-mini focused" id="room_no" name="room_no" type="text" value="${leads.room_no!''}">
+						</div>
 					</div>
 					<%}%>
 
 					<div class="control-group">
+						<label class="control-label" for="focusedInput">广告标题</label>
+						<div class="controls">
+							<input class="input-xlarge focused" id="title" name="title" type="text" value="${leads.title!''}">
+						</div>
+					</div>
+
+					<div class="control-group">
 						<label class="control-label" for="textarea2">描述</label>
 						<div class="controls">
-							<textarea class="cleditor11" id="intro" name="intro" rows="10">
+							<textarea class="cleditor11 autogrow" id="intro" name="intro" rows="10">
 								<%if(leads.intro!''!=''){%>
 								${leads.intro}
 								<%}else{%>几房几厅几卫:
@@ -222,7 +233,7 @@
 					<div class="control-group">
 						<label class="control-label" for="textarea2">跟进情况</label>
 						<div class="controls">
-							<textarea class="cleditor11" id="remark" name="remark" rows="8"><%if(leads.remark!''!=''){%>
+							<textarea class="cleditor11 autogrow" id="remark" name="remark" rows="8"><%if(leads.remark!''!=''){%>
 								${leads.remark}
 								<%}else{%>跟进情况：
 								跟进人：
