@@ -123,10 +123,17 @@
 					
 					<% if(shiro.hasAnyRole("admin,property_manager") || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
 					<div class="control-group">
-						<label class="control-label" for="focusedInput">客户来源/介绍人</label>
+						<label class="control-label" for="focusedInput">介绍人</label>
 						<div class="controls">
 						  <span class="input-xlarge uneditable-input">${leads.introducer!''}</span>
 						</div>  
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="focusedInput">客户来源</label>
+						<div class="controls">
+							<span class="input-xlarge uneditable-input">${leads.customer_source!''}</span>
+						</div>
 					</div>
 
 					<div class="control-group">
