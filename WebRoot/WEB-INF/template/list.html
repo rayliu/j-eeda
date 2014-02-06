@@ -3,11 +3,9 @@
 			
 
 			<div>
-				<ul class="breadcrumb">
-					<li>
-						<a href="#">查找资料</a>
-					</li>
-				</ul>
+				<% if(shiro.hasAnyRole("admin,property_manager,property_internal_user")){ %>
+                     <a class="btn btn-info" href="/editLeads"><i class="icon-edit icon-white"></i><span class="hidden-tablet">新增房地产资料</span></a>
+                <%}%>
 			</div>
 			
 			<div class="row-fluid sortable">		
