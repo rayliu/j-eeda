@@ -20,8 +20,12 @@
 				房地产资料单
 			</h2>
 		</div>
+		<% var isAdminPmInU=shiro.hasAnyRole("admin,property_manager,property_internal_user");
+
+		%>
+
 		<div class="box-content">
-			<form class="form-horizontal" id='leadsForm' name="leadsForm" action="<% if(shiro.hasAnyRole("admin,property_manager,property_internal_user")){ %>/saveLeads<%}else{%>#<%}%>" method="post">
+			<form class="form-horizontal" id='leadsForm' name="leadsForm" action="<% if(isAdminPmInU){ %>/saveLeads<%}else{%>#<%}%>" method="post">
 				<fieldset>
 					<input id="leadsId" name="leadsId" type="hidden" value="${leads.id!''}">
 					<legend>资料单</legend>
@@ -185,22 +189,24 @@
 					</div>
 
 					<div class="control-group">
-						<label class="control-label" >总价/租金</label>
+						<label class="control-label" >总价(万)/租金(元)</label>
 						<div class="controls">
 							<input class="input-xlarge focused" id="total" name="total" type="text" value="${leads.total!0}">
 						</div>
 					</div>
 
-					<% if(shiro.hasAnyRole("admin,property_manager,property_internal_user")){ %>
+					
 					<div class="control-group">
 						<label class="control-label" >地址</label>
 						<div class="controls">
 							<input class="input-xlarge focused" id="addr" name="addr" type="text" value="${leads.addr!''}">
+<% if(isAdminPmInU){ %>
 栋数<input class="input-mini focused" id="building_no" name="building_no" type="text" value="${leads.building_no!''}">
 房号<input class="input-mini focused" id="room_no" name="room_no" type="text" value="${leads.room_no!''}">
+<%}%>
 						</div>
 					</div>
-					<%}%>
+					
 
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">广告标题</label>
@@ -331,7 +337,7 @@
 	$(document).ready(function() {
 		$('#leadsForm').validate({
 		    rules: {
-		      title: {
+		      building_name: {
 		        minlength: 5,
 		        required: true
 		      },

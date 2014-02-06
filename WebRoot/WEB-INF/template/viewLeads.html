@@ -20,8 +20,12 @@
 				房地产资料单
 			</h2>
 		</div>
+		<%  var isAdminPmInU=shiro.hasAnyRole("admin,property_manager,property_internal_user");
+			var isAdminPm=shiro.hasAnyRole("admin,property_manager");
+			var isInterUser=shiro.hasRole("property_internal_user");
+		%>
 		<div class="box-content">
-			<form class="form-horizontal"  name="leadsForm" action="<% if(shiro.hasAnyRole("admin,property_manager,property_internal_user")){ %>
+			<form class="form-horizontal"  name="leadsForm" action="<% if(isAdminPmInU){ %>
 				/saveLeads
 				<%}else{%>
 				#
@@ -31,7 +35,7 @@
 					<input id="leadsId" name="leadsId" type="hidden" value="${leads.id!''}">
 					<legend>资料单</legend>
 					<div class="control-group">
-						<label class="control-label" for="focusedInput">小区名称/大厦名称</label>
+						<label class="control-label" for="focusedInput">小区/大厦名称</label>
 						
 						<div class="controls">
 							<span class="input-xlarge uneditable-input">${leads.building_name!''}</span>
@@ -82,16 +86,18 @@
 						</div>
 					</div>
 
-					<% if(shiro.hasAnyRole("admin,property_manager,property_internal_user")){ %>
+					
 					<div class="control-group">
 						<label class="control-label" >地址</label>
 						<div class="controls">
 							<span class="input-xlarge uneditable-input">${leads.addr!''}</span>
+<% if(isAdminPmInU){ %>
 栋数${leads.building_no!''} 
 房号${leads.room_no!''}
+<%}%>
 					    </div>
 					</div>
-					<%}%>
+					
 
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">广告标题</label>
@@ -130,14 +136,15 @@
 						</div>
 					</div>
 					
-					<% if(shiro.hasAnyRole("admin,property_manager") || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
+					<% if(isAdminPm || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
+					
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">介绍人</label>
 						<div class="controls">
 						  <span class="input-xlarge uneditable-input">${leads.introducer!''}</span>
 						</div>  
 					</div>
-
+					
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">客户来源</label>
 						<div class="controls">
@@ -194,13 +201,51 @@
 							
 						</div>
 					</div>
-					<%}%>
-					<!--div class="control-group">
-						<label class="control-label" for="date01">创建日期</label>
+					<%}else if(isInterUser) {%>
+						<div class="control-group">
+						<label class="control-label" for="focusedInput">客户来源</label>
 						<div class="controls">
-							<input type="text" class="input-xlarge datepicker" id="createDate" name="createDate" value="${leads.createDate!''}">
+							<span class="input-xlarge uneditable-input">${leads.customer_source!''}</span>
 						</div>
-					</div-->
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="focusedInput">接单人/合作单位</label>
+						<div class="controls">
+						  <span class="input-xlarge uneditable-input">${leads.sales!''}</span>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="focusedInput">跟进人</label>
+						<div class="controls">
+						  <span class="input-xlarge uneditable-input">${leads.follower!''}</span>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="focusedInput">跟进人电话</label>
+						<div class="controls">
+						  <span class="input-xlarge uneditable-input">${leads.follower_phone!''}</span>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="focusedInput">底价(元)</label>
+						<div class="controls">
+						  <span class="input-xlarge uneditable-input">${leads.lowest_price!0}</span>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="focusedInput">代理费</label>
+						<div class="controls">
+						  <span class="input-xlarge uneditable-input">${leads.agent_fee!0}</span>
+							
+						</div>
+					</div>
+
+					<%}%>
 
 					<div class="form-actions">
 						<a href='/list' class="btn">返回</a>
