@@ -222,7 +222,11 @@
 					<div class="control-group">
 						<label class="control-label" for="textarea2">跟进情况</label>
 						<div class="controls">
-							<textarea class="cleditor11" id="remark" name="remark" rows="8">${leads.remark!''}</textarea>
+							<textarea class="cleditor11" id="remark" name="remark" rows="8"><%if(leads.remark!''!=''){%>
+								${leads.remark}
+								<%}else{%>跟进情况：
+								跟进人：
+跟进日期：<%}%></textarea>
 						</div>
 					</div>
 
