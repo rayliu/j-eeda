@@ -36,7 +36,16 @@
 							<input class="input-xlarge focused" id="building_name" name="building_name" type="text" value="${leads.building_name!''}">
 						</div>
 					</div>
-
+					<% if(isAdminPmInU){ %>
+					<div class="control-group">
+						<label class="control-label" for="focusedInput"></label>							
+						<div class="controls">
+							<input style="text-align: right;" class="input-mini focused" id="building_no" name="building_no" type="text" value="${leads.building_no!''}">栋 
+							<input style="text-align: right;" class="input-mini focused" id="building_unit" name="building_unit" type="text" value="${leads.building_unit!''}">单元
+							<input style="text-align: right;" class="input-mini focused" id="room_no" name="room_no" type="text" value="${leads.room_no!''}">房
+						</div>
+					</div>
+					<%}%>
 					<div class="control-group">
 						<label class="control-label">客户等级</label>
 						<div class="controls">
@@ -61,7 +70,7 @@
 					<div class="control-group">
 						<label class="control-label">租售状态</label>
 						<div class="controls">
-							<select id="status" name="status">
+							<select id="statusSel" name="status">
 								<option></option>
 								<option <%if(leads.status!''=='出租'){%>
 									selected
@@ -78,6 +87,9 @@
 								<option <%if(leads.status!''=='空置中'){%>
 									selected
 									<%}%>>空置中</option>
+								<option <%if(leads.status!''=='自用中'){%>
+									selected
+									<%}%>>自用中</option>
 							</select>
 						</div>
 					</div>
@@ -200,10 +212,6 @@
 						<label class="control-label" >地址</label>
 						<div class="controls">
 							<input class="input-xlarge focused" id="addr" name="addr" type="text" value="${leads.addr!''}">
-<% if(isAdminPmInU){ %>
-栋数<input class="input-mini focused" id="building_no" name="building_no" type="text" value="${leads.building_no!''}">
-房号<input class="input-mini focused" id="room_no" name="room_no" type="text" value="${leads.room_no!''}">
-<%}%>
 						</div>
 					</div>
 					
@@ -247,7 +255,7 @@
 						</div>
 					</div>
 
-					<% if(shiro.hasAnyRole("admin,property_mananger") || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
+					<% if(shiro.hasAnyRole("admin,property_manager") || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">介绍人</label>
 						<div class="controls">
@@ -281,7 +289,11 @@
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">业主</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="owner" name="owner" type="text" value="${leads.owner!''}">
+							<input class="input-medium focused" id="owner" name="owner" type="text" value="${leads.owner!''}">
+							<label class="checkbox inline">								
+								<input type="checkbox" id="is_have_car" name="is_have_car" value="Y" style="opacity: 0;" <%if(leads.is_have_car!'N'=='Y'){%>checked<%}%>>						
+								有车
+						  	</label>
 						</div>
 					</div>
 					
@@ -311,7 +323,7 @@
 					</div-->
 
 					<div class="form-actions">
-						<% if(shiro.hasAnyRole("admin,property_mananger") || leads.creator!''=='' ||userId==leads.creator!''){ %>
+						<% if(shiro.hasAnyRole("admin,property_manager") || leads.creator!''=='' ||userId==leads.creator!''){ %>
 						<button type="submit" class="btn btn-primary">保存</button>
 						<%}%>
 						<a href='/list' class="btn">取消</a>
@@ -332,25 +344,133 @@
 <!-- validate.min.js 1.11.1 -->
 <script src="/js/jquery.validate.min.js"></script>
 <script src="/js/jvalidate.messages_cn.js"></script>
-<!-- application script for Charisma demo -->
-<script type="text/javascript">
+<script>
 	$(document).ready(function() {
-		$('#leadsForm').validate({
-		    rules: {
-		      building_name: {
-		        minlength: 5,
-		        required: true
-		      },
-		      status: {
-		        required: true
-		      }
-		    },
-			highlight: function(element) {
-			    $(element).closest('.control-group').removeClass('success').addClass('error');
-			},
-			success: function(element) {
-			    element.text('OK!').addClass('valid').closest('.control-group').removeClass('error').addClass('success');
+
+	$("#statusSel").on("change", function(){
+		
+		var statusValue = '';
+
+		statusValue = $(this).val();
+		var type = $("#type").val();
+		if(type==undefined)
+			type='';
+
+
+		
+		if(statusValue=='出租'){
+			if(type=='1房'||type=='2房'||type=='3房'||type=='4房'||type=='5房'||type=='6房'||type=='7房以上'){
+				$("#intro").val('（ ）房（ ）厅（ ）卫（ ）阳？建筑面积？套内面积？朝向？楼层？第（ ）层，共（ ）？房屋配置（全齐或者部分）？电梯/楼梯？租金？看房方式（约看/自住/出租）？其他要求？注意事项？');
 			}
-		});
+			if(type=='厂房/仓库'||type=='整栋厂房'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 总高？ 电梯/楼梯？ 租金？ 元/平/月？ 管理费？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='商铺'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 商铺总高？ 是否两层（每层面积）？ 电梯/楼梯？ 租金？ 元/平/月？ 管理费？ 停车费？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='别墅'){
+				$("#intro").val('（ ）房（ ）厅（ ）卫（ ）阳台 别墅性质（独立/联排）？ 建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 花园面积？ 附送面积？ 房屋配置（全齐或者部分）？ 电梯/楼梯？ 租金？ 看房方式（约看/自住/出租）？ 其他要求？ 注意事项？');
+			}
+			if(type=='车库'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 商铺总高？ 是否两层（每层面积）？ 电梯/楼梯？ 租金？ 元/平/月？ 管理费？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='写字楼'){
+				$("#intro").val('（ ）房（）厅？ 建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 写字楼配置（全齐或者部分）？ 电梯/楼梯？ 租金？ 元/平/月？ 管理费？ 停车费？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+		}
+
+		if(statusValue=='出售'){
+			if(type=='1房'||type=='2房'||type=='3房'||type=='4房'||type=='5房'||type=='6房'||type=='7房以上'){
+				$("#intro").val('（ ）房（ ）厅（ ）卫（ ）阳台？建筑面积？套内面积？朝向？楼层？第（ ）层，共（ ）？电梯/楼梯？总价？税务实收/各付？原购价（发票价）？购入日期（指契税填发日期）？看房方式（约看/自住/出租）？其他要求？注意事项？');
+			}
+			if(type=='厂房/仓库'||type=='整栋厂房'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 总高？ 电梯/楼梯？ 总价？ 税务实收/各付？ 原购价（发票价）？ 购入日期（指契税填发日期）？ 管理费？ 停车？ 可租（月租）？ 元/平/月？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='商铺'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 商铺总高？ 是否两层（每层面积）？ 电梯/楼梯？ 总价？ 税务实收/各付？ 原购价（发票价）？ 购入日期（指契税填发日期）？ 管理费？ 停车费？ 可租（月租）？ 元/平/月？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='别墅'){
+				$("#intro").val('（ ）房（ ）厅（ ）卫（ ）阳台 别墅性质（独立/联排）？ 建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 花园面积？ 附送面积？ 电梯/楼梯？ 总价？ 税务实收/各付？ 原购价（发票价）？ 购入日期（指契税填发日期）？ 看房方式（约看/自住/出租）？ 其他要求？ 注意事项？');
+			}
+			if(type=='车库'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 商铺总高？ 是否两层（每层面积）？ 电梯/楼梯？ 总价？ 税务实收/各付？ 原购价（发票价）？ 购入日期（指契税填发日期）？ 管理费？ 停车？ 可租（月租）？ 元/平/月？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='写字楼'){
+				$("#intro").val('（ ）房（）厅 建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 写字楼配置（全齐或者部分）？ 电梯/楼梯？ 总价？ 税务实收/各付？ 原购价（发票价）？ 购入日期（指契税填发日期）？ 管理费？ 停车费？ 可租（月租）？ 元/平/月？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+		}
+		
+			
+
 	});
+
+	$("#type").change( function(){
+				
+		var type = $(this).val();
+		var statusValue = $("#statusSel").val();
+		
+		if(statusValue==undefined)
+			statusValue='';
+		
+		if(statusValue=='出租'){
+			if(type=='1房'||type=='2房'||type=='3房'||type=='4房'||type=='5房'||type=='6房'||type=='7房以上'){
+				$("#intro").val('（ ）房（ ）厅（ ）卫（ ）阳？建筑面积？套内面积？朝向？楼层？第（ ）层，共（ ）？房屋配置（全齐或者部分）？电梯/楼梯？租金？看房方式（约看/自住/出租）？其他要求？注意事项？');
+			}
+			if(type=='厂房/仓库'||type=='整栋厂房'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 总高？ 电梯/楼梯？ 租金？ 元/平/月？ 管理费？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='商铺'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 商铺总高？ 是否两层（每层面积）？ 电梯/楼梯？ 租金？ 元/平/月？ 管理费？ 停车费？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='别墅'){
+				$("#intro").val('（ ）房（ ）厅（ ）卫（ ）阳台 别墅性质（独立/联排）？ 建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 花园面积？ 附送面积？ 房屋配置（全齐或者部分）？ 电梯/楼梯？ 租金？ 看房方式（约看/自住/出租）？ 其他要求？ 注意事项？');
+			}
+			if(type=='车库'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 商铺总高？ 是否两层（每层面积）？ 电梯/楼梯？ 租金？ 元/平/月？ 管理费？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='写字楼'){
+				$("#intro").val('（ ）房（）厅？ 建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 写字楼配置（全齐或者部分）？ 电梯/楼梯？ 租金？ 元/平/月？ 管理费？ 停车费？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+		}
+
+		if(statusValue=='出售'){
+			if(type=='1房'||type=='2房'||type=='3房'||type=='4房'||type=='5房'||type=='6房'||type=='7房以上'){
+				$("#intro").val('（ ）房（ ）厅（ ）卫（ ）阳台？建筑面积？套内面积？朝向？楼层？第（ ）层，共（ ）？电梯/楼梯？总价？税务实收/各付？原购价（发票价）？购入日期（指契税填发日期）？看房方式（约看/自住/出租）？其他要求？注意事项？');
+			}
+			if(type=='厂房/仓库'||type=='整栋厂房'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 总高？ 电梯/楼梯？ 总价？ 税务实收/各付？ 原购价（发票价）？ 购入日期（指契税填发日期）？ 管理费？ 停车？ 可租（月租）？ 元/平/月？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='商铺'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 商铺总高？ 是否两层（每层面积）？ 电梯/楼梯？ 总价？ 税务实收/各付？ 原购价（发票价）？ 购入日期（指契税填发日期）？ 管理费？ 停车费？ 可租（月租）？ 元/平/月？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='别墅'){
+				$("#intro").val('（ ）房（ ）厅（ ）卫（ ）阳台 别墅性质（独立/联排）？ 建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 花园面积？ 附送面积？ 电梯/楼梯？ 总价？ 税务实收/各付？ 原购价（发票价）？ 购入日期（指契税填发日期）？ 看房方式（约看/自住/出租）？ 其他要求？ 注意事项？');
+			}
+			if(type=='车库'){
+				$("#intro").val('建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 商铺总高？ 是否两层（每层面积）？ 电梯/楼梯？ 总价？ 税务实收/各付？ 原购价（发票价）？ 购入日期（指契税填发日期）？ 管理费？ 停车？ 可租（月租）？ 元/平/月？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+			if(type=='写字楼'){
+				$("#intro").val('（ ）房（）厅 建筑面积？ 套内面积？ 朝向？ 楼层？第（ ）层，共（ ）层 写字楼配置（全齐或者部分）？ 电梯/楼梯？ 总价？ 税务实收/各付？ 原购价（发票价）？ 购入日期（指契税填发日期）？ 管理费？ 停车费？ 可租（月租）？ 元/平/月？ 看房方式（约看/出租中/空置/自用）？ 现状经营？ 其他要求？ 注意事项？');
+			}
+		}
+	});
+
+	$('#leadsForm').validate({
+	    rules: {
+	      building_name: {
+	        minlength: 5,
+	        required: true
+	      },
+	      status: {
+	        required: true
+	      }
+	    },
+		highlight: function(element) {
+		    $(element).closest('.control-group').removeClass('success').addClass('error');
+		},
+		success: function(element) {
+		    element.text('OK!').addClass('valid').closest('.control-group').removeClass('error').addClass('success');
+		}
+	});
+});
 </script>
