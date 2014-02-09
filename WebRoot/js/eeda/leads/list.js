@@ -8,31 +8,20 @@ $.fn.dataTableExt.afnFiltering.push(
 
     	function isAreaInRange(){
     		var iColumn = 4;
-	        var range = $('#areaFilter').val();
 
-	        var areaRange = range.split("-");
-
-			var iMin = parseInt(areaRange[0])*1;
-			var iMax = areaRange[1]==""? "" : parseInt(areaRange[1])*1;
+			var iMin = parseInt($('#area_min').val())*1;
+			var iMax = parseInt($('#area_max').val())*1;
 	         
 	        var iCellValue = aData[iColumn] == "" ? 0 : aData[iColumn]*1;
-	        if ( areaRange == "" )
-	        {
+	        if (!iMin && !iMax){
 	            return true;
-	        }else if ( iMin == "" && iMax == "" )
-	        {
+	        }else if ( !iMin && iCellValue <= iMax ){
 	            return true;
 	        }
-	        else if ( iMin == "" && iCellValue <= iMax )
-	        {
+	        else if ( iMin <= iCellValue && !iMax ){
 	            return true;
 	        }
-	        else if ( iMin <= iCellValue && "" == iMax )
-	        {
-	            return true;
-	        }
-	        else if ( iMin <= iCellValue && iCellValue <= iMax )
-	        {
+	        else if ( iMin <= iCellValue && iCellValue <= iMax ){
 	            return true;
 	        }
 	        return false;
@@ -40,44 +29,28 @@ $.fn.dataTableExt.afnFiltering.push(
 
     	function isAmountInRange(){
     		var iColumn = 5;
-    		var range, iCellValue;
+    		var range, iCellValue, iMin, iMax;
 	        var statusVal = $("#status").val();
 
 	        if(statusVal==''){
 	        	return true;
-	        }else if(statusVal=='出租' || statusVal=='已租' ){
-	        	range = $('#rentFilter').val();	        	
-	        }else{
-	        	range = $('#totalFilter').val();	        	
-	        }
-
-	        if(range==''){
-	        	return true;
 	        }else if(statusVal=='出租' || statusVal=='已租'){
 	        	iCellValue = aData[iColumn].substr(0, aData[iColumn].length-2);
+	        	iMin = parseInt($('#rent_min').val())*1;
+				iMax = parseInt($('#rent_max').val())*1;
 	        }else{
 	        	iCellValue = aData[iColumn].substr(0, aData[iColumn].length-1);
+	        	iMin = parseInt($('#total_min').val())*1;
+				iMax = parseInt($('#total_max').val())*1;
 	        }
 
-	        var amountRange = range.split("-");
-
-			var iMin = parseInt(amountRange[0])*1;
-			var iMax = amountRange[1] == ""? "" : parseInt(amountRange[1])*1;
-	        
-	        if ( iMin == "" && iMax == "" )
-	        {
+	        if ( !iMin && !iMax){
 	            return true;
-	        }
-	        else if ( iMin == "" && iCellValue < iMax )
-	        {
+	        }else if ( !iMin && iCellValue <= iMax ){
 	            return true;
-	        }
-	        else if ( iMin <= iCellValue && "" == iMax )
-	        {
+	        }else if ( iMin <= iCellValue && !iMax ){
 	            return true;
-	        }
-	        else if ( iMin <= iCellValue && iCellValue <= iMax )
-	        {
+	        }else if ( iMin <= iCellValue && iCellValue <= iMax ){
 	            return true;
 	        }
 	        return false;
@@ -157,12 +130,23 @@ $(document).ready(function() {
 		e.preventDefault();
 		var input_box = $('#eeda-table_filter input').first();
         input_box.val('');
-        $("#status").val('');
-        $("#type").val('');
-        $("#region").val('');
-        oTable.fnFilter(input_box.val(), null, false, true);
+
+        $("#status").val('').trigger('change');
+        $("#type").val('').trigger('change');
+        $("#region").val('').trigger('change');
+
+        $('#area_min').val('').trigger('change');
+		$('#area_max').val('').trigger('change');
+		$('#rent_min').val('').trigger('change');
+		$('#rent_max').val('').trigger('change');
+		$('#total_min').val('').trigger('change');
+		$('#total_max').val('').trigger('change');
+        
         $('#totalFilterDiv').hide();
         $('#rentFilterDiv').hide();
+
+        oTable.fnFilter('', null, false, true);
+        
     });
 
 	$("#status").on("change", function(){
@@ -183,6 +167,7 @@ $(document).ready(function() {
 
     $("#type").on("change", function(){
         var typeVal = $(this).val();
+        console.log('type:'+typeVal);
         oTable.fnFilter(typeVal, 2, false, true);
     });
     
@@ -192,15 +177,25 @@ $(document).ready(function() {
     });
 
     /* Add event listeners to the two range filtering inputs */
-	$('#areaFilter').on("change", function() {
+	$('#area_min').on("keyup", function() {
 		oTable.fnDraw(); 
-	} );
-	$('#totalFilter').on("change", function() {
+	});
+	$('#area_max').on("keyup", function() {
 		oTable.fnDraw(); 
-	} );
-	$('#rentFilter').on("change", function() {
+	});
+	$('#rent_min').on("keyup", function() {
 		oTable.fnDraw(); 
-	} );
+	});
+	$('#rent_max').on("keyup", function() {
+		oTable.fnDraw(); 
+	});
+	$('#total_min').on("keyup", function() {
+		oTable.fnDraw(); 
+	});
+	$('#total_max').on("keyup", function() {
+		oTable.fnDraw(); 
+	});
+
 
 	jQuery.fn.limit=function(){ 
 	    var self = $("td[limit]"); 
