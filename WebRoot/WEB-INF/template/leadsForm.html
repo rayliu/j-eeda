@@ -458,9 +458,16 @@
 	$('#leadsForm').validate({
 	    rules: {
 	      building_name: {
-	        minlength: 5,
 	        required: true
 	      },
+	      area:{
+	      	number:true
+	      },
+	      total:{
+	      	number:true
+	      },
+	      lowest_price:{number:true},
+	      agent_fee:{number:true},
 	      status: {
 	        required: true
 	      }
