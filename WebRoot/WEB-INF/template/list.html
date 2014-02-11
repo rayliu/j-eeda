@@ -135,15 +135,23 @@
 							  </tr>
 						  </thead>   
 						  <tbody>
-						     <% var isShow =false;
+						     <% var isShow =false, isAdminPmInt=false;
 						        //千万不要在循环中使用，否则频繁连接数据库，效率极低！！
 						     	if(shiro.hasAnyRole("admin,property_manager") ){
 						     		isShow=true;
 						     	}
+
+						     	if(shiro.hasAnyRole("admin,property_manager,property_internal_user") ){
+						     		isAdminPmInt=true;
+						     	}
 						     %>
 						  	￼<% for(leads in leadsList!){ %>
 							    <tr>
-							     <td data-title="标题"><a href='/viewLeads/${leads.id}'>${leads.building_name}</a></td>
+							     <td data-title="小区/大厦名称"><a href='/viewLeads/${leads.id}'>${leads.building_name}</a><br/>
+							     <% if(isAdminPmInt) {%>
+							     	${leads.building_no!''}栋-${leads.building_unit!''}单元-${leads.room_no!''}房
+							     <%}%>
+							     </td>
 							     <td data-title="租售状态">${leads.status}</td>
 							     <td data-title="房型">${leads.type!''}</td>   
 							     <td data-title="区域">${leads.region!""}</td>
