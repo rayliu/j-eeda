@@ -149,7 +149,9 @@
 							    <tr>
 							     <td data-title="小区/大厦名称"><a href='/viewLeads/${leads.id}'>${leads.building_name}</a><br/>
 							     <% if(isAdminPmInt) {%>
-							     	${leads.building_no!''}栋-${leads.building_unit!''}单元-${leads.room_no!''}房
+							     	<%if(leads.building_no!''!=''){%>${leads.building_no!''}栋 <%}%>
+									<%if(leads.building_unit!''!=''){%>-${leads.building_unit}单元<%}%>	
+									<%if(leads.room_no!''!=''){%>-${leads.room_no!''}房<%}%>
 							     <%}%>
 							     </td>
 							     <td data-title="租售状态">${leads.status}</td>

@@ -46,7 +46,9 @@
 						<div class="control-group">
 							<label class="control-label" for="focusedInput"></label>							
 							<div class="controls">
-								${leads.building_no!''}栋 <%if(leads.building_unit!''!=''){%>${leads.building_unit}单元<%}%>	${leads.room_no!''}房
+								<%if(leads.building_no!''!=''){%>${leads.building_no!''}栋 <%}%>
+								<%if(leads.building_unit!''!=''){%>${leads.building_unit}单元<%}%>	
+								<%if(leads.room_no!''!=''){%>${leads.room_no!''}房<%}%>
 							</div>
 						</div>
 						
