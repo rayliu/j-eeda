@@ -170,7 +170,7 @@
 							     <td data-title="创建日期">${leads.create_date, dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
 							     <td class="center">
 									
-									<% if(isShow || userId==leads.creator!''){ %>
+									<% if(isAdminPmInt || userId==leads.creator!''){ %>
 									<a class="btn btn-info" href="/editLeads/${leads.id}">
 										<i class="icon-edit icon-white"></i>
 										编辑

@@ -303,6 +303,9 @@
 							<input class="input-xlarge focused" id="owner_phone" name="owner_phone" type="text" value="${leads.owner_phone!''}">
 						</div>
 					</div>
+					
+					<%}%>
+
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">底价(元)</label>
 						<div class="controls">
@@ -314,7 +317,6 @@
 						<div class="controls">
 							<input class="input-xlarge focused" id="agent_fee" name="agent_fee" type="text" value="${leads.agent_fee!0}"></div>
 					</div>
-					<%}%>
 					<!--div class="control-group">
 						<label class="control-label" for="date01">创建日期</label>
 						<div class="controls">
@@ -323,7 +325,7 @@
 					</div-->
 
 					<div class="form-actions">
-						<% if(shiro.hasAnyRole("admin,property_manager") || leads.creator!''=='' ||userId==leads.creator!''){ %>
+						<% if(shiro.hasAnyRole("admin,property_manager, property_internal_user") || leads.creator!''=='' ||userId==leads.creator!''){ %>
 						<button type="submit" class="btn btn-primary">保存</button>
 						<%}%>
 						<a href='/list' class="btn">取消</a>
