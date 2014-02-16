@@ -1,10 +1,23 @@
 $.fn.dataTableExt.afnFiltering.push(
     function( oSettings, aData, iDataIndex ) {
 
-    	if( isAreaInRange() && isAmountInRange() ){
+
+    	if( isTypeInRange() && isAreaInRange() && isAmountInRange() ){
     		return true;
     	}
     	return false;
+
+        function isTypeInRange(){
+        	var typeVal = $("#type").val();
+        	if('allDepartment'==typeVal){
+        		var iCellValue = aData[2].substr(0, 1);
+        		if(iCellValue<=6){
+        			return true;
+        		}
+        		return false;
+        	}        	
+        	return true;        	
+        };
 
     	function isAreaInRange(){
     		var iColumn = 4;
@@ -167,8 +180,11 @@ $(document).ready(function() {
 
     $("#type").on("change", function(){
         var typeVal = $(this).val();
-        console.log('type:'+typeVal);
-        oTable.fnFilter(typeVal, 2, false, true);
+        if('allDepartment'!=typeVal){
+        	oTable.fnFilter(typeVal, 2, false, true);
+        }else{
+        	oTable.fnDraw(); 
+        }        
     });
     
     $("#region").on("change", function(){
