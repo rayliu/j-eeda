@@ -183,6 +183,7 @@ $(document).ready(function() {
         if('allDepartment'!=typeVal){
         	oTable.fnFilter(typeVal, 2, false, true);
         }else{
+        	oTable.fnFilter('', 2, false, true);
         	oTable.fnDraw(); 
         }        
     });
