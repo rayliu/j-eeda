@@ -20,8 +20,9 @@
 				房地产资料单
 			</h2>
 		</div>
-		<% var isAdminPmInU=shiro.hasAnyRole("admin,property_manager,property_internal_user");
-
+		<%  var isAdminPmInU = shiro.hasAnyRole("admin,property_manager,property_internal_user");
+		    var isAdminPm= shiro.hasAnyRole("admin,property_manager");
+			var isPublic = leads.is_public=='Y'?true:false;
 		%>
 
 		<div class="box-content">
@@ -255,7 +256,7 @@
 						</div>
 					</div>
 
-					<% if(shiro.hasAnyRole("admin,property_manager") || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
+					<% if(isPublic || isAdminPm || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">介绍人</label>
 						<div class="controls">
@@ -274,7 +275,7 @@
 							<input class="input-xlarge focused" id="sales" name="sales" type="text" value="${leads.sales!''}"></div>
 					</div>
 					<%}%>
-					<% if(isAdminPmInU || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
+					<% if(isPublic ||isAdminPmInU || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">跟进人</label>
 						<div class="controls">
@@ -287,7 +288,7 @@
 							<input class="input-xlarge focused" id="follower_phone" name="follower_phone" type="text" value="${leads.follower_phone!''}"></div>
 					</div>
 					<%}%>
-					<% if(shiro.hasAnyRole("admin,property_manager") || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
+					<% if(isPublic || isAdminPm || leads.creator!''=='' || userId==leads.creator!'' ) { %>
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">业主</label>
 						<div class="controls">
@@ -306,6 +307,15 @@
 						</div>
 					</div>
 					
+					<div class="control-group">
+						<label class="control-label" for="focusedInput"></label>
+						<div class="controls">							
+							<label class="checkbox inline">								
+								<input type="checkbox" id="is_public" name="is_public" value="Y" style="opacity: 0;" <%if(leads.is_public!'N'=='Y'){%>checked<%}%>>						
+								公开此资料(所有内部人员可见)
+						  	</label>
+						</div>
+					</div>
 					<%}%>
 
 					<div class="control-group">
@@ -318,13 +328,7 @@
 						<label class="control-label" for="focusedInput">代理费</label>
 						<div class="controls">
 							<input class="input-xlarge focused" id="agent_fee" name="agent_fee" type="text" value="${leads.agent_fee!0}"></div>
-					</div>
-					<!--div class="control-group">
-						<label class="control-label" for="date01">创建日期</label>
-						<div class="controls">
-							<input type="text" class="input-xlarge datepicker" id="createDate" name="createDate" value="${leads.createDate!''}">
-						</div>
-					</div-->
+					</div>					
 
 					<div class="form-actions">
 						<% if(isAdminPmInU || leads.creator!''=='' ||userId==leads.creator!''){ %>
