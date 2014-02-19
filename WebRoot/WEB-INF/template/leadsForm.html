@@ -273,7 +273,8 @@
 						<div class="controls">
 							<input class="input-xlarge focused" id="sales" name="sales" type="text" value="${leads.sales!''}"></div>
 					</div>
-
+					<%}%>
+					<% if(isAdminPmInU || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">跟进人</label>
 						<div class="controls">
@@ -285,7 +286,8 @@
 						<div class="controls">
 							<input class="input-xlarge focused" id="follower_phone" name="follower_phone" type="text" value="${leads.follower_phone!''}"></div>
 					</div>
-
+					<%}%>
+					<% if(shiro.hasAnyRole("admin,property_manager") || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">业主</label>
 						<div class="controls">
@@ -325,7 +327,7 @@
 					</div-->
 
 					<div class="form-actions">
-						<% if(shiro.hasAnyRole("admin,property_manager, property_internal_user") || leads.creator!''=='' ||userId==leads.creator!''){ %>
+						<% if(isAdminPmInU || leads.creator!''=='' ||userId==leads.creator!''){ %>
 						<button type="submit" class="btn btn-primary">保存</button>
 						<%}%>
 						<a href='/list' class="btn">取消</a>
