@@ -2,10 +2,72 @@ $.fn.dataTableExt.afnFiltering.push(
     function( oSettings, aData, iDataIndex ) {
 
 
-    	if( isTypeInRange() && isAreaInRange() && isAmountInRange() ){
+    	if(filterBuildingNo() && filterBuildingUnit() && filterRoomNo() && isTypeInRange() && isAreaInRange() && isAmountInRange() ){
     		return true;
     	}
     	return false;
+
+    	function filterBuildingNo(){
+    		var buildingNo = parseInt($("#fitler_building_no").val())*1;
+        	if(buildingNo){
+        		var iCellValue = aData[0];
+        		var cellValue= $(iCellValue)[3].innerText.trim();
+        		var index = cellValue.indexOf('栋');
+        		if(index>=0){
+        			var tempBuildingNo = cellValue.substr(0, index);
+        			if(tempBuildingNo){
+        				if(buildingNo==tempBuildingNo){
+        					return true;
+        				}
+        				return false;
+        			}        			
+        		}        		
+        		return false;
+        	}        	
+        	return true; 
+    	}
+
+    	function filterBuildingUnit(){
+    		var buildingUnit = parseInt($("#fitler_building_unit").val())*1;
+        	if(buildingUnit){
+        		var iCellValue = aData[0];
+        		var cellValue= $(iCellValue)[3].innerText.trim();
+        		var startIndex = cellValue.indexOf('-')+1;
+        		var endIndex = cellValue.indexOf('单元');
+        		if(endIndex>=0){
+        			var tempBuildingUnit = cellValue.substr(startIndex, endIndex-startIndex);
+        			if(tempBuildingUnit){
+        				if(buildingUnit==tempBuildingUnit){
+        					return true;
+        				}
+        				return false;
+        			}        			
+        		}        		
+        		return false;
+        	}        	
+        	return true;        	
+    	}
+
+    	function filterRoomNo(){
+    		var roomNo = parseInt($("#fitler_room_no").val())*1;
+        	if(roomNo){
+        		var iCellValue = aData[0];
+        		var cellValue= $(iCellValue)[3].innerText.trim();
+        		var startIndex = cellValue.lastIndexOf('-')+1;
+        		var endIndex = cellValue.indexOf('房');
+        		if(endIndex>=0){
+        			var tempRoomNo = cellValue.substr(startIndex, endIndex-startIndex);
+        			if(tempRoomNo){
+        				if(tempRoomNo.indexOf(roomNo)>=0){
+        					return true;
+        				}
+        				return false;
+        			}        			
+        		}        		
+        		return false;
+        	}        	
+        	return true;        	
+    	}
 
         function isTypeInRange(){
         	var typeVal = $("#type").val();
@@ -154,6 +216,9 @@ $(document).ready(function() {
 		$('#rent_max').val('').trigger('change');
 		$('#total_min').val('').trigger('change');
 		$('#total_max').val('').trigger('change');
+		$('#fitler_building_no').val('').trigger('change');
+		$('#fitler_building_unit').val('').trigger('change');
+		$('#fitler_room_no').val('').trigger('change');
         
         $('#totalFilterDiv').hide();
         $('#rentFilterDiv').hide();
@@ -210,6 +275,15 @@ $(document).ready(function() {
 		oTable.fnDraw(); 
 	});
 	$('#total_max').on("keyup", function() {
+		oTable.fnDraw(); 
+	});
+	$('#fitler_building_no').on("keyup", function() {
+		oTable.fnDraw(); 
+	});
+	$('#fitler_building_unit').on("keyup", function() {
+		oTable.fnDraw(); 
+	});
+	$('#fitler_room_no').on("keyup", function() {
 		oTable.fnDraw(); 
 	});
 

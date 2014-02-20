@@ -1,9 +1,18 @@
 <%layout("/layout.html"){%>
 			<!-- content starts -->
-			
+			<% var isShow =false, isAdminPmInt=false;
+		        //千万不要在循环中使用，否则频繁连接数据库，效率极低！！
+		     	if(shiro.hasAnyRole("admin,property_manager") ){
+		     		isShow=true;
+		     	}
+
+		     	if(shiro.hasAnyRole("admin,property_manager,property_internal_user") ){
+		     		isAdminPmInt=true;
+		     	}
+		     %>
 
 			<div>
-				<% if(shiro.hasAnyRole("admin,property_manager,property_internal_user")){ %>
+				<% if(isAdminPmInt){ %>
                      <a class="btn btn-info" href="/editLeads"><i class="icon-edit icon-white"></i><span class="hidden-tablet">新增房地产资料</span></a>
                 <%}%>
 			</div>
@@ -54,7 +63,7 @@
 	                                <option>上冲</option>
 	                              </select>                              
 	                            </div>
-	                        </div>
+	                        </div>	                        
 
 	                        <div class="control-group" id='totalFilterDiv' style="display:none;">
 	                            <label class="control-label" for="selectError3">总价</label>
@@ -71,6 +80,8 @@
 	                            	<input class="input-mini focused" id="rent_max" name="rent_max" type="text">
 	                            </div>
 	                        </div>
+
+	                        
 	                      </fieldset>  
 						</div>
 
@@ -107,6 +118,15 @@
 	                            	<input class="input-mini focused" id="area_max" name="area_max" type="text">                              
 	                            </div>
 	                        </div>
+	                        <div class="control-group" id='areaFilterDiv'>
+	                            <label class="control-label"></label>
+	                            <div class="controls">
+	                            	<input style="width: 50px;" class="input-mini focused" id="fitler_building_no" name="fitler_building_no" type="text">栋
+	                            	<input style="width: 30px;" class="input-mini focused" id="fitler_building_unit" name="fitler_building_unit" type="text">单元
+	                            	<input class="input-mini focused" id="fitler_room_no" name="fitler_room_no" type="text">房
+	                            </div>
+	                        </div>
+
 	                        <div class="control-group" >
 	                            <div class="controls">
 	                              <button id='resetBtn' class='btn btn-primary'>清空过滤条件</button>
@@ -116,7 +136,7 @@
 	                      </fieldset>
 	                    </div>
 						</form> <!-- END THE FORM -->
-
+						<div class="clearfix"></div>
                         
 					
 						<table id="eeda-table" class="table table-striped table-bordered bootstrap-datatable datatable" sytle="display: none;">
@@ -137,25 +157,18 @@
 							  </tr>
 						  </thead>   
 						  <tbody>
-						     <% var isShow =false, isAdminPmInt=false;
-						        //千万不要在循环中使用，否则频繁连接数据库，效率极低！！
-						     	if(shiro.hasAnyRole("admin,property_manager") ){
-						     		isShow=true;
-						     	}
-
-						     	if(shiro.hasAnyRole("admin,property_manager,property_internal_user") ){
-						     		isAdminPmInt=true;
-						     	}
-						     %>
+						     
 						  	￼<% for(leads in leadsList!){ %>
 							    <tr>
 							     <td data-title="小区/大厦名称">
 
 							     <% if(isAdminPmInt) {%>
 							        <a href='/editLeads/${leads.id}'>${leads.building_name}</a><br/>
-							     	<%if(leads.building_no!''!=''){%>${leads.building_no!''}栋 <%}%>
-									<%if(leads.building_unit!''!=''){%>-${leads.building_unit}单元<%}%>	
-									<%if(leads.room_no!''!=''){%>-${leads.room_no!''}房<%}%>
+							        <div class="building_info">
+								     	<%if(leads.building_no!''!=''){%>${leads.building_no!''}栋<%}%>
+										<%if(leads.building_unit!''!=''){%>-${leads.building_unit}单元<%}%>	
+										<%if(leads.room_no!''!=''){%>-${leads.room_no!''}房<%}%>
+									</div>
 							     <%}else{%>
 							     	<a href='/viewLeads/${leads.id}'>${leads.building_name}</a>
 							     <%}%>
