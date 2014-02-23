@@ -229,7 +229,14 @@
 							<textarea class="cleditor11 autogrow" id="intro" name="intro" rows="10">
 								<%if(partyAtt['intro']!''!=''){%>
 								${partyAtt['intro']}
-								<%}else{%>求购/租/n 区域：  /n价格：  /n付款方式：  /n面积： /n电梯/楼梯  /n具体要求：/n<%}%></textarea>
+								<%}else{%>求购/租:
+								区域： 
+价格：  
+付款方式：  
+面积： 
+电梯/楼梯  
+具体要求：
+								<%}%></textarea>
 						</div>
 					</div>
 
@@ -300,7 +307,7 @@
 
 
 					<div class="form-actions">
-						<% if(shiro.hasAnyRole("admin,property_manager, property_internal_user") || leads.creator!''=='' ||userId==leads.creator!''){ %>
+						<% if( isAdminPmInU &&(party.creator!''=='' || userId==party.creator!'')){ %>
 						<button type="submit" class="btn btn-primary">保存</button>
 						<%}%>
 						<a href='/propertyClient' class="btn">取消</a>
