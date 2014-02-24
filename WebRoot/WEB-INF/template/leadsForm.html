@@ -22,7 +22,7 @@
 		</div>
 		<%  var isAdminPmInU = shiro.hasAnyRole("admin,property_manager,property_internal_user");
 		    var isAdminPm= shiro.hasAnyRole("admin,property_manager");
-			var isPublic = leads.is_public=='Y'?true:false;
+			var isPublic = leads.isPublic=='Y'?true:false;
 		%>
 
 		<div class="box-content">
@@ -256,7 +256,7 @@
 						</div>
 					</div>
 
-					<% if(isPublic || isAdminPm || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
+					<% if( isPublic || isAdminPm || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">介绍人</label>
 						<div class="controls">
@@ -332,7 +332,7 @@
 
 					<div class="form-actions">
 						<% if(isAdminPmInU || leads.creator!''=='' ||userId==leads.creator!''){ %>
-						<button type="submit" class="btn btn-primary">保存</button>
+						<button type="submit" class="btn btn-primary" name="submit">保存</button>
 						<%}%>
 						<a href='/list' class="btn">取消</a>
 					</div>
