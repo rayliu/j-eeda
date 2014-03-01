@@ -79,9 +79,12 @@
 								<option <%if(leads.status!''=='出售'){%>
 									selected
 									<%}%>>出售</option>
+								<option <%if(leads.status!''=='已付订金'){%>
+									selected
+									<%}%>>出租</option>
 								<option <%if(leads.status!''=='已租'){%>
 									selected
-									<%}%>>已租</option>
+									<%}%>>已付订金</option>
 								<option <%if(leads.status!''=='已售'){%>
 									selected
 									<%}%>>已售</option>
@@ -151,6 +154,9 @@
 						<div class="controls">
 							<select id="region"  name="region">
 								<option></option>
+								<option <%if(leads.region!''=='香洲'){%>
+									selected
+									<%}%>>香洲</option>
 								<option <%if(leads.region!''=='老香洲'){%>
 									selected
 									<%}%>>老香洲</option>
@@ -163,6 +169,9 @@
 								<option <%if(leads.region!''=='吉大'){%>
 									selected
 									<%}%>>吉大</option>
+								<option <%if(leads.region!''=='兰埔'){%>
+									selected
+									<%}%>>兰埔</option>
 								<option <%if(leads.region!''=='湾仔'){%>
 									selected
 									<%}%>>湾仔</option>
