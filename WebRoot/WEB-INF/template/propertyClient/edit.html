@@ -153,6 +153,9 @@
 						<div class="controls">
 							<select id="region"  name="region">
 								<option></option>
+								<option <%if(partyAtt['region']!''=='香洲'){%>
+									selected
+									<%}%>>香洲</option>
 								<option <%if(partyAtt['region']!''=='老香洲'){%>
 									selected
 									<%}%>>老香洲</option>
@@ -165,6 +168,9 @@
 								<option <%if(partyAtt['region']!''=='吉大'){%>
 									selected
 									<%}%>>吉大</option>
+								<option <%if(partyAtt['region']!''=='兰埔'){%>
+									selected
+									<%}%>>兰埔</option>
 								<option <%if(partyAtt['region']!''=='湾仔'){%>
 									selected
 									<%}%>>湾仔</option>
@@ -307,7 +313,7 @@
 
 
 					<div class="form-actions">
-						<% if( isAdminPmInU &&(party.creator!''=='' || userId==party.creator!'')){ %>
+						<% if(isAdminPmInU){ %>
 						<button type="submit" class="btn btn-primary">保存</button>
 						<%}%>
 						<a href='/propertyClient' class="btn">取消</a>
@@ -439,19 +445,20 @@
 		}
 	});
 
-	$('#leadsForm').validate({
+	$('#propertyClientForm').validate({
 	    rules: {
-	      building_name: {
+	      title: {
+	        required: true
+	      },
+	      client_name: {
 	        required: true
 	      },
 	      area:{
-	      	number:true
+	      	number: true
 	      },
 	      total:{
-	      	number:true
+	      	number: true
 	      },
-	      lowest_price:{number:true},
-	      agent_fee:{number:true},
 	      status: {
 	        required: true
 	      }
