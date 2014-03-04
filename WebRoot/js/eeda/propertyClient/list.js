@@ -10,7 +10,7 @@ $.fn.dataTableExt.afnFiltering.push(
         function isTypeInRange(){
         	var typeVal = $("#type").val();
         	if('allDepartment'==typeVal){
-        		var iCellValue = aData[3].substr(0, 1);
+        		var iCellValue = aData[4].substr(0, 1);
         		if(iCellValue<=6){
         			return true;
         		}
@@ -20,7 +20,7 @@ $.fn.dataTableExt.afnFiltering.push(
         };
 
     	function isAreaInRange(){
-    		var iColumn = 4;
+    		var iColumn = 5;
 
 			var iMin = parseInt($('#area_min').val())*1;
 			var iMax = parseInt($('#area_max').val())*1;
@@ -41,7 +41,7 @@ $.fn.dataTableExt.afnFiltering.push(
     	};
 
     	function isAmountInRange(){
-    		var iColumn = 6;
+    		var iColumn = 7;
     		var range, iCellValue, iMin, iMax;
 	        var statusVal = $("#status").val();
 
@@ -151,6 +151,7 @@ $(document).ready(function() {
         $("#status").val('').trigger('change');
         $("#type").val('').trigger('change');
         $("#region").val('').trigger('change');
+        $("#priority").val('').trigger('change');
         $("#user").val(userId).trigger('change');
 
         $('#area_min').val('').trigger('change');
@@ -172,7 +173,7 @@ $(document).ready(function() {
 
 	$("#status").on("change", function(){
         var typeVal = $(this).val();
-        oTable.fnFilter(typeVal, 2, false, true);
+        oTable.fnFilter(typeVal, 3, false, true);
         if(typeVal==''){
         	$('#totalFilterDiv').hide();
         	$('#rentFilterDiv').hide();
@@ -189,21 +190,26 @@ $(document).ready(function() {
     $("#type").on("change", function(){
         var typeVal = $(this).val();
         if('allDepartment'!=typeVal){
-        	oTable.fnFilter(typeVal, 3, false, true);
+        	oTable.fnFilter(typeVal, 4, false, true);
         }else{
-        	oTable.fnFilter('', 3, false, true);
+        	oTable.fnFilter('', 4, false, true);
         	oTable.fnDraw(); 
         }        
     });
 
     $("#user").on("change", function(){
         var typeVal = $(this).val();
-        oTable.fnFilter(typeVal, 7, false, true);
+        oTable.fnFilter(typeVal, 8, false, true);
     });
     
     $("#region").on("change", function(){
         var typeVal = $(this).val();
-        oTable.fnFilter(typeVal, 4, false, true);
+        oTable.fnFilter(typeVal, 5, false, true);
+    });
+
+    $("#priority").on("change", function(){
+        var typeVal = $(this).val();
+        oTable.fnFilter(typeVal, 2, false, true);
     });
 
     /* Add event listeners to the two range filtering inputs */

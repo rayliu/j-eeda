@@ -60,7 +60,20 @@
 	                                <option>上冲</option>
 	                              </select>                              
 	                            </div>
-	                        </div>	                        
+	                        </div>
+                              
+                            <div class="control-group">
+	                            <label class="control-label">客户等级</label>
+	                            <div class="controls">
+	                              <select id="priority"  name="priority">
+	                                <option></option>
+	                                <option>1重要紧急</option>
+									<option>2重要不紧急</option>
+									<option>3不重要紧急</option>
+									<option>4不重要不紧急</option>
+	                              </select>                              
+	                            </div>
+	                        </div>
 
 	                        <div class="control-group" id='totalFilterDiv' style="display:none;">
 	                            <label class="control-label" for="selectError3">总价</label>
@@ -147,6 +160,7 @@
 							  <tr>
 							  		<th>标题</th>
 								    <th>客户名称</th>
+								    <th>客户等级</th>
 								    <th>求租/售</th>
 								    <th>房型</th>
 								    <th>区域</th>
@@ -163,7 +177,8 @@
 						  	%>
 							    <tr>
 							     <td data-title="标题"><a href='/propertyClient/edit/${client.id}'>${clientAttr["title"]!''}</a></td>
-							     <td data-title="客户名称">${clientAttr["client_name"]!''}</td>   
+							     <td data-title="客户名称">${clientAttr["client_name"]!''}</td>
+							     <td data-title="客户等级">${clientAttr["priority"]!''}</td>     
 							     <td data-title="求租/售">${clientAttr["status"]!''}</td>
 							     <td data-title="房型">${clientAttr["type"]!''}</td> 
 							     <td data-title="区域">${clientAttr["region"]!''}</td>
