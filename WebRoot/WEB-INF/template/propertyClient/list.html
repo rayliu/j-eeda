@@ -176,7 +176,7 @@
 						  		var clientAttr = client.attr;
 						  	%>
 							    <tr>
-							     <td data-title="标题"><a href='/propertyClient/edit/${client.id}'>${clientAttr["title"]!''}</a></td>
+							     <td data-title="标题"><a class='editLink' href='/propertyClient/edit/${client.id}'>${clientAttr["title"]!''}</a></td>
 							     <td data-title="客户名称">${clientAttr["client_name"]!''}</td>
 							     <td data-title="客户等级">${clientAttr["priority"]!''}</td>     
 							     <td data-title="求租/售">${clientAttr["status"]!''}</td>
@@ -190,7 +190,7 @@
 							     <td data-title="创建日期">${client.create_date, dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
 							     <td class="center">									
 									<% if(isAdminPmInU){ %>
-									<a class="btn btn-info" href="/propertyClient/edit/${client.id}">
+									<a class="btn btn-info editLink" href="/propertyClient/edit/${client.id}">
 										<i class="icon-edit icon-white"></i>
 										编辑
 									</a>	
@@ -210,4 +210,6 @@
 <script>
 	var userId = '${userId}';
 </script>
+    
+<script src="/js/eeda/eeda.js"></script>
 <script src="/js/eeda/propertyClient/list.js"></script>

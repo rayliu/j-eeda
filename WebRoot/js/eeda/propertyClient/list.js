@@ -20,7 +20,7 @@ $.fn.dataTableExt.afnFiltering.push(
         };
 
     	function isAreaInRange(){
-    		var iColumn = 5;
+    		var iColumn = 6;
 
 			var iMin = parseInt($('#area_min').val())*1;
 			var iMax = parseInt($('#area_max').val())*1;
@@ -80,7 +80,7 @@ $(document).ready(function() {
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		"sPaginationType": "bootstrap",
 		"oLanguage": {
-			"sUrl": "dataTables.ch.txt"
+			"sUrl": "/dataTables.ch.txt"
 		},
 		"aoColumnDefs": [
 	      { "sWidth": "15%", "aTargets": [ 0 ] },
@@ -95,9 +95,12 @@ $(document).ready(function() {
 	      { "sWidth": "10%", "aTargets": [ 9 ] }					      
 	    ],
 	    "aaSorting": [[ 8, "desc" ]],
-        "fnInitComplete": function(oSettings, json) {
-          
-          $("#user").val(userId).trigger('change');
+        "fnInitComplete": function(oSettings, json) {         
+          if(window.location.search){
+            initSearch();
+          }else{
+            $("#user").val(userId).trigger('change');
+          }
         }
 	} );
 	/* //datatable, 动态处理
@@ -142,7 +145,48 @@ $(document).ready(function() {
 	var getFilterVal=function(){
 		return $("#status").val()+' '+$("#type").val()+' '+$("#region").val();
 	}
-	
+	var getQueryStringRegExp = eeda.getQueryStringRegExp;
+    
+    $('.editLink').click(function(e){
+        e.preventDefault();
+        url=$(this).attr('href');
+        url=url+buildQueryParas();
+        window.location.href = url; 
+    });
+    
+    var buildQueryParas=function(){
+        return '?status='+$("#status").val()
+            +'&type='+$("#type").val()
+            +'&region='+$("#region").val()        
+            +'&priority='+$('#priority').val()
+            +'&user='+$('#user').val()
+            +'&area_min='+$('#area_min').val()
+            +'&area_max='+$('#area_max').val()
+            +'&rent_min='+$('#rent_min').val()
+            +'&rent_max='+$('#rent_max').val()
+            +'&total_min='+$('#total_min').val()
+            +'&total_max='+$('#total_max').val()
+    }
+    
+    var initSearch=function(){
+		
+		//var input_box = $('#eeda-table_filter input').first();
+        //input_box.val('');
+        
+        $("#status").val(getQueryStringRegExp("status")).trigger('change');
+        $("#type").val(getQueryStringRegExp("type")).trigger('change');
+        $("#region").val(getQueryStringRegExp("region")).trigger('change');
+        $("#priority").val(getQueryStringRegExp("priority")).trigger('change');
+        $("#user").val(getQueryStringRegExp("user")).trigger('change');
+        
+        $('#area_min').val(getQueryStringRegExp("area_min")).trigger('change');
+		$('#area_max').val(getQueryStringRegExp("area_max")).trigger('change');
+		$('#rent_min').val(getQueryStringRegExp("rent_min")).trigger('change');
+		$('#rent_max').val(getQueryStringRegExp("rent_max")).trigger('change');
+		$('#total_min').val(getQueryStringRegExp("total_min")).trigger('change');
+		$('#total_max').val(getQueryStringRegExp("total_max")).trigger('change');
+        
+    };
 	$("#resetBtn").on("click", function(e){
 		e.preventDefault();
 		var input_box = $('#eeda-table_filter input').first();
@@ -160,9 +204,6 @@ $(document).ready(function() {
 		$('#rent_max').val('').trigger('change');
 		$('#total_min').val('').trigger('change');
 		$('#total_max').val('').trigger('change');
-		$('#fitler_building_no').val('').trigger('change');
-		$('#fitler_building_unit').val('').trigger('change');
-		$('#fitler_room_no').val('').trigger('change');
         
         $('#totalFilterDiv').hide();
         $('#rentFilterDiv').hide();

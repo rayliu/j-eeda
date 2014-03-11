@@ -314,9 +314,9 @@
 
 					<div class="form-actions">
 						<% if(isAdminPmInU){ %>
-						<button type="submit" class="btn btn-primary">保存</button>
+						<button type="submit" class="btn btn-primary" name="submit">保存</button>
 						<%}%>
-						<a href='/propertyClient' class="btn">取消</a>
+						<a href='/propertyClient?${queryString}' class="btn">取消</a>
 					</div>
 
 				</fieldset>

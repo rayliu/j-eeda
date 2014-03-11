@@ -156,7 +156,10 @@ $(document).ready(function() {
 	      { "sWidth": "7%", "aTargets": [ 8 ] },
 	      { "sWidth": "10%", "aTargets": [ 9 ] }					      
 	    ],
-	    "aaSorting": [[ 9, "desc" ]]
+	    "aaSorting": [[ 9, "desc" ]],
+        "fnInitComplete": function(oSettings, json) {          
+          initSearch();
+        }
 	} );
 	/* //datatable, 动态处理
     $('#eeda-table').dataTable({
@@ -196,11 +199,55 @@ $(document).ready(function() {
 	      }
 	    }]
     });*/
-
+    var getQueryStringRegExp = eeda.getQueryStringRegExp;
+    
 	var getFilterVal=function(){
 		return $("#status").val()+' '+$("#type").val()+' '+$("#region").val();
 	}
 	
+    $('.editLink').click(function(e){
+        e.preventDefault();
+        url=$(this).attr('href');
+        url=url+buildQueryParas();
+        window.location.href = url; 
+    });
+    
+    var buildQueryParas=function(){
+        return '?status='+$("#status").val()
+            +'&type='+$("#type").val()
+            +'&region='+$("#region").val()
+            +'&area_min='+$('#area_min').val()
+            +'&area_max='+$('#area_max').val()
+            +'&rent_min='+$('#rent_min').val()
+            +'&rent_max='+$('#rent_max').val()
+            +'&total_min='+$('#total_min').val()
+            +'&total_max='+$('#total_max').val()
+            +'&fitler_building_no='+$('#fitler_building_no').val()
+            +'&fitler_building_unit='+$('#fitler_building_unit').val()
+            +'&fitler_room_no='+$('#fitler_room_no').val();
+    }
+    
+    var initSearch=function(){
+		
+		//var input_box = $('#eeda-table_filter input').first();
+        //input_box.val('');
+        
+        $("#status").val(getQueryStringRegExp("status")).trigger('change');
+        $("#type").val(getQueryStringRegExp("type")).trigger('change');
+        $("#region").val(getQueryStringRegExp("region")).trigger('change');
+
+        $('#area_min').val(getQueryStringRegExp("area_min")).trigger('change');
+		$('#area_max').val(getQueryStringRegExp("area_max")).trigger('change');
+		$('#rent_min').val(getQueryStringRegExp("rent_min")).trigger('change');
+		$('#rent_max').val(getQueryStringRegExp("rent_max")).trigger('change');
+		$('#total_min').val(getQueryStringRegExp("total_min")).trigger('change');
+		$('#total_max').val(getQueryStringRegExp("total_max")).trigger('change');
+		$('#fitler_building_no').val(getQueryStringRegExp("fitler_building_no")).trigger('change');
+		$('#fitler_building_unit').val(getQueryStringRegExp("fitler_building_unit")).trigger('change');
+		$('#fitler_room_no').val(getQueryStringRegExp("fitler_room_no")).trigger('change');
+        
+    };
+    
 	$("#resetBtn").on("click", function(e){
 		e.preventDefault();
 		var input_box = $('#eeda-table_filter input').first();

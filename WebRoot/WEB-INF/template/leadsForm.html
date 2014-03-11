@@ -343,7 +343,8 @@
 						<% if(isAdminPmInU || leads.creator!''=='' ||userId==leads.creator!''){ %>
 						<button type="submit" class="btn btn-primary" name="submit">保存</button>
 						<%}%>
-						<a href='/list' class="btn">取消</a>
+						<a href='/list?${queryString}' class="btn">取消</a>
+                            
 					</div>
 
 				</fieldset>
