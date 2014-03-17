@@ -138,7 +138,7 @@ $.fn.dataTableExt.afnFiltering.push(
 $(document).ready(function() {
 	
 	//datatable, 静态处理
-	var oTable = $('.datatable').dataTable({
+	/*var oTable = $('.datatable').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		"sPaginationType": "bootstrap",
 		"oLanguage": {
@@ -161,44 +161,94 @@ $(document).ready(function() {
           initSearch();
         }
 	} );
-	/* //datatable, 动态处理
-    $('#eeda-table').dataTable({
+*/
+	//datatable, 动态处理
+    var oTable = $('#eeda-table').dataTable({
+        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
     	"oLanguage": {
-            "sUrl": "dataTables.ch.txt"
+            "sUrl": "/dataTables.ch.txt"
         },
-        "sPaginationType": "full_numbers",
+        //"sPaginationType": "full_numbers",
         "bProcessing": true,
         "bServerSide": true,
-        "sAjaxSource": "listLeads",
+        "sAjaxSource": "/listLeads",
         "aoColumns": [   
-        	{"mData":"TITLE"},
-        	{"mData":"STATUS"},
-            {"mData":"TYPE"},
-            {"mData":"REGION"},
-            {"mData":"INTRO"},
-        	{"mData":"REMARK"},
-            {"mData":"LOWEST_PRICE"},
-            {"mData":"AGENT_FEE"},
-            {"mData":"INTRODUCER"},
-        	{"mData":"SALES"},
-            {"mData":"FOLLOWER"},
-            {"mData":"FOLLOWER_PHONE"},
-            {"mData":"OWNER"},
-            <% if(shiro.hasAnyRole("admin,property_mananger,property_internal_user")){ %>
-        	{"mData":"OWNER_PHONE"},
-        	<%}%>
-        	{"mData":"CREATOR"},
-            {"mData":"STATUS"},
-            {"mData":"CREATE_DATE"}                        
+            {"mDataProp":"BUILDING_NO", "bVisible": false},
+            {"mDataProp":"BUILDING_UNIT", "bVisible": false},
+            {"mDataProp":"ROOM_NO", "bVisible": false},
+        	{   
+                "sWidth": "15%",             
+                "mDataProp":"BUILDING_NAME",
+                "fnRender": function(obj) {
+                    var returnStr = "<a href='/editLeads/"+obj.aData.ID+"''>"+obj.aData.BUILDING_NAME+"</a>";
+                    if(isAdminPmInt){
+                        returnStr +="<div class='building_info'>"+
+                            obj.aData.BUILDING_NO+"栋"+
+                            obj.aData.BUILDING_UNIT+"单元" +  
+                            obj.aData.ROOM_NO+"房"+
+                        "</div>";
+                    }
+                        
+                    return returnStr;                        
+                }
+            },
+        	{"mDataProp":"STATUS","sWidth": "8%"},
+            {"mDataProp":"TYPE"},
+            {"mDataProp":"REGION","sWidth": "8%"},
+            {"mDataProp":"AREA"},
+            {"mDataProp":"TOTAL"},
+            {"mDataProp":"INTRO", "sWidth": "20%",
+                "fnRender": function(obj) {
+                    var intro=obj.aData.INTRO;
+                    return limitLength(intro);
+                }
+            },
+        	{"mDataProp":"REMARK",
+                "fnRender": function(obj) {
+                    var remark=obj.aData.REMARK;
+                    return limitLength(remark);
+                }
+            },            
+        	{"mDataProp":"CREATOR"},
+            {"mDataProp":"CREATE_DATE", "sWidth": "10%"},
+            { 
+                "mDataProp": null, 
+                "sWidth": "8%",
+                "bVisible": isAdminPmInt, 
+                "fnRender": function(obj) {                    
+                    return "<a class='btn btn-info' href='/editLeads/"+obj.aData.ID+"'>"+
+                                "<i class='icon-edit icon-white'></i>"+
+                                "编辑"+
+                            "</a>"+
+                            "<a class='btn btn-danger' href='/deleteLeads/"+obj.aData.ID+"'>"+
+                                "<i class='icon-trash icon-white'></i>"+ 
+                                "删除"+
+                            "</a>";
+                }
+            }                         
         ],
-        "aoColumnDefs": [ {
-	      "aTargets": [ 0 ],
-	      "mData": "download_link",
-	      "mRender": function ( data, type, full ) {
-	        return '<a href="'+data+'">Download</a>';
-	      }
-	    }]
-    });*/
+        "fnServerData": function ( sSource, aoData, fnCallback ) {
+            /* Add some extra data to the sender */
+            //aoData.push( { "name": "more_data", "value": "my_value" } );
+            $.getJSON( sSource, aoData, function (json) { 
+                /* Do whatever additional processing you want on the callback, then tell DataTables */
+                fnCallback(json)
+            } );
+        }
+        
+    });
+
+    var limitLength=function(str){
+        var objLength = str.length;
+        if(objLength > 50){ 
+            str = str.substring(0,50) + "..."; 
+        } 
+        return str;
+    }
+
     var getQueryStringRegExp = eeda.getQueryStringRegExp;
     
 	var getFilterVal=function(){
@@ -276,14 +326,18 @@ $(document).ready(function() {
 
 	$("#status").on("change", function(){
         var typeVal = $(this).val();
-        oTable.fnFilter(typeVal, 1, false, true);
+        oTable.fnFilter(typeVal, 4, false, true);
         if(typeVal==''){
         	$('#totalFilterDiv').hide();
         	$('#rentFilterDiv').hide();
-        }else if(typeVal=='出租' || typeVal=='已租' ){
+        }else if(typeVal=='出租' || typeVal=='已租' ){            
+            $('#total_min').val('').trigger('change');
+            $('#total_max').val('').trigger('change');
         	$('#totalFilterDiv').hide();
         	$('#rentFilterDiv').show();
         }else{
+            $('#rent_min').val('').trigger('change');
+            $('#rent_max').val('').trigger('change');
         	$('#totalFilterDiv').show();
         	$('#rentFilterDiv').hide();
         }
@@ -293,30 +347,34 @@ $(document).ready(function() {
     $("#type").on("change", function(){
         var typeVal = $(this).val();
         if('allDepartment'!=typeVal){
-        	oTable.fnFilter(typeVal, 2, false, true);
+        	oTable.fnFilter(typeVal, 5, false, true);
         }else{
-        	oTable.fnFilter('', 2, false, true);
+        	oTable.fnFilter('', 5, false, true);
         	oTable.fnDraw(); 
         }        
     });
     
     $("#region").on("change", function(){
         var typeVal = $(this).val();
-        oTable.fnFilter(typeVal, 3, false, true);
+        oTable.fnFilter(typeVal, 6, false, true);
     });
 
     /* Add event listeners to the two range filtering inputs */
 	$('#area_min').on("keyup", function() {
-		oTable.fnDraw(); 
+        var typeVal = $(this).val()+"-"+$('#area_max').val();
+		oTable.fnFilter(typeVal, 7, false, true);
 	});
 	$('#area_max').on("keyup", function() {
-		oTable.fnDraw(); 
+        var typeVal = $('#area_min').val()+"-"+$(this).val();
+		oTable.fnFilter(typeVal, 7, false, true);
 	});
 	$('#rent_min').on("keyup", function() {
-		oTable.fnDraw(); 
+		var typeVal = $(this).val()+"-"+$('#rent_max').val();
+        oTable.fnFilter(typeVal, 8, false, true);
 	});
 	$('#rent_max').on("keyup", function() {
-		oTable.fnDraw(); 
+		var typeVal = $('#rent_min').val()+"-"+$(this).val();
+        oTable.fnFilter(typeVal, 8, false, true);
 	});
 	$('#total_min').on("keyup", function() {
 		oTable.fnDraw(); 
@@ -325,13 +383,13 @@ $(document).ready(function() {
 		oTable.fnDraw(); 
 	});
 	$('#fitler_building_no').on("keyup", function() {
-		oTable.fnDraw(); 
+		oTable.fnFilter($(this).val(), 0, false, true);
 	});
 	$('#fitler_building_unit').on("keyup", function() {
-		oTable.fnDraw(); 
+		oTable.fnFilter($(this).val(), 1, false, true);
 	});
 	$('#fitler_room_no').on("keyup", function() {
-		oTable.fnDraw(); 
+		oTable.fnFilter($(this).val(), 2, false, true);
 	});
 
 

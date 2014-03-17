@@ -121,6 +121,7 @@
 	                            	<input class="input-mini focused" id="area_max" name="area_max" type="text">                              
 	                            </div>
 	                        </div>
+	                        <% if(isAdminPmInt){ %>
 	                        <div class="control-group" id='areaFilterDiv'>
 	                            <label class="control-label"></label>
 	                            <div class="controls">
@@ -129,7 +130,7 @@
 	                            	<input class="input-mini focused" id="fitler_room_no" name="fitler_room_no" type="text">房
 	                            </div>
 	                        </div>
-
+	                        <%}%>
 	                        <div class="control-group" >
 	                            <div class="controls">
 	                              <button id='resetBtn' class='btn btn-primary'>清空过滤条件</button>
@@ -145,6 +146,9 @@
 						<table id="eeda-table" class="table table-striped table-bordered bootstrap-datatable datatable" sytle="display: none;">
 						  <thead>
 							  <tr>
+							  	  <th></th>
+							  	  <th></th>
+							  	  <th></th>	
 								  <th>小区/大厦名称</th>
 								  <th>租售状态</th>
 								  <th>房型</th>
@@ -215,6 +219,10 @@
 			
 			</div><!--/row-->    
 			<!-- content ends -->
+			<script type="text/javascript">
+			    var isAdminPmInt = ${isAdminPmInt};
+			</script>
 <%}%>
+
 <script src="/js/eeda/eeda.js"></script>
 <script src="/js/eeda/leads/list.js"></script>
