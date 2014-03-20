@@ -1,4 +1,4 @@
-<%layout("/layout.html"){%>
+<%layout("/eeda/layout.html"){%>
 <!-- content starts -->
 
 <div>
@@ -8,7 +8,7 @@
 			<span class="divider">/</span>
 		</li>
 		<li>
-			<a href="#">新增房产客户</a>
+			<a href="#">新增房地产资料</a>
 		</li>
 	</ul>
 </div>
@@ -17,55 +17,51 @@
 	<div class="box span12">
 		<div class="box-header well" data-original-title>
 			<h2> <i class="icon-edit"></i>
-				房产客户
+				房地产资料单
 			</h2>
 		</div>
-		<%  var isAdminPmInU=shiro.hasAnyRole("admin,property_manager,property_internal_user");
-			var partyAtt;
-		    var isPartyNull = party!''=='';
-		    if(!isPartyNull){
-		   		partyAtt = party.attr;
-		   }
-           
-           //print(partyAtt);
+		<%  var isAdminPmInU = shiro.hasAnyRole("admin,property_manager,property_internal_user");
+		    var isAdminPm= shiro.hasAnyRole("admin,property_manager");
+			var isPublic = leads.isPublic=='Y'?true:false;
 		%>
 
 		<div class="box-content">
-			<form class="form-horizontal" id='propertyClientForm' name="propertyClientForm" action="<% if(isAdminPmInU){ %>/propertyClient/save<%}else{%>#<%}%>" method="post">
+			<form class="form-horizontal" id='leadsForm' name="leadsForm" action="<% if(isAdminPmInU){ %>/saveLeads<%}else{%>#<%}%>" method="post">
 				<fieldset>
-					<input id="id" name="id" type="hidden" value="${party.id!''}">
-					<legend>房产客户资料单</legend>
+					<input id="leadsId" name="leadsId" type="hidden" value="${leads.id!''}">
+					<legend>资料单</legend>
 					
 					<div class="control-group">
-						<label class="control-label" for="focusedInput">标题</label>
+						<label class="control-label" for="focusedInput">小区名称/大厦名称</label>
 						<div class="controls">
-							<% var title=partyAtt!=null?partyAtt['title']:'';%>
-							<input class="input-xlarge focused" id="title" name="title" type="text" value="${title}">
+							<input class="input-xlarge focused" id="building_name" name="building_name" type="text" value="${leads.building_name!''}">
 						</div>
 					</div>
-
+					<% if(isAdminPmInU){ %>
 					<div class="control-group">
-						<label class="control-label" for="focusedInput">客户名称</label>
+						<label class="control-label" for="focusedInput"></label>							
 						<div class="controls">
-							<input class="input-xlarge focused" id="client_name" name="client_name" type="text" value="${partyAtt['client_name']!''}">
+							<input style="text-align: right;" class="input-mini focused" id="building_no" name="building_no" type="text" value="${leads.building_no!''}">栋 
+							<input style="text-align: right;" class="input-mini focused" id="building_unit" name="building_unit" type="text" value="${leads.building_unit!''}">单元
+							<input style="text-align: right;" class="input-mini focused" id="room_no" name="room_no" type="text" value="${leads.room_no!''}">房
 						</div>
 					</div>
-
+					<%}%>
 					<div class="control-group">
 						<label class="control-label">客户等级</label>
 						<div class="controls">
 						      <select id="priority" name="priority">
 								<option></option>
-								<option <%if(partyAtt['priority']!''=='1重要紧急'){%>
+								<option <%if(leads.priority!''=='1重要紧急'){%>
 									selected
 									<%}%>>1重要紧急</option>
-								<option <%if(partyAtt['priority']!''=='2重要不紧急'){%>
+								<option <%if(leads.priority!''=='2重要不紧急'){%>
 									selected
 									<%}%>>2重要不紧急</option>
-								<option <%if(partyAtt['priority']!''=='3不重要紧急'){%>
+								<option <%if(leads.priority!''=='3不重要紧急'){%>
 									selected
 									<%}%>>3不重要紧急</option>
-								<option <%if(partyAtt['priority']!''=='4不重要不紧急'){%>
+								<option <%if(leads.priority!''=='4不重要不紧急'){%>
 									selected
 									<%}%>>4不重要不紧急</option>
 							</select>
@@ -73,25 +69,31 @@
 					</div>
 
 					<div class="control-group">
-						<label class="control-label">求租/售</label>
+						<label class="control-label">租售状态</label>
 						<div class="controls">
 							<select id="statusSel" name="status">
 								<option></option>
-								<option <%if(partyAtt['status']!''=='求租'){%>
+								<option <%if(leads.status!''=='出租'){%>
 									selected
-									<%}%>>求租</option>
-								<option <%if(partyAtt['status']!''=='求购'){%>
+									<%}%>>出租</option>
+								<option <%if(leads.status!''=='出售'){%>
 									selected
-									<%}%>>求购</option>
-								<option <%if(partyAtt['status']!''=='已租'){%>
+									<%}%>>出售</option>
+								<option <%if(leads.status!''=='已付订金'){%>
+									selected
+									<%}%>>已付订金</option>
+								<option <%if(leads.status!''=='已租'){%>
 									selected
 									<%}%>>已租</option>
-								<option <%if(partyAtt['status']!''=='已买'){%>
+								<option <%if(leads.status!''=='已售'){%>
 									selected
-									<%}%>>已买</option>
-								<option <%if(partyAtt['status']!''=='暂没需求'){%>
+									<%}%>>已售</option>
+								<option <%if(leads.status!''=='空置中'){%>
 									selected
-									<%}%>>暂没需求</option>
+									<%}%>>空置中</option>
+								<option <%if(leads.status!''=='自用中'){%>
+									selected
+									<%}%>>自用中</option>
 							</select>
 						</div>
 					</div>
@@ -101,49 +103,48 @@
 						<div class="controls">
 							<select id="type" name="type">
 								<option></option>
-								<option <%if(partyAtt['type']!''=='1房'){%>
+								<option <%if(leads.type!''=='1房'){%>
 									selected
 									<%}%>>1房</option>
-								<option <%if(partyAtt['type']!''=='2房'){%>
+								<option <%if(leads.type!''=='2房'){%>
 									selected
 									<%}%>>2房</option>
-								<option <%if(partyAtt['type']!''=='3房'){%>
+								<option <%if(leads.type!''=='3房'){%>
 									selected
 									<%}%>>3房</option>
-								<option <%if(partyAtt['type']!''=='4房'){%>
+								<option <%if(leads.type!''=='4房'){%>
 									selected
 									<%}%>>4房</option>
-								<option <%if(partyAtt['type']!''=='5房'){%>
+								<option <%if(leads.type!''=='5房'){%>
 									selected
 									<%}%>>5房</option>
-								<option <%if(partyAtt['type']!''=='6房'){%>
+								<option <%if(leads.type!''=='6房'){%>
 									selected
 									<%}%>>6房</option>
-								<option <%if(partyAtt['type']!''=='6房以上'){%>
+								<option <%if(leads.type!''=='6房以上'){%>
 									selected
 									<%}%>>6房以上</option>
-								<option <%if(partyAtt['type']!''=='厂房/仓库'){%>
+								<option <%if(leads.type!''=='厂房/仓库'){%>
 									selected
 									<%}%>>厂房/仓库</option>
-								<option <%if(partyAtt['type']!''=='整栋厂房'){%>
+								<option <%if(leads.type!''=='整栋厂房'){%>
 									selected
 									<%}%>>整栋厂房</option>
-								<option <%if(partyAtt['type']!''=='别墅'){%>
+								<option <%if(leads.type!''=='别墅'){%>
 									selected
 									<%}%>>别墅</option>
-								<option <%if(partyAtt['type']!''=='地皮'){%>
+								<option <%if(leads.type!''=='地皮'){%>
 									selected
 									<%}%>>地皮</option>
-								<option <%if(partyAtt['type']!''=='商铺'){%>
+								<option <%if(leads.type!''=='商铺'){%>
 									selected
 									<%}%>>商铺</option>
-								<option <%if(partyAtt['type']!''=='车库'){%>
+								<option <%if(leads.type!''=='车库'){%>
 									selected
 									<%}%>>车库</option>
-								<option <%if(partyAtt['type']!''=='写字楼'){%>
+								<option <%if(leads.type!''=='写字楼'){%>
 									selected
 									<%}%>>写字楼</option>
-
 							</select>
 						</div>
 					</div>
@@ -153,54 +154,51 @@
 						<div class="controls">
 							<select id="region"  name="region">
 								<option></option>
-								<option <%if(partyAtt['region']!''=='香洲'){%>
+								<option <%if(leads.region!''=='香洲'){%>
 									selected
 									<%}%>>香洲</option>
-								<option <%if(partyAtt['region']!''=='老香洲'){%>
+								<option <%if(leads.region!''=='老香洲'){%>
 									selected
 									<%}%>>老香洲</option>
-								<option <%if(partyAtt['region']!''=='新香洲'){%>
+								<option <%if(leads.region!''=='新香洲'){%>
 									selected
 									<%}%>>新香洲</option>
-								<option <%if(partyAtt['region']!''=='柠溪'){%>
+								<option <%if(leads.region!''=='柠溪'){%>
 									selected
 									<%}%>>柠溪</option>
-								<option <%if(partyAtt['region']!''=='吉大'){%>
+								<option <%if(leads.region!''=='吉大'){%>
 									selected
 									<%}%>>吉大</option>
-								<option <%if(partyAtt['region']!''=='兰埔'){%>
+								<option <%if(leads.region!''=='兰埔'){%>
 									selected
 									<%}%>>兰埔</option>
-								<option <%if(partyAtt['region']!''=='湾仔'){%>
+								<option <%if(leads.region!''=='湾仔'){%>
 									selected
 									<%}%>>湾仔</option>
-								<option <%if(partyAtt['region']!''=='南屏'){%>
+								<option <%if(leads.region!''=='南屏'){%>
 									selected
 									<%}%>>南屏</option>
-								<option <%if(partyAtt['region']!''=='前山'){%>
+								<option <%if(leads.region!''=='前山'){%>
 									selected
 									<%}%>>前山</option>
-								<option <%if(partyAtt['region']!''=='拱北'){%>
+								<option <%if(leads.region!''=='拱北'){%>
 									selected
 									<%}%>>拱北</option>
-								<option <%if(partyAtt['region']!''=='夏湾'){%>
+								<option <%if(leads.region!''=='夏湾'){%>
 									selected
 									<%}%>>夏湾</option>
-								<option <%if(partyAtt['region']!''=='斗门'){%>
+								<option <%if(leads.region!''=='斗门'){%>
 									selected
 									<%}%>>斗门</option>
-								<option <%if(partyAtt['region']!''=='金湾'){%>
+								<option <%if(leads.region!''=='金湾'){%>
 									selected
 									<%}%>>金湾</option>
-								<option <%if(partyAtt['region']!''=='唐家'){%>
+								<option <%if(leads.region!''=='唐家'){%>
 									selected
 									<%}%>>唐家</option>
-								<option <%if(partyAtt['region']!''=='上冲'){%>
+								<option <%if(leads.region!''=='上冲'){%>
 									selected
 									<%}%>>上冲</option>
-								<option <%if(partyAtt['region']!''=='其他'){%>
-									selected
-									<%}%>>其他</option>
 							</select>
 						</div>
 					</div>
@@ -208,115 +206,145 @@
 					<div class="control-group">
 						<label class="control-label" >面积（平）</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="area" name="area" type="text" value="${partyAtt['area']!0}">
+							<input class="input-xlarge focused" id="area" name="area" type="text" value="${leads.area!0}">
 						</div>
 					</div>
 
 					<div class="control-group">
 						<label class="control-label" >总价(万)/租金(元)</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="total" name="total" type="text" value="${partyAtt['total']!0}">
+							<input class="input-xlarge focused" id="total" name="total" type="text" value="${leads.total!0}">
 						</div>
 					</div>
 
 					
 					<div class="control-group">
-						<label class="control-label" >客户职业</label>
+						<label class="control-label" >地址</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="career" name="career" type="text" value="${partyAtt['career']!''}">
+							<input class="input-xlarge focused" id="addr" name="addr" type="text" value="${leads.addr!''}">
 						</div>
 					</div>
 					
 
+					<div class="control-group">
+						<label class="control-label" for="focusedInput">广告标题</label>
+						<div class="controls">
+							<input class="input-xlarge focused" id="title" name="title" type="text" value="${leads.title!''}">
+						</div>
+					</div>
 
 					<div class="control-group">
-						<label class="control-label" for="textarea2">详细情况</label>
+						<label class="control-label" for="textarea2">描述</label>
 						<div class="controls">
 							<textarea class="cleditor11 autogrow" id="intro" name="intro" rows="10">
-								<%if(partyAtt['intro']!''!=''){%>
-								${partyAtt['intro']}
-								<%}else{%>求购/租:
-								区域： 
-价格：  
-付款方式：  
-面积： 
-电梯/楼梯  
-具体要求：
-								<%}%></textarea>
+								<%if(leads.intro!''!=''){%>
+								${leads.intro}
+								<%}else{%>几房几厅几卫:
+								面积：
+朝向：
+楼层：
+总层楼：
+电梯楼梯：
+价格：
+税务实收/各付：
+原购价（发票价）：
+购入房屋日期：
+看房方式（约看/自住/出租）：
+其他要求:<%}%></textarea>
 						</div>
 					</div>
 
 					<div class="control-group">
 						<label class="control-label" for="textarea2">跟进情况</label>
 						<div class="controls">
-							<textarea class="cleditor11 autogrow" id="follow_info" name="follow_info" rows="8"><%if(partyAtt['follow_info']!''!=''){%>
-								${partyAtt['follow_info']}
+							<textarea class="cleditor11 autogrow" id="remark" name="remark" rows="8"><%if(leads.remark!''!=''){%>
+								${leads.remark}
 								<%}else{%>跟进情况：
 								跟进人：
 跟进日期：<%}%></textarea>
 						</div>
 					</div>
 
-					<% if(shiro.hasAnyRole("admin,property_manager") || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
+					<% if( isPublic || isAdminPm || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">介绍人</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="introducer" name="introducer" type="text" value="${partyAtt['introducer']!''}"></div>
+							<input class="input-xlarge focused" id="introducer" name="introducer" type="text" value="${leads.introducer!''}"></div>
 					</div>
 
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">客户来源</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="customer_source" name="customer_source" type="text" value="${partyAtt['customer_source']!''}"></div>
+							<input class="input-xlarge focused" id="customer_source" name="customer_source" type="text" value="${leads.customer_source!''}"></div>
 					</div>
 
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">接单人/合作单位</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="sales" name="sales" type="text" value="${partyAtt['sales']!''}"></div>
+							<input class="input-xlarge focused" id="sales" name="sales" type="text" value="${leads.sales!''}"></div>
 					</div>
-
+					<%}%>
+					<% if(isPublic ||isAdminPmInU || leads.creator!''=='' ||userId==leads.creator!'' ) { %>
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">跟进人</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="follower" name="follower" type="text" value="${partyAtt['follower']!''}"></div>
+							<input class="input-xlarge focused" id="follower" name="follower" type="text" value="${leads.follower!''}"></div>
 					</div>
 
 					<div class="control-group">
 						<label class="control-label" for="focusedInput">跟进人电话</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="follower_phone" name="follower_phone" type="text" value="${partyAtt['follower_phone']!''}"></div>
+							<input class="input-xlarge focused" id="follower_phone" name="follower_phone" type="text" value="${leads.follower_phone!''}"></div>
 					</div>
-					
+					<%}%>
+					<% if(isPublic || isAdminPm || leads.creator!''=='' || userId==leads.creator!'' ) { %>
 					<div class="control-group">
-						<label class="control-label" for="focusedInput">客户电话1</label>
+						<label class="control-label" for="focusedInput">业主</label>
 						<div class="controls">
-							<input class="input-xlarge focused" id="client_phone1" name="client_phone1" type="text" value="${partyAtt['client_phone1']!''}">
-						</div>
-					</div>
-
-					<div class="control-group">
-						<label class="control-label" for="focusedInput">电话2</label>
-						<div class="controls">
-							<input class="input-xlarge focused" id="client_phone2" name="client_phone2" type="text" value="${partyAtt['client_phone2']!''}">
-						</div>
-					</div>
-
-					<div class="control-group">
-						<label class="control-label" for="focusedInput">电话3</label>
-						<div class="controls">
-							<input class="input-xlarge focused" id="client_phone3" name="client_phone3" type="text" value="${partyAtt['client_phone3']!''}">
+							<input class="input-medium focused" id="owner" name="owner" type="text" value="${leads.owner!''}">
+							<label class="checkbox inline">								
+								<input type="checkbox" id="is_have_car" name="is_have_car" value="Y" style="opacity: 0;" <%if(leads.is_have_car!'N'=='Y'){%>checked<%}%>>						
+								有车
+						  	</label>
 						</div>
 					</div>
 					
+					<div class="control-group">
+						<label class="control-label" for="focusedInput">业主电话</label>
+						<div class="controls">
+							<input class="input-xlarge focused" id="owner_phone" name="owner_phone" type="text" value="${leads.owner_phone!''}">
+						</div>
+					</div>
+					
+					<div class="control-group">
+						<label class="control-label" for="focusedInput"></label>
+						<div class="controls">							
+							<label class="checkbox inline">								
+								<input type="checkbox" id="is_public" name="is_public" value="Y" style="opacity: 0;" <%if(leads.is_public!'N'=='Y'){%>checked<%}%>>						
+								公开此资料(所有内部人员可见)
+						  	</label>
+						</div>
+					</div>
 					<%}%>
 
+					<div class="control-group">
+						<label class="control-label" for="focusedInput">底价(元)</label>
+						<div class="controls">
+							<input class="input-xlarge focused" id="lowest_price" name="lowest_price" type="text" value="${leads.lowest_price!0}"></div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" for="focusedInput">代理费</label>
+						<div class="controls">
+							<input class="input-xlarge focused" id="agent_fee" name="agent_fee" type="text" value="${leads.agent_fee!0}"></div>
+					</div>					
 
 					<div class="form-actions">
-						<% if(isAdminPmInU){ %>
+						<% if(isAdminPmInU || leads.creator!''=='' ||userId==leads.creator!''){ %>
 						<button type="submit" class="btn btn-primary" name="submit">保存</button>
 						<%}%>
-						<a href='/propertyClient?${queryString}' class="btn">取消</a>
+						<a href='/list?${queryString}' class="btn">取消</a>
+                            
 					</div>
 
 				</fieldset>
@@ -445,20 +473,19 @@
 		}
 	});
 
-	$('#propertyClientForm').validate({
+	$('#leadsForm').validate({
 	    rules: {
-	      title: {
-	        required: true
-	      },
-	      client_name: {
+	      building_name: {
 	        required: true
 	      },
 	      area:{
-	      	number: true
+	      	number:true
 	      },
 	      total:{
-	      	number: true
+	      	number:true
 	      },
+	      lowest_price:{number:true},
+	      agent_fee:{number:true},
 	      status: {
 	        required: true
 	      }

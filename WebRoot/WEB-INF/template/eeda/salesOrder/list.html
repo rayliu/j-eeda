@@ -1,11 +1,11 @@
-<%layout("/layout.html"){%>
+<%layout("/eeda/layout.html"){%>
 			<!-- content starts -->
 			
 
 			<div>
 				<ul class="breadcrumb">
 					<li>
-						<a href="#">查找问题</a>
+						<a href="#">查找销售订单</a>
 					</li>
 				</ul>
 			</div>
@@ -13,41 +13,37 @@
 			<div class="row-fluid sortable">		
 				<div class="box span12">
 					<div class="box-header well" data-original-title>
-						<h2><i class="icon-align-justify"></i> 问题列表</h2>
+						<h2><i class="icon-align-justify"></i> 订单列表</h2>
 					</div>
 					
 					
 					
 					<div class="box-content" id="no-more-tables">
 						<div class="btn-group" >
-							<a class="btn btn-info" href="/case/newCase" >我要建议</a>
+							<a class="btn btn-info" href="/salesOrder/edit" >新订单</a>
 						</div>
 						<table id="eeda-table" class="table table-striped table-bordered bootstrap-datatable datatable">
 						  <thead>
 							  <tr>
-								  <th>标题</th>
-								  <th>问题级别</th>
+								  <th>单号</th>
 								  <th>状态</th>
-								  <th>描述</th>
-								  <th>回答</th>
-								  <th>创建人</th>								  
+								  <th>备注</th>
+								  <th>创建人</th>
 								  <th>创建日期</th>
 								  <th></th>
 							  </tr>
 						  </thead>   
 						  <tbody>
-						  	￼<% for(rCase in caseList!){ %>
+						  	￼<% for(order in orderList!){ %>
 							    <tr>
-							     <td data-title="标题">${rCase.title} </td>
-							     <td data-title="问题级别">${rCase.type}</td>
-							     <td data-title="状态">${rCase.status!''}</td>   
-							     <td data-title="描述">${rCase.case_desc!""}</td>
-							     <td data-title="回答">${rCase.note!""}</td>
-							     <td data-title="创建人">${rCase.creator!""}</td>							     
-							     <td data-title="创建日期">${rCase.create_date, dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+							     <td data-title="标题"><a href='/salesOrder/view/${order.id}'>${order.order_no}</a></td>
+							     <td data-title="状态">${order.status!''}</td>   
+							     <td data-title="备注">${order.remark!""}</td>
+							     <td data-title="创建人">${order.creator!""}</td>
+							     <td data-title="创建日期">${order.create_date, dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
 							     <td class="center">									
-									<% if(shiro.hasAnyRole("admin,property_mananger,property_internal_user")){ %>
-									<a class="btn btn-info" href="/editCase/${rCase.id}">
+									<% if(shiro.hasAnyRole("admin,property_mananger,property_internal_user, property_external_user")){ %>
+									<a class="btn btn-info" href="/salesOrder/edit/${order.id}">
 										<i class="icon-edit icon-white"></i>
 										编辑
 									</a>	
@@ -76,15 +72,13 @@
 						},
 						"aoColumnDefs": [
 					      { "sWidth": "20%", "aTargets": [ 0 ] },
-					      { "sWidth": "10%", "aTargets": [ 1 ] },
-					      { "sWidth": "6%", "aTargets": [ 2 ] },
-					      { "sWidth": "20%", "aTargets": [ 3 ] },
-					      { "sWidth": "15%", "aTargets": [ 4 ] },
-					      { "sWidth": "10%", "aTargets": [ 5 ] },
-					      { "sWidth": "10%", "aTargets": [ 6 ] },
-					      { "sWidth": "30%", "aTargets": [ 7 ] }
+					      { "sWidth": "5%", "aTargets": [ 1 ] },
+					      { "sWidth": "20%", "aTargets": [ 2 ] },
+					      { "sWidth": "10%", "aTargets": [ 3 ] },
+					      { "sWidth": "10%", "aTargets": [ 4 ] },
+					      { "sWidth": "10%", "aTargets": [ 5 ] }
 					    ],
-					    "aaSorting": [[ 6, "desc" ]]
+					    "aaSorting": [[ 4, "desc" ]]
 					} );
 			    	
 					var getFilterVal=function(){
