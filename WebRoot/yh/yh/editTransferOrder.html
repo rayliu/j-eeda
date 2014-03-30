@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>源鸿物流 Demo</title>
+
+    <!-- Core CSS - Include with every page -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Page-Level Plugin CSS - Dashboard -->
+    <link href="../css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+    <link href="../css/plugins/timeline/timeline.css" rel="stylesheet">
+
+    <!-- SB Admin CSS - Include with every page -->
+    <link href="../css/sb-admin.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">源鸿物流 Demo</a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> 用户信息</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> 默认配置</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> 退出</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+
+        </nav>
+        <!-- /.navbar-static-top -->
+
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="sidebar-search">
+                        <div class="input-group custom-search-form">
+                            <input type="text" class="form-control" placeholder="单据号快速查找...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                        </div>
+                        <!-- /input-group -->
+                    </li>
+                    <li>
+                        <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> 系统监控</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-truck fa-fw"></i> 运输管理<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="transferOrderList.html">运输单</a>
+                            </li>
+                            <li>
+                                <a href="blankLayout.html">提货拼车单</a>
+                            </li>
+                            <li>
+                                <a href="deliveryOrderList.html">配送单</a>
+                            </li>
+                            <li>
+                                <a href="returnOrderList.html">回单</a>
+                            </li>
+                            <li>
+                                <a href="damageOrderList.html">货损运输单</a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-truck fa-fw"></i> 库存管理<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="flot.html">入库单</a>
+                            </li>
+                            <li>
+                                <a href="flot.html">出库单</a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-cny fa-fw"></i> 财务结算<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="#">应收结账单</a>
+                            </li>
+                            <li>
+                                <a href="#">应付结账单</a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-book fa-fw"></i> 合同管理<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="#">客户合同</a>
+                            </li>
+                            <li>
+                                <a href="#">供应商合同</a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-table fa-fw"></i> 系统报表<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="#">中转仓库存报表</a>
+                            </li>
+                            <li>
+                                <a href="#">运输运营日报表</a>
+                            </li>
+                            <li>
+                                <a href="#">终端送货计划明细表</a>
+                            </li>
+                            <li>
+                                <a href="#">终端送货完成明细表</a>
+                            </li>
+                            <li>
+                                <a href="#">应收款结算进度表</a>
+                            </li>
+                            <li>
+                                <a href="#">应付款结算进度表</a>
+                            </li>
+                            <li>
+                                <a href="#">成本核算分析表</a>
+                            </li>
+                            <li>
+                                <a href="#">盈利分析表</a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-cog fa-fw"></i> 基础数据设置<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="#">登录用户</a>
+                            </li>
+                            <li>
+                                <a href="#">用户角色</a>
+                            </li>
+                            <li>
+                                <a href="#">用户权限</a>
+                            </li>
+                            <li>
+                                <a href="#">客户</a>
+                            </li>
+                            <li>
+                                <a href="#">供应商</a>
+                            </li>
+                            <li>
+                                <a href="#">分公司</a>
+                            </li>
+                            <li>
+                                <a href="#">产品</a>
+                            </li>
+                            <li>
+                                <a href="#">仓库</a>
+                            </li>
+                            <li>
+                                <a href="#">城市</a>
+                            </li>
+                            <li>
+                                <a href="#">干线定义</a>
+                            </li>
+                            <li>
+                                <a href="#">里程碑</a>
+                            </li>
+                            <li>
+                                <a href="#">收费条目</a>
+                            </li>
+                            <li>
+                                <a href="#">付费条目</a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-question fa-fw"></i> 需要帮助<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="#">帮助文档</a>
+                            </li>
+                            <li>
+                                <a href="#">问题反馈</a>
+                            </li>
+                            
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+                </ul>
+                <!-- /#side-menu -->
+            </div>
+            <!-- /.sidebar-collapse -->
+        </nav>
+        <!-- /.navbar-static-side -->
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">运输单</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#basic" data-toggle="tab">基本信息</a>
+                                </li>
+                                <li class=""><a href="#cargos" data-toggle="tab">货品明细</a>
+                                </li>
+                                <li class=""><a href="#milestone" data-toggle="tab">运输里程碑</a>
+                                </li>
+                                <li class=""><a href="#arap" data-toggle="tab">应收应付</a>
+                                </li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div class="tab-pane fade active in" id="basic">
+                                <div class="row">
+                                <div class="col-lg-6">
+                                    <form role="form">
+                                        <h2>客户信息</h2>
+                                        <div class="form-group">
+                                            <label>客户名称</label>
+                                            <input class="form-control" placeholder="选择客户">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>取货地址</label>
+                                            <input class="form-control" placeholder="Enter text">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>联系人</label>
+                                            <input class="form-control" placeholder="选择客户">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>电话</label>
+                                            <input class="form-control" placeholder="选择客户">
+                                        </div>
+                                        <h2>供应商信息</h2>
+                                        <div class="form-group">
+                                            <label>供应商名称</label>
+                                            <input class="form-control" placeholder="Enter text">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>联系人</label>
+                                            <input class="form-control" placeholder="Enter text">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>电话</label>
+                                            <input class="form-control" placeholder="Enter text">
+                                        </div>
+                                        <h2>收货人信息</h2>
+                                        <div class="form-group">
+                                            <label>收货人公司名称</label>
+                                            <input class="form-control" placeholder="Enter text">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>收货地址</label>
+                                            <input class="form-control" placeholder="Enter text">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>联系人</label>
+                                            <input class="form-control" placeholder="Enter text">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>电话</label>
+                                            <input class="form-control" placeholder="Enter text">
+                                        </div>
+                                        
+                                        
+                                        
+                                    </form>
+                                </div>
+                                <!-- /.col-lg-6 (nested) -->
+                                <div class="col-lg-6">
+                                    <h2>运输信息</h2>
+                                    <div class="form-group">
+                                        <label>运输单号</label>
+                                        <input class="form-control" value='2014031000001'>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>单据状态</label>
+                                        <input class="form-control" value='已发车'>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>业务员</label>
+                                        <input class="form-control" value='linda'>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>货品属性</label>
+                                        <label class="radio-inline">
+                                                <input type="radio" name="cargoNature" id="optionsRadiosInline1" value="option1" checked="">ATM
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="cargoNature" id="optionsRadiosInline2" value="option2">普通货品
+                                            </label>
+                                        <label class="radio-inline">
+                                                <input type="radio" name="cargoNature" id="optionsRadiosInline2" value="option2">损害货品
+                                            </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>提货方式</label>
+                                        <label class="radio-inline">
+                                                <input type="radio" name="pickupMode" id="optionsRadiosInline1" value="option1" checked="">供应商自提
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="pickupMode" id="optionsRadiosInline2" value="option2">源鸿自提
+                                            </label>
+                                    </div>
+                                        
+                                       
+                                        <div class="form-group">
+                                            <label>到达方式</label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="arrivalMode" id="optionsRadiosInline1" value="option1" checked="">货品直送
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="arrivalMode" id="optionsRadiosInline2" value="option2">入中转仓
+                                            </label>
+                                            
+                                        </div>
+                                        
+                                       
+                                    <h2>路线</h2>
+                                    <form role="form">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control input-inline input-small" id="inputSuccess" value="广州"> - <input type="text" class="form-control input-small input-inline" id="inputSuccess" value="武汉">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>备注</label>
+                                            <textarea class="form-control" rows="13"></textarea>
+                                        </div>
+                                    </form>
+                                   
+                                    
+                                </div>
+                                <!-- /.col-lg-6 (nested) -->
+                            </div>
+                                </div>
+                                <div class="tab-pane fade" id="cargos">
+                                    <div class="panel-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>型号</th>
+                                                        <th>数量</th>
+                                                        <th>单位</th>
+                                                        <th>备注</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><a class="btn" href="#">查看序号列表</a></td>
+                                                        <td>Mark-001</td>
+                                                        <td>20</td>
+                                                        <td>台</td>
+                                                        <td>通知仓库李生</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><a class="btn" href="#">查看序号列表</a></td>
+                                                        <td>Good-002</td>
+                                                        <td>5</td>
+                                                        <td>台</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><a class="btn" href="#">查看序号列表</a></td>
+                                                        <td>X-005</td>
+                                                        <td>5</td>
+                                                        <td>台</td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                    <!-- /.panel-body -->
+                                </div>
+                                <div class="tab-pane fade" id="milestone">
+                                    <div class="panel-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>状态</th>
+                                                        <th>更新用户</th>
+                                                        <th>更新时间</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>新建单据</td>
+                                                        <td>Otto</td>
+                                                        <td>2014-03-07 13:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2</td>
+                                                        <td>已发车</td>
+                                                        <td>Jacob</td>
+                                                        <td>2014-03-08 23:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>3</td>
+                                                        <td>株洲</td>
+                                                        <td>Larry</td>
+                                                        <td>2014-03-09 9:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>4</td>
+                                                        <td>长沙</td>
+                                                        <td>Larry</td>
+                                                        <td>2014-03-09 15:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>5</td>
+                                                        <td>武汉中转仓</td>
+                                                        <td>Larry</td>
+                                                        <td>2014-03-10 3:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>7</td>
+                                                        <td>收货人签收</td>
+                                                        <td>Larry</td>
+                                                        <td>2014-03-10 13:00</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                    <!-- /.panel-body -->
+                                </div>
+                                <div class="tab-pane fade" id="arap">
+                                    <h2>应收</h2>
+                                    <div class="panel-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>费用条目</th>
+                                                        <th>金额</th>
+                                                        <th>备注</th>
+                                                        <th>结算状态</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>装车费</td>
+                                                        <td>200</td>
+                                                        <td></td>
+                                                        <td>已结</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2</td>
+                                                        <td>设备包装</td>
+                                                        <td>50</td>
+                                                        <td></td>
+                                                        <td>已结</td>
+                                                    </tr>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                    <!-- /.panel-body -->
+                                    
+                                    <hr>
+                                    <h2>应付</h2>
+                                    <div class="panel-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>费用条目</th>
+                                                        <th>金额</th>
+                                                        <th>备注</th>
+                                                        <th>结算状态</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>运输费用</td>
+                                                        <td>2000</td>
+                                                        <td></td>
+                                                        <td>未结</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2</td>
+                                                        <td>卸货费</td>
+                                                        <td>300</td>
+                                                        <td></td>
+                                                        <td>未结</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>3</td>
+                                                        <td>上楼费</td>
+                                                        <td>300</td>
+                                                        <td></td>
+                                                        <td>未结</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                    <!-- /.panel-body -->
+                                </div>
+                                
+                                
+                                <button type="submit" class="btn btn-default pull-right">保存</button>
+                                
+                                <button type="submit" class="btn btn-default">发车确认</button>
+                                <button type="reset" class="btn btn-default">入仓确认</button> 
+                                <button type="submit" class="btn btn-default">回单签收</button>
+                            </div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+
+            </div>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Core Scripts - Include with every page -->
+    <script src="../js/jquery-1.10.2.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+
+    <!-- Page-Level Plugin Scripts - Dashboard -->
+    <script src="../js/plugins/morris/raphael-2.1.0.min.js"></script>
+    <script src="../js/plugins/morris/morris.js"></script>
+
+    <!-- SB Admin Scripts - Include with every page -->
+    <script src="../js/sb-admin.js"></script>
+
+    <!-- Page-Level Demo Scripts - Dashboard - Use for reference -->
+    <script src="../js/demo/dashboard-demo.js"></script>
+
+</body>
+
+</html>
