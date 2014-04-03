@@ -1,1 +1,0 @@
-package models;import com.jfinal.plugin.activerecord.Model;public class Case extends Model<Case> {	public static final Case dao = new Case();}
