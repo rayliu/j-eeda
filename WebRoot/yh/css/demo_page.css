@@ -1,0 +1,51 @@
+#dt_example {
+	PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #fff; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; FONT: 80%/1.45em "Lucida Grande", Verdana, Arial, Helvetica, sans-serif; COLOR: #333; PADDING-TOP: 0px
+}
+#dt_example #container {
+	PADDING-BOTTOM: 0px; MARGIN: 30px auto; PADDING-LEFT: 0px; WIDTH: 800px; PADDING-RIGHT: 0px; PADDING-TOP: 0px
+}
+#dt_example #footer {
+	PADDING-BOTTOM: 0px; MARGIN: 50px auto 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px
+}
+#dt_example #demo {
+	MARGIN: 30px auto 0px
+}
+#dt_example .demo_jui {
+	MARGIN: 30px auto 0px
+}
+#dt_example .big {
+	LINE-HEIGHT: 1.6em; COLOR: #4e6ca3; FONT-SIZE: 1.3em; FONT-WEIGHT: bold
+}
+#dt_example .spacer {
+	HEIGHT: 20px; CLEAR: both
+}
+#dt_example .clear {
+	CLEAR: both
+}
+#dt_example PRE {
+	BORDER-BOTTOM: #cccccc 1px solid; BORDER-LEFT: #cccccc 1px solid; PADDING-BOTTOM: 15px; BACKGROUND-COLOR: #f5f5f5; PADDING-LEFT: 15px; PADDING-RIGHT: 15px; BORDER-TOP: #cccccc 1px solid; BORDER-RIGHT: #cccccc 1px solid; PADDING-TOP: 15px
+}
+#dt_example H1 {
+	BORDER-BOTTOM: #b0bed9 1px solid; LINE-HEIGHT: 1.6em; MARGIN-TOP: 2em; COLOR: #4e6ca3; CLEAR: both; FONT-SIZE: 1.3em; FONT-WEIGHT: normal
+}
+#dt_example H2 {
+	LINE-HEIGHT: 1.6em; COLOR: #4e6ca3; CLEAR: both; FONT-SIZE: 1.2em; FONT-WEIGHT: normal
+}
+#dt_example A {
+	COLOR: #0063dc; TEXT-DECORATION: none
+}
+#dt_example A:hover {
+	TEXT-DECORATION: underline
+}
+#dt_example UL {
+	COLOR: #4e6ca3
+}
+.css_right {
+	FLOAT: right
+}
+.css_left {
+	FLOAT: left
+}
+.demo_links {
+	WIDTH: 50%; MARGIN-BOTTOM: 1em; FLOAT: left
+}
