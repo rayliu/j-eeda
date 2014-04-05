@@ -2,26 +2,26 @@
 <html>
 
 <head>
-	 <style type="text/css">
-      @import "/yh/css/demo_page.css";
-      @import "/yh/css/demo_table.css";
-    </style>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>源鸿物流信息平台</title>
-	<script src="/yh/js/jquery-1.10.2.js"></script>
-	 
+
     <!-- Core CSS - Include with every page -->
     <link href="/yh/css/bootstrap.min.css" rel="stylesheet">
     <link href="/yh/font-awesome/css/font-awesome.css" rel="stylesheet">
-	
+
     <!-- Page-Level Plugin CSS - Dashboard -->
+    
     <link href="/yh/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
     <link href="/yh/css/plugins/timeline/timeline.css" rel="stylesheet">
-    <link href="/yh/css/sb-admin.css" rel="stylesheet">
+
+    <!-- Page-Level Plugin CSS - Tables -->
+    <link href="/yh/css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+
     <!-- SB Admin CSS - Include with every page -->
-   
+    <link href="/yh/css/sb-admin.css" rel="stylesheet">
 
 </head>
 
@@ -231,16 +231,16 @@
                         <a href="#"><i class="fa fa-cog fa-fw"></i> 基础数据设置<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="/yh/loginUser">登录用户</a>
+                                <a href="#">登录用户</a>
                             </li>
                             <li>
-                                <a href="#">用户角色</a>
+                                <a href="/yh/role">用户角色</a>
                             </li>
                             <li>
                                 <a href="#">用户权限</a>
                             </li>
                             <li>
-                                <a href="#">客户</a>
+                                <a href="/yh/customer">客户</a>
                             </li>
                             <li>
                                 <a href="#">供应商</a>
@@ -286,7 +286,7 @@
                         <!-- /.nav-second-level -->
                     </li>
                 </ul>
-                <!-- /#side-menu -->
+                <!--  /#side-menu -->
             </div>
             <!-- /.sidebar-collapse -->
         </nav>
@@ -298,20 +298,16 @@
     <!-- /#wrapper -->
 
     <!-- Core Scripts - Include with every page -->
-   
+    <script src="/yh/js/jquery-1.10.2.js"></script>
     <script src="/yh/js/bootstrap.min.js"></script>
     <script src="/yh/js/plugins/metisMenu/jquery.metisMenu.js"></script>
 
-    <!-- Page-Level Plugin Scripts - Dashboard -->
-    <script src="/yh/js/plugins/morris/raphael-2.1.0.min.js"></script>
-    <script src="/yh/js/plugins/morris/morris.js"></script>
+ 
 
     <!-- SB Admin Scripts - Include with every page -->
     <script src="/yh/js/sb-admin.js"></script>
 
-    <!-- Page-Level Demo Scripts - Dashboard - Use for reference -->
-    <script src="/yh/js/demo/dashboard-demo.js"></script>
-    <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+
 
 </body>
 
