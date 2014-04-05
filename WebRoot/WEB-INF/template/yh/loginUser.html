@@ -34,6 +34,10 @@
 
 <%}%>
 
+<!-- Page-Level Plugin Scripts - Tables -->
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+
 <script>
 $(document).ready(function() {
 	 $("#del").click(function(){
@@ -58,7 +62,7 @@ $(document).ready(function() {
 	                "mDataProp": null, 
 	                "sWidth": "13%",
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-info' href='/yh/loginUser/delect"+obj.aData.ID+"'>"+
+	                    return "<a class='btn btn-info' href='/yh/loginUser/edit/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-edit'> </i> "+
 	                                "编辑"+
 	                            "</a>"+
