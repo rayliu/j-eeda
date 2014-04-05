@@ -1,1 +1,0 @@
-package controllers.yh;import com.jfinal.core.Controller;public class loginUserController extends Controller {	// in config route已经将路径默认设置为/yh	// me.add("/yh", controllers.yh.AppController.class, "/yh");	public void index() {		render("/yh/loginUser.html");	}	public void add(){		render("/yh/edit.html");	}}
