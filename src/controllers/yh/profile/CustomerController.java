@@ -1,0 +1,1 @@
+package controllers.yh.profile;import com.jfinal.core.Controller;public class CustomerController extends Controller {    // in config route已经将路径默认设置为/yh    // me.add("/yh", controllers.yh.AppController.class, "/yh");    public void index() {        render("profile/customer/CustomerList.html");    }}

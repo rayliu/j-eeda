@@ -1,0 +1,76 @@
+<%layout("/yh/layout.html"){%>
+ 
+ <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">创建新用户角色</h1>
+                   
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i>                            
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="table-responsive">
+			<form class="form-horizontal" id="leadsForm" name="leadsForm" action="/yh/role" method="post">
+				<fieldset>
+					
+					
+
+                    <div class="control-group">
+                        <label class="control-label" for="focusedInput">用户名</label>
+                        <div class="controls">
+                            
+                            <select class="input-xlarge" id="status" name="status">
+	                                <option></option>
+	                                <option>出租</option>
+	                                <option>出售</option>
+	                                <option>已付订金</option>
+	                                <option>已租</option>
+	                                <option>已售</option>
+	                                <option>自用中</option>
+	                              </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label" for="focusedInput">新角色</label>
+                        <div class="controls">
+                            <input class="input-xlarge" id="new_pwd" name="new_pwd" type="password" value="">
+                        </div>
+                    </div>
+<div>&nbsp</div>
+					<div class="control-group">						
+						<button type="submit" class="btn btn-primary">保存</button>
+						<a href='/yh/role/cancelRole' class="btn btn-primary">取消</a>
+					</div>
+
+				</fieldset>
+			</form>
+			 </div>
+                                    
+                        </div>
+                       
+                    </div>
+                    
+                </div>
+               
+       
+            </div>
+          
+        </div>
+			
+	<!--/span-->
+
+
+<!--/row-->
+
+<!-- content ends -->
+<%}%>
+<!-- validate.min.js 1.11.1 -->
