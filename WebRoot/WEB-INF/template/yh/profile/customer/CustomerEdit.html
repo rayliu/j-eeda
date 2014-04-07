@@ -25,7 +25,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                <form role="form" action="/yh/customer/save" method="post">
+                                <form id="customerForm" role="form" action="/yh/customer/save" method="post">
                                     <input id="partyId" name="party_id" type="hidden" value="${party.id!''}">
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
                                     <div class="col-lg-6">
@@ -33,7 +33,7 @@
                                             <div class="form-group">
 
                                                 <label>公司名称(必填)</label>
-                                                <input class="form-control" id="disabledInput" name="company_name" type="text" value="${company_name!''}">
+                                                <input class="form-control" id="company_name" name="company_name" type="text" value="${company_name!''}">
                                             </div>                                     
                                         </fieldset>
                                     </div>
@@ -42,21 +42,21 @@
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
-                                                <label>联系地址</label>
-                                                <input class="form-control" id="disabledInput" type="text" name="address" value="${address!''}">
-                                            </div>                                     
+                                                <label>联系人(必填)</label>
+                                                <input class="form-control" id="name" type="text" name="name" value="${name!''}">
+                                            </div>
                                         </fieldset>
                                     </div>
 
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
-                                    <div class="col-lg-6">
+                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
-                                                <label>联系人(必填)</label>
-                                                <input class="form-control" id="disabledInput" type="text" name="name" value="${name!''}">
-                                            </div>
+                                                <label>联系地址</label>
+                                                <input class="form-control" id="address" type="text" name="address" value="${address!''}">
+                                            </div>                                     
                                         </fieldset>
-                                    </div>
+                                    </div>                                    
                                     
                                     <!-- /.col-lg-6 (even) 偶数列 -->
                                     <div class="col-lg-6">
@@ -73,7 +73,7 @@
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>email</label>
-                                                <input class="form-control" id="disabledInput" type="text" name="email" value="${email!''}">
+                                                <input class="form-control" id="email" type="text" name="email" value="${email!''}">
                                             </div>                                     
                                         </fieldset>
                                     </div>
@@ -83,7 +83,7 @@
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>邮政编码</label>
-                                                <input class="form-control" id="disabledInput" type="text" name="post_code" value="${post_code!''}">
+                                                <input class="form-control" id="post_code" type="text" name="post_code" value="${post_code!''}">
                                             </div>
                                         </fieldset>
                                     </div>
@@ -116,4 +116,26 @@
 
 <!-- content ends -->
 <%}%>
-<!-- validate.min.js 1.11.1 -->
+<!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/eeda/js/jquery.validate.min.js"></script>
+<script src="/eeda/js/jvalidate.messages_cn.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#customerForm').validate({
+            rules: {
+              company_name: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
+                required: true
+              },
+              name:{//form 中 name为必填
+                required: true
+              }
+            },
+            highlight: function(element) {
+                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+            },
+            success: function(element) {
+                element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+            }
+        });
+    });
+</script>
