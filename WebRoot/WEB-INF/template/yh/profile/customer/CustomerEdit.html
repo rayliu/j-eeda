@@ -1,70 +1,113 @@
 <%layout("/yh/layout.html"){%>
  
+
  <div id="page-wrapper">
-            <div class="row">
+    
+    <div class="row">
+        <div class="col-lg-12 panel-body">
+            <% if(saveOK!''==true){%>
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                保存成功。
+            </div>
+            <%}%>
+            <h1 class="page-header">创建新客户</h1>
+           
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+
+    <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">创建新用户角色</h1>
-                   
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            客户基本信息
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <form role="form" action="/yh/customer/save" method="post">
+                                    <input id="partyId" name="party_id" type="hidden" value="${party.id!''}">
+                                    <!-- /.col-lg-6 (odd) 奇数列 -->
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+
+                                                <label>公司名称(必填)</label>
+                                                <input class="form-control" id="disabledInput" name="company_name" type="text" value="${company_name!''}">
+                                            </div>                                     
+                                        </fieldset>
+                                    </div>
+
+                                    <!-- /.col-lg-6 (even) 偶数列-->                                    
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>联系地址</label>
+                                                <input class="form-control" id="disabledInput" type="text" name="address" value="${address!''}">
+                                            </div>                                     
+                                        </fieldset>
+                                    </div>
+
+                                    <!-- /.col-lg-6 (odd) 奇数列 -->
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>联系人(必填)</label>
+                                                <input class="form-control" id="disabledInput" type="text" name="name" value="${name!''}">
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    
+                                    <!-- /.col-lg-6 (even) 偶数列 -->
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>联系人电话</label>
+                                                <input class="form-control" id="disabledInput" type="text" name="phone" value="${phone!''}">
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    
+                                    <!-- /.col-lg-6 (odd) 奇数列 -->
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>email</label>
+                                                <input class="form-control" id="disabledInput" type="text" name="email" value="${email!''}">
+                                            </div>                                     
+                                        </fieldset>
+                                    </div>
+
+                                    <!-- /.col-lg-6 (even) 偶数列 -->
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>邮政编码</label>
+                                                <input class="form-control" id="disabledInput" type="text" name="post_code" value="${post_code!''}">
+                                            </div>
+                                        </fieldset>
+                                    </div>
+
+                                    <!-- /.col-lg-6 (odd) 奇数列 -->
+                                    <div class="col-lg-6">
+                                        <button type="submit" class="btn btn-default">保存</button>
+                                        <a class="btn btn-default" href="/yh/customer">取消</a>
+                                    </div>
+
+                                   
+                                <form role="form">
+
+                            </div>
+                            <!-- /.row (nested) -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-            <!-- /.row -->
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i>                            
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="table-responsive">
-			<form class="form-horizontal" id="leadsForm" name="leadsForm" action="/yh/role" method="post">
-				<fieldset>
-					
-					
-
-                    <div class="control-group">
-                        <label class="control-label" for="focusedInput">用户名</label>
-                        <div class="controls">
-                            
-                            <select class="input-xlarge" id="status" name="status">
-	                                <option></option>
-	                                <option>出租</option>
-	                                <option>出售</option>
-	                                <option>已付订金</option>
-	                                <option>已租</option>
-	                                <option>已售</option>
-	                                <option>自用中</option>
-	                              </select>
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label class="control-label" for="focusedInput">新角色</label>
-                        <div class="controls">
-                            <input class="input-xlarge" id="new_pwd" name="new_pwd" type="password" value="">
-                        </div>
-                    </div>
-<div>&nbsp</div>
-					<div class="control-group">						
-						<button type="submit" class="btn btn-primary">保存</button>
-						<a href='/yh/role/cancelRole' class="btn btn-primary">取消</a>
-					</div>
-
-				</fieldset>
-			</form>
-			 </div>
-                                    
-                        </div>
-                       
-                    </div>
-                    
-                </div>
-               
-       
-            </div>
-          
-        </div>
+            <!-- /.row -->      
+</div>
 			
 	<!--/span-->
 
