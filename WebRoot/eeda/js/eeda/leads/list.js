@@ -221,7 +221,7 @@ $(document).ready(function() {
         	{"mDataProp":"REMARK",
                 "fnRender": function(obj) {
                     var remark=obj.aData.REMARK;
-                    return limitLength(remark);
+                    return limitLength(remark);  
                 }
             },            
         	{"mDataProp":"CREATOR"},

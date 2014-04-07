@@ -11,18 +11,18 @@
                      </div>
                       <h1>添加登陆用户</h1>
 					<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/yh/loginUser/saveUser" method="post">
-						<input id="userId" name="userId" type="hidden" value="">
+						<input id="userId" name="userId" type="hidden" value="${ul.id!''}">
 						<div class="form-group has-success">
 			                 <label class="control-label" for="inputSuccess">用户名</label>
-			                 <input id="username" name="username" type="text" class="form-control" >
+			                 <input id="username" name="username" type="text" class="form-control" value="${ul.user_name!''}">
 			             </div>
 			             <div class="form-group has-warning">
 			                 <label class="control-label" for="inputWarning">密码</label>
-			                 <input type="text" class="form-control" id="password" name="password">
+			                 <input type="text" class="form-control" id="password" name="password" value="${ul.password!''}">
 			             </div>
 			              <div class="form-group has-error">
 			                 <label class="control-label" for="inputError">密码提示</label>
-			                 <input type="text" class="form-control" id="pw_hint" name="pw_hint">
+			                 <input type="text" class="form-control" id="pw_hint" name="pw_hint" value="${ul.password_hint!''}">
 			             </div>
 			             	<button type="submit" class="btn btn-default">保存</button>
 				            <button  class="btn btn-default">取消</button>
