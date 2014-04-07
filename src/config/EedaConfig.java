@@ -78,6 +78,7 @@ public class EedaConfig extends JFinalConfig {
 		me.add("/yh/loginUser", controllers.yh.LoginUserController.class, "/yh");
 		me.add("/yh/role", controllers.yh.RoleController.class, "/yh");
 		me.add("/yh/customer", controllers.yh.profile.CustomerController.class, "/yh");
+		me.add("/yh/location", controllers.yh.LocationController.class, "/yh");
 	}
 
 	public void configPlugin(Plugins me) {

@@ -5,30 +5,36 @@
 		
 	<div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">
-				<a class="btn btn-info" href="/yh/loginUser/editUser"><i class="icon-edit icon-white"></i><span class="hidden-tablet">添加登陆用户</span></a>
-			</h1>
+          			<h1 class="page-header"></h1>
+        	 <div class="panel panel-default">
+        		<div class="panel-heading">
+                 	<i class="fa fa-list fa-fw"></i>城市列表
+            	</div>
+        	<div class="panel-body">
+	        	 <div class="row-fluid">
+	 				<table class="table table-striped table-bordered table-hover datatable" id="example">
+						<thead>
+							<tr>
+								<th>上一级</th>
+								<th>code</th>
+								<th>市</th>
+								<th>pcode</th>
+								<!-- <th></th> -->
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="odd gradeX">
+								<td colspan="5">Loading data from server</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
         </div>
+      </div>
         <!-- /.col-lg-12 -->
     </div>
-    
-	<div class="row-fluid">
- 			<table class="table table-striped table-bordered table-hover datatable" id="example">
-				<thead>
-					<tr>
-						<th>用户名</th>
-						<th>密码</th>
-						<th>密码提示</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="odd gradeX">
-						<td colspan="5">Loading data from server</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+   
 </div>
 
 
@@ -53,12 +59,13 @@ $(document).ready(function() {
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "/yh/loginUser/listUser",
+	        "sAjaxSource": "/yh/location/listLocation",
 			"aoColumns": [
-				{ "mDataProp": "USER_NAME" },
-	            { "mDataProp": "PASSWORD" },
-	            { "mDataProp": "PASSWORD_HINT" },
-	            { 
+				{ "mDataProp": "P_NAME" },
+	            { "mDataProp": "CODE" },
+	            { "mDataProp": "NAME" },
+	            { "mDataProp": "PCODE" }
+	            /* { 
 	                "mDataProp": null, 
 	                "sWidth": "13%",
 	                "fnRender": function(obj) {                    
@@ -71,7 +78,7 @@ $(document).ready(function() {
 	                                "删除"+
 	                            "</a>";
 	                }
-	            } 
+	            }  */
 	            ]
 	} );
 		
