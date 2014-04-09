@@ -10,26 +10,27 @@
 				</h1>
                  <div class="panel panel-default">
                    <div class="panel-heading">
-                 		用户信息
+                 		分公司信息
             		</div>
             		<div class="panel-body">
             			<div class="row-fluid">
-            				<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/yh/loginUser/saveRoute" method="post">
-						<input id="userId" name="userId" type="hidden" value="${ul.id!''}">
+            				<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/yh/office/saveOffice" method="post">
+						<input id="officeId" name="officeId" type="hidden" value="${ul.id!''}">
 						<div class="form-group ">
-			                 <label class="control-label">用户名(必填)</label>
-			                 <input id="username" name="username" type="text" class="form-control" value="${ul.user_name!''}">
+			                 <label class="control-label">分公司代码(必填)</label>
+			                 <input id="office_code" name="office_code" type="text" class="form-control" value="${ul.office_code!''}">
 			             </div>
 			             <div class="form-group ">
-			                 <label class="control-label">密码(必填)</label>
-			                 <input type="text" class="form-control" id="password" name="password" value="${ul.password!''}">
+			                 <label class="control-label">分公司名称(必填)</label>
+			                 <input type="text" class="form-control" id="office_name" name="office_name" value="${ul.office_name!''}">
 			             </div>
 			              <div class="form-group">
-			                 <label class="control-label">密码提示</label>
-			                 <input type="text" class="form-control" id="pw_hint" name="pw_hint" value="${ul.password_hint!''}">
+			                 <label class="control-label">联系方式(必填)</label>
+			                 <input type="text" class="form-control" id="contact_id" name="contact_id" value="${ul.contact_id!''}">
 			             </div>
 			             	<button type="submit" class="btn btn-default">保存</button>
-				            <a class="btn btn-default" href="/yh/loginUser">取消</a>
+			             	<a class="btn btn-default" href="/yh/office">取消</a>
+			             	
 			         </form>
             			</div>
             		</div>
@@ -47,12 +48,15 @@
 	$(document).ready(function() {
         $('#leadsForm').validate({
             rules: {
-            	username: {
+            	office_code: {
                 required: true
               },
-              password:{//form 中 name为必填
+              office_name:{//form 中 name为必填
                 required: true
-              }
+              },
+              contact_id:{//form 中 name为必填
+                  required: true
+                }
             },
             highlight: function(element) {
                 $(element).closest('.form-group').removeClass('has-success').addClass('has-error');

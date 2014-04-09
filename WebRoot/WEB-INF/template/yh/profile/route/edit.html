@@ -1,0 +1,102 @@
+<%layout("/yh/layout.html"){%>
+	<div id="page-wrapper">
+		<div class="row">
+			<div class="col-lg-12">
+			<h1 class="page-header">
+			<h1 class="page-header">
+			</h1>
+			</h1>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+					干线信息
+				</div>
+					<div class="panel-body">
+						<div class="row-fluid">
+							<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/yh/route/saveRoute" method="post">
+								<input id="Id" name="Id" type="hidden" value="${ul.id!''}">
+								<div class="form-group ">
+								<label class="control-label">出发地点</label>
+								<input id="fromCode" name="fromCode" type="text" value="${ul.fromCode!''}">
+								<input id="fromName" name="from" type="text" class="form-control" value="${ul.user_name!''}">
+								
+								<ul id='fromLocationList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 50%; left: 5%;">
+										
+								</ul>
+								
+							</div>
+								<div class="form-group ">
+								<label class="control-label">目的地点</label>
+								<input type="text" class="form-control" id="to" name="to" value="${ul.password!''}">
+							</div>
+								<div class="form-group">
+								<label class="control-label">备注</label>
+								<input type="text" class="form-control" id="remark" name="remark" value="${ul.password_hint!''}">
+							</div>
+							<button type="submit" class="btn btn-default">保存</button>
+							<a class="btn btn-default" href="/yh/route">取消</a>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<%}%>
+<!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/eeda/js/jquery.validate.min.js"></script>
+<script src="/eeda/js/jvalidate.messages_cn.js"></script>
+<script>
+	$(document).ready(function() {
+		$('#leadsForm').validate({
+			rules: {
+				from: {
+					required: true
+				},
+				to:{//form 中 name为必填
+				required: true
+				}
+			},
+			highlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+			}
+		});
+		
+		$('#fromName').on('keyup', function(){
+			var inputStr = $('#fromName').val();
+			$.get('/yh/route/search', {locationName:inputStr}, function(data){
+				console.log(data);
+				var fromLocationList =$("#fromLocationList");
+				fromLocationList.empty();
+				for(var i = 0; i < data.length; i++)
+				{
+					fromLocationList.append("<li><a tabindex='-1' class='fromLocationItem' href=''>("+data[i].CODE+")"+data[i].NAME+"</a></li>");
+				}
+				fromLocationList.empty();
+				fromLocationList.show();
+			},'json');
+		});
+	
+		$('#fromLocationList').on('click', '.fromLocationItem', function(e){
+        	console.log('val:'+$(this).val());
+        	$('#fromCode').val($(this).val());
+    	});
+		
+
+		/* $.ajax({
+				url:"/yh/route/show",
+					method:'GET',
+					async:false,
+					dataType:'json',
+					success:function(data){
+							alert(data.length);
+						for(var i = 0; i < data.length; i++)
+						{
+							$("#type").append("<option id='"+data[i].name+"'>"+data[i].name+"</option>");
+						}
+					}
+				}); */
+		});
+</script>

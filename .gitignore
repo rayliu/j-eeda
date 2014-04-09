@@ -33,3 +33,4 @@ misc
 php-version
 .externalToolBuilders/org.eclipse.wst.common.project.facet.core.builder.launch
 .externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator.launch
+/build
