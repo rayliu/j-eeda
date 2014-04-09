@@ -28,7 +28,6 @@ public class DataInitUtil {
 			
 			
 			
-
             stmt.executeUpdate("create table if not exists leads(id bigint auto_increment PRIMARY KEY, "
                     + "title VARCHAR(255), priority varchar(50), create_date TIMESTAMP, creator varchar(50), status varchar(50),"
                     + "type varchar(50), region varchar(50), addr varchar(256), "
@@ -174,7 +173,16 @@ public class DataInitUtil {
                     + "'SalesOrder001', 'SALES_ORDER', 'New', 'jason', CURRENT_TIMESTAMP(), '这是一个销售订单示例');");
             stmt.executeUpdate("insert into order_item(order_id, item_name, item_desc, quantity, unit_price) values("
                     + "1, 'P001', 'iPad Air', 1, 3200);");
-
+            //角色表
+			
+			stmt.executeUpdate("insert into role_table(role_name,role_time,role_people,role_lasttime,role_lastpeople) values('调度','2012','李四','2013','王五');");
+			
+			
+			//收费条目定义表code VARCHAR(50),name VARCHAR(50),type VARCHAR(50),Remark VARCHAR(50)
+			//for(int i=0;i<15;i++){
+				//stmt.executeUpdate("insert into Toll_table(code,name,type,Remark) values("
+						//+ "'2013201448','运输收费','付款','这是一张运输收费单');");
+			//}
             // 贷款客户 attributes
             for (int i = 1; i <= 1; i++) {
                 stmt.executeUpdate("insert into party(party_type, create_date, creator) values('贷款客户', CURRENT_TIMESTAMP(), 'demo');");
@@ -186,6 +194,7 @@ public class DataInitUtil {
                 stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
                         + ", 'email', 'test@test.com');");
             }
+		
             // 地产客户
             Party p = new Party();
             Date createDate = Calendar.getInstance().getTime();
