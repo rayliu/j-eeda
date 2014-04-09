@@ -72,16 +72,19 @@
 				fromLocationList.empty();
 				for(var i = 0; i < data.length; i++)
 				{
-					fromLocationList.append("<li><a tabindex='-1' class='fromLocationItem' href=''>("+data[i].CODE+")"+data[i].NAME+"</a></li>");
+					fromLocationList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].CODE+"'>("+data[i].CODE+")"+data[i].NAME+"</a></li>");
 				}
-				fromLocationList.empty();
+				
 				fromLocationList.show();
 			},'json');
 		});
 	
 		$('#fromLocationList').on('click', '.fromLocationItem', function(e){
-        	console.log('val:'+$(this).val());
-        	$('#fromCode').val($(this).val());
+			//方法已经对了，只是没有取对值
+			var code=$(this).attr('code');
+        	$('#fromCode').val(code);
+        	$('#fromName').val($(this).text());
+        	$("#fromLocationList").hide();
     	});
 		
 
