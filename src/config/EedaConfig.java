@@ -3,8 +3,6 @@ package config;
 import models.Office;
 import models.Party;
 import models.PartyAttribute;
-import models.Role;
-import models.Toll;
 import models.UserLogin;
 import models.eeda.Case;
 import models.eeda.Leads;
@@ -119,8 +117,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("party_attribute", PartyAttribute.class);
         arp.addMapping("office", Office.class);
         // arp.addMapping("fin_account", Account.class);
-        arp.addMapping("role_table", Role.class);
-        arp.addMapping("Toll_table", Toll.class);
+        // arp.addMapping("role_table", Role.class);
+        // arp.addMapping("Toll_table", Toll.class);
         // yh mapping
 
     }

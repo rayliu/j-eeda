@@ -21,13 +21,10 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment PRIMARY KEY, user_name VARCHAR(50) not null, password VARCHAR(50) not null, password_hint VARCHAR(255));");
             stmt.executeUpdate("create table if not exists user_roles(id bigint auto_increment PRIMARY KEY, user_name VARCHAR(50) not null, role_name VARCHAR(255) not null, remark VARCHAR(255));");
             stmt.executeUpdate("create table if not exists role_permissions(id bigint auto_increment PRIMARY KEY, role_name VARCHAR(50) not null, role_permission VARCHAR(50), remark VARCHAR(255));");
-			stmt.executeUpdate("create table if not exists location(id bigint auto_increment PRIMARY KEY, code VARCHAR(50) not null, name VARCHAR(50), pcode VARCHAR(255));");
-			stmt.executeUpdate("create table if not exists office(id bigint auto_increment PRIMARY KEY, office_code VARCHAR(50) not null, office_name VARCHAR(50), contact_id VARCHAR(255));");
-			stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment PRIMARY KEY, name VARCHAR(20) not null, type VARCHAR(50), currency VARCHAR(50),org_name VARCHAR(50),account_pin VARCHAR(50), remark VARCHAR(255));");
-			
-			
-			
-			
+            stmt.executeUpdate("create table if not exists location(id bigint auto_increment PRIMARY KEY, code VARCHAR(50) not null, name VARCHAR(50), pcode VARCHAR(255));");
+            stmt.executeUpdate("create table if not exists office(id bigint auto_increment PRIMARY KEY, office_code VARCHAR(50) not null, office_name VARCHAR(50), contact_id VARCHAR(255));");
+            stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment PRIMARY KEY, name VARCHAR(20) not null, type VARCHAR(50), currency VARCHAR(50),org_name VARCHAR(50),account_pin VARCHAR(50), remark VARCHAR(255));");
+
             stmt.executeUpdate("create table if not exists leads(id bigint auto_increment PRIMARY KEY, "
                     + "title VARCHAR(255), priority varchar(50), create_date TIMESTAMP, creator varchar(50), status varchar(50),"
                     + "type varchar(50), region varchar(50), addr varchar(256), "
@@ -64,27 +61,27 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('demo', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('jason', '123456', '1-6');");
-			stmt.executeUpdate("insert into location(code, name, pcode) values('110000', '北京', '1');");
-			stmt.executeUpdate("insert into location(code, name, pcode) values('110100', '北京市', '110000');");
-			stmt.executeUpdate("insert into location(code, name, pcode) values('110101', '东城区', '110100');");
-			stmt.executeUpdate("insert into location(code, name, pcode) values('110102', '西城区', '110100');");
-			stmt.executeUpdate("insert into location(code, name, pcode) values('110103', '崇文区', '110100');");
-			stmt.executeUpdate("insert into location(code, name, pcode) values('110104', '朝阳区', '110100');");
-			stmt.executeUpdate("insert into location(code, name, pcode) values('110105', '宣武区', '110100');");
-			stmt.executeUpdate("insert into location(code, name, pcode) values('120000', '天津', '1');");
-			stmt.executeUpdate("insert into location(code, name, pcode) values('120100', '天津市', '120000');");
-			stmt.executeUpdate("insert into location(code, name, pcode) values('110105', '宣武区', '120100');");
-			stmt.executeUpdate("insert into location(code, name, pcode) values('120101', '和平区', '120100');");
-			
-			stmt.executeUpdate("insert into office(office_code, office_name, contact_id) values('1201', '广州司', '020-111');");
-			stmt.executeUpdate("insert into office(office_code, office_name, contact_id) values('121', '珠公司', '0756-111');");
-			stmt.executeUpdate("insert into office(office_code, office_name, contact_id) values('101', '深圳分公司', '0751-111');");
-			
-			stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李志坚','收费','人民币','建设银行','12123123123','穷人');");
-			stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李四','收费','人民币','建设银行','12123123123','穷人');");
-			stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('张三','付费','人民币','建设银行','12123123123','穷人');");
-			//系统权限
-			stmt.executeUpdate("insert into role_permissions(role_name, role_permission, remark) values('root', '123456', '1-6');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('110000', '北京', '1');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('110100', '北京市', '110000');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('110101', '东城区', '110100');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('110102', '西城区', '110100');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('110103', '崇文区', '110100');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('110104', '朝阳区', '110100');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('110105', '宣武区', '110100');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('120000', '天津', '1');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('120100', '天津市', '120000');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('110105', '宣武区', '120100');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('120101', '和平区', '120100');");
+
+            stmt.executeUpdate("insert into office(office_code, office_name, contact_id) values('1201', '广州司', '020-111');");
+            stmt.executeUpdate("insert into office(office_code, office_name, contact_id) values('121', '珠公司', '0756-111');");
+            stmt.executeUpdate("insert into office(office_code, office_name, contact_id) values('101', '深圳分公司', '0751-111');");
+
+            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李志坚','收费','人民币','建设银行','12123123123','穷人');");
+            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李四','收费','人民币','建设银行','12123123123','穷人');");
+            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('张三','付费','人民币','建设银行','12123123123','穷人');");
+            // 系统权限
+            stmt.executeUpdate("insert into role_permissions(role_name, role_permission, remark) values('root', '123456', '1-6');");
             // alter table leads add(priority varchar(50),customer_source
             // varchar(50), building_name varchar(255), building_no varchar(50),
             // room_no varchar(50)); 2-6
@@ -173,16 +170,16 @@ public class DataInitUtil {
                     + "'SalesOrder001', 'SALES_ORDER', 'New', 'jason', CURRENT_TIMESTAMP(), '这是一个销售订单示例');");
             stmt.executeUpdate("insert into order_item(order_id, item_name, item_desc, quantity, unit_price) values("
                     + "1, 'P001', 'iPad Air', 1, 3200);");
-            //角色表
-			
-			stmt.executeUpdate("insert into role_table(role_name,role_time,role_people,role_lasttime,role_lastpeople) values('调度','2012','李四','2013','王五');");
-			
-			
-			//收费条目定义表code VARCHAR(50),name VARCHAR(50),type VARCHAR(50),Remark VARCHAR(50)
-			//for(int i=0;i<15;i++){
-				//stmt.executeUpdate("insert into Toll_table(code,name,type,Remark) values("
-						//+ "'2013201448','运输收费','付款','这是一张运输收费单');");
-			//}
+            // 角色表
+
+            // stmt.executeUpdate("insert into role_table(role_name,role_time,role_people,role_lasttime,role_lastpeople) values('调度','2012','李四','2013','王五');");
+
+            // 收费条目定义表code VARCHAR(50),name VARCHAR(50),type VARCHAR(50),Remark
+            // VARCHAR(50)
+            // for(int i=0;i<15;i++){
+            // stmt.executeUpdate("insert into Toll_table(code,name,type,Remark) values("
+            // + "'2013201448','运输收费','付款','这是一张运输收费单');");
+            // }
             // 贷款客户 attributes
             for (int i = 1; i <= 1; i++) {
                 stmt.executeUpdate("insert into party(party_type, create_date, creator) values('贷款客户', CURRENT_TIMESTAMP(), 'demo');");
@@ -194,7 +191,7 @@ public class DataInitUtil {
                 stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
                         + ", 'email', 'test@test.com');");
             }
-		
+
             // 地产客户
             Party p = new Party();
             Date createDate = Calendar.getInstance().getTime();
