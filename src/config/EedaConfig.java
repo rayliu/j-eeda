@@ -1,13 +1,20 @@
 package config;
 
+
 import models.Office;
 import models.Party;
 import models.PartyAttribute;
+import models.Privilege;
+import models.Role;
+import models.Toll;
 import models.UserLogin;
 import models.eeda.Case;
 import models.eeda.Leads;
 import models.eeda.Order;
 import models.eeda.OrderItem;
+
+
+
 
 import org.bee.tl.ext.jfinal.BeetlRenderFactory;
 
@@ -79,6 +86,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/loginUser", controllers.yh.LoginUserController.class, "/yh");
         me.add("/yh/role", controllers.yh.RoleController.class, "/yh");
         me.add("/yh/toll", controllers.yh.TollController.class, "/yh");
+		me.add("/yh/privilege", controllers.yh.PrivilegeController.class, "/yh");
         me.add("/yh/pay", controllers.yh.PayController.class, "/yh");
         me.add("/yh/customer", controllers.yh.profile.CustomerController.class, "/yh");
         me.add("/yh/location", controllers.yh.LocationController.class, "/yh");
@@ -86,7 +94,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/spContract", controllers.yh.contract.ContractController.class, "/yh");
         me.add("/yh/route", controllers.yh.RouteController.class, "/yh");
         me.add("/yh/office", controllers.yh.OfficeController.class, "/yh");
-        // me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
+		//me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {
@@ -116,9 +124,10 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("party", Party.class);
         arp.addMapping("party_attribute", PartyAttribute.class);
         arp.addMapping("office", Office.class);
-        // arp.addMapping("fin_account", Account.class);
-        // arp.addMapping("role_table", Role.class);
-        // arp.addMapping("Toll_table", Toll.class);
+	//arp.addMapping("fin_account",Account.class);
+         arp.addMapping("role_table", Role.class);
+         arp.addMapping("Toll_table", Toll.class);
+         arp.addMapping("privilege_table", Privilege.class);
         // yh mapping
 
     }
