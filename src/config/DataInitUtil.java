@@ -24,6 +24,8 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists location(id bigint auto_increment PRIMARY KEY, code VARCHAR(50) not null, name VARCHAR(50), pcode VARCHAR(255));");
             stmt.executeUpdate("create table if not exists office(id bigint auto_increment PRIMARY KEY, office_code VARCHAR(50) not null, office_name VARCHAR(50), contact_id VARCHAR(255));");
             stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment PRIMARY KEY, name VARCHAR(20) not null, type VARCHAR(50), currency VARCHAR(50),org_name VARCHAR(50),account_pin VARCHAR(50), remark VARCHAR(255));");
+            stmt.executeUpdate("create table if not exists contract(id bigint auto_increment PRIMARY KEY, name VARCHAR(50) not null, type VARCHAR(50), party_id bigint,period_from VARCHAR(50),period_to VARCHAR(50), remark VARCHAR(255));");
+            
 
             stmt.executeUpdate("create table if not exists leads(id bigint auto_increment PRIMARY KEY, "
                     + "title VARCHAR(255), priority varchar(50), create_date TIMESTAMP, creator varchar(50), status varchar(50),"
@@ -80,6 +82,11 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李志坚','收费','人民币','建设银行','12123123123','穷人');");
             stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李四','收费','人民币','建设银行','12123123123','穷人');");
             stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('张三','付费','人民币','建设银行','12123123123','穷人');");
+            
+            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER','1101','2014-11-12','2014-11-14','无');");
+            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER','1102','2014-10-12','2014-11-15','无');");
+            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('供应商合同','SERVICE_PROVIDER','2101','2011-1-12','2014-10-14','无');");
+            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('供应商合同','SERVICE_PROVIDER','2102','2013-11-12','2014-11-14','无');");
             // 系统权限
             stmt.executeUpdate("insert into role_permissions(role_name, role_permission, remark) values('root', '123456', '1-6');");
             // alter table leads add(priority varchar(50),customer_source
@@ -181,15 +188,13 @@ public class DataInitUtil {
             // + "'2013201448','运输收费','付款','这是一张运输收费单');");
             // }
             // 贷款客户 attributes
-            for (int i = 1; i <= 1; i++) {
+            for (int i = 1; i <= 3; i++) {
                 stmt.executeUpdate("insert into party(party_type, create_date, creator) values('贷款客户', CURRENT_TIMESTAMP(), 'demo');");
                 stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i + ", 'priority', '1重要紧急');");
                 stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i + ", 'name', '温生');");
                 stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i + ", 'loan_max', '15万');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
-                        + ", 'mobile', '1357038829');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
-                        + ", 'email', 'test@test.com');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i + ", 'mobile', '1357038829');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i + ", 'email', 'test@test.com');");
             }
 
             // 地产客户

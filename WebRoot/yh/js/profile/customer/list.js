@@ -14,9 +14,24 @@ $(document).ready(function() {
         $('td:eq(7)', nRow).attr('data-title','跟进情况');
         $('td:eq(8)', nRow).attr('data-title','创建人');
         $('td:eq(9)', nRow).attr('data-title','创建日期');
+    };
+    
+    var type = $("#type").val();//注意这里
+    //var type =  '${contractType}';
+    var urlSource;
+
+    if(type=='SP'){
+    	 urlSource="/yh/spContract/spList";
+    
+
+    }else{
+
+    	urlSource="/yh/customerContract/customerList";
+
     }
+    
 	//datatable, 动态处理
-    var oTable = $('#eeda-table').dataTable({
+    $('#eeda-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
@@ -26,14 +41,14 @@ $(document).ready(function() {
         },
         "bProcessing": true,
         "bServerSide": true,
-        "sAjaxSource": "/yh/customer/list",//
+        "sAjaxSource": urlSource,//
         "aoColumns": [   
             
-        	{"mDataProp":"ID"},
-            {"mDataProp":"COMPANY_NAME"},
-            {"mDataProp":"NAME"},        	
-        	{"mDataProp":"CREATOR"},
-            {"mDataProp":"CREATE_DATE", "sWidth": "10%"},
+        	{"mDataProp":"NAME"},
+            {"mDataProp":"PARTY_ID"},        	
+        	{"mDataProp":"PERIOD_FROM"},
+        	{"mDataProp":"PERIOD_TO"},
+            {"mDataProp":"REMARK", "sWidth": "10%"},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
