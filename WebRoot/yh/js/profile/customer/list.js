@@ -16,19 +16,7 @@ $(document).ready(function() {
         $('td:eq(9)', nRow).attr('data-title','创建日期');
     };
     
-    var type = $("#type").val();//注意这里
-    //var type =  '${contractType}';
-    var urlSource;
-
-    if(type=='SP'){
-    	 urlSource="/yh/spContract/spList";
-    
-
-    }else{
-
-    	urlSource="/yh/customerContract/customerList";
-
-    }
+  
     
 	//datatable, 动态处理
     $('#eeda-table').dataTable({
@@ -41,23 +29,23 @@ $(document).ready(function() {
         },
         "bProcessing": true,
         "bServerSide": true,
-        "sAjaxSource": urlSource,//
+        "sAjaxSource": "/yh/customer/list",
         "aoColumns": [   
             
-        	{"mDataProp":"NAME"},
-            {"mDataProp":"PARTY_ID"},        	
-        	{"mDataProp":"PERIOD_FROM"},
-        	{"mDataProp":"PERIOD_TO"},
-            {"mDataProp":"REMARK", "sWidth": "10%"},
+            {"mDataProp":"ID"},
+            {"mDataProp":"COMPANY_NAME"},
+            {"mDataProp":"CONTACT_PERSON"},        	
+            {"mDataProp":"CREATOR"},
+            {"mDataProp":"CREATE_DATE", "sWidth": "10%"},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' href='customer/edit/"+obj.aData.ID+"'>"+
+                    return "<a class='btn btn-success' href='/yh/customer/edit/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+
                             "</a>"+
-                            "<a class='btn btn-danger' href='customer/edit/"+obj.aData.ID+"'>"+
+                            "<a class='btn btn-danger' href='/yh/customer/delete/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "删除"+
                             "</a>";

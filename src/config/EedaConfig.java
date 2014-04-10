@@ -12,6 +12,7 @@ import models.eeda.Case;
 import models.eeda.Leads;
 import models.eeda.Order;
 import models.eeda.OrderItem;
+import models.yh.profile.Contact;
 
 
 
@@ -123,6 +124,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("order_item", OrderItem.class);
         arp.addMapping("party", Party.class);
         arp.addMapping("party_attribute", PartyAttribute.class);
+        arp.addMapping("contact", Contact.class);
         arp.addMapping("office", Office.class);
 	//arp.addMapping("fin_account",Account.class);
          arp.addMapping("role_table", Role.class);

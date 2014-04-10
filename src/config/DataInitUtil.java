@@ -7,6 +7,7 @@ import java.util.Date;
 
 import models.Party;
 import models.PartyAttribute;
+import models.yh.profile.Contact;
 
 import com.jfinal.plugin.c3p0.C3p0Plugin;
 
@@ -44,8 +45,10 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists order_item(id bigint auto_increment PRIMARY KEY, order_id bigint, item_name VARCHAR(50), item_desc VARCHAR(50), quantity decimal(10,2), unit_price decimal(10,2), status varchar(50), FOREIGN KEY(order_id) REFERENCES order_header(id) );");
 
             // party 褰撲簨浜猴紝鍙互鏈夊悇绉峵ype
-            stmt.executeUpdate("create table if not exists party(id bigint auto_increment PRIMARY KEY, party_type VARCHAR(32), create_date TIMESTAMP, creator varchar(50), last_update_date TIMESTAMP, last_updator varchar(50), status varchar(50), remark VARCHAR(5120));");
+            stmt.executeUpdate("create table if not exists party(id bigint auto_increment PRIMARY KEY, party_type VARCHAR(32), contact_id bigint, create_date TIMESTAMP, creator varchar(50), last_update_date TIMESTAMP, last_updator varchar(50), status varchar(50), remark VARCHAR(5120));");
             stmt.executeUpdate("create table if not exists party_attribute(id bigint auto_increment PRIMARY KEY, party_id bigint, attr_name varchar(60), attr_value VARCHAR(255), create_date TIMESTAMP, creator varchar(50), FOREIGN KEY(party_id) REFERENCES party(id));");
+            stmt.executeUpdate("create table if not exists contact(id bigint auto_increment PRIMARY KEY, company_name varchar(100), contact_person varchar(100), email varchar(100), mobile varchar(100), phone varchar(100), address VARCHAR(255), city varchar(100), postal_code varchar(60),"
+                    + " create_date TIMESTAMP, Last_updated_stamp TIMESTAMP);");
 
             stmt.close();
             // conn.commit();
@@ -264,22 +267,14 @@ public class DataInitUtil {
     }
 
     public static void newCustomer() {
+        Contact contact = new Contact();
+        contact.set("company_name", "珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com");
+        contact.set("mobile", "1234567").set("phone", "1234567").set("address", "香洲珠海市香洲区老香洲为农街为农市场").set("postal_code", "519000").save();
+
         Party p1 = new Party();
         Date createDate = Calendar.getInstance().getTime();
-        p1.set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo").save();
-        long partyId = p1.getLong("id");
-
-        PartyAttribute p1_pa = new PartyAttribute();
-        p1_pa.set("party_id", partyId).set("attr_name", "company_name").set("attr_value", "鐝犳捣鍒涜瘹鏄撹揪淇℃伅绉戞妧鏈夐檺鍏徃").save();
-
-        PartyAttribute p1_pa1 = new PartyAttribute();
-        p1_pa1.set("party_id", partyId).set("attr_name", "name").set("attr_value", "娓╃敓").save();
-
-        PartyAttribute p1_paPriority = new PartyAttribute();
-        p1_paPriority.set("party_id", partyId).set("attr_name", "address").set("attr_value", "棣欐床鐝犳捣甯傞娲插尯鑰侀娲蹭负鍐滆涓哄啘甯傚満").save();
-
-        PartyAttribute p1_pa2 = new PartyAttribute();
-        p1_pa2.set("party_id", partyId).set("attr_name", "mobile").set("attr_value", "1234567").save();
+        p1.set("contact_id", contact.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
+                .save();
 
     }
 }
