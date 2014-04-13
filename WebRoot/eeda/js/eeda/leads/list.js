@@ -451,45 +451,34 @@ $(document).ready(function() {
 		} 
 			
 		if(localStorage.getItem("area_min")){
-			$("#area_min").val(localStorage.getItem("area_min")).trigger('change');  
+			$("#area_min").val(localStorage.getItem("area_min")).trigger('keyup');  
 		} 	
 			
 		if(localStorage.getItem("area_max")){
-			$("#area_max").val(localStorage.getItem("area_max")).trigger('change');  
+			$("#area_max").val(localStorage.getItem("area_max")).trigger('keyup');  
 		} 				
 		
 		if(localStorage.getItem("rent_min")){
-			$("#rent_min").val(localStorage.getItem("rent_min")).trigger('change');  
+			$("#rent_min").val(localStorage.getItem("rent_min")).trigger('keyup');  
 		} 	
 		
 		if(localStorage.getItem("rent_max")){
-			$("#rent_max").val(localStorage.getItem("rent_max")).trigger('change');  
+			$("#rent_max").val(localStorage.getItem("rent_max")).trigger('keyup');  
 		} 				
 		
 		if(localStorage.getItem("fitler_building_no")){
-			$("#fitler_building_no").val(localStorage.getItem("fitler_building_no")).trigger('change');  
+			$("#fitler_building_no").val(localStorage.getItem("fitler_building_no")).trigger('keyup');  
 		} 				
 		
 		if(localStorage.getItem("fitler_building_unit")){
-			$("#fitler_building_unit").val(localStorage.getItem("fitler_building_unit")).trigger('change');  
+			$("#fitler_building_unit").val(localStorage.getItem("fitler_building_unit")).trigger('keyup');  
 		} 	
 		
 		if(localStorage.getItem("fitler_room_no")){
-			$("#fitler_room_no").val(localStorage.getItem("fitler_room_no")).trigger('change');  
+			$("#fitler_room_no").val(localStorage.getItem("fitler_room_no")).trigger('keyup');  
 		} 				
 	};
 	
 	initLocalStorage();
-	  
-	/*var send = function(){
-		alert(localStorage.getItem("area_min") +",,,,,"+ $("#area_min").val());
-		if(localStorage.getItem("area_min") & (localStorage.getItem("area_min") != $("#area_min").val())){
-			$().post("/list", localStorage.getItem("area_min"));				
-		}else{
-			return;
-		}
-	}
-	
-	send();*/
 	
 } );
