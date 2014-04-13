@@ -1,5 +1,6 @@
 package config;
 
+import java.sql.SQLException;
 
 import models.Office;
 import models.Party;
@@ -13,13 +14,10 @@ import models.eeda.Leads;
 import models.eeda.Order;
 import models.eeda.OrderItem;
 import models.yh.profile.Contact;
-
-
-
-
 import models.yh.profile.Route;
 
 import org.bee.tl.ext.jfinal.BeetlRenderFactory;
+import org.h2.tools.Server;
 
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
@@ -89,7 +87,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/loginUser", controllers.yh.LoginUserController.class, "/yh");
         me.add("/yh/role", controllers.yh.RoleController.class, "/yh");
         me.add("/yh/toll", controllers.yh.TollController.class, "/yh");
-		me.add("/yh/privilege", controllers.yh.PrivilegeController.class, "/yh");
+        me.add("/yh/privilege", controllers.yh.PrivilegeController.class, "/yh");
         me.add("/yh/pay", controllers.yh.PayController.class, "/yh");
         me.add("/yh/customer", controllers.yh.profile.CustomerController.class, "/yh");
         me.add("/yh/location", controllers.yh.LocationController.class, "/yh");
@@ -97,7 +95,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/spContract", controllers.yh.contract.ContractController.class, "/yh");
         me.add("/yh/route", controllers.yh.RouteController.class, "/yh");
         me.add("/yh/office", controllers.yh.OfficeController.class, "/yh");
-		//me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
+        // me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {
@@ -128,11 +126,11 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("party_attribute", PartyAttribute.class);
         arp.addMapping("contact", Contact.class);
         arp.addMapping("office", Office.class);
-	//arp.addMapping("fin_account",Account.class);
-         arp.addMapping("role_table", Role.class);
-         arp.addMapping("Toll_table", Toll.class);
-         arp.addMapping("privilege_table", Privilege.class);
-         arp.addMapping("route", Route.class);
+        // arp.addMapping("fin_account",Account.class);
+        arp.addMapping("role_table", Role.class);
+        arp.addMapping("Toll_table", Toll.class);
+        arp.addMapping("privilege_table", Privilege.class);
+        arp.addMapping("route", Route.class);
         // yh mapping
 
     }
@@ -152,6 +150,13 @@ public class EedaConfig extends JFinalConfig {
     }
 
     private void connectH2() {
+        // 这个启动web console以方便通过localhost:8082访问数据库
+        try {
+            Server.createWebServer().start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         cp = new C3p0Plugin("jdbc:h2:mem:eeda;", "sa", "");
         cp.setDriverClass("org.h2.Driver");
         DataInitUtil.initH2Tables(cp);
