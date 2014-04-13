@@ -184,7 +184,7 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         //"sPaginationType": "full_numbers",
-        "bProcessing": true,
+        "bProcessing": false,
         "bServerSide": true,
         "sAjaxSource": "/listLeads",
         "aoColumns": [   
@@ -334,12 +334,15 @@ $(document).ready(function() {
         
         $('#totalFilterDiv').hide();
         $('#rentFilterDiv').hide();
+        
+        localStorage.clear();
 
         oTable.fnFilter('', null, false, true);
         
     });
 
 	$("#status").on("change", function(){
+		localStorage.setItem('status', $("#status").val());
         var typeVal = $(this).val();
         oTable.fnFilter(typeVal, 4, false, true);
         if(typeVal==''){
@@ -360,6 +363,7 @@ $(document).ready(function() {
     });
 
     $("#type").on("change", function(){
+		localStorage.setItem('type', $("#type").val());
         var typeVal = $(this).val();
         if('allDepartment'!=typeVal){
         	oTable.fnFilter(typeVal, 5, false, true);
@@ -370,43 +374,52 @@ $(document).ready(function() {
     });
     
     $("#region").on("change", function(){
+		localStorage.setItem('region', $("#region").val());
         var typeVal = $(this).val();
         oTable.fnFilter(typeVal, 6, false, true);
     });
 
     /* Add event listeners to the two range filtering inputs */
 	$('#area_min').on("keyup", function() {
+		localStorage.setItem('area_min', $("#area_min").val());
         var typeVal = $(this).val()+"-"+$('#area_max').val();
 		oTable.fnFilter(typeVal, 7, false, true);
 	});
 	$('#area_max').on("keyup", function() {
+		localStorage.setItem('area_max', $("#area_max").val());
         var typeVal = $('#area_min').val()+"-"+$(this).val();
 		oTable.fnFilter(typeVal, 7, false, true);
 	});
 	$('#rent_min').on("keyup", function() {
+		localStorage.setItem('rent_min', $("#rent_min").val());
 		var typeVal = $(this).val()+"-"+$('#rent_max').val();
         oTable.fnFilter(typeVal, 8, false, true);
 	});
 	$('#rent_max').on("keyup", function() {
+		localStorage.setItem('rent_max', $("#rent_max").val());
 		var typeVal = $('#rent_min').val()+"-"+$(this).val();
         oTable.fnFilter(typeVal, 8, false, true);
 	});
 	$('#total_min').on("keyup", function() {
+		localStorage.setItem('total_min', $("#total_min").val());
 		oTable.fnDraw(); 
 	});
 	$('#total_max').on("keyup", function() {
+		localStorage.setItem('total_max', $("#total_max").val());
 		oTable.fnDraw(); 
 	});
 	$('#fitler_building_no').on("keyup", function() {
+		localStorage.setItem('fitler_building_no', $("#fitler_building_no").val());
 		oTable.fnFilter($(this).val(), 0, false, true);
 	});
 	$('#fitler_building_unit').on("keyup", function() {
+		localStorage.setItem('fitler_building_unit', $("#fitler_building_unit").val());
 		oTable.fnFilter($(this).val(), 1, false, true);
 	});
 	$('#fitler_room_no').on("keyup", function() {
+		localStorage.setItem('fitler_room_no', $("#fitler_room_no").val());
 		oTable.fnFilter($(this).val(), 2, false, true);
 	});
-
 
 	jQuery.fn.limit=function(){ 
 	    var self = $("td[limit]"); 
@@ -423,5 +436,60 @@ $(document).ready(function() {
 
 	$("#eeda-table").limit(); 
 	
+	var initLocalStorage= function(){
+		//local storage
+		if(localStorage.getItem("status")){
+			$("#status").val(localStorage.getItem("status")).trigger('change');  
+		} 
+		
+		if(localStorage.getItem("region")){
+			$("#region").val(localStorage.getItem("region")).trigger('change');  
+		} 
+	
+		if(localStorage.getItem("type")){
+			$("#type").val(localStorage.getItem("type")).trigger('change');  
+		} 
+			
+		if(localStorage.getItem("area_min")){
+			$("#area_min").val(localStorage.getItem("area_min")).trigger('change');  
+		} 	
+			
+		if(localStorage.getItem("area_max")){
+			$("#area_max").val(localStorage.getItem("area_max")).trigger('change');  
+		} 				
+		
+		if(localStorage.getItem("rent_min")){
+			$("#rent_min").val(localStorage.getItem("rent_min")).trigger('change');  
+		} 	
+		
+		if(localStorage.getItem("rent_max")){
+			$("#rent_max").val(localStorage.getItem("rent_max")).trigger('change');  
+		} 				
+		
+		if(localStorage.getItem("fitler_building_no")){
+			$("#fitler_building_no").val(localStorage.getItem("fitler_building_no")).trigger('change');  
+		} 				
+		
+		if(localStorage.getItem("fitler_building_unit")){
+			$("#fitler_building_unit").val(localStorage.getItem("fitler_building_unit")).trigger('change');  
+		} 	
+		
+		if(localStorage.getItem("fitler_room_no")){
+			$("#fitler_room_no").val(localStorage.getItem("fitler_room_no")).trigger('change');  
+		} 				
+	};
+	
+	initLocalStorage();
+	  
+	/*var send = function(){
+		alert(localStorage.getItem("area_min") +",,,,,"+ $("#area_min").val());
+		if(localStorage.getItem("area_min") & (localStorage.getItem("area_min") != $("#area_min").val())){
+			$().post("/list", localStorage.getItem("area_min"));				
+		}else{
+			return;
+		}
+	}
+	
+	send();*/
 	
 } );
