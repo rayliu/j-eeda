@@ -1,8 +1,11 @@
 package controllers.yh;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import models.UserLogin;
+import models.yh.profile.Route;
 
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -25,12 +28,10 @@ public class RouteController extends Controller {
     public void edit() {
         String id = getPara();
         if (id != null) {
-            UserLogin l = UserLogin.dao.findById(id);
+            Route l = Route.dao.findById(id);
             setAttr("ul", l);
-        } else {
-            setAttr("ul", new UserLogin());
         }
-        render("/yh/profile/loginUser/addUser.html");
+        render("/yh/profile/route/edit.html");
 
     }
 
@@ -39,23 +40,25 @@ public class RouteController extends Controller {
         /*
          * if (!isAuthenticated()) return;
          */
-        String id = getPara("userId");
+        String id = getPara("routeId");
         if (id != "") {
-            UserLogin user = UserLogin.dao.findById(id);
+            Route user = Route.dao.findById(id);
         }
         Record user = new Record();
-        user.set("user_name", getPara("username"));
-        user.set("password", getPara("password"));
-        user.set("password_hint", getPara("pw_hint"));
+        user.set("from_id", getPara("from_id"));
+        user.set("to_id", getPara("to_id"));
+        user.set("location_from", getPara("fromName"));
+        user.set("location_to", getPara("toName"));
+        user.set("remark", getPara("remark"));
         if (id != "") {
             logger.debug("update....");
             user.set("id", id);
-            Db.update("user_login", user);
+            Db.update("route", user);
         } else {
             logger.debug("insert....");
-            Db.save("user_login", user);
+            Db.save("route", user);
         }
-        render("/yh/profile/loginUser/loginUser.html");
+        render("/yh/profile/route/route.html");
 
     }
 
@@ -67,10 +70,9 @@ public class RouteController extends Controller {
          */
         String id = getPara();
         if (id != null) {
-            UserLogin l = UserLogin.dao.findById(id);
-            l.delete();
+        Db.deleteById("route", id);
         }
-        render("/yh/profile/loginUser/loginUser.html");
+        render("/yh/profile/route/route.html");
     }
 
     // input控件列出城市列表
@@ -83,4 +85,30 @@ public class RouteController extends Controller {
             renderJson(locationList);
         }
     }
-}
+    
+    public void list(){
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        
+        //获取总条数
+        String totalWhere="";
+        String sql = "select count(1) total from route ";
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+        
+        //获取当前页的数据
+        List<Record> orders = Db.find("select * from route");
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        orderMap.put("aaData", orders);
+        
+        renderJson(orderMap);
+    }
+ }
+

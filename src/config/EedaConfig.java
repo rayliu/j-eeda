@@ -17,6 +17,8 @@ import models.yh.profile.Contact;
 
 
 
+import models.yh.profile.Route;
+
 import org.bee.tl.ext.jfinal.BeetlRenderFactory;
 
 import com.jfinal.config.Constants;
@@ -130,6 +132,7 @@ public class EedaConfig extends JFinalConfig {
          arp.addMapping("role_table", Role.class);
          arp.addMapping("Toll_table", Toll.class);
          arp.addMapping("privilege_table", Privilege.class);
+         arp.addMapping("route", Route.class);
         // yh mapping
 
     }

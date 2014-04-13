@@ -13,21 +13,24 @@
 					<div class="panel-body">
 						<div class="row-fluid">
 							<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/yh/route/saveRoute" method="post">
-								<input id="Id" name="Id" type="hidden" value="${ul.id!''}">
+								<input id="routeId" name="routeId" type="hidden" value="${ul.id!''}">
 								<div class="form-group ">
 								<label class="control-label">出发地点</label>
-								<input id="fromCode" name="fromCode" type="text" value="${ul.fromCode!''}">
-								<input id="fromName" name="from" type="text" class="form-control" value="${ul.user_name!''}">
-								<ul id='fromLocationList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 50%; left: 5%;">
+								<input id="from_id" name="from_id" type="hidden" class="form-control" value="${ul.location_from!''}">
+								<input id="fromName" name="fromName" type="text" class="form-control" value="${ul.location_from!''}">
+								<ul id='fromLocationList' class="pull-right dropdown-menu default" style="top: 50%; left: 3%;">
 								</ul>
 							</div>
 								<div class="form-group ">
 								<label class="control-label">目的地点</label>
-								<input type="text" class="form-control" id="to" name="to" value="${ul.password!''}">
+								<input id="to_id" name="to_id" type="hidden" class="form-control" value="${ul.location_from!''}">
+								<input id="toName" name="toName"  class="form-control" type="text" value="${ul.location_to!''}">
+								<ul id='toLocationList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 65%; left: 3%;">
+								</ul>
 							</div>
 								<div class="form-group">
 								<label class="control-label">备注</label>
-								<input type="text" class="form-control" id="remark" name="remark" value="${ul.password_hint!''}">
+								<input type="text" class="form-control" id="remark" name="remark" value="${ul.remark!''}">
 							</div>
 							<button type="submit" class="btn btn-default">保存</button>
 							<a class="btn btn-default" href="/yh/route">取消</a>
@@ -60,7 +63,7 @@
 				element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
 			}
 		});
-		
+		//选择出发地点
 		$('#fromName').on('keyup', function(){
 			var inputStr = $('#fromName').val();
 			$.get('/yh/route/search', {locationName:inputStr}, function(data){
@@ -69,7 +72,7 @@
 				fromLocationList.empty();
 				for(var i = 0; i < data.length; i++)
 				{
-					fromLocationList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].CODE+"'>("+data[i].CODE+")"+data[i].NAME+"</a></li>");
+					fromLocationList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].CODE+"'>"+data[i].NAME+"</a></li>");
 				}
 				
 				fromLocationList.show();
@@ -77,26 +80,32 @@
 		});
 	
 		$('#fromLocationList').on('click', '.fromLocationItem', function(e){
-			//方法已经对了，只是没有取对值
-			var code=$(this).attr('code');
-        	$('#fromCode').val(code);
-        	$('#fromName').val($(this).text());
+			$('#from_id').val($(this).attr('code'));
+			$('#fromName').val($(this).text());
         	$("#fromLocationList").hide();
     	});
 		
-
-		/* $.ajax({
-				url:"/yh/route/show",
-					method:'GET',
-					async:false,
-					dataType:'json',
-					success:function(data){
-							alert(data.length);
-						for(var i = 0; i < data.length; i++)
-						{
-							$("#type").append("<option id='"+data[i].name+"'>"+data[i].name+"</option>");
-						}
-					}
-				}); */
+		//选择目的地点
+		$('#toName').on('keyup', function(){
+			var inputStr = $('#toName').val();
+			$.get('/yh/route/search', {locationName:inputStr}, function(data){
+				
+				var toLocationList =$("#toLocationList");
+				toLocationList.empty();
+				for(var i = 0; i < data.length; i++)
+				{
+					toLocationList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].CODE+"'>"+data[i].NAME+"</a></li>");
+				}
+				
+				toLocationList.show();
+			},'json');
 		});
+	
+		$('#toLocationList').on('click', '.fromLocationItem', function(e){
+			$('#to_id').val($(this).attr('code'));
+			$('#toName').val($(this).text());
+        	$("#toLocationList").hide();
+    	});
+		
+});
 </script>

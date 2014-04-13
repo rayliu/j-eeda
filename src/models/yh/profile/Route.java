@@ -1,0 +1,1 @@
+package models.yh.profile;import com.jfinal.plugin.activerecord.Model;@SuppressWarnings("serial")public class Route extends Model<Route> {    	public static final Route dao = new Route();}
