@@ -335,8 +335,11 @@ $(document).ready(function() {
         $('#totalFilterDiv').hide();
         $('#rentFilterDiv').hide();
         
+        $("#area_min").val(0).trigger('keyup'); 
+        $("#rent_min").val(0).trigger('keyup'); 
         localStorage.clear();
-
+        $("#area_min").val("");
+        $("#rent_min").val("");
         oTable.fnFilter('', null, false, true);
         
     });
