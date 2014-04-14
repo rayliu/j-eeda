@@ -44,4 +44,19 @@
         </java>
     </target>
 	
+   <target name="clean"> 
+       <delete includeEmptyDirs="true"> 
+           <fileset dir="WebRoot/WEB-INF/classes" /> 
+       </delete>
+    </target>
+    
+    <target name="compile" >
+         <mkdir dir="WebRoot/WEB-INF/classes" />
+        <javac srcdir="src"
+                 destdir="WebRoot/WEB-INF/classes"
+                 classpathref="project.lib.path">
+            <compilerarg line="-encoding UTF-8"/>
+        </javac> 
+    </target>
+
 </project>
