@@ -6,6 +6,11 @@
 	    <fileset dir="WebRoot/WEB-INF/lib" includes="*.jar"/>
 	</path>
 	
+   <path id="project.lib.path">
+        <fileset dir="WebRoot/WEB-INF/lib" includes="*.jar"/>
+    </path>
+
+	
 	<target name="h2">
 		<copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-h2" overwrite="true"/>
 		<copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-h2" overwrite="true"/>
