@@ -1,0 +1,1 @@
+package models.yh.profile;import com.jfinal.plugin.activerecord.Model;public class Contract extends Model<Contract> {    public static final Contract dao = new Contract();}

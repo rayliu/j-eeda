@@ -29,7 +29,8 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists role_table(id bigint auto_increment PRIMARY KEY,role_name VARCHAR(50),role_time TIMESTAMP,role_people VARCHAR(50),role_lasttime TIMESTAMP,role_lastpeople VARCHAR(50));");
             stmt.executeUpdate("create table if not exists Toll_table(id bigint auto_increment PRIMARY KEY,code VARCHAR(20),name VARCHAR(20),type VARCHAR(20),Remark VARCHAR(255));");
             stmt.executeUpdate("create table if not exists privilege_table(id bigint auto_increment PRIMARY KEY,privilege VARCHAR(50));");
-            
+            stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment PRIMARY KEY,contract_id bigint,route_id bigint,amount Double,remark VARCHAR(255));");
+             
             stmt.executeUpdate("create table if not exists route(id bigint auto_increment PRIMARY KEY,from_id VARCHAR(50), location_from VARCHAR(50) not null,to_id VARCHAR(50), location_to VARCHAR(50) not null, remark VARCHAR(255));");
             
             stmt.executeUpdate("create table if not exists leads(id bigint auto_increment PRIMARY KEY, "
@@ -99,7 +100,10 @@ public class DataInitUtil {
             
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','110103','宣武区','123123');");
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','120000','天津','123123');");
+            stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('120000','天津','110000','北京','123123');");
             
+            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('1','1','120000','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('2','3','130000','路线2');");
             // 系统权限
             stmt.executeUpdate("insert into role_permissions(role_name, role_permission, remark) values('root', '123456', '1-6');");
             // alter table leads add(priority varchar(50),customer_source
@@ -280,16 +284,16 @@ public class DataInitUtil {
     public static void newCustomer() {
         Contact contact = new Contact();
         contact.set("company_name", "珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com");
-        contact.set("mobile", "1234567").set("phone", "13527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场").set("postal_code", "519000").save();
+        contact.set("mobile", "12345671").set("phone", "113527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场1").set("postal_code", "5190001").save();
         Contact contact2 = new Contact();
         contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生").set("email", "test@test.com");
-        contact2.set("mobile", "1234567").set("phone", "13527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场").set("postal_code", "519000").save();
+        contact2.set("mobile", "12345672").set("phone", "213527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场2").set("postal_code", "5190002").save();
         Contact contact3 = new Contact();
         contact3.set("company_name", "上海能源科技有限公司").set("contact_person", "李生").set("email", "test@test.com");
-        contact3.set("mobile", "1234567").set("phone", "13527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场").set("postal_code", "519000").save();
+        contact3.set("mobile", "12345673").set("phone", "313527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场3").set("postal_code", "5190003").save();
         Contact contact4 = new Contact();
         contact4.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生").set("email", "test@test.com");
-        contact4.set("mobile", "1234567").set("phone", "13527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场").set("postal_code", "519000").save();
+        contact4.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004").save();
         
         
         Party p1 = new Party();
