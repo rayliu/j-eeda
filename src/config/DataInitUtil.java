@@ -52,6 +52,8 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists contact(id bigint auto_increment PRIMARY KEY, company_name varchar(100), contact_person varchar(100), email varchar(100), mobile varchar(100), phone varchar(100), address VARCHAR(255), city varchar(100), postal_code varchar(60),"
                     + " create_date TIMESTAMP, Last_updated_stamp TIMESTAMP);");
             
+            // product 产品
+            stmt.executeUpdate("create table if not exists product(id bigint auto_increment PRIMARY KEY,item_name varchar(50),item_no varchar(255),item_desc varchar(5120));");
             stmt.close();
             // conn.commit();
             conn.close();

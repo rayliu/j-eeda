@@ -6,6 +6,7 @@ import models.Office;
 import models.Party;
 import models.PartyAttribute;
 import models.Privilege;
+import models.Product;
 import models.Role;
 import models.Toll;
 import models.UserLogin;
@@ -90,11 +91,13 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/privilege", controllers.yh.PrivilegeController.class, "/yh");
         me.add("/yh/pay", controllers.yh.PayController.class, "/yh");
         me.add("/yh/customer", controllers.yh.profile.CustomerController.class, "/yh");
+        me.add("/yh/serviceProvider", controllers.yh.profile.ServiceProviderController.class, "/yh");
         me.add("/yh/location", controllers.yh.LocationController.class, "/yh");
         me.add("/yh/customerContract", controllers.yh.contract.ContractController.class, "/yh");
         me.add("/yh/spContract", controllers.yh.contract.ContractController.class, "/yh");
         me.add("/yh/route", controllers.yh.RouteController.class, "/yh");
         me.add("/yh/office", controllers.yh.OfficeController.class, "/yh");
+        me.add("/yh/product", controllers.yh.profile.ProductController.class, "/yh");
         // me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
     }
 
@@ -131,6 +134,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("Toll_table", Toll.class);
         arp.addMapping("privilege_table", Privilege.class);
         arp.addMapping("route", Route.class);
+        arp.addMapping("product", Product.class);
         // yh mapping
 
     }
