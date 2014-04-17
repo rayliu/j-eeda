@@ -17,7 +17,7 @@
 		<property name="db" value="H2" />
 		<java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
 			<arg value="WebRoot"/>
-			<arg value="8000"/>
+			<arg value="8080"/>
 			<arg value="/"/>
 			<arg value="5"/>
 			<arg value="${db}"/>
@@ -64,5 +64,19 @@
             <compilerarg line="-encoding UTF-8"/>
         </javac> 
     </target>
+	
+	<target name="h2ci">
+	        <copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-h2" overwrite="true"/>
+	        <copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-h2" overwrite="true"/>
+	        <property name="db" value="H2" />
+	        <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
+	            <arg value="WebRoot"/>
+	            <arg value="8000"/>
+	            <arg value="/"/>
+	            <arg value="5"/>
+	            <arg value="${db}"/>
+	            <classpath path="WebRoot/WEB-INF/classes"></classpath>
+	        </java>
+	    </target>
 
 </project>

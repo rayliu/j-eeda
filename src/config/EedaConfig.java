@@ -15,8 +15,9 @@ import models.eeda.Case;
 import models.eeda.Leads;
 import models.eeda.Order;
 import models.eeda.OrderItem;
+import models.yh.contract.Contract;
+import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
-import models.yh.profile.Contract;
 import models.yh.profile.Route;
 
 import org.bee.tl.ext.jfinal.BeetlRenderFactory;
@@ -131,13 +132,14 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("party_attribute", PartyAttribute.class);
         arp.addMapping("contact", Contact.class);
         arp.addMapping("office", Office.class);
-        arp.addMapping("fin_account",Account.class);
+        arp.addMapping("fin_account", Account.class);
         arp.addMapping("role_table", Role.class);
         arp.addMapping("Toll_table", Toll.class);
         arp.addMapping("privilege_table", Privilege.class);
         arp.addMapping("route", Route.class);
         arp.addMapping("product", Product.class);
         arp.addMapping("contract", Contract.class);
+        arp.addMapping("contract_item", ContractItem.class);
         // yh mapping
 
     }
