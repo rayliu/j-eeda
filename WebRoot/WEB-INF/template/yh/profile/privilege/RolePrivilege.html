@@ -18,38 +18,25 @@
                        
                         <div class="panel-body">
                            
-        <form id="UserRoleForm" name="form1" method="post" action="/yh/role/SaveRole"> 
+        <form id="UserRoleForm" name="form1" method="post" action="/yh/privilege/SaveRolePrivilege"> 
 
  	
  	<div class="col-lg-8">
 	<div class="form-group">
-	<label >角色(必选)</label>
-	<select class="form-control" id="role" name="role">
-	<option></option>
-	<option>1</option>
-	<option>2</option>
-	<option>3</option>
-	<option>4</option>
-	<option>5</option>
+	<label >角色(必选)</label><input id="roleid" name="roleid">
+	<select class="form-control" id="role" name="role">	
 	</select>
 	</div>
 	</div>
 	<div class="col-lg-8">
-	<div class="form-group">
 	<label>权限(必选)</label>
-	<select class="form-control" id="privilege" name="privilege">
-	<option></option>
-	<option>1</option>
-	<option>2</option>
-	<option>3</option>
-	<option>4</option>
-	<option>5</option>
-	</select>
+	<div class="form-group" id="checkbox">
+	
 	</div>
 	</div>
 	<div class="col-lg-8">
    <button  class="btn btn-default" type="submit">保存</button>
- 	<a  class="btn btn-default" href="/yh/role"> 取消    </a> 
+ 	<a  class="btn btn-default" href="/yh/privilege"> 取消    </a> 
 	</div>
            </form>
  
@@ -65,7 +52,7 @@
 			
 	
 
-</div>
+
 
 
 <!-- content ends -->
@@ -75,35 +62,42 @@
 <script src="/eeda/js/jvalidate.messages_cn.js"></script>
 <script>
     $(document).ready(function() {
-    	$("#privilege").click(function(){
-    	       	//alert("waerwerwee");
-    	       	var user =$("#privilege");
-    	       	user.empty();
-    	       	$.get('/yh/privilege/SelectUser?select=3',{},function(data){
- 
-    				for(var i = 0; i < data.length; i++)
-    				{
-    					user.append("<option>("+data[i].ID+")"+data[i].PRIVILEGE+"</option>");
-    				}
-    				
-    			},'json');
+    	$.get('/yh/privilege/SelectUser?select=3',{},function(data) {
+    		
+for ( var i = 0; i < data.length; i++) {
+	
+	$("#checkbox").append("<label>"+data[i]+"</label>"+
+	"<label><input type='checkbox' value='"+i+1+"' name='per'>*/</label>"+
+	"<label><input type='checkbox' value='"+i+2+"' name='per'>查看</label>"+
+	"<label><input type='checkbox' value='"+i+3+"' name='per'>增加</label>"+
+	"<label><input type='checkbox' value='"+i+4+"' name='per'>修改</label>"+
+	"<label><input type='checkbox' value='"+i+5+"' name='per'>删除</label><br/>");										
+																				
+					}
 
-    	 });
+				}, 'json');				
     	
-    	$("#role").click(function(){
+    	
 	       	//alert("waerwerwee");
-	       	var user =$("#role");
-	       	user.empty();
+	       	var role =$("#role");
+	       	role.empty();
 	       	$.get('/yh/privilege/SelectUser?select=2',{},function(data){
 
 				for(var i = 0; i < data.length; i++)
 				{
-					user.append("<option>("+data[i].ID+")"+data[i].ROLE_NAME+"</option>");
+					role.append("<option  value="+data[i].ID+">("+data[i].ID+")"+data[i].ROLE_NAME+"</option>");
 				}
 				
 			},'json');
 
-	 });
+	       	$("#role").change(
+					function() {
+						var role = $("#role").find("option:selected").text();
+						
+						var roleid = $("#role").val();
+						$('#roleid').val(roleid);
+						
+					});
     	
         $('#RolePrivilegeForm').validate({
             rules: {

@@ -24,17 +24,32 @@
 
 						<div class="col-lg-8">
 							<div class="form-group">
-								<label>用户名(必选)</label> <input type="text" id="userid"> <select
+								<label>用户名(必选)</label> <input type="text" id="userid"> <input type="text" name="uid" value="${id.id!''}"><select
 									class="form-control" id="user" name="user">
 								</select>
 							</div>
 						</div>
+					
+
 						<div class="col-lg-8">
-							<label>角色(必选)</label> 
+							<label>角色(必选)</label> <input id="roleid" name="roleid">							
+						
 							<div class="form-group">
-							<div class="panel panel-default" id="check" name="check">															
-								</div>
+												
+								<select class="form-control" id="role" name="role">	
+								</select>
+																					
+							
 							</div>
+						</div>
+						<div class="col-lg-8">
+					<label>权限(必选)</label>
+					<div class="panel panel-default" id="check" name="check">
+						<div class="form-group" >
+						<div class="panel-body" id="checkbox">
+						</div>
+							</div>
+						</div>
 						</div>
 						<div class="col-lg-8">
 							<button id="btn_sub" class="btn btn-default" type="submit">保存</button>
@@ -79,16 +94,39 @@
 								});
 						
 						
-				$.get('/yh/privilege/SelectUser?select=2',{},
-							
-								function(data) {
-				for ( var i = 0; i < data.length; i++) {
-					
-					$("#check").append("<label><input type='checkbox' id= 'che' name='remember'value='"+ data[i].ID+ "' >("+ data[i].ID+ ")"+ data[i].ROLE_NAME+"</label>");										
-																								
-									}
+						var role =$("#role");
+				       	role.empty();
+				       	$.get('/yh/privilege/SelectUser?select=2',{},function(data){
 
-								}, 'json');				
+							for(var i = 0; i < data.length; i++)
+							{
+								role.append("<option  value="+data[i].ID+">("+data[i].ID+")"+data[i].ROLE_NAME+"</option>");
+							}
+							
+						},'json');
+
+				       	$("#role").change(
+								function() {
+									var role = $("#role").find("option:selected").text();
+									
+									var roleid = $("#role").val();
+									$('#roleid').val(roleid);
+									
+								});	
+				$.get('/yh/privilege/SelectUser?select=3',{},function(data) {
+		    		
+					for ( var i = 0; i < data.length; i++) {
+						
+						$("#checkbox").append("<label>"+data[i]+"</label>"+
+						"<label><input type='checkbox' value='"+i+1+"' name='per'>*/</label>"+
+						"<label><input type='checkbox' value='"+i+2+"' name='per'>查看</label>"+
+						"<label><input type='checkbox' value='"+i+3+"' name='per'>增加</label>"+
+						"<label><input type='checkbox' value='"+i+4+"' name='per'>修改</label>"+
+						"<label><input type='checkbox' value='"+i+5+"' name='per'>删除</label><br/>");										
+																									
+										}
+
+									}, 'json');	
 											
 						$('#UserRoleForm').validate(
 								{
