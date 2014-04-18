@@ -2,15 +2,21 @@
 
 $(document).ready(function() {
 	
+	
     var type = $("#type").val();//注意这里
-    
-	var urlSource;
+    var urlSource;
+    var urlSource2;
+    var urlSource3;
 	if(type=='CUSTOMER'){
+		$("#btn1").show();
 		urlSource="/yh/customerContract/customerList";
+		urlSource2="/yh/customerContract/edit/";
+		urlSource3="/yh/customerContract/delete/";
 	}else{
-
+		$("#btn2").show();
 		urlSource="/yh/spContract/spList";
-
+		urlSource2="/yh/spContract/edit2/";
+		urlSource3="/yh/spContract/delete2/";
 	}
     
 	//datatable, 动态处理
@@ -42,7 +48,7 @@ $(document).ready(function() {
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+
                             "</a>"+
-                            "<a class='btn btn-danger' href='/yh/customerContract/delete/"+obj.aData.ID+"'>"+
+                            "<a class='btn btn-danger' href='"+urlSource3+""+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "删除"+
                             "</a>";

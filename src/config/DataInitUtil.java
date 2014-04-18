@@ -29,9 +29,10 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists role_table(id bigint auto_increment PRIMARY KEY,role_name VARCHAR(50),role_time TIMESTAMP,role_people VARCHAR(50),role_lasttime TIMESTAMP,role_lastpeople VARCHAR(50));");
             stmt.executeUpdate("create table if not exists Toll_table(id bigint auto_increment PRIMARY KEY,code VARCHAR(20),name VARCHAR(20),type VARCHAR(20),Remark VARCHAR(255));");
             stmt.executeUpdate("create table if not exists privilege_table(id bigint auto_increment PRIMARY KEY,privilege VARCHAR(50));");
-            
+            stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment PRIMARY KEY,contract_id bigint,route_id bigint, amount Double,remark VARCHAR(255));");
+
             stmt.executeUpdate("create table if not exists route(id bigint auto_increment PRIMARY KEY,from_id VARCHAR(50), location_from VARCHAR(50) not null,to_id VARCHAR(50), location_to VARCHAR(50) not null, remark VARCHAR(255));");
-            
+
             stmt.executeUpdate("create table if not exists leads(id bigint auto_increment PRIMARY KEY, "
                     + "title VARCHAR(255), priority varchar(50), create_date TIMESTAMP, creator varchar(50), status varchar(50),"
                     + "type varchar(50), region varchar(50), addr varchar(256), "
@@ -51,7 +52,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists party_attribute(id bigint auto_increment PRIMARY KEY, party_id bigint, attr_name varchar(60), attr_value VARCHAR(255), create_date TIMESTAMP, creator varchar(50), FOREIGN KEY(party_id) REFERENCES party(id));");
             stmt.executeUpdate("create table if not exists contact(id bigint auto_increment PRIMARY KEY, company_name varchar(100), contact_person varchar(100), email varchar(100), mobile varchar(100), phone varchar(100), address VARCHAR(255), city varchar(100), postal_code varchar(60),"
                     + " create_date TIMESTAMP, Last_updated_stamp TIMESTAMP);");
-            
+
             // product 产品
             stmt.executeUpdate("create table if not exists product(id bigint auto_increment PRIMARY KEY,item_name varchar(50),item_no varchar(255),item_desc varchar(5120));");
             
@@ -94,15 +95,18 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李志坚','收费','人民币','建设银行','12123123123','穷人');");
             stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李四','收费','人民币','建设银行','12123123123','穷人');");
             stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('张三','付费','人民币','建设银行','12123123123','穷人');");
-            
+
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 4,'2014-11-12','2014-11-14','无');");
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,'2014-10-12','2014-11-15','无');");
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('供应商合同','SERVICE_PROVIDER', 6,'2011-1-12','2014-10-14','无');");
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('供应商合同','SERVICE_PROVIDER', 7,'2013-11-12','2014-11-14','无');");
-            
+
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','110103','宣武区','123123');");
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','120000','天津','123123');");
-            
+            stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('120000','天津','110000','北京','123123');");
+
+            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('1','1','120000','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('2','3','130000','路线2');");
             // 系统权限
             stmt.executeUpdate("insert into role_permissions(role_name, role_permission, remark) values('root', '123456', '1-6');");
             // alter table leads add(priority varchar(50),customer_source
@@ -283,18 +287,21 @@ public class DataInitUtil {
     public static void newCustomer() {
         Contact contact = new Contact();
         contact.set("company_name", "珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com");
-        contact.set("mobile", "1234567").set("phone", "13527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场").set("postal_code", "519000").save();
+        contact.set("mobile", "12345671").set("phone", "113527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场1").set("postal_code", "5190001")
+                .save();
         Contact contact2 = new Contact();
         contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生").set("email", "test@test.com");
-        contact2.set("mobile", "1234567").set("phone", "13527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场").set("postal_code", "519000").save();
+        contact2.set("mobile", "12345672").set("phone", "213527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场2").set("postal_code", "5190002")
+                .save();
         Contact contact3 = new Contact();
         contact3.set("company_name", "上海能源科技有限公司").set("contact_person", "李生").set("email", "test@test.com");
-        contact3.set("mobile", "1234567").set("phone", "13527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场").set("postal_code", "519000").save();
+        contact3.set("mobile", "12345673").set("phone", "313527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场3").set("postal_code", "5190003")
+                .save();
         Contact contact4 = new Contact();
         contact4.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生").set("email", "test@test.com");
-        contact4.set("mobile", "1234567").set("phone", "13527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场").set("postal_code", "519000").save();
-        
-        
+        contact4.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
+                .save();
+
         Party p1 = new Party();
         Party p2 = new Party();
         Party p3 = new Party();
@@ -303,11 +310,11 @@ public class DataInitUtil {
         p1.set("contact_id", contact.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
                 .save();
         p2.set("contact_id", contact2.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
-        .save();
-        p3.set("contact_id", contact3.getLong("id")).set("party_type", "SERVICE_PROVIDER").set("create_date", createDate).set("creator", "demo")
-        .save();
-        p4.set("contact_id", contact4.getLong("id")).set("party_type", "SERVICE_PROVIDER").set("create_date", createDate).set("creator", "demo")
-        .save();
-     
+                .save();
+        p3.set("contact_id", contact3.getLong("id")).set("party_type", "SERVICE_PROVIDER").set("create_date", createDate)
+                .set("creator", "demo").save();
+        p4.set("contact_id", contact4.getLong("id")).set("party_type", "SERVICE_PROVIDER").set("create_date", createDate)
+                .set("creator", "demo").save();
+
     }
 }

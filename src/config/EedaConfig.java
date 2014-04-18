@@ -1,7 +1,8 @@
-package config;
+﻿package config;
 
 import java.sql.SQLException;
 
+import models.Account;
 import models.Office;
 import models.Party;
 import models.PartyAttribute;
@@ -15,6 +16,8 @@ import models.eeda.Case;
 import models.eeda.Leads;
 import models.eeda.Order;
 import models.eeda.OrderItem;
+import models.yh.contract.Contract;
+import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
 import models.yh.profile.Route;
 
@@ -100,7 +103,6 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/office", controllers.yh.OfficeController.class, "/yh");
         me.add("/yh/product", controllers.yh.profile.ProductController.class, "/yh");
         me.add("/yh/warehouse", controllers.yh.profile.WarehouseController.class, "/yh");
-        // me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {
@@ -131,13 +133,14 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("party_attribute", PartyAttribute.class);
         arp.addMapping("contact", Contact.class);
         arp.addMapping("office", Office.class);
-        // arp.addMapping("fin_account",Account.class);
+        arp.addMapping("fin_account", Account.class);
         arp.addMapping("role_table", Role.class);
         arp.addMapping("Toll_table", Toll.class);
         arp.addMapping("privilege_table", Privilege.class);
         arp.addMapping("route", Route.class);
         arp.addMapping("product", Product.class);
         arp.addMapping("warehouse", Warehouse.class);
+        arp.addMapping("contract_item", ContractItem.class);
         // yh mapping
 
     }
