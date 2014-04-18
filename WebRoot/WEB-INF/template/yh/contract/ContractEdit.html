@@ -39,7 +39,7 @@
                                         </fieldset>
                                     </div>
 									 <!-- 下面input判断 customer和供应商sp -->
-                        			<div><input id="type2" name="type2" type="hidden" value="${contractType!}"</div>
+                        			<div><input id="type2" name="type2" type="hidden" value="${contractType!''}"</div>
                         			<!-- 下面用来编辑保存contract的type -->
                         			<div><input id="type3" name="type3" type="hidden" value="${ul.type!''}"</div>
                         			<!-- /.col-lg-6 (odd) 奇数列 -->
@@ -48,7 +48,7 @@
                                             <div class="form-group">
 												<label>客户公司名称(选择客户后，自动填写其他信息)</label>
                                                	<input id="companyName" name="companyfrom" type="text" class="form-control" value="${c.company_name!''}">
-												<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 50%; left: 5%;">
+												<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 77%; left: 2%;">
 												</ul>
                                             </div>                                     
                                         </fieldset>
@@ -154,7 +154,7 @@
                             <div class="col-lg-12">
                     			<h1 class="page-header">
                         		<!-- <button class="btn btn-primary" id="btn">新增合同干线</button> -->
-                        		<input type="button" id="btn" value="新增合同干线">
+                        		<input type="button" id="btn" value="新增合同干线" class="btn btn-primary">
                     			</h1>
                 			</div>
                 			
@@ -162,14 +162,14 @@
                         		<div id="routeItemFormDiv" style="display:none">
 
                              	 	<form id="routeItemForm" action="" method="post">
-                                        <input id="contractId" name="contractId" type="hidden" value="${ul.id!''}">
+                                        <input id="contractId" name="contractId" type="text" value="${ul.id!''}">
                              	 		<input id="routeItemId" name="routeItemId" type="hidden">
-                                        <input id="routeId" name="routeId" type="hidden" value="3">
+                                        <input id="routeId" name="routeId" type="hidden" value="">
                                         <!-- 根据 始发地 和 目的地 找到 干线id-->
                              	 		<lable>干线：</lable><input id="fromName" name="fromName" type="text" >
                              	 		<lable> 至 </lable><input id="toName" name="toName" type="text">
                              	 		<lable>费用：</lable><input id="price" name="price" type="text">
-                             	 		<lable>公里数：</lable><input id="miles" name="miles" type="text">
+                             	 		<!-- <lable>公里数：</lable><input id="miles" name="miles" type="text"> -->
                              	 		<a id="saveRouteBtn" class="btn btn-default" href="#">保存</a>
     		             				<button class="btn btn-default" id="cancel">取消</button>
                              	 	</form>	
