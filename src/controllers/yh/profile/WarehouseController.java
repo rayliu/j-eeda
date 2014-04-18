@@ -92,9 +92,9 @@ public class WarehouseController extends Controller{
 		Date createDate = Calendar.getInstance().getTime();
 		if (id != null && !id.equals("")) {
 			warehouse = Warehouse.dao.findById(id);
-			warehouse.set("name", getPara("name"));
-			warehouse.set("address", getPara("address"));
-			warehouse.set("desc", getPara("desc"));
+			warehouse.set("warehouse_name", getPara("warehouse_name"));
+			warehouse.set("warehouse_address", getPara("warehouse_address"));
+			warehouse.set("warehouse_desc", getPara("warehouse_desc"));
 
 			contact = Contact.dao.findFirst("select * from contact where id=?",
 					warehouse.getLong("contact_id"));
@@ -106,9 +106,9 @@ public class WarehouseController extends Controller{
 			setContact(contact);
 			contact.save();
 			warehouse = new Warehouse();
-			warehouse.set("name", getPara("name"))
-					 .set("address", getPara("address"))
-					 .set("desc", getPara("desc"));
+			warehouse.set("warehouse_name", getPara("warehouse_name"))
+					 .set("warehouse_address", getPara("warehouse_address"))
+					 .set("warehouse_desc", getPara("warehouse_desc"));
 			warehouse.set("contact_id", contact.get("id"));
 			warehouse.save();
 		}

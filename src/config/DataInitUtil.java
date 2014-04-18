@@ -57,7 +57,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists product(id bigint auto_increment PRIMARY KEY,item_name varchar(50),item_no varchar(255),item_desc varchar(5120));");
             
             // warehouse 仓库
-            stmt.executeUpdate("create table if not exists warehouse(id bigint auto_increment PRIMARY KEY,name varchar(50),address varchar(255),desc VARCHAR(5120),contact_id bigint,FOREIGN KEY(contact_id) REFERENCES contact(id));");
+            stmt.executeUpdate("create table if not exists warehouse(id bigint auto_increment PRIMARY KEY,warehouse_name varchar(50),warehouse_address varchar(255),warehouse_desc VARCHAR(5120),contact_id bigint,FOREIGN KEY(contact_id) REFERENCES contact(id));");
             stmt.close();
             // conn.commit();
             conn.close();

@@ -13,9 +13,9 @@ $(document).ready(function() {
         "sAjaxSource": "/yh/warehouse/list",
         "aoColumns": [   
             
-            {"mDataProp":"NAME"},
-            {"mDataProp":"ADDRESS"},        	
-            {"mDataProp":"DESC"},
+            {"mDataProp":"WAREHOUSE_NAME"}, 
+            {"mDataProp":"WAREHOUSE_ADDRESS"},        	
+            {"mDataProp":"WAREHOUSE_DESC"},
             {"mDataProp":"CONTACT_PERSON"},        	
             {"mDataProp":"PHONE"},
             { 
