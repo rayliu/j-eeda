@@ -28,10 +28,10 @@
                                 <table class="table table-striped table-bordered table-hover" id="toll_example">
                                     <thead>
                                         <tr>
-                                        <th>ID</th>
-                                            <th>用户名称</th>                                           
+                                            <th>用户名称</th>
                                             <th>用户角色</th>
-                                            <th>用户权限</th>                                                                                    
+                                            <th>用户权限</th>
+                                            <th>备注</th>                                           
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -79,20 +79,20 @@
    	    	"oLanguage": {
    	            "sUrl": "/eeda/dataTables.ch.txt"
    	        },
-   	        "sAjaxSource": "/yh/privilege/list",
+   	        "sAjaxSource": "/yh/toll/list",
    			"aoColumns": [
-				{ "mDataProp": "ID" },          
-   				{ "mDataProp": "USER_NAME" },   	         
-   	         	{ "mDataProp": "ROLE_NAME" },
-   	            { "mDataProp": "PRIVILEGE" },   	           
+   				{ "mDataProp": "TYPE" },
+   	            { "mDataProp": "NAME" },
+   	            { "mDataProp": "CODE" },
+   	            { "mDataProp": "REMARK" },
    	            { "mDataProp": null,
    	         		"sWidth": "8%", 
    	         "fnRender": function(obj) {                    
-                 return "<a class='btn btn-success' href='/yh/privilege/Edit/"+obj.aData.ID+"'>"+
+                 return "<a class='btn btn-success' href='/yh/toll/Edit/"+obj.aData.ID+"'>"+
                              "<i class='fa fa-edit fa-fw'></i> "+
                              "编辑"+
                          "</a>"+
-                         "<a class='btn btn-danger' href='/yh/privilege/delete/"+obj.aData.ID+"'>"+
+                         "<a class='btn btn-danger' href='/yh/toll/delete/"+obj.aData.ID+"'>"+
                              "<i class='fa fa-trash-o fa-fw'></i> "+ 
                              "删除"+
                          "</a>";
