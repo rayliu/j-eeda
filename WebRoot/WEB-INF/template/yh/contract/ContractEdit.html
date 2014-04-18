@@ -158,19 +158,23 @@
                     			</h1>
                 			</div>
                 			
-                            	<div class="panel-heading">
-                            		<div id="contractForm" style="display:none"> 
-                             	 	<form action="/yh/customerContract/add" method="post">
-                             	 		<input id="contractId" name="contractId" type="hidden">
-                             	 		<lable>出发地点：</lable><input id="" name="" type="text" >
-                             	 		<lable>目的地点：</lable><input id="" name="" type="text">
-                             	 		<lable>费用：</lable><input id="" name="" type="text">
-                             	 		<lable>公里数：</lable><input id="" name="" type="text">
-                             	 		<a class="btn btn-default" href="/yh/account">保存</a>
-			             				<button class="btn btn-default" id="cancel">取消</button>
+                        	<div class="panel-heading">
+                        		<div id="routeItemFormDiv" style="display:none">
+
+                             	 	<form id="routeItemForm" action="" method="post">
+                                        <input id="contractId" name="contractId" type="hidden" value="${ul.id!''}">
+                             	 		<input id="routeItemId" name="routeItemId" type="hidden">
+                                        <input id="routeId" name="routeId" type="hidden" value="3">
+                                        <!-- 根据 始发地 和 目的地 找到 干线id-->
+                             	 		<lable>干线：</lable><input id="fromName" name="fromName" type="text" >
+                             	 		<lable> 至 </lable><input id="toName" name="toName" type="text">
+                             	 		<lable>费用：</lable><input id="price" name="price" type="text">
+                             	 		<lable>公里数：</lable><input id="miles" name="miles" type="text">
+                             	 		<a id="saveRouteBtn" class="btn btn-default" href="#">保存</a>
+    		             				<button class="btn btn-default" id="cancel">取消</button>
                              	 	</form>	
                              	 </div>
-                        		</div>
+                    		</div>
                         	
                             <!-- /.row (nested) -->
                        <div class="col-lg-12">
