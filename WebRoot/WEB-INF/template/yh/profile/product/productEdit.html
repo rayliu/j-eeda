@@ -14,19 +14,19 @@
 			<!-- /.panel-heading -->
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<form name="form1" method="post" action="/yh/product/save">
+					<form id="productForm" name="form1" method="post" action="/yh/product/save">
 						<input id="product_id" class="form-control" type="hidden"
 							name="id" value="${product.id!''}">
 
 						<div class="col-lg-8">
 							<div class="form-group ">
-								<label class="control-label" for="inputSuccess">产品名称</label> <input
-									id="inputSuccess" class="form-control" type="text"
+								<label class="control-label" for="inputSuccess">产品名称(必填)</label> <input
+									id="itemName" class="form-control" type="text"
 									name="itemName" value="${product.item_name!''}">
 							</div>
 							<div class="form-group">
-								<label class="control-label" for="inputWarning">产品型号</label> <input
-									id="inputWarning" class="form-control" type="text"
+								<label class="control-label" for="inputWarning">产品型号(必填)</label> <input
+									id="itemNo" class="form-control" type="text"
 									name="itemNo" value="${product.item_no!''}">
 							</div>
 							<div class="form-group">
@@ -47,4 +47,26 @@
 		<!--/row-->
 		<!-- content ends -->
 		<%}%>
-		<!-- validate.min.js 1.11.1 -->
+<!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/eeda/js/jquery.validate.min.js"></script>
+<script src="/eeda/js/jvalidate.messages_cn.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#productForm').validate({
+            rules: {
+            	itemName: {//form 中itemName为必填, 注意input 中定义的id, name都要为itemName
+                required: true
+              },
+              	itemNo:{//form 中 itemNo为必填
+                required: true
+              }
+            },
+            highlight: function(element) {
+                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+            },
+            success: function(element) {
+                element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+            }
+        });
+    });
+</script>

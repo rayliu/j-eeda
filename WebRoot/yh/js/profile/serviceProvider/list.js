@@ -27,8 +27,6 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "bProcessing": true,
-        "bServerSide": true,
         "sAjaxSource": "/yh/serviceProvider/list",
         "aoColumns": [   
             

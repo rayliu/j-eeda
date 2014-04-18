@@ -10,21 +10,23 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/product/list",
+        "sAjaxSource": "/yh/warehouse/list",
         "aoColumns": [   
             
-            {"mDataProp":"ITEM_NAME"},
-            {"mDataProp":"ITEM_NO"},        	
-            {"mDataProp":"ITEM_DESC"},
+            {"mDataProp":"NAME"},
+            {"mDataProp":"ADDRESS"},        	
+            {"mDataProp":"DESC"},
+            {"mDataProp":"CONTACT_PERSON"},        	
+            {"mDataProp":"PHONE"},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' href='/yh/product/edit/"+obj.aData.ID+"'>"+
+                    return "<a class='btn btn-success' href='/yh/warehouse/edit/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+
                             "</a>"+
-                            "<a class='btn btn-danger' href='/yh/product/delete/"+obj.aData.ID+"'>"+
+                            "<a class='btn btn-danger' href='/yh/warehouse/delete/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "删除"+
                             "</a>";

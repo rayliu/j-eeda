@@ -1,0 +1,168 @@
+<%layout("/yh/layout.html"){%>
+ <div id="page-wrapper">    
+    <div class="row">
+        <div class="col-lg-12 panel-body">
+            <% if(saveOK!''==true){%>
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                保存成功。
+            </div>
+            <%}%>
+            <h1 class="page-header">创建新仓库</h1>
+           
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+
+    <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            仓库基本信息
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <form id="warehouseForm" role="form" action="/yh/warehouse/save" method="post">
+                                    <input id="warehouseId" name="warehouse_id" type="hidden" value="${warehouse.id!''}">
+                                    <!-- /.col-lg-6 (odd) 奇数列 -->
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+
+                                                <label>仓库名称(必填)</label>
+                                                <input class="form-control" id="name" name="name" type="text" value="${warehouse.name!''}">
+                                            </div>                                     
+                                        </fieldset>
+                                    </div>
+
+                                    <!-- /.col-lg-6 (even) 偶数列-->                                    
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>仓库地址(必填)</label>
+                                                <input class="form-control" id="addresson" type="text" name="address" value="${warehouse.address!''}">
+                                            </div>
+                                        </fieldset>
+                                    </div>
+
+                                    <!-- /.col-lg-6 (odd) 奇数列 -->
+                                     <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>仓库描述</label>
+                                                <input class="form-control" id="desc" type="text" name="desc" value="${warehouse.desc!''}">
+                                            </div>                                     
+                                        </fieldset>
+                                    </div>     
+                                                                  
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+
+                                                <label>公司名称(必填)</label>
+                                                <input class="form-control" id="company_name" name="company_name" type="text" value="${contact.company_name!''}">
+                                            </div>                                     
+                                        </fieldset>
+                                    </div>
+
+                                    <!-- /.col-lg-6 (even) 偶数列-->                                    
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>联系人(必填)</label>
+                                                <input class="form-control" id="contact_person" type="text" name="contact_person" value="${contact.contact_person!''}">
+                                            </div>
+                                        </fieldset>
+                                    </div>
+
+                                    <!-- /.col-lg-6 (odd) 奇数列 -->
+                                     <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>联系地址</label>
+                                                <input class="form-control" id="address" type="text" name="address" value="${contact.address!''}">
+                                            </div>                                     
+                                        </fieldset>
+                                    </div>                                    
+                                    
+                                    <!-- /.col-lg-6 (even) 偶数列 -->
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>联系人电话</label>
+                                                <input class="form-control" id="disabledInput" type="text" name="phone" value="${contact.phone!''}">
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    
+                                    <!-- /.col-lg-6 (odd) 奇数列 -->
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>email</label>
+                                                <input class="form-control" id="email" type="text" name="email" value="${contact.email!''}">
+                                            </div>                                     
+                                        </fieldset>
+                                    </div>
+
+                                    <!-- /.col-lg-6 (even) 偶数列 -->
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>邮政编码</label>
+                                                <input class="form-control" id="postal_code" type="text" name="postal_code" value="${contact.postal_code!''}">
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <!-- /.col-lg-6 (odd) 奇数列 -->
+                                    <div class="col-lg-6">
+                                        <button type="submit" class="btn btn-default">保存</button>
+                                        <a class="btn btn-default" href="/yh/warehouse">取消</a>
+                                    </div>
+
+                                <form role="form">
+
+                            </div>
+                            <!-- /.row (nested) -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->      
+</div>			
+	<!--/span-->
+<!--/row-->
+<!-- content ends -->
+<%}%>
+<!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/eeda/js/jquery.validate.min.js"></script>
+<script src="/eeda/js/jvalidate.messages_cn.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#warehouseForm').validate({
+            rules: {
+            	name: {
+                required: true
+              },
+              	address:{
+                required: true
+              },
+              	company_name:{
+                required: true
+              },
+              	contact_person:{
+                required: true
+              }
+            },
+            highlight: function(element) {
+                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+            },
+            success: function(element) {
+                element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+            }
+        });
+    });
+</script>

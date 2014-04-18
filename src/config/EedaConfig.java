@@ -10,6 +10,7 @@ import models.Product;
 import models.Role;
 import models.Toll;
 import models.UserLogin;
+import models.Warehouse;
 import models.eeda.Case;
 import models.eeda.Leads;
 import models.eeda.Order;
@@ -98,6 +99,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/route", controllers.yh.RouteController.class, "/yh");
         me.add("/yh/office", controllers.yh.OfficeController.class, "/yh");
         me.add("/yh/product", controllers.yh.profile.ProductController.class, "/yh");
+        me.add("/yh/warehouse", controllers.yh.profile.WarehouseController.class, "/yh");
         // me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
     }
 
@@ -135,6 +137,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("privilege_table", Privilege.class);
         arp.addMapping("route", Route.class);
         arp.addMapping("product", Product.class);
+        arp.addMapping("warehouse", Warehouse.class);
         // yh mapping
 
     }
