@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import models.Account;
 import models.Office;
+import models.OrderStatus;
 import models.Party;
 import models.PartyAttribute;
 import models.Privilege;
@@ -16,7 +17,6 @@ import models.eeda.Case;
 import models.eeda.Leads;
 import models.eeda.Order;
 import models.eeda.OrderItem;
-import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
 import models.yh.profile.Route;
@@ -103,6 +103,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/office", controllers.yh.OfficeController.class, "/yh");
         me.add("/yh/product", controllers.yh.profile.ProductController.class, "/yh");
         me.add("/yh/warehouse", controllers.yh.profile.WarehouseController.class, "/yh");
+        me.add("/yh/orderStatus", controllers.yh.profile.OrderStatusController.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {
@@ -141,6 +142,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("product", Product.class);
         arp.addMapping("warehouse", Warehouse.class);
         arp.addMapping("contract_item", ContractItem.class);
+        arp.addMapping("order_status", OrderStatus.class);
         // yh mapping
 
     }

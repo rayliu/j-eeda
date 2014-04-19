@@ -1,0 +1,77 @@
+<%layout("/yh/layout.html"){%>
+
+<div id="page-wrapper">
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header">编辑里程碑</h1>
+
+		</div>
+		<!-- /.col-lg-12 -->
+	</div>
+	<!-- /.row -->
+	<div class="row">
+		<div class="col-lg-12">
+			<!-- /.panel-heading -->
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<form id="orderStatusForm" name="form1" method="post" action="/yh/orderStatus/save">
+						<input id="orderStatus_id" class="form-control" type="hidden"
+							name="id" value="${orderStatus.id!''}">
+						
+						<div class="form-group">
+							<label class="control-label" for="inputWarning">里程碑代码(必填)</label> <input
+								id="status_code" class="form-control" type="text"
+								name="status_code" value="${orderStatus.status_code!''}">
+						</div>
+						<div class="col-lg-8">
+							<div class="form-group ">
+								<label class="control-label" for="inputSuccess">里程碑名称(必填)</label> <input
+									id="status_name" class="form-control" type="text"
+									name="status_name" value="${orderStatus.status_name!''}">
+							</div>
+							<div class="form-group">
+								<label class="control-label" for="inputWarning">单据类型</label> <input
+									id="order_type" class="form-control" type="text"
+									name="order_type" value="${orderStatus.order_type!''}">
+							</div>
+							<div class="form-group">
+								<label class="control-label" for="inputWarning">备注</label> <input
+									id="remark" class="form-control" type="text"
+									name="remark" value="${orderStatus.remark!''}">
+							</div>
+							<div class="form-group">
+								<button class="btn btn-default" type="submit">保存</button>
+								<a class="btn btn-default" href="/yh/orderStatus"> 取消 </a>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--/span-->
+		<!--/row-->
+		<!-- content ends -->
+		<%}%>
+<!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/eeda/js/jquery.validate.min.js"></script>
+<script src="/eeda/js/jvalidate.messages_cn.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#orderStatusForm').validate({
+            rules: {
+            	status_code: {//form 中status_code为必填, 注意input 中定义的id, name都要为status_code
+                required: true
+              },
+              	status_name:{//form 中 status_name为必填
+                required: true
+              }
+            },
+            highlight: function(element) {
+                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+            },
+            success: function(element) {
+                element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+            }
+        });
+    });
+</script>
