@@ -109,7 +109,11 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('120000','天津','110000','北京','123123');");
 
             stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('1','1','120000','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('2','3','130000','路线2');");
+            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('2','2','130000','路线2');");
+            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('1','3','120000','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('2','1','130000','路线2');");
+            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('3','2','120000','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('4','3','130000','路线2');");
             // 系统权限
             stmt.executeUpdate("insert into role_permissions(role_name, role_permission, remark) values('root', '123456', '1-6');");
             // alter table leads add(priority varchar(50),customer_source

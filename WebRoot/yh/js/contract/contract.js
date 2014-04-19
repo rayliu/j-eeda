@@ -1,4 +1,5 @@
 $(document).ready(function() {
+		var contractId=$('#contractId').val();
 	var dataTable = $('#dataTables-example').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -9,7 +10,7 @@ $(document).ready(function() {
         },
         "bProcessing": true,
         "bServerSide": true,
-        "sAjaxSource": "/yh/spContract/routeEdit",
+        "sAjaxSource": "/yh/spContract/routeEdit?routId="+contractId,
         "aoColumns": [   
             
             
@@ -20,7 +21,7 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' href='/yh/customerContract/edit/"+obj.aData.ID+"'>"+
+                    return "<a class='btn btn-success' id='111' href='/yh/customerContract/edit/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+
                             "</a>"+
@@ -34,7 +35,7 @@ $(document).ready(function() {
        
             
     });
-        
+	
         // $('#customerForm').validate({
         //     rules: {
         //       company_name: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
@@ -82,7 +83,8 @@ $(document).ready(function() {
         $('#companyName').on('keyup', function(){
 			var inputStr = $('#companyName').val();
 			var type = $("#type2").val();
-			if(type=='CUSTOMER'){
+			var type2 = $("#type3").val();
+			if(type=='CUSTOMER'||type2=='CUSTOMER'){
 				$.get('/yh/customerContract/search', {locationName:inputStr}, function(data){
 					console.log(data);
 					var companyList =$("#companyList");
@@ -121,4 +123,27 @@ $(document).ready(function() {
         	$('#email').val($(this).attr('email'));
         	$('#partyid').val($(this).attr('partyId'));
         });
+		
+		//添加routeItemForm  出发地点
+		 
+		//添加routeItemForm 目的地点
+		 $('#toName').on('keyup', function(){
+			 var inputStr = $('#fromName').val();
+			 var inputStr2 = $('#toName').val();
+			  if(inputStr==""){
+				 alert("请先输入出发点！");
+			 }else{
+				 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
+					 for(var i = 0; i < data.length; i++){
+						 if(data.length==""){
+							alert("没此路线");
+						 }else{
+							 $('#routeId').val(data[i].RID);
+						 }
+						
+					 }
+				 },'json');
+			 }
+		});
+		 
     });
