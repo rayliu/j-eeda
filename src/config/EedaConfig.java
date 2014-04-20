@@ -48,7 +48,7 @@ public class EedaConfig extends JFinalConfig {
     private static String ProdMysql = "ProdMysql";
     /**
      * 
-     * 供Shiro插件使用。
+     * 供Shiro插件使用 。
      */
     Routes routes;
 
