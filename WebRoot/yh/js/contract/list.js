@@ -1,21 +1,16 @@
-
-
 $(document).ready(function() {
 	
 	
     var type = $("#type").val();//注意这里
     var urlSource;
-    var urlSource2;
     var urlSource3;
 	if(type=='CUSTOMER'){
 		$("#btn1").show();
 		urlSource="/yh/customerContract/customerList";
-		urlSource2="/yh/customerContract/edit/";
 		urlSource3="/yh/customerContract/delete/";
 	}else{
 		$("#btn2").show();
 		urlSource="/yh/spContract/spList";
-		urlSource2="/yh/spContract/edit2/";
 		urlSource3="/yh/spContract/delete2/";
 	}
     
@@ -55,7 +50,5 @@ $(document).ready(function() {
                 }
             }                         
         ],
-       
-            
-    });
+     });
 } );
