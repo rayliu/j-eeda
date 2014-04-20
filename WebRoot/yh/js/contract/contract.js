@@ -36,34 +36,26 @@ $(document).ready(function() {
             
     });
 	
-		//from表单验证
-	$('#customerForm').validate({
-        rules: {
-        	contract_name: {
-            required: true
-          },
-          companyName:{//form 中 name为必填
-            required: true
-          }
-        },
-        highlight: function(element) {
-            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-        },
-        success: function(element) {
-            element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
-        }
-    });
-	
+        // $('#customerForm').validate({
+        //     rules: {
+        //       company_name: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
+        //         required: true
+        //       },
+        //       name:{//form 中 name为必填
+        //         required: true
+        //       }
+        //     },
+        //     highlight: function(element) {
+        //         $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        //     },
+        //     success: function(element) {
+        //         element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+        //     }
+        // });
+        
         //点击button显示添加合同干线div
         $("#btn").click(function(){
-        	var contractId = $("#contractId").val();
-        	
-        	if(contractId != ""){
-        		$("#routeItemFormDiv").show();
-        	}else{
-        		alert("请先添加合同！");
-        		
-        	}
+        	$("#routeItemFormDiv").show();
         });
         $("#cancel").click(function(){
         	$("#routeItemFormDiv").hide();
@@ -79,7 +71,7 @@ $(document).ready(function() {
                     //保存成功后，刷新列表
                     console.log(data);
                     if(data.success){
-                    	dataTable.fnDraw();
+                        dataTable.fnDraw();
                     }else{
                         alert('数据保存失败。');
                     }
@@ -138,39 +130,20 @@ $(document).ready(function() {
 		 $('#toName').on('keyup', function(){
 			 var inputStr = $('#fromName').val();
 			 var inputStr2 = $('#toName').val();
-			 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
-				 for(var i = 0; i < data.length; i++){
-					 	$('#routeId').val(data[i].RID);
-				 }
-			 },'json');
+			  if(inputStr==""){
+				 alert("请先输入出发点！");
+			 }else{
+				 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
+					 for(var i = 0; i < data.length; i++){
+						 if(data.length==""){
+							alert("没此路线");
+						 }else{
+							 $('#routeId').val(data[i].RID);
+						 }
+						
+					 }
+				 },'json');
+			 }
 		});
-		 $('#fromName').on('keyup', function(){
-			 var inputStr = $('#fromName').val();
-			 var inputStr2 = $('#toName').val();
-			 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
-				 for(var i = 0; i < data.length; i++){
-					 	$('#routeId').val(data[i].RID);
-				 }
-			 },'json');
-		});
-		 
-		 //添加合同
-		$("#saveContract").click(function(e){
-	            //阻止a 的默认响应行为，不需要跳转
-	            e.preventDefault();
-	            //异步向后台提交数据
-	            $.post('/yh/customerContract/save', $("#customerForm").serialize(), function(data){
-	                    //保存成功后，刷新列表
-	                    console.log(data);
-	                    if(data.success){
-	                        //dataTable.fnDraw();
-	                    	//alert("保存合同成功！");
-	                    	//$("#style").show();
-	                    }else{
-	                        alert('数据保存失败。');
-	                    }
-	                    
-	                },'json');
-	        });
 		 
     });
