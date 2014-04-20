@@ -10,12 +10,14 @@ import models.PartyAttribute;
 import models.Privilege;
 import models.Role;
 import models.Toll;
+import models.Product;
 import models.UserLogin;
 import models.Warehouse;
 import models.eeda.Case;
 import models.eeda.Leads;
 import models.eeda.Order;
 import models.eeda.OrderItem;
+import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
 import models.yh.profile.Route;
@@ -138,10 +140,11 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("Toll_table", Toll.class);
         arp.addMapping("privilege_table", Privilege.class);
         arp.addMapping("route", Route.class);
-        //arp.addMapping("product", Product.class);
+        arp.addMapping("product",Product.class);
         arp.addMapping("warehouse", Warehouse.class);
         arp.addMapping("contract_item", ContractItem.class);
         arp.addMapping("order_status", OrderStatus.class);
+        arp.addMapping("contract", Contract.class);
         // yh mapping
 
     }
