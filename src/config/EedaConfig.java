@@ -1,5 +1,6 @@
 package config;
 
+import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
 import models.Account;
@@ -8,9 +9,9 @@ import models.OrderStatus;
 import models.Party;
 import models.PartyAttribute;
 import models.Privilege;
+import models.Product;
 import models.Role;
 import models.Toll;
-import models.Product;
 import models.UserLogin;
 import models.Warehouse;
 import models.eeda.Case;
@@ -58,6 +59,7 @@ public class EedaConfig extends JFinalConfig {
     ActiveRecordPlugin arp;
 
     public void configConstant(Constants me) {
+
         me.setDevMode(true);
 
         BeetlRenderFactory templateFactory = new BeetlRenderFactory();
@@ -73,7 +75,12 @@ public class EedaConfig extends JFinalConfig {
         // me.setError404View("/login.html");
         // me.setError500View("/login.html");
         // me.setErrorView(503, "/login.html");
-
+        // get name representing the running Java virtual machine.
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        System.out.println(name);
+        // get pid
+        String pid = name.split("@")[0];
+        System.out.println("Pid is: " + pid);
     }
 
     public void configRoute(Routes me) {
@@ -140,7 +147,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("Toll_table", Toll.class);
         arp.addMapping("privilege_table", Privilege.class);
         arp.addMapping("route", Route.class);
-        arp.addMapping("product",Product.class);
+        arp.addMapping("product", Product.class);
         arp.addMapping("warehouse", Warehouse.class);
         arp.addMapping("contract_item", ContractItem.class);
         arp.addMapping("order_status", OrderStatus.class);
