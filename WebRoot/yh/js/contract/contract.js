@@ -19,17 +19,26 @@ $(document).ready(function() {
 	                "mDataProp": null, 
 	                "sWidth": "8%",                
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-success' id='111' href='/yh/customerContract/roteEdit/"+obj.aData.ID+"'>"+
+	                    return "<a class='btn btn-success' id='111' href='/yh/customerContract/roteEdit"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-edit fa-fw'></i>"+
 	                                "编辑"+
 	                            "</a>"+
-	                            "<a class='btn btn-danger' href='/yh/customerContract/roteDelete/"+obj.aData.ID+"'>"+
+	                            "<a class='btn btn-danger' href='/yh/customerContract/roteDelete"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
 	                                "删除"+
 	                            "</a>";
 	                }
 	            }                         
-	        ],
+	        ]
+	        // "fnDrawCallback": function () {//行编辑模式
+	        //     $('#ataTables-example tbody td').editable( '/yh/customerContract/roteEdit', {
+	        //         "callback": function( sValue, y ) {
+	        //             /* Redraw the table from the new data on the server */
+	        //             oTable.fnDraw();
+	        //         },
+	        //         "height": "14px"
+	        //     } );
+	        // }
 	    });
 	
 		//from表单验证
@@ -151,14 +160,13 @@ $(document).ready(function() {
 			//validator.resetForm();
 	            e.preventDefault();
 	            //异步向后台提交数据
-	            $.post('/yh/customerContract/save', $("#customerForm").serialize(), function(data){
-	                    //保存成功后，刷新列表
-	            		
-	                    console.log(data);
-	                    if(data.success){
-	                       alert("保存合同成功！");
+	            $.post('/yh/customerContract/save', $("#customerForm").serialize(), function(contractId){
+	                    
+	                    if(contractId>0){
+	                        //alert("保存合同成功！");
 	                    	$("#style").show();
-	                    	//$('#contractId').val(12);
+	                    	//已经有一个重复的contractId 在前面了
+	                    	$('#routeContractId').val(contractId);
 	                    }else{
 	                        alert('数据保存失败。');
 	                    }
