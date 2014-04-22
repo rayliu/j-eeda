@@ -20,10 +20,10 @@
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                <form role="form" id="addTollForm" action="/yh/pay/SaveEdit" method="post">
+                                <form  id="addTollForm" action="/yh/pay/SaveEdit" method="post">
                                     <input id="partyId" name="id" type="hidden" value="${to.id!''}">
                                    
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-8">
                                         <fieldset>
                                             <div class="form-group">
 
@@ -34,27 +34,16 @@
                                     </div>
 
                                                                   
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-8">
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>条目代码</label>
                                                 <input class="form-control" id="code" type="text" name="code" value="${to.code!''}">
                                             </div>                                     
                                         </fieldset>
-                                    </div>
-
+                                    </div>                                                                
                                  
-                                    <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>类型</label>
-                                                <input class="form-control" id="type" type="text" name="type" value="${to.type!''}">
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                    
-                                 
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-8">
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>备注</label>
@@ -63,7 +52,7 @@
                                         </fieldset>
                                     </div>
                           
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-8">
                                         <button type="submit" class="btn btn-default">保存</button>
                                         <a class="btn btn-default" href="/yh/pay">取消</a>
                                     </div>

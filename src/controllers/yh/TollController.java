@@ -92,7 +92,7 @@ public void SaveEdit() {
 	String id = getPara("id");
 
 		String name = getPara("name");
-		String type = getPara("type");
+		String type = "收费";
 		String code=getPara("code");
 		String remark=getPara("remark");
 
