@@ -1,58 +1,53 @@
 $(document).ready(function() {
 		var contractId=$('#contractId').val();
-	var dataTable = $('#dataTables-example').dataTable({
+		var dataTable = $('#dataTables-example').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",
-        "iDisplayLength": 10,
-    	"oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
-        },
-        "bProcessing": true,
-        "bServerSide": true,
-        "sAjaxSource": "/yh/spContract/routeEdit?routId="+contractId,
-        "aoColumns": [   
-            
-            
-            {"mDataProp":"LOCATION_FROM"},
-            {"mDataProp":"LOCATION_TO"},
-            {"mDataProp":"AMOUNT"},
-            { 
-                "mDataProp": null, 
-                "sWidth": "8%",                
-                "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' id='111' href='/yh/customerContract/edit/"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                                "编辑"+
-                            "</a>"+
-                            "<a class='btn btn-danger' href='/yh/customerContract/delete/"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "删除"+
-                            "</a>";
-                }
-            }                         
-        ],
-       
-            
-    });
+	        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+	        //"sPaginationType": "bootstrap",
+	        "iDisplayLength": 10,
+	    	"oLanguage": {
+	            "sUrl": "/eeda/dataTables.ch.txt"
+	        },
+	        "bProcessing": true,
+	        "bServerSide": true,
+	        "sAjaxSource": "/yh/spContract/routeEdit?routId="+contractId,
+	        "aoColumns": [   
+	            {"mDataProp":"LOCATION_FROM"},
+	            {"mDataProp":"LOCATION_TO"},
+	            {"mDataProp":"AMOUNT"},
+	            { 
+	                "mDataProp": null, 
+	                "sWidth": "8%",                
+	                "fnRender": function(obj) {                    
+	                    return "<a class='btn btn-success' id='111' href='/yh/customerContract/edit/"+obj.aData.ID+"'>"+
+	                                "<i class='fa fa-edit fa-fw'></i>"+
+	                                "编辑"+
+	                            "</a>"+
+	                            "<a class='btn btn-danger' href='/yh/customerContract/delete/"+obj.aData.ID+"'>"+
+	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
+	                                "删除"+
+	                            "</a>";
+	                }
+	            }                         
+	        ],
+	    });
 	
 		//from表单验证
-	$('#customerForm').validate({
-        rules: {
-        	contract_name: {
-            required: true
-          },
-          companyName:{//form 中 name为必填
-            required: true
-          }
-        },
-        highlight: function(element) {
-            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-        },
-        success: function(element) {
-            element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
-        }
-    });
+		var validate = $('#customerForm').validate({
+	        rules: {
+	        	contract_name: {
+	            required: true
+	          },
+	          companyName:{//form 中 name为必填
+	            required: true
+	          }
+	        },
+	        messages : {
+	             
+	        	contract_name : {required:  "不能为空"}, 
+	        	companyName: {required :"不能为空"},
+	        }
+	    });
 	
         //点击button显示添加合同干线div
         $("#btn").click(function(){
@@ -92,32 +87,22 @@ $(document).ready(function() {
 			var inputStr = $('#companyName').val();
 			var type = $("#type2").val();
 			var type2 = $("#type3").val();
+			 var urlSource;
 			if(type=='CUSTOMER'||type2=='CUSTOMER'){
-				$.get('/yh/customerContract/search', {locationName:inputStr}, function(data){
-					console.log(data);
-					var companyList =$("#companyList");
-					companyList.empty();
-					for(var i = 0; i < data.length; i++)
-					{
-						companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+"</a></li>");
-					}
-					companyList.show();
-					
-				},'json');
+				urlSource ="/yh/customerContract/search";
 			}else{
-				$.get('/yh/spContract/search2', {locationName:inputStr}, function(data){
-					console.log(data);
-					var companyList =$("#companyList");
-					companyList.empty();
-					for(var i = 0; i < data.length; i++)
-					{
-						companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+"</a></li>");
-					}
-					companyList.show();
-					
-				},'json');
+				urlSource ="/yh/spContract/search2";
 			}
-			
+			$.get(urlSource, {locationName:inputStr}, function(data){
+				console.log(data);
+				var companyList =$("#companyList");
+				companyList.empty();
+				for(var i = 0; i < data.length; i++)
+				{
+					companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+"</a></li>");
+				}
+				companyList.show();
+			},'json');
 		});
 	
 		$('#companyList').on('click', '.fromLocationItem', function(e){
@@ -130,6 +115,12 @@ $(document).ready(function() {
         	$('#post_code').val($(this).attr('post_code'));
         	$('#email').val($(this).attr('email'));
         	$('#partyid').val($(this).attr('partyId'));
+        	$('#label').html($(this).attr('contact_person'));
+        	$('#label2').html($(this).attr('phone'));
+        	$('#label3').html($(this).attr('email'));
+        	$('#label4').html($(this).attr('address'));
+        	$('#label5').html($(this).attr('post_code'));
+        	
         });
 		
 		//添加routeItemForm  出发地点
@@ -157,15 +148,18 @@ $(document).ready(function() {
 		 //添加合同
 		$("#saveContract").click(function(e){
 	            //阻止a 的默认响应行为，不需要跳转
+			//validator.resetForm();
 	            e.preventDefault();
+	            
 	            //异步向后台提交数据
 	            $.post('/yh/customerContract/save', $("#customerForm").serialize(), function(data){
 	                    //保存成功后，刷新列表
+	            		
 	                    console.log(data);
 	                    if(data.success){
-	                        //dataTable.fnDraw();
-	                    	//alert("保存合同成功！");
-	                    	//$("#style").show();
+	                       alert("保存合同成功！");
+	                    	$("#style").show();
+	                    	//$('#contractId').val(12);
 	                    }else{
 	                        alert('数据保存失败。');
 	                    }
@@ -173,4 +167,47 @@ $(document).ready(function() {
 	                },'json');
 	        });
 		 
+		
+		//选择出发地点
+		$('#fromName').on('keyup', function(){
+			var inputStr = $('#fromName').val();
+			$.get('/yh/route/search', {locationName:inputStr}, function(data){
+				console.log(data);
+				var fromLocationList =$("#fromLocationList");
+				fromLocationList.empty();
+				for(var i = 0; i < data.length; i++)
+				{
+					fromLocationList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].CODE+"'>"+data[i].NAME+"</a></li>");
+				}
+				
+				fromLocationList.show();
+			},'json');
+		});
+	
+		$('#fromLocationList').on('click', '.fromLocationItem', function(e){
+			$('#from_id').val($(this).attr('code'));
+			$('#fromName').val($(this).text());
+        	$("#fromLocationList").hide();
+    	});
+		
+		//选择目的地点
+		$('#toName').on('keyup', function(){
+			var inputStr = $('#toName').val();
+			$.get('/yh/route/search', {locationName:inputStr}, function(data){
+				
+				var toLocationList =$("#toLocationList");
+				toLocationList.empty();
+				for(var i = 0; i < data.length; i++)
+				{
+					toLocationList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].CODE+"'>"+data[i].NAME+"</a></li>");
+				}
+				toLocationList.show();
+			},'json');
+		});
+	
+		$('#toLocationList').on('click', '.fromLocationItem', function(e){
+			$('#to_id').val($(this).attr('code'));
+			$('#toName').val($(this).text());
+        	$("#toLocationList").hide();
+    	});
     });

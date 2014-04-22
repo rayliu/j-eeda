@@ -56,7 +56,12 @@
                                             </div>                                     
                                         </fieldset>
                                     </div>
-
+									<div><label id="label"></label>
+										<label id="label2"></label>
+										<label id="label3"></label>
+										<label id="label4"></label>
+										<label id="label5"></label>
+									</div>
                                     <!-- /.col-lg-6 (even) 偶数列-->                                    
                                     <div class="col-lg-6">
                                         <fieldset>
@@ -166,7 +171,11 @@
                                         <input id="routeId" name="routeId" type="hidden" value="">
                                         <!-- 根据 始发地 和 目的地 找到 干线id-->
                              	 		<lable>干线：</lable><input id="fromName" name="fromName" type="text" >
+					                    <ul id='fromLocationList' class="pull-right dropdown-menu default" style="top: 56%; left: 20%; width:100px">
+										</ul>
                              	 		<lable> 至 </lable><input id="toName" name="toName" type="text">
+                             	 		<ul id='toLocationList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 56%; left: 35%; width:100px"">
+										</ul>
                              	 		<lable>费用：</lable><input id="price" name="price" type="text">
                              	 		<!-- <lable>公里数：</lable><input id="miles" name="miles" type="text"> -->
                              	 		<a id="saveRouteBtn" class="btn btn-default" href="#">保存</a>

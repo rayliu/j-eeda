@@ -15,23 +15,23 @@
 							<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/yh/route/saveRoute" method="post">
 								<input id="routeId" name="routeId" type="hidden" value="${ul.id!''}">
 								<div class="form-group ">
-								<label class="control-label">出发地点</label>
-								<input id="from_id" name="from_id" type="hidden" class="form-control" value="${ul.location_from!''}">
-								<input id="fromName" name="fromName" type="text" class="form-control" value="${ul.location_from!''}">
-								<ul id='fromLocationList' class="pull-right dropdown-menu default" style="top: 50%; left: 3%;">
-								</ul>
-							</div>
+									<label class="control-label">出发地点</label>
+									<input id="from_id" name="from_id" type="hidden" class="form-control" value="${ul.location_from!''}">
+									<input id="fromName" name="fromName" type="text" class="form-control" value="${ul.location_from!''}">
+									<ul id='fromLocationList' class="pull-right dropdown-menu default" style="top: 50%; left: 3%;">
+									</ul>
+								</div>
 								<div class="form-group ">
-								<label class="control-label">目的地点</label>
-								<input id="to_id" name="to_id" type="hidden" class="form-control" value="${ul.location_from!''}">
-								<input id="toName" name="toName"  class="form-control" type="text" value="${ul.location_to!''}">
-								<ul id='toLocationList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 65%; left: 3%;">
-								</ul>
-							</div>
+									<label class="control-label">目的地点</label>
+									<input id="to_id" name="to_id" type="hidden" class="form-control" value="${ul.location_from!''}">
+									<input id="toName" name="toName"  class="form-control" type="text" value="${ul.location_to!''}">
+									<ul id='toLocationList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 65%; left: 3%;">
+									</ul>
+								</div>
 								<div class="form-group">
-								<label class="control-label">备注</label>
-								<input type="text" class="form-control" id="remark" name="remark" value="${ul.remark!''}">
-							</div>
+									<label class="control-label">备注</label>
+									<input type="text" class="form-control" id="remark" name="remark" value="${ul.remark!''}">
+								</div>
 							<button type="submit" class="btn btn-default">保存</button>
 							<a class="btn btn-default" href="/yh/route">取消</a>
 						</form>

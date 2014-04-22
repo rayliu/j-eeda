@@ -27,8 +27,6 @@ $(document).ready(function() {
         "bServerSide": true,
         "sAjaxSource": urlSource,
         "aoColumns": [   
-            
-            
             {"mDataProp":"NAME"},
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":"CONTACT_PERSON"},
