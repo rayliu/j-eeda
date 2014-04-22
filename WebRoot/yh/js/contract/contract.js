@@ -19,11 +19,11 @@ $(document).ready(function() {
 	                "mDataProp": null, 
 	                "sWidth": "8%",                
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-success' id='111' href='/yh/customerContract/edit/"+obj.aData.ID+"'>"+
+	                    return "<a class='btn btn-success' id='111' href='/yh/customerContract/roteEdit/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-edit fa-fw'></i>"+
 	                                "编辑"+
 	                            "</a>"+
-	                            "<a class='btn btn-danger' href='/yh/customerContract/delete/"+obj.aData.ID+"'>"+
+	                            "<a class='btn btn-danger' href='/yh/customerContract/roteDelete/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
 	                                "删除"+
 	                            "</a>";
@@ -150,7 +150,6 @@ $(document).ready(function() {
 	            //阻止a 的默认响应行为，不需要跳转
 			//validator.resetForm();
 	            e.preventDefault();
-	            
 	            //异步向后台提交数据
 	            $.post('/yh/customerContract/save', $("#customerForm").serialize(), function(data){
 	                    //保存成功后，刷新列表
