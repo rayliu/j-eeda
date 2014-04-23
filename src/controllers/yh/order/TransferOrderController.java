@@ -152,7 +152,7 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 收货人列表
-	public void selectContactr(){
+	public void selectContact(){
 		List<Contact> contacts = Contact.dao.find("select * from contact");			
 		renderJson(contacts);
 	}

@@ -14,6 +14,7 @@ import models.Role;
 import models.Toll;
 import models.Product;
 import models.TransferOrder;
+import models.TransferOrderItem;
 import models.UserLogin;
 import models.Warehouse;
 import models.eeda.Case;
@@ -156,6 +157,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("order_status", OrderStatus.class);
         arp.addMapping("contract", Contract.class);
         arp.addMapping("transfer_order", TransferOrder.class);
+        arp.addMapping("transfer_order_item", TransferOrderItem.class);
         // yh mapping
 
     }

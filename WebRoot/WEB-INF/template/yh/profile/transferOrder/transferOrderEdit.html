@@ -78,7 +78,59 @@
                                         <input id="email" type="text" name="email">
                                         <label>邮政编码</label>
                                         <input id="postal_code" type="text" name="postal_code">
+                                        <label>收货预约时间</label>
+                                        <input id="eta" type="text" name="eta">
                             	 		<a id="saveCustomerBtn" class="btn btn-default" href="#">保存</a>
+   		             				<button class="btn btn-default" id="cancel">取消</button>
+                           	 	</form>	
+                           	 </div>
+                   		</div>
+                   		
+                   		<div class="panel-heading">
+                       		<div id="radioFormDiv">
+								<form id="radioForm" action="" method="post">
+                            	 		<label>货品属性</label>
+                            	 		<div>
+	                                        <input id="cargo_nature_atm" name="cargo_nature" type="radio" value="cargo_nature_atm">ATM			
+	                                        <input name="cargo_nature" type="radio" value="cargo_nature_common">普通货品			
+	                                        <input name="cargo_nature" type="radio" value="cargo_nature_damaged">损坏货品
+	                                    </div>
+	                                    <div>
+	                                        <input name="pickup_mode" type="radio" value="pickup_mode_service_provider">干线供应商自提		
+	                                        <input name="pickup_mode" type="radio" value="pickup_mode_company">公司自提			
+	                                        <input name="pickup_mode" type="radio" value="pickup_mode_outsourcer_service_provider">外包供应商提货
+	                                    </div>
+	                                    <div>
+	                                        <input name="arrival_mode" type="radio" value="arrival_mode_direct">货品直送		
+	                                        <input name="arrival_mode" type="radio" value="arrival_mode_transit_warehouse">入中转仓			
+	                                    </div>
+                            	 		<a id="saveRadioBtn" class="btn btn-default" href="#">保存</a>
+   		             				<button class="btn btn-default" id="cancel">取消</button>
+                           	 	</form>	
+                           	 </div>
+                   		</div>
+                   		
+                   		<div class="panel-heading">
+                     		<div><h4>货品明细</h4></div>
+                       		<div id="itemFormDiv">
+								<form id="itemForm" action="" method="post">
+                            	 		<label id="label_item_no" style="display:none">ATM序列号</label>
+                                        <input id="item_no" type="text" name="item_no" style="display:none">
+                            	 		<label>货品名称</label>
+                                        <input id="item_name" type="text" name="item_name">
+                            	 		<label>货品描述</label>
+                                        <input id="item_desc" type="text" name="item_desc">
+                                        <label>数量</label>
+                                        <input id="amount" type="text" name="amount">
+                                        <label>单位</label>
+                                        <input id="unit" type="text" name="unit">
+                                        <label>体积</label>
+                                        <input id="volume" type="text" name="volume">
+                                        <label>重量</label>
+                                        <input id="weight" type="text" name="weight">
+                                        <label>备注</label>
+                                        <input id="remark" type="text" name="remark">
+                            	 		<a id="saveItemBtn" class="btn btn-default" href="#">保存</a>
    		             				<button class="btn btn-default" id="cancel">取消</button>
                            	 	</form>	
                            	 </div>
@@ -144,7 +196,7 @@
              },'json');
         });
 
-        /* // 动态显示收货人(单选按钮)
+    	// 动态显示联系人(单选按钮)
        	var contact =$("#contacts");
        	contact.empty();
        	$.get('/yh/transferOrder/selectContact',{},function(data){
@@ -152,7 +204,7 @@
 			{
 				contact.append("<input id='"+data[i].ID+"' type='radio' name='customer_id' />"+data[i].ID+" - "+data[i].COMPANY_NAME+" - "+data[i].CONTACT_PERSON+" - "+data[i].ADDRESS+" - "+data[i].MOBILE+" / "+data[i].PHONE +"</br>");
 			}
-			contact.append("<input id='newContact' type='radio' name='customer_id' />"+"使用新地址");
+			contact.append("<input id='newCustomer' type='radio' name='customer_id' />"+"使用新地址");
 		},'json');
        	
        	// 单击选中单选按钮,触发事件,控制form的显示与隐藏
@@ -165,6 +217,12 @@
        				$("#contactFormDiv").hide();
        			}
        		}
-       	}); */
+       	}); 
+       	
+       	// 当货品属性位ATM时,增加ATM的序列号
+       	$("#cargo_nature_atm").click(function(){
+       		$("#label_item_no").show()
+       		$("#item_no").show()
+       	});
     })
 </script>

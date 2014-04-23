@@ -70,6 +70,9 @@ public class DataInitUtil {
             					+"create_stamp TIMESTAMP,last_modified_by bigint,last_modified_stamp TIMESTAMP,eta TIMESTAMP,route_from varchar(255),route_to varchar(255),"
             					+"route_id bigint,customer_id bigint,sp_id bigint,notify_party_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id),FOREIGN KEY(sp_id) REFERENCES party(id),"
             					+"FOREIGN KEY(route_id) REFERENCES route(id),FOREIGN KEY(notify_party_id) REFERENCES contact(id));");
+            // transfer_order_item 货品明细
+            stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment PRIMARY KEY,item_no varchar(255),item_name varchar(255),item_desc varchar(255),"
+            				   +"amount int,unit varchar(20),volume varchar(255),weight varchar(255),remark varchar(5120),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
             stmt.close();
             // conn.commit();
             conn.close();
