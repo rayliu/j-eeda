@@ -1,4 +1,4 @@
-package config;
+﻿package config;
 
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
@@ -12,6 +12,8 @@ import models.Privilege;
 import models.Product;
 import models.Role;
 import models.Toll;
+import models.Product;
+import models.TransferOrder;
 import models.UserLogin;
 import models.Warehouse;
 import models.eeda.Case;
@@ -112,6 +114,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/product", controllers.yh.profile.ProductController.class, "/yh");
         me.add("/yh/warehouse", controllers.yh.profile.WarehouseController.class, "/yh");
         me.add("/yh/orderStatus", controllers.yh.profile.OrderStatusController.class, "/yh");
+        me.add("/yh/transferOrder", controllers.yh.order.TransferOrderController.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {
@@ -152,6 +155,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("contract_item", ContractItem.class);
         arp.addMapping("order_status", OrderStatus.class);
         arp.addMapping("contract", Contract.class);
+        arp.addMapping("transfer_order", TransferOrder.class);
         // yh mapping
 
     }

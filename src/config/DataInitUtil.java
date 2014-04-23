@@ -63,6 +63,13 @@ public class DataInitUtil {
             
             // order_status 里程碑
             stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment PRIMARY KEY,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
+            
+            // transfer_order 运输单
+            stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment PRIMARY KEY,order_no varchar(20),status varchar(20),"
+            					+"cargo_nature VARCHAR(32),pickup_mode VARCHAR(32),arrival_mode VARCHAR(32),remark varchar(255),create_by bigint,"
+            					+"create_stamp TIMESTAMP,last_modified_by bigint,last_modified_stamp TIMESTAMP,eta TIMESTAMP,route_from varchar(255),route_to varchar(255),"
+            					+"route_id bigint,customer_id bigint,sp_id bigint,notify_party_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id),FOREIGN KEY(sp_id) REFERENCES party(id),"
+            					+"FOREIGN KEY(route_id) REFERENCES route(id),FOREIGN KEY(notify_party_id) REFERENCES contact(id));");
             stmt.close();
             // conn.commit();
             conn.close();

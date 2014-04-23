@@ -62,12 +62,12 @@ $(document).ready(function() {
         $("#btn").click(function(){
         	var contractId = $("#contractId").val();
         	
-        	if(contractId != ""){
+        	//if(contractId != ""){
         		$("#routeItemFormDiv").show();
-        	}else{
+        	/*}else{
         		alert("请先添加合同！");
         		
-        	}
+        	}*/
         });
         $("#cancel").click(function(){
         	$("#routeItemFormDiv").hide();
