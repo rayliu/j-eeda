@@ -1,4 +1,4 @@
-﻿package config;
+package config;
 
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
@@ -12,7 +12,6 @@ import models.Privilege;
 import models.Product;
 import models.Role;
 import models.Toll;
-import models.Product;
 import models.TransferOrder;
 import models.TransferOrderItem;
 import models.UserLogin;
@@ -54,7 +53,7 @@ public class EedaConfig extends JFinalConfig {
     private static String ProdMysql = "ProdMysql";
     /**
      * 
-     * 供Shiro插件使用 。
+     * 供Shiro插件使用。
      */
     Routes routes;
 
