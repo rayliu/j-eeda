@@ -115,6 +115,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/warehouse", controllers.yh.profile.WarehouseController.class, "/yh");
         me.add("/yh/orderStatus", controllers.yh.profile.OrderStatusController.class, "/yh");
         me.add("/yh/transferOrder", controllers.yh.order.TransferOrderController.class, "/yh");
+        me.add("/yh/delivery", controllers.yh.delivery.DeliveryController.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {

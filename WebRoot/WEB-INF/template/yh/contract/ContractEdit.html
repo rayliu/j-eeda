@@ -164,10 +164,9 @@
                 			</div>
                 			
                         	<div class="panel-heading">
-                        		<!-- <div id="routeItemFormDiv" style="display:none"> -->
-                        		<div id="routeItemFormDiv" >
+                        		<div id="routeItemFormDiv" style="display:none">
 									<form id="routeItemForm" action="" method="post">
-                                        <input id="routeContractId" name="contractId" type="text" value="${ul.id!''}">
+                                        <input id="routeContractId" name="routeContractId" type="hidden" value="${ul.id!''}">
                              	 		<input id="routeItemId" name="routeItemId" type="hidden">
                                         <input id="routeId" name="routeId" type="hidden" value="">
                                         <!-- 根据 始发地 和 目的地 找到 干线id-->

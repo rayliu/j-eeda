@@ -60,14 +60,12 @@ $(document).ready(function() {
 	
         //点击button显示添加合同干线div
         $("#btn").click(function(){
-        	var contractId = $("#contractId").val();
-        	
-        	//if(contractId != ""){
+        	var contractId = $("#routeContractId").val();
+        	if(contractId != ""){
         		$("#routeItemFormDiv").show();
-        	/*}else{
+        	}else{
         		alert("请先添加合同！");
-        		
-        	}*/
+        	}
         });
         $("#cancel").click(function(){
         	$("#routeItemFormDiv").hide();
@@ -163,7 +161,7 @@ $(document).ready(function() {
 	            $.post('/yh/customerContract/save', $("#customerForm").serialize(), function(contractId){
 	                    
 	                    if(contractId>0){
-	                        //alert("保存合同成功！");
+	                        alert("添加合同成功！");
 	                    	$("#style").show();
 	                    	//已经有一个重复的contractId 在前面了
 	                    	$('#routeContractId').val(contractId);
