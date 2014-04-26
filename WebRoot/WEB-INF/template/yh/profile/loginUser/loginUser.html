@@ -71,7 +71,7 @@ $(document).ready(function() {
 	                "mDataProp": null, 
 	                "sWidth": "15%",
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-info' href='/yh/loginUser/edit/"+obj.aData.ID+"'>"+
+	                    return "<a class='btn btn-info editbutton' href='/yh/loginUser/edit/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-edit'> </i> "+
 	                                "编辑"+
 	                            "</a>"+
@@ -83,6 +83,12 @@ $(document).ready(function() {
 	            } 
 	            ]
 	} );
+	 
+	 $("#example").on('click', '.editbutton', function(){
+		    console.log(this);
+		   alert(123);
+		    
+		  });
 		
 
 });

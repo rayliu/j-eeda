@@ -214,7 +214,7 @@ public class ContractController extends Controller {
         // 获取总条数
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
-        sql = "select count(1) total from route r, contract_item c where c.route_id=r.idand c.contract_id = ?";
+        sql = "select count(1) total from route r, contract_item c where c.route_id=r.id and c.contract_id = "+contractId+"";
         }
         System.out.println(sql);
         Record rec = Db.findFirst(sql + totalWhere);

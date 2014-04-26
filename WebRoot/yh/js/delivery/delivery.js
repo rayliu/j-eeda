@@ -13,6 +13,15 @@ $(document).ready(function() {
 		      sp.append("<div class='radio'><label><input type='radio' name='customer_id' id='newCustomer' value='' checked=''>以上选项没有我需要的, 创建新客户</label></div>");
 		    },'json');
 		  
+		  var tab =$("#tab");
+		  tab.empty();
+		  $.get('/yh/delivery/selectSp',{},function(data){
+		      for(var i = 0; i < data.length; i++)
+		      {
+		        tab.append("<tr><td>"+data[i].ID+"</td><td>"+data[i].COMPANY_NAME+"</td><td>"+data[i].CONTACT_PERSON+"</td><td>"+data[i].ADDRESS+"</td><td>"+data[i].PHONE+"</td></tr>");        
+		      }
+		    },'json');
+		  
 		  //单击选中单选按钮,触发事件,控制form的显示与隐藏
 		  $("#customers").on('click', 'input', function(){
 		    console.log(this);
