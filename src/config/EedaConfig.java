@@ -1,4 +1,4 @@
-﻿package config;
+package config; 
 
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
