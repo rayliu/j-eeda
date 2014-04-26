@@ -11,7 +11,6 @@
       </div>
       <%}%>
       <h1 class="page-header">创建新运输单</h1>
-      
     </div>
     <!-- /.col-lg-12 -->
   </div>
@@ -30,6 +29,7 @@
             </div>
           </div>
         </div>
+        
           <div class="panel-heading">
             <div id="customerFormDiv" style="display:none">
               <form id="customerForm" action="" method="post">
@@ -51,6 +51,37 @@
             </div>
           </div>
         
+        <div class="panel-body">
+            <div class="col-lg-8">
+              <div class="form-group">
+                <label >请选择供应商</label>
+                <div id="serviceProviders">
+                </div>
+            </div>
+          </div>
+        </div>
+        
+          <div class="panel-heading">
+            <div id="serviceProviderFormDiv" style="display:none">
+              <form id="serviceProviderForm" action="" method="post">
+                <label>公司名称(必填)</label>
+                <input id="company_name" name="company_name" type="text">
+                <label>联系人(必填)</label>
+                <input id="contact_person" type="text" name="contact_person">
+                <label>联系地址</label>
+                <input id="address" type="text" name="address">
+                <label>联系人电话</label>
+                <input id="disabledInput" type="text" name="phone">
+                <label>email</label>
+                <input id="email" type="text" name="email">
+                <label>邮政编码</label>
+                <input id="postal_code" type="text" name="postal_code">
+                <a id="saveServiceProviderBtn" class="btn btn-default" href="#">保存</a>
+                <button class="btn btn-default" id="cancel">取消</button>
+              </form>
+            </div>
+          </div>
+          
           <div class="panel-body">
             <div class="col-lg-8">
               <div class="form-group">
@@ -78,67 +109,78 @@
               <input id="postal_code" type="text" name="postal_code">
               <label>收货预约时间</label>
               <input id="eta" type="text" name="eta">
-              <a id="saveCustomerBtn" class="btn btn-default" href="#">保存</a>
+              <a id="saveContactBtn" class="btn btn-default" href="#">保存</a>
               <button class="btn btn-default" id="cancel">取消</button>
             </form>
           </div>
         </div>
-        
-          <div class="panel-heading">
-            <div id="radioFormDiv">
-              <form id="radioForm" action="" method="post">
-              <label>货品属性</label>
-                <div>
-                <input id="cargo_nature_atm" name="cargo_nature" type="radio" value="cargo_nature_atm">ATM
-                <input name="cargo_nature" type="radio" value="cargo_nature_common">普通货品
-                <input name="cargo_nature" type="radio" value="cargo_nature_damaged">损坏货品
-              </div>
-                <div>
-                <input name="pickup_mode" type="radio" value="pickup_mode_service_provider">干线供应商自提
-                <input name="pickup_mode" type="radio" value="pickup_mode_company">公司自提
-                <input name="pickup_mode" type="radio" value="pickup_mode_outsourcer_service_provider">外包供应商提货
-              </div>
-                <div>
-                <input name="arrival_mode" type="radio" value="arrival_mode_direct">货品直送
-                <input name="arrival_mode" type="radio" value="arrival_mode_transit_warehouse">入中转仓
-              </div>
-              <a id="saveRadioBtn" class="btn btn-default" href="#">保存</a>
-              <button class="btn btn-default" id="cancel">取消</button>
-            </form>
-          </div>
-        </div>
-        
-          <div class="panel-heading">
-            <div><h4>货品明细 <a id="" class="btn btn-primary" href="#">新增</a></h4></div>
-          </div>  
-          
         
         <div class="panel-body">
           <div class="well">
               <div id="itemFormDiv">
-                <form id="itemForm" action="" method="post">
-                  <label id="label_item_no" style="display:none">ATM序列号</label>
-                  <input id="item_no" type="text" name="item_no" style="display:none">
-                  <label>货品名称</label>
-                  <input id="item_name" type="text" name="item_name">
-                  <label>货品描述</label>
-                  <input id="item_desc" type="text" name="item_desc">
-                  <label>数量</label>
-                  <input id="amount" type="text" name="amount" class="input-mini">
-                  <label>单位</label>
-                  <input id="unit" type="text" name="unit" class="input-mini">
-                  <label>体积</label>
-                  <input id="volume" type="text" name="volume" class="input-mini">
-                  <label>重量</label>
-                  <input id="weight" type="text" name="weight" class="input-mini">
-                  <label>备注</label>
-                  <input id="remark" type="text" name="remark">
-                  <a id="saveItemBtn" class="btn btn-default" href="#">保存</a>
-                  <button class="btn btn-default" id="cancel">取消</button>
+                <form id="itemForm" action="/yh/transferOrder/saveItem" method="post">
+                  <input id="customer_id" type="hidden" name="customer_id" />
+                  <input id="sp_id" type="hidden" name="sp_id" />
+                  <input id="notify_party_id" type="hidden" name="notify_party_id" />
+	              <label>货品属性</label>
+	                <div id="cargo_nature">
+	                <label class="radio-inline">
+	                	<input id="cargo_nature_atm" name="cargo_nature" type="radio" value="ATM">ATM
+	                </label>
+	                <label class="radio-inline">    
+	                	<input name="cargo_nature" type="radio" value="普通货品">普通货品
+	                </label>
+	                <label class="radio-inline">
+	                	<input name="cargo_nature" type="radio" value="损坏货品">损坏货品
+	                </label>
+	              </div>
+	              <label>提货方式</label>
+	              <div>
+	                <label class="radio-inline">
+	                	<input name="pickup_mode" type="radio" value="干线供应商自提">干线供应商自提
+	                </label>
+	                <label class="radio-inline">
+	                	<input name="pickup_mode" type="radio" value="公司自提">公司自提
+	                </label>
+	                <label class="radio-inline">
+	                	<input name="pickup_mode" type="radio" value="外包供应商提货">外包供应商提货
+	                </label>
+	              </div>
+	              <label>到达方式</label>
+	              <div>
+	                <label class="radio-inline">
+	                	<input name="arrival_mode" type="radio" value="货品直送">货品直送
+	                </label>
+	                <label class="radio-inline">
+	                	<input name="arrival_mode" type="radio" value="入中转仓">入中转仓
+	                </label>
+	              </div>
+
+				  <label>货品明细 <a id="newOrderItem" class="btn btn-primary" href="#">新增</a></label>
+				  <div id="orderItem" style="display:none">
+	                  <label>货品名称</label>
+	                  <input id="item_name" type="text" name="item_name">
+	                  <label>货品描述</label>
+	                  <input id="item_desc" type="text" name="item_desc">
+	                  <label>数量</label>
+	                  <input id="amount" type="text" name="amount" class="input-mini">
+	                  <label>单位</label>
+	                  <input id="unit" type="text" name="unit" class="input-mini">
+	                  <label>体积</label>
+	                  <input id="volume" type="text" name="volume" class="input-mini">
+	                  <label>重量</label>
+	                  <input id="weight" type="text" name="weight" class="input-mini">
+	                  <label>备注</label>
+	                  <input id="remark" type="text" name="remark">
+	                  <!-- <a id="saveItemBtn" class="btn btn-default" href="#">保存</a> -->
+	                  <input type="submit" value="保存" class="btn btn-default"/>
+	                  <button class="btn btn-default" id="cancel">取消</button>
+                  </div>    
                 </form>
             </div>
           </div>
           <!-- /.well -->
+     
           <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover" id="eeda-table">
                                     <thead>
@@ -577,75 +619,153 @@
 <script src="/eeda/js/jvalidate.messages_cn.js"></script>
 <script>
 $(document).ready(function() {
-    $('#eeda-table').dataTable();
-  // 动态显示客户(单选按钮)
-  var customer =$("#customers");
-  customer.empty();
-  $.get('/yh/transferOrder/selectCustomer',{},function(data){
-      for(var i = 0; i < data.length; i++)
-      {
-        customer.append("<div class='radio'><label><input type='radio' name='customer_id' id='"+data[i].ID+"' value='"+data[i].ID+"' checked=''>"+data[i].ID+" - "+data[i].COMPANY_NAME+" - "+data[i].CONTACT_PERSON+" - "+data[i].ADDRESS+" - "+data[i].MOBILE+" / "+data[i].PHONE +"</label></div>");        
-      }
-      customer.append("<div class='radio'><label><input type='radio' name='customer_id' id='selectNewCustomer' value='' checked=''>以上选项没有我需要的, 选择新客户:<input id='company_name' name='company_name' type='text'></label></div>");
-      customer.append("<div class='radio'><label><input type='radio' name='customer_id' id='newCustomer' value='' checked=''>以上选项没有我需要的, 创建新客户</label></div>");
-    },'json');
+	$('#eeda-table').dataTable();
+	// 动态显示客户(单选按钮)
+	var customer =$("#customers");
+	customer.empty();
+	$.get('/yh/transferOrder/selectCustomer',{},function(data){
+	    for(var i = 0; i < data.length; i++)
+	    {
+	      customer.append("<div class='radio'><label><input type='radio' name='customer_id' id='"+data[i].ID+"' value='"+data[i].ID+"' checked=''>"+data[i].ID+" - "+data[i].COMPANY_NAME+" - "+data[i].CONTACT_PERSON+" - "+data[i].ADDRESS+" - "+data[i].MOBILE+" / "+data[i].PHONE +"</label></div>");        
+	    }
+	    customer.append("<div class='radio'><label><input type='radio' name='customer_id' id='selectNewCustomer' value='' checked=''>以上选项没有我需要的, 选择新客户:<input id='company_name' name='company_name' type='text'></label></div>");
+	    customer.append("<div class='radio'><label><input type='radio' name='customer_id' id='newCustomer' value='' checked=''>以上选项没有我需要的, 创建新客户</label></div>");
+	  },'json');
+	
+	//单击选中单选按钮,触发事件,控制form的显示与隐藏
+	$("#customers").on('click', 'input', function(){
+	  console.log(this);
+	  var inputId  = $(this).attr('id');
+	  
+	  if(inputId=='newCustomer'){
+	      $("#customerFormDiv").show();
+	  }else{
+		  $.get('/yh/transferOrder/saveCustomer','customer_id='+inputId, function(customer_id){
+				if(customer_id>0){
+				  	//dataTable.fnDraw();
+				  	$("#customer_id").val(customer_id);
+				}else{
+					alert('数据保存失败。');
+				}
+			},'json');
+	      $("#customerFormDiv").hide();
+	  }	  
+	});
   
-  //单击选中单选按钮,触发事件,控制form的显示与隐藏
-  $("#customers").on('click', 'input', function(){
-    console.log(this);
-    var inputId  = $(this).attr('id');
-    
-    if(inputId=='newCustomer'){
-        $("#customerFormDiv").show();
-    }else{
-        $("#customerFormDiv").hide();
-    }
-    
-  });
+  	//点击保存的事件，保存客户信息
+	//customerForm 不需要提交	
+ 	$("#saveCustomerBtn").click(function(e){
+	//阻止a 的默认响应行为，不需要跳转
+	e.preventDefault();
+	//异步向后台提交数据
+	$.post('/yh/transferOrder/saveCustomer', $("#customerForm").serialize(), function(customer_id){
+		if(customer_id>0){
+		  	$("#customer_id").val(customer_id);
+		}else{
+			alert('数据保存失败。');
+		}
+	},'json');
+	});   	
   
-  //点击保存的事件，保存客户信息
-//customerForm 不需要提交
-$("#saveCustomerBtn").click(function(e){
-//阻止a 的默认响应行为，不需要跳转
-e.preventDefault();
-//异步向后台提交数据
-$.post('/yh/transferOrder/saveCustomer', $("#customerForm").serialize(), function(data){
-//保存成功后，刷新列表
-console.log(data);
-if(data.success){
-  dataTable.fnDraw();
-}else{
-alert('数据保存失败。');
-}
-},'json');
-});
+	// 动态显示客户(单选按钮)
+	var serviceProvider =$("#serviceProviders");
+	serviceProvider.empty();
+	$.get('/yh/transferOrder/selectServiceProvider',{},function(data){
+	    for(var i = 0; i < data.length; i++)
+	    {
+	    	serviceProvider.append("<div class='radio'><label><input type='radio' name='sp_id' id='"+data[i].ID+"' value='"+data[i].ID+"' checked=''>"+data[i].ID+" - "+data[i].COMPANY_NAME+" - "+data[i].CONTACT_PERSON+" - "+data[i].ADDRESS+" - "+data[i].MOBILE+" / "+data[i].PHONE +"</label></div>");        
+	    }
+	    serviceProvider.append("<div class='radio'><label><input type='radio' name='sp_id' id='selectNewServiceProvider' value='' checked=''>以上选项没有我需要的, 选择新供应商:<input id='company_name' name='company_name' type='text'></label></div>");
+	    serviceProvider.append("<div class='radio'><label><input type='radio' name='sp_id' id='newServiceProvider' value='' checked=''>以上选项没有我需要的, 创建新供应商</label></div>");
+	  },'json');
+
+	//单击选中单选按钮,触发事件,控制form的显示与隐藏
+	$("#serviceProviders").on('click', 'input', function(){
+	  console.log(this);
+	  var inputId  = $(this).attr('id');
+	  
+	  if(inputId=='newServiceProvider'){
+	      $("#serviceProviderFormDiv").show();
+	  }else{
+		  $.get('/yh/transferOrder/saveServiceProvider','sp_id='+inputId, function(sp_id){
+				if(sp_id>0){
+				  	//dataTable.fnDraw();
+				  	$("#sp_id").val(sp_id);
+				}else{
+					alert('数据保存失败。');
+				}
+			},'json');
+	      $("#serviceProviderFormDiv").hide();
+	  }	  
+	});
+  
+  	//点击保存的事件，保存供应商信息
+	//serviceProviderForm 不需要提交	
+ 	$("#saveServiceProviderBtn").click(function(e){
+	//阻止a 的默认响应行为，不需要跳转
+	e.preventDefault();
+	//异步向后台提交数据
+	$.post('/yh/transferOrder/saveServiceProvider', $("#serviceProviderForm").serialize(), function(sp_id){
+		if(sp_id>0){
+		  	//dataTable.fnDraw();
+		  	$("#sp_id").val(sp_id);
+		}else{
+			alert('数据保存失败。');
+		}
+	},'json');
+	});   	
+  
   // 动态显示联系人(单选按钮)
-  var contact =$("#contacts");
-  contact.empty();
-  $.get('/yh/transferOrder/selectContact',{},function(data){
-      for(var i = 0; i < data.length; i++)
-      {
-        contact.append("<input id='"+data[i].ID+"' type='radio' name='customer_id' />"+data[i].ID+" - "+data[i].COMPANY_NAME+" - "+data[i].CONTACT_PERSON+" - "+data[i].ADDRESS+" - "+data[i].MOBILE+" / "+data[i].PHONE +"</br>");
-      }
-      contact.append("<input id='newCustomer' type='radio' name='customer_id' />"+"使用新地址");
-    },'json');
-  
+	var contact =$("#contacts");
+	contact.empty();
+	$.get('/yh/transferOrder/selectContact',{},function(data){
+	 	for(var i = 0; i < data.length; i++)
+		{
+	 		contact.append("<div class='radio'><label><input type='radio' name='contact_id' id='"+data[i].ID+"' value='"+data[i].ID+"' checked=''>"+data[i].ID+" - "+data[i].COMPANY_NAME+" - "+data[i].CONTACT_PERSON+" - "+data[i].ADDRESS+" - "+data[i].MOBILE+" / "+data[i].PHONE +"</label></div>");        
+		}
+	 	contact.append("<div class='radio'><label><input type='radio' name='contact_id' id='selectNewContact' value='' checked=''>以上选项没有我需要的, 选择新联系人:<input id='company_name' name='company_name' type='text'></label></div>");
+	 	contact.append("<div class='radio'><label><input type='radio' name='contact_id' id='newContact' value='' checked=''>以上选项没有我需要的, 创建新联系人</label></div>");
+	  },'json'); 
+	
   // 单击选中单选按钮,触发事件,控制form的显示与隐藏
-  $("#contacts").click(function(){
-    var ins = $("#contacts input[id]");
-    for(var i=0;i<ins.length;i++){
-      if(i == ins.length-1){
-                $("#contactFormDiv").show();
-      }else{
-        $("#contactFormDiv").hide();
-      }
-    }
-  });
+  $("#contacts").on('click', 'input', function(){
+    var inputId  = $(this).attr('id');
+	  
+	  if(inputId=='newContact'){
+	      $("#contactFormDiv").show();
+	  }else{
+		  $.get('/yh/transferOrder/saveContact','notify_party_id='+inputId, function(notify_party_id){
+				if(notify_party_id>0){
+				  	//dataTable.fnDraw();
+				  	$("#notify_party_id").val(notify_party_id);
+				}else{
+					alert('数据保存失败。');
+				}
+			},'json');
+	      $("#contactFormDiv").hide();
+	  }	  
+  }); 
+
+	//点击保存的事件，保存收货人信息
+	//contactForm 不需要提交	
+	$("#saveContactBtn").click(function(e){
+	//阻止a 的默认响应行为，不需要跳转
+	e.preventDefault();
+	//异步向后台提交数据
+	$.post('/yh/transferOrder/saveContact', $("#contactForm").serialize(), function(notify_party_id){
+		if(notify_party_id>0){
+		  	//dataTable.fnDraw();
+		  	$("#notify_party_id").val(notify_party_id);
+		}else{
+			alert('数据保存失败。');
+		}
+	},'json');
+	});   	
   
-  // 当货品属性位ATM时,增加ATM的序列号
-  $("#cargo_nature_atm").click(function(){
-    $("#label_item_no").show()
-    $("#item_no").show()
-  });
+  	// 点击新建按钮,显示增加货品明细
+  	$("#newOrderItem").click(function(){
+  		$("#orderItem").show();
+  	});
+  
 })
 </script>

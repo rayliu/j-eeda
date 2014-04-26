@@ -1,4 +1,4 @@
-package config;
+﻿package config;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -65,14 +65,14 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment PRIMARY KEY,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
             
             // transfer_order 运输单
-            stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment PRIMARY KEY,order_no varchar(20),status varchar(20),"
-            					+"cargo_nature VARCHAR(32),pickup_mode VARCHAR(32),arrival_mode VARCHAR(32),remark varchar(255),create_by bigint,"
+            stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment PRIMARY KEY,order_no varchar(255),status varchar(255),"
+            					+"cargo_nature VARCHAR(255),pickup_mode VARCHAR(255),arrival_mode VARCHAR(255),remark varchar(255),create_by bigint,"
             					+"create_stamp TIMESTAMP,last_modified_by bigint,last_modified_stamp TIMESTAMP,eta TIMESTAMP,route_from varchar(255),route_to varchar(255),"
             					+"route_id bigint,customer_id bigint,sp_id bigint,notify_party_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id),FOREIGN KEY(sp_id) REFERENCES party(id),"
             					+"FOREIGN KEY(route_id) REFERENCES route(id),FOREIGN KEY(notify_party_id) REFERENCES contact(id));");
             // transfer_order_item 货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment PRIMARY KEY,item_no varchar(255),item_name varchar(255),item_desc varchar(255),"
-            				   +"amount int,unit varchar(20),volume varchar(255),weight varchar(255),remark varchar(5120),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
+            				   +"amount varchar(255),unit varchar(255),volume varchar(255),weight varchar(255),remark varchar(5120),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
             stmt.close();
             // conn.commit();
             conn.close();
@@ -294,6 +294,10 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'note', '工商注册');");
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'mobile', '1357038829');");
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
+            
+            // 运输单
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '3', '1', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '1', '订单已生成', '2014-04-26 16:33:35.1', '货品直送');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品 ', '4', '2', 'ca1edc18-f698-486b-82e3-86788859888c', '4', '公司自提', '2', '订单已生成', '2014-04-26 16:40:35.1', '入中转仓');");
 
             stmt.close();
             // conn.commit();
