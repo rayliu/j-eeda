@@ -122,11 +122,11 @@ $(document).ready(function() {
         	$('#post_code').val($(this).attr('post_code'));
         	$('#email').val($(this).attr('email'));
         	$('#partyid').val($(this).attr('partyId'));
-        	$('#label').html($(this).attr('contact_person'));
+        	/*$('#label').html($(this).attr('contact_person'));
         	$('#label2').html($(this).attr('phone'));
         	$('#label3').html($(this).attr('email'));
         	$('#label4').html($(this).attr('address'));
-        	$('#label5').html($(this).attr('post_code'));
+        	$('#label5').html($(this).attr('post_code'));*/
         	
         });
 		
