@@ -11,7 +11,7 @@ import models.yh.profile.Contact;
 
 import com.jfinal.plugin.c3p0.C3p0Plugin;
 
-public class DataInitUtil {
+public class DataInitUtil { 
     public static void initH2Tables(C3p0Plugin cp) {
         try {
             cp.start();
