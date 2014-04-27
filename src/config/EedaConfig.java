@@ -58,7 +58,7 @@ public class EedaConfig extends JFinalConfig {
     Routes routes;
 
     C3p0Plugin cp;
-    ActiveRecordPlugin arp;
+    ActiveRecordPlugin arp;  
 
     public void configConstant(Constants me) {
 
