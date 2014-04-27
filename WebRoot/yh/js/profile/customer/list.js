@@ -1,7 +1,7 @@
 
 
 $(document).ready(function() {
-	
+	$('#menu_profile').addClass('active').find('ul').addClass('in');
 
     var setTdTitle=function(nRow){
         $('td:eq(0)', nRow).attr('data-title','小区/大厦名称');

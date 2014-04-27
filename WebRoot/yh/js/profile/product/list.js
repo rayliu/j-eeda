@@ -1,6 +1,7 @@
 
 
 $(document).ready(function() {
+    $('#menu_profile').addClass('active').find('ul').addClass('in');
 	//datatable, 动态处理
     $('#eeda-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",

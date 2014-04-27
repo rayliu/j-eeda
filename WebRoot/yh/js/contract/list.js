@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	
+	$('#menu_contract').addClass('active').find('ul').addClass('in');
 	
     var type = $("#type").val();//注意这里
     var urlSource;
