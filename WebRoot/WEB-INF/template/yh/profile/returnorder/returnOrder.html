@@ -6,16 +6,7 @@
   
 
         <div id="page-wrapper">
-            <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">											
-                                               
-												<div id='companyList' tabindex="-1" class="pull-right dropdown-menu " style="top: 77%; left: 2%;">
-												
-												</div>
-                                            </div>                                     
-                                        </fieldset>
-                                    </div>
+           
                 <div class="col-lg-12">
                     <h1 class="page-header">回单</h1>
                    
@@ -31,7 +22,7 @@
                         </div> 
                        
                         <!-- 客户 -->
-                        <form action="">
+                      
                           <div class="panel-body" >
                            <div class="col-lg-12"> 
                             <div class="form-group" >
@@ -48,7 +39,7 @@
             <div class="col-lg-12"> 
          
               <div class="form-group" >
-
+         <form action="">
               <table class="table table-hover">
                                     <thead>
                                         <tr>
@@ -77,25 +68,27 @@
                                         </tr>                                      
                                     </tbody>
                                 </table>
+                                </form>
             			</div>
             			</div>
             			</div>
             			</div>
+            			
+            			
             			<div class="panel-heading">
             		 <div class="panel-body">
             		  <div><label>货品详细</label></div>
             <div class="col-lg-12">          
               <div class="form-group">
             
-            			<!--<form method="post" action="" id="radioForm">   -->
+            			<form method="post" action="" id="radioForm"> 
                 	<label  id="label_item_no">货品属性</label>
                    <input type="text" name="nature" id="nature" readonly="">
                   <label>提货方式</label>
                 	  <input type="text" name="pickup" id="pickup" readonly="">
                   <label>到达方式</label>
                    <input type="text" name="arrival" id="arrival" readonly="">                       
-            <!-- </form> -->           
-         <!--   <form method="post" action="" id="itemForm">--> 
+                              
                   <label style="display:none" id="label_item_no">ATM序列号</label>
                   <input type="text" style="display:none" name="item_no" id="item_no"><br/>
                   <label>货品名称</label>
@@ -112,7 +105,7 @@
                   <input type="text" class="input-mini" name="weight" id="weight" readonly="">
                   <label>备注</label>
                   <input type="text" name="remark" id="remark" readonly="">                
-                <!--  </form>--> 
+                </form>
                </div>
                 </div>
                  </div>
@@ -124,15 +117,15 @@
             <div class="col-lg-12">
                      
               <div class="form-group">
-               <!--<form method="post" action="" id="itemForm">    -->                           
+               <form method="post" action="" id="itemForm">                            
                   <label>始发地</label>
                  <input type="text" name="location_from" id="location_from" readonly="">
                   <label>目的地</label>
                  <input type="text" name="location_to" id="location_to" readonly="">                
                   <label>费用</label>
                   <input type="text" class="input-mini" name="amount" id="amount" readonly="">                        
-               <!-- </form> -->               
-               <!--  <form> -->      		
+               </form>             
+               <form>      		
                  <table class="table">
                                     <thead>
                                         <tr>                                       
@@ -157,14 +150,14 @@
                                         </tr>                                       
                                     </tbody>
                                 </table>            	
-                    	<!--</form>--> 
+                    	</form> 
                     	
                 </div>     	
                     </div>
                     </div> 
                     	  	
                     </div>
-   </form>  
+   
                     </div>
                 			</div>
                 			</div>
@@ -185,48 +178,41 @@
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>
     $(document).ready(function() {
-    	$.get('/yh/returnorder/checkorder', {}, function(data){
-    		var list =$("#companyList");
-    		//r.status_code,r.create_date,r.transaction_status,r.creator,
-    			for(var i = 0; i < data.length; i++)
-				{
-    				list.append("<a tabindex='-1' class='fromLocationItem' status_code='"+data[i].STATUS_CODE+"' create_date='"+data[i].CREATE_DATE+"' creator='"+data[i].CREATOR+"' transaction_status='"+data[i].TRANSACTION_STATUS+"' pay_company='"+data[i].PAY_COMPANY+"' pay_phone='"+data[i].PAY_PHONE+"' pay_contad='"+data[i].PAY_CONTAD+"' company_name='"+data[i].COMPANY_NAME+"' phone='"+data[i].PHONE+"' contad='"+data[i].CONTAD+"' nature='"+data[i].NATURE+"' pickup='"+data[i].PICKUP+"' arrival='"+data[i].ARRIVAL+"' item_name='"+data[i].ITEM_NAME+"' item_desc='"+data[i].ITEM_DESC+"' amoumt='"+data[i].AMOUMT+"' address='"+data[i].ADDRESS+"', unit='"+data[i].UNIT+"', volume='"+data[i].VOLUME+"', weight='"+data[i].WEIGHT+"', remark='"+data[i].REMARK+"', location_from='"+data[i].LOCATION_FROM+"', location_to='"+data[i].LOCATION_TO+"', amount='"+data[i].AMOUNT+"', amount2='"+data[i].AMOUNT+"' >点击这进行数据测试</a>");
+    	$.get('/yh/returnorder/checkorder', {}, function(data){   		
+				for(var i=0; i < data.length; i++){
+					$('#nature').val(data[i].NATURE);
+		        	$('#pickup').val(data[i].PICKUP);
+		        	$('#arrival').val(data[i].ARRIVAL);
+		        	$('#item_name').val(data[i].ITEM_NAME);
+		        	$('#item_desc').val(data[i].ITEM_DESC);
+		        	$('#amoumt').val(data[i].AMOUMT);
+		        	$('#address').val(data[i].ADDRESS);
+		        	$('#unit').val(data[i].UNIT);
+		        	$('#volume').val(data[i].VOLUME);
+		        	$('#weight').val(data[i].WEIGHT);
+		        	$('#remark').val(data[i].REMARK); 
+		        	$('#location_from').val(data[i].LOCATION_FROM);
+		        	$('#location_to').val(data[i].LOCATION_TO);
+		        	$('#amount').val(data[i].AMOUNT);
+		        	$('#amount2').html(data[i].AMOUNT);
+		        	$('#company_name').html(data[i].COMPANY_NAME);
+		        	$('#phone').html(data[i].PHONE);
+		        	$('#contad').html(data[i].CONTAD);
+		        	$('#pay_company').html(data[i].PAY_COMPANY);
+		        	$('#pay_phone').html(data[i].PAY_PHONE);
+		        	$('#pay_contad').html(data[i].PAY_CONTAD);
+		        	$('#status_code').html(data[i].STATUS_CODE);
+		        	$('#creator').html(data[i].CREATOR);
+		        	$('#create_date').html(data[i].CREATE_DATE);
+		        	$('#transaction_status').html(data[i].TRANSACTION_STATUS);
+					
 				}
-    			list.show();
+				
 			
 		},'json');
     	
     	
-    	$('#companyList').on('click','.fromLocationItem', function(e){
-
-        	$('#nature').val($(this).attr('nature'));
-        	$('#pickup').val($(this).attr('pickup'));
-        	$('#arrival').val($(this).attr('arrival'));
-        	$('#item_name').val($(this).attr('item_name'));
-        	$('#item_desc').val($(this).attr('item_desc'));
-        	$('#amoumt').val($(this).attr('amoumt'));
-        	$('#address').val($(this).attr('address'));
-        	$('#unit').val($(this).attr('unit'));
-        	$('#volume').val($(this).attr('volume'));
-        	$('#weight').val($(this).attr('weight'));
-        	$('#remark').val($(this).attr('remark')); 
-        	$('#location_from').val($(this).attr('location_from'));
-        	$('#location_to').val($(this).attr('location_to'));
-        	$('#amount').val($(this).attr('amount'));
-        	$('#amount2').html($(this).attr('amount2'));
-        	$('#company_name').html($(this).attr('company_name'));
-        	$('#phone').html($(this).attr('phone'));
-        	$('#contad').html($(this).attr('contad'));
-        	$('#pay_company').html($(this).attr('pay_company'));
-        	$('#pay_phone').html($(this).attr('pay_phone'));
-        	$('#pay_contad').html($(this).attr('pay_contad'));
-        	$('#status_code').html($(this).attr('status_code'));
-        	$('#creator').html($(this).attr('creator'));
-        	$('#create_date').html($(this).attr('create_date'));
-        	$('#transaction_status').html($(this).attr('transaction_status'));
-        	
-        	
-        });
+    	
       
    		
 

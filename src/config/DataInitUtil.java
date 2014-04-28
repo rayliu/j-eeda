@@ -366,8 +366,12 @@ public class DataInitUtil {
 			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品 ', '7', '4', 'ca1edc18-f698-486b-82e3-86788859888c', '4', '公司自提', '5', '订单已生成', '2014-04-26 16:40:35.1', '入中转仓');");
 			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品', '6', '5', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '4', '订单已生成', '2014-04-26 16:33:35.1', '入中转仓');");
 			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '7', '4', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '5', '订单已生成', '2014-04-26 16:33:35.1', '货品直送');");
-
-            //stmt.execute("insert into delivery_order()");
+			// 货品明细
+			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+					+ "values('123456', '冰箱', '这是一台冰箱','5','台','452','100kg','一台冰箱','1');");
+			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+					+ "values('54321', '音箱', '这是对音响','5','对','50','10kg','一对音响','2');");
+			// stmt.execute("insert into delivery_order()");
 			stmt.close();
 			// conn.commit();
 			conn.close();
