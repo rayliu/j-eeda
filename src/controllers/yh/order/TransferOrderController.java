@@ -11,7 +11,6 @@ import models.Party;
 import models.TransferOrder;
 import models.TransferOrderItem;
 import models.UserLogin;
-import models.eeda.OrderItem;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
@@ -61,10 +60,11 @@ public class TransferOrderController extends Controller {
 
     public void add() {
         setAttr("saveOK", false);
-        render("transferOrder/transferOrderEdit.html");
+        render("transferOrder/editTransferOrder.html");
+        // render("transferOrder/transferOrderEdit.html");
     }
 
-    public void edit() {
+    public void edit1() {
         long id = getParaToLong();
 
         Party party = Party.dao.findById(id);
@@ -74,6 +74,10 @@ public class TransferOrderController extends Controller {
         setAttr("contact", contact);
 
         render("transferOrder/transferOrderEdit.html");
+    }
+
+    public void edit() {
+        render("transferOrder/editTransferOrder.html");
     }
 
     public void delete() {
@@ -135,71 +139,71 @@ public class TransferOrderController extends Controller {
                 .find("select * from contact c  where id in (select contact_id from party where party_type='CUSTOMER' order by last_update_date desc limit 0,5)");
         renderJson(contactjson);
     }
-    
+
     // 客户列表,列出最近使用的5个供应商
     public void selectServiceProvider() {
-    	List<Contact> contactjson = Contact.dao
-    			.find("select * from contact c  where id in (select contact_id from party where party_type='SERVICE_PROVIDER' order by last_update_date desc limit 0,5)");
-    	renderJson(contactjson);
+        List<Contact> contactjson = Contact.dao
+                .find("select * from contact c  where id in (select contact_id from party where party_type='SERVICE_PROVIDER' order by last_update_date desc limit 0,5)");
+        renderJson(contactjson);
     }
 
     // 保存客户
     public void saveCustomer() {
-    	String customer_id = getPara("customer_id");
-    	Party party = null;
-    	if(customer_id != null && !customer_id.equals("")){
-    		party = Party.dao.findById(customer_id);    		
-    	}else{
-    		party = new Party();
-	        party.set("party_type", Party.PARTY_TYPE_CUSTOMER);
-	        Contact contact = new Contact();
-	        setContact(contact);
-	        contact.save();
-	        party.set("contact_id", contact.getLong("id"));
-	        party.set("create_date", new Date());
-	        party.set("creator", currentUser.getPrincipal());
-	        party.save();
-    	}
-    	renderJson(party.get("id"));
+        String customer_id = getPara("customer_id");
+        Party party = null;
+        if (customer_id != null && !customer_id.equals("")) {
+            party = Party.dao.findById(customer_id);
+        } else {
+            party = new Party();
+            party.set("party_type", Party.PARTY_TYPE_CUSTOMER);
+            Contact contact = new Contact();
+            setContact(contact);
+            contact.save();
+            party.set("contact_id", contact.getLong("id"));
+            party.set("create_date", new Date());
+            party.set("creator", currentUser.getPrincipal());
+            party.save();
+        }
+        renderJson(party.get("id"));
     }
-    
+
     // 保存供应商
     public void saveServiceProvider() {
-    	String sp_id = getPara("sp_id");
-    	Party party = null;
-    	if(sp_id != null && !sp_id.equals("")){
-    		party = Party.dao.findById(sp_id);    		
-    	}else{
-    		party = new Party();
-    		party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
-    		Contact contact = new Contact();
-    		setContact(contact);
-    		contact.save();
-    		party.set("contact_id", contact.getLong("id"));
-    		party.set("create_date", new Date());
-    		party.set("creator", currentUser.getPrincipal());
-    		party.save();
-    	}
-    	renderJson(party.get("id"));
+        String sp_id = getPara("sp_id");
+        Party party = null;
+        if (sp_id != null && !sp_id.equals("")) {
+            party = Party.dao.findById(sp_id);
+        } else {
+            party = new Party();
+            party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
+            Contact contact = new Contact();
+            setContact(contact);
+            contact.save();
+            party.set("contact_id", contact.getLong("id"));
+            party.set("create_date", new Date());
+            party.set("creator", currentUser.getPrincipal());
+            party.save();
+        }
+        renderJson(party.get("id"));
     }
-    
+
     // 保存联系人
     public void saveContact() {
-    	String notify_party_id = getPara("notify_party_id");
-    	Party party = null;
-    	if(notify_party_id != null && !notify_party_id.equals("")){
-    		party = Party.dao.findById(notify_party_id);    		
-    	}else{
-    		party = new Party();
-    		Contact contact = new Contact();
-    		setContact(contact);
-    		contact.save();
-    		party.set("contact_id", contact.getLong("id"));
-    		party.set("create_date", new Date());
-    		party.set("creator", currentUser.getPrincipal());
-    		party.save();
-    	}
-    	renderJson(party.get("id"));
+        String notify_party_id = getPara("notify_party_id");
+        Party party = null;
+        if (notify_party_id != null && !notify_party_id.equals("")) {
+            party = Party.dao.findById(notify_party_id);
+        } else {
+            party = new Party();
+            Contact contact = new Contact();
+            setContact(contact);
+            contact.save();
+            party.set("contact_id", contact.getLong("id"));
+            party.set("create_date", new Date());
+            party.set("creator", currentUser.getPrincipal());
+            party.save();
+        }
+        renderJson(party.get("id"));
     }
 
     // 收货人列表
@@ -212,36 +216,36 @@ public class TransferOrderController extends Controller {
     // 这些外键需在页面中传递,传的方式以及获取的方式未知?
     // 在新建页面不能直接显示,需重新进入才能显示刚添加的.
     // 保存货品属性的信息
-    public void saveItem(){
-    	TransferOrder transferOrder = new TransferOrder();
-    	transferOrder.set("customer_id", getPara("customer_id"));
-    	transferOrder.set("sp_id", getPara("sp_id"));
-    	transferOrder.set("notify_party_id", getPara("notify_party_id"));
-    	transferOrder.set("cargo_nature", getPara("cargo_nature"));
-    	transferOrder.set("pickup_mode", getPara("pickup_mode"));
-    	transferOrder.set("arrival_mode", getPara("arrival_mode"));   
-    	String name = (String) currentUser.getPrincipal();
-    	List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='"+name+"'");
-    	transferOrder.set("create_by", users.get(0).get("id"));   	
-    	transferOrder.set("create_stamp", new Date());
-    	transferOrder.set("order_no", UUID.randomUUID().toString());
-    	transferOrder.set("status", "订单已生成");
-    	saveOrderItem(transferOrder);
-    	transferOrder.save();
+    public void saveItem() {
+        TransferOrder transferOrder = new TransferOrder();
+        transferOrder.set("customer_id", getPara("customer_id"));
+        transferOrder.set("sp_id", getPara("sp_id"));
+        transferOrder.set("notify_party_id", getPara("notify_party_id"));
+        transferOrder.set("cargo_nature", getPara("cargo_nature"));
+        transferOrder.set("pickup_mode", getPara("pickup_mode"));
+        transferOrder.set("arrival_mode", getPara("arrival_mode"));
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        transferOrder.set("create_by", users.get(0).get("id"));
+        transferOrder.set("create_stamp", new Date());
+        transferOrder.set("order_no", UUID.randomUUID().toString());
+        transferOrder.set("status", "订单已生成");
+        saveOrderItem(transferOrder);
+        transferOrder.save();
         render("transferOrder/transferOrderList.html");
     }
-    
+
     // 保存订单项
-    public void saveOrderItem(TransferOrder transferOrder){
-    	TransferOrderItem orderItem = new TransferOrderItem();
-    	orderItem.set("item_name", getPara("item_name"));
-    	orderItem.set("item_desc", getPara("item_desc"));
-    	orderItem.set("amount", getPara("amount"));
-    	orderItem.set("unit", getPara("unit"));
-    	orderItem.set("volume", getPara("volume"));
-    	orderItem.set("weight", getPara("weight"));
-    	orderItem.set("remark", getPara("remark"));
-    	orderItem.set("order_id", transferOrder.get("id"));
-    	orderItem.save();
+    public void saveOrderItem(TransferOrder transferOrder) {
+        TransferOrderItem orderItem = new TransferOrderItem();
+        orderItem.set("item_name", getPara("item_name"));
+        orderItem.set("item_desc", getPara("item_desc"));
+        orderItem.set("amount", getPara("amount"));
+        orderItem.set("unit", getPara("unit"));
+        orderItem.set("volume", getPara("volume"));
+        orderItem.set("weight", getPara("weight"));
+        orderItem.set("remark", getPara("remark"));
+        orderItem.set("order_id", transferOrder.get("id"));
+        orderItem.save();
     }
 }
