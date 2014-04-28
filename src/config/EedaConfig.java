@@ -10,6 +10,7 @@ import models.Party;
 import models.PartyAttribute;
 import models.Privilege;
 import models.Product;
+import models.ReturnOrder;
 import models.Role;
 import models.Toll;
 import models.TransferOrder;
@@ -117,6 +118,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
         me.add("/yh/transferOrder", controllers.yh.order.TransferOrderController.class, "/yh");
         me.add("/yh/delivery", controllers.yh.delivery.DeliveryController.class, "/yh");
+        me.add("/yh/returnorder", controllers.yh.ReturnOrderControllers.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {
@@ -159,6 +161,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("contract", Contract.class);
         arp.addMapping("transfer_order", TransferOrder.class);
         arp.addMapping("transfer_order_item", TransferOrderItem.class);
+        arp.addMapping("return_order", ReturnOrder.class);
         // yh mapping
 
     }
