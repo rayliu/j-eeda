@@ -64,7 +64,7 @@ public class DataInitUtil {
 			// order_status 里程碑
 			stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment PRIMARY KEY,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
 			// return_order 回单
-			stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment PRIMARY KEY,status_code varchar(20),create_date TIMESTAMP,transaction_status varchar(20),order_type varchar(20),creator varchar(50),remark varchar(255),transfer_order_id bigint,notity_party_id bigint,customer_id bigint,route_id bigint);");
+			stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment PRIMARY KEY,status_code varchar(20),create_date TIMESTAMP,transaction_status varchar(20),order_type varchar(20),creator varchar(50),remark varchar(255),transfer_order_id bigint,distribution_order_id bigint,contract_id bigint,route_id bigint);");
 			// transfer_order 运输单
 			stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment PRIMARY KEY,order_no varchar(255),status varchar(255),"
 					+ "cargo_nature VARCHAR(255),pickup_mode VARCHAR(255),arrival_mode VARCHAR(255),remark varchar(255),create_by bigint,"
@@ -257,9 +257,12 @@ public class DataInitUtil {
 					+ "'SalesOrder001', 'SALES_ORDER', 'New', 'jason', CURRENT_TIMESTAMP(), '这是一个销售订单示例');");
 			stmt.executeUpdate("insert into order_item(order_id, item_name, item_desc, quantity, unit_price) values("
 					+ "1, 'P001', 'iPad Air', 1, 3200);");
-			// 回单notity_party_id bigint,customer_id
-			stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'完成','应收','张三','这是一张回单','1','1','1','1');");
-			stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'未完成','应付','张三','这是一张回单','2','2','2','2');");
+			// 回单return_order(id bigint auto_increment PRIMARY KEY,status_code
+			// varchar(20),create_date TIMESTAMP,order_type varchar(20),creator
+			// varchar(50),remark varchar(255),transfer_order_id
+			// bigint,distribution_order_id bigint,contract_id bigint)
+			stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,distribution_order_id,contract_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'完成','应收','张三','这是一张回单','1','1','1','1');");
+			stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,distribution_order_id,contract_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'未完成','应付','张三','这是一张回单','2','2','2','2');");
 			// 角色表
 
 			// stmt.executeUpdate("insert into role_table(role_name,role_time,role_people,role_lasttime,role_lastpeople) values('浠撶',CURRENT_TIMESTAMP(),'寮犱笁',CURRENT_TIMESTAMP(),'鏉庡洓');");
@@ -359,8 +362,8 @@ public class DataInitUtil {
 			stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
 
 			// 运输单
-			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '6', '1', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '2', '订单已生成', '2014-04-26 16:33:35.1', '货品直送');");
-			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品 ', '7', '2', 'ca1edc18-f698-486b-82e3-86788859888c', '4', '公司自提', '1', '订单已生成', '2014-04-26 16:40:35.1', '入中转仓');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '6', '5', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '4', '订单已生成', '2014-04-26 16:33:35.1', '货品直送');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品 ', '7', '4', 'ca1edc18-f698-486b-82e3-86788859888c', '4', '公司自提', '5', '订单已生成', '2014-04-26 16:40:35.1', '入中转仓');");
 			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品', '6', '5', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '4', '订单已生成', '2014-04-26 16:33:35.1', '入中转仓');");
 			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '7', '4', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '5', '订单已生成', '2014-04-26 16:33:35.1', '货品直送');");
 			// 货品明细
