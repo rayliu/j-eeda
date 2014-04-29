@@ -334,12 +334,16 @@
                                     <!-- /.panel-body -->
                                 </div>
                                 
-                                
-                                <button type="submit" class="btn btn-default">保存</button>
-                                
-                                <button type="submit" class="btn btn-default">发车确认</button>
-                                <button type="reset" class="btn btn-default">入仓确认</button> 
-                                <button type="submit" class="btn btn-default">回单签收</button>
+                                <div class=".tooltip-demo">
+                                    <button type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
+                                    <button type="button" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
+                                    <button type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
+                                    <button type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">回单签收</button>
+                                </div>
+                                <p>保存：新建时只能保存（其他按钮都灰掉不能点）, 保存后单据状态变为“新建”</p>
+                                <p>发车确认：新建后可以点击，点击后生成单据状态 “已发车”，之后生成应付条目（付费给供应商）</p>
+                                <p>入库确认：如果是直送不显示该按钮，发车后可以点击，点击后生成单据状态 “已入库”</p>
+                                <p>回单签收：如果是入中转仓不显示该按钮，发车后可以点击，点击后生成单据状态 “已签收”，之后生成应收条目（向客户收钱）</p>
                             </div>
                         </div>
                         <!-- /.panel-body -->
@@ -353,8 +357,18 @@
         <!-- /#page-wrapper -->
 
 <%}%>
+
+<script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
 <script type="text/javascript">
     $(document).ready(function() {
         $('#menu_transfer').addClass('active').find('ul').addClass('in');
+
+        
+        // tooltip demo
+        $('.tooltip-demo').tooltip({
+          selector: "[data-toggle=tooltip]",
+          container: "body"
+        });
     });
 </script>
