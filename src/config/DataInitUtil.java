@@ -1,4 +1,4 @@
-package config;
+﻿package config;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -70,7 +70,7 @@ public class DataInitUtil {
 					+ "cargo_nature VARCHAR(255),pickup_mode VARCHAR(255),arrival_mode VARCHAR(255),remark varchar(255),create_by bigint,"
 					+ "create_stamp TIMESTAMP,last_modified_by bigint,last_modified_stamp TIMESTAMP,eta TIMESTAMP,route_from varchar(255),route_to varchar(255),"
 					+ "route_id bigint,customer_id bigint,sp_id bigint,notify_party_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id),FOREIGN KEY(sp_id) REFERENCES party(id),"
-					+ "FOREIGN KEY(route_id) REFERENCES route(id),FOREIGN KEY(notify_party_id) REFERENCES contact(id));");
+					+ "FOREIGN KEY(route_id) REFERENCES route(id),FOREIGN KEY(notify_party_id) REFERENCES party(id));");
 			// transfer_order_item 货品明细
 			stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment PRIMARY KEY,item_no varchar(255),item_name varchar(255),item_desc varchar(255),"
 					+ "amount varchar(255),unit varchar(255),volume varchar(255),weight varchar(255),remark varchar(5120),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
@@ -359,10 +359,11 @@ public class DataInitUtil {
 			stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
 
 			// 运输单
-			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '6', '1', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '2', '订单已生成', '2014-04-26 16:33:35.1', '货品直送');");
-			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品 ', '7', '2', 'ca1edc18-f698-486b-82e3-86788859888c', '4', '公司自提', '1', '订单已生成', '2014-04-26 16:40:35.1', '入中转仓');");
-			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品', '6', '5', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '4', '订单已生成', '2014-04-26 16:33:35.1', '入中转仓');");
-			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '7', '4', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '5', '订单已生成', '2014-04-26 16:33:35.1', '货品直送');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '6', '5', '2014042600001', '3', '干线供应商自提', '4', '新建', '2014-04-26 16:33:35.1', '货品直送');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '6', '5', '2014042600002', '3', '干线供应商自提', '6', '新建', '2014-04-26 16:33:35.1', '货品直送');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品 ', '7', '4', '2014042600003', '4', '公司自提', '5', '新建', '2014-04-26 16:40:35.1', '入中转仓');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品', '6', '5', '2014042600004', '3', '干线供应商自提', '4', '新建', '2014-04-26 16:35:35.1', '入中转仓');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '7', '4', '2014042600005', '3', '干线供应商自提', '5', '新建', '2014-04-26 16:38:35.1', '货品直送');");
 			// 货品明细
 			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
 					+ "values('123456', '冰箱', '这是一台冰箱','5','台','452','100kg','一台冰箱','1');");
@@ -384,6 +385,10 @@ public class DataInitUtil {
 		contact.set("mobile", "12345671").set("phone", "113527229313")
 				.set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
 				.set("postal_code", "5190001").save();
+        Contact contact7 = new Contact();
+        contact7.set("company_name", "珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com");
+        contact7.set("mobile", "12345671").set("phone", "113527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场1").set("postal_code", "5190001")
+        .save();
 		Contact contact2 = new Contact();
 		contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生")
 				.set("email", "test@test.com");
@@ -421,10 +426,13 @@ public class DataInitUtil {
 		Party p4 = new Party();
 		Party p5 = new Party();
 		Party p6 = new Party();
+        Party p7 = new Party();
 		Date createDate = Calendar.getInstance().getTime();
 		p1.set("contact_id", contact.getLong("id"))
 				.set("party_type", "CUSTOMER").set("create_date", createDate)
 				.set("creator", "demo").save();
+				p7.set("contact_id", contact7.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
+				.save();
 		p2.set("contact_id", contact2.getLong("id"))
 				.set("party_type", "CUSTOMER").set("create_date", createDate)
 				.set("creator", "demo").save();
@@ -435,10 +443,10 @@ public class DataInitUtil {
 				.set("party_type", "SERVICE_PROVIDER")
 				.set("create_date", createDate).set("creator", "demo").save();
 		p5.set("contact_id", contact5.getLong("id"))
-				.set("party_type", "NOTIFY").set("create_date", createDate)
+				.set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
 				.set("creator", "demo").save();
 		p6.set("contact_id", contact6.getLong("id"))
-				.set("party_type", "NOTIFY").set("create_date", createDate)
+				.set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
 				.set("creator", "demo").save();
 
 	}

@@ -1,6 +1,8 @@
-package controllers.yh.order;
+﻿package controllers.yh.order;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +29,7 @@ public class TransferOrderController extends Controller {
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-        render("transferOrder/transferOrderList.html");
+        render("transferOrder/transferOrderList.html");  
     }
 
     public void list() {
@@ -60,6 +62,29 @@ public class TransferOrderController extends Controller {
 
     public void add() {
         setAttr("saveOK", false);
+        TransferOrder transferOrder = new TransferOrder();
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        transferOrder.set("create_by", users.get(0).get("id"));
+        
+        TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order order by order_no desc limit 0,1");
+        if(order != null){
+        	String num = order.get("order_no");
+        	String order_no = String.valueOf((Long.parseLong(num) + 1));
+        	transferOrder.set("order_no", order_no);
+        }else{
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	        String format = sdf.format(new Date());
+	        String order_no = format + "00001";
+	        transferOrder.set("order_no", order_no);
+        }
+        setAttr("transferOrder", transferOrder);
+        
+        UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+        setAttr("userLogin", userLogin);
+        
+    	transferOrder.set("status", "已发车");
+        transferOrder.save();
         render("transferOrder/editTransferOrder.html");
         // render("transferOrder/transferOrderEdit.html");
     }
@@ -103,11 +128,11 @@ public class TransferOrderController extends Controller {
             party.set("last_update_date", createDate).update();
 
             contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
-            setContact(contact);
+            //setContact(contact);
             contact.update();
         } else {
             contact = new Contact();
-            setContact(contact);
+            //setContact(contact);
             contact.save();
             party = new Party();
             party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
@@ -122,28 +147,17 @@ public class TransferOrderController extends Controller {
         render("transferOrder/transferOrderList.html");
     }
 
-    private void setContact(Contact contact) {
-        contact.set("company_name", getPara("company_name"));
-        contact.set("contact_person", getPara("contact_person"));
-        contact.set("email", getPara("email"));
-        contact.set("mobile", getPara("mobile"));
-        contact.set("phone", getPara("phone"));
-        contact.set("address", getPara("address"));
-        contact.set("city", getPara("city"));
-        contact.set("postal_code", getPara("postal_code"));
-    }
-
     // 客户列表,列出最近使用的5个客户
     public void selectCustomer() {
         List<Contact> contactjson = Contact.dao
-                .find("select * from contact c  where id in (select contact_id from party where party_type='CUSTOMER' order by last_update_date desc limit 0,5)");
+                .find("SELECT * FROM CONTACT WHERE ID IN(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT CUSTOMER_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC) LIMIT 0,5)");
         renderJson(contactjson);
     }
 
     // 客户列表,列出最近使用的5个供应商
     public void selectServiceProvider() {
         List<Contact> contactjson = Contact.dao
-                .find("select * from contact c  where id in (select contact_id from party where party_type='SERVICE_PROVIDER' order by last_update_date desc limit 0,5)");
+    			.find("SELECT * FROM CONTACT WHERE ID IN(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT SP_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC) LIMIT 0,5)");
         renderJson(contactjson);
     }
 
@@ -157,7 +171,7 @@ public class TransferOrderController extends Controller {
             party = new Party();
             party.set("party_type", Party.PARTY_TYPE_CUSTOMER);
             Contact contact = new Contact();
-            setContact(contact);
+            //setContact(contact);
             contact.save();
             party.set("contact_id", contact.getLong("id"));
             party.set("create_date", new Date());
@@ -177,26 +191,7 @@ public class TransferOrderController extends Controller {
             party = new Party();
             party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
             Contact contact = new Contact();
-            setContact(contact);
-            contact.save();
-            party.set("contact_id", contact.getLong("id"));
-            party.set("create_date", new Date());
-            party.set("creator", currentUser.getPrincipal());
-            party.save();
-        }
-        renderJson(party.get("id"));
-    }
-
-    // 保存联系人
-    public void saveContact() {
-        String notify_party_id = getPara("notify_party_id");
-        Party party = null;
-        if (notify_party_id != null && !notify_party_id.equals("")) {
-            party = Party.dao.findById(notify_party_id);
-        } else {
-            party = new Party();
-            Contact contact = new Contact();
-            setContact(contact);
+            //setContact(contact);
             contact.save();
             party.set("contact_id", contact.getLong("id"));
             party.set("create_date", new Date());
@@ -212,40 +207,85 @@ public class TransferOrderController extends Controller {
         renderJson(contacts);
     }
 
-    // TODO saveItem的同时对整个表单进行保存?如果是的话,那么运输单中需维护customer_id,sp_id,contact_id
-    // 这些外键需在页面中传递,传的方式以及获取的方式未知?
-    // 在新建页面不能直接显示,需重新进入才能显示刚添加的.
-    // 保存货品属性的信息
     public void saveItem() {
-        TransferOrder transferOrder = new TransferOrder();
-        transferOrder.set("customer_id", getPara("customer_id"));
-        transferOrder.set("sp_id", getPara("sp_id"));
-        transferOrder.set("notify_party_id", getPara("notify_party_id"));
-        transferOrder.set("cargo_nature", getPara("cargo_nature"));
-        transferOrder.set("pickup_mode", getPara("pickup_mode"));
-        transferOrder.set("arrival_mode", getPara("arrival_mode"));
-        String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        transferOrder.set("create_by", users.get(0).get("id"));
-        transferOrder.set("create_stamp", new Date());
-        transferOrder.set("order_no", UUID.randomUUID().toString());
-        transferOrder.set("status", "订单已生成");
-        saveOrderItem(transferOrder);
-        transferOrder.save();
+    	//saveOrderItem(transferOrder);
         render("transferOrder/transferOrderList.html");
     }
-
+    
     // 保存订单项
-    public void saveOrderItem(TransferOrder transferOrder) {
-        TransferOrderItem orderItem = new TransferOrderItem();
-        orderItem.set("item_name", getPara("item_name"));
-        orderItem.set("item_desc", getPara("item_desc"));
-        orderItem.set("amount", getPara("amount"));
-        orderItem.set("unit", getPara("unit"));
-        orderItem.set("volume", getPara("volume"));
-        orderItem.set("weight", getPara("weight"));
-        orderItem.set("remark", getPara("remark"));
-        orderItem.set("order_id", transferOrder.get("id"));
-        orderItem.save();
+    public void saveOrderItem(){
+    	TransferOrderItem orderItem = new TransferOrderItem();
+    	orderItem.set("item_name", getPara("item_name"));
+    	orderItem.set("item_desc", getPara("item_desc"));
+    	orderItem.set("amount", getPara("amount"));
+    	orderItem.set("unit", getPara("unit"));
+    	orderItem.set("volume", getPara("volume"));
+    	orderItem.set("weight", getPara("weight"));
+    	orderItem.set("remark", getPara("remark"));
+    	orderItem.set("order_id", getPara("order_id"));
+    	orderItem.save();
+    	// 当不需要返回值时
+    	renderJson("{\"success\":true}");
+    }
+    
+    // 保存运输单 
+    public void saveTransferOrder(){
+        TransferOrder transferOrder = TransferOrder.dao.findById(getPara("transferOrder_id"));
+        transferOrder.set("customer_id", getPara("customer_id"));
+        transferOrder.set("sp_id", getPara("sp_id"));
+        transferOrder.set("cargo_nature", getPara("cargoNature"));
+        transferOrder.set("pickup_mode", getPara("pickupMode"));
+        transferOrder.set("arrival_mode", getPara("arrivalMode"));
+        transferOrder.set("create_stamp", new Date());
+        
+        Party party = saveContact();
+        transferOrder.set("notify_party_id", party.get("id"));
+        transferOrder.update();
+    	renderJson(transferOrder.get("id"));
+    }
+
+    // 保存收货人
+    public Party saveContact() {
+        Party party = new Party();
+        Contact contact = setContact();
+        party.set("contact_id", contact.getLong("id"));
+        party.set("create_date", new Date());
+        party.set("creator", currentUser.getPrincipal());
+        party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
+        party.save();
+        return party;
+    }
+
+    // 保存联系人
+    private Contact setContact() {
+    	Contact contact = new Contact();
+        contact.set("company_name", getPara("notify_company_name"));
+        contact.set("contact_person", getPara("notify_contact_person"));
+        contact.set("phone", getPara("notify_phone"));
+        contact.set("address", getPara("notify_address"));
+        contact.save();
+        return contact;
+    }
+
+    // 查找客户
+    public void searchCustomer(){
+    	String input = getPara("input");
+    	List<Record> locationList = Collections.EMPTY_LIST;
+        if (input.trim().length() > 0) {
+            locationList = Db
+                    .find("select * from contact where id in(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT CUSTOMER_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC)) and (company_name like '%"+input+"%' or contact_person like '%"+input+"%' or email like '%"+input+"%' or mobile like '%"+input+"%' or phone like '%"+input+"%' or address like '%"+input+"%' or postal_code like '%"+input+"%') limit 0,10");
+        }
+    	renderJson(locationList);
+    }
+    
+    // 查找供应商
+    public void searchSp(){
+    	String input = getPara("input");
+    	List<Record> locationList = Collections.EMPTY_LIST;
+    	if (input.trim().length() > 0) {
+    		locationList = Db
+    				.find("select * from contact where id in(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT SP_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC)) and (company_name like '%"+input+"%' or contact_person like '%"+input+"%' or email like '%"+input+"%' or mobile like '%"+input+"%' or phone like '%"+input+"%' or address like '%"+input+"%' or postal_code like '%"+input+"%') limit 0,10");
+    	}
+    	renderJson(locationList);
     }
 }

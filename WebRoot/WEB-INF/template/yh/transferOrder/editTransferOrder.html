@@ -1,4 +1,4 @@
-<%layout("/yh/layout.html"){%>
+﻿<%layout("/yh/layout.html"){%>
 
         <div id="page-wrapper">
             <div class="row">
@@ -31,97 +31,98 @@
                                 <div class="tab-pane fade active in" id="basic">
                                 <div class="row">
                                 <div class="col-lg-6">
-                                    <form role="form">
+                                    <form role="form" id="transferOrderForm">
+                                    	<input type="text" name="transferOrder_id" value="${transferOrder.id}"/>
+                                    	<input id="customer_id" type="text" name="customer_id"/>
+                                    	<input id="sp_id" type="text" name="sp_id"/>
                                         <h2>客户信息</h2>
                                         <div class="form-group">
                                             <!--label>客户名称</label-->
-                                            <input class="form-control" placeholder="选择客户" value="中山市明基运输有限公司">
+                                            <input id="customerMessage" class="form-control" placeholder="选择客户" type="text" name="customerMessage" />
+                                            <ul id='customerList' tabindex="-1" style="top: 77%; left: 2%;">
+											</ul>
                                         </div>
-                                        <div class="form-group">                                            
-                                             <h5>王小二  1357836324</h5>  中山市中山港货运码头
+                                        <div class="form-group">     
+                                        	<h5 id="pageCustomerName"></h5><h5 id="pageCustomerAddress"></h5>     
                                         </div>
                                         
                                         <h2>供应商信息</h2>
                                         <div class="form-group">
                                             <!--label>供应商名称</label-->
-                                            <input class="form-control" placeholder="Enter text" value="中国外运广东有限公司江门分公司">
+                                            <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage" />
+                                            <ul id='spList' tabindex="-1" style="top: 77%; left: 2%;">
+											</ul>
                                         </div>
-                                        <div class="form-group">
-                                            <h5>linda  1357836324</h5>  江门蓬江区港口二路36号泰成大厦四楼
+                                        <div class="form-group">     
+                                        	<h5 id="pageSpName"></h5><h5 id="pageSpAddress"></h5>     
                                         </div>
                                         
                                         <h2>收货人信息</h2>
                                         <div class="form-group">
                                             <label>收货人公司名称</label>
-                                            <input class="form-control" placeholder="请输入公司名称">
+                                            <input name="notify_company_name" class="form-control" placeholder="请输入公司名称">
                                         </div>
                                         <div class="form-group">
                                             <label>收货地址</label>
-                                            <input class="form-control" placeholder="请输入收货地址">
+                                            <input name="notify_address" class="form-control" placeholder="请输入收货地址">
                                         </div>
                                         <div class="form-group">
                                             <label>联系人</label>
-                                            <input class="form-control" placeholder="请输入联系人">
+                                            <input name="notify_contact_person" class="form-control" placeholder="请输入联系人">
                                         </div>
                                         <div class="form-group">
                                             <label>电话</label>
-                                            <input class="form-control" placeholder="请输入电话">
-                                        </div>
-                                        
-                                        
-                                        
-                                    </form>
+                                            <input name="notify_phone" class="form-control" placeholder="请输入电话">
+                                        </div>  
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
                                 <div class="col-lg-6">
                                     <h2>运输信息</h2>
                                     <div class="form-group">
-                                        <label>运输单号</label> <strong>2014031000001</strong>
+                                        <label>运输单号</label> <strong>${transferOrder.order_no}</strong>
                                     </div>
                                     <div class="form-group">
-                                        <label>单据状态</label>   已发车
+                                        <label>单据状态</label>   ${transferOrder.status}
                                     </div>
                                     <div class="form-group">
-                                        <label>创建人</label>   Terry 
+                                        <label>创建人</label>   ${userLogin.user_name}
                                         
                                     </div>
                                     <div class="form-group">
                                         <label>货品属性</label>
                                         <label class="radio-inline">
-                                                <input type="radio" name="cargoNature" id="optionsRadiosInline1" value="option1" checked="">ATM
+                                                <input type="radio" name="cargoNature" id="optionsRadiosInline1" value="ATM">ATM
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="cargoNature" id="optionsRadiosInline2" value="option2">普通货品
+                                                <input type="radio" name="cargoNature" id="optionsRadiosInline2" value="普通货品">普通货品
                                             </label>
                                         <label class="radio-inline">
-                                                <input type="radio" name="cargoNature" id="optionsRadiosInline2" value="option2">损坏货品
+                                                <input type="radio" name="cargoNature" id="optionsRadiosInline2" value="损坏货品">损坏货品
                                             </label>
                                     </div>
                                     <div class="form-group">
                                         <label>提货方式</label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="pickupMode" id="optionsRadiosInline1" value="option1" checked="">干线供应商自提
+                                                <input type="radio" name="pickupMode" id="optionsRadiosInline1" value="干线供应商自提">干线供应商自提
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="pickupMode" id="optionsRadiosInline1" value="option1" checked="">外包供应商提货
+                                                <input type="radio" name="pickupMode" id="optionsRadiosInline1" value="外包供应商提货">外包供应商提货
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="pickupMode" id="optionsRadiosInline2" value="option2">源鸿自提
+                                                <input type="radio" name="pickupMode" id="optionsRadiosInline2" value="源鸿自提">源鸿自提
                                             </label>
-                                    </div>
-                                        
+                                    </div>                                        
                                        
-                                        <div class="form-group">
-                                            <label>到达方式</label>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="arrivalMode" id="optionsRadiosInline1" value="option1" checked="">货品直送
-                                            </label>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="arrivalMode" id="optionsRadiosInline2" value="option2">入中转仓
-                                            </label>
-                                            
-                                        </div>
-                                        
+                                    <div class="form-group">
+                                        <label>到达方式</label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="arrivalMode" id="optionsRadiosInline1" value="货品直送">货品直送
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="arrivalMode" id="optionsRadiosInline2" value="入中转仓">入中转仓
+                                        </label>                                            
+                                    </div> 
+                                    </form>                                        
                                        
                                     <h2>路线</h2>
                                     <form role="form">
@@ -335,7 +336,8 @@
                                 </div>
                                 
                                 <div class=".tooltip-demo">
-                                    <button type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
+                                	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
+                                    <button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
                                     <button type="button" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
                                     <button type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
                                     <button type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">回单签收</button>
@@ -361,14 +363,81 @@
 <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('#menu_transfer').addClass('active').find('ul').addClass('in');
-
-        
-        // tooltip demo
-        $('.tooltip-demo').tooltip({
-          selector: "[data-toggle=tooltip]",
-          container: "body"
-        });
-    });
+	$(document).ready(function() {        
+     // tooltip demo
+     $('.tooltip-demo').tooltip({
+       selector: "[data-toggle=tooltip]",
+       container: "body"
+     });
+		
+	//获取客户的list，选中信息在下方展示其他信息
+	$('#customerMessage').on('keyup', function(){
+		var inputStr = $('#customerMessage').val();
+		$.get('/yh/transferOrder/searchCustomer', {input:inputStr}, function(data){
+			console.log(data);
+			var customerList =$("#customerList");
+			customerList.empty();
+			for(var i = 0; i < data.length; i++)
+			{
+				customerList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+"</a></li>");
+			}
+		},'json');
+	});
+	
+	// 选中客户
+	$('#customerList').on('click', '.fromLocationItem', function(e){
+		$('#customerMessage').val($(this).text());
+		$('#customer_id').val($(this).attr('cid'));
+		var pageCustomerName = $("#pageCustomerName");
+		pageCustomerName.empty();
+		pageCustomerName.append($(this).attr('contact_person')+'&nbsp;');
+		pageCustomerName.append($(this).attr('phone')); 
+		var pageCustomerAddress = $("#pageCustomerAddress");
+		pageCustomerAddress.empty();
+		pageCustomerAddress.append($(this).attr('address'));
+    }); 
+	
+	//获取供应商的list，选中信息在下方展示其他信息
+	$('#spMessage').on('keyup', function(){
+		var inputStr = $('#spMessage').val();
+		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+			console.log(data);
+			var spList =$("#spList");
+			spList.empty();
+			for(var i = 0; i < data.length; i++)
+			{
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+"</a></li>");
+			}
+		},'json');
+	});
+	
+	// 选中供应商
+	$('#spList').on('click', '.fromLocationItem', function(e){
+		$('#spMessage').val($(this).text());
+		$('#sp_id').val($(this).attr('spid'));
+		var pageSpName = $("#pageSpName");
+		pageSpName.empty();
+		pageSpName.append($(this).attr('contact_person')+'&nbsp;');
+		pageSpName.append($(this).attr('phone')); 
+		var pageSpAddress = $("#pageSpAddress");
+		pageSpAddress.empty();
+		pageSpAddress.append($(this).attr('address'));
+    }); 
+	
+	//点击保存的事件，保存运输单信息
+	//transferOrderForm 不需要提交	
+ 	$("#saveTransferOrderBtn").click(function(e){
+		//阻止a 的默认响应行为，不需要跳转
+		e.preventDefault();
+		//异步向后台提交数据
+		$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transfer_order_id){
+			if(transfer_order_id>0){
+			  	alert("运输单保存成功!");
+			  	$("#style").show();
+			}else{
+				alert('数据保存失败。');
+			}
+		},'json');
+	});
+});
 </script>
