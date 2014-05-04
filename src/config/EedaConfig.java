@@ -1,4 +1,4 @@
-package config;
+﻿package config;
 
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
@@ -117,11 +117,16 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/warehouse", controllers.yh.profile.WarehouseController.class, "/yh");
         me.add("/yh/orderStatus", controllers.yh.profile.OrderStatusController.class, "/yh");
         me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
-        me.add("/yh/transferOrder", controllers.yh.order.TransferOrderController.class, "/yh");
-        me.add("/yh/delivery", controllers.yh.delivery.DeliveryController.class, "/yh");
+		me.add("/yh/transferOrder", controllers.yh.order.TransferOrderController.class, "/yh");
+        me.add("/yh/transferOrderItem", controllers.yh.order.TransferOrderItemController.class, "/yh");
         me.add("/yh/returnorder", controllers.yh.ReturnOrderControllers.class, "/yh");
         me.add("/yh/pickupOrder", controllers.yh.pickup.PickupOrderController.class, "/yh");
     }
+		me.add("/yh/delivery",
+				controllers.yh.delivery.DeliveryController.class, "/yh");
+		me.add("/yh/returnorder", controllers.yh.ReturnOrderControllers.class,
+				"/yh");
+	}
 
     public void configPlugin(Plugins me) {
         // 加载Shiro插件, for backend notation, not for UI

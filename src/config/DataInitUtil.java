@@ -1,4 +1,4 @@
-package config;
+﻿package config;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -73,7 +73,13 @@ public class DataInitUtil {
                     + "FOREIGN KEY(route_id) REFERENCES route(id),FOREIGN KEY(notify_party_id) REFERENCES party(id));");
             // transfer_order_item 货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment PRIMARY KEY,item_no varchar(255),item_name varchar(255),item_desc varchar(255),"
-                    + "amount varchar(255),unit varchar(255),volume varchar(255),weight varchar(255),remark varchar(5120),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
+					+ "amount double,unit varchar(255),volume double,weight double,remark varchar(5120),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
+			
+			// Transfer_Order_item_detail 单件货品明细
+            stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment PRIMARY KEY,order_id bigint,item_id bigint,item_no varchar(255),"
+            		+ "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,contact_id bigint,"
+            		+ "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),FOREIGN KEY(order_id) REFERENCES transfer_order(id),"
+            		+ "FOREIGN KEY(item_id) REFERENCES transfer_order_item(id),FOREIGN KEY(notify_party_id) REFERENCES party(id),FOREIGN KEY(contact_id) REFERENCES contact(id));");
             // Transfer_Order_fin_item 运输单应收应付明细
             stmt.executeUpdate("create table if not exists transfer_order_fin_item (id bigint auto_increment PRIMARY KEY, order_id bigint, fin_item_id bigint,"
                     + "fin_item_code varchar(20), amount double, status varchar(50), "
@@ -305,16 +311,16 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
 
             // 运输单
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id) values('ATM', '6', '1', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '2', '订单已生成', '2014-04-26 16:33:35.1', '货品直送','1');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id) values('普通货品 ', '7', '2', 'ca1edc18-f698-486b-82e3-86788859888c', '4', '公司自提', '1', '订单已生成', '2014-04-26 16:40:35.1', '入中转仓','2');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id) values('ATM', '6', '1', '2014042600003', '3', '干线供应商自提', '2', '订单已生成', '2014-04-26 16:33:35.1', '货品直送','1');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id) values('普通货品 ', '7', '2', '2014042600003', '4', '公司自提', '1', '订单已生成', '2014-04-26 16:40:35.1', '入中转仓','2');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品 ', '7', '4', '2014042600003', '4', '公司自提', '5', '新建', '2014-04-26 16:40:35.1', '入中转仓');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品', '6', '5', '2014042600004', '3', '干线供应商自提', '4', '新建', '2014-04-26 16:35:35.1', '入中转仓');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '7', '4', '2014042600005', '3', '干线供应商自提', '5', '新建', '2014-04-26 16:38:35.1', '货品直送');");
-            // 货品明细
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('123456', '冰箱', '这是一台冰箱','5','台','452','100kg','一台冰箱','1');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('54321', '音箱', '这是对音响','5','对','50','10kg','一对音响','2');");
+			// 货品明细
+			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+					+ "values('123456', '冰箱', '这是一台冰箱','5','台','452','100','一台冰箱','1');");
+			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+					+ "values('54321', '音箱', '这是对音响','5','对','50','10','一对音响','2');");
 			//配送单
 			stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600013','1','5','7','9','配送在途');");
 			stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600004','2','6','7','10','已签收');");
