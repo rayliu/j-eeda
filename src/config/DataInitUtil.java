@@ -315,7 +315,11 @@ public class DataInitUtil {
                     + "values('123456', '冰箱', '这是一台冰箱','5','台','452','100kg','一台冰箱','1');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('54321', '音箱', '这是对音响','5','对','50','10kg','一对音响','2');");
-            // stmt.execute("insert into delivery_order()");
+			//配送单
+			stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600013','1','5','7','9','配送在途');");
+			stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600004','2','6','7','10','已签收');");
+			stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600014','3','5','8','9','取消');");
+			stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600003','4','6','8','10','配送在途');");
             stmt.close();
             // conn.commit();
             conn.close();

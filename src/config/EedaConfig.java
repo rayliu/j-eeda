@@ -23,6 +23,7 @@ import models.eeda.Order;
 import models.eeda.OrderItem;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
+import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 import models.yh.profile.Route;
 
@@ -163,6 +164,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("transfer_order", TransferOrder.class);
         arp.addMapping("transfer_order_item", TransferOrderItem.class);
         arp.addMapping("return_order", ReturnOrder.class);
+        arp.addMapping("delivery_order", DeliveryOrder.class);
         // yh mapping
 
     }

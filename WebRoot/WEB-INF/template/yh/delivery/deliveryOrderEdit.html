@@ -18,59 +18,181 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="panel panel-default">
-          <div class="panel-heading">
-          	配送单基本信息
-        	</div>
-        <div class="panel-body">
-            <div class="col-lg-8">
-              <div class="form-group">
-                <label >客户</label>
-               <div id="customer"></div>
-               ${customer.id!''}
-            </div>
-          </div>
-        </div>
-         <div class="panel-heading"></div>
-        <div class="panel-body">
-            <div class="col-lg-8">
-              <div class="form-group">
-                <label >供应商</label>
-                <div id="sp">
-                </div>
-            </div>
-          </div>
-        </div>
-          <div class="panel-heading"> </div>
-        
           <div class="panel-body">
-            <div class="col-lg-8">
-              <div class="form-group">
-              <label>收货人</label>
-                <div id="contacts">
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="panel-heading"> </div>
-        <div class="panel-body">
-            <div class="col-lg-8">
-              <div class="form-group">
-              <label>货品明细</label>
-                <table id="tab" class="table table-hover">
-                	    
-                 </table>
-              </div>
-            </div>
-         </div>
-        
-        </div>
-         <div style="float:right">
-            	<button type="submit" class="btn btn-default" id="savedelivery">确认</button>
-                <a class="btn btn-default" href="/yh/delivery/add">取消</a>
+	            <!-- Nav tabs -->
+	            <ul class="nav nav-tabs">
+	                <li class="active"><a href="#basic" data-toggle="tab">基本信息</a>
+	                </li>
+	                <li class=""><a href="#cargos" data-toggle="tab">货品明细</a>
+	                </li>
+	                <li class=""><a href="#milestone" data-toggle="tab">运输里程碑</a>
+                     </li>
+	            </ul>
+	            <div class="tab-content">
+                                <div class="tab-pane fade active in" id="basic">
+                                <div class="row">
+                                <div class="col-lg-6">
+                                 
+                                    <h3> <label >客户信息</label></h3>
+					                      <div class="form-group">
+					                          <label>联系人：</label> ${customer.contact_person}
+					                      </div>
+					                      <div class="form-group">
+					                          <label>公司：</label> ${customer.company_name}
+					                      </div>
+					                      <div class="form-group">
+					                          <label>地址:</label> ${customer.address}
+					                      </div>
+					                      <div class="form-group">
+					                          <label>联系方式：</label> ${customer.phone}
+					                      </div>
+					                  <h2>供应商信息</h2>
+                                        <div class="form-group">
+                                            <label>供应商名称</label>
+                                          <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage" />
+                                            <ul id='spList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 35%; left: 2%;">
+											</ul>
+                                        </div>
+                                         <div class="form-group">     
+                                        	<h5 id="pageSpName"></h5><h5 id="pageSpAddress"></h5>     
+                                        </div>
+                                 </div>
+                                 <div class="col-lg-6">   
+                                        <h2>收货人信息</h2>
+                                        <div class="form-group">
+                                            <label>收货人公司名称</label>
+                                            <input name="notify_company_name" class="form-control" placeholder="请输入公司名称">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>收货地址</label>
+                                            <input name="notify_address" class="form-control" placeholder="请输入收货地址">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>联系人</label>
+                                            <input name="notify_contact_person" class="form-control" placeholder="请输入联系人">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>电话</label>
+                                            <input name="notify_phone" class="form-control" placeholder="请输入电话">
+                                        </div>  
+                                      </div>  
+					                
+                                <!-- /.col-lg-6 (nested) -->
+                                
+                                <!-- /.col-lg-6 (nested) -->
+                            </div>
+                  </div>
+                  <div class="tab-pane fade" id="cargos">
+               <div class="panel-body">                                                                            
+                   
+                   <div class="table-responsive">
+                       <table class="table table-striped table-bordered table-hover">
+                           <thead>
+                               <tr>
+                                   <th></th>
+                                   <th>型号</th>
+                                   <th>数量</th>
+                                   <th>单位</th>
+                                   <th>备注</th>
+                                   <th></th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                               <tr>
+                                   <td><a class="btn" href="#">查看序列号</a></td>
+                                   <td>Mark-001</td>
+                                   <td>20</td>
+                                   <td>台</td>
+                                   <td>通知仓库李生</td>
+                                   <td>
+                                       <button type="submit" class="btn btn-default">单品编辑</button>
+                                       <button type="submit" class="btn btn-default">编辑</button>
+                                       <button type="submit" class="btn btn-default">删除</button>
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td><a class="btn" href="#">查看序号列表</a></td>
+                                   <td>Good-002</td>
+                                   <td>5</td>
+                                   <td>台</td>
+                                   <td></td>
+                                   <td>
+                                       <button type="submit" class="btn btn-default">单品编辑</button>
+                                       <button type="submit" class="btn btn-default">编辑</button>
+                                       <button type="submit" class="btn btn-default">删除</button>
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td><a class="btn" href="#">查看序号列表</a></td>
+                                   <td><input class='form-control input-inline input-small' value='X-005'></td>
+                                   <td><input class='form-control input-inline input-small'value='5'></td>
+                                   <td><input class='form-control input-inline input-small'value='5'></td>
+                                   <td><input class='form-control input-inline'value=''></td>
+                                   <td>
+                                       <button type="submit" class="btn btn-default">单品编辑</button>
+                                       <button type="submit" class="btn btn-default">编辑</button>
+                                       <button type="submit" class="btn btn-default">删除</button>
+                                   </td>
+                               </tr>
+                           </tbody>
+                       </table>
+                   </div>
+                   <!-- /.table-responsive -->
+               </div>
+               <!-- /.panel-body -->
            </div>
-         
+            <div class="tab-pane fade" id="milestone">
+                                    <div class="panel-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>状态</th>
+                                                        <th>更新用户</th>
+                                                        <th>更新时间</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>新建单据</td>
+                                                        <td>Otto</td>
+                                                        <td>2014-03-07 13:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2</td>
+                                                        <td>已发车</td>
+                                                        <td>Jacob</td>
+                                                        <td>2014-03-08 23:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>3</td>
+                                                        <td>株洲</td>
+                                                        <td>Larry</td>
+                                                        <td>2014-03-09 9:00</td>
+                                                    </tr>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                    <!-- /.panel-body -->
+                                </div>
+           
+           		<div class=".tooltip-demo">
+                    <hr/>
+                	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
+                    <button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
+                    <button type="button" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
+                    <button type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
+                    <button type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">回单签收</button>
+                </div>
+	        </div>
+        </div>
       </div>
-      /
+      
     </div>
     
   </div> 

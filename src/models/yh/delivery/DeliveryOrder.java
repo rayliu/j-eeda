@@ -1,0 +1,1 @@
+package models.yh.delivery;import com.jfinal.plugin.activerecord.Model;public class DeliveryOrder extends Model<DeliveryOrder> {    public static final DeliveryOrder dao = new DeliveryOrder();}
