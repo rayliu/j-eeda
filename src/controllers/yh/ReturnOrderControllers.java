@@ -48,6 +48,7 @@ public class ReturnOrderControllers extends Controller {
 		renderJson(orderMap);
 	}
 
+	// 查看回单显示
 	public void checkorder() {
 		// status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,distribution_order_id,contract_id
 
@@ -81,6 +82,7 @@ public class ReturnOrderControllers extends Controller {
 						+ "(select  contact_person from  contact c where c.id in (select t.customer_id  from  transfer_order t  where t. id in (select transfer_order_id from return_order  where t.id='"
 						+ id
 						+ "')))pay_contad,"
+						+ "(select order_no  from transfer_order t where r.transfer_order_id=t.id)  order_no ,"
 						+ "(select cargo_nature  from transfer_order t where r.transfer_order_id=t.id)  nature ,"
 						+ "(select  pickup_mode from transfer_order t where r.transfer_order_id=t.id) pickup  ,"
 						+ "(select arrival_mode from transfer_order t where r.transfer_order_id=t.id) arrival  ,"
@@ -108,6 +110,7 @@ public class ReturnOrderControllers extends Controller {
 
 	}
 
+	// 点击查看
 	public void check() {
 		String user = currentUser.getPrincipal().toString();
 		String id = getPara();
@@ -116,6 +119,15 @@ public class ReturnOrderControllers extends Controller {
 		render("profile/returnorder/returnOrder.html");
 	}
 
+	public void save() {
+		int id = Integer.parseInt(getPara("locationName"));
+
+		ReturnOrder r = ReturnOrder.dao.findById(id);
+		r.set("transaction_status", "完成").update();
+
+	}
+
+	// 删除
 	public void delete() {
 		String id = getPara();
 		ReturnOrder re = new ReturnOrder();
