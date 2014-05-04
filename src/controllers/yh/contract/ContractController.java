@@ -148,14 +148,13 @@ public class ContractController extends Controller {
             c.set("type", getPara("type2"));
             Db.save("contract", c);
         }
-       
-      /*  Map orderMap = new HashMap();
-        orderMap.put("contractId",c.get("id"));
-        orderMap.put("success", true);
-        renderJson(orderMap);*/
+
+        /*
+         * Map orderMap = new HashMap(); orderMap.put("contractId",c.get("id"));
+         * orderMap.put("success", true); renderJson(orderMap);
+         */
         // 保存后，只需要把contractId 回传到页面上就可以了
         renderJson(c.get("id"));
-        
 
     }
 
@@ -203,9 +202,18 @@ public class ContractController extends Controller {
     // contract模块的对应的干线
     public void routeEdit() {
         String contractId = getPara("routId");
+        if (contractId.equals("")) {
+            Map orderMap = new HashMap();
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+            renderJson(orderMap);
+            return;
+        }
 
         String sLimit = "";
-        String sql ="";
+        String sql = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
@@ -214,8 +222,9 @@ public class ContractController extends Controller {
         // 获取总条数
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
-        sql = "select count(1) total from route r, contract_item c where c.route_id=r.id and c.contract_id = "+contractId+"";
+            sql = "select count(1) total from route r, contract_item c where c.route_id=r.id and c.contract_id = " + contractId + "";
         }
+
         System.out.println(sql);
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
