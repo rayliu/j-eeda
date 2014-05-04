@@ -25,12 +25,12 @@ public class DataInitUtil {
 			stmt.executeUpdate("create table if not exists location(id bigint auto_increment PRIMARY KEY, code VARCHAR(50) not null, name VARCHAR(50), pcode VARCHAR(255));");
 			stmt.executeUpdate("create table if not exists office(id bigint auto_increment PRIMARY KEY, office_code VARCHAR(50) not null, office_name VARCHAR(50), contact_id VARCHAR(255));");
 			stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment PRIMARY KEY, name VARCHAR(20) not null, type VARCHAR(50), currency VARCHAR(50),org_name VARCHAR(50),account_pin VARCHAR(50), remark VARCHAR(255));");
-			stmt.executeUpdate("create table if not exists contract(id bigint auto_increment PRIMARY KEY, name VARCHAR(50) not null, type VARCHAR(50), party_id bigint,Fin_item_id bigint,period_from Timestamp,period_to Timestamp, remark VARCHAR(255));");
+			stmt.executeUpdate("create table if not exists contract(id bigint auto_increment PRIMARY KEY, name VARCHAR(50) not null, type VARCHAR(50), party_id bigint,period_from Timestamp,period_to Timestamp, remark VARCHAR(255));");
 			stmt.executeUpdate("create table if not exists role_table(id bigint auto_increment PRIMARY KEY,role_name VARCHAR(50),role_time TIMESTAMP,role_people VARCHAR(50),role_lasttime TIMESTAMP,role_lastpeople VARCHAR(50));");
 			stmt.executeUpdate("create table if not exists Fin_item(id bigint auto_increment PRIMARY KEY,code VARCHAR(20),name VARCHAR(20),type VARCHAR(20),Remark VARCHAR(255));");
 			stmt.executeUpdate("create table if not exists privilege_table(id bigint auto_increment PRIMARY KEY,privilege VARCHAR(50));");
 
-			stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment PRIMARY KEY,contract_id bigint,route_id bigint, amount Double,remark VARCHAR(255));");
+			stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment PRIMARY KEY,contract_id bigint,route_id bigint,Fin_item_id bigint,amount Double,remark VARCHAR(255));");
 			stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment PRIMARY KEY,Order_no VARCHAR(50),Transfer_order_id VARCHAR(50), customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status VARCHAR(50),cargo_nature Varchar(20),from_warehouse_code Varchar(20),Remark Varchar(255),Create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp);");
 
 			stmt.executeUpdate("create table if not exists route(id bigint auto_increment PRIMARY KEY,from_id VARCHAR(50), location_from VARCHAR(50) not null,to_id VARCHAR(50), location_to VARCHAR(50) not null, remark VARCHAR(255));");
@@ -112,8 +112,8 @@ public class DataInitUtil {
 			stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李四','收费','人民币','建设银行','12123123123','穷人');");
 			stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('张三','付费','人民币','建设银行','12123123123','穷人');");
 
-			stmt.executeUpdate("insert into contract(name,type,party_id,Fin_item_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 4,1,'2014-11-12','2014-11-14','无');");
-			stmt.executeUpdate("insert into contract(name,type,party_id,Fin_item_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,2,'2014-10-12','2014-11-15','无');");
+			stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 4,'2014-11-12','2014-11-14','无');");
+			stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,'2014-10-12','2014-11-15','无');");
 			stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('供应商合同','SERVICE_PROVIDER', 6,'2011-1-12','2014-10-14','无');");
 			stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('供应商合同','SERVICE_PROVIDER', 7,'2013-11-12','2014-11-14','无');");
 
@@ -121,10 +121,10 @@ public class DataInitUtil {
 			stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','120000','天津','123123');");
 			stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('120000','天津','110000','北京','123123');");
 
-			stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('1','1','120000','路线');");
-			stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('2','2','130000','路线2');");
-			stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('1','3','120000','路线');");
-			stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('2','1','130000','路线2');");
+			stmt.executeUpdate("insert into contract_item(contract_id,route_id,Fin_item_id,amount,remark) values('1','1','1','120000','路线');");
+			stmt.executeUpdate("insert into contract_item(contract_id,route_id,Fin_item_id,amount,remark) values('2','2','2','130000','路线2');");
+			stmt.executeUpdate("insert into contract_item(contract_id,route_id,Fin_item_id,amount,remark) values('1','3','3','120000','路线');");
+			stmt.executeUpdate("insert into contract_item(contract_id,route_id,Fin_item_id,amount,remark) values('2','1','2','130000','路线2');");
 			stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('3','2','120000','路线');");
 			stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('4','3','130000','路线2');");
 			// 系统权限
