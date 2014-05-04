@@ -45,7 +45,7 @@ $(document).ready(function() {
 		//from表单验证
 		var validate = $('#customerForm').validate({
 	        rules: {
-	        	contract_name: {
+	          contract_name: {
 	            required: true
 	          },
 	          companyName:{//form 中 name为必填
@@ -155,14 +155,16 @@ $(document).ready(function() {
 		 
 		 //添加合同
 		$("#saveContract").click(function(e){
-	            //阻止a 的默认响应行为，不需要跳转
-			//validator.resetForm();
+	            //阻止a 的默认响应行为，不需要跳转			    
 	            e.preventDefault();
+	            //提交前，校验数据
+	            if(!$("#customerForm").valid())
+	            	return;
 	            //异步向后台提交数据
 	            $.post('/yh/customerContract/save', $("#customerForm").serialize(), function(contractId){
 	                    
 	                    if(contractId>0){
-	                        alert("添加合同成功！");
+	                        //alert("添加合同成功！");
 	                    	$("#style").show();
 	                    	//已经有一个重复的contractId 在前面了
 	                    	$('#routeContractId').val(contractId);
