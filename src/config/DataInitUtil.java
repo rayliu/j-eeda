@@ -25,9 +25,9 @@ public class DataInitUtil {
 			stmt.executeUpdate("create table if not exists location(id bigint auto_increment PRIMARY KEY, code VARCHAR(50) not null, name VARCHAR(50), pcode VARCHAR(255));");
 			stmt.executeUpdate("create table if not exists office(id bigint auto_increment PRIMARY KEY, office_code VARCHAR(50) not null, office_name VARCHAR(50), contact_id VARCHAR(255));");
 			stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment PRIMARY KEY, name VARCHAR(20) not null, type VARCHAR(50), currency VARCHAR(50),org_name VARCHAR(50),account_pin VARCHAR(50), remark VARCHAR(255));");
-			stmt.executeUpdate("create table if not exists contract(id bigint auto_increment PRIMARY KEY, name VARCHAR(50) not null, type VARCHAR(50), party_id bigint,period_from Timestamp,period_to Timestamp, remark VARCHAR(255));");
+			stmt.executeUpdate("create table if not exists contract(id bigint auto_increment PRIMARY KEY, name VARCHAR(50) not null, type VARCHAR(50), party_id bigint,Fin_item_id bigint,period_from Timestamp,period_to Timestamp, remark VARCHAR(255));");
 			stmt.executeUpdate("create table if not exists role_table(id bigint auto_increment PRIMARY KEY,role_name VARCHAR(50),role_time TIMESTAMP,role_people VARCHAR(50),role_lasttime TIMESTAMP,role_lastpeople VARCHAR(50));");
-			stmt.executeUpdate("create table if not exists Toll_table(id bigint auto_increment PRIMARY KEY,code VARCHAR(20),name VARCHAR(20),type VARCHAR(20),Remark VARCHAR(255));");
+			stmt.executeUpdate("create table if not exists Fin_item(id bigint auto_increment PRIMARY KEY,code VARCHAR(20),name VARCHAR(20),type VARCHAR(20),Remark VARCHAR(255));");
 			stmt.executeUpdate("create table if not exists privilege_table(id bigint auto_increment PRIMARY KEY,privilege VARCHAR(50));");
 
 			stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment PRIMARY KEY,contract_id bigint,route_id bigint, amount Double,remark VARCHAR(255));");
@@ -112,8 +112,8 @@ public class DataInitUtil {
 			stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李四','收费','人民币','建设银行','12123123123','穷人');");
 			stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('张三','付费','人民币','建设银行','12123123123','穷人');");
 
-			stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 4,'2014-11-12','2014-11-14','无');");
-			stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,'2014-10-12','2014-11-15','无');");
+			stmt.executeUpdate("insert into contract(name,type,party_id,Fin_item_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 4,1,'2014-11-12','2014-11-14','无');");
+			stmt.executeUpdate("insert into contract(name,type,party_id,Fin_item_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,2,'2014-10-12','2014-11-15','无');");
 			stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('供应商合同','SERVICE_PROVIDER', 6,'2011-1-12','2014-10-14','无');");
 			stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('供应商合同','SERVICE_PROVIDER', 7,'2013-11-12','2014-11-14','无');");
 
@@ -275,11 +275,14 @@ public class DataInitUtil {
 			stmt.executeUpdate("insert into privilege_table(privilege) values('delete');");
 
 			// 收费条目定义表code VARCHAR(50),name VARCHAR(50),type VARCHAR(50),Remark
-			// VARCHAR(50)
-			// for(int i=0;i<15;i++){
-			// stmt.executeUpdate("insert into Toll_table(code,name,type,Remark) values("
-			// + "'2013201448','运输收费','付款','这是一张运输收费单');");
-			// }
+
+			stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
+					+ "'2013201448','干线运输费','应收','这是一张运输单收费');");
+			stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
+					+ "'2013201448','搬运费','应收','这是一张运输单收费');");
+			stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
+					+ "'2013201448','上楼费','应收','这是一张运输单收费');");
+
 			// 贷款客户 attributes
 			for (int i = 1; i <= 1; i++) {
 				stmt.executeUpdate("insert into party(party_type, create_date, creator) values('贷款客户', CURRENT_TIMESTAMP(), 'demo');");
@@ -359,11 +362,11 @@ public class DataInitUtil {
 			stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
 
 			// 运输单
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '6', '5', '2014042600001', '3', '干线供应商自提', '4', '新建', '2014-04-26 16:33:35.1', '货品直送');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '6', '5', '2014042600002', '3', '干线供应商自提', '6', '新建', '2014-04-26 16:33:35.1', '货品直送');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品 ', '7', '4', '2014042600003', '4', '公司自提', '5', '新建', '2014-04-26 16:40:35.1', '入中转仓');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品', '6', '5', '2014042600004', '3', '干线供应商自提', '4', '新建', '2014-04-26 16:35:35.1', '入中转仓');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '7', '4', '2014042600005', '3', '干线供应商自提', '5', '新建', '2014-04-26 16:38:35.1', '货品直送');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id) values('ATM', '6', '1', 'ca1edc18-f698-486b-82e3-86788859525c', '3', '干线供应商自提', '2', '订单已生成', '2014-04-26 16:33:35.1', '货品直送','1');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id) values('普通货品 ', '7', '2', 'ca1edc18-f698-486b-82e3-86788859888c', '4', '公司自提', '1', '订单已生成', '2014-04-26 16:40:35.1', '入中转仓','2');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品 ', '7', '4', '2014042600003', '4', '公司自提', '5', '新建', '2014-04-26 16:40:35.1', '入中转仓');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('普通货品', '6', '5', '2014042600004', '3', '干线供应商自提', '4', '新建', '2014-04-26 16:35:35.1', '入中转仓');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE) values('ATM', '7', '4', '2014042600005', '3', '干线供应商自提', '5', '新建', '2014-04-26 16:38:35.1', '货品直送');");
 			// 货品明细
 			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
 					+ "values('123456', '冰箱', '这是一台冰箱','5','台','452','100kg','一台冰箱','1');");
@@ -385,10 +388,12 @@ public class DataInitUtil {
 		contact.set("mobile", "12345671").set("phone", "113527229313")
 				.set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
 				.set("postal_code", "5190001").save();
-        Contact contact7 = new Contact();
-        contact7.set("company_name", "珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com");
-        contact7.set("mobile", "12345671").set("phone", "113527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场1").set("postal_code", "5190001")
-        .save();
+		Contact contact7 = new Contact();
+		contact7.set("company_name", "珠海创诚易达信息科技有限公司")
+				.set("contact_person", "温生").set("email", "test@test.com");
+		contact7.set("mobile", "12345671").set("phone", "113527229313")
+				.set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
+				.set("postal_code", "5190001").save();
 		Contact contact2 = new Contact();
 		contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生")
 				.set("email", "test@test.com");
@@ -426,13 +431,14 @@ public class DataInitUtil {
 		Party p4 = new Party();
 		Party p5 = new Party();
 		Party p6 = new Party();
-        Party p7 = new Party();
+		Party p7 = new Party();
 		Date createDate = Calendar.getInstance().getTime();
 		p1.set("contact_id", contact.getLong("id"))
 				.set("party_type", "CUSTOMER").set("create_date", createDate)
 				.set("creator", "demo").save();
-				p7.set("contact_id", contact7.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
-				.save();
+		p7.set("contact_id", contact7.getLong("id"))
+				.set("party_type", "CUSTOMER").set("create_date", createDate)
+				.set("creator", "demo").save();
 		p2.set("contact_id", contact2.getLong("id"))
 				.set("party_type", "CUSTOMER").set("create_date", createDate)
 				.set("creator", "demo").save();
@@ -443,11 +449,11 @@ public class DataInitUtil {
 				.set("party_type", "SERVICE_PROVIDER")
 				.set("create_date", createDate).set("creator", "demo").save();
 		p5.set("contact_id", contact5.getLong("id"))
-				.set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
-				.set("creator", "demo").save();
+				.set("party_type", "NOTIFY_PARTY")
+				.set("create_date", createDate).set("creator", "demo").save();
 		p6.set("contact_id", contact6.getLong("id"))
-				.set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
-				.set("creator", "demo").save();
+				.set("party_type", "NOTIFY_PARTY")
+				.set("create_date", createDate).set("creator", "demo").save();
 
 	}
 }

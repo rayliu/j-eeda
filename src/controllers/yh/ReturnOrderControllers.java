@@ -91,9 +91,16 @@ public class ReturnOrderControllers extends Controller {
 						+ "(select volume from transfer_order_item t where t.order_id= r.transfer_order_id ) volume,"
 						+ "(select weight from transfer_order_item t where t.order_id= r.transfer_order_id ) weight ,"
 						+ "(select remark from transfer_order_item t where t.order_id= r.transfer_order_id ) remark ,"
-						+ "(select location_from from route rt where rt.id=r.route_id ) location_from ,"
-						+ "(select location_to from route rt  where rt.id=r.route_id ) location_to ,"
-						+ "(select amount from contract_item c where c.contract_id=r.notity_party_id and c.route_id=r.route_id) amount "
+						+ "(SELECT location_from  FROM ROUTE  ro  where ro.id in (select route_id from transfer_order t where t.id='"
+						+ id
+						+ "') ) location_from ,"
+						+ "(SELECT location_to  FROM ROUTE  ro  where ro.id in (select route_id from transfer_order t where t.id='"
+						+ id
+						+ "') ) location_to ,"
+						+ "(select amount from contract_item c where c.contract_id=r.notity_party_id and c.route_id=r.route_id) amount ,"
+						+ "(SELECT user_name  FROM user_login u  where  u.id in (select create_by from transfer_order t where t.id='"
+						+ id
+						+ "')) counterman "
 						+ "from return_order r where  r.transfer_order_id='"
 						+ id + "'");
 
@@ -112,7 +119,6 @@ public class ReturnOrderControllers extends Controller {
 	public void delete() {
 		String id = getPara();
 		ReturnOrder re = new ReturnOrder();
-
 		re.dao.deleteById(id);
 		index();
 	}
