@@ -1,4 +1,4 @@
-package controllers.yh.order;
+﻿package controllers.yh.order;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import models.Party;
 import models.TransferOrder;
@@ -65,26 +64,24 @@ public class TransferOrderController extends Controller {
         TransferOrder transferOrder = new TransferOrder();
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        transferOrder.set("create_by", users.get(0).get("id"));
+        setAttr("create_by", users.get(0).get("id"));
         
         TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order order by order_no desc limit 0,1");
         if(order != null){
         	String num = order.get("order_no");
         	String order_no = String.valueOf((Long.parseLong(num) + 1));
-        	transferOrder.set("order_no", order_no);
+        	setAttr("order_no", order_no);
         }else{
 	        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 	        String format = sdf.format(new Date());
 	        String order_no = format + "00001";
-	        transferOrder.set("order_no", order_no);
+	        setAttr("order_no", order_no);
         }
-        setAttr("transferOrder", transferOrder);
         
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
         
-    	transferOrder.set("status", "已发车");
-        transferOrder.save();
+    	setAttr("status", "已发车");
         render("transferOrder/editTransferOrder.html");
         // render("transferOrder/transferOrderEdit.html");
     }
@@ -230,9 +227,12 @@ public class TransferOrderController extends Controller {
     
     // 保存运输单 
     public void saveTransferOrder(){
-        TransferOrder transferOrder = TransferOrder.dao.findById(getPara("transferOrder_id"));
+        TransferOrder transferOrder = new TransferOrder();
         transferOrder.set("customer_id", getPara("customer_id"));
         transferOrder.set("sp_id", getPara("sp_id"));
+        transferOrder.set("status", getPara("status"));
+        transferOrder.set("order_no", getPara("order_no"));
+        transferOrder.set("create_by", getPara("create_by"));
         transferOrder.set("cargo_nature", getPara("cargoNature"));
         transferOrder.set("pickup_mode", getPara("pickupMode"));
         transferOrder.set("arrival_mode", getPara("arrivalMode"));
@@ -240,7 +240,7 @@ public class TransferOrderController extends Controller {
         
         Party party = saveContact();
         transferOrder.set("notify_party_id", party.get("id"));
-        transferOrder.update();
+        transferOrder.save();
     	renderJson(transferOrder.get("id"));
     }
 
