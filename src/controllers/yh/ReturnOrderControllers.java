@@ -86,13 +86,7 @@ public class ReturnOrderControllers extends Controller {
 						+ "(select cargo_nature  from transfer_order t where r.transfer_order_id=t.id)  nature ,"
 						+ "(select  pickup_mode from transfer_order t where r.transfer_order_id=t.id) pickup  ,"
 						+ "(select arrival_mode from transfer_order t where r.transfer_order_id=t.id) arrival  ,"
-						+ "(select item_name from transfer_order_item t where t.order_id= r.transfer_order_id ) item_name ,"
-						+ "(select item_desc from transfer_order_item t where t.order_id= r.transfer_order_id ) item_desc ,"
-						+ "(select amount from transfer_order_item t where t.order_id= r.transfer_order_id ) amoumt ,"
-						+ "(select unit from transfer_order_item t where t.order_id= r.transfer_order_id ) unit ,"
-						+ "(select volume from transfer_order_item t where t.order_id= r.transfer_order_id ) volume,"
-						+ "(select weight from transfer_order_item t where t.order_id= r.transfer_order_id ) weight ,"
-						+ "(select remark from transfer_order_item t where t.order_id= r.transfer_order_id ) remark ,"
+						+ "(select remark from transfer_order t where r.transfer_order_id=t.id) remark  ,"
 						+ "(SELECT location_from  FROM ROUTE  ro  where ro.id in (select route_id from transfer_order t where t.id='"
 						+ id
 						+ "') ) location_from ,"
@@ -108,6 +102,28 @@ public class ReturnOrderControllers extends Controller {
 
 		renderJson(message);
 
+	}
+
+	// 收费条目
+	public void paylist() {
+		int id = Integer.parseInt(getPara("locationName"));
+		List<Record> paylist = new ArrayList<Record>();
+		paylist = Db
+				.find("select f.name,f.remark,tf.amount,tf.status from FIN_ITEM f,TRANSFER_ORDER_FIN_ITEM tf  where tf.fin_item_id =f.id and tf.order_id ='"
+						+ id + "'");
+
+		renderJson(paylist);
+	}
+
+	// 货品详细
+	public void itemlist() {
+		int id = Integer.parseInt(getPara("locationName"));
+		List<Record> itemlist = new ArrayList<Record>();
+		itemlist = Db
+				.find("SELECT * FROM TRANSFER_ORDER_ITEM where ORDER_ID ='"
+						+ id + "'");
+
+		renderJson(itemlist);
 	}
 
 	// 点击查看

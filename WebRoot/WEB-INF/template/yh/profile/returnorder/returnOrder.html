@@ -164,17 +164,8 @@
                                                         <th>备注</th>  
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td id="item_name"></td>
-                                                        <td id=""></td>
-                                                        <td id="amoumt"></td>
-                                                        <td id="unit"></td>
-                                                        <td id="volume"></td>
-                                                         <td id="weight"></td>
-                                                        <td id="item_desc"></td>
-                                                    </tr>
-                                               
+                                                <tbody id="item">
+
                                                 </tbody>
                                             </table>
                                           
@@ -199,22 +190,8 @@
                                                         <th>结算状态</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>1</td>
-                                                        <td>装车费</td>
-                                                        <td>200</td>
-                                                        <td></td>
-                                                        <td>已结</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>2</td>
-                                                        <td>设备包装</td>
-                                                        <td>50</td>
-                                                        <td></td>
-                                                        <td>已结</td>
-                                                    </tr>
-                                                    
+                                                <tbody id="pay">
+                                                                                                      
                                                 </tbody>
                                             </table>
                                         </div>
@@ -263,13 +240,7 @@
 				$('#order_no').html(data[i].ORDER_NO);
 				$('#nature').html(data[i].NATURE);
 	        	$('#pickup').html(data[i].PICKUP);
-	        	$('#arrival').html(data[i].ARRIVAL);
-	        	$('#item_name').html(data[i].ITEM_NAME);
-	        	$('#item_desc').html(data[i].ITEM_DESC);
-	        	$('#amoumt').html(data[i].AMOUMT);	        	
-	        	$('#unit').html(data[i].UNIT);
-	        	$('#volume').html(data[i].VOLUME);
-	        	$('#weight').html(data[i].WEIGHT);
+	        	$('#arrival').html(data[i].ARRIVAL);	        	
 	        	$('#remark').val(data[i].REMARK); 
 	        	$('#location_from').html(data[i].LOCATION_FROM);
 	        	$('#location_to').html(data[i].LOCATION_TO);
@@ -294,6 +265,29 @@
 			
 		
 	},'json');
+    	//item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id
+    	$.get('/yh/returnorder/itemlist', {locationName:inputStr}, function(data){ 
+    		for(var i=0; i < data.length; i++){
+    			$("#item").append(" <tr><td>"+data[i].ITEM_NAME+"</td>"
+    			+"<td>"+data[i].ITEM_NO+"</td>"
+    			+"<td>"+data[i].AMOUNT+"</td>"
+    			+"<td>"+data[i].UNIT+"</td>"
+    			+"<td>"+data[i].VOLUME+"</td>"
+    			+"<td>"+data[i].WEIGHT+"</td>"
+    			+"<td>"+data[i].ITEM_DESC+"</td></tr>");
+    		}
+    	},'json');
+    	
+    	$.get('/yh/returnorder/paylist', {locationName:inputStr}, function(data){ 
+    		for(var i=0; i < data.length; i++){
+    			$("#pay").append(" <tr><td>"+i+"</td>"
+    			+"<td>"+data[i].NAME+"</td>"
+    			+"<td>"+data[i].AMOUNT+"</td>"
+    			+"<td>"+data[i].REMARK+"</td>"
+    			+"<td>"+data[i].STATUS+"</td></tr>");
+    		}
+    	},'json');
+    	
 	
     });
 </script>
