@@ -82,7 +82,7 @@ public class TransferOrderController extends Controller {
 		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
 		setAttr("userLogin", userLogin);
 
-		setAttr("status", "已发车");
+		setAttr("status", "新建");
 		render("transferOrder/editTransferOrder.html");
 		// render("transferOrder/transferOrderEdit.html");
 	}
@@ -245,6 +245,7 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("notify_party_id", party.get("id"));
 		}
 		transferOrder.save();
+		// setAttr("transferOrder", transferOrder);
 		renderJson(transferOrder.get("id"));
 	}
 

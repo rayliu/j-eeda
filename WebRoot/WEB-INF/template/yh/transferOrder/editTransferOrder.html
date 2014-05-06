@@ -103,32 +103,32 @@
                                                 <input type="radio" name="cargoNature" id="cargoNature1" value="ATM">ATM
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="cargoNature" id="cargoNature2" value="普通货品">普通货品
+                                                <input type="radio" name="cargoNature" id="cargoNature2" value="cargo">普通货品
                                             </label>
                                         <label class="radio-inline">
-                                                <input type="radio" name="cargoNature" id="cargoNature3" value="损坏货品">损坏货品
+                                                <input type="radio" name="cargoNature" id="cargoNature3" value="damageCargo">损坏货品
                                             </label>
                                     </div>
                                     <div class="form-group">
                                         <label>提货方式</label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="pickupMode" id="pickupMode1" value="干线供应商自提">干线供应商自提
+                                                <input type="radio" name="pickupMode" id="pickupMode1" value="routeSP">干线供应商自提
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="pickupMode" id="pickupMode2" value="外包供应商提货">外包供应商提货
+                                                <input type="radio" name="pickupMode" id="pickupMode2" value="pickupSP">外包供应商提货
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="pickupMode" id="pickupMode3" value="源鸿自提">源鸿自提
+                                                <input type="radio" name="pickupMode" id="pickupMode3" value="own">源鸿自提
                                             </label>
                                     </div>                                        
                                        
                                     <div id="arrivalModes" class="form-group">
-                                        <label>到达方式</label>
+                                        <label>到达方式 </label>
                                         <label class="radio-inline">
-                                            <input type="radio" name="arrivalMode" id="arrivalMode1" value="货品直送">货品直送
+                                            <input type="radio" name="arrivalMode" id="arrivalMode1" value="delivery">货品直送
                                         </label>
                                         <label class="radio-inline">
-                                            <input type="radio" name="arrivalMode" id="arrivalMode2" value="入中转仓">入中转仓
+                                            <input type="radio" name="arrivalMode" id="arrivalMode2" value="gateIn">入中转仓
                                         </label>                                            
                                     </div> 
                                     </form>                                        
@@ -410,9 +410,9 @@
                                     <hr/>
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                                     <button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
-                                    <button type="button" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
-                                    <button type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
-                                    <button type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">回单签收</button>
+                                    <button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
+                                    <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
+                                    <button id="receiptBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">回单签收</button>
                                 </div>
                                 <p>保存：新建时只能保存（其他按钮都灰掉不能点）, 保存后单据状态变为“新建”</p>
                                 <p>发车确认：新建后可以点击，点击后生成单据状态 “已发车”，之后生成应付条目（付费给供应商）</p>
@@ -438,20 +438,22 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		/* $('#menu_profile').addClass('active').find('ul').addClass('in');
-        $('#transferOrderForm').validate({
-            rules: {
-            	customerMessage: {
-                required: true
-              }
-            },
-            highlight: function(element) {
-                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-            },
-            success: function(element) {
-                element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
-            }
-        });  */
+		$('#menu_assign').addClass('active').find('ul').addClass('in');
+        //from表单验证
+		var validate = $('#transferOrderForm').validate({
+	        rules: {
+	        	customerMessage: {
+	            required: true
+	          },
+				spMessage: {
+	            required: true
+	          }
+	        },
+	        messages : {	             
+	        	customerMessage : {required:  "请选择一个客户"}, 
+	        	spMessage : {required:  "请选择一个供应商"}, 
+	        }
+	    });
 		
      // tooltip demo
      $('.tooltip-demo').tooltip({
@@ -538,10 +540,15 @@
  	$("#saveTransferOrderBtn").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
+		//提交前，校验数据
+        if(!$("#transferOrderForm").valid()){
+	       	return;
+        }
 		//异步向后台提交数据
 		$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transfer_order_id){
 			$("#transfer_order_id").val(transfer_order_id);
 			if(transfer_order_id>0){
+				$("#departureConfirmationBtn").attr("disabled", false);
 			  	alert("运输单保存成功!");
 			  	$("#style").show();
 			}else{
@@ -566,10 +573,15 @@
     $("#transferOrderItemList").click(function(){
     	// 切换到货品明细时,应先保存运输单
     	// 应先判断order_id是否为空
-    	
+    	//提交前，校验数据
+        if(!$("#transferOrderForm").valid()){
+        	alert("请先保存运输单!");
+	       	return;
+        }
     	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transfer_order_id){
 			$("#transfer_order_id").val(transfer_order_id);
     		if(transfer_order_id>0){
+				$("#departureConfirmationBtn").attr("disabled", false);
 			  	$("#style").show();
 			}else{
 				alert('数据保存失败。');
@@ -616,6 +628,7 @@
   	  var inputId  = $(this).attr('id');
 	  if(inputId=='arrivalMode1'){
 		 $("#contactInformation").show();
+		 $("#warehousingConfirmBtn").attr("disabled", true);
 	  }else{
 		 $("#contactInformation").hide();
 	  } 
@@ -680,5 +693,17 @@
 			},'json');
     	}
     });
+						
+	// 发车确认
+	$("#departureConfirmationBtn").click(function(){
+		debugger;
+		if($("#arrivalMode1").checked == 'checked'){
+			$("#warehousingConfirmBtn").attr("disabled", true);			
+		}else{
+			$("#warehousingConfirmBtn").attr("disabled", false);			
+		}
+		$("#receiptBtn").attr("disabled", false); 
+		
+	});
 });
 </script>

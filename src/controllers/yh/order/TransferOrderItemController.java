@@ -65,7 +65,7 @@ public class TransferOrderItemController extends Controller {
 	}
 
 	// 获取TransferOrderItem对象
-	public void TransferOrderItem() {
+	public void getTransferOrderItem() {
 		String id = getPara("transfer_order_item_id");
 		TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(id);
 		setAttr("transferOrderItem", transferOrderItem);
