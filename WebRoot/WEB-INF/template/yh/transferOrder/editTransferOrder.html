@@ -15,8 +15,8 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <!-- Nav tabs -->
-                            <ul class="nav nav-tabs">
-                                <li class="active"><a href="#basic" data-toggle="tab">基本信息</a>
+                            <ul id="orderTabs" class="nav nav-tabs">
+                                <li class="active"><a href="#basic" data-toggle="tab" data-src="basic" >基本信息</a>
                                 </li>
                                 <li class=""><a href="#cargos" data-toggle="tab" id="transferOrderItemList">货品明细</a>
                                 </li>
@@ -568,16 +568,18 @@
             $(e.currentTarget).append("<input type='text' value="+e.currentTarget.innerHTML+">");
         }    
     }
-    
+
     // 单击货品明细时,应列表显示所有的货品
-    $("#transferOrderItemList").click(function(){
+    $("#transferOrderItemList").click(function(e){
+        e.preventDefault();
     	// 切换到货品明细时,应先保存运输单
     	// 应先判断order_id是否为空
     	//提交前，校验数据
         if(!$("#transferOrderForm").valid()){
         	alert("请先保存运输单!");
-	       	return;
+	       	return false; 
         }
+
     	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transfer_order_id){
 			$("#transfer_order_id").val(transfer_order_id);
     		if(transfer_order_id>0){
