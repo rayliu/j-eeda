@@ -24,268 +24,294 @@ import com.jfinal.plugin.activerecord.Record;
 
 public class TransferOrderController extends Controller {
 
-    private Logger logger = Logger.getLogger(TransferOrderController.class);
-    Subject currentUser = SecurityUtils.getSubject();
+	private Logger logger = Logger.getLogger(TransferOrderController.class);
+	Subject currentUser = SecurityUtils.getSubject();
 
-    public void index() {
-        render("transferOrder/transferOrderList.html");  
-    }
+	public void index() {
+		render("transferOrder/transferOrderList.html");
+	}
 
-    public void list() {
-        /*
-         * Paging
-         */
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-        }
+	public void list() {
+		/*
+		 * Paging
+		 */
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+		}
 
-        String sqlTotal = "select count(1) total from transfer_order";
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
+		String sqlTotal = "select count(1) total from transfer_order";
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select * from transfer_order";
+		String sql = "select * from transfer_order";
 
-        List<Record> transferOrders = Db.find(sql);
+		List<Record> transferOrders = Db.find(sql);
 
-        Map transferOrderListMap = new HashMap();
-        transferOrderListMap.put("sEcho", pageIndex);
-        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		Map transferOrderListMap = new HashMap();
+		transferOrderListMap.put("sEcho", pageIndex);
+		transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+		transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
 
-        transferOrderListMap.put("aaData", transferOrders);
+		transferOrderListMap.put("aaData", transferOrders);
 
-        renderJson(transferOrderListMap);
-    }
+		renderJson(transferOrderListMap);
+	}
 
-    public void add() {
-        setAttr("saveOK", false);
-        TransferOrder transferOrder = new TransferOrder();
-        String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        setAttr("create_by", users.get(0).get("id"));
-        
-        TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order order by order_no desc limit 0,1");
-        if(order != null){
-        	String num = order.get("order_no");
-        	String order_no = String.valueOf((Long.parseLong(num) + 1));
-        	setAttr("order_no", order_no);
-        }else{
-	        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-	        String format = sdf.format(new Date());
-	        String order_no = format + "00001";
-	        setAttr("order_no", order_no);
-        }
-        
-        UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
-        setAttr("userLogin", userLogin);
-        
-    	setAttr("status", "已发车");
-        render("transferOrder/editTransferOrder.html");
-        // render("transferOrder/transferOrderEdit.html");
-    }
+	public void add() {
+		setAttr("saveOK", false);
+		TransferOrder transferOrder = new TransferOrder();
+		String name = (String) currentUser.getPrincipal();
+		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+		setAttr("create_by", users.get(0).get("id"));
 
-    public void edit1() {
-        long id = getParaToLong();
+		TransferOrder order = TransferOrder.dao
+				.findFirst("select * from transfer_order order by order_no desc limit 0,1");
+		if (order != null) {
+			String num = order.get("order_no");
+			String order_no = String.valueOf((Long.parseLong(num) + 1));
+			setAttr("order_no", order_no);
+		} else {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			String format = sdf.format(new Date());
+			String order_no = format + "00001";
+			setAttr("order_no", order_no);
+		}
 
-        Party party = Party.dao.findById(id);
-        setAttr("party", party);
+		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+		setAttr("userLogin", userLogin);
 
-        Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
-        setAttr("contact", contact);
+		setAttr("status", "已发车");
+		render("transferOrder/editTransferOrder.html");
+		// render("transferOrder/transferOrderEdit.html");
+	}
 
-        render("transferOrder/transferOrderEdit.html");
-    }
+	public void edit1() {
+		long id = getParaToLong();
 
-    public void edit() {
-        render("transferOrder/editTransferOrder.html");
-    }
+		Party party = Party.dao.findById(id);
+		setAttr("party", party);
 
-    public void delete() {
-        long id = getParaToLong();
+		Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
+		setAttr("contact", contact);
 
-        Party party = Party.dao.findById(id);
-        party.delete();
+		render("transferOrder/transferOrderEdit.html");
+	}
 
-        Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
-        contact.delete();
+	public void edit() {
+		render("transferOrder/editTransferOrder.html");
+	}
 
-        redirect("/yh/transferOrder");
-    }
+	public void delete() {
+		long id = getParaToLong();
 
-    public void save() {
+		Party party = Party.dao.findById(id);
+		party.delete();
 
-        String id = getPara("party_id");
-        Party party = null;
-        Contact contact = null;
-        Date createDate = Calendar.getInstance().getTime();
-        if (id != null && !id.equals("")) {
-            party = Party.dao.findById(id);
-            party.set("last_update_date", createDate).update();
+		Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
+		contact.delete();
 
-            contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
-            //setContact(contact);
-            contact.update();
-        } else {
-            contact = new Contact();
-            //setContact(contact);
-            contact.save();
-            party = new Party();
-            party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
-            party.set("contact_id", contact.getLong("id"));
-            party.set("creator", "test");
-            party.set("create_date", createDate);
-            party.save();
+		redirect("/yh/transferOrder");
+	}
 
-        }
+	public void save() {
 
-        setAttr("saveOK", true);
-        render("transferOrder/transferOrderList.html");
-    }
+		String id = getPara("party_id");
+		Party party = null;
+		Contact contact = null;
+		Date createDate = Calendar.getInstance().getTime();
+		if (id != null && !id.equals("")) {
+			party = Party.dao.findById(id);
+			party.set("last_update_date", createDate).update();
 
-    // 客户列表,列出最近使用的5个客户
-    public void selectCustomer() {
-        List<Contact> contactjson = Contact.dao
-                .find("SELECT * FROM CONTACT WHERE ID IN(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT CUSTOMER_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC) LIMIT 0,5)");
-        renderJson(contactjson);
-    }
+			contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
+			// setContact(contact);
+			contact.update();
+		} else {
+			contact = new Contact();
+			// setContact(contact);
+			contact.save();
+			party = new Party();
+			party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
+			party.set("contact_id", contact.getLong("id"));
+			party.set("creator", "test");
+			party.set("create_date", createDate);
+			party.save();
 
-    // 客户列表,列出最近使用的5个供应商
-    public void selectServiceProvider() {
-        List<Contact> contactjson = Contact.dao
-    			.find("SELECT * FROM CONTACT WHERE ID IN(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT SP_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC) LIMIT 0,5)");
-        renderJson(contactjson);
-    }
+		}
 
-    // 保存客户
-    public void saveCustomer() {
-        String customer_id = getPara("customer_id");
-        Party party = null;
-        if (customer_id != null && !customer_id.equals("")) {
-            party = Party.dao.findById(customer_id);
-        } else {
-            party = new Party();
-            party.set("party_type", Party.PARTY_TYPE_CUSTOMER);
-            Contact contact = new Contact();
-            //setContact(contact);
-            contact.save();
-            party.set("contact_id", contact.getLong("id"));
-            party.set("create_date", new Date());
-            party.set("creator", currentUser.getPrincipal());
-            party.save();
-        }
-        renderJson(party.get("id"));
-    }
+		setAttr("saveOK", true);
+		render("transferOrder/transferOrderList.html");
+	}
 
-    // 保存供应商
-    public void saveServiceProvider() {
-        String sp_id = getPara("sp_id");
-        Party party = null;
-        if (sp_id != null && !sp_id.equals("")) {
-            party = Party.dao.findById(sp_id);
-        } else {
-            party = new Party();
-            party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
-            Contact contact = new Contact();
-            //setContact(contact);
-            contact.save();
-            party.set("contact_id", contact.getLong("id"));
-            party.set("create_date", new Date());
-            party.set("creator", currentUser.getPrincipal());
-            party.save();
-        }
-        renderJson(party.get("id"));
-    }
+	// 客户列表,列出最近使用的5个客户
+	public void selectCustomer() {
+		List<Contact> contactjson = Contact.dao
+				.find("SELECT * FROM CONTACT WHERE ID IN(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT CUSTOMER_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC) LIMIT 0,5)");
+		renderJson(contactjson);
+	}
 
-    // 收货人列表
-    public void selectContact() {
-        List<Contact> contacts = Contact.dao.find("select * from contact");
-        renderJson(contacts);
-    }
+	// 客户列表,列出最近使用的5个供应商
+	public void selectServiceProvider() {
+		List<Contact> contactjson = Contact.dao
+				.find("SELECT * FROM CONTACT WHERE ID IN(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT SP_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC) LIMIT 0,5)");
+		renderJson(contactjson);
+	}
 
-    public void saveItem() {
-    	//saveOrderItem(transferOrder);
-        render("transferOrder/transferOrderList.html");
-    }
-    
-    // 保存订单项
-    public void saveOrderItem(){
-    	TransferOrderItem orderItem = new TransferOrderItem();
-    	orderItem.set("item_name", getPara("item_name"));
-    	orderItem.set("item_desc", getPara("item_desc"));
-    	orderItem.set("amount", getPara("amount"));
-    	orderItem.set("unit", getPara("unit"));
-    	orderItem.set("volume", getPara("volume"));
-    	orderItem.set("weight", getPara("weight"));
-    	orderItem.set("remark", getPara("remark"));
-    	orderItem.set("order_id", getPara("order_id"));
-    	orderItem.save();
-    	// 当不需要返回值时
-    	renderJson("{\"success\":true}");
-    }
-    
-    // 保存运输单 
-    public void saveTransferOrder(){
-        TransferOrder transferOrder = new TransferOrder();
-        transferOrder.set("customer_id", getPara("customer_id"));
-        transferOrder.set("sp_id", getPara("sp_id"));
-        transferOrder.set("status", getPara("status"));
-        transferOrder.set("order_no", getPara("order_no"));
-        transferOrder.set("create_by", getPara("create_by"));
-        transferOrder.set("cargo_nature", getPara("cargoNature"));
-        transferOrder.set("pickup_mode", getPara("pickupMode"));
-        transferOrder.set("arrival_mode", getPara("arrivalMode"));
-        transferOrder.set("create_stamp", new Date());
-        
-        Party party = saveContact();
-        transferOrder.set("notify_party_id", party.get("id"));
-        transferOrder.save();
-    	renderJson(transferOrder.get("id"));
-    }
+	// 保存客户
+	public void saveCustomer() {
+		String customer_id = getPara("customer_id");
+		Party party = null;
+		if (customer_id != null && !customer_id.equals("")) {
+			party = Party.dao.findById(customer_id);
+		} else {
+			party = new Party();
+			party.set("party_type", Party.PARTY_TYPE_CUSTOMER);
+			Contact contact = new Contact();
+			// setContact(contact);
+			contact.save();
+			party.set("contact_id", contact.getLong("id"));
+			party.set("create_date", new Date());
+			party.set("creator", currentUser.getPrincipal());
+			party.save();
+		}
+		renderJson(party.get("id"));
+	}
 
-    // 保存收货人
-    public Party saveContact() {
-        Party party = new Party();
-        Contact contact = setContact();
-        party.set("contact_id", contact.getLong("id"));
-        party.set("create_date", new Date());
-        party.set("creator", currentUser.getPrincipal());
-        party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
-        party.save();
-        return party;
-    }
+	// 保存供应商
+	public void saveServiceProvider() {
+		String sp_id = getPara("sp_id");
+		Party party = null;
+		if (sp_id != null && !sp_id.equals("")) {
+			party = Party.dao.findById(sp_id);
+		} else {
+			party = new Party();
+			party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
+			Contact contact = new Contact();
+			// setContact(contact);
+			contact.save();
+			party.set("contact_id", contact.getLong("id"));
+			party.set("create_date", new Date());
+			party.set("creator", currentUser.getPrincipal());
+			party.save();
+		}
+		renderJson(party.get("id"));
+	}
 
-    // 保存联系人
-    private Contact setContact() {
-    	Contact contact = new Contact();
-        contact.set("company_name", getPara("notify_company_name"));
-        contact.set("contact_person", getPara("notify_contact_person"));
-        contact.set("phone", getPara("notify_phone"));
-        contact.set("address", getPara("notify_address"));
-        contact.save();
-        return contact;
-    }
+	// 收货人列表
+	public void selectContact() {
+		List<Contact> contacts = Contact.dao.find("select * from contact");
+		renderJson(contacts);
+	}
 
-    // 查找客户
-    public void searchCustomer(){
-    	String input = getPara("input");
-    	List<Record> locationList = Collections.EMPTY_LIST;
-        if (input.trim().length() > 0) {
-            locationList = Db
-                    .find("select * from contact where id in(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT CUSTOMER_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC)) and (company_name like '%"+input+"%' or contact_person like '%"+input+"%' or email like '%"+input+"%' or mobile like '%"+input+"%' or phone like '%"+input+"%' or address like '%"+input+"%' or postal_code like '%"+input+"%') limit 0,10");
-        }
-    	renderJson(locationList);
-    }
-    
-    // 查找供应商
-    public void searchSp(){
-    	String input = getPara("input");
-    	List<Record> locationList = Collections.EMPTY_LIST;
-    	if (input.trim().length() > 0) {
-    		locationList = Db
-    				.find("select * from contact where id in(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT SP_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC)) and (company_name like '%"+input+"%' or contact_person like '%"+input+"%' or email like '%"+input+"%' or mobile like '%"+input+"%' or phone like '%"+input+"%' or address like '%"+input+"%' or postal_code like '%"+input+"%') limit 0,10");
-    	}
-    	renderJson(locationList);
-    }
+	public void saveItem() {
+		// saveOrderItem(transferOrder);
+		render("transferOrder/transferOrderList.html");
+	}
+
+	// 保存订单项
+	public void saveOrderItem() {
+		TransferOrderItem orderItem = new TransferOrderItem();
+		orderItem.set("item_name", getPara("item_name"));
+		orderItem.set("item_desc", getPara("item_desc"));
+		orderItem.set("amount", getPara("amount"));
+		orderItem.set("unit", getPara("unit"));
+		orderItem.set("volume", getPara("volume"));
+		orderItem.set("weight", getPara("weight"));
+		orderItem.set("remark", getPara("remark"));
+		orderItem.set("order_id", getPara("order_id"));
+		orderItem.save();
+		// 当不需要返回值时
+		renderJson("{\"success\":true}");
+	}
+
+	// 保存运输单
+	public void saveTransferOrder() {
+		TransferOrder transferOrder = new TransferOrder();
+		transferOrder.set("customer_id", getPara("customer_id"));
+		transferOrder.set("sp_id", getPara("sp_id"));
+		transferOrder.set("status", getPara("status"));
+		transferOrder.set("order_no", getPara("order_no"));
+		transferOrder.set("create_by", getPara("create_by"));
+		transferOrder.set("cargo_nature", getPara("cargoNature"));
+		transferOrder.set("pickup_mode", getPara("pickupMode"));
+		transferOrder.set("arrival_mode", getPara("arrivalMode"));
+		transferOrder.set("address", getPara("address"));
+		transferOrder.set("create_stamp", new Date());
+
+		if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("货品直送")) {
+			Party party = saveContact();
+			transferOrder.set("notify_party_id", party.get("id"));
+		}
+		transferOrder.save();
+		renderJson(transferOrder.get("id"));
+	}
+
+	// 保存收货人
+	public Party saveContact() {
+		Party party = new Party();
+		Contact contact = setContact();
+		party.set("contact_id", contact.getLong("id"));
+		party.set("create_date", new Date());
+		party.set("creator", currentUser.getPrincipal());
+		party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
+		party.save();
+		return party;
+	}
+
+	// 保存联系人
+	private Contact setContact() {
+		Contact contact = new Contact();
+		contact.set("company_name", getPara("notify_company_name"));
+		contact.set("contact_person", getPara("notify_contact_person"));
+		contact.set("phone", getPara("notify_phone"));
+		contact.set("address", getPara("notify_address"));
+		contact.save();
+		return contact;
+	}
+
+	// 查找客户
+	public void searchCustomer() {
+		String input = getPara("input");
+		List<Record> locationList = Collections.EMPTY_LIST;
+		if (input.trim().length() > 0) {
+			locationList = Db
+					.find("select * from contact where id in(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT CUSTOMER_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC)) and (company_name like '%"
+							+ input
+							+ "%' or contact_person like '%"
+							+ input
+							+ "%' or email like '%"
+							+ input
+							+ "%' or mobile like '%"
+							+ input
+							+ "%' or phone like '%"
+							+ input
+							+ "%' or address like '%"
+							+ input + "%' or postal_code like '%" + input + "%') limit 0,10");
+		}
+		renderJson(locationList);
+	}
+
+	// 查找供应商
+	public void searchSp() {
+		String input = getPara("input");
+		List<Record> locationList = Collections.EMPTY_LIST;
+		if (input.trim().length() > 0) {
+			locationList = Db
+					.find("select * from contact where id in(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT SP_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC)) and (company_name like '%"
+							+ input
+							+ "%' or contact_person like '%"
+							+ input
+							+ "%' or email like '%"
+							+ input
+							+ "%' or mobile like '%"
+							+ input
+							+ "%' or phone like '%"
+							+ input
+							+ "%' or address like '%"
+							+ input + "%' or postal_code like '%" + input + "%') limit 0,10");
+		}
+		renderJson(locationList);
+	}
 }

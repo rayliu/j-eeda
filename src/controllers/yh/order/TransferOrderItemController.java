@@ -14,53 +14,68 @@ import com.jfinal.core.Controller;
 
 public class TransferOrderItemController extends Controller {
 
-    private Logger logger = Logger.getLogger(TransferOrderItemController.class);
-    Subject currentUser = SecurityUtils.getSubject();
+	private Logger logger = Logger.getLogger(TransferOrderItemController.class);
+	Subject currentUser = SecurityUtils.getSubject();
 
-    public void transferOrderItemList(){
-    	List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item");
-    	renderJson(transferOrderItems);
-    }
-    
-    public void edit1() {
-        long id = getParaToLong();
+	public void transferOrderItemList() {
+		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item");
+		renderJson(transferOrderItems);
+	}
 
-        Party party = Party.dao.findById(id);
-        setAttr("party", party);
+	public void edit1() {
+		long id = getParaToLong();
 
-        Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
-        setAttr("contact", contact);
+		Party party = Party.dao.findById(id);
+		setAttr("party", party);
 
-        render("transferOrder/transferOrderEdit.html");
-    }
+		Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
+		setAttr("contact", contact);
 
-    public void edit() {
-        render("transferOrder/editTransferOrder.html");
-    }
+		render("transferOrder/transferOrderEdit.html");
+	}
 
-    public void delete() {
-        long id = getParaToLong();
+	public void edit() {
+		render("transferOrder/editTransferOrder.html");
+	}
 
-        Party party = Party.dao.findById(id);
-        party.delete();
+	public void delete() {
+		long id = getParaToLong();
 
-        Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
-        contact.delete();
+		Party party = Party.dao.findById(id);
+		party.delete();
 
-        redirect("/yh/transferOrder");
-    }
+		Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
+		contact.delete();
 
-    // 保存货品
-    public void saveTransferOrderItem() {
-    	TransferOrderItem item = new TransferOrderItem();
-        item.set("item_name",getPara("item_name"));
-        item.set("amount",getPara("amount"));
-        item.set("unit",getPara("unit"));
-        item.set("volume",getPara("volume"));
-        item.set("weight",getPara("weight"));   
-        item.set("remark",getPara("remark"));   
-        item.set("order_id",getPara("transfer_order_id"));   
-        item.save();
-        renderJson(item.get("id"));
-    }
+		redirect("/yh/transferOrder");
+	}
+
+	// 保存货品
+	public void saveTransferOrderItem() {
+		TransferOrderItem item = new TransferOrderItem();
+		item.set("item_name", getPara("item_name"));
+		item.set("amount", getPara("amount"));
+		item.set("unit", getPara("unit"));
+		item.set("volume", getPara("volume"));
+		item.set("weight", getPara("weight"));
+		item.set("remark", getPara("remark"));
+		item.set("order_id", getPara("transfer_order_id"));
+		item.save();
+		renderJson(item.get("id"));
+	}
+
+	// 获取TransferOrderItem对象
+	public void TransferOrderItem() {
+		String id = getPara("transfer_order_item_id");
+		TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(id);
+		setAttr("transferOrderItem", transferOrderItem);
+		renderJson("{\"success\":true}");
+	}
+
+	// 删除TransferOrderItem
+	public void deleteTransferOrderItem() {
+		String id = getPara("transfer_order_item_id");
+		TransferOrderItem.dao.deleteById(id);
+		renderJson("{\"success\":true}");
+	}
 }
