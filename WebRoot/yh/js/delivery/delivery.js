@@ -1,6 +1,5 @@
 
 $(document).ready(function() {
-		    $('#eeda-table').dataTable();
 		    
 		  //获取供应商的list，选中信息在下方展示其他信息
 			$('#spMessage').on('keyup', function(){
@@ -33,8 +32,8 @@ $(document).ready(function() {
 		        $('#spList').hide();
 		    }); 
 			//datatable, 动态处理
-			
-		    $('#eeda-table').dataTable({
+			var trandferOrderId = $("#tranferid").val();
+			$('#eeda-table').dataTable({
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        //"sPaginationType": "bootstrap",
@@ -42,16 +41,30 @@ $(document).ready(function() {
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
-		        "sAjaxSource": "/yh/delivery/transferOderItem",
+		        "sAjaxSource": "/yh/delivery/orderList?trandferOrderId="+trandferOrderId,
 		        "aoColumns": [   
 		            
 		            {"mDataProp":"ITEM_NO"},
 		            {"mDataProp":"ITEM_NAME"},
-		            {"mDataProp":"MOUNT"},        	
-		            {"mDataProp":"UNIT"},
-		            {"mDataProp":"ITEM_DESC"},
-		            {"mDataProp":"REMARK"},
+		            {"mDataProp":"AMOUNT"},        	
+		            {"mDataProp":"VOLUME"},
+		            {"mDataProp":"WEIGHT"},
+		                                 
 		        ]      
 		    });	
-			
+			//添加配送单
+			$("#saveBtn").click(function(e){
+		            //阻止a 的默认响应行为，不需要跳转			    
+		            e.preventDefault();
+		            //异步向后台提交数据
+		            $.post('/yh/delivery/deliverySave', $("#deliveryForm").serialize(), function(contractId){
+		                console.log(data);
+	                    if(data.success){
+	                    	dataTable.fnDraw();
+	                    }else{
+	                        alert('数据保存失败。');
+	                    }
+		                    
+		                },'json');
+		        });
 });
