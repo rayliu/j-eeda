@@ -2,6 +2,7 @@
 
         <div id="page-wrapper">
             <div class="row">
+           
                 <div class="col-lg-12">
                     <h1 class="page-header">回单</h1>                  
                     <input  class="form-control" id="user" value="${user!''}" type="hidden">
@@ -15,6 +16,12 @@
                         
                         <!-- /.panel-heading -->
                         <div class="panel-body">
+                         <%if(saveOK!''==true){%>  
+		    <div class="alert alert-success">
+              <button type="button" class="close" data-dismiss="alert">×</button>
+              保存成功
+            </div>
+		    <%}%>
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs">
                                 <li class="active"><a href="#basic" data-toggle="tab">基本信息</a>
@@ -30,7 +37,7 @@
                                 <div class="tab-pane fade active in" id="basic">
                                 <div class="row">
                                <div class="col-lg-6">
-                                    <form role="form">
+                                    <form role="form" method="post" action="/yh/returnorder/save">
                                      <input class="form-control" id="id" value="${id}" type="hidden" name="id">
                                    		  <h2>回单信息</h2>  
                                    		   <div class="form-group">
@@ -95,7 +102,7 @@
                                         </div>
                                         
                                         <div class="form-group">
-                                         <button class="btn-btn-default" id="save">保存</button>
+                                         <button class="btn-btn-default" id="save" type="submit">保存</button>
                                          </div>
                                        
                                        
@@ -227,11 +234,7 @@
     $(document).ready(function() {
        // $('#menu_transfer').addClass('active').find('ul').addClass('in');
         var inputStr = $('#id').val(); 
-       $("#save").click(function(){
-       
-       	$.post('/yh/returnorder/save', {locationName:inputStr});
-    	alert("waerwerwee");
-       });
+      
       
       // var user = $('#user').val();
        //var user2 = $('#user').val();
@@ -288,6 +291,18 @@
     		}
     	},'json');
     	
-	
+     /**
+    	$("#save").click(function(e){
+    		//阻止a 的默认响应行为，不需要跳转
+    		e.preventDefault();
+    		//异步向后台提交数据
+    		 $.get('/yh/returnorder/save', {locationName:inputStr},function(data){
+    			
+    			 
+    		 });
+    		    	
+    	 		
+    	});
+   **/
     });
 </script>

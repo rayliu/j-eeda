@@ -136,10 +136,13 @@ public class ReturnOrderControllers extends Controller {
 	}
 
 	public void save() {
-		int id = Integer.parseInt(getPara("locationName"));
+		int id = Integer.parseInt(getPara("id"));
 
 		ReturnOrder r = ReturnOrder.dao.findById(id);
 		r.set("transaction_status", "完成").update();
+		setAttr("id", id);
+		setAttr("saveOK", true);
+		render("profile/returnorder/returnOrder.html");
 
 	}
 
