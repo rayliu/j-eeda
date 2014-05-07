@@ -52,24 +52,37 @@ public class TransferOrderItemController extends Controller {
 
 	// 保存货品
 	public void saveTransferOrderItem() {
-		TransferOrderItem item = new TransferOrderItem();
-		item.set("item_name", getPara("item_name"));
-		item.set("amount", getPara("amount"));
-		item.set("unit", getPara("unit"));
-		item.set("volume", getPara("volume"));
-		item.set("weight", getPara("weight"));
-		item.set("remark", getPara("remark"));
-		item.set("order_id", getPara("transfer_order_id"));
-		item.save();
-		renderJson(item.get("id"));
+		TransferOrderItem item = null;
+		String id = getPara("transfer_order_item_id");
+		if (id != null && !id.equals("")) {
+			item = TransferOrderItem.dao.findById(id);
+			item.set("item_name", getPara("update_item_name"));
+			item.set("amount", getPara("update_amount"));
+			item.set("unit", getPara("update_unit"));
+			item.set("volume", getPara("update_volume"));
+			item.set("weight", getPara("update_weight"));
+			item.set("remark", getPara("update_remark"));
+			item.set("order_id", getPara("transfer_order_id"));
+			item.update();
+		} else {
+			item = new TransferOrderItem();
+			item.set("item_name", getPara("item_name"));
+			item.set("amount", getPara("amount"));
+			item.set("unit", getPara("unit"));
+			item.set("volume", getPara("volume"));
+			item.set("weight", getPara("weight"));
+			item.set("remark", getPara("remark"));
+			item.set("order_id", getPara("transfer_order_id"));
+			item.save();
+		}
+		renderJson(item);
 	}
 
 	// 获取TransferOrderItem对象
 	public void getTransferOrderItem() {
 		String id = getPara("transfer_order_item_id");
 		TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(id);
-		setAttr("transferOrderItem", transferOrderItem);
-		renderJson("{\"success\":true}");
+		renderJson(transferOrderItem);
 	}
 
 	// 删除TransferOrderItem

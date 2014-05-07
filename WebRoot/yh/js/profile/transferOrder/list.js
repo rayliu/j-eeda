@@ -24,7 +24,8 @@ $(document).ready(function() {
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
-                "fnRender": function(obj) {                    
+                "fnRender": function(obj) {  
+                	
                     return "<a class='btn btn-success' href='/yh/transferOrder/edit/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+

@@ -15,6 +15,7 @@ import models.Role;
 import models.Toll;
 import models.TransferOrder;
 import models.TransferOrderItem;
+import models.TransferOrderItemDetail;
 import models.UserLogin;
 import models.Warehouse;
 import models.eeda.Case;
@@ -119,6 +120,7 @@ public class EedaConfig extends JFinalConfig {
 		me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
 		me.add("/yh/transferOrder", controllers.yh.order.TransferOrderController.class, "/yh");
 		me.add("/yh/transferOrderItem", controllers.yh.order.TransferOrderItemController.class, "/yh");
+		me.add("/yh/transferOrderItemDetail", controllers.yh.order.TransferOrderItemDetailController.class, "/yh");
 		me.add("/yh/returnorder", controllers.yh.ReturnOrderControllers.class, "/yh");
 		me.add("/yh/delivery", controllers.yh.delivery.DeliveryController.class, "/yh");
 		me.add("/yh/pickupOrder", controllers.yh.pickup.PickupOrderController.class, "/yh");
@@ -164,6 +166,7 @@ public class EedaConfig extends JFinalConfig {
 		arp.addMapping("contract", Contract.class);
 		arp.addMapping("transfer_order", TransferOrder.class);
 		arp.addMapping("transfer_order_item", TransferOrderItem.class);
+		arp.addMapping("transfer_order_item_detail", TransferOrderItemDetail.class);
 		arp.addMapping("return_order", ReturnOrder.class);
 		arp.addMapping("delivery_order", DeliveryOrder.class);
 		// yh mapping

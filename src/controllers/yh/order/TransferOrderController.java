@@ -245,8 +245,7 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("notify_party_id", party.get("id"));
 		}
 		transferOrder.save();
-		// setAttr("transferOrder", transferOrder);
-		renderJson(transferOrder.get("id"));
+		renderJson(transferOrder);
 	}
 
 	// 保存收货人
