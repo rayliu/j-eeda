@@ -54,14 +54,15 @@ $(document).ready(function() {
 		    });	
 			//添加配送单
 			$("#saveBtn").click(function(e){
-		            //阻止a 的默认响应行为，不需要跳转			    
+		            //阻止a 的默认响应行为，不需要跳转	
+				
 		            e.preventDefault();
 		            //异步向后台提交数据
-		            $.post('/yh/delivery/deliverySave', $("#deliveryForm").serialize(), function(contractId){
+		           $.post('/yh/delivery/deliverySave', $("#deliveryForm").serialize(), function(data){
 		                console.log(data);
 	                    if(data.success){
-	                    	dataTable.fnDraw();
-	                    }else{
+	                    	$("#style").show();
+	                     }else{
 	                        alert('数据保存失败。');
 	                    }
 		                    

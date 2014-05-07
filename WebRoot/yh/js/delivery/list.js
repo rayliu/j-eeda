@@ -42,13 +42,13 @@ $(document).ready(function() {
 		  e.preventDefault();
          //异步向后台提交数据
 		 var id = $(this).attr('code');
-		$.post('/yh/delivery/cancel/'+id, $("#eeda-table").serialize(), function(data){
+		$.post('/yh/delivery/cancel/'+id,function(data){
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data.success){
-                 	dataTable.fnDraw();
+                	dataTable.fnDraw();
                  }else{
-                     alert('数据保存失败。');
+                     alert('已取消');
                  }
                  
              },'json');

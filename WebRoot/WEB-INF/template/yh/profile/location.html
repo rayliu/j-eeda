@@ -15,10 +15,10 @@
 	 				<table class="table table-striped table-bordered table-hover datatable" id="example">
 						<thead>
 							<tr>
-								<th>上一级</th>
-								<th>code</th>
+								<th>省</th>
 								<th>市</th>
-								<th>pcode</th>
+								<th>区</th>
+								<th>城市描述</th>
 								<!-- <th></th> -->
 							</tr>
 						</thead>
@@ -62,10 +62,10 @@ $(document).ready(function() {
 	        },
 	        "sAjaxSource": "/yh/location/listLocation",
 			"aoColumns": [
-				{ "mDataProp": "P_NAME" },
-	            { "mDataProp": "CODE" },
-	            { "mDataProp": "NAME" },
-	            { "mDataProp": "PCODE" }
+				{ "mDataProp": "PROVINCE" },
+	            { "mDataProp": "CITY" },
+	            { "mDataProp": "DISTRICT" },
+	            { "mDataProp": "NAME" }
 	            /* { 
 	                "mDataProp": null, 
 	                "sWidth": "13%",
