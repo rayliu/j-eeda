@@ -23,10 +23,15 @@ $(document).ready(function() {
             {"mDataProp":"REMARK"},
             { 
                 "mDataProp": null, 
+            	//"mDataProp": "CARGO_NATURE", 
                 "sWidth": "8%",                
-                "fnRender": function(obj) {  
-                	
-                    return "<a class='btn btn-success' href='/yh/transferOrder/edit/"+obj.aData.ID+"'>"+
+                "fnRender": function(obj) {
+                	/*if(obj.aData.CARGO_NATURE=='cargo'){
+                		obj.aData.CARGO_NATURE = '普通货品';
+                	}else if(obj.aData.CARGO_NATURE=='damageCargo'){
+                		return '损坏货品';
+                	}*/
+                    return	"<a class='btn btn-success' href='/yh/transferOrder/edit/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+
                             "</a>"+

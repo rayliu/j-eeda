@@ -57,13 +57,7 @@ public class TransferOrderItemDetailController extends Controller {
 		String id = getPara("transfer_order_item_detail_id");
 		if (id != null && !id.equals("")) {
 			item = TransferOrderItemDetail.dao.findById(id);
-			item.set("item_name", getPara("update_item_name"));
-			item.set("amount", getPara("update_amount"));
-			item.set("unit", getPara("update_unit"));
-			item.set("volume", getPara("update_volume"));
-			item.set("weight", getPara("update_weight"));
-			item.set("remark", getPara("update_remark"));
-			item.set("order_id", getPara("transfer_order_id"));
+
 			item.update();
 		} else {
 			item = new TransferOrderItemDetail();
@@ -77,36 +71,60 @@ public class TransferOrderItemDetailController extends Controller {
 			item.set("damage_revenue", getPara("detail_damage_revenue"));
 			item.set("damage_payment", getPara("detail_damage_payment"));
 			item.set("damage_remark", getPara("detail_damage_remark"));
-			Contact contact = setContact();
-			contact.save();
-			item.set("contact_id", contact.get("id"));
+			Party party = setParty();
+
+			item.set("notify_party_id", party.get("id"));
 			item.set("order_id", getPara("transfer_order_id"));
 			item.set("item_id", getPara("transfer_order_item_id"));
 			item.save();
 		}
-		renderJson(item.get("id"));
+		renderJson(item);
 	}
 
-	// 保存客户
-	private Contact setContact() {
+	// 保存收货人
+	private Party setParty() {
+		Party party = new Party();
 		Contact contact = new Contact();
-		contact.set("contact_person", getPara("contact_person"));
-		contact.set("phone", getPara("phone"));
-		contact.set("address", getPara("address"));
-		return contact;
+		contact.set("contact_person", getPara("detail_contact_person"));
+		contact.set("phone", getPara("detail_phone"));
+		contact.set("address", getPara("detail_address"));
+		contact.save();
+		party.set("contact_id", contact.get("id"));
+		party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
+		party.save();
+		return party;
 	}
 
-	// 获取TransferOrderItem对象
-	public void getTransferOrderItem() {
-		String id = getPara("transfer_order_item_id");
-		TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(id);
-		renderJson(transferOrderItem);
+	// 获取getTransferOrderItemDetail对象
+	public void getTransferOrderItemDetail() {
+		String id = getPara("detail_id");
+		TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(id);
+		renderJson(transferOrderItemDetail);
 	}
 
 	// 删除TransferOrderItem
-	public void deleteTransferOrderItem() {
-		String id = getPara("transfer_order_item_id");
-		TransferOrderItem.dao.deleteById(id);
+	public void deleteTransferOrderItemDetail() {
+		String id = getPara("detail_id");
+		TransferOrderItemDetail.dao.deleteById(id);
 		renderJson("{\"success\":true}");
+	}
+
+	// 获取所有单品
+	public void getAllTransferOrderItemDetail() {
+		String item_id = getPara("transfer_order_item_id");
+		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
+				.find("select * from TRANSFER_ORDER_ITEM_DETAIL where item_id=" + item_id);
+		/*
+		 * (
+		 * "select d.*,(select c.contact_person from contact c where id in(select contact_id from party where id in(SELECT NOTIFY_PARTY_ID FROM TRANSFER_ORDER_ITEM_DETAIL where item_id="
+		 * + item_id +
+		 * ")))  contact_person,(select c.phone from contact c where id in(select contact_id from party where id in(SELECT NOTIFY_PARTY_ID FROM TRANSFER_ORDER_ITEM_DETAIL where item_id="
+		 * + item_id +
+		 * "))) phone,(select c.address from contact c where id in(select contact_id from party where id in(SELECT NOTIFY_PARTY_ID FROM TRANSFER_ORDER_ITEM_DETAIL where item_id="
+		 * + item_id +
+		 * "))) address from TRANSFER_ORDER_ITEM_DETAIL d where item_id=" +
+		 * item_id);
+		 */
+		renderJson(transferOrderItemDetails);
 	}
 }

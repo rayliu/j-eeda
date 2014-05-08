@@ -363,24 +363,31 @@
 												</div>											
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">收货人</label> <input
-													id="contact_person" class="form-control" type="text"
-													name="contact_person"">
+													id="detail_contact_person" class="form-control" type="text"
+													name="detail_contact_person"">
 												</div>
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">电话</label> <input
-													id="phone" class="form-control" type="text"
-													name="phone"">
+													id="detail_phone" class="form-control" type="text"
+													name="detail_phone"">
 												</div>
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">地址</label> <input
-													id="address" class="form-control" type="text"
-													name="address"">
+													id="detail_address" class="form-control" type="text"
+													name="detail_address"">
 												</div>
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">货损?</label> <input
-													id="detail_remark" class="form-control" type="text"
+													id="detail_is_damage" class="form-control" type="text"
 													name="detail_is_damage"">
 												</div>
+												<!-- <label>货损?</label>             
+									            <label class="radio-inline">
+									           		<input name="detail_is_damage" type="radio" value="true">是
+									            </label>
+									            <label class="radio-inline">
+									           		<input name="detail_is_damage" type="radio" value="false">否
+									            </label> -->
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">定损金额</label> <input
 													id="detail_estimate_damage_amount" class="form-control" type="text"
@@ -410,6 +417,101 @@
 									    </div><!-- /.modal-content -->
 									  </div><!-- /.modal-dialog -->
 									</div><!-- /.modal -->
+                                     
+                                   <!-- 模态框 -->
+									<div class="modal fade" id="updateDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+									        <h4 class="modal-title" id="myModalLabel">新增货品明细</h4>
+									      </div>
+									      <div class="modal-body">
+									      	<form id="transferOrderItemDetailUpdateForm" action="">
+									      		<input id="update_detail_transfer_order_id" type="text" name="transfer_order_id" />
+									      		<input id="update_detail_transfer_order_item_id" type="text" name="transfer_order_item_id" />
+									      		<input id="detail_transfer_order_item_detail_id" type="text" name="detail_id" />
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">序列号</label> <input
+													id="update_serial_no" class="form-control" type="text"
+													name="update_serial_no">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">名称</label> <input
+													id="update_detail_item_name" class="form-control" type="text"
+													name="update_detail_item_name"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
+													id="update_detail_volume" class="form-control" type="text"
+													name="update_detail_volume"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
+													id="update_detail_weight" class="form-control" type="text"
+													name="update_detail_weight"">
+												</div>	
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">货品备注</label> <input
+													id="update_detail_remark" class="form-control" type="text"
+													name="update_detail_remark"">
+												</div>											
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">收货人</label> <input
+													id="update_detail_contact_person" class="form-control" type="text"
+													name="update_detail_contact_person"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">电话</label> <input
+													id="update_detail_phone" class="form-control" type="text"
+													name="update_detail_phone"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">地址</label> <input
+													id="update_detail_address" class="form-control" type="text"
+													name="update_detail_address"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">货损?</label> <input
+													id="update_detail_is_damage" class="form-control" type="text"
+													name="update_detail_is_damage"">
+												</div>
+												<!-- <label>货损?</label>             
+									            <label class="radio-inline">
+									           		<input name="update_detail_is_damage" type="radio" value="true">是
+									            </label>
+									            <label class="radio-inline">
+									           		<input name="update_detail_is_damage" type="radio" value="false">否
+									            </label> -->
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">定损金额</label> <input
+													id="update_detail_estimate_damage_amount" class="form-control" type="text"
+													name="update_detail_estimate_damage_amount"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">理赔金额</label> <input
+													id="update_detail_damage_revenue" class="form-control" type="text"
+													name="update_detail_damage_revenue"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">赔付给客户金额 </label> <input
+													id="update_detail_damage_payment" class="form-control" type="text"
+													name="update_detail_damage_payment"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">差异说明 </label> <input
+													id="update_detail_damage_remark" class="form-control" type="text"
+													name="update_detail_damage_remark"">
+												</div>
+										      </div>
+										      <div class="modal-footer">
+										        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+										        <button id="transferOrderItemDetailUpdateFormBtn" type="button" class="btn btn-primary">保存</button>
+										      </div>
+											</form>
+									    </div><!-- /.modal-content -->
+									  </div><!-- /.modal-dialog -->
+									</div><!-- /.modal -->
                                                 
                                 </div>
                                 <div class="tab-pane fade" id="milestone">
@@ -420,6 +522,7 @@
                                                     <tr>
                                                         <th>#</th>
                                                         <th>状态</th>
+                                                        <th>地点</th>
                                                         <th>更新用户</th>
                                                         <th>更新时间</th>
                                                     </tr>
@@ -428,29 +531,34 @@
                                                     <tr>
                                                         <td>1</td>
                                                         <td>新建单据</td>
+                                                        <td></td>
                                                         <td>Otto</td>
                                                         <td>2014-03-07 13:00</td>
                                                     </tr>
                                                     <tr>
                                                         <td>2</td>
                                                         <td>已发车</td>
+                                                        <td></td>
                                                         <td>Jacob</td>
                                                         <td>2014-03-08 23:00</td>
                                                     </tr>
                                                     <tr>
                                                         <td>3</td>
+                                                        <td>在途中</td>
                                                         <td>株洲</td>
                                                         <td>Larry</td>
                                                         <td>2014-03-09 9:00</td>
                                                     </tr>
                                                     <tr>
                                                         <td>4</td>
+                                                        <td>在途中</td>
                                                         <td>长沙</td>
                                                         <td>Larry</td>
                                                         <td>2014-03-09 15:00</td>
                                                     </tr>
                                                     <tr>
                                                         <td>5</td>
+                                                        <td>在途中</td>
                                                         <td>武汉中转仓</td>
                                                         <td>Larry</td>
                                                         <td>2014-03-10 3:00</td>
@@ -458,6 +566,7 @@
                                                     <tr>
                                                         <td>7</td>
                                                         <td>收货人签收</td>
+                                                        <td></td>
                                                         <td>Larry</td>
                                                         <td>2014-03-10 13:00</td>
                                                     </tr>
@@ -694,8 +803,9 @@
 			if(transferOrder.ID>0){
 				$("#departureConfirmationBtn").attr("disabled", false);
 				$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-			  	alert("运输单保存成功!");
+			  	//alert("运输单保存成功!");
 			  	$("#style").show();
+			  	$("#saveTransferOrderBtn").attr("disabled", true);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -731,7 +841,8 @@
 			if(transferOrder.ID>0){
 				$("#departureConfirmationBtn").attr("disabled", false);
 				$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-			  	alert("运输单保存成功!");
+			  	//alert("运输单保存成功!");
+			  	$("#saveTransferOrderBtn").attr("disabled", true);
 			  	$("#style").show();
 			}else{
 				alert('数据保存失败。');
@@ -819,6 +930,16 @@
 	  	    $("#detail_transfer_order_item_id").val(item_id);
 	  	    $("#detail_transfer_order_id").val(order_id);
 	  	    $("#transferOrderItemDateil").show();
+	  	    // 动态展示单品
+	  	    $.post('/yh/transferOrderItemDetail/getAllTransferOrderItemDetail', 'transfer_order_item_id='+item_id, function(data){
+				var transferOrderItemDetailTbody = $("#transferOrderItemDetailTbody");
+				transferOrderItemDetailTbody.empty();
+				for(var i=0;i<data.length;i++){
+		  	    	transferOrderItemDetailTbody.append("<tr><td>"+data[i].SERIAL_NO+"</td><td>"+data[i].ITEM_NAME+"</td><td>"+data[i].VOLUME+"</td><td>"+data[i].WEIGHT+"</td><td>"+data[i].CONTACT_PERSON+"<br/>"+data[i].PHONE+"<br/>"+data[i].ADDRESS+"<br/></td>"
+		                       + "<td>"+data[i].REMARK+"</td><td>"+data[i].IS_DAMAGE+"</td><td>"+data[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data[i].DAMAGE_REVENUE+"<br/>"+data[i].DAMAGE_PAYMENT+"<br/>"+data[i].DAMAGE_REMARK+"</td>"
+		                       + "<td><button id='itemDetailEdit("+data[i].ID+"|"+data[i].ITEM_ID+"["+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data[i].ID+"|"+data[i].ITEM_ID+"["+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+	  	    	}
+			},'json');
     	}else if(type == 'itemEdit'){
 	  	    var id = inputId.substring(inputId.indexOf('(')+1);
 	  	    $("#transfer_order_item_id").val(id);
@@ -906,8 +1027,8 @@
 	
 	// 保存单品信息
 	$("#transferOrderItemDetailFormBtn").click(function(){
-		$.post('/yh/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailForm").serialize(), function(order_item_dateil_id){
-			if(order_item_dateil_id > 0){
+		$.post('/yh/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailForm").serialize(), function(transferOrderItemDetail){
+			if(transferOrderItemDetail.ID > 0){
 				// 动态显示单品信息
 				var transferOrderItemDetailTbody = $("#transferOrderItemDetailTbody");
 				var serial_no = $("#serial_no").val();                              
@@ -920,15 +1041,68 @@
 				var detail_damage_revenue = $("#detail_damage_revenue").val();             
 				var detail_damage_payment = $("#detail_damage_payment").val();             
 				var detail_damage_remark = $("#detail_damage_remark").val();               
-				var contact_person = $("#contact_person").val();
-				var phone = $("#phone").val();               
-				var address = $("#address").val();   
+				var contact_person = $("#detail_contact_person").val();
+				var phone = $("#detail_phone").val();               
+				var address = $("#detail_address").val();   
 				transferOrderItemDetailTbody.append("<tr><td>"+serial_no+"</td><td>"+detail_item_name+"</td><td>"+detail_volume+"</td><td>"+detail_weight+"</td><td>"+contact_person+"<br/>"+phone+"<br/>"+address+"<br/></td>"
 	                       + "<td>"+detail_remark+"</td><td>"+detail_is_damage+"</td><td>"+detail_estimate_damage_amount+"<br/>"+detail_damage_revenue+"<br/>"+detail_damage_payment+"<br/>"+detail_damage_remark+"</td>"
-	                       + "<td><button type='submit' class='btn btn-default'>编辑</button><button type='submit' class='btn btn-default'>删除</button></td></tr>");
+	                       + "<td><button id='itemDetailEdit("+transferOrderItemDetail.ID+"|"+transferOrderItemDetail.ITEM_ID+"["+transferOrderItemDetail.ORDER_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+transferOrderItemDetail.ID+"|"+transferOrderItemDetail.ITEM_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
 				$("#detailModal").modal('hide');
 			}			
 		});
+	});
+	
+	// 点击单品按钮
+	$("#transferOrderItemDetailTbody").on('click', 'button', function(){
+		var inputId = $(this).attr('id');
+		var type = inputId.substring(0,inputId.indexOf('('));
+    	if(type == 'itemDetailEdit'){
+    		var order_id = inputId.substring(inputId.indexOf('[')+1);
+    		var detailItem = inputId.substring(0,inputId.indexOf('['));
+    		var item_id = detailItem.substring(detailItem.indexOf('|')+1);
+    		var typeDetail = detailItem.substring(0,detailItem.indexOf('|'));
+	  	    var detail_id = typeDetail.substring(typeDetail.indexOf('(')+1);
+	  	    
+	  	    $("#update_detail_transfer_order_id").val(order_id);
+	  	    $("#update_detail_transfer_order_item_id").val(item_id);
+	  	    $("#detail_transfer_order_item_detail_id").val(detail_id);
+	  	    $.post('/yh/transferOrderItemDetail/getTransferOrderItemDetail', 'detail_id='+detail_id, function(data){
+	  	    	// 编辑时回显数据
+	  	    	$("#update_serial_no").val(data.SERIAL_NO);
+	  	    	$("#update_detail_item_name").val(data.ITEM_NAME);
+	  	    	$("#update_detail_volume").val(data.VOLUME);
+	  	    	$("#update_detail_weight").val(data.WEIGHT);
+	  	    	$("#update_detail_remark").val(data.REMARK);
+	  	    	//$("#update_detail_contact_person").val(data.);
+	  	    	//$("#update_detail_phone").val(data.);
+	  	    	//$("#update_detail_address").val(data.);
+	  	    	$("#update_detail_is_damage").val(data.IS_DAMAGE);
+	  	    	$("#update_detail_estimate_damage_amount").val(data.ESTIMATE_DAMAGE_AMOUNT);
+	  	    	$("#update_detail_damage_revenue").val(data.DAMAGE_REVENUE);
+	  	    	$("#update_detail_damage_payment").val(data.DAMAGE_PAYMENT);
+	  	    	$("#update_detail_damage_remark").val(data.DAMAGE_REMARK);
+			},'json');
+
+	  		// 模态框:修改单品明细
+			$('#updateDetailModal').modal('show');	
+    	}else{
+    		var item_id = inputId.substring(inputId.indexOf('|')+1);
+	  	    var detail = inputId.substring(0,inputId.indexOf('|'));
+	  	    var detail_id = detail.substring(inputId.indexOf('(')+1);   
+    		$.post('/yh/transferOrderItemDetail/deleteTransferOrderItemDetail', 'detail_id='+detail_id, function(data){
+			},'json');
+    		
+    		// 动态展示单品
+	  	    $.post('/yh/transferOrderItemDetail/getAllTransferOrderItemDetail', 'transfer_order_item_id='+item_id, function(data){
+				var transferOrderItemDetailTbody = $("#transferOrderItemDetailTbody");
+				transferOrderItemDetailTbody.empty();
+				for(var i=0;i<data.length;i++){
+		  	    	transferOrderItemDetailTbody.append("<tr><td>"+data[i].SERIAL_NO+"</td><td>"+data[i].ITEM_NAME+"</td><td>"+data[i].VOLUME+"</td><td>"+data[i].WEIGHT+"</td><td>"+data[i].CONTACT_PERSON+"<br/>"+data[i].PHONE+"<br/>"+data[i].ADDRESS+"<br/></td>"
+		                       + "<td>"+data[i].REMARK+"</td><td>"+data[i].IS_DAMAGE+"</td><td>"+data[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data[i].DAMAGE_REVENUE+"<br/>"+data[i].DAMAGE_PAYMENT+"<br/>"+data[i].DAMAGE_REMARK+"</td>"
+		                       + "<td><button id='itemDetailEdit("+data[i].ID+"|"+data[i].ITEM_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data[i].ID+"|"+data[i].ITEM_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+	  	    	}
+			},'json'); 
+    	}
 	});
 });
 </script>

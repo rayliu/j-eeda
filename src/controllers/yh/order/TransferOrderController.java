@@ -244,9 +244,13 @@ public class TransferOrderController extends Controller {
 			Party party = saveContact();
 			transferOrder.set("notify_party_id", party.get("id"));
 		}
+		// 保存运输单之前先保存运输单里程碑
+		// saveOrderStatus(transferOrder);
 		transferOrder.save();
 		renderJson(transferOrder);
 	}
+
+	// 保保存运输单里程碑
 
 	// 保存收货人
 	public Party saveContact() {
