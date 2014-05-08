@@ -9,6 +9,7 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
+        "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -48,7 +49,7 @@ $(document).ready(function() {
                  if(data.success){
                 	 dataTable.fnDraw();
                  }else{
-                     alert('已取消');
+                     alert('取消失败');
                  }
                  
              },'json');
