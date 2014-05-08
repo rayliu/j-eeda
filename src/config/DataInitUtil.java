@@ -23,7 +23,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists user_roles(id bigint auto_increment PRIMARY KEY, user_name VARCHAR(50) not null, role_name VARCHAR(255) not null, remark VARCHAR(255));");
             stmt.executeUpdate("create table if not exists role_permissions(id bigint auto_increment PRIMARY KEY, role_name VARCHAR(50) not null, role_permission VARCHAR(50), remark VARCHAR(255));");
             stmt.executeUpdate("create table if not exists location(id bigint auto_increment PRIMARY KEY, code VARCHAR(50) not null, name VARCHAR(50), pcode VARCHAR(255));");
-            stmt.executeUpdate("create table if not exists office(id bigint auto_increment PRIMARY KEY, office_code VARCHAR(50) not null, office_name VARCHAR(50), contact_id VARCHAR(255));");
+            stmt.executeUpdate("create table if not exists office(id bigint auto_increment PRIMARY KEY, office_code VARCHAR(50) not null, office_name VARCHAR(50), contact_id VARCHAR(255),company_person varchar(50),address varchar(255),type varchar(50),remark varchar(255));");
             stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment PRIMARY KEY, name VARCHAR(20) not null, type VARCHAR(50), currency VARCHAR(50),org_name VARCHAR(50),account_pin VARCHAR(50), remark VARCHAR(255));");
             stmt.executeUpdate("create table if not exists contract(id bigint auto_increment PRIMARY KEY, name VARCHAR(50) not null, type VARCHAR(50), party_id bigint,period_from Timestamp,period_to Timestamp, remark VARCHAR(255));");
             stmt.executeUpdate("create table if not exists role_table(id bigint auto_increment PRIMARY KEY,role_name VARCHAR(50),role_time TIMESTAMP,role_people VARCHAR(50),role_lasttime TIMESTAMP,role_lastpeople VARCHAR(50));");
@@ -115,9 +115,9 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into location(code, name, pcode) values('110105', '宣武区', '120100');");
             stmt.executeUpdate("insert into location(code, name, pcode) values('120101', '和平区', '120100');");
 
-            stmt.executeUpdate("insert into office(office_code, office_name, contact_id) values('1201', '广州司', '020-111');");
-            stmt.executeUpdate("insert into office(office_code, office_name, contact_id) values('121', '珠公司', '0756-111');");
-            stmt.executeUpdate("insert into office(office_code, office_name, contact_id) values('101', '深圳分公司', '0751-111');");
+            stmt.executeUpdate("insert into office(office_code, office_name, company_person,contact_id,address,type,remark) values('1201', '广州司','张三', '020-1122211','广东省珠海市香洲区老香洲为农街为农市场','自营','');");
+            stmt.executeUpdate("insert into office(office_code, office_name, company_person,contact_id,address,type,remark) values('121', '珠公司', '李四','0756-1113333','广东省珠海市香洲区老香洲为农街为农市场','控股','');");
+            stmt.executeUpdate("insert into office(office_code, office_name, company_person,contact_id,address,type,remark) values('101', '深圳分公司','王五', '0751-11111111','广东省珠海市香洲区老香洲为农街为农市场','合作','');");
 
             stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李志坚','收费','人民币','建设银行','12123123123','穷人');");
             stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李四','收费','人民币','建设银行','12123123123','穷人');");

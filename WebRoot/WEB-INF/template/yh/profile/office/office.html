@@ -19,7 +19,11 @@
 							<tr>
 								<th>分公司代码</th>
 								<th>分公司名称</th>
+								<th>负责人</th>
 								<th>联系方式</th>
+								<th>地址</th>
+								<th>公司简介</th>
+								<th>备注</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -59,9 +63,13 @@ $(document).ready(function() {
 	        },
 	        "sAjaxSource": "/yh/office/listOffice",
 			"aoColumns": [
-				{ "mDataProp": "OFFICE_CODE" },
+				{ "mDataProp": "OFFICE_CODE","sWidth": "15%" },
 	            { "mDataProp": "OFFICE_NAME" },
+	            { "mDataProp": "COMPANY_PERSON" },
 	            { "mDataProp": "CONTACT_ID" },
+	            { "mDataProp": "ADDRESS","sWidth": "15%"},
+	            { "mDataProp": "TYPE" },
+	            { "mDataProp": "REMARK" },
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "15%",

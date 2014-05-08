@@ -4,7 +4,7 @@ $(document).ready(function() {
     $('#menu_transfer').addClass('active').find('ul').addClass('in');
     
 	//datatable, 动态处理
-    $('#eeda-table').dataTable({
+    var dataTable =$('#eeda-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
@@ -46,7 +46,7 @@ $(document).ready(function() {
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data.success){
-                	dataTable.fnDraw();
+                	 dataTable.fnDraw();
                  }else{
                      alert('已取消');
                  }
