@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.ReturnOrder;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import models.TransferOrder;
 
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -17,7 +15,6 @@ import com.jfinal.plugin.activerecord.Record;
 
 public class ReturnOrderControllers extends Controller {
 	private Logger logger = Logger.getLogger(ReturnOrderControllers.class);
-	Subject currentUser = SecurityUtils.getSubject();
 
 	public void index() {
 		render("profile/returnorder/returnOrderList.html");
@@ -100,6 +97,10 @@ public class ReturnOrderControllers extends Controller {
 						+ "from return_order r where  r.transfer_order_id='"
 						+ id + "'");
 
+		for (int i = 0; i < message.size(); i++) {
+			String nature = message.get(i).get("nature");
+		}
+
 		renderJson(message);
 
 	}
@@ -119,18 +120,46 @@ public class ReturnOrderControllers extends Controller {
 	public void itemlist() {
 		int id = Integer.parseInt(getPara("locationName"));
 		List<Record> itemlist = new ArrayList<Record>();
+		List<Record> totallist = new ArrayList<Record>();
+		TransferOrder tr = TransferOrder.dao.findById(id);
+		String nature = tr.get("cargo_nature");
+		// 获取货损条数和货品id
+		totallist = Db
+				.find("select count(1) total  , ITEM_ID  from TRANSFER_ORDER_ITEM_DETAIL where order_id ='"
+						+ id + "' and is_damage =true GROUP by item_id  ");
+		// 货品信息
+		// if (nature == "ATM") {
 		itemlist = Db
 				.find("SELECT * FROM TRANSFER_ORDER_ITEM where ORDER_ID ='"
 						+ id + "'");
+		// }
+		try {
+			for (int i = 0; i < itemlist.size(); i++) {
 
-		renderJson(itemlist);
+				if (itemlist.get(i).get("id") == totallist.get(i)
+						.get("item_id")) {
+					String amount = String.valueOf(itemlist.get(i)
+							.get("amount"));
+					String total = totallist.get(i).get("total").toString();
+					double allamount = Double.parseDouble(amount);
+					double lasttotal = Double.parseDouble(total);
+					double lastamount = allamount - lasttotal;
+					itemlist.get(i).set("amount", lastamount);
+
+				}
+			}
+		} catch (Exception e) {
+
+			renderJson(itemlist);
+
+		}
+
 	}
 
 	// 点击查看
 	public void check() {
-		String user = currentUser.getPrincipal().toString();
+
 		String id = getPara();
-		setAttr("user", user);
 		setAttr("id", id);
 		render("profile/returnorder/returnOrder.html");
 	}

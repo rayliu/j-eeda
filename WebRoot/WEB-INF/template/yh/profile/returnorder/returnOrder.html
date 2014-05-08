@@ -5,7 +5,7 @@
            
                 <div class="col-lg-12">
                     <h1 class="page-header">回单</h1>                  
-                    <input  class="form-control" id="user" value="${user!''}" type="hidden">
+                  
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -15,7 +15,8 @@
                     <div class="panel panel-default">
                         
                         <!-- /.panel-heading -->
-                        <div class="panel-body">
+                        <div class="panel-body" id="total">
+                       
                          <%if(saveOK!''==true){%>  
 		    <div class="alert alert-success">
               <button type="button" class="close" data-dismiss="alert">×</button>
@@ -28,7 +29,7 @@
                                 </li>
                                 <li class=""><a href="#cargos" data-toggle="tab">货品明细</a>
                                 </li>
-                                <li class=""><a href="#arap" data-toggle="tab">应收应付</a>
+                                <li class=""><a href="#arap" data-toggle="tab">应收</a>
                                 </li>
                             </ul>
 
@@ -102,7 +103,8 @@
                                         </div>
                                         
                                         <div class="form-group">
-                                         <button class="btn-btn-default" id="save" type="submit">保存</button>
+                                        <button class="btn btn-default" type="submit">&nbsp&nbsp&nbsp&nbsp保存&nbsp&nbsp&nbsp&nbsp</button>
+                                         
                                          </div>
                                        
                                        
@@ -234,12 +236,15 @@
     $(document).ready(function() {
        // $('#menu_transfer').addClass('active').find('ul').addClass('in');
         var inputStr = $('#id').val(); 
-      
+        
+       
+     
       
       // var user = $('#user').val();
        //var user2 = $('#user').val();
     	$.get('/yh/returnorder/checkorder', {locationName:inputStr}, function(data){   		
 			for(var i=0; i < data.length; i++){
+				nature=data[i].NATURE;
 				$('#order_no').html(data[i].ORDER_NO);
 				$('#nature').html(data[i].NATURE);
 	        	$('#pickup').html(data[i].PICKUP);
@@ -268,9 +273,12 @@
 			
 		
 	},'json');
-    	//item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id
+   
+    	
+    	
     	$.get('/yh/returnorder/itemlist', {locationName:inputStr}, function(data){ 
     		for(var i=0; i < data.length; i++){
+    		
     			$("#item").append(" <tr><td>"+data[i].ITEM_NAME+"</td>"
     			+"<td>"+data[i].ITEM_NO+"</td>"
     			+"<td>"+data[i].AMOUNT+"</td>"
@@ -291,18 +299,11 @@
     		}
     	},'json');
     	
-     /**
-    	$("#save").click(function(e){
-    		//阻止a 的默认响应行为，不需要跳转
-    		e.preventDefault();
-    		//异步向后台提交数据
-    		 $.get('/yh/returnorder/save', {locationName:inputStr},function(data){
-    			
-    			 
-    		 });
+    
+    	
     		    	
     	 		
-    	});
-   **/
+    
+   
     });
 </script>
