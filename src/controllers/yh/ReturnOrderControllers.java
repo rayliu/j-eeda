@@ -55,28 +55,28 @@ public class ReturnOrderControllers extends Controller {
 		List<Record> message = new ArrayList<Record>();
 		message = Db
 				.find("select r.id,r.status_code,r.create_date,r.transaction_status,r.creator,"
-						+ "(select company_name from contact c where c.id in (select t.notify_party_id  from  transfer_order t  where t. id in (select transfer_order_id from return_order  where t.id='"
+						+ "(select company_name from contact c where c.id in  (SELECT p.conTACT_ID  FROM PARTY  p where p.id in (select t.notify_party_id  from  transfer_order t  where t. id='"
 						+ id
 						+ "' )) )company_name,"
-						+ "(select address from contact c where c.id in (select t.notify_party_id  from  transfer_order t  where t. id in (select transfer_order_id from return_order  where t.id='"
+						+ "(select address from contact c where c.id in (SELECT p.conTACT_ID  FROM PARTY  p where p.id in (select t.notify_party_id  from  transfer_order t  where t. id='"
 						+ id
 						+ "' )))address,"
-						+ "(select phone from contact c where c.id in (select t.notify_party_id  from  transfer_order t  where t. id in (select transfer_order_id from return_order  where t.id='"
+						+ "(select phone from contact c where c.id in (SELECT p.conTACT_ID  FROM PARTY  p where p.id in (select t.notify_party_id  from  transfer_order t  where t. id='"
 						+ id
 						+ "' )) )phone,"
-						+ "(select contact_person from contact c where c.id in (select t.notify_party_id  from  transfer_order t  where t. id in (select transfer_order_id from return_order  where t.id='"
+						+ "(select contact_person from contact c where c.id in (SELECT p.conTACT_ID  FROM PARTY  p where p.id in (select t.notify_party_id  from  transfer_order t  where t. id='"
 						+ id
 						+ "' )))contact,"
-						+ "(select company_name from  contact c where c.id in (select t.customer_id  from  transfer_order t  where t. id in (select transfer_order_id from return_order  where t.id='"
+						+ "(select company_name from  contact c where c.id in (SELECT p.conTACT_ID  FROM PARTY  p where p.id in (select t.notify_party_id  from  transfer_order t  where t. id='"
 						+ id
 						+ "'))) pay_company,"
-						+ "(select address from contact c where c.id in (select t.customer_id  from  transfer_order t  where t. id in (select transfer_order_id from return_order  where t.id='"
+						+ "(select address from contact c where c.id in (SELECT p.conTACT_ID  FROM PARTY  p where p.id in (select t.notify_party_id  from  transfer_order t  where t. id='"
 						+ id
 						+ "' )))pay_address,"
-						+ "(select phone from contact c where c.id in (select t.customer_id  from  transfer_order t  where t. id in (select transfer_order_id from return_order where t.id='"
+						+ "(select phone from contact c where c.id in (SELECT p.conTACT_ID  FROM PARTY  p where p.id in (select t.notify_party_id  from  transfer_order t  where t. id='"
 						+ id
 						+ "' )))pay_phone,"
-						+ "(select  contact_person from  contact c where c.id in (select t.customer_id  from  transfer_order t  where t. id in (select transfer_order_id from return_order  where t.id='"
+						+ "(select  contact_person from  contact c where c.id in (SELECT p.conTACT_ID  FROM PARTY  p where p.id in (select t.notify_party_id  from  transfer_order t  where t. id='"
 						+ id
 						+ "')))pay_contad,"
 						+ "(select order_no  from transfer_order t where r.transfer_order_id=t.id)  order_no ,"
@@ -122,38 +122,64 @@ public class ReturnOrderControllers extends Controller {
 		List<Record> itemlist = new ArrayList<Record>();
 		List<Record> totallist = new ArrayList<Record>();
 		TransferOrder tr = TransferOrder.dao.findById(id);
-		String nature = tr.get("cargo_nature");
+		String nature = tr.getStr("cargo_nature");
+
 		// 获取货损条数和货品id
 		totallist = Db
 				.find("select count(1) total  , ITEM_ID  from TRANSFER_ORDER_ITEM_DETAIL where order_id ='"
 						+ id + "' and is_damage =true GROUP by item_id  ");
 		// 货品信息
-		// if (nature == "ATM") {
-		itemlist = Db
-				.find("SELECT * FROM TRANSFER_ORDER_ITEM where ORDER_ID ='"
-						+ id + "'");
-		// }
-		try {
-			for (int i = 0; i < itemlist.size(); i++) {
+		if (nature.equals("ATM")) {
+			if (totallist.size() > 0) {
+				itemlist = Db
+						.find("SELECT td.id,td.item_id,td.SERIAL_NO ,td.IS_DAMAGE ,td.ESTIMATE_DAMAGE_AMOUNT,ti.ITEM_NAME,ti.VOLUME,ti.amount,ti.WEIGHT ,ti.REMARK,"
+								+ "(select address from contact c where c.id  =td.NOTIFY_PARTY_ID )address,"
+								+ "(select contact_person from contact c where c.id  =td.NOTIFY_PARTY_ID )contact,"
+								+ "(select phone from contact c where c.id =td.NOTIFY_PARTY_ID ) phone "
+								+ "FROM TRANSFER_ORDER_ITEM_DETAIL  td ,TRANSFER_ORDER_ITEM  ti where td.ITEM_ID =ti.id and ti.ORDER_ID ='"
+								+ id + "'");
+			} else {
+				itemlist = Db
+						.find("SELECT ITEM_NAME ,AMOUNT ,VOLUME ,WEIGHT ,REMARK  FROM TRANSFER_ORDER_ITEM where ORDER_ID ='"
+								+ id + "'");
+				itemlist.get(0).set("SERIAL_NO", "");
+				itemlist.get(0).set("ESTIMATE_DAMAGE_AMOUNT", "");
+				itemlist.get(0).set("IS_DAMAGE", "");
+				itemlist.get(0).set("address", "");
+				itemlist.get(0).set("contact", "");
+				itemlist.get(0).set("phone", "");
+			}
+		} else {
+			itemlist = Db
+					.find("SELECT * FROM TRANSFER_ORDER_ITEM where ORDER_ID ='"
+							+ id + "'");
+		}
 
+		for (int i = 0; i < itemlist.size(); i++) {
+			try {
 				if (itemlist.get(i).get("id") == totallist.get(i)
-						.get("item_id")) {
+						.get("item_id")
+						|| itemlist.get(i).get("item_id") == totallist.get(i)
+								.get("item_id")) {
 					String amount = String.valueOf(itemlist.get(i)
 							.get("amount"));
 					String total = totallist.get(i).get("total").toString();
 					double allamount = Double.parseDouble(amount);
 					double lasttotal = Double.parseDouble(total);
 					double lastamount = allamount - lasttotal;
-					itemlist.get(i).set("amount", lastamount);
-
+					itemlist.get(i).set("lasttotal", lasttotal);
+					itemlist.get(i).set("lastamount", lastamount);
 				}
-			}
-		} catch (Exception e) {
+			} catch (Exception e) {
+				itemlist.get(i).set("lasttotal", 0);
+				itemlist.get(i)
+						.set("lastamount", itemlist.get(i).get("amount"));
 
-			renderJson(itemlist);
+			}
 
 		}
 
+		renderJson(itemlist);
 	}
 
 	// 点击查看

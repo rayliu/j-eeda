@@ -1,4 +1,4 @@
-package config;
+﻿package config;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -85,9 +85,9 @@ public class DataInitUtil {
                     + "fin_item_code varchar(20), amount double, status varchar(50), "
                     + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp);");
 
-            // transfer_order_milestone 运输单应收应付明细
-            stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
-                    + "last_modified_stamp TIMESTAMP,order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
+			// transfer_order_milestone 运输单应收应付明细
+			stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
+					+ "last_modified_stamp TIMESTAMP,order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
 
             stmt.close();
             // conn.commit();
@@ -273,8 +273,8 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into order_item(order_id, item_name, item_desc, quantity, unit_price) values("
                     + "1, 'P001', 'iPad Air', 1, 3200);");
             // 回单notity_party_id bigint,customer_id
-            stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'完成','应收','张三','这是一张回单','1','1','1','1');");
-            stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'未完成','应付','张三','这是一张回单','2','2','2','2');");
+			stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'完成','应收','张三','这是一张回单','1','1','1','1');");
+			stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'未完成','应收','张三','这是一张回单','2','2','2','2');");
             // 运输单应收应付明细id bigint auto_increment PRIMARY KEY, order_id bigint,
             // fin_item_id bigint,"
             // +
@@ -386,45 +386,41 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
 
             // 运输单
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('ATM', '6', '9', '2014042600003', '3', 'routeSP', '5', '订单已生成', '2014-04-26 16:33:35.1', 'delivery','1','珠海');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('cargo ', '7', '10', '2014042600003', '4', 'pickupSP', '4', '订单已生成', '2014-04-26 16:40:35.1', 'gateIn','2','中山');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '7', '9', '2014042600003', '4', 'pickupSP', '5', '新建', '2014-04-26 16:40:35.1', 'gateIn','广州');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '6', '10', '2014042600004', '3', 'own', '4', '新建', '2014-04-26 16:35:35.1', 'gateIn','深圳');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600005', '3', 'own', '5', '新建', '2014-04-26 16:38:35.1', 'delivery','东莞');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('ATM', '6', '9', '2014042600003', '3', 'routeSP', '5', '订单已生成', '2014-04-26 16:33:35.1', 'delivery','1','珠海');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('cargo ', '7', '10', '2014042600003', '4', 'pickupSP', '4', '订单已生成', '2014-04-26 16:40:35.1', 'gateIn','2','中山');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '7', '9', '2014042600003', '4', 'pickupSP', '5', '新建', '2014-04-26 16:40:35.1', 'gateIn','广州');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '6', '10', '2014042600004', '3', 'own', '4', '新建', '2014-04-26 16:35:35.1', 'gateIn','深圳');");
+			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600005', '3', 'own', '5', '新建', '2014-04-26 16:38:35.1', 'delivery','东莞');");
             // 货品明细
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('123456', '冰箱', '这是一台冰箱','5','台','452','100','一台冰箱','1');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('54321', '音箱2', '这是对音响','5','对','50','10','一对音响','2');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('25895', '电视', '这是一台电视','10','台','452','100','TCL电视机','1');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('51456', '电脑', '这是一台电脑','12','台','50','10','十二台电脑','1');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('25895', '电视4', '这是一台电视','10','台','452','100','TCL电视机','4');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('51456', '电脑3', '这是一台电脑','12','台','50','10','十二台电脑','3');");
-            // transfer_order_item_detail(id bigint auto_increment PRIMARY
-            // KEY,order_id bigint,item_id bigint,item_no varchar(255),"
-            // +
-            // "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,contact_id bigint,"
-            // +
-            // "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),FOREIGN KEY(order_id) REFERENCES transfer_order(id),"
-            // + "FOREIGN KEY(item_id) REFERENCES transfer_order_item(id
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '音箱', 'true','2');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '音箱', 'true','2');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '音箱', 'true','2');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '音箱', 'false','2');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '电视', 'true','3');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '电视', 'true','3');");
-			stmt.executeUpdate("insert into `transfer_order_item_detail`(`DAMAGE_REMARK`, `DAMAGE_REVENUE`, `REMARK`, `IS_DAMAGE`, `ITEM_ID`, `VOLUME`, `DAMAGE_PAYMENT`, `ORDER_ID`, `NOTIFY_PARTY_ID`, `WEIGHT`, `ITEM_NAME`, `SERIAL_NO`, `ESTIMATE_DAMAGE_AMOUNT`) values(1, 1, 1, true, 1, 1, 1, 1, 8, 1, 1, 1, 1)");
-			stmt.executeUpdate("insert into `transfer_order_item_detail`(`DAMAGE_REMARK`, `DAMAGE_REVENUE`, `REMARK`, `IS_DAMAGE`, `ITEM_ID`, `VOLUME`, `DAMAGE_PAYMENT`, `ORDER_ID`, `NOTIFY_PARTY_ID`, `WEIGHT`, `ITEM_NAME`, `SERIAL_NO`, `ESTIMATE_DAMAGE_AMOUNT`) values(2, 2, 2, true, 1, 2, 2, 1, 9, 2, 2, 2, 2)");
+					+ "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','1');");
+			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+					+ "values('54321', '音箱', '这是对音响','5','对','50','10','一对音响','2');");
+			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+					+ "values('25895', '电视', '这是一台电视','10','台','452','100','TCL电视机','2');");
+			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+					+ "values('51456', '电脑', '这是一台电脑','12','台','50','10','十二台电脑','2');");
+			// transfer_order_item_detail(id bigint auto_increment PRIMARY
+			// KEY,order_id bigint,item_id bigint,item_no varchar(255),"
+			// +
+			// "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,contact_id bigint,"
+			// +
+			// "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),FOREIGN KEY(order_id) REFERENCES transfer_order(id),"
+			// + "FOREIGN KEY(item_id) REFERENCES transfer_order_item(id
+			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+					+ "values('2', '音箱', 'true','2');");
+			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+					+ "values('2', '音箱', 'true','2');");
+			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+					+ "values('2', '音箱', 'true','2');");
+			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+					+ "values('2', '音箱', 'false','2');");
+			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+					+ "values('2', '电视', 'true','3');");
+			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+					+ "values('2', '电视', 'true','3');");
+			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+					+ "values('1','fdgh1265985','10000', 'ATM', 'true','1','1');");
 
             // 配送单
             stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600013','1','5','7','9','配送在途');");

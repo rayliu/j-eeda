@@ -161,19 +161,21 @@
                                 <div class="tab-pane fade" id="cargos">
                                     <div class="panel-body">
                                         <div class="table-responsive">
-                                            <table class="table table-striped table-bordered table-hover">
-                                                <thead>
-                                                    <tr>
-                                                       <th>名称</th>
-                                                        <th>型号</th>
-                                                        <th>数量</th>
-                                                        <th>单位</th>
-                                                        <th>体积</th>
-                                                        <th>重量</th>
-                                                        <th>备注</th>  
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="item">
+                                            <table class="table table-striped table-bordered table-hover" id="ATMitem">
+                                              <thead style="display:none" id="style">
+                        					<tr>
+                         						 <th>名称</th>
+                        						 <th>型号</th>
+                         						 <th>数量</th>
+                        						 <th>货损数量</th>
+                        						 <th>剩余数量</th>
+                        						 <th>单位</th>
+                       							 <th>体积</th>
+                        						 <th>重量</th>
+                        						 <th>备注</th>
+                    						 </tr>
+                 							</thead>
+                                                <tbody id="item" style="display:none" >
 
                                                 </tbody>
                                             </table>
@@ -277,20 +279,58 @@
     	
     	
     	$.get('/yh/returnorder/itemlist', {locationName:inputStr}, function(data){ 
-    		for(var i=0; i < data.length; i++){
-    		
-    			$("#item").append(" <tr><td>"+data[i].ITEM_NAME+"</td>"
-    			+"<td>"+data[i].ITEM_NO+"</td>"
-    			+"<td>"+data[i].AMOUNT+"</td>"
-    			+"<td>"+data[i].UNIT+"</td>"
-    			+"<td>"+data[i].VOLUME+"</td>"
-    			+"<td>"+data[i].WEIGHT+"</td>"
-    			+"<td>"+data[i].ITEM_DESC+"</td></tr>");
+    		for(var i=0; i < data.length; i++){	
+    			if(data[i].ITEM_NAME=="ATM"){
+    				
+    				$("#ATMitem").append(" <thead>"
+    	  					+"<tr>"
+      						 +"<th>序列号</th>"
+     						 +"<th>名称</th>"
+      						 +"<th>数量</th>"
+     						 +"<th>货损数量</th>"
+     						 +"<th>剩余数量</th>"     					
+    						 +"<th>体积</th>" 
+     						 +"<th>重量</th>"
+     						 +"<th>收货人/地址/电话</th>"
+     						+"<th>货损？</th>"
+     						+"<th>货损信息</th>"
+     						 +"<th>备注</th>"
+   						 +"</tr>"
+   						+"</thead>"
+                            +"<tbody>"   
+                            +"<tr><td>"+data[i].SERIAL_NO+"</td>"
+    		    			+"<td>"+data[i].ITEM_NAME+"</td>"
+    		    			+"<td>"+data[i].AMOUNT+"</td>"
+    		    			+"<td>"+data[i].LASTTOTAL+"</td>"
+    		    			+"<td>"+data[i].LASTAMOUNT+"</td>"	
+    		    			+"<td>"+data[i].VOLUME+"</td>"
+    		    			+"<td>"+data[i].WEIGHT+"</td>"
+    		    			+"<td>"+data[i].CONTACT+"</br>"+data[i].PHONE+"</br>"+data[i].ADDRESS+"</td>"
+    		    			+"<td>"+data[i].IS_DAMAGE+"</td>"
+    		    			+"<td>"+data[i].ESTIMATE_DAMAGE_AMOUNT+"</td>"
+    		    			+"<td>"+data[i].REMARK+"</td></tr>"
+                            +" </tbody>");
+    				 
+    			}else{
+    				$("#style").show();
+    				$("#item").show();
+    				$("#item").append("<tr><td>"+data[i].ITEM_NAME+"</td>"
+    		    			+"<td>"+data[i].ITEM_NO+"</td>"
+    		    			+"<td>"+data[i].AMOUNT+"</td>"
+    		    			+"<td>"+data[i].LASTTOTAL+"</td>"
+    		    			+"<td>"+data[i].LASTAMOUNT+"</td>"
+    		    			+"<td>"+data[i].UNIT+"</td>"
+    		    			+"<td>"+data[i].VOLUME+"</td>"
+    		    			+"<td>"+data[i].WEIGHT+"</td>"
+    		    			+"<td>"+data[i].ITEM_DESC+"</td></tr>");
+    			}
+    			
     		}
     	},'json');
     	
     	$.get('/yh/returnorder/paylist', {locationName:inputStr}, function(data){ 
     		for(var i=0; i < data.length; i++){
+    			
     			$("#pay").append(" <tr><td>"+i+"</td>"
     			+"<td>"+data[i].NAME+"</td>"
     			+"<td>"+data[i].AMOUNT+"</td>"
