@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
-
 import models.Party;
 import models.PartyAttribute;
 import models.yh.profile.Contact;
