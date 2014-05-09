@@ -387,6 +387,8 @@ public class DataInitUtil {
 					+ "values('2', '电视', 'true','3');");
 			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
 					+ "values('2', '电视', 'true','3');");
+			stmt.executeUpdate("insert into `transfer_order_item_detail`(`DAMAGE_REMARK`, `DAMAGE_REVENUE`, `REMARK`, `IS_DAMAGE`, `ITEM_ID`, `VOLUME`, `DAMAGE_PAYMENT`, `ORDER_ID`, `NOTIFY_PARTY_ID`, `WEIGHT`, `ITEM_NAME`, `SERIAL_NO`, `ESTIMATE_DAMAGE_AMOUNT`) values(1, 1, 1, true, 1, 1, 1, 1, 8, 1, 1, 1, 1)");
+			stmt.executeUpdate("insert into `transfer_order_item_detail`(`DAMAGE_REMARK`, `DAMAGE_REVENUE`, `REMARK`, `IS_DAMAGE`, `ITEM_ID`, `VOLUME`, `DAMAGE_PAYMENT`, `ORDER_ID`, `NOTIFY_PARTY_ID`, `WEIGHT`, `ITEM_NAME`, `SERIAL_NO`, `ESTIMATE_DAMAGE_AMOUNT`) values(2, 2, 2, true, 1, 2, 2, 1, 9, 2, 2, 2, 2)");
 
 			// 配送单
 			stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600013','1','5','7','9','配送在途');");

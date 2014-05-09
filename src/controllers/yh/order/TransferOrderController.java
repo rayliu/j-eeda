@@ -11,6 +11,7 @@ import java.util.Map;
 import models.Party;
 import models.TransferOrder;
 import models.TransferOrderItem;
+import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.profile.Contact;
 
@@ -244,13 +245,23 @@ public class TransferOrderController extends Controller {
 			Party party = saveContact();
 			transferOrder.set("notify_party_id", party.get("id"));
 		}
-		// 保存运输单之前先保存运输单里程碑
-		// saveOrderStatus(transferOrder);
 		transferOrder.save();
+		// 保存运输单之前先保存运输里程碑
+		saveTransferOrderMilestone(transferOrder);
 		renderJson(transferOrder);
 	}
 
-	// 保保存运输单里程碑
+	// 保存运输里程碑
+	private void saveTransferOrderMilestone(TransferOrder transferOrder) {
+		TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+		transferOrderMilestone.set("status", "新建");
+		String name = (String) currentUser.getPrincipal();
+		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+		transferOrderMilestone.set("create_by", users.get(0).get("id"));
+		transferOrderMilestone.set("create_stamp", new Date());
+		transferOrderMilestone.set("order_id", transferOrder.get("id"));
+		transferOrderMilestone.save();
+	}
 
 	// 保存收货人
 	public Party saveContact() {

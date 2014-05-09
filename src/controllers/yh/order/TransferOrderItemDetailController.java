@@ -1,6 +1,8 @@
 package controllers.yh.order;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import models.Party;
 import models.TransferOrderItem;
@@ -57,7 +59,28 @@ public class TransferOrderItemDetailController extends Controller {
 		String id = getPara("transfer_order_item_detail_id");
 		if (id != null && !id.equals("")) {
 			item = TransferOrderItemDetail.dao.findById(id);
-
+			item.set("serial_no", getPara("update_serial_no"));
+			item.set("item_name", getPara("update_detail_item_name"));
+			item.set("volume", getPara("update_detail_volume"));
+			item.set("weight", getPara("update_detail_weight"));
+			item.set("remark", getPara("update_detail_remark"));
+			item.set("is_damage", getPara("update_detail_is_damage"));
+			item.set("estimate_damage_amount", getPara("update_detail_estimate_damage_amount"));
+			item.set("damage_revenue", getPara("update_detail_damage_revenue"));
+			item.set("damage_payment", getPara("update_detail_damage_payment"));
+			item.set("damage_remark", getPara("update_detail_damage_remark"));
+			Party party = Party.dao.findById(getPara("notify_party_id"));
+			Contact contact = Contact.dao.findFirst("select * from contact where id=(select contact_id from party where id="+party.get("id")+")");
+			contact.set("contact_person", getPara("update_detail_contact_person"));
+			contact.set("phone", getPara("update_detail_phone"));
+			contact.set("address", getPara("update_detail_address"));
+			contact.update();
+			party.set("contact_id", contact.get("id"));
+			party.update();
+			
+			item.set("notify_party_id", party.get("id"));
+			item.set("order_id", getPara("transfer_order_id"));
+			item.set("item_id", getPara("transfer_order_item_id"));
 			item.update();
 		} else {
 			item = new TransferOrderItemDetail();
@@ -97,23 +120,39 @@ public class TransferOrderItemDetailController extends Controller {
 
 	// 获取getTransferOrderItemDetail对象
 	public void getTransferOrderItemDetail() {
+		Map<String,Object> map = new HashMap<String, Object>();
 		String id = getPara("detail_id");
+		String notify_party_id = getPara("notify_party_id");
 		TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(id);
-		renderJson(transferOrderItemDetail);
+		Contact contact = (Contact) Contact.dao.findFirst("select * from contact where id=(select contact_id from party where id="+ notify_party_id + ")");
+		map.put("transferOrderItemDetail", transferOrderItemDetail);
+		map.put("contact", contact);
+		renderJson(map);
 	}
 
 	// 删除TransferOrderItem
 	public void deleteTransferOrderItemDetail() {
+		String notify_party_id = getPara("notify_party_id");
+		Party party = Party.dao.findById(getPara("notify_party_id"));
+		Contact contact = Contact.dao.findFirst("select * from contact where id=(select contact_id from party where id="+party.get("id")+")");
+		party.set("contact_id", null);
+		contact.delete();
 		String id = getPara("detail_id");
+		TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(id);
+		transferOrderItemDetail.set("order_id", null);
+		transferOrderItemDetail.set("item_id", null);
+		transferOrderItemDetail.set("notify_party_id", null);
 		TransferOrderItemDetail.dao.deleteById(id);
+		party.delete();
 		renderJson("{\"success\":true}");
 	}
 
 	// 获取所有单品
 	public void getAllTransferOrderItemDetail() {
 		String item_id = getPara("transfer_order_item_id");
-		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
-				.find("select * from TRANSFER_ORDER_ITEM_DETAIL where item_id=" + item_id);
+		Map<String, List> map = new HashMap<String, List>();
+		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from TRANSFER_ORDER_ITEM_DETAIL where item_id=" + item_id);
+		List<Contact> contacts = Contact.dao.find("select * from contact  where id in(select contact_id from party where id in(SELECT NOTIFY_PARTY_ID FROM TRANSFER_ORDER_ITEM_DETAIL where item_id="+ item_id + "))");
 		/*
 		 * (
 		 * "select d.*,(select c.contact_person from contact c where id in(select contact_id from party where id in(SELECT NOTIFY_PARTY_ID FROM TRANSFER_ORDER_ITEM_DETAIL where item_id="
@@ -125,6 +164,8 @@ public class TransferOrderItemDetailController extends Controller {
 		 * "))) address from TRANSFER_ORDER_ITEM_DETAIL d where item_id=" +
 		 * item_id);
 		 */
-		renderJson(transferOrderItemDetails);
+		map.put("transferOrderItemDetails", transferOrderItemDetails);
+		map.put("contacts", contacts);
+		renderJson(map);
 	}
 }
