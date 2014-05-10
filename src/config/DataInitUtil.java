@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
+
 import models.Party;
 import models.PartyAttribute;
 import models.yh.profile.Contact;
@@ -84,10 +85,20 @@ public class DataInitUtil {
                     + "fin_item_code varchar(20), amount double, status varchar(50), "
                     + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp);");
 
-			// transfer_order_milestone 运输单应收应付明细
-			stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
-					+ "last_modified_stamp TIMESTAMP,order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
+            // transfer_order_milestone 运输单应收应付明细
+            stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
+                    + "last_modified_stamp TIMESTAMP,order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
 
+            // billing_order 应收应付单主表
+            stmt.executeUpdate("create table if not exists billing_order(id bigint auto_increment PRIMARY KEY, blling_order_no varchar(255), "
+                    + "order_type varchar(50), customer_id bigint, customer_type varchar(50), charge_account_id bigint, payment_account_id bigint, status varchar(255),"
+                    + "transfer_order_id bigint, delivery_order_id bigint, remark varchar(1024), creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
+                    + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
+            // billing_order_item 应收应付单从表
+            stmt.executeUpdate("create table if not exists billing_order_item(id bigint auto_increment PRIMARY KEY,blling_order_id bigint, "
+                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
+                    + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
+                    + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
             stmt.close();
             // conn.commit();
             conn.close();
@@ -153,11 +164,9 @@ public class DataInitUtil {
             String propertySql = "insert into leads(title, create_date, creator, status, type, "
                     + "region, intro, remark, lowest_price, agent_fee, introducer, sales, follower, "
                     + "follower_phone, owner, owner_phone, customer_source, building_name, building_no, room_no, building_unit) values("
-                    + "'%d 初始测试数据-老香洲两盘', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'1房', '老香洲', "
+                    + "'%d 初始测试数据-老香洲两盘', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'1房', '老香洲', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', '58自来客', '五洲花城2期', '2', '1320', '3');";
 
             // for (int i = 0; i < 50; i++) {
@@ -168,100 +177,62 @@ public class DataInitUtil {
                     + "region, intro, remark, lowest_price, agent_fee, introducer, sales, follower, follower_phone, "
                     + "owner, owner_phone, area, total, customer_source, building_name, building_no, room_no, building_unit) values(";
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-老香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'1房', '老香洲', "
-                    + "'老香洲楼盘 2房2卫',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-老香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'1房', '老香洲', "
+                    + "'老香洲楼盘 2房2卫'," + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 36, 1200, '58自来客', '五洲花城2期', '2', '1320', '3');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-新香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出售', "
-                    + "'2房', '新香洲', "
-                    + "'新香洲楼盘 2房2卫',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-新香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出售', " + "'2房', '新香洲', "
+                    + "'新香洲楼盘 2房2卫'," + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 78, 56, '58自来客', '五洲花城2期', '3', '1321', '5');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-老香洲楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已租', "
-                    + "'3房', '老香洲', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-老香洲楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已租', " + "'3房', '老香洲', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 92, 2300, '58自来客', '五洲花城2期', '4', '1320', '3');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-拱北楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已售', "
-                    + "'4房', '拱北', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-拱北楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已售', " + "'4房', '拱北', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 150, 120, '58自来客', '五洲花城2期', '6', '1320', '3');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'5房', '柠溪', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'5房', '柠溪', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '', '1325', '8');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房', '柠溪', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'6房', '柠溪', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '', '5');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房以上', '柠溪', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'6房以上', '柠溪', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
-                    + "'地皮', '前山', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', " + "'地皮', '前山', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'd_user1', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
                     + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房以上', '柠溪', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'6房以上', '柠溪', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
-                    + "'地皮', '前山', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', " + "'地皮', '前山', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'd_user1', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
                     + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房以上', '柠溪', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'6房以上', '柠溪', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
-                    + "'地皮', '前山', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', " + "'地皮', '前山', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'd_user1', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
                     + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
 
             stmt.executeUpdate("insert into support_case(title, create_date, creator, status, type, case_desc, note) values("
@@ -272,8 +243,8 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into order_item(order_id, item_name, item_desc, quantity, unit_price) values("
                     + "1, 'P001', 'iPad Air', 1, 3200);");
             // 回单notity_party_id bigint,customer_id
-			stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'完成','应收','张三','这是一张回单','1','1','1','1');");
-			stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'未完成','应收','张三','这是一张回单','2','2','2','2');");
+            stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'完成','应收','张三','这是一张回单','1','1','1','1');");
+            stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'未完成','应收','张三','这是一张回单','2','2','2','2');");
             // 运输单应收应付明细id bigint auto_increment PRIMARY KEY, order_id bigint,
             // fin_item_id bigint,"
             // +
@@ -299,83 +270,61 @@ public class DataInitUtil {
 
             // 收费条目定义表code VARCHAR(50),name VARCHAR(50),type VARCHAR(50),Remark
 
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
-                    + "'2013201448','干线运输费','应收','这是一张运输单收费');");
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
-                    + "'2013201448','搬运费','应收','这是一张运输单收费');");
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
-                    + "'2013201448','上楼费','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'2013201448','干线运输费','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'2013201448','搬运费','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'2013201448','上楼费','应收','这是一张运输单收费');");
 
             // 贷款客户 attributes
             for (int i = 1; i <= 1; i++) {
                 stmt.executeUpdate("insert into party(party_type, create_date, creator) values('贷款客户', CURRENT_TIMESTAMP(), 'demo');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values("
-                        + i + ", 'priority', '1重要紧急');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values("
-                        + i + ", 'name', '温生');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values("
-                        + i + ", 'loan_max', '15万');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values("
-                        + i + ", 'mobile', '1357038829');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values("
-                        + i + ", 'email', 'test@test.com');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i + ", 'priority', '1重要紧急');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i + ", 'name', '温生');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i + ", 'loan_max', '15万');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
+                        + ", 'mobile', '1357038829');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
+                        + ", 'email', 'test@test.com');");
             }
 
             // 地产客户
             Party p = new Party();
             Date createDate = Calendar.getInstance().getTime();
-            p.set("party_type", "地产客户").set("create_date", createDate)
-                    .set("creator", "jason").save();
+            p.set("party_type", "地产客户").set("create_date", createDate).set("creator", "jason").save();
             long partyId = p.getLong("id");
             PartyAttribute pa = new PartyAttribute();
-            pa.set("party_id", partyId).set("attr_name", "title")
-                    .set("attr_value", "求2房近3小").save();
+            pa.set("party_id", partyId).set("attr_name", "title").set("attr_value", "求2房近3小").save();
             PartyAttribute pa1 = new PartyAttribute();
-            pa1.set("party_id", partyId).set("attr_name", "client_name")
-                    .set("attr_value", "温生").save();
+            pa1.set("party_id", partyId).set("attr_name", "client_name").set("attr_value", "温生").save();
             PartyAttribute paPriority = new PartyAttribute();
-            paPriority.set("party_id", partyId).set("attr_name", "priority")
-                    .set("attr_value", "1重要紧急").save();
+            paPriority.set("party_id", partyId).set("attr_name", "priority").set("attr_value", "1重要紧急").save();
             PartyAttribute pa2 = new PartyAttribute();
-            pa2.set("party_id", partyId).set("attr_name", "status")
-                    .set("attr_value", "求租").save();
+            pa2.set("party_id", partyId).set("attr_name", "status").set("attr_value", "求租").save();
             PartyAttribute pa3 = new PartyAttribute();
-            pa3.set("party_id", partyId).set("attr_name", "region")
-                    .set("attr_value", "老香洲").save();
+            pa3.set("party_id", partyId).set("attr_name", "region").set("attr_value", "老香洲").save();
             PartyAttribute pa4 = new PartyAttribute();
-            pa4.set("party_id", partyId).set("attr_name", "type")
-                    .set("attr_value", "1房").save();
+            pa4.set("party_id", partyId).set("attr_name", "type").set("attr_value", "1房").save();
 
             // 外部user 创建的客户
             Party p1 = new Party();
             createDate = Calendar.getInstance().getTime();
-            p1.set("party_type", "地产客户").set("create_date", createDate)
-                    .set("creator", "demo").save();
+            p1.set("party_type", "地产客户").set("create_date", createDate).set("creator", "demo").save();
             partyId = p1.getLong("id");
             PartyAttribute p1_pa = new PartyAttribute();
-            p1_pa.set("party_id", partyId).set("attr_name", "title")
-                    .set("attr_value", "求前山小区").save();
+            p1_pa.set("party_id", partyId).set("attr_name", "title").set("attr_value", "求前山小区").save();
             PartyAttribute p1_pa1 = new PartyAttribute();
-            p1_pa1.set("party_id", partyId).set("attr_name", "client_name")
-                    .set("attr_value", "温生").save();
+            p1_pa1.set("party_id", partyId).set("attr_name", "client_name").set("attr_value", "温生").save();
             PartyAttribute p1_paPriority = new PartyAttribute();
-            p1_paPriority.set("party_id", partyId).set("attr_name", "priority")
-                    .set("attr_value", "1重要紧急").save();
+            p1_paPriority.set("party_id", partyId).set("attr_name", "priority").set("attr_value", "1重要紧急").save();
             PartyAttribute p1_pa2 = new PartyAttribute();
-            p1_pa2.set("party_id", partyId).set("attr_name", "status")
-                    .set("attr_value", "求购").save();
+            p1_pa2.set("party_id", partyId).set("attr_name", "status").set("attr_value", "求购").save();
             PartyAttribute p1_pa3 = new PartyAttribute();
-            p1_pa3.set("party_id", partyId).set("attr_name", "region")
-                    .set("attr_value", "拱北").save();
+            p1_pa3.set("party_id", partyId).set("attr_name", "region").set("attr_value", "拱北").save();
             PartyAttribute p1_pa4 = new PartyAttribute();
-            p1_pa4.set("party_id", partyId).set("attr_name", "type")
-                    .set("attr_value", "1房").save();
+            p1_pa4.set("party_id", partyId).set("attr_name", "type").set("attr_value", "1房").save();
             PartyAttribute p1_pa5 = new PartyAttribute();
-            p1_pa5.set("party_id", partyId).set("attr_name", "area")
-                    .set("attr_value", "120").save();
+            p1_pa5.set("party_id", partyId).set("attr_name", "area").set("attr_value", "120").save();
             PartyAttribute p1_pa6 = new PartyAttribute();
-            p1_pa6.set("party_id", partyId).set("attr_name", "total")
-                    .set("attr_value", "200").save();
+            p1_pa6.set("party_id", partyId).set("attr_name", "total").set("attr_value", "200").save();
 
             newCustomer();
             // 其他客户 attributes
@@ -385,47 +334,79 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
 
             // 运输单
-			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('ATM', '6', '9', '2014042600003', '3', 'routeSP', '5', '订单已生成', '2014-04-26 16:33:35.1', 'delivery','1','珠海');");
-			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('cargo ', '7', '10', '2014042600003', '4', 'pickupSP', '4', '订单已生成', '2014-04-26 16:40:35.1', 'gateIn','2','中山');");
-			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '7', '9', '2014042600003', '4', 'pickupSP', '5', '新建', '2014-04-26 16:40:35.1', 'gateIn','广州');");
-			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '6', '10', '2014042600004', '3', 'own', '4', '新建', '2014-04-26 16:35:35.1', 'gateIn','深圳');");
-			stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600005', '3', 'own', '5', '新建', '2014-04-26 16:38:35.1', 'delivery','东莞');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('ATM', '6', '9', '2014042600003', '3', 'routeSP', '5', '订单已生成', '2014-04-26 16:33:35.1', 'delivery','1','珠海');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('cargo ', '7', '10', '2014042600003', '4', 'pickupSP', '4', '订单已生成', '2014-04-26 16:40:35.1', 'gateIn','2','中山');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '7', '9', '2014042600003', '4', 'pickupSP', '5', '新建', '2014-04-26 16:40:35.1', 'gateIn','广州');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '6', '10', '2014042600004', '3', 'own', '4', '新建', '2014-04-26 16:35:35.1', 'gateIn','深圳');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600005', '3', 'own', '5', '新建', '2014-04-26 16:38:35.1', 'delivery','东莞');");
             // 货品明细
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-					+ "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','1');");
-			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-					+ "values('54321', '音箱', '这是对音响','5','对','50','10','一对音响','2');");
-			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-					+ "values('25895', '电视', '这是一台电视','10','台','452','100','TCL电视机','2');");
-			stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-					+ "values('51456', '电脑', '这是一台电脑','12','台','50','10','十二台电脑','2');");
-			// transfer_order_item_detail(id bigint auto_increment PRIMARY
-			// KEY,order_id bigint,item_id bigint,item_no varchar(255),"
-			// +
-			// "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,contact_id bigint,"
-			// +
-			// "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),FOREIGN KEY(order_id) REFERENCES transfer_order(id),"
-			// + "FOREIGN KEY(item_id) REFERENCES transfer_order_item(id
-			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-					+ "values('2', '音箱', 'true','2');");
-			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-					+ "values('2', '音箱', 'true','2');");
-			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-					+ "values('2', '音箱', 'true','2');");
-			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-					+ "values('2', '音箱', 'false','2');");
-			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-					+ "values('2', '电视', 'true','3');");
-			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-					+ "values('2', '电视', 'true','3');");
-			stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-					+ "values('1','fdgh1265985','10000', 'ATM', 'true','1','1');");
+                    + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','1');");
+            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                    + "values('54321', '音箱', '这是对音响','5','对','50','10','一对音响','2');");
+            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                    + "values('25895', '电视', '这是一台电视','10','台','452','100','TCL电视机','2');");
+            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                    + "values('51456', '电脑', '这是一台电脑','12','台','50','10','十二台电脑','2');");
+            // transfer_order_item_detail(id bigint auto_increment PRIMARY
+            // KEY,order_id bigint,item_id bigint,item_no varchar(255),"
+            // +
+            // "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,contact_id bigint,"
+            // +
+            // "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),FOREIGN KEY(order_id) REFERENCES transfer_order(id),"
+            // + "FOREIGN KEY(item_id) REFERENCES transfer_order_item(id
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+                    + "values('2', '音箱', 'true','2');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+                    + "values('2', '音箱', 'true','2');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+                    + "values('2', '音箱', 'true','2');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+                    + "values('2', '音箱', 'false','2');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+                    + "values('2', '电视', 'true','3');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
+                    + "values('2', '电视', 'true','3');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                    + "values('1','fdgh1265985','10000', 'ATM', 'true','1','1');");
 
             // 配送单
             stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600013','1','5','7','9','配送在途');");
             stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600004','2','6','7','10','已签收');");
             stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600014','3','5','8','9','取消');");
             stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600003','4','6','8','10','配送在途');");
+
+            // billing_order 应收应付单主表
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应收对账单001', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'new', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应收对账单002', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'checking', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应收对账单003', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'confirmed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应收对账单004', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'completed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应收对账单005', 'charge_audit_order',4, 'CUSTOMER', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            // billing_order_item 应收应付单从表
+            stmt.execute("create table if not exists billing_order_item(id bigint auto_increment PRIMARY KEY,blling_order_id bigint, "
+                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
+                    + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
+                    + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
             stmt.close();
             // conn.commit();
             conn.close();
@@ -436,47 +417,33 @@ public class DataInitUtil {
 
     public static void newCustomer() {
         Contact contact = new Contact();
-        contact.set("company_name", "珠海创诚易达信息科技有限公司")
-                .set("contact_person", "温生").set("email", "test@test.com");
-        contact.set("mobile", "12345671").set("phone", "113527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
-                .set("postal_code", "5190001").save();
+        contact.set("company_name", "珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com");
+        contact.set("mobile", "12345671").set("phone", "113527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场1").set("postal_code", "5190001")
+                .save();
         Contact contact7 = new Contact();
-        contact7.set("company_name", "珠海创诚易达信息科技有限公司")
-                .set("contact_person", "温生").set("email", "test@test.com");
-        contact7.set("mobile", "12345671").set("phone", "113527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
-                .set("postal_code", "5190001").save();
+        contact7.set("company_name", "珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com");
+        contact7.set("mobile", "12345671").set("phone", "113527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场1").set("postal_code", "5190001")
+                .save();
         Contact contact2 = new Contact();
-        contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生")
-                .set("email", "test@test.com");
-        contact2.set("mobile", "12345672").set("phone", "213527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场2")
-                .set("postal_code", "5190002").save();
+        contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生").set("email", "test@test.com");
+        contact2.set("mobile", "12345672").set("phone", "213527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场2").set("postal_code", "5190002")
+                .save();
         Contact contact3 = new Contact();
-        contact3.set("company_name", "上海能源科技有限公司").set("contact_person", "李生")
-                .set("email", "test@test.com");
-        contact3.set("mobile", "12345673").set("phone", "313527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场3")
-                .set("postal_code", "5190003").save();
+        contact3.set("company_name", "上海能源科技有限公司").set("contact_person", "李生").set("email", "test@test.com");
+        contact3.set("mobile", "12345673").set("phone", "313527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场3").set("postal_code", "5190003")
+                .save();
         Contact contact4 = new Contact();
-        contact4.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生")
-                .set("email", "test@test.com");
-        contact4.set("mobile", "12345674").set("phone", "413527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场4")
-                .set("postal_code", "5190004").save();
+        contact4.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生").set("email", "test@test.com");
+        contact4.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
+                .save();
         Contact contact5 = new Contact();
-        contact5.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生")
-                .set("email", "test@test.com");
-        contact5.set("mobile", "12345674").set("phone", "413527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场4")
-                .set("postal_code", "5190004").save();
+        contact5.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生").set("email", "test@test.com");
+        contact5.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
+                .save();
         Contact contact6 = new Contact();
-        contact6.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生")
-                .set("email", "test@test.com");
-        contact6.set("mobile", "12345674").set("phone", "413527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场4")
-                .set("postal_code", "5190004").save();
+        contact6.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生").set("email", "test@test.com");
+        contact6.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
+                .save();
 
         Party p1 = new Party();
         Party p2 = new Party();
@@ -486,27 +453,20 @@ public class DataInitUtil {
         Party p6 = new Party();
         Party p7 = new Party();
         Date createDate = Calendar.getInstance().getTime();
-        p1.set("contact_id", contact.getLong("id"))
-                .set("party_type", "CUSTOMER").set("create_date", createDate)
+        p1.set("contact_id", contact.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
+                .save();
+        p7.set("contact_id", contact7.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
+                .save();
+        p2.set("contact_id", contact2.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
+                .save();
+        p3.set("contact_id", contact3.getLong("id")).set("party_type", "SERVICE_PROVIDER").set("create_date", createDate)
                 .set("creator", "demo").save();
-        p7.set("contact_id", contact7.getLong("id"))
-                .set("party_type", "CUSTOMER").set("create_date", createDate)
+        p4.set("contact_id", contact4.getLong("id")).set("party_type", "SERVICE_PROVIDER").set("create_date", createDate)
                 .set("creator", "demo").save();
-        p2.set("contact_id", contact2.getLong("id"))
-                .set("party_type", "CUSTOMER").set("create_date", createDate)
+        p5.set("contact_id", contact5.getLong("id")).set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
                 .set("creator", "demo").save();
-        p3.set("contact_id", contact3.getLong("id"))
-                .set("party_type", "SERVICE_PROVIDER")
-                .set("create_date", createDate).set("creator", "demo").save();
-        p4.set("contact_id", contact4.getLong("id"))
-                .set("party_type", "SERVICE_PROVIDER")
-                .set("create_date", createDate).set("creator", "demo").save();
-        p5.set("contact_id", contact5.getLong("id"))
-                .set("party_type", "NOTIFY_PARTY")
-                .set("create_date", createDate).set("creator", "demo").save();
-        p6.set("contact_id", contact6.getLong("id"))
-                .set("party_type", "NOTIFY_PARTY")
-                .set("create_date", createDate).set("creator", "demo").save();
+        p6.set("contact_id", contact6.getLong("id")).set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
+                .set("creator", "demo").save();
 
     }
 

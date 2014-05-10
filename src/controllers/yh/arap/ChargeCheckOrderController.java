@@ -1,0 +1,52 @@
+package controllers.yh.arap;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.jfinal.core.Controller;
+import com.jfinal.log.Logger;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+
+public class ChargeCheckOrderController extends Controller {
+    private Logger logger = Logger.getLogger(ChargeCheckOrderController.class);
+
+    public void index() {
+        render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
+    }
+
+    public void list() {
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        String sqlTotal = "select count(1) total from billing_order where order_type='charge_audit_order'";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 左连接party, contact取到company_name
+        // 左连接transfer_order取到运输单号
+        // 左连接delivery_order取到配送单号
+        String sql = "select bo.*,  p.id, p.party_type, t.company_name, to.order_no as transfer_order_no, "
+                + "do.order_no as delivery_order_no, u.user_name as creator_name from billing_order bo "
+                + " left join party p on bo.customer_id =p.id and bo.customer_type =p.party_type "
+                + " left join contact t on p.contact_id = t.id left join transfer_order to on bo.transfer_order_id = to.id "
+                + "left join user_login u on bo.creator = u.id"
+                + " left join delivery_order do on bo.delivery_order_id = do.id where bo.order_type='charge_audit_order'";
+
+        logger.debug("sql:" + sql);
+        List<Record> BillingOrders = Db.find(sql);
+
+        Map BillingOrderListMap = new HashMap();
+        BillingOrderListMap.put("sEcho", pageIndex);
+        BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        BillingOrderListMap.put("aaData", BillingOrders);
+
+        renderJson(BillingOrderListMap);
+    }
+}
