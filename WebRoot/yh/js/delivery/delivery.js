@@ -79,16 +79,36 @@ $(document).ready(function() {
 		        "aoColumns": [   
 		            {"mDataProp":"ORDER_NO"},
 		            {"mDataProp":"STATUS"},
-		            {"mDataProp":"CARGO_NATURE"},        	
-		            {"mDataProp":"PICKUP_MODE"},
-		            {"mDataProp":"ARRIVAL_MODE"},
+		            {"mDataProp":"CARGO_NATURE"
+		            	
+		            },        	
+		            {"mDataProp":"PICKUP_MODE"
+		            	
+		            },
+		            {"mDataProp":"ARRIVAL_MODE"
+	            			
+	            	},
 		            { 
 		                "mDataProp": null, 
-		                "fnRender": function(obj) {                    
-		                    return "<select>"+
-		                    		"<option>123</option>"+
-		                    		"<option>asda</option>"+
-		                    		"</select>";
+		                "fnRender": function(obj) {
+		                	console.log(obj.aData.ID);
+		                	$.ajax({  	
+		                			type : "post",  
+		                		  	url : "/yh/delivery/serialNo?id="+obj.aData.ID,  
+		                		  	async : false,  
+		                		  	success : function(data){  
+		                		  		console.log(data);
+		                		  		for(var i = 0; i < data.length; i++)
+		        						{
+		                		  			/*return "<select>"+
+		                            		"<option>"+123+"</option>"+
+		                            		"</select>";*/
+		                		  			append("<option>"+data[i].serial_no+"</option>");
+		        						}
+		        						
+		                		  }  
+		                	 });
+		                	
 		                }
 		            },   
 		            { 
@@ -157,5 +177,8 @@ $(document).ready(function() {
 		                 
 		             },'json');
 				  });
+			 $("#eeda-table3").on('click', '.edit', function(){
+				
+				});
 			
 });
