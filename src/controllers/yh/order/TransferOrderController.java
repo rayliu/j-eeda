@@ -259,6 +259,7 @@ public class TransferOrderController extends Controller {
 		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 		transferOrderMilestone.set("create_by", users.get(0).get("id"));
 		transferOrderMilestone.set("create_stamp", new Date());
+		transferOrderMilestone.set("location", "");
 		transferOrderMilestone.set("order_id", transferOrder.get("id"));
 		transferOrderMilestone.save();
 	}

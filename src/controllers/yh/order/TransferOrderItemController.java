@@ -1,6 +1,8 @@
 package controllers.yh.order;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import models.Party;
 import models.TransferOrderItem;
@@ -11,6 +13,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 
 public class TransferOrderItemController extends Controller {
 
@@ -18,8 +22,41 @@ public class TransferOrderItemController extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 
 	public void transferOrderItemList() {
-		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item");
-		renderJson(transferOrderItems);
+//		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item");
+//		renderJson(transferOrderItems);
+		
+		String trandferOrderId = getPara("order_id");
+		if(trandferOrderId.isEmpty()){
+			trandferOrderId="-1";
+		}		
+		logger.debug(trandferOrderId);
+		
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+
+        String sqlTotal = "select count(1) total from transfer_order_item where order_id ="
+                + trandferOrderId;
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select * from transfer_order_item where order_id ="
+                + trandferOrderId;
+
+        List<Record> transferOrders = Db.find(sql);
+
+        Map transferOrderListMap = new HashMap();
+        transferOrderListMap.put("sEcho", pageIndex);
+        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        transferOrderListMap.put("aaData", transferOrders);
+
+        renderJson(transferOrderListMap);
 	}
 
 	public void edit1() {
