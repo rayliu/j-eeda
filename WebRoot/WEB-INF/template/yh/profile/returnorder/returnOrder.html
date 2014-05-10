@@ -38,8 +38,10 @@
                                 <div class="tab-pane fade active in" id="basic">
                                 <div class="row">
                                <div class="col-lg-6">
+                                <input class="form-control" id="snature" value="${nature}" type="hidden" >
                                     <form role="form" method="post" action="/yh/returnorder/save">
                                      <input class="form-control" id="id" value="${id}" type="hidden" name="id">
+                                    
                                    		  <h2>回单信息</h2>  
                                    		   <div class="form-group">
                                             <label>回单号</label>
@@ -159,26 +161,56 @@
                             </div>
                                 </div>
                                 <div class="tab-pane fade" id="cargos">
-                                    <div class="panel-body">
+                                    <div class="panel-body" style="display:none" id="item">
                                         <div class="table-responsive">
-                                            <table class="table table-striped table-bordered table-hover" id="ATMitem">
-                                              <thead style="display:none" id="style">
-                        					<tr>
-                         						 <th>名称</th>
-                        						 <th>型号</th>
-                         						 <th>数量</th>
-                        						 <th>货损数量</th>
-                        						 <th>剩余数量</th>
-                        						 <th>单位</th>
-                       							 <th>体积</th>
-                        						 <th>重量</th>
-                        						 <th>备注</th>
-                    						 </tr>
-                 							</thead>
-                                                <tbody id="item" style="display:none" >
-
-                                                </tbody>
-                                            </table>
+                                        
+                                <table class="table table-striped table-bordered table-hover" id="example">                             
+                               
+                                    <thead>
+                                        <tr>
+                                            <th>名称</th>
+                                            <th>型号</th>
+                                            <th>数量</th>                                   
+                                            <th>货损数量</th> 
+                                            <th>剩余数量</th>
+                                            <th>单位</th> 
+                                            <th>体积</th> 
+                                            <th>重量</th> 
+                                            <th>备注</th>                                          
+                                           
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                                                                                                                            
+                                    </tbody>
+                                </table>
+                       
+                                          
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                    
+                                     <div class="panel-body" style="display:none" id="ATMitem">
+                                        <div class="table-responsive">
+                                        
+                                <table class="table table-striped table-bordered table-hover" id="exampl">
+                              
+                                <thead   >
+                                        <tr>
+                                         	<th>序列号</th> 
+                                            <th>名称</th>
+                                            <th>数量</th>                                   
+                                            <th>体积</th> 
+                                            <th>重量</th> 
+                                            <th>备注</th>                                          
+                                           
+                                        </tr>
+                                    </thead>                               
+                                    <tbody>
+                                                                                                                                            
+                                    </tbody>
+                                </table>
+                       
                                           
                                         </div>
                                         <!-- /.table-responsive -->
@@ -241,9 +273,7 @@
         
        
      
-      
-      // var user = $('#user').val();
-       //var user2 = $('#user').val();
+           
     	$.get('/yh/returnorder/checkorder', {locationName:inputStr}, function(data){   		
 			for(var i=0; i < data.length; i++){
 				nature=data[i].NATURE;
@@ -276,7 +306,7 @@
 		
 	},'json');
    
-    	
+    	/**
     	
     	$.get('/yh/returnorder/itemlist', {locationName:inputStr}, function(data){ 
     		for(var i=0; i < data.length; i++){	
@@ -327,7 +357,7 @@
     			
     		}
     	},'json');
-    	
+    	**/
     	$.get('/yh/returnorder/paylist', {locationName:inputStr}, function(data){ 
     		for(var i=0; i < data.length; i++){
     			
@@ -338,11 +368,64 @@
     			+"<td>"+data[i].STATUS+"</td></tr>");
     		}
     	},'json');
+    	 var nature = $('#snature').val(); 
+  
     	
-    
-    	
+    		
+    	 if(nature=="ATM"){
+    		 $("#ATMitem").show();
+    		 $('#exampl').dataTable( {
+           		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+           	        //"sPaginationType": "bootstrap",insert into return_order(status_code,create_date,order_type,creator,remark,transfer_order,distribution_order_id,contract_id
+           	        "iDisplayLength": 10,
+           	    	"oLanguage": {
+           	            "sUrl": "/eeda/dataTables.ch.txt"
+           	        },
+           	        "sAjaxSource": "/yh/returnorder/itemlist?locationName="+inputStr+"",
+           	       
+           			"aoColumns": [
+           			          
+           				{ "mDataProp": "SERIAL_NO" },
+           				{ "mDataProp": "ITEM_NAME" },
+           				{ "mDataProp": "AMOUNT" },
+           	            { "mDataProp": "VOLUME" },
+           	            { "mDataProp": "WEIGHT" },
+           	            { "mDataProp": "REMARK" },
+           	         
+           	            
+           	            ]
+           	       
+           	});
+    	 }else{
+    		$("#item").show();
+    		 $('#example').dataTable( {
+           		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+           	        //"sPaginationType": "bootstrap",insert into return_order(status_code,create_date,order_type,creator,remark,transfer_order,distribution_order_id,contract_id
+           	        "iDisplayLength": 10,
+           	    	"oLanguage": {
+           	            "sUrl": "/eeda/dataTables.ch.txt"
+           	        },
+           	        "sAjaxSource": "/yh/returnorder/itemlist?locationName="+inputStr+"",
+           	       
+           			"aoColumns": [
+
+           				{ "mDataProp": "ITEM_NAME" },
+           				{ "mDataProp": "ITEM_NO" },
+           				{ "mDataProp": "AMOUNT" },
+           	            { "mDataProp": "LASTTOTAL" },
+           	            { "mDataProp": "LASTAMOUNT" },
+           	            { "mDataProp": "UNIT" },
+           	         	{ "mDataProp": "VOLUME" },
+           	         	{ "mDataProp": "WEIGHT" },
+        	            { "mDataProp": "ITEM_DESC" },
+           	            
+           	            ]
+           	       
+           	});
+    	}
     		    	
-    	 		
+    	
+         		
     
    
     });

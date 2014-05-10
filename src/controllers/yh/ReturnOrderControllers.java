@@ -47,10 +47,8 @@ public class ReturnOrderControllers extends Controller {
 
 	// 查看回单显示
 	public void checkorder() {
-		// status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,distribution_order_id,contract_id
 
 		int id = Integer.parseInt(getPara("locationName"));
-		// setAttr("id",id);
 
 		List<Record> message = new ArrayList<Record>();
 		message = Db
@@ -99,6 +97,26 @@ public class ReturnOrderControllers extends Controller {
 
 		for (int i = 0; i < message.size(); i++) {
 			String nature = message.get(i).get("nature");
+			String pickup = message.get(i).get("pickup");
+			String arrival = message.get(i).get("arrival");
+			if (nature.equals("cargo ")) {
+				message.get(i).set("nature", "普通货品");
+			}
+			if (pickup.equals("routeSP")) {
+				message.get(i).set("pickup", "干线供应商自提");
+			}
+			if (pickup.equals("pickupSP")) {
+				message.get(i).set("pickup", "外包供应商自提");
+			}
+			if (pickup.equals("own")) {
+				message.get(i).set("pickup", "公司自提");
+			}
+			if (arrival.equals("delivery")) {
+				message.get(i).set("arrival", "货品直送");
+			}
+			if (arrival.equals("gateIn")) {
+				message.get(i).set("arrival", "入中转仓");
+			}
 		}
 
 		renderJson(message);
@@ -119,6 +137,21 @@ public class ReturnOrderControllers extends Controller {
 	// 货品详细
 	public void itemlist() {
 		int id = Integer.parseInt(getPara("locationName"));
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+
+		// 获取总条数
+		String totalWhere = "";
+		String sql = "select count(1) total from TRANSFER_ORDER_ITEM ";
+		Record rec = Db.findFirst(sql + totalWhere);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		// 获取当前页的数据
 		List<Record> itemlist = new ArrayList<Record>();
 		List<Record> totallist = new ArrayList<Record>();
 		TransferOrder tr = TransferOrder.dao.findById(id);
@@ -178,23 +211,31 @@ public class ReturnOrderControllers extends Controller {
 			}
 
 		}
-
-		renderJson(itemlist);
+		Map orderMap = new HashMap();
+		orderMap.put("sEcho", pageIndex);
+		orderMap.put("iTotalRecords", rec.getLong("total"));
+		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		orderMap.put("aaData", itemlist);
+		renderJson(orderMap);
 	}
 
 	// 点击查看
 	public void check() {
-
 		String id = getPara();
+		TransferOrder tr = TransferOrder.dao.findById(id);
+		String nature = tr.getStr("cargo_nature");
+		setAttr("nature", nature);
 		setAttr("id", id);
 		render("profile/returnorder/returnOrder.html");
 	}
 
 	public void save() {
 		int id = Integer.parseInt(getPara("id"));
-
+		TransferOrder tr = TransferOrder.dao.findById(id);
+		String nature = tr.getStr("cargo_nature");
 		ReturnOrder r = ReturnOrder.dao.findById(id);
 		r.set("transaction_status", "完成").update();
+		setAttr("nature", nature);
 		setAttr("id", id);
 		setAttr("saveOK", true);
 		render("profile/returnorder/returnOrder.html");
