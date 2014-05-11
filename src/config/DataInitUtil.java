@@ -64,7 +64,7 @@ public class DataInitUtil {
             // order_status 里程碑
             stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment PRIMARY KEY,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
             // return_order 回单
-            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment PRIMARY KEY,status_code varchar(20),create_date TIMESTAMP,transaction_status varchar(20),order_type varchar(20),creator varchar(50),remark varchar(255),transfer_order_id bigint,notity_party_id bigint,customer_id bigint,route_id bigint);");
+            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment PRIMARY KEY, order_no varchar(50), status_code varchar(20),create_date TIMESTAMP,transaction_status varchar(20),order_type varchar(20),creator varchar(50),remark varchar(255), transfer_order_id bigint, delivery_order_id bigint, notity_party_id bigint,customer_id bigint,route_id bigint);");
             // transfer_order 运输单
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment PRIMARY KEY,order_no varchar(255),status varchar(255),"
                     + "cargo_nature VARCHAR(255),pickup_mode VARCHAR(255),arrival_mode VARCHAR(255),remark varchar(255),create_by bigint,"
@@ -244,8 +244,16 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into order_item(order_id, item_name, item_desc, quantity, unit_price) values("
                     + "1, 'P001', 'iPad Air', 1, 3200);");
             // 回单notity_party_id bigint,customer_id
-            stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'完成','应收','张三','这是一张回单','1','1','1','1');");
-            stmt.executeUpdate("insert into return_order(status_code,create_date,transaction_status,order_type,creator,remark,transfer_order_id,notity_party_id,customer_id,route_id) values('20132014',CURRENT_TIMESTAMP(),'未完成','应收','张三','这是一张回单','2','2','2','2');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id,route_id) values('回单20132014001', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','1', 1, '1','4','1');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id,route_id) values('回单20132014002', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','2', 1, '2','4','2');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id,route_id) values('回单20132014003', CURRENT_TIMESTAMP(), 'cancel','应收','张三','这是一张回单','1', 1, '1','4','1');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id,route_id) values('回单20132014004', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','2', 1, '2','5','2');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id,route_id) values('回单20132014005', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','1', 1, '1','5','1');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id,route_id) values('回单20132014006', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','2', 1, '2','5','2');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id,route_id) values('回单20132014007', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','1', 1, '1','6','1');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id,route_id) values('回单20132014008', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','2', 1, '2','6','2');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id,route_id) values('回单20132014009', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','1', 1, '1','6','1');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id,route_id) values('回单20132014010', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','2', 1, '2','7','2');");
             // 运输单应收应付明细id bigint auto_increment PRIMARY KEY, order_id bigint,
             // fin_item_id bigint,"
             // +
@@ -387,6 +395,39 @@ public class DataInitUtil {
             stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600004','2','6','7','10','已签收');");
             stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600014','3','5','8','9','取消');");
             stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600003','4','6','8','10','配送在途');");
+
+            // billing_order 应收应付单主表
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应收对账单001', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'new', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应收对账单002', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'checking', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应收对账单003', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'confirmed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应收对账单004', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'completed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应收对账单005', 'charge_audit_order',4, 'CUSTOMER', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            // billing_order_item 应收应付单从表
+            stmt.execute("create table if not exists billing_order_item(id bigint auto_increment PRIMARY KEY,blling_order_id bigint, "
+                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
+                    + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
+                    + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
+
             stmt.close();
             // conn.commit();
             conn.close();
@@ -401,7 +442,7 @@ public class DataInitUtil {
         contact.set("mobile", "12345671").set("phone", "113527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场1").set("postal_code", "5190001")
                 .save();
         Contact contact7 = new Contact();
-        contact7.set("company_name", "珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com");
+        contact7.set("company_name", "珠海博兆计算机科技有限公司").set("contact_person", "温生").set("email", "test@test.com");
         contact7.set("mobile", "12345671").set("phone", "113527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场1").set("postal_code", "5190001")
                 .save();
         Contact contact2 = new Contact();

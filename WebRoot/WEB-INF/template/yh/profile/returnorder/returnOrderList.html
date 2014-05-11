@@ -42,10 +42,13 @@
                                     <thead>
                                         <tr>
                                             <th>回单编号</th>
+                                            <th>客户名称</th>
                                             <th>类型</th>
+                                            <th>运输单号</th>
+                                            <th>配送单号</th>
                                             <th>回单创建人</th>                                   
                                             <th>创建时间</th> 
-                                            <th>交易状态</th>
+                                            <th>状态</th>
                                             <th>备注</th>                                          
                                             <th></th>
                                         </tr>
@@ -82,7 +85,8 @@
     <script>
     $(document).ready(function() {
     	
-    	
+      $('#menu_return').addClass('active').find('ul').addClass('in');
+      	
    	 $("#del").click(function(){
        	alert("waerwerwee");
        });
@@ -90,35 +94,48 @@
    	    	alert("123");
    	    });
    	 $('#example').dataTable( {
-   		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+   		    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
    	        //"sPaginationType": "bootstrap",insert into return_order(status_code,create_date,order_type,creator,remark,transfer_order,distribution_order_id,contract_id
-   	        "iDisplayLength": 10,
+   	      "iDisplayLength": 10,
    	    	"oLanguage": {
    	            "sUrl": "/eeda/dataTables.ch.txt"
    	        },
-   	        "sAjaxSource": "/yh/returnorder/list",
-   			"aoColumns": [
-   				{ "mDataProp": "STATUS_CODE" },
-   	            { "mDataProp": "ORDER_TYPE" },
-   	            { "mDataProp": "CREATOR" },
-   	            { "mDataProp": "CREATE_DATE" },
-   	         	{ "mDataProp": "TRANSACTION_STATUS" },
-	            { "mDataProp": "REMARK" },
-   	            { "mDataProp": null,
-   	         		"sWidth": "8%", 
-   	         "fnRender": function(obj) {                    
-                 return "<a class='btn btn-success' href='/yh/returnorder/check/"+obj.aData.ID+"'>"+
-                 "<i class='fa fa-search fa-fw'></i> "+
-                 "查看"+
-             "</a>"+
-             "<a class='btn btn-danger' href='/yh/returnorder/delete/"+obj.aData.ID+"'>"+
-                 "<i class='fa fa-trash-o fa-fw'></i> "+ 
-                 "删除"+
-             "</a>";
-   	         								}
-   	 			}
-             
-   	            ]
+   	      "sAjaxSource": "/yh/returnorder/list",
+   			  "aoColumns": [
+   				    { "mDataProp": "ORDER_NO"},
+              { "mDataProp": "COMPANY_NAME"},
+              { "mDataProp": "ORDER_TYPE", "bVisible": false},
+              { "mDataProp": "TRANSFER_ORDER_NO"},
+              { "mDataProp": "DELIVERY_ORDER_NO"},
+              { "mDataProp": "CREATOR" },
+              { "mDataProp": "CREATE_DATE" },
+              { "mDataProp": "TRANSACTION_STATUS",
+                  "fnRender": function(obj) {
+                      if(obj.aData.TRANSACTION_STATUS=='new')
+                          return '新建';
+                      if(obj.aData.TRANSACTION_STATUS=='confirmed')
+                          return '已确认';
+                      if(obj.aData.TRANSACTION_STATUS=='cancel')
+                          return '取消';
+                      
+                      return obj.aData.TRANSACTION_STATUS;
+                   }
+              },
+              { "mDataProp": "REMARK" },
+     	          { "mDataProp": null,
+     	         		"sWidth": "8%", 
+     	            "fnRender": function(obj) {                    
+                   return "<a class='btn btn-success' href='/yh/returnorder/check/"+obj.aData.ID+"'>"+
+                           "<i class='fa fa-search fa-fw'></i> "+
+                           "查看"+
+                       "</a>"+
+                       "<a class='btn btn-danger' href='/yh/returnorder/delete/"+obj.aData.ID+"'>"+
+                           "<i class='fa fa-trash-o fa-fw'></i> "+ 
+                           "取消"+
+                       "</a>";
+     	         		}
+     	 			    }
+   	      ]
    	});
    		 
    	 $("#btn").click(function(){
