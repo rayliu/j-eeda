@@ -629,11 +629,13 @@ $(document).ready(function() {
 	
 	// 保存新里程碑
 	$("#transferOrderMilestoneFormBtn").click(function(){
+		$('#transfer_milestone_order_id').val($('#order_id').val());
 		$.post('/yh/transferOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 		},'json');
 		$('#transferOrderMilestone').modal('hide');
+		$('#transferOrderMilestoneList').click();
 	});
 	
 	// 回单签收
