@@ -1,8 +1,8 @@
 
 $(document).ready(function() {
-	$('#menu_assign').addClass('active').find('ul').addClass('in');
+	$('#menu_transfer').addClass('active').find('ul').addClass('in');
     //from表单验证
-	var validate = $('#transferOrderForm').validate({
+	var validate = $('#transferOrderUpdateForm').validate({
         rules: {
         	customerMessage: {
             required: true
@@ -108,7 +108,7 @@ $(document).ready(function() {
         }
 		//异步向后台提交数据
         if($("#order_id").val() == ""){
-	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -128,7 +128,7 @@ $(document).ready(function() {
 				}
 			},'json');
         }else{
-        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -168,13 +168,13 @@ $(document).ready(function() {
     	// 切换到货品明细时,应先保存运输单
     	// 应先判断order_id是否为空
     	//提交前，校验数据
-        if(!$("#transferOrderForm").valid()){
+        if(!$("#transferOrderUpdateForm").valid()){
         	alert("请先保存运输单!");
 	       	return false; 
         }
 
         if($("#order_id").val() == ""){
-	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -194,7 +194,7 @@ $(document).ready(function() {
 				}
 			},'json');
         }else{
-        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -253,7 +253,7 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {
-                    return	"<a id='dateilEdit2' class='btn btn-success' href='#"+obj.aData.ID+"'>"+
+                    return	"<a class='btn btn-success dateilEdit' href='?id="+obj.aData.ID+"&order_id="+obj.aData.ID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "单品编辑"+
                             "</a>"+
@@ -575,7 +575,7 @@ $(document).ready(function() {
         }
         
         if($("#order_id").val() == ""){
-	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -595,7 +595,7 @@ $(document).ready(function() {
 				}
 			},'json');
         }else{
-        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -676,5 +676,12 @@ $(document).ready(function() {
 				$("#contactInformation").hide();
 			}
 		}
+	});
+	
+	// 
+	$("#itemTable").on('click', '.dateilEdit', function(e){
+		e.preventDefault();
+		alert($(this).attr('href'));
+		$("#transferOrderItemDateil").show();
 	});
 });

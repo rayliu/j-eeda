@@ -101,19 +101,27 @@ public class TransferOrderController extends Controller {
 	}
 
 	public void edit() {
-		render("transferOrder/editTransferOrder.html");
-	}
-
-	public void delete() {
 		long id = getParaToLong();
+		TransferOrder transferOrder = TransferOrder.dao.findById(id);
+		setAttr("transferOrder", transferOrder);
+		Party customer = Party.dao.findById(transferOrder.get("customer_id"));
+		Contact customerContact = Contact.dao.findById(customer.get("contact_id"));
+		setAttr("customerContact", customerContact);	
+		Party sp = Party.dao.findById(transferOrder.get("sp_id"));
+		Contact spContact = Contact.dao.findById(sp.get("contact_id"));
+		setAttr("spContact", spContact);	
+		Long notify_party_id = transferOrder.get("notify_party_id");
+		if(notify_party_id != null){
+			Party notify = Party.dao.findById(notify_party_id);
+			Contact contact = Contact.dao.findById(notify.get("contact_id"));
+			setAttr("contact", contact);	
+		}else{
+			setAttr("contact", null);	
+		}
 
-		Party party = Party.dao.findById(id);
-		party.delete();
-
-		Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
-		contact.delete();
-
-		redirect("/yh/transferOrder");
+		UserLogin userLogin = UserLogin.dao.findById(transferOrder.get("create_by"));
+		setAttr("userLogin", userLogin);
+		render("transferOrder/updateTransferOrder.html");
 	}
 
 	public void save() {
@@ -229,25 +237,52 @@ public class TransferOrderController extends Controller {
 
 	// 保存运输单
 	public void saveTransferOrder() {
-		TransferOrder transferOrder = new TransferOrder();
-		transferOrder.set("customer_id", getPara("customer_id"));
-		transferOrder.set("sp_id", getPara("sp_id"));
-		transferOrder.set("status", getPara("status"));
-		transferOrder.set("order_no", getPara("order_no"));
-		transferOrder.set("create_by", getPara("create_by"));
-		transferOrder.set("cargo_nature", getPara("cargoNature"));
-		transferOrder.set("pickup_mode", getPara("pickupMode"));
-		transferOrder.set("arrival_mode", getPara("arrivalMode"));
-		transferOrder.set("address", getPara("address"));
-		transferOrder.set("create_stamp", new Date());
-
-		if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("货品直送")) {
-			Party party = saveContact();
-			transferOrder.set("notify_party_id", party.get("id"));
+		String order_id = getPara("id");
+		TransferOrder transferOrder = null;
+		if(order_id.isEmpty()){
+			transferOrder = new TransferOrder();
+			Party customer = Party.dao.findById(getPara("customer_id"));
+			transferOrder.set("customer_id", customer.get("id"));
+			Party sp = Party.dao.findById(getPara("sp_id"));
+			transferOrder.set("sp_id", sp.get("id"));
+			transferOrder.set("status", getPara("status"));
+			transferOrder.set("order_no", getPara("order_no"));
+			transferOrder.set("create_by", getPara("create_by"));
+			transferOrder.set("cargo_nature", getPara("cargoNature"));
+			transferOrder.set("pickup_mode", getPara("pickupMode"));
+			transferOrder.set("arrival_mode", getPara("arrivalMode"));
+			transferOrder.set("address", getPara("address"));
+			transferOrder.set("create_stamp", new Date());
+	
+			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("货品直送")) {
+				Party party = saveContact();
+				transferOrder.set("notify_party_id", party.get("id"));
+			}
+			transferOrder.save();
+			saveTransferOrderMilestone(transferOrder);
+		}else{
+			transferOrder = TransferOrder.dao.findById(order_id);
+			//Party customer = Party.dao.findById(getPara("customer_id"));
+			//transferOrder.set("customer_id", customer.get("id"));
+			transferOrder.set("customer_id", getPara("customer_id"));
+			//Party sp = Party.dao.findById(getPara("sp_id"));
+			//transferOrder.set("sp_id", sp.get("id"));
+			transferOrder.set("sp_id", getPara("sp_id"));
+			transferOrder.set("status", getPara("status"));
+			transferOrder.set("order_no", getPara("order_no"));
+			transferOrder.set("create_by", getPara("create_by"));
+			transferOrder.set("cargo_nature", getPara("cargoNature"));
+			transferOrder.set("pickup_mode", getPara("pickupMode"));
+			transferOrder.set("arrival_mode", getPara("arrivalMode"));
+			transferOrder.set("address", getPara("address"));
+			transferOrder.set("create_stamp", new Date());
+	
+			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("货品直送")) {
+				Party party = saveContact();
+				transferOrder.set("notify_party_id", party.get("id"));
+			}
+			transferOrder.update();
 		}
-		transferOrder.save();
-		// 保存运输单之前先保存运输里程碑
-		saveTransferOrderMilestone(transferOrder);
 		renderJson(transferOrder);
 	}
 
@@ -258,8 +293,8 @@ public class TransferOrderController extends Controller {
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 		transferOrderMilestone.set("create_by", users.get(0).get("id"));
-		transferOrderMilestone.set("create_stamp", new Date());
 		transferOrderMilestone.set("location", "");
+		transferOrderMilestone.set("create_stamp", new Date());
 		transferOrderMilestone.set("order_id", transferOrder.get("id"));
 		transferOrderMilestone.save();
 	}
@@ -329,5 +364,19 @@ public class TransferOrderController extends Controller {
 							+ input + "%' or postal_code like '%" + input + "%') limit 0,10");
 		}
 		renderJson(locationList);
+	}
+	
+	// 删除订单
+	public void delete() {
+		long id = getParaToLong();
+
+		//删除主表
+		TransferOrder transferOrder = TransferOrder.dao.findById(id);
+		transferOrder.set("notify_party_id",null);
+		transferOrder.set("customer_id",null);
+		transferOrder.set("sp_id",null);
+		
+		transferOrder.delete();
+		redirect("/yh/transferOrder");
 	}
 }
