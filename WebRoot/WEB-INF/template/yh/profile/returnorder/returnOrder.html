@@ -45,7 +45,7 @@
                                    		  <h2>回单信息</h2>  
                                    		   <div class="form-group">
                                             <label>回单号</label>
-                                            <label class="radio-inline" id="status_code"></label>
+                                            <label class="radio-inline" id="order_no"></label>
                                         </div>
                                          <div class="form-group">
                                             <label>状态</label>
@@ -119,7 +119,7 @@
                                 <div class="col-lg-6">
                                    <h2>运输信息</h2>
                                     <div class="form-group">
-                                        <label>运输单号</label> <strong id="order_no" class="radio-inline"></strong>
+                                        <label>运输单号</label> <strong id="transfer_order_no" class="radio-inline"></strong>
                                     </div>                                   
                                     <div class="form-group">
                                      <label >业务员</label> &nbsp;&nbsp;&nbsp;
@@ -278,7 +278,7 @@
     	$.get('/yh/returnorder/checkorder', {locationName:inputStr}, function(data){   		
 			for(var i=0; i < data.length; i++){
 				nature=data[i].NATURE;
-				$('#order_no').html(data[i].ORDER_NO);
+				$('#transfer_order_no').html(data[i].TRANSFER_ORDER_NO);
 				$('#nature').html(data[i].NATURE);
 	        	$('#pickup').html(data[i].PICKUP);
 	        	$('#arrival').html(data[i].ARRIVAL);	        	
@@ -295,7 +295,7 @@
 	        	$('#pay_phone').html(data[i].PAY_PHONE);
 	        	$('#pay_contad').html(data[i].PAY_CONTAD);
 	        	$('#pay_address').html(data[i].PAY_ADDRESS);
-	        	$('#status_code').html(data[i].STATUS_CODE);
+	        	$('#order_no').html(data[i].ORDER_NO);
 	        	$('#creator').html(data[i].CREATOR);
 	        	$('#create_date').html(data[i].CREATE_DATE);
 	        	$('#transaction_status').html(data[i].TRANSACTION_STATUS);
