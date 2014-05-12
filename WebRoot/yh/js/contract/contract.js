@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	
 	$('#menu_contract').addClass('active').find('ul').addClass('in');
 		var contractId=$('#contractId').val();
 		var dataTable = $('#dataTables-example').dataTable({

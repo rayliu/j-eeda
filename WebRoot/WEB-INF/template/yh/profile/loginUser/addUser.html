@@ -24,6 +24,10 @@
 			                 <label class="control-label">密码(必填)</label>
 			                 <input type="text" class="form-control" id="password" name="password" value="${ul.password!''}">
 			             </div>
+			              <div class="form-group ">
+			                 <label class="control-label">再次输入密码(必填)</label>
+			                 <input type="text" class="form-control" id="confirm_password" name="confirm_password" value="${ul.password!''}">
+			             </div>
 			              <div class="form-group">
 			                 <label class="control-label">密码提示</label>
 			                 <input type="text" class="form-control" id="pw_hint" name="pw_hint" value="${ul.password_hint!''}">
@@ -45,16 +49,28 @@
 <script src="/eeda/js/jvalidate.messages_cn.js"></script>
 <script>
 	$(document).ready(function() {
+		jQuery.validator.addMethod("stringCheck", function(value, element) {
+			return this.optional(element) || /^[u0391-uFFE5w]+$/.test(value);
+			}, "只能包括中文字、英文字母、数字和下划线");
+
     $('#menu_profile').addClass('active').find('ul').addClass('in');
         $('#leadsForm').validate({
             rules: {
             	username: {
-                required: true
-              },
+                required: true,
+                stringCheck:true,
+                minlength: 5
+				},
               password:{//form 中 name为必填
-                required: true
-              }
-            },
+                required: true,
+                minlength: 5
+              },
+              confirm_password: { 
+            	  required: true, 
+            	  minlength: 5, 
+            	  equalTo: "#password" 
+            	  } 
+             },
             highlight: function(element) {
                 $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
             },

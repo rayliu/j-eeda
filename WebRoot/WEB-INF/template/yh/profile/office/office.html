@@ -22,8 +22,9 @@
 								<th>负责人</th>
 								<th>联系方式</th>
 								<th>地址</th>
+								<th>邮箱</th>
+								<th>类型</th>
 								<th>公司简介</th>
-								<th>备注</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -63,13 +64,14 @@ $(document).ready(function() {
 	        },
 	        "sAjaxSource": "/yh/office/listOffice",
 			"aoColumns": [
-				{ "mDataProp": "OFFICE_CODE","sWidth": "15%" },
+				{ "mDataProp": "OFFICE_CODE","sWidth": "10%" },
 	            { "mDataProp": "OFFICE_NAME" },
-	            { "mDataProp": "COMPANY_PERSON" },
-	            { "mDataProp": "CONTACT_ID" },
+	            { "mDataProp": "OFFICE_PERSON" },
+	            { "mDataProp": "PHONE" },
 	            { "mDataProp": "ADDRESS","sWidth": "15%"},
+	            { "mDataProp": "EMAIL" },
 	            { "mDataProp": "TYPE" },
-	            { "mDataProp": "REMARK" },
+	            { "mDataProp": "COMPANY_INTRO" },
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "15%",

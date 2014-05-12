@@ -79,15 +79,31 @@ $(document).ready(function() {
 		        "aoColumns": [   
 		            {"mDataProp":"ORDER_NO"},
 		            {"mDataProp":"STATUS"},
-		            {"mDataProp":"CARGO_NATURE"
-		            	
-		            },        	
-		            {"mDataProp":"PICKUP_MODE"
-		            	
-		            },
-		            {"mDataProp":"ARRIVAL_MODE"
-	            			
-	            	},
+		            {"mDataProp":"CARGO_NATURE",
+		            	"fnRender": function(obj) {
+		            		if(obj.aData.CARGO_NATURE == "cargo"){
+		            			return "普通货品";
+		            		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
+		            			return "损坏货品";
+		            		}else{
+		            			return "ATM";
+		            		}}},        	
+		            {"mDataProp":"PICKUP_MODE",
+		            	"fnRender": function(obj) {
+		            		if(obj.aData.PICKUP_MODE == "routeSP"){
+		            			return "干线供应商自提";
+		            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
+		            			return "外包供应商提货";
+		            		}else{
+		            			return "源鸿自提";
+		            		}}},
+		            {"mDataProp":"ARRIVAL_MODE",
+		            	"fnRender": function(obj) {
+		            		if(obj.aData.ARRIVAL_MODE == "delivery"){
+		            			return "货品直送";
+		            		}else{
+		            			return "入中转仓";
+		            		}}},
 		            { 
 		                "mDataProp": null, 
 		                "fnRender": function(obj) {
@@ -100,10 +116,7 @@ $(document).ready(function() {
 		                		  		console.log(data);
 		                		  		for(var i = 0; i < data.length; i++)
 		        						{
-		                		  			/*return "<select>"+
-		                            		"<option>"+123+"</option>"+
-		                            		"</select>";*/
-		                		  			append("<option>"+data[i].serial_no+"</option>");
+		                		  		
 		        						}
 		        						
 		                		  }  
@@ -174,7 +187,6 @@ $(document).ready(function() {
 		                 }else{
 		                     alert('取消失败');
 		                 }
-		                 
 		             },'json');
 				  });
 			 $("#eeda-table3").on('click', '.edit', function(){

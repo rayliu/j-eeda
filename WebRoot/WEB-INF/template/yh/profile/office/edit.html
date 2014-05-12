@@ -16,21 +16,82 @@
             			<div class="row-fluid">
             				<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/yh/office/saveOffice" method="post">
 						<input id="officeId" name="officeId" type="hidden" value="${ul.id!''}">
-						<div class="form-group ">
-			                 <label class="control-label">分公司代码(必填)</label>
-			                 <input id="office_code" name="office_code" type="text" class="form-control" value="${ul.office_code!''}">
-			             </div>
-			             <div class="form-group ">
-			                 <label class="control-label">分公司名称(必填)</label>
-			                 <input type="text" class="form-control" id="office_name" name="office_name" value="${ul.office_name!''}">
-			             </div>
-			              <div class="form-group">
-			                 <label class="control-label">联系方式(必填)</label>
-			                 <input type="text" class="form-control" id="contact_id" name="contact_id" value="${ul.contact_id!''}">
-			             </div>
+						<div class="col-lg-6">
+                        	<fieldset>
+							<div class="form-group ">
+				                 <label class="control-label">分公司代码(必填)</label>
+				                 <input id="office_code" name="office_code" type="text" class="form-control" value="${ul.office_code!''}">
+				             </div>
+			               </fieldset>
+                         </div>
+                         <div class="col-lg-6">
+                        	<fieldset>
+					             <div class="form-group ">
+					                 <label class="control-label">分公司名称(必填)</label>
+					                 <input type="text" class="form-control" id="office_name" name="office_name" value="${ul.office_name!''}">
+					             </div>
+				            </fieldset>
+                         </div>
+                         <div class="col-lg-6">
+                        	<fieldset>
+					             <div class="form-group ">
+					                 <label class="control-label">联系人(必填)</label>
+					                 <input type="text" class="form-control" id="office_person" name="office_person" value="${ul.office_person!''}">
+					             </div>
+				            </fieldset>
+                         </div>
+                         <div class="col-lg-6">
+                        	<fieldset>
+				              <div class="form-group">
+				                 <label class="control-label">联系方式(必填)</label>
+				                 <input type="text" class="form-control" id="phone" name="phone" value="${ul.phone!''}">
+				             </div>
+			              </fieldset>
+                         </div>
+                         <div class="col-lg-6">
+                        	<fieldset>
+					             <div class="form-group ">
+					                 <label class="control-label">地址(必填)</label>
+					                 <input type="text" class="form-control" id="address" name="address" value="${ul.address!''}">
+					             </div>
+				            </fieldset>
+                         </div>
+                         <div class="col-lg-6">
+                        	<fieldset>
+					             <div class="form-group ">
+					                 <label class="control-label">email(必填)</label>
+					                 <input type="text" class="form-control" id="email" name="email" value="${ul.email!''}">
+					             </div>
+				            </fieldset>
+                         </div>
+                         <div class="col-lg-6">
+                        	<fieldset>
+					             <div class="form-group ">
+					                 <label class="control-label">公司类别</label>
+					                 <input type="text" class="form-control" id="type" name="type" value="${ul.type!''}">
+					                <!--  <select class="form-control" id="type" name="type" value="${ul.type!''}">
+					                 	<option></option>
+					                 	<option>自营</option>
+					                 	<option>控股</option>
+					                 	<option>合作</option>
+					                 </select> -->
+					             </div>
+				            </fieldset>
+                         </div>
+                        <div class="col-lg-6">
+                        	<fieldset>
+					             <div class="form-group ">
+					                 <label class="control-label">公司简介(必填)</label>
+					                 <input type="text" class="form-control" id="company_intro" name="company_intro" value="${ul.company_intro!''}">
+					             </div>
+				            </fieldset>
+                         </div>
+                         <div class="col-lg-7">
+                         	
 			             	<button type="submit" class="btn btn-default">保存</button>
 			             	<a class="btn btn-default" href="/yh/office">取消</a>
 			             	
+			             </div>
 			         </form>
             			</div>
             		</div>

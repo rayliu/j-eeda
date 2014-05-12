@@ -1,5 +1,5 @@
 ﻿<%layout("/yh/layout.html"){%>
- 
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
  <div id="page-wrapper">
     
@@ -112,20 +112,25 @@
                                         </fieldset>
                                     </div>
                                     <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>开始时间</label>
-                                                <input class="form-control" id="period_from" type="text" name="period_from" value="${ul.period_from!''}">
-                                            </div>                                     
-                                        </fieldset>
+                                    	
+                                    	 	<label>开始时间</label>	
+	                                    	 <div id="datetimepicker" class="input-append date">  
+											    <input class="form-control" id="period_from" type="text" name="period_from" value="${ul.period_from!''}"></input>
+											    <span class="add-on">  
+										        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+										    	</span>  
+											</div>
+										
                                     </div>
                                     <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>结束时间</label>
-                                                <input class="form-control" id="period_to" type="text" name="period_to" value="${ul.period_to!''}">
-                                            </div>                                     
-                                        </fieldset>
+                                    		<label>结束时间</label>	
+	                                    	 <div id="datetimepicker2" class="input-append date">  
+											    <input class="form-control" id="period_to" type="text" name="period_to" value="${ul.period_to!''}"></input>
+											    <span class="add-on">  
+										        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+										    	</span> 
+										    </div>
+                                        
                                     </div>
                                      <div class="col-lg-6">
                                         <fieldset>
@@ -143,7 +148,7 @@
                                             </div>
                                         </fieldset>
                                     </div>
-
+	
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
                                    <div>
                                     	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
@@ -221,8 +226,7 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-            <!-- /.row -->      
-        	         
+            <!-- /.row -->    
 </div>
 			
 	<!--/span-->
@@ -235,8 +239,33 @@
  <!-- 引入dataTables的js 文件- Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="/yh/js/bootstrap.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+
 
 <!-- 引入校验的js 文件及其 中文 文件-->
 <script src="/eeda/js/jquery.validate.min.js"></script>
 <script src="/eeda/js/jvalidate.messages_cn.js"></script>
 <script src="/yh/js/contract/contract.js"></script>
+<script type="text/javascript">  
+      $('#datetimepicker').datetimepicker({  
+        format: 'yyyy/MM/dd',  
+        language: 'en',  
+        pickDate: true,  
+        pickTime: true,  
+        hourStep: 1,  
+        minuteStep: 15,  
+        secondStep: 30,  
+        inputMask: true  
+      });
+      $('#datetimepicker2').datetimepicker({  
+          format: 'yyyy/MM/dd',  
+          language: 'en',  
+          pickDate: true,  
+          pickTime: true,  
+          hourStep: 1,  
+          minuteStep: 15,  
+          secondStep: 30,  
+          inputMask: true  
+        });
+</script>  

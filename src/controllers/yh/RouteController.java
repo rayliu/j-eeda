@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.UserLogin;
 import models.yh.profile.Route;
 
 import com.jfinal.core.Controller;
@@ -70,7 +69,7 @@ public class RouteController extends Controller {
          */
         String id = getPara();
         if (id != null) {
-        Db.deleteById("route", id);
+            Db.deleteById("route", id);
         }
         render("/yh/profile/route/route.html");
     }
@@ -81,25 +80,31 @@ public class RouteController extends Controller {
 
         // 不能查所有
         if (locationName.trim().length() > 0) {
-            List<Record> locationList = Db.find("select * from location where name like '%" + locationName + "%'");
+            List<Record> locationList = Db
+                    .find("select * from location where name like '%"
+                            + locationName + "%' or code like '%"
+                            + locationName + "%' or pcode like '%"
+                            + locationName + "%'");
             renderJson(locationList);
         }
     }
-    
-    public void list(){
+
+    public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
         }
-        
-        //获取总条数
-        String totalWhere="";
+
+        // 获取总条数
+        String totalWhere = "";
         String sql = "select count(1) total from route ";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
-        
-        //获取当前页的数据
+
+        // 获取当前页的数据
         List<Record> orders = Db.find("select * from route");
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -107,8 +112,7 @@ public class RouteController extends Controller {
         orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 
         orderMap.put("aaData", orders);
-        
+
         renderJson(orderMap);
     }
- }
-
+}

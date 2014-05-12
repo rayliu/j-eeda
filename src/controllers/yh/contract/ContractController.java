@@ -44,8 +44,10 @@ public class ContractController extends Controller {
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
         }
 
         // 获取总条数
@@ -74,8 +76,10 @@ public class ContractController extends Controller {
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
         }
 
         // 获取总条数
@@ -215,14 +219,17 @@ public class ContractController extends Controller {
         String sLimit = "";
         String sql = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
         }
 
         // 获取总条数
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
-            sql = "select count(1) total from route r, contract_item c where c.route_id=r.id and c.contract_id = " + contractId + "";
+            sql = "select count(1) total from route r, contract_item c where c.route_id=r.id and c.contract_id = "
+                    + contractId + "";
         }
 
         System.out.println(sql);
@@ -232,7 +239,9 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db.find("select * from  route r, contract_item c where c.route_id=r.id and c.contract_id = ?", contractId);
+            orders = Db
+                    .find("select * from  route r, contract_item c where c.route_id=r.id and c.contract_id = ?",
+                            contractId);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -246,7 +255,8 @@ public class ContractController extends Controller {
         ContractItem item = new ContractItem();
         String contractId = getPara("routeContractId");
         System.out.println(contractId);
-        item.set("contract_id", contractId).set("route_id", getPara("routeId")).set("amount", getPara("price"));
+        item.set("contract_id", contractId).set("route_id", getPara("routeId"))
+                .set("amount", getPara("price"));
         // .set("miles", getPara("miles"));\
         item.save();
         renderJson("{\"success\":true}");
@@ -258,8 +268,10 @@ public class ContractController extends Controller {
         String toName = getPara("toName");
         System.out.println(fromName);
         System.out.println(toName);
-        List<Route> routeId = Route.dao.find("select id as rId from route where location_from like '%" + fromName
-                + "%' and location_to like '%" + toName + "%'");
+        List<Route> routeId = Route.dao
+                .find("select id as rId from route where location_from like '%"
+                        + fromName + "%' and location_to like '%" + toName
+                        + "%'");
         System.out.println(routeId);
         renderJson(routeId);
     }
