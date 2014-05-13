@@ -39,7 +39,7 @@ $(document).ready(function() {
 			customerList.empty();
 			for(var i = 0; i < data.length; i++)
 			{
-				customerList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
+				customerList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
 			}
 		},'json');
         $('#customerList').show();
@@ -48,7 +48,7 @@ $(document).ready(function() {
 	// 选中客户
 	$('#customerList').on('click', '.fromLocationItem', function(e){
 		$('#customerMessage').val($(this).text());
-		$('#customer_id').val($(this).attr('cid'));
+		$('#customer_id').val($(this).attr('partyId'));
 		var pageCustomerName = $("#pageCustomerName");
 		pageCustomerName.empty();
 		pageCustomerName.append($(this).attr('contact_person')+'&nbsp;');
@@ -76,7 +76,7 @@ $(document).ready(function() {
 			spList.empty();
 			for(var i = 0; i < data.length; i++)
 			{
-				spList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
 			}
 		},'json');
 
@@ -86,7 +86,7 @@ $(document).ready(function() {
 	// 选中供应商
 	$('#spList').on('click', '.fromLocationItem', function(e){
 		$('#spMessage').val($(this).text());
-		$('#sp_id').val($(this).attr('spid'));
+		$('#sp_id').val($(this).attr('partyId'));
 		var pageSpName = $("#pageSpName");
 		pageSpName.empty();
 		pageSpName.append($(this).attr('contact_person')+'&nbsp;');
@@ -118,11 +118,7 @@ $(document).ready(function() {
 					$("#departureConfirmationBtn").attr("disabled", false);
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	//alert("运输单保存成功!");
-				  	$("#style").show();	
-				  	
-	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
-				  	itemDataTable.fnDraw();                
+				  	$("#style").show();	              
 				}else{
 					alert('数据保存失败。');
 				}
@@ -138,11 +134,7 @@ $(document).ready(function() {
 					$("#departureConfirmationBtn").attr("disabled", false);
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	//alert("运输单保存成功!");
-				  	$("#style").show();	
-				  	
-	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
-				  	itemDataTable.fnDraw();                
+				  	$("#style").show();	            
 				}else{
 					alert('数据保存失败。');
 				}
@@ -575,7 +567,7 @@ $(document).ready(function() {
         }
         
         if($("#order_id").val() == ""){
-	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -587,15 +579,21 @@ $(document).ready(function() {
 				  	//alert("运输单保存成功!");
 				  	$("#style").show();	
 				  	
-	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
-				  	itemDataTable.fnDraw();                
+				  	var order_id = $("#order_id").val();
+					$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+						var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+						transferOrderMilestoneTbody.empty();
+						for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
+						{
+							transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+						}
+					},'json');              
 				}else{
 					alert('数据保存失败。');
 				}
 			},'json');
         }else{
-        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -607,9 +605,15 @@ $(document).ready(function() {
 				  	//alert("运输单保存成功!");
 				  	$("#style").show();	
 				  	
-	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
-				  	itemDataTable.fnDraw();                
+				  	var order_id = $("#order_id").val();
+					$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+						var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+						transferOrderMilestoneTbody.empty();
+						for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
+						{
+							transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+						}
+					},'json');               
 				}else{
 					alert('数据保存失败。');
 				}

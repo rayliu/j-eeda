@@ -294,7 +294,9 @@ public class TransferOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         transferOrderMilestone.set("create_by", users.get(0).get("id"));
         transferOrderMilestone.set("location", "");
-        transferOrderMilestone.set("create_stamp", new Date());
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+        transferOrderMilestone.set("create_stamp", sqlDate);
         transferOrderMilestone.set("order_id", transferOrder.get("id"));
         transferOrderMilestone.save();
     }
@@ -328,7 +330,7 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-                    .find("select * from contact where id in(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT CUSTOMER_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC)) and (company_name like '%"
+                    	.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and (company_name like '%"
                             + input
                             + "%' or contact_person like '%"
                             + input
@@ -353,7 +355,7 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-                    .find("select * from contact where id in(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT SP_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC)) and (company_name like '%"
+            		.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' and (company_name like '%"
                             + input
                             + "%' or contact_person like '%"
                             + input
@@ -384,5 +386,12 @@ public class TransferOrderController extends Controller {
 
         transferOrder.delete();
         redirect("/yh/transferOrder");
+    }
+    
+    // 取消
+    public void cancel() {
+        String id = getPara();
+        TransferOrder.dao.findById(id).set("Status", "取消").update();
+        renderJson("{\"success\":true}");
     }
 }

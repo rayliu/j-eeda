@@ -1,11 +1,11 @@
 package controllers.yh.order;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.TransferOrder;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 
@@ -41,6 +41,10 @@ public class TransferOrderMilestoneController extends Controller {
 
     // 发车确认
     public void departureConfirmation() {
+    	Long order_id = Long.parseLong(getPara("order_id"));
+    	TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
+    	transferOrder.set("status", "已发车");
+    	transferOrder.update();
         Map<String, Object> map = new HashMap<String, Object>();
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         transferOrderMilestone.set("status", "已发车");
@@ -48,7 +52,9 @@ public class TransferOrderMilestoneController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         transferOrderMilestone.set("create_by", users.get(0).get("id"));
         transferOrderMilestone.set("location", "");
-        transferOrderMilestone.set("create_stamp", new Date());
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+        transferOrderMilestone.set("create_stamp", sqlDate);
         transferOrderMilestone.set("order_id", getPara("order_id"));
         transferOrderMilestone.save();
         map.put("transferOrderMilestone", transferOrderMilestone);
@@ -60,15 +66,20 @@ public class TransferOrderMilestoneController extends Controller {
 
     // 保存里程碑
     public void saveTransferOrderMilestone() {
+    	Long order_id = Long.parseLong(getPara("order_id"));
+    	TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
         Map<String, Object> map = new HashMap<String, Object>();
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         String status = getPara("status");
         String location = getPara("location");
         if (!status.isEmpty()) {
             transferOrderMilestone.set("status", status);
+            transferOrder.set("status", status);
         } else {
             transferOrderMilestone.set("status", "在途");
+            transferOrder.set("status", "在途");
         }
+        transferOrder.update();
         if (!location.isEmpty()) {
             transferOrderMilestone.set("location", location);
         } else {
@@ -94,6 +105,10 @@ public class TransferOrderMilestoneController extends Controller {
 
     // 回单签收
     public void receipt() {
+    	Long order_id = Long.parseLong(getPara("order_id"));
+    	TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
+    	transferOrder.set("status", "已签收");
+    	transferOrder.update();
         Map<String, Object> map = new HashMap<String, Object>();
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         transferOrderMilestone.set("status", "已签收");
@@ -101,7 +116,9 @@ public class TransferOrderMilestoneController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         transferOrderMilestone.set("create_by", users.get(0).get("id"));
         transferOrderMilestone.set("location", "");
-        transferOrderMilestone.set("create_stamp", new Date());
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+        transferOrderMilestone.set("create_stamp", sqlDate);
         transferOrderMilestone.set("order_id", getPara("order_id"));
         transferOrderMilestone.save();
         map.put("transferOrderMilestone", transferOrderMilestone);
@@ -113,6 +130,10 @@ public class TransferOrderMilestoneController extends Controller {
 
     // 入库确认
     public void warehousingConfirm() {
+    	Long order_id = Long.parseLong(getPara("order_id"));
+    	TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
+    	transferOrder.set("status", "已入库");
+    	transferOrder.update();
         Map<String, Object> map = new HashMap<String, Object>();
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         transferOrderMilestone.set("status", "已入库");
@@ -120,7 +141,9 @@ public class TransferOrderMilestoneController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         transferOrderMilestone.set("create_by", users.get(0).get("id"));
         transferOrderMilestone.set("location", "");
-        transferOrderMilestone.set("create_stamp", new Date());
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+        transferOrderMilestone.set("create_stamp", sqlDate);
         transferOrderMilestone.set("order_id", getPara("order_id"));
         transferOrderMilestone.save();
         map.put("transferOrderMilestone", transferOrderMilestone);
