@@ -57,8 +57,9 @@ public class ReturnOrderControllers extends Controller {
 		int id = Integer.parseInt(getPara("locationName"));
 
 		List<Record> message = new ArrayList<Record>();
+		
 		message = Db
-				.find("select r.id,r.order_no,r.create_date,r.transaction_status,r.creator,"
+				.find("select r.id,r.order_no, r.create_date,r.transaction_status,r.creator,"
 						+ "(select company_name from contact c where c.id in  (SELECT p.conTACT_ID  FROM PARTY  p where p.id in (select t.notify_party_id  from  transfer_order t  where t. id=r.transfer_order_id"
 
 						+ " )) )company_name,"
@@ -88,12 +89,13 @@ public class ReturnOrderControllers extends Controller {
 						+ "(select  pickup_mode from transfer_order t where r.transfer_order_id=t.id) pickup  ,"
 						+ "(select arrival_mode from transfer_order t where r.transfer_order_id=t.id) arrival  ,"
 						+ "(select remark from transfer_order t where r.transfer_order_id=t.id) remark  ,"
-						+ "(SELECT location_from  FROM ROUTE  ro  where ro.id in (select route_id from transfer_order t where t.id=r.transfer_order_id"
+						+ "(SELECT ORDER_NO  FROM DELIVERY_ORDER fo  where fo.id=r.DELIVERY_ORDER_ID ) DELIVERY_ORDER_ID_NO  ,"
+						+ "(SELECT location_from  FROM ROUTE  ro  where ro.id in (select route_id from transfer_order t where t.id=r.transfer_order_id)) location_from ,"
+						 
+						
+						+ "(SELECT location_to  FROM ROUTE  ro  where ro.id in (select route_id from transfer_order t where t.id=r.transfer_order_id)) location_to ,"
 
-						+ ") ) location_from ,"
-						+ "(SELECT location_to  FROM ROUTE  ro  where ro.id in (select route_id from transfer_order t where t.id=r.transfer_order_id"
-
-						+ ") ) location_to ,"
+						
 						+ "(select amount from contract_item c where c.contract_id=r.notity_party_id and c.route_id=r.route_id) amount ,"
 						+ "(SELECT user_name  FROM user_login u  where  u.id in (select create_by from transfer_order t where t.id=r.transfer_order_id"
 
@@ -238,8 +240,18 @@ public class ReturnOrderControllers extends Controller {
 	// 点击查看
 	public void check() {
 		String id = getPara();
+		List<Record> DELIVERYORDERID = new ArrayList<Record>();
+		DELIVERYORDERID = Db
+				.find("SELECT DELIVERY_ORDER_ID  FROM RETURN_ORDER ro where ro.id='"
+						+ id + "'");
 		TransferOrder tr = TransferOrder.dao.findById(id);
 		String nature = tr.getStr("cargo_nature");
+		if(DELIVERYORDERID.get(0).get("DELIVERY_ORDER_ID")!=null){
+			setAttr("check", true);
+		}else{
+			setAttr("check", false);
+		}
+		
 		setAttr("nature", nature);
 		setAttr("id", id);
 		if(LoginUserController.isAuthenticated(this))
@@ -248,6 +260,15 @@ public class ReturnOrderControllers extends Controller {
 
 	public void save() {
 		int id = Integer.parseInt(getPara("id"));
+		List<Record> DELIVERYORDERID = new ArrayList<Record>();
+		DELIVERYORDERID = Db
+				.find("SELECT DELIVERY_ORDER_ID  FROM RETURN_ORDER ro where ro.id='"
+						+ id + "'");
+		if(DELIVERYORDERID.size()!=0){
+			setAttr("check", true);
+		}else{
+			setAttr("check", false);
+		}
 		TransferOrder tr = TransferOrder.dao.findById(id);
 		String nature = tr.getStr("cargo_nature");
 		ReturnOrder r = ReturnOrder.dao.findById(id);
@@ -260,13 +281,14 @@ public class ReturnOrderControllers extends Controller {
 
 	}
 
-	// 删除
-	public void delete() {
+	// 取消
+	public void cancel() {
 		String id = getPara();
 	
 		ReturnOrder re =ReturnOrder.dao.findById(id);
 		re.set("TRANSACTION_STATUS", "cancel").update();
-		index();
+		  renderJson("{\"success\":true}");
+		
 	}
 
 }

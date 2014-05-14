@@ -121,9 +121,9 @@
                                     <div class="form-group">
                                         <label>运输单号</label> <strong id="transfer_order_no" class="radio-inline"></strong>
                                     </div>  
-                                     <%if(type!''=='CUSTOMER' && classify!''==''){%>  
+                                     <%if(check!''==true){%>  
                       					<div class="form-group">
-                                        <label>配送单号</label> <strong id="transfer_order_no" class="radio-inline"></strong>
+                                        <label>配送单号</label> <strong id="DELIVERY_ORDER_ID_NO" class="radio-inline"></strong>
                                     </div> 
                        				 <%}%>
                                                                             
@@ -285,6 +285,7 @@
 			for(var i=0; i < data.length; i++){
 				nature=data[i].NATURE;
 				$('#transfer_order_no').html(data[i].TRANSFER_ORDER_NO);
+				$('#DELIVERY_ORDER_ID_NO').html(data[i].DELIVERY_ORDER_ID_NO);
 				$('#nature').html(data[i].NATURE);
 	        	$('#pickup').html(data[i].PICKUP);
 	        	$('#arrival').html(data[i].ARRIVAL);	        	

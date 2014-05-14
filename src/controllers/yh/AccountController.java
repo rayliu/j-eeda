@@ -18,10 +18,12 @@ import com.jfinal.plugin.activerecord.Record;
 public class AccountController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);
     public  void  index(){
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/account/account.html");
     }
     //链接到添加金融账户页面
     public void editAccount(){
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/account/edit.html");
     }
   //编辑金融账户信息
@@ -31,6 +33,7 @@ public class AccountController extends Controller {
             Account l = Account.dao.findById(id);
             setAttr("ul", l);
         }
+        if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/account/edit.html");
         
     }
@@ -58,6 +61,7 @@ public class AccountController extends Controller {
             logger.debug("insert....");
             Db.save("fin_account", user);
         }
+        if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/account/account.html");
         
     }
@@ -67,6 +71,7 @@ public class AccountController extends Controller {
         if (id != null) {
         Db.deleteById("fin_account", id);
         }
+        if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/account/account.html");
     }
   //列出金融账户信息

@@ -93,7 +93,7 @@
    	 $("#query").click(function(){
    	    	alert("123");
    	    });
-   	 $('#example').dataTable( {
+   	var dataTable =$('#example').dataTable( {
    		    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
    	        //"sPaginationType": "bootstrap",insert into return_order(status_code,create_date,order_type,creator,remark,transfer_order,distribution_order_id,contract_id
    	      "iDisplayLength": 10,
@@ -130,15 +130,28 @@
                            "<i class='fa fa-search fa-fw'></i> "+
                            "查看"+
                        "</a>"+
-                       "<a class='btn btn-danger cancelbutton' href='/yh/returnorder/delete/"+obj.aData.ID+"'>"+
-                           "<i class='fa fa-trash-o fa-fw'></i> "+ 
-                           "取消"+
-                       "</a>";
+                       "<a class='btn btn-danger cancelbutton' code='"+obj.aData.ID+"'>"+
+                       "<i class='fa fa-trash-o fa-fw'></i> "+ 
+                       "取消"+
+                   "</a>";
      	         		}
      	 			    }
    	      ]
    	});
-   		 
+    $("#example").on('click', '.cancelbutton', function(e){
+		  e.preventDefault();
+       //异步向后台提交数据
+		 var id = $(this).attr('code');
+		$.post('/yh/returnorder/cancel/'+id,function(data){
+               //保存成功后，刷新列表
+               console.log(data);
+               if(data.success){
+              	 dataTable.fnDraw();
+               }else{
+                   alert('取消失败');
+               }
+           },'json');
+		  });
    	 $("#btn").click(function(){
       	
    		alert("waerwerwee");
