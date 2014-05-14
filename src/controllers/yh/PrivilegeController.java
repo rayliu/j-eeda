@@ -13,15 +13,16 @@ import com.jfinal.plugin.activerecord.Record;
 
 public class PrivilegeController extends Controller {
 	public void index(){
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/privilege/PrivilegeList.html");
 	}
 	
 	public void userrole(){
-	
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/privilege/UserRole.html");
 	}
 	public void roleprivilege(){
-		
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/privilege/RolePrivilege.html");
 	}
 	public void SelectUser(){

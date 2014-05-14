@@ -12,18 +12,22 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
+
 public class ChargeCheckOrderController extends Controller {
     private Logger logger = Logger.getLogger(ChargeCheckOrderController.class);
 
     public void index() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "");
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
     }
 
     public void add() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "");
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderCreateSearchList.html");
     }
 
@@ -39,6 +43,7 @@ public class ChargeCheckOrderController extends Controller {
         setAttr("customer", contact);
         setAttr("type", "CUSTOMER");
     	setAttr("classify", "");
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
     }
 

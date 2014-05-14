@@ -16,11 +16,13 @@ public class OfficeController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);
 
     public void index() {
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/office/office.html");
     }
 
     // 链接到添加分公司页面
     public void editOffice() {
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/office/edit.html");
     }
 
@@ -33,6 +35,7 @@ public class OfficeController extends Controller {
         } else {
             setAttr("ul", new UserLogin());
         }
+        if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/office/edit.html");
 
     }
@@ -63,6 +66,7 @@ public class OfficeController extends Controller {
             logger.debug("insert....");
             Db.save("office", user);
         }
+        if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/office/office.html");
 
     }
@@ -77,6 +81,7 @@ public class OfficeController extends Controller {
         if (id != null) {
             Db.deleteById("office", id);
         }
+        if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/office/office.html");
     }
 

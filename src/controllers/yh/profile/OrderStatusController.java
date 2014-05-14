@@ -12,11 +12,14 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
+
 public class OrderStatusController extends Controller{
 
     private Logger logger = Logger.getLogger(OrderStatusController.class);
     
 	public void index() {
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/orderStatus/orderStatusList.html");
 	}
 
@@ -52,6 +55,7 @@ public class OrderStatusController extends Controller{
 
 	public void add() {
 		setAttr("saveOK", false);
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/orderStatus/orderStatusEdit.html");
 	}
 
@@ -60,6 +64,7 @@ public class OrderStatusController extends Controller{
 
 		OrderStatus orderStatus = OrderStatus.dao.findById(id);
 		setAttr("orderStatus", orderStatus);
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/orderStatus/orderStatusEdit.html");
 	}
 
@@ -68,6 +73,7 @@ public class OrderStatusController extends Controller{
 
 		OrderStatus orderStatus = OrderStatus.dao.findById(id);
 		orderStatus.delete();
+		if(LoginUserController.isAuthenticated(this))
 		redirect("/yh/orderStatus");
 	}
 
@@ -89,6 +95,7 @@ public class OrderStatusController extends Controller{
 			orderStatus.set("status_code", status_code).set("status_name", status_name)
 			        .set("order_type", order_type).set("remark", remark).save();
 		}
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/orderStatus/orderStatusList.html");
 	}
 }

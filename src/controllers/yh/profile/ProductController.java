@@ -17,11 +17,14 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
+
 public class ProductController extends Controller{
 
     private Logger logger = Logger.getLogger(ProductController.class);
     
 	public void index() {
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/product/productList.html");
 	}
 
@@ -57,6 +60,7 @@ public class ProductController extends Controller{
 
 	public void add() {
 		setAttr("saveOK", false);
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/product/productEdit.html");
 	}
 
@@ -65,6 +69,7 @@ public class ProductController extends Controller{
 
 		Product product = Product.dao.findById(id);
 		setAttr("product", product);
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/product/productEdit.html");
 	}
 
@@ -73,6 +78,7 @@ public class ProductController extends Controller{
 
 		Product product = Product.dao.findById(id);
 		product.delete();
+		if(LoginUserController.isAuthenticated(this))
 		redirect("/yh/product");
 	}
 
@@ -93,6 +99,7 @@ public class ProductController extends Controller{
 			product.set("item_name", itemName).set("item_no", itemNo)
 			        .set("item_desc", itemDesc).save();
 		}
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/product/productList.html");
 	}
 }

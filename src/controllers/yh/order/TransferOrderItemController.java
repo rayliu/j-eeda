@@ -16,6 +16,8 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
+
 public class TransferOrderItemController extends Controller {
 
 	private Logger logger = Logger.getLogger(TransferOrderItemController.class);
@@ -67,11 +69,12 @@ public class TransferOrderItemController extends Controller {
 
 		Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
 		setAttr("contact", contact);
-
+		if(LoginUserController.isAuthenticated(this))
 		render("transferOrder/transferOrderEdit.html");
 	}
 
 	public void edit() {
+		if(LoginUserController.isAuthenticated(this))
 		render("transferOrder/editTransferOrder.html");
 	}
 
@@ -83,7 +86,7 @@ public class TransferOrderItemController extends Controller {
 
 		Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
 		contact.delete();
-
+		if(LoginUserController.isAuthenticated(this))
 		redirect("/yh/transferOrder");
 	}
 

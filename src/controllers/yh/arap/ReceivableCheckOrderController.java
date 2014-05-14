@@ -12,18 +12,22 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
+
 public class ReceivableCheckOrderController extends Controller {
     private Logger logger = Logger.getLogger(ReceivableCheckOrderController.class);
 
     public void index() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
     }
 
     public void add() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderCreateSearchList.html");
     }
 
@@ -39,6 +43,7 @@ public class ReceivableCheckOrderController extends Controller {
         setAttr("customer", contact);
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
     }
 

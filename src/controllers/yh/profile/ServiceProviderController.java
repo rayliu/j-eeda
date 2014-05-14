@@ -17,11 +17,14 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
+
 public class ServiceProviderController extends Controller {
 
     private Logger logger = Logger.getLogger(ServiceProviderController.class);
 
     public void index() {
+    	if(LoginUserController.isAuthenticated(this))
         render("profile/serviceProvider/serviceProviderList.html");
     }
 
@@ -57,6 +60,7 @@ public class ServiceProviderController extends Controller {
 
     public void add() {
         setAttr("saveOK", false);
+        if(LoginUserController.isAuthenticated(this))
         render("profile/serviceProvider/serviceProviderEdit.html");
     }
 
@@ -70,7 +74,7 @@ public class ServiceProviderController extends Controller {
                 .findFirst("select * from contact where id=?",
                         party.getLong("contact_id"));
         setAttr("contact", contact);
-
+        if(LoginUserController.isAuthenticated(this))
         render("profile/serviceProvider/serviceProviderEdit.html");
     }
 
@@ -95,6 +99,7 @@ public class ServiceProviderController extends Controller {
         contact.delete();
 
         party.delete();
+        if(LoginUserController.isAuthenticated(this))
         redirect("/yh/serviceProvider");
     }
 
@@ -126,6 +131,7 @@ public class ServiceProviderController extends Controller {
         }
 
         setAttr("saveOK", true);
+        if(LoginUserController.isAuthenticated(this))
         render("profile/serviceProvider/serviceProviderList.html");
     }
 

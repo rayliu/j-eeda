@@ -15,11 +15,13 @@ public class RouteController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);
 
     public void index() {
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/route/route.html");
     }
 
     // 链接到添加干线页面
     public void editRoute() {
+    	if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/route/edit.html");
     }
 
@@ -30,6 +32,7 @@ public class RouteController extends Controller {
             Route l = Route.dao.findById(id);
             setAttr("ul", l);
         }
+        if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/route/edit.html");
 
     }
@@ -57,6 +60,7 @@ public class RouteController extends Controller {
             logger.debug("insert....");
             Db.save("route", user);
         }
+        if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/route/route.html");
 
     }
@@ -71,6 +75,7 @@ public class RouteController extends Controller {
         if (id != null) {
             Db.deleteById("route", id);
         }
+        if(LoginUserController.isAuthenticated(this))
         render("/yh/profile/route/route.html");
     }
 

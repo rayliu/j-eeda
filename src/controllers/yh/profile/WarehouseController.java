@@ -15,11 +15,14 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
+
 public class WarehouseController extends Controller{
 
     private Logger logger = Logger.getLogger(WarehouseController.class);
     
 	public void index() {
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/warehouse/warehouseList.html");
 	}
 
@@ -62,6 +65,7 @@ public class WarehouseController extends Controller{
 
 	public void add() {
 		setAttr("saveOK", false);
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/warehouse/warehouseEdit.html");
 	}
 
@@ -72,7 +76,8 @@ public class WarehouseController extends Controller{
 		setAttr("warehouse", warehouse);
 		
 		Contact contact = Contact.dao.findFirst("select * from contact where id = (select contact_id from warehouse where id="+warehouse.get("id")+")");
-		setAttr("contact", contact);			
+		setAttr("contact", contact);	
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/warehouse/warehouseEdit.html");
 	}
 
@@ -81,6 +86,7 @@ public class WarehouseController extends Controller{
 
 		Warehouse warehouse = Warehouse.dao.findById(id);
 		warehouse.delete();
+		if(LoginUserController.isAuthenticated(this))
 		redirect("/yh/warehouse");
 	}
 
@@ -113,6 +119,7 @@ public class WarehouseController extends Controller{
 			warehouse.save();
 		}
 		setAttr("saveOK", true);
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/warehouse/warehouseList.html");
 	}
 

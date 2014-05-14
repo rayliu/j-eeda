@@ -15,6 +15,8 @@ import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
 
+import controllers.yh.LoginUserController;
+
 public class TransferOrderItemDetailController extends Controller {
 
 	private Logger logger = Logger.getLogger(TransferOrderItemDetailController.class);
@@ -33,11 +35,12 @@ public class TransferOrderItemDetailController extends Controller {
 
 		Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
 		setAttr("contact", contact);
-
+		if(LoginUserController.isAuthenticated(this))
 		render("transferOrder/transferOrderEdit.html");
 	}
 
 	public void edit() {
+		if(LoginUserController.isAuthenticated(this))
 		render("transferOrder/editTransferOrder.html");
 	}
 
@@ -49,7 +52,7 @@ public class TransferOrderItemDetailController extends Controller {
 
 		Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
 		contact.delete();
-
+		if(LoginUserController.isAuthenticated(this))
 		redirect("/yh/transferOrder");
 	}
 

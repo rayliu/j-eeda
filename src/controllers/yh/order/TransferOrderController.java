@@ -23,12 +23,15 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
+
 public class TransferOrderController extends Controller {
 
     private Logger logger = Logger.getLogger(TransferOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
+    	if(LoginUserController.isAuthenticated(this))
         render("transferOrder/transferOrderList.html");
     }
 
@@ -83,6 +86,7 @@ public class TransferOrderController extends Controller {
         setAttr("userLogin", userLogin);
 
         setAttr("status", "新建");
+        if(LoginUserController.isAuthenticated(this))
         render("transferOrder/editTransferOrder.html");
         // render("transferOrder/transferOrderEdit.html");
     }
@@ -95,7 +99,7 @@ public class TransferOrderController extends Controller {
 
         Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
         setAttr("contact", contact);
-
+        if(LoginUserController.isAuthenticated(this))
         render("transferOrder/transferOrderEdit.html");
     }
 
@@ -121,6 +125,7 @@ public class TransferOrderController extends Controller {
 
         UserLogin userLogin = UserLogin.dao.findById(transferOrder.get("create_by"));
         setAttr("userLogin", userLogin);
+        if(LoginUserController.isAuthenticated(this))
         render("transferOrder/updateTransferOrder.html");
     }
 
@@ -151,6 +156,7 @@ public class TransferOrderController extends Controller {
         }
 
         setAttr("saveOK", true);
+        if(LoginUserController.isAuthenticated(this))
         render("transferOrder/transferOrderList.html");
     }
 
@@ -216,6 +222,7 @@ public class TransferOrderController extends Controller {
 
     public void saveItem() {
         // saveOrderItem(transferOrder);
+    	if(LoginUserController.isAuthenticated(this))
         render("transferOrder/transferOrderList.html");
     }
 
@@ -385,6 +392,7 @@ public class TransferOrderController extends Controller {
         transferOrder.set("sp_id", null);
 
         transferOrder.delete();
+        if(LoginUserController.isAuthenticated(this))
         redirect("/yh/transferOrder");
     }
     

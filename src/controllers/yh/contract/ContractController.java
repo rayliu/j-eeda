@@ -19,6 +19,8 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
+
 public class ContractController extends Controller {
 
     private Logger logger = Logger.getLogger(ContractController.class);
@@ -31,9 +33,11 @@ public class ContractController extends Controller {
         logger.debug("URI:" + url);
         if (url.equals("/yh/customerContract")) {
             setAttr("contractType", "CUSTOMER");
+            if(LoginUserController.isAuthenticated(this))
             render("contract/ContractList.html");
         } else {
             setAttr("contractType", "SP");
+            if(LoginUserController.isAuthenticated(this))
             render("contract/ContractList.html");
         }
 
@@ -109,10 +113,12 @@ public class ContractController extends Controller {
         if (url.equals("/yh/customerContract/add")) {
             setAttr("contractType", "CUSTOMER");
             setAttr("saveOK", false);
+            if(LoginUserController.isAuthenticated(this))
             render("/yh/contract/ContractEdit.html");
         } else {
             setAttr("contractType", "SERVICE_PROVIDER");
             setAttr("saveOK", false);
+            if(LoginUserController.isAuthenticated(this))
             render("/yh/contract/ContractEdit.html");
         }
         setAttr("saveOK", false);
@@ -127,6 +133,7 @@ public class ContractController extends Controller {
             setAttr("c", contact);
             setAttr("ul", contract);
         }
+        if(LoginUserController.isAuthenticated(this))
         render("/yh/contract/ContractEdit.html");
     }
 
@@ -167,6 +174,7 @@ public class ContractController extends Controller {
         if (id != null) {
             Db.deleteById("contract", id);
         }
+        if(LoginUserController.isAuthenticated(this))
         redirect("/yh/customerContract");
     }
 
@@ -175,6 +183,7 @@ public class ContractController extends Controller {
         if (id != null) {
             Db.deleteById("contract", id);
         }
+        if(LoginUserController.isAuthenticated(this))
         redirect("/yh/spContract");
     }
 
@@ -276,11 +285,13 @@ public class ContractController extends Controller {
         renderJson(routeId);
     }
 
-    public void roteEdit() {
-
+    public void contractRouteEdit() {
+        String id = getPara();
+        System.out.println(id);
+        renderJson("{\"success\":true}");
     }
 
-    public void roteDelete() {
+    public void routeDelete() {
         String id = getPara();
         if (id != null) {
             Db.deleteById("contract_item", id);

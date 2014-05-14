@@ -17,6 +17,7 @@ public class ReturnOrderControllers extends Controller {
 	private Logger logger = Logger.getLogger(ReturnOrderControllers.class);
 
 	public void index() {
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/returnorder/returnOrderList.html");
 	}
 
@@ -241,6 +242,7 @@ public class ReturnOrderControllers extends Controller {
 		String nature = tr.getStr("cargo_nature");
 		setAttr("nature", nature);
 		setAttr("id", id);
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/returnorder/returnOrder.html");
 	}
 
@@ -253,6 +255,7 @@ public class ReturnOrderControllers extends Controller {
 		setAttr("nature", nature);
 		setAttr("id", id);
 		setAttr("saveOK", true);
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/returnorder/returnOrder.html");
 
 	}

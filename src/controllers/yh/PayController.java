@@ -30,7 +30,7 @@ if(page.equals("付款")){
 	//System.out.print("没获取参数page");
 	setAttr("page", "付款条目定义");
 }
-**/
+**/if(LoginUserController.isAuthenticated(this))
 	render("profile/toll/PayList.html");
 
 	
@@ -72,8 +72,10 @@ public void Edit(){
 	if (id != null) {
 		Toll h = Toll.dao.findById(id);
 		setAttr("to", h);
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/toll/PayEdit.html");
 	}else{
+		if(LoginUserController.isAuthenticated(this))
 		render("profile/toll/PayEdit.html");
 	}
 }
@@ -85,6 +87,7 @@ public void delete(){
 		Toll l = Toll.dao.findById(id);
 		l.delete();
 	}
+	if(LoginUserController.isAuthenticated(this))
 	redirect("/yh/pay");
 }
 
@@ -113,7 +116,7 @@ if(id==""){
 	  Toll toll = Toll.dao.findById(id);
 		boolean b = toll.set("name", name).set("type", type)
 		        .set("code", code).set("Remark", remark).update();
-
+		if(LoginUserController.isAuthenticated(this))
 render("profile/toll/PayList.html");
   }
 
