@@ -97,6 +97,7 @@
    		    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
    	        //"sPaginationType": "bootstrap",insert into return_order(status_code,create_date,order_type,creator,remark,transfer_order,distribution_order_id,contract_id
    	      "iDisplayLength": 10,
+   	   	"bServerSide": true,
    	    	"oLanguage": {
    	            "sUrl": "/eeda/dataTables.ch.txt"
    	        },
@@ -129,7 +130,7 @@
                            "<i class='fa fa-search fa-fw'></i> "+
                            "查看"+
                        "</a>"+
-                       "<a class='btn btn-danger' href='/yh/returnorder/delete/"+obj.aData.ID+"'>"+
+                       "<a class='btn btn-danger cancelbutton' href='/yh/returnorder/delete/"+obj.aData.ID+"'>"+
                            "<i class='fa fa-trash-o fa-fw'></i> "+ 
                            "取消"+
                        "</a>";

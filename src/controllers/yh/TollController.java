@@ -38,13 +38,13 @@ public class TollController extends Controller {
 
 		// 获取总条数
 		String totalWhere = "";
-		String sql = "select count(1) total from Toll_table where type ='收费' ";
+		String sql = "select count(1) total from FIN_ITEM  where type ='应收' ";
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
 		List<Record> orders = Db
-				.find("select * from Toll_table where type ='应收'");
+				.find("select * from FIN_ITEM  where type ='应收'");
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));

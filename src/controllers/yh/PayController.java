@@ -49,12 +49,12 @@ public void list() {
 
 	// 获取总条数
 	String totalWhere = "";
-	String sql = "select count(1) total from Toll_table where type ='付费'";
+	String sql = "select count(1) total from FIN_ITEM  where type ='应付'";
 	Record rec = Db.findFirst(sql + totalWhere);
 	logger.debug("total records:" + rec.getLong("total"));
 
 	// 获取当前页的数据
-	List<Record> orders = Db.find("select * from Toll_table where type ='付费'");
+	List<Record> orders = Db.find("select * from FIN_ITEM  where type ='应付'");
 	Map orderMap = new HashMap();
 	orderMap.put("sEcho", pageIndex);
 	orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -98,7 +98,7 @@ public void SaveEdit() {
 	String id = getPara("id");
 
 		String name = getPara("name");
-		String type = "付费";
+		String type = "应付";
 		String code=getPara("code");
 		String remark=getPara("remark");
 
