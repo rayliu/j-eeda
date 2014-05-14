@@ -12,18 +12,18 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-public class ChargeCheckOrderController extends Controller {
-    private Logger logger = Logger.getLogger(ChargeCheckOrderController.class);
+public class ReceivableCheckOrderController extends Controller {
+    private Logger logger = Logger.getLogger(ReceivableCheckOrderController.class);
 
     public void index() {
     	setAttr("type", "CUSTOMER");
-    	setAttr("classify", "");
+    	setAttr("classify", "receivable");
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
     }
 
     public void add() {
     	setAttr("type", "CUSTOMER");
-    	setAttr("classify", "");
+    	setAttr("classify", "receivable");
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderCreateSearchList.html");
     }
 
@@ -37,8 +37,8 @@ public class ChargeCheckOrderController extends Controller {
 
         Contact contact = Contact.dao.findById(party.get("contact_id").toString());
         setAttr("customer", contact);
-        setAttr("type", "CUSTOMER");
-    	setAttr("classify", "");
+    	setAttr("type", "CUSTOMER");
+    	setAttr("classify", "receivable");
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
     }
 

@@ -12,18 +12,18 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-public class ChargeCheckOrderController extends Controller {
-    private Logger logger = Logger.getLogger(ChargeCheckOrderController.class);
+public class CopeCheckOrderController extends Controller {
+    private Logger logger = Logger.getLogger(CopeCheckOrderController.class);
 
     public void index() {
-    	setAttr("type", "CUSTOMER");
-    	setAttr("classify", "");
+    	setAttr("type", "SERVICE_PROVIDER");
+    	setAttr("classify", "cope");
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
     }
 
     public void add() {
-    	setAttr("type", "CUSTOMER");
-    	setAttr("classify", "");
+    	setAttr("type", "SERVICE_PROVIDER");
+    	setAttr("classify", "cope");
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderCreateSearchList.html");
     }
 
@@ -37,8 +37,8 @@ public class ChargeCheckOrderController extends Controller {
 
         Contact contact = Contact.dao.findById(party.get("contact_id").toString());
         setAttr("customer", contact);
-        setAttr("type", "CUSTOMER");
-    	setAttr("classify", "");
+    	setAttr("type", "SERVICE_PROVIDER");
+    	setAttr("classify", "cope");
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
     }
 
@@ -102,7 +102,7 @@ public class ChargeCheckOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from billing_order where order_type='charge_audit_order'";
+        String sqlTotal = "select count(1) total from billing_order where order_type='pay_audit_order'";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
@@ -114,7 +114,7 @@ public class ChargeCheckOrderController extends Controller {
                 + " left join party p on bo.customer_id =p.id and bo.customer_type =p.party_type "
                 + " left join contact t on p.contact_id = t.id left join transfer_order to on bo.transfer_order_id = to.id "
                 + "left join user_login u on bo.creator = u.id"
-                + " left join delivery_order do on bo.delivery_order_id = do.id where bo.order_type='charge_audit_order'";
+                + " left join delivery_order do on bo.delivery_order_id = do.id where bo.order_type='pay_audit_order'";
 
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);

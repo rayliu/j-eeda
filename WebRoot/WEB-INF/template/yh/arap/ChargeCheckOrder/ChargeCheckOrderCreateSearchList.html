@@ -7,7 +7,18 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        新增应收对账单，选取回单
+                    <%if(type!''=='CUSTOMER'&&classify!''==''){%>  
+                             新增应收对账单，选取回单
+                             <%}%>
+                              <%if(type!''=='SERVICE_PROVIDER'&&classify!''==''){%>
+                                新增应付对账单，选取运输单
+                             <%}%>
+                          <%if(classify!''=='receivable'&& type!''=='CUSTOMER'){%>  
+                             新增应收结账单，选取应收对账单
+                             <%}%>
+                              <%if(classify!''=='cope'&& type!''=='SERVICE_PROVIDER'){%>
+                                 新增应付结账单，选取应付对账单
+                             <%}%>
                     </h1>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -19,7 +30,22 @@
 
                     <div class="panel panel-default">                              
                         <div class="panel-heading">
-                            <i class="fa fa-list fa-fw"></i>回单列表
+                           
+                              
+                          <%if(type!''=='CUSTOMER'&&classify!''==''){%>  
+                           <i class="fa fa-list fa-fw"></i>回单列表
+                             <%}%>
+                              <%if(type!''=='SERVICE_PROVIDER'&&classify!''==''){%>
+                                <i class="fa fa-list fa-fw"></i>运输单列表
+                             <%}%>
+                              <%if(classify!''=='receivable'&& type!''=='CUSTOMER'){%>  
+                            <i class="fa fa-list fa-fw"></i>应收结账单列表
+                             <%}%>
+                              <%if(classify!''=='cope'&& type!''=='SERVICE_PROVIDER'){%>
+                               <i class="fa fa-list fa-fw"></i>应付结账单列表
+                             <%}%>
+                              
+                          
                         </div>
 
                         <!-- /.panel-heading -->

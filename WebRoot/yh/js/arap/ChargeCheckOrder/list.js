@@ -2,7 +2,20 @@
 $(document).ready(function() {
 
     $('#menu_finance').addClass('active').find('ul').addClass('in');
-    
+    var type = $("#type").val();//注意这里
+    var urlSource1;
+    var urlSource2;
+    var urlSource3;
+	if(type=='CUSTOMER'){
+		
+		urlSource1="/yh/chargeCheckOrder/list";
+		urlSource2="/yh/transferOrder/edit/";
+		urlSource3="/yh/transferOrder/delete/";
+	}else{	
+		urlSource1="/yh/paymentCheckOrder/list";
+		urlSource2="/yh/transferOrder/edit/";
+		urlSource3="/yh/transferOrder/delete/";
+	}
 	//datatable, 动态处理
     $('#eeda-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -12,7 +25,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeCheckOrder/list",
+        "sAjaxSource": urlSource1,
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"BLLING_ORDER_NO"},
@@ -58,11 +71,11 @@ $(document).ready(function() {
                 	}else if(obj.aData.CARGO_NATURE=='damageCargo'){
                 		return '损坏货品';
                 	}*/
-                    return	"<a class='btn btn-success' href='/yh/transferOrder/edit/"+obj.aData.ID+"'>"+
+                    return	"<a class='btn btn-success' href='"+urlSource2+""+obj.aData.ID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+
                             "</a>"+
-                            "<a class='btn btn-danger' href='/yh/transferOrder/delete/"+obj.aData.ID+"'>"+
+                            "<a class='btn btn-danger' href='"+urlSource3+""+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "删除"+
                             "</a>";

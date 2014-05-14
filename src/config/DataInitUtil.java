@@ -484,6 +484,31 @@ public class DataInitUtil {
                     + "last_modified_stamp, approver, approve_date) values"
                     + "('应收对账单005', 'charge_audit_order',4, 'CUSTOMER', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
                     + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应付对账单001', 'pay_audit_order', 7, 'SERVICE_PROVIDER', 1, 2, 'new', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应付对账单002', 'pay_audit_order', 7, 'SERVICE_PROVIDER', 1, 2, 'checking', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应付对账单003', 'pay_audit_order', 7, 'SERVICE_PROVIDER',1, 2, 'confirmed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应付对账单004', 'pay_audit_order', 7, 'SERVICE_PROVIDER	',1, 2, 'completed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
+            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                    + "last_modified_stamp, approver, approve_date) values"
+                    + "('应付对账单005', 'pay_audit_order',7, 'SERVICE_PROVIDER	', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP());");
             // billing_order_item 应收应付单从表
             stmt.execute("create table if not exists billing_order_item(id bigint auto_increment PRIMARY KEY,blling_order_id bigint, "
                     + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
