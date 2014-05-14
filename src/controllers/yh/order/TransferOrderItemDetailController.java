@@ -14,6 +14,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
@@ -22,9 +24,38 @@ public class TransferOrderItemDetailController extends Controller {
 	private Logger logger = Logger.getLogger(TransferOrderItemDetailController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 
-	public void transferOrderItemList() {
-		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item");
-		renderJson(transferOrderItems);
+	public void transferOrderDetailList() {
+		String itemId = getPara("item_id");
+		if(itemId.isEmpty()){
+			itemId="-1";
+		}		
+		logger.debug(itemId);
+		
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+
+        String sqlTotal = "select count(1) total from transfer_order_item_detail where item_id ="
+                + itemId;
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select d.id,d.notify_party_id,d.serial_no,d.item_name,d.volume,d.weight,c.contact_person,c.phone,c.address,d.remark,d.is_damage,d.ESTIMATE_DAMAGE_AMOUNT,d.DAMAGE_REVENUE,d.DAMAGE_PAYMENT,d.DAMAGE_REMARK from transfer_order_item_detail d,party p,contact c where d.item_id ="+itemId+" and d.notify_party_id=p.id and p.contact_id=c.id";
+
+        List<Record> transferOrders = Db.find(sql);
+
+        Map transferOrderListMap = new HashMap();
+        transferOrderListMap.put("sEcho", pageIndex);
+        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        transferOrderListMap.put("aaData", transferOrders);
+
+        renderJson(transferOrderListMap);
 	}
 
 	public void edit1() {
@@ -60,18 +91,43 @@ public class TransferOrderItemDetailController extends Controller {
 	public void saveTransferOrderItemDetail() {
 		TransferOrderItemDetail item = null;
 		String id = getPara("transfer_order_item_detail_id");
+		String itemId = getPara("transfer_order_item_id");
+		TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(itemId);
 		if (id != null && !id.equals("")) {
 			item = TransferOrderItemDetail.dao.findById(id);
+			item.set("item_no", transferOrderItem.get("item_no"));
 			item.set("serial_no", getPara("update_serial_no"));
 			item.set("item_name", getPara("update_detail_item_name"));
 			item.set("volume", getPara("update_detail_volume"));
 			item.set("weight", getPara("update_detail_weight"));
 			item.set("remark", getPara("update_detail_remark"));
-			item.set("is_damage", getPara("update_detail_is_damage"));
-			item.set("estimate_damage_amount", getPara("update_detail_estimate_damage_amount"));
-			item.set("damage_revenue", getPara("update_detail_damage_revenue"));
-			item.set("damage_payment", getPara("update_detail_damage_payment"));
-			item.set("damage_remark", getPara("update_detail_damage_remark"));
+			
+			boolean detail_is_damage = getParaToBoolean("update_detail_is_damage");
+			//if(detail_is_damage == true){
+				item.set("is_damage", detail_is_damage);
+				String estimate_damage_amount = getPara("update_detail_estimate_damage_amount");
+				if(estimate_damage_amount != null && !estimate_damage_amount.equals("")){
+					item.set("estimate_damage_amount", estimate_damage_amount);
+				}
+				String damage_revenue = getPara("update_detail_damage_revenue");
+				if(damage_revenue != null && !damage_revenue.equals("")){
+					item.set("damage_revenue", damage_revenue);
+				}
+				String damage_payment = getPara("update_detail_damage_payment");
+				if(damage_payment != null && !damage_payment.equals("")){
+					item.set("damage_payment", damage_payment);
+				}
+				String damage_remark = getPara("update_detail_damage_remark");
+				if(damage_remark != null && !damage_remark.equals("")){
+					item.set("damage_remark", damage_remark);
+				}
+				/*}else{
+				item.set("is_damage", false);
+				item.set("estimate_damage_amount", 0);
+				item.set("damage_revenue", 0);
+				item.set("damage_payment", 0);
+				item.set("damage_remark", "");
+			}*/
 			Party party = Party.dao.findById(getPara("notify_party_id"));
 			Contact contact = Contact.dao.findFirst("select * from contact where id=(select contact_id from party where id="+party.get("id")+")");
 			contact.set("contact_person", getPara("update_detail_contact_person"));
@@ -87,16 +143,30 @@ public class TransferOrderItemDetailController extends Controller {
 			item.update();
 		} else {
 			item = new TransferOrderItemDetail();
+			item.set("item_no", transferOrderItem.get("item_no"));
 			item.set("serial_no", getPara("serial_no"));
 			item.set("item_name", getPara("detail_item_name"));
 			item.set("volume", getPara("detail_volume"));
 			item.set("weight", getPara("detail_weight"));
 			item.set("remark", getPara("detail_remark"));
-			item.set("is_damage", getPara("detail_is_damage"));
-			item.set("estimate_damage_amount", getPara("detail_estimate_damage_amount"));
-			item.set("damage_revenue", getPara("detail_damage_revenue"));
-			item.set("damage_payment", getPara("detail_damage_payment"));
-			item.set("damage_remark", getPara("detail_damage_remark"));
+			boolean detail_is_damage = getParaToBoolean("detail_is_damage");
+			item.set("is_damage", detail_is_damage);
+			String estimate_damage_amount = getPara("detail_estimate_damage_amount");
+			if(estimate_damage_amount != null && !estimate_damage_amount.equals("")){
+				item.set("estimate_damage_amount", estimate_damage_amount);
+			}
+			String damage_revenue = getPara("detail_damage_revenue");
+			if(damage_revenue != null && !damage_revenue.equals("")){
+				item.set("damage_revenue", damage_revenue);
+			}
+			String damage_payment = getPara("detail_damage_payment");
+			if(damage_payment != null && !damage_payment.equals("")){
+				item.set("damage_payment", damage_payment);
+			}
+			String damage_remark = getPara("detail_damage_remark");
+			if(damage_remark != null && !damage_remark.equals("")){
+				item.set("damage_remark", damage_remark);
+			}
 			Party party = setParty();
 
 			item.set("notify_party_id", party.get("id"));
@@ -133,20 +203,14 @@ public class TransferOrderItemDetailController extends Controller {
 		renderJson(map);
 	}
 
-	// 删除TransferOrderItem
+	// 删除
 	public void deleteTransferOrderItemDetail() {
-		String notify_party_id = getPara("notify_party_id");
-		Party party = Party.dao.findById(getPara("notify_party_id"));
-		Contact contact = Contact.dao.findFirst("select * from contact where id=(select contact_id from party where id="+party.get("id")+")");
-		party.set("contact_id", null);
-		contact.delete();
 		String id = getPara("detail_id");
 		TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(id);
 		transferOrderItemDetail.set("order_id", null);
 		transferOrderItemDetail.set("item_id", null);
 		transferOrderItemDetail.set("notify_party_id", null);
 		TransferOrderItemDetail.dao.deleteById(id);
-		party.delete();
 		renderJson("{\"success\":true}");
 	}
 
@@ -156,17 +220,6 @@ public class TransferOrderItemDetailController extends Controller {
 		Map<String, List> map = new HashMap<String, List>();
 		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from TRANSFER_ORDER_ITEM_DETAIL where item_id=" + item_id);
 		List<Contact> contacts = Contact.dao.find("select * from contact  where id in(select contact_id from party where id in(SELECT NOTIFY_PARTY_ID FROM TRANSFER_ORDER_ITEM_DETAIL where item_id="+ item_id + "))");
-		/*
-		 * (
-		 * "select d.*,(select c.contact_person from contact c where id in(select contact_id from party where id in(SELECT NOTIFY_PARTY_ID FROM TRANSFER_ORDER_ITEM_DETAIL where item_id="
-		 * + item_id +
-		 * ")))  contact_person,(select c.phone from contact c where id in(select contact_id from party where id in(SELECT NOTIFY_PARTY_ID FROM TRANSFER_ORDER_ITEM_DETAIL where item_id="
-		 * + item_id +
-		 * "))) phone,(select c.address from contact c where id in(select contact_id from party where id in(SELECT NOTIFY_PARTY_ID FROM TRANSFER_ORDER_ITEM_DETAIL where item_id="
-		 * + item_id +
-		 * "))) address from TRANSFER_ORDER_ITEM_DETAIL d where item_id=" +
-		 * item_id);
-		 */
 		map.put("transferOrderItemDetails", transferOrderItemDetails);
 		map.put("contacts", contacts);
 		renderJson(map);

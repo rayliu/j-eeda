@@ -117,7 +117,6 @@ $(document).ready(function() {
 				if(transferOrder.ID>0){
 					$("#departureConfirmationBtn").attr("disabled", false);
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	//alert("运输单保存成功!");
 				  	$("#style").show();	
 				  	
 	            	var order_id = $("#order_id").val();
@@ -137,7 +136,6 @@ $(document).ready(function() {
 				if(transferOrder.ID>0){
 					$("#departureConfirmationBtn").attr("disabled", false);
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	//alert("运输单保存成功!");
 				  	$("#style").show();	
 				  	
 	            	var order_id = $("#order_id").val();
@@ -166,7 +164,6 @@ $(document).ready(function() {
     $("#transferOrderItemList").click(function(e){
         e.preventDefault();
     	// 切换到货品明细时,应先保存运输单
-    	// 应先判断order_id是否为空
     	//提交前，校验数据
         if(!$("#transferOrderForm").valid()){
         	alert("请先保存运输单!");
@@ -183,7 +180,6 @@ $(document).ready(function() {
 				if(transferOrder.ID>0){
 					$("#departureConfirmationBtn").attr("disabled", false);
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	//alert("运输单保存成功!");
 				  	$("#style").show();	
 				  	
 	            	var order_id = $("#order_id").val();
@@ -214,21 +210,6 @@ $(document).ready(function() {
 				}
 			},'json');
         }
-    	
-    	/*$.post('/yh/transferOrderItem/transferOrderItemList',{},function(data){
-			var transferOrderItemTbody = $("#transferOrderItemTbody");
-			transferOrderItemTbody.empty();
-			for(var i = 0; i < data.length; i++)
-			{
-				var item = data[i].ITEM_NO;
-				if(item == null){
-					item = "";
-					transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-				}else{
-					transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-				}
-			}
-		},'json');*/
     });
 
 	
@@ -253,26 +234,22 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {
-                    return	"<a id='dateilEdit2' class='btn btn-success' href='#"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                                "单品编辑"+
-                            "</a>"+
-                    		"<a class='btn btn-success' href='/yh/transferOrder/edit/"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                                "编辑"+
-                            "</a>"+
-                            "<a class='btn btn-danger' href='/yh/transferOrder/delete/"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "删除"+
-                            "</a>";
-                }
+                    return	"<a class='btn btn-success dateilEdit' code='?id="+obj.aData.ID+"'>"+
+			                    "<i class='fa fa-edit fa-fw'></i>"+
+			                    "单品编辑"+
+			                "</a>"+
+			        		"<a class='btn btn-success editItem' code='?item_id="+obj.aData.ID+"'>"+
+			                    "<i class='fa fa-edit fa-fw'></i>"+
+			                    "编辑"+
+			                "</a>"+
+			                "<a class='btn btn-danger deleteItem' code='?item_id="+obj.aData.ID+"'>"+
+			                    "<i class='fa fa-trash-o fa-fw'></i>"+ 
+			                    "删除"+
+			                "</a>";
+			           }
             }                         
         ]      
     });	
-    
-    $('#itemTable').on( 'dateilEdit2', function () {
-        alert( 'dateilEdit2' );
-    } );
     
    	// 保存货品
     $("#transferOrderItemFormBtn").click(function(){
@@ -287,39 +264,22 @@ $(document).ready(function() {
                 }else{
                     alert('数据保存失败。');
                 }
-				/*var transferOrderItemTbody =$("#transferOrderItemTbody");
-				var item_no = "";  
-				var amount = $("#amount").val();  
-				var unit = $("#unit").val();   
-				var remark = $("#remark").val(); */
-				//transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item_no+"</td><td>"+amount+"</td><td>"+unit+"</td><td>"+remark+"</td><td><button id='detailEdit("+data.ID+"|"+data.ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data.ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data.ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-				// 关闭模态框
 				$('#myModal').modal('hide');
 			}
 		},'json');
     });
     
    	// 更新货品
-    $("#transferOrderItemUpdateFormBtn").click(function(){
-    	
+    $("#transferOrderItemUpdateFormBtn").click(function(){    	
     	$.post('/yh/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemUpdateForm").serialize(), function(data){
 			if(data.ID > 0){ 
 				// 关闭模态框
 				$('#updateMyModal').modal('hide');
-				$.post('/yh/transferOrderItem/transferOrderItemList',{},function(data){
-					var transferOrderItemTbody = $("#transferOrderItemTbody");
-					transferOrderItemTbody.empty();
-					for(var i = 0; i < data.length; i++)
-					{
-						var item = data[i].ITEM_NO;
-						if(item == null){
-							item = "";
-							transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-						}else{
-							transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-						}
-					}
-				},'json');
+				
+				// 更新货品列表
+				var order_id = $("#order_id").val();
+				itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+			  	itemDataTable.fnDraw();   
 			}
 		},'json');
     });
@@ -335,88 +295,7 @@ $(document).ready(function() {
 		 $("#contactInformation").hide();
 	  } 
   	});
-    
-    // 单品编辑
-    $("#transferOrderItemTbody").on('click', 'button', function(){
-    	var inputId  = $(this).attr('id');
-    	var type = inputId.substring(0,inputId.indexOf('('));
-    	if(type == 'detailEdit'){
-	  	    var order_id = inputId.substring(inputId.indexOf('|')+1);
-	  	    var detail = inputId.substring(0,inputId.indexOf('|'));
-	  	    var item_id = detail.substring(inputId.indexOf('(')+1);
-	  	    $("#detail_transfer_order_item_id").val(item_id);
-	  	    $("#detail_transfer_order_id").val(order_id);
-	  	    $("#transferOrderItemDateil").show();
-	  	    // 动态展示单品
-	  	    $.post('/yh/transferOrderItemDetail/getAllTransferOrderItemDetail', 'transfer_order_item_id='+item_id, function(data){
-				var transferOrderItemDetailTbody = $("#transferOrderItemDetailTbody");
-				transferOrderItemDetailTbody.empty();
-				if(data.transferOrderItemDetails.length > 0 && data.contacts.length > 0){
-					for(var i=0,j=0;i<data.transferOrderItemDetails.length,j<data.contacts.length;i++,j++){
-			  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td>"+data.contacts[j].CONTACT_PERSON+"<br/>"+data.contacts[j].PHONE+"<br/>"+data.contacts[j].ADDRESS+"<br/></td>"
-			                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-		  	    	}
-				}else{
-					for(var i=0;i<data.transferOrderItemDetails.length;i++){
-			  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td></td>"
-			                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-		  	    	}
-				}
-			},'json');
-    	}else if(type == 'itemEdit'){
-	  	    var id = inputId.substring(inputId.indexOf('(')+1);
-	  	    $("#transfer_order_item_id").val(id);
-	  	    $.post('/yh/transferOrderItem/getTransferOrderItem', 'transfer_order_item_id='+id, function(data){
-	  	    	// 编辑时回显数据
- 	  	    	$("#update_item_name").val(data.ITEM_NAME);
- 	  	    	$("#update_amount").val(data.AMOUNT);
- 	  	    	$("#update_unit").val(data.UNIT);
- 	  	    	$("#update_volume").val(data.VOLUME);
- 	  	    	$("#update_weight").val(data.WEIGHT);
- 	  	    	$("#update_remark").val(data.REMARK);
-			},'json');
-	  	    
-	  	  	$.post('/yh/transferOrderItem/transferOrderItemList',{},function(data){
-				var transferOrderItemTbody = $("#transferOrderItemTbody");
-				transferOrderItemTbody.empty();
-				for(var i = 0; i < data.length; i++)
-				{
-					var item = data[i].ITEM_NO;
-					if(item == null){
-						item = "";
-						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-					}else{
-						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-					}
-				}
-			},'json');
-	  	    
-	  		// 模态框:修改货品明细
-			$('#updateMyModal').modal('show');	
-		}else{
-			var id = inputId.substring(inputId.indexOf('(')+1);
-			$.post('/yh/transferOrderItem/deleteTransferOrderItem', 'transfer_order_item_id='+id, function(data){
-			},'json');
-			
-			$.post('/yh/transferOrderItem/transferOrderItemList',{},function(data){
-				var transferOrderItemTbody = $("#transferOrderItemTbody");
-				transferOrderItemTbody.empty();
-				for(var i = 0; i < data.length; i++)
-				{
-					var item = data[i].ITEM_NO;
-					if(item == null){
-						item = "";
-						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-					}else{
-						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-					}
-				}
-			},'json');
-    	}
-    });
-						
+    			
 	// 发车确认
 	$("#departureConfirmationBtn").click(function(){
 		// 浏览器启动时,停到当前位置
@@ -450,115 +329,25 @@ $(document).ready(function() {
 	$("#transferOrderItemDetailFormBtn").click(function(){
 		$.post('/yh/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailForm").serialize(), function(transferOrderItemDetail){
 			if(transferOrderItemDetail.ID > 0){
-				// 动态显示单品信息
-				var transferOrderItemDetailTbody = $("#transferOrderItemDetailTbody");
-				var serial_no = $("#serial_no").val();                              
-				var detail_item_name = $("#detail_item_name").val();                       
-				var detail_volume = $("#detail_volume").val();                             
-				var detail_weight = $("#detail_weight").val();                             
-				var detail_remark = $("#detail_remark").val();                             
-				var detail_is_damage = $("#detail_is_damage").val();                       
-				var detail_estimate_damage_amount = $("#detail_estimate_damage_amount").val();
-				var detail_damage_revenue = $("#detail_damage_revenue").val();             
-				var detail_damage_payment = $("#detail_damage_payment").val();             
-				var detail_damage_remark = $("#detail_damage_remark").val();               
-				var contact_person = $("#detail_contact_person").val();
-				var phone = $("#detail_phone").val();               
-				var address = $("#detail_address").val();   
-				transferOrderItemDetailTbody.append("<tr><td>"+serial_no+"</td><td>"+detail_item_name+"</td><td>"+detail_volume+"</td><td>"+detail_weight+"</td><td>"+contact_person+"<br/>"+phone+"<br/>"+address+"<br/></td>"
-	                       + "<td>"+detail_remark+"</td><td>"+detail_is_damage+"</td><td>"+detail_estimate_damage_amount+"<br/>"+detail_damage_revenue+"<br/>"+detail_damage_payment+"<br/>"+detail_damage_remark+"</td>"
-	                       + "<td><button id='itemDetailEdit("+transferOrderItemDetail.ID+"|"+transferOrderItemDetail.ITEM_ID+"["+transferOrderItemDetail.ORDER_ID+"-"+transferOrderItemDetail.NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+transferOrderItemDetail.ID+"|"+transferOrderItemDetail.ITEM_ID+"["+transferOrderItemDetail.ORDER_ID+"-"+transferOrderItemDetail.NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
 				$("#detailModal").modal('hide');
+				var itemId = $("#item_id").val();
+				var orderId = $("#order_id").val();
+				detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
+				detailDataTable.fnDraw();
 			}			
 		});
 	});
-	
-	// 点击单品按钮
-	$("#transferOrderItemDetailTbody").on('click', 'button', function(){
-		var inputId = $(this).attr('id');
-		var notify_party_id = inputId.substring(inputId.indexOf('-')+1);
-		var contactInfo = inputId.substring(0,inputId.indexOf('-'));
-		var order_id = contactInfo.substring(contactInfo.indexOf('[')+1);
-		var detailItem = contactInfo.substring(0,contactInfo.indexOf('['));
-		var item_id = detailItem.substring(detailItem.indexOf('|')+1);
-		var typeDetail = detailItem.substring(0,detailItem.indexOf('|'));
-  	    var detail_id = typeDetail.substring(typeDetail.indexOf('(')+1);
-		var type = inputId.substring(0,inputId.indexOf('('));
-    	if(type == 'itemDetailEdit'){
-			//alert(inputId+", order_id=" + order_id +", item_id="+item_id+", detail_id="+detail_id+", contact_id="+notify_party_id);
-	  	    
-	  	    $("#update_detail_transfer_order_id").val(order_id);
-	  	    $("#update_detail_transfer_order_item_id").val(item_id);
-	  	    $("#detail_transfer_order_item_detail_id").val(detail_id);
-	  	    $("#detail_notify_party_id").val(notify_party_id);
-	  	    $.post('/yh/transferOrderItemDetail/getTransferOrderItemDetail', {detail_id:detail_id,notify_party_id:notify_party_id}, function(data){
-	  	    	// 编辑时回显数据
-	  	    	$("#update_serial_no").val(data.transferOrderItemDetail.SERIAL_NO);
-	  	    	$("#update_detail_item_name").val(data.transferOrderItemDetail.ITEM_NAME);
-	  	    	$("#update_detail_volume").val(data.transferOrderItemDetail.VOLUME);
-	  	    	$("#update_detail_weight").val(data.transferOrderItemDetail.WEIGHT);
-	  	    	$("#update_detail_remark").val(data.transferOrderItemDetail.REMARK);
-	  	    	$("#update_detail_contact_person").val(data.contact.CONTACT_PERSON);
-	  	    	$("#update_detail_phone").val(data.contact.PHONE);
-	  	    	$("#update_detail_address").val(data.contact.ADDRESS);
-	  	    	$("#update_detail_is_damage").val(data.transferOrderItemDetail.IS_DAMAGE);
-	  	    	$("#update_detail_estimate_damage_amount").val(data.transferOrderItemDetail.ESTIMATE_DAMAGE_AMOUNT);
-	  	    	$("#update_detail_damage_revenue").val(data.transferOrderItemDetail.DAMAGE_REVENUE);
-	  	    	$("#update_detail_damage_payment").val(data.transferOrderItemDetail.DAMAGE_PAYMENT);
-	  	    	$("#update_detail_damage_remark").val(data.transferOrderItemDetail.DAMAGE_REMARK);
-			},'json');
-
-	  		// 模态框:修改单品明细
-			$('#updateDetailModal').modal('show');	
-    	}else{
-			//alert(inputId+", order_id=" + order_id +", item_id="+item_id+", detail_id="+detail_id+", contact_id="+notify_party_id);
-    		$.post('/yh/transferOrderItemDetail/deleteTransferOrderItemDetail', {detail_id:detail_id,notify_party_id:notify_party_id}, function(data){},'json');
-    		
-    		// 动态展示单品
-	  	    $.post('/yh/transferOrderItemDetail/getAllTransferOrderItemDetail', 'transfer_order_item_id='+item_id, function(data){
-				var transferOrderItemDetailTbody = $("#transferOrderItemDetailTbody");
-				transferOrderItemDetailTbody.empty();
-				if(data.transferOrderItemDetails.length > 0 && data.contacts.length > 0){
-					for(var i=0,j=0;i<data.transferOrderItemDetails.length,j<data.contacts.length;i++,j++){
-			  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td>"+data.contacts[j].CONTACT_PERSON+"<br/>"+data.contacts[j].PHONE+"<br/>"+data.contacts[j].ADDRESS+"<br/></td>"
-			                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-		  	    	}
-				}else{
-					for(var i=0;i<data.transferOrderItemDetails.length;i++){
-			  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td></td>"
-			                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-		  	    	}
-				}
-			},'json'); 
-    	}
-	});
-	  	    
+	  
 	// 更新单品		  	    	
 	$("#transferOrderItemDetailUpdateFormBtn").click(function(){
 		$.post('/yh/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailUpdateForm").serialize(), function(data){
 			if(data.ID > 0){
 				// 模态框:修改单品明细
 				$('#updateDetailModal').modal('hide');
-				var item_id = $("#update_detail_transfer_order_item_id").val();
-		  	    $.post('/yh/transferOrderItemDetail/getAllTransferOrderItemDetail', 'transfer_order_item_id='+item_id, function(data){
-					var transferOrderItemDetailTbody = $("#transferOrderItemDetailTbody");
-					transferOrderItemDetailTbody.empty();
-					if(data.transferOrderItemDetails.length > 0 && data.contacts.length > 0){
-						for(var i=0,j=0;i<data.transferOrderItemDetails.length,j<data.contacts.length;i++,j++){
-				  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td>"+data.contacts[j].CONTACT_PERSON+"<br/>"+data.contacts[j].PHONE+"<br/>"+data.contacts[j].ADDRESS+"<br/></td>"
-				                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-				                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-			  	    	}
-					}else{
-						for(var i=0;i<data.transferOrderItemDetails.length;i++){
-				  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td></td>"
-				                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-				                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
-			  	    	}
-					}
-				},'json');
+				// 更新货品列表
+				var itemId = $("#item_id").val();
+				detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
+				detailDataTable.fnDraw();
 			}
 		},'json');
 	});
@@ -688,5 +477,177 @@ $(document).ready(function() {
 				$("#contactInformation").hide();
 			}
 		}
+	});
+	
+	var item_id = $("#item_id").val();
+	//datatable, 动态处理
+    var detailDataTable = $('#detailTable').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+        "sAjaxSource": "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+item_id,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "aoColumns": [  			            
+            {"mDataProp":"SERIAL_NO"},
+            {"mDataProp":"ITEM_NAME"},       	
+            {"mDataProp":"VOLUME"},
+            {"mDataProp":"WEIGHT"},
+            {"mDataProp":"CONTACT_PERSON",
+            	"fnRender": function(obj) {
+            			return obj.aData.CONTACT_PERSON+"<br/>"+obj.aData.PHONE+"<br/>"+obj.aData.ADDRESS;
+            		}},
+            {"mDataProp":"REMARK"},
+            {"mDataProp":"IS_DAMAGE"},
+            {"mDataProp":"ESTIMATE_DAMAGE_AMOUNT",
+            	"fnRender": function(obj) {
+        			return "定损金额: "+obj.aData.ESTIMATE_DAMAGE_AMOUNT+"<br/>"+"理赔金额: "+obj.aData.DAMAGE_REVENUE+"<br/>"+"赔付给客户金额: "+obj.aData.DAMAGE_PAYMENT+"<br/>"+"差异说明: "+obj.aData.DAMAGE_REMARK;
+        		}},
+            {  
+                "mDataProp": null, 
+                "sWidth": "8%",                
+                "fnRender": function(obj) {
+                    return	"<a class='btn btn-success editDetail' code='?item_id="+obj.aData.ID+"&notify_party_id="+obj.aData.NOTIFY_PARTY_ID+"'>"+
+                                "<i class='fa fa-edit fa-fw'></i>"+
+                                "编辑"+
+                            "</a>"+
+                            "<a class='btn btn-danger deleteDetail' code='?item_id="+obj.aData.ID+"&notify_party_id="+obj.aData.NOTIFY_PARTY_ID+"'>"+
+                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
+                                "删除"+
+                            "</a>";
+                }
+            }                         
+        ]      
+    });		
+	
+	// 编辑单品
+	$("#itemTable").on('click', '.dateilEdit', function(e){
+		e.preventDefault();
+		var code = $(this).attr('code');
+		var itemId = code.substring(code.indexOf('=')+1);
+		$("#item_id").val(itemId);
+		$("#transferOrderItemDateil").show();
+
+		// 设置单品信息
+		$("#detail_transfer_order_id").val($("#order_id").val());
+		$("#detail_transfer_order_item_id").val(itemId);
+		
+		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
+		detailDataTable.fnDraw();  
+	});
+	
+	// 编辑货品
+	$("#itemTable").on('click', '.editItem', function(e){
+		var code = $(this).attr('code');
+		var itemId = code.substring(code.indexOf('=')+1);
+		$("#item_id").val(itemId);
+		
+  	    $("#transfer_order_item_id").val(itemId);
+  	    $.post('/yh/transferOrderItem/getTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
+  	    	// 编辑时回显数据
+  	    	$("#update_item_no").val(data.ITEM_NO);
+  	    	$("#update_item_name").val(data.ITEM_NAME);
+  	    	$("#update_amount").val(data.AMOUNT);
+  	    	$("#update_unit").val(data.UNIT);
+  	    	$("#update_volume").val(data.VOLUME);
+  	    	$("#update_weight").val(data.WEIGHT);
+  	    	$("#update_remark").val(data.REMARK);
+		},'json');
+  		// 模态框:修改货品明细
+		$('#updateMyModal').modal('show');	
+	});
+	
+	// 删除货品
+	$("#itemTable").on('click', '.deleteItem', function(e){
+		var code = $(this).attr('code');
+		var itemId = code.substring(code.indexOf('=')+1);
+		$("#item_id").val(itemId);
+		$.post('/yh/transferOrderItem/deleteTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
+		},'json');
+		$("#transferOrderItemDateil").hide();
+		// 更新货品列表
+		var order_id = $("#order_id").val();
+		itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+	  	itemDataTable.fnDraw(); 	  	
+	});	
+	
+	// 是否货损
+	$("input[name='detail_is_damage']").click(function(){
+		if($(this).val() == 'true'){
+			$("#isDamageMessage").show();
+		}else{
+			$("#isDamageMessage").hide();
+		}
+	});	
+	
+	// 是否货损
+	$("input[name='update_detail_is_damage']").click(function(){
+		if($(this).val() == 'true'){
+			$("#isDamageMessageUpdate").show();
+		}else{
+			$("#isDamageMessageUpdate").hide();
+		}
+	});
+	
+	// 删除单品
+	$("#detailTable").on('click', '.deleteDetail', function(e){
+		var code = $(this).attr('code');
+		var detail = code.substring(0,code.indexOf('&'));
+		var detailId = detail.substring(detail.indexOf('=')+1);
+		var notifyParty = code.substring(code.indexOf('&')+1);
+		var notifyPartyId = notifyParty.substring(notifyParty.indexOf('=')+1);
+		$.post('/yh/transferOrderItemDetail/deleteTransferOrderItemDetail', {detail_id:detailId,notify_party_id:notifyPartyId}, function(data){
+		},'json');
+		// 更新货品列表
+		var itemId = $("#item_id").val();
+		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
+		detailDataTable.fnDraw();
+	});	
+	
+	// 编辑单品
+	$("#detailTable").on('click', '.editDetail', function(e){
+		var code = $(this).attr('code');
+		var detail = code.substring(0,code.indexOf('&'));
+		var detailId = detail.substring(detail.indexOf('=')+1);
+		var notifyParty = code.substring(code.indexOf('&')+1);
+		var notifyPartyId = notifyParty.substring(notifyParty.indexOf('=')+1);
+		var itemId = $("item_id").val();
+  	    $.post('/yh/transferOrderItemDetail/getTransferOrderItemDetail', {detail_id:detailId,notify_party_id:notifyPartyId}, function(data){
+  	    	// 编辑时回显数据
+  	    	$("#update_detail_transfer_order_id").val(data.transferOrderItemDetail.ORDER_ID);
+  	    	$("#update_detail_transfer_order_item_id").val(data.transferOrderItemDetail.ITEM_ID);
+  	    	$("#detail_transfer_order_item_detail_id").val(data.transferOrderItemDetail.ID);
+  	    	$("#detail_notify_party_id").val(notifyPartyId);  	    	
+  	    	
+  	    	$("#update_serial_no").val(data.transferOrderItemDetail.SERIAL_NO);
+  	    	$("#update_detail_item_name").val(data.transferOrderItemDetail.ITEM_NAME);
+  	    	$("#update_detail_volume").val(data.transferOrderItemDetail.VOLUME);
+  	    	$("#update_detail_weight").val(data.transferOrderItemDetail.WEIGHT);
+  	    	$("#update_detail_remark").val(data.transferOrderItemDetail.REMARK);
+  	    	$("#update_detail_contact_person").val(data.contact.CONTACT_PERSON);
+  	    	$("#update_detail_phone").val(data.contact.PHONE);
+  	    	$("#update_detail_address").val(data.contact.ADDRESS);
+  	    	$("#update_detail_is_damage").val(data.transferOrderItemDetail.IS_DAMAGE);
+  	    	
+  	    	var isDamage = data.transferOrderItemDetail.IS_DAMAGE;
+  	    	$("input[name='update_detail_is_damage']").each(function(){
+  	  		if($(this).val() == isDamage+''){
+  	  			$(this).attr('checked', true);
+  	  			if($(this).val() == 'true'){
+  	  				$("#isDamageMessageUpdate").show();
+  	  			}else{
+  	  				$("#isDamageMessageUpdate").hide();
+  	  			}
+  	  		}
+  	  	});
+  	    	$("#update_detail_estimate_damage_amount").val(data.transferOrderItemDetail.ESTIMATE_DAMAGE_AMOUNT);
+  	    	$("#update_detail_damage_revenue").val(data.transferOrderItemDetail.DAMAGE_REVENUE);
+  	    	$("#update_detail_damage_payment").val(data.transferOrderItemDetail.DAMAGE_PAYMENT);
+  	    	$("#update_detail_damage_remark").val(data.transferOrderItemDetail.DAMAGE_REMARK);
+		},'json');
+  		// 模态框:修改货品明细
+		$('#updateDetailModal').modal('show');	
 	});
 });

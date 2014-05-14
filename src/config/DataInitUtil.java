@@ -431,18 +431,16 @@ public class DataInitUtil {
             // +
             // "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),FOREIGN KEY(order_id) REFERENCES transfer_order(id),"
             // + "FOREIGN KEY(item_id) REFERENCES transfer_order_item(id
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '音箱', 'true','2');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '音箱', 'true','2');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '音箱', 'true','2');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '音箱', 'false','2');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '电视', 'true','3');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_name,is_damage,item_id) "
-                    + "values('2', '电视', 'true','3');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                    + "values('2', 'dkjf5421', '10000', '音箱', 'true', '2', '9');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+            		+ "values('2', 'dkjf5421', '10000', '音箱', 'true', '2', '9');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+            		+ "values('2', 'dkjf5421', '10000', '音箱', 'true', '2', '10');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+            		+ "values('2', 'dkjf5421', '10000', '音箱', 'true', '3', '9');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+            		+ "values('2', 'dkjf5421', '10000', '音箱', 'true', '3', '10');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
                     + "values('1','fdgh1265985','10000', 'ATM', 'true','1','9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "

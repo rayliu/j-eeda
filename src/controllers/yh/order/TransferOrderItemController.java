@@ -6,6 +6,7 @@ import java.util.Map;
 
 import models.Party;
 import models.TransferOrderItem;
+import models.TransferOrderItemDetail;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
@@ -24,9 +25,6 @@ public class TransferOrderItemController extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 
 	public void transferOrderItemList() {
-//		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item");
-//		renderJson(transferOrderItems);
-		
 		String trandferOrderId = getPara("order_id");
 		if(trandferOrderId.isEmpty()){
 			trandferOrderId="-1";
@@ -96,6 +94,7 @@ public class TransferOrderItemController extends Controller {
 		String id = getPara("transfer_order_item_id");
 		if (id != null && !id.equals("")) {
 			item = TransferOrderItem.dao.findById(id);
+			item.set("item_no", getPara("update_item_no"));
 			item.set("item_name", getPara("update_item_name"));
 			item.set("amount", getPara("update_amount"));
 			item.set("unit", getPara("update_unit"));
@@ -106,6 +105,7 @@ public class TransferOrderItemController extends Controller {
 			item.update();
 		} else {
 			item = new TransferOrderItem();
+			item.set("item_no", getPara("item_no"));
 			item.set("item_name", getPara("item_name"));
 			item.set("amount", getPara("amount"));
 			item.set("unit", getPara("unit"));
@@ -128,6 +128,10 @@ public class TransferOrderItemController extends Controller {
 	// 删除TransferOrderItem
 	public void deleteTransferOrderItem() {
 		String id = getPara("transfer_order_item_id");
+		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where item_id="+id);
+		for(TransferOrderItemDetail itemDetail : transferOrderItemDetails){
+			itemDetail.delete();
+		}
 		TransferOrderItem.dao.deleteById(id);
 		renderJson("{\"success\":true}");
 	}
