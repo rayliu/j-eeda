@@ -263,8 +263,9 @@ public class ReturnOrderControllers extends Controller {
 	// 删除
 	public void delete() {
 		String id = getPara();
-		ReturnOrder re = new ReturnOrder();
-		re.dao.deleteById(id);
+	
+		ReturnOrder re =ReturnOrder.dao.findById(id);
+		re.set("TRANSACTION_STATUS", "cancel").update();
 		index();
 	}
 
