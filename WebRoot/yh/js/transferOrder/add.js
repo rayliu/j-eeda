@@ -42,6 +42,11 @@ $(document).ready(function() {
 				customerList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
 			}
 		},'json');
+		
+		$("#customerList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        }); 
         $('#customerList').show();
 	});
 	
@@ -79,8 +84,13 @@ $(document).ready(function() {
 				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
 			}
 		},'json');
-
+		
         $('#spList').show();
+        $("#spList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        }); 
+        
 	});
 	
 	// 选中供应商
@@ -115,7 +125,11 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);						
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	
 				  	
@@ -134,7 +148,17 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);		
+						if(transferOrder.ARRIVAL_MODE == 'gateIn'){
+							$("#warehousingConfirmBtn").attr("disabled", false);								
+							$("#receiptBtn").attr("disabled",true);									
+						}else{
+							$("#receiptBtn").attr("disabled",false);																
+						}					
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	
 				  	
@@ -178,7 +202,11 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);		
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	
 				  	
@@ -197,9 +225,18 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);
+						if(transferOrder.ARRIVAL_MODE == 'gateIn'){
+							$("#warehousingConfirmBtn").attr("disabled", false);								
+							$("#receiptBtn").attr("disabled",true);									
+						}else{
+							$("#receiptBtn").attr("disabled",false);																
+						}
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	//alert("运输单保存成功!");
 				  	$("#style").show();	
 				  	
 	            	var order_id = $("#order_id").val();
@@ -302,10 +339,11 @@ $(document).ready(function() {
 		//debugger;
 		if($("#arrivalModeVal").val() == 'delivery'){
 			$("#warehousingConfirmBtn").attr("disabled", true);
+			$("#receiptBtn").attr("disabled", false); 
 		}else{
 			$("#warehousingConfirmBtn").attr("disabled", false);	
+			$("#receiptBtn").attr("disabled", true); 	
 		} 
-		$("#receiptBtn").attr("disabled", false); 
 
 		var order_id = $("#order_id").val();
 		$.post('/yh/transferOrderMilestone/departureConfirmation',{order_id:order_id},function(data){
@@ -356,7 +394,6 @@ $(document).ready(function() {
 	$("#transferOrderMilestoneList").click(function(e){
 		e.preventDefault();
     	// 切换到货品明细时,应先保存运输单
-    	// 应先判断order_id是否为空
     	//提交前，校验数据
         if(!$("#transferOrderForm").valid()){
         	alert("请先保存运输单!");
@@ -371,9 +408,12 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);		
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	//alert("运输单保存成功!");
 				  	$("#style").show();	
 				  	
 				  	var order_id = $("#order_id").val();
@@ -397,7 +437,17 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);
+						if(transferOrder.ARRIVAL_MODE == 'gateIn'){
+							$("#warehousingConfirmBtn").attr("disabled", false);								
+							$("#receiptBtn").attr("disabled",true);								
+						}else{
+							$("#receiptBtn").attr("disabled",false);																
+						}
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	//alert("运输单保存成功!");
 				  	$("#style").show();	

@@ -79,7 +79,7 @@ $(document).ready(function() {
 				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
 			}
 		},'json');
-
+		
         $('#spList').show();
 	});
 	
@@ -116,7 +116,11 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);						
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	              
 				}else{
@@ -131,7 +135,17 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);		
+						if(transferOrder.ARRIVAL_MODE == 'gateIn'){
+							$("#warehousingConfirmBtn").attr("disabled", false);								
+							$("#receiptBtn").attr("disabled",true);									
+						}else{
+							$("#receiptBtn").attr("disabled",false);																
+						}					
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	            
 				}else{
@@ -171,7 +185,11 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);		
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	
 				  	
@@ -190,7 +208,17 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);
+						if(transferOrder.ARRIVAL_MODE == 'gateIn'){
+							$("#warehousingConfirmBtn").attr("disabled", false);								
+							$("#receiptBtn").attr("disabled",true);									
+						}else{
+							$("#receiptBtn").attr("disabled",false);																
+						}
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	
 				  	
@@ -292,10 +320,11 @@ $(document).ready(function() {
 		//debugger;
 		if($("#arrivalModeVal").val() == 'delivery'){
 			$("#warehousingConfirmBtn").attr("disabled", true);
+			$("#receiptBtn").attr("disabled", false); 
 		}else{
 			$("#warehousingConfirmBtn").attr("disabled", false);	
+			$("#receiptBtn").attr("disabled", true); 	
 		} 
-		$("#receiptBtn").attr("disabled", false); 
 
 		var order_id = $("#order_id").val();
 		$.post('/yh/transferOrderMilestone/departureConfirmation',{order_id:order_id},function(data){
@@ -346,7 +375,6 @@ $(document).ready(function() {
 	$("#transferOrderMilestoneList").click(function(e){
 		e.preventDefault();
     	// 切换到货品明细时,应先保存运输单
-    	// 应先判断order_id是否为空
     	//提交前，校验数据
         if(!$("#transferOrderUpdateForm").valid()){
         	alert("请先保存运输单!");
@@ -361,9 +389,12 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);		
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	//alert("运输单保存成功!");
 				  	$("#style").show();	
 				  	
 				  	var order_id = $("#order_id").val();
@@ -387,7 +418,17 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					$("#departureConfirmationBtn").attr("disabled", false);
+					if(transferOrder.STATUS == '已发车'){
+						$("#departureConfirmationBtn").attr("disabled", true);
+						if(transferOrder.ARRIVAL_MODE == 'gateIn'){
+							$("#warehousingConfirmBtn").attr("disabled", false);								
+							$("#receiptBtn").attr("disabled",true);								
+						}else{
+							$("#receiptBtn").attr("disabled",false);																
+						}
+					}else{
+						$("#departureConfirmationBtn").attr("disabled", false);
+					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	//alert("运输单保存成功!");
 				  	$("#style").show();	
@@ -492,10 +533,21 @@ $(document).ready(function() {
             			return obj.aData.CONTACT_PERSON+"<br/>"+obj.aData.PHONE+"<br/>"+obj.aData.ADDRESS;
             		}},
             {"mDataProp":"REMARK"},
-            {"mDataProp":"IS_DAMAGE"},
+            {"mDataProp":"IS_DAMAGE",
+            	"fnRender": function(obj) {
+            		return obj.aData.IS_DAMAGE;
+            	}
+            },
             {"mDataProp":"ESTIMATE_DAMAGE_AMOUNT",
             	"fnRender": function(obj) {
-        			return "定损金额: "+obj.aData.ESTIMATE_DAMAGE_AMOUNT+"<br/>"+"理赔金额: "+obj.aData.DAMAGE_REVENUE+"<br/>"+"赔付给客户金额: "+obj.aData.DAMAGE_PAYMENT+"<br/>"+"差异说明: "+obj.aData.DAMAGE_REMARK;
+            		var amount = (obj.aData.ESTIMATE_DAMAGE_AMOUNT==null?'':obj.aData.ESTIMATE_DAMAGE_AMOUNT);
+            		var DAMAGE_REVENUE = (obj.aData.DAMAGE_REVENUE==null?'':obj.aData.DAMAGE_REVENUE);
+            		var DAMAGE_PAYMENT = (obj.aData.DAMAGE_PAYMENT==null?'':obj.aData.DAMAGE_PAYMENT);
+            		var DAMAGE_REMARK = (obj.aData.DAMAGE_REMARK==null?'':obj.aData.DAMAGE_REMARK);
+            		if(obj.aData.IS_DAMAGE){
+            			return "定损金额: "+amount+"<br/>"+"理赔金额: "+DAMAGE_REVENUE+"<br/>"+"赔付给客户金额: "+DAMAGE_PAYMENT+"<br/>"+"差异说明: "+DAMAGE_REMARK;
+            		}
+        			return "";
         		}},
             {  
                 "mDataProp": null, 
@@ -641,5 +693,10 @@ $(document).ready(function() {
 		},'json');
   		// 模态框:修改货品明细
 		$('#updateDetailModal').modal('show');	
+	});
+	
+	// 清空单品表单
+	$("#transferOrderItemDetailUpdateFormCancel").click(function(){
+		$("#transferOrderItemDetailUpdateForm")[0].reset();
 	});
 });

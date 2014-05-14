@@ -246,7 +246,7 @@ public class TransferOrderController extends Controller {
     public void saveTransferOrder() {
         String order_id = getPara("id");
         TransferOrder transferOrder = null;
-        if (order_id.isEmpty()) {
+        if (order_id == null || order_id.equals("")) {
             transferOrder = new TransferOrder();
             Party customer = Party.dao.findById(getPara("customer_id"));
             transferOrder.set("customer_id", customer.get("id"));
@@ -269,13 +269,8 @@ public class TransferOrderController extends Controller {
             saveTransferOrderMilestone(transferOrder);
         } else {
             transferOrder = TransferOrder.dao.findById(order_id);
-            // Party customer = Party.dao.findById(getPara("customer_id"));
-            // transferOrder.set("customer_id", customer.get("id"));
             transferOrder.set("customer_id", getPara("customer_id"));
-            // Party sp = Party.dao.findById(getPara("sp_id"));
-            // transferOrder.set("sp_id", sp.get("id"));
             transferOrder.set("sp_id", getPara("sp_id"));
-            transferOrder.set("status", getPara("status"));
             transferOrder.set("order_no", getPara("order_no"));
             transferOrder.set("create_by", getPara("create_by"));
             transferOrder.set("cargo_nature", getPara("cargoNature"));
@@ -284,7 +279,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("address", getPara("address"));
             transferOrder.set("create_stamp", new Date());
 
-            if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("货品直送")) {
+            if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
                 Party party = saveContact();
                 transferOrder.set("notify_party_id", party.get("id"));
             }
