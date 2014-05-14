@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
 
-    $('#menu_transfer').addClass('active').find('ul').addClass('in');
+    $('#menu_deliver').addClass('active').find('ul').addClass('in');
     
 	//datatable, 动态处理
     var dataTable =$('#eeda-table').dataTable({

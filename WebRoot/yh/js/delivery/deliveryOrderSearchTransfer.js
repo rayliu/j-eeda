@@ -1,5 +1,6 @@
 $(document).ready(function() {
-
+	$('#menu_deliver').addClass('active').find('ul').addClass('in');
+	
 	 $('#eeda-table').dataTable({
 	        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",

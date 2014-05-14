@@ -107,13 +107,10 @@ public class DataInitUtil {
                     + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
                     + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
 
-            /*
-             * // 拼车单表 stmt.executeUpdate(
-             * "create table if not exists pickup_order(id bigint auto_increment PRIMARY KEY,order_no varchar(20),sp_id bigint,status varchar(20),cargo_nature varchar(20),to_type varchar(20),remark varchar(255),create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp);"
-             * ); // 拼车单表从表 stmt.executeUpdate(
-             * "create table if not exists Pickup_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Customer_id bigint"
-             * );
-             */
+            stmt.executeUpdate("create table if not exists pickup_order(id bigint auto_increment PRIMARY KEY,order_no varchar(20),sp_id bigint,status varchar(20),cargo_nature varchar(20),to_type varchar(20),remark varchar(255),create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp);"); // 拼车单表从表
+                                                                                                                                                                                                                                                                                                                                      // stmt.executeUpdate(
+            // stmt.executeUpdate("create table if not exists Pickup_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Customer_id bigint");
+
             stmt.close();
             // conn.commit();
             conn.close();
@@ -148,9 +145,9 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','控股','这是一家公司');");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('101', '深圳分公司','张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','合作','这是一家公司');");
 
-            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李志坚','收费','人民币','建设银行','12123123123','穷人');");
-            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李四','收费','人民币','建设银行','12123123123','穷人');");
-            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('张三','付费','人民币','建设银行','12123123123','穷人');");
+            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李志坚','收费','人民币','建设银行','12123123123','');");
+            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李四','收费','人民币','建设银行','12123123123','');");
+            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('张三','付费','人民币','建设银行','12123123123','');");
 
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 4,'2014-11-12','2014-11-14','无');");
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,'2014-10-12','2014-11-15','无');");
@@ -419,12 +416,12 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
 
             // 运输单
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('ATM', '8', '9', '2014042600001', '3', 'routeSP', '5', '订单已生成', '2014-04-26 16:33:35.1', 'delivery','1','珠海');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('cargo ', '7', '10', '2014042600002', '4', 'pickupSP', '4', '订单已生成', '2014-04-26 16:40:35.1', 'gateIn','2','中山');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '7', '9', '2014042600003', '4', 'pickupSP', '5', '新建', '2014-04-26 16:40:35.1', 'gateIn','广州');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '8', '10', '2014042600004', '3', 'own', '4', '新建', '2014-04-26 16:35:35.1', 'gateIn','深圳');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600005', '3', 'own', '5', '新建', '2014-04-26 16:38:35.1', 'delivery','东莞');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600006', '3', 'own', '5', '新建', '2014-04-26 16:38:35.1', 'gateIn','东莞');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('ATM', '8', '9', '2014042600001', '3', 'routeSP', '5', '已入库', '2014-04-26 16:33:35.1', 'delivery','1','珠海');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('cargo ', '7', '10', '2014042600002', '4', 'pickupSP', '4', '已入库', '2014-04-26 16:40:35.1', 'gateIn','2','中山');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '7', '9', '2014042600003', '4', 'pickupSP', '5', '已入库', '2014-04-26 16:40:35.1', 'gateIn','广州');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '8', '10', '2014042600004', '3', 'own', '4', '已入库', '2014-04-26 16:35:35.1', 'gateIn','深圳');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600005', '3', 'own', '5', '已入库', '2014-04-26 16:38:35.1', 'delivery','东莞');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600006', '3', 'own', '5', '已入库', '2014-04-26 16:38:35.1', 'gateIn','东莞');");
             // 货品明细
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','1');");

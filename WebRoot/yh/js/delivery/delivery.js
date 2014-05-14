@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+	$('#menu_deliver').addClass('active').find('ul').addClass('in');
 		    
 		  //获取供应商的list，选中信息在下方展示其他信息
 			$('#spMessage').on('keyup', function(){
@@ -146,7 +147,7 @@ $(document).ready(function() {
 		        ]      
 		    });	
 			
-			$('#menu_transfer').addClass('active').find('ul').addClass('in');
+			
 		    
 			//datatable, 动态处理
 		    var dataTable =$('#eeda-table3').dataTable({
