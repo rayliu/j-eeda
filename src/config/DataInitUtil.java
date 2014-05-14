@@ -31,8 +31,15 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists privilege_table(id bigint auto_increment PRIMARY KEY,privilege VARCHAR(50));");
 
             stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment PRIMARY KEY,contract_id bigint,route_id bigint,Fin_item_id bigint,amount Double,remark VARCHAR(255));");
+
+            // 配送单
             stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment PRIMARY KEY,Order_no VARCHAR(50),Transfer_order_id VARCHAR(50), customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status VARCHAR(50),cargo_nature Varchar(20),from_warehouse_code Varchar(20),Remark Varchar(255),Create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp);");
 
+            // delivery_order_milestone 配送单里程碑
+            stmt.executeUpdate("create table if not exists delivery_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
+                    + "last_modified_stamp TIMESTAMP,order_id bigint,FOREIGN KEY(order_id) REFERENCES delivery_order(id));");
+
+            // 干线表
             stmt.executeUpdate("create table if not exists route(id bigint auto_increment PRIMARY KEY,from_id VARCHAR(50), location_from VARCHAR(50) not null,to_id VARCHAR(50), location_to VARCHAR(50) not null, remark VARCHAR(255));");
 
             stmt.executeUpdate("create table if not exists leads(id bigint auto_increment PRIMARY KEY, "
@@ -85,7 +92,7 @@ public class DataInitUtil {
                     + "fin_item_code varchar(20), amount double, status varchar(50), "
                     + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp);");
 
-            // transfer_order_milestone 运输单应收应付明细
+            // transfer_order_milestone 运输单里程碑
             stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
                     + "last_modified_stamp TIMESTAMP,order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
 
@@ -100,6 +107,13 @@ public class DataInitUtil {
                     + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
                     + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
 
+            /*
+             * // 拼车单表 stmt.executeUpdate(
+             * "create table if not exists pickup_order(id bigint auto_increment PRIMARY KEY,order_no varchar(20),sp_id bigint,status varchar(20),cargo_nature varchar(20),to_type varchar(20),remark varchar(255),create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp);"
+             * ); // 拼车单表从表 stmt.executeUpdate(
+             * "create table if not exists Pickup_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Customer_id bigint"
+             * );
+             */
             stmt.close();
             // conn.commit();
             conn.close();
@@ -434,13 +448,13 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
                     + "values('2', 'dkjf5421', '10000', '音箱', 'true', '2', '9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-            		+ "values('2', 'dkjf5421', '10000', '音箱', 'true', '2', '9');");
+                    + "values('2', 'dkjf5421', '10000', '音箱', 'true', '2', '9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-            		+ "values('2', 'dkjf5421', '10000', '音箱', 'true', '2', '10');");
+                    + "values('2', 'dkjf5421', '10000', '音箱', 'true', '2', '10');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-            		+ "values('2', 'dkjf5421', '10000', '音箱', 'true', '3', '9');");
+                    + "values('2', 'dkjf5421', '10000', '音箱', 'true', '3', '9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-            		+ "values('2', 'dkjf5421', '10000', '音箱', 'true', '3', '10');");
+                    + "values('2', 'dkjf5421', '10000', '音箱', 'true', '3', '10');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
                     + "values('1','fdgh1265985','10000', 'ATM', 'true','1','9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
@@ -541,13 +555,13 @@ public class DataInitUtil {
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场2")
                 .set("postal_code", "5190002").save();
         Contact contact3 = new Contact();
-        contact3.set("company_name", "上海能源科技有限公司").set("contact_person", "李生")
+        contact3.set("company_name", "上海运输公司").set("contact_person", "李生")
                 .set("email", "test@test.com");
         contact3.set("mobile", "12345673").set("phone", "313527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场3")
                 .set("postal_code", "5190003").save();
         Contact contact4 = new Contact();
-        contact4.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生")
+        contact4.set("company_name", "天津运输有限公司").set("contact_person", "何生")
                 .set("email", "test@test.com");
         contact4.set("mobile", "12345674").set("phone", "413527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场4")

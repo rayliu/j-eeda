@@ -58,9 +58,11 @@ $(document).ready(function() {
 		            //异步向后台提交数据
 		           $.post('/yh/delivery/deliverySave', $("#deliveryForm").serialize(), function(data){
 		                console.log(data);
-	                    if(data.success){
+	                    if(data>0){
 	                    	$("#style").show();
-	                     }else{
+	                    	$("#ConfirmationBtn").attr("disabled", false);
+	                    	$('#deliveryid').val(data);
+	                    }else{
 	                        alert('数据保存失败。');
 	                    }
 		                    
@@ -107,6 +109,7 @@ $(document).ready(function() {
 		            { 
 		                "mDataProp": null, 
 		                "fnRender": function(obj) {
+		                	var returnString ="";
 		                	console.log(obj.aData.ID);
 		                	$.ajax({  	
 		                			type : "post",  
@@ -114,14 +117,20 @@ $(document).ready(function() {
 		                		  	async : false,  
 		                		  	success : function(data){  
 		                		  		console.log(data);
+		                		  		returnString = "<select>";
 		                		  		for(var i = 0; i < data.length; i++)
 		        						{
-		                		  		
-		        						}
-		        						
-		                		  }  
+		                		  			console.log(data.length);
+		                		  			if(data[i].SERIAL_NO==null||data.length==0){
+		                		  				returnString ="" ;
+		                		  			}else{
+		                		  				returnString+="<option>"+data[i].SERIAL_NO+"</option>"
+		                		  			}
+		                		  		}
+		                		  		returnString+="</select>";
+		                		    }  
 		                	 });
-		                	
+		                	return returnString+"</select>";
 		                }
 		            },   
 		            { 
@@ -193,4 +202,16 @@ $(document).ready(function() {
 				
 				});
 			
+			// 发车确认
+				$("#ConfirmationBtn").click(function(){
+					// 浏览器启动时,停到当前位置
+					//debugger;
+					$("#receiptBtn").attr("disabled", false); 
+
+					var order_id = $("#tranferid").val();
+					$.post('/yh/delivery/departureConfirmation',{order_id:order_id},function(data){
+						var MilestoneTbody = $("#MilestoneTbody");
+						MilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
+					},'json');
+				});
 });

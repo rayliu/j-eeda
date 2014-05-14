@@ -33,12 +33,12 @@ public class ContractController extends Controller {
         logger.debug("URI:" + url);
         if (url.equals("/yh/customerContract")) {
             setAttr("contractType", "CUSTOMER");
-            if(LoginUserController.isAuthenticated(this))
-            render("contract/ContractList.html");
+            if (LoginUserController.isAuthenticated(this))
+                render("contract/ContractList.html");
         } else {
             setAttr("contractType", "SP");
-            if(LoginUserController.isAuthenticated(this))
-            render("contract/ContractList.html");
+            if (LoginUserController.isAuthenticated(this))
+                render("contract/ContractList.html");
         }
 
     }
@@ -113,13 +113,13 @@ public class ContractController extends Controller {
         if (url.equals("/yh/customerContract/add")) {
             setAttr("contractType", "CUSTOMER");
             setAttr("saveOK", false);
-            if(LoginUserController.isAuthenticated(this))
-            render("/yh/contract/ContractEdit.html");
+            if (LoginUserController.isAuthenticated(this))
+                render("/yh/contract/ContractEdit.html");
         } else {
             setAttr("contractType", "SERVICE_PROVIDER");
             setAttr("saveOK", false);
-            if(LoginUserController.isAuthenticated(this))
-            render("/yh/contract/ContractEdit.html");
+            if (LoginUserController.isAuthenticated(this))
+                render("/yh/contract/ContractEdit.html");
         }
         setAttr("saveOK", false);
 
@@ -133,8 +133,8 @@ public class ContractController extends Controller {
             setAttr("c", contact);
             setAttr("ul", contract);
         }
-        if(LoginUserController.isAuthenticated(this))
-        render("/yh/contract/ContractEdit.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("/yh/contract/ContractEdit.html");
     }
 
     public void save() {
@@ -174,8 +174,8 @@ public class ContractController extends Controller {
         if (id != null) {
             Db.deleteById("contract", id);
         }
-        if(LoginUserController.isAuthenticated(this))
-        redirect("/yh/customerContract");
+        if (LoginUserController.isAuthenticated(this))
+            redirect("/yh/customerContract");
     }
 
     public void delete2() {
@@ -183,8 +183,8 @@ public class ContractController extends Controller {
         if (id != null) {
             Db.deleteById("contract", id);
         }
-        if(LoginUserController.isAuthenticated(this))
-        redirect("/yh/spContract");
+        if (LoginUserController.isAuthenticated(this))
+            redirect("/yh/spContract");
     }
 
     // 列出客户公司名称
@@ -263,12 +263,23 @@ public class ContractController extends Controller {
     public void routeAdd() {
         ContractItem item = new ContractItem();
         String contractId = getPara("routeContractId");
-        System.out.println(contractId);
-        item.set("contract_id", contractId).set("route_id", getPara("routeId"))
-                .set("amount", getPara("price"));
-        // .set("miles", getPara("miles"));\
-        item.save();
-        renderJson("{\"success\":true}");
+        String routeId = getPara("routeId");
+        if (routeId != null) {
+            System.out.println(contractId);
+            item.set("contract_id", contractId)
+                    .set("route_id", getPara("routeId"))
+                    .set("amount", getPara("price"));
+            // .set("miles", getPara("miles"));\
+            item.save();
+            renderJson("{\"success\":true}");
+        } else {
+            Route route = new Route();
+            route.set("contract_id", contractId)
+                    .set("route_id", getPara("routeId"))
+                    .set("amount", getPara("price"));
+            renderJson("{\"success\":true}");
+        }
+
     }
 
     // 通过输入起点和终点判断干线id
