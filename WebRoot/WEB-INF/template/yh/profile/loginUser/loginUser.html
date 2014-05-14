@@ -18,7 +18,7 @@
 						<thead>
 							<tr>
 								<th>用户名</th>
-								<th>密码</th>
+								
 								<th>密码提示</th>
 								<th></th>
 							</tr>
@@ -70,11 +70,7 @@ $(document).ready(function() {
 	        "sAjaxSource": "/yh/loginUser/listUser",
 			"aoColumns": [
 				{ "mDataProp": "USER_NAME" },
-	            { "mDataProp": null,
-	            	"fnRender": function(obj) {
-	            		return "<input type='password' value='"+obj.aData.PASSWORD+"' style='border-left:0px;border-top:0px;border-right:0px;border-bottom:1px ' disabled>";
-	            	}
-				},
+	           
 	            { "mDataProp": "PASSWORD_HINT" },
 	            { 
 	                "mDataProp": null, 
