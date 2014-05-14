@@ -263,23 +263,12 @@ public class ContractController extends Controller {
     public void routeAdd() {
         ContractItem item = new ContractItem();
         String contractId = getPara("routeContractId");
-        String routeId = getPara("routeId");
-        if (routeId != null) {
-            System.out.println(contractId);
-            item.set("contract_id", contractId)
-                    .set("route_id", getPara("routeId"))
-                    .set("amount", getPara("price"));
-            // .set("miles", getPara("miles"));\
-            item.save();
-            renderJson("{\"success\":true}");
-        } else {
-            Route route = new Route();
-            route.set("contract_id", contractId)
-                    .set("route_id", getPara("routeId"))
-                    .set("amount", getPara("price"));
-            renderJson("{\"success\":true}");
-        }
-
+        System.out.println(contractId);
+        item.set("contract_id", contractId).set("route_id", getPara("routeId"))
+                .set("amount", getPara("price"));
+        // .set("miles", getPara("miles"));\
+        item.save();
+        renderJson("{\"success\":true}");
     }
 
     // 通过输入起点和终点判断干线id

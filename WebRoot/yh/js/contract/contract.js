@@ -21,44 +21,27 @@ $(document).ready(function() {
 	                "mDataProp": null, 
 	                "sWidth": "8%",                
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-success contractRouteEdit' code='"+obj.aData.ID+"'>"+
+	                    return "<a class='btn btn-success' id='111' href='/yh/customerContract/roteEdit"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-edit fa-fw'></i>"+
 	                                "编辑"+
 	                            "</a>"+
-	                            "<a class='btn btn-danger routeDelete' code2='"+obj.aData.ID+"'>"+
+	                            "<a class='btn btn-danger' href='/yh/customerContract/roteDelete"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
 	                                "删除"+
 	                            "</a>";
 	                }
 	            }                         
 	        ]
-	     });
-		 $("#dataTables-example").on('click', '.contractRouteEdit', function(){
-			 
-			 	var id = $(this).attr('code');
-			 $.post('/yh/customerContract/contractRouteEdit/'+id,function(data){
-                 //保存成功后，刷新列表
-                 console.log(data);
-                 if(data.success){
-                	 dataTable.fnDraw();
-                 }else{
-                     alert('取消失败');
-                 }
-             },'json');
-		  });
-			
-		 $("#dataTables-example").on('click', '.routeDelete', function(){
-			 var id = $(this).attr('code2');
-			 $.post('/yh/customerContract/routeDelete/'+id,function(data){
-                 //保存成功后，刷新列表
-                 console.log(data);
-                 if(data.success){
-                	 dataTable.fnDraw();
-                 }else{
-                     alert('取消失败');
-                 }
-             },'json');
-			});
+	        // "fnDrawCallback": function () {//行编辑模式
+	        //     $('#ataTables-example tbody td').editable( '/yh/customerContract/roteEdit', {
+	        //         "callback": function( sValue, y ) {
+	        //             /* Redraw the table from the new data on the server */
+	        //             oTable.fnDraw();
+	        //         },
+	        //         "height": "14px"
+	        //     } );
+	        // }
+	    });
 	
 		//from表单验证
 		var validate = $('#customerForm').validate({
@@ -81,13 +64,15 @@ $(document).ready(function() {
         $("#btn").click(function(){
         	var contractId = $("#routeContractId").val();
         	if(contractId != ""){
-        		//$("#routeItemFormDiv").show();
+        		$("#routeItemFormDiv").show();
         	}else{
         		alert("请先添加合同！");
-        		return false;
         	}
         });
-        
+        $("#cancel").click(function(){
+        	$("#routeItemFormDiv").hide();
+        });
+
         //点击保存的事件，保存干线信息
         //routeItemForm 不需要提交
         $("#saveRouteBtn").click(function(e){
@@ -98,12 +83,11 @@ $(document).ready(function() {
                     //保存成功后，刷新列表
                     console.log(data);
                     if(data.success){
-                    	$('#myModal').modal('hide');
-                    	$('#reset').click();
                     	dataTable.fnDraw();
                     }else{
                         alert('数据保存失败。');
                     }
+                    
                 },'json');
         });
 
@@ -148,7 +132,28 @@ $(document).ready(function() {
         	
         });
 		
-		
+		//添加routeItemForm  出发地点
+		 
+		//添加routeItemForm 目的地点
+		 $('#toName').on('keyup', function(){
+			 var inputStr = $('#fromName').val();
+			 var inputStr2 = $('#toName').val();
+			 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
+				 for(var i = 0; i < data.length; i++){
+					 	$('#routeId').val(data[i].RID);
+				 }
+			 },'json');
+		});
+		 $('#fromName').on('keyup', function(){
+			 var inputStr = $('#fromName').val();
+			 var inputStr2 = $('#toName').val();
+			 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
+				 for(var i = 0; i < data.length; i++){
+					 	$('#routeId').val(data[i].RID);
+				 }
+			 },'json');
+		});
+		 
 		 //添加合同
 		$("#saveContract").click(function(e){
 	            //阻止a 的默认响应行为，不需要跳转			    
@@ -183,6 +188,7 @@ $(document).ready(function() {
 				{
 					fromLocationList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].CODE+"'>"+data[i].NAME+"</a></li>");
 				}
+				
 				fromLocationList.show();
 			},'json');
 		});
@@ -191,15 +197,6 @@ $(document).ready(function() {
 			$('#from_id').val($(this).attr('code'));
 			$('#fromName').val($(this).text());
         	$("#fromLocationList").hide();
-        	 var inputStr = $('#fromName').val();
-			 var inputStr2 = $('#toName').val();
-			 if(inputStr!=''&&inputStr2!=''){
-				 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
-					 for(var i = 0; i < data.length; i++){
-						 	$('#routeId').val(data[i].RID);
-					 }
-				 },'json');
-			 }
     	});
 		
 		//选择目的地点
@@ -221,39 +218,8 @@ $(document).ready(function() {
 			$('#to_id').val($(this).attr('code'));
 			$('#toName').val($(this).text());
         	$("#toLocationList").hide();
-        	 var inputStr = $('#fromName').val();
-			 var inputStr2 = $('#toName').val();
-			 if(inputStr!=''&&inputStr2!=''){
-				 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
-					 for(var i = 0; i < data.length; i++){
-						 	$('#routeId').val(data[i].RID);
-					 }
-				 },'json');
-			 }
     	});
 		
-		//添加routeItemForm  出发地点
-		 
-		//添加routeItemForm 目的地点
-		/* $('#toName').on('keyup', function(){
-			 var inputStr = $('#fromName').val();
-			 var inputStr2 = $('#toName').val();
-			 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
-				 for(var i = 0; i < data.length; i++){
-					 	$('#routeId').val(data[i].RID);
-				 }
-			 },'json');
-		});
-		 $('#fromName').on('keyup', function(){
-			 var inputStr = $('#fromName').val();
-			 var inputStr2 = $('#toName').val();
-			 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
-				 for(var i = 0; i < data.length; i++){
-					 	$('#routeId').val(data[i].RID);
-				 }
-			 },'json');
-		});*/
-		 
 		//datatable, 动态处理
 	    $('#eeda-table').dataTable({
 	        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -288,23 +254,4 @@ $(document).ready(function() {
 	            }                         
 	        ]      
 	    });	
-	    $("#changePage").click(function(){
-	    	var type= $("#type2").val();
-	    	if(type=='CUSTOMER'){
-	    		window.location.href="/yh/customerContract";
-	    	}else{
-	    		window.location.href="/yh/spContract";
-	    	}
-	    });
-	    $(function(){
-	    	 var type= $("#type2").val();
-	    	 $('#reset').hide();
-	 	    if(type=='CUSTOMER'){
-	 	    	$("#labeltext").html("创建新客户合同");
-	 	    }else{
-	 	    	$("#labeltext").html("创建供应商合同");
-	 	    }
-	    }) ;
-	   
-	    	
-});
+    });

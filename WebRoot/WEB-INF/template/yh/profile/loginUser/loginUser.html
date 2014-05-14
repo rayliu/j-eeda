@@ -5,7 +5,7 @@
 <div class="row">
       <div class="col-lg-12">
             <h1 class="page-header">
-				<a class="btn btn-info" href="/yh/loginUser/addUser"><i class="fa fa-plus-square-o"></i>
+				<a class="btn btn-info" href="/yh/loginUser/editUser"><i class="fa fa-plus-square-o"></i>
 				<span class="hidden-tablet">添加用户</span></a>
 			</h1>
 		<div class="panel panel-default">
@@ -28,13 +28,10 @@
 								<td colspan="5">Loading data from server</td>
 							</tr>
 						</tbody>
-						
 					</table>
-					
 				</div>
       		</div>
 		</div>
-		
 			
  	</div>
         <!-- /.col-lg-12 -->
@@ -70,11 +67,7 @@ $(document).ready(function() {
 	        "sAjaxSource": "/yh/loginUser/listUser",
 			"aoColumns": [
 				{ "mDataProp": "USER_NAME" },
-	            { "mDataProp": null,
-	            	"fnRender": function(obj) {
-	            		return "<input type='password' value='"+obj.aData.PASSWORD+"' style='border-left:0px;border-top:0px;border-right:0px;border-bottom:1px ' disabled>";
-	            	}
-				},
+	            { "mDataProp": "PASSWORD" },
 	            { "mDataProp": "PASSWORD_HINT" },
 	            { 
 	                "mDataProp": null, 

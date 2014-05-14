@@ -4,7 +4,6 @@ import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
 import models.Account;
-import models.DeliveryOrderMilestone;
 import models.Office;
 import models.OrderStatus;
 import models.Party;
@@ -181,7 +180,6 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("transfer_order_milestone", TransferOrderMilestone.class);
         arp.addMapping("billing_order", BillingOrder.class);
         arp.addMapping("billing_order_item", BillingOrderItem.class);
-        arp.addMapping("delivery_order_milestone", DeliveryOrderMilestone.class);
         // yh mapping
 
     }
