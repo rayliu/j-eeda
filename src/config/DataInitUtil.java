@@ -109,7 +109,7 @@ public class DataInitUtil {
 
             stmt.executeUpdate("create table if not exists pickup_order(id bigint auto_increment PRIMARY KEY,order_no varchar(20),sp_id bigint,status varchar(20),cargo_nature varchar(20),to_type varchar(20),remark varchar(255),create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp);"); // 拼车单表从表
                                                                                                                                                                                                                                                                                                                                       // stmt.executeUpdate(
-            // stmt.executeUpdate("create table if not exists Pickup_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Customer_id bigint");
+            stmt.executeUpdate("create table if not exists Pickup_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Customer_id bigint);");
 
             stmt.close();
             // conn.commit();
@@ -432,9 +432,13 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('51456', '电脑', '这是一台电脑','12','台','50','10','十二台电脑','2');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('123456', 'ATM', '这是一台ATM','3','台','452','100','一台ATM','3');");
+                    + "values('123456', '电脑', '这是一台电脑','3','台','452','100','一台ATM','3');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('123456', 'ATM', '这是一台ATM','2','台','452','100','一台ATM','4');");
+                    + "values('123456', '电视', '这是一台电视','2','台','452','100','一台ATM','4');");
+            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                    + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','5');");
+            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                    + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','6');");
             // transfer_order_item_detail(id bigint auto_increment PRIMARY
             // KEY,order_id bigint,item_id bigint,item_no varchar(255),"
             // +
@@ -455,11 +459,11 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
                     + "values('1','fdgh1265985','10000', 'ATM', 'true','1','9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('6','asdf1265985','10000', 'ATM', 'false','5','9');");
+                    + "values('5','asdf1265985','10000', 'ATM', 'false','5','9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('6','iouu1265985','10000', 'ATM', 'false','5','10');");
+                    + "values('6','iouu1265985','10000', 'ATM', 'false','6','10');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('6','2221265985','10000', 'ATM', 'false','5','10');");
+                    + "values('6','2221265985','10000', 'ATM', 'false','6','10');");
 
             // 配送单
             stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600013','1','5','7','9','配送在途');");

@@ -34,6 +34,7 @@ $(document).ready(function() {
 		    }); 
 			//datatable, 动态处理
 			var trandferOrderId = $("#tranferid").val();
+			var sel = $("#eeda-table2").val();
 			$('#eeda-table').dataTable({
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -42,7 +43,7 @@ $(document).ready(function() {
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
-		        "sAjaxSource": "/yh/delivery/orderList?trandferOrderId="+trandferOrderId,
+		        "sAjaxSource": "/yh/delivery/orderList?trandferOrderId="+trandferOrderId+"?sel="+sel,
 		        "aoColumns": [   
 		            {"mDataProp":"ITEM_NO"},
 		            {"mDataProp":"ITEM_NAME"},
@@ -84,13 +85,12 @@ $(document).ready(function() {
 		            {"mDataProp":"STATUS"},
 		            {"mDataProp":"CARGO_NATURE",
 		            	"fnRender": function(obj) {
-		            		if(obj.aData.CARGO_NATURE == "cargo"){
-		            			return "普通货品";
-		            		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
-		            			return "损坏货品";
-		            		}else{
+		            		if(obj.aData.CARGO_NATURE == "ATM"){
 		            			return "ATM";
-		            		}}},        	
+		            		}else{
+		            			return "普通货品";
+		            		}}
+		            },        	
 		            {"mDataProp":"PICKUP_MODE",
 		            	"fnRender": function(obj) {
 		            		if(obj.aData.PICKUP_MODE == "routeSP"){
@@ -100,14 +100,7 @@ $(document).ready(function() {
 		            		}else{
 		            			return "源鸿自提";
 		            		}}},
-		            {"mDataProp":"ARRIVAL_MODE",
-		            	"fnRender": function(obj) {
-		            		if(obj.aData.ARRIVAL_MODE == "delivery"){
-		            			return "货品直送";
-		            		}else{
-		            			return "入中转仓";
-		            		}}},
-		            { 
+		           { 
 		                "mDataProp": null, 
 		                "fnRender": function(obj) {
 		                	var returnString ="";
@@ -118,10 +111,11 @@ $(document).ready(function() {
 		                		  	async : false,  
 		                		  	success : function(data){  
 		                		  		console.log(data);
-		                		  		returnString = "<select>";
+		                		  		if(data.length!=0){
+		                		  		returnString = "<select id='sel'>";
 		                		  		for(var i = 0; i < data.length; i++)
 		        						{
-		                		  			console.log(data.length);
+		                		  			
 		                		  			if(data[i].SERIAL_NO==null||data.length==0){
 		                		  				returnString ="" ;
 		                		  			}else{
@@ -129,6 +123,7 @@ $(document).ready(function() {
 		                		  			}
 		                		  		}
 		                		  		returnString+="</select>";
+		                		  		}
 		                		    }  
 		                	 });
 		                	return returnString+"</select>";

@@ -13,22 +13,19 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeCheckOrder/createList",
+        "sAjaxSource": "/yh/pickupOrder/createList",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
                     return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
                  }
             },
-            { "mDataProp": "COMPANY_ID", "bVisible": false},
-            { "mDataProp": "COMPANY_NAME"},
-            { "mDataProp": "ORDER_TYPE", "bVisible": false},
-            { "mDataProp": "TRANSFER_ORDER_NO"},
-            { "mDataProp": "TRANSFER_ORDER_NO"},
-            { "mDataProp": "DELIVERY_ORDER_NO"},
-            { "mDataProp": "CREATOR" },
-            { "mDataProp": "CREATE_DATE" }
-                                       
+            { "mDataProp": "ORDER_NO"},
+            { "mDataProp": "CARGO_NATURE"},
+            { "mDataProp": "ADDRESS"},
+            { "mDataProp": "PICKUP_MODE"},
+            { "mDataProp": "STATUS"}
+                                      
         ]      
     });	
     
