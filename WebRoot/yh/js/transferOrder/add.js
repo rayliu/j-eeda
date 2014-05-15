@@ -52,7 +52,8 @@ $(document).ready(function() {
 	
 	// 选中客户
 	$('#customerList').on('click', '.fromLocationItem', function(e){
-		$('#customerMessage').val($(this).text());
+		var message = $(this).text();
+		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#customer_id').val($(this).attr('partyId'));
 		var pageCustomerName = $("#pageCustomerName");
 		pageCustomerName.empty();
@@ -95,7 +96,8 @@ $(document).ready(function() {
 	
 	// 选中供应商
 	$('#spList').on('click', '.fromLocationItem', function(e){
-		$('#spMessage').val($(this).text());
+		var message = $(this).text();
+		$('#spMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#sp_id').val($(this).attr('partyId'));
 		var pageSpName = $("#pageSpName");
 		pageSpName.empty();
@@ -295,6 +297,7 @@ $(document).ready(function() {
 				//保存成功后，刷新列表
                 console.log(data);
                 if(data.ORDER_ID>0){
+                	$("#transferOrderItemForm")[0].reset();
                 	var order_id = $("#order_id").val();
                 	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
                 	itemDataTable.fnDraw();
@@ -368,6 +371,7 @@ $(document).ready(function() {
 		$.post('/yh/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailForm").serialize(), function(transferOrderItemDetail){
 			if(transferOrderItemDetail.ID > 0){
 				$("#detailModal").modal('hide');
+				$("#transferOrderItemDetailForm")[0].reset();
 				var itemId = $("#item_id").val();
 				var orderId = $("#order_id").val();
 				detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
@@ -531,7 +535,7 @@ $(document).ready(function() {
 	
 	var item_id = $("#item_id").val();
 	//datatable, 动态处理
-    var detailDataTable = $('#detailTable').dataTable({
+	var detailDataTable = $('#detailTable').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
@@ -550,10 +554,25 @@ $(document).ready(function() {
             			return obj.aData.CONTACT_PERSON+"<br/>"+obj.aData.PHONE+"<br/>"+obj.aData.ADDRESS;
             		}},
             {"mDataProp":"REMARK"},
-            {"mDataProp":"IS_DAMAGE"},
+            {"mDataProp":"IS_DAMAGE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.IS_DAMAGE == true){
+            			return '是';
+            		}else{
+            			return '否';
+            		}
+            	}
+            },
             {"mDataProp":"ESTIMATE_DAMAGE_AMOUNT",
             	"fnRender": function(obj) {
-        			return "定损金额: "+obj.aData.ESTIMATE_DAMAGE_AMOUNT+"<br/>"+"理赔金额: "+obj.aData.DAMAGE_REVENUE+"<br/>"+"赔付给客户金额: "+obj.aData.DAMAGE_PAYMENT+"<br/>"+"差异说明: "+obj.aData.DAMAGE_REMARK;
+            		var amount = (obj.aData.ESTIMATE_DAMAGE_AMOUNT==null?'':obj.aData.ESTIMATE_DAMAGE_AMOUNT);
+            		var DAMAGE_REVENUE = (obj.aData.DAMAGE_REVENUE==null?'':obj.aData.DAMAGE_REVENUE);
+            		var DAMAGE_PAYMENT = (obj.aData.DAMAGE_PAYMENT==null?'':obj.aData.DAMAGE_PAYMENT);
+            		var DAMAGE_REMARK = (obj.aData.DAMAGE_REMARK==null?'':obj.aData.DAMAGE_REMARK);
+            		if(obj.aData.IS_DAMAGE){
+            			return "定损金额: "+amount+"<br/>"+"理赔金额: "+DAMAGE_REVENUE+"<br/>"+"赔付给客户金额: "+DAMAGE_PAYMENT+"<br/>"+"差异说明: "+DAMAGE_REMARK;
+            		}
+        			return "";
         		}},
             {  
                 "mDataProp": null, 
@@ -699,5 +718,10 @@ $(document).ready(function() {
 		},'json');
   		// 模态框:修改货品明细
 		$('#updateDetailModal').modal('show');	
+	});
+	
+	// 清空单品表单
+	$("#transferOrderItemDetailUpdateFormCancel").click(function(){
+		$("#transferOrderItemDetailUpdateForm")[0].reset();
 	});
 });

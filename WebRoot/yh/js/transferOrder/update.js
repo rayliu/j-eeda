@@ -42,12 +42,17 @@ $(document).ready(function() {
 				customerList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
 			}
 		},'json');
+		$("#customerList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        }); 
         $('#customerList').show();
 	});
 	
 	// 选中客户
 	$('#customerList').on('click', '.fromLocationItem', function(e){
-		$('#customerMessage').val($(this).text());
+		var message = $(this).text();
+		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#customer_id').val($(this).attr('partyId'));
 		var pageCustomerName = $("#pageCustomerName");
 		pageCustomerName.empty();
@@ -79,13 +84,18 @@ $(document).ready(function() {
 				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
 			}
 		},'json');
-		
+
+		$("#spList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        }); 
         $('#spList').show();
 	});
 	
 	// 选中供应商
 	$('#spList').on('click', '.fromLocationItem', function(e){
-		$('#spMessage').val($(this).text());
+		var message = $(this).text();
+		$('#spMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#sp_id').val($(this).attr('partyId'));
 		var pageSpName = $("#pageSpName");
 		pageSpName.empty();
@@ -276,6 +286,7 @@ $(document).ready(function() {
 				//保存成功后，刷新列表
                 console.log(data);
                 if(data.ORDER_ID>0){
+                	$("#transferOrderItemForm")[0].reset();
                 	var order_id = $("#order_id").val();
                 	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
                 	itemDataTable.fnDraw();
@@ -349,6 +360,7 @@ $(document).ready(function() {
 		$.post('/yh/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailForm").serialize(), function(transferOrderItemDetail){
 			if(transferOrderItemDetail.ID > 0){
 				$("#detailModal").modal('hide');
+				$("#transferOrderItemDetailForm")[0].reset();
 				var itemId = $("#item_id").val();
 				var orderId = $("#order_id").val();
 				detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
@@ -382,7 +394,7 @@ $(document).ready(function() {
         }
         
         if($("#order_id").val() == ""){
-	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -411,7 +423,7 @@ $(document).ready(function() {
 				}
 			},'json');
         }else{
-        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -535,7 +547,11 @@ $(document).ready(function() {
             {"mDataProp":"REMARK"},
             {"mDataProp":"IS_DAMAGE",
             	"fnRender": function(obj) {
-            		return obj.aData.IS_DAMAGE;
+            		if(obj.aData.IS_DAMAGE == true){
+            			return '是';
+            		}else{
+            			return '否';
+            		}
             	}
             },
             {"mDataProp":"ESTIMATE_DAMAGE_AMOUNT",

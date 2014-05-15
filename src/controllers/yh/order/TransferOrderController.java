@@ -246,7 +246,7 @@ public class TransferOrderController extends Controller {
     public void saveTransferOrder() {
         String order_id = getPara("id");
         TransferOrder transferOrder = null;
-        if (order_id == null || order_id.equals("")) {
+        if (order_id.isEmpty()) {
             transferOrder = new TransferOrder();
             Party customer = Party.dao.findById(getPara("customer_id"));
             transferOrder.set("customer_id", customer.get("id"));

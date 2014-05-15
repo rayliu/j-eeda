@@ -350,9 +350,7 @@
 									      </div>
 									      <div class="modal-body">									      
 									      	<form id="transferOrderItemDetailForm" action="">
-									      		<input id="detail_transfer_order_id" type="hidden" name="transfer_order_id" />
-									      		<input id="detail_transfer_order_item_id" type="hidden" name="transfer_order_item_id" />
-									      		<div class="row">
+									      		<!-- div class="row">
 		                                            <div class="col-lg-6">
 		                                            	<div class="form-group ">
 															<label class="control-label" for="inputSuccess">序列号</label> 
@@ -360,95 +358,89 @@
 																id="serial_no" class="form-control" type="text"
 																name="serial_no">
 														</div>
-		                                            </div>    
+		                                            </div>                                           
+		                                            
 		                                            <div class="col-lg-6">
 		                                            	<div class="form-group ">
-															<label class="control-label" for="inputSuccess">名称</label> <input
-																id="detail_item_name" class="form-control" type="text"
-																name="detail_item_name"">
+															<label class="control-label" for="inputSuccess">序列号</label> 
+															<input
+																id="serial_no" class="form-control" type="text"
+																name="serial_no">
 														</div>
 		                                            </div>
-		                                            <div class="col-lg-6">
-		                                            	<div class="form-group ">
-															<label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
-																id="detail_volume" class="form-control" type="text"
-																name="detail_volume"">
-														</div>
-		                                            </div>    
-		                                            <div class="col-lg-6">
-		                                            	<div class="form-group ">
-															<label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
-																id="detail_weight" class="form-control" type="text"
-																name="detail_weight"">
-														</div>
-		                                            </div>
-		                                            <div class="col-lg-6">
-		                                            	<div class="form-group ">
-															<label class="control-label" for="inputSuccess">货品备注</label> <input
-																id="detail_remark" class="form-control" type="text"
-																name="detail_remark"">
-														</div>
-		                                            </div>    
-		                                            <div class="col-lg-6">
-		                                            	<div class="form-group ">
-															<label class="control-label" for="inputSuccess">收货人</label> <input
-																id="detail_contact_person" class="form-control" type="text"
-																name="detail_contact_person"">
-														</div>
-		                                            </div>
-		                                            <div class="col-lg-6">
-		                                            	<div class="form-group ">
-															<label class="control-label" for="inputSuccess">电话</label> <input
-																id="detail_phone" class="form-control" type="text"
-																name="detail_phone"">
-														</div>
-		                                            </div>    
-		                                            <div class="col-lg-6">
-		                                            	<div class="form-group ">
-															<label class="control-label" for="inputSuccess">地址</label> <input
-																id="detail_address" class="form-control" type="text"
-																name="detail_address"">
-														</div>
-		                                            </div>
-		                                            <label>货损?</label>             
-										            <label class="radio-inline">
-										           		<input name="detail_is_damage" type="radio" value="true">是
-										            </label>
-										            <label class="radio-inline">
-										           		<input name="detail_is_damage" type="radio" value="false" checked="">否
-										            </label>
-										            <div id="isDamageMessage" style="display: none"> 
-			                                            <div class="col-lg-6">
-			                                            	<div class="form-group ">
-																<label class="control-label" for="inputSuccess">定损金额</label> <input
-																	id="detail_estimate_damage_amount" class="form-control" type="text"
-																	name="detail_estimate_damage_amount"">
-															</div>
-			                                            </div>    
-			                                            <div class="col-lg-6">
-			                                            	<div class="form-group ">
-																<label class="control-label" for="inputSuccess">理赔金额</label> <input
-																	id="detail_damage_revenue" class="form-control" type="text"
-																	name="detail_damage_revenue"">
-															</div>
-			                                            </div>
-			                                            <div class="col-lg-6">
-			                                            	<div class="form-group ">
-																<label class="control-label" for="inputSuccess">赔付给客户金额 </label> <input
-																	id="detail_damage_payment" class="form-control" type="text"
-																	name="detail_damage_payment"">
-															</div>
-			                                            </div>    
-			                                            <div class="col-lg-6">
-			                                            	<div class="form-group ">
-																<label class="control-label" for="inputSuccess">差异说明 </label> <input
-																	id="detail_damage_remark" class="form-control" type="text"
-																	name="detail_damage_remark"">
-															</div>
-			                                            </div>
-			                                         </div>
-                                          		</div>  
-									      		
+                                          		</div>   -->
+									      		<input id="detail_transfer_order_id" type="hidden" name="transfer_order_id" />
+									      		<input id="detail_transfer_order_item_id" type="hidden" name="transfer_order_item_id" />
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">序列号</label> <input
+													id="serial_no" class="form-control" type="text"
+													name="serial_no">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">名称</label> <input
+													id="detail_item_name" class="form-control" type="text"
+													name="detail_item_name"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
+													id="detail_volume" class="form-control" type="text"
+													name="detail_volume"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
+													id="detail_weight" class="form-control" type="text"
+													name="detail_weight"">
+												</div>	
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">货品备注</label> <input
+													id="detail_remark" class="form-control" type="text"
+													name="detail_remark"">
+												</div>											
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">收货人</label> <input
+													id="detail_contact_person" class="form-control" type="text"
+													name="detail_contact_person"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">电话</label> <input
+													id="detail_phone" class="form-control" type="text"
+													name="detail_phone"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">地址</label> <input
+													id="detail_address" class="form-control" type="text"
+													name="detail_address"">
+												</div>												
+												<label>货损?</label>             
+									            <label class="radio-inline">
+									           		<input name="detail_is_damage" type="radio" value="true">是
+									            </label>
+									            <label class="radio-inline">
+									           		<input name="detail_is_damage" type="radio" value="false" checked="">否
+									            </label>
+									            <div id="isDamageMessage" style="display: none"> 
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">定损金额</label> <input
+													id="detail_estimate_damage_amount" class="form-control" type="text"
+													name="detail_estimate_damage_amount"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">理赔金额</label> <input
+													id="detail_damage_revenue" class="form-control" type="text"
+													name="detail_damage_revenue"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">赔付给客户金额 </label> <input
+													id="detail_damage_payment" class="form-control" type="text"
+													name="detail_damage_payment"">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">差异说明 </label> <input
+													id="detail_damage_remark" class="form-control" type="text"
+													name="detail_damage_remark"">
+												</div>
+										      	</div>
+										      </div>
 										      <div class="modal-footer">
 										        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 										        <button id="transferOrderItemDetailFormBtn" type="button" class="btn btn-primary">保存</button>
@@ -464,7 +456,7 @@
 									    <div class="modal-content">
 									      <div class="modal-header">
 									        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-									        <h4 class="modal-title" id="myModalLabel">新增货品明细</h4>
+									        <h4 class="modal-title" id="myModalLabel">修改货品明细</h4>
 									      </div>
 									      <div class="modal-body">
 									      	<form id="transferOrderItemDetailUpdateForm" action="">
