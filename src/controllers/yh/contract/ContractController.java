@@ -162,7 +162,7 @@ public class ContractController extends Controller {
 
         /*
          * Map orderMap = new HashMap(); orderMap.put("contractId",c.get("id"));
-         * orderMap.put("success", true); renderJson(orderMap);
+         * orderMap.put("success", true); render-Json(orderMap);
          */
         // 保存后，只需要把contractId 回传到页面上就可以了
         renderJson(c.get("id"));

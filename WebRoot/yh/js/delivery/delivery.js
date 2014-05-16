@@ -37,7 +37,7 @@ $(document).ready(function() {
 		    }); 
 			//datatable, 动态处理
 			var trandferOrderId = $("#tranferid").val();
-			var sel = $("#eeda-table2").val();
+			
 			$('#eeda-table').dataTable({
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -46,7 +46,7 @@ $(document).ready(function() {
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
-		        "sAjaxSource": "/yh/delivery/orderList?trandferOrderId="+trandferOrderId+"?sel="+sel,
+		        "sAjaxSource": "/yh/delivery/orderList?trandferOrderId="+trandferOrderId,
 		        "aoColumns": [   
 		            {"mDataProp":"ITEM_NO"},
 		            {"mDataProp":"ITEM_NAME"},
@@ -213,6 +213,7 @@ $(document).ready(function() {
 						var MilestoneTbody = $("#MilestoneTbody");
 						MilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 					},'json');
+					$("#ConfirmationBtn").attr("disabled", true);
 				});
 				
 				// 运输里程碑
@@ -266,5 +267,13 @@ $(document).ready(function() {
 						},'json');     
 			        }
 				});
+				
+				 $(function(){
+			    	var deliveryID = $('#delivery_id').val();
+			 	    if(deliveryID !=null ){
+			 	    	$("#receiptBtn").attr("disabled", false);
+			 	    }
+			    }) ;
+			   
 			    	
 });
