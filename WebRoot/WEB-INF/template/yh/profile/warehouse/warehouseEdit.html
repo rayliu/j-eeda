@@ -22,7 +22,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                <form id="warehouseForm" role="form" action="/yh/warehouse/save" method="post" enctype="multipart/form-data">
+                                <form id="warehouseForm" role="form" action="/yh/warehouse/save" method="post">
                                     <input id="warehouseId" name="warehouse_id" type="hidden" value="${warehouse.id!''}">
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
                                     <div class="col-lg-6">
@@ -114,14 +114,6 @@
                                             </div>
                                         </fieldset>
                                     </div>
-                                    <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>仓库面积</label>
-                                                <input class="form-control" id="warehouse_area" type="text" name="warehouse_area" value="${warehouse.warehouse_area!''}">
-                                            </div>
-                                        </fieldset>
-                                    </div>
 
                                     <div class="col-lg-6">
                                         <fieldset>
@@ -157,7 +149,7 @@
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script>
-    /* $(document).ready(function() {
+    $(document).ready(function() {
         $('#menu_profile').addClass('active').find('ul').addClass('in');
         $('#warehouseForm').validate({
             rules: {
@@ -184,5 +176,5 @@
                 element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
             }
         });
-    }); */
+    });
 </script>

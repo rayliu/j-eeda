@@ -12,8 +12,6 @@ import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
@@ -24,7 +22,6 @@ import controllers.yh.LoginUserController;
 public class ServiceProviderController extends Controller {
 
     private Logger logger = Logger.getLogger(ServiceProviderController.class);
-    Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
     	if(LoginUserController.isAuthenticated(this))
@@ -73,7 +70,9 @@ public class ServiceProviderController extends Controller {
         Party party = Party.dao.findById(id);
         setAttr("party", party);
 
-        Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="+id);
+        Contact contact = Contact.dao
+                .findFirst("select * from contact where id=?",
+                        party.getLong("contact_id"));
         setAttr("contact", contact);
         if(LoginUserController.isAuthenticated(this))
         render("profile/serviceProvider/serviceProviderEdit.html");
@@ -94,7 +93,9 @@ public class ServiceProviderController extends Controller {
         	deliveryOrder.update();
         }
 
-        Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="+id);;
+        Contact contact = Contact.dao
+                .findFirst("select * from contact where id=?",
+                        party.getLong("contact_id"));
         contact.delete();
 
         party.delete();
@@ -110,14 +111,10 @@ public class ServiceProviderController extends Controller {
         Date createDate = Calendar.getInstance().getTime();
         if (id != null && !id.equals("")) {
             party = Party.dao.findById(id);
-            party = Party.dao.findById(id);
-			party.set("last_update_date", createDate);
-			party.set("location", getPara("location"));
-			party.set("introduction", getPara("introduction"));
-			party.set("remark", getPara("remark"));
-			party.update();
+            party.set("last_update_date", createDate).update();
 
-			contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="+id);;
+            contact = Contact.dao.findFirst("select * from contact where id=?",
+                    party.getLong("contact_id"));
             setContact(contact);
             contact.update();
         } else {
@@ -127,11 +124,8 @@ public class ServiceProviderController extends Controller {
             party = new Party();
             party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
             party.set("contact_id", contact.getLong("id"));
-            party.set("creator", currentUser.getPrincipal());
-			party.set("create_date", createDate);
-			party.set("location", getPara("location"));
-			party.set("introduction", getPara("introduction"));
-			party.set("remark", getPara("remark"));
+            party.set("creator", "test");
+            party.set("create_date", createDate);
             party.save();
 
         }

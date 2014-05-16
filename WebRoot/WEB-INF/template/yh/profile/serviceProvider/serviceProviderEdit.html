@@ -87,32 +87,9 @@
                                             </div>
                                         </fieldset>
                                     </div>
-									<div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>公司简介</label>
-												<textarea class="form-control" rows="3" name="introduction">${party.introduction!''}</textarea>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>备注</label>
-												<textarea class="form-control" rows="3" name="remark">${party.remark!''}</textarea>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-									<div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>客户所在地</label>
-                                                <input class="form-control" id="location" type="text" name="location" value="${party.location!''}">
-                                            </div>
-                                        </fieldset>
-                                    </div>
+
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
-                                    <div class="col-lg-6" style="clear:both;">
+                                    <div class="col-lg-6">
                                         <button type="submit" class="btn btn-default">保存</button>
                                         <a class="btn btn-default" href="/yh/serviceProvider">取消</a>
                                     </div>
@@ -152,12 +129,6 @@
               },
               contact_person:{//form 中 name为必填
                 required: true
-              },
-              location:{
-                required: true
-              },
-           	  email:{
-                email: true
               }
             },
             highlight: function(element) {

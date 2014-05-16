@@ -90,9 +90,7 @@ public class WarehouseController extends Controller{
 		redirect("/yh/warehouse");
 	}
 
-	@SuppressWarnings("unused")
 	public void save() {
-		//UploadFile uploadFile = getFile();
 		Warehouse warehouse = null;
 		String id = getPara("warehouse_id");
 		
@@ -116,8 +114,7 @@ public class WarehouseController extends Controller{
 			warehouse = new Warehouse();
 			warehouse.set("warehouse_name", getPara("warehouse_name"))
 					 .set("warehouse_address", getPara("warehouse_address"))
-					 .set("warehouse_desc", getPara("warehouse_desc"))
-					 .set("warehouse_area", getPara("warehouse_area"));
+					 .set("warehouse_desc", getPara("warehouse_desc"));
 			warehouse.set("contact_id", contact.get("id"));
 			warehouse.save();
 		}
