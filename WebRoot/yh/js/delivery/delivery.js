@@ -14,7 +14,10 @@ $(document).ready(function() {
 						spList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+"</a></li>");
 					}
 				},'json');
-
+				$("#spList").css({ 
+		        	left:$(this).position().left+"px", 
+		        	top:$(this).position().top+32+"px" 
+		        }); 
 		        $('#spList').show();
 			});
 			// 选中供应商
@@ -60,7 +63,8 @@ $(document).ready(function() {
 		            //异步向后台提交数据
 		           $.post('/yh/delivery/deliverySave', $("#deliveryForm").serialize(), function(data){
 		                console.log(data);
-	                    if(data>0){
+	                    if(data.ID>0){
+	                    	$("#delivery_id").val(data.ID);
 	                    	$("#style").show();
 	                    	$("#ConfirmationBtn").attr("disabled", false);
 	                    	$('#deliveryid').val(data);
@@ -210,4 +214,57 @@ $(document).ready(function() {
 						MilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 					},'json');
 				});
+				
+				// 运输里程碑
+				$("#transferOrderMilestoneList").click(function(e){
+					e.preventDefault();
+			    	// 切换到货品明细时,应先保存运输单
+			    	//提交前，校验数据
+			        /*if(!$("#transferOrderForm").valid()){
+			        	alert("请先保存运输单!");
+				       	return false; 
+			        }*/
+			        
+			        if($("#delivery_id").val() == ""){
+				    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+							$("#transfer_order_id").val(transferOrder.ID);
+							$("#update_transfer_order_id").val(transferOrder.ID);
+							$("#order_id").val(transferOrder.ID);
+							$("#transfer_milestone_order_id").val(transferOrder.ID);
+							$("#id").val(transferOrder.ID);
+							if(transferOrder.ID>0){
+								if(transferOrder.STATUS == '已发车'){
+									$("#departureConfirmationBtn").attr("disabled", true);		
+								}else{
+									$("#departureConfirmationBtn").attr("disabled", false);
+								}
+								$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
+							  	$("#style").show();	
+							  	
+							  	var order_id = $("#order_id").val();
+								$.post('/yh/deliveryOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+									var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+									transferOrderMilestoneTbody.empty();
+									for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
+									{
+										transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+									}
+								},'json');              
+							}else{
+								alert('数据保存失败。');
+							}
+						},'json');
+			        }else{
+					  	var order_id = $("#delivery_id").val(); 
+						$.post('/yh/deliveryOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+							var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+							transferOrderMilestoneTbody.empty();
+							for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
+							{
+								transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+							}
+						},'json');     
+			        }
+				});
+			    	
 });

@@ -128,6 +128,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/transferOrderMilestone", controllers.yh.order.TransferOrderMilestoneController.class, "/yh");
         me.add("/yh/returnorder", controllers.yh.ReturnOrderControllers.class, "/yh");
         me.add("/yh/delivery", controllers.yh.delivery.DeliveryController.class, "/yh");
+        me.add("/yh/deliveryOrderMilestone", controllers.yh.delivery.DeliveryOrderMilestoneController.class, "/yh");
         me.add("/yh/pickupOrder", controllers.yh.pickup.PickupOrderController.class, "/yh");
         me.add("/yh/chargeCheckOrder", controllers.yh.arap.ChargeCheckOrderController.class, "/yh");
         me.add("/yh/paymentCheckOrder", controllers.yh.arap.PaymentCheckOrderController.class, "/yh");
