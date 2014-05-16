@@ -25,14 +25,12 @@ $(document).ready(function() {
 				$('#spMessage').val($(this).text());
 				$('#sp_id').val($(this).attr('spid'));
 				$('#cid').val($(this).attr('code'));
-				var pageSpName = $("#pageSpName");
-				pageSpName.empty();
 				
-				pageSpName.append($(this).attr('contact_person')+'&nbsp;');
-				pageSpName.append($(this).attr('phone')); 
-				var pageSpAddress = $("#pageSpAddress");
-				pageSpAddress.empty();
-				pageSpAddress.append($(this).attr('address'));
+				$('#a1').html($(this).attr('contact_person'));
+				$('#a2').html($(this).attr('company_name'));
+				$('#a3').html($(this).attr('address'));
+				$('#a4').html($(this).attr('phone'));
+				
 		        $('#spList').hide();
 		    }); 
 			//datatable, 动态处理
@@ -270,7 +268,9 @@ $(document).ready(function() {
 				
 				 $(function(){
 			    	var deliveryID = $('#delivery_id').val();
-			 	    if(deliveryID !=null ){
+			 	    if(deliveryID == ''){
+			 	    	$("#receiptBtn").attr("disabled", true);
+			 	     }else{
 			 	    	$("#receiptBtn").attr("disabled", false);
 			 	    }
 			    }) ;
