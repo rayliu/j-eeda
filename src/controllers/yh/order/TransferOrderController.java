@@ -35,30 +35,54 @@ public class TransferOrderController extends Controller {
         render("transferOrder/transferOrderList.html");
     }
 
-    public void list() {
-        /*
-         * Paging
-         */
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+    @SuppressWarnings({ "rawtypes", "null" })
+	public void list() {
+    	Map transferOrderListMap = null;
+        String orderNo = getPara("orderNo");
+        String status = getPara("status");
+        if(orderNo == null && status == null){
+	        String sLimit = "";
+	        String pageIndex = getPara("sEcho");
+	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+	        }
+	
+	        String sqlTotal = "select count(1) total from transfer_order";
+	        Record rec = Db.findFirst(sqlTotal);
+	        logger.debug("total records:" + rec.getLong("total"));
+	
+	        String sql = "select * from transfer_order";
+	
+	        List<Record> transferOrders = Db.find(sql);
+	        
+	        transferOrderListMap = new HashMap();
+	        transferOrderListMap.put("sEcho", pageIndex);
+	        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+	        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+	
+	        transferOrderListMap.put("aaData", transferOrders);
+        }else{
+        	String sLimit = "";
+	        String pageIndex = getPara("sEcho");
+	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+	        }
+	
+	        String sqlTotal = "select count(1) total from transfer_order where order_no like '%"+orderNo+"%' and status like '%"+status+"%'";
+	        Record rec = Db.findFirst(sqlTotal);
+	        logger.debug("total records:" + rec.getLong("total"));
+	
+	        String sql = "select * from transfer_order where order_no like '%"+orderNo+"%' and status like '%"+status+"%'";
+	
+	        List<Record> transferOrders = Db.find(sql);
+	        
+	        transferOrderListMap = new HashMap();
+	        transferOrderListMap.put("sEcho", pageIndex);
+	        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+	        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+	
+	        transferOrderListMap.put("aaData", transferOrders);
         }
-
-        String sqlTotal = "select count(1) total from transfer_order";
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
-
-        String sql = "select * from transfer_order";
-
-        List<Record> transferOrders = Db.find(sql);
-
-        Map transferOrderListMap = new HashMap();
-        transferOrderListMap.put("sEcho", pageIndex);
-        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
-        transferOrderListMap.put("aaData", transferOrders);
 
         renderJson(transferOrderListMap);
     }

@@ -4,7 +4,7 @@ $(document).ready(function() {
     $('#menu_transfer').addClass('active').find('ul').addClass('in');
     
 	//datatable, 动态处理
-    var dataTable = $('#eeda-table').dataTable({
+    var transferOrder = $('#eeda-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
@@ -75,5 +75,38 @@ $(document).ready(function() {
                }
                
            },'json');
-		  });
+		});
+    
+    function filterGlobal () {
+        $('#eeda-table').DataTable().search(
+            $('#global_filter').val(),
+            $('#global_regex').prop('checked'),
+            $('#global_smart').prop('checked')
+        ).draw();
+    }
+     
+    function filterColumn ( i ) {
+        $('#eeda-table').DataTable().column( i ).search(
+            $('#col'+i+'_filter').val(),
+            $('#col'+i+'_regex').prop('checked'),
+            $('#col'+i+'_smart').prop('checked')
+        ).draw();
+    }
+    
+    $('input.global_filter').on( 'keyup click', function () {
+    	var orderNo = $("#global_filter").val();
+    	var status = $("#col0_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status;
+    	transferOrder.fnDraw(); 
+    	//filterGlobal();
+    } );
+ 
+    $('input.column_filter').on( 'keyup click', function () {
+    	var orderNo = $("#global_filter").val();
+    	var status = $("#col0_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status;
+    	transferOrder.fnDraw();
+    	//alert("column");
+        //filterColumn( $(this).parents('tr').attr('data-column') );
+    } );
 } );
