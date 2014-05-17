@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
 
@@ -92,7 +93,8 @@ public class WarehouseController extends Controller{
 
 	@SuppressWarnings("unused")
 	public void save() {
-		//UploadFile uploadFile = getFile();
+		UploadFile uploadFile = getFile("fileupload");
+		
 		Warehouse warehouse = null;
 		String id = getPara("warehouse_id");
 		
@@ -103,6 +105,7 @@ public class WarehouseController extends Controller{
 			warehouse.set("warehouse_name", getPara("warehouse_name"));
 			warehouse.set("warehouse_address", getPara("warehouse_address"));
 			warehouse.set("warehouse_desc", getPara("warehouse_desc"));
+			warehouse.set("path", uploadFile.getSaveDirectory());
 
 			contact = Contact.dao.findFirst("select * from contact where id=?",
 					warehouse.getLong("contact_id"));
@@ -117,7 +120,8 @@ public class WarehouseController extends Controller{
 			warehouse.set("warehouse_name", getPara("warehouse_name"))
 					 .set("warehouse_address", getPara("warehouse_address"))
 					 .set("warehouse_desc", getPara("warehouse_desc"))
-					 .set("warehouse_area", getPara("warehouse_area"));
+					 .set("warehouse_area", getPara("warehouse_area"))
+					 .set("path", uploadFile.getSaveDirectory());
 			warehouse.set("contact_id", contact.get("id"));
 			warehouse.save();
 		}

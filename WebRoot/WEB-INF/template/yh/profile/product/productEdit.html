@@ -17,27 +17,68 @@
 					<form id="productForm" name="form1" method="post" action="/yh/product/save">
 						<input id="product_id" class="form-control" type="hidden"
 							name="id" value="${product.id!''}">
-
-						<div class="col-lg-8">
+						<div>
+						<div class="col-lg-6">
 							<div class="form-group ">
 								<label class="control-label" for="inputSuccess">产品名称(必填)</label> <input
 									id="itemName" class="form-control" type="text"
 									name="itemName" value="${product.item_name!''}">
 							</div>
+						</div>
+						<div class="col-lg-6">
 							<div class="form-group">
 								<label class="control-label" for="inputWarning">产品型号(必填)</label> <input
 									id="itemNo" class="form-control" type="text"
 									name="itemNo" value="${product.item_no!''}">
 							</div>
+						</div>
+						<div class="col-lg-6">
 							<div class="form-group">
 								<label class="control-label" for="inputWarning">产品描述</label> <input
 									id="inputWarning" class="form-control" type="text"
 									name="itemDesc" value="${product.item_desc!''}">
 							</div>
+						</div>
+						<div class="col-lg-6">
 							<div class="form-group">
-								<button class="btn btn-default" type="submit">保存</button>
-								<a class="btn btn-default" href="/yh/product"> 取消 </a>
+								<label class="control-label" for="inputWarning">长度</label> <input
+									id="size" class="form-control" type="text"
+									name="size" value="${product.size!''}">
 							</div>
+						</div>
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label class="control-label" for="inputWarning">宽度</label> <input
+									id="width" class="form-control" type="text"
+									name="width" value="${product.width!''}">
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label class="control-label" for="inputWarning">单位</label> <input
+									id="unit" class="form-control" type="text"
+									name="unit" value="${product.unit!''}">
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label class="control-label" for="inputWarning">体积</label> <input
+									id="volume" class="form-control" type="text"
+									name="volume" value="${product.volume!''}">
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label class="control-label" for="inputWarning">重量</label> <input
+									id="weight" class="form-control" type="text"
+									name="weight" value="${product.weight!''}">
+							</div>
+						</div>
+						
+						<div class="col-lg-6" style="clear:both;">
+							<button class="btn btn-default" type="submit">保存</button>
+							<a class="btn btn-default" href="/yh/product"> 取消 </a>
+						</div>
 						</div>
 					</form>
 				</div>

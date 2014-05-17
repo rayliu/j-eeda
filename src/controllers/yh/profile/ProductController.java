@@ -1,15 +1,10 @@
 package controllers.yh.profile;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.Party;
 import models.Product;
-import models.Role;
-import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
 
@@ -88,16 +83,56 @@ public class ProductController extends Controller{
 		
 		if (id != null && !id.equals("")) {
 			product = Product.dao.findById(id);
-			product.set("item_name", getPara("itemName")).set("item_no", getPara("itemNo"))
-	        .set("item_desc", getPara("itemDesc")).update();
+			String size = getPara("size");
+			String width = getPara("width");
+			String volume = getPara("volume");
+			String weight = getPara("weight");
+
+			if(!size.isEmpty()){
+				product.set("size", size);
+			}
+			if(!width.isEmpty()){
+				product.set("width", width);
+			}
+			if(!volume.isEmpty()){
+				product.set("volume", volume);
+			}
+			if(!weight.isEmpty()){
+				product.set("weight", weight);
+			}
+			product.set("item_name", getPara("itemName"))
+			       .set("item_no", getPara("itemNo"))
+	               .set("item_desc", getPara("itemDesc"))
+				   .set("unit", getPara("unit"));
+	        product.update();
 		} else {
 			product = new Product();
 			String itemName = getPara("itemName");
 			String itemNo = getPara("itemNo");
 			String itemDesc = getPara("itemDesc");
+			String size = getPara("size");
+			String width = getPara("width");
+			String unit = getPara("unit");
+			String volume = getPara("volume");
+			String weight = getPara("weight");
 
-			product.set("item_name", itemName).set("item_no", itemNo)
-			        .set("item_desc", itemDesc).save();
+			product.set("item_name", itemName)
+				   .set("item_no", itemNo)
+			       .set("item_desc", itemDesc)
+			       .set("unit", getPara("unit"));
+			if(!size.isEmpty()){
+				product.set("size", size);
+			}
+			if(!width.isEmpty()){
+				product.set("width", width);
+			}
+			if(!volume.isEmpty()){
+				product.set("volume", volume);
+			}
+			if(!weight.isEmpty()){
+				product.set("weight", weight);
+			}
+	        product.save();
 		}
 		if(LoginUserController.isAuthenticated(this))
 		render("profile/product/productList.html");
