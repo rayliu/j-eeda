@@ -65,7 +65,7 @@ $(document).ready(function() {
 	                    	$("#delivery_id").val(data.ID);
 	                    	$("#style").show();
 	                    	$("#ConfirmationBtn").attr("disabled", false);
-	                    	$('#deliveryid').val(data);
+	                    	
 	                    }else{
 	                        alert('数据保存失败。');
 	                    }
@@ -197,7 +197,7 @@ $(document).ready(function() {
 		             },'json');
 				  });
 			 $("#eeda-table3").on('click', '.edit', function(){
-				
+				 
 				});
 			
 			// 发车确认
@@ -266,14 +266,12 @@ $(document).ready(function() {
 			        }
 				});
 				
-				 $(function(){
-			    	var deliveryID = $('#delivery_id').val();
-			 	    if(deliveryID == ''){
+				 	var deliveryID = $('#delivery_id').val();
+			 	    if(deliveryID==''){
 			 	    	$("#receiptBtn").attr("disabled", true);
 			 	     }else{
 			 	    	$("#receiptBtn").attr("disabled", false);
-			 	    }
-			    }) ;
-			   
+			 	     }
+			 	    	 
 			    	
 });

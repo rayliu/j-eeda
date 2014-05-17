@@ -263,23 +263,37 @@ public class ContractController extends Controller {
     public void routeAdd() {
         ContractItem item = new ContractItem();
         String contractId = getPara("routeContractId");
-        String routeId = getPara("routeId");
-        if (routeId != null) {
-            System.out.println(contractId);
+        String id = getPara("routeId");
+        if (id != "") {
+        }
+        Record user = new Record();
+        user.set("from_id", getPara("from_id"));
+        user.set("to_id", getPara("to_id"));
+        user.set("location_from", getPara("fromName"));
+        user.set("location_to", getPara("toName"));
+        user.set("remark", getPara("remark"));
+
+        if (id != "") {
+            user.set("id", id);
+            Db.update("route", user);
+
             item.set("contract_id", contractId)
                     .set("route_id", getPara("routeId"))
+                    .set("amount", getPara("price"))
+                    .set("id", getPara("routeItemId"));
+            // .set("miles", getPara("miles"));\
+            item.update();
+            renderJson("{\"success\":true}");
+        } else {
+
+            Db.save("route", user);
+            item.set("contract_id", contractId).set("route_id", user.get("id"))
                     .set("amount", getPara("price"));
             // .set("miles", getPara("miles"));\
             item.save();
             renderJson("{\"success\":true}");
-        } else {
-            Route route = new Route();
-            route.set("contract_id", contractId)
-                    .set("route_id", getPara("routeId"))
-                    .set("amount", getPara("price"));
-            renderJson("{\"success\":true}");
-        }
 
+        }
     }
 
     // 通过输入起点和终点判断干线id
@@ -298,8 +312,14 @@ public class ContractController extends Controller {
 
     public void contractRouteEdit() {
         String id = getPara();
-        System.out.println(id);
-        renderJson("{\"success\":true}");
+
+        String contractId = getPara("contractId");
+        System.out.println(contractId);
+        // Route route = Route.dao.findById(id);
+        List<Route> route = Route.dao
+                .find("select *,c.id as contractItemID from route r join contract_item c on r.id = c.route_id and r.id ="
+                        + id + " and c.contract_id = " + contractId + "");
+        renderJson(route);
     }
 
     public void routeDelete() {

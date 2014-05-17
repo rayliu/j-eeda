@@ -18,7 +18,7 @@
 									<label class="control-label">出发地点</label>
 									<input id="from_id" name="from_id" type="hidden" class="form-control" value="${ul.location_from!''}">
 									<input id="fromName" name="fromName" type="text" class="form-control" value="${ul.location_from!''}">
-									<ul id='fromLocationList' class="pull-right dropdown-menu default" style="top: 50%; left: 3%;">
+									<ul id='fromLocationList' class="pull-right dropdown-menu default" >
 									</ul>
 								</div>
 								<div class="form-group ">
@@ -75,11 +75,16 @@
 				{
 					fromLocationList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].CODE+"'>"+data[i].NAME+"</a></li>");
 				}
-				
-				fromLocationList.show();
+			
 			},'json');
+			
+			$("#fromLocationList").css({ 
+	        	left:$(this).position().left+"px", 
+	        	top:$(this).position().top+32+"px" 
+	        }); 
+			fromLocationList.show();
 		});
-	
+		
 		$('#fromLocationList').on('click', '.fromLocationItem', function(e){
 			$('#from_id').val($(this).attr('code'));
 			$('#fromName').val($(this).text());
@@ -100,6 +105,10 @@
 				
 				toLocationList.show();
 			},'json');
+			$("#toLocationList").css({ 
+	        	left:$(this).position().left+"px", 
+	        	top:$(this).position().top+32+"px" 
+	        }); 
 		});
 	
 		$('#toLocationList').on('click', '.fromLocationItem', function(e){

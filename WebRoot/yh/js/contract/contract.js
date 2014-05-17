@@ -34,13 +34,20 @@ $(document).ready(function() {
 	        ]
 	     });
 		 $("#dataTables-example").on('click', '.contractRouteEdit', function(){
-			 
+			  var contractId = $("#routeContractId").val();
 			 	var id = $(this).attr('code');
-			 $.post('/yh/customerContract/contractRouteEdit/'+id,function(data){
+			 $.post('/yh/customerContract/contractRouteEdit/'+id,{contractId:contractId},function(data){
                  //保存成功后，刷新列表
                  console.log(data);
-                 if(data.success){
-                	 dataTable.fnDraw();
+                 if(data[0] !=null){
+                	 $('#myModal').modal('show');
+                	 $('#routeId').val(data[0].ID);
+                	 $('#from_id').val(data[0].FROM_ID);
+                	 $('#fromName').val(data[0].LOCATION_FROM);
+                	 $('#to_id').val(data[0].TO_ID);
+                	 $('#toName').val(data[0].LOCATION_TO);
+                	 $('#price').val(data[0].AMOUNT)
+                	 $('#routeItemId').val(data[0].CONTRACTITEMID);
                  }else{
                      alert('取消失败');
                  }
