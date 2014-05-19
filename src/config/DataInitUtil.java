@@ -37,7 +37,7 @@ public class DataInitUtil {
 
             // delivery_order_milestone 配送单里程碑
             stmt.executeUpdate("create table if not exists delivery_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
-                    + "last_modified_stamp TIMESTAMP,order_id bigint,FOREIGN KEY(order_id) REFERENCES delivery_order(id));");
+                    + "last_modified_stamp TIMESTAMP,delivery_id bigint,FOREIGN KEY(delivery_id) REFERENCES delivery_order(id));");
 
             // 干线表
             stmt.executeUpdate("create table if not exists route(id bigint auto_increment PRIMARY KEY,from_id VARCHAR(50), location_from VARCHAR(50) not null,to_id VARCHAR(50), location_to VARCHAR(50) not null, remark VARCHAR(255));");

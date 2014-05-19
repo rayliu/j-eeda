@@ -1,4 +1,4 @@
-
+﻿
 $(document).ready(function() {
 	$('#menu_deliver').addClass('active').find('ul').addClass('in');
 		    
@@ -206,12 +206,13 @@ $(document).ready(function() {
 					//debugger;
 					$("#receiptBtn").attr("disabled", false); 
 
-					var order_id = $("#tranferid").val();
-					$.post('/yh/delivery/departureConfirmation',{order_id:order_id},function(data){
+					var delivery_id = $("#delivery_id").val();
+					$.post('/yh/deliveryOrderMilestone/departureConfirmation',{delivery_id:delivery_id},function(data){
 						var MilestoneTbody = $("#MilestoneTbody");
 						MilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 					},'json');
 					$("#ConfirmationBtn").attr("disabled", true);
+					$("#receiptBtn").attr("disabled", false);
 				});
 				
 				// 运输里程碑
@@ -254,8 +255,9 @@ $(document).ready(function() {
 							}
 						},'json');
 			        }else{
-					  	var order_id = $("#delivery_id").val(); 
-						$.post('/yh/deliveryOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+					  	var delivery_id = $("#delivery_id").val(); 
+					  	$("#transfer_milestone_delivery_id").val(delivery_id); 
+						$.post('/yh/deliveryOrderMilestone/transferOrderMilestoneList',{delivery_id:delivery_id},function(data){
 							var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 							transferOrderMilestoneTbody.empty();
 							for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
@@ -265,13 +267,35 @@ $(document).ready(function() {
 						},'json');     
 			        }
 				});
+			
+				// 保存新里程碑
+				$("#deliveryOrderMilestoneFormBtn").click(function(){
+					$.post('/yh/deliveryOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
+						var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+						transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
+					},'json');
+					$('#deliveryOrderMilestone').modal('hide');
+				});
 				
+				
+				// 回单签收
+				$("#receiptBtn").click(function(){
+					var delivery_id = $("#delivery_id").val();
+					$.post('/yh/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
+						var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+						transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
+					},'json');
+					$("#receiptBtn").attr("disabled", true);
+				});
+				
+				 /*$(function(){
 				 	var deliveryID = $('#delivery_id').val();
 			 	    if(deliveryID==''){
 			 	    	$("#receiptBtn").attr("disabled", true);
 			 	     }else{
 			 	    	$("#receiptBtn").attr("disabled", false);
 			 	     }
+			    }) ;*/
 			 	    	 
 			    	
 });
