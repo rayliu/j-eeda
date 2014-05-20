@@ -68,13 +68,13 @@
                         	<fieldset>
 					             <div class="form-group ">
 					                 <label class="control-label">公司类别</label>
-					                 <input type="text" class="form-control" id="type" name="type" value="${ul.type!''}">
-					                <!--  <select class="form-control" id="type" name="type" value="${ul.type!''}">
+					                
+					                <select class="form-control" id="type" name="type" value="">
 					                 	<option></option>
 					                 	<option>自营</option>
 					                 	<option>控股</option>
 					                 	<option>合作</option>
-					                 </select> -->
+					                 </select>
 					             </div>
 				            </fieldset>
                          </div>
@@ -107,6 +107,8 @@
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script>
 	$(document).ready(function() {
+		var type = '${ul.type!''}';
+		$('#type').val(type);
     $('#menu_profile').addClass('active').find('ul').addClass('in');
         $('#leadsForm').validate({
             rules: {

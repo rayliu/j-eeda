@@ -69,8 +69,7 @@ $(document).ready(function() {
 	                    }else{
 	                        alert('数据保存失败。');
 	                    }
-		                    
-		                },'json');
+		             },'json');
 		        });
 			
 			$('#eeda-table2').dataTable({
@@ -143,9 +142,6 @@ $(document).ready(function() {
 		            }                         
 		        ]      
 		    });	
-			
-			
-		    
 			//datatable, 动态处理
 		    var dataTable =$('#eeda-table3').dataTable({
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -161,9 +157,9 @@ $(document).ready(function() {
 		            
 		            {"mDataProp":"ORDER_NO"},
 		            {"mDataProp":"TRANSFER_ORDER_ID"},
-		            {"mDataProp":"CUSTOMER_ID"},        	
-		            {"mDataProp":"SP_ID"},
-		            {"mDataProp":"NOTIFY_PARTY_ID"},
+		            {"mDataProp":"C1"},        	
+		            {"mDataProp":"C2"},
+		            {"mDataProp":"C3"},
 		            {"mDataProp":"STATUS"},
 		            { 
 		                "mDataProp": null, 
@@ -196,10 +192,6 @@ $(document).ready(function() {
 		                 }
 		             },'json');
 				  });
-			 $("#eeda-table3").on('click', '.edit', function(){
-				 
-				});
-			
 			// 发车确认
 				$("#ConfirmationBtn").click(function(){
 					// 浏览器启动时,停到当前位置
@@ -213,6 +205,17 @@ $(document).ready(function() {
 					},'json');
 					$("#ConfirmationBtn").attr("disabled", true);
 					$("#receiptBtn").attr("disabled", false);
+					
+					var delivery_id = $("#delivery_id").val(); 
+				  	$("#transfer_milestone_delivery_id").val(delivery_id); 
+					$.post('/yh/deliveryOrderMilestone/transferOrderMilestoneList',{delivery_id:delivery_id},function(data){
+						var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+						transferOrderMilestoneTbody.empty();
+						for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
+						{
+							transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+						}
+					},'json');  
 				});
 				
 				// 运输里程碑

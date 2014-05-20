@@ -110,7 +110,8 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists pickup_order(id bigint auto_increment PRIMARY KEY,order_no varchar(20),sp_id bigint,status varchar(20),cargo_nature varchar(20),to_type varchar(20),remark varchar(255),create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp);"); // 拼车单表从表
                                                                                                                                                                                                                                                                                                                                       // stmt.executeUpdate(
             stmt.executeUpdate("create table if not exists Pickup_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Customer_id bigint);");
-
+            // 发车单
+            stmt.executeUpdate("create table if not exists departrue_order(id bigint auto_increment PRIMARY KEY,Order_id bigint,Transfer_id bigint,creat_by bigint,creat_stamp timestamp,last_modified_by bigint,remark varchar(255),last_modified_starp timestamp);");
             stmt.close();
             // conn.commit();
             conn.close();

@@ -134,6 +134,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/paymentCheckOrder", controllers.yh.arap.PaymentCheckOrderController.class, "/yh");
         me.add("/yh/receivableCheckOrder", controllers.yh.arap.ReceivableCheckOrderController.class, "/yh");
         me.add("/yh/copeCheckOrder", controllers.yh.arap.CopeCheckOrderController.class, "/yh");
+        me.add("/yh/departureOrder", controllers.yh.departure.DepartureOrderController.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {
