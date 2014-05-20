@@ -35,12 +35,16 @@ public class TransferOrderController extends Controller {
         render("transferOrder/transferOrderList.html");
     }
 
-    @SuppressWarnings({ "rawtypes", "null" })
 	public void list() {
     	Map transferOrderListMap = null;
         String orderNo = getPara("orderNo");
         String status = getPara("status");
-        if(orderNo == null && status == null){
+        String address = getPara("address");
+        String customer = getPara("customer");
+        String sp = getPara("sp");
+        String beginTime = getPara("beginTime");
+        String endTime = getPara("endTime");
+        if(orderNo == null && status == null && address == null && customer == null && sp == null && beginTime == null && endTime == null){
 	        String sLimit = "";
 	        String pageIndex = getPara("sEcho");
 	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -51,7 +55,11 @@ public class TransferOrderController extends Controller {
 	        Record rec = Db.findFirst(sqlTotal);
 	        logger.debug("total records:" + rec.getLong("total"));
 	
-	        String sql = "select * from transfer_order";
+	        String sql = "select to.*,c1.company_name cname,c2.company_name spname,to.create_stamp from transfer_order to "
+							+" left join party p1 on to.customer_id = p1.id "
+							+" left join party p2 on to.sp_id = p2.id "
+							+" left join contact c1 on p1.contact_id = c1.id"
+							+" left join contact c2 on p2.contact_id = c2.id";
 	
 	        List<Record> transferOrders = Db.find(sql);
 	        
@@ -62,17 +70,31 @@ public class TransferOrderController extends Controller {
 	
 	        transferOrderListMap.put("aaData", transferOrders);
         }else{
+            if(beginTime == null || "".equals(beginTime)){
+            	beginTime = "1-1-1";
+            }
+            if(endTime == null || "".equals(endTime)){
+            	endTime = "9999-12-31";
+            }
         	String sLimit = "";
 	        String pageIndex = getPara("sEcho");
 	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
 	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 	        }
 	
-	        String sqlTotal = "select count(1) total from transfer_order where order_no like '%"+orderNo+"%' and status like '%"+status+"%'";
+	        String sqlTotal = "select count(1) from transfer_order to "
+							+" left join party p1 on to.customer_id = p1.id "
+							+" left join party p2 on to.sp_id = p2.id "
+							+" left join contact c1 on p1.contact_id = c1.id"
+							+" left join contact c2 on p2.contact_id = c2.id where to.order_no like '%"+orderNo+"%' and to.status like '%"+status+"%' and to.address like '%"+address+"%' and c1.COMPANY_NAME like '%"+customer+"%' and c2.COMPANY_NAME  like '%"+sp+"%' and create_stamp between '"+beginTime+"' and '"+endTime+"'";
 	        Record rec = Db.findFirst(sqlTotal);
 	        logger.debug("total records:" + rec.getLong("total"));
 	
-	        String sql = "select * from transfer_order where order_no like '%"+orderNo+"%' and status like '%"+status+"%'";
+	        String sql = "select to.*,c1.company_name cname,c2.company_name spname from transfer_order to "
+							+" left join party p1 on to.customer_id = p1.id "
+							+" left join party p2 on to.sp_id = p2.id "
+							+" left join contact c1 on p1.contact_id = c1.id"
+							+" left join contact c2 on p2.contact_id = c2.id where to.order_no like '%"+orderNo+"%' and to.status like '%"+status+"%' and to.address like '%"+address+"%' and c1.COMPANY_NAME like '%"+customer+"%' and c2.COMPANY_NAME  like '%"+sp+"%' and create_stamp between '"+beginTime+"' and '"+endTime+"'";
 	
 	        List<Record> transferOrders = Db.find(sql);
 	        

@@ -127,7 +127,14 @@
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>上传图片</label>
-                                                <input type="file" name="fileupload">
+                                                <input id="fileupload" type="file" name="fileupload">
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <img id="showImg" src="${warehouse.path!''}">
                                             </div>
                                         </fieldset>
                                     </div>
@@ -159,7 +166,7 @@
 <script>
     $(document).ready(function() {
         $('#menu_profile').addClass('active').find('ul').addClass('in');
-        $('#warehouseForm').validate({
+        /* $('#warehouseForm').validate({
             rules: {
             	warehouse_name: {
                 required: true
@@ -183,6 +190,11 @@
             success: function(element) {
                 element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
             }
+        }); */
+        
+        $("#fileupload").change(function(){
+        	var path = $(this).val();
+        	$("#showImg").attr('src', 'F:\\j-eeda\\WebRoot\\upload\\'+path);
         });
     }); 
 </script>

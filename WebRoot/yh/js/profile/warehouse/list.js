@@ -23,9 +23,13 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' href='/yh/warehouse/edit/"+obj.aData.ID+"'>"+
+                    return "<a class='btn btn-success picture' target='_Blank' href='"+obj.aData.PATH+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
-                                "编辑"+
+                                "查看图片"+
+                            "</a>"+
+                            "<a class='btn btn-success' href='/yh/warehouse/edit/"+obj.aData.ID+"'>"+
+                            "<i class='fa fa-edit fa-fw'></i>"+
+                            "编辑"+
                             "</a>"+
                             "<a class='btn btn-danger' href='/yh/warehouse/delete/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
@@ -35,4 +39,14 @@ $(document).ready(function() {
             }                         
         ],      
     });	
+    
+    /*$("#eeda-table").on('click', '.picture', function(e){
+		  e.preventDefault();
+		  //异步向后台提交数据
+		  var picture = $(this).attr('picture');
+		  //alert(picture);
+		  $.post("/yh/warehouse/showPicture?picturePath="+picture,function(data){
+             
+         },'json');
+		});*/
 } );

@@ -1,7 +1,8 @@
 
 
 <%layout("/yh/layout.html"){%>
-
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
         <div id="page-wrapper">
             
             <div class="row">
@@ -23,31 +24,28 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="table-responsive">
-                            <table cellpadding="3" cellspacing="0" border="0" style="width: 67%; margin: 0 auto 2em auto;">
-							        <thead>
-							            <tr>
-							                <th>Target</th>
-							                <th>Filter text</th>
-							                <th>Treat as regex</th>
-							                <th>Use smart filter</th>
-							            </tr>
-							        </thead>
-							 
-							        <tbody>
-							            <tr id="filter_global">
-							                <td>订单号</td>
-							                <td align="center"><input type="text" class="global_filter" id="global_filter"></td>
-							                <td align="center"><input type="checkbox" class="global_filter" id="global_regex"></td>
-							                <td align="center"><input type="checkbox" class="global_filter" id="global_smart" checked="checked"></td>
-							            </tr>
-							            <tr id="filter_col1" data-column="0">
-							                <td>状态</td>
-							                <td align="center"><input type="text" class="column_filter" id="col0_filter"></td>
-							                <td align="center"><input type="checkbox" class="column_filter" id="col0_regex"></td>
-							                <td align="center"><input type="checkbox" class="column_filter" id="col0_smart" checked="checked"></td>
-							            </tr>
-							        </tbody>
-							    </table>
+                                                        订单号<input type="text" class="orderNo_filter" id="orderNo_filter">
+                                                        状态<input type="text" class="status_filter" id="status_filter">
+                                                        提货地点<input type="text" class="address_filter" id="address_filter">
+                                                        客户<input type="text" class="customer_filter" id="customer_filter">
+                                                        供应商<input type="text" class="sp_filter" id="sp_filter">
+                            <!--  下单时间<input type="text" class="beginTime_filter" id="beginTime_filter"> - 到达时间<input type="text" class="endTime_filter" id="endTime_filter" -->
+	                        <label>开始时间</label>	
+	                        <div id="datetimepicker" class="input-append date">  
+							    <input id="beginTime_filter" class="beginTime_filter" type="text"></input>
+							    <span class="add-on">  
+						        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+						    	</span>  
+							</div>	<br/>
+							<label>结束时间</label>	
+	                        <div id="datetimepicker2" class="input-append date">  
+							    <input id="endTime_filter" class="endTime_filter" type="text"></input>
+							    <span class="add-on">  
+						        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+						    	</span>  
+							</div>	<br/><br/><br/><br/><br/>
+									
+                                   
                                 <table class="table table-striped table-bordered table-hover" id="eeda-table">
                                     <thead>
                                         <tr>
@@ -56,6 +54,10 @@
                                             <th>货品属性</th>
                                             <th>提货方式</th>
                                             <th>到达方式</th>
+                                            <th>提货地点</th>
+                                            <th>下单时间</th>
+                                            <th>客户</th>
+                                            <th>供应商</th>
                                             <th>备注</th>
                                             <th></th>
                                         </tr>
@@ -81,4 +83,30 @@
  <!-- Page-Level Plugin Scripts - Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="/yh/js/bootstrap.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/transferOrder/list.js"></script>
+
+<script type="text/javascript">  
+      $('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'en',  
+        pickDate: true,  
+        pickTime: true,  
+        hourStep: 1,  
+        minuteStep: 15,  
+        secondStep: 30,  
+        inputMask: true  
+      });
+      $('#datetimepicker2').datetimepicker({  
+          format: 'yyyy-MM-dd',  
+          language: 'en',  
+          pickDate: true,  
+          pickTime: true,  
+          hourStep: 1,  
+          minuteStep: 15,  
+          secondStep: 30,  
+          inputMask: true  
+        });
+</script>  
+

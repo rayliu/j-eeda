@@ -43,6 +43,10 @@ $(document).ready(function() {
             		}else{
             			return "入中转仓";
             		}}},
+            {"mDataProp":"ADDRESS"},
+            {"mDataProp":"CREATE_STAMP"},
+            {"mDataProp":"CNAME"},
+            {"mDataProp":"SPNAME"},
             {"mDataProp":"REMARK"},
             { 
                 "mDataProp": null,  
@@ -77,36 +81,87 @@ $(document).ready(function() {
            },'json');
 		});
     
-    function filterGlobal () {
-        $('#eeda-table').DataTable().search(
-            $('#global_filter').val(),
-            $('#global_regex').prop('checked'),
-            $('#global_smart').prop('checked')
-        ).draw();
-    }
-     
-    function filterColumn ( i ) {
-        $('#eeda-table').DataTable().column( i ).search(
-            $('#col'+i+'_filter').val(),
-            $('#col'+i+'_regex').prop('checked'),
-            $('#col'+i+'_smart').prop('checked')
-        ).draw();
-    }
-    
-    $('input.global_filter').on( 'keyup click', function () {
-    	var orderNo = $("#global_filter").val();
-    	var status = $("#col0_filter").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status;
+    $('input.orderNo_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var sp = $("#sp_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
     	transferOrder.fnDraw(); 
-    	//filterGlobal();
     } );
  
-    $('input.column_filter').on( 'keyup click', function () {
-    	var orderNo = $("#global_filter").val();
-    	var status = $("#col0_filter").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status;
+    $('input.status_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var sp = $("#sp_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
     	transferOrder.fnDraw();
-    	//alert("column");
-        //filterColumn( $(this).parents('tr').attr('data-column') );
+    } );
+    
+    $('input.address_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var sp = $("#sp_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	transferOrder.fnDraw();
+    } );
+    
+    $('input.customer_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var sp = $("#sp_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	transferOrder.fnDraw();
+    } );
+    
+    $('input.sp_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var sp = $("#sp_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	transferOrder.fnDraw();
+    } );
+    
+    $('input.beginTime_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var sp = $("#sp_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	transferOrder.fnDraw();
+    } );
+    
+    $('input.endTime_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var sp = $("#sp_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	transferOrder.fnDraw();
     } );
 } );
