@@ -19,6 +19,10 @@ $(document).ready(function() {
             {"mDataProp":"WAREHOUSE_DESC"},
             {"mDataProp":"CONTACT_PERSON"},        	
             {"mDataProp":"PHONE"},
+            /*{"mDataProp":"",
+            	"fnRender": function(obj) {
+            			return "<a href='"+obj.aData.PATH+"'>查看图片</a>";
+            		}},*/
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                

@@ -82,7 +82,7 @@ public class TransferOrderController extends Controller {
 	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 	        }
 	
-	        String sqlTotal = "select count(1) from transfer_order to "
+	        String sqlTotal = "select count(1) total from transfer_order to "
 							+" left join party p1 on to.customer_id = p1.id "
 							+" left join party p2 on to.sp_id = p2.id "
 							+" left join contact c1 on p1.contact_id = c1.id"

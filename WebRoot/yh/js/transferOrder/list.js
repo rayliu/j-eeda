@@ -164,4 +164,8 @@ $(document).ready(function() {
     	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
     	transferOrder.fnDraw();
     } );
+    
+    $().load(function(){
+    	alert("hehehhe");
+    });
 } );
