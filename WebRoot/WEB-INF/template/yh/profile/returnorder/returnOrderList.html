@@ -1,6 +1,7 @@
 
 <%layout("/yh/layout.html"){%>
-
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
  
 
     <div id="wrapper">
@@ -24,14 +25,25 @@
                           <div class="">
                         		 <div class="form-group">
                         		
-                                        <label>回单号</label> <input class=" input-inline input-small" type="text" id="order_no">
-                                         <label>运输单号</label> <input class=" input-inline input-small" type="text" id="tr_order_no">
-                                         <label>配送单号</label> <input class=" input-inline input-small" type="text" id="de_order_no">
-                                         <label>创建人</label> <input class=" input-inline input-small" type="text" id="stator">
-                                         <label>状态</label> <input class=" input-inline input-small" type="text" id="status">
-                                          <label>时间段</label> <input class=" input-inline input-small" type="text" id="time_one">
-                                          -
-                                          <input class=" input-inline input-small" type="text" id="time_two">
+                                        <label class="input-inline">回单号</label> <input class=" input-inline input-small" type="text" id="order_no">
+                                         <label class="input-inline">运输单号</label> <input class=" input-inline input-small" type="text" id="tr_order_no">
+                                         <label class="input-inline">配送单号</label> <input class=" input-inline input-small" type="text" id="de_order_no">
+                                         <label class="input-inline">创建人</label> <input class=" input-inline input-small" type="text" id="stator">
+                                         <label class="input-inline">状态</label> <input class=" input-inline input-small" type="text" id="status">
+                                          <label class="input-inline">时间段</label> <div class="input-append input-inline input-small date" id="datetimepicker">  
+							    <input type="text" class="input-inline input-small" id="time_one">
+							    <span class="add-on">  
+						        <i data-date-icon="icon-calendar" data-time-icon="icon-time" class="icon-calendar"></i>  
+						    	</span>  
+							</div>
+							
+							&nbsp至
+                            <div id="datetimepicker2" class="input-append input-inline date ">  
+							    <input id="time_two" class="input-inline input-small" type="text"></input>
+							    <span class="add-on">  
+						        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+						    	</span>  
+							</div>
                                     </div>  
                     		</div>
                             <div class="table-responsive">
@@ -77,9 +89,29 @@
     <!-- Page-Level Plugin Scripts - Tables -->
     <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
     <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
-
+	<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>
+    $('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'en',  
+        pickDate: true,  
+        pickTime: true,  
+        hourStep: 1,  
+        minuteStep: 15,  
+        secondStep: 30,  
+        inputMask: true  
+      });
+      $('#datetimepicker2').datetimepicker({  
+          format: 'yyyy-MM-dd',  
+          language: 'en',  
+          pickDate: true,  
+          pickTime: true,  
+          hourStep: 1,  
+          minuteStep: 15,  
+          secondStep: 30,  
+          inputMask: true  
+        });
     $(document).ready(function() {
     	
       $('#menu_return').addClass('active').find('ul').addClass('in');
@@ -161,18 +193,25 @@
       $("#cancel").click(function(){
       	$("#routeItemFormDiv").hide();
       });
-      $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two").on( 'keyup click', function () {
-    	 	
+      $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two").on( 'keyup click', function () {    	 	
       	var order_no = $("#order_no").val();
       	var tr_order_no = $("#tr_order_no").val();
-    	var de_order_no = $("#tr_order_no").val();
+    	var de_order_no = $("#de_order_no").val();
       	var stator = $("#stator").val();    	
       	var status = $("#status").val();
       	var time_one = $("#time_one").val();
       	var time_two = $("#time_two").val();
+      	if (status=="新建") {
+      		status ="new";
+		}
+		if (status=="确认") {
+			status = "confirmed";
+		}
+		if (status=="取消") {
+			status ="cancel";
+		}
       	dataTable.fnSettings().sAjaxSource = "/yh/returnorder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&stator="+stator+"&status="+status+"&time_one="+time_one+"&time_two="+time_two;
-      	dataTable.fnDraw(); 
-      
+      	dataTable.fnDraw();
       });
 
    });

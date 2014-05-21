@@ -61,6 +61,12 @@ public class ReturnOrderControllers extends Controller {
 			orderMap.put("aaData", orders);
 
 		} else {
+			if (time_one == null || "".equals(time_one)) {
+				time_one = "1-1-1";
+			}
+			if (time_two == null || "".equals(time_two)) {
+				time_two = "9999-12-31";
+			}
 			// 获取总条数
 			String totalWhere = "";
 			String sql = "select count(1) total from return_order ";
@@ -76,16 +82,17 @@ public class ReturnOrderControllers extends Controller {
 			                + "left join contact c on p.contact_id = c.id "
 			                + "where ro.ORDER_NO like '%"
 			                + order_no
-			                + "%' and  ro.TRANSFER_ORDER_ID like '%"
+			                + "%' and  to.order_no like '%"
 			                + tr_order_no
-			                + "%' and ro.DELIVERY_ORDER_ID like '%"
+			                + "%' and do.order_no like '%"
 			                + de_order_no
 			                + "%' and ro.CREATOR like '%"
 			                + stator
-			                + "%' and ro.CREATE_DATE like '%"
-			                + time_one
 			                + "%' and ro.TRANSACTION_STATUS like'%"
-			                + status + "%'  ");
+			                + status
+			                + "%' and ro.CREATE_DATE between '"
+			                + time_one
+			                + "' and '" + time_two + "' ");
 
 			orderMap.put("sEcho", pageIndex);
 			orderMap.put("iTotalRecords", rec.getLong("total"));
