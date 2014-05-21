@@ -23,27 +23,60 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
+                            <form role="form" style="margin: 0 15px;">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>订单号</label>
+                                        <input type="text" class="orderNo_filter" id="orderNo_filter" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>状态</label>
+                                        <input type="text" class="status_filter" id="status_filter">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>提货地点</label>
+                                        <input type="text" class="address_filter" id="address_filter">
+                                    </div>
+                                </div>
+                                <!-- end of col-lg-6-->
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>客户</label>
+                                        <input type="text" class="customer_filter" id="customer_filter">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>供应商</label>
+                                        <input type="text" class="sp_filter" id="sp_filter">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>开始时间</label> 
+                                        <div id="datetimepicker" class="input-append date">  
+                                            <input id="beginTime_filter" class="beginTime_filter" type="text">
+                                            <span class="add-on">  
+                                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                            </span>  
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>结束时间</label> 
+                                        <div id="datetimepicker2" class="input-append date">  
+                                            <input id="endTime_filter" class="endTime_filter" type="text">
+                                            <span class="add-on">  
+                                            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                            </span>  
+                                        </div>
+                                    </div>
+                                    
+                                    <!--  下单时间<input type="text" class="beginTime_filter" id="beginTime_filter"> - 到达时间<input type="text" class="endTime_filter" id="endTime_filter" -->
+                                </div>
+                                <!-- end of col-lg-6-->
+                            </div><!-- end of row-->
+                            </form>
                             <div class="table-responsive">
-                                                        订单号<input type="text" class="orderNo_filter" id="orderNo_filter" value="">
-                                                        状态<input type="text" class="status_filter" id="status_filter">
-                                                        提货地点<input type="text" class="address_filter" id="address_filter">
-                                                        客户<input type="text" class="customer_filter" id="customer_filter">
-                                                        供应商<input type="text" class="sp_filter" id="sp_filter">
-                            <!--  下单时间<input type="text" class="beginTime_filter" id="beginTime_filter"> - 到达时间<input type="text" class="endTime_filter" id="endTime_filter" -->
-	                        <label>开始时间</label>	
-	                        <div id="datetimepicker" class="input-append date">  
-							    <input id="beginTime_filter" class="beginTime_filter" type="text"></input>
-							    <span class="add-on">  
-						        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-						    	</span>  
-							</div>	<br/>
-							<label>结束时间</label>	
-	                        <div id="datetimepicker2" class="input-append date">  
-							    <input id="endTime_filter" class="endTime_filter" type="text"></input>
-							    <span class="add-on">  
-						        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-						    	</span>  
-							</div>	<br/><br/><br/><br/><br/>
+                                                        
+                                                        
+                                                        	<br/><br/><br/><br/><br/>
                                    
                                 <table class="table table-striped table-bordered table-hover" id="eeda-table">
                                     <thead>
