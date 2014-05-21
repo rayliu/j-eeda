@@ -92,7 +92,7 @@
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>公司简介</label>
-												<textarea class="form-control" rows="3" name="introduction">${party.introduction!''}</textarea>
+												<textarea class="form-control" rows="3" name="introduction">${contact.introduction!''}</textarea>
                                             </div>
                                         </fieldset>
                                     </div>
@@ -100,16 +100,22 @@
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>备注</label>
-												<textarea class="form-control" rows="3" name="remark">${party.remark!''}</textarea>
+												<textarea class="form-control" rows="3" name="remark">${contact.remark!''}</textarea>
                                             </div>
                                         </fieldset>
                                     </div>
-									<div class="col-lg-6">
+									<div class="col-lg-7">
                                         <fieldset>
-                                            <div class="form-group">
-                                                <label>客户所在地</label>
-                                                <input class="form-control" id="location" type="text" name="location" value="${party.location!''}">
-                                            </div>
+                                        	<label>客户所在地</label>
+                                                <input id="location" type="hidden" name="location" value="${contact.location!''}">
+		                                            <div class="form-group">
+		                                                <label>省</label>
+		                                                <select id="mbProvince" style="width:150px" name="mbProvince" value=""></select>
+		                                                <label>市</label>
+		                                                <select  id="cmbCity" style="width:150px" name="cmbCity" value=""></select>
+		                                                <label>区(县)</label>
+		                                                <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
+		                                            </div>
                                         </fieldset>
                                     </div>
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
@@ -142,6 +148,14 @@
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script>
     $(document).ready(function() {
+    	var province = '${location.province!''}';
+    	var city= '${location.city!''}';
+    	var district = '${location.district!''}';
+    	
+    	$("#mbProvince").val(province);
+    	$("#cmbCity").val(city);
+    	$("#cmbArea").val(district);
+    	
         $('#customerForm').validate({
             rules: {
               company_name: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
@@ -164,5 +178,53 @@
                 element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
             }
         });
+        //获取全国省份
+       $(function(){
+        	var province = $("#mbProvince");
+        	$.post('/yh/serviceProvider/province',function(data){
+        		province.append("<option>--请选择省份--</option>");
+        		for(var i = 0; i < data.length; i++)
+				{
+        			province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");
+				}
+        		
+        	},'json');
+       });
+        //获取省份的城市
+        $('#mbProvince').on('change', function(){
+        	//var inputStr = $(this).parent("option").attr('id'); 
+			var inputStr = $(this).val();
+			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+				var cmbCity =$("#cmbCity");
+				cmbCity.empty();
+				cmbCity.append("<option>--请选择城市--</option>");
+				for(var i = 0; i < data.length; i++)
+				{
+					cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");
+				}
+				toLocationList.show();
+			},'json');
+		});
+        //获取城市的区县
+        $('#cmbCity').on('change', function(){
+        	//var inputStr = $(this).parent("option").attr('id'); 
+			var inputStr = $(this).val();
+			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+				var cmbArea =$("#cmbArea");
+				cmbArea.empty();
+				cmbArea.append("<option>--请选择区(县)--</option>");
+				for(var i = 0; i < data.length; i++)
+				{
+					cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");
+				}
+				toLocationList.show();
+			},'json');
+		});
+        
+        $('#cmbArea').on('change', function(){
+        	//var inputStr = $(this).parent("option").attr('id'); 
+			var inputStr = $(this).val();
+			var code = $("#location").val(inputStr);
+		}); 
     });
 </script>

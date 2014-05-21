@@ -200,22 +200,12 @@ $(document).ready(function() {
 
 					var delivery_id = $("#delivery_id").val();
 					$.post('/yh/deliveryOrderMilestone/departureConfirmation',{delivery_id:delivery_id},function(data){
-						var MilestoneTbody = $("#MilestoneTbody");
+						var MilestoneTbody = $("#transferOrderMilestoneTbody");
 						MilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 					},'json');
 					$("#ConfirmationBtn").attr("disabled", true);
 					$("#receiptBtn").attr("disabled", false);
 					
-					var delivery_id = $("#delivery_id").val(); 
-				  	$("#transfer_milestone_delivery_id").val(delivery_id); 
-					$.post('/yh/deliveryOrderMilestone/transferOrderMilestoneList',{delivery_id:delivery_id},function(data){
-						var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
-						transferOrderMilestoneTbody.empty();
-						for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
-						{
-							transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
-						}
-					},'json');  
 				});
 				
 				// 运输里程碑

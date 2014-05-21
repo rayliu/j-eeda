@@ -57,9 +57,9 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists order_item(id bigint auto_increment PRIMARY KEY, order_id bigint, item_name VARCHAR(50), item_desc VARCHAR(50), quantity decimal(10,2), unit_price decimal(10,2), status varchar(50), FOREIGN KEY(order_id) REFERENCES order_header(id) );");
 
             // party 当事人，可以有各种type
-            stmt.executeUpdate("create table if not exists party(id bigint auto_increment PRIMARY KEY, party_type VARCHAR(32), contact_id bigint, create_date TIMESTAMP, creator varchar(50), last_update_date TIMESTAMP, last_updator varchar(50), status varchar(50), location varchar(255), introduction varchar(5120), remark VARCHAR(5120));");
+            stmt.executeUpdate("create table if not exists party(id bigint auto_increment PRIMARY KEY, party_type VARCHAR(32), contact_id bigint, create_date TIMESTAMP, creator varchar(50), last_update_date TIMESTAMP, last_updator varchar(50), status varchar(50),remark VARCHAR(255));");
             stmt.executeUpdate("create table if not exists party_attribute(id bigint auto_increment PRIMARY KEY, party_id bigint, attr_name varchar(60), attr_value VARCHAR(255), create_date TIMESTAMP, creator varchar(50), FOREIGN KEY(party_id) REFERENCES party(id));");
-            stmt.executeUpdate("create table if not exists contact(id bigint auto_increment PRIMARY KEY, company_name varchar(100), contact_person varchar(100), email varchar(100), mobile varchar(100), phone varchar(100), address VARCHAR(255), city varchar(100), postal_code varchar(60),"
+            stmt.executeUpdate("create table if not exists contact(id bigint auto_increment PRIMARY KEY, company_name varchar(100), contact_person varchar(100),location varchar(255),introduction varchar(255),email varchar(100), mobile varchar(100), phone varchar(100), address VARCHAR(255), city varchar(100), postal_code varchar(60),"
                     + " create_date TIMESTAMP, Last_updated_stamp TIMESTAMP);");
 
             // product 产品
@@ -141,6 +141,12 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into location(code, name, pcode) values('120100', '天津市', '120000');");
             stmt.executeUpdate("insert into location(code, name, pcode) values('110105', '宣武区', '120100');");
             stmt.executeUpdate("insert into location(code, name, pcode) values('120101', '和平区', '120100');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('440000', '广东省', '1');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('440100', '广州市', '440000');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('440106', '白云区', '440100');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('440400', '珠海市', '440000');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('440402', '香洲区', '440400');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('440403', '斗门区', '440400');");
 
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('1201', '广州分公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','自营','这是一家公司');");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','控股','这是一家公司');");
@@ -543,7 +549,7 @@ public class DataInitUtil {
                 .set("contact_person", "温生").set("email", "test@test.com");
         contact.set("mobile", "12345671").set("phone", "113527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
-                .set("postal_code", "5190001").save();
+                .set("postal_code", "5190001").set("location", "110101").save();
         Contact contact7 = new Contact();
         contact7.set("company_name", "珠海博兆计算机科技有限公司")
                 .set("contact_person", "温生").set("email", "test@test.com");
@@ -555,7 +561,7 @@ public class DataInitUtil {
                 .set("email", "test@test.com");
         contact2.set("mobile", "12345672").set("phone", "213527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场2")
-                .set("postal_code", "5190002").save();
+                .set("postal_code", "5190002").set("location", "110102").save();
         Contact contact3 = new Contact();
         contact3.set("company_name", "上海运输公司").set("contact_person", "李生")
                 .set("email", "test@test.com");

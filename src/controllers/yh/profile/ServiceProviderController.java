@@ -27,8 +27,8 @@ public class ServiceProviderController extends Controller {
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-    	if(LoginUserController.isAuthenticated(this))
-        render("profile/serviceProvider/serviceProviderList.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("profile/serviceProvider/serviceProviderList.html");
     }
 
     public void list() {
@@ -63,8 +63,8 @@ public class ServiceProviderController extends Controller {
 
     public void add() {
         setAttr("saveOK", false);
-        if(LoginUserController.isAuthenticated(this))
-        render("profile/serviceProvider/serviceProviderEdit.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("profile/serviceProvider/serviceProviderEdit.html");
     }
 
     public void edit() {
@@ -73,33 +73,42 @@ public class ServiceProviderController extends Controller {
         Party party = Party.dao.findById(id);
         setAttr("party", party);
 
-        Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="+id);
+        Contact contact = Contact.dao
+                .findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
+                        + id);
         setAttr("contact", contact);
-        if(LoginUserController.isAuthenticated(this))
-        render("profile/serviceProvider/serviceProviderEdit.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("profile/serviceProvider/serviceProviderEdit.html");
     }
 
     public void delete() {
         long id = getParaToLong();
-        
+
         Party party = Party.dao.findById(id);
-        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where sp_id="+party.get("id"));
-        for(TransferOrder transferOrder : transferOrders){
-        	transferOrder.set("sp_id", null);
-        	transferOrder.update();
+        List<TransferOrder> transferOrders = TransferOrder.dao
+                .find("select * from transfer_order where sp_id="
+                        + party.get("id"));
+        for (TransferOrder transferOrder : transferOrders) {
+            transferOrder.set("sp_id", null);
+            transferOrder.update();
         }
-        List<DeliveryOrder> deliveryOrders = DeliveryOrder.dao.find("select * from delivery_order where sp_id="+party.get("id"));
-        for(DeliveryOrder deliveryOrder : deliveryOrders){
-        	deliveryOrder.set("sp_id", null);
-        	deliveryOrder.update();
+        List<DeliveryOrder> deliveryOrders = DeliveryOrder.dao
+                .find("select * from delivery_order where sp_id="
+                        + party.get("id"));
+        for (DeliveryOrder deliveryOrder : deliveryOrders) {
+            deliveryOrder.set("sp_id", null);
+            deliveryOrder.update();
         }
 
-        Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="+id);;
+        Contact contact = Contact.dao
+                .findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
+                        + id);
+        ;
         contact.delete();
 
         party.delete();
-        if(LoginUserController.isAuthenticated(this))
-        redirect("/yh/serviceProvider");
+        if (LoginUserController.isAuthenticated(this))
+            redirect("/yh/serviceProvider");
     }
 
     public void save() {
@@ -110,14 +119,14 @@ public class ServiceProviderController extends Controller {
         Date createDate = Calendar.getInstance().getTime();
         if (id != null && !id.equals("")) {
             party = Party.dao.findById(id);
-            party = Party.dao.findById(id);
-			party.set("last_update_date", createDate);
-			party.set("location", getPara("location"));
-			party.set("introduction", getPara("introduction"));
-			party.set("remark", getPara("remark"));
-			party.update();
+            party.set("last_update_date", createDate);
+            party.set("remark", getPara("remark"));
+            party.update();
 
-			contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="+id);;
+            contact = Contact.dao
+                    .findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
+                            + id);
+            ;
             setContact(contact);
             contact.update();
         } else {
@@ -128,28 +137,49 @@ public class ServiceProviderController extends Controller {
             party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
             party.set("contact_id", contact.getLong("id"));
             party.set("creator", currentUser.getPrincipal());
-			party.set("create_date", createDate);
-			party.set("location", getPara("location"));
-			party.set("introduction", getPara("introduction"));
-			party.set("remark", getPara("remark"));
+            party.set("create_date", createDate);
+            party.set("remark", getPara("remark"));
             party.save();
 
         }
 
         setAttr("saveOK", true);
-        if(LoginUserController.isAuthenticated(this))
-        render("profile/serviceProvider/serviceProviderList.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("profile/serviceProvider/serviceProviderList.html");
     }
 
     private void setContact(Contact contact) {
         contact.set("company_name", getPara("company_name"));
         contact.set("contact_person", getPara("contact_person"));
+        contact.set("location", getPara("location"));
         contact.set("email", getPara("email"));
         contact.set("mobile", getPara("mobile"));
         contact.set("phone", getPara("phone"));
         contact.set("address", getPara("address"));
+        contact.set("introduction", getPara("introduction"));
         contact.set("city", getPara("city"));
         contact.set("postal_code", getPara("postal_code"));
     }
 
+    public void province() {
+        List<Record> locationList = Db
+                .find("select * from location where pcode ='1'");
+        renderJson(locationList);
+    }
+
+    public void city() {
+        String cityId = getPara("id");
+        System.out.println(cityId);
+        List<Record> locationList = Db
+                .find("select * from location where pcode ='" + cityId + "'");
+        renderJson(locationList);
+    }
+
+    public void area() {
+        String areaId = getPara("id");
+        System.out.println(areaId);
+        List<Record> locationList = Db
+                .find("select * from location where pcode ='" + areaId + "'");
+        renderJson(locationList);
+    }
 }
