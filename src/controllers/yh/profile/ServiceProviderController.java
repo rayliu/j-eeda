@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Location;
 import models.Party;
 import models.TransferOrder;
 import models.yh.delivery.DeliveryOrder;
@@ -181,5 +182,17 @@ public class ServiceProviderController extends Controller {
         List<Record> locationList = Db
                 .find("select * from location where pcode ='" + areaId + "'");
         renderJson(locationList);
+    }
+    
+    public void searchAllCity(){
+    	String province = getPara("province");
+    	List<Location> locations = Location.dao.find("select * from location where name in (select name from location where pcode=(select code from location where name = '"+province+"'))");
+    	renderJson(locations);
+    }
+    
+    public void searchAllDistrict(){
+    	String city = getPara("city");
+    	List<Location> locations = Location.dao.find("select * from location where pcode=(select code from location where name = '"+city+"')");
+    	renderJson(locations);
     }
 }
