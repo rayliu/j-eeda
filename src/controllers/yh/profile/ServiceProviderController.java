@@ -77,8 +77,8 @@ public class ServiceProviderController extends Controller {
         String code = locationCode.get("location");
 
         Location location = Location.dao
-                .findFirst("select t.name as province,t1.name as city,t3.name as district,t3.code FROM location t left join location t1 on t.code=t1.pcode inner join location t3 on t3.pcode=t1.code and t3.code="
-                        + code);
+                .findFirst("select t.name as province,t1.name as city,t3.name as district,t3.code FROM location t left join location t1 on t.code=t1.pcode inner join location t3 on t3.pcode=t1.code and t3.code='"
+                        + code + "'");
         System.out.println(location);
         setAttr("location", location);
 

@@ -60,26 +60,13 @@ $(document).ready(function() {
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
+	        "bServerSide": true,
 	        "sAjaxSource": "/yh/location/listLocation",
 			"aoColumns": [
 				{ "mDataProp": "PROVINCE" },
 	            { "mDataProp": "CITY" },
 	            { "mDataProp": "DISTRICT" },
 	            { "mDataProp": "NAME" }
-	            /* { 
-	                "mDataProp": null, 
-	                "sWidth": "13%",
-	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-info' href='/yh/loginUser/edit/"+obj.aData.ID+"'>"+
-	                                "<i class='fa fa-edit'> </i> "+
-	                                "编辑"+
-	                            "</a>"+
-	                            "<a class='btn btn-danger' href='/yh/loginUser/del/"+obj.aData.ID+"'>"+
-	                                "<i class='icon-trash icon-white'></i>"+ 
-	                                "删除"+
-	                            "</a>";
-	                }
-	            }  */
 	            ]
 	} );
 		

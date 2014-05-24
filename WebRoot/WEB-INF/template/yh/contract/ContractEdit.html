@@ -1,5 +1,6 @@
 ﻿<%layout("/yh/layout.html"){%>
 <link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<!-- <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet"> -->
 
  <div id="page-wrapper">
     
@@ -182,9 +183,9 @@
 									      </div>
 									      <div class="modal-body">
 										     	<form id="routeItemForm" action="" method="post">
-			                                        <input id="routeContractId" name="routeContractId" type="text" value="${ul.id!''}">
-			                             	 		<input id="routeItemId" name="routeItemId" type="text" value ="">
-			                                        <input id="routeId" name="routeId" type="text" value="">
+			                                        <input id="routeContractId" name="routeContractId" type="hidden" value="${ul.id!''}">
+			                             	 		<input id="routeItemId" name="routeItemId" type="hidden" value ="">
+			                                        <input id="routeId" name="routeId" type="hidden" value="">
 			                                        <!-- 根据 始发地 和 目的地 找到 干线id-->
 			                                        <div class="modal-body">
 			                                        

@@ -32,6 +32,9 @@ public class DataInitUtil {
 
             stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment PRIMARY KEY,contract_id bigint,route_id bigint,Fin_item_id bigint,amount Double,remark VARCHAR(255));");
 
+            // location init
+            LocationDataInit.initLocation(stmt);
+
             // 配送单
             stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment PRIMARY KEY,Order_no VARCHAR(50),Transfer_order_id VARCHAR(50), customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status VARCHAR(50),cargo_nature Varchar(20),from_warehouse_code Varchar(20),Remark Varchar(255),Create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp);");
 
@@ -130,23 +133,6 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('demo', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('jason', '123456', '1-6');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('110000', '北京', '1');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('110100', '北京市', '110000');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('110101', '东城区', '110100');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('110102', '西城区', '110100');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('110103', '崇文区', '110100');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('110104', '朝阳区', '110100');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('110105', '宣武区', '110100');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('120000', '天津', '1');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('120100', '天津市', '120000');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('120102', '河东区', '120100');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('120101', '和平区', '120100');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('440000', '广东省', '1');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('440100', '广州市', '440000');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('440106', '白云区', '440100');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('440400', '珠海市', '440000');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('440402', '香洲区', '440400');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('440403', '斗门区', '440400');");
 
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('1201', '广州分公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','自营','这是一家公司');");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','控股','这是一家公司');");

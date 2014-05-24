@@ -74,14 +74,14 @@ $(document).ready(function() {
 	            { "mDataProp": "COMPANY_INTRO" },
 	            { 
 	                "mDataProp": null, 
-	                "sWidth": "15%",
+	                "sWidth": "18%",
 	                "fnRender": function(obj) {                    
 	                    return "<a class='btn btn-info' href='/yh/office/edit/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-edit'> </i> "+
 	                                "编辑"+
 	                            "</a>"+
 	                            "<a class='btn btn-danger' href='/yh/office/del/"+obj.aData.ID+"'>"+
-	                                "<i class='fa fa-bitbucket'></i>"+ 
+	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
 	                                "删除"+
 	                            "</a>";
 	                }
