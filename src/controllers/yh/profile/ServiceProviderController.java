@@ -48,7 +48,7 @@ public class ServiceProviderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select p.id, p.creator, p.create_date, c.company_name, c.contact_person from party p, contact c where p.party_type='SERVICE_PROVIDER' and p.contact_id=c.id order by p.create_date desc ";
+        String sql = "select *,p.id as pid from party p, contact c where p.party_type='SERVICE_PROVIDER' and p.contact_id=c.id order by p.create_date desc ";
 
         List<Record> customers = Db.find(sql);
 
@@ -72,6 +72,16 @@ public class ServiceProviderController extends Controller {
         long id = getParaToLong();
 
         Party party = Party.dao.findById(id);
+        Contact locationCode = Contact.dao.findById(party.get("contact_id"),
+                "location");
+        String code = locationCode.get("location");
+
+        Location location = Location.dao
+                .findFirst("select t.name as province,t1.name as city,t3.name as district,t3.code FROM location t left join location t1 on t.code=t1.pcode inner join location t3 on t3.pcode=t1.code and t3.code="
+                        + code);
+        System.out.println(location);
+        setAttr("location", location);
+
         setAttr("party", party);
 
         Contact contact = Contact.dao
@@ -154,6 +164,7 @@ public class ServiceProviderController extends Controller {
         contact.set("contact_person", getPara("contact_person"));
         contact.set("location", getPara("location"));
         contact.set("email", getPara("email"));
+        contact.set("abbr", getPara("abbr"));
         contact.set("mobile", getPara("mobile"));
         contact.set("phone", getPara("phone"));
         contact.set("address", getPara("address"));
@@ -183,16 +194,20 @@ public class ServiceProviderController extends Controller {
                 .find("select * from location where pcode ='" + areaId + "'");
         renderJson(locationList);
     }
-    
-    public void searchAllCity(){
-    	String province = getPara("province");
-    	List<Location> locations = Location.dao.find("select * from location where name in (select name from location where pcode=(select code from location where name = '"+province+"'))");
-    	renderJson(locations);
+
+    public void searchAllCity() {
+        String province = getPara("province");
+        List<Location> locations = Location.dao
+                .find("select * from location where name in (select name from location where pcode=(select code from location where name = '"
+                        + province + "'))");
+        renderJson(locations);
     }
-    
-    public void searchAllDistrict(){
-    	String city = getPara("city");
-    	List<Location> locations = Location.dao.find("select * from location where pcode=(select code from location where name = '"+city+"')");
-    	renderJson(locations);
+
+    public void searchAllDistrict() {
+        String city = getPara("city");
+        List<Location> locations = Location.dao
+                .find("select * from location where pcode=(select code from location where name = '"
+                        + city + "')");
+        renderJson(locations);
     }
 }

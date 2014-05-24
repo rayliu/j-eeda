@@ -30,16 +30,36 @@ $(document).ready(function() {
         "sAjaxSource": "/yh/serviceProvider/list",
         "aoColumns": [   
             
-            {"mDataProp":"ID"},
             {"mDataProp":"COMPANY_NAME"},
+            {"mDataProp":"ABBR"},
             {"mDataProp":"CONTACT_PERSON"},        	
-            {"mDataProp":"CREATOR"},
-            {"mDataProp":"CREATE_DATE", "sWidth": "10%"},
+            {"mDataProp":"PHONE"},
+            {"mDataProp":"ADDRESS"},
+            { 
+                "mDataProp": null, 
+                "fnRender": function(obj) {
+                	var returnString ="";
+                	console.log(obj.aData.ID);
+                	$.ajax({  	
+                			type : "post",  
+                			url : "/yh/customer/location/"+obj.aData.ID, 
+                		  	async : false,  
+                		  	success : function(data){  
+                		  		console.log(data);
+                		  		for(var i = 0; i < data.length; i++)
+        						{
+                		  				returnString+="<lable>"+data[i].DNAME+"</lable>"
+                		  		}
+                		    }  
+                	 });
+                	return returnString+"</lable>";
+                }
+            },
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' href='/yh/serviceProvider/edit/"+obj.aData.ID+"'>"+
+                    return "<a class='btn btn-success' href='/yh/serviceProvider/edit/"+obj.aData.PID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+
                             "</a>"+

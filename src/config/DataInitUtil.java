@@ -57,9 +57,9 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists order_item(id bigint auto_increment PRIMARY KEY, order_id bigint, item_name VARCHAR(50), item_desc VARCHAR(50), quantity decimal(10,2), unit_price decimal(10,2), status varchar(50), FOREIGN KEY(order_id) REFERENCES order_header(id) );");
 
             // party 当事人，可以有各种type
-            stmt.executeUpdate("create table if not exists party(id bigint auto_increment PRIMARY KEY, party_type VARCHAR(32), contact_id bigint, create_date TIMESTAMP, creator varchar(50), last_update_date TIMESTAMP, last_updator varchar(50), status varchar(50),remark VARCHAR(255));");
+            stmt.executeUpdate("create table if not exists party(id bigint auto_increment PRIMARY KEY, party_type VARCHAR(32), contact_id bigint, create_date TIMESTAMP, creator varchar(50), last_update_date TIMESTAMP, last_updator varchar(50), status varchar(50),remark VARCHAR(255),receipt varchar(50));");
             stmt.executeUpdate("create table if not exists party_attribute(id bigint auto_increment PRIMARY KEY, party_id bigint, attr_name varchar(60), attr_value VARCHAR(255), create_date TIMESTAMP, creator varchar(50), FOREIGN KEY(party_id) REFERENCES party(id));");
-            stmt.executeUpdate("create table if not exists contact(id bigint auto_increment PRIMARY KEY, company_name varchar(100), contact_person varchar(100),location varchar(255),introduction varchar(255),email varchar(100), mobile varchar(100), phone varchar(100), address VARCHAR(255), city varchar(100), postal_code varchar(60),"
+            stmt.executeUpdate("create table if not exists contact(id bigint auto_increment PRIMARY KEY, company_name varchar(100),abbr varchar(60), contact_person varchar(100),location varchar(255),introduction varchar(255),email varchar(100), mobile varchar(100), phone varchar(100), address VARCHAR(255), city varchar(100), postal_code varchar(60),"
                     + " create_date TIMESTAMP, Last_updated_stamp TIMESTAMP);");
 
             // product 产品
@@ -139,7 +139,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into location(code, name, pcode) values('110105', '宣武区', '110100');");
             stmt.executeUpdate("insert into location(code, name, pcode) values('120000', '天津', '1');");
             stmt.executeUpdate("insert into location(code, name, pcode) values('120100', '天津市', '120000');");
-            stmt.executeUpdate("insert into location(code, name, pcode) values('110105', '宣武区', '120100');");
+            stmt.executeUpdate("insert into location(code, name, pcode) values('120102', '河东区', '120100');");
             stmt.executeUpdate("insert into location(code, name, pcode) values('120101', '和平区', '120100');");
             stmt.executeUpdate("insert into location(code, name, pcode) values('440000', '广东省', '1');");
             stmt.executeUpdate("insert into location(code, name, pcode) values('440100', '广州市', '440000');");
