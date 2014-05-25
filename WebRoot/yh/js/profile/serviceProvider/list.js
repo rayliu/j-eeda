@@ -35,26 +35,7 @@ $(document).ready(function() {
             {"mDataProp":"CONTACT_PERSON"},        	
             {"mDataProp":"PHONE"},
             {"mDataProp":"ADDRESS"},
-            { 
-                "mDataProp": null, 
-                "fnRender": function(obj) {
-                	var returnString ="";
-                	console.log(obj.aData.ID);
-                	$.ajax({  	
-                			type : "post",  
-                			url : "/yh/customer/location/"+obj.aData.ID, 
-                		  	async : false,  
-                		  	success : function(data){  
-                		  		console.log(data);
-                		  		for(var i = 0; i < data.length; i++)
-        						{
-                		  				returnString+="<lable>"+data[i].DNAME+"</lable>"
-                		  		}
-                		    }  
-                	 });
-                	return returnString+"</lable>";
-                }
-            },
+            {"mDataProp":"DNAME"},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                

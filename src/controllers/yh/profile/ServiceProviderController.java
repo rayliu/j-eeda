@@ -49,8 +49,26 @@ public class ServiceProviderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         String sql = "select *,p.id as pid from party p, contact c where p.party_type='SERVICE_PROVIDER' and p.contact_id=c.id order by p.create_date desc ";
-
         List<Record> customers = Db.find(sql);
+
+        String code = "";
+        for (int i = 0; i < customers.size(); i++) {
+
+            code = customers.get(i).get("location");
+            String sql2 = "SELECT trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code='"
+                    + code + "'";
+            List<Record> customers2 = Db.find(sql2);
+            String id = "";
+            try {
+                id = customers2.get(0).get("dname");
+            } catch (Exception e) {
+                // TODO: handle exception
+                customers.get(i).set("dname", null);
+            }
+
+            customers.get(i).set("dname", id);
+
+        }
 
         Map customerListMap = new HashMap();
         customerListMap.put("sEcho", pageIndex);
@@ -77,7 +95,7 @@ public class ServiceProviderController extends Controller {
         String code = locationCode.get("location");
 
         Location location = Location.dao
-                .findFirst("select t.name as province,t1.name as city,t3.name as district,t3.code FROM location t left join location t1 on t.code=t1.pcode inner join location t3 on t3.pcode=t1.code and t3.code='"
+                .findFirst("SELECT l.name as DISTRICT, l1.name as CITY,l2.name as PROVINCE,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
                         + code + "'");
         System.out.println(location);
         setAttr("location", location);

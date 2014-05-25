@@ -192,8 +192,16 @@ $(document).ready(function() {
 				}
 				fromLocationList.show();
 			},'json');
+			$("#fromLocationList").css({ 
+	        	left:$(this).position().left+"px", 
+	        	top:$(this).position().top+30+"px" 
+	        }); 
+			
 		});
-	
+		$('#fromName').on('blur', function(){
+			$("#fromLocationList").empty();
+			$("#fromLocationList").hide();
+		});
 		$('#fromLocationList').on('click', '.fromLocationItem', function(e){
 			$('#from_id').val($(this).attr('code'));
 			$('#fromName').val($(this).text());
@@ -222,8 +230,16 @@ $(document).ready(function() {
 				}
 				toLocationList.show();
 			},'json');
+			$("#toLocationList").css({ 
+	        	left:$(this).position().left+"px", 
+	        	top:$(this).position().top+30+"px" 
+	        }); 
+			
 		});
-	
+		$('#toName').on('blur', function(){
+			$("#toLocationList").empty();
+			$("#toLocationList").hide();
+		});
 		$('#toLocationList').on('click', '.fromLocationItem', function(e){
 			$('#to_id').val($(this).attr('code'));
 			$('#toName').val($(this).text());

@@ -37,7 +37,7 @@ $(document).ready(function() {
             {"mDataProp":"PHONE"},
             {"mDataProp":"ADDRESS"},
             {"mDataProp":"RECEIPT"},
-            { 
+            /*{ 
                 "mDataProp": null, 
                 "fnRender": function(obj) {
                 	var returnString ="";
@@ -56,7 +56,8 @@ $(document).ready(function() {
                 	 });
                 	return returnString+"</lable>";
                 }
-            },   
+            },   */
+            {"mDataProp":"DNAME"},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
