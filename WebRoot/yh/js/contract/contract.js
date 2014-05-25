@@ -310,7 +310,8 @@ $(document).ready(function() {
 	                }
 	            }                         
 	        ]      
-	    });	
+	    });
+
 	    $("#changePage").click(function(){
 	    	var type= $("#type2").val();
 	    	if(type=='CUSTOMER'){
@@ -319,6 +320,7 @@ $(document).ready(function() {
 	    		window.location.href="/yh/spContract";
 	    	}
 	    });
+
 	    $(function(){
 	    	 var type= $("#type2").val();
 	    	 $('#reset').hide();
@@ -329,5 +331,32 @@ $(document).ready(function() {
 	 	    }
 	    }) ;
 	   
-	    	
+	    $("input[type='radio'][name='priceType']").change(function(){
+	    	hidePriceElements();
+	    	var val=$('input[type="radio"][name="priceType"]:checked').val(); // 获取一组radio被选中项的值   
+	    	if(val=="计件"){
+	    		$("#carType").hide();
+	    		$("#carLength").hide();
+	    		$("#ltlUnitType").hide();
+	    	}else if(val=="整车"){
+	    		$("#carType").show();
+	    		$("#carLength").show();
+	    		$("#ltlUnitType").hide();
+	    	}else if(val=="零担"){
+				$("#carType").hide();
+	    		$("#carLength").hide();
+	    		$("#ltlUnitType").show();
+	    	}
+
+	    });	
+
+	    var hidePriceElements=function(){
+	    	$("#carType").hide();
+	    	$("#carLength").hide();
+	    	$("#ltlUnitType").hide();
+	    };
+
+	    
+	    hidePriceElements();
+	    
 });
