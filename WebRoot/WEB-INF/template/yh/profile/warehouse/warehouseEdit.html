@@ -34,7 +34,23 @@
                                             </div>                                     
                                         </fieldset>
                                     </div>
-
+									<div class="col-lg-6">
+                                        <fieldset>
+                                         <label>客户所在地</label>
+                                                <input id="location" type="hidden" name="location" value="${contact.location!''}">
+		                                            <div class="form-group">
+		                                                <label>省</label>
+		                                                <input id="hideProvince" type="hidden" value="${location.province!''}"/>
+		                                                <select id="mbProvince" style="width:150px" name="mbProvince" value=""></select>
+		                                                <label>市</label>
+		                                                <input id="hideCity" type="hidden" value="${location.city!''}"/>
+		                                                <select  id="cmbCity" style="width:150px" name="cmbCity" value=""></select>
+		                                                <label>区(县)</label>
+		                                                <input id="hideDistrict" type="hidden" value="${location.district!''}"/>
+		                                                <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
+		                                            </div>
+                                        </fieldset>
+                                    </div>
                                     <!-- /.col-lg-6 (even) 偶数列-->                                    
                                     <div class="col-lg-6">
                                         <fieldset>
@@ -127,15 +143,14 @@
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>上传图片</label>
-                                                <input id="fileupload" type="file" name="fileupload">
+                                                <input id="fileupload" type="file" name="fileupload" >
                                             </div>
                                         </fieldset>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-6" style="clear:both;">
                                         <fieldset>
-                                            <div class="form-group">
-                                                <img id="showImg" src="WebRoot/upload/Koala5.jpg">
-<!--                                                 <img id="showImg" src="${warehouse.path!''}"> -->
+                                            <div class="form-group">                                                
+                                         		<img id="showImg" src="/upload/${warehouse.path!''}" height="300" width="500" alt="图片展示区域"> 
                                             </div>
                                         </fieldset>
                                     </div>
@@ -192,10 +207,10 @@
                 element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
             }
         }); */
-        
+        /* 
         $("#fileupload").change(function(){
         	var path = $(this).val();
-        	$("#showImg").attr('src', 'F:\\j-eeda\\WebRoot\\upload\\'+path);
-        });
+        	$("#showImg").attr('src', 'http://localhost:8080/upload/'+path);
+        }); */
     }); 
 </script>

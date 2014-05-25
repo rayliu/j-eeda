@@ -141,7 +141,7 @@ $(document).ready(function() {
     	transferOrder.fnDraw();
     } );
     
-    $('input.beginTime_filter').on( 'keyup click', function () {
+    $('input.beginTime_filter').on( 'change input', function () {
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -165,7 +165,4 @@ $(document).ready(function() {
     	transferOrder.fnDraw();
     } );
     
-    $().load(function(){
-    	alert("hehehhe");
-    });
 } );

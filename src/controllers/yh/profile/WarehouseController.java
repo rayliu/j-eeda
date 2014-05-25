@@ -1,15 +1,10 @@
 package controllers.yh.profile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import models.Warehouse;
 import models.yh.profile.Contact;
@@ -48,9 +43,7 @@ public class WarehouseController extends Controller{
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		//String sql = "select w.name,w.address,w.desc,(select c.contact_person from contact c where id=w.contact_id) contact_person ,(select c.phone from contact c where id=w.contact_id) phone from warehouse w";
 		String sql = "select w.*,(select c.contact_person from contact c where id=w.contact_id) contact_person ,(select c.phone from contact c where id=w.contact_id) phone from warehouse w";
-		//String sql = "select * from warehouse w";
 
 		List<Record> warehouses = Db.find(sql);
 
@@ -100,11 +93,9 @@ public class WarehouseController extends Controller{
 	public void save() {
 		UploadFile uploadFile = getFile("fileupload");
 		String saveDir = uploadFile.getSaveDirectory();
-//		saveDir = saveDir.substring(1, saveDir.indexOf("\\"));
-//		System.out.println(saveDir);
 			
 		Warehouse warehouse = null;
-		String id = getPara("warehouse_id");
+		String id = getPara("warehouse_id");	
 		
 		Contact contact = null;
 		Date createDate = Calendar.getInstance().getTime();
@@ -113,7 +104,7 @@ public class WarehouseController extends Controller{
 			warehouse.set("warehouse_name", getPara("warehouse_name"));
 			warehouse.set("warehouse_address", getPara("warehouse_address"));
 			warehouse.set("warehouse_desc", getPara("warehouse_desc"));
-			warehouse.set("path", uploadFile.getSaveDirectory()+uploadFile.getFileName());
+			warehouse.set("path", uploadFile.getFileName());
 
 			contact = Contact.dao.findFirst("select * from contact where id=?",
 					warehouse.getLong("contact_id"));
@@ -129,13 +120,13 @@ public class WarehouseController extends Controller{
 					 .set("warehouse_address", getPara("warehouse_address"))
 					 .set("warehouse_desc", getPara("warehouse_desc"))
 					 .set("warehouse_area", getPara("warehouse_area"))
-					 .set("path", uploadFile.getSaveDirectory()+uploadFile.getFileName());
+					 .set("path", uploadFile.getFileName());
 			warehouse.set("contact_id", contact.get("id"));
 			warehouse.save();
 		}
 		setAttr("saveOK", true);
 		if(LoginUserController.isAuthenticated(this))
-		render("profile/warehouse/warehouseList.html");
+		redirect("/yh/warehouse");
 	}
 
 	private void setContact(Contact contact) {
@@ -147,24 +138,5 @@ public class WarehouseController extends Controller{
 		contact.set("address", getPara("address"));
 		contact.set("city", getPara("city"));
 		contact.set("postal_code", getPara("postal_code"));
-	}
-	
-	// 查看图片
-	public void showPicture() throws Exception{
-		String path = getPara("picturePath");
-		File file = new File(path);
-		
-		HttpServletResponse response = getResponse();
-		FileInputStream in = new FileInputStream(file);
-		OutputStream out = response.getOutputStream();
-		//FileOutputStream out = new FileOutputStream("c:/picture/1.jpg");
-		byte[] buf = new byte[1024];
-		int len = 0;
-		while((len = in.read(buf)) != -1){
-			out.write(buf, 0, len);
-		}
-		out.close();
-		in.close();
-		renderJson("{\"success\":true}");
 	}
 }

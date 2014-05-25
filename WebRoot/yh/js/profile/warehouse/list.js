@@ -19,15 +19,11 @@ $(document).ready(function() {
             {"mDataProp":"WAREHOUSE_DESC"},
             {"mDataProp":"CONTACT_PERSON"},        	
             {"mDataProp":"PHONE"},
-            /*{"mDataProp":"",
-            	"fnRender": function(obj) {
-            			return "<a href='"+obj.aData.PATH+"'>查看图片</a>";
-            		}},*/
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success picture' target='_Blank' href='"+obj.aData.PATH+"'>"+
+                    return "<a class='btn btn-success picture' target='_Blank' href='/upload/"+obj.aData.PATH+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "查看图片"+
                             "</a>"+
@@ -43,14 +39,4 @@ $(document).ready(function() {
             }                         
         ],      
     });	
-    
-    /*$("#eeda-table").on('click', '.picture', function(e){
-		  e.preventDefault();
-		  //异步向后台提交数据
-		  var picture = $(this).attr('picture');
-		  //alert(picture);
-		  $.post("/yh/warehouse/showPicture?picturePath="+picture,function(data){
-             
-         },'json');
-		});*/
 } );

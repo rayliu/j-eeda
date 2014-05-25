@@ -66,7 +66,7 @@ public class DataInitUtil {
                     + " create_date TIMESTAMP, Last_updated_stamp TIMESTAMP);");
 
             // product 产品
-            stmt.executeUpdate("create table if not exists product(id bigint auto_increment PRIMARY KEY,item_name varchar(50),item_no varchar(255),size double,width double,unit varchar(255),volume double,weight double,item_desc varchar(5120));");
+            stmt.executeUpdate("create table if not exists product(id bigint auto_increment PRIMARY KEY,item_name varchar(50),item_no varchar(255),size double,width double,unit varchar(255),volume double,weight double,item_desc varchar(5120),category varchar(255),customer_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id));");
 
             // warehouse 仓库
             stmt.executeUpdate("create table if not exists warehouse(id bigint auto_increment PRIMARY KEY,warehouse_name varchar(50),warehouse_address varchar(255),warehouse_area double,path varchar(255),warehouse_desc VARCHAR(5120),contact_id bigint,FOREIGN KEY(contact_id) REFERENCES contact(id));");
@@ -521,6 +521,10 @@ public class DataInitUtil {
                     + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
                     + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
 
+            // 产品
+            stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('ATM', '2014042600001','1','5','7','9','ATM', '这是一台ATM', '4');");
+            stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('普通货品', '2014042600002','1','5','7','9','普通货品', '这是普通货品', '4');");
+            
             stmt.close();
             // conn.commit();
             conn.close();

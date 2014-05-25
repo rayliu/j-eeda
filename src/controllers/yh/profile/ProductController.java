@@ -35,11 +35,12 @@ public class ProductController extends Controller{
 					+ getPara("iDisplayLength");
 		}
 
-		String sqlTotal = "select count(1) total from product";
+		String category = getPara("category");
+		String sqlTotal = "select count(1) total from product where category = '"+category+"'";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select * from product";
+		String sql = "select * from product where category = '"+category+"'";
 
 		List<Record> products = Db.find(sql);
 
@@ -69,12 +70,9 @@ public class ProductController extends Controller{
 	}
 
 	public void delete() {
-		long id = getParaToLong();
-
-		Product product = Product.dao.findById(id);
+		Product product = Product.dao.findById(getPara("productId"));
 		product.delete();
-		if(LoginUserController.isAuthenticated(this))
-		redirect("/yh/product");
+        renderJson("{\"success\":true}");
 	}
 
 	public void save() {
@@ -100,16 +98,18 @@ public class ProductController extends Controller{
 			if(!weight.isEmpty()){
 				product.set("weight", weight);
 			}
-			product.set("item_name", getPara("itemName"))
-			       .set("item_no", getPara("itemNo"))
-	               .set("item_desc", getPara("itemDesc"))
-				   .set("unit", getPara("unit"));
+			product.set("item_name", getPara("item_name"))
+			       .set("item_no", getPara("item_no"))
+	               .set("item_desc", getPara("item_desc"))
+				   .set("unit", getPara("unit"))
+				   .set("category", getPara("category"));
+			product.set("customer_id", getPara("customerId"));
 	        product.update();
 		} else {
 			product = new Product();
-			String itemName = getPara("itemName");
-			String itemNo = getPara("itemNo");
-			String itemDesc = getPara("itemDesc");
+			String itemName = getPara("item_name");
+			String itemNo = getPara("item_no");
+			String itemDesc = getPara("item_desc");
 			String size = getPara("size");
 			String width = getPara("width");
 			String unit = getPara("unit");
@@ -119,7 +119,8 @@ public class ProductController extends Controller{
 			product.set("item_name", itemName)
 				   .set("item_no", itemNo)
 			       .set("item_desc", itemDesc)
-			       .set("unit", getPara("unit"));
+			       .set("unit", getPara("unit"))
+				   .set("category", getPara("category"));
 			if(!size.isEmpty()){
 				product.set("size", size);
 			}
@@ -132,9 +133,22 @@ public class ProductController extends Controller{
 			if(!weight.isEmpty()){
 				product.set("weight", weight);
 			}
+			product.set("customer_id", getPara("customerId"));
 	        product.save();
 		}
-		if(LoginUserController.isAuthenticated(this))
-		render("profile/product/productList.html");
+		renderJson(product);;
+	}
+	
+	// 查出所有的类别
+	public void searchAllCategory(){
+		String customerId = getPara("customerId");
+		List<Product> products = Product.dao.find("select category from product where customer_id ="+customerId);
+		renderJson(products);
+	}
+	
+	// 查找产品对象
+	public void getProduct(){
+		Product product = Product.dao.findById(getPara("productId"));
+		renderJson(product);
 	}
 }
