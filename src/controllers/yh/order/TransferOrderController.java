@@ -22,6 +22,7 @@ import org.apache.shiro.subject.Subject;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
 
@@ -442,5 +443,11 @@ public class TransferOrderController extends Controller {
         String id = getPara();
         TransferOrder.dao.findById(id).set("Status", "取消").update();
         renderJson("{\"success\":true}");
+    }
+    
+    // 导入运输单
+    public void intoTransferOrder(){
+    	logger.debug(getRequest().getContentType());
+    	UploadFile uploadFile = getFile("toFileLoad");
     }
 }

@@ -9,6 +9,10 @@
                 <div class="col-lg-12">
                     <h1 class="page-header">
                         <a class="btn btn-primary" href="/yh/transferOrder/add">新增运输单</a>
+                        <form id="toFileUploadForm" method="post" action="/yh/transferOrder/intoTransferOrder" enctype="multipart/form-data">
+						     <input id="fileUploadBtn" type="button" class="btn btn-primary" value="导入运输单" size="30" />
+						     <input type="file" id="toFileUpload" name="toFileLoad" style="position:absolute; filter:alpha(opacity=0); opacity:0; width:30px; " size="1" />
+						</form>
                     </h1>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -113,6 +117,8 @@
 
 <%}%>
  <!-- Page-Level Plugin Scripts - Tables -->
+<script src="http://malsup.github.com/jquery.form.js"></script> 
+ 
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/bootstrap.min.js"></script>

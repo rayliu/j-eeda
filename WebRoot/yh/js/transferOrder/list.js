@@ -165,4 +165,19 @@ $(document).ready(function() {
     	transferOrder.fnDraw();
     } );
     
+    // 导入运输单
+    $("#fileUploadBtn").click(function(){
+    	$("#toFileUpload").click();
+    });
+    
+    $("#toFileUpload").change(function(){    	
+    	// bind 'myForm' and provide a simple callback function 
+        $('#toFileUploadForm').ajaxForm(function() { 
+            alert("Thank you for your comment!"); 
+        }); 
+
+    	
+//    	$.post('/yh/transferOrder/intoTransferOrder', formData, function(data){ 	
+//		},'json');
+    });
 } );
