@@ -70,6 +70,18 @@
         	                                        </div>
         	                                        <div class="form-group">
         	                                            <label>收货地址</label>
+        	                                            <input id="location" type="hidden" name="location" value="${contact.location!''}">
+				                                            <div class="form-group">
+				                                                <label>省</label>
+				                                                <input id="hideProvince" type="hidden" value="${location.province!''}"/>
+				                                                <select id="mbProvince" style="width:150px" name="mbProvince" value=""></select>
+				                                                <label>市</label>
+				                                                <input id="hideCity" type="hidden" value="${location.city!''}"/>
+				                                                <select  id="cmbCity" style="width:150px" name="cmbCity" value=""></select>
+				                                                <label>区(县)</label>
+				                                                <input id="hideDistrict" type="hidden" value="${location.district!''}"/>
+				                                                <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
+				                                            </div>
         	                                            <input name="notify_address" value="${contact.address!''}" class="form-control" placeholder="请输入收货地址">
         	                                        </div>
         	                                        <div class="form-group">
@@ -143,7 +155,15 @@
                                             <h2>路线</h2>
                                             <form role="form">
                                                 <div class="form-group">
-                                                    <input type="text" class="form-control input-inline input-small" id="inputSuccess" value="广州"> - <input type="text" class="form-control input-small input-inline" id="inputSuccess" value="武汉">
+                                                    <input id="from_id" name="from_id" type="hidden" class="form-control" value="">
+                                                    <input class="form-control input-inline input-small" id="fromName" name="fromName" type="text" placeholder="初始点" value="">
+                                                    <ul id='fromLocationList' class="pull-right dropdown-menu default" style="top: 56%; left: 20%; width:100px">
+                                                    </ul>
+                                                    -
+                                                    <input id="to_id" name="to_id" type="hidden" class="form-control" value="">
+                                                    <input class="form-control input-inline input-small" id="toName" name="toName" type="text" placeholder="目的地" value="">		                             	 		    
+                                                    <ul id='toLocationList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 56%; left: 35%; width:100px">
+                                                    </ul>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>备注</label>

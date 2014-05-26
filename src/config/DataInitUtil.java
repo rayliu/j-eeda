@@ -413,7 +413,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address) values('cargo ', '7', '10', '2014042600002', '4', 'pickupSP', '4', '已入库', '2014-04-16 16:40:35.1', 'gateIn','2','中山');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '7', '9', '2014042600003', '4', 'pickupSP', '5', '已入库', '2014-04-28 16:46:35.1', 'gateIn','广州');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '8', '10', '2014042600004', '3', 'own', '4', '已发车', '2014-04-25 16:35:35.1', 'gateIn','深圳');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600005', '3', 'own', '5', '已入库', '2014-04-22 16:28:35.1', 'delivery','东莞');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '10', '2014042600005', '3', 'own', '5', '已入库', '2014-04-22 16:28:35.1', 'delivery','东莞');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600006', '3', 'own', '5', '已发车', '2014-04-24 16:58:35.1', 'gateIn','东莞');");
             // 货品明细
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
@@ -527,6 +527,7 @@ public class DataInitUtil {
             
             // 仓库
             stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿总仓', '这是广州总仓','萝岗','2');");
+            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿总仓', '这是广州总仓','东莞','4');");
             
             stmt.close();
             // conn.commit();
@@ -548,7 +549,7 @@ public class DataInitUtil {
                 .set("contact_person", "温生").set("email", "test@test.com");
         contact7.set("mobile", "12345671").set("phone", "113527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
-                .set("postal_code", "5190001").set("location", "440116").save();
+                .set("postal_code", "5190001").set("location", "441900").save();
         Contact contact2 = new Contact();
         contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生")
                 .set("email", "test@test.com");
@@ -560,7 +561,7 @@ public class DataInitUtil {
                 .set("email", "test@test.com");
         contact3.set("mobile", "12345673").set("phone", "313527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场3")
-                .set("postal_code", "5190003").save();
+                .set("postal_code", "5190003").set("location", "440116").save();
         Contact contact4 = new Contact();
         contact4.set("company_name", "天津运输有限公司").set("contact_person", "何生")
                 .set("email", "test@test.com");
@@ -572,13 +573,13 @@ public class DataInitUtil {
                 .set("email", "test@test.com");
         contact5.set("mobile", "12345674").set("phone", "413527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场4")
-                .set("postal_code", "5190004").save();
+                .set("postal_code", "5190004").set("location", "442000").save();
         Contact contact6 = new Contact();
         contact6.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生")
                 .set("email", "test@test.com");
         contact6.set("mobile", "12345674").set("phone", "413527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场4")
-                .set("postal_code", "5190004").save();
+                .set("postal_code", "5190004").set("location", "440402").save();
 
         Party p1 = new Party();
         Party p2 = new Party();

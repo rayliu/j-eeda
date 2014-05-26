@@ -94,10 +94,18 @@ public class ServiceProviderController extends Controller {
                 "location");
         String code = locationCode.get("location");
 
-        Location location = Location.dao
-                .findFirst("SELECT l.name as DISTRICT, l1.name as CITY,l2.name as PROVINCE,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-                        + code + "'");
-        System.out.println(location);
+        List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
+        Location l = Location.dao.findFirst("SELECT * FROM LOCATION where code = (select pcode from location where CODE = '"+code+"')");
+        Location location = null;
+        if(provinces.contains(l)){
+        	location = Location.dao
+	                .findFirst("SELECT l.name as CITY,l1.name as PROVINCE,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+	                        + code + "'");
+        }else{
+        	location = Location.dao
+	                .findFirst("SELECT l.name as DISTRICT, l1.name as CITY,l2.name as PROVINCE,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+	                        + code + "'");
+        }
         setAttr("location", location);
 
         setAttr("party", party);
