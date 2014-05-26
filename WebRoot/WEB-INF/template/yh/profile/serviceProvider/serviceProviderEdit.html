@@ -216,8 +216,10 @@
  			var inputStr = $(this).val();
  			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
  				var cmbCity =$("#cmbCity");
+ 				var cmbArea =$("#cmbArea");
  				cmbCity.empty();
  				cmbCity.append("<option>--请选择城市--</option>");
+ 				cmbArea.empty();
  				for(var i = 0; i < data.length; i++)
  				{
  					cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
@@ -229,6 +231,7 @@
          $('#cmbCity').on('change', function(){
          	//var inputStr = $(this).parent("option").attr('id'); 
  			var inputStr = $(this).val();
+ 			var code = $("#location").val(inputStr);
  			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
  				var cmbArea =$("#cmbArea");
  				cmbArea.empty();

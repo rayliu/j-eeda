@@ -159,14 +159,7 @@ public class ContractController extends Controller {
             c.set("type", getPara("type2"));
             Db.save("contract", c);
         }
-
-        /*
-         * Map orderMap = new HashMap(); orderMap.put("contractId",c.get("id"));
-         * orderMap.put("success", true); render-Json(orderMap);
-         */
-        // 保存后，只需要把contractId 回传到页面上就可以了
         renderJson(c.get("id"));
-
     }
 
     public void delete() {
@@ -215,6 +208,7 @@ public class ContractController extends Controller {
     // contract模块的对应的干线
     public void routeEdit() {
         String contractId = getPara("routId");
+        System.out.println(contractId);
         if (contractId.equals("")) {
             Map orderMap = new HashMap();
             orderMap.put("sEcho", 0);
@@ -264,30 +258,55 @@ public class ContractController extends Controller {
         ContractItem item = new ContractItem();
         String contractId = getPara("routeContractId");
         String id = getPara("routeId");
+        String routeItemId = getPara("routeItemId");
+
+        // 判断合同干线是否存在
+
         if (id != "") {
         }
-        Record user = new Record();
-        user.set("from_id", getPara("from_id"));
-        user.set("to_id", getPara("to_id"));
-        user.set("location_from", getPara("fromName"));
-        user.set("location_to", getPara("toName"));
-        user.set("remark", getPara("remark"));
+        Record route = new Record();
+        route.set("from_id", getPara("from_id"));
+        route.set("to_id", getPara("to_id"));
+        route.set("location_from", getPara("fromName"));
+        route.set("location_to", getPara("toName"));
+        route.set("remark", getPara("remark"));
 
         if (id != "") {
-            user.set("id", id);
-            Db.update("route", user);
+            if (routeItemId != "") {
+                route.set("id", id);
+                Db.update("route", route);
 
-            item.set("contract_id", contractId)
-                    .set("route_id", getPara("routeId"))
-                    .set("amount", getPara("price"))
-                    .set("id", getPara("routeItemId"));
-            // .set("miles", getPara("miles"));\
-            item.update();
-            renderJson("{\"success\":true}");
+                item.set("contract_id", contractId)
+                        .set("route_id", getPara("routeId"))
+                        .set("amount", getPara("price"))
+                        .set("id", getPara("routeItemId"));
+                // .set("miles", getPara("miles"));\
+                item.update();
+                renderJson("{\"success\":true}");
+            }
+
+            List<Record> itemId = Db
+                    .find("select * from CONTRACT_ITEM where contract_id ='"
+                            + contractId + "' and route_id ='" + id + "'");
+            if (itemId.size() == 0) {
+                Db.save("route", route);
+                item.set("contract_id", contractId)
+                        .set("route_id", route.get("id"))
+                        .set("amount", getPara("price"));
+                // .set("miles", getPara("miles"));\
+                item.save();
+                renderJson("{\"success\":true}");
+            }
+
+            /*
+             * System.out.println(itemId.get(0).get("id"));
+             */
+
         } else {
 
-            Db.save("route", user);
-            item.set("contract_id", contractId).set("route_id", user.get("id"))
+            Db.save("route", route);
+            item.set("contract_id", contractId)
+                    .set("route_id", route.get("id"))
                     .set("amount", getPara("price"));
             // .set("miles", getPara("miles"));\
             item.save();
@@ -317,8 +336,9 @@ public class ContractController extends Controller {
         System.out.println(contractId);
         // Route route = Route.dao.findById(id);
         List<Route> route = Route.dao
-                .find("select *,c.id as contractItemID from route r join contract_item c on r.id = c.route_id and r.id ="
-                        + id + " and c.contract_id = " + contractId + "");
+                .find("SELECT *,c.id as cid FROM  route r left join CONTRACT_ITEM  c  on c.route_ID = r.id where  c.id = '"
+                        + id + "' and c.contract_id = '" + contractId + "'");
+
         renderJson(route);
     }
 

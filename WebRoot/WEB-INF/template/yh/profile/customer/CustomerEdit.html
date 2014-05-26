@@ -124,7 +124,7 @@
 									<div class="col-lg-7">
                                         <fieldset>
                                         	<label>客户所在地</label>
-                                                <input id="location" type="hidden" name="location" value="${contact.location!''}">
+                                                <input id="location" type="text" name="location" value="${contact.location!''}">
 		                                            <div class="form-group">
 		                                                <label>省</label>
 		                                                <input id="hideProvince" type="hidden" value="${location.province!''}"/>
@@ -223,8 +223,10 @@
 			var inputStr = $(this).val();
 			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
 				var cmbCity =$("#cmbCity");
+				var cmbArea =$("#cmbArea");
 				cmbCity.empty();
 				cmbCity.append("<option>--请选择城市--</option>");
+				cmbArea.empty()
 				for(var i = 0; i < data.length; i++)
 				{
 					cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
@@ -236,6 +238,8 @@
         $('#cmbCity').on('change', function(){
         	//var inputStr = $(this).parent("option").attr('id'); 
 			var inputStr = $(this).val();
+			var code = $("#location").val(inputStr);
+			
 			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
 				var cmbArea =$("#cmbArea");
 				cmbArea.empty();

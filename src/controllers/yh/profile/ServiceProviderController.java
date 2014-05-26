@@ -111,14 +111,17 @@ public class ServiceProviderController extends Controller {
     }
 
     public void delete() {
-        long id = getParaToLong();
-
+        // long id = getParaToLong();
+        String id = getPara();
+        // Db.deleteById("contract", id);
         Party party = Party.dao.findById(id);
+
         List<TransferOrder> transferOrders = TransferOrder.dao
                 .find("select * from transfer_order where sp_id="
                         + party.get("id"));
         for (TransferOrder transferOrder : transferOrders) {
             transferOrder.set("sp_id", null);
+            transferOrder.set("customer_id", null);
             transferOrder.update();
         }
         List<DeliveryOrder> deliveryOrders = DeliveryOrder.dao
@@ -126,15 +129,15 @@ public class ServiceProviderController extends Controller {
                         + party.get("id"));
         for (DeliveryOrder deliveryOrder : deliveryOrders) {
             deliveryOrder.set("sp_id", null);
+            deliveryOrder.set("customer_id", null);
             deliveryOrder.update();
         }
 
         Contact contact = Contact.dao
                 .findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
                         + id);
-        ;
-        contact.delete();
 
+        contact.delete();
         party.delete();
         if (LoginUserController.isAuthenticated(this))
             redirect("/yh/serviceProvider");

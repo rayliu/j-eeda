@@ -183,9 +183,9 @@
 									      </div>
 									      <div class="modal-body">
 										     	<form id="routeItemForm" action="" method="post">
-			                                        <input id="routeContractId" name="routeContractId" type="hidden" value="${ul.id!''}">
-			                             	 		<input id="routeItemId" name="routeItemId" type="hidden" value ="">
-			                                        <input id="routeId" name="routeId" type="hidden" value="">
+			                                        <input id="routeContractId" name="routeContractId" type="text" value="${ul.id!''}">
+			                             	 		<input id="routeItemId" name="routeItemId" type="text" value ="">
+			                                        <input id="routeId" name="routeId" type="text" value="">
 			                                        <!-- 根据 始发地 和 目的地 找到 干线id-->
 			                                        <div class="modal-body">
                                                         <div class="form-group">
@@ -241,26 +241,6 @@
                                                             <lable>车量长度</lable>
                                                             <select class="form-control">
                                                                 <option>21</option>
-                                                                <option>18.5</option>
-                                                                <option>18.0</option>
-                                                                <option>17.8</option>
-                                                                <option>17.5</option>
-                                                                <option>17.0</option>
-                                                                <option>16.0</option>
-                                                                <option>15.0</option>
-                                                                <option>14.5</option>
-                                                                <option>13.5</option>
-                                                                <option>13.0</option>
-                                                                <option>12.5</option>
-                                                                <option>9.6</option>
-                                                                <option>8.6</option>
-                                                                <option>8.0</option>
-                                                                <option>7.6</option>
-                                                                <option>7.2</option>
-                                                                <option>6.8</option>
-                                                                <option>6.5</option>
-                                                                <option>5.3</option>
-                                                                <option>4.3</option>
                                                             </select>
                                                         </div>
 			                                            <div class="form-group">
@@ -273,7 +253,7 @@
 				                             	 		<div class="form-group">
                                                             <lable>干线目的地</lable>
                                                             <input id="to_id" name="to_id" type="hidden" class="form-control" value="">
-                                                            <input class="form-control" iid="toName" name="toName" type="text" placeholder="目的地" value="">
+                                                            <input class="form-control" id="toName" name="toName" type="text" placeholder="目的地" value="">
 				                             	 		    
                                                             <ul id='toLocationList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 56%; left: 35%; width:100px">
                                                             </ul>
@@ -387,6 +367,4 @@
           secondStep: 30,  
           inputMask: true  
         });
-</script>  
-
-
+</script>
