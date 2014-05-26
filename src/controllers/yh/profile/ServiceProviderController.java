@@ -174,7 +174,7 @@ public class ServiceProviderController extends Controller {
 
         setAttr("saveOK", true);
         if (LoginUserController.isAuthenticated(this))
-            render("profile/serviceProvider/serviceProviderList.html");
+        	redirect("/yh/serviceProvider");
     }
 
     private void setContact(Contact contact) {

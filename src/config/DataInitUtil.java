@@ -525,6 +525,9 @@ public class DataInitUtil {
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('ATM', '2014042600001','1','5','7','9','ATM', '这是一台ATM', '4');");
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('普通货品', '2014042600002','1','5','7','9','普通货品', '这是普通货品', '4');");
             
+            // 仓库
+            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿总仓', '这是广州总仓','萝岗','2');");
+            
             stmt.close();
             // conn.commit();
             conn.close();
@@ -545,7 +548,7 @@ public class DataInitUtil {
                 .set("contact_person", "温生").set("email", "test@test.com");
         contact7.set("mobile", "12345671").set("phone", "113527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
-                .set("postal_code", "5190001").save();
+                .set("postal_code", "5190001").set("location", "440116").save();
         Contact contact2 = new Contact();
         contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生")
                 .set("email", "test@test.com");

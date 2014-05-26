@@ -15,10 +15,11 @@ $(document).ready(function() {
         "aoColumns": [   
             
             {"mDataProp":"WAREHOUSE_NAME"}, 
-            {"mDataProp":"WAREHOUSE_ADDRESS"},        	
-            {"mDataProp":"WAREHOUSE_DESC"},
             {"mDataProp":"CONTACT_PERSON"},        	
             {"mDataProp":"PHONE"},
+            {"mDataProp":"DNAME"},       	
+            {"mDataProp":"WAREHOUSE_ADDRESS"},        	
+            {"mDataProp":"WAREHOUSE_DESC"},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                

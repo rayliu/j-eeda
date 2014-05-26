@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Location;
 import models.Warehouse;
 import models.yh.profile.Contact;
 
@@ -43,7 +44,9 @@ public class WarehouseController extends Controller{
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select w.*,(select c.contact_person from contact c where id=w.contact_id) contact_person ,(select c.phone from contact c where id=w.contact_id) phone from warehouse w";
+		String sql = "select w.*,c.contact_person,c.phone,(SELECT trim(concat(l2.name, ' ', l1.name,' ',l.name)) FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.location) dname,lc.name from warehouse w"
+				+ " left join contact c on w.contact_id = c.id"
+				+ " left join location lc on c.location = lc.code";
 
 		List<Record> warehouses = Db.find(sql);
 
@@ -74,6 +77,15 @@ public class WarehouseController extends Controller{
 		Warehouse warehouse = Warehouse.dao.findById(id);
 		setAttr("warehouse", warehouse);
 		
+		Contact locationCode = Contact.dao.findById(warehouse.get("contact_id"),
+                "location");
+        String code = locationCode.get("location");
+
+        Location location = Location.dao
+                .findFirst("SELECT l.name as DISTRICT, l1.name as CITY,l2.name as PROVINCE,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                        + code + "'");
+        setAttr("location", location);
+		
 		Contact contact = Contact.dao.findFirst("select * from contact where id = (select contact_id from warehouse where id="+warehouse.get("id")+")");
 		setAttr("contact", contact);	
 		if(LoginUserController.isAuthenticated(this))
@@ -92,7 +104,6 @@ public class WarehouseController extends Controller{
 	@SuppressWarnings("unused")
 	public void save() {
 		UploadFile uploadFile = getFile("fileupload");
-		String saveDir = uploadFile.getSaveDirectory();
 			
 		Warehouse warehouse = null;
 		String id = getPara("warehouse_id");	
@@ -104,7 +115,9 @@ public class WarehouseController extends Controller{
 			warehouse.set("warehouse_name", getPara("warehouse_name"));
 			warehouse.set("warehouse_address", getPara("warehouse_address"));
 			warehouse.set("warehouse_desc", getPara("warehouse_desc"));
-			warehouse.set("path", uploadFile.getFileName());
+			if(uploadFile != null){
+				warehouse.set("path", uploadFile.getFileName());
+			}
 
 			contact = Contact.dao.findFirst("select * from contact where id=?",
 					warehouse.getLong("contact_id"));
@@ -119,8 +132,10 @@ public class WarehouseController extends Controller{
 			warehouse.set("warehouse_name", getPara("warehouse_name"))
 					 .set("warehouse_address", getPara("warehouse_address"))
 					 .set("warehouse_desc", getPara("warehouse_desc"))
-					 .set("warehouse_area", getPara("warehouse_area"))
-					 .set("path", uploadFile.getFileName());
+					 .set("warehouse_area", getPara("warehouse_area"));					 
+			if(uploadFile != null){
+				warehouse.set("path", uploadFile.getFileName());
+			}
 			warehouse.set("contact_id", contact.get("id"));
 			warehouse.save();
 		}
@@ -138,5 +153,6 @@ public class WarehouseController extends Controller{
 		contact.set("address", getPara("address"));
 		contact.set("city", getPara("city"));
 		contact.set("postal_code", getPara("postal_code"));
+		contact.set("location", getPara("location"));
 	}
 }
