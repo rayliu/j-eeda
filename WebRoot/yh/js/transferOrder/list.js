@@ -170,14 +170,15 @@ $(document).ready(function() {
     	$("#toFileUpload").click();
     });
     
-    $("#toFileUpload").change(function(){    	
-    	// bind 'myForm' and provide a simple callback function 
-        $('#toFileUploadForm').ajaxForm(function() { 
-            alert("Thank you for your comment!"); 
-        }); 
-
-    	
-//    	$.post('/yh/transferOrder/intoTransferOrder', formData, function(data){ 	
-//		},'json');
+    
+	$('#toFileUpload').fileupload({
+        dataType: 'json',
+        done: function (e, data) {
+            $.each(data.result.files, function (index, file) {
+                $('<p/>').text(file.name).appendTo(document.body);
+            });
+        }
     });
+    
+    
 } );

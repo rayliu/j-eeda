@@ -33,12 +33,12 @@ public class TransferOrderController extends Controller {
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-    	if(LoginUserController.isAuthenticated(this))
-        render("transferOrder/transferOrderList.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("transferOrder/transferOrderList.html");
     }
 
-	public void list() {
-    	Map transferOrderListMap = null;
+    public void list() {
+        Map transferOrderListMap = null;
         String orderNo = getPara("orderNo");
         String status = getPara("status");
         String address = getPara("address");
@@ -46,66 +46,65 @@ public class TransferOrderController extends Controller {
         String sp = getPara("sp");
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
-        if(orderNo == null && status == null && address == null && customer == null && sp == null && beginTime == null && endTime == null){
-	        String sLimit = "";
-	        String pageIndex = getPara("sEcho");
-	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-	        }
-	
-	        String sqlTotal = "select count(1) total from transfer_order";
-	        Record rec = Db.findFirst(sqlTotal);
-	        logger.debug("total records:" + rec.getLong("total"));
-	
-	        String sql = "select to.*,c1.company_name cname,c2.company_name spname,to.create_stamp from transfer_order to "
-							+" left join party p1 on to.customer_id = p1.id "
-							+" left join party p2 on to.sp_id = p2.id "
-							+" left join contact c1 on p1.contact_id = c1.id"
-							+" left join contact c2 on p2.contact_id = c2.id";
-	
-	        List<Record> transferOrders = Db.find(sql);
-	        
-	        transferOrderListMap = new HashMap();
-	        transferOrderListMap.put("sEcho", pageIndex);
-	        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-	        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-	
-	        transferOrderListMap.put("aaData", transferOrders);
-        }else{
-            if(beginTime == null || "".equals(beginTime)){
-            	beginTime = "1-1-1";
+        if (orderNo == null && status == null && address == null && customer == null && sp == null && beginTime == null && endTime == null) {
+            String sLimit = "";
+            String pageIndex = getPara("sEcho");
+            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
-            if(endTime == null || "".equals(endTime)){
-            	endTime = "9999-12-31";
+
+            String sqlTotal = "select count(1) total from transfer_order";
+            Record rec = Db.findFirst(sqlTotal);
+            logger.debug("total records:" + rec.getLong("total"));
+
+            String sql = "select to.*,c1.company_name cname,c2.company_name spname,to.create_stamp from transfer_order to "
+                    + " left join party p1 on to.customer_id = p1.id " + " left join party p2 on to.sp_id = p2.id "
+                    + " left join contact c1 on p1.contact_id = c1.id" + " left join contact c2 on p2.contact_id = c2.id";
+
+            List<Record> transferOrders = Db.find(sql);
+
+            transferOrderListMap = new HashMap();
+            transferOrderListMap.put("sEcho", pageIndex);
+            transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+            transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+            transferOrderListMap.put("aaData", transferOrders);
+        } else {
+            if (beginTime == null || "".equals(beginTime)) {
+                beginTime = "1-1-1";
             }
-        	String sLimit = "";
-	        String pageIndex = getPara("sEcho");
-	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-	        }
-	
-	        String sqlTotal = "select count(1) total from transfer_order to "
-							+" left join party p1 on to.customer_id = p1.id "
-							+" left join party p2 on to.sp_id = p2.id "
-							+" left join contact c1 on p1.contact_id = c1.id"
-							+" left join contact c2 on p2.contact_id = c2.id where to.order_no like '%"+orderNo+"%' and to.status like '%"+status+"%' and to.address like '%"+address+"%' and c1.COMPANY_NAME like '%"+customer+"%' and c2.COMPANY_NAME  like '%"+sp+"%' and create_stamp between '"+beginTime+"' and '"+endTime+"'";
-	        Record rec = Db.findFirst(sqlTotal);
-	        logger.debug("total records:" + rec.getLong("total"));
-	
-	        String sql = "select to.*,c1.company_name cname,c2.company_name spname from transfer_order to "
-							+" left join party p1 on to.customer_id = p1.id "
-							+" left join party p2 on to.sp_id = p2.id "
-							+" left join contact c1 on p1.contact_id = c1.id"
-							+" left join contact c2 on p2.contact_id = c2.id where to.order_no like '%"+orderNo+"%' and to.status like '%"+status+"%' and to.address like '%"+address+"%' and c1.COMPANY_NAME like '%"+customer+"%' and c2.COMPANY_NAME  like '%"+sp+"%' and create_stamp between '"+beginTime+"' and '"+endTime+"'";
-	
-	        List<Record> transferOrders = Db.find(sql);
-	        
-	        transferOrderListMap = new HashMap();
-	        transferOrderListMap.put("sEcho", pageIndex);
-	        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-	        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-	
-	        transferOrderListMap.put("aaData", transferOrders);
+            if (endTime == null || "".equals(endTime)) {
+                endTime = "9999-12-31";
+            }
+            String sLimit = "";
+            String pageIndex = getPara("sEcho");
+            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+            }
+
+            String sqlTotal = "select count(1) total from transfer_order to " + " left join party p1 on to.customer_id = p1.id "
+                    + " left join party p2 on to.sp_id = p2.id " + " left join contact c1 on p1.contact_id = c1.id"
+                    + " left join contact c2 on p2.contact_id = c2.id where to.order_no like '%" + orderNo + "%' and to.status like '%"
+                    + status + "%' and to.address like '%" + address + "%' and c1.COMPANY_NAME like '%" + customer
+                    + "%' and c2.COMPANY_NAME  like '%" + sp + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
+            Record rec = Db.findFirst(sqlTotal);
+            logger.debug("total records:" + rec.getLong("total"));
+
+            String sql = "select to.*,c1.company_name cname,c2.company_name spname from transfer_order to "
+                    + " left join party p1 on to.customer_id = p1.id " + " left join party p2 on to.sp_id = p2.id "
+                    + " left join contact c1 on p1.contact_id = c1.id"
+                    + " left join contact c2 on p2.contact_id = c2.id where to.order_no like '%" + orderNo + "%' and to.status like '%"
+                    + status + "%' and to.address like '%" + address + "%' and c1.COMPANY_NAME like '%" + customer
+                    + "%' and c2.COMPANY_NAME  like '%" + sp + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
+
+            List<Record> transferOrders = Db.find(sql);
+
+            transferOrderListMap = new HashMap();
+            transferOrderListMap.put("sEcho", pageIndex);
+            transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+            transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+            transferOrderListMap.put("aaData", transferOrders);
         }
 
         renderJson(transferOrderListMap);
@@ -134,8 +133,8 @@ public class TransferOrderController extends Controller {
         setAttr("userLogin", userLogin);
 
         setAttr("status", "新建");
-        if(LoginUserController.isAuthenticated(this))
-        render("transferOrder/editTransferOrder.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("transferOrder/editTransferOrder.html");
         // render("transferOrder/transferOrderEdit.html");
     }
 
@@ -147,8 +146,8 @@ public class TransferOrderController extends Controller {
 
         Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
         setAttr("contact", contact);
-        if(LoginUserController.isAuthenticated(this))
-        render("transferOrder/transferOrderEdit.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("transferOrder/transferOrderEdit.html");
     }
 
     public void edit() {
@@ -171,16 +170,17 @@ public class TransferOrderController extends Controller {
             String code = locationCode.get("location");
 
             List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
-            Location l = Location.dao.findFirst("SELECT * FROM LOCATION where code = (select pcode from location where CODE = '"+code+"')");
+            Location l = Location.dao.findFirst("SELECT * FROM LOCATION where code = (select pcode from location where CODE = '" + code
+                    + "')");
             Location location = null;
-            if(provinces.contains(l)){
-            	location = Location.dao
-    	                .findFirst("SELECT l.name as CITY,l1.name as PROVINCE,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-    	                        + code + "'");
-            }else{
-            	location = Location.dao
-    	                .findFirst("SELECT l.name as DISTRICT, l1.name as CITY,l2.name as PROVINCE,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-    	                        + code + "'");
+            if (provinces.contains(l)) {
+                location = Location.dao
+                        .findFirst("SELECT l.name as CITY,l1.name as PROVINCE,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                                + code + "'");
+            } else {
+                location = Location.dao
+                        .findFirst("SELECT l.name as DISTRICT, l1.name as CITY,l2.name as PROVINCE,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                                + code + "'");
             }
             setAttr("location", location);
         } else {
@@ -189,8 +189,8 @@ public class TransferOrderController extends Controller {
 
         UserLogin userLogin = UserLogin.dao.findById(transferOrder.get("create_by"));
         setAttr("userLogin", userLogin);
-        if(LoginUserController.isAuthenticated(this))
-        render("transferOrder/updateTransferOrder.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("transferOrder/updateTransferOrder.html");
     }
 
     public void save() {
@@ -220,8 +220,8 @@ public class TransferOrderController extends Controller {
         }
 
         setAttr("saveOK", true);
-        if(LoginUserController.isAuthenticated(this))
-        render("transferOrder/transferOrderList.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("transferOrder/transferOrderList.html");
     }
 
     // 客户列表,列出最近使用的5个客户
@@ -286,8 +286,8 @@ public class TransferOrderController extends Controller {
 
     public void saveItem() {
         // saveOrderItem(transferOrder);
-    	if(LoginUserController.isAuthenticated(this))
-        render("transferOrder/transferOrderList.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("transferOrder/transferOrderList.html");
     }
 
     // 保存订单项
@@ -396,7 +396,7 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-                    	.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and (company_name like '%"
+                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and (company_name like '%"
                             + input
                             + "%' or contact_person like '%"
                             + input
@@ -421,7 +421,7 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-            		.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' and (company_name like '%"
+                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' and (company_name like '%"
                             + input
                             + "%' or contact_person like '%"
                             + input
@@ -451,20 +451,21 @@ public class TransferOrderController extends Controller {
         transferOrder.set("sp_id", null);
 
         transferOrder.delete();
-        if(LoginUserController.isAuthenticated(this))
-        redirect("/yh/transferOrder");
+        if (LoginUserController.isAuthenticated(this))
+            redirect("/yh/transferOrder");
     }
-    
+
     // 取消
     public void cancel() {
         String id = getPara();
         TransferOrder.dao.findById(id).set("Status", "取消").update();
         renderJson("{\"success\":true}");
     }
-    
+
     // 导入运输单
-    public void intoTransferOrder(){
-    	logger.debug(getRequest().getContentType());
-    	UploadFile uploadFile = getFile("toFileLoad");
+    public void importTransferOrder() {
+        UploadFile uploadFile = getFile();
+        logger.debug("上传的文件名:" + uploadFile.getFileName());
+
     }
 }
