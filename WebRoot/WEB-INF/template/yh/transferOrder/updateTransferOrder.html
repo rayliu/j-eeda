@@ -37,6 +37,7 @@
                                             	<input id="id" type="hidden" name="id" value="${transferOrder.id!''}"/>
                                             	<input id="customer_id" type="hidden" name="customer_id" value="${transferOrder.customer_id}"/>
                                             	<input id="sp_id" type="hidden" name="sp_id" value="${transferOrder.sp_id}"/>
+                                            	<input id="notify_party_id" type="hidden" name="notify_party_id" value="${transferOrder.notify_party_id}"/>
                                             	<input type="hidden" name="order_no" value="${transferOrder.order_no}"/>
                                             	<input type="hidden" name="status" value="${transferOrder.status}"/>
                                             	<input type="hidden" name="create_by" value="${transferOrder.create_by}"/>
@@ -70,7 +71,7 @@
         	                                        </div>
         	                                        <div class="form-group">
         	                                            <label>收货地址</label>
-        	                                            <input id="location" type="hidden" name="location" value="${contact.location!''}">
+        	                                            <input id="notify_location" type="hidden" name="notify_location" value="${contact.location!''}">
 				                                            <div class="form-group">
 				                                                <label>省</label>
 				                                                <input id="hideProvince" type="hidden" value="${location.province!''}"/>
@@ -150,25 +151,42 @@
                                                     <input type="radio" name="arrivalMode" id="arrivalMode2" value="gateIn">入中转仓
                                                 </label>                                            
                                             </div> 
-                                            </form>                                        
                                                
                                             <h2>路线</h2>
-                                            <form role="form">
                                                 <div class="form-group">
-                                                    <input id="from_id" name="from_id" type="hidden" class="form-control" value="">
-                                                    <input class="form-control input-inline input-small" id="fromName" name="fromName" type="text" placeholder="初始点" value="">
-                                                    <ul id='fromLocationList' class="pull-right dropdown-menu default" style="top: 56%; left: 20%; width:100px">
-                                                    </ul>
-                                                    -
-                                                    <input id="to_id" name="to_id" type="hidden" class="form-control" value="">
-                                                    <input class="form-control input-inline input-small" id="toName" name="toName" type="text" placeholder="目的地" value="">		                             	 		    
-                                                    <ul id='toLocationList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 56%; left: 35%; width:100px">
-                                                    </ul>
-                                                </div>
+                                                <label><h4>始发城市</h4></label>
+			                                            <input id="locationForm" type="hidden" name="route_from" value="${transferOrder.route_from!''}">
+			                                            <input id="hideLocationFrom" type="hidden"> 
+			                                            <div class="form-group">
+			                                                <label>省</label>
+			                                                <input id="hideProvinceFrom" type="hidden" value="${locationFrom.province!''}"/>
+			                                                <select id="mbProvinceFrom" style="width:150px" name="mbProvinceFrom" value=""></select>
+			                                                <label>市</label>
+			                                                <input id="hideCityFrom" type="hidden" value="${locationFrom.city!''}"/>
+			                                                <select  id="cmbCityFrom" style="width:150px" name="cmbCityFrom" value=""></select>
+			                                                <label>区(县)</label>
+			                                                <input id="hideDistrictFrom" type="hidden" value="${locationFrom.district!''}"/>
+			                                                <select  id="cmbAreaFrom" style="width:150px" name="cmbAreaFrom" value=""></select>
+			                                            </div>
+                                                    - <br/>
+                                                    <input id="locationTo" type="hidden" name="route_to" value="${transferOrder.route_to!''}">
+                                                    	<label><h4>目的地城市</h4></label>
+			                                            <div class="form-group">
+			                                                <label>省</label>
+			                                                <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
+			                                                <select id="mbProvinceTo" style="width:150px" name="mbProvinceTo" value=""></select>
+			                                                <label>市</label>
+			                                                <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
+			                                                <select  id="cmbCityTo" style="width:150px" name="cmbCityTo" value=""></select>
+			                                                <label>区(县)</label>
+			                                                <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}"/>
+			                                                <select  id="cmbAreaTo" style="width:150px" name="cmbAreaTo" value=""></select>
+			                                            </div>
+                                                </div><!-- -->
                                                 <div class="form-group">
                                                     <label>备注</label>
-                                                    <textarea class="form-control" rows="13"></textarea>
-                                                </div>
+                                                    <textarea class="form-control" rows="13" name="remark">${transferOrder.remark!''}</textarea>
+                                                </div> 
                                             </form>
                                         </div>
                                         <!-- /.col-lg-6 (nested) -->

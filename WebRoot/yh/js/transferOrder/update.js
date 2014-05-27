@@ -39,7 +39,7 @@ $(document).ready(function() {
 			customerList.empty();
 			for(var i = 0; i < data.length; i++)
 			{
-				customerList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
+				customerList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
 			}
 		},'json');
 		$("#customerList").css({ 
@@ -54,6 +54,9 @@ $(document).ready(function() {
 		var message = $(this).text();
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#customer_id').val($(this).attr('partyId'));
+		var location = $(this).attr('location');
+		$('#hideLocationFrom').val(location);	
+		$('#locationForm').val(location);		
 		var pageCustomerName = $("#pageCustomerName");
 		pageCustomerName.empty();
 		pageCustomerName.append($(this).attr('contact_person')+'&nbsp;');
@@ -62,6 +65,77 @@ $(document).ready(function() {
 		pageCustomerAddress.empty();
 		pageCustomerAddress.append($(this).attr('address'));
 
+        
+        var locationFrom = $('#hideLocationFrom').val();
+        $.get('/yh/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
+			console.log(data);
+			$("#hideProvinceFrom").val(data.PROVINCE);
+			$("#hideCityFrom").val(data.CITY);
+			$("#hideDistrictFrom").val(data.DISTRICT);
+			
+
+	        //获取全国省份
+	        $(function(){
+	         	var province = $("#mbProvinceFrom");
+	         	$.post('/yh/serviceProvider/province',function(data){
+	         		province.empty();
+	         		province.append("<option>--请选择省份--</option>");
+	    			var hideProvince = $("#hideProvinceFrom").val();
+	         		for(var i = 0; i < data.length; i++)
+	    				{
+	    					if(data[i].NAME == hideProvince){
+	    						province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+	    					}else{
+	    						province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+	    					}
+	    				}
+	         		
+	         	},'json');
+	        });
+	        
+	        // 回显出发城市
+	        var hideProvince = $("#hideProvinceFrom").val();
+	        $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+	    			if(data.length > 0){
+	    				var cmbCity =$("#cmbCityFrom");
+	    				cmbCity.empty();
+	    				cmbCity.append("<option>--请选择城市--</option>");
+	    				var hideCity = $("#hideCityFrom").val();
+	    				for(var i = 0; i < data.length; i++)
+	    				{
+	    					if(data[i].NAME == hideCity){
+	    						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+	    					}else{
+	    						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+	    					}
+	    				}
+	    			}
+	    		},'json');
+
+	        // 回显区
+	        var hideCity = $("#hideCityFrom").val();
+	        $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+	    			if(data.length > 0){
+	    				var cmbArea =$("#cmbAreaFrom");
+	    				cmbArea.empty();
+	    				cmbArea.append("<option>--请选择区(县)--</option>");
+	    				var hideDistrict = $("#hideDistrictFrom").val();
+	    				for(var i = 0; i < data.length; i++)
+	    				{
+	    					if(data[i].NAME == hideDistrict){
+	    						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+	    					}else{
+	    						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+	    					}
+	    				}
+	    			}else{
+	    				var cmbArea =$("#cmbAreaFrom");
+	    				cmbArea.empty();
+	    			}
+	    		},'json');
+	        
+		},'json');
+        
         $('#customerList').hide();
     }); 
 	
@@ -716,6 +790,7 @@ $(document).ready(function() {
 		$("#transferOrderItemDetailUpdateForm")[0].reset();
 	});
 
+
     //获取全国省份
     $(function(){
      	var province = $("#mbProvince");
@@ -755,6 +830,7 @@ $(document).ready(function() {
      $('#cmbCity').on('change', function(){
      	//var inputStr = $(this).parent("option").attr('id'); 
 			var inputStr = $(this).val();
+			var code = $("#notify_location").val(inputStr);
 			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
 				var cmbArea =$("#cmbArea");
 				cmbArea.empty();
@@ -770,7 +846,7 @@ $(document).ready(function() {
      $('#cmbArea').on('change', function(){
      	//var inputStr = $(this).parent("option").attr('id'); 
 			var inputStr = $(this).val();
-			var code = $("#location").val(inputStr);
+			var code = $("#notify_location").val(inputStr);
 		});         
 
      // 回显城市
@@ -810,83 +886,194 @@ $(document).ready(function() {
 				}
 			}
 		},'json');
-     
-    //选择出发地点
-	$('#fromName').on('keyup', function(){
-		var inputStr = $('#fromName').val();
-		$.get('/yh/route/search', {locationName:inputStr}, function(data){
-			console.log(data);
-			var fromLocationList =$("#fromLocationList");
-			fromLocationList.empty();
-			for(var i = 0; i < data.length; i++)
-			{
-				fromLocationList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].CODE+"'>"+data[i].NAME+"</a></li>");
+    
+    //获取全国省份
+    $(function(){
+     	var province = $("#mbProvinceFrom");
+     	$.post('/yh/serviceProvider/province',function(data){
+     		province.append("<option>--请选择省份--</option>");
+				var hideProvince = $("#hideProvinceFrom").val();
+     		for(var i = 0; i < data.length; i++)
+				{
+					if(data[i].NAME == hideProvince){
+     				province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+     				
+     				
+					}else{
+     				province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+					}
+				}
+     		
+     	},'json');
+    });
+    
+    //获取省份的城市
+    $('#mbProvinceFrom').on('change', function(){
+			var inputStr = $(this).val();
+			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+				var cmbCity =$("#cmbCityFrom");
+				cmbCity.empty();
+				cmbCity.append("<option>--请选择城市--</option>");
+				for(var i = 0; i < data.length; i++)
+				{
+					cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+				}
+				toLocationList.show();
+			},'json');
+		});
+    //获取城市的区县
+    $('#cmbCityFrom').on('change', function(){
+			var inputStr = $(this).val();
+			var code = $("#locationForm").val(inputStr);
+			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+				var cmbArea =$("#cmbAreaFrom");
+				cmbArea.empty();
+				cmbArea.append("<option>--请选择区(县)--</option>");
+				for(var i = 0; i < data.length; i++)
+				{
+					cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
+				}
+				toLocationList.show();
+			},'json');
+		});
+    
+    $('#cmbAreaFrom').on('change', function(){
+			var inputStr = $(this).val();
+			var code = $("#locationForm").val(inputStr);
+		});         
+    
+
+    //获取全国省份
+    $(function(){
+     	var province = $("#mbProvinceTo");
+     	$.post('/yh/serviceProvider/province',function(data){
+     		province.append("<option>--请选择省份--</option>");
+				var hideProvince = $("#hideProvinceTo").val();
+     		for(var i = 0; i < data.length; i++)
+				{
+					if(data[i].NAME == hideProvince){
+     				province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+     				
+     				
+					}else{
+     				province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+					}
+				}
+     		
+     	},'json');
+    });
+    
+    //获取省份的城市
+    $('#mbProvinceTo').on('change', function(){
+			var inputStr = $(this).val();
+			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+				var cmbCity =$("#cmbCityTo");
+				cmbCity.empty();
+				cmbCity.append("<option>--请选择城市--</option>");
+				for(var i = 0; i < data.length; i++)
+				{
+					cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+				}
+				toLocationList.show();
+			},'json');
+		});
+    
+    //获取城市的区县
+    $('#cmbCityTo').on('change', function(){
+			var inputStr = $(this).val();
+			var code = $("#locationTo").val(inputStr);
+			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+				var cmbArea =$("#cmbAreaTo");
+				cmbArea.empty();
+				cmbArea.append("<option>--请选择区(县)--</option>");
+				for(var i = 0; i < data.length; i++)
+				{
+					cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
+				}
+				toLocationList.show();
+			},'json');
+		});
+    
+    $('#cmbAreaTo').on('change', function(){
+			var inputStr = $(this).val();
+			var code = $("#locationTo").val(inputStr);
+		});  
+    
+
+    // 回显城市
+    var hideProvince = $("#hideProvinceFrom").val();
+    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+			if(data.length > 0){
+				var cmbCity =$("#cmbCityFrom");
+				cmbCity.empty();
+				cmbCity.append("<option>--请选择城市--</option>");
+				var hideCity = $("#hideCityFrom").val();
+				for(var i = 0; i < data.length; i++)
+				{
+					if(data[i].NAME == hideCity){
+						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+					}else{
+						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+					}
+				}
 			}
-			fromLocationList.show();
 		},'json');
-		$("#fromLocationList").css({ 
-        	left:$(this).position().left+"px", 
-        	top:$(this).position().top+30+"px" 
-        }); 
-		
-	});
-	//失去焦点隐藏
-	$('#fromName').on('blur', function(){
-		$("#fromLocationList").delay(120).hide(1);
-	});
-	
-	$('#fromLocationList').on('click', '.fromLocationItem', function(e){
-		$('#from_id').val($(this).attr('code'));
-		$('#fromName').val($(this).text());
- 	$("#fromLocationList").hide();
- 	 var inputStr = $('#fromName').val();
-		 var inputStr2 = $('#toName').val();
-		 if(inputStr!=''&&inputStr2!=''){
-			 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
-				 for(var i = 0; i < data.length; i++){
-					 	$('#routeId').val(data[i].RID);
-				 }
-			 },'json');
-		 }
- 	});
-		
-	//选择目的地点
-	$('#toName').on('keyup', function(){
-		var inputStr = $('#toName').val();
-		$.get('/yh/route/search', {locationName:inputStr}, function(data){
-			
-			var toLocationList =$("#toLocationList");
-			toLocationList.empty();
-			for(var i = 0; i < data.length; i++)
-			{
-				toLocationList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].CODE+"'>"+data[i].NAME+"</a></li>");
+
+    // 回显区
+    var hideCity = $("#hideCityFrom").val();
+    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+			if(data.length > 0){
+				var cmbArea =$("#cmbAreaFrom");
+				cmbArea.empty();
+				cmbArea.append("<option>--请选择区(县)--</option>");
+				var hideDistrict = $("#hideDistrictFrom").val();
+				for(var i = 0; i < data.length; i++)
+				{
+					if(data[i].NAME == hideDistrict){
+						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+					}else{
+						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+					}
+				}
 			}
-			toLocationList.show();
 		},'json');
-		$("#toLocationList").css({ 
-        	left:$(this).position().left+"px", 
-        	top:$(this).position().top+30+"px" 
-        }); 
-		
-	});
-	
-	//失去焦点隐藏
-	$('#toName').on('blur', function(){
-		$("#toLocationList").delay(120).hide(1);
-	});
-	
-	$('#toLocationList').on('click', '.fromLocationItem', function(e){
-		$('#to_id').val($(this).attr('code'));
-		$('#toName').val($(this).text());
- 	$("#toLocationList").hide();
- 	 var inputStr = $('#fromName').val();
-		 var inputStr2 = $('#toName').val();
-		 if(inputStr!=''&&inputStr2!=''){
-			 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
-				 for(var i = 0; i < data.length; i++){
-					 	$('#routeId').val(data[i].RID);
-				 }
-			 },'json');
-		 }
- 	});
+    
+
+    // 回显城市
+    var hideProvince = $("#hideProvinceTo").val();
+    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+			if(data.length > 0){
+				var cmbCity =$("#cmbCityTo");
+				cmbCity.empty();
+				cmbCity.append("<option>--请选择城市--</option>");
+				var hideCity = $("#hideCityTo").val();
+				for(var i = 0; i < data.length; i++)
+				{
+					if(data[i].NAME == hideCity){
+						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+					}else{
+						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+					}
+				}
+			}
+		},'json');
+
+    // 回显区
+    var hideCity = $("#hideCityTo").val();
+    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+			if(data.length > 0){
+				var cmbArea =$("#cmbAreaTo");
+				cmbArea.empty();
+				cmbArea.append("<option>--请选择区(县)--</option>");
+				var hideDistrict = $("#hideDistrictTo").val();
+				for(var i = 0; i < data.length; i++)
+				{
+					if(data[i].NAME == hideDistrict){
+						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+					}else{
+						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+					}
+				}
+			}
+		},'json');
 });

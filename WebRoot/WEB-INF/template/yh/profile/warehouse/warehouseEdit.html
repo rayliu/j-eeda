@@ -249,6 +249,7 @@
          $('#cmbCity').on('change', function(){
          	//var inputStr = $(this).parent("option").attr('id'); 
  			var inputStr = $(this).val();
+			var code = $("#location").val(inputStr);
  			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
  				var cmbArea =$("#cmbArea");
  				cmbArea.empty();
