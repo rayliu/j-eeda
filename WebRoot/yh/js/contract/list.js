@@ -7,10 +7,12 @@ $(document).ready(function() {
 	if(type=='CUSTOMER'){
 		$("#btn1").show();
 		urlSource="/yh/customerContract/customerList";
+		urlSource2="/yh/customerContract/edit/";
 		urlSource3="/yh/customerContract/delete/";
 	}else{
 		$("#btn2").show();
 		urlSource="/yh/spContract/spList";
+		urlSource2="/yh/spContract/edit/";
 		urlSource3="/yh/spContract/delete2/";
 	}
     
@@ -37,11 +39,11 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' href='/yh/customerContract/edit/"+obj.aData.CID+"'>"+
+                    return "<a class='btn btn-success' href='"+urlSource2+""+obj.aData.CID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+
                             "</a>"+
-                            "<a class='btn btn-danger' href='"+urlSource3+""+obj.aData.ID+"'>"+
+                            "<a class='btn btn-danger' href='"+urlSource3+""+obj.aData.CID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "删除"+
                             "</a>";

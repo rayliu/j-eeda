@@ -156,10 +156,10 @@ $(document).ready(function() {
 		        "aoColumns": [   
 		            
 		            {"mDataProp":"ORDER_NO"},
-		            {"mDataProp":"TRANSFER_ORDER_ID"},
+		            {"mDataProp":"TRANSFER_ORDER_NO"},
 		            {"mDataProp":"C1"},        	
 		            {"mDataProp":"C2"},
-		            {"mDataProp":"C3"},
+		            {"mDataProp":"CREATE_BY"},
 		            {"mDataProp":"STATUS"},
 		            { 
 		                "mDataProp": null, 

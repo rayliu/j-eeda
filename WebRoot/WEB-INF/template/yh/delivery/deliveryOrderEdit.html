@@ -38,9 +38,9 @@
 	                                <div class="col-lg-6">
 	                                 	<div>
 		                                    <h3> <label >客户信息</label></h3>
-                                    		<input id="delivery_id" type="hidden" name="delivery_id" value="${deliveryId.id!''}"/>
-		                                    <input id="tranferid" name="tranferid" type="hidden" value="${transferId!''}">
-		                                   	 <input id="customer_id" name="customer_id" type="hidden" value="${customer.id!''}">
+                                    		delivery_id<input id="delivery_id" type="text" name="delivery_id" value="${deliveryId.id!''}"/>
+		                                   tranferid <input id="tranferid" name="tranferid" type="text" value="${transferId!''}">
+		                                   	customer_id <input id="customer_id" name="customer_id" type="text" value="${customer.id!''}">
 							                      <div class="form-group">
 							                          <label>联系人：</label> ${customer.contact_person!''}
 							                      </div>
@@ -58,7 +58,7 @@
 						                  <h3> <label >供应商信息</label></h3>
 	                                        <div class="form-group">
 	                                            <label>供应商名称</label>
-	                                            <input id="cid" name="cid" type="hidden" value="${spContact.id!''}">
+	                                           cid <input id="cid" name="cid" type="text" value="${spContact.id!''}">
 	                                          <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage" value="${spContact.company_name!''}"/>
 	                                            <ul id='spList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 35%; left: 2%;">
 												</ul>
@@ -85,7 +85,7 @@
                                  			<div>
 			                                    <h3> <label >运输单信息</label></h3>
 			                                   
-			                                   	 <input id="transfer_id" name=""transfer_id"" type="hidden" value="${deliveryOrder.id!''}">
+			                                   	transfer_id <input id="transfer_id" name=""transfer_id"" type="text" value="${deliveryOrder.id!''}">
 						                      <div class="form-group">
 						                          <label>运输单号：</label> ${deliveryOrder.order_no!''}
 						                      </div>
@@ -102,7 +102,7 @@
 						                      <div>   
 		                                        <h3><label >收货人信息</label></h3>
 		                                        <div class="form-group">
-		                                        	<input name="notify_id" type="hidden" value="${notifyParty.pid!''}">
+		                                        	notify_id<input name="notify_id" type="text" value="${notifyParty.pid!''}">
 		                                            <label>收货人公司名称</label>
 		                                            <input name="notify_company_name" class="form-control" placeholder="请输入公司名称" value="${notifyParty.company_name!''}">
 		                                        </div>

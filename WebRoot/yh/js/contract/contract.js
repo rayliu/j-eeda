@@ -173,9 +173,8 @@ $(document).ready(function() {
 	                    	$("#style").show();
 	                    	//已经有一个重复的contractId 在前面了
 	                    	$('#routeContractId').val(contractId);
-	                    	/*
-	                    	dataTable.sAjaxSource="/yh/spContract/routeEdit?routId="+contractId;
-	                    	dataTable.fnDraw();*/
+	                    	dataTable.fnSettings().sAjaxSource="/yh/spContract/routeEdit?routId="+contractId;
+	                    	
 	                    }else{
 	                        alert('数据保存失败。');
 	                    }
@@ -299,8 +298,9 @@ $(document).ready(function() {
 	    });
 
 	    $("#changePage").click(function(){
-	    	var type= $("#type2").val();
-	    	if(type=='CUSTOMER'){
+	    	var type= $("#type3").val();
+	    	var type2= $("#type2").val();
+	    	if(type=='CUSTOMER'||type2=='CUSTOMER'){
 	    		window.location.href="/yh/customerContract";
 	    	}else{
 	    		window.location.href="/yh/spContract";
