@@ -185,7 +185,6 @@
 										     	<form id="routeItemForm" action="" method="post">
 			                                        <input id="routeContractId" name="routeContractId" type="hidden" value="${ul.id!''}">
 			                             	 		<input id="routeItemId" name="routeItemId" type="hidden" value ="">
-			                                        <input id="routeId" name="routeId" type="hidden" value="">
 			                                        <!-- 根据 始发地 和 目的地 找到 干线id-->
 			                                        <div class="modal-body">
                                                         <div class="form-group">
@@ -200,9 +199,16 @@
                                                                 <input type="radio" name="priceType" id="optionsRadiosInline3" value="零担">零担
                                                             </label>
                                                         </div>
+                                                       <!--  <div class="form-group" id="cargoNature">
+                                                            <lable>货品类型</lable>
+                                                            <select class="form-control" id="cargoNature2" name="cargoNature2">
+                                                                <option>ATM</option>
+                                                                <option>普通货品</option>
+                                                            </select>
+                                                        </div> -->
                                                         <div class="form-group" id="carType">
                                                             <lable>车型</lable>
-                                                            <select class="form-control">
+                                                            <select class="form-control" id="carType2" name="carType2">
                                                                 <option>全部</option>
                                                                 <option>平板车</option>
                                                                 <option>高栏车</option>
@@ -239,7 +245,7 @@
                                                         </div>
                                                         <div class="form-group" id="carLength">
                                                             <lable>车量长度</lable>
-                                                            <select class="form-control">
+                                                            <select class="form-control" id="carLength2" name="carLength2">
                                                                 <option>21</option>
                                                             </select>
                                                         </div>
@@ -266,13 +272,13 @@
                                                         <div class="form-group" id="ltlUnitType">
                                                             <label>零担计费方式</label>
                                                             <label class="radio-inline">
-                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosInline1" value="option1" checked="">按体积（每立方米）
+                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosInline1" value="按体积（每立方米）" checked="">按体积（每立方米）
                                                             </label>
                                                             <label class="radio-inline">
-                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosInline2" value="option2">按重量（每吨）
+                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosInline2" value="按重量（每吨）">按重量（每吨）
                                                             </label>
                                                             <label class="radio-inline">
-                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosInline3" value="option3">按重量（每公斤）
+                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosInline3" value="按重量（每公斤）">按重量（每公斤）
                                                             </label>
                                                         </div>
 													</div>
@@ -300,6 +306,10 @@
                              	 	<table class="table table-striped table-bordered table-hover" id="dataTables-example">
 	                                    <thead>
 	                                        <tr>
+	                                        	<th>计费方式</th>
+	                                        	<th>车型</th>
+	                                        	<th>长度</th>
+	                                        	<th>零担计费方式</th>
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
 	                                            <th>费用</th>

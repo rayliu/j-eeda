@@ -157,9 +157,9 @@ $(document).ready(function() {
 		            
 		            {"mDataProp":"ORDER_NO"},
 		            {"mDataProp":"TRANSFER_ORDER_NO"},
-		            {"mDataProp":"C1"},        	
+		            {"mDataProp":"CUSTOMER"},        	
 		            {"mDataProp":"C2"},
-		            {"mDataProp":"CREATE_BY"},
+		            {"mDataProp":"CREATE_STAMP"},
 		            {"mDataProp":"STATUS"},
 		            { 
 		                "mDataProp": null, 

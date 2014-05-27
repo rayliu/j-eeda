@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
-import models.yh.profile.Route;
 
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -231,7 +230,7 @@ public class ContractController extends Controller {
         // 获取总条数
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
-            sql = "select count(1) total from route r, contract_item c where c.route_id=r.id and c.contract_id = "
+            sql = "select count(1) total from contract_item c where c.contract_id = "
                     + contractId + "";
         }
 
@@ -242,9 +241,9 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db
-                    .find("select * from  route r, contract_item c where c.route_id=r.id and c.contract_id = ?",
-                            contractId);
+            orders = Db.find(
+                    "select * from  contract_item c where c.contract_id = ?",
+                    contractId);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -257,89 +256,75 @@ public class ContractController extends Controller {
     public void routeAdd() {
         ContractItem item = new ContractItem();
         String contractId = getPara("routeContractId");
-        String id = getPara("routeId");
         String routeItemId = getPara("routeItemId");
-
+        String priceType = getPara("priceType");
         // 判断合同干线是否存在
+        item.set("contract_id", contractId)
+                .set("pricetype", getPara("priceType"))
+                .set("from_id", getPara("from_id"))
+                .set("location_from", getPara("fromName"))
+                .set("to_id", getPara("to_id"))
+                .set("location_to", getPara("toName"))
+                .set("amount", getPara("price"));
 
-        if (id != "") {
-        }
-        Record route = new Record();
-        route.set("from_id", getPara("from_id"));
-        route.set("to_id", getPara("to_id"));
-        route.set("location_from", getPara("fromName"));
-        route.set("location_to", getPara("toName"));
-        route.set("remark", getPara("remark"));
-
-        if (id != "") {
-            if (routeItemId != "") {
-                route.set("id", id);
-                Db.update("route", route);
-
-                item.set("contract_id", contractId)
-                        .set("route_id", getPara("routeId"))
-                        .set("amount", getPara("price"))
-                        .set("id", getPara("routeItemId"));
-                // .set("miles", getPara("miles"));\
+        if (routeItemId != "") {
+            if (priceType.equals("计件")) {
+                item.set("id", getPara("routeItemId"));
                 item.update();
                 renderJson("{\"success\":true}");
             }
-
-            List<Record> itemId = Db
-                    .find("select * from CONTRACT_ITEM where contract_id ='"
-                            + contractId + "' and route_id ='" + id + "'");
-            if (itemId.size() == 0) {
-                Db.save("route", route);
-                item.set("contract_id", contractId)
-                        .set("route_id", route.get("id"))
-                        .set("amount", getPara("price"));
-                // .set("miles", getPara("miles"));\
+            if (priceType.equals("整车")) {
+                item.set("id", getPara("routeItemId"));
+                item.set("cartype", getPara("carType2")).set("carlength",
+                        getPara("carLength2"));
+                item.update();
+                renderJson("{\"success\":true}");
+            }
+            if (priceType.equals("零担")) {
+                item.set("id", getPara("routeItemId"));
+                item.set("ltlUnitType", getPara("ltlUnitType"));
+                item.update();
+                renderJson("{\"success\":true}");
+            }
+        } else {
+            if (priceType.equals("计件")) {
                 item.save();
                 renderJson("{\"success\":true}");
             }
-
-            /*
-             * System.out.println(itemId.get(0).get("id"));
-             */
-
-        } else {
-
-            Db.save("route", route);
-            item.set("contract_id", contractId)
-                    .set("route_id", route.get("id"))
-                    .set("amount", getPara("price"));
-            // .set("miles", getPara("miles"));\
-            item.save();
-            renderJson("{\"success\":true}");
-
+            if (priceType.equals("整车")) {
+                item.set("cartype", getPara("carType2")).set("carlength",
+                        getPara("carLength2"));
+                item.save();
+                renderJson("{\"success\":true}");
+            }
+            if (priceType.equals("零担")) {
+                item.set("ltlUnitType", getPara("ltlUnitType"));
+                item.save();
+                renderJson("{\"success\":true}");
+            }
         }
     }
 
-    // 通过输入起点和终点判断干线id
-    public void searchRoute() {
-        String fromName = getPara("fromName");
-        String toName = getPara("toName");
-        System.out.println(fromName);
-        System.out.println(toName);
-        List<Route> routeId = Route.dao
-                .find("select id as rId from route where location_from like '%"
-                        + fromName + "%' and location_to like '%" + toName
-                        + "%'");
-        System.out.println(routeId);
-        renderJson(routeId);
-    }
+    /*
+     * // 通过输入起点和终点判断干线id public void searchRoute() { String fromName =
+     * getPara("fromName"); String toName = getPara("toName");
+     * System.out.println(fromName); System.out.println(toName); List<Route>
+     * routeId = Route.dao
+     * .find("select id as rId from CONTRACT_ITEM where location_from like '%" +
+     * fromName + "%' and location_to like '%" + toName + "%'");
+     * System.out.println(routeId); renderJson(routeId); }
+     */
 
     public void contractRouteEdit() {
         String id = getPara();
 
         String contractId = getPara("contractId");
-        System.out.println(contractId);
+        System.out.println(id);
         // Route route = Route.dao.findById(id);
-        List<Route> route = Route.dao
-                .find("SELECT *,c.id as cid FROM  route r left join CONTRACT_ITEM  c  on c.route_ID = r.id where  c.id = '"
-                        + id + "' and c.contract_id = '" + contractId + "'");
-
-        renderJson(route);
+        List<Record> list = Db
+                .find("select * from contract_item where contract_id ='"
+                        + contractId + "'and id = '" + id + "'");
+        renderJson(list);
     }
 
     public void routeDelete() {

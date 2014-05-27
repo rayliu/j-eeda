@@ -13,7 +13,11 @@ $(document).ready(function() {
 	        "bProcessing": true,
 	        "bServerSide": true,
 	        "sAjaxSource": "/yh/spContract/routeEdit?routId="+contractId,
-	        "aoColumns": [   
+	        "aoColumns": [  
+				{"mDataProp":"PRICETYPE"},
+				{"mDataProp":"CARTYPE"},
+				{"mDataProp":"CARLENGTH"},
+				{"mDataProp":"LTLUNITTYPE"},
 	            {"mDataProp":"LOCATION_FROM"},
 	            {"mDataProp":"LOCATION_TO"},
 	            {"mDataProp":"AMOUNT"},
@@ -47,7 +51,7 @@ $(document).ready(function() {
                 	 $('#to_id').val(data[0].TO_ID);
                 	 $('#toName').val(data[0].LOCATION_TO);
                 	 $('#price').val(data[0].AMOUNT);
-                	 $('#routeItemId').val(data[0].CID);
+                	 $('#routeItemId').val(data[0].ID);
                  }else{
                      alert('取消失败');
                  }
@@ -90,7 +94,6 @@ $(document).ready(function() {
         	if(contractId != ""){
         		//$("#routeItemFormDiv").show();
         		$("#routeItemId").val("");
-        		$("#routeId").val("");
         	}else{
         		alert("请先添加合同！");
         		return false;
@@ -211,15 +214,15 @@ $(document).ready(function() {
 			$('#from_id').val($(this).attr('code'));
 			$('#fromName').val($(this).text());
         	$("#fromLocationList").hide();
-        	 var inputStr = $('#fromName').val();
+        	 /*var inputStr = $('#fromName').val();
 			 var inputStr2 = $('#toName').val();
 			 if(inputStr!=''&&inputStr2!=''){
 				 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
 					 for(var i = 0; i < data.length; i++){
-						 	$('#routeId').val(data[i].RID);
+						 	$('#routeItemId').val(data[i].RID);
 					 }
 				 },'json');
-			 }
+			 }*/
     	});
 		
 		//选择目的地点
@@ -251,7 +254,7 @@ $(document).ready(function() {
 			$('#to_id').val($(this).attr('code'));
 			$('#toName').val($(this).text());
         	$("#toLocationList").hide();
-        	 var inputStr = $('#fromName').val();
+        	/* var inputStr = $('#fromName').val();
 			 var inputStr2 = $('#toName').val();
 			 if(inputStr!=''&&inputStr2!=''){
 				 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
@@ -259,7 +262,7 @@ $(document).ready(function() {
 						 	$('#routeId').val(data[i].RID);
 					 }
 				 },'json');
-			 }
+			 }*/
     	});
 		
 		//datatable, 动态处理
@@ -328,6 +331,7 @@ $(document).ready(function() {
 	    		$("#carType").show();
 	    		$("#carLength").show();
 	    		$("#ltlUnitType").hide();
+	    		//$("#cargoNature").hide();
 	    	}else if(val=="零担"){
 				$("#carType").hide();
 	    		$("#carLength").hide();

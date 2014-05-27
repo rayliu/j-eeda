@@ -30,7 +30,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists Fin_item(id bigint auto_increment PRIMARY KEY,code VARCHAR(20),name VARCHAR(20),type VARCHAR(20),Remark VARCHAR(255));");
             stmt.executeUpdate("create table if not exists privilege_table(id bigint auto_increment PRIMARY KEY,privilege VARCHAR(50));");
 
-            stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment PRIMARY KEY,contract_id bigint,route_id bigint,Fin_item_id bigint,amount Double,remark VARCHAR(255));");
+            stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment PRIMARY KEY,contract_id bigint,Fin_item_id bigint,priceType varchar(50),carType varchar(255),carLength varchar(255),ltlUnitType varchar(50), from_id VARCHAR(50),location_from VARCHAR(50),to_id VARCHAR(50),location_to VARCHAR(50) ,amount Double,remark VARCHAR(255));");
 
             // location init
             LocationDataInit.initLocation(stmt);
@@ -151,12 +151,13 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','120000','天津','123123');");
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('120000','天津','110000','北京','123123');");
 
-            stmt.executeUpdate("insert into contract_item(contract_id,route_id,Fin_item_id,amount,remark) values('1','1','1','120000','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,route_id,Fin_item_id,amount,remark) values('2','2','2','130000','路线2');");
-            stmt.executeUpdate("insert into contract_item(contract_id,route_id,Fin_item_id,amount,remark) values('1','3','3','120000','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,route_id,Fin_item_id,amount,remark) values('2','1','2','130000','路线2');");
-            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('3','2','120000','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,route_id,amount,remark) values('4','3','130000','路线2');");
+            stmt.executeUpdate("insert into contract_item(contract_id,Fin_item_id,amount,from_id,location_from,to_id,location_to,remark) values('1','1','120000','110000','北京','110103','宣武区','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,Fin_item_id,amount,from_id,location_from,to_id,location_to,remark) values('2','2','130000','110000','北京','120000','天津','路线2');");
+            stmt.executeUpdate("insert into contract_item(contract_id,Fin_item_id,amount,from_id,location_from,to_id,location_to,remark) values('1','3','120000','120000','天津','110000','北京','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,Fin_item_id,amount,remark) values('2','1','130000','路线2');");
+            stmt.executeUpdate("insert into contract_item(contract_id,amount,remark) values('3','120000','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,amount,remark) values('4','130000','路线2');");
+
             // 系统权限
             stmt.executeUpdate("insert into role_permissions(role_name, role_permission, remark) values('root', '123456', '1-6');");
             // alter table leads add(priority varchar(50),customer_source
@@ -524,11 +525,11 @@ public class DataInitUtil {
             // 产品
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('ATM', '2014042600001','1','5','7','9','ATM', '这是一台ATM', '4');");
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('普通货品', '2014042600002','1','5','7','9','普通货品', '这是普通货品', '4');");
-            
+
             // 仓库
             stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿总仓', '这是广州总仓','萝岗','2');");
             stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿总仓', '这是广州总仓','东莞','4');");
-            
+
             stmt.close();
             // conn.commit();
             conn.close();
