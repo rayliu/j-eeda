@@ -73,7 +73,7 @@ $(document).ready(function() {
                //保存成功后，刷新列表
                console.log(data);
                if(data.success){
-              	 dataTable.fnDraw();
+            	   transferOrder.fnDraw();
                }else{
                    alert('取消失败');
                }

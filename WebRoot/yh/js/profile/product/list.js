@@ -52,11 +52,12 @@ $(document).ready(function() {
         if(customerId > 0){
     	    $.get('/yh/product/searchAllCategory', {customerId:customerId}, function(data){
     			console.log(data);	
-    			var productTreeLi = $("#productTreeLi");
+    			var productTreeUl = $("#productTreeUl");
+    			productTreeUl.empty();
     			if(data.length > 0){
     				for(var i = 0; i < data.length; i++)
     				{
-    					productTreeLi.append("<ul><li><span><i class='icon-minus-sign'></i><a href='javascript:void(0)' class='productList'>"+data[i].CATEGORY+"</a></span> <a href=''>Goes somewhere</a><ul><li><span><i class='icon-leaf'></i> Grand Child</span> <a href=''>Goes somewhere</a></li></ul></li></ul>");
+    					productTreeUl.append("<li class='parent_li'><span><i class='icon-minus-sign'></i><a href='javascript:void(0)' class='productList'>"+data[i].CATEGORY+"</a></span><ul><li><span><i class='icon-leaf'></i> Grand Child</span></li></ul></li>");
     				}
     			}
     		},'json');
@@ -87,7 +88,7 @@ $(document).ready(function() {
 			if(data.length > 0){
 				for(var i = 0; i < data.length; i++)
 				{
-					productTreeLi.append("<ul><li><span><i class='icon-minus-sign'></i><a href='javascript:void(0)' class='productList'>"+data[i].CATEGORY+"</a></span> <a href=''>Goes somewhere</a><ul><li><span><i class='icon-leaf'></i> Grand Child</span> <a href=''>Goes somewhere</a></li></ul></li></ul>");
+					productTreeLi.append("<li class='parent_li'><span><i class='icon-minus-sign'></i><a href='javascript:void(0)' class='productList'>"+data[i].CATEGORY+"</a></span><ul><li><span><i class='icon-leaf'></i> Grand Child</span></li></ul></li>");
 				}
 			}
 		},'json');
@@ -100,43 +101,49 @@ $(document).ready(function() {
     	$("#productCategory").val(category);
     	$("#productCustomerId").val($('#customerId').val());
     	
-    	//datatable, 动态处理
-        productDataTable = $('#eeda-table').dataTable({
-            //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-            //"sPaginationType": "bootstrap",
-            "iDisplayLength": 10,
-            "bServerSide": true,
-        	"oLanguage": {
-                "sUrl": "/eeda/dataTables.ch.txt"
-            },
-            "sAjaxSource": "/yh/product/list?category="+category,
-            "aoColumns": [   
-                {"mDataProp":"ITEM_NAME"},
-                {"mDataProp":"ITEM_NO"},        	
-                {"mDataProp":"SIZE"},
-                {"mDataProp":"WIDTH"},
-                {"mDataProp":"UNIT"},
-                {"mDataProp":"VOLUME"},
-                {"mDataProp":"WEIGHT"},
-                {"mDataProp":"CATEGORY"},
-                {"mDataProp":"ITEM_DESC"},
-                { 
-                    "mDataProp": null, 
-                    "sWidth": "8%",                
-                    "fnRender": function(obj) {                    
-                        return "<a class='btn btn-success editProduct' id='"+obj.aData.ID+"'>"+
-                                    "<i class='fa fa-edit fa-fw'></i>"+
-                                    "编辑"+
-                                "</a>"+
-                                "<a class='btn btn-danger deleteProduct' id='"+obj.aData.ID+"'>"+
-                                    "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                    "删除"+
-                                "</a>";
-                    }
-                }                         
-            ],      
-        });
+    	if($("#displayDiv").attr('style') != ""){
+    		$("#displayDiv").show();
+	    	//datatable, 动态处理
+	        productDataTable = $('#eeda-table').dataTable({
+	            //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+	            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+	            //"sPaginationType": "bootstrap",
+	            "iDisplayLength": 10,
+	            "bServerSide": true,
+	        	"oLanguage": {
+	                "sUrl": "/eeda/dataTables.ch.txt"
+	            },
+	            "sAjaxSource": "/yh/product/list?category="+category,
+	            "aoColumns": [   
+	                {"mDataProp":"ITEM_NAME"},
+	                {"mDataProp":"ITEM_NO"},        	
+	                {"mDataProp":"SIZE"},
+	                {"mDataProp":"WIDTH"},
+	                {"mDataProp":"UNIT"},
+	                {"mDataProp":"VOLUME"},
+	                {"mDataProp":"WEIGHT"},
+	                {"mDataProp":"CATEGORY"},
+	                {"mDataProp":"ITEM_DESC"},
+	                { 
+	                    "mDataProp": null, 
+	                    "sWidth": "8%",                
+	                    "fnRender": function(obj) {                    
+	                        return "<a class='btn btn-success editProduct' id='"+obj.aData.ID+"'>"+
+	                                    "<i class='fa fa-edit fa-fw'></i>"+
+	                                    "编辑"+
+	                                "</a>"+
+	                                "<a class='btn btn-danger deleteProduct' id='"+obj.aData.ID+"'>"+
+	                                    "<i class='fa fa-trash-o fa-fw'></i>"+ 
+	                                    "删除"+
+	                                "</a>";
+	                    }
+	                }                         
+	            ],      
+	        });
+    	}else{
+    		productDataTable.fnSettings().sAjaxSource = "/yh/product/list?category="+category;
+        	productDataTable.fnDraw();
+    	}
     });
 	
     // 保存产品
