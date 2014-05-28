@@ -14,38 +14,79 @@
             		</div>
             		<div class="panel-body">
             			<div class="row-fluid">
-            				<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/yh/account/saveAccount" method="post">
-						<input id="accountId" name="accountId" type="hidden" value="${ul.id!''}">
-						<div class="form-group ">
-			                 <label class="control-label">银行账户人姓名(必填)</label>
-			                 <input id="name" name="name" type="text" class="form-control" value="${ul.name!''}">
-			             </div>
-			             <div class="form-group ">
-			                 <label class="control-label">账户类型(必填)</label>
-			                 <input  id="type" name="type" type="text" class="form-control"value="${ul.type!''}">
-			             </div>
-			              <div class="form-group">
-			                 <label class="control-label">币种(必填)</label>
-			                 <input type="text" class="form-control" id="currency" name="currency" value="${ul.currency!''}">
-			             </div>
-			             <div class="form-group">
-			                 <label class="control-label">银行机构(必填)</label>
-			                 <input type="text" class="form-control" id="org_name" name="org_name" value="${ul.org_name!''}">
-			             </div>
-			             <div class="form-group">
-			                 <label class="control-label">银行账户号码(必填)</label>
-			                 <input type="text" class="form-control" id="account_pin" name="account_pin" value="${ul.account_pin!''}">
-			             </div>
-			             <div class="form-group">
-			                 <label class="control-label">备注</label>
-			                 <input type="text" class="form-control" id="remark" name="remark" value="${ul.remark!''}">
-			             </div>
-			             	<button type="submit" class="btn btn-default">保存</button>
-			             	<a class="btn btn-default" href="/yh/account">取消</a>
-			         </form>
+            			<form lass="form-horizontal" id='accountFrom' name="accountFrom" action="" method="post">
+							<input id="accountId" name="accountId" type="hidden" value="${ul.id!''}">
+							<div class="form-group ">
+				                 <label class="control-label">银行账户人姓名(必填)</label>
+				                 <input id="name" name="name" type="text" class="form-control" value="${ul.name!''}">
+				             </div>
+				             <div class="form-group ">
+				                 <label class="control-label">账户类型(必填)</label>
+				                 <select id="type" name="type" class="form-control" value="">
+				                 	<option></option>
+				                 	<option>收费</option>
+				                 	<option>付费</option>
+				                 </select>
+				             </div>
+				            <div class="form-group">
+				                 <label class="control-label">备注</label>
+				                 <!-- //<input type="text" class="form-control" id="remark" name="remark" > -->
+				                 <textarea class="form-control" id="remark" name="remark" rows="3" value="${ul.remark!''}"></textarea>
+				             </div>
+				        </form>
+			         		<div>
+				            	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
+				            	<button id="save" class="btn btn-default" >保存</button>
+				             	<a class="btn btn-default" href="/yh/account">返回</a>
+				             </div>
             			</div>
-            			<div class="panel-heading"></div>
+            			<div class="panel-heading">
+                        			<!-- Button trigger modal -->
+								<button id="btn" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+								 	 新增账户
+								</button>
+									<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+									        <h4 class="modal-title" id="myModalLabel">客户账户</h4>
+									      </div>
+									      <div class="modal-body">
+										     	<form id="accountItemForm" action="" method="post">
+			                                        <input id="accountId2" name="accountId2" type="hidden" value="${ul.id!''}">
+			                             	 		<input id="accountItemId" name="accountItemId" type="hidden" value ="">
+			                                        <!-- 根据 始发地 和 目的地 找到 干线id-->
+			                                        <div class="modal-body">
+                                                     	<div class="form-group">
+                                                            <lable>银行机构</lable>
+                                                             <input type="text" class="form-control" id="org_name" name="org_name" value="">
+                                                        </div>
+				                             	 		<div class="form-group">
+                                                            <lable>银行账户</lable>
+                                                            <input type="text" class="form-control" id="account_pin" name="account_pin" value="">
+                                                        </div>
+                                                         <div class="form-group">
+		                								 	<label>币种</label>
+						                 					<input type="text" class="form-control" id="currency" name="currency" value="">
+							            				 </div>
+                                                        <div class="form-group">
+                                                            <lable>开户人</lable>
+                                                            <input class="form-control" id="account_person" name="account_person" type="text" value="">
+                                                        </div>
+													</div>
+			                             	 	</form>	
+									      </div>
+									      <div class="modal-footer">
+									        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									        <button id="saveAccountItemBtn" type="button" class="btn btn-primary">保存</button>
+									      </div>
+									    </div><!-- /.modal-content -->
+									  </div><!-- /.modal-dialog -->
+									</div><!-- /.modal -->
+                    		</div>
             			<div class="col-lg-12">
+            			
                          <div class="panel panel-default">
                             <div class="panel-heading">
                             	<i class="fa fa-list fa-fw"></i>金融账户
@@ -57,57 +98,133 @@
 	                                        <tr>
 	                                        	<th>银行机构</th>
 	                                            <th>银行账户号码</th>
+	                                            <th>币种</th>
 	                                            <th>开户人</th>
 	                                            <th></th>
 	                                        </tr>
 	                                    </thead>
-	                                    <tbody>
-	                                        <tr>
-	                                            
-	                                        </tr>
-	                                    </tbody>
-                               		 </table>
-                            </div>
-                          </div>
-                        </div>
-                      </div> 
+	                                    </table>
+                           		 </div>
+                          	</div>
+                        	</div>
+                      	</div> 
+                      	
             		</div>
-					
-							
 				</div>
 			</div>
 		</div>
 	</div>
 <%}%>
 <!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
-<script>
-	$(document).ready(function() {
-        $('#leadsForm').validate({
-            rules: {
-            	name: {
-                required: true
-              },
-              type:{//form 中 name为必填
-                required: true
-              },
-              currency:{//form 中 name为必填
-                  required: true
-                },
-              org_name:{//form 中 name为必填
-                required: true
-              },
-              account_pin:{//form 中 name为必填
-                required: true
-              }
-            },
-            highlight: function(element) {
-                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-            },
-            success: function(element) {
-                element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+
+<script src="/yh/js/account/account.js" type="text/javascript"></script>
+<script type="text/javascript">
+var accountId = $("#accountId2").val();
+var dataTable= $('#dataTables-example').dataTable({
+    //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    //"sPaginationType": "bootstrap",
+    "iDisplayLength": 10,
+	"oLanguage": {
+        "sUrl": "/eeda/dataTables.ch.txt"
+    },
+    "bProcessing": true,
+    "bServerSide": true,
+    "sAjaxSource": "/yh/account/accountItem?accountId="+accountId,
+    "aoColumns": [   
+        {"mDataProp":"ORG_NAME"},
+        {"mDataProp":"ACCOUNT_PIN"},
+        {"mDataProp":"CURRENCY"},
+        {"mDataProp":"ORG_PERSON"},
+        { 
+            "mDataProp": null, 
+            "sWidth": "8%",                
+            "fnRender": function(obj) {                    
+         	   return "<a class='btn btn-success eidtAcountItem' code = '"+obj.aData.FID+"'>"+
+		                       "<i class='fa fa-edit fa-fw'></i>"+
+		                       "编辑"+
+		                   "</a>"+
+		                   "<a class='btn btn-danger delectAcountItem' code2 ='"+obj.aData.FID+"'>"+
+		                       "<i class='fa fa-trash-o fa-fw'></i>"+ 
+		                       "删除"+
+		                   "</a>";
             }
-        });
-    });
+        }                          
+    ],
+ });
+$("#dataTables-example").on('click', '.eidtAcountItem', function(){
+	  var accountId = $("#accountId2").val();
+	 	var id = $(this).attr('code');
+	 $.post('/yh/account/eidtAcountItem/'+id,{accountId:accountId},function(data){
+       //保存成功后，刷新列表
+       console.log(data);
+       if(data[0] !=null){
+      	 $('#myModal').modal('show');
+      	 $('#currency').val(data[0].CURRENCY);
+      	 $('#org_name').val(data[0].ORG_NAME);
+      	 $('#account_pin').val(data[0].ACCOUNT_PIN);
+      	 $('#account_person').val(data[0].ORG_PERSON);
+      	 $('#accountItemId').val(data[0].ID);
+       }else{
+           alert('取消失败');
+       }
+   },'json');
+});
+$("#dataTables-example").on('click', '.delectAcountItem', function(){
+	  var accountId = $("#accountId2").val();
+	 	var id = $(this).attr('code2');
+	 $.post('/yh/account/delectAcountItem/'+id,{accountId:accountId},function(data){
+     //保存成功后，刷新列表
+     console.log(data);
+     if(data.success){
+    	 dataTable.fnDraw();
+     }else{
+         alert('取消失败');
+     }
+ },'json');
+});
+var type = '${ul.type!''}';
+$("#type").val(type);
+//添加账户
+$('#save').click(function(){
+	 $.post('/yh/account/save', $("#accountFrom").serialize(), function(data){
+         if(data>0){
+             //alert("添加合同成功！");
+         	$("#style").show();
+         	//已经有一个重复的contractId 在前面了
+         	$('#accountId2').val(data);
+         	// dataTable.fnSettings().sAjaxSource="/yh/account/accountItem?routId="+contractId; 
+         }else{
+             alert('数据保存失败。');
+         }
+         
+     },'json');
+});
+$("#btn").click(function(){
+   	var accountId = $("#accountId2").val();
+   	if(accountId != ""){
+   		//$("#routeItemFormDiv").show();
+   		$("#accountItemId").val("");
+   	}else{
+   		alert("请先添加合同！");
+   		return false;
+   	}
+   });
+$('#saveAccountItemBtn').click(function(){
+		 $.post('/yh/account/saveAccountItemBtn', $("#accountItemForm").serialize(), function(data){
+	         if(data.success){
+	        	 $('#myModal').modal('hide');
+	        	 dataTable.fnDraw();
+	         }else{
+	             alert('数据保存失败。');
+	         }
+	         
+	     },'json');
+});
+
 </script>

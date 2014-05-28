@@ -269,20 +269,23 @@ public class ContractController extends Controller {
 
         if (routeItemId != "") {
             if (priceType.equals("计件")) {
-                item.set("id", getPara("routeItemId"));
+                item.set("id", getPara("routeItemId")).set("cartype", null)
+                        .set("carlength", null).set("ltlUnitType", null);
                 item.update();
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("整车")) {
                 item.set("id", getPara("routeItemId"));
-                item.set("cartype", getPara("carType2")).set("carlength",
-                        getPara("carLength2"));
+                item.set("cartype", getPara("carType2"))
+                        .set("carlength", getPara("carLength2"))
+                        .set("ltlUnitType", null);
                 item.update();
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("零担")) {
                 item.set("id", getPara("routeItemId"));
-                item.set("ltlUnitType", getPara("ltlUnitType"));
+                item.set("ltlUnitType", getPara("ltlUnitType"))
+                        .set("cartype", null).set("carlength", null);
                 item.update();
                 renderJson("{\"success\":true}");
             }

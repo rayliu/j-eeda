@@ -1,0 +1,1 @@
+package models.yh.profile;import com.jfinal.plugin.activerecord.Model;public class AccountItem extends Model<AccountItem> {    public static final AccountItem dao = new AccountItem();}

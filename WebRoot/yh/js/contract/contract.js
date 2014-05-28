@@ -44,6 +44,7 @@ $(document).ready(function() {
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data[0] !=null){
+                	
                 	 $('#myModal').modal('show');
                 	 $('#routeId').val(data[0].ID);
                 	 $('#from_id').val(data[0].FROM_ID);
@@ -52,6 +53,12 @@ $(document).ready(function() {
                 	 $('#toName').val(data[0].LOCATION_TO);
                 	 $('#price').val(data[0].AMOUNT);
                 	 $('#routeItemId').val(data[0].ID);
+                	 
+                	 $("input[name='priceType']").each(function(){
+	                	 if($(this).val() == data[0].PRICETYPE){
+	                		 $(this).attr("checked","checked");
+	              		}
+                	 });
                  }else{
                      alert('取消失败');
                  }

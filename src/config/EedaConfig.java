@@ -30,6 +30,7 @@ import models.yh.arap.BillingOrderItem;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.delivery.DeliveryOrder;
+import models.yh.profile.AccountItem;
 import models.yh.profile.Contact;
 import models.yh.profile.Route;
 
@@ -188,6 +189,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("billing_order_item", BillingOrderItem.class);
         arp.addMapping("delivery_order_milestone", DeliveryOrderMilestone.class);
         arp.addMapping("location", Location.class);
+        arp.addMapping("fin_account_item",AccountItem.class);
+        
         // yh mapping
 
     }

@@ -24,7 +24,8 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists role_permissions(id bigint auto_increment PRIMARY KEY, role_name VARCHAR(50) not null, role_permission VARCHAR(50), remark VARCHAR(255));");
             stmt.executeUpdate("create table if not exists location(id bigint auto_increment PRIMARY KEY, code VARCHAR(50) not null, name VARCHAR(50), pcode VARCHAR(255));");
             stmt.executeUpdate("create table if not exists office(id bigint auto_increment PRIMARY KEY, office_code VARCHAR(50) not null, office_name VARCHAR(50), office_person VARCHAR(50),phone VARCHAR(255),address VARCHAR(255),email VARCHAR(50),type VARCHAR(50),company_intro VARCHAR(255),remark VARCHAR(255));");
-            stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment PRIMARY KEY, name VARCHAR(20) not null, type VARCHAR(50), currency VARCHAR(50),org_name VARCHAR(50),account_pin VARCHAR(50), remark VARCHAR(255));");
+            stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment PRIMARY KEY, name VARCHAR(20) not null, type VARCHAR(50),remark VARCHAR(255));");
+            stmt.executeUpdate("create table if not exists fin_account_item(id bigint auto_increment PRIMARY KEY,account_id bigint,currency VARCHAR(50),org_name VARCHAR(50),account_pin VARCHAR(50),org_person varchar(50));");
             stmt.executeUpdate("create table if not exists contract(id bigint auto_increment PRIMARY KEY, name VARCHAR(50) not null, type VARCHAR(50), party_id bigint,period_from Timestamp,period_to Timestamp, remark VARCHAR(255));");
             stmt.executeUpdate("create table if not exists role_table(id bigint auto_increment PRIMARY KEY,role_name VARCHAR(50),role_time TIMESTAMP,role_people VARCHAR(50),role_lasttime TIMESTAMP,role_lastpeople VARCHAR(50));");
             stmt.executeUpdate("create table if not exists Fin_item(id bigint auto_increment PRIMARY KEY,code VARCHAR(20),name VARCHAR(20),type VARCHAR(20),Remark VARCHAR(255));");
@@ -138,9 +139,13 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','控股','这是一家公司');");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('101', '深圳分公司','张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','合作','这是一家公司');");
 
-            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李志坚','收费','人民币','建设银行','12123123123','');");
-            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('李四','收费','人民币','建设银行','12123123123','');");
-            stmt.executeUpdate("insert into fin_account(name,type,currency,org_name,account_pin,remark) values('张三','付费','人民币','建设银行','12123123123','');");
+            stmt.executeUpdate("insert into fin_account(name,type,remark) values('李志坚','收费','');");
+            stmt.executeUpdate("insert into fin_account(name,type,remark) values('李四','收费','');");
+            stmt.executeUpdate("insert into fin_account(name,type,remark) values('张三','付费','');");
+
+            stmt.executeUpdate("insert into fin_account_item(account_id,currency,org_name,account_pin,org_person) values('1','人民币','建设银行','12123123123','张三');");
+            stmt.executeUpdate("insert into fin_account_item(account_id,currency,org_name,account_pin,org_person) values('2','人民币','建设银行','12123123123','李四');");
+            stmt.executeUpdate("insert into fin_account_item(account_id,currency,org_name,account_pin,org_person) values('3','人民币','建设银行','12123123123','王五');");
 
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 4,'2014-11-12','2014-11-14','无');");
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,'2014-10-12','2014-11-15','无');");
