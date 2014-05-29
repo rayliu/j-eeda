@@ -30,8 +30,8 @@
                                          <label class="input-inline">配送单号</label> <input class=" input-inline input-small" type="text" id="de_order_no">
                                          <label class="input-inline">创建人</label> <input class=" input-inline input-small" type="text" id="stator">
                                          <label class="input-inline">状态</label> <input class=" input-inline input-small" type="text" id="status">
-                                          <label class="input-inline">时间段</label> <div class="input-append input-inline input-small date" id="datetimepicker">  
-							    <input type="text" class="input-inline input-small" id="time_one">
+                                          <label class="input-inline">时间段</label> <div  class="input-append input-inline input-small date" id="datetimepicker">  
+							    <input id="time_one" type="text" class="input-inline input-small" >
 							    <span class="add-on">  
 						        <i data-date-icon="icon-calendar" data-time-icon="icon-time" class="icon-calendar"></i>  
 						    	</span>  
@@ -52,7 +52,7 @@
                                         <tr>
                                             <th>回单编号</th>
                                             <th>客户名称</th>
-                                            <th>类型</th>
+                                            <th>类型</th>  
                                             <th>运输单号</th>
                                             <th>配送单号</th>
                                             <th>回单创建人</th>                                   
@@ -134,7 +134,7 @@
    			  "aoColumns": [
    				    { "mDataProp": "ORDER_NO"},
               { "mDataProp": "COMPANY_NAME"},
-              { "mDataProp": "ORDER_TYPE", "bVisible": false},
+              { "mDataProp": "ORDER_TYPE"},
               { "mDataProp": "TRANSFER_ORDER_NO"},
               { "mDataProp": "DELIVERY_ORDER_NO"},
               { "mDataProp": "CREATOR" },
