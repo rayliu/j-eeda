@@ -72,7 +72,7 @@ $(document).ready(function() {
 		             },'json');
 		        });
 			
-			$('#eeda-table2').dataTable({
+			var dataTable2 =  $('#eeda-table2').dataTable({
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        //"sPaginationType": "bootstrap",
@@ -120,7 +120,7 @@ $(document).ready(function() {
 		                		  			if(data[i].SERIAL_NO==null||data.length==0){
 		                		  				returnString ="" ;
 		                		  			}else{
-		                		  				returnString+="<option>"+data[i].SERIAL_NO+"</option>"
+		                		  				returnString+="<option value="+data[i].SERIAL_NO+">"+data[i].SERIAL_NO+"</option>"
 		                		  			}
 		                		  		}
 		                		  		returnString+="</select>";
@@ -134,7 +134,7 @@ $(document).ready(function() {
 		                "mDataProp": null, 
 		                "sWidth": "8%",                
 		                "fnRender": function(obj) {                    
-		                    return "<a class='btn btn-info editbutton' href='/yh/delivery/creat/"+obj.aData.ID+"'>"+
+		                    return "<a class='btn btn-info creat' code='"+obj.aData.ID+"'>"+
 		                    		"<i class='fa fa-list fa-fw'> </i> "+
 		                    		"创建"+
 		                    		"</a>";
@@ -142,6 +142,25 @@ $(document).ready(function() {
 		            }                         
 		        ]      
 		    });	
+			//异步创建配送单
+			 $("#eeda-table2").on('click', '.creat', function(e){
+				 	var ser = $("#sel").val();
+				 	
+				  e.preventDefault();
+		         //异步向后台提交数据
+				 var id = $(this).attr('code');
+				$.post('/yh/delivery/creat/'+id,{ser:ser},function(id){
+		                 //保存成功后，刷新列表
+		                 console.log(id);
+		                 if(id>0){
+		                	// $("#tranferid").val(id);
+		                	 //dataTable2.fnSettings().sAjaxSource="/yh/delivery/orderList?trandferOrderId="+id;
+		                	 window.location.href="/yh/delivery/creat2/"+id;
+		                 }else{
+		                     alert('取消失败');
+		                 }
+		             },'json');
+				  });
 			//datatable, 动态处理
 		    var dataTable =$('#eeda-table3').dataTable({
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
