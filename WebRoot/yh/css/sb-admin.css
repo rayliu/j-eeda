@@ -344,4 +344,9 @@ label.error {
   margin-top: 2px;
 }
 
+.search-control{
+    display: inline;  
+    width: 50%;
+}
+
 /* ray added */
