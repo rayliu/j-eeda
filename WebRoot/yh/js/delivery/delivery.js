@@ -113,7 +113,7 @@ $(document).ready(function() {
 		                		  	success : function(data){  
 		                		  		console.log(data);
 		                		  		if(data.length!=0){
-		                		  		returnString = "<select id='sel'>";
+		                		  		returnString = "<select id='ser'>";
 		                		  		for(var i = 0; i < data.length; i++)
 		        						{
 		                		  			
@@ -144,8 +144,8 @@ $(document).ready(function() {
 		    });	
 			//异步创建配送单
 			 $("#eeda-table2").on('click', '.creat', function(e){
-				 	var ser = $("#sel").val();
-				 	
+				 	//var ser = $("#eeda-table2 select").val();
+				var ser = $("#ser").val();
 				  e.preventDefault();
 		         //异步向后台提交数据
 				 var id = $(this).attr('code');
