@@ -102,7 +102,7 @@ public class TransferOrderItemDetailController extends Controller {
 			item.set("weight", getPara("update_detail_weight"));
 			item.set("remark", getPara("update_detail_remark"));
 			
-			boolean detail_is_damage = getParaToBoolean("update_detail_is_damage");
+			/*boolean detail_is_damage = getParaToBoolean("update_detail_is_damage");
 			item.set("is_damage", detail_is_damage);
 			String estimate_damage_amount = getPara("update_detail_estimate_damage_amount");
 			if(estimate_damage_amount != null && !estimate_damage_amount.equals("")){
@@ -127,7 +127,7 @@ public class TransferOrderItemDetailController extends Controller {
 				item.set("damage_remark", damage_remark);
 			}else{
 				item.set("damage_remark", null);
-			}
+			}*/
 			Party party = Party.dao.findById(getPara("notify_party_id"));
 			Contact contact = Contact.dao.findFirst("select * from contact where id=(select contact_id from party where id="+party.get("id")+")");
 			contact.set("contact_person", getPara("update_detail_contact_person"));
@@ -149,9 +149,9 @@ public class TransferOrderItemDetailController extends Controller {
 			item.set("volume", getPara("detail_volume"));
 			item.set("weight", getPara("detail_weight"));
 			item.set("remark", getPara("detail_remark"));
-			boolean detail_is_damage = getParaToBoolean("detail_is_damage");
-			item.set("is_damage", detail_is_damage);
-			String estimate_damage_amount = getPara("detail_estimate_damage_amount");
+			/*//boolean detail_is_damage = getParaToBoolean("detail_is_damage");
+			//item.set("is_damage", detail_is_damage);
+			//String estimate_damage_amount = getPara("detail_estimate_damage_amount");
 			if(estimate_damage_amount != null && !estimate_damage_amount.equals("")){
 				item.set("estimate_damage_amount", estimate_damage_amount);
 			}else{
@@ -174,7 +174,7 @@ public class TransferOrderItemDetailController extends Controller {
 				item.set("damage_remark", damage_remark);
 			}else{
 				item.set("damage_remark", null);
-			}
+			}*/
 			Party party = setParty();
 
 			item.set("notify_party_id", party.get("id"));
