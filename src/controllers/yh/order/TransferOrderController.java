@@ -23,9 +23,9 @@ import org.apache.shiro.subject.Subject;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.util.PoiUtils;
 
 public class TransferOrderController extends Controller {
 
@@ -155,12 +155,18 @@ public class TransferOrderController extends Controller {
         TransferOrder transferOrder = TransferOrder.dao.findById(id);
         setAttr("transferOrder", transferOrder);
 
-        Party customer = Party.dao.findById(transferOrder.get("customer_id"));
-        Contact customerContact = Contact.dao.findById(customer.get("contact_id"));
-        setAttr("customerContact", customerContact);
-        Party sp = Party.dao.findById(transferOrder.get("sp_id"));
-        Contact spContact = Contact.dao.findById(sp.get("contact_id"));
-        setAttr("spContact", spContact);
+        Long customer_id = transferOrder.get("customer_id");
+        Long sp_id = transferOrder.get("sp_id");
+        if(customer_id != null){
+	        Party customer = Party.dao.findById(customer_id);
+	        Contact customerContact = Contact.dao.findById(customer.get("contact_id"));
+	        setAttr("customerContact", customerContact);
+        }
+        if(sp_id != null){
+	        Party sp = Party.dao.findById(sp_id);
+	        Contact spContact = Contact.dao.findById(sp.get("contact_id"));
+	        setAttr("spContact", spContact);
+        }
         Long notify_party_id = transferOrder.get("notify_party_id");
         if (notify_party_id != null) {
             Party notify = Party.dao.findById(notify_party_id);
@@ -543,9 +549,17 @@ public class TransferOrderController extends Controller {
 
     // 导入运输单
     public void importTransferOrder() {
-        UploadFile uploadFile = getFile();
-        logger.debug("上传的文件名:" + uploadFile.getFileName());
-
+        //UploadFile uploadFile = getFile();
+        //logger.debug("上传的文件名:" + uploadFile.getFileName());
+    	Map<String, List<String>> map = PoiUtils.readExcel("c:/c.xlsx");
+    	for(Map.Entry<String, List<String>> entry : map.entrySet()){
+    		/*for(String param : entry.getValue()){
+    			System.out.println(param);
+    		}*/
+    		logger.debug(entry.getKey() +"   "+entry.getValue());
+    		List<String> list = entry.getValue();
+    	}
+    	renderJson("{\"success\":true}");
     }
     
     // 根据客户查出location

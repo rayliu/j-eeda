@@ -24,8 +24,10 @@ $(document).ready(function() {
             			return "普通货品";
             		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
             			return "损坏货品";
-            		}else{
+            		}else if(obj.aData.CARGO_NATURE == "ATM"){
             			return "ATM";
+            		}else{
+            			return "";
             		}}},        	
             {"mDataProp":"PICKUP_MODE",
             	"fnRender": function(obj) {
@@ -33,15 +35,19 @@ $(document).ready(function() {
             			return "干线供应商自提";
             		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
             			return "外包供应商提货";
-            		}else{
+            		}else if(obj.aData.PICKUP_MODE == "own"){
             			return "源鸿自提";
+            		}else{
+            			return "";
             		}}},
             {"mDataProp":"ARRIVAL_MODE",
             	"fnRender": function(obj) {
             		if(obj.aData.ARRIVAL_MODE == "delivery"){
             			return "货品直送";
-            		}else{
+            		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
             			return "入中转仓";
+            		}else{
+            			return "";
             		}}},
             {"mDataProp":"ADDRESS"},
             {"mDataProp":"CREATE_STAMP"},
@@ -177,6 +183,7 @@ $(document).ready(function() {
             $.each(data.result.files, function (index, file) {
                 $('<p/>').text(file.name).appendTo(document.body);
             });
+            //transferOrder.fnDraw();
         }
     });
     

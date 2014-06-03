@@ -32,9 +32,11 @@ $(document).ready(function() {
 	
 	// 选中客户
 	$('#customerList').on('click', '.fromLocationItem', function(e){
+		$("#treeListDiv").show();
 		var message = $(this).text();
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#customerId').val($(this).attr('partyId'));
+		$('#productCustomerId').val($(this).attr('partyId'));
 		var pageCustomerName = $("#pageCustomerName");
 		pageCustomerName.empty();
 		pageCustomerName.append($(this).attr('contact_person')+'&nbsp;');
@@ -57,12 +59,13 @@ $(document).ready(function() {
     			if(data.length > 0){
     				for(var i = 0; i < data.length; i++)
     				{
-    					productTreeUl.append("<li class='parent_li'><span><i class='icon-minus-sign'></i><a href='javascript:void(0)' class='productList'>"+data[i].CATEGORY+"</a></span><ul><li><span><i class='icon-leaf'></i> Grand Child</span></li></ul></li>");
+    					productTreeUl.append("<li class='parent_li'><span><i class='icon-minus-sign'></i><a href='javascript:void(0)' class='productList'>"+data[i].CATEGORY+"</a></li></ul></li>");
     				}
     			}
     		},'json');
         }
-        
+        $("#addProductDiv").show();
+        $("#displayDiv").hide();
     }); 
 	
 	// 树状结构点击效果
@@ -88,7 +91,7 @@ $(document).ready(function() {
 			if(data.length > 0){
 				for(var i = 0; i < data.length; i++)
 				{
-					productTreeLi.append("<li class='parent_li'><span><i class='icon-minus-sign'></i><a href='javascript:void(0)' class='productList'>"+data[i].CATEGORY+"</a></span><ul><li><span><i class='icon-leaf'></i> Grand Child</span></li></ul></li>");
+					productTreeLi.append("<li class='parent_li'><span><i class='icon-minus-sign'></i><a href='javascript:void(0)' class='productList'>"+data[i].CATEGORY+"</a></span><ul><li></li></ul></li>");
 				}
 			}
 		},'json');
@@ -154,8 +157,26 @@ $(document).ready(function() {
             if(data.ID>0){
             	//$("#productForm")[0].reset();
             	var category = $("#productCategory").val();
-            	productDataTable.fnSettings().sAjaxSource = "/yh/product/list?category="+category;
-            	productDataTable.fnDraw();
+            	if(category != ""){
+	            	productDataTable.fnSettings().sAjaxSource = "/yh/product/list?category="+category;
+	            	productDataTable.fnDraw();
+            	}
+            	
+            	// 查出所有的类别
+                var customerId = $('#customerId').val();
+                if(customerId > 0){
+            	    $.get('/yh/product/searchAllCategory', {customerId:customerId}, function(data){
+            			console.log(data);	
+            			var productTreeUl = $("#productTreeUl");
+            			productTreeUl.empty();
+            			if(data.length > 0){
+            				for(var i = 0; i < data.length; i++)
+            				{
+            					productTreeUl.append("<li class='parent_li'><span><i class='icon-minus-sign'></i><a href='javascript:void(0)' class='productList'>"+data[i].CATEGORY+"</a></li></ul></li>");
+            				}
+            			}
+            		},'json');
+                }
             }else{
                 alert('数据保存失败。');
             }

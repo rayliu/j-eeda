@@ -37,9 +37,9 @@
                                             	<input id="id" type="hidden" name="id" value="${transferOrder.id!''}"/>
                                             	<input id="customer_id" type="hidden" name="customer_id"/>
                                             	<input id="sp_id" type="hidden" name="sp_id"/>
-                                            	<input type="hidden" name="order_no" value="${order_no}"/>
-                                            	<input type="hidden" name="status" value="${status}"/>
-                                            	<input type="hidden" name="create_by" value="${create_by}"/>
+                                            	<input type="hidden" name="order_no" value="${order_no!''}"/>
+                                            	<input type="hidden" name="status" value="${status!''}"/>
+                                            	<input type="hidden" name="create_by" value="${create_by!''}"/>
                                                 <h2>客户信息</h2>
                                                 <div class="form-group">
                                                     <!--label>客户名称</label-->
@@ -98,13 +98,13 @@
                                         <div class="col-lg-6">
                                             <h2>运输信息</h2>
                                             <div class="form-group">
-                                                <label>运输单号</label> <strong>${order_no}</strong>
+                                                <label>运输单号</label> <strong>${order_no!''}</strong>
                                             </div>
                                             <div class="form-group">
-                                                <label>单据状态</label>   ${status}
+                                                <label>单据状态</label>   ${status!''}
                                             </div>
                                             <div class="form-group">
-                                                <label>创建人</label>   ${userLogin.user_name}
+                                                <label>创建人</label>   ${userLogin.user_name!''}
                                                 
                                             </div>
                                             <div class="form-group ">

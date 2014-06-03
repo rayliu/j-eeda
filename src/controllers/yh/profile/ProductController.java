@@ -142,7 +142,7 @@ public class ProductController extends Controller{
 	// 查出所有的类别
 	public void searchAllCategory(){
 		String customerId = getPara("customerId");
-		List<Product> products = Product.dao.find("select category from product where customer_id ="+customerId);
+		List<Product> products = Product.dao.find("select category from product where customer_id ="+customerId+" group by category");
 		renderJson(products);
 	}
 	

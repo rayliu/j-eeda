@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">运输单</h1>
-                    <input id="order_id" type="hidden" name="order_id" value="${transferOrder.id}"/>
+                    <input id="order_id" type="hidden" name="order_id" value="${transferOrder.id!''}"/>
                     <input id="item_id" type="hidden" name="item_id" />
                 </div>
                 <!-- /.col-lg-12 -->
@@ -35,32 +35,32 @@
                                         <div class="col-lg-6">
                                             <form role="form" id="transferOrderUpdateForm">
                                             	<input id="id" type="hidden" name="id" value="${transferOrder.id!''}"/>
-                                            	<input id="customer_id" type="hidden" name="customer_id" value="${transferOrder.customer_id}"/>
-                                            	<input id="sp_id" type="hidden" name="sp_id" value="${transferOrder.sp_id}"/>
-                                            	<input id="notify_party_id" type="hidden" name="notify_party_id" value="${transferOrder.notify_party_id}"/>
-                                            	<input type="hidden" name="order_no" value="${transferOrder.order_no}"/>
-                                            	<input type="hidden" name="status" value="${transferOrder.status}"/>
-                                            	<input type="hidden" name="create_by" value="${transferOrder.create_by}"/>
+                                            	<input id="customer_id" type="hidden" name="customer_id" value="${transferOrder.customer_id!''}"/>
+                                            	<input id="sp_id" type="hidden" name="sp_id" value="${transferOrder.sp_id!''}"/>
+                                            	<input id="notify_party_id" type="hidden" name="notify_party_id" value="${transferOrder.notify_party_id!''}"/>
+                                            	<input type="hidden" name="order_no" value="${transferOrder.order_no!''}"/>
+                                            	<input type="hidden" name="status" value="${transferOrder.status!''}"/>
+                                            	<input type="hidden" name="create_by" value="${transferOrder.create_by!''}"/>
                                                 <h2>客户信息</h2>
                                                 <div class="form-group">
                                                     <!--label>客户名称</label-->
-                                                    <input id="customerMessage" class="form-control" placeholder="选择客户" type="text" name="customerMessage" value="${customerContact.company_name}"/>
+                                                    <input id="customerMessage" class="form-control" placeholder="选择客户" type="text" name="customerMessage" value="${customerContact.company_name!''}"/>
                                                     <ul id='customerList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 17%; left: 2%;">
         											</ul>
                                                 </div>
                                                 <div class="form-group">     
-                                                	<h5 id="pageCustomerName">${customerContact.contact_person} ${customerContact.phone}</h5><h5 id="pageCustomerAddress">${customerContact.address}</h5>     
+                                                	<h5 id="pageCustomerName">${customerContact.contact_person!''} ${customerContact.phone!''}</h5><h5 id="pageCustomerAddress">${customerContact.address!''}</h5>     
                                                 </div>
                                                 
                                                 <h2>供应商信息</h2>
                                                 <div class="form-group">
                                                     <!--label>供应商名称</label-->
-                                                    <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage"  value="${spContact.company_name}"/>
+                                                    <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage"  value="${spContact.company_name!''}"/>
                                                     <ul id='spList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 35%; left: 2%;">
         											</ul>
                                                 </div>
                                                 <div class="form-group">     
-                                                	<h5 id="pageSpName">${spContact.contact_person} ${spContact.phone}</h5><h5 id="pageSpAddress">${spContact.address}</h5>     
+                                                	<h5 id="pageSpName">${spContact.contact_person!''} ${spContact.phone!''}</h5><h5 id="pageSpAddress">${spContact.address!''}</h5>     
                                                 </div>
                                                 
                                                 <div id="contactInformation" style="display: none">
@@ -99,23 +99,23 @@
                                         <div class="col-lg-6">
                                             <h2>运输信息</h2>
                                             <div class="form-group">
-                                                <label>运输单号</label> <strong>${transferOrder.order_no}</strong>
+                                                <label>运输单号</label> <strong>${transferOrder.order_no!''}</strong>
                                             </div>
                                             <div class="form-group">
-                                                <label>单据状态</label>   ${transferOrder.status}
+                                                <label>单据状态</label>   ${transferOrder.status!''}
                                             </div>
                                             <div class="form-group">
-                                                <label>创建人</label>   ${userLogin.user_name}
+                                                <label>创建人</label>   ${userLogin.user_name!''}
                                                 
                                             </div>
                                             <div class="form-group ">
         										<label class="control-label" for="inputSuccess">取货地址</label> <input
         											id="address" class="form-control" type="text"
-        											name="address" value="${transferOrder.address}">
+        											name="address" value="${transferOrder.address!''}">
         									</div>
                                             <div class="form-group">
                                                 <label>货品属性</label>
-                                                	<input id="cargoNatureRadio" type="hidden" value="${transferOrder.cargo_nature}"/>
+                                                	<input id="cargoNatureRadio" type="hidden" value="${transferOrder.cargo_nature!''}"/>
 	                                                <label class="radio-inline">
 	                                                    <input type="radio" name="cargoNature" id="cargoNature1" value="ATM" checked="">ATM
 	                                                </label>
@@ -128,7 +128,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>提货方式</label>
-                                                	<input id="pickupModeRadio" type="hidden" value="${transferOrder.pickup_mode}"/>
+                                                	<input id="pickupModeRadio" type="hidden" value="${transferOrder.pickup_mode!''}"/>
                                                     <label class="radio-inline">
                                                         <input type="radio" name="pickupMode" id="pickupMode1" value="routeSP" checked="">干线供应商自提
                                                     </label>
@@ -143,7 +143,7 @@
                                             <div id="arrivalModes" class="form-group">
                                             	<input id="arrivalModeVal" type="hidden" />
                                                 <label>到达方式 </label>
-                                                <input id="arrivalModeRadio" type="hidden" value="${transferOrder.arrival_mode}"/>
+                                                <input id="arrivalModeRadio" type="hidden" value="${transferOrder.arrival_mode!''}"/>
                                                 <label class="radio-inline">
                                                     <input type="radio" name="arrivalMode" id="arrivalMode1" value="delivery" checked="">货品直送
                                                 </label>

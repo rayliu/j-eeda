@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,7 +31,7 @@ public class PoiUtils {
 		/**
 		 * 读文件
 		 */
-		readExcel("c:/a.xlsx");
+		//readExcel("c:/a.xlsx");
 		
 		/**
 		 * 写文件
@@ -42,21 +43,29 @@ public class PoiUtils {
 	 * 读excel 
 	 * @param filePath excel路径
 	 */
-	public static  void readExcel(String filePath){
+	public static Map<String, List<String>> readExcel(String filePath){
 		Workbook book = null;
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
+		List<String> orderList = new ArrayList<String>();
+		List<String> itemList = new ArrayList<String>();
+		List<String> detailList = new ArrayList<String>();
 		try {
 			book = getExcelWorkbook(filePath);
 			Sheet sheet = getSheetByNum(book,1);
-			System.out.println("sheet名称是："+sheet.getSheetName());
+			//System.out.println("sheet名称是："+sheet.getSheetName());
 			
 			int lastRowNum = sheet.getLastRowNum();
 			
 			Row row = null;
+			String names = "";
+			String values = "";
+			String[] nameArr = null;
+			String[] valueArr = null;
 			for(int i=0;i<=lastRowNum;i++){
 				row = sheet.getRow(i);
 				if(row != null){
 					//System.out.println("正在读第"+(i+1)+"行：");
-					System.out.println();
+					//System.out.println();
 					int lastCellNum = row.getLastCellNum();
 					Cell cell = null;
 					StringBuilder sb = null;
@@ -79,7 +88,8 @@ public class PoiUtils {
 									}else {
 										type_cn = "NUMBER";
 										double tempValue = cell.getNumericCellValue();
-										value = String.valueOf(tempValue);
+										//value = String.valueOf(tempValue);
+										value = String.valueOf((int)tempValue);
 									}
 									break;
 								case 1:
@@ -108,14 +118,74 @@ public class PoiUtils {
 							}
 							//sb.append(value + ",内容类型是："+type_cn+",单元格的格式是："+type_style_cn);
 							sb.append(value);
-							System.out.print(sb.toString());
+							if(i == 0){
+								if(j == lastCellNum - 1){
+									names += sb.toString()+"";
+								}else{
+									names += sb.toString()+", ";
+								}
+							}else{
+								String val = sb.toString();
+								if(val == null || "".equals(val)){
+									values += "null, ";
+									//System.out.println("names : "+names+"   values :" + values);
+								}else{
+									if(j == lastCellNum - 1){
+										values += "'"+val+"'";
+									}else{
+										values += "'"+val+"', ";
+									}
+									//System.out.println("names : "+names+"   values :" + values);
+								}
+							}
 						}
+						/*if(i == 0){
+							names += sb.toString()+", ";
+						}else{
+							String val = sb.toString();
+							if(val == null || "".equals(val)){
+								values += "null, ";
+								System.out.println("names : "+names+"   values :" + values);
+							}else{
+								values += "'"+val+"', ";
+								System.out.println("names : "+names+"   values :" + values);
+							}
+						}*/
 					}
-				}
+					System.out.println();
+					if(i == 0){
+						nameArr = names.split(",");
+						for(int x=0; x<nameArr.length; x++){
+							if(x == 1 || x == 2){
+								itemList.add(nameArr[x]);
+							}else if(x == 3){
+								detailList.add(nameArr[x]);
+							}else{
+								orderList.add(nameArr[x]);
+							}
+						}
+					}else{
+						valueArr = values.split(",");
+						for(int x=0; x<valueArr.length; x++){
+							if(x == 1 || x == 2){
+								itemList.add(valueArr[x]);
+							}else if(x == 3){
+								detailList.add(valueArr[x]);
+							}else{
+								orderList.add(valueArr[x]);
+							}
+						}
+						values = "";
+					}
+					map.put("orderList", orderList);
+					map.put("itemList", itemList);
+					map.put("detailList", detailList);
+				}				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
+		return map;
 	}
 
 	

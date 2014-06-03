@@ -17,7 +17,7 @@
     </div>
 </div>
     
-    <div class="row">
+    <div id="treeListDiv" class="row" style="display: none;">
 	    <div class="col-lg-4">
 	    	<div class="tree " style="clear: both;">
     <ul>
@@ -71,11 +71,13 @@
     </ul>
 </div>
 	    </div>
-	    <div id="displayDiv" class="col-lg-8" style="display: none;">
-	    	<h1 class="page-header">
+	    <div id="addProductDiv" style="display: none;">
 	    	<button class="btn btn-primary" data-toggle="modal" data-target="#myModal">
 			  添加产品 
 			</button>
+		</div>
+	    <div id="displayDiv" class="col-lg-8" style="display: none;">
+	    	<h1 class="page-header">
 			</h1>
 			<div class="panel panel-default">
 					<div class="panel-heading">
@@ -120,7 +122,7 @@
 	      </div>
 	      <div class="modal-body">
 	      	<form id="productForm" action="">
-	      		<input id="productCustomerId" type="hidden" name="customerId" /> 
+	      		<input id="productCustomerId" type="text" name="customerId" /> 
 	      		<input id="productId" type="hidden" name="id"/> 
 	      		<div class="form-group ">
 				<label class="control-label" for="inputSuccess">型号</label> <input
