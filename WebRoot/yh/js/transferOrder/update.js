@@ -619,7 +619,7 @@ $(document).ready(function() {
             			return obj.aData.CONTACT_PERSON+"<br/>"+obj.aData.PHONE+"<br/>"+obj.aData.ADDRESS;
             		}},
             {"mDataProp":"REMARK"},
-            {"mDataProp":"IS_DAMAGE",
+            /*{"mDataProp":"IS_DAMAGE",
             	"fnRender": function(obj) {
             		if(obj.aData.IS_DAMAGE == true){
             			return '是';
@@ -638,7 +638,7 @@ $(document).ready(function() {
             			return "定损金额: "+amount+"<br/>"+"理赔金额: "+DAMAGE_REVENUE+"<br/>"+"赔付给客户金额: "+DAMAGE_PAYMENT+"<br/>"+"差异说明: "+DAMAGE_REMARK;
             		}
         			return "";
-        		}},
+        		}},*/
             {  
                 "mDataProp": null, 
                 "sWidth": "8%",                

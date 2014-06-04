@@ -100,6 +100,7 @@ $(document).ready(function() {
     var productDataTable;
     $("#productTreeLi").on('click', '.productList', function(e){
     	e.preventDefault();
+    	//productDataTable.fnClearTable();
     	var category = $(this).text();
     	$("#productCategory").val(category);
     	$("#productCustomerId").val($('#customerId').val());
@@ -113,6 +114,7 @@ $(document).ready(function() {
 	            //"sPaginationType": "bootstrap",
 	            "iDisplayLength": 10,
 	            "bServerSide": true,
+	            "bRetrieve": true,
 	        	"oLanguage": {
 	                "sUrl": "/eeda/dataTables.ch.txt"
 	            },
