@@ -80,8 +80,8 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment PRIMARY KEY,order_no varchar(255),status varchar(255),"
                     + "cargo_nature VARCHAR(255),pickup_mode VARCHAR(255),arrival_mode VARCHAR(255),remark varchar(255),create_by bigint,"
                     + "create_stamp TIMESTAMP,last_modified_by bigint,last_modified_stamp TIMESTAMP,eta TIMESTAMP,address varchar(255),route_from varchar(255),route_to varchar(255),"
-                    + "route_id bigint,customer_id bigint,sp_id bigint,notify_party_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id),FOREIGN KEY(sp_id) REFERENCES party(id),"
-                    + "FOREIGN KEY(route_id) REFERENCES route(id),FOREIGN KEY(notify_party_id) REFERENCES party(id));");
+                    + "route_id bigint,customer_id bigint,sp_id bigint,notify_party_id bigint,warehouse_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id),FOREIGN KEY(sp_id) REFERENCES party(id),"
+                    + "FOREIGN KEY(route_id) REFERENCES route(id),FOREIGN KEY(notify_party_id) REFERENCES party(id),FOREIGN KEY(warehouse_id) REFERENCES warehouse(id));");
             // transfer_order_item 货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment PRIMARY KEY,item_no varchar(255),item_name varchar(255),item_desc varchar(255),"
                     + "amount double,unit varchar(255),volume double,weight double,remark varchar(5120),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
@@ -496,14 +496,18 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'mobile', '1357038829');");
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
 
+            // 仓库
+            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿广州总仓', '这是广州总仓','萝岗','2');");
+            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿分仓', '这是广州总仓','东莞','4');");
+
             // 运输单
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address,ROUTE_FROM,ROUTE_TO) values('ATM', '8', '9', '2014042600001', '3', 'routeSP', '5', '新建', '2014-04-20 16:33:35.1', 'delivery','1','珠海','110102','440402');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address,ROUTE_FROM,ROUTE_TO) values('cargo ', '7', '10', '2014042600002', '4', 'pickupSP', '4', '已入库', '2014-04-16 16:40:35.1', 'gateIn','2','中山','110105','442000');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '7', '9', '2014042600003', '4', 'pickupSP', '5', '已入库', '2014-04-28 16:46:35.1', 'gateIn','广州');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('cargo', '8', '10', '2014042600004', '3', 'own', '4', '已发车', '2014-04-25 16:35:35.1', 'gateIn','深圳');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '10', '2014042600005', '3', 'own', '5', '已入库', '2014-04-22 16:28:35.1', 'delivery','东莞');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600006', '3', 'own', '5', '已发车', '2014-04-24 16:58:35.1', 'gateIn','东莞');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address) values('ATM', '7', '9', '2014042600007', '3', 'own', '5', '已入库', '2014-04-24 16:58:35.1', 'gateIn','广州');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,WAREHOUSE_ID) values('ATM', '7', '9', '2014042600006', '3', 'own', '5', '已发车', '2014-04-24 16:58:35.1', 'gateIn','东莞','2');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,WAREHOUSE_ID) values('ATM', '7', '9', '2014042600007', '3', 'own', '5', '已入库', '2014-04-24 16:58:35.1', 'gateIn','广州','1');");
             // 货品明细
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','1');");
@@ -621,10 +625,6 @@ public class DataInitUtil {
             // 产品
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('ATM', '2014042600001','1','5','7','9','ATM', '这是一台ATM', '4');");
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('普通货品', '2014042600002','1','5','7','9','普通货品', '这是普通货品', '4');");
-
-            // 仓库
-            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿总仓', '这是广州总仓','萝岗','2');");
-            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿总仓', '这是广州总仓','东莞','4');");
 
             stmt.close();
             // conn.commit();

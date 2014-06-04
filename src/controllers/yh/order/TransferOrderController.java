@@ -14,6 +14,7 @@ import models.TransferOrder;
 import models.TransferOrderItem;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.Warehouse;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
@@ -59,7 +60,7 @@ public class TransferOrderController extends Controller {
 
             String sql = "select to.*,c1.company_name cname,c2.company_name spname,to.create_stamp from transfer_order to "
                     + " left join party p1 on to.customer_id = p1.id " + " left join party p2 on to.sp_id = p2.id "
-                    + " left join contact c1 on p1.contact_id = c1.id" + " left join contact c2 on p2.contact_id = c2.id";
+                    + " left join contact c1 on p1.contact_id = c1.id" + " left join contact c2 on p2.contact_id = c2.id order by create_stamp desc";
 
             List<Record> transferOrders = Db.find(sql);
 
@@ -95,7 +96,7 @@ public class TransferOrderController extends Controller {
                     + " left join contact c1 on p1.contact_id = c1.id"
                     + " left join contact c2 on p2.contact_id = c2.id where to.order_no like '%" + orderNo + "%' and to.status like '%"
                     + status + "%' and to.address like '%" + address + "%' and c1.COMPANY_NAME like '%" + customer
-                    + "%' and c2.COMPANY_NAME  like '%" + sp + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
+                    + "%' and c2.COMPANY_NAME  like '%" + sp + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "' order by create_stamp desc";
 
             List<Record> transferOrders = Db.find(sql);
 
@@ -351,6 +352,7 @@ public class TransferOrderController extends Controller {
     // 保存运输单
     public void saveTransferOrder() {
         String order_id = getPara("id");
+        String warehouseId = getPara("gateInSelect");
         TransferOrder transferOrder = null;
         if (order_id == null || "".equals(order_id)) {
             transferOrder = new TransferOrder();
@@ -380,6 +382,9 @@ public class TransferOrderController extends Controller {
             	}
                 transferOrder.set("notify_party_id", party.get("id"));
             }
+            if(warehouseId != null && !"".equals(warehouseId)){
+            	transferOrder.set("warehouse_id", warehouseId);
+            }
             transferOrder.save();
             saveTransferOrderMilestone(transferOrder);
         } else {
@@ -406,6 +411,9 @@ public class TransferOrderController extends Controller {
             		party = updateContact(notifyPartyId);
             	}
                 transferOrder.set("notify_party_id", party.get("id"));
+            }
+            if(warehouseId != null && !"".equals(warehouseId)){
+            	transferOrder.set("warehouse_id", warehouseId);
             }
             transferOrder.update();
         }
@@ -578,5 +586,11 @@ public class TransferOrderController extends Controller {
 	                        + code + "'");
         }
        renderJson(location);
+    }
+    
+    // 查出所有的warehouse
+    public void searchAllWarehouse(){
+    	List<Warehouse> warehouses = Warehouse.dao.find("select * from warehouse");
+    	renderJson(warehouses);
     }
 }

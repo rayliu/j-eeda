@@ -104,6 +104,7 @@ $(document).ready(function() {
 	    				for(var i = 0; i < data.length; i++)
 	    				{
 	    					if(data[i].NAME == hideCity){
+	    						$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val());
 	    						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
 	    					}else{
 	    						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
@@ -123,6 +124,7 @@ $(document).ready(function() {
 	    				for(var i = 0; i < data.length; i++)
 	    				{
 	    					if(data[i].NAME == hideDistrict){
+	    						$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val() +" "+ $("#hideDistrictFrom").val());
 	    						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
 	    					}else{
 	    						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
@@ -394,8 +396,13 @@ $(document).ready(function() {
 	  if(inputId=='arrivalMode1'){
 		 $("#contactInformation").show();
 		 $("#warehousingConfirmBtn").attr("disabled", true);
+		 var gateInSelect = $("#gateInSelect");
+		 gateInSelect.empty();
+		 $("#gateInSelect").hide();
+		 $("#warehousingConfirmBtn").attr("disabled", true);
 	  }else{
 		 $("#contactInformation").hide();
+		 $("#gateInSelect").show();
 	  } 
   	});    
 						
@@ -591,8 +598,9 @@ $(document).ready(function() {
 	// 回显到达方式
 	$("input[name='arrivalMode']").each(function(){
 		if($("#arrivalModeRadio").val() == $(this).val()){
-			$(this).attr('checked', true);
+			$(this).attr('checked', true);			
 			if($(this).val() == 'gateIn'){
+				$("#gateInSelect").show();
 				$("#contactInformation").hide();
 			}
 		}
@@ -1076,4 +1084,20 @@ $(document).ready(function() {
 				}
 			}
 		},'json');
+    
+     // 获取所有仓库
+	 $.post('/yh/transferOrder/searchAllWarehouse',function(data){
+		 if(data.length > 0){
+			 var gateInSelect = $("#gateInSelect");
+			 gateInSelect.empty();
+			 var hideWarehouseId = $("#hideWarehouseId").val();
+			 for(var i=0; i<data.length; i++){
+				 if(data[i].ID == hideWarehouseId){
+					 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");					 
+				 }else{
+					 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+				 }
+			 }
+		 }
+	 },'json');
 });

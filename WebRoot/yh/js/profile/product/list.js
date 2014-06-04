@@ -95,9 +95,47 @@ $(document).ready(function() {
 				}
 			}
 		},'json');
-    }
+    }    
+
+	//datatable, 动态处理
+    productDataTable = $('#eeda-table').dataTable({
+        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+        "bRetrieve": true,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "sAjaxSource": "/yh/product/list?category="+category,
+        "aoColumns": [   
+            {"mDataProp":"ITEM_NAME"},
+            {"mDataProp":"ITEM_NO"},        	
+            {"mDataProp":"SIZE"},
+            {"mDataProp":"WIDTH"},
+            {"mDataProp":"UNIT"},
+            {"mDataProp":"VOLUME"},
+            {"mDataProp":"WEIGHT"},
+            {"mDataProp":"CATEGORY"},
+            {"mDataProp":"ITEM_DESC"},
+            { 
+                "mDataProp": null, 
+                "sWidth": "8%",                
+                "fnRender": function(obj) {                    
+                    return "<a class='btn btn-success editProduct' id='"+obj.aData.ID+"'>"+
+                                "<i class='fa fa-edit fa-fw'></i>"+
+                                "编辑"+
+                            "</a>"+
+                            "<a class='btn btn-danger deleteProduct' id='"+obj.aData.ID+"'>"+
+                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
+                                "删除"+
+                            "</a>";
+                }
+            }                         
+        ],      
+    });
     
-    var productDataTable;
     $("#productTreeLi").on('click', '.productList', function(e){
     	e.preventDefault();
     	//productDataTable.fnClearTable();
@@ -107,44 +145,8 @@ $(document).ready(function() {
     	
     	if($("#displayDiv").attr('style') != ""){
     		$("#displayDiv").show();
-	    	//datatable, 动态处理
-	        productDataTable = $('#eeda-table').dataTable({
-	            //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-	            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-	            //"sPaginationType": "bootstrap",
-	            "iDisplayLength": 10,
-	            "bServerSide": true,
-	            "bRetrieve": true,
-	        	"oLanguage": {
-	                "sUrl": "/eeda/dataTables.ch.txt"
-	            },
-	            "sAjaxSource": "/yh/product/list?category="+category,
-	            "aoColumns": [   
-	                {"mDataProp":"ITEM_NAME"},
-	                {"mDataProp":"ITEM_NO"},        	
-	                {"mDataProp":"SIZE"},
-	                {"mDataProp":"WIDTH"},
-	                {"mDataProp":"UNIT"},
-	                {"mDataProp":"VOLUME"},
-	                {"mDataProp":"WEIGHT"},
-	                {"mDataProp":"CATEGORY"},
-	                {"mDataProp":"ITEM_DESC"},
-	                { 
-	                    "mDataProp": null, 
-	                    "sWidth": "8%",                
-	                    "fnRender": function(obj) {                    
-	                        return "<a class='btn btn-success editProduct' id='"+obj.aData.ID+"'>"+
-	                                    "<i class='fa fa-edit fa-fw'></i>"+
-	                                    "编辑"+
-	                                "</a>"+
-	                                "<a class='btn btn-danger deleteProduct' id='"+obj.aData.ID+"'>"+
-	                                    "<i class='fa fa-trash-o fa-fw'></i>"+ 
-	                                    "删除"+
-	                                "</a>";
-	                    }
-	                }                         
-	            ],      
-	        });
+    		productDataTable.fnSettings().sAjaxSource = "/yh/product/list?category="+category;
+        	productDataTable.fnDraw();
     	}else{
     		productDataTable.fnSettings().sAjaxSource = "/yh/product/list?category="+category;
         	productDataTable.fnDraw();

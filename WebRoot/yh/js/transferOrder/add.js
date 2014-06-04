@@ -66,7 +66,6 @@ $(document).ready(function() {
 		pageCustomerAddress.empty();
 		pageCustomerAddress.append($(this).attr('address'));
 
-        
         var locationFrom = $('#hideLocationFrom').val();
         $.get('/yh/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
 			console.log(data);
@@ -105,6 +104,7 @@ $(document).ready(function() {
 	    				for(var i = 0; i < data.length; i++)
 	    				{
 	    					if(data[i].NAME == hideCity){
+	    						$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val());
 	    						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
 	    					}else{
 	    						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
@@ -124,6 +124,7 @@ $(document).ready(function() {
 	    				for(var i = 0; i < data.length; i++)
 	    				{
 	    					if(data[i].NAME == hideDistrict){
+	    						$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val() +" "+ $("#hideDistrictFrom").val());
 	    						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
 	    					}else{
 	    						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
@@ -136,7 +137,7 @@ $(document).ready(function() {
 	    		},'json');
 	        
 		},'json');
-        
+        //$("#address").val($("#hideDistrictFrom").val() + $("#hideProvinceFrom").val() + $("#hideCityFrom").val());
         $('#customerList').hide();
     }); 
 	
@@ -404,9 +405,13 @@ $(document).ready(function() {
   	  var inputId  = $(this).attr('id');
 	  if(inputId=='arrivalMode1'){
 		 $("#contactInformation").show();
+		 var gateInSelect = $("#gateInSelect");
+		 gateInSelect.empty();
+		 $("#gateInSelect").hide();
 		 $("#warehousingConfirmBtn").attr("disabled", true);
 	  }else{
 		 $("#contactInformation").hide();
+		 $("#gateInSelect").show();
 	  } 
   	});
     			
@@ -1006,4 +1011,15 @@ $(document).ready(function() {
 			var inputStr = $(this).val();
 			var code = $("#locationTo").val(inputStr);
 		});  
+    
+     // 获取所有仓库
+	 $.post('/yh/transferOrder/searchAllWarehouse',function(data){
+		 if(data.length > 0){
+			 var gateInSelect = $("#gateInSelect");
+			 gateInSelect.empty();
+			 for(var i=0; i<data.length; i++){
+				 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+			 }
+		 }
+	 },'json');
 });
