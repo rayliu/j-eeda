@@ -117,6 +117,10 @@ public class DataInitUtil {
 
 			stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Serial_no varchar(50),Item_no bigint,Item_name varchar(50),Item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
 
+			
+			// 发车单
+			stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment PRIMARY KEY,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp TIMESTAMP,combine_type varchar(255),"
+					+ "car_no varchar(255),car_type varchar(255),notify_party_id bigint,FOREIGN KEY(notify_party_id) REFERENCES party(id));");
 			stmt.close();
 			// conn.commit();
 			conn.close();
@@ -131,9 +135,6 @@ public class DataInitUtil {
 			Connection conn = cp.getDataSource().getConnection();
 			Statement stmt = conn.createStatement();
 			// 发车单
-			stmt.executeUpdate("insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450201', '2014042600001', '拼车', '新建', 'ATM', '源宏仓库', '');");
-			stmt.executeUpdate("insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450202', '2014042600002', '一单多车', '新建', '货品', '货场', '');");
-			stmt.executeUpdate("insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450203', '2014042600002', '一单多车', '新建', 'A货品', '货场', '');");
 			stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
 			stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
 			stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('demo', '123456', '1-6');");
@@ -626,6 +627,10 @@ public class DataInitUtil {
 			stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿总仓', '这是广州总仓','萝岗','2');");
 			stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿总仓', '这是广州总仓','东莞','4');");
 
+			// 发车单
+			/*stmt.executeUpdate("insert into depart_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450201', '2014042600001', '拼车', '新建', 'ATM', '源宏仓库', '');");
+			stmt.executeUpdate("insert into depart_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450202', '2014042600002', '一单多车', '新建', '货品', '货场', '');");
+			stmt.executeUpdate("insert into depart_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450203', '2014042600002', '一单多车', '新建', 'A货品', '货场', '');");*/
 			stmt.close();
 			// conn.commit();
 			conn.close();

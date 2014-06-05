@@ -1,7 +1,6 @@
 
 $(document).ready(function() {
-    $('#menu_assign').addClass('active').find('ul').addClass('in');
-    
+    $('#menu_assign').addClass('active').find('ul').addClass('in');    
 	//datatable, 动态处理
     var datatable = $('#eeda-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -12,7 +11,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/pickupOrder/createList",
+        "sAjaxSource": "/yh/departOrder/createTransferOrderList",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
@@ -20,9 +19,27 @@ $(document).ready(function() {
                  }
             },
             { "mDataProp": "ORDER_NO"},
-            { "mDataProp": "CARGO_NATURE"},
+            {"mDataProp":"CARGO_NATURE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.CARGO_NATURE == "cargo"){
+            			return "普通货品";
+            		}else if(obj.aData.CARGO_NATURE == "ATM"){
+            			return "ATM";
+            		}else{
+            			return "";
+            		}}},
             { "mDataProp": "ADDRESS"},
-            { "mDataProp": "PICKUP_MODE"},
+            {"mDataProp":"PICKUP_MODE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.PICKUP_MODE == "routeSP"){
+            			return "干线供应商自提";
+            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
+            			return "外包供应商提货";
+            		}else if(obj.aData.PICKUP_MODE == "own"){
+            			return "源鸿自提";
+            		}else{
+            			return "";
+            		}}},
             { "mDataProp": "STATUS"}
                                       
         ]      
@@ -40,17 +57,7 @@ $(document).ready(function() {
         	});          	
         	  	
         	}); 
-        tableArr.push(trArr); 
-       
+        tableArr.push(trArr);        
         console.log(tableArr);
-  
-        /*
-        $.post("/yh/privilege/editModule_pri",{localArr:Arr},function(data){     
-
-        	   //回调函数 
-
-        	   });
-*/
-    });
-    
+    });    
 } );
