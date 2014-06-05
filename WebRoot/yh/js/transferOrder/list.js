@@ -51,8 +51,22 @@ $(document).ready(function() {
             		}}},
             {"mDataProp":"ADDRESS"},
             {"mDataProp":"CREATE_STAMP"},
+            {"mDataProp":"ORDER_TYPE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ORDER_TYPE == "salesOrder"){
+            			return "销售订单";
+            		}else if(obj.aData.ORDER_TYPE == "arrangementOrder"){
+            			return "调拨订单";
+            		}else if(obj.aData.ORDER_TYPE == "cargoReturnOrder"){
+            			return "退货订单";
+            		}else if(obj.aData.ORDER_TYPE == "damageReturnOrder"){
+            			return "质量退单";
+            		}else{
+            			return "";
+            		}}},
             {"mDataProp":"CNAME"},
             {"mDataProp":"SPNAME"},
+            {"mDataProp":"ONAME"},
             {"mDataProp":"REMARK"},
             { 
                 "mDataProp": null,  
@@ -95,7 +109,8 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	var officeName = $("#officeName_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
     	transferOrder.fnDraw(); 
     } );
  
@@ -107,7 +122,8 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	var officeName = $("#officeName_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
     	transferOrder.fnDraw();
     } );
     
@@ -119,7 +135,8 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	var officeName = $("#officeName_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
     	transferOrder.fnDraw();
     } );
     
@@ -131,7 +148,8 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	var officeName = $("#officeName_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
     	transferOrder.fnDraw();
     } );
     
@@ -143,7 +161,8 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	var officeName = $("#officeName_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
     	transferOrder.fnDraw();
     } );
     
@@ -155,7 +174,8 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	var officeName = $("#officeName_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
     	transferOrder.fnDraw();
     } );
     
@@ -167,7 +187,21 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	var officeName = $("#officeName_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+    	transferOrder.fnDraw();
+    } );    
+    
+    $('input.officeName_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var sp = $("#sp_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	var officeName = $("#officeName_filter").val();
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
     	transferOrder.fnDraw();
     } );
     

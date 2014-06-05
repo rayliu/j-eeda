@@ -202,11 +202,7 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					if(transferOrder.STATUS == '已发车'){
-						$("#departureConfirmationBtn").attr("disabled", true);						
-					}else{
-						$("#departureConfirmationBtn").attr("disabled", false);
-					}
+					$("#departureConfirmationBtn").attr("disabled", false);
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	
 				  	
@@ -225,14 +221,8 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					if(transferOrder.STATUS == '已发车'){
-						$("#departureConfirmationBtn").attr("disabled", true);		
-						if(transferOrder.ARRIVAL_MODE == 'gateIn'){
-							$("#warehousingConfirmBtn").attr("disabled", false);								
-							$("#receiptBtn").attr("disabled",true);									
-						}else{
-							$("#receiptBtn").attr("disabled",false);																
-						}					
+					if(transferOrder.STATUS == '已发车' || transferOrder.STATUS == '已入库' || transferOrder.STATUS == '已签收'){
+						$("#departureConfirmationBtn").attr("disabled", true);						
 					}else{
 						$("#departureConfirmationBtn").attr("disabled", false);
 					}
@@ -279,11 +269,7 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					if(transferOrder.STATUS == '已发车'){
-						$("#departureConfirmationBtn").attr("disabled", true);		
-					}else{
-						$("#departureConfirmationBtn").attr("disabled", false);
-					}
+					$("#departureConfirmationBtn").attr("disabled", false);
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	
 				  	
@@ -302,14 +288,8 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					if(transferOrder.STATUS == '已发车'){
-						$("#departureConfirmationBtn").attr("disabled", true);
-						if(transferOrder.ARRIVAL_MODE == 'gateIn'){
-							$("#warehousingConfirmBtn").attr("disabled", false);								
-							$("#receiptBtn").attr("disabled",true);									
-						}else{
-							$("#receiptBtn").attr("disabled",false);																
-						}
+					if(transferOrder.STATUS == '已发车' || transferOrder.STATUS == '已入库' || transferOrder.STATUS == '已签收'){
+						$("#departureConfirmationBtn").attr("disabled", true);						
 					}else{
 						$("#departureConfirmationBtn").attr("disabled", false);
 					}
@@ -414,11 +394,12 @@ $(document).ready(function() {
 		 $("#gateInSelect").show();
 	  } 
   	});
-    			
+        			
 	// 发车确认
 	$("#departureConfirmationBtn").click(function(){
 		// 浏览器启动时,停到当前位置
 		//debugger;
+		$("#departureConfirmationBtn").attr("disabled", true);
 		if($("#arrivalModeVal").val() == 'delivery'){
 			$("#warehousingConfirmBtn").attr("disabled", true);
 			$("#receiptBtn").attr("disabled", false); 
@@ -491,11 +472,7 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					if(transferOrder.STATUS == '已发车'){
-						$("#departureConfirmationBtn").attr("disabled", true);		
-					}else{
-						$("#departureConfirmationBtn").attr("disabled", false);
-					}
+					$("#departureConfirmationBtn").attr("disabled", false);
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	
 				  	
@@ -520,14 +497,8 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					if(transferOrder.STATUS == '已发车'){
-						$("#departureConfirmationBtn").attr("disabled", true);
-						if(transferOrder.ARRIVAL_MODE == 'gateIn'){
-							$("#warehousingConfirmBtn").attr("disabled", false);								
-							$("#receiptBtn").attr("disabled",true);								
-						}else{
-							$("#receiptBtn").attr("disabled",false);																
-						}
+					if(transferOrder.STATUS == '已发车' || transferOrder.STATUS == '已入库' || transferOrder.STATUS == '已签收'){
+						$("#departureConfirmationBtn").attr("disabled", true);						
 					}else{
 						$("#departureConfirmationBtn").attr("disabled", false);
 					}
@@ -572,6 +543,7 @@ $(document).ready(function() {
 	
 	// 回单签收
 	$("#receiptBtn").click(function(){
+		$("#receiptBtn").attr("disabled", true);
 		var order_id = $("#order_id").val();
 		$.post('/yh/transferOrderMilestone/receipt',{order_id:order_id},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
@@ -581,6 +553,7 @@ $(document).ready(function() {
 	
 	// 入库确认
 	$("#warehousingConfirmBtn").click(function(){
+		$("#warehousingConfirmBtn").attr("disabled", true);
 		var order_id = $("#order_id").val();
 		$.post('/yh/transferOrderMilestone/warehousingConfirm',{order_id:order_id},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
@@ -1019,6 +992,17 @@ $(document).ready(function() {
 			 gateInSelect.empty();
 			 for(var i=0; i<data.length; i++){
 				 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+			 }
+		 }
+	 },'json');
+	 
+	 // 获取所有城市
+	 $.post('/yh/transferOrder/searchAllOffice',function(data){
+		 if(data.length > 0){
+			 var officeSelect = $("#officeSelect");
+			 officeSelect.empty();
+			 for(var i=0; i<data.length; i++){
+				 officeSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");
 			 }
 		 }
 	 },'json');

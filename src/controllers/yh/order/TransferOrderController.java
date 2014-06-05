@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.Location;
+import models.Office;
 import models.Party;
 import models.TransferOrder;
 import models.TransferOrderItem;
@@ -45,6 +46,7 @@ public class TransferOrderController extends Controller {
         String address = getPara("address");
         String customer = getPara("customer");
         String sp = getPara("sp");
+        String officeName = getPara("officeName");
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
         if (orderNo == null && status == null && address == null && customer == null && sp == null && beginTime == null && endTime == null) {
@@ -58,9 +60,9 @@ public class TransferOrderController extends Controller {
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select to.*,c1.company_name cname,c2.company_name spname,to.create_stamp from transfer_order to "
+            String sql = "select to.*,c1.company_name cname,c2.company_name spname,to.create_stamp,o.office_name oname from transfer_order to "
                     + " left join party p1 on to.customer_id = p1.id " + " left join party p2 on to.sp_id = p2.id "
-                    + " left join contact c1 on p1.contact_id = c1.id" + " left join contact c2 on p2.contact_id = c2.id order by create_stamp desc";
+                    + " left join contact c1 on p1.contact_id = c1.id" + " left join contact c2 on p2.contact_id = c2.id " + " left join office o on to.office_id = o.id order by create_stamp desc";
 
             List<Record> transferOrders = Db.find(sql);
 
@@ -85,18 +87,20 @@ public class TransferOrderController extends Controller {
 
             String sqlTotal = "select count(1) total from transfer_order to " + " left join party p1 on to.customer_id = p1.id "
                     + " left join party p2 on to.sp_id = p2.id " + " left join contact c1 on p1.contact_id = c1.id"
-                    + " left join contact c2 on p2.contact_id = c2.id where to.order_no like '%" + orderNo + "%' and to.status like '%"
+                    + " left join contact c2 on p2.contact_id = c2.id"
+                    + " left join office o on to.office_id = o.id where to.order_no like '%" + orderNo + "%' and to.status like '%"
                     + status + "%' and to.address like '%" + address + "%' and c1.COMPANY_NAME like '%" + customer
-                    + "%' and c2.COMPANY_NAME  like '%" + sp + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
+                    + "%' and c2.COMPANY_NAME  like '%" + sp + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select to.*,c1.company_name cname,c2.company_name spname from transfer_order to "
+            String sql = "select to.*,c1.company_name cname,c2.company_name spname,o.office_name oname from transfer_order to "
                     + " left join party p1 on to.customer_id = p1.id " + " left join party p2 on to.sp_id = p2.id "
                     + " left join contact c1 on p1.contact_id = c1.id"
-                    + " left join contact c2 on p2.contact_id = c2.id where to.order_no like '%" + orderNo + "%' and to.status like '%"
+                    + " left join contact c2 on p2.contact_id = c2.id" 
+                    + " left join office o on to.office_id = o.id where to.order_no like '%" + orderNo + "%' and to.status like '%"
                     + status + "%' and to.address like '%" + address + "%' and c1.COMPANY_NAME like '%" + customer
-                    + "%' and c2.COMPANY_NAME  like '%" + sp + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "' order by create_stamp desc";
+                    + "%' and c2.COMPANY_NAME  like '%" + sp + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "' order by create_stamp desc";
 
             List<Record> transferOrders = Db.find(sql);
 
@@ -112,6 +116,7 @@ public class TransferOrderController extends Controller {
     }
 
     public void add() {
+    	String order_no = null;
         setAttr("saveOK", false);
         TransferOrder transferOrder = new TransferOrder();
         String name = (String) currentUser.getPrincipal();
@@ -121,12 +126,21 @@ public class TransferOrderController extends Controller {
         TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order order by order_no desc limit 0,1");
         if (order != null) {
             String num = order.get("order_no");
-            String order_no = String.valueOf((Long.parseLong(num) + 1));
+            Long oldTime = Long.parseLong(num);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if(oldTime >= newTime){
+            	order_no = String.valueOf((oldTime + 1));
+            }else{
+            	order_no = String.valueOf(newTime);
+            }
             setAttr("order_no", order_no);
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String format = sdf.format(new Date());
-            String order_no = format + "00001";
+            order_no = format + "00001";
             setAttr("order_no", order_no);
         }
 
@@ -353,6 +367,7 @@ public class TransferOrderController extends Controller {
     public void saveTransferOrder() {
         String order_id = getPara("id");
         String warehouseId = getPara("gateInSelect");
+        String officeId = getPara("officeSelect");
         TransferOrder transferOrder = null;
         if (order_id == null || "".equals(order_id)) {
             transferOrder = new TransferOrder();
@@ -371,8 +386,11 @@ public class TransferOrderController extends Controller {
             transferOrder.set("remark", getPara("remark"));
             transferOrder.set("route_from", getPara("route_from"));
             transferOrder.set("route_to", getPara("route_to"));
+            transferOrder.set("order_type", getPara("orderType"));
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
+            	// 到达方式为货品直送时把warehouseId置为null
+            	warehouseId = null;
             	Party party = null;
             	String notifyPartyId = getPara("notify_party_id");
             	if(notifyPartyId == null || "".equals("notifyPartyId")){
@@ -384,6 +402,9 @@ public class TransferOrderController extends Controller {
             }
             if(warehouseId != null && !"".equals(warehouseId)){
             	transferOrder.set("warehouse_id", warehouseId);
+            }
+            if(officeId != null && !"".equals(officeId)){
+            	transferOrder.set("office_id", officeId);
             }
             transferOrder.save();
             saveTransferOrderMilestone(transferOrder);
@@ -401,8 +422,11 @@ public class TransferOrderController extends Controller {
             transferOrder.set("remark", getPara("remark"));
             transferOrder.set("route_from", getPara("route_from"));
             transferOrder.set("route_to", getPara("route_to"));
+            transferOrder.set("order_type", getPara("orderType"));
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
+            	// 到达方式为货品直送时把warehouseId置为null
+            	warehouseId = null;
             	Party party = null;
             	String notifyPartyId = getPara("notify_party_id");
             	if(notifyPartyId == null || "".equals("notifyPartyId")){
@@ -414,6 +438,9 @@ public class TransferOrderController extends Controller {
             }
             if(warehouseId != null && !"".equals(warehouseId)){
             	transferOrder.set("warehouse_id", warehouseId);
+            }
+            if(officeId != null && !"".equals(officeId)){
+            	transferOrder.set("office_id", officeId);
             }
             transferOrder.update();
         }
@@ -592,5 +619,11 @@ public class TransferOrderController extends Controller {
     public void searchAllWarehouse(){
     	List<Warehouse> warehouses = Warehouse.dao.find("select * from warehouse");
     	renderJson(warehouses);
+    }
+    
+    // 查出所有的office
+    public void searchAllOffice(){
+    	List<Office> offices = Office.dao.find("select * from office");
+    	renderJson(offices);
     }
 }

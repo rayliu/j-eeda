@@ -105,13 +105,33 @@
                                                 <label>单据状态</label>   ${transferOrder.status!''}
                                             </div>
                                             <div class="form-group">
-                                                <label>创建人</label>   ${userLogin.user_name!''}
-                                                
+                                                <label>创建人</label>   ${userLogin.user_name!''}                                                
                                             </div>
+                                            
+                                            <div class="form-group">
+                                                <label>订单类型</label>
+                                                	<input id="orderTypeRadio" type="hidden" value="${transferOrder.order_type!''}"/>
+                                                	<label class="radio-inline">
+                                                        <input type="radio" name="orderType" id="salesOrder" value="salesOrder" checked="">销售订单
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="orderType" id="arrangementOrder" value="arrangementOrder">调拨订单
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="orderType" id="cargoReturnOrder" value="cargoReturnOrder">退货订单
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="orderType" id="damageReturnOrder" value="damageReturnOrder">质量退单
+                                                    </label>
+                                            </div>
+                                            
                                             <div class="form-group ">
         										<label class="control-label" for="inputSuccess">取货地址</label> <input
         											id="address" class="form-control" type="text"
         											name="address" value="${transferOrder.address!''}">
+                                                <input id="hideOfficeId" type="hidden" value="${transferOrder.office_id!''}" />    
+        										<label class="control-label" for="inputSuccess">请选择网点</label>
+                                                <select id="officeSelect" class="form-control" name="officeSelect"></select>  
         									</div>
                                             <div class="form-group">
                                                 <label>货品属性</label>
