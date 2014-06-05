@@ -140,17 +140,16 @@ $(document).ready(function() {
 		                		  	async : false,  
 		                		  	success : function(data){  
 		                		  		console.log(data);
-		                		  		returnString+= "<input id='qy2' type='text' placeholder='请选择序列号' class='form-control'>";
-	                		  			returnString+= "<ul id ='ulList' >";
+		                		  		//returnString+= "<input id='qy2' type='text' placeholder='请选择序列号' class='form-control'>";
+	                		  			//returnString+= "<ul id ='ulList'>";
 		                		  		if(data.length!=0){
 		                		  			for(var i = 0; i < data.length; i++)
 			        						{
-		                		  			
-		                		  			returnString+="<li>"+"<a>"+data[i].SERIAL_NO+"</a>"+"</li>";
+		                		  			returnString+="<input type='checkbox' id='box' name='items' value='"+data[i].SERIAL_NO+"'>"+"<a>"+data[i].SERIAL_NO+"</a>";
 		                		  			
 			        						}
 		                		  		}
-		                		  		returnString+="</ul>";
+		                		  		returnString;
 		                		    }  
 		                	 });
 		                	return returnString ;
@@ -173,17 +172,24 @@ $(document).ready(function() {
 		        	});
 		        }    
 		    });	
-			$("#eeda-table2").on('click', '#qy2', function(){
-				$("#ulList").show();
-			});
+			
 			//异步创建配送单
 			 $("#eeda-table2").on('click', '.creat', function(e){
 				 var id = $(this).attr('code');
 				 var ser ="";
+				 
 				 $("#eeda-table2 tr:eq('"+hang+"')").each(function(){
-		        	$("#ser",this).each(function(){
-		        		ser =$(this).val();        	
-		        	});          	
+		        	$("input:checked",this).each(function(){
+		        		ser=$(this).val();
+		        	}); 
+		        	 
+					
+					/* 
+					 $("input[name=items]").each(function(){
+						 if ($("input[name=items]").attr("checked")) {  
+							 ser =$(this).val();  
+						 	}  
+			        	}); */
 		        }); 
 				  e.preventDefault();
 		         //异步向后台提交数据
@@ -224,7 +230,7 @@ $(document).ready(function() {
 		                "fnRender": function(obj) {                    
 		                    return "<a class='btn btn-success edit' href='/yh/delivery/edit/"+obj.aData.ID+"'>"+
 		                                "<i class='fa fa-edit fa-fw'></i>"+
-		                                "查看"+
+		                                "编辑"+
 		                            "</a>"+
 		                            "<a class='btn btn-danger cancelbutton' code='"+obj.aData.ID+"'>"+
 		                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
@@ -347,24 +353,15 @@ $(document).ready(function() {
 			 	     }
 			    }) ;*/
 				//条件筛选
-				$("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two").on( 'keyup click', function () {    	 	
-			      	var order_no = $("#order_no").val();
-			      	var tr_order_no = $("#tr_order_no").val();
-			    	var de_order_no = $("#de_order_no").val();
-			      	var stator = $("#stator").val();    	
-			      	var status = $("#status").val();
-			      	var time_one = $("#time_one").val();
-			      	var time_two = $("#time_two").val();
-			      	if (status=="新建") {
-			      		status ="new";
-					}
-					if (status=="确认") {
-						status = "confirmed";
-					}
-					if (status=="取消") {
-						status ="cancel";
-					}
-			      	dataTable.fnSettings().sAjaxSource = "/yh/returnorder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&stator="+stator+"&status="+status+"&time_one="+time_one+"&time_two="+time_two;
+				$("#orderNo_filter ,#transfer_filter ,#status_filter,#customer_filter,#sp_filter,#beginTime_filter,#endTime_filter").on( 'keyup click', function () {    	 	
+			      	var orderNo_filter = $("#orderNo_filter").val();
+			      	var transfer_filter = $("#transfer_filter").val();
+			    	var status_filter = $("#status_filter").val();
+			      	var customer_filter = $("#customer_filter").val();    	
+			      	var sp_filter = $("#sp_filter").val();
+			      	var beginTime_filter = $("#beginTime_filter").val();
+			      	var endTime_filter = $("#endTime_filter").val();
+			      	dataTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter;
 			      	dataTable.fnDraw();
 			      });
 			 	    	 
