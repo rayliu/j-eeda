@@ -35,6 +35,7 @@ $(document).ready(function() {
             {"mDataProp":"CONTACT_PERSON"},        	
             {"mDataProp":"PHONE"},
             {"mDataProp":"ADDRESS"},
+            {"mDataProp":"RECEIPT"},
             {"mDataProp":"DNAME"},
             { 
                 "mDataProp": null, 

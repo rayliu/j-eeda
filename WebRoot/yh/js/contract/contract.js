@@ -56,8 +56,11 @@ $(document).ready(function() {
                 	 
                 	 $("input[name='priceType']").each(function(){
 	                	 if($(this).val() == data[0].PRICETYPE){
-	                		 $(this).attr("checked","checked");
+	                		 $(this).attr("checked",true);
+	              		}else{
+	              			$(this).attr("checked",false);
 	              		}
+	                	 
                 	 });
                  }else{
                      alert('取消失败');

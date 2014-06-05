@@ -115,7 +115,7 @@ public class DataInitUtil {
             // stmt.executeUpdate(
             stmt.executeUpdate("create table if not exists Pickup_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Customer_id bigint,Serial_no varchar(50),Item_no bigint,Item_name varchar(50),Item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
 
-            stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Serial_no varchar(50),Item_no bigint,Item_name varchar(50),Item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
+            stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Serial_no varchar(50),Item_no bigint,Item_name varchar(50),Item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255),delivery_id bigint);");
 
             stmt.close();
             // conn.commit();

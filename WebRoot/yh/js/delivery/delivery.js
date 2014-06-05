@@ -1,7 +1,7 @@
 ﻿
 $(document).ready(function() {
 	$('#menu_deliver').addClass('active').find('ul').addClass('in');
-		    
+	var hang="";
 		  //获取供应商的list，选中信息在下方展示其他信息
 			$('#spMessage').on('keyup', function(){
 				var inputStr = $('#spMessage').val();
@@ -25,7 +25,6 @@ $(document).ready(function() {
 				$('#spMessage').val($(this).text());
 				$('#sp_id').val($(this).attr('spid'));
 				$('#cid').val($(this).attr('code'));
-				
 				$('#a1').html($(this).attr('contact_person'));
 				$('#a2').html($(this).attr('company_name'));
 				$('#a3').html($(this).attr('address'));
@@ -35,7 +34,7 @@ $(document).ready(function() {
 		    }); 
 			//datatable, 动态处理
 			var trandferOrderId = $("#tranferid").val();
-			
+			var ser =  $("#ser_no").val();
 			$('#eeda-table').dataTable({
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -44,9 +43,10 @@ $(document).ready(function() {
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
-		        "sAjaxSource": "/yh/delivery/orderList?trandferOrderId="+trandferOrderId,
-		        "aoColumns": [   
-		            {"mDataProp":"ITEM_NO"},
+		        "sAjaxSource": "/yh/delivery/orderList?trandferOrderId="+trandferOrderId+"&ser="+ser,
+		        "aoColumns": [
+		            {"mDataProp":"ITEM_NO"},  
+		            {"mDataProp":"SERIAL_NO"},
 		            {"mDataProp":"ITEM_NAME"},
 		            {"mDataProp":"AMOUNT"},        	
 		            {"mDataProp":"VOLUME"},
@@ -56,10 +56,10 @@ $(document).ready(function() {
 			//添加配送单
 			$("#saveBtn").click(function(e){
 		            //阻止a 的默认响应行为，不需要跳转	
-				
+				 var itemId = $("#item_id").val();
 		            e.preventDefault();
 		            //异步向后台提交数据
-		           $.post('/yh/delivery/deliverySave', $("#deliveryForm").serialize(), function(data){
+		           $.post('/yh/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
 		                console.log(data);
 	                    if(data.ID>0){
 	                    	$("#delivery_id").val(data.ID);
@@ -101,7 +101,7 @@ $(document).ready(function() {
 		            		}else{
 		            			return "源鸿自提";
 		            		}}},
-		           { 
+		          /* { 
 		                "mDataProp": null, 
 		                "fnRender": function(obj) {
 		                	var returnString ="";
@@ -116,7 +116,6 @@ $(document).ready(function() {
 		                		  		returnString = "<select id='ser'>";
 		                		  		for(var i = 0; i < data.length; i++)
 		        						{
-		                		  			
 		                		  			if(data[i].SERIAL_NO==null||data.length==0){
 		                		  				returnString ="" ;
 		                		  			}else{
@@ -129,7 +128,34 @@ $(document).ready(function() {
 		                	 });
 		                	return returnString+"</select>";
 		                }
-		            },   
+		            }, */
+		            { 
+		                "mDataProp": null, 
+		                "fnRender": function(obj) {
+		                	var returnString ="";
+		                	console.log(obj.aData.ID);
+		                	$.ajax({  	
+		                			type : "post",  
+		                		  	url : "/yh/delivery/serialNo?id="+obj.aData.ID,  
+		                		  	async : false,  
+		                		  	success : function(data){  
+		                		  		console.log(data);
+		                		  		returnString+= "<input id='qy2' type='text' placeholder='请选择序列号' class='form-control'>";
+	                		  			returnString+= "<ul id ='ulList' >";
+		                		  		if(data.length!=0){
+		                		  			for(var i = 0; i < data.length; i++)
+			        						{
+		                		  			
+		                		  			returnString+="<li>"+"<a>"+data[i].SERIAL_NO+"</a>"+"</li>";
+		                		  			
+			        						}
+		                		  		}
+		                		  		returnString+="</ul>";
+		                		    }  
+		                	 });
+		                	return returnString ;
+		                }
+		            },
 		            { 
 		                "mDataProp": null, 
 		                "sWidth": "8%",                
@@ -140,22 +166,34 @@ $(document).ready(function() {
 		                    		"</a>";
 		                }
 		            }                         
-		        ]      
+		        ], "fnInitComplete": function(oSettings, json) {
+		        	$("#eeda-table2 tr").on('click', '', function(){
+		        	 hang = $(this).prevAll().length; 
+		       		  	hang = Number(hang)+1;
+		        	});
+		        }    
 		    });	
+			$("#eeda-table2").on('click', '#qy2', function(){
+				$("#ulList").show();
+			});
 			//异步创建配送单
 			 $("#eeda-table2").on('click', '.creat', function(e){
-				 	//var ser = $("#eeda-table2 select").val();
-				var ser = $("#ser").val();
+				 var id = $(this).attr('code');
+				 var ser ="";
+				 $("#eeda-table2 tr:eq('"+hang+"')").each(function(){
+		        	$("#ser",this).each(function(){
+		        		ser =$(this).val();        	
+		        	});          	
+		        }); 
 				  e.preventDefault();
 		         //异步向后台提交数据
-				 var id = $(this).attr('code');
 				$.post('/yh/delivery/creat/'+id,{ser:ser},function(id){
 		                 //保存成功后，刷新列表
 		                 console.log(id);
 		                 if(id>0){
 		                	// $("#tranferid").val(id);
 		                	 //dataTable2.fnSettings().sAjaxSource="/yh/delivery/orderList?trandferOrderId="+id;
-		                	 window.location.href="/yh/delivery/creat2/"+id;
+		                	 window.location.href="/yh/delivery/creat2?id="+id+ "&ser="+ser;
 		                 }else{
 		                     alert('取消失败');
 		                 }
@@ -308,6 +346,27 @@ $(document).ready(function() {
 			 	    	$("#receiptBtn").attr("disabled", false);
 			 	     }
 			    }) ;*/
+				//条件筛选
+				$("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two").on( 'keyup click', function () {    	 	
+			      	var order_no = $("#order_no").val();
+			      	var tr_order_no = $("#tr_order_no").val();
+			    	var de_order_no = $("#de_order_no").val();
+			      	var stator = $("#stator").val();    	
+			      	var status = $("#status").val();
+			      	var time_one = $("#time_one").val();
+			      	var time_two = $("#time_two").val();
+			      	if (status=="新建") {
+			      		status ="new";
+					}
+					if (status=="确认") {
+						status = "confirmed";
+					}
+					if (status=="取消") {
+						status ="cancel";
+					}
+			      	dataTable.fnSettings().sAjaxSource = "/yh/returnorder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&stator="+stator+"&status="+status+"&time_one="+time_one+"&time_two="+time_two;
+			      	dataTable.fnDraw();
+			      });
 			 	    	 
 			    	
 });
