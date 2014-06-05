@@ -76,7 +76,7 @@
 <script>
     $(document).ready(function() {
         $('#menu_profile').addClass('active').find('ul').addClass('in');
-    	$("#user").click(function(){
+    	
     	       	//alert("waerwerwee");
     	       	var user =$("#user");
     	       	user.empty();
@@ -89,22 +89,22 @@
     				
     			},'json');
 
-    	 });
     	
-    	$("#role").click(function(){
+    	
+    	
 	       	//alert("waerwerwee");
-	       	var user =$("#role");
-	       	user.empty();
+	       	var role =$("#role");
+	       	role.empty();
 	       	$.get('/yh/privilege/SelectUser?select=2',{},function(data){
 
 				for(var i = 0; i < data.length; i++)
 				{
-					user.append("<option>("+data[i].ID+")"+data[i].ROLE_NAME+"</option>");
+					role.append("<option>("+data[i].ID+")"+data[i].ROLE_NAME+"</option>");
 				}
 				
 			},'json');
 
-	 });
+	
     	
         $('#UserRoleForm').validate({
             rules: {

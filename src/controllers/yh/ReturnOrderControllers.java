@@ -136,7 +136,8 @@ public class ReturnOrderControllers extends Controller {
 		                + "(SELECT ORDER_NO  FROM DELIVERY_ORDER fo  where fo.id=r.DELIVERY_ORDER_ID ) DELIVERY_ORDER_ID_NO  ,"
 		                + "(SELECT location_from  FROM ROUTE  ro  where ro.id in (select route_id from transfer_order t where t.id=r.transfer_order_id)) location_from ,"
 		                + "(SELECT location_to  FROM ROUTE  ro  where ro.id in (select route_id from transfer_order t where t.id=r.transfer_order_id)) location_to ,"
-		                + "(select amount from contract_item c where c.contract_id=r.notity_party_id and c.route_id=r.route_id) amount ,"
+		                // +
+						// "(select amount from contract_item c where c.contract_id=r.notity_party_id and c.route_id=r.route_id) amount ,"
 		                + "(SELECT user_name  FROM user_login u  where  u.id in (select create_by from transfer_order t where t.id=r.transfer_order_id"
 		                + ")) counterman "
 		                + "from return_order r where  r.id='" + id + "'");
