@@ -59,5 +59,16 @@ $(document).ready(function() {
         	}); 
         tableArr.push(trArr);        
         console.log(tableArr);
+      
+        $.ajax({//点击确定，保存设置
+    		url: "/yh/departOrder/addDepartOrder",
+    		type:'post',
+    		dataType : "text",
+    		data : "localArr="+tableArr,
+    		success: function(msg){
+    			alert(msg);
+    			$( "#dialog-modal").omDialog("close");
+    		}
+    	});
     });    
 } );

@@ -180,7 +180,7 @@ $(document).ready(function() {
         //获取权限, 放到数组中
         var roles =[];    
 		var tableArr = [];
-		var sendArr = [];
+		
 		roles.push(role);
 		tableArr.push(roles) ; 
        var check=true;
@@ -193,16 +193,29 @@ $(document).ready(function() {
         		 tableArr.push(trArr);
         	 }        	
         	}); 
-        sendArr.push(tableArr); 
-        var Arr=sendArr;
-        console.log(Arr);
+       
+      
+      
+        console.log(tableArr);
+        $.ajax({//点击确定，保存设置
+    		url: "/yh/privilege/editModule_pri",
+    		type:'post',
+    		//dataType : "object",
+    		data : "localArr="+tableArr,
+    		success: function(msg){
+    			alert(msg);
+    			$( "#dialog-modal").omDialog("close");
+    		}
+    	});
+
         //sendArr[0].toString();
-        $.post("/yh/privilege/editModule_pri",{localArr:Arr},function(data){     
+        /*
+        $.post("/yh/privilege/editModule_pri",{localArr:tableArr},function(data){     
 
         	   //回调函数 
 
         	   });
-
+*/
     });
 });	
 </script>
