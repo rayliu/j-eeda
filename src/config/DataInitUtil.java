@@ -118,8 +118,8 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Serial_no varchar(50),Item_no bigint,Item_name varchar(50),Item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
 
             // 发车单
-         	stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment PRIMARY KEY,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp TIMESTAMP,combine_type varchar(255),"
-         					+ "car_no varchar(255),car_type varchar(255),notify_party_id bigint,FOREIGN KEY(notify_party_id) REFERENCES party(id));");
+            stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment PRIMARY KEY,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp TIMESTAMP,combine_type varchar(255),"
+                    + "car_no varchar(255),car_type varchar(255),notify_party_id bigint,FOREIGN KEY(notify_party_id) REFERENCES party(id));");
             stmt.close();
             // conn.commit();
             conn.close();
@@ -563,10 +563,10 @@ public class DataInitUtil {
                     + "values('7','aaasswqq63','10000', 'ATM', 'false','10','10');");
 
             // 配送单
-            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600013','1','5','7','9','配送在途');");
-            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600004','2','6','7','10','已签收');");
-            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600014','3','5','8','9','取消');");
-            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,) values('2014042600003','4','6','8','10','配送在途');");
+            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,CREATE_STAMP) values('2014042600013','1','5','7','9','配送在途','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,CREATE_STAMP) values('2014042600004','2','6','7','10','已签收','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,CREATE_STAMP) values('2014042600014','3','5','8','9','取消','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,CREATE_STAMP) values('2014042600003','4','6','8','10','配送在途','2014-04-25 16:35:35.1');");
 
             // billing_order 应收应付单主表
             stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
