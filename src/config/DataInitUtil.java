@@ -120,6 +120,9 @@ public class DataInitUtil {
             // 发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment PRIMARY KEY,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp TIMESTAMP,combine_type varchar(255),"
                     + "car_no varchar(255),car_type varchar(255),notify_party_id bigint,FOREIGN KEY(notify_party_id) REFERENCES party(id));");
+            
+            // 发车单运输单中间表
+            stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,FOREIGN KEY(depart_id) REFERENCES depart_order(id),FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
             stmt.close();
             // conn.commit();
             conn.close();
