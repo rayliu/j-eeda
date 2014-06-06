@@ -32,36 +32,78 @@
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="basic">
                                     <div class="row">
+                                	<form role="form" id="transferOrderForm">
                                         <div class="col-lg-6">
-                                            <form role="form" id="transferOrderForm">
                                             	<input id="id" type="hidden" name="id" value="${transferOrder.id!''}"/>
                                             	<input id="customer_id" type="hidden" name="customer_id"/>
                                             	<input id="sp_id" type="hidden" name="sp_id"/>
                                             	<input type="hidden" name="order_no" value="${order_no!''}"/>
                                             	<input type="hidden" name="status" value="${status!''}"/>
                                             	<input type="hidden" name="create_by" value="${create_by!''}"/>
-                                                <h2>客户信息</h2>
-                                                <div class="form-group">
-                                                    <!--label>客户名称</label-->
-                                                    <input id="customerMessage" class="form-control" placeholder="选择客户" type="text" name="customerMessage" />
-                                                    <ul id='customerList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 17%; left: 2%;">
-        											</ul>
-                                                </div>
-                                                <div class="form-group">     
-                                                	<h5 id="pageCustomerName"></h5><h5 id="pageCustomerAddress"></h5>     
-                                                </div>
+                                                <h2>运输信息</h2>
+	                                            <div class="form-group">
+	                                                <label>运输单号</label> <strong>${order_no!''}</strong>
+	                                            </div>
+	                                            <div class="form-group">
+	                                                <label>单据状态</label>   ${status!''}
+	                                            </div>
+	                                            <div class="form-group">
+	                                                <label>创建人</label>   ${userLogin.user_name!''}                                                
+	                                            </div>
+	                                            
+	                                            <div class="form-group">
+	                                                <label>订单类型</label>
+	                                                	<label class="radio-inline">
+	                                                        <input type="radio" name="orderType" id="salesOrder" value="salesOrder" checked="">销售订单
+	                                                    </label>
+	                                                    <label class="radio-inline">
+	                                                        <input type="radio" name="orderType" id="arrangementOrder" value="arrangementOrder">调拨订单
+	                                                    </label>
+	                                                    <label class="radio-inline">
+	                                                        <input type="radio" name="orderType" id="cargoReturnOrder" value="cargoReturnOrder">退货订单
+	                                                    </label>
+	                                                    <label class="radio-inline">
+	                                                        <input type="radio" name="orderType" id="damageReturnOrder" value="damageReturnOrder">质量退单
+	                                                    </label>
+	                                            </div>
                                                 
-                                                <h2>供应商信息</h2>
-                                                <div class="form-group">
-                                                    <!--label>供应商名称</label-->
-                                                    <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage" />
-                                                    <ul id='spList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 35%; left: 2%;">
-        											</ul>
-                                                </div>
-                                                <div class="form-group">     
-                                                	<h5 id="pageSpName"></h5><h5 id="pageSpAddress"></h5>     
-                                                </div>
-                                                
+	                                            <div class="form-group">
+	                                                <label>货品属性</label>
+	                                                <label class="radio-inline">
+	                                                        <input type="radio" name="cargoNature" id="cargoNature1" value="ATM" checked="">ATM
+	                                                    </label>
+	                                                    <label class="radio-inline">
+	                                                        <input type="radio" name="cargoNature" id="cargoNature2" value="cargo">普通货品
+	                                                    </label>
+	                                            		<!--<label class="radio-inline">
+	                                                        <input type="radio" name="cargoNature" id="cargoNature3" value="damageCargo">损坏货品
+	                                                    </label> -->
+	                                            </div>
+	                                            <div class="form-group">
+	                                                <label>提货方式</label>
+	                                                    <label class="radio-inline">
+	                                                        <input type="radio" name="pickupMode" id="pickupMode1" value="routeSP" checked="">干线供应商自提
+	                                                    </label>
+	                                                    <label class="radio-inline">
+	                                                        <input type="radio" name="pickupMode" id="pickupMode2" value="pickupSP">外包供应商提货
+	                                                    </label>
+	                                                    <label class="radio-inline">
+	                                                        <input type="radio" name="pickupMode" id="pickupMode3" value="own">源鸿自提
+	                                                    </label>
+	                                            </div>                                        
+	                                               
+	                                            <div id="arrivalModes" class="form-group">
+	                                            	<input id="arrivalModeVal" type="hidden" />
+	                                                <label>到达方式 </label>
+	                                                <label class="radio-inline">
+	                                                    <input type="radio" name="arrivalMode" id="arrivalMode1" value="delivery" checked="">货品直送
+	                                                </label>
+	                                                <label class="radio-inline">
+	                                                    <input type="radio" name="arrivalMode" id="arrivalMode2" value="gateIn">入中转仓
+	                                                </label>  
+	                                                <select id="gateInSelect" class="form-control" name="gateInSelect" style="display: none;"></select>                                          
+	                                            </div>                                       
+                                               
                                                 <div id="contactInformation" style="display: none">
         	                                        <h2>收货人信息</h2>
         	                                        <div class="form-group">
@@ -96,31 +138,15 @@
                                         </div>
                                         <!-- /.col-lg-6 (nested) -->
                                         <div class="col-lg-6">
-                                            <h2>运输信息</h2>
+                                    		<h2>客户信息</h2>
                                             <div class="form-group">
-                                                <label>运输单号</label> <strong>${order_no!''}</strong>
+                                                <!--label>客户名称</label-->
+                                                <input id="customerMessage" class="form-control" placeholder="选择客户" type="text" name="customerMessage" />
+                                                <ul id='customerList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 17%; left: 2%;">
+    											</ul>
                                             </div>
-                                            <div class="form-group">
-                                                <label>单据状态</label>   ${status!''}
-                                            </div>
-                                            <div class="form-group">
-                                                <label>创建人</label>   ${userLogin.user_name!''}                                                
-                                            </div>
-                                            
-                                            <div class="form-group">
-                                                <label>订单类型</label>
-                                                	<label class="radio-inline">
-                                                        <input type="radio" name="orderType" id="salesOrder" value="salesOrder" checked="">销售订单
-                                                    </label>
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="orderType" id="arrangementOrder" value="arrangementOrder">调拨订单
-                                                    </label>
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="orderType" id="cargoReturnOrder" value="cargoReturnOrder">退货订单
-                                                    </label>
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="orderType" id="damageReturnOrder" value="damageReturnOrder">质量退单
-                                                    </label>
+                                            <div class="form-group">     
+                                            	<h5 id="pageCustomerName"></h5><h5 id="pageCustomerAddress"></h5>     
                                             </div>
                                             
                                             <div class="form-group ">
@@ -129,61 +155,35 @@
         											name="address">
         										<label class="control-label" for="inputSuccess">请选择网点</label>
                                                 <select id="officeSelect" class="form-control" name="officeSelect"></select>  
-        									</div>
+        									</div>	
                                             <div class="form-group">
-                                                <label>货品属性</label>
-                                                <label class="radio-inline">
-                                                        <input type="radio" name="cargoNature" id="cargoNature1" value="ATM" checked="">ATM
-                                                    </label>
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="cargoNature" id="cargoNature2" value="cargo">普通货品
-                                                    </label>
-                                            		<!--<label class="radio-inline">
-                                                        <input type="radio" name="cargoNature" id="cargoNature3" value="damageCargo">损坏货品
-                                                    </label> -->
+                                            <label><h4>始发城市</h4></label>
+                                            <input id="locationForm" type="hidden" name="route_from" value="">
+                                            <input id="hideLocationFrom" type="hidden"> 
+                                            <div class="form-group">
+                                               <label>省</label>
+                                               <input id="hideProvinceFrom" type="hidden" value="${locationFrom.province!''}"/>
+                                               <select id="mbProvinceFrom" style="width:150px" name="mbProvinceFrom" value=""></select>
+                                               <label>市</label>
+                                               <input id="hideCityFrom" type="hidden" value="${locationFrom.city!''}"/>
+                                               <select  id="cmbCityFrom" style="width:150px" name="cmbCityFrom" value=""></select>
+                                               <label>区(县)</label>
+                                               <input id="hideDistrictFrom" type="hidden" value="${locationFrom.district!''}"/>
+                                               <select  id="cmbAreaFrom" style="width:150px" name="cmbAreaFrom" value=""></select>
                                             </div>
+        									
+                                            <h2>供应商信息</h2>
                                             <div class="form-group">
-                                                <label>提货方式</label>
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="pickupMode" id="pickupMode1" value="routeSP" checked="">干线供应商自提
-                                                    </label>
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="pickupMode" id="pickupMode2" value="pickupSP">外包供应商提货
-                                                    </label>
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="pickupMode" id="pickupMode3" value="own">源鸿自提
-                                                    </label>
-                                            </div>                                        
-                                               
-                                            <div id="arrivalModes" class="form-group">
-                                            	<input id="arrivalModeVal" type="hidden" />
-                                                <label>到达方式 </label>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="arrivalMode" id="arrivalMode1" value="delivery" checked="">货品直送
-                                                </label>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="arrivalMode" id="arrivalMode2" value="gateIn">入中转仓
-                                                </label>  
-                                                <select id="gateInSelect" class="form-control" name="gateInSelect" style="display: none;"></select>                                          
-                                            </div>                                       
-                                               
+                                                <!--label>供应商名称</label-->
+                                                <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage" />
+                                                <ul id='spList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 35%; left: 2%;">
+    											</ul>
+                                            </div>
+                                            <div class="form-group">     
+                                            	<h5 id="pageSpName"></h5><h5 id="pageSpAddress"></h5>     
+                                            </div>
+                                                
                                             <h2>路线</h2>
-                                                <div class="form-group">
-                                                <label><h4>始发城市</h4></label>
-			                                            <input id="locationForm" type="hidden" name="route_from" value="">
-			                                            <input id="hideLocationFrom" type="hidden"> 
-			                                            <div class="form-group">
-			                                                <label>省</label>
-			                                                <input id="hideProvinceFrom" type="hidden" value="${locationFrom.province!''}"/>
-			                                                <select id="mbProvinceFrom" style="width:150px" name="mbProvinceFrom" value=""></select>
-			                                                <label>市</label>
-			                                                <input id="hideCityFrom" type="hidden" value="${locationFrom.city!''}"/>
-			                                                <select  id="cmbCityFrom" style="width:150px" name="cmbCityFrom" value=""></select>
-			                                                <label>区(县)</label>
-			                                                <input id="hideDistrictFrom" type="hidden" value="${locationFrom.district!''}"/>
-			                                                <select  id="cmbAreaFrom" style="width:150px" name="cmbAreaFrom" value=""></select>
-			                                            </div>
-                                                    - <br/>
                                                     <input id="locationTo" type="hidden" name="route_to" value="${contact.location!''}">
                                                     	<label><h4>目的地城市</h4></label>
 			                                            <div class="form-group">
@@ -201,10 +201,10 @@
                                                 <div class="form-group">
                                                     <label>备注</label>
                                                     <textarea class="form-control" rows="13" name="remark"></textarea>
-                                                </div> 
-                                            </form>
+                                                </div>
                                         </div>
                                         <!-- /.col-lg-6 (nested) -->
+                                	</form>
                                     </div>
                                 </div>
                                 

@@ -104,7 +104,12 @@ $(document).ready(function() {
 	    				for(var i = 0; i < data.length; i++)
 	    				{
 	    					if(data[i].NAME == hideCity){
-	    						$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val());
+	    						var district = $("#hideDistrictFrom").val();
+	    						if(district == ''){
+	    							$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val());
+	    						}else{
+	    							$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val() +" "+ $("#hideDistrictFrom").val());
+	    						}
 	    						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
 	    					}else{
 	    						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
