@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.Location;
+import models.TransferOrder;
 import models.Warehouse;
 import models.yh.profile.Contact;
 
@@ -103,7 +104,11 @@ public class WarehouseController extends Controller{
 
 	public void delete() {
 		long id = getParaToLong();
-
+		List<TransferOrder> orders = TransferOrder.dao.find("select * from transfer_order where warehouse_id = "+id);
+    	for(TransferOrder order : orders){
+    		order.set("warehouse_id", null);
+    		order.update();
+    	}
 		Warehouse warehouse = Warehouse.dao.findById(id);
 		warehouse.delete();
 		if(LoginUserController.isAuthenticated(this))

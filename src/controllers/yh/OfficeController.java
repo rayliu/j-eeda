@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.Office;
+import models.TransferOrder;
 import models.UserLogin;
 
 import com.jfinal.core.Controller;
@@ -79,6 +80,11 @@ public class OfficeController extends Controller {
          */
         String id = getPara();
         if (id != null) {
+        	List<TransferOrder> orders = TransferOrder.dao.find("select * from transfer_order where office_id = "+id);
+        	for(TransferOrder order : orders){
+        		order.set("office_id", null);
+        		order.update();
+        	}
             Db.deleteById("office", id);
         }
         if(LoginUserController.isAuthenticated(this))
