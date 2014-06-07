@@ -126,7 +126,9 @@ public class TransferOrderController extends Controller {
         TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order order by order_no desc limit 0,1");
         if (order != null) {
             String num = order.get("order_no");
-            Long oldTime = Long.parseLong(num);
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String format = sdf.format(new Date());
             String time = format + "00001";
@@ -136,12 +138,12 @@ public class TransferOrderController extends Controller {
             }else{
             	order_no = String.valueOf(newTime);
             }
-            setAttr("order_no", order_no);
+            setAttr("order_no", "YS"+order_no);
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String format = sdf.format(new Date());
             order_no = format + "00001";
-            setAttr("order_no", order_no);
+            setAttr("order_no", "YS"+order_no);
         }
 
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
@@ -166,7 +168,8 @@ public class TransferOrderController extends Controller {
     }
 
     public void edit() {
-        long id = getParaToLong();
+        //long id = getParaToLong();
+        long id = getParaToLong("id");
         TransferOrder transferOrder = TransferOrder.dao.findById(id);
         setAttr("transferOrder", transferOrder);
 

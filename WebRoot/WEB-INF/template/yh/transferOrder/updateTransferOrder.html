@@ -141,6 +141,10 @@
     	                                            <input name="notify_phone" value="${contact.phone!''}" class="form-control" placeholder="请输入电话">
     	                                        </div>
                                             </div>  
+                                            <div class="form-group">
+                                                <label>备注</label>
+                                                <textarea class="form-control" rows="13" name="remark">${transferOrder.remark!''}</textarea>
+                                            </div> 
                                         </div>
                                         <!-- /.col-lg-6 (nested) -->
                                         <div class="col-lg-6">
@@ -206,10 +210,6 @@
 			                                                <select  id="cmbAreaTo" style="width:150px" name="cmbAreaTo" value=""></select>
 			                                            </div>
                                                 </div><!-- -->
-                                                <div class="form-group">
-                                                    <label>备注</label>
-                                                    <textarea class="form-control" rows="13" name="remark">${transferOrder.remark!''}</textarea>
-                                                </div> 
                                         </div>
                                         <!-- /.col-lg-6 (nested) -->
                                         </form>
@@ -707,7 +707,7 @@
                                     <button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
                                     <button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
                                     <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
-                                    <button id="receiptBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">回单签收</button>
+                                    <button id="receiptBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button>
                                 </div>
                                 <p>保存：新建时只能保存（其他按钮都灰掉不能点）, 保存后单据状态变为“新建”</p>
                                 <p>发车确认：新建后可以点击，点击后生成单据状态 “已发车”，之后生成应付条目（付费给供应商）</p>

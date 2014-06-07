@@ -15,7 +15,7 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/yh/transferOrder/list",
         "aoColumns": [   
-            
+            {"mDataProp":"ID"},
             {"mDataProp":"ORDER_NO"},
             {"mDataProp":"STATUS"},
             {"mDataProp":"CARGO_NATURE",
@@ -72,17 +72,25 @@ $(document).ready(function() {
                 "mDataProp": null,  
                 "sWidth": "8%",                
                 "fnRender": function(obj) {
-                    return	"<a class='btn btn-success' href='/yh/transferOrder/edit/"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                                "编辑"+
-                            "</a>"+
-                            "<a class='btn btn-danger cancelbutton' code='"+obj.aData.ID+"'>"+
+                    return	"<a class='btn btn-danger cancelbutton' code='"+obj.aData.ID+"'>"+
 	                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
 	                            "取消"+
 	                        "</a>";
                 }
             }                         
-        ]      
+        ],
+        "fnInitComplete": function(oSettings, json) {  	
+        	$("#eeda-table td").on('dblclick', '', function(){    
+	        	var hang = $(this).parent("tr").prevAll().length; 
+	       		col = Number(hang)+1;	     	
+	        	
+	       	    $("table tr:eq('"+col+"') td:eq(0)").each(function(){
+	       	    	var id = $(this).html();
+	       	    	window.location.href = "/yh/transferOrder/edit?id="+id;
+	       	    	//window.open("/yh/transferOrder/edit?id="+id);
+	         	}); 
+        	});	        	    
+	     }     
     });	
     
     $("#eeda-table").on('click', '.cancelbutton', function(e){
@@ -221,5 +229,8 @@ $(document).ready(function() {
         }
     });
     
-    
+    // 单击行事件
+	/*$('#eeda-table tbody').on( 'click', 'tr', function () {
+		alert($(this).html());
+    } );*/
 } );

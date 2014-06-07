@@ -83,8 +83,4 @@ public class DepartOrderController extends Controller {
 
 		renderJson(transferOrderListMap);
 	}
-					n = 0;
-					onelist.clear();
-					break;
-		int lang = alllist.size();
 }
