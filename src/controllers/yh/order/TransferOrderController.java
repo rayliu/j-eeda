@@ -586,14 +586,8 @@ public class TransferOrderController extends Controller {
     public void importTransferOrder() {
         //UploadFile uploadFile = getFile();
         //logger.debug("上传的文件名:" + uploadFile.getFileName());
-    	Map<String, List<String>> map = PoiUtils.readExcel("c:/c.xlsx");
-    	for(Map.Entry<String, List<String>> entry : map.entrySet()){
-    		/*for(String param : entry.getValue()){
-    			System.out.println(param);
-    		}*/
-    		logger.debug(entry.getKey() +"   "+entry.getValue());
-    		List<String> list = entry.getValue();
-    	}
+    	Map<String, List<Object>> map = PoiUtils.readExcel("c:/c.xlsx");
+    	
     	renderJson("{\"success\":true}");
     }
     

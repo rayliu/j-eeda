@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -43,148 +41,60 @@ public class PoiUtils {
 	 * 读excel 
 	 * @param filePath excel路径
 	 */
-	public static Map<String, List<String>> readExcel(String filePath){
+	public static Map<String, List<Object>> readExcel(String filePath){
 		Workbook book = null;
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
-		List<String> orderList = new ArrayList<String>();
-		List<String> itemList = new ArrayList<String>();
-		List<String> detailList = new ArrayList<String>();
+		Map<String, List<Object>> map = new HashMap<String, List<Object>>();
+		List<Object> headList = new ArrayList<Object>();
+		List<Object> content = null;
 		try {
 			book = getExcelWorkbook(filePath);
 			Sheet sheet = getSheetByNum(book,1);
-			//System.out.println("sheet名称是："+sheet.getSheetName());
 			
 			int lastRowNum = sheet.getLastRowNum();
 			
 			Row row = null;
-			String names = "";
-			String values = "";
-			String[] nameArr = null;
-			String[] valueArr = null;
 			for(int i=0;i<=lastRowNum;i++){
 				row = sheet.getRow(i);
 				if(row != null){
-					//System.out.println("正在读第"+(i+1)+"行：");
-					//System.out.println();
+					String str = "";
 					int lastCellNum = row.getLastCellNum();
 					Cell cell = null;
-					StringBuilder sb = null;
-					for(int j=0;j<lastCellNum;j++){
-						cell = row.getCell(j);
-						if(cell != null){
-							sb = new StringBuilder("第"+(j+1)+"列的单元格内容是：");
-							sb = new StringBuilder();
-							String type_cn = null;
-							String type_style = cell.getCellStyle().getDataFormatString().toUpperCase();
-							String type_style_cn = getCellStyleByChinese(type_style);
-							int type = cell.getCellType();
-							String value = "";
-							switch (type) {
-								case 0:
-									if(DateUtil.isCellDateFormatted(cell)){
-										type_cn = "NUMBER-DATE";
-										Date date = cell.getDateCellValue();
-										value = sFormat.format(date);
-									}else {
-										type_cn = "NUMBER";
-										double tempValue = cell.getNumericCellValue();
-										//value = String.valueOf(tempValue);
-										value = String.valueOf((int)tempValue);
-									}
-									break;
-								case 1:
-									type_cn = "STRING";
-									value = cell.getStringCellValue();
-									break;
-								case 2:
-									type_cn = "FORMULA";
-									value = cell.getCellFormula();
-									break;
-								case 3:
-									type_cn = "BLANK";
-									value = cell.getStringCellValue();
-									break;
-								case 4:
-									type_cn = "BOOLEAN";
-									boolean tempValue = cell.getBooleanCellValue();
-									value = String.valueOf(tempValue);
-									break;
-								case 5:
-									type_cn = "ERROR";
-									byte b = cell.getErrorCellValue();
-									value = String.valueOf(b);
-								default:
-									break;
-							}
-							//sb.append(value + ",内容类型是："+type_cn+",单元格的格式是："+type_style_cn);
-							sb.append(value);
-							if(i == 0){
-								if(j == lastCellNum - 1){
-									names += sb.toString()+"";
-								}else{
-									names += sb.toString()+", ";
-								}
-							}else{
-								String val = sb.toString();
-								if(val == null || "".equals(val)){
-									values += "null, ";
-									//System.out.println("names : "+names+"   values :" + values);
-								}else{
-									if(j == lastCellNum - 1){
-										values += "'"+val+"'";
-									}else{
-										values += "'"+val+"', ";
-									}
-									//System.out.println("names : "+names+"   values :" + values);
-								}
-							}
-						}
-						/*if(i == 0){
-							names += sb.toString()+", ";
-						}else{
-							String val = sb.toString();
-							if(val == null || "".equals(val)){
-								values += "null, ";
-								System.out.println("names : "+names+"   values :" + values);
-							}else{
-								values += "'"+val+"', ";
-								System.out.println("names : "+names+"   values :" + values);
-							}
-						}*/
-					}
-					System.out.println();
 					if(i == 0){
-						nameArr = names.split(",");
-						for(int x=0; x<nameArr.length; x++){
-							if(x == 1 || x == 2){
-								itemList.add(nameArr[x]);
-							}else if(x == 3){
-								detailList.add(nameArr[x]);
-							}else{
-								orderList.add(nameArr[x]);
+						for(int j=0;j<lastCellNum;j++){
+							cell = row.getCell(j);
+								headList.add(cell);
 							}
 						}
-					}else{
-						valueArr = values.split(",");
-						for(int x=0; x<valueArr.length; x++){
-							if(x == 1 || x == 2){
-								itemList.add(valueArr[x]);
-							}else if(x == 3){
-								detailList.add(valueArr[x]);
-							}else{
-								orderList.add(valueArr[x]);
+					else{
+						content = new ArrayList<Object>();
+						for(int j=0;j<lastCellNum;j++){
+							cell = row.getCell(j);
+							if(j == 0){
+								str += cell;
 							}
+							content.add(cell);
 						}
-						values = "";
+						if(map.containsKey(str)){
+							List<Object> exist = map.get(str);
+							exist.addAll(content);
+						}else{
+							map.put(str, content);							
+						}
 					}
-					map.put("orderList", orderList);
-					map.put("itemList", itemList);
-					map.put("detailList", detailList);
 				}				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
+		for(Object head : headList){
+			System.out.println("head : " + head);
+		}
+		for(Map.Entry<String, List<Object>> entry : map.entrySet()){
+			System.out.println("key :" + entry.getKey());
+			for(Object val : entry.getValue()){
+				System.out.println("val : " + val);
+			}
+		}
 		return map;
 	}
 

@@ -1,6 +1,5 @@
-package controllers.yh.departOrder;
+﻿package controllers.yh.departOrder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,30 +83,8 @@ public class DepartOrderController extends Controller {
 
 		renderJson(transferOrderListMap);
 	}
-
-	public void addDepartOrder() {
-
-		String[] list = this.getPara("localArr").split(",");
-		List<String> alllist = new ArrayList<String>();
-		List<String> onelist = new ArrayList<String>();
-		int k = 0;
-		int n = 0;
-		for (int i = 1; i < list.length + 1; i++) {
-			String j = "";
-			j = list[i - 1].toString();
-			onelist.add(n, j);
-			n++;
-			if (i % 2 == 0 && i != 0) {
-				for (k = 0; k < list.length / 2;) {
-					alllist.add(k, onelist.toString());
-					k++;
 					n = 0;
 					onelist.clear();
 					break;
-				}
-			}
-		}
 		int lang = alllist.size();
-
-	}
 }
