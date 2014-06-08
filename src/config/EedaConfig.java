@@ -28,6 +28,7 @@ import models.eeda.Case;
 import models.eeda.Leads;
 import models.eeda.Order;
 import models.eeda.OrderItem;
+import models.eeda.ServiceProvider;
 import models.yh.arap.BillingOrder;
 import models.yh.arap.BillingOrderItem;
 import models.yh.contract.Contract;
@@ -107,6 +108,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/salesOrder", SalesOrderController.class);
         me.add("/loan", LoanController.class);
         me.add("/propertyClient", PropertyClientController.class);
+        me.add("/splist", controllers.eeda.ServiceProviderController.class);
         // me.add("/au", AdminUserController.class);
 
         // me.add("/fileUpload", HelloController.class);
@@ -171,6 +173,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("order_item", OrderItem.class);
         arp.addMapping("party", Party.class);
         arp.addMapping("party_attribute", PartyAttribute.class);
+        arp.addMapping("DP_PROF_PROVIDER_INFO", ServiceProvider.class);
+
         arp.addMapping("contact", Contact.class);
         arp.addMapping("office", Office.class);
         arp.addMapping("fin_account", Account.class);
@@ -212,6 +216,7 @@ public class EedaConfig extends JFinalConfig {
             connectH2();
         } else {
             cp = new C3p0Plugin(url, username, pwd);
+            DataInitUtil.initH2Tables(cp);
         }
 
     }
