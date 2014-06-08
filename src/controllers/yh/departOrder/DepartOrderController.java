@@ -1,4 +1,4 @@
-﻿package controllers.yh.departOrder;
+package controllers.yh.departOrder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +22,7 @@ public class DepartOrderController extends Controller {
 	public void index() {
 		if (LoginUserController.isAuthenticated(this))
 			render("departOrder/departOrderList.html");
-	}
+	} 
 
 	public void list() {
 		String sLimit = "";
