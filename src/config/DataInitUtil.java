@@ -125,7 +125,7 @@ public class DataInitUtil {
                     + "car_no varchar(255),car_type varchar(255),notify_party_id bigint,FOREIGN KEY(notify_party_id) REFERENCES party(id));");
 
             // 发车单运输单中间表
-            stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,FOREIGN KEY(depart_id) REFERENCES depart_order(id),FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
+            stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,transfer_order_no varchar(255),FOREIGN KEY(depart_id) REFERENCES depart_order(id),FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
             stmt.close();
             // conn.commit();
             conn.close();

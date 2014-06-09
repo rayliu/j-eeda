@@ -54,21 +54,27 @@ $(document).ready(function() {
         	$("input:checked",this).each(function(){
         		trArr.push($(this).val());  
         		trArr.push($("td:eq(1)",row).html());        		
-        	});          	
-        	  	
+        	});          		
         	}); 
         tableArr.push(trArr);        
         console.log(tableArr);
-      
+            $('#departOrder_message').val(tableArr);
+            $('#createForm').submit();
+       
+      /*$("departOrder_message").val(tableArr);
         $.ajax({//点击确定，保存设置
     		url: "/yh/departOrder/addDepartOrder",
     		type:'post',
     		dataType : "text",
     		data : "localArr="+tableArr,
     		success: function(msg){
-    			alert(msg);
-    			$( "#dialog-modal").omDialog("close");
+    			//alert(msg);
+    			$.get('/yh/departOrder/creatdepartOrder', {}, function(data){ 
+    	    		
+    	    		
+    	    	});
+    			
     		}
-    	});
+    	});*/
     });    
 } );

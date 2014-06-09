@@ -48,15 +48,14 @@
                             </div>
 
                             <div class="row">
-                                <form id='createForm' action="/yh/chargeCheckOrder/create" method="post">
-                                    <input id='ids' name='ids' type="hidden">
-                                    <input id='customerId' name='customerId' type="hidden">
-                                    <input id='startTime' name='startTime' type="hidden">
-                                    <input id='endTime' name='endTime' type="hidden">
+                                <form id='createForm' action="/yh/departOrder/addDepartOrder" method="post">
+                                   
+                                    <input id='departOrder_message' name='localArr' type="hidden">
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <div class="controls">
-                                              <a  class="btn btn-primary" href="/yh/pickupOrder/creat" id="saveBtn">创建发车单</a>
+                                              <a  class="btn btn-primary" id="saveBtn">创建发车单</a>
+                                                
                                             </div>
                                         </div>
                                     </div>    
