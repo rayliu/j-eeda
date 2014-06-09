@@ -43,8 +43,9 @@ $(document).ready(function() {
             {"mDataProp":"PROVIDER_NAME",
                 "fnRender": function(obj) {                    
                     return  "<a href='#' id='"+obj.aData.ID+"'>"+
-                                obj.aData.PROVIDER_NAME+
-                            "</a>";
+                                obj.aData.PROVIDER_NAME+                                
+                            "</a> "+
+                            "<a href='http://www.baidu.com/#wd="+obj.aData.PROVIDER_NAME+"' class='btn btn-info' target='_blank' >查找</a>";
                 }
             },
             {"mDataProp":"MAINTENANCE_OFFICE"},
