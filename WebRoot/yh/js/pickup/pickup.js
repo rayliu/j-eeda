@@ -20,9 +20,27 @@ $(document).ready(function() {
                  }
             },
             { "mDataProp": "ORDER_NO"},
-            { "mDataProp": "CARGO_NATURE"},
+            {"mDataProp":"CARGO_NATURE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.CARGO_NATURE == "cargo"){
+            			return "普通货品";
+            		}else if(obj.aData.CARGO_NATURE == "ATM"){
+            			return "ATM";
+            		}else{
+            			return "";
+            		}}},
             { "mDataProp": "ADDRESS"},
-            { "mDataProp": "PICKUP_MODE"},
+            {"mDataProp":"PICKUP_MODE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.PICKUP_MODE == "routeSP"){
+            			return "干线供应商自提";
+            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
+            			return "外包供应商提货";
+            		}else if(obj.aData.PICKUP_MODE == "own"){
+            			return "源鸿自提";
+            		}else{
+            			return "";
+            		}}},
             { "mDataProp": "STATUS"}
                                       
         ]      

@@ -140,7 +140,7 @@ public class DataInitUtil {
             Connection conn = cp.getDataSource().getConnection();
             Statement stmt = conn.createStatement();
             // 发车单
-            stmt.executeUpdate("insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450201', '2014042600001', '拼车', '新建', 'ATM', '源宏仓库', '');");
+            stmt.executeUpdate("insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450201', '2014042600001', '拼车', '新建', 'ATM', '源鸿仓库', '');");
             stmt.executeUpdate("insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450202', '2014042600002', '一单多车', '新建', '货品', '货场', '');");
             stmt.executeUpdate("insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450203', '2014042600002', '一单多车', '新建', 'A货品', '货场', '');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
