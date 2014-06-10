@@ -41,10 +41,9 @@ public class DepartOrderController extends Controller {
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "SELECT do.*,c.contact_person,c.phone,dt.transfer_order_no FROM DEPART_ORDER do "
+		String sql = "SELECT do.*,c.contact_person,c.phone, (select group_concat(dt.TRANSFER_ORDER_NO separator '\r\n')  FROM DEPART_TRANSFER dt where DEPART_ID = do.id)  as TRANSFER_ORDER_NO  FROM DEPART_ORDER do "
 				+ " left join party p on do.notify_party_id = p.id "
-				+ " left join contact c on p.contact_id = c.id "
-				+ " left join depart_transfer dt on do.id = dt.depart_id where combine_type = 'DEPART'";
+				+ " left join contact c on p.contact_id = c.id where combine_type = 'DEPART'";
 
 		List<Record> warehouses = Db.find(sql);
 		
