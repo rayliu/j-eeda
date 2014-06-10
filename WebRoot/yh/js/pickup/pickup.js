@@ -45,7 +45,7 @@ $(document).ready(function() {
         ]      
     });	
     
-    $('#saveBtn').click(function(e){
+    /*$('#saveBtn').click(function(e){
         e.preventDefault();
     	var trArr=[];
       var tableArr=[];
@@ -60,14 +60,6 @@ $(document).ready(function() {
         tableArr.push(trArr); 
        
         console.log(tableArr);
-  
-        /*
-        $.post("/yh/privilege/editModule_pri",{localArr:Arr},function(data){     
-
-        	   //回调函数 
-
-        	   });
-*/
-    });
+    });*/
     
 } );

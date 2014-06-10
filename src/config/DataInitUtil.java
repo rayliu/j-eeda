@@ -113,11 +113,7 @@ public class DataInitUtil {
                     + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
                     + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
                     + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
-            // 发车单
-            stmt.executeUpdate("create table if not exists pickup_order(id bigint auto_increment PRIMARY KEY,order_no varchar(20),transfer_id bigint,type varchar(50),sp_id bigint,status varchar(20),To_type varchar(20),cargo_nature varchar(20),driver varchar(50),create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp,remark varchar(255));"); // 拼车单表从表
-            // stmt.executeUpdate(
-            stmt.executeUpdate("create table if not exists Pickup_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Customer_id bigint,Serial_no varchar(50),Item_no bigint,Item_name varchar(50),Item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
-
+           
             stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Serial_no varchar(50),Item_no bigint,Item_name varchar(50),Item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
 
             // 发车单
@@ -139,10 +135,10 @@ public class DataInitUtil {
             cp.start();
             Connection conn = cp.getDataSource().getConnection();
             Statement stmt = conn.createStatement();
-            // 发车单
+            /*// 发车单
             stmt.executeUpdate("insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450201', '2014042600001', '拼车', '新建', 'ATM', '源鸿仓库', '');");
             stmt.executeUpdate("insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450202', '2014042600002', '一单多车', '新建', '货品', '货场', '');");
-            stmt.executeUpdate("insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450203', '2014042600002', '一单多车', '新建', 'A货品', '货场', '');");
+            stmt.executeUpdate("insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450203', '2014042600002', '一单多车', '新建', 'A货品', '货场', '');");*/
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('demo', '123456', '1-6');");
@@ -579,6 +575,20 @@ public class DataInitUtil {
             // 产品
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('ATM', '2014042600001','1','5','7','9','ATM', '这是一台ATM', '4');");
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('普通货品', '2014042600002','1','5','7','9','普通货品', '这是普通货品', '4');");
+            
+            // 发车单
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,notify_party_id) values('FC2014061000001', '2014-06-10 10:35:35.1','DEPART','粤A876596','平板货车','10');");
+            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '1','YS2014042600001');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,notify_party_id) values('FC2014061000002', '2014-06-10 10:39:35.1','DEPART','粤A879588','箱式货车','9');");
+            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('2', '2','YS2014042600002');");
+            //stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '3','YS2014042600003');");
+            
+            // 拼车单
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,notify_party_id) values('PC2014061000001', '2014-06-10 10:35:35.1','PICKUP','粤A876596','平板货车','10');");
+            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('3', '3','YS2014042600003');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,notify_party_id) values('PC2014061000002', '2014-06-10 10:39:35.1','PICKUP','粤A879588','箱式货车','9');");
+            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '4','YS2014042600004');");
+            //stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '3','YS2014042600003');");
 
             stmt.close();
             // conn.commit();

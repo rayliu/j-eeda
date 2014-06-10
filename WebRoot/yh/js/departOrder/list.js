@@ -11,8 +11,12 @@
         "sAjaxSource": "/yh/departOrder/list",
         "aoColumns": [   
             {"mDataProp":"DEPART_NO"},
+            {"mDataProp":"CONTACT_PERSON"},
+            {"mDataProp":"PHONE"},
             {"mDataProp":"CAR_NO"},
             {"mDataProp":"CAR_TYPE"},     
+            {"mDataProp":"CREATE_STAMP"},     
+            {"mDataProp":"TRANSFER_ORDER_NO"},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                

@@ -34,13 +34,23 @@ public class DepartOrderController extends Controller {
 			        + getPara("iDisplayLength");
 		}
 
-		String sqlTotal = "select count(1) total from depart_order";
+		String sqlTotal = "select count(1) total FROM DEPART_ORDER do "
+				+ " left join party p on do.notify_party_id = p.id "
+				+ " left join contact c on p.contact_id = c.id "
+				+ " left join depart_transfer dt on do.id = dt.depart_id where combine_type = 'DEPART'";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select * from depart_order";
+		String sql = "SELECT do.*,c.contact_person,c.phone,dt.transfer_order_no FROM DEPART_ORDER do "
+				+ " left join party p on do.notify_party_id = p.id "
+				+ " left join contact c on p.contact_id = c.id "
+				+ " left join depart_transfer dt on do.id = dt.depart_id where combine_type = 'DEPART'";
 
 		List<Record> warehouses = Db.find(sql);
+		
+		/*String sql2 = "SELECT do.DEPART_NO,dt.TRANSFER_ORDER_NO  FROM DEPART_ORDER do "
+				+ " left join depart_transfer dt on do.id = dt.depart_id";
+		List<Record> orders = Db.find(sql2);*/
 
 		Map map = new HashMap();
 		map.put("sEcho", pageIndex);
@@ -48,6 +58,7 @@ public class DepartOrderController extends Controller {
 		map.put("iTotalDisplayRecords", rec.getLong("total"));
 
 		map.put("aaData", warehouses);
+		//map.put("bbData", orders);
 
 		renderJson(map);
 	}
