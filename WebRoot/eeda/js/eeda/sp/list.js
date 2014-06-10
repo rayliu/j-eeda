@@ -26,13 +26,13 @@ $(document).ready(function() {
         //"sPaginationType": "full_numbers",
         "bProcessing": false,
         "bServerSide": true,
-        "sAjaxSource": "/splist/list",
+        "sAjaxSource": "/sp/list",
         "aoColumns": [
             { 
                 "mDataProp": null, 
                 "sWidth": "15%",
                 "fnRender": function(obj) {                    
-                    return  "<a class='btn btn-info' href='#' id='"+obj.aData.ID+"'>"+
+                    return  "<a class='btn btn-info send-mail' href='#' id='"+obj.aData.ID+"'>"+
                                 "<i class='icon-edit icon-white'></i>"+
                                 "发邮件"+
                             "</a>";
@@ -42,7 +42,7 @@ $(document).ready(function() {
             {"mDataProp": null}, 
             {"mDataProp":"PROVIDER_NAME",
                 "fnRender": function(obj) {                    
-                    return  "<a href='#' id='"+obj.aData.ID+"'>"+
+                    return  "<a href='/sp/edit/"+obj.aData.ID+"' id='"+obj.aData.ID+"'>"+
                                 obj.aData.PROVIDER_NAME+                                
                             "</a> "+
                             "<a href='http://www.baidu.com/#wd="+obj.aData.PROVIDER_NAME+"' class='btn btn-info' target='_blank' >查找</a>";
@@ -60,10 +60,10 @@ $(document).ready(function() {
         ]
     });
 
-    $("#eeda-table").on("click", 'a.btn', function(e){
+    $("#eeda-table").on("click", 'a.send-mail', function(e){
         e.preventDefault();
         id=$(this).attr('id');
-        $.post("/splist/sendMarketingMail/", {id: id}, function(data){
+        $.post("/sp/sendMarketingMail/", {id: id}, function(data){
 
         });
 	});
