@@ -286,4 +286,28 @@ public class PoiUtils {
         percentStyle.setDataFormat(hssfDF.getFormat("0.00%"));
         styleMap.put("PERCENT", percentStyle);
 	}
+	
+	public class ExcelResult{
+		Map content=null;
+		List header=null;
+		
+		public ExcelResult(Map content, List header) {
+			this.content = content;
+			this.header = header;
+		}
+		
+		public Map getContent() {
+			return content;
+		}
+		public void setContent(Map content) {
+			this.content = content;
+		}
+		public List getHeader() {
+			return header;
+		}
+		public void setHeader(List header) {
+			this.header = header;
+		}
+		
+	}
 }

@@ -15,8 +15,10 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/yh/transferOrder/list",
         "aoColumns": [   
-            {"mDataProp":"ID"},
-            {"mDataProp":"ORDER_NO"},
+            {"mDataProp":"ORDER_NO",
+            	"fnRender": function(obj) {
+            			return "<a href='/yh/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		}},
             {"mDataProp":"STATUS"},
             {"mDataProp":"CARGO_NATURE",
             	"fnRender": function(obj) {
@@ -78,19 +80,7 @@ $(document).ready(function() {
 	                        "</a>";
                 }
             }                         
-        ],
-        "fnInitComplete": function(oSettings, json) {  	
-        	$("#eeda-table td").on('dblclick', '', function(){    
-	        	var hang = $(this).parent("tr").prevAll().length; 
-	       		col = Number(hang)+1;	     	
-	        	
-	       	    $("table tr:eq('"+col+"') td:eq(0)").each(function(){
-	       	    	var id = $(this).html();
-	       	    	window.location.href = "/yh/transferOrder/edit?id="+id;
-	       	    	//window.open("/yh/transferOrder/edit?id="+id);
-	         	}); 
-        	});	        	    
-	     }     
+        ]  
     });	
     
     $("#eeda-table").on('click', '.cancelbutton', function(e){
