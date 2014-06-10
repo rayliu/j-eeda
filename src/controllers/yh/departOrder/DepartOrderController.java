@@ -1,6 +1,5 @@
 package controllers.yh.departOrder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +18,7 @@ public class DepartOrderController extends Controller {
 
 	private Logger logger = Logger.getLogger(DepartOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
+
 
 	public void index() {
 		if (LoginUserController.isAuthenticated(this))
@@ -94,33 +94,42 @@ public class DepartOrderController extends Controller {
 
 		renderJson(transferOrderListMap);
 	}
-
+		//allTranferOrderList 创建发车单
 	public void addDepartOrder() {
-		// 构造前台参数
-		String[] list = this.getPara("localArr").split(",");
-		List<String> alllist = new ArrayList<String>();
-		List<String> onelist = new ArrayList<String>();
-		int k = 0;
-		int n = 0;
-		for (int i = 1; i < list.length + 1; i++) {
-			String j = "";
-			j = list[i - 1].toString();
-			onelist.add(n, j);
-			n++;
-			if (i % 2 == 0 && i != 0) {
-				for (k = 0; k < list.length / 2;) {
-					alllist.add(k, onelist.toString());
-					k++;
-					n = 0;
-					onelist.clear();
-					break;
-				}
-			}
-		}
-		int lang = alllist.size();
+		String list = this.getPara("localArr");
+		setAttr("localArr",list);
 		render("departOrder/editTransferOrder.html");
+	}
+	//editTransferOrder 初始数据
+	public void getIintDepartOrderItems(){
+		// 构造前台参数
+		String idlist = getPara("localArr");		
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+		        && getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+			        + getPara("iDisplayLength");
+		}
+
+		String sqlTotal = "select count(1) total from transfer_order";
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		String sql = "SELECT tof.* ,or.ORDER_NO as order_no  FROM TRANSFER_ORDER_ITEM tof"
+				+ " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id where tof.ORDER_ID in("+idlist+");";
+
+		List<Record> departOrderitem = Db.find(sql);
+
+		Map Map = new HashMap();
+		Map.put("sEcho", pageIndex);
+		Map.put("iTotalRecords", rec.getLong("total"));
+		Map.put("iTotalDisplayRecords", rec.getLong("total"));
+
+		Map.put("aaData", departOrderitem);
+
+		renderJson(Map);
 	
-		
 	}
 	
 }

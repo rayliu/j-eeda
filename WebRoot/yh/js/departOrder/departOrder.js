@@ -50,10 +50,10 @@ $(document).ready(function() {
     	var trArr=[];
       var tableArr=[];
         $("table tr:not(:first)").each(function(){
-        	var row=$(this);
+        
         	$("input:checked",this).each(function(){
         		trArr.push($(this).val());  
-        		trArr.push($("td:eq(1)",row).html());        		
+        	        		
         	});          		
         	}); 
         tableArr.push(trArr);        
