@@ -218,9 +218,4 @@ $(document).ready(function() {
             //transferOrder.fnDraw();
         }
     });
-    
-    // 单击行事件
-	/*$('#eeda-table tbody').on( 'click', 'tr', function () {
-		alert($(this).html());
-    } );*/
 } );

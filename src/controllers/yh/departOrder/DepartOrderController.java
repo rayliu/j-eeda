@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DepartOrder;
+
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -37,19 +39,15 @@ public class DepartOrderController extends Controller {
 		String sqlTotal = "select count(1) total FROM DEPART_ORDER do "
 				+ " left join party p on do.notify_party_id = p.id "
 				+ " left join contact c on p.contact_id = c.id "
-				+ " left join depart_transfer dt on do.id = dt.depart_id where combine_type = 'DEPART'";
+				+ " left join depart_transfer dt on do.id = dt.depart_id where combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		String sql = "SELECT do.*,c.contact_person,c.phone, (select group_concat(dt.TRANSFER_ORDER_NO separator '\r\n')  FROM DEPART_TRANSFER dt where DEPART_ID = do.id)  as TRANSFER_ORDER_NO  FROM DEPART_ORDER do "
 				+ " left join party p on do.notify_party_id = p.id "
-				+ " left join contact c on p.contact_id = c.id where combine_type = 'DEPART'";
+				+ " left join contact c on p.contact_id = c.id where combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'";
 
 		List<Record> warehouses = Db.find(sql);
-		
-		/*String sql2 = "SELECT do.DEPART_NO,dt.TRANSFER_ORDER_NO  FROM DEPART_ORDER do "
-				+ " left join depart_transfer dt on do.id = dt.depart_id";
-		List<Record> orders = Db.find(sql2);*/
 
 		Map map = new HashMap();
 		map.put("sEcho", pageIndex);
@@ -57,7 +55,6 @@ public class DepartOrderController extends Controller {
 		map.put("iTotalDisplayRecords", rec.getLong("total"));
 
 		map.put("aaData", warehouses);
-		//map.put("bbData", orders);
 
 		renderJson(map);
 	}

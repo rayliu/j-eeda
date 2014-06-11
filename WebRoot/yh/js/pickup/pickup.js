@@ -3,7 +3,7 @@ $(document).ready(function() {
     $('#menu_assign').addClass('active').find('ul').addClass('in');
     
 	//datatable, 动态处理
-    var datatable = $('#eeda-table').dataTable({
+    var pickupOrder = $('#eeda-table').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 25,
@@ -28,6 +28,9 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
+            { "mDataProp": "TOTAL_WEIGHT"},
+            { "mDataProp": "TOTAL_VOLUMN"},
+            { "mDataProp": "TOTAL_AMOUNT"},
             { "mDataProp": "ADDRESS"},
             {"mDataProp":"PICKUP_MODE",
             	"fnRender": function(obj) {
@@ -40,26 +43,117 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
-            { "mDataProp": "STATUS"}
-                                      
+            { "mDataProp": "STATUS"},
+            { "mDataProp": "CNAME"},
+    		{ "mDataProp": "ROUTE_FROM"},
+    		{ "mDataProp": "ROUTE_TO"},                                      
+    		{ "mDataProp": "CREATE_STAMP"}                                      
         ]      
     });	
     
-    /*$('#saveBtn').click(function(e){
-        e.preventDefault();
-    	var trArr=[];
-      var tableArr=[];
-        $("table tr:not(:first)").each(function(){
-        	var row=$(this);
-        	$("input:checked",this).each(function(){
-        		trArr.push($(this).val());  
-        		trArr.push($("td:eq(1)",row).html());        		
-        	});          	
-        	  	
-        	}); 
-        tableArr.push(trArr); 
-       
-        console.log(tableArr);
-    });*/
+    $('input.orderNo_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	var routeFrom = $("#routeFrom_filter").val();
+    	var routeTo = $("#routeTo_filter").val();
+    	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+    	pickupOrder.fnDraw(); 
+    } );
+ 
+    $('input.status_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	var routeFrom = $("#routeFrom_filter").val();
+    	var routeTo = $("#routeTo_filter").val();
+    	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+    	pickupOrder.fnDraw();
+    } );
+    
+    $('input.address_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	var routeFrom = $("#routeFrom_filter").val();
+    	var routeTo = $("#routeTo_filter").val();
+    	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+    	pickupOrder.fnDraw();
+    } );
+    
+    $('input.customer_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	var routeFrom = $("#routeFrom_filter").val();
+    	var routeTo = $("#routeTo_filter").val();
+    	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+    	pickupOrder.fnDraw();
+    } );
+    
+    $('input.routeFrom_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var routeFrom = $("#routeFrom_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	var routeFrom = $("#routeFrom_filter").val();
+    	var routeTo = $("#routeTo_filter").val();
+    	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+    	pickupOrder.fnDraw();
+    } );
+    
+    $('input.beginTime_filter').on( 'change input', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	var routeFrom = $("#routeFrom_filter").val();
+    	var routeTo = $("#routeTo_filter").val();
+    	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+    	pickupOrder.fnDraw();
+    } );
+    
+    $('input.endTime_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	var routeFrom = $("#routeFrom_filter").val();
+    	var routeTo = $("#routeTo_filter").val();
+    	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+    	pickupOrder.fnDraw();
+    } );    
+    
+    $('input.routeTo_filter').on( 'keyup click', function () {
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	var routeFrom = $("#routeFrom_filter").val();
+    	var routeTo = $("#routeTo_filter").val();
+    	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+    	pickupOrder.fnDraw();
+    } );
     
 } );
