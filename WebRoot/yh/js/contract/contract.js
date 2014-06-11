@@ -15,9 +15,6 @@ $(document).ready(function() {
 	        "sAjaxSource": "/yh/spContract/routeEdit?routId="+contractId,
 	        "aoColumns": [  
 				{"mDataProp":"PRICETYPE"},
-				{"mDataProp":"CARTYPE"},
-				{"mDataProp":"CARLENGTH"},
-				{"mDataProp":"LTLUNITTYPE"},
 	            {"mDataProp":"LOCATION_FROM"},
 	            {"mDataProp":"LOCATION_TO"},
 	            {"mDataProp":"AMOUNT"},
@@ -37,6 +34,73 @@ $(document).ready(function() {
 	            }                         
 	        ]
 	     });
+		var dataTable2 = $('#dataTables-example2').dataTable({
+	        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		        //"sPaginationType": "bootstrap",
+		        "iDisplayLength": 10,
+		    	"oLanguage": {
+		            "sUrl": "/eeda/dataTables.ch.txt"
+		        },
+		        "bProcessing": true,
+		        "bServerSide": true,
+		        "sAjaxSource": "/yh/spContract/routeEdit2?routId="+contractId,
+		        "aoColumns": [  
+					{"mDataProp":"PRICETYPE"},
+					{"mDataProp":"CARTYPE"},
+					{"mDataProp":"CARLENGTH"},
+		            {"mDataProp":"LOCATION_FROM"},
+		            {"mDataProp":"LOCATION_TO"},
+		            {"mDataProp":"AMOUNT"},
+		            { 
+		                "mDataProp": null, 
+		                "sWidth": "8%",                
+		                "fnRender": function(obj) {                    
+		                    return "<a class='btn btn-success contractRouteEdit' code='"+obj.aData.ID+"'>"+
+		                                "<i class='fa fa-edit fa-fw'></i>"+
+		                                "编辑"+
+		                            "</a>"+
+		                            "<a class='btn btn-danger routeDelete' code2='"+obj.aData.ID+"'>"+
+		                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
+		                                "删除"+
+		                            "</a>";
+		                }
+		            }                         
+		        ]
+		     });
+		var dataTable3 = $('#dataTables-example3').dataTable({
+	        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		        //"sPaginationType": "bootstrap",
+		        "iDisplayLength": 10,
+		    	"oLanguage": {
+		            "sUrl": "/eeda/dataTables.ch.txt"
+		        },
+		        "bProcessing": true,
+		        "bServerSide": true,
+		        "sAjaxSource": "/yh/spContract/routeEdit3?routId="+contractId,
+		        "aoColumns": [  
+					{"mDataProp":"PRICETYPE"},
+					{"mDataProp":"LTLUNITTYPE"},
+		            {"mDataProp":"LOCATION_FROM"},
+		            {"mDataProp":"LOCATION_TO"},
+		            {"mDataProp":"AMOUNT"},
+		            { 
+		                "mDataProp": null, 
+		                "sWidth": "8%",                
+		                "fnRender": function(obj) {                    
+		                    return "<a class='btn btn-success contractRouteEdit' code='"+obj.aData.ID+"'>"+
+		                                "<i class='fa fa-edit fa-fw'></i>"+
+		                                "编辑"+
+		                            "</a>"+
+		                            "<a class='btn btn-danger routeDelete' code2='"+obj.aData.ID+"'>"+
+		                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
+		                                "删除"+
+		                            "</a>";
+		                }
+		            }                         
+		        ]
+		     });
 		 $("#dataTables-example").on('click', '.contractRouteEdit', function(){
 			  var contractId = $("#routeContractId").val();
 			 	var id = $(this).attr('code');
@@ -60,7 +124,7 @@ $(document).ready(function() {
 	              		}else{
 	              			$(this).attr("checked",false);
 	              		}
-	                	 
+	                	 return;
                 	 });
                  }else{
                      alert('取消失败');
@@ -68,6 +132,7 @@ $(document).ready(function() {
              },'json');
 		  });
 			
+		 //计件删除
 		 $("#dataTables-example").on('click', '.routeDelete', function(){
 			 var id = $(this).attr('code2');
 			 $.post('/yh/customerContract/routeDelete/'+id,function(data){
@@ -75,6 +140,32 @@ $(document).ready(function() {
                  console.log(data);
                  if(data.success){
                 	 dataTable.fnDraw();
+                 }else{
+                     alert('取消失败');
+                 }
+             },'json');
+			});
+		 //整车删除
+		 $("#dataTables-example2").on('click', '.routeDelete', function(){
+			 var id = $(this).attr('code2');
+			 $.post('/yh/customerContract/routeDelete/'+id,function(data){
+                 //保存成功后，刷新列表
+                 console.log(data);
+                 if(data.success){
+                	 dataTable2.fnDraw();
+                 }else{
+                     alert('取消失败');
+                 }
+             },'json');
+			});
+		 //零担删除
+		 $("#dataTables-example3").on('click', '.routeDelete', function(){
+			 var id = $(this).attr('code2');
+			 $.post('/yh/customerContract/routeDelete/'+id,function(data){
+                 //保存成功后，刷新列表
+                 console.log(data);
+                 if(data.success){
+                	 dataTable3.fnDraw();
                  }else{
                      alert('取消失败');
                  }
@@ -123,6 +214,8 @@ $(document).ready(function() {
                     	$('#myModal').modal('hide');
                     	$('#reset').click();
                     	dataTable.fnDraw();
+                    	dataTable2.fnDraw();
+                    	dataTable3.fnDraw();
                     }else{
                         alert('数据保存失败。');
                     }
@@ -187,6 +280,8 @@ $(document).ready(function() {
 	                    	//已经有一个重复的contractId 在前面了
 	                    	$('#routeContractId').val(contractId);
 	                    	dataTable.fnSettings().sAjaxSource="/yh/spContract/routeEdit?routId="+contractId;
+	                    	dataTable2.fnSettings().sAjaxSource="/yh/spContract/routeEdit2?routId="+contractId;
+	                    	dataTable3.fnSettings().sAjaxSource="/yh/spContract/routeEdit3?routId="+contractId;
 	                    	
 	                    }else{
 	                        alert('数据保存失败。');
@@ -322,8 +417,9 @@ $(document).ready(function() {
 
 	    $(function(){
 	    	 var type= $("#type2").val();
+	    	 var type2= $("#type3").val();
 	    	 $('#reset').hide();
-	 	    if(type=='CUSTOMER'){
+	 	    if(type=='CUSTOMER'||type2=='CUSTOMER'){
 	 	    	$("#labeltext").html("创建新客户合同");
 	 	    }else{
 	 	    	$("#labeltext").html("创建供应商合同");

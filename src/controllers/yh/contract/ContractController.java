@@ -35,7 +35,7 @@ public class ContractController extends Controller {
             if (LoginUserController.isAuthenticated(this))
                 render("contract/ContractList.html");
         } else {
-            setAttr("contractType", "SP");
+            setAttr("contractType", "SERVICE_PROVIDER");
             if (LoginUserController.isAuthenticated(this))
                 render("contract/ContractList.html");
         }
@@ -204,7 +204,7 @@ public class ContractController extends Controller {
         }
     }
 
-    // contract模块的对应的干线
+    // 合同运价（计件）
     public void routeEdit() {
         String contractId = getPara("routId");
         System.out.println(contractId);
@@ -231,7 +231,7 @@ public class ContractController extends Controller {
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
             sql = "select count(1) total from contract_item c where c.contract_id = "
-                    + contractId + "";
+                    + contractId + " and PRICETYPE ='计件'";
         }
 
         System.out.println(sql);
@@ -241,9 +241,107 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db.find(
-                    "select * from  contract_item c where c.contract_id = ?",
-                    contractId);
+            orders = Db
+                    .find("select * from  contract_item c where c.contract_id = "
+                            + contractId + " and PRICETYPE ='计件'");
+        }
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        orderMap.put("aaData", orders);
+        renderJson(orderMap);
+    }
+
+    // 合同运价（整车）
+    public void routeEdit2() {
+        String contractId = getPara("routId");
+        System.out.println(contractId);
+        if (contractId.equals("")) {
+            Map orderMap = new HashMap();
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+            renderJson(orderMap);
+            return;
+        }
+
+        String sLimit = "";
+        String sql = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+
+        // 获取总条数
+        String totalWhere = "";
+        if (contractId != null && contractId.length() > 0) {
+            sql = "select count(1) total from contract_item c where c.contract_id = "
+                    + contractId + " and PRICETYPE ='整车'";
+        }
+
+        System.out.println(sql);
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 获取当前页的数据
+        List<Record> orders = null;
+        if (contractId != null && contractId.length() > 0) {
+            orders = Db
+                    .find("select * from  contract_item c where c.contract_id = "
+                            + contractId + " and PRICETYPE ='整车'");
+        }
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        orderMap.put("aaData", orders);
+        renderJson(orderMap);
+    }
+
+    // 合同运价（零担）
+    public void routeEdit3() {
+        String contractId = getPara("routId");
+        System.out.println(contractId);
+        if (contractId.equals("")) {
+            Map orderMap = new HashMap();
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+            renderJson(orderMap);
+            return;
+        }
+
+        String sLimit = "";
+        String sql = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+
+        // 获取总条数
+        String totalWhere = "";
+        if (contractId != null && contractId.length() > 0) {
+            sql = "select count(1) total from contract_item c where c.contract_id = "
+                    + contractId + " and PRICETYPE ='零担'";
+        }
+
+        System.out.println(sql);
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 获取当前页的数据
+        List<Record> orders = null;
+        if (contractId != null && contractId.length() > 0) {
+            orders = Db
+                    .find("select * from  contract_item c where c.contract_id = "
+                            + contractId + " and PRICETYPE ='零担'");
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);

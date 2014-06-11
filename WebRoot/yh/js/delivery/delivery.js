@@ -34,7 +34,7 @@ $(document).ready(function() {
 		    }); 
 			//datatable, 动态处理
 			var trandferOrderId = $("#tranferid").val();
-			var ser =  $("#ser_no").val();
+			//var ser =  $("#ser_no").val();
 			$('#eeda-table').dataTable({
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -43,7 +43,7 @@ $(document).ready(function() {
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
-		        "sAjaxSource": "/yh/delivery/orderList?trandferOrderId="+trandferOrderId+"&ser="+ser,
+		        "sAjaxSource": "/yh/delivery/orderList/"+trandferOrderId,
 		        "aoColumns": [
 		            {"mDataProp":"ITEM_NO"},  
 		            {"mDataProp":"SERIAL_NO"},
@@ -56,7 +56,7 @@ $(document).ready(function() {
 			//添加配送单
 			$("#saveBtn").click(function(e){
 		            //阻止a 的默认响应行为，不需要跳转	
-				 var itemId = $("#item_id").val();
+				 //var itemId = $("#item_id").val();
 		            e.preventDefault();
 		            //异步向后台提交数据
 		           $.post('/yh/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
@@ -129,7 +129,7 @@ $(document).ready(function() {
 		                	return returnString+"</select>";
 		                }
 		            }, */
-		            { 
+		            /*{ 
 		                "mDataProp": null, 
 		                "fnRender": function(obj) {
 		                	var returnString ="";
@@ -154,7 +154,8 @@ $(document).ready(function() {
 		                	 });
 		                	return returnString ;
 		                }
-		            },
+		            },*/
+		            { "mDataProp": "WAREHOUSE_NAME",},   		
 		            { 
 		                "mDataProp": null, 
 		                "sWidth": "8%",                
@@ -165,12 +166,12 @@ $(document).ready(function() {
 		                    		"</a>";
 		                }
 		            }                         
-		        ], "fnInitComplete": function(oSettings, json) {
+		        ], /*"fnInitComplete": function(oSettings, json) {
 		        	$("#eeda-table2 tr").on('click', '', function(){
 		        	 hang = $(this).prevAll().length; 
 		       		  	hang = Number(hang)+1;
 		        	});
-		        }    
+		        }    */
 		    });	
 			
 			//异步创建配送单
@@ -178,19 +179,19 @@ $(document).ready(function() {
 				 var id = $(this).attr('code');
 				 var ser ="";
 				 
-				 $("#eeda-table2 tr:eq('"+hang+"')").each(function(){
+				/* $("#eeda-table2 tr:eq('"+hang+"')").each(function(){
 		        	$("input:checked",this).each(function(){
 		        		ser=$(this).val();
 		        	}); 
 		        	 
 					
-					/* 
+					
 					 $("input[name=items]").each(function(){
 						 if ($("input[name=items]").attr("checked")) {  
 							 ser =$(this).val();  
 						 	}  
-			        	}); */
-		        }); 
+			        	});
+		        }); */
 				  e.preventDefault();
 		         //异步向后台提交数据
 				$.post('/yh/delivery/creat/'+id,{ser:ser},function(id){
@@ -223,6 +224,7 @@ $(document).ready(function() {
 		            {"mDataProp":"CUSTOMER"},        	
 		            {"mDataProp":"C2"},
 		            {"mDataProp":"CREATE_STAMP"},
+		            {"mDataProp":"WAREHOUSE_NAME"},
 		            {"mDataProp":"STATUS"},
 		            { 
 		                "mDataProp": null, 
@@ -255,6 +257,41 @@ $(document).ready(function() {
 		                 }
 		             },'json');
 				  });
+			  //deliveryOrderSearchTransfer ATM选择序列号
+			 $('#eeda-table4').dataTable({
+			        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+			        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+			        //"sPaginationType": "bootstrap",
+			        "iDisplayLength": 10,
+			        "bServerSide": true,
+			    	"oLanguage": {
+			            "sUrl": "/eeda/dataTables.ch.txt"
+			        },
+			        "sAjaxSource": "/yh/delivery/SearchTransfer2",
+			        "aoColumns": [
+						{ "mDataProp": null,
+						    "fnRender": function(obj) {
+						       return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+						    }
+						},          
+			            {"mDataProp":"SERIAL_NO"},
+			            {"mDataProp":"ORDER_NO"},
+			            {"mDataProp":"STATUS"},        	
+			            {"mDataProp":"CARGO_NATURE"},
+			            {"mDataProp":"PICKUP_MODE",
+			            	"fnRender": function(obj) {
+			            		if(obj.aData.PICKUP_MODE == "routeSP"){
+			            			return "干线供应商自提";
+			            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
+			            			return "外包供应商提货";
+			            		}else{
+			            			return "源鸿自提";
+			            		}}},
+			            {"mDataProp":"WAREHOUSE_NAME"},
+			            {"mDataProp":"CUSTOMER_ID"},
+			        ]      
+			    });	
+			 
 			// 发车确认
 				$("#ConfirmationBtn").click(function(){
 					// 浏览器启动时,停到当前位置
@@ -353,7 +390,7 @@ $(document).ready(function() {
 			 	     }
 			    }) ;*/
 				//条件筛选
-				$("#orderNo_filter ,#transfer_filter ,#status_filter,#customer_filter,#sp_filter,#beginTime_filter,#endTime_filter").on( 'keyup click', function () {    	 	
+				$("#orderNo_filter ,#transfer_filter ,#status_filter,#customer_filter,#sp_filter,#beginTime_filter,#endTime_filter,#warehouse").on( 'keyup click', function () {    	 	
 			      	var orderNo_filter = $("#orderNo_filter").val();
 			      	var transfer_filter = $("#transfer_filter").val();
 			    	var status_filter = $("#status_filter").val();
@@ -361,7 +398,8 @@ $(document).ready(function() {
 			      	var sp_filter = $("#sp_filter").val();
 			      	var beginTime_filter = $("#beginTime_filter").val();
 			      	var endTime_filter = $("#endTime_filter").val();
-			      	dataTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter;
+			      	var warehouse = $("#warehouse").val();
+			      	dataTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse;
 			      	dataTable.fnDraw();
 			      });
 			 	    	 

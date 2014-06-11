@@ -9,7 +9,7 @@ $(document).ready(function() {
 		urlSource="/yh/customerContract/customerList";
 		urlSource2="/yh/customerContract/edit/";
 		urlSource3="/yh/customerContract/delete/";
-	}else{
+	}if(type=='SERVICE_PROVIDER'){
 		$("#btn2").show();
 		urlSource="/yh/spContract/spList";
 		urlSource2="/yh/spContract/edit/";
