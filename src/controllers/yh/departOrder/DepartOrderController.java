@@ -1,10 +1,14 @@
 package controllers.yh.departOrder;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
+import models.DepartTransferOrder;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -150,6 +154,68 @@ public class DepartOrderController extends Controller {
 
 		renderJson(Map);
 	
+	}
+	//构造单号
+	 public String creat_order_no() {
+	    	String order_no = null;
+	    	String the_order_no=null;
+	        //TransferOrder transferOrder = new TransferOrder();
+	        /*String name = (String) currentUser.getPrincipal();
+	        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+	        setAttr("create_by", users.get(0).get("id"));*/
+
+	    	DepartOrder order = DepartOrder.dao.findFirst("select * from DEPART_ORDER  order by DEPART_no desc limit 0,1");
+	        if (order != null) {
+	            String num = order.get("DEPART_no");
+	            String str = num.substring(2, num.length());
+	            System.out.println(str);
+	            Long oldTime = Long.parseLong(str);
+	            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	            String format = sdf.format(new Date());
+	            String time = format + "00001";
+	            Long newTime = Long.parseLong(time);
+	            if(oldTime >= newTime){
+	            	order_no = String.valueOf((oldTime + 1));
+	            }else{
+	            	order_no = String.valueOf(newTime);
+	            }
+	            the_order_no="FC"+order_no;
+	        } else {
+	            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	            String format = sdf.format(new Date());
+	            order_no = format + "00001";
+	           the_order_no = "FC"+order_no;
+	        }
+	        return the_order_no;
+	 }
+	//发车单保存id bigint auto_increment PRIMARY KEY,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp TIMESTAMP,combine_type varchar(255),"
+    //+ "car_no varchar(255),car_type varchar(255),notify_party_id bigint,FOREIGN KEY(notify_party_id) REFERENCES party(id));");
+
+	public void savedepartOrder(){
+		String	depart_no=creat_order_no();
+		getPara("remark");
+		String[] order_id=this.getPara("orderid").split(",");
+		 Date createDate = Calendar.getInstance().getTime();
+		DepartOrder de=new DepartOrder();
+		de.set("CREATE_BY",Integer.parseInt(getPara("create"))).set("create_stamp", createDate)
+		.set("combine_type", getPara("ordertype")).set("car_no", getPara("car_no"))
+		.set("car_type", getPara("cartype")).set("depart_no",depart_no )
+		.set("notify_party_id", getPara("driver")).set("car_size",getPara("carsize")).save();
+		
+		DepartOrder der=DepartOrder.dao.findFirst("SELECT * FROM DEPART_ORDER where DEPART_NO  ='"+depart_no+"'");
+		int de_id=Integer.parseInt(der.get("id").toString()) ;
+		for(int i=0;i<order_id.length;i++){
+			DepartTransferOrder dt=new DepartTransferOrder();
+			dt.set("depart_id",de_id).set("ORDER_ID",order_id[i]).save();
+		}
+		int lang=order_id.length;
+		if(lang>1){
+			setAttr("type","many");
+		}else{
+			setAttr("type","one");
+		}
+		setAttr("localArr",order_id);
+		render("departOrder/editTransferOrder.html");
 	}
 	
 }
