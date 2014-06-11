@@ -354,4 +354,12 @@ label.error {
     width: 12%;
 }
 
+/* datepicker icon style*/
+.add-on{
+    display: inline-block !important;
+}
+
+.bootstrap-datetimepicker-widget ul{
+    padding: 0;
+}
 /* ray added */
