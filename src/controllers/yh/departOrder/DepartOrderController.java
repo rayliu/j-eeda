@@ -97,6 +97,13 @@ public class DepartOrderController extends Controller {
 		//allTranferOrderList 创建发车单
 	public void addDepartOrder() {
 		String list = this.getPara("localArr");
+		int lang=list.length();
+		if(lang>1){
+			setAttr("type","many");
+		}else{
+			setAttr("type","one");
+		}
+		
 		setAttr("localArr",list);
 		render("departOrder/editTransferOrder.html");
 	}
@@ -112,14 +119,30 @@ public class DepartOrderController extends Controller {
 			        + getPara("iDisplayLength");
 		}
 
-		String sqlTotal = "select count(1) total from transfer_order";
+		String sqlTotal = "select count(1) total from TRANSFER_ORDER_ITEM tof"
+				+ " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
+				+ " left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id)"
+				+ " where tof.ORDER_ID in("+idlist+")";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "SELECT tof.* ,or.ORDER_NO as order_no  FROM TRANSFER_ORDER_ITEM tof"
-				+ " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id where tof.ORDER_ID in("+idlist+");";
-
+		String sql = "SELECT tof.* ,or.ORDER_NO as order_no,c.COMPANY_NAME as customer  FROM TRANSFER_ORDER_ITEM tof"
+				+ " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
+				+ "left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id)"
+				+ " where tof.ORDER_ID in("+idlist+")  order by c.id"+sLimit;
 		List<Record> departOrderitem = Db.find(sql);
+		for(int i=0;i<departOrderitem.size();i++){
+			String itemname=departOrderitem.get(i).get("item_name");
+			if("ATM".equals(itemname)){
+				long itemid=departOrderitem.get(i).get("id");
+				String sql2="SELECT SERIAL_NO  FROM TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID ="+itemid;
+				List<Record> itemserial_no = Db.find(sql2);
+				String itemno=itemserial_no.get(0).get("SERIAL_NO");
+					departOrderitem.get(i).set("serial_no", itemno);
+			}else{
+				departOrderitem.get(i).set("serial_no", "无");
+			}
+		}
 
 		Map Map = new HashMap();
 		Map.put("sEcho", pageIndex);

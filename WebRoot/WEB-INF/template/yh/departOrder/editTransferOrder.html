@@ -34,8 +34,8 @@
                                 <div class="row">
                                    <form  method="post" action="/yh/returnorder/save">
                                <div class="col-lg-6">
-                            
-             <input class="" id="message" value="${localArr}" type="hidden" >
+                             <input class="" id="type" value="${type}" type="hidden" >
+            				 <input class="" id="message" value="${localArr}" type="hidden" >
                                     
                                    		  <h2>车辆信息</h2>  
                                    		   <div class="form-group">
@@ -112,11 +112,11 @@
                                             <label>发车类型</label></br>
                                             <div class="form-control" style=box-shadow:none;border:none>
                                           <label class="radio-inline">
-                                           <input type="radio" value="arrangementOrder" id="arrangementOrder" name="orderType">一车一单
+                                           <input type="radio" value="arrangementOrder" id="ordertypeone" name="orderType">一车一单
                                           </label>
                                           
                                            <label class="radio-inline">
-                                           <input type="radio" value="arrangementOrder" id="arrangementOrder" name="orderType">一车多单
+                                           <input type="radio" value="arrangementOrder" id="ordertypetwo" name="orderType">一车多单
                                           </label>
                                            </div>
                                         </div>
@@ -179,8 +179,8 @@
                               
                                 <thead   >
                                         <tr>
-                                        
-                                        	<th>单号</th> 
+                                        	<th>客户</th> 
+                                        	<th>运输单号</th> 
                                          	<th>序列号</th> 
                                             <th>名称</th>
                                             <th>数量</th>                                   
@@ -269,11 +269,12 @@
     $(document).ready(function() {
         $('#menu_assign').addClass('active').find('ul').addClass('in');
         var message=$("#message").val();
-        
-    	/* $.get('/yh/departOrder/showdepartOrder', {localArr:message}, function(data){ 
-    	    	var order_item=data;
-    	    		
-    	  },'text'); */
+        var type=$("#type").val();
+      if(type=="one"){
+    	  $("#ordertypeone").attr('checked', 'checked');
+      }else{
+    	  $("#ordertypetwo").attr('checked', 'checked');
+      }
     	var datatable = $('#eeda-table').dataTable({
             //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
             "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -285,9 +286,9 @@
             },
             "sAjaxSource": "/yh/departOrder/getIintDepartOrderItems?localArr="+message+"",
             "aoColumns": [
-                
-                { "mDataProp": "ORDER_NO"},      
-                { "mDataProp": " "},
+                { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
+                { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
+                { "mDataProp": "SERIAL_NO"},
                 { "mDataProp": "ITEM_NAME"},
                 { "mDataProp": "AMOUNT"},
                 { "mDataProp": "VOLUME"},
