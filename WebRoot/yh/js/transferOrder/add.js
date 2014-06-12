@@ -71,8 +71,7 @@ $(document).ready(function() {
 			console.log(data);
 			$("#hideProvinceFrom").val(data.PROVINCE);
 			$("#hideCityFrom").val(data.CITY);
-			$("#hideDistrictFrom").val(data.DISTRICT);
-			
+			$("#hideDistrictFrom").val(data.DISTRICT);			
 
 	        //获取全国省份
 	        $(function(){
@@ -93,6 +92,16 @@ $(document).ready(function() {
 	         	},'json');
 	        });
 	        
+	        var checkProvince= function(provinceFrom){
+	        	if(provinceFrom == '广东省'){
+					$("#customerProvince2").removeAttr('checked');
+					$("#customerProvince1").attr('checked', true);
+				}else{
+					$("#customerProvince1").removeAttr('checked');    			
+					$("#customerProvince2").attr('checked', true);    			
+				}
+	        };
+	        
 	        // 回显出发城市
 	        var hideProvince = $("#hideProvinceFrom").val();
 	        $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
@@ -107,8 +116,11 @@ $(document).ready(function() {
 	    						var district = $("#hideDistrictFrom").val();
 	    						if(district == ''){
 	    							$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val());
+	    							checkProvince($("#hideProvinceFrom").val());
+	    							
 	    						}else{
 	    							$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val() +" "+ $("#hideDistrictFrom").val());
+	    							checkProvince($("#hideProvinceFrom").val());
 	    						}
 	    						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
 	    					}else{
@@ -131,6 +143,7 @@ $(document).ready(function() {
 	    					if(data[i].NAME == hideDistrict){
 	    						$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val() +" "+ $("#hideDistrictFrom").val());
 	    						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+	    						checkProvince($("#hideProvinceFrom").val());
 	    					}else{
 	    						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
 	    					}
@@ -142,7 +155,13 @@ $(document).ready(function() {
 	    		},'json');
 	        
 		},'json');
-        //$("#address").val($("#hideDistrictFrom").val() + $("#hideProvinceFrom").val() + $("#hideCityFrom").val());
+        
+        /*// 选中客户
+		if($("#hideProvinceFrom").val() == '广东省'){
+			$("#customerProvince1").attr('checked', true);
+		}else{
+			$("#customerProvince2").attr('checked', true);    			
+		}*/
         $('#customerList').hide();
     }); 
 	
