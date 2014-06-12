@@ -135,7 +135,7 @@ public class DepartOrderController extends Controller {
 		for(int i=0;i<departOrderitem.size();i++){
 			String itemname=departOrderitem.get(i).get("item_name");
 			if("ATM".equals(itemname)){
-				long itemid=departOrderitem.get(i).get("id");
+				Long itemid= departOrderitem.get(i).get("id");
 				String sql2="SELECT SERIAL_NO  FROM TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID ="+itemid;
 				List<Record> itemserial_no = Db.find(sql2);
 				String itemno=itemserial_no.get(0).get("SERIAL_NO");
