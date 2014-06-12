@@ -164,6 +164,7 @@ public class ServiceProviderController extends Controller {
             party = Party.dao.findById(id);
             party.set("last_update_date", createDate);
             party.set("remark", getPara("remark"));
+            party.set("receipt", getPara("receipt"));
             party.update();
 
             contact = Contact.dao
@@ -198,6 +199,7 @@ public class ServiceProviderController extends Controller {
         contact.set("location", getPara("location"));
         contact.set("email", getPara("email"));
         contact.set("abbr", getPara("abbr"));
+        contact.set("sp_type", getPara("sp_type"));
         contact.set("mobile", getPara("mobile"));
         contact.set("phone", getPara("phone"));
         contact.set("address", getPara("address"));

@@ -38,10 +38,12 @@
 	                                <div class="col-lg-6">
 	                                 	<div>
 		                                    <h3> <label >客户信息</label></h3>
-		                                    <!-- <input id = "ser_no" type="hidden" value="${ser!''}"/> -->
+		                                    <input id="tranferid" name="tranferid" type="hidden" value="${transferId!''}">
+		                                    <input id = "localArr" type="hidden" value="${localArr!''}"/>
+		                                    <input id = "localArr2" type="hidden" value="${localArr2!''}"/>
 		                                    <!-- <input id = "item_id" name="item_id" type="hidden" value="${itemsIds.id!''}"/> -->
                                     		<input id="delivery_id" type="hidden" name="delivery_id" value="${deliveryId.id!''}"/>
-		                                   <input id="tranferid" name="tranferid" type="hidden" value="${transferId!''}">
+		                                   	
 		                                   	<input id="customer_id" name="customer_id" type="hidden" value="${customer.customerId!''}">
 							                      <div class="form-group">
 							                          <label>联系人：</label> ${customer.contact_person!''}

@@ -49,7 +49,11 @@
                         </div>
                         <!-- /.panel-body -->
                         <div class="panel-heading">
-                        <a class="btn btn-primary">创建</a>
+                        <form id='createForm' action="/yh/delivery/creat3" method="post">
+	                        <input id='departOrder_message' name='localArr' type="hidden">
+	                        <input id='departOrder_message2' name='localArr2' type="hidden">
+	                        <a class="btn btn-primary" id="saveDelivery">创建</a>
+                        </form>
                         <div class="panel-body">
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover" id="eeda-table4">

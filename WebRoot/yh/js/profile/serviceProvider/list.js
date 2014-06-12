@@ -32,6 +32,7 @@ $(document).ready(function() {
             
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":"ABBR"},
+            {"mDataProp":"SP_TYPE"}, 
             {"mDataProp":"CONTACT_PERSON"},        	
             {"mDataProp":"PHONE"},
             {"mDataProp":"ADDRESS"},

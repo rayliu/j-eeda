@@ -33,7 +33,15 @@ $(document).ready(function() {
 		        $('#spList').hide();
 		    }); 
 			//datatable, 动态处理
+			var sAjaxSource ="";
 			var trandferOrderId = $("#tranferid").val();
+			var localArr =$("#localArr").val();
+			var localArr2 =$("#localArr2").val();
+			if(localArr!=""){
+				sAjaxSource ="/yh/delivery/orderList?localArr="+localArr+"&localArr2="+localArr2
+			}else{
+				sAjaxSource ="/yh/delivery/orderList?localArr="+trandferOrderId
+			}
 			//var ser =  $("#ser_no").val();
 			$('#eeda-table').dataTable({
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -43,7 +51,7 @@ $(document).ready(function() {
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
-		        "sAjaxSource": "/yh/delivery/orderList/"+trandferOrderId,
+		        "sAjaxSource": sAjaxSource,
 		        "aoColumns": [
 		            {"mDataProp":"ITEM_NO"},  
 		            {"mDataProp":"SERIAL_NO"},
@@ -71,6 +79,7 @@ $(document).ready(function() {
 	                    }
 		             },'json');
 		        });
+			
 			
 			var dataTable2 =  $('#eeda-table2').dataTable({
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -177,30 +186,15 @@ $(document).ready(function() {
 			//异步创建配送单
 			 $("#eeda-table2").on('click', '.creat', function(e){
 				 var id = $(this).attr('code');
-				 var ser ="";
-				 
-				/* $("#eeda-table2 tr:eq('"+hang+"')").each(function(){
-		        	$("input:checked",this).each(function(){
-		        		ser=$(this).val();
-		        	}); 
-		        	 
-					
-					
-					 $("input[name=items]").each(function(){
-						 if ($("input[name=items]").attr("checked")) {  
-							 ser =$(this).val();  
-						 	}  
-			        	});
-		        }); */
 				  e.preventDefault();
 		         //异步向后台提交数据
-				$.post('/yh/delivery/creat/'+id,{ser:ser},function(id){
+				$.post('/yh/delivery/creat/'+id,function(id){
 		                 //保存成功后，刷新列表
 		                 console.log(id);
 		                 if(id>0){
 		                	// $("#tranferid").val(id);
 		                	 //dataTable2.fnSettings().sAjaxSource="/yh/delivery/orderList?trandferOrderId="+id;
-		                	 window.location.href="/yh/delivery/creat2?id="+id+ "&ser="+ser;
+		                	 window.location.href="/yh/delivery/creat2/"+id;
 		                 }else{
 		                     alert('取消失败');
 		                 }
@@ -291,6 +285,27 @@ $(document).ready(function() {
 			            {"mDataProp":"CUSTOMER_ID"},
 			        ]      
 			    });	
+			//添加运输单序列号
+				$("#saveDelivery").click(function(e){
+					 e.preventDefault();
+				    	var trArr=[];
+				    	var ser =[];
+					$("#eeda-table4 tr:not(:first)").each(function(){
+						var the=this;
+			        	$("input:checked",this).each(function(){
+			        		trArr.push($(this).val()); 
+			        		ser.push($("td:eq(1)",the).html());
+			        	});
+			        	}); 
+					
+					console.log(ser);
+			        console.log(trArr);
+			        	$('#departOrder_message2').val(ser);
+			            $('#departOrder_message').val(trArr);
+			            $('#createForm').submit();
+			            
+			            
+				});
 			 
 			// 发车确认
 				$("#ConfirmationBtn").click(function(){

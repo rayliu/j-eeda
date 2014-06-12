@@ -44,6 +44,19 @@
                                             </div>
                                         </fieldset>
                                     </div>
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>供应商类型</label>
+                                            	<select class="form-control" id="sp_type" name="sp_type">
+	                                            	<option value="干线运输供应商">干线运输供应商</option>
+	                                            	<option value="配送供应商">配送供应商</option>
+	                                            	<option value="提货供应商">提货供应商</option>
+	                                            	<option value="个体供应商">个体供应商</option>
+                                            	</select>
+                                            </div>
+                                        </fieldset>
+                                    </div>
                                     <!-- /.col-lg-6 (even) 偶数列-->                                    
                                     <div class="col-lg-6">
                                         <fieldset>
@@ -172,6 +185,8 @@
     	var province = '${location.province!''}';
     	var city= '${location.city!''}';
     	var district = '${location.district!''}';
+    	var spType = '${contact.sp_type!''}';
+    	$("#sp_type").val(spType);
     	
     	$("#mbProvince").val(province);
     	$("#cmbCity").val(city);
