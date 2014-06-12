@@ -5,6 +5,7 @@ $(document).ready(function() {
     
 	//datatable, 动态处理
     var transferOrder = $('#eeda-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
@@ -99,17 +100,19 @@ $(document).ready(function() {
            },'json');
 		});
     
-    $('input.orderNo_filter').on( 'keyup click', function () {
+    $('#orderNo_filter').on( 'keyup', function () {
     	var orderNo = $("#orderNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var address = $("#address_filter").val();
-    	var customer = $("#customer_filter").val();
-    	var sp = $("#sp_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	var officeName = $("#officeName_filter").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-    	transferOrder.fnDraw(); 
+        transferOrder.fnFilter(orderNo, 0, false, true);
+        transferOrder.fnDraw();
+    	// var status = $("#status_filter").val();
+    	// var address = $("#address_filter").val();
+    	// var customer = $("#customer_filter").val();
+    	// var sp = $("#sp_filter").val();
+    	// var beginTime = $("#beginTime_filter").val();
+    	// var endTime = $("#endTime_filter").val();
+    	// var officeName = $("#officeName_filter").val();
+    	// transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+    	// transferOrder.fnDraw(); 
     } );
  
     $('input.status_filter').on( 'keyup click', function () {
@@ -177,7 +180,7 @@ $(document).ready(function() {
     	transferOrder.fnDraw();
     } );
     
-    $('input.endTime_filter').on( 'keyup click', function () {
+    $('#beginTime_filter').on('keyup', function () {
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -190,7 +193,7 @@ $(document).ready(function() {
     	transferOrder.fnDraw();
     } );    
     
-    $('input.officeName_filter').on( 'keyup click', function () {
+    $('#endTime_filter').on( 'keyup click', function () {
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -218,4 +221,24 @@ $(document).ready(function() {
             //transferOrder.fnDraw();
         }
     });
+
+
+    $('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $('#beginTime_filter').trigger('keyup');
+    });
+
+
+    $('#datetimepicker2').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $('#endTime_filter').trigger('keyup');
+    });
+
+
 } );
