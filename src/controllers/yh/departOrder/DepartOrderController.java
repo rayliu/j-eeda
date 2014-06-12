@@ -45,9 +45,9 @@ public class DepartOrderController extends Controller {
 				+ " left join contact c on p.contact_id = c.id "
 				+ " left join depart_transfer dt on do.id = dt.depart_id where combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'";
 		Record rec = Db.findFirst(sqlTotal);
-		logger.debug("total records:" + rec.getLong("total"));
+		logger.debug("total records:" + rec.getLong("total"));   
 
-		String sql = "SELECT do.*,c.contact_person,c.phone, (select group_concat(dt.TRANSFER_ORDER_NO separator '\r\n')  FROM DEPART_TRANSFER dt where DEPART_ID = do.id)  as TRANSFER_ORDER_NO  FROM DEPART_ORDER do "
+		String sql = "SELECT do.*,c.contact_person,c.phone, (select group_concat(tr.ORDER_NO separator '\r\n') FROM TRANSFER_ORDER tr where tr.id in(select ORDER_ID from DEPART_TRANSFER dt where dt.DEPART_ID=do.id ))  as TRANSFER_ORDER_NO  FROM DEPART_ORDER do "
 				+ " left join party p on do.notify_party_id = p.id "
 				+ " left join contact c on p.contact_id = c.id where combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'";
 
@@ -164,7 +164,7 @@ public class DepartOrderController extends Controller {
 	        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 	        setAttr("create_by", users.get(0).get("id"));*/
 
-	    	DepartOrder order = DepartOrder.dao.findFirst("select * from DEPART_ORDER  order by DEPART_no desc limit 0,1");
+	    	DepartOrder order = DepartOrder.dao.findFirst("select * from DEPART_ORDER where  COMBINE_TYPE= '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by DEPART_no desc limit 0,1");
 	        if (order != null) {
 	            String num = order.get("DEPART_no");
 	            String str = num.substring(2, num.length());
@@ -194,19 +194,21 @@ public class DepartOrderController extends Controller {
 	public void savedepartOrder(){
 		String	depart_no=creat_order_no();
 		getPara("remark");
+		String order_id2=this.getPara("orderid");
 		String[] order_id=this.getPara("orderid").split(",");
 		 Date createDate = Calendar.getInstance().getTime();
 		DepartOrder de=new DepartOrder();
 		de.set("CREATE_BY",Integer.parseInt(getPara("create"))).set("create_stamp", createDate)
-		.set("combine_type", getPara("ordertype")).set("car_no", getPara("car_no"))
+		.set("combine_type", "DEPART").set("car_no", getPara("car_no"))
 		.set("car_type", getPara("cartype")).set("depart_no",depart_no )
 		.set("notify_party_id", getPara("driver")).set("car_size",getPara("carsize")).save();
 		
 		DepartOrder der=DepartOrder.dao.findFirst("SELECT * FROM DEPART_ORDER where DEPART_NO  ='"+depart_no+"'");
-		int de_id=Integer.parseInt(der.get("id").toString()) ;
+		int de_id=Integer.parseInt(der.get("id").toString());
+		
 		for(int i=0;i<order_id.length;i++){
 			DepartTransferOrder dt=new DepartTransferOrder();
-			dt.set("depart_id",de_id).set("ORDER_ID",order_id[i]).save();
+			dt.set("depart_id",de_id).set("ORDER_ID",order_id[i]).set("TRANSFER_ORDER_NO",order_id[i]).save();
 		}
 		int lang=order_id.length;
 		if(lang>1){
@@ -214,7 +216,7 @@ public class DepartOrderController extends Controller {
 		}else{
 			setAttr("type","one");
 		}
-		setAttr("localArr",order_id);
+		setAttr("localArr",order_id2);
 		render("departOrder/editTransferOrder.html");
 	}
 	
