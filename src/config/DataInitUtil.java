@@ -73,7 +73,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists product(id bigint auto_increment PRIMARY KEY,item_name varchar(50),item_no varchar(255),size double,width double,unit varchar(255),volume double,weight double,item_desc varchar(5120),category varchar(255),customer_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id));");
 
             // warehouse 仓库
-            stmt.executeUpdate("create table if not exists warehouse(id bigint auto_increment PRIMARY KEY,warehouse_name varchar(50),warehouse_address varchar(255),warehouse_area double,path varchar(255),warehouse_desc VARCHAR(5120),contact_id bigint,FOREIGN KEY(contact_id) REFERENCES contact(id));");
+            stmt.executeUpdate("create table if not exists warehouse(id bigint auto_increment PRIMARY KEY,warehouse_name varchar(50),warehouse_address varchar(255),warehouse_area double,path varchar(255),warehouse_type varchar(255),warehouse_desc VARCHAR(5120),sp_id bigint,notify_party_id bigint,office_id bigint,FOREIGN KEY(sp_id) REFERENCES party(id),FOREIGN KEY(notify_party_id) REFERENCES party(id),FOREIGN KEY(office_id) REFERENCES office(id));");
 
             // order_status 里程碑
             stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment PRIMARY KEY,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
@@ -522,8 +522,8 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
 
             // 仓库
-            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿广州总仓', '这是广州总仓','萝岗','2');");
-            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,CONTACT_ID) values('582','源鸿分仓', '这是广州总仓','东莞','4');");
+            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,notify_party_id,office_id,WAREHOUSE_TYPE) values('582','源鸿广州总仓', '这是广州总仓','萝岗','9','2','ownWarehouse');");
+            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,notify_party_id,sp_id,WAREHOUSE_TYPE) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse');");
 
             // 运输单
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address,WAREHOUSE_ID,ROUTE_FROM,ROUTE_TO,office_id,order_type) values('ATM', '8', '9', '2014042600001', '3', 'routeSP', '5', '新建', '2014-04-20 16:33:35.1', 'delivery','1','珠海','2','110102','440402','2','salesOrder');");

@@ -24,6 +24,8 @@
                             <div class="row">
                                 <form id="warehouseForm" role="form" action="/yh/warehouse/save" method="post" enctype="multipart/form-data">
                                     <input id="warehouseId" name="warehouse_id" type="hidden" value="${warehouse.id!''}">
+                                    <input id="sp_id" type="hidden" name="sp_id"  value="${sp.id!''}"/>
+                                    <input id="notifyPartyId" type="hidden" name="notifyPartyId"  value="${warehouse.notify_party_id!''}"/>
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
                                     <div class="col-lg-6">
                                         <fieldset>
@@ -138,8 +140,39 @@
                                             </div>
                                         </fieldset>
                                     </div>
-
                                     <div class="col-lg-6">
+                                        <fieldset>
+                                            <div id="arrivalModes" class="form-group">
+                                                <label>仓库类型</label>
+                                                <input type="hidden" id="warehouseTypeHide" value="${warehouse.warehouse_type!''}"/>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="warehouseType" id="warehouseType1" value="ownWarehouse" checked="">自营仓库
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="warehouseType" id="warehouseType2" value="deliverySpWarehouse">配送供应商仓库
+                                                </label>  
+                                            </div> 
+                                            <div id="officeDiv" style="display: none;">
+                                                <input id="hideOfficeId" type="hidden" value="${warehouse.office_id!''}" />   
+                                             	<label class="control-label" for="inputSuccess">请选择网点</label>
+                                            	<select id="officeSelect" class="form-control" name="officeSelect"></select> 
+                                            </div> 
+                                            <div id="spDiv" style="display: none;">
+	                                            <h2>供应商信息</h2>
+	                                            <div class="form-group">
+	                                                <!--label>供应商名称</label-->
+	                                                <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage" value="${sp.company_name!''}"/>
+	                                                <ul id='spList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 35%; left: 2%;">
+	    											</ul>
+	                                            </div>
+	                                            <div class="form-group">     
+	                                            	<h5 id="pageSpName">${sp.contact_person!''} ${sp.phone!''}</h5><h5 id="pageSpAddress">${sp.address!''}</h5>     
+	                                            </div>
+	                                        </div>
+                                        </fieldset>
+                                    </div>
+
+                                    <div class="col-lg-6" style="clear:both;">
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>上传图片</label>
@@ -159,8 +192,7 @@
                                         <button type="submit" class="btn btn-default">保存</button>
                                         <a class="btn btn-default" href="/yh/warehouse">取消</a>
                                     </div>
-                                <form role="form">
-
+                            	<form role="form">
                             </div>
                             <!-- /.row (nested) -->
                         </div>
@@ -179,131 +211,4 @@
 <!-- 引入校验的js 文件及其 中文 文件-->
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#menu_profile').addClass('active').find('ul').addClass('in');
-        $('#warehouseForm').validate({
-            rules: {
-            	warehouse_name: {
-                required: true
-              },
-              	warehouse_address:{
-                required: true
-              },
-              	company_name:{
-                required: true
-              },
-              	contact_person:{
-                required: true
-              },
-              	email:{
-              	email: true
-              },
-              	warehouse_area:{
-              	required: true
-              }
-            },
-            highlight: function(element) {
-                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-            },
-            success: function(element) {
-                element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
-            }
-        }); 
-        
-        //获取全国省份
-        $(function(){
-         	var province = $("#mbProvince");
-         	$.post('/yh/serviceProvider/province',function(data){
-         		province.append("<option>--请选择省份--</option>");
- 				var hideProvince = $("#hideProvince").val();
-         		for(var i = 0; i < data.length; i++)
- 				{
- 					if(data[i].NAME == hideProvince){
-         				province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-         				
-         				
- 					}else{
-         				province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
- 					}
- 				}
-         		
-         	},'json');
-        });
-         //获取省份的城市
-         $('#mbProvince').on('change', function(){
-         	//var inputStr = $(this).parent("option").attr('id'); 
- 			var inputStr = $(this).val();
- 			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
- 				var cmbCity =$("#cmbCity");
- 				cmbCity.empty();
- 				cmbCity.append("<option>--请选择城市--</option>");
- 				for(var i = 0; i < data.length; i++)
- 				{
- 					cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
- 				}
- 				toLocationList.show();
- 			},'json');
- 		});
-         //获取城市的区县
-         $('#cmbCity').on('change', function(){
-         	//var inputStr = $(this).parent("option").attr('id'); 
- 			var inputStr = $(this).val();
-			var code = $("#location").val(inputStr);
- 			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
- 				var cmbArea =$("#cmbArea");
- 				cmbArea.empty();
- 				cmbArea.append("<option>--请选择区(县)--</option>");
- 				for(var i = 0; i < data.length; i++)
- 				{
- 					cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
- 				}
- 				toLocationList.show();
- 			},'json');
- 		});
-         
-         $('#cmbArea').on('change', function(){
-         	//var inputStr = $(this).parent("option").attr('id'); 
- 			var inputStr = $(this).val();
- 			var code = $("#location").val(inputStr);
- 		});         
-
-         // 回显城市
- 		var hideProvince = $("#hideProvince").val();
-         $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
- 			if(data.length > 0){
- 				var cmbCity =$("#cmbCity");
- 				cmbCity.empty();
- 				cmbCity.append("<option>--请选择城市--</option>");
- 				var hideCity = $("#hideCity").val();
- 				for(var i = 0; i < data.length; i++)
- 				{
- 					if(data[i].NAME == hideCity){
- 						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
- 					}else{
- 						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
- 					}
- 				}
- 			}
- 		},'json');
-
-         // 回显区
-         var hideCity = $("#hideCity").val();
-         $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
- 			if(data.length > 0){
- 				var cmbArea =$("#cmbArea");
- 				cmbArea.empty();
- 				cmbArea.append("<option>--请选择区(县)--</option>");
- 				var hideDistrict = $("#hideDistrict").val();
- 				for(var i = 0; i < data.length; i++)
- 				{
- 					if(data[i].NAME == hideDistrict){
- 						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
- 					}else{
- 						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
- 					}
- 				}
- 			}
- 		},'json');
-    }); 
-</script>
+<script src="/yh/js/profile/warehouse/edit.js"></script> 

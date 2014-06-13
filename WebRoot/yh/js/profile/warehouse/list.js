@@ -1,5 +1,3 @@
-
-
 $(document).ready(function() {
     $('#menu_profile').addClass('active').find('ul').addClass('in');
 	//datatable, 动态处理
