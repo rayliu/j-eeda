@@ -4,7 +4,7 @@
 <div id="page-wrapper">
 <div class="row">
 	<h2>产品信息</h2>
-	<div class="col-lg-6">
+	<div class="col-lg-4">
 		<h4>客户信息</h4>
 	    <div class="form-group">
 	        <!--label>客户名称</label-->
@@ -14,70 +14,31 @@
 	        <ul id='customerList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 17%; left: 2%;">
 			</ul>
 	    </div>
-    </div>
-</div>
-    
-    <div id="treeListDiv" class="row" style="display: none;">
-	    <div class="col-lg-4">
+	    <div id="treeListDiv" style="display: none;">		    
 	    	<div class="tree " style="clear: both;">
-    <ul>
-        <li id="productTreeLi">
-            <span id="parentTree"><i class="icon-folder-open"></i></span> 
-            <ul id="productTreeUl"></ul>
-            <!-- <ul>
-                <li>
-                	<span><i class="icon-minus-sign"></i> Child</span> 
-                    <ul>
-                        <li>
-	                        <span><i class="icon-leaf"></i> Grand Child</span> 
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                	<span><i class="icon-minus-sign"></i> Child</span> 
-                    <ul>
-                        <li>
-	                        <span><i class="icon-leaf"></i> Grand Child</span> 
-                        </li>
-                        <li>
-                        	<span><i class="icon-minus-sign"></i> Grand Child</span> 
-                            <ul>
-                                <li>
-	                                <span><i class="icon-minus-sign"></i> Great Grand Child</span> 
-		                            <ul>
-		                                <li>
-			                                <span><i class="icon-leaf"></i> Great great Grand Child</span> 
-		                                </li>
-		                                <li>
-			                                <span><i class="icon-leaf"></i> Great great Grand Child</span> 
-		                                </li>
-		                             </ul>
-                                </li>
-                                <li>
-	                                <span><i class="icon-leaf"></i> Great Grand Child</span> 
-                                </li>
-                                <li>
-	                                <span><i class="icon-leaf"></i> Great Grand Child</span> 
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-	                        <span><i class="icon-leaf"></i> Grand Child</span> 
-                        </li>
-                    </ul>
-                </li>
-            </ul> -->
-        </li>
-    </ul>
-</div>
-	    </div>
-	    <div id="addProductDiv" style="display: none;">
-	    	<button class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-			  添加产品 
-			</button>
-		</div>
-	    <div id="displayDiv" class="col-lg-8" style="display: none;">
-	    	<h1 class="page-header">
+			    <ul>
+			        <li id="productTreeLi">
+			            <span id="parentTree"><i class="icon-folder-open"></i></span> 
+			            <ul id="productTreeUl"></ul>
+			            
+			        </li>
+			    </ul>
+			</div>
+		    
+		    
+		    
+    	</div>
+
+    </div>
+    <!--end of col4 -->
+    <div class="col-lg-8">
+    	<div id="displayDiv" style="display: none;">
+    		<h1>
+		    	<div id="addProductDiv" style="display: none;">
+			    	<button class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+					  添加产品 
+					</button>
+				</div>
 			</h1>
 			<div class="panel panel-default">
 					<div class="panel-heading">
@@ -111,6 +72,10 @@
 			</div>			
 	    </div>
     </div>
+    <!--end of col8 -->
+</div>
+<!--end of row -->   
+    
     
     <!-- 模态框 -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
