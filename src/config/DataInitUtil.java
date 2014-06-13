@@ -547,7 +547,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('123456', '电视', '这是一台电视','2','台','452','100','一台ATM','4');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','5');");
+                    + "values('123456', 'ATM', '这是一台ATM','1','台','454','100','一台ATM','5');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','6');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "

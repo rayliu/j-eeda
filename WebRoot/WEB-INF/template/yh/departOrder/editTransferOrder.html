@@ -143,34 +143,7 @@
                                 
                                 
                                 <div class="tab-pane fade" id="cargos">
-                                    <div class="panel-body" style="display:none" id="item">
-                                        <div class="table-responsive">
-                                        
-                                <table class="table table-striped table-bordered table-hover" id="example">                             
-                               
-                                    <thead>
-                                        <tr>
-                                            <th>名称</th>
-                                            <th>型号</th>
-                                            <th>数量</th>                                   
-                                            <th>货损数量</th> 
-                                            <th>剩余数量</th>
-                                            <th>单位</th> 
-                                            <th>体积</th> 
-                                            <th>重量</th> 
-                                            <th>备注</th>                                          
-                                           
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                                                                                                                            
-                                    </tbody>
-                                </table>
-                       
-                                          
-                                        </div>
-                                        <!-- /.table-responsive -->
-                                    </div>
+                                   
                                     
                                      <div class="panel-body" style="" id="ATMitem">
                                         <div class="table-responsive">
@@ -187,7 +160,7 @@
                                             <th>体积</th> 
                                             <th>重量</th> 
                                             <th>备注</th>                                          
-                                           
+                                           <th>操作</th>
                                         </tr>
                                     </thead>                               
                                     <tbody>
@@ -207,9 +180,31 @@
                                           
                                         </div>
                                         <!-- /.table-responsive -->
+                                        <div style="display: none" id="transferOrderItemDateil">
+	                                            <h3 class="page-header">单品列表</h3>
+	 
+	                                           <div class="table-responsive">
+	                                          
+	                                            <table id="detailTable" class="table table-striped table-bordered table-hover dataTable">
+	                                                <thead>
+	                                                    <tr role="row">
+	                                                    <th class="sorting"  >名称</th>
+	                                                    <th class="sorting"  >型号</th>
+	                                                    <th class="sorting_asc"  >序列号</th>
+	                                                    <th class="sorting"  >体积</th>
+	                                                    <th class="sorting"  >重量</th>
+	                                                    <th class="sorting" >备注</th>
+	                                                    <th class="sorting" ></th>
+	                                                    </tr>
+	                                                </thead>
+	                                                </table>
+	                                          </div>
+                                            </div>
                                     </div>
                                   
                                     <!-- /.panel-body -->
+                                      <!-- 模态框 -->
+									
                                 </div>
                               
                                 <div class="tab-pane fade" id="arap">
@@ -293,10 +288,74 @@
                 { "mDataProp": "AMOUNT"},
                 { "mDataProp": "VOLUME"},
                 { "mDataProp": "WEIGHT"},
-                { "mDataProp": "REMARK"}
+                { "mDataProp": "REMARK"},
+                { 
+                    "mDataProp": null, 
+                    "sWidth": "8%",                
+                    "fnRender": function(obj) {                    
+                        return "<a class='btn btn-success dateilEdit'"+obj.aData.ID+"'>"+
+                                    "<i class='fa fa-search fa-fw'></i>"+
+                                    "查看"+
+                                "</a>"+
+                                "<a class='btn btn-danger cancelbutton' href='/yh/pickupOrder/edit/"+obj.aData.ID+"'>"+
+                                    "<i class='fa fa-trash-o fa-fw'></i>"+ 
+                                    "取消"+
+                                "</a>";
+                    },
+                }
                                           
             ]      
         });	
+    	
+    	 $('#detailTable').dataTable({           
+            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",  
+            "iDisplayLength": 10,
+           /*  "bServerSide": true, */
+        	"oLanguage": {
+                "sUrl": "/eeda/dataTables.ch.txt"
+            }
+            /*    "sAjaxSource": "",
+            "aoColumns": [
+  { "mDataProp": "" },
+                { "mDataProp": "" },      
+                { "mDataProp": ""},
+                { "mDataProp": ""},
+                { "mDataProp": ""},
+                { "mDataProp": ""},
+                { "mDataProp": ""},
+                { "mDataProp": ""},
+                { 
+                    "mDataProp": null, 
+                    "sWidth": "8%",                
+                    "fnRender": function(obj) {                    
+                        return "<a class='btn btn-success edit' href='/yh/pickupOrder/edit/"+obj.aData.ID+"'>"+
+                                    "<i class='fa fa-search fa-fw'></i>"+
+                                    "查看"+
+                                "</a>"+
+                                "<a class='btn btn-danger cancelbutton' href='/yh/pickupOrder/edit/"+obj.aData.ID+"'>"+
+                                    "<i class='fa fa-trash-o fa-fw'></i>"+ 
+                                    "取消"+
+                                "</a>";
+                    }, 
+               
+                                          
+            ]    }*/   
+        });	
+    	 
+    	// 编辑单品
+    		$("#eeda-table").on('click', '.dateilEdit', function(e){
+    			e.preventDefault();
+    			$("#transferOrderItemDateil").show();
+    			 /* //var code = $(this).attr('code');
+    			//var itemId = code.substring(code.indexOf('=')+1);
+    			//$("#item_id").val(itemId);
+    			// 设置单品信息
+    			//$("#detail_transfer_order_id").val($("#order_id").val());
+    			//$("#detail_transfer_order_item_id").val(itemId); 
+    			
+    			detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
+    			detailDataTable.fnDraw();  */ 
+    		});
     		
     	
     });

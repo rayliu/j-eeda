@@ -22,7 +22,7 @@
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
                     return "<a class='btn btn-success edit' href='/yh/pickupOrder/edit/"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
+                                "<i class='fa fa-search fa-fw'></i>"+
                                 "查看"+
                             "</a>"+
                             "<a class='btn btn-danger cancelbutton' href='/yh/pickupOrder/edit/"+obj.aData.ID+"'>"+
