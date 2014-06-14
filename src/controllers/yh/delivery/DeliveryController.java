@@ -58,27 +58,56 @@ public class DeliveryController extends Controller {
         String id = getPara();
 
         DeliveryOrder tOrder = DeliveryOrder.dao.findById(id);
-
+        List<Record> serIdList = Db
+                .find("select TRANSFER_ITEM_ID from DELIVERY_ORDER_ITEM where DELIVERY_ID ="
+                        + id);
+        if (serIdList.get(0).get("TRANSFER_ITEM_ID") != null) {
+            // 序列号id
+            String idStr = "";
+            for (Record record : serIdList) {
+                idStr += record.get("TRANSFER_ITEM_ID") + ",";
+            }// 4,5,6
+            idStr = idStr.substring(0, idStr.length() - 1);
+            setAttr("localArr2", idStr);
+            // 序列号运输单id数组
+            List<Record> transferIdList = Db
+                    .find("select TRANSFER_ORDER_ID from DELIVERY_ORDER_ITEM where DELIVERY_ID ="
+                            + id);
+            String idStr2 = "";
+            for (Record record : transferIdList) {
+                idStr2 += record.get("TRANSFER_ORDER_ID") + ",";
+            }// 4,5,6
+            idStr2 = idStr2.substring(0, idStr2.length() - 1);
+            setAttr("localArr", idStr2);
+        } else {
+            // 运输单id
+            List<Record> transferId = Db
+                    .find("select TRANSFER_ORDER_ID from DELIVERY_ORDER_ITEM where DELIVERY_ID ="
+                            + id);
+            String transferId2 = transferId.get(0).get("TRANSFER_ORDER_ID")
+                    .toString();
+            setAttr("transferId", transferId2);
+        }
         // 运输单信息
         TransferOrder transferOrder = TransferOrder.dao.findById(tOrder
                 .get("TRANSFER_ORDER_ID"));
-
         // 客户信息
-        Party customerContact = Party.dao
-                .findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
-                        + tOrder.get("customer_id")
-                        + "'and p.contact_id = c.id");
+        // Party customerContact = Party.dao
+        // .findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
+        // + tOrder.get("customer_id")
+        // + "'and p.contact_id = c.id");
         // 供应商信息
         Party spContact = Party.dao
                 .findFirst("select *,p.id as spId from party p,contact c where p.id ='"
                         + tOrder.get("sp_id") + "'and p.contact_id = c.id");
 
-        List<Record> deliveryId = Db
-                .find("select TRANSFER_ORDER_ID from DELIVERY_ORDER where id ="
-                        + id);
-        String dd = deliveryId.get(0).get("TRANSFER_ORDER_ID").toString();
-        // 收货人信息
+        // List<Record> deliveryIdList = Db
+        // .find("select TRANSFER_ORDER_ID from DELIVERY_ORDER where id ="
+        // + id);
+        // String dd =
+        // deliveryIdList.get(0).get("TRANSFER_ORDER_ID").toString();
 
+        // 收货人信息
         Contact notifyPartyContact = null;
         if (tOrder.get("notify_party_id") != null) {
             notifyPartyContact = (Contact) Contact.dao
@@ -87,8 +116,7 @@ public class DeliveryController extends Controller {
                             tOrder.get("notify_party_id"));
         }
         setAttr("deliveryId", tOrder);
-        setAttr("transferId", dd);
-        setAttr("customer", customerContact);
+        // setAttr("customer", customerContact);
         setAttr("deliveryOrder", transferOrder);
         setAttr("notifyParty", notifyPartyContact);
         setAttr("spContact", spContact);
