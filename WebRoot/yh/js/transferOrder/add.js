@@ -71,7 +71,7 @@ $(document).ready(function() {
 			console.log(data);
 			$("#hideProvinceFrom").val(data.PROVINCE);
 			$("#hideCityFrom").val(data.CITY);
-			$("#hideDistrictFrom").val(data.DISTRICT);			
+			$("#hideDistrictFrom").val(data.DISTRICT);
 
 	        //获取全国省份
 	        $(function(){
@@ -94,11 +94,11 @@ $(document).ready(function() {
 	        
 	        var checkProvince= function(provinceFrom){
 	        	if(provinceFrom == '广东省'){
-					$("#customerProvince2").removeAttr('checked');
-					$("#customerProvince1").attr('checked', true);
+					$("#customerProvince2").prop('checked', false);
+					$("#customerProvince1").prop('checked', true);
 				}else{
-					$("#customerProvince1").removeAttr('checked');    			
-					$("#customerProvince2").attr('checked', true);    			
+					$("#customerProvince1").prop('checked', false);    			
+					$("#customerProvince2").prop('checked', true);    			
 				}
 	        };
 	        
