@@ -10,7 +10,16 @@
         },
         "sAjaxSource": "/yh/departOrder/list",
         "aoColumns": [   
-            {"mDataProp":"DEPART_NO"},
+           
+            { 
+                "mDataProp": null, 
+                "sWidth": "8%",                
+                "fnRender": function(obj) {                    
+                    return "<a class='' href='/yh/departOrder/add/"+obj.aData.ID+"'>"+
+                                obj.aData.DEPART_NO +
+                            "</a>";
+                }
+            } ,
             {"mDataProp":"CONTACT_PERSON"},
             {"mDataProp":"PHONE"},
             {"mDataProp":"CAR_NO"},
@@ -21,11 +30,7 @@
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success edit' href='/yh/pickupOrder/edit/"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-search fa-fw'></i>"+
-                                "查看"+
-                            "</a>"+
-                            "<a class='btn btn-danger cancelbutton' href='/yh/pickupOrder/edit/"+obj.aData.ID+"'>"+
+                    return "<a class='btn btn-danger cancelbutton' href='/yh/pickupOrder/edit/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "取消"+
                             "</a>";

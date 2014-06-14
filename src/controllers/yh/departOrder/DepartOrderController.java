@@ -2,6 +2,7 @@ package controllers.yh.departOrder;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,9 @@ import java.util.Map;
 
 import models.DepartOrder;
 import models.DepartTransferOrder;
+import models.Party;
+import models.UserLogin;
+import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -62,11 +66,20 @@ public class DepartOrderController extends Controller {
 
 		renderJson(map);
 	}
-
+//添加编辑
 	public void add() {
-		setAttr("saveOK", false);
-		if (LoginUserController.isAuthenticated(this))
-			render("/yh/departOrder/allTransferOrderList.html");
+		if(getPara()==null){
+			if (LoginUserController.isAuthenticated(this))
+				render("/yh/departOrder/allTransferOrderList.html");
+		}else{
+			String name = (String) currentUser.getPrincipal();
+			setAttr("type","one");
+			setAttr("localArr","5,4,2");
+			setAttr("creat",name);
+			if (LoginUserController.isAuthenticated(this))
+				render("departOrder/editTransferOrder.html");
+		}
+		
 	}
 
 	public void createTransferOrderList() {
@@ -104,8 +117,10 @@ public class DepartOrderController extends Controller {
 		}else{
 			setAttr("type","one");
 		}
-		
+		String name = (String) currentUser.getPrincipal();
+		setAttr("creat",name);
 		setAttr("localArr",list);
+		if (LoginUserController.isAuthenticated(this))
 		render("departOrder/editTransferOrder.html");
 	}
 	//editTransferOrder 初始数据
@@ -159,11 +174,6 @@ public class DepartOrderController extends Controller {
 	 public String creat_order_no() {
 	    	String order_no = null;
 	    	String the_order_no=null;
-	        //TransferOrder transferOrder = new TransferOrder();
-	        /*String name = (String) currentUser.getPrincipal();
-	        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-	        setAttr("create_by", users.get(0).get("id"));*/
-
 	    	DepartOrder order = DepartOrder.dao.findFirst("select * from DEPART_ORDER where  COMBINE_TYPE= '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by DEPART_no desc limit 0,1");
 	        if (order != null) {
 	            String num = order.get("DEPART_no");
@@ -188,21 +198,57 @@ public class DepartOrderController extends Controller {
 	        }
 	        return the_order_no;
 	 }
-	//发车单保存id bigint auto_increment PRIMARY KEY,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp TIMESTAMP,combine_type varchar(255),"
-    //+ "car_no varchar(255),car_type varchar(255),notify_party_id bigint,FOREIGN KEY(notify_party_id) REFERENCES party(id));");
+	 
+	 // 查找客户
+	    public void searchCustomer() {
+	        String input = getPara("input");
+	        List<Record> locationList = Collections.EMPTY_LIST;
+	        if (input.trim().length() > 0) {
+	            locationList = Db
+	                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'NOTIFY_PARTY' and (company_name like '%"
+	                            + input
+	                            + "%' or contact_person like '%"
+	                            + input
+	                            + "%' or email like '%"
+	                            + input
+	                            + "%' or mobile like '%"
+	                            + input
+	                            + "%' or phone like '%"
+	                            + input
+	                            + "%' or address like '%"
+	                            + input
+	                            + "%' or postal_code like '%"
+	                            + input
+	                            + "%') limit 0,10");
+	        }
+	        renderJson(locationList);
+	    }
 
+	//发车单保存
 	public void savedepartOrder(){
 		String	depart_no=creat_order_no();
 		getPara("remark");
+		String name = (String) currentUser.getPrincipal();
+        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
+       String creat_id=users.get("id").toString();
 		String order_id2=this.getPara("orderid");
 		String[] order_id=this.getPara("orderid").split(",");
+		String party_id=getPara("driverid");
 		 Date createDate = Calendar.getInstance().getTime();
-		DepartOrder de=new DepartOrder();
-		de.set("CREATE_BY",Integer.parseInt(getPara("create"))).set("create_stamp", createDate)
-		.set("combine_type", "DEPART").set("car_no", getPara("car_no"))
-		.set("car_type", getPara("cartype")).set("depart_no",depart_no )
-		.set("notify_party_id", getPara("driver")).set("car_size",getPara("carsize")).save();
-		
+			if("".equals(getPara("driverid"))){
+				Contact con=new Contact();
+				con.set("phone", getPara("phone")).set("CONTACT_PERSON", getPara("customerMessage")).save();
+				Long con_id=con.get("id");
+				Party pt=new Party();
+				pt.set("PARTY_TYPE", "NOTIFY_PARTY").set("CONTACT_ID", con_id).save();
+				party_id=pt.get("id").toString();
+			}
+				DepartOrder de=new DepartOrder();
+				de.set("CREATE_BY",Integer.parseInt(creat_id)).set("create_stamp", createDate)
+				.set("combine_type", "DEPART").set("car_no", getPara("car_no"))
+				.set("car_type", getPara("cartype")).set("depart_no",depart_no )
+				.set("notify_party_id",Integer.parseInt(party_id)).set("car_size",getPara("carsize")).save();
+					
 		DepartOrder der=DepartOrder.dao.findFirst("SELECT * FROM DEPART_ORDER where DEPART_NO  ='"+depart_no+"'");
 		int de_id=Integer.parseInt(der.get("id").toString());
 		
@@ -216,8 +262,36 @@ public class DepartOrderController extends Controller {
 		}else{
 			setAttr("type","one");
 		}
+		setAttr("creat",name);
 		setAttr("localArr",order_id2);
+		if (LoginUserController.isAuthenticated(this))
 		render("departOrder/editTransferOrder.html");
+	}
+	//货品明细
+	public void itemDetailList(){
+		String item_id = getPara("item_id");		
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+		        && getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+			        + getPara("iDisplayLength");
+		}
+
+		String sqlTotal = "select count(1) total from TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID ="+item_id+"";
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		String sql = "SELECT * FROM TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID ="+item_id+""+sLimit;
+		List<Record> itemdetail = Db.find(sql);
+		Map Map = new HashMap();
+		Map.put("sEcho", pageIndex);
+		Map.put("iTotalRecords", rec.getLong("total"));
+		Map.put("iTotalDisplayRecords", rec.getLong("total"));
+
+		Map.put("aaData", itemdetail);
+
+		renderJson(Map);
 	}
 	
 }
