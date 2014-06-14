@@ -541,7 +541,8 @@ public class DeliveryController extends Controller {
         DeliveryOrder deliveryOrder = null;
         String notifyId = getPara("notify_id");
         // String itemId = getPara("item_id");
-
+        String idlist3 = getPara("localArr");
+        System.out.println(idlist3);
         String[] idlist = getPara("localArr").split(",");
         String[] idlist2 = getPara("localArr2").split(",");
         System.out.println(idlist.length);
@@ -592,7 +593,7 @@ public class DeliveryController extends Controller {
                     .set("CREATE_STAMP", createDate).set("Status", "新建");
             deliveryOrder.save();
 
-            if (idlist.length > 1) {
+            if (idlist3 != null || !"".equals(idlist3)) {
                 for (int i = 0; i < idlist.length; i++) {
                     DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
                     deliveryOrderItem
