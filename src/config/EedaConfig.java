@@ -4,6 +4,7 @@ import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
 import models.Account;
+import models.Category;
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.DepartOrder;
@@ -183,6 +184,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("privileges", Privilege.class);
         arp.addMapping("route", Route.class);
         arp.addMapping("product", Product.class);
+        arp.addMapping("category", Category.class);
         arp.addMapping("warehouse", Warehouse.class);
         arp.addMapping("contract_item", ContractItem.class);
         arp.addMapping("order_status", OrderStatus.class);

@@ -6,10 +6,10 @@
 	<h2>产品信息</h2>
 	<div class="col-lg-4">
 		<h4>客户信息</h4>
+		<input type="hidden" id="customerId" />
+		<input type="hidden" id="categoryId" />
 	    <div class="form-group">
 	        <!--label>客户名称</label-->
-	        <input id="customerId" type="hidden" />
-	        <input id="productCategory" type="hidden" />
 	        <input id="customerMessage" class="form-control" placeholder="选择客户" type="text" name="customerMessage" />
 	        <ul id='customerList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 17%; left: 2%;">
 			</ul>
@@ -18,9 +18,9 @@
 	    	<div class="tree " style="clear: both;">
 			    <ul>
 			        <li id="productTreeLi">
-			            <span id="parentTree"><i class="icon-folder-open"></i></span> 
-			            <ul id="productTreeUl"></ul>
-			            
+			            <span id="parentTree"><i class="fa fa-folder-open"></i></span>
+			            <button class="btn btn-primary" data-toggle="modal" data-target="#editCategory">添加类别</button>
+			            <ul id="productTreeUl"></ul>			            
 			        </li>
 			    </ul>
 			</div>
@@ -39,7 +39,75 @@
 					  添加产品 
 					</button>
 				</div>
-			</h1>
+			</h1>			
+    
+		    <!-- 模态框 -->
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			  <div class="modal-dialog">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			        <h4 class="modal-title" id="myModalLabel">新增产品</h4>
+			      </div>
+			      <div class="modal-body">
+			      	<form id="productForm" action="">
+	      				<input id="hiddenCategoryId" type="hidden" name="categoryId" /> 
+	      				<input id="hiddenProductId" type="hidden" name="id" /> 
+			      		<div class="form-group ">
+						<label class="control-label" for="inputSuccess">型号</label> <input
+							id="item_no" class="form-control" type="text"
+							name="item_no">
+						</div>
+						<div class="form-group ">
+						<label class="control-label" for="inputSuccess">产品名称</label> <input
+							id="item_name" class="form-control" type="text"
+							name="item_name">
+						</div>
+						<div class="form-group ">
+						<label class="control-label" for="inputSuccess">产品长度</label> <input
+							id="size" class="form-control" type="text"
+							name="size">
+						</div>
+						<div class="form-group ">
+						<label class="control-label" for="inputSuccess">产品宽度</label> <input
+							id="width" class="form-control" type="text"
+							name="width">
+						</div>
+						<div class="form-group ">
+						<label class="control-label" for="inputSuccess">产品单位</label> <input
+							id="unit" class="form-control" type="text"
+							name="unit">
+						</div>
+						<div class="form-group ">
+						<label class="control-label" for="inputSuccess">产品体积(m³)</label> <input
+							id="volume" class="form-control" type="text"
+							name="volume">
+						</div>
+						<div class="form-group ">
+						<label class="control-label" for="inputSuccess">产品重量(kg)</label> <input
+							id="weight" class="form-control" type="text"
+							name="weight">
+						</div>
+						<div class="form-group ">
+							<input id="hideOfficeId" type="hidden" value="${warehouse.office_id!''}" />   
+                           	<label class="control-label" for="inputSuccess">请选择类别</label>
+                          	<select id="categorySelect" class="form-control" name="categorySelect"></select> 
+						</div>
+						<div class="form-group ">
+						<label class="control-label" for="inputSuccess">产品备注</label> <input
+							id="item_desc" class="form-control" type="text"
+							name="item_desc">
+						</div>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				        <button id="productFormBtn" type="button" class="btn btn-primary">保存</button>
+				      </div>
+					</form>
+			    </div><!-- /.modal-content -->
+			 </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+	
 			<div class="panel panel-default">
 					<div class="panel-heading">
 	                 	<i class="fa fa-list fa-fw"></i>产品列表	    
@@ -56,7 +124,6 @@
 									<th>单位</th>
 									<th>体积</th>
 									<th>重量</th>
-									<th>产品类别</th>
 									<th>备注</th>
 									<th></th>
 								</tr>
@@ -75,70 +142,27 @@
     <!--end of col8 -->
 </div>
 <!--end of row -->   
-    
-    
     <!-- 模态框 -->
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="editCategory" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	        <h4 class="modal-title" id="myModalLabel">新增产品</h4>
+	        <h4 class="modal-title" id="myModalLabel">新增类别</h4>
 	      </div>
 	      <div class="modal-body">
-	      	<form id="productForm" action="">
-	      		<input id="productCustomerId" type="text" name="customerId" /> 
-	      		<input id="productId" type="hidden" name="id"/> 
+	      	<form id="categoryForm" action="">
+	      		<input id="hiddenCustomerId" type="hidden" name="customerId" /> 
+	      		<input id="hiddenParentId" type="text" name="parentId" /> 
 	      		<div class="form-group ">
-				<label class="control-label" for="inputSuccess">型号</label> <input
-					id="item_no" class="form-control" type="text"
-					name="item_no">
+				<label class="control-label" for="inputSuccess">类别名称</label> <input
+					id="name" class="form-control" type="text"
+					name="name">
 				</div>
-				<div class="form-group ">
-				<label class="control-label" for="inputSuccess">产品名称</label> <input
-					id="item_name" class="form-control" type="text"
-					name="item_name">
-				</div>
-				<div class="form-group ">
-				<label class="control-label" for="inputSuccess">产品长度</label> <input
-					id="size" class="form-control" type="text"
-					name="size">
-				</div>
-				<div class="form-group ">
-				<label class="control-label" for="inputSuccess">产品宽度</label> <input
-					id="width" class="form-control" type="text"
-					name="width">
-				</div>
-				<div class="form-group ">
-				<label class="control-label" for="inputSuccess">产品单位</label> <input
-					id="unit" class="form-control" type="text"
-					name="unit">
-				</div>
-				<div class="form-group ">
-				<label class="control-label" for="inputSuccess">产品体积(m³)</label> <input
-					id="volume" class="form-control" type="text"
-					name="volume">
-				</div>
-				<div class="form-group ">
-				<label class="control-label" for="inputSuccess">产品重量(kg)</label> <input
-					id="weight" class="form-control" type="text"
-					name="weight">
-				</div>
-				<div class="form-group ">
-				<label class="control-label" for="inputSuccess">产品类别</label> <input
-					id="category" class="form-control" type="text"
-					name="category">
-				</div>
-				<div class="form-group ">
-				<label class="control-label" for="inputSuccess">产品备注</label> <input
-					id="item_desc" class="form-control" type="text"
-					name="item_desc">
-				</div>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-		        <button id="productFormBtn" type="button" class="btn btn-primary">保存</button>
-		      </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			        <button id="categoryFormBtn" type="button" class="btn btn-primary">保存</button>
+			    </div>
 			</form>
 	    </div><!-- /.modal-content -->
 	 </div><!-- /.modal-dialog -->

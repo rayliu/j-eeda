@@ -68,10 +68,13 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists party_attribute(id bigint auto_increment PRIMARY KEY, party_id bigint, attr_name varchar(60), attr_value VARCHAR(255), create_date TIMESTAMP, creator varchar(50), FOREIGN KEY(party_id) REFERENCES party(id));");
             stmt.executeUpdate("create table if not exists contact(id bigint auto_increment PRIMARY KEY, company_name varchar(100),sp_type varchar(60),abbr varchar(60), contact_person varchar(100),location varchar(255),introduction varchar(255),email varchar(100), mobile varchar(100), phone varchar(100), address VARCHAR(255), city varchar(100), postal_code varchar(60),"
                     + " create_date TIMESTAMP, Last_updated_stamp TIMESTAMP);");
+            
+            // category 类别
+            stmt.executeUpdate("create table if not exists category(id bigint auto_increment PRIMARY KEY,name varchar(255),parent_id bigint,FOREIGN KEY(parent_id) REFERENCES category(id),customer_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id));");
 
             // product 产品
-            stmt.executeUpdate("create table if not exists product(id bigint auto_increment PRIMARY KEY,item_name varchar(50),item_no varchar(255),size double,width double,unit varchar(255),volume double,weight double,item_desc varchar(5120),category varchar(255),customer_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id));");
-
+            stmt.executeUpdate("create table if not exists product(id bigint auto_increment PRIMARY KEY,item_name varchar(50),item_no varchar(255),size double,width double,unit varchar(255),volume double,weight double,item_desc varchar(5120),category_id bigint,FOREIGN KEY(category_id) REFERENCES category(id));");
+          
             // warehouse 仓库
             stmt.executeUpdate("create table if not exists warehouse(id bigint auto_increment PRIMARY KEY,warehouse_name varchar(50),warehouse_address varchar(255),warehouse_area double,path varchar(255),warehouse_type varchar(255),warehouse_desc VARCHAR(5120),sp_id bigint,notify_party_id bigint,office_id bigint,FOREIGN KEY(sp_id) REFERENCES party(id),FOREIGN KEY(notify_party_id) REFERENCES party(id),FOREIGN KEY(office_id) REFERENCES office(id));");
 
@@ -526,8 +529,8 @@ public class DataInitUtil {
             stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,notify_party_id,sp_id,WAREHOUSE_TYPE) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse');");
 
             // 运输单
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address,WAREHOUSE_ID,ROUTE_FROM,ROUTE_TO,office_id,order_type) values('ATM', '8', '9', '2014042600001', '3', 'routeSP', '5', '新建', '2014-04-20 16:33:35.1', 'delivery','1','珠海','2','110102','440402','2','salesOrder');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address,WAREHOUSE_ID,ROUTE_FROM,ROUTE_TO,office_id,order_type) values('cargo', '7', '10', '2014042600002', '4', 'pickupSP', '4', '已入库', '2014-04-16 16:40:35.1', 'gateIn','2','中山','2','110105','442000','3','salesOrder');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address,WAREHOUSE_ID,ROUTE_FROM,ROUTE_TO,office_id,order_type) values('ATM', '8', '9', 'YS2014042600001', '3', 'routeSP', '5', '新建', '2014-04-20 16:33:35.1', 'delivery','1','珠海','2','110102','440402','2','salesOrder');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,route_id,address,WAREHOUSE_ID,ROUTE_FROM,ROUTE_TO,office_id,order_type) values('cargo', '7', '10', 'YS2014042600002', '4', 'pickupSP', '4', '已入库', '2014-04-16 16:40:35.1', 'gateIn','2','中山','2','110105','442000','3','salesOrder');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,ROUTE_FROM,ROUTE_TO,office_id,order_type) values('cargo', '7', '9', 'YS2014042600003', '4', 'pickupSP', '5', '已入库', '2014-04-28 16:46:35.1', 'gateIn','广州','110106','440403','2','salesOrder');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,ROUTE_FROM,ROUTE_TO,office_id,order_type) values('cargo', '8', '10', 'YS2014042600004', '3', 'own', '4', '已发车', '2014-04-25 16:35:35.1', 'gateIn','深圳','110107','440404','1','salesOrder');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,ROUTE_FROM,ROUTE_TO,office_id,order_type) values('ATM', '7', '10', 'YS2014042600005', '3', 'own', '5', '已入库', '2014-04-22 16:28:35.1', 'delivery','东莞','110108','440507','1','arrangementOrder');");
@@ -647,9 +650,13 @@ public class DataInitUtil {
                     + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
                     + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
 
+            // 类别
+            stmt.execute("insert into category(name,customer_id) values('ATM', '4');");
+            stmt.execute("insert into category(name,customer_id) values('普通货品', '4');");
+            
             // 产品
-            stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('ATM', '2014042600001','1','5','7','9','ATM', '这是一台ATM', '4');");
-            stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category,item_desc,customer_id) values('普通货品', '2014042600002','1','5','7','9','普通货品', '这是普通货品', '4');");
+            stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category_id,item_desc) values('ATM', '2014042600001','1','5','7','9','1', '这是一台ATM');");
+            stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category_id,item_desc) values('普通货品', '2014042600002','1','5','7','9','2', '这是普通货品');");
 
             // 发车单
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,notify_party_id) values('FC2014061000001', '2014-06-10 10:35:35.1','DEPART','粤A876596','平板货车','10');");

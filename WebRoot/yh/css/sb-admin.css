@@ -362,4 +362,8 @@ label.error {
 .bootstrap-datetimepicker-widget ul{
     padding: 0;
 }
+
+.tree .edit_icons{
+	display: inline;
+}
 /* ray added */

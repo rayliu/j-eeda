@@ -1,4 +1,4 @@
-
+﻿
 $(document).ready(function() {
 	$('#menu_transfer').addClass('active').find('ul').addClass('in');
     //from表单验证

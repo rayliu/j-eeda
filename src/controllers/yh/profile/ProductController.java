@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Category;
 import models.Product;
 
 import org.apache.log4j.Logger;
@@ -24,33 +25,56 @@ public class ProductController extends Controller{
 	}
 
 	public void list() {
-		/*
-		 * Paging
-		 */
 		String sLimit = "";
-		String pageIndex = getPara("sEcho");
-		if (getPara("iDisplayStart") != null
-				&& getPara("iDisplayLength") != null) {
-			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-					+ getPara("iDisplayLength");
+		Map productListMap = null;
+		String categoryId = getPara("categoryId");
+		if(categoryId == null || "".equals(categoryId)){
+			String pageIndex = getPara("sEcho");
+			if (getPara("iDisplayStart") != null
+					&& getPara("iDisplayLength") != null) {
+				sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+						+ getPara("iDisplayLength");
+			}
+	
+			String category = getPara("category");
+			String sqlTotal = "select count(1) total from product";
+			Record rec = Db.findFirst(sqlTotal);
+			logger.debug("total records:" + rec.getLong("total"));
+	
+			String sql = "select * from product";
+	
+			List<Record> products = Db.find(sql);
+	
+			productListMap = new HashMap();
+			productListMap.put("sEcho", pageIndex);
+			productListMap.put("iTotalRecords", rec.getLong("total"));
+			productListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+	
+			productListMap.put("aaData", products);
+		}else{
+			String pageIndex = getPara("sEcho");
+			if (getPara("iDisplayStart") != null
+					&& getPara("iDisplayLength") != null) {
+				sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+						+ getPara("iDisplayLength");
+			}
+	
+			String category = getPara("category");
+			String sqlTotal = "select count(1) total from product where category_id = " + categoryId;
+			Record rec = Db.findFirst(sqlTotal);
+			logger.debug("total records:" + rec.getLong("total"));
+	
+			String sql = "select * from product where category_id = " + categoryId;
+	
+			List<Record> products = Db.find(sql);
+	
+			productListMap = new HashMap();
+			productListMap.put("sEcho", pageIndex);
+			productListMap.put("iTotalRecords", rec.getLong("total"));
+			productListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+	
+			productListMap.put("aaData", products);
 		}
-
-		String category = getPara("category");
-		String sqlTotal = "select count(1) total from product where category = '"+category+"'";
-		Record rec = Db.findFirst(sqlTotal);
-		logger.debug("total records:" + rec.getLong("total"));
-
-		String sql = "select * from product where category = '"+category+"'";
-
-		List<Record> products = Db.find(sql);
-
-		Map productListMap = new HashMap();
-		productListMap.put("sEcho", pageIndex);
-		productListMap.put("iTotalRecords", rec.getLong("total"));
-		productListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
-		productListMap.put("aaData", products);
-
 		renderJson(productListMap);
 	}
 
@@ -71,6 +95,7 @@ public class ProductController extends Controller{
 
 	public void delete() {
 		Product product = Product.dao.findById(getPara("productId"));
+		product.set("category_id", null);
 		product.delete();
         renderJson("{\"success\":true}");
 	}
@@ -85,25 +110,23 @@ public class ProductController extends Controller{
 			String width = getPara("width");
 			String volume = getPara("volume");
 			String weight = getPara("weight");
-
-			if(!size.isEmpty()){
-				product.set("size", size);
-			}
-			if(!width.isEmpty()){
-				product.set("width", width);
-			}
-			if(!volume.isEmpty()){
-				product.set("volume", volume);
-			}
-			if(!weight.isEmpty()){
-				product.set("weight", weight);
-			}
 			product.set("item_name", getPara("item_name"))
 			       .set("item_no", getPara("item_no"))
 	               .set("item_desc", getPara("item_desc"))
-				   .set("unit", getPara("unit"))
-				   .set("category", getPara("category"));
-			product.set("customer_id", getPara("customerId"));
+				   .set("unit", getPara("unit"))				   
+				   .set("category_id", getPara("categorySelect"));
+			if(size != null && !"".equals(size)){
+				product.set("size", size);
+			}
+			if(width != null && !"".equals(weight)){
+				product.set("width", width);
+			}
+			if(volume != null && !"".equals(volume)){
+				product.set("volume", volume);
+			}
+			if(weight != null && !"".equals(weight)){
+				product.set("weight", weight);
+			}
 	        product.update();
 		} else {
 			product = new Product();
@@ -120,20 +143,19 @@ public class ProductController extends Controller{
 				   .set("item_no", itemNo)
 			       .set("item_desc", itemDesc)
 			       .set("unit", getPara("unit"))
-				   .set("category", getPara("category"));
-			if(!size.isEmpty()){
+				   .set("category_id", getPara("categorySelect"));
+			if(size != null && !"".equals(size)){
 				product.set("size", size);
 			}
-			if(!width.isEmpty()){
+			if(width != null && !"".equals(weight)){
 				product.set("width", width);
 			}
-			if(!volume.isEmpty()){
+			if(volume != null && !"".equals(volume)){
 				product.set("volume", volume);
 			}
-			if(!weight.isEmpty()){
+			if(weight != null && !"".equals(weight)){
 				product.set("weight", weight);
 			}
-			product.set("customer_id", getPara("customerId"));
 	        product.save();
 		}
 		renderJson(product);;
@@ -142,13 +164,30 @@ public class ProductController extends Controller{
 	// 查出所有的类别
 	public void searchAllCategory(){
 		String customerId = getPara("customerId");
-		List<Product> products = Product.dao.find("select category from product where customer_id ="+customerId+" group by category");
-		renderJson(products);
+		List<Category> categories = Category.dao.find("select * from category where customer_id ="+customerId+" group by name");
+		renderJson(categories);
 	}
 	
 	// 查找产品对象
 	public void getProduct(){
 		Product product = Product.dao.findById(getPara("productId"));
 		renderJson(product);
+	}
+	
+	// 保存类别
+	public void saveCategory(){
+		String categoryId = getPara("categoryId");
+		String parentId = getPara("parentId");
+		Category category = null;
+		if(categoryId == null || "".equals(categoryId)){
+			category = new Category();
+			category.set("name", getPara("name"));
+			category.set("customer_id", getPara("customerId"));
+			if(parentId != null && !"".equals(parentId)){
+				category.set("parent_id", getPara("parentId"));				
+			}
+			category.save();
+		}
+		renderJson(category);
 	}
 }
