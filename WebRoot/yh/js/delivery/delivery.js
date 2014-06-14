@@ -53,6 +53,12 @@ $(document).ready(function() {
 		        },
 		        "sAjaxSource": sAjaxSource,
 		        "aoColumns": [
+					{"mDataProp":"ORDER_NO",
+						 "sWidth": "12%",
+							 },
+					{"mDataProp":"CUSTOMER",
+							 
+								 },
 		            {"mDataProp":"ITEM_NO"},  
 		            {"mDataProp":"SERIAL_NO"},
 		            {"mDataProp":"ITEM_NAME"},
@@ -109,7 +115,8 @@ $(document).ready(function() {
 		  		            		}else{
 		  		            			return "源鸿自提";
 		  		            		}}},
-		  		            { "mDataProp": "WAREHOUSE_NAME",},   		
+		  		            { "mDataProp": "WAREHOUSE_NAME",},
+		  		            {"mDataProp":"COMPANY_NAME"},
 		  		            { 
 		  		                "mDataProp": null, 
 		  		                "sWidth": "8%",                
@@ -207,7 +214,12 @@ $(document).ready(function() {
 						       return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
 						    }
 						},          
-			            {"mDataProp":"SERIAL_NO"},
+			            {"mDataProp":null,
+							"sWidth": "10%", 
+							"fnRender": function(obj) {
+							       return  "<a class='serId' style='color:#464D51;text-decoration:none;' code='"+obj.aData.TID+"'>"+obj.aData.SERIAL_NO+ "</a>";
+							    }
+			            	},
 			            {"mDataProp":"ORDER_NO"},
 			            {"mDataProp":"STATUS"},        	
 			            {"mDataProp":"CARGO_NATURE"},
@@ -221,10 +233,12 @@ $(document).ready(function() {
 			            			return "源鸿自提";
 			            		}}},
 			            {"mDataProp":"WAREHOUSE_NAME"},
-			            {"mDataProp":"CUSTOMER_ID"},
+			            {"mDataProp":"COMPANY_NAME"}
 			        ]      
 			    });	
 			//添加运输单序列号
+			/* $("#eeda-table2").on('click', '.creat', function(e){
+				 var id = $(this).attr('code');*/
 				$("#saveDelivery").click(function(e){
 					 e.preventDefault();
 				    	var trArr=[];
@@ -233,7 +247,8 @@ $(document).ready(function() {
 						var the=this;
 			        	$("input:checked",this).each(function(){
 			        		trArr.push($(this).val()); 
-			        		ser.push($("td:eq(1)",the).html());
+			        		//ser.push($("td:eq(1)",the).html());
+			        		ser.push($(".serId",the).attr('code'));
 			        	});
 			        	}); 
 					

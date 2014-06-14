@@ -281,7 +281,7 @@ public class DeliveryController extends Controller {
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "SELECT  t1.seRIAL_NO ,t2.*,w.wAREHOUSE_NAME,c.company_name FROM TRANSFER_ORDER_ITEM_DETAIL t1 "
+            String sql = "SELECT  t1.seRIAL_NO,t1.id as tid,t2.*,w.wAREHOUSE_NAME,c.company_name FROM TRANSFER_ORDER_ITEM_DETAIL t1 "
                     + "left join transfer_order t2 on t1.order_id=t2.id "
                     + "left join warehouse w on t2.warehouse_id = w.id "
                     + "left join party p on t2.customer_id = p.id "
@@ -465,27 +465,37 @@ public class DeliveryController extends Controller {
                 + " where tof.ORDER_ID in(" + idlist + ")";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-
-        String sql = "SELECT tof.* ,or.ORDER_NO as order_no,c.COMPANY_NAME as customer  FROM TRANSFER_ORDER_ITEM tof"
-                + " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
-                + "left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id)"
-                + " where tof.ORDER_ID in("
-                + idlist
-                + ")  order by c.id"
-                + sLimit;
-        List<Record> departOrderitem = Db.find(sql);
-        for (int i = 0; i < departOrderitem.size(); i++) {
-            String itemname = departOrderitem.get(i).get("item_name");
-            if ("ATM".equals(itemname)) {
-                Long itemid = departOrderitem.get(i).get("id");
-                String sql2 = "SELECT SERIAL_NO  FROM TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID ="
-                        + itemid;
-                List<Record> itemserial_no = Db.find(sql2);
-                String itemno = itemserial_no.get(0).get("SERIAL_NO");
-                departOrderitem.get(i).set("serial_no", itemno);
-            } else {
-                departOrderitem.get(i).set("serial_no", "无");
+        String sql = "";
+        List<Record> departOrderitem = null;
+        if (idlist2 == null || idlist2.equals("")) {
+            sql = "SELECT tof.* ,or.ORDER_NO as order_no,c.COMPANY_NAME as customer  FROM TRANSFER_ORDER_ITEM tof "
+                    + " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
+                    + "left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id) "
+                    + " where tof.ORDER_ID in("
+                    + idlist
+                    + ")  order by c.id"
+                    + sLimit;
+            departOrderitem = Db.find(sql);
+            for (int i = 0; i < departOrderitem.size(); i++) {
+                String itemname = departOrderitem.get(i).get("item_name");
+                if ("ATM".equals(itemname)) {
+                    Long itemid = departOrderitem.get(i).get("id");
+                    String sql2 = "SELECT SERIAL_NO  FROM TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID ="
+                            + itemid;
+                    List<Record> itemserial_no = Db.find(sql2);
+                    String itemno = itemserial_no.get(0).get("SERIAL_NO");
+                    departOrderitem.get(i).set("serial_no", itemno);
+                } else {
+                    departOrderitem.get(i).set("serial_no", "无");
+                }
             }
+        } else {
+            sql = "SELECT tof.* ,or.ORDER_NO as order_no,c.COMPANY_NAME as customer,toid.serial_no as serial_no FROM TRANSFER_ORDER_ITEM tof "
+                    + " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
+                    + "left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id) "
+                    + "left join transfer_order_item_detail toid on toid.ITEM_ID =tof.id "
+                    + " where toid.id in(" + idlist2 + ")" + sLimit;
+            departOrderitem = Db.find(sql);
         }
 
         Map Map = new HashMap();
@@ -502,8 +512,11 @@ public class DeliveryController extends Controller {
         String deliveryid = getPara("delivery_id");
         DeliveryOrder deliveryOrder = null;
         String notifyId = getPara("notify_id");
-        String itemId = getPara("item_id");
-        System.out.println(itemId);
+        // String itemId = getPara("item_id");
+
+        String[] idlist = getPara("localArr").split(",");
+        String[] idlist2 = getPara("localArr2").split(",");
+        System.out.println(idlist.length);
 
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao
@@ -542,16 +555,29 @@ public class DeliveryController extends Controller {
             String num = order.get("order_no");
             String order_no = String.valueOf((Long.parseLong(num) + 1));
 
-            deliveryOrder.set("Order_no", order_no)
-                    .set("Transfer_order_id", getPara("tranferid"))
-                    .set("Customer_id", getPara("customer_id"))
+            deliveryOrder
+                    .set("Order_no", order_no)
+                    // .set("Transfer_order_id", getPara("tranferid"))
+                    // .set("Customer_id", getPara("customer_id"))
                     .set("Sp_id", getPara("cid"))
                     .set("Notify_party_id", party.get("id"))
                     .set("CREATE_STAMP", createDate).set("Status", "新建");
             deliveryOrder.save();
-            if (!"".equals(itemId)) {
-                DeliveryOrderItem.dao.findById(itemId)
-                        .set("delivery_id", deliveryOrder.get("id")).update();
+
+            if (idlist.length > 1) {
+                for (int i = 0; i < idlist.length; i++) {
+                    DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
+                    deliveryOrderItem
+                            .set("DELIVERY_ID", deliveryOrder.get("id"))
+                            .set("TRANSFER_ORDER_ID", idlist[i])
+                            .set("TRANSFER_ITEM_ID", idlist2[i]);
+                    deliveryOrderItem.save();
+                }
+            } else {
+                DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
+                deliveryOrderItem.set("DELIVERY_ID", deliveryOrder.get("id"))
+                        .set("TRANSFER_ORDER_ID", getPara("tranferid"));
+                deliveryOrderItem.save();
             }
             saveDeliveryOrderMilestone(deliveryOrder);
         } else {

@@ -101,6 +101,7 @@ $(document).ready(function() {
 		            }                         
 		        ]
 		     });
+		//计件编辑
 		 $("#dataTables-example").on('click', '.contractRouteEdit', function(){
 			  var contractId = $("#routeContractId").val();
 			 	var id = $(this).attr('code');
@@ -118,20 +119,58 @@ $(document).ready(function() {
                 	 $('#price').val(data[0].AMOUNT);
                 	 $('#routeItemId').val(data[0].ID);
                 	 
-                	 $("input[name='priceType']").each(function(){
-	                	 if($(this).val() == data[0].PRICETYPE){
-	                		 $(this).attr("checked",true);
-	              		}else{
-	              			$(this).attr("checked",false);
-	              		}
-	                	 return;
-                	 });
                  }else{
                      alert('取消失败');
                  }
              },'json');
 		  });
 			
+		//整车编辑
+		 $("#dataTables-example2").on('click', '.contractRouteEdit', function(){
+			  var contractId = $("#routeContractId").val();
+			 	var id = $(this).attr('code');
+			 $.post('/yh/customerContract/contractRouteEdit/'+id,{contractId:contractId},function(data){
+                 //保存成功后，刷新列表
+                 console.log(data);
+                 if(data[0] !=null){
+                	
+                	 $('#myModal').modal('show');
+                	 $('#routeId').val(data[0].ID);
+                	 $('#from_id').val(data[0].FROM_ID);
+                	 $('#fromName').val(data[0].LOCATION_FROM);
+                	 $('#to_id').val(data[0].TO_ID);
+                	 $('#toName').val(data[0].LOCATION_TO);
+                	 $('#price').val(data[0].AMOUNT);
+                	 $('#routeItemId').val(data[0].ID);
+                	
+                 }else{
+                     alert('取消失败');
+                 }
+             },'json');
+		  });
+		//零担编辑
+		 $("#dataTables-example3").on('click', '.contractRouteEdit', function(){
+			  var contractId = $("#routeContractId").val();
+			 	var id = $(this).attr('code');
+			 $.post('/yh/customerContract/contractRouteEdit/'+id,{contractId:contractId},function(data){
+                 //保存成功后，刷新列表
+                 console.log(data);
+                 if(data[0] !=null){
+                	
+                	 $('#myModal').modal('show');
+                	 $('#routeId').val(data[0].ID);
+                	 $('#from_id').val(data[0].FROM_ID);
+                	 $('#fromName').val(data[0].LOCATION_FROM);
+                	 $('#to_id').val(data[0].TO_ID);
+                	 $('#toName').val(data[0].LOCATION_TO);
+                	 $('#price').val(data[0].AMOUNT);
+                	 $('#routeItemId').val(data[0].ID);
+                	
+                 }else{
+                     alert('取消失败');
+                 }
+             },'json');
+		  });
 		 //计件删除
 		 $("#dataTables-example").on('click', '.routeDelete', function(){
 			 var id = $(this).attr('code2');
