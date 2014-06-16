@@ -30,7 +30,7 @@ $(document).ready(function() {
         "aoColumns": [
             { 
                 "mDataProp": null, 
-                "sWidth": "15%",
+                "sWidth": "95px",
                 "fnRender": function(obj) {                    
                     return  "<a class='btn btn-info send-mail' href='#' id='"+obj.aData.ID+"'>"+
                                 "<i class='icon-edit icon-white'></i>"+
@@ -38,25 +38,34 @@ $(document).ready(function() {
                             "</a>";
                 }
             }, 
-            {"mDataProp": "MAIL_SENT_TIME"},
-            {"mDataProp": null}, 
+            {"mDataProp": "MAIL_SENT_TIME", "sWidth": "95px"},
+            {"mDataProp": null, "sWidth": "55px"}, 
+            {"mDataProp":"MAINTENANCE_OFFICE", "sWidth": "55px"},
             {"mDataProp":"PROVIDER_NAME",
+            	"sWidth": "20%",
                 "fnRender": function(obj) {                    
                     return  "<a href='/sp/edit/"+obj.aData.ID+"' id='"+obj.aData.ID+"'>"+
                                 obj.aData.PROVIDER_NAME+                                
-                            "</a> "+
+                            "</a> <br>"+
                             "<a href='http://www.baidu.com/#wd="+obj.aData.PROVIDER_NAME+"' class='btn btn-info' target='_blank' >查找</a>";
                 }
             },
-            {"mDataProp":"MAINTENANCE_OFFICE"},
-            {"mDataProp":"CONTACT"},        	
-        	{"mDataProp":"EMAIL", "sWidth": "25px"},
-            {"mDataProp":"PHONE_NO"},
+            {"mDataProp":"CONTACT",
+            	"sWidth": "30%",
+            	"fnRender": function(obj) {                    
+                    return  "联系人："+obj.aData.CONTACT+"<br>"+
+                    		"电话："+obj.aData.PHONE_NO+ "<br>"+
+                    		"传真："+obj.aData.FAX_NO+ "<br>"+
+                    		"地址："+obj.aData.ADDRESS1;
+                }
+            },        	
+        	{"mDataProp":"EMAIL", "sWidth": "20%"}
+            /*{"mDataProp":"PHONE_NO"},
             {"mDataProp":"FAX_NO"},
             {"mDataProp":"ADDRESS1"},
             {"mDataProp":"COUNTRY"},        
         	{"mDataProp":"PROVINCE"},
-            {"mDataProp":"CITY", "sWidth": "10%"}            
+            {"mDataProp":"CITY", "sWidth": "10%"}*/
         ]
     });
 
@@ -75,41 +84,7 @@ $(document).ready(function() {
         window.location.href = url; 
     });
     
-    var buildQueryParas=function(){
-        return '?status='+$("#status").val()
-            +'&type='+$("#type").val()
-            +'&region='+$("#region").val()
-            +'&area_min='+$('#area_min').val()
-            +'&area_max='+$('#area_max').val()
-            +'&rent_min='+$('#rent_min').val()
-            +'&rent_max='+$('#rent_max').val()
-            +'&total_min='+$('#total_min').val()
-            +'&total_max='+$('#total_max').val()
-            +'&fitler_building_no='+$('#fitler_building_no').val()
-            +'&fitler_building_unit='+$('#fitler_building_unit').val()
-            +'&fitler_room_no='+$('#fitler_room_no').val();
-    }
     
-    var initSearch=function(){
-		
-		//var input_box = $('#eeda-table_filter input').first();
-        //input_box.val('');
-        
-        $("#status").val(getQueryStringRegExp("status")).trigger('change');
-        $("#type").val(getQueryStringRegExp("type")).trigger('change');
-        $("#region").val(getQueryStringRegExp("region")).trigger('change');
-
-        $('#area_min').val(getQueryStringRegExp("area_min")).trigger('change');
-		$('#area_max').val(getQueryStringRegExp("area_max")).trigger('change');
-		$('#rent_min').val(getQueryStringRegExp("rent_min")).trigger('change');
-		$('#rent_max').val(getQueryStringRegExp("rent_max")).trigger('change');
-		$('#total_min').val(getQueryStringRegExp("total_min")).trigger('change');
-		$('#total_max').val(getQueryStringRegExp("total_max")).trigger('change');
-		$('#fitler_building_no').val(getQueryStringRegExp("fitler_building_no")).trigger('change');
-		$('#fitler_building_unit').val(getQueryStringRegExp("fitler_building_unit")).trigger('change');
-		$('#fitler_room_no').val(getQueryStringRegExp("fitler_room_no")).trigger('change');
-        
-    };
     
 	$("#resetBtn").on("click", function(e){
 		e.preventDefault();
@@ -144,7 +119,8 @@ $(document).ready(function() {
 
 	$("#office").on("change", function(){
         var typeVal = $(this).val();
-        oTable.fnFilter(typeVal, 4, false, true);
+        localStorage.setItem('officeFilter', $("#office").val());
+        oTable.fnFilter(typeVal, 3, false, true);
     });
 
     $("#type").on("change", function(){
@@ -221,6 +197,12 @@ $(document).ready(function() {
 
 	$("#eeda-table").limit(); 
 	
+	var initLocalStorage= function(){
+		//local storage
+		if(localStorage.getItem("officeFilter")){
+			$("#office").val(localStorage.getItem("officeFilter")).trigger('change');  
+		} 
+	}
 	
-	
+	initLocalStorage();
 } );
