@@ -160,19 +160,7 @@ public class TransferOrderController extends Controller {
             render("transferOrder/editTransferOrder.html");
         // render("transferOrder/transferOrderEdit.html");
     }
-
-    public void edit1() {
-        long id = getParaToLong();
-
-        Party party = Party.dao.findById(id);
-        setAttr("party", party);
-
-        Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
-        setAttr("contact", contact);
-        if (LoginUserController.isAuthenticated(this))
-            render("transferOrder/transferOrderEdit.html");
-    }
-
+    
     public void edit() {
         // long id = getParaToLong();
         long id = getParaToLong("id");
@@ -260,7 +248,6 @@ public class TransferOrderController extends Controller {
     }
 
     public void save() {
-
         String id = getPara("party_id");
         Party party = null;
         Contact contact = null;
@@ -270,11 +257,9 @@ public class TransferOrderController extends Controller {
             party.set("last_update_date", createDate).update();
 
             contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
-            // setContact(contact);
             contact.update();
         } else {
             contact = new Contact();
-            // setContact(contact);
             contact.save();
             party = new Party();
             party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
@@ -282,9 +267,7 @@ public class TransferOrderController extends Controller {
             party.set("creator", "test");
             party.set("create_date", createDate);
             party.save();
-
         }
-
         setAttr("saveOK", true);
         if (LoginUserController.isAuthenticated(this))
             render("transferOrder/transferOrderList.html");
@@ -396,6 +379,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("route_from", getPara("route_from"));
             transferOrder.set("route_to", getPara("route_to"));
             transferOrder.set("order_type", getPara("orderType"));
+            transferOrder.set("customer_province", getPara("customerProvince"));
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
                 // 到达方式为货品直送时把warehouseId置为null
@@ -432,6 +416,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("route_from", getPara("route_from"));
             transferOrder.set("route_to", getPara("route_to"));
             transferOrder.set("order_type", getPara("orderType"));
+            transferOrder.set("customer_province", getPara("customerProvince"));
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
                 // 到达方式为货品直送时把warehouseId置为null

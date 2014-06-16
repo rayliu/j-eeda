@@ -110,6 +110,17 @@
                                                 <select id="gateInSelect" class="form-control" name="gateInSelect" style="display: none;"></select>                                        
                                             </div> 
                                             
+                                            <div id="customerProvinces" class="form-group">
+                                                <label>省内或省外客户</label>
+                                                <input id="customerProvinceRadio" type="hidden" value="${transferOrder.customer_province!''}"/>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="customerProvince" id="customerProvince1" value="provinceIn" checked="">省内
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="customerProvince" id="customerProvince2" value="provinceOut">省外
+                                                </label>  
+                                            </div> 
+                                            
                                             <div id="contactInformation" style="display: none">
     	                                        <h2>收货人信息</h2>
     	                                        <div class="form-group">

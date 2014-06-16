@@ -580,6 +580,13 @@ $(document).ready(function() {
 			}
 		}
 	});
+	
+	// 回显省内省外客户
+	$("input[name='customerProvince']").each(function(){
+		if($("#customerProvinceRadio").val() == $(this).val()){
+			$(this).attr('checked', true);			
+		}
+	});
 
 	var item_id = $("#item_id").val();
 	//datatable, 动态处理

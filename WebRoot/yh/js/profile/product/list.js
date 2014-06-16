@@ -71,6 +71,7 @@ $(document).ready(function() {
 	
     // 保存类别
     $("#categoryFormBtn").click(function(){
+    	var parentId = $("#hiddenParentId").val();
     	$.post('/yh/product/saveCategory', $("#categoryForm").serialize(), function(data){
 			//保存成功后，刷新列表
             console.log(data);
@@ -85,10 +86,17 @@ $(document).ready(function() {
             			if(data.length > 0){
             				for(var i = 0; i < data.length; i++)
             				{
-            					productTreeUl.append("<li class='parent_li'><span><i class='fa fa-folder'>" +
-            							"</i>  <a href='javascript:void(0)' class='productList' id='"+data[i].ID+"'>"+data[i].NAME+
-            							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
-            							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  <a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul></li>");
+            					if(parentId == ""){
+	            					productTreeUl.append("<li class='parent_li'><span><i class='fa fa-folder'>" +
+	            							"</i>  <a href='javascript:void(0)' class='productList' id='"+data[i].ID+"'>"+data[i].NAME+
+	            							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
+	            							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  <a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul></li>");
+            					}else{
+            						productTreeUl.append("<li class='parent_li'><span><i class='fa fa-folder'>" +
+	            							"</i>  <a href='javascript:void(0)' class='productList' id='"+data[i].ID+"'>"+data[i].NAME+
+	            							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
+	            							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  <a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul></li>");
+            					}
             				}
             			}
             		},'json');
