@@ -118,6 +118,8 @@ $(document).ready(function() {
                 	 $('#toName').val(data[0].LOCATION_TO);
                 	 $('#price').val(data[0].AMOUNT);
                 	 $('#routeItemId').val(data[0].ID);
+                	
+                	 $('#optionsRadiosInline1').prop('checked', true).trigger('change');
                 	 
                  }else{
                      alert('取消失败');
@@ -142,7 +144,8 @@ $(document).ready(function() {
                 	 $('#toName').val(data[0].LOCATION_TO);
                 	 $('#price').val(data[0].AMOUNT);
                 	 $('#routeItemId').val(data[0].ID);
-                	
+                	 
+                	 $('#optionsRadiosInline2').prop('checked', true).trigger('change');
                  }else{
                      alert('取消失败');
                  }
@@ -165,7 +168,7 @@ $(document).ready(function() {
                 	 $('#toName').val(data[0].LOCATION_TO);
                 	 $('#price').val(data[0].AMOUNT);
                 	 $('#routeItemId').val(data[0].ID);
-                	
+                	 $('#optionsRadiosInline3').prop('checked', true).trigger('change');
                  }else{
                      alert('取消失败');
                  }
