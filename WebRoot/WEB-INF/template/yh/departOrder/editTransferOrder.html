@@ -34,6 +34,7 @@
                                 <div class="row">
                                    <form  method="post" action="/yh/departOrder/savedepartOrder">
                                <div class="col-lg-6">
+                               <input class="" id="depart_id" value="${depart_id}" type="hidden" name="depart_id" >
                              <input class="" id="type" value="${type}" type="hidden" >
             				 <input class="" id="message" value="${localArr}" type="hidden" name="orderid" >
                                     
@@ -45,7 +46,7 @@
 										    <div class="form-group">
 										        <!--label>司机名称</label-->
 										        <input type="hidden" id="driverId" name="driverid">
-										        <input type="text" name="customerMessage" placeholder="选择司机" class="form-control" id="customerMessage">
+										        <input type="text" name="customerMessage" placeholder="选择司机" class="form-control" id="customerMessage" value="">
 										        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="customerList">
 												</ul>
 										    </div>
@@ -53,7 +54,7 @@
                                         
                                          <div class="form-group">
                                             <label>车牌</label>
-                                             <input class="form-control" id="id" value=""  name="car_no">
+                                             <input class="form-control" id="car_no" value=""  name="car_no">
                                         </div>
                                          <div class="form-group">
                                         <div  style=display:inline-block;width:49%>
@@ -133,7 +134,7 @@
                                          
                                         <div class="form-group">
                                             <label>创建人</label>
-                                             <input class="form-control" id="id" value="${creat}"  name="create">
+                                             <input class="form-control" id="create" value="${creat}"  name="create">
                                         </div>                                                                               
 										<div class="form-group">
                                             <label>备注</label>
@@ -274,10 +275,22 @@
         $('#menu_assign').addClass('active').find('ul').addClass('in');
         var message=$("#message").val();
         var type=$("#type").val();
+        var depart_id=$("#depart_id").val();
       if(type=="one"){
     	  $("#ordertypeone").attr('checked', 'checked');
       }else{
     	  $("#ordertypetwo").attr('checked', 'checked');
+      }
+      if(depart_id!="no"){
+    		$.get('/yh/departOrder/editshow', {depart_id:depart_id}, function(data){ 
+    			$('#customerMessage').val(data[0].CONTACT_PERSON);
+    			$('#car_no').val(data[0].CAR_NO);
+    			$('#cartype').val(data[0].CAR_TYPE);
+    			$('#carsize').val(data[0].CAR_SIZE);
+    			$('#phone').val(data[0].PHONE);
+    			$('#create').val(data[0].USER_NAME);
+    		},'json');
+    		
       }
       
       $('#customerMessage').on('keyup', function(){
