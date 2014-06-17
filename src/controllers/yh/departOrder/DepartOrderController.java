@@ -78,25 +78,16 @@ public class DepartOrderController extends Controller {
 					+ "left join CONTACT co on co.id in( SELECT p.CONTACT_ID  FROM PARTY p where p.id=do.NOTIFY_PARTY_ID ) "
 					+ "left join USER_LOGIN  u on u.id=do.CREATE_BY where do.COMBINE_TYPE ='DEPART' and do.id in("+Integer.parseInt(getPara())+")";
 			DepartOrder depar=DepartOrder.dao.findFirst(sql);
-			setAttr("creat","");
 			setAttr("type","many");
 			setAttr("depart_id",getPara());
 			setAttr("localArr",depar.get("order_id"));
-		
+			setAttr("depart",depar);
 			if (LoginUserController.isAuthenticated(this))
 				render("departOrder/editTransferOrder.html");
 		}
 		
 	}
-	//编辑回显
-	public void editshow(){
-		String sql="SELECT do.*,co.CONTACT_PERSON,co.phone,u.USER_NAME,(select group_concat(dt.ORDER_ID  separator',')  FROM DEPART_TRANSFER  dt "
-				+ "where dt.DEPART_ID =do.id)as order_id FROM DEPART_ORDER  do "
-				+ "left join CONTACT co on co.id in( SELECT p.CONTACT_ID  FROM PARTY p where p.id=do.NOTIFY_PARTY_ID ) "
-				+ "left join USER_LOGIN  u on u.id=do.CREATE_BY where do.COMBINE_TYPE ='DEPART' and do.id in("+Integer.parseInt(getPara("depart_id"))+")";
-		 List<Record> deparList =Db.find(sql);
-		renderJson(deparList);
-	}
+	
 
 	public void createTransferOrderList() {
 		String sLimit = "";
@@ -136,7 +127,7 @@ public class DepartOrderController extends Controller {
 		String name = (String) currentUser.getPrincipal();
 		setAttr("creat",name);
 		setAttr("localArr",list);
-		setAttr("depart_id","no");
+		
 		if (LoginUserController.isAuthenticated(this))
 		render("departOrder/editTransferOrder.html");
 	}
@@ -262,28 +253,24 @@ public class DepartOrderController extends Controller {
 					party_id=pt.get("id").toString();
 
 			}
-			DepartOrder sql=DepartOrder.dao.set("CREATE_BY",Integer.parseInt(creat_id))
+			DepartOrder dp=DepartOrder.dao.set("CREATE_BY",Integer.parseInt(creat_id))
 					.set("create_stamp", createDate).set("combine_type", "DEPART")
 					.set("car_no", getPara("car_no")).set("car_type", getPara("cartype"))
 					.set("depart_no",depart_no ).set("notify_party_id",Integer.parseInt(party_id))
 					.set("car_size",getPara("carsize"));
-			if("no".equals(depart_id)){
-				 sql.save();
+			if("".equals(depart_id)){
+				dp.save();
 				 setAttr("depart_id","no");
 			}else{
-				DepartOrder de=new DepartOrder();
-				de.dao.findById(Integer.parseInt(depart_id));
-				de.dao.set("CREATE_BY",Integer.parseInt(creat_id))
-				.set("create_stamp", createDate).set("combine_type", "DEPART")
-				.set("car_no", getPara("car_no")).set("car_type", getPara("cartype"))
-				.set("depart_no",depart_no ).set("notify_party_id",Integer.parseInt(party_id))
-				.set("car_size",getPara("carsize")).update();
+				
+				 dp.findById(Integer.parseInt(depart_id));
+				dp.update();
 				 setAttr("depart_id",depart_id);
 			}
 				
 					
-		DepartOrder der=DepartOrder.dao.findFirst("SELECT * FROM DEPART_ORDER where DEPART_NO  ='"+depart_no+"'");
-		int de_id=Integer.parseInt(der.get("id").toString());
+		//DepartOrder der=DepartOrder.dao.findFirst("SELECT * FROM DEPART_ORDER where DEPART_NO  ='"+depart_no+"'");
+		int de_id=Integer.parseInt(dp.get("id").toString());
 		
 		for(int i=0;i<order_id.length;i++){
 			DepartTransferOrder dt=new DepartTransferOrder();
