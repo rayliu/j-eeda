@@ -33,9 +33,8 @@
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
-
-                                                <label>合同名称(必填)</label>
-                                                <input class="form-control" id="contract_name" name="contract_name" type="text" value="${ul.name!''}">
+                                                <label>合同名称</label>
+                                                <input class="form-control search-control" id="contract_name" name="contract_name" type="text" value="${ul.name!''}">
                                             </div>                                     
                                         </fieldset>
                                     </div>
@@ -50,8 +49,8 @@
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
-												<label>公司名称(选择公司后，自动填写其他信息)</label>
-                                               	<input id="companyName" name="companyName" type="text" class="form-control" value="${c.company_name!''}">
+												<label>公司名称</label>
+                                               	<input id="companyName" name="companyName" type="text" class="form-control search-control" value="${c.company_name!''}">
 												<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 77%; left: 2%;">
 												</ul>
                                             </div>                                     
@@ -64,19 +63,19 @@
 										<label id="label5"></label>
 									</div>
                                     <!-- /.col-lg-6 (even) 偶数列-->                                    
-                                    <div class="col-lg-6">
+                                   <!--  <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>联系人(必填)</label>
                                                 <input class="form-control" id="name" type="text" name="name" value="${c.contact_person!''}" readonly>
                                             </div>
                                         </fieldset>
-                                    </div>
+                                    </div> -->
 									<!-- 客户id party id -->
                                     <div><input id="partyid" type="hidden" name="partyid" value="${ul.party_id!''}"></div>
                                    
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
-                                     <div class="col-lg-6">
+                                     <!-- <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>联系地址</label>
@@ -85,7 +84,7 @@
                                         </fieldset>
                                     </div>                                    
                                     
-                                    <!-- /.col-lg-6 (even) 偶数列 -->
+                                    /.col-lg-6 (even) 偶数列
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
@@ -95,7 +94,7 @@
                                         </fieldset>
                                     </div>
                                     
-                                    <!-- /.col-lg-6 (odd) 奇数列 -->
+                                    /.col-lg-6 (odd) 奇数列
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
@@ -111,33 +110,38 @@
                                                 <input class="form-control" id="post_code" type="text" name="post_code" value="${c.postal_code!''}" readonly>
                                             </div>
                                         </fieldset>
+                                    </div> -->
+                                    
+                                <div class="col-lg-6">
+                                    <div class="form-group">                                        
+                                        <div id="datetimepicker" class="input-append date "> 
+                                            <label class="search-label">开始时间</label> 
+                                            <input id="period_from" class="form-control search-control  beginTime_filter" type="text">
+                                            <span class="add-on">  
+                                                <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                            </span>  
+                                        </div>
+                                    </div>    
+                                </div>
+                                <!-- end of col-lg-6-->
+                                <div class="col-lg-6">
+                                    <div class="form-group">                                                    
+                                        <span id="datetimepicker2" class="input-append date search-control "> 
+                                            <label class="search-label">结束时间</label> 
+                                            <input id="period_to" class="form-control search-control endTime_filter" type="text">
+                                            <span class="add-on">  
+                                                <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                            </span>  
+                                        </span>
                                     </div>
-                                    <div class="col-lg-6">
-                                    	
-                                    	 	<label>开始时间</label>	
-	                                    	 <div id="datetimepicker" class="input-append date">  
-											    <input class="form-control" id="period_from" type="text" name="period_from" value="${ul.period_from!''}"></input>
-											    <span class="add-on">  
-										        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-										    	</span>  
-											</div>
-										
-                                    </div>
-                                    <div class="col-lg-6">
-                                    		<label>结束时间</label>	
-	                                    	 <div id="datetimepicker2" class="input-append date">  
-											    <input class="form-control" id="period_to" type="text" name="period_to" value="${ul.period_to!''}"></input>
-											    <span class="add-on">  
-										        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-										    	</span> 
-										    </div>
-                                        
-                                    </div>
+                                </div>
+                                <!-- end of col-lg-6-->
+                           
                                      <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>备注</label>
-                                                <input class="form-control" id="remark" type="text" name="remark" value="${email!''}">
+                                                <textarea class="form-control" id="remark" name="remark" rows="3" value="${email!''}"></textarea>
                                             </div>                                     
                                         </fieldset>
                                     </div>
@@ -151,7 +155,7 @@
                                     </div>
 	
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
-                                   <div>
+                                   <div class="col-lg-7">
                                     	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                                         <button type="submit" class="btn btn-default" id="saveContract">保存</button>
                                         <input type="button" class="btn btn-default" id="changePage" value="返回列表">
@@ -404,8 +408,10 @@
  <!-- 引入dataTables的js 文件- Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+
 <script src="/yh/js/bootstrap.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 
 
 <!-- 引入校验的js 文件及其 中文 文件-->
@@ -413,24 +419,20 @@
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script src="/yh/js/contract/contract.js"></script>
 <script type="text/javascript">  
-      $('#datetimepicker').datetimepicker({  
-        format: 'yyyy-MM-dd hh:mm',  
-        language: 'en',  
-        pickDate: true,  
-        pickTime: true,  
-        hourStep: 1,  
-        minuteStep: 15,  
-        secondStep: 30,  
-        inputMask: true  
-      });
-      $('#datetimepicker2').datetimepicker({  
-          format: 'yyyy-MM-dd hh:mm',  
-          language: 'en',  
-          pickDate: true,  
-          pickTime: true,  
-          hourStep: 1,  
-          minuteStep: 15,  
-          secondStep: 30,  
-          inputMask: true  
-        });
+$('#datetimepicker').datetimepicker({  
+    format: 'yyyy-MM-dd',  
+    language: 'zh-CN'
+}).on('changeDate', function(ev){
+    $('#beginTime_filter').trigger('keyup');
+});
+
+
+$('#datetimepicker2').datetimepicker({  
+    format: 'yyyy-MM-dd',  
+    language: 'zh-CN', 
+    autoclose: true,
+    pickerPosition: "bottom-left"
+}).on('changeDate', function(ev){
+    $('#endTime_filter').trigger('keyup');
+});
 </script>

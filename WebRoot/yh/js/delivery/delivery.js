@@ -403,5 +403,22 @@ $(document).ready(function() {
 					}
 					
 				});
+				
+				$('#datetimepicker').datetimepicker({  
+			        format: 'yyyy-MM-dd',  
+			        language: 'zh-CN'
+			    }).on('changeDate', function(ev){
+			        $('#beginTime_filter').trigger('keyup');
+			    });
+
+
+			    $('#datetimepicker2').datetimepicker({  
+			        format: 'yyyy-MM-dd',  
+			        language: 'zh-CN', 
+			        autoclose: true,
+			        pickerPosition: "bottom-left"
+			    }).on('changeDate', function(ev){
+			        $('#endTime_filter').trigger('keyup');
+			    });
 			    	
 });
