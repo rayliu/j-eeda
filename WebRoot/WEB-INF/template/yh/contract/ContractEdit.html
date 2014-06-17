@@ -41,9 +41,9 @@
 									 
                         			<div>
                         				<!-- 下面input判断 customer和供应商sp -->
-	                        			<input id="type2" name="type2" type="hidden" value="${contractType!}"/>
+	                        			type2<input id="type2" name="type2" type="hidden" value="${contractType!}"/>
 	                        			<!-- 下面用来编辑保存contract的type -->
-	                        			<input id="type3" name="type3" type="hidden" value="${ul.type!''}" />
+	                        			type3<input id="type3" name="type3" type="hidden" value="${ul.type!''}" />
                         			</div>
                         			<!-- /.col-lg-6 (odd) 奇数列 -->
                                     <div class="col-lg-6">
@@ -116,7 +116,7 @@
                                     <div class="form-group">                                        
                                         <div id="datetimepicker" class="input-append date "> 
                                             <label class="search-label">开始时间</label> 
-                                            <input id="period_from" class="form-control search-control  beginTime_filter" type="text">
+                                            <input id="period_from" class="form-control search-control  beginTime_filter" type="text" value="${ul.period_from!''}">
                                             <span class="add-on">  
                                                 <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
                                             </span>  
@@ -128,7 +128,7 @@
                                     <div class="form-group">                                                    
                                         <span id="datetimepicker2" class="input-append date search-control "> 
                                             <label class="search-label">结束时间</label> 
-                                            <input id="period_to" class="form-control search-control endTime_filter" type="text">
+                                            <input id="period_to" class="form-control search-control endTime_filter" type="text" value="${ul.period_to!''}">
                                             <span class="add-on">  
                                                 <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
                                             </span>  

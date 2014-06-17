@@ -14,6 +14,11 @@ $(document).ready(function() {
 		urlSource="/yh/spContract/spList";
 		urlSource2="/yh/spContract/edit/";
 		urlSource3="/yh/spContract/delete2/";
+	}if(type=='DELIVERY_SERVICE_PROVIDER'){
+		$("#btn3").show();
+		urlSource="/yh/deliverySpContract/deliveryspList";
+		urlSource2="/yh/deliverySpContract/edit/";
+		urlSource3="/yh/deliverySpContract/delete3/";
 	}
     
 	//datatable, 动态处理
@@ -32,7 +37,7 @@ $(document).ready(function() {
             {"mDataProp":"NAME"},
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":"CONTACT_PERSON"},
-            {"mDataProp":"PHONE"},
+            {"mDataProp":"MOBILE"},
             {"mDataProp":"PERIOD_FROM"},
             {"mDataProp":"PERIOD_TO"},
             { 

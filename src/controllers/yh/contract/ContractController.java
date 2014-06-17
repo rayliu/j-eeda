@@ -34,7 +34,13 @@ public class ContractController extends Controller {
             setAttr("contractType", "CUSTOMER");
             if (LoginUserController.isAuthenticated(this))
                 render("contract/ContractList.html");
-        } else {
+        }
+        if (url.equals("/yh/deliverySpContract")) {
+            setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
+            if (LoginUserController.isAuthenticated(this))
+                render("contract/ContractList.html");
+        }
+        if (url.equals("/yh/spContract")) {
             setAttr("contractType", "SERVICE_PROVIDER");
             if (LoginUserController.isAuthenticated(this))
                 render("contract/ContractList.html");
@@ -74,7 +80,39 @@ public class ContractController extends Controller {
 
     }
 
-    // 供应商合同列表
+    // 配送供应商合同列表
+    public void deliveryspList() {
+
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'";
+        System.out.println(sql);
+        Record rec = Db.findFirst(sql + totalWhere);
+        long total = rec.getLong("total");
+        logger.debug("total records:" + total);
+
+        // 获取当前页的数据
+        List<Record> orders = Db
+                .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'");
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", total);
+        orderMap.put("iTotalDisplayRecords", total);
+        orderMap.put("aaData", orders);
+
+        renderJson(orderMap);
+
+    }
+
+    // 干线供应商合同列表
     public void spList() {
 
         String sLimit = "";
@@ -114,7 +152,14 @@ public class ContractController extends Controller {
             setAttr("saveOK", false);
             if (LoginUserController.isAuthenticated(this))
                 render("/yh/contract/ContractEdit.html");
-        } else {
+        }
+        if (url.equals("/yh/deliverySpContract/add")) {
+            setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
+            setAttr("saveOK", false);
+            if (LoginUserController.isAuthenticated(this))
+                render("/yh/contract/ContractEdit.html");
+        }
+        if (url.equals("/yh/spContract/add")) {
             setAttr("contractType", "SERVICE_PROVIDER");
             setAttr("saveOK", false);
             if (LoginUserController.isAuthenticated(this))

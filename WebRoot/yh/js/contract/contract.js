@@ -452,8 +452,10 @@ $(document).ready(function() {
 	    	var type2= $("#type2").val();
 	    	if(type=='CUSTOMER'||type2=='CUSTOMER'){
 	    		window.location.href="/yh/customerContract";
-	    	}else{
+	    	}if(type=='SERVICE_PROVIDER'||type2=='SERVICE_PROVIDER'){
 	    		window.location.href="/yh/spContract";
+	    	}if(type=='DELIVERY_SERVICE_PROVIDER'||type2=='DELIVERY_SERVICE_PROVIDER'){
+	    		window.location.href="/yh/deliverySpContract";
 	    	}
 	    });
 
@@ -461,11 +463,23 @@ $(document).ready(function() {
 	    	 var type= $("#type2").val();
 	    	 var type2= $("#type3").val();
 	    	 $('#reset').hide();
-	 	    if(type=='CUSTOMER'||type2=='CUSTOMER'){
-	 	    	$("#labeltext").html("创建新客户合同");
-	 	    }else{
-	 	    	$("#labeltext").html("创建供应商合同");
-	 	    }
+	    	 if(type!=null||type!=''){
+		 	    if(type=='CUSTOMER'){
+		 	    	$("#labeltext").html("创建新客户合同");
+		 	    }if(type=='SERVICE_PROVIDER'){
+		 	    	$("#labeltext").html("创建干线供应商合同");
+		 	    }if(type=='DELIVERY_SERVICE_PROVIDER'){
+		 	    	$("#labeltext").html("创建配送供应商合同");
+		 	    }
+	    	 }if(type2!=null||type2!=''){
+	    		 if(type2=='CUSTOMER'){
+			 	    	$("#labeltext").html("编辑新客户合同");
+			 	    }if(type2=='SERVICE_PROVIDER'){
+			 	    	$("#labeltext").html("编辑干线供应商合同");
+			 	    }if(type2=='DELIVERY_SERVICE_PROVIDER'){
+			 	    	$("#labeltext").html("编辑配送供应商合同");
+			 	    }
+	    	 }
 	    }) ;
 	   
 	    $("input[type='radio'][name='priceType']").change(function(){
