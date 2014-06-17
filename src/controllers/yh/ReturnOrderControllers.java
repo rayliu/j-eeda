@@ -240,12 +240,11 @@ public class ReturnOrderControllers extends Controller {
 	// 点击查看
 	public void check() {
 		String id = getPara();
-		List<Record> DELIVERYORDERID = new ArrayList<Record>();
-		DELIVERYORDERID = Db
-		        .find("SELECT to.CARGO_NATURE   FROM TRANSFER_ORDER to where to.id in (select ro.TRANSFER_ORDER_ID  from RETURN_ORDER  ro where ro.id="+id+")");
-		TransferOrder tr = TransferOrder.dao.findById(id);
+		
+	ReturnOrder re=ReturnOrder.dao.findById(id);
+		TransferOrder tr = TransferOrder.dao.findFirst("SELECT to.CARGO_NATURE   FROM TRANSFER_ORDER to where to.id in (select ro.TRANSFER_ORDER_ID  from RETURN_ORDER  ro where ro.id="+id+")");
 		String nature = tr.getStr("cargo_nature");
-		if (DELIVERYORDERID.get(0).get("DELIVERY_ORDER_ID") != null) {
+		if (re.get("DELIVERY_ORDER_ID") != null) {
 			setAttr("check", true);
 		} else {
 			setAttr("check", false);
