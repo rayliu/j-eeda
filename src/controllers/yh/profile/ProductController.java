@@ -161,10 +161,18 @@ public class ProductController extends Controller{
 		renderJson(product);;
 	}
 	
-	// 查出所有的类别
-	public void searchAllCategory(){
+	// 查出客户的子类别
+	public void searchCustomerCategory(){
 		String customerId = getPara("customerId");
-		List<Category> categories = Category.dao.find("select * from category where customer_id ="+customerId+" group by name");
+		List<Category> categories = Category.dao.find("select * from category where customer_id ="+customerId);
+		renderJson(categories);
+	}
+	
+	//查出当前节点的子节点
+	public void searchNodeCategory(){
+		String categoryId = getPara("categoryId");
+		String customerId = getPara("customerId");
+		List<Category> categories = Category.dao.find("select * from category where parent_id="+categoryId+" and customer_id ="+customerId);
 		renderJson(categories);
 	}
 	
@@ -187,7 +195,50 @@ public class ProductController extends Controller{
 				category.set("parent_id", getPara("parentId"));				
 			}
 			category.save();
+		}else{
+			category = Category.dao.findById(categoryId);
+			category.set("name", getPara("name"));
+			category.set("customer_id", getPara("customerId"));
+			category.update();
 		}
+		renderJson(category);
+	}
+	
+	// 删除类别
+	public void deleteCategory(){
+		String cid = getPara("categoryId");
+		removeChildern(cid);
+		List<Product> products = Product.dao.find("select * from product where category_id = ?", cid);	
+		for(Product product : products){
+			product.delete();
+		}
+		Category.dao.deleteById(cid);
+        renderJson("{\"success\":true}");
+	}	
+	
+	private void removeChildern(String cid) {
+		List<Category> categories = Category.dao.find("select * from category where parent_id = ?", cid);
+		if(categories.size() > 0){
+			for(Category c : categories){
+				removeChildern(c.get("id").toString());
+				List<Product> products = Product.dao.find("select * from product where category_id = ?", c.get("id"));	
+				for(Product product : products){
+					product.delete();
+				}
+				c.delete();
+			}
+		}else{
+			List<Product> products = Product.dao.find("select * from product where category_id = ?", cid);	
+			for(Product product : products){
+				product.delete();
+			}
+			Category.dao.deleteById(cid);
+		}
+	}
+
+	// 查找类别
+	public void searchCategory(){
+		Category category = Category.dao.findById(getPara("categoryId"));
 		renderJson(category);
 	}
 }

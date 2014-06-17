@@ -48,19 +48,33 @@ $(document).ready(function() {
         
         $("#parentTree").text($("#customerMessage").val());
         
-        // 查出所有的类别
+        // 查出customer的子类别
         if(customerId > 0){
-    	    $.get('/yh/product/searchAllCategory', {customerId:customerId}, function(data){
+    	    $.get('/yh/product/searchCustomerCategory', {customerId:customerId}, function(data){
     			console.log(data);	
     			var productTreeUl = $("#productTreeUl");
     			productTreeUl.empty();
     			if(data.length > 0){
     				for(var i = 0; i < data.length; i++)
     				{
-    					productTreeUl.append("<li class='parent_li'><span><i class='fa fa-folder'>" +
-    							"</i>  <a href='javascript:void(0)' class='productList' id='"+data[i].ID+"'>"+data[i].NAME+
-    							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
-    							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  <a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul></li>");
+    					var id = data[i].ID;
+    					if(data[i].PARENT_ID == null){
+	    					productTreeUl.append("<li class=' parent_li productList' categoryId='"+data[i].ID+"'><span ><i class='fa fa-folder'>" +
+	    							"</i>  <a href='javascript:void(0)' id='"+data[i].ID+"'>"+data[i].NAME+
+	    							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
+	    							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  " +
+	    							"<a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul></li>");
+//	    					for(var j = 0; j < data.length; j++)
+//	        				{
+//	    						if(data[j].PARENT_ID == id){
+//		    						productTreeUl.append("<ul><li class='parent_li'><span><i class='fa fa-folder'>" +
+//			    							"</i>  <a href='javascript:void(0)' class='productList' id='"+data[j].ID+"'>"+data[j].NAME+
+//			    							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[j].ID+"'></a>  " +
+//			    							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[j].ID+"'></a>  " +
+//			    							"<a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[j].ID+"'></a></div></li></ul></li></ul>");
+//	    						}
+//	    					}
+    					}
     				}
     			}
     		},'json');
@@ -71,7 +85,6 @@ $(document).ready(function() {
 	
     // 保存类别
     $("#categoryFormBtn").click(function(){
-    	var parentId = $("#hiddenParentId").val();
     	$.post('/yh/product/saveCategory', $("#categoryForm").serialize(), function(data){
 			//保存成功后，刷新列表
             console.log(data);
@@ -86,16 +99,13 @@ $(document).ready(function() {
             			if(data.length > 0){
             				for(var i = 0; i < data.length; i++)
             				{
-            					if(parentId == ""){
-	            					productTreeUl.append("<li class='parent_li'><span><i class='fa fa-folder'>" +
-	            							"</i>  <a href='javascript:void(0)' class='productList' id='"+data[i].ID+"'>"+data[i].NAME+
-	            							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
-	            							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  <a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul></li>");
-            					}else{
-            						productTreeUl.append("<li class='parent_li'><span><i class='fa fa-folder'>" +
-	            							"</i>  <a href='javascript:void(0)' class='productList' id='"+data[i].ID+"'>"+data[i].NAME+
-	            							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
-	            							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  <a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul></li>");
+            					var id = data[i].ID;
+            					if(data[i].PARENT_ID == null){
+        	    					productTreeUl.append("<li class='parent_li'><span><i class='fa fa-folder'>" +
+        	    							"</i>  <a href='javascript:void(0)' class='productList' id='"+data[i].ID+"'>"+data[i].NAME+
+        	    							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
+        	    							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  " +
+        	    							"<a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul></li>");        	    					
             					}
             				}
             			}
@@ -111,6 +121,7 @@ $(document).ready(function() {
     
 	// 树状结构点击效果
     $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+    
     $('.tree li.parent_li > span').on('click', function (e) {
         var children = $(this).parent('li.parent_li').find(' > ul > li');
         if (children.is(":visible")) {
@@ -159,8 +170,27 @@ $(document).ready(function() {
             }                         
         ],      
     });
+    var addNode = function(data, nodeElement){
+    	nodeElement.find('ul').empty();
+    	for(var i = 0; i < data.length; i++){
+    		nodeElement.append("<ul><li class='parent_li productList' categoryId='"+data[i].ID+"'><span ><i class='fa fa-folder'>" +
+				"</i>  <a href='javascript:void(0)' id='"+data[i].ID+"'>"+data[i].NAME+
+				"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
+				"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  " +
+				"<a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul>");
+    	}
+    };
     
-    $("#productTreeLi").on('click', '.productList', function(e){
+    $("#productTreeLi").on('click', '.productList', function(e){    	
+    	//显示子目录
+    	var customerId = $('#customerId').val();
+    	var categoryId = $(this).attr('categoryId');
+    	var nodeElement = $(this);
+    	$.get('/yh/product/searchNodeCategory', {categoryId: categoryId, customerId: customerId}, function(data){
+    		console.log(data);
+    		addNode(data, nodeElement);
+    	});
+    	//显示产品列表
     	e.preventDefault();
     	var categoryId = $(this).attr('id');
     	$("#hiddenCategoryId").val(categoryId);
@@ -194,36 +224,59 @@ $(document).ready(function() {
 	
     // 保存产品
     $("#productFormBtn").click(function(){
-    	$.post('/yh/product/save', $("#productForm").serialize(), function(data){
-			//保存成功后，刷新列表
-            console.log(data);
-            if(data.ID>0){
-            	// 查出所有的类别
-                var customerId = $('#customerId').val();
-                if(customerId > 0){
-                	$.get('/yh/product/searchAllCategory', {customerId:customerId}, function(data){
-            			console.log(data);	
-            			var productTreeUl = $("#productTreeUl");
-            			productTreeUl.empty();
-            			if(data.length > 0){
-            				for(var i = 0; i < data.length; i++)
-            				{
-            					productTreeUl.append("<li class='parent_li'><span><i class='fa fa-folder'></i>  <a href='javascript:void(0)' class='productList' id='"+data[i].ID+"'>"+data[i].NAME+"</a></li></ul></li>");
-            				}
-            			}
-            		},'json');
-                	
-                	var categoryId = $("#categoryId").val();
-                	productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+categoryId;
-	            	productDataTable.fnDraw();
-                }
-            }else{
-                alert('数据保存失败。');
-            }
-			$('#myModal').modal('hide');
-	    	//$("#productForm")[0].reset();
-		},'json');
+    	$.post('/yh/product/save', $("#productForm").serialize(), saveCallback(data),'json');
     });
+    
+    var saveCallback=function(data){    
+		//保存成功后，刷新列表
+        console.log(data);
+        if(data.ID>0){
+        	// 查出所有的类别
+        	searchAllCategory();
+        }else{
+            alert('数据保存失败。');
+        }
+		$('#myModal').modal('hide');
+    	//$("#productForm")[0].reset();		
+    };
+    
+    var searchAllCategory=function(){
+    	var customerId = $('#customerId').val();
+        if(customerId > 0){
+        	$.get('/yh/product/searchAllCategory', {customerId:customerId}, function(data){
+    			console.log(data);	
+    			var productTreeUl = $("#productTreeUl");
+    			productTreeUl.empty();
+    			if(data.length > 0){
+    				for(var i = 0; i < data.length; i++)
+    				{
+    					var id = data[i].ID;
+    					if(data[i].PARENT_ID == null){
+	    					productTreeUl.append("<li class='parent_li'><span><i class='fa fa-folder'>" +
+	    							"</i>  <a href='javascript:void(0)' class='productList' id='"+data[i].ID+"'>"+data[i].NAME+
+	    							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
+	    							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  " +
+	    							"<a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul></li>");
+	    					for(var j = 0; j < data.length; j++)
+	        				{
+	    						if(data[j].PARENT_ID == id){
+		    						productTreeUl.append("<ul><li class='parent_li'><span><i class='fa fa-folder'>" +
+			    							"</i>  <a href='javascript:void(0)' class='productList' id='"+data[j].ID+"'>"+data[j].NAME+
+			    							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[j].ID+"'></a>  " +
+			    							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[j].ID+"'></a>  " +
+			    							"<a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[j].ID+"'></a></div></li></ul></li></ul>");
+	    						}
+	    					}
+    					}
+    				}
+    			}
+    		},'json');
+        	
+        	/*var categoryId = $("#categoryId").val();
+        	productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+categoryId;
+        	productDataTable.fnDraw();*/
+        }
+    };
     
     // 编辑产品
     $("#eeda-table").on('click', '.editProduct', function(e){
@@ -261,17 +314,33 @@ $(document).ready(function() {
     $("#treeListDiv").on('click', 'a.addCategory', function(){
     	var categoryId = $(this).attr('id');
     	$("#hiddenParentId").val(categoryId);
+    	$("#hiddenCustomerId").val($("#customerId").val());
     	$("#editCategory").modal('show');
     });
     
     // 编辑类别
     $("#treeListDiv").on('click', 'a.editCategory', function(){
     	var categoryId = $(this).attr('id');
-    	alert("edit"+$(this).attr('id'));
+    	$("#hiddenCustomerId").val($("#customerId").val());
+    	$("#hiddenCId").val(categoryId);
+    	$("#hiddenParentId").val("");
+    	$.post('/yh/product/searchCategory', {categoryId:categoryId}, function(data){ 
+    		if(data.ID > 0){
+    			$("#name").val(data.NAME);
+    		}
+		},'json');  
+    	$("#editCategory").modal('show');
     });
     
     // 删除类别
-    $("#treeListDiv").on('click', 'a.deleteCategory', function(){
-    	alert("de"+$(this).attr('id'));
+    $("#treeListDiv").on('click', 'a.deleteCategory', function(){    	
+    	var categoryId = $(this).attr('id');
+    	$.post('/yh/product/deleteCategory', {categoryId:categoryId}, function(data){ 	
+    		 if(data.success){
+            	 searchAllCategory();
+             }else{
+                 alert('删除失败');
+             }
+		},'json');    	
     });
 } );

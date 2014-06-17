@@ -60,21 +60,5 @@ $(document).ready(function() {
         console.log(tableArr);
             $('#departOrder_message').val(tableArr);
             $('#createForm').submit();
-       
-      /*$("departOrder_message").val(tableArr);
-        $.ajax({//点击确定，保存设置
-    		url: "/yh/departOrder/addDepartOrder",
-    		type:'post',
-    		dataType : "text",
-    		data : "localArr="+tableArr,
-    		success: function(msg){
-    			//alert(msg);
-    			$.get('/yh/departOrder/creatdepartOrder', {}, function(data){ 
-    	    		
-    	    		
-    	    	});
-    			
-    		}
-    	});*/
-    });    
+    });
 } );

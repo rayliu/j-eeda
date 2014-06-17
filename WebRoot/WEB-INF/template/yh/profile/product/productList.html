@@ -19,7 +19,7 @@
 			    <ul>
 			        <li id="productTreeLi">
 			            <span id="parentTree"><i class="fa fa-folder-open"></i></span>
-			            <button class="btn btn-primary" data-toggle="modal" data-target="#editCategory">添加类别</button>
+			            <a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加类别' data-target="#editCategory"></a>
 			            <ul id="productTreeUl"></ul>			            
 			        </li>
 			    </ul>
@@ -152,8 +152,9 @@
 	      </div>
 	      <div class="modal-body">
 	      	<form id="categoryForm" action="">
-	      		<input id="hiddenCustomerId" type="hidden" name="customerId" /> 
-	      		<input id="hiddenParentId" type="text" name="parentId" /> 
+	      		客户<input id="hiddenCustomerId" type="text" name="customerId" /> 
+	      		类别<input id="hiddenCId" type="text" name="categoryId" /> 
+	      		父类<input id="hiddenParentId" type="text" name="parentId" /> 
 	      		<div class="form-group ">
 				<label class="control-label" for="inputSuccess">类别名称</label> <input
 					id="name" class="form-control" type="text"

@@ -59,61 +59,60 @@
                                          <div class="form-group">
                                         <div  style=display:inline-block;width:49%>
                                             <label>车型</label>
-                                             <select name="cartype" id="cartype" class="form-control" value="${depart.CAR_SIZE!''}">
-                                                                <option>全部</option>
-                                                                <option>平板车</option>
-                                                                <option>高栏车</option>
-                                                                <option>集装车</option>
-                                                                <option>单桥车</option>
-                                                                <option>双桥车</option>
-                                                                <option>半挂车</option>
-                                                                <option>冷藏车</option>
-                                                                <option>特种车</option>
-                                                                <option>商品运输车</option>
-                                                                <option>危险品车</option>
-                                                                <option>挂车</option>
-                                                                <option>爬梯车</option>
-                                                                <option>可拼车</option>
-                                                                <option>低栏车</option>
-                                                                <option>半挂一拖二</option>
-                                                                <option>半挂一拖三</option>
-                                                                <option>半挂二拖二</option>
-                                                                <option>半挂二拖三</option>
-                                                                <option>前四后四</option>
-                                                                <option>前四后六</option>
-                                                                <option>前四后八</option>
-                                                                <option>前四后十</option>
-                                                                <option>五轮车</option>
-                                                                <option>后八轮</option>
-                                                                <option>半封闭</option>
-                                                                <option>封闭车</option>
-                                                                <option>罐式车</option>
-                                                                <option>厢式车</option>
-                                                                <option>自卸车</option>
-                                                                <option>棉被车</option>
-                                                                <option>其他</option>
+                                         	<input type="hidden" value="${depart.CAR_TYPE!''}" id="carTypeSelect">
+                                             <select name="cartype" id="cartype" class="form-control">
+                                                                <option value="全部">全部</option>
+                                                                <option value="平板车">平板车</option>
+                                                                <option value="高栏车">高栏车</option>
+                                                                <option value="集装车">集装车</option>
+                                                                <option value="单桥车">单桥车</option>
+                                                                <option value="双桥车">双桥车</option>
+                                                                <option value="半挂车">半挂车</option>
+                                                                <option value="冷藏车">冷藏车</option>
+                                                                <option value="特种车">特种车</option>
+                                                                <option value="商品运输车">商品运输车</option>
+                                                                <option value="危险品车">危险品车</option>
+                                                                <option value="挂车">挂车</option>
+                                                                <option value="爬梯车">爬梯车</option>
+                                                                <option value="可拼车">可拼车</option>
+                                                                <option value="低栏车">低栏车</option>
+                                                                <option value="半挂一拖二">半挂一拖二</option>
+                                                                <option value="半挂一拖三">半挂一拖三</option>
+                                                                <option value="半挂二拖二">半挂二拖二</option>
+                                                                <option value="半挂二拖三">半挂二拖三</option>
+                                                                <option value="前四后四">前四后四</option>
+                                                                <option value="前四后六">前四后六</option>
+                                                                <option value="前四后八">前四后八</option>
+                                                                <option value="前四后十">前四后十</option>
+                                                                <option value="五轮车">五轮车</option>
+                                                                <option value="后八轮">后八轮</option>
+                                                                <option value="半封闭">半封闭</option>
+                                                                <option value="封闭车">封闭车</option>
+                                                                <option value="罐式车">罐式车</option>
+                                                                <option value="厢式车">厢式车</option>
+                                                                <option value="自卸车">自卸车</option>
+                                                                <option value="棉被车">棉被车</option>
+                                                                <option value="其他">其他</option>
                                                             </select>
                                                             </div>
                                                          <div   style=display:inline-block;width:50%>
                                                                
                                             <label>长度</label>
-                                             <select name="carsize" id="carsize" class="form-control"  >
-                                                                <option>15</option>
-                                                                <option>20</option>
-                                                                <option>25</option>
-                                                               
-                                                            </select>
+                                         	<input type="hidden" value="${depart.CAR_SIZE!''}" id="carSizeSelect">
+                                            <select name="carsize" id="carsize" class="form-control">
+                                                <option value="15">15</option>
+                                                <option value="20">20</option>
+                                                <option value="25">25</option>                                                
+                                            </select>
                                        </div>
-                                        </div>
-                                      
+                                       </div>                                      
                                             <div class="form-group">
                                             <label>电话</label>
                                              <input class="form-control" id="phone" value="${depart.PHONE!''}"  name="phone">
                                         </div>
 
                                         <div class="form-group">
-                                        <button class="btn btn-default" type="submit">&nbsp&nbsp&nbsp&nbsp保存&nbsp&nbsp&nbsp&nbsp</button>
-                                          
+                                        <button class="btn btn-default" type="submit">&nbsp&nbsp&nbsp&nbsp保存&nbsp&nbsp&nbsp&nbsp</button>                                          
                                          </div>
                                     </div>
                                       <div class="col-lg-6">
@@ -138,7 +137,7 @@
                                         </div>                                                                               
 										<div class="form-group">
                                             <label>备注</label>
-                                            <textarea class="form-control" rows="4" id="remark" name="remark"></textarea>
+                                            <textarea class="form-control" rows="4" id="remark" name="remark">${depart.remark!''}</textarea>
                                         </div> 
                                  		
                                     
@@ -322,6 +321,7 @@
             //"sPaginationType": "bootstrap",
             "iDisplayLength": 10,
             "bServerSide": true,
+            "bDestroy": true,
         	"oLanguage": {
                 "sUrl": "/eeda/dataTables.ch.txt"
             },
@@ -387,8 +387,26 @@
                     { "mDataProp": "REMARK"},
                                               
                 ]  
-            });	
-        	 
-    	
+            });	    
+    	    
+    	    // 回显车长
+    	    var carSizeOption=$("#carsize>option");
+    	    var carSizeVal=$("#carSizeSelect").val();
+    	    for(var i=0;i<carSizeOption.length;i++){
+    		      var svalue=carSizeOption[i].text;
+    		      if(carSizeVal==svalue){
+    		       $("#carsize option[value='"+svalue+"']").attr("selected","selected");
+    		      }
+    	      }
+    	    
+    	    // 回显车型
+    	    var carTypeOption=$("#cartype>option");
+    	    var carTypeVal=$("#carTypeSelect").val();
+    	    for(var i=0;i<carTypeOption.length;i++){
+    	    	var svalue=carTypeOption[i].text;
+    	    	if(carTypeVal==svalue){
+    	    		$("#cartype option[value='"+svalue+"']").attr("selected","selected");
+    	    	}
+    	    }
     });
 </script>
