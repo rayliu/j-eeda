@@ -80,7 +80,7 @@ $(document).ready(function() {
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		"sPaginationType": "bootstrap",
 		"oLanguage": {
-			"sUrl": "/dataTables.ch.txt"
+			"sUrl": "/eeda/dataTables.ch.txt"
 		},
 		"aoColumnDefs": [
 	      { "sWidth": "15%", "aTargets": [ 0 ] },
