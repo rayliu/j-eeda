@@ -700,17 +700,22 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap requires jQuery'
     }
 
     var desc = ' li:not(.divider):visible a'
+    console.log('[role=menu]' + desc + ', [role=listbox]' + desc);
     var $items = $parent.find('[role=menu]' + desc + ', [role=listbox]' + desc)
-
+    console.log("$items: "+$items);
     if (!$items.length) return
 
+    console.log($items.filter(':focus'));
     var index = $items.index($items.filter(':focus'))
-
+    
+    console.log("index: "+index);
     if (e.keyCode == 38 && index > 0)                 index--                        // up
     if (e.keyCode == 40 && index < $items.length - 1) index++                        // down
     if (!~index)                                      index = 0
 
     $items.eq(index).focus()
+    
+    console.log("index: "+$items.index($items.filter(':focus')));
   }
 
   function clearMenus(e) {
