@@ -309,7 +309,6 @@ public class DepartOrderController extends Controller {
 		Map.put("sEcho", pageIndex);
 		Map.put("iTotalRecords", rec.getLong("total"));
 		Map.put("iTotalDisplayRecords", rec.getLong("total"));
-
 		Map.put("aaData", itemdetail);
 
 		renderJson(Map);

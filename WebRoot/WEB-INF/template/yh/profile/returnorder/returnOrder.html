@@ -65,22 +65,22 @@
                                         <h2>客户信息</h2>  
                                          <div class="form-group">
                                             <label>公司名称</label>
-                                            <label class="radio-inline" id="pay_company"></label>
+                                            <label class="radio-inline" id="company"></label>
                                         </div>
                                          
                                          
                                         <div class="form-group">
                                             <label>地址</label>
-                                            <label class="radio-inline" id="pay_address"></label>
+                                            <label class="radio-inline" id="address"></label>
                                         </div>                                                                               
                                         <div class="form-group">
                                             <label>联系人</label>
-                                            <label class="radio-inline" id="pay_contad"></label>
+                                            <label class="radio-inline" id="contad"></label>
                                         </div>
                                         
                                         <div class="form-group">
                                             <label>电话</label>
-                                            <label class="radio-inline" id="pay_phone"></label>
+                                            <label class="radio-inline" id="phone"></label>
                                         </div>  
                                        
                                                                            
@@ -88,20 +88,20 @@
                                   
                                         <div class="form-group">
                                             <label>收货人公司名称</label>
-                                            <label class="radio-inline" id="company"> </label>
+                                            <label class="radio-inline" id="pay_company"> </label>
                                         </div>
                                         
                                         <div class="form-group">
                                             <label>收货地址</label>
-                                            <label class="radio-inline" id="address"></label>
+                                            <label class="radio-inline" id="pay_address"></label>
                                         </div>
                                         <div class="form-group">
                                             <label>联系人</label>
-                                            <label class="radio-inline" id="contad"></label>
+                                            <label class="radio-inline" id="pay_contad"></label>
                                         </div>
                                         <div class="form-group">
                                             <label>电话</label>
-                                            <label class="radio-inline" id="phone"> </label>
+                                            <label class="radio-inline" id="pay_phone"> </label>
                                         </div>
                                         
                                         <div class="form-group">
@@ -177,8 +177,6 @@
                                             <th>名称</th>
                                             <th>型号</th>
                                             <th>数量</th>                                   
-                                            <th>货损数量</th> 
-                                            <th>剩余数量</th>
                                             <th>单位</th> 
                                             <th>体积</th> 
                                             <th>重量</th> 
@@ -204,8 +202,10 @@
                                 <thead   >
                                         <tr>
                                          	<th>序列号</th> 
+                                         	<th>型号</th>
                                             <th>名称</th>
-                                            <th>数量</th>                                   
+                                            <th>数量</th> 
+                                            <th>单位</th>                                   
                                             <th>体积</th> 
                                             <th>重量</th> 
                                             <th>备注</th>                                          
@@ -278,9 +278,6 @@
         
         var inputStr = $('#id').val(); 
         
-       
-     
-           
     	$.get('/yh/returnorder/checkorder', {locationName:inputStr}, function(data){   		
 			for(var i=0; i < data.length; i++){
 				nature=data[i].NATURE;
@@ -292,12 +289,10 @@
 	        	$('#remark').val(data[i].REMARK); 
 	        	$('#location_from').html(data[i].LOCATION_FROM);
 	        	$('#location_to').html(data[i].LOCATION_TO);
-	        	$('#amount').val(data[i].AMOUNT);
-	        	$('#amount2').html(data[i].AMOUNT);
 	        	$('#company').html(data[i].COMPANY_NAME);
 	        	$('#phone').html(data[i].PHONE);
-	        	$('#contad').html(data[i].CONTACT);
 	        	$('#address').html(data[i].ADDRESS);
+	        	$('#contad').html(data[i].CONTACT);
 	        	$('#pay_company').html(data[i].PAY_COMPANY);
 	        	$('#pay_phone').html(data[i].PAY_PHONE);
 	        	$('#pay_contad').html(data[i].PAY_CONTAD);
@@ -307,65 +302,13 @@
 	        	$('#create_date').html(data[i].CREATE_DATE);
 	        	$('#transaction_status').html(data[i].TRANSACTION_STATUS);
 	        	$('#counterman').html(data[i].COUNTERMAN);
-	        	$('#lastcreator').html(data[i].COUNTERMAN);
+	        	
 				
 			}
 			
 		
 	},'json');
    
-    	/**
-    	
-    	$.get('/yh/returnorder/itemlist', {locationName:inputStr}, function(data){ 
-    		for(var i=0; i < data.length; i++){	
-    			if(data[i].ITEM_NAME=="ATM"){
-    				
-    				$("#ATMitem").append(" <thead>"
-    	  					+"<tr>"
-      						 +"<th>序列号</th>"
-     						 +"<th>名称</th>"
-      						 +"<th>数量</th>"
-     						 +"<th>货损数量</th>"
-     						 +"<th>剩余数量</th>"     					
-    						 +"<th>体积</th>" 
-     						 +"<th>重量</th>"
-     						 +"<th>收货人/地址/电话</th>"
-     						+"<th>货损？</th>"
-     						+"<th>货损信息</th>"
-     						 +"<th>备注</th>"
-   						 +"</tr>"
-   						+"</thead>"
-                            +"<tbody>"   
-                            +"<tr><td>"+data[i].SERIAL_NO+"</td>"
-    		    			+"<td>"+data[i].ITEM_NAME+"</td>"
-    		    			+"<td>"+data[i].AMOUNT+"</td>"
-    		    			+"<td>"+data[i].LASTTOTAL+"</td>"
-    		    			+"<td>"+data[i].LASTAMOUNT+"</td>"	
-    		    			+"<td>"+data[i].VOLUME+"</td>"
-    		    			+"<td>"+data[i].WEIGHT+"</td>"
-    		    			+"<td>"+data[i].CONTACT+"</br>"+data[i].PHONE+"</br>"+data[i].ADDRESS+"</td>"
-    		    			+"<td>"+data[i].IS_DAMAGE+"</td>"
-    		    			+"<td>"+data[i].ESTIMATE_DAMAGE_AMOUNT+"</td>"
-    		    			+"<td>"+data[i].REMARK+"</td></tr>"
-                            +" </tbody>");
-    				 
-    			}else{
-    				$("#style").show();
-    				$("#item").show();
-    				$("#item").append("<tr><td>"+data[i].ITEM_NAME+"</td>"
-    		    			+"<td>"+data[i].ITEM_NO+"</td>"
-    		    			+"<td>"+data[i].AMOUNT+"</td>"
-    		    			+"<td>"+data[i].LASTTOTAL+"</td>"
-    		    			+"<td>"+data[i].LASTAMOUNT+"</td>"
-    		    			+"<td>"+data[i].UNIT+"</td>"
-    		    			+"<td>"+data[i].VOLUME+"</td>"
-    		    			+"<td>"+data[i].WEIGHT+"</td>"
-    		    			+"<td>"+data[i].ITEM_DESC+"</td></tr>");
-    			}
-    			
-    		}
-    	},'json');
-    	**/
     	$.get('/yh/returnorder/paylist', {locationName:inputStr}, function(data){ 
     		for(var i=0; i < data.length; i++){
     			
@@ -394,8 +337,10 @@
            			"aoColumns": [
            			          
            				{ "mDataProp": "SERIAL_NO" },
+           				{ "mDataProp": "ITEM_NO" },
            				{ "mDataProp": "ITEM_NAME" },
            				{ "mDataProp": "AMOUNT" },
+           				{ "mDataProp": "UNIT" },
            	            { "mDataProp": "VOLUME" },
            	            { "mDataProp": "WEIGHT" },
            	            { "mDataProp": "REMARK" },
@@ -419,9 +364,7 @@
 
            				{ "mDataProp": "ITEM_NAME" },
            				{ "mDataProp": "ITEM_NO" },
-           				{ "mDataProp": "AMOUNT" },
-           	            { "mDataProp": "LASTTOTAL" },
-           	            { "mDataProp": "LASTAMOUNT" },
+           				{ "mDataProp": "AMOUNT" },           	         
            	            { "mDataProp": "UNIT" },
            	         	{ "mDataProp": "VOLUME" },
            	         	{ "mDataProp": "WEIGHT" },
