@@ -475,7 +475,7 @@ public class TransferOrderController extends Controller {
     // 删除发车单
     private void deleteDepartOrder(TransferOrder transferOrder) {
     	DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id = ?", transferOrder.get("id"));
-    	long departId = departTransferOrder.get("depart_id");
+    	Long departId = departTransferOrder.get("depart_id");
     	if(departTransferOrder != null){
     		departTransferOrder.set("order_id", null);
     		departTransferOrder.update();
