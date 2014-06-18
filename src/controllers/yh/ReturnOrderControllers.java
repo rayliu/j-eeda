@@ -118,12 +118,12 @@ public class ReturnOrderControllers extends Controller {
 						+" to.ORDER_NO  as transfer_order_no,to.CARGO_NATURE  as nature,to.PICKUP_MODE  as pickup,to.ARRIVAL_MODE  as arrival,to.REMARK as remark ,"
 						+" u.user_name as counterman,lo.name as location_from,loc.name as location_to "
 						+" FROM RETURN_ORDER  ro "
-						+" left join CONTACT  co on co.id in (select p.CONTACT_ID from PARTY p where p.id=ro.CUSTOMER_ID ) "
-						+" left join CONTACT  con on con.id in (select p.CONTACT_ID from PARTY p where p.id=ro.NOTITY_PARTY_ID )"
-						+" left join TRANSFER_ORDER  to on to.id=ro.TRANSFER_ORDER_ID "
-						+" left join USER_LOGIN  u on u.id =to.CREATE_BY "
-						+ " left join location lo on lo.code=to.route_from"
-						+ " left join location loc on loc.code=to.route_to"
+						+"  left join TRANSFER_ORDER  to on to.id=ro.TRANSFER_ORDER_ID "
++"left join CONTACT  co on co.id in (select p.CONTACT_ID from PARTY p where p.id=to.CUSTOMER_ID  )" 
++" left join CONTACT  con on con.id in (select pa.CONTACT_ID from PARTY pa where pa.id=to.NOTIFY_PARTY_ID  )"
+ +" left join  USER_LOGIN  u on u.id =to.CREATE_BY "
++" left join  LOCATION  lo on lo.code=to.route_from"
+ +" left join LOCATION  loc  on loc.code=to.route_to"
 						+ " where ro.id="+id+"";
 			String sql_del="SELECT ro.*,co.COMPANY_NAME as company_name ,co.ADDRESS as address,co.CONTACT_PERSON as contact ,co.PHONE as phone ,"
 					+" con.COMPANY_NAME as pay_company ,con.ADDRESS as pay_address,con.CONTACT_PERSON as pay_contad ,con.PHONE as pay_phone ,"
@@ -139,7 +139,7 @@ public class ReturnOrderControllers extends Controller {
 					 +" left join DELIVERY_ORDER  de on de.id=ro.DELIVERY_ORDER_ID"
 					 +" where ro.id="+id+"";
 			ReturnOrder re=ReturnOrder.dao.findById(id);
-			if("null".equals(re.get("DELIVERY_ORDER_ID"))){
+			if(re.get("DELIVERY_ORDER_ID")==null){
 				message = Db.find(sql_tr);
 			}else{
 				message = Db.find(sql_del);
@@ -245,27 +245,25 @@ public class ReturnOrderControllers extends Controller {
 		TransferOrder tr = TransferOrder.dao.findFirst("SELECT to.CARGO_NATURE   FROM TRANSFER_ORDER to where to.id in (select ro.TRANSFER_ORDER_ID  from RETURN_ORDER  ro where ro.id="+id+")");
 		String nature = tr.getStr("cargo_nature");
 		if (re.get("DELIVERY_ORDER_ID") != null) {
+		
 			setAttr("check", true);
 		} else {
 			setAttr("check", false);
 		}
-
+		
 		setAttr("nature", nature);
 		setAttr("id", id);
 		if (LoginUserController.isAuthenticated(this))
 			render("profile/returnorder/returnOrder.html");
+	
 	}
-
 	public void save() {
 		int id = Integer.parseInt(getPara("id"));
-		List<Record> DELIVERYORDERID = new ArrayList<Record>();
-		DELIVERYORDERID = Db
-		        .find("SELECT DELIVERY_ORDER_ID  FROM RETURN_ORDER ro where ro.id='"
-		                + id + "'");
-		if (DELIVERYORDERID.get(0).get("DELIVERY_ORDER_ID") != null) {
-			setAttr("check", true);
-		} else {
+		ReturnOrder re=ReturnOrder.dao.findFirst("SELECT ro.deLIVERY_ORDER_ID  FROM RETURN_ORDER  ro where ro.id="+id+"");
+		if (re.get("DELIVERY_ORDER_ID")==null) {
 			setAttr("check", false);
+		} else {
+			setAttr("check", true);
 		}
 		TransferOrder tr = TransferOrder.dao.findById(id);
 		String nature = tr.getStr("cargo_nature");

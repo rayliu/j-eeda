@@ -128,8 +128,8 @@ public class DataInitUtil {
             // 发车单运输单中间表
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,transfer_order_no varchar(255),FOREIGN KEY(depart_id) REFERENCES depart_order(id),FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
             // location init
-            // LocationDataInit.initLocation(stmt);
-            // ProfileDataInit.initProfile(stmt);
+            LocationDataInit.initLocation(stmt);
+             ProfileDataInit.initProfile(stmt);
             stmt.close();
             // conn.commit();
             conn.close();
