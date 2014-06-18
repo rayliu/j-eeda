@@ -8,6 +8,7 @@ import models.Category;
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.DepartOrder;
+import models.DepartOrderItemdetail;
 import models.DepartTransferOrder;
 import models.Location;
 import models.Office;
@@ -204,7 +205,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("delivery_order_item", DeliveryOrderItem.class);
         arp.addMapping("depart_order", DepartOrder.class);
         arp.addMapping("depart_transfer", DepartTransferOrder.class);
-
+        arp.addMapping("depart_transfer_itemdetail", DepartOrderItemdetail.class);
         // yh mapping
 
     }

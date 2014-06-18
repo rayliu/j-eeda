@@ -1,10 +1,11 @@
  $(document).ready(function() {
 	$('#menu_assign').addClass('active').find('ul').addClass('in');
-	$('#dataTables-example').dataTable({
+var dataTable =$('#dataTables-example').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
+        "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -28,14 +29,15 @@
             {"mDataProp":"TRANSFER_ORDER_NO"},
             { 
                 "mDataProp": null, 
-                "sWidth": "8%",                
+                "sWidth": "8%",               
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-danger cancelbutton' href='/yh/pickupOrder/edit/"+obj.aData.ID+"'>"+
+                    return "<a class='btn btn-danger cancelbutton' href=' /yh/departOrder/cancel/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "取消"+
                             "</a>";
                 }
             } 
         ]      
-    });	
+    });
+	
 });

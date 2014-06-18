@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
+import models.DepartOrderItemdetail;
 import models.DepartTransferOrder;
 import models.Party;
+import models.TransferOrderItemDetail;
 import models.UserLogin;
 import models.yh.profile.Contact;
 
@@ -147,23 +149,12 @@ public class DepartOrderController extends Controller {
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "SELECT tof.* ,or.ORDER_NO as order_no,c.COMPANY_NAME as customer  FROM TRANSFER_ORDER_ITEM tof"
+		String sql = "SELECT tof.* ,or.ORDER_NO as order_no,or.id as tr_order_id,c.COMPANY_NAME as customer  FROM TRANSFER_ORDER_ITEM tof"
 				+ " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
 				+ "left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id)"
 				+ " where tof.ORDER_ID in(" + idlist + ")  order by c.id" + sLimit;
 		List<Record> departOrderitem = Db.find(sql);
-		for (int i = 0; i < departOrderitem.size(); i++) {
-			String itemname = departOrderitem.get(i).get("item_name");
-			if ("ATM".equals(itemname)) {
-				Long itemid = departOrderitem.get(i).get("id");
-				String sql2 = "SELECT SERIAL_NO  FROM TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID =" + itemid;
-				List<Record> itemserial_no = Db.find(sql2);
-				String itemno = itemserial_no.get(0).get("SERIAL_NO");
-				departOrderitem.get(i).set("serial_no", itemno);
-			} else {
-				departOrderitem.get(i).set("serial_no", "无");
-			}
-		}
+		
 
 		Map Map = new HashMap();
 		Map.put("sEcho", pageIndex);
@@ -238,9 +229,12 @@ public class DepartOrderController extends Controller {
 		String order_id2 = this.getPara("orderid");
 		String[] order_id = this.getPara("orderid").split(",");
 		String party_id = getPara("driverid");
+		String[] item_detail = this.getPara("item_detail").split(",");
+		String[] tr_itemid = this.getPara("tr_itemid_list").split(",");
+	
 		Date createDate = Calendar.getInstance().getTime();
 		if ("".equals(getPara("driverid"))) {
-
+          
 			Contact con = new Contact();
 			con.set("phone", getPara("phone")).set("CONTACT_PERSON", getPara("customerMessage")).save();
 			Long con_id = con.get("id");
@@ -259,6 +253,20 @@ public class DepartOrderController extends Controller {
 			.set("car_size", getPara("carsize")).set("remark", getPara("remark"));
 			dp.save();
 			setAttr("depart_id", "no");
+			if(item_detail.length!=0 && tr_itemid.length!=0 ){
+				for(int i=0; i<tr_itemid.length;i++){
+					
+					for(int j=0;j<item_detail.length;j++){
+						TransferOrderItemDetail tr_item_de=TransferOrderItemDetail.dao.findById(Integer.parseInt(item_detail[j]));
+					if(tr_item_de.get("ITEM_ID").equals(tr_itemid[i])){
+						DepartOrderItemdetail de_item_detail=new DepartOrderItemdetail();
+						de_item_detail.set("DEPART_ID",Integer.parseInt(dp.get("id").toString()))
+						.set("ITEM_ID",Integer.parseInt(tr_itemid[i])).set("ITEMDETAIL_ID",Integer.parseInt(item_detail[i])).save();
+						
+					}
+					}
+				}
+			}
 		} else {
 			dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
 			dp.set("CREATE_BY", Integer.parseInt(creat_id)).set("create_stamp", createDate)
@@ -311,5 +319,21 @@ public class DepartOrderController extends Controller {
 
 		renderJson(Map);
 	}
+	// 取消
+		public void cancel() {
+			String id = getPara();
+			String sql="SELECT * FROM DEPART_TRANSFER  where DEPART_ID ="+id+"";
+			List<DepartTransferOrder> re_tr=DepartTransferOrder.dao.find(sql);
+			for(int i=0;i<re_tr.size();i++){
+				DepartTransferOrder dep_tr=DepartTransferOrder.dao.findFirst(sql);
+				dep_tr.set("DEPART_ID", null);
+				dep_tr.delete();
+			}
+		
+			DepartOrder re = DepartOrder.dao.findById(id);
+			re.set("notify_party_id", null).update();
+			re.delete();
+			render("departOrder/departOrderList.html");
+		}
 
 }
