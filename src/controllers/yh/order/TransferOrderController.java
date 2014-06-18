@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DepartOrder;
+import models.DepartTransferOrder;
 import models.Location;
 import models.Office;
 import models.Party;
@@ -380,18 +382,24 @@ public class TransferOrderController extends Controller {
             transferOrder.set("route_to", getPara("route_to"));
             transferOrder.set("order_type", getPara("orderType"));
             transferOrder.set("customer_province", getPara("customerProvince"));
+            transferOrder.set("car_size", getPara("car_size"));
+            transferOrder.set("car_no", getPara("car_no"));
+            transferOrder.set("car_type", getPara("car_type"));
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
                 // 到达方式为货品直送时把warehouseId置为null
                 warehouseId = null;
                 Party party = null;
+                Party dirver = null;
                 String notifyPartyId = getPara("notify_party_id");
-                if (notifyPartyId == null || "".equals("notifyPartyId")) {
+                if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
+                    dirver = saveDriver();
                 } else {
                     party = updateContact(notifyPartyId);
                 }
                 transferOrder.set("notify_party_id", party.get("id"));
+                transferOrder.set("driver_id", dirver.get("id"));
             }
             if (warehouseId != null && !"".equals(warehouseId)) {
                 transferOrder.set("warehouse_id", warehouseId);
@@ -400,6 +408,10 @@ public class TransferOrderController extends Controller {
                 transferOrder.set("office_id", officeId);
             }
             transferOrder.save();
+            // 如果是货品直送,则需生成一张发车单
+            if(transferOrder.get("arrival_mode").equals("delivery")){
+            	createDepartOrder(transferOrder);
+            }
             saveTransferOrderMilestone(transferOrder);
         } else {
             transferOrder = TransferOrder.dao.findById(order_id);
@@ -417,18 +429,26 @@ public class TransferOrderController extends Controller {
             transferOrder.set("route_to", getPara("route_to"));
             transferOrder.set("order_type", getPara("orderType"));
             transferOrder.set("customer_province", getPara("customerProvince"));
+            transferOrder.set("car_size", getPara("car_size"));
+            transferOrder.set("car_no", getPara("car_no"));
+            transferOrder.set("car_type", getPara("car_type"));
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
                 // 到达方式为货品直送时把warehouseId置为null
                 warehouseId = null;
                 Party party = null;
+                Party dirver = null;
                 String notifyPartyId = getPara("notify_party_id");
-                if (notifyPartyId == null || "".equals("notifyPartyId")) {
+                if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
+                    dirver = saveDriver();
                 } else {
                     party = updateContact(notifyPartyId);
                 }
                 transferOrder.set("notify_party_id", party.get("id"));
+                transferOrder.set("driver_id", dirver.get("id"));
+            }else{
+            	transferOrder.set("notify_party_id", null);            	
             }
             if (warehouseId != null && !"".equals(warehouseId)) {
                 transferOrder.set("warehouse_id", warehouseId);
@@ -437,11 +457,105 @@ public class TransferOrderController extends Controller {
                 transferOrder.set("office_id", officeId);
             }
             transferOrder.update();
+            // 如果是货品直送,则需判断是否新建一张发车单
+            if(transferOrder.get("arrival_mode").equals("delivery")){
+            	DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id = ?", transferOrder.get("id"));
+            	if(departTransferOrder == null){
+            		createDepartOrder(transferOrder);
+            	}else{
+            		updateDepartOrder(transferOrder, departTransferOrder);
+            	}
+            }else{
+            	deleteDepartOrder(transferOrder);
+            }
         }
         renderJson(transferOrder);
     }
 
-    // 保存运输里程碑
+    // 删除发车单
+    private void deleteDepartOrder(TransferOrder transferOrder) {
+    	DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id = ?", transferOrder.get("id"));
+    	long departId = departTransferOrder.get("depart_id");
+    	if(departTransferOrder != null){
+    		departTransferOrder.set("order_id", null);
+    		departTransferOrder.update();
+    		departTransferOrder.delete();
+    		DepartOrder.dao.deleteById(departId);    		
+    	}
+	}
+
+	// 创建发车单
+    private void createDepartOrder(TransferOrder transferOrder) {
+    	String depart_no = creatDepartNo();
+		String name = (String) currentUser.getPrincipal();
+		UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
+		String creat_id = users.get("id").toString();
+		Date createDate = Calendar.getInstance().getTime();
+		DepartOrder departOrder = new DepartOrder();			
+		departOrder.set("create_by", Integer.parseInt(creat_id)).set("create_stamp", createDate)
+			.set("combine_type", "DEPART").set("depart_no", depart_no);
+			//.set("car_no", getPara("car_no")).set("car_type", getPara("cartype")).set("car_size", getPara("carsize")).set("remark", getPara("remark"));
+		departOrder.set("notify_party_id", transferOrder.get("notify_party_id"));
+		departOrder.save();
+		
+		DepartTransferOrder departTransferOrder = new DepartTransferOrder();
+		departTransferOrder.set("depart_id", departOrder.get("id"));
+		departTransferOrder.set("order_id", transferOrder.get("id"));
+		departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
+		departTransferOrder.save();
+	}
+    
+    // 更新发车单
+    private void updateDepartOrder(TransferOrder transferOrder, DepartTransferOrder departTransferOrder) {
+    	String depart_no = creatDepartNo();
+    	String name = (String) currentUser.getPrincipal();
+    	UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
+    	String creat_id = users.get("id").toString();
+    	Date createDate = Calendar.getInstance().getTime();
+    	DepartOrder departOrder = DepartOrder.dao.findById(departTransferOrder.get("depart_id"));
+    	departOrder.set("create_by", Integer.parseInt(creat_id)).set("create_stamp", createDate)
+			.set("combine_type", "DEPART").set("depart_no", depart_no);
+			//.set("car_no", getPara("car_no")).set("car_type", getPara("cartype")).set("car_size", getPara("carsize")).set("remark", getPara("remark"));
+		departOrder.set("notify_party_id", transferOrder.get("notify_party_id"));
+		departOrder.update();
+		
+		departTransferOrder.set("depart_id", departOrder.get("id"));
+		departTransferOrder.set("order_id", transferOrder.get("id"));
+		departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
+		departTransferOrder.update();
+    }
+
+    // 创建发车单序列号
+	private String creatDepartNo() {
+		String order_no = null;
+		String the_order_no = null;
+		DepartOrder order = DepartOrder.dao.findFirst("select * from DEPART_ORDER where  COMBINE_TYPE= '"
+				+ DepartOrder.COMBINE_TYPE_DEPART + "' order by DEPART_no desc limit 0,1");
+		if (order != null) {
+			String num = order.get("DEPART_no");
+			String str = num.substring(2, num.length());
+			System.out.println(str);
+			Long oldTime = Long.parseLong(str);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			String format = sdf.format(new Date());
+			String time = format + "00001";
+			Long newTime = Long.parseLong(time);
+			if (oldTime >= newTime) {
+				order_no = String.valueOf((oldTime + 1));
+			} else {
+				order_no = String.valueOf(newTime);
+			}
+			the_order_no = "FC" + order_no;
+		} else {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			String format = sdf.format(new Date());
+			order_no = format + "00001";
+			the_order_no = "FC" + order_no;
+		}
+		return the_order_no;
+	}
+
+	// 保存运输里程碑
     private void saveTransferOrderMilestone(TransferOrder transferOrder) {
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         transferOrderMilestone.set("status", "新建");
@@ -467,12 +581,23 @@ public class TransferOrderController extends Controller {
         party.save();
         return party;
     }
+    
+    // 保存司机
+    public Party saveDriver() {
+    	Party party = new Party();
+    	Contact contact = setDriver();
+    	party.set("contact_id", contact.getLong("id"));
+    	party.set("create_date", new Date());
+    	party.set("creator", currentUser.getPrincipal());
+    	party.set("party_type", Party.PARTY_TYPE_DRIVER);
+    	party.save();
+    	return party;
+    }
 
     // 更新收货人
     public Party updateContact(String notifyPartyId) {
         Party party = Party.dao.findById(notifyPartyId);
         Contact contact = editContact(party);
-        // party.set("contact_id", contact.getLong("id"));
         party.set("create_date", new Date());
         party.set("creator", currentUser.getPrincipal());
         party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
@@ -490,6 +615,15 @@ public class TransferOrderController extends Controller {
         contact.set("location", getPara("notify_location"));
         contact.save();
         return contact;
+    }
+    
+    // 保存司机
+    private Contact setDriver() {
+    	Contact contact = new Contact();
+    	contact.set("contact_person", getPara("driver_name"));
+    	contact.set("phone", getPara("driver_phone"));
+    	contact.save();
+    	return contact;
     }
 
     // 更新联系人

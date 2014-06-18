@@ -117,7 +117,8 @@ $(document).ready(function() {
     	pickupOrder.fnDraw();
     } );
     
-    $('input.beginTime_filter').on( 'change input', function () {
+    //$('input.beginTime_filter').on( 'change input', function () {
+    $('#beginTime_filter').on('keyup', function () {
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -130,7 +131,8 @@ $(document).ready(function() {
     	pickupOrder.fnDraw();
     } );
     
-    $('input.endTime_filter').on( 'keyup click', function () {
+    //$('input.endTime_filter').on( 'keyup click', function () {
+    $('#endTime_filter').on( 'keyup click', function () {
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -155,5 +157,20 @@ $(document).ready(function() {
     	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
     	pickupOrder.fnDraw();
     } );
-    
+
+    $('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $('#beginTime_filter').trigger('keyup');
+    });
+
+    $('#datetimepicker2').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $('#endTime_filter').trigger('keyup');
+    });
 } );
