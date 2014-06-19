@@ -390,6 +390,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("car_size", getPara("car_size"));
             transferOrder.set("car_no", getPara("car_no"));
             transferOrder.set("car_type", getPara("car_type"));
+            transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
                 // 到达方式为货品直送时把warehouseId置为null
@@ -442,6 +443,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("car_size", getPara("car_size"));
             transferOrder.set("car_no", getPara("car_no"));
             transferOrder.set("car_type", getPara("car_type"));
+            transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
                 // 到达方式为货品直送时把warehouseId置为null

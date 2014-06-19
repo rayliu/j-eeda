@@ -98,11 +98,27 @@ public class DepartOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
 
-		String sqlTotal = "select count(1) total from transfer_order";
+		String sqlTotal = "select count(1) total  from transfer_order to "
+					+" left join party p on to.customer_id = p.id "
+					+" left join contact c on p.contact_id = c.id "
+					+" left join location l1 on to.route_from = l1.code "
+					+" left join location l2 on to.route_to = l2.code"
+					+" where to.status not in ('已入库','已签收') and arrival_mode not in ('delivery')";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select * from transfer_order order by create_stamp desc";
+		String sql = "select to.order_no,to.cargo_nature,"
+					+" (select sum(toi.weight) from transfer_order_item toi where toi.order_id = to.id) as total_weight,"  
+					+" (select sum(toi.volume) from transfer_order_item toi where toi.order_id = to.id) as total_volumn," 
+					+" (select sum(toi.amount) from transfer_order_item toi where toi.order_id = to.id) as total_amount," 
+					+" to.address,to.pickup_mode,to.status,c.company_name cname,"
+					+" l1.name route_from,l2.name route_to,to.CREATE_STAMP from transfer_order to "
+					+" left join party p on to.customer_id = p.id "
+					+" left join contact c on p.contact_id = c.id "
+					+" left join location l1 on to.route_from = l1.code "
+					+" left join location l2 on to.route_to = l2.code"
+					+" where to.status not in ('已入库','已签收') and arrival_mode not in ('delivery')"
+					+" order by to.CREATE_STAMP desc";
 
 		List<Record> transferOrders = Db.find(sql);
 

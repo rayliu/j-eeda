@@ -154,14 +154,7 @@ $(document).ready(function() {
 	    			}
 	    		},'json');
 	        
-		},'json');
-        
-        /*// 选中客户
-		if($("#hideProvinceFrom").val() == '广东省'){
-			$("#customerProvince1").attr('checked', true);
-		}else{
-			$("#customerProvince2").attr('checked', true);    			
-		}*/
+		},'json');        
         $('#customerList').hide();
     }); 
 	
@@ -183,14 +176,12 @@ $(document).ready(function() {
 			{
 				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
 			}
-		},'json');
-		
-        $('#spList').show();
+		},'json');		
         $("#spList").css({ 
         	left:$(this).position().left+"px", 
         	top:$(this).position().top+32+"px" 
         }); 
-        
+        $('#spList').show();        
 	});
 	
 	// 选中供应商

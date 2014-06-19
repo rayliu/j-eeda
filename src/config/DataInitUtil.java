@@ -594,8 +594,9 @@ public class DataInitUtil {
                     + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
 
             // 类别
-            stmt.execute("insert into category(name,customer_id) values('ATM', 19);");
-            stmt.execute("insert into category(name,customer_id) values('普通货品', 19);");
+            stmt.execute("insert into category(name,customer_id) values('公司名', 19);");
+            stmt.execute("insert into category(name,customer_id, parent_id) values('ATM', 19, 1);");
+            stmt.execute("insert into category(name,customer_id, parent_id) values('普通货品', 19, 1);");
 
             // 产品
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category_id,item_desc) values('ATM', '2014042600001','1','5','7','9','1', '这是一台ATM');");

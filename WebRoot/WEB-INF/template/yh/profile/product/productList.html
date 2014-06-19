@@ -14,7 +14,7 @@
 	        <ul id='customerList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 17%; left: 2%;">
 			</ul>
 	    </div>
-	    <div id="treeListDiv" style="display: none;">		    
+	    <div id="treeListDiv" style="display: none;">
 	    	<div class="tree " style="clear: both;">
 			    <ul>
 			        <li id="productTreeLi">
@@ -24,11 +24,10 @@
 			        </li>
 			    </ul>
 			</div>
-		    
-		    
-		    
-    	</div>
-
+        </div>
+		<div>
+	        <ul id="treeDemo" class="ztree"></ul>
+	    </div>
     </div>
     <!--end of col4 -->
     <div class="col-lg-8">
@@ -175,3 +174,102 @@
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/profile/product/list.js"></script>
 <link href="/yh/css/productTree.css" rel="stylesheet" />
+
+
+<link rel="stylesheet" href="/yh/js/plugins/zTree_v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.core-3.5.js"></script>
+
+<SCRIPT type="text/javascript">
+       
+        var setting = {
+            view: {
+                selectedMulti: false
+            },
+            async: {
+                enable: true,
+                url:"/yh/product/searchNodeCategory",
+                autoParam:["categoryId", "customerId", "level=lv"],
+                otherParam:{"otherParam":"zTreeAsyncTest"},
+                dataFilter: filter
+            },
+            callback: {
+                beforeClick: beforeClick,
+                beforeAsync: beforeAsync,
+                onAsyncError: onAsyncError,
+                onAsyncSuccess: onAsyncSuccess
+            }
+        };
+
+        function filter(treeId, parentNode, childNodes) {
+            if (!childNodes) return null;
+            for (var i=0, l=childNodes.length; i<l; i++) {
+                childNodes[i].name = childNodes[i].NAME.replace(/\.n/g, '.');
+                childNodes[i].categoryId = childNodes[i].ID;
+                childNodes[i].customerId = childNodes[i].CUSTOMER_ID;
+                childNodes[i].parentId = childNodes[i].PARENT_ID;
+                childNodes[i].isParent=true;
+            }
+            return childNodes;
+        }
+        function beforeClick(treeId, treeNode) {
+            if (!treeNode.isParent) {
+                alert("pls select parent node");
+                return false;
+            } else {
+                return true;
+            }
+        }
+        var log, className = "dark";
+        function beforeAsync(treeId, treeNode) {
+            className = (className === "dark" ? "":"dark");
+            showLog("[ "+getTime()+" beforeAsync ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root") );
+            return true;
+        }
+        function onAsyncError(event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
+            showLog("[ "+getTime()+" onAsyncError ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root") );
+        }
+        function onAsyncSuccess(event, treeId, treeNode, msg) {
+            showLog("[ "+getTime()+" onAsyncSuccess ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root") );
+        }
+        
+        function showLog(str) {
+            if (!log) log = $("#log");
+            log.append("<li class='"+className+"'>"+str+"</li>");
+            if(log.children("li").length > 8) {
+                log.get(0).removeChild(log.children("li")[0]);
+            }
+        }
+        function getTime() {
+            var now= new Date(),
+            h=now.getHours(),
+            m=now.getMinutes(),
+            s=now.getSeconds(),
+            ms=now.getMilliseconds();
+            return (h+":"+m+":"+s+ " " +ms);
+        }
+
+        function refreshNode(e) {
+            var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+            type = e.data.type,
+            silent = e.data.silent,
+            nodes = zTree.getSelectedNodes();
+            if (nodes.length == 0) {
+                alert("pls select parent node");
+            }
+            for (var i=0, l=nodes.length; i<l; i++) {
+                zTree.reAsyncChildNodes(nodes[i], type, silent);
+                if (!silent) zTree.selectNode(nodes[i]);
+            }
+        }
+
+        var zNodes =[{name:'test', categoryId:1, customerId:19, isParent:true}];
+        
+        $(document).ready(function(){
+            $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+            $("#refreshNode").bind("click", {type:"refresh", silent:false}, refreshNode);
+            $("#refreshNodeSilent").bind("click", {type:"refresh", silent:true}, refreshNode);
+            $("#addNode").bind("click", {type:"add", silent:false}, refreshNode);
+            $("#addNodeSilent").bind("click", {type:"add", silent:true}, refreshNode);
+        });
+        
+    </SCRIPT>

@@ -286,10 +286,6 @@ $(document).ready(function() {
     				}
     			}
     		},'json');
-        	
-        	/*var categoryId = $("#categoryId").val();
-        	productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+categoryId;
-        	productDataTable.fnDraw();*/
         }
     };
     

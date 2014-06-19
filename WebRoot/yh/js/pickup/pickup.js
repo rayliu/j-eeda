@@ -47,7 +47,18 @@ $(document).ready(function() {
             { "mDataProp": "CNAME"},
     		{ "mDataProp": "ROUTE_FROM"},
     		{ "mDataProp": "ROUTE_TO"},                                      
-    		{ "mDataProp": "CREATE_STAMP"}                                      
+    		{ "mDataProp": "CREATE_STAMP"},                                      
+    		{ "mDataProp": "ASSIGN_STATUS",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ASSIGN_STATUS == "NEW"){
+            			return "未发车";
+            		}else if(obj.aData.ASSIGN_STATUS == "PARTIAL"){
+            			return "部分发车";
+            		}else if(obj.aData.ASSIGN_STATUS == "ALL"){
+            			return "全部发车";
+            		}else{
+            			return "";
+            		}}},                                     
         ]      
     });	
     
