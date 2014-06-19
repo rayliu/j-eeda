@@ -37,6 +37,8 @@
                                             	<input id="id" type="hidden" name="id" value="${transferOrder.id!''}"/>
                                             	<input id="customer_id" type="hidden" name="customer_id"/>
                                             	<input id="sp_id" type="hidden" name="sp_id"/>
+                                            	<input id="notify_party_id" type="hidden" name="notify_party_id"/>
+                                            	<input id="driver_id" type="hidden" name="driver_id"/>
                                             	<input type="hidden" name="order_no" value="${order_no!''}"/>
                                             	<input type="hidden" name="status" value="${status!''}"/>
                                             	<input type="hidden" name="create_by" value="${create_by!''}"/>
@@ -148,13 +150,15 @@
                                                 	<h2>车辆信息</h2>    
 			                                          <div class="form-group">
 														<label>司机</label>
-													    <div class="form-group">
-													        <input type="text" name="driver_name" placeholder="选择司机" class="form-control" id="">
+													    <div class="form-group">											
+													        <input type="text" name="driver_name" placeholder="选择司机" class="form-control" id="driverMessage">
+													        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="driverList">
+															</ul>
 													    </div>
 												    </div> 												    
         	                                        <div class="form-group">
         	                                            <label>司机电话</label>
-        	                                            <input name="driver_phone" class="form-control" placeholder="请输入司机电话">
+        	                                            <input id="driver_phone" name="driver_phone" class="form-control" placeholder="请输入司机电话">
         	                                        </div>                                       
 			                                        <div class="form-group">
 			                                            <label>车牌</label>

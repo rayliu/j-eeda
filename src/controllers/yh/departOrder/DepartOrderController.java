@@ -44,14 +44,15 @@ public class DepartOrderController extends Controller {
 		}
 
 		String sqlTotal = "select count(1) total FROM DEPART_ORDER do "
-				+ " left join party p on do.notify_party_id = p.id " + " left join contact c on p.contact_id = c.id "
-				+ " left join depart_transfer dt on do.id = dt.depart_id where combine_type = '"
+				+ " left join party p on do.driver_id = p.id  and p.party_type = '"+Party.PARTY_TYPE_DRIVER+"'" 
+				+ " left join contact c on p.contact_id = c.id "
+				+ " where combine_type = '"
 				+ DepartOrder.COMBINE_TYPE_DEPART + "'";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		String sql = "SELECT do.*,c.contact_person,c.phone, (select group_concat(tr.ORDER_NO separator '\r\n') FROM TRANSFER_ORDER tr where tr.id in(select ORDER_ID from DEPART_TRANSFER dt where dt.DEPART_ID=do.id ))  as TRANSFER_ORDER_NO  FROM DEPART_ORDER do "
-				+ " left join party p on do.notify_party_id = p.id "
+				+ " left join party p on do.driver_id = p.id and p.party_type = '"+Party.PARTY_TYPE_DRIVER+"'"
 				+ " left join contact c on p.contact_id = c.id where combine_type = '"
 				+ DepartOrder.COMBINE_TYPE_DEPART + "'";
 

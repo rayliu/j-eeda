@@ -171,6 +171,7 @@ public class TransferOrderController extends Controller {
 
         Long customer_id = transferOrder.get("customer_id");
         Long sp_id = transferOrder.get("sp_id");
+        Long driver_id = transferOrder.get("driver_id");
         if (customer_id != null) {
             Party customer = Party.dao.findById(customer_id);
             Contact customerContact = Contact.dao.findById(customer.get("contact_id"));
@@ -180,6 +181,11 @@ public class TransferOrderController extends Controller {
             Party sp = Party.dao.findById(sp_id);
             Contact spContact = Contact.dao.findById(sp.get("contact_id"));
             setAttr("spContact", spContact);
+        }
+        if (driver_id != null) {
+        	Party driver = Party.dao.findById(driver_id);
+        	Contact driverContact = Contact.dao.findById(driver.get("contact_id"));
+        	setAttr("driverContact", driverContact);
         }
         Long notify_party_id = transferOrder.get("notify_party_id");
         if (notify_party_id != null) {
@@ -336,7 +342,6 @@ public class TransferOrderController extends Controller {
     }
 
     public void saveItem() {
-        // saveOrderItem(transferOrder);
         if (LoginUserController.isAuthenticated(this))
             render("transferOrder/transferOrderList.html");
     }
@@ -392,11 +397,16 @@ public class TransferOrderController extends Controller {
                 Party party = null;
                 Party dirver = null;
                 String notifyPartyId = getPara("notify_party_id");
+                String driverId = getPara("driver_id");
                 if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
-                    dirver = saveDriver();
                 } else {
                     party = updateContact(notifyPartyId);
+                }
+                if (driverId == null || "".equals(driverId)) {
+                	dirver = saveDriver();
+                } else {
+                	dirver = updateDriver(driverId);
                 }
                 transferOrder.set("notify_party_id", party.get("id"));
                 transferOrder.set("driver_id", dirver.get("id"));
@@ -439,16 +449,22 @@ public class TransferOrderController extends Controller {
                 Party party = null;
                 Party dirver = null;
                 String notifyPartyId = getPara("notify_party_id");
+                String driverId = getPara("driver_id");
                 if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
-                    dirver = saveDriver();
                 } else {
                     party = updateContact(notifyPartyId);
+                }
+                if (driverId == null || "".equals(driverId)) {
+                	dirver = saveDriver();
+                } else {
+                	dirver = updateDriver(driverId);
                 }
                 transferOrder.set("notify_party_id", party.get("id"));
                 transferOrder.set("driver_id", dirver.get("id"));
             }else{
             	transferOrder.set("notify_party_id", null);            	
+            	transferOrder.set("driver_id", null);            	
             }
             if (warehouseId != null && !"".equals(warehouseId)) {
                 transferOrder.set("warehouse_id", warehouseId);
@@ -493,9 +509,9 @@ public class TransferOrderController extends Controller {
 		Date createDate = Calendar.getInstance().getTime();
 		DepartOrder departOrder = new DepartOrder();			
 		departOrder.set("create_by", Integer.parseInt(creat_id)).set("create_stamp", createDate)
-			.set("combine_type", "DEPART").set("depart_no", depart_no);
-			//.set("car_no", getPara("car_no")).set("car_type", getPara("cartype")).set("car_size", getPara("carsize")).set("remark", getPara("remark"));
-		departOrder.set("notify_party_id", transferOrder.get("notify_party_id"));
+			.set("combine_type", "DEPART").set("depart_no", depart_no)
+			.set("car_no", transferOrder.get("car_no")).set("car_type", transferOrder.get("car_type")).set("car_size", transferOrder.get("car_size"));
+		departOrder.set("driver_id", transferOrder.get("driver_id"));
 		departOrder.save();
 		
 		DepartTransferOrder departTransferOrder = new DepartTransferOrder();
@@ -514,9 +530,9 @@ public class TransferOrderController extends Controller {
     	Date createDate = Calendar.getInstance().getTime();
     	DepartOrder departOrder = DepartOrder.dao.findById(departTransferOrder.get("depart_id"));
     	departOrder.set("create_by", Integer.parseInt(creat_id)).set("create_stamp", createDate)
-			.set("combine_type", "DEPART").set("depart_no", depart_no);
-			//.set("car_no", getPara("car_no")).set("car_type", getPara("cartype")).set("car_size", getPara("carsize")).set("remark", getPara("remark"));
-		departOrder.set("notify_party_id", transferOrder.get("notify_party_id"));
+			.set("combine_type", "DEPART").set("depart_no", depart_no)
+			.set("car_no", transferOrder.get("car_no")).set("car_type", transferOrder.get("car_type")).set("car_size", transferOrder.get("car_size"));
+		departOrder.set("driver_id", transferOrder.get("driver_id"));
 		departOrder.update();
 		
 		departTransferOrder.set("depart_id", departOrder.get("id"));
@@ -594,7 +610,7 @@ public class TransferOrderController extends Controller {
     	return party;
     }
 
-    // 更新收货人
+    // 更新收货人party
     public Party updateContact(String notifyPartyId) {
         Party party = Party.dao.findById(notifyPartyId);
         Contact contact = editContact(party);
@@ -603,6 +619,17 @@ public class TransferOrderController extends Controller {
         party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
         party.update();
         return party;
+    }
+    
+    // 更新司机party
+    public Party updateDriver(String driverId) {
+    	Party party = Party.dao.findById(driverId);
+    	Contact contact = editDriver(party);
+    	party.set("create_date", new Date());
+    	party.set("creator", currentUser.getPrincipal());
+    	party.set("party_type", Party.PARTY_TYPE_DRIVER);
+    	party.update();
+    	return party;
     }
 
     // 保存联系人
@@ -636,6 +663,15 @@ public class TransferOrderController extends Controller {
         contact.set("location", getPara("notify_location"));
         contact.update();
         return contact;
+    }
+    
+    // 更新司机
+    private Contact editDriver(Party party) {
+    	Contact contact = Contact.dao.findById(party.get("contact_id"));
+    	contact.set("contact_person", getPara("driver_name"));
+    	contact.set("phone", getPara("driver_phone"));
+    	contact.update();
+    	return contact;
     }
 
     // 查找客户
@@ -747,5 +783,16 @@ public class TransferOrderController extends Controller {
     public void searchAllOffice() {
         List<Office> offices = Office.dao.find("select * from office");
         renderJson(offices);
+    }
+    
+    // 查出所有的driver
+    public void searchAllDriver() {
+    	 String input = getPara("input");
+         List<Record> locationList = Collections.EMPTY_LIST;
+         if (input.trim().length() > 0) {
+             locationList = Db
+                     .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_DRIVER+"' and (contact_person like '%"+ input +"%' or phone like '%"+ input + "%') limit 0,10");
+         }
+         renderJson(locationList);
     }
 }

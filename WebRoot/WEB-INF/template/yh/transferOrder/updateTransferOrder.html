@@ -38,6 +38,7 @@
                                             	<input id="customer_id" type="hidden" name="customer_id" value="${transferOrder.customer_id!''}"/>
                                             	<input id="sp_id" type="hidden" name="sp_id" value="${transferOrder.sp_id!''}"/>
                                             	<input id="notify_party_id" type="hidden" name="notify_party_id" value="${transferOrder.notify_party_id!''}"/>
+                                            	<input id="driver_id" type="hidden" name="notify_party_id" value="${transferOrder.driver_id!''}"/>
                                             	<input type="hidden" name="order_no" value="${transferOrder.order_no!''}"/>
                                             	<input type="hidden" name="status" value="${transferOrder.status!''}"/>
                                             	<input type="hidden" name="create_by" value="${transferOrder.create_by!''}"/>
@@ -151,6 +152,73 @@
     	                                            <label>电话</label>
     	                                            <input name="notify_phone" value="${contact.phone!''}" class="form-control" placeholder="请输入电话">
     	                                        </div>
+    	                                        
+    	                                        <h2>车辆信息</h2>    
+			                                          <div class="form-group">
+														<label>司机</label>
+													    <div class="form-group">											
+													        <input type="text" name="driver_name" placeholder="选择司机" class="form-control" id="driverMessage" value="${driverContact.contact_person!''}">
+													        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="driverList">
+															</ul>
+													    </div>
+												    </div> 												    
+        	                                        <div class="form-group">
+        	                                            <label>司机电话</label>
+        	                                            <input id="driver_phone" name="driver_phone" class="form-control" placeholder="请输入司机电话" value="${driverContact.phone!''}">
+        	                                        </div>                                       
+			                                        <div class="form-group">
+			                                            <label>车牌</label>
+			                                            <input class="form-control" id="car_no" placeholder="请输入车牌" value="${transferOrder.car_no!''}"  name="car_no">
+			                                        </div>
+			                                         <div class="form-group">
+			                                        <div style=display:inline-block;width:49%>
+			                                            <label>车型</label>
+			                                         	<input type="hidden" value="${transferOrder.car_type!''}" id="carTypeSelect">
+			                                            <select name="car_type" id="cartype" class="form-control">
+			                                                                <option value="全部">全部</option>
+			                                                                <option value="平板车">平板车</option>
+			                                                                <option value="高栏车">高栏车</option>
+			                                                                <option value="集装车">集装车</option>
+			                                                                <option value="单桥车">单桥车</option>
+			                                                                <option value="双桥车">双桥车</option>
+			                                                                <option value="半挂车">半挂车</option>
+			                                                                <option value="冷藏车">冷藏车</option>
+			                                                                <option value="特种车">特种车</option>
+			                                                                <option value="商品运输车">商品运输车</option>
+			                                                                <option value="危险品车">危险品车</option>
+			                                                                <option value="挂车">挂车</option>
+			                                                                <option value="爬梯车">爬梯车</option>
+			                                                                <option value="可拼车">可拼车</option>
+			                                                                <option value="低栏车">低栏车</option>
+			                                                                <option value="半挂一拖二">半挂一拖二</option>
+			                                                                <option value="半挂一拖三">半挂一拖三</option>
+			                                                                <option value="半挂二拖二">半挂二拖二</option>
+			                                                                <option value="半挂二拖三">半挂二拖三</option>
+			                                                                <option value="前四后四">前四后四</option>
+			                                                                <option value="前四后六">前四后六</option>
+			                                                                <option value="前四后八">前四后八</option>
+			                                                                <option value="前四后十">前四后十</option>
+			                                                                <option value="五轮车">五轮车</option>
+			                                                                <option value="后八轮">后八轮</option>
+			                                                                <option value="半封闭">半封闭</option>
+			                                                                <option value="封闭车">封闭车</option>
+			                                                                <option value="罐式车">罐式车</option>
+			                                                                <option value="厢式车">厢式车</option>
+			                                                                <option value="自卸车">自卸车</option>
+			                                                                <option value="棉被车">棉被车</option>
+			                                                                <option value="其他">其他</option>
+			                                                            </select>
+			                                                            </div>
+			                                                         <div   style=display:inline-block;width:50%>			                                                               
+			                                            <label>长度</label>
+			                                         	<input type="hidden" value="${transferOrder.car_size!''}" id="carSizeSelect">
+			                                            <select name="car_size" id="carsize" class="form-control">
+			                                                <option value="15">15</option>
+			                                                <option value="20">20</option>
+			                                                <option value="25">25</option>                                                
+			                                            </select>
+			                                       </div>
+			                                       </div>
                                             </div>  
                                             <div class="form-group">
                                                 <label>备注</label>

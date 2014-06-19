@@ -114,7 +114,7 @@ public class DataInitUtil {
                     + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
                     + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
                     + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
-            // 发车单
+            // 拼车单
             stmt.executeUpdate("create table if not exists pickup_order(id bigint auto_increment PRIMARY KEY,order_no varchar(20),transfer_id bigint,type varchar(50),sp_id bigint,status varchar(20),To_type varchar(20),cargo_nature varchar(20),driver varchar(50),create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp,remark varchar(255));"); // 拼车单表从表
             // stmt.executeUpdate(
             stmt.executeUpdate("create table if not exists Pickup_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Customer_id bigint,Serial_no varchar(50),Item_no bigint,Item_name varchar(50),Item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
@@ -123,7 +123,7 @@ public class DataInitUtil {
 
             // 发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment PRIMARY KEY,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp TIMESTAMP,combine_type varchar(255),"
-                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),remark varchar(255),notify_party_id bigint,FOREIGN KEY(notify_party_id) REFERENCES party(id));");
+                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),remark varchar(255),driver_id bigint,FOREIGN KEY(driver_id) REFERENCES party(id));");
 
             // 发车单运输单中间表
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,transfer_order_no varchar(255),FOREIGN KEY(depart_id) REFERENCES depart_order(id),FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
@@ -602,16 +602,16 @@ public class DataInitUtil {
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category_id,item_desc) values('普通货品', '2014042600002','1','5','7','9','2', '这是普通货品');");
 
             // 发车单
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,notify_party_id,car_size) values('FC2014061000001', '2014-06-10 10:35:35.1','DEPART','粤A876596','平板车','10','20');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('FC2014061000001', '2014-06-10 10:35:35.1','DEPART','粤A876596','平板车','26','20');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '1','YS2014042600001');");
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,notify_party_id,car_size) values('FC2014061000002', '2014-06-10 10:39:35.1','DEPART','粤A879588','集装车','9','25');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('FC2014061000002', '2014-06-10 10:39:35.1','DEPART','粤A879588','集装车','27','25');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('2', '2','YS2014042600002');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '5','YS2014042600005');");
 
             // 拼车单
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,notify_party_id,car_size) values('PC2014061000001', '2014-06-10 10:35:35.1','PICKUP','粤A876596','平板货车','10','20');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('PC2014061000001', '2014-06-10 10:35:35.1','PICKUP','粤A876596','平板货车','26','20');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('3', '3','YS2014042600003');");
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,notify_party_id,car_size) values('PC2014061000002', '2014-06-10 10:39:35.1','PICKUP','粤A879588','箱式货车','9','25');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('PC2014061000002', '2014-06-10 10:39:35.1','PICKUP','粤A879588','箱式货车','27','25');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '4','YS2014042600004');");
             // stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '3','YS2014042600003');");
 
@@ -652,6 +652,10 @@ public class DataInitUtil {
         contact6.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生").set("email", "test@test.com");
         contact6.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
                 .set("location", "440402").save();
+        Contact contact8 = new Contact();
+        contact8.set("contact_person", "王师傅").set("phone", "13888888888").save();
+        Contact contact9 = new Contact();
+        contact9.set("contact_person", "康师傅").set("phone", "13777777777").save();
 
         Party p1 = new Party();
         Party p2 = new Party();
@@ -660,6 +664,8 @@ public class DataInitUtil {
         Party p5 = new Party();
         Party p6 = new Party();
         Party p7 = new Party();
+        Party p8 = new Party();
+        Party p9 = new Party();
         Date createDate = Calendar.getInstance().getTime();
         p1.set("contact_id", contact.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
                 .save();
@@ -675,7 +681,8 @@ public class DataInitUtil {
                 .set("creator", "demo").save();
         p6.set("contact_id", contact6.getLong("id")).set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
                 .set("creator", "demo").save();
-
+        p8.set("contact_id", contact8.getLong("id")).set("party_type", "DRIVER").set("create_date", createDate).set("creator", "demo").save();
+        p9.set("contact_id", contact9.getLong("id")).set("party_type", "DRIVER").set("create_date", createDate).set("creator", "demo").save();
     }
 
 }

@@ -205,6 +205,8 @@ $(document).ready(function() {
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
+				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
+				$("#driver_id").val(transferOrder.DRIVER_ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
@@ -219,6 +221,8 @@ $(document).ready(function() {
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
+				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
+				$("#driver_id").val(transferOrder.DRIVER_ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
 					if(transferOrder.STATUS == '已发车' || transferOrder.STATUS == '已入库' || transferOrder.STATUS == '已签收'){
@@ -263,6 +267,8 @@ $(document).ready(function() {
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
+				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
+				$("#driver_id").val(transferOrder.DRIVER_ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
@@ -281,6 +287,8 @@ $(document).ready(function() {
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
+				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
+				$("#driver_id").val(transferOrder.DRIVER_ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
 					if(transferOrder.STATUS == '已发车' || transferOrder.STATUS == '已入库' || transferOrder.STATUS == '已签收'){
@@ -464,6 +472,8 @@ $(document).ready(function() {
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
+				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
+				$("#driver_id").val(transferOrder.DRIVER_ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
@@ -488,6 +498,8 @@ $(document).ready(function() {
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
+				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
+				$("#driver_id").val(transferOrder.DRIVER_ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
 					if(transferOrder.STATUS == '已发车' || transferOrder.STATUS == '已入库' || transferOrder.STATUS == '已签收'){
@@ -1105,4 +1117,55 @@ $(document).ready(function() {
 			$(this).attr('checked', true);
 		}
 	 });
+
+	 // 列出所有的司机
+	 $('#driverMessage').on('keyup', function(){
+  		var inputStr = $('#driverMessage').val();
+  		if(inputStr == ""){
+  			$('#driver_phone').val($(this).attr(""));
+  		}
+  		$.get('/yh/transferOrder/searchAllDriver', {input:inputStr}, function(data){
+  			console.log(data);
+  			var driverList = $("#driverList");
+  			driverList.empty();
+  			for(var i = 0; i < data.length; i++)
+  			{
+  				driverList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', > "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
+  			}
+  		},'json');
+  		
+  		$("#driverList").css({ 
+          	left:$(this).position().left+"px", 
+          	top:$(this).position().top+32+"px" 
+          }); 
+          $('#driverList').show();
+	 });
+	  	
+  	 // 选中司机
+  	 $('#driverList').on('click', '.fromLocationItem', function(e){	
+  		   $("#driver_id").val($(this).attr('partyId'));
+	  	   $('#driverMessage').val($(this).attr('CONTACT_PERSON'));
+	  	   $('#driver_phone').val($(this).attr('phone'));
+	       $('#driverList').hide();   
+     }); 
+
+	// 回显车长
+	var carSizeOption=$("#carsize>option");
+	var carSizeVal=$("#carSizeSelect").val();
+	for(var i=0;i<carSizeOption.length;i++){
+	      var svalue=carSizeOption[i].text;
+	      if(carSizeVal==svalue){
+	       $("#carsize option[value='"+svalue+"']").attr("selected","selected");
+	      }
+	  }
+	
+	// 回显车型
+	var carTypeOption=$("#cartype>option");
+	var carTypeVal=$("#carTypeSelect").val();
+	for(var i=0;i<carTypeOption.length;i++){
+		var svalue=carTypeOption[i].text;
+		if(carTypeVal==svalue){
+			$("#cartype option[value='"+svalue+"']").attr("selected","selected");
+		}
+	}
 });
