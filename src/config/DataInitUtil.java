@@ -131,7 +131,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists depart_transfer_itemdetail(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,item_id bigint,itemdetail_id bigint );");
             // location init
             LocationDataInit.initLocation(stmt);
-             ProfileDataInit.initProfile(stmt);
+            ProfileDataInit.initProfile(stmt);
             stmt.close();
             // conn.commit();
             conn.close();
@@ -599,8 +599,8 @@ public class DataInitUtil {
             stmt.execute("insert into category(name,customer_id, parent_id) values('普通货品', 19, 1);");
 
             // 产品
-            stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category_id,item_desc) values('ATM', '2014042600001','1','5','7','9','1', '这是一台ATM');");
-            stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category_id,item_desc) values('普通货品', '2014042600002','1','5','7','9','2', '这是普通货品');");
+            stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category_id,item_desc) values('ATM', '2014042600001','1','5','7','9',2, '这是一台ATM');");
+            stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category_id,item_desc) values('普通货品', '2014042600002','1','5','7','9',3, '这是普通货品');");
 
             // 发车单
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('FC2014061000001', '2014-06-10 10:35:35.1','DEPART','粤A876596','平板车','26','20');");
@@ -682,8 +682,10 @@ public class DataInitUtil {
                 .set("creator", "demo").save();
         p6.set("contact_id", contact6.getLong("id")).set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
                 .set("creator", "demo").save();
-        p8.set("contact_id", contact8.getLong("id")).set("party_type", "DRIVER").set("create_date", createDate).set("creator", "demo").save();
-        p9.set("contact_id", contact9.getLong("id")).set("party_type", "DRIVER").set("create_date", createDate).set("creator", "demo").save();
+        p8.set("contact_id", contact8.getLong("id")).set("party_type", "DRIVER").set("create_date", createDate).set("creator", "demo")
+                .save();
+        p9.set("contact_id", contact9.getLong("id")).set("party_type", "DRIVER").set("create_date", createDate).set("creator", "demo")
+                .save();
     }
 
 }
