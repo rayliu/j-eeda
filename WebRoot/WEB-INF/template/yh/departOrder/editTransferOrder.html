@@ -37,8 +37,8 @@
                                <input class="" id="depart_id" value="${depart_id!''}" type="hidden" name="depart_id" >
                              <input class="" id="type" value="${type!''}" type="hidden" >
             				 <input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
-            				  <input class="" id="tr_itemid_list" value="" type="hidden" name="tr_itemid_list">
-            				 <input class="" id="item_detail" value="" type="hidden" name="item_detail" >
+            				  <input class="" id="tr_itemid_list" value="${tr_itemid!''}" type="hidden" name="tr_itemid_list">
+            				 <input class="" id="item_detail" value="${item_detail!''}" type="hidden" name="item_detail" >
                                     
                                    		  <h2>车辆信息</h2>  
                                    		   
@@ -282,6 +282,9 @@
         var message=$("#message").val();
         var type=$("#type").val();
         var depart_id=$("#depart_id").val();
+        var tr_item=$("#tr_itemid_list").val();
+        var item_detail=$("#item_detail").val();
+        var hang="";
       if(type=="one"){
     	  $("#ordertypeone").attr('checked', 'checked');
       }else{
@@ -333,7 +336,7 @@
         	"oLanguage": {
                 "sUrl": "/eeda/dataTables.ch.txt"
             },
-            "sAjaxSource": "/yh/departOrder/getIintDepartOrderItems?localArr="+message+"",
+            "sAjaxSource": "/yh/departOrder/getIintDepartOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
             "aoColumns": [
                 { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
                 { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
@@ -358,7 +361,14 @@
                     },
                 }
                                           
-            ]      
+            ],
+            "fnInitComplete": function(oSettings, json) {
+            	$("#eeda-table td").on('click', '', function(){
+            	 hang = $(this).parent("tr").prevAll().length; 
+           		  	hang = Number(hang)+1;
+            	});
+            	    
+            }       
         });	
     	
     	var tr_itemid_list=[];
@@ -375,30 +385,17 @@
     			$("#item_save").attr("disabled", false);
     			$("#style").hide();
     			detailTable.fnSettings().sAjaxSource = "/yh/departOrder/itemDetailList?item_id="+itemId+"";
-    			detailTable.fnDraw();   
+    			detailTable.fnDraw(); 
     			
     		});
     		// 删除货品
     		$("#eeda-table").on('click', '.cancelbutton', function(e){
-    			e.preventDefault();
-    			
-    			//$("#transferOrderItemDateil").show();
-    			//alert("12345");
+    			e.preventDefault();		
     			 var code = $(this).attr('code');
     			var itemId = code.substring(code.indexOf('=')+1);
-    			var tr_order_id=message;
-    			tr_order_id=tr_order_id.replace(/,/g, "").replace(itemId, "");
-    			var	tr_order =[];
-    			for(var i=0;i<tr_order_id.length;i++){
-    			tr_order.push(tr_order_id[i]);	
-    			}
-    			message=tr_order.join(",");
-    			$("#message").val(tr_order.join(","));
-    			$("#item_id").val(itemId);
-    			datatable.fnSettings().sAjaxSource = "/yh/departOrder/getIintDepartOrderItems?localArr="+tr_order.join(",")+"";
-    			datatable.fnDraw();   
+    			 $("table tr:eq("+hang+")").remove(); 
     		});
-    		
+    		var the_id="";
     		var item_id = $("#item_id").val();
     		var detailTable= $('#detailTable').dataTable({           
                 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",  
@@ -408,9 +405,11 @@
                     "sUrl": "/eeda/dataTables.ch.txt"
                 },
                "sAjaxSource": "/yh/departOrder/itemDetailList?item_id="+item_id+"",
-                "aoColumns": [
+              
+              "aoColumns": [
                      { "mDataProp": null,
                        "fnRender": function(obj) {
+                    	   the_id=obj.aData.ID;
                            return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
                       }
                      },
@@ -420,8 +419,11 @@
                     { "mDataProp": "VOLUME"},
                     { "mDataProp": "WEIGHT"},
                     { "mDataProp": "REMARK"},
-                                              
-                ]  
+                  
+                ]
+                
+
+               
             });	    
     	    //选择单品保存
     	    var item_detail_id=[];

@@ -151,37 +151,33 @@ public class DepartOrderController extends Controller {
 
 	// editTransferOrder 初始数据
 	public void getIintDepartOrderItems() {
-		// 构造前台参数
-		String idlist = getPara("localArr");
+		String order_id = getPara("localArr");//运输单id
+		String tr_item=getPara("tr_item");//货品id
+		String item_detail=getPara("item_detail");//单品id
+		
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
-
 		String sqlTotal = "select count(1) total from TRANSFER_ORDER_ITEM tof"
 				+ " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
 				+ " left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id)"
-				+ " where tof.ORDER_ID in(" + idlist + ")";
+				+ " where tof.ORDER_ID in(" + order_id + ")";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		String sql = "SELECT tof.* ,or.ORDER_NO as order_no,or.id as tr_order_id,c.COMPANY_NAME as customer  FROM TRANSFER_ORDER_ITEM tof"
 				+ " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
 				+ "left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id)"
-				+ " where tof.ORDER_ID in(" + idlist + ")  order by c.id" + sLimit;
-		List<Record> departOrderitem = Db.find(sql);
-		
-
+				+ " where tof.ORDER_ID in(" + order_id + ")  order by c.id" + sLimit;
+		List<Record> departOrderitem = Db.find(sql);	
 		Map Map = new HashMap();
 		Map.put("sEcho", pageIndex);
 		Map.put("iTotalRecords", rec.getLong("total"));
 		Map.put("iTotalDisplayRecords", rec.getLong("total"));
-
 		Map.put("aaData", departOrderitem);
-
 		renderJson(Map);
-
 	}
 
 	// 构造单号
@@ -220,7 +216,7 @@ public class DepartOrderController extends Controller {
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
-					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'NOTIFY_PARTY' and (company_name like '%"
+					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'DRIVER' and (company_name like '%"
 							+ input
 							+ "%' or contact_person like '%"
 							+ input
@@ -238,53 +234,54 @@ public class DepartOrderController extends Controller {
 
 	// 发车单保存
 	public void savedepartOrder() {
-		String depart_no = creat_order_no();
-		String depart_id = getPara("depart_id");
+		String depart_no = creat_order_no();//构造发车单号
+		String depart_id = getPara("depart_id");//发车单id
 		String name = (String) currentUser.getPrincipal();
+		//查找创建人id
 		UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
-		String creat_id = users.get("id").toString();
-		String order_id2 = this.getPara("orderid");
-		String[] order_id = this.getPara("orderid").split(",");
-		String party_id = getPara("driverid");
-		String[] item_detail = this.getPara("item_detail").split(",");
-		String[] tr_itemid = this.getPara("tr_itemid_list").split(",");
-	
+		String creat_id = users.get("id").toString();//创建人id
+		String party_id = getPara("driverid");//司机id
+		String order_id2 = this.getPara("orderid");//运输单id
+		String[] order_id = this.getPara("orderid").split(",");//运输单id
+		String[] item_detail = this.getPara("item_detail").split(",");//单品id
+		String[] tr_itemid = this.getPara("tr_itemid_list").split(",");//货品id
 		Date createDate = Calendar.getInstance().getTime();
+		//如果司机id=“”,插入新司机
 		if ("".equals(getPara("driverid"))) {
-          
 			Contact con = new Contact();
 			con.set("phone", getPara("phone")).set("CONTACT_PERSON", getPara("customerMessage")).save();
 			Long con_id = con.get("id");
 			Party pt = new Party();
-			pt.set("PARTY_TYPE", "NOTIFY_PARTY").set("CONTACT_ID", con_id).save();
+			pt.set("PARTY_TYPE", "DRIVER").set("CONTACT_ID", con_id).save();
 			party_id = pt.get("id").toString();
-
 		}
 		DepartOrder dp = null;
-		if ("".equals(depart_id)) {
+		//如果发车单id="",新建发车单
+		if ("".equals(depart_id)||!"".equals(getPara("item_detail"))) {
 			dp = new DepartOrder();
-			
 			dp.set("CREATE_BY", Integer.parseInt(creat_id)).set("create_stamp", createDate)
 			.set("combine_type", "DEPART").set("car_no", getPara("car_no")).set("car_type", getPara("cartype"))
-			.set("depart_no", depart_no).set("notify_party_id", Integer.parseInt(party_id))
+			.set("depart_no", depart_no).set("DRIVER_ID", Integer.parseInt(party_id))
 			.set("car_size", getPara("carsize")).set("remark", getPara("remark"));
 			dp.save();
-			setAttr("depart_id", "no");
-			if(item_detail.length!=0 && tr_itemid.length!=0 ){
-				for(int i=0; i<tr_itemid.length;i++){
-					
-					for(int j=0;j<item_detail.length;j++){
+			
+			if(!"".equals(getPara("item_detail")) && !"".equals(getPara("tr_itemid_list")) ){
+			for(int k=0;k<order_id.length;k++){//运输单id
+				for(int i=0; i<tr_itemid.length;i++){//货品id
+					for(int j=0;j<item_detail.length;j++){//单品id
 						TransferOrderItemDetail tr_item_de=TransferOrderItemDetail.dao.findById(Integer.parseInt(item_detail[j]));
-					if(tr_item_de.get("ITEM_ID").equals(tr_itemid[i])){
-						DepartOrderItemdetail de_item_detail=new DepartOrderItemdetail();
-						de_item_detail.set("DEPART_ID",Integer.parseInt(dp.get("id").toString()))
-						.set("ITEM_ID",Integer.parseInt(tr_itemid[i])).set("ITEMDETAIL_ID",Integer.parseInt(item_detail[i])).save();
-						
-					}
+					if(tr_item_de.get("ITEM_ID").toString().equals(tr_itemid[i].toString())){
+						DepartOrderItemdetail de_item_detail=new DepartOrderItemdetail(); 
+						de_item_detail.set("DEPART_ID",Integer.parseInt(dp.get("id").toString())).set("ORDER_ID",Integer.parseInt(order_id[k]))
+						.set("ITEM_ID",Integer.parseInt(tr_itemid[i])).set("ITEMDETAIL_ID",Integer.parseInt(item_detail[j])).save();
+						}
 					}
 				}
+				}
+				setAttr("item_detail", getPara("item_detail"));
+				setAttr("tr_itemid", getPara("tr_itemid_list"));
 			}
-		} else {
+		} else {//编辑发车单
 			dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
 			dp.set("CREATE_BY", Integer.parseInt(creat_id)).set("create_stamp", createDate)
 			.set("combine_type", "DEPART").set("car_no", getPara("car_no")).set("car_type", getPara("cartype"))
@@ -293,27 +290,27 @@ public class DepartOrderController extends Controller {
 			dp.update();
 			setAttr("depart_id", depart_id);
 		}
-
-		int de_id = Integer.parseInt(dp.get("id").toString());
-
+		int de_id = Integer.parseInt(dp.get("id").toString());//获取发车单id
+		//根据勾选了多少个运输单，循环插入发车运输单中间表
 		for (int i = 0; i < order_id.length; i++) {
 			DepartTransferOrder dt = new DepartTransferOrder();
 			dt.set("depart_id", de_id).set("ORDER_ID", order_id[i]).set("TRANSFER_ORDER_NO", order_id[i]).save();
 		}
+		//根据运输单个数，判断发车单类型
 		int lang = order_id.length;
 		if (lang > 1) {
 			setAttr("type", "many");
 		} else {
 			setAttr("type", "one");
 		}
-		setAttr("creat", name);
-		setAttr("localArr", order_id2);
-
+		setAttr("creat", name);//创建人
+		setAttr("localArr", order_id2);//运输单id,回显货品table
+		//返回编辑发车单页面
 		if (LoginUserController.isAuthenticated(this))
 			render("departOrder/editTransferOrder.html");
 	}
 
-	// 货品明细
+	// 点击货品table的查看 ，显示对应货品的单品
 	public void itemDetailList() {
 		String item_id = getPara("item_id");
 		String sLimit = "";
