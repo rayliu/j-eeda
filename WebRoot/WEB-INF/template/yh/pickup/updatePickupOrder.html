@@ -34,11 +34,11 @@
                                 <div class="row">
                                    <form id="pickupOrderForm" method="post" action="">
                                         <input id="driver_id" type="hidden" name="driver_id"/>                                   	  
-                                       	<input type="hidden" name="order_no" value="${order_no!''}"/>
-                                       	<input type="hidden" name="status" value="${status!''}"/>
-                                       	<input type="hidden" name="create_by" value="${create_by!''}"/>
+                                       	<input type="hidden" name="order_no" value="${pickupOrder.depart_no!''}"/>
+                                       	<input type="hidden" name="status" value="${pickupOrder.status!''}"/>
+                                       	<input type="hidden" name="create_by" value="${pickupOrder.create_by!''}"/>
                                <div class="col-lg-6">
-                               <input class="" id="depart_id" value="${depart_id!''}" type="hidden" name="depart_id" >
+                               <input class="" id="depart_id" value="${pickupOrder.depart_id!''}" type="hidden" name="depart_id" >
                                <input class="" id="type" value="${type!''}" type="hidden" >
             				   <input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
             				   <input class="" id="tr_itemid_list" value="" type="hidden" name="tr_itemid_list">
@@ -49,7 +49,7 @@
                                           <div class="form-group">
 											<label>司机</label>
 										    <div class="form-group">											
-										        <input type="text" name="driver_name" class="form-control" id="driverMessage">
+										        <input type="text" name="driver_name" class="form-control" id="driverMessage" value="${driver.contact_person!''}">
 										        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="driverList">
 												</ul>
 										    </div>
@@ -57,12 +57,12 @@
                                         
                                          <div class="form-group">
                                             <label>车牌</label>
-                                             <input class="form-control" id="car_no" value="${depart.CAR_NO!''}"  name="car_no">
+                                             <input class="form-control" id="car_no" value="${pickupOrder.car_no!''}"  name="car_no">
                                         </div>
                                          <div class="form-group">
 			                                        <div style=display:inline-block;width:49%>
 			                                            <label>车型</label>
-			                                         	<input type="hidden" value="${depart.CAR_TYPE!''}" id="carTypeSelect">
+			                                         	<input type="hidden" value="${pickupOrder.car_type!''}" id="carTypeSelect">
 			                                            <select name="car_type" id="cartype" class="form-control">
 			                                                                <option value="全部">全部</option>
 			                                                                <option value="平板车">平板车</option>
@@ -98,9 +98,9 @@
 			                                                                <option value="其他">其他</option>
 			                                                            </select>
 			                                                            </div>
-			                                       <div   style=display:inline-block;width:50%>			                                                               
+			                                       <div style=display:inline-block;width:50%>			                                                               
 			                                            <label>长度</label>
-			                                         	<input type="hidden" value="${depart.CAR_SIZE!''}" id="carSizeSelect">
+			                                         	<input type="hidden" value="${dpickupOrder.car_size!''}" id="carSizeSelect">
 			                                            <select name="car_size" id="carsize" class="form-control">
 			                                                <option value="15">15</option>
 			                                                <option value="20">20</option>
@@ -110,16 +110,16 @@
 			                                       </div>                                 
                                             <div class="form-group">
                                             <label>电话</label>
-                                             <input class="form-control" id="driver_phone" value="${depart.PHONE!''}"  name="driver_phone">
+                                             <input class="form-control" id="driver_phone" value="${driver.phone!''}"  name="driver_phone">
                                         </div>    
 			                                <div class="form-group">
 	                                            <label>跟车人</label>
-	                                            <input class="form-control" id="car_follow_name" name="car_follow_name">
+	                                            <input class="form-control" id="car_follow_name" name="car_follow_name" value="${pickupOrder.car_follow_name!''}">
                                             </div>
                                                                                
                                             <div class="form-group">
 	                                            <label>跟车人电话</label>
-	                                            <input class="form-control" id="car_follow_phone" name="car_follow_phone">
+	                                            <input class="form-control" id="car_follow_phone" name="car_follow_phone" value="${pickupOrder.car_follow_phone!''}">
                                             </div>
                                             
                                             <label><h4>始发城市</h4></label>
@@ -161,10 +161,10 @@
                                    <div class="col-lg-6">
                                   		<h2>拼车信息</h2>                                           
                                             <div class="form-group">
-                                                <label>拼车单号</label> <strong>${order_no!''}</strong>
+                                                <label>拼车单号</label> <strong>${pickuporder.depart_no!''}</strong>
                                             </div>
                                             <div class="form-group">
-                                                <label>单据状态</label>   ${status!''}
+                                                <label>单据状态</label>   ${pickuporder.status!''}
                                             </div>
                                             <div class="form-group">
                                             <label>创建人</label>   ${userLogin.user_name!''}                                                
@@ -172,7 +172,7 @@
 	                                                                                                                         
 										<div class="form-group">
                                             <label>备注</label>
-                                            <textarea class="form-control" rows="8" id="remark" name="remark">${depart.remark!''}</textarea>
+                                            <textarea class="form-control" rows="8" id="remark" name="remark">${pickuporder.remark!''}</textarea>
                                         </div> 
                                 </div>
                                        </div>   

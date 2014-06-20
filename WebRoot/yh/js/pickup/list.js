@@ -10,7 +10,10 @@
 	        },
 	        "sAjaxSource": "/yh/pickupOrder/pickuplist",
 	        "aoColumns": [   
-			    {"mDataProp":"DEPART_NO"},
+			    {"mDataProp":"DEPART_NO",
+	            	"fnRender": function(obj) {
+	            			return "<a href='/yh/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+	            		}},
 			    {"mDataProp":"CONTACT_PERSON"},
 			    {"mDataProp":"PHONE"},
 			    {"mDataProp":"CAR_NO"},

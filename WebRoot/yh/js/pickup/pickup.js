@@ -62,6 +62,21 @@ $(document).ready(function() {
         ]      
     });	
     
+    $('#saveBtn').click(function(e){
+        e.preventDefault();
+    	var trArr=[];
+        var tableArr=[];
+        $("table tr:not(:first)").each(function(){        
+        	$("input:checked",this).each(function(){
+        		trArr.push($(this).val());          	        		
+        	});          		
+        }); 
+        tableArr.push(trArr);        
+        console.log(tableArr);
+        $('#pickupOrder_message').val(tableArr);
+        $('#createForm').submit();
+    });
+    
     $('input.orderNo_filter').on( 'keyup click', function () {
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();

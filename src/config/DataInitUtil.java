@@ -114,8 +114,6 @@ public class DataInitUtil {
                     + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
                     + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
                     + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
-            // 拼车单
-            stmt.executeUpdate("create table if not exists pickup_order(id bigint auto_increment PRIMARY KEY,order_no varchar(20),transfer_id bigint,type varchar(50),sp_id bigint,status varchar(20),To_type varchar(20),cargo_nature varchar(20),driver varchar(50),create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp,remark varchar(255));"); // 拼车单表从表
             // stmt.executeUpdate(
             stmt.executeUpdate("create table if not exists Pickup_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Customer_id bigint,Serial_no varchar(50),Item_no bigint,Item_name varchar(50),Item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
             // 配送单货品表
@@ -123,7 +121,7 @@ public class DataInitUtil {
 
             // 发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment PRIMARY KEY,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp TIMESTAMP,combine_type varchar(255),"
-                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),remark varchar(255),driver_id bigint,FOREIGN KEY(driver_id) REFERENCES party(id));");
+                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),remark varchar(255),driver_id bigint,FOREIGN KEY(driver_id) REFERENCES party(id));");
 
             // 发车单运输单中间表
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,transfer_order_no varchar(255),FOREIGN KEY(depart_id) REFERENCES depart_order(id),FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
@@ -145,15 +143,6 @@ public class DataInitUtil {
             cp.start();
             Connection conn = cp.getDataSource().getConnection();
             Statement stmt = conn.createStatement();
-            /*
-             * // 发车单 stmt.executeUpdate(
-             * "insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450201', '2014042600001', '拼车', '新建', 'ATM', '源鸿仓库', '');"
-             * ); stmt.executeUpdate(
-             * "insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450202', '2014042600002', '一单多车', '新建', '货品', '货场', '');"
-             * ); stmt.executeUpdate(
-             * "insert into pickup_order(order_no, transfer_id, TYPE,Status,Cargo_nature,To_type,Remark) values('201450203', '2014042600002', '一单多车', '新建', 'A货品', '货场', '');"
-             * );
-             */
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('demo', '123456', '1-6');");
@@ -192,13 +181,6 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into contract_item(contract_id,Fin_item_id,priceType,amount,remark) values('2','1','整车','130000','路线2');");
             stmt.executeUpdate("insert into contract_item(contract_id,priceType,amount,remark) values('3','计件','120000','路线');");
             stmt.executeUpdate("insert into contract_item(contract_id,priceType,amount,remark) values('4','零担','130000','路线2');");
-
-            // alter table leads add(priority varchar(50),customer_source
-            // varchar(50), building_name varchar(255), building_no varchar(50),
-            // room_no varchar(50)); 2-6
-            // alter table leads add(building_unit varchar(50), is_have_car
-            // char(1) default 'N');
-            // alter table leads add(is_public char(1) default 'N');
 
             String propertySql = "insert into leads(title, create_date, creator, status, type, "
                     + "region, intro, remark, lowest_price, agent_fee, introducer, sales, follower, "
@@ -473,7 +455,7 @@ public class DataInitUtil {
 
             // 运输单
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,WAREHOUSE_ID,ROUTE_FROM,ROUTE_TO,office_id,order_type,customer_province) values('ATM', '8', '9', 'YS2014042600001', '3', 'routeSP', '5', '新建', '2014-04-20 16:33:35.1', 'delivery','珠海','2','110102','440402','2','salesOrder','provinceOut');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,WAREHOUSE_ID,ROUTE_FROM,ROUTE_TO,office_id,order_type,customer_province) values('cargo', '7', '10', 'YS2014042600002', '4', 'pickupSP', '4', '新建', '2014-04-16 16:40:35.1', 'gateIn','中山','2','110105','442000','3','salesOrder','provinceIn');");
+            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,WAREHOUSE_ID,ROUTE_FROM,ROUTE_TO,office_id,order_type,customer_province,assign_status) values('cargo', '7', '10', 'YS2014042600002', '4', 'pickupSP', '4', '新建', '2014-04-16 16:40:35.1', 'gateIn','中山','2','110105','442000','3','salesOrder','provinceIn','fulldepart');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,ROUTE_FROM,ROUTE_TO,office_id,order_type,customer_province) values('cargo', '7', '9', 'YS2014042600003', '4', 'pickupSP', '5', '新建', '2014-04-28 16:46:35.1', 'gateIn','广州','110106','440403','2','salesOrder','provinceOut');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,ROUTE_FROM,ROUTE_TO,office_id,order_type,customer_province) values('cargo', '8', '10', 'YS2014042600004', '3', 'own', '4', '已发车', '2014-04-25 16:35:35.1', 'gateIn','深圳','110107','440404','1','salesOrder','provinceIn');");
             stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,ROUTE_FROM,ROUTE_TO,office_id,order_type,customer_province) values('ATM', '7', '10', 'YS2014042600005', '3', 'own', '5', '已发车', '2014-04-22 16:28:35.1', 'delivery','东莞','110108','440507','1','arrangementOrder','provinceOut');");
