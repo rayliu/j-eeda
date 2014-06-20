@@ -45,20 +45,19 @@ $(document).ready(function() {
         ]      
     });	
     
-    $('#saveBtn').click(function(e){
+    $("#saveBtn").click(function(e){
         e.preventDefault();
     	var trArr=[];
       var tableArr=[];
         $("table tr:not(:first)").each(function(){
-        
         	$("input:checked",this).each(function(){
-        		trArr.push($(this).val());  
-        	        		
+        		trArr.push($(this).val());     		
         	});          		
         	}); 
         tableArr.push(trArr);        
         console.log(tableArr);
-            $('#departOrder_message').val(tableArr);
-            $('#createForm').submit();
+            $("#departOrder_message").val(tableArr);
+            $("#createForm").submit();
     });
-} );
+    
+});

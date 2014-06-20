@@ -77,7 +77,7 @@ public class DepartOrderController extends Controller {
 		} else {
 			String sql = "SELECT do.*,co.CONTACT_PERSON,co.phone,u.USER_NAME,(select group_concat(dt.ORDER_ID  separator',')  FROM DEPART_TRANSFER  dt "
 					+ "where dt.DEPART_ID =do.id)as order_id FROM DEPART_ORDER  do "
-					+ "left join CONTACT co on co.id in( SELECT p.CONTACT_ID  FROM PARTY p where p.id=do.NOTIFY_PARTY_ID ) "
+					+ "left join CONTACT co on co.id in( SELECT p.CONTACT_ID  FROM PARTY p where p.id=do.DRIVER_ID ) "
 					+ "left join USER_LOGIN  u on u.id=do.CREATE_BY where do.COMBINE_TYPE ='DEPART' and do.id in("
 					+ Integer.parseInt(getPara()) + ")";
 			DepartOrder depar = DepartOrder.dao.findFirst(sql);
@@ -107,7 +107,7 @@ public class DepartOrderController extends Controller {
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select to.order_no,to.cargo_nature,"
+		String sql = "select to.id,to.order_no,to.cargo_nature,"
 					+" (select sum(toi.weight) from transfer_order_item toi where toi.order_id = to.id) as total_weight,"  
 					+" (select sum(toi.volume) from transfer_order_item toi where toi.order_id = to.id) as total_volumn," 
 					+" (select sum(toi.amount) from transfer_order_item toi where toi.order_id = to.id) as total_amount," 
@@ -134,7 +134,7 @@ public class DepartOrderController extends Controller {
 
 	// allTranferOrderList 创建发车单
 	public void addDepartOrder() {
-		String list = this.getPara("localArr");
+		String list = getPara("localArr");
 		int lang = list.length();
 		if (lang > 1) {
 			setAttr("type", "many");
@@ -171,7 +171,19 @@ public class DepartOrderController extends Controller {
 				+ " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
 				+ "left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id)"
 				+ " where tof.ORDER_ID in(" + order_id + ")  order by c.id" + sLimit;
-		List<Record> departOrderitem = Db.find(sql);	
+		String sql_dp_detail="SELECT * FROM DEPART_TRANSFER_ITEMDETAIL";
+		List<Record> departOrderitem = Db.find(sql);
+		List<Record> depart_item_detail = Db.find(sql_dp_detail);
+		for(int i=0;i<departOrderitem.size();i++){
+			for(int j=0;j<depart_item_detail.size();j++ ){
+				if(departOrderitem.get(i).get("ORDER_ID").equals(depart_item_detail.get(j).get("ORDER_ID")) 
+						&& departOrderitem.get(i).get("ID").equals(depart_item_detail.get(j).get("ITEM_ID"))){
+				double amount=Double.parseDouble(departOrderitem.get(i).get("AMOUNT").toString());
+				amount--;
+				departOrderitem.get(i).set("AMOUNT",amount);
+				}
+			}
+		}
 		Map Map = new HashMap();
 		Map.put("sEcho", pageIndex);
 		Map.put("iTotalRecords", rec.getLong("total"));
@@ -270,7 +282,8 @@ public class DepartOrderController extends Controller {
 				for(int i=0; i<tr_itemid.length;i++){//货品id
 					for(int j=0;j<item_detail.length;j++){//单品id
 						TransferOrderItemDetail tr_item_de=TransferOrderItemDetail.dao.findById(Integer.parseInt(item_detail[j]));
-					if(tr_item_de.get("ITEM_ID").toString().equals(tr_itemid[i].toString())){
+					if(tr_item_de.get("ITEM_ID").toString().equals(tr_itemid[i].toString())&&
+					tr_item_de.get("ORDER_ID").toString().equals(order_id[k].toString())){
 						DepartOrderItemdetail de_item_detail=new DepartOrderItemdetail(); 
 						de_item_detail.set("DEPART_ID",Integer.parseInt(dp.get("id").toString())).set("ORDER_ID",Integer.parseInt(order_id[k]))
 						.set("ITEM_ID",Integer.parseInt(tr_itemid[i])).set("ITEMDETAIL_ID",Integer.parseInt(item_detail[j])).save();
@@ -285,7 +298,7 @@ public class DepartOrderController extends Controller {
 			dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
 			dp.set("CREATE_BY", Integer.parseInt(creat_id)).set("create_stamp", createDate)
 			.set("combine_type", "DEPART").set("car_no", getPara("car_no")).set("car_type", getPara("cartype"))
-			.set("depart_no", depart_no).set("notify_party_id", Integer.parseInt(party_id))
+			.set("depart_no", depart_no).set("DRIVER_ID", Integer.parseInt(party_id))
 			.set("car_size", getPara("carsize")).set("remark", getPara("remark"));
 			dp.update();
 			setAttr("depart_id", depart_id);
@@ -322,9 +335,18 @@ public class DepartOrderController extends Controller {
 		String sqlTotal = "select count(1) total from TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID =" + item_id + "";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
-
-		String sql = "SELECT * FROM TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID =" + item_id + "" + sLimit;
+		String sql_item="SELECT * FROM DEPART_TRANSFER_ITEMDETAIL where ITEM_ID="+item_id;
+		String sql = "SELECT * FROM TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID =" + item_id;
+		List<Record> depart_itemdetail=Db.find(sql_item);
 		List<Record> itemdetail = Db.find(sql);
+		int	detail_size=itemdetail.size();
+		for(int i=0;i<detail_size;i++){
+			for(int j=0;j<depart_itemdetail.size();j++){
+				if(itemdetail.get(i).get("id").equals(depart_itemdetail.get(j).get("itemdetail_id"))){
+					itemdetail.remove(i);
+				}
+			}
+		}
 		Map Map = new HashMap();
 		Map.put("sEcho", pageIndex);
 		Map.put("iTotalRecords", rec.getLong("total"));
@@ -343,9 +365,8 @@ public class DepartOrderController extends Controller {
 				dep_tr.set("DEPART_ID", null);
 				dep_tr.delete();
 			}
-		
 			DepartOrder re = DepartOrder.dao.findById(id);
-			re.set("notify_party_id", null).update();
+			re.set("driver_id", null).update();
 			re.delete();
 			render("departOrder/departOrderList.html");
 		}

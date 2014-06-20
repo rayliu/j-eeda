@@ -256,8 +256,6 @@
                              
                                     <!-- /.panel-body -->
                                 </div>
-                                
-                                
                              
                             </div>
                         </div>
@@ -371,7 +369,7 @@
             }       
         });	
     	
-    	var tr_itemid_list=[];
+    	
     	// 查看货品
     		$("#eeda-table").on('click', '.dateilEdit', function(e){
     			e.preventDefault();
@@ -380,7 +378,6 @@
     			//alert("12345");
     			 var code = $(this).attr('code');
     			var itemId = code.substring(code.indexOf('=')+1);
-    			tr_itemid_list.push(itemId);
     			$("#item_id").val(itemId);
     			$("#item_save").attr("disabled", false);
     			$("#style").hide();
@@ -409,8 +406,7 @@
               "aoColumns": [
                      { "mDataProp": null,
                        "fnRender": function(obj) {
-                    	   the_id=obj.aData.ID;
-                           return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+                           return '<input type="checkbox" name="order_check_box" value={'+obj.aData.ID+','+obj.aData.ITEM_ID+'}>';
                       }
                      },
                     { "mDataProp": "ITEM_NAME"},      
@@ -426,16 +422,19 @@
                
             });	    
     	    //选择单品保存
+    	    var tr_itemid_list=[];
     	    var item_detail_id=[];
+    	    var item_id="";
     	    $("#item_save").click(function(){
-    	    	
-    	    	 $("table tr:not(:first)").each(function(){
-    	    	        
+    	    	 $("table tr:not(:first)").each(function(){ 
     	         	$("input:checked",this).each(function(){
-    	         		item_detail_id.push($(this).val());
-    	         	
+    	         	var code=$(this).val();
+    	         	var detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','))
+    	         	    item_id=code.substring(code.indexOf(',')+1,code.indexOf('}'))
+    	         		item_detail_id.push(detail_id);
     	         	});          		
     	         	}); 
+    	    	 tr_itemid_list.push(item_id);
     	    	//alert(item_detail_id);
     	    	$("#item_detail").val(item_detail_id);
     	    	$("#tr_itemid_list").val(tr_itemid_list);
