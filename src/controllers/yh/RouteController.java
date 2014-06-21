@@ -86,10 +86,10 @@ public class RouteController extends Controller {
         // 不能查所有
         if (locationName.trim().length() > 0) {
             List<Record> locationList = Db
-                    .find("select  top 10* from location where name like '%"
+                    .find("select * from location where name like '%"
                             + locationName + "%' or code like '%"
                             + locationName + "%' or pcode like '%"
-                            + locationName + "%'");
+                            + locationName + "%' ORDER BY id limit 10");
             renderJson(locationList);
         }
     }

@@ -15,9 +15,16 @@ $(document).ready(function() {
 	        "sAjaxSource": "/yh/spContract/routeEdit?routId="+contractId,
 	        "aoColumns": [  
 				{"mDataProp":"PRICETYPE"},
+	            {"mDataProp":"UNIT"},
 	            {"mDataProp":"LOCATION_FROM"},
 	            {"mDataProp":"LOCATION_TO"},
 	            {"mDataProp":"AMOUNT"},
+	            {"mDataProp":"KILOMETER"},
+	            {"mDataProp":null,
+	            	"fnRender": function(obj) {                    
+	                    return +obj.aData.DAYFROM+"-"+obj.aData.DAYTO;
+	                            
+	                }},
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "8%",                
@@ -52,6 +59,11 @@ $(document).ready(function() {
 		            {"mDataProp":"LOCATION_FROM"},
 		            {"mDataProp":"LOCATION_TO"},
 		            {"mDataProp":"AMOUNT"},
+		            {"mDataProp":null,
+		            	"fnRender": function(obj) {                    
+		                    return +obj.aData.DAYFROM+"-"+obj.aData.DAYTO;
+		                            
+		                }},
 		            { 
 		                "mDataProp": null, 
 		                "sWidth": "8%",                
@@ -82,9 +94,19 @@ $(document).ready(function() {
 		        "aoColumns": [  
 					{"mDataProp":"PRICETYPE"},
 					{"mDataProp":"LTLUNITTYPE"},
+					{"mDataProp":null,
+						"fnRender": function(obj) {                    
+		                    return +obj.aData.AMOUNTFROM+"-"+obj.aData.AMOUNTTO;
+		                            
+		                }},
 		            {"mDataProp":"LOCATION_FROM"},
 		            {"mDataProp":"LOCATION_TO"},
 		            {"mDataProp":"AMOUNT"},
+		            {"mDataProp":null,
+		            	"fnRender": function(obj) {                    
+		                    return +obj.aData.DAYFROM+"-"+obj.aData.DAYTO;
+		                            
+		                }},
 		            { 
 		                "mDataProp": null, 
 		                "sWidth": "8%",                
@@ -118,7 +140,9 @@ $(document).ready(function() {
                 	 $('#toName').val(data[0].LOCATION_TO);
                 	 $('#price').val(data[0].AMOUNT);
                 	 $('#routeItemId').val(data[0].ID);
-                	
+                	 $('#day').val(data[0].DAYFROM);
+                	 $('#day2').val(data[0].DAYTO);
+                	 $('#unit2').val(data[0].UNIT);
                 	 $('#optionsRadiosInline1').prop('checked', true).trigger('change');
                 	 
                  }else{
@@ -144,6 +168,8 @@ $(document).ready(function() {
                 	 $('#toName').val(data[0].LOCATION_TO);
                 	 $('#price').val(data[0].AMOUNT);
                 	 $('#routeItemId').val(data[0].ID);
+                	 $('#day').val(data[0].DAYFROM);
+                	 $('#day2').val(data[0].DAYTO);
                 	 
                 	 $('#optionsRadiosInline2').prop('checked', true).trigger('change');
                  }else{
@@ -168,7 +194,24 @@ $(document).ready(function() {
                 	 $('#toName').val(data[0].LOCATION_TO);
                 	 $('#price').val(data[0].AMOUNT);
                 	 $('#routeItemId').val(data[0].ID);
+                	 $('#day').val(data[0].DAYFROM);
+                	 $('#day2').val(data[0].DAYTO);
+                	 $('#amountFrom').val(data[0].AMOUNTFROM);
+                	 $('#amountTo').val(data[0].AMOUNTTO);
+                	
+                	 console.log($('#typeRadio').val(data[0].LTLUNITTYPE));
                 	 $('#optionsRadiosInline3').prop('checked', true).trigger('change');
+                	
+                	
+                	 if(data[0].LTLUNITTYPE==$('#optionsRadiosIn1').val()){
+                		 $('#optionsRadiosIn1').prop('checked', true).trigger('change'); 
+                	 }
+                	 if(data[0].LTLUNITTYPE==$('#optionsRadiosIn2').val()){
+                		 $('#optionsRadiosIn2').prop('checked', true).trigger('change'); 
+                	 }
+                	 if(data[0].LTLUNITTYPE==$('#optionsRadiosIn3').val()){
+                		 $('#optionsRadiosIn3').prop('checked', true).trigger('change'); 
+                	 }
                  }else{
                      alert('取消失败');
                  }
@@ -486,6 +529,7 @@ $(document).ready(function() {
 	    	hidePriceElements();
 	    	var val=$('input[type="radio"][name="priceType"]:checked').val(); // 获取一组radio被选中项的值   
 	    	if(val=="计件"){
+	    		$("#unit").show();
 	    		$("#carType").hide();
 	    		$("#carLength").hide();
 	    		$("#ltlUnitType").hide();
@@ -493,11 +537,13 @@ $(document).ready(function() {
 	    		$("#carType").show();
 	    		$("#carLength").show();
 	    		$("#ltlUnitType").hide();
+	    		$("#unit").hide();
 	    		//$("#cargoNature").hide();
 	    	}else if(val=="零担"){
 				$("#carType").hide();
 	    		$("#carLength").hide();
 	    		$("#ltlUnitType").show();
+	    		$("#unit").hide();
 	    	}
 
 	    });	
@@ -510,5 +556,5 @@ $(document).ready(function() {
 
 	    
 	    hidePriceElements();
-	    
+	   
 });

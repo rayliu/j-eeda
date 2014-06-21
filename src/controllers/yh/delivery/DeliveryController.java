@@ -61,7 +61,12 @@ public class DeliveryController extends Controller {
         List<Record> serIdList = Db
                 .find("select TRANSFER_ITEM_ID from DELIVERY_ORDER_ITEM where DELIVERY_ID ="
                         + id);
-        if (serIdList.get(0).get("TRANSFER_ITEM_ID") != null) {
+        try {
+            serIdList.get(0).get("TRANSFER_ITEM_ID");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        if (serIdList.size() != 0) {
             // 序列号id
             String idStr = "";
             for (Record record : serIdList) {
@@ -234,17 +239,17 @@ public class DeliveryController extends Controller {
         Map transferOrderListMap = new HashMap();
         if (deliveryOrderNo == null && customerName == null
                 && orderStatue == null && warehouse == null) {
-            String sqlTotal = "select count(1) total from transfer_order to "
-                    + "left join warehouse w on to.warehouse_id = w.id "
-                    + "where to.STATUS='已入库' and to.CARGO_NATURE='cargo'";
+            String sqlTotal = "select count(1) total from transfer_order t "
+                    + "left join warehouse w on t.warehouse_id = w.id "
+                    + "where t.STATUS='已入库' and t.CARGO_NATURE='cargo'";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select to.*,w.warehouse_name,c.company_name from transfer_order to "
-                    + "left join warehouse w on to.warehouse_id = w.id "
-                    + "left join party p on to.customer_id = p.id "
+            String sql = "select t.*,w.warehouse_name,c.company_name from transfer_order t "
+                    + "left join warehouse w on t.warehouse_id = w.id "
+                    + "left join party p on t.customer_id = p.id "
                     + "left join contact c  on p.contact_id = c.id "
-                    + "where to.STATUS='已入库' and to.CARGO_NATURE='cargo'";
+                    + "where t.STATUS='已入库' and t.CARGO_NATURE='cargo'";
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
@@ -253,18 +258,18 @@ public class DeliveryController extends Controller {
                     rec.getLong("total"));
             transferOrderListMap.put("aaData", transferOrders);
         } else {
-            String sqlTotal = "select count(1) total from transfer_order to "
-                    + "left join warehouse w on to.warehouse_id = w.id "
-                    + "where to.STATUS='已入库' and to.CARGO_NATURE='cargo'";
+            String sqlTotal = "select count(1) total from transfer_order t "
+                    + "left join warehouse w on t.warehouse_id = w.id "
+                    + "where t.STATUS='已入库' and t.CARGO_NATURE='cargo'";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select to.*,w.warehouse_name,c.company_name from transfer_order to "
-                    + "left join warehouse w on to.warehouse_id = w.id "
-                    + "left join party p on to.customer_id = p.id "
+            String sql = "select t.*,w.warehouse_name,c.company_name from transfer_order t "
+                    + "left join warehouse w on t.warehouse_id = w.id "
+                    + "left join party p on t.customer_id = p.id "
                     + "left join contact c  on p.contact_id = c.id "
-                    + "where to.STATUS='已入库' and to.CARGO_NATURE='cargo' "
-                    + "and to.order_no like '%"
+                    + "where t.STATUS='已入库' and t.CARGO_NATURE='cargo' "
+                    + "and t.order_no like '%"
                     + deliveryOrderNo
                     + "%'"
                     + "and w.warehouse_name like '%"
@@ -273,7 +278,7 @@ public class DeliveryController extends Controller {
                     + "and c.company_name like '%"
                     + customerName
                     + "%'"
-                    + "and to.STATUS like '%" + orderStatue + "%'";
+                    + "and t.STATUS like '%" + orderStatue + "%'";
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
@@ -384,11 +389,11 @@ public class DeliveryController extends Controller {
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select d.*,c.company_name as customer,c2.company_name as c2,to.order_no as transfer_order_no,w.warehouse_name from delivery_order d "
+            String sql = "select d.*,c.company_name as customer,c2.company_name as c2,t.order_no as transfer_order_no,w.warehouse_name from delivery_order d "
                     + "left join party p on d.customer_id = p.id left join contact c on p.contact_id = c.id "
                     + "left join party p2 on d.sp_id = p2.id join contact c2 on p2.contact_id = c2.id "
-                    + "left join transfer_order to on d.transfer_order_id = to.id "
-                    + "left join warehouse w on to.warehouse_id = w.id order by d.CREATE_STAMP desc";
+                    + "left join transfer_order t on d.transfer_order_id = t.id "
+                    + "left join warehouse w on t.warehouse_id = w.id order by d.CREATE_STAMP desc";
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
@@ -408,14 +413,14 @@ public class DeliveryController extends Controller {
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select d.*,c.company_name as customer,c2.company_name as c2,to.order_no as transfer_order_no,w.warehouse_name from delivery_order d "
+            String sql = "select d.*,c.company_name as customer,c2.company_name as c2,t.order_no as transfer_order_no,w.warehouse_name from delivery_order d "
                     + "left join party p on d.customer_id = p.id left join contact c on p.contact_id = c.id "
                     + "left join party p2 on d.sp_id = p2.id join contact c2 on p2.contact_id = c2.id "
-                    + "left join transfer_order to on d.transfer_order_id = to.id "
-                    + "left join warehouse w on to.warehouse_id = w.id "
+                    + "left join transfer_order t on d.transfer_order_id = t.id "
+                    + "left join warehouse w on t.warehouse_id = w.id "
                     + "where d.ORDER_NO like '%"
                     + orderNo_filter
-                    + "%' and  to.order_no like '%"
+                    + "%' and  t.order_no like '%"
                     + transfer_filter
                     + "%' and d.STATUS like '%"
                     + status_filter
@@ -488,17 +493,17 @@ public class DeliveryController extends Controller {
         }
 
         String sqlTotal = "select count(1) total from TRANSFER_ORDER_ITEM tof"
-                + " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
-                + " left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id)"
+                + " left join TRANSFER_ORDER t_o on tof.ORDER_ID =t_o.id "
+                + " left join CONTACT c on c.id in (select contact_id from party p where t_o.customer_id=p.id)"
                 + " where tof.ORDER_ID in(" + idlist + ")";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         String sql = "";
         List<Record> departOrderitem = null;
-        if (idlist2 == null || idlist2.equals("")) {
-            sql = "SELECT tof.* ,or.ORDER_NO as order_no,c.COMPANY_NAME as customer  FROM TRANSFER_ORDER_ITEM tof "
-                    + " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
-                    + "left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id) "
+        if (idlist2 == null || idlist2.equals("null")) {
+            sql = "SELECT tof.* ,t_o.ORDER_NO as order_no,c.COMPANY_NAME as customer  FROM TRANSFER_ORDER_ITEM tof "
+                    + " left join TRANSFER_ORDER t_o on tof.ORDER_ID =t_o.id "
+                    + "left join CONTACT c on c.id in (select contact_id from party p where t_o.customer_id=p.id) "
                     + " where tof.ORDER_ID in("
                     + idlist
                     + ")  order by c.id"
@@ -518,9 +523,9 @@ public class DeliveryController extends Controller {
                 }
             }
         } else {
-            sql = "SELECT tof.* ,or.ORDER_NO as order_no,c.COMPANY_NAME as customer,toid.serial_no as serial_no FROM TRANSFER_ORDER_ITEM tof "
-                    + " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
-                    + "left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id) "
+            sql = "SELECT tof.* ,t_o.ORDER_NO as order_no,c.COMPANY_NAME as customer,toid.serial_no as serial_no FROM TRANSFER_ORDER_ITEM tof "
+                    + " left join TRANSFER_ORDER  t_o  on tof.ORDER_ID =t_o.id "
+                    + "left join CONTACT c on c.id in (select contact_id from party p where t_o.customer_id=p.id) "
                     + "left join transfer_order_item_detail toid on toid.ITEM_ID =tof.id "
                     + " where toid.id in(" + idlist2 + ")" + sLimit;
             departOrderitem = Db.find(sql);
@@ -545,7 +550,6 @@ public class DeliveryController extends Controller {
         System.out.println(idlist3);
         String[] idlist = getPara("localArr").split(",");
         String[] idlist2 = getPara("localArr2").split(",");
-        System.out.println(idlist.length);
 
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao
@@ -593,13 +597,13 @@ public class DeliveryController extends Controller {
                     .set("CREATE_STAMP", createDate).set("Status", "新建");
             deliveryOrder.save();
 
-            if (idlist3 != null || !"".equals(idlist3)) {
+            if (!idlist3.equals("")) {
                 for (int i = 0; i < idlist.length; i++) {
                     DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-                    deliveryOrderItem
-                            .set("DELIVERY_ID", deliveryOrder.get("id"))
-                            .set("TRANSFER_ORDER_ID", idlist[i])
-                            .set("TRANSFER_ITEM_ID", idlist2[i]);
+                    deliveryOrderItem.set("DELIVERY_ID",
+                            deliveryOrder.get("id")).set("TRANSFER_ORDER_ID",
+                            idlist[i]);
+                    deliveryOrderItem.set("TRANSFER_ITEM_ID", idlist2[i]);
                     deliveryOrderItem.save();
                 }
             } else {

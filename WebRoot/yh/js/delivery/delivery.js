@@ -186,17 +186,23 @@ $(document).ready(function() {
 			 $("#eeda-table3").on('click', '.cancelbutton', function(e){
 				  e.preventDefault();
 		         //异步向后台提交数据
-				 var id = $(this).attr('code');
-				$.post('/yh/delivery/cancel/'+id,function(data){
-		                 //保存成功后，刷新列表
-		                 console.log(data);
-		                 if(data.success){
-		                	 dataTable.fnDraw();
-		                 }else{
-		                     alert('取消失败');
-		                 }
-		             },'json');
-				  });
+				  var r=confirm("是否取消单据！");   
+                  if(r==true){
+                	  var id = $(this).attr('code');
+      				$.post('/yh/delivery/cancel/'+id,function(data){
+      		                 //保存成功后，刷新列表
+      		                 console.log(data);
+      		                 if(data.success){
+      		                	 dataTable.fnDraw();
+      		                 }else{
+      		                     alert('取消失败');
+      		                 }
+      		             },'json');
+				}else{
+					return false;   
+				}
+				 
+			});
 			  //deliveryOrderSearchTransfer ATM选择序列号
 			var dab= $('#eeda-table4').dataTable({
 			        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",

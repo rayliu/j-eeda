@@ -34,7 +34,7 @@ $(document).ready(function() {
             {"mDataProp":"ABBR"},
             {"mDataProp":"SP_TYPE"}, 
             {"mDataProp":"CONTACT_PERSON"},        	
-            {"mDataProp":"PHONE"},
+            {"mDataProp":"MOBILE"},
             {"mDataProp":"ADDRESS"},
             {"mDataProp":"RECEIPT"},
             {"mDataProp":"DNAME"},

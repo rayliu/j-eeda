@@ -61,7 +61,7 @@ public class ContractController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'  ";
+        String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'";
         System.out.println(sql);
         Record rec = Db.findFirst(sql + totalWhere);
         long total = rec.getLong("total");
@@ -69,7 +69,8 @@ public class ContractController extends Controller {
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'");
+                .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'"
+                        + sLimit);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", total);
@@ -101,7 +102,8 @@ public class ContractController extends Controller {
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'");
+                .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
+                        + sLimit);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", total);
@@ -132,7 +134,8 @@ public class ContractController extends Controller {
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'");
+                .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'"
+                        + sLimit);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -288,7 +291,7 @@ public class ContractController extends Controller {
         if (contractId != null && contractId.length() > 0) {
             orders = Db
                     .find("select * from  contract_item c where c.contract_id = "
-                            + contractId + " and PRICETYPE ='计件'");
+                            + contractId + " and PRICETYPE ='计件'" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -337,7 +340,7 @@ public class ContractController extends Controller {
         if (contractId != null && contractId.length() > 0) {
             orders = Db
                     .find("select * from  contract_item c where c.contract_id = "
-                            + contractId + " and PRICETYPE ='整车'");
+                            + contractId + " and PRICETYPE ='整车'" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -386,7 +389,7 @@ public class ContractController extends Controller {
         if (contractId != null && contractId.length() > 0) {
             orders = Db
                     .find("select * from  contract_item c where c.contract_id = "
-                            + contractId + " and PRICETYPE ='零担'");
+                            + contractId + " and PRICETYPE ='零担'" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -408,12 +411,14 @@ public class ContractController extends Controller {
                 .set("location_from", getPara("fromName"))
                 .set("to_id", getPara("to_id"))
                 .set("location_to", getPara("toName"))
-                .set("amount", getPara("price"));
+                .set("amount", getPara("price")).set("dayfrom", getPara("day"))
+                .set("dayto", getPara("day2"));
 
         if (routeItemId != "") {
             if (priceType.equals("计件")) {
                 item.set("id", getPara("routeItemId")).set("cartype", null)
                         .set("carlength", null).set("ltlUnitType", null);
+                item.set("unit", getPara("unit2"));
                 item.update();
                 renderJson("{\"success\":true}");
             }
@@ -426,7 +431,10 @@ public class ContractController extends Controller {
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("零担")) {
-                item.set("id", getPara("routeItemId"));
+                item.set("id", getPara("routeItemId"))
+                        .set("amountFrom", getPara("amountFrom"))
+                        .set("amountTo", getPara("amountTo"));
+
                 item.set("ltlUnitType", getPara("ltlUnitType"))
                         .set("cartype", null).set("carlength", null);
                 item.update();
@@ -434,6 +442,7 @@ public class ContractController extends Controller {
             }
         } else {
             if (priceType.equals("计件")) {
+                item.set("unit", getPara("unit2"));
                 item.save();
                 renderJson("{\"success\":true}");
             }
@@ -444,7 +453,9 @@ public class ContractController extends Controller {
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("零担")) {
-                item.set("ltlUnitType", getPara("ltlUnitType"));
+                item.set("ltlUnitType", getPara("ltlUnitType"))
+                        .set("amountFrom", getPara("amountFrom"))
+                        .set("amountTo", getPara("amountTo"));
                 item.save();
                 renderJson("{\"success\":true}");
             }
@@ -479,5 +490,62 @@ public class ContractController extends Controller {
             Db.deleteById("contract_item", id);
         }
         renderJson("{\"success\":true}");
+    }
+
+    // 添加搜索
+    public void SearchContract() {
+        String contractName_filter = getPara("contractName_filter");
+        String contactPerson_filter = getPara("contactPerson_filter");
+        String periodFrom_filter = getPara("periodFrom_filter");
+        String companyName_filter = getPara("companyName_filter");
+        String phone_filter = getPara("phone_filter");
+        String periodTo_filter = getPara("periodTo_filter");
+
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+        Map transferOrderListMap = new HashMap();
+        if (contractName_filter == null && contactPerson_filter == null
+                && periodFrom_filter == null && companyName_filter == null
+                && phone_filter == null && periodTo_filter == null) {
+            String sqlTotal = "select count(1) total from transfer_order t "
+                    + "left join warehouse w on t.warehouse_id = w.id "
+                    + "where t.STATUS='已入库' and t.CARGO_NATURE='cargo'";
+            Record rec = Db.findFirst(sqlTotal);
+            logger.debug("total records:" + rec.getLong("total"));
+
+            String sql = "select t.*,w.warehouse_name,c.company_name from transfer_order t "
+                    + "left join warehouse w on t.warehouse_id = w.id "
+                    + "left join party p on t.customer_id = p.id "
+                    + "left join contact c  on p.contact_id = c.id "
+                    + "where t.STATUS='已入库' and t.CARGO_NATURE='cargo'";
+            List<Record> transferOrders = Db.find(sql);
+
+            transferOrderListMap.put("sEcho", pageIndex);
+            transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+            transferOrderListMap.put("iTotalDisplayRecords",
+                    rec.getLong("total"));
+            transferOrderListMap.put("aaData", transferOrders);
+        } else {
+            String sqlTotal = "select count(1) total from transfer_order t "
+                    + "left join warehouse w on t.warehouse_id = w.id "
+                    + "where t.STATUS='已入库' and t.CARGO_NATURE='cargo'";
+            Record rec = Db.findFirst(sqlTotal);
+            logger.debug("total records:" + rec.getLong("total"));
+
+            String sql = "";
+            List<Record> transferOrders = Db.find(sql);
+
+            transferOrderListMap.put("sEcho", pageIndex);
+            transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+            transferOrderListMap.put("iTotalDisplayRecords",
+                    rec.getLong("total"));
+            transferOrderListMap.put("aaData", transferOrders);
+        }
+        renderJson(transferOrderListMap);
     }
 }

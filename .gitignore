@@ -34,3 +34,5 @@ php-version
 .externalToolBuilders/org.eclipse.wst.common.project.facet.core.builder.launch
 .externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator.launch
 /build
+WebRoot/WEB-INF/config/app_config.txt-uat
+WebRoot/WEB-INF/config/shiro.ini-uat

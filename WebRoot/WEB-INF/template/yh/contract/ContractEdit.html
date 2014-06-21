@@ -41,9 +41,9 @@
 									 
                         			<div>
                         				<!-- 下面input判断 customer和供应商sp -->
-	                        			type2<input id="type2" name="type2" type="hidden" value="${contractType!}"/>
+	                        			<input id="type2" name="type2" type="hidden" value="${contractType!}"/>
 	                        			<!-- 下面用来编辑保存contract的type -->
-	                        			type3<input id="type3" name="type3" type="hidden" value="${ul.type!''}" />
+	                        			<input id="type3" name="type3" type="hidden" value="${ul.type!''}" />
                         			</div>
                         			<!-- /.col-lg-6 (odd) 奇数列 -->
                                     <div class="col-lg-6">
@@ -188,9 +188,12 @@
 	                                    <thead>
 	                                        <tr>
 	                                        	<th>计费方式</th>
+	                                        	<th>单位</th>
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
 	                                            <th>费用</th>
+	                                            <th>路程(KM)</th>
+	                                            <th>天数</th>
 	                                            <th></th>
 	                                        </tr>
 	                                    </thead>
@@ -216,6 +219,7 @@
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
 	                                            <th>费用</th>
+	                                            <th>天数</th>
 	                                            <th></th>
 	                                        </tr>
 	                                    </thead>
@@ -236,9 +240,11 @@
 	                                        <tr>
 	                                        	<th>计费方式</th>
 	                                        	<th>零担计费方式</th>
+	                                        	<th>计费区间</th>
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
 	                                            <th>费用</th>
+	                                            <th>天数</th>
 	                                            <th></th>
 	                                        </tr>
 	                                    </thead>
@@ -332,6 +338,13 @@
                                                                 <option>21</option>
                                                             </select>
                                                         </div>
+                                                       <div class="form-group" id="unit">
+                                                            <lable>单位</lable>
+                                                            <select class="form-control" id="unit2" name="unit2">
+                                                                <option>台</option>
+                                                                <option>件</option>
+                                                            </select>
+                                                        </div>
 			                                            <div class="form-group">
                                                             <lable>干线始发地</lable>
                                                             <input id="from_id" name="from_id" type="hidden" class="form-control" value="">
@@ -350,23 +363,29 @@
                                                         <div class="form-group" id="ltlUnitType">
                                                             <label>零担计费方式</label>
                                                             <label class="radio-inline">
-                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosInline1" value="按体积（每立方米）" checked="">按体积（每立方米）
+                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosIn1" value="按体积（每立方米）">按体积（每立方米）
                                                             </label>
                                                             <label class="radio-inline">
-                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosInline2" value="按重量（每吨）">按重量（每吨）
+                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosIn2" value="按重量（每吨）">按重量（每吨）
                                                             </label>
                                                             <label class="radio-inline">
-                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosInline3" value="按重量（每公斤）">按重量（每公斤）
+                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosIn3" value="按重量（每公斤）">按重量（每公斤）
                                                             </label>
-                                                        </div>
-                                                        <div class="form-group">
+                                                            <div class="form-group">
                                                             <lable>计费区间</lable>
                                                             <input class="form-control search-control" id="amountFrom" name="amountFrom" type="text" style="width:20%"> ~ 
                                                             <input class="form-control search-control" id="amountTo" name="amountTo" type="text" style="width:20%">
                                                         </div>
+                                                        </div>
+                                                        
                                                         <div class="form-group">
                                                             <lable>费用</lable>
                                                             <input class="form-control" id="price" name="price" type="text">
+                                                        </div>
+                                                         <div class="form-group">
+                                                            <lable>天数</lable>
+                                                            <input class="form-control search-control" id="day" name="day" type="text" style="width:20%"> ~ 
+                                                            <input class="form-control search-control" id="day2" name="day2" type="text" style="width:20%">
                                                         </div>
                                                         
                                                         

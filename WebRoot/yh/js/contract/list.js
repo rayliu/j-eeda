@@ -22,7 +22,7 @@ $(document).ready(function() {
 	}
     
 	//datatable, 动态处理
-    $('#eeda-table').dataTable({
+   var tab2= $('#eeda-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
@@ -56,4 +56,17 @@ $(document).ready(function() {
             }                         
         ],
      });
+    
+    //条件搜索
+    $("#contractName_filter,#contactPerson_filter,#periodFrom_filter,#companyName_filter,#phone_filter,#periodTo_filter").on('keyup click', function () {    	 	
+      	var contractName_filter = $("#contractName_filter").val();
+      	var contactPerson_filter = $("#contactPerson_filter").val();
+    	var periodFrom_filter = $("#periodFrom_filter").val();
+      	var companyName_filter = $("#companyName_filter").val();
+      	var phone_filter = $("#phone_filter").val();   
+      	var periodTo_filter = $("#periodTo_filter").val();   
+      	tab2.fnSettings().sAjaxSource = "/yh/contract/SearchContract?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+      	tab2.fnDraw();
+      });
+    
 } );
