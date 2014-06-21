@@ -146,7 +146,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/receivableCheckOrder", controllers.yh.arap.ReceivableCheckOrderController.class, "/yh");
         me.add("/yh/copeCheckOrder", controllers.yh.arap.CopeCheckOrderController.class, "/yh");
         me.add("/yh/departOrder", controllers.yh.departOrder.DepartOrderController.class, "/yh");
-        me.add("/yh/deliverySpContract",controllers.yh.contract.ContractController.class, "/yh");
+        me.add("/yh/deliverySpContract", controllers.yh.contract.ContractController.class, "/yh");
 
     }
 
@@ -176,7 +176,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("order_item", OrderItem.class);
         arp.addMapping("party", Party.class);
         arp.addMapping("party_attribute", PartyAttribute.class);
-        arp.addMapping("DP_PROF_PROVIDER_INFO", ServiceProvider.class);
+        arp.addMapping("dp_prof_provider_info", ServiceProvider.class);
 
         arp.addMapping("contact", Contact.class);
         arp.addMapping("office", Office.class);
@@ -220,7 +220,7 @@ public class EedaConfig extends JFinalConfig {
             connectH2();
         } else {
             cp = new C3p0Plugin(url, username, pwd);
-            DataInitUtil.initH2Tables(cp);
+            // DataInitUtil.initH2Tables(cp);
         }
 
     }

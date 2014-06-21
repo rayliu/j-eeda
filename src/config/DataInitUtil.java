@@ -17,6 +17,7 @@ public class DataInitUtil {
             cp.start();
             Connection conn = cp.getDataSource().getConnection();
             Statement stmt = conn.createStatement();
+
             // 登陆及授权的3个表
             stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment PRIMARY KEY, user_name VARCHAR(50) not null, password VARCHAR(50) not null, password_hint VARCHAR(255));");
             stmt.executeUpdate("create table if not exists user_roles(id bigint auto_increment PRIMARY KEY, user_name VARCHAR(50) not null, role_name VARCHAR(255) not null, remark VARCHAR(255));");
@@ -34,7 +35,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment PRIMARY KEY,contract_id bigint,Fin_item_id bigint,priceType varchar(50),carType varchar(255),carLength varchar(255),ltlUnitType varchar(50), from_id VARCHAR(50),location_from VARCHAR(50),to_id VARCHAR(50),location_to VARCHAR(50) ,amount Double,remark VARCHAR(255));");
 
             // eeda 平台的SP
-            stmt.executeUpdate("create table if not exists DP_PROF_PROVIDER_INFO(OID bigint auto_increment PRIMARY KEY, ADDITIONAL_SERVICES VARCHAR(600),  BIZNATURE VARCHAR(60),  PROVIDER_SYS_CODE VARCHAR(90),  PROVIDER_NAME  VARCHAR(270),  PROVIDER_BIZ_CODE VARCHAR(60),  MAINTENANCE_OFFICE  VARCHAR(90),  COUNTRY_BAK VARCHAR(90),  PROVINCE_BAK VARCHAR(90),  CITY_BAK VARCHAR(90),  POST_CODE   VARCHAR(90),  CONTACT VARCHAR(120),  FAX_BAK VARCHAR(60),  EMAIL   VARCHAR(450),  TELEPHONE_BAK   VARCHAR(90),  ADDRESS1 VARCHAR(300),  ADDRESS2 VARCHAR(300),  ADDRESS3 VARCHAR(300),  ADDRESS4 VARCHAR(300),  STATUS  CHAR(1) default 'A',  CREATOR VARCHAR(20),  CREATE_DATE DATE,  LAST_UPDATER VARCHAR(20),  LAST_UPDATE_DATE DATE,  COUNTRY_OID bigint,  COUNTRY VARCHAR(300),  PROVINCE_OID bigint,  PROVINCE VARCHAR(300),  CITY_OID bigint,  CITY VARCHAR(300),  PHONE_COUNTRY_CODE  VARCHAR(10),  PHONE_AREA_CODE VARCHAR(10),  PHONE_NO VARCHAR(120),  FAX_COUNTRY_CODE VARCHAR(10),  FAX_AREA_CODE   VARCHAR(10),  FAX_NO  VARCHAR(120),  SPPM_OID bigint,  PROVIDER_FULL_NAME  VARCHAR(300),  CONTROL_OFFICE  VARCHAR(90),  DATA_REALM  VARCHAR(20),  COPY_FROM_SP_OID bigint,  ONE_OFF VARCHAR(1) default 'N',  EFFECTIVE_FROM  DATE,  EFFECTIVE_TO DATE, MAIL_SENT_TIME TIMESTAMP);");
+            stmt.executeUpdate("create table if not exists dp_prof_provider_info(OID bigint auto_increment PRIMARY KEY, ADDITIONAL_SERVICES VARCHAR(600),  BIZNATURE VARCHAR(60),  PROVIDER_SYS_CODE VARCHAR(90),  PROVIDER_NAME  VARCHAR(270),  PROVIDER_BIZ_CODE VARCHAR(60),  MAINTENANCE_OFFICE  VARCHAR(90),  COUNTRY_BAK VARCHAR(90),  PROVINCE_BAK VARCHAR(90),  CITY_BAK VARCHAR(90),  POST_CODE   VARCHAR(90),  CONTACT VARCHAR(120),  FAX_BAK VARCHAR(60),  EMAIL   VARCHAR(450),  TELEPHONE_BAK   VARCHAR(90),  ADDRESS1 VARCHAR(300),  ADDRESS2 VARCHAR(300),  ADDRESS3 VARCHAR(300),  ADDRESS4 VARCHAR(300),  STATUS  CHAR(1) default 'A',  CREATOR VARCHAR(20),  CREATE_DATE DATE,  LAST_UPDATER VARCHAR(20),  LAST_UPDATE_DATE DATE,  COUNTRY_OID bigint,  COUNTRY VARCHAR(300),  PROVINCE_OID bigint,  PROVINCE VARCHAR(300),  CITY_OID bigint,  CITY VARCHAR(300),  PHONE_COUNTRY_CODE  VARCHAR(10),  PHONE_AREA_CODE VARCHAR(10),  PHONE_NO VARCHAR(120),  FAX_COUNTRY_CODE VARCHAR(10),  FAX_AREA_CODE   VARCHAR(10),  FAX_NO  VARCHAR(120),  SPPM_OID bigint,  PROVIDER_FULL_NAME  VARCHAR(300),  CONTROL_OFFICE  VARCHAR(90),  DATA_REALM  VARCHAR(20),  COPY_FROM_SP_OID bigint,  ONE_OFF VARCHAR(1) default 'N',  EFFECTIVE_FROM  DATE,  EFFECTIVE_TO DATE, MAIL_SENT_TIME TIMESTAMP);");
 
             // 配送单
             stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment PRIMARY KEY,Order_no VARCHAR(50),Transfer_order_id VARCHAR(50), customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status VARCHAR(50),cargo_nature Varchar(20),from_warehouse_code Varchar(20),Remark Varchar(255),Create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp);");
@@ -127,9 +128,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,transfer_order_no varchar(255),FOREIGN KEY(depart_id) REFERENCES depart_order(id),FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
             // 发车单单品表
             stmt.executeUpdate("create table if not exists depart_transfer_itemdetail(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,item_id bigint,itemdetail_id bigint );");
-            // location init
-            LocationDataInit.initLocation(stmt);
-            ProfileDataInit.initProfile(stmt);
+
             stmt.close();
             // conn.commit();
             conn.close();
@@ -143,6 +142,11 @@ public class DataInitUtil {
             cp.start();
             Connection conn = cp.getDataSource().getConnection();
             Statement stmt = conn.createStatement();
+
+            // location init
+            // LocationDataInit.initLocation(stmt);
+            ProfileDataInit.initProfile(stmt);
+
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('demo', '123456', '1-6');");
@@ -266,7 +270,7 @@ public class DataInitUtil {
             // 回单notity_party_id bigint,customer_id
             stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014001', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','1', 1, '1','4');");
             stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, notity_party_id,customer_id) values('回单20132014002', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','2', '2','4');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014003', CURRENT_TIMESTAMP(), 'cancel','应收','张三','这是一张回单','1', 1, '1','4',);");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014003', CURRENT_TIMESTAMP(), 'cancel','应收','张三','这是一张回单','1', 1, '1','4');");
             stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014004', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','2', 1, '2','5');");
             stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014005', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','1', 1, '1','5');");
             stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014006', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','2', 1, '2','5');");
@@ -396,11 +400,13 @@ public class DataInitUtil {
             }
 
             // eeda sp
-            stmt.executeUpdate("insert into dp_prof_provider_info (OID, ADDITIONAL_SERVICES, BIZNATURE, PROVIDER_SYS_CODE, PROVIDER_NAME, PROVIDER_BIZ_CODE, MAINTENANCE_OFFICE, COUNTRY_BAK, PROVINCE_BAK, CITY_BAK, POST_CODE, CONTACT, FAX_BAK, EMAIL, TELEPHONE_BAK, ADDRESS1, ADDRESS2, ADDRESS3, ADDRESS4, STATUS, CREATOR, CREATE_DATE, LAST_UPDATER, LAST_UPDATE_DATE, COUNTRY_OID, COUNTRY, PROVINCE_OID, PROVINCE, CITY_OID, CITY, PHONE_COUNTRY_CODE, PHONE_AREA_CODE, PHONE_NO, FAX_COUNTRY_CODE, FAX_AREA_CODE, FAX_NO, SPPM_OID, PROVIDER_FULL_NAME, CONTROL_OFFICE, COPY_FROM_SP_OID, DATA_REALM)"
-                    + " values (76, 'TSC;TSR;GEW;', 'MS;TP;WH;', 'SYS_PVD_PAS0000000277', 'Lintas Niaga Nusantara', 'PAS0000000277', 'OLINL/JKT', '', '', '', '', '', '', '', '', '', '', '', '', 'I', '', null, '', null, null, '', null, '', null, '', '', '', '', '', '', '', null, '', '', null, 'DCS');");
-
-            stmt.executeUpdate("insert into dp_prof_provider_info (OID, ADDITIONAL_SERVICES, BIZNATURE, PROVIDER_SYS_CODE, PROVIDER_NAME, PROVIDER_BIZ_CODE, MAINTENANCE_OFFICE, COUNTRY_BAK, PROVINCE_BAK, CITY_BAK, POST_CODE, CONTACT, FAX_BAK, EMAIL, TELEPHONE_BAK, ADDRESS1, ADDRESS2, ADDRESS3, ADDRESS4, STATUS, CREATOR, CREATE_DATE, LAST_UPDATER, LAST_UPDATE_DATE, COUNTRY_OID, COUNTRY, PROVINCE_OID, PROVINCE, CITY_OID, CITY, PHONE_COUNTRY_CODE, PHONE_AREA_CODE, PHONE_NO, FAX_COUNTRY_CODE, FAX_AREA_CODE, FAX_NO, SPPM_OID, PROVIDER_FULL_NAME, CONTROL_OFFICE, COPY_FROM_SP_OID, DATA_REALM)"
-                    + " values (77, 'TSC;TSR;', 'TP;', 'SYS_PVD_PAS0000000278', 'Maersk Indonesia', 'PAS0000000278', 'OLINL/JKT', '', '', '', '', '', '', '', '', '', '', '', '', 'A', '', null, '', null, null, '', null, '', null, '', '', '', '', '', '', '', null, '', '', null, 'DCS');");
+            // stmt.executeUpdate("insert into dp_prof_provider_info (OID, ADDITIONAL_SERVICES, BIZNATURE, PROVIDER_SYS_CODE, PROVIDER_NAME, PROVIDER_BIZ_CODE, MAINTENANCE_OFFICE, COUNTRY_BAK, PROVINCE_BAK, CITY_BAK, POST_CODE, CONTACT, FAX_BAK, EMAIL, TELEPHONE_BAK, ADDRESS1, ADDRESS2, ADDRESS3, ADDRESS4, STATUS, CREATOR, CREATE_DATE, LAST_UPDATER, LAST_UPDATE_DATE, COUNTRY_OID, COUNTRY, PROVINCE_OID, PROVINCE, CITY_OID, CITY, PHONE_COUNTRY_CODE, PHONE_AREA_CODE, PHONE_NO, FAX_COUNTRY_CODE, FAX_AREA_CODE, FAX_NO, SPPM_OID, PROVIDER_FULL_NAME, CONTROL_OFFICE, COPY_FROM_SP_OID, DATA_REALM)"
+            // +
+            // " values (76, 'TSC;TSR;GEW;', 'MS;TP;WH;', 'SYS_PVD_PAS0000000277', 'Lintas Niaga Nusantara', 'PAS0000000277', 'OLINL/JKT', '', '', '', '', '', '', '', '', '', '', '', '', 'I', '', null, '', null, null, '', null, '', null, '', '', '', '', '', '', '', null, '', '', null, 'DCS');");
+            //
+            // stmt.executeUpdate("insert into dp_prof_provider_info (OID, ADDITIONAL_SERVICES, BIZNATURE, PROVIDER_SYS_CODE, PROVIDER_NAME, PROVIDER_BIZ_CODE, MAINTENANCE_OFFICE, COUNTRY_BAK, PROVINCE_BAK, CITY_BAK, POST_CODE, CONTACT, FAX_BAK, EMAIL, TELEPHONE_BAK, ADDRESS1, ADDRESS2, ADDRESS3, ADDRESS4, STATUS, CREATOR, CREATE_DATE, LAST_UPDATER, LAST_UPDATE_DATE, COUNTRY_OID, COUNTRY, PROVINCE_OID, PROVINCE, CITY_OID, CITY, PHONE_COUNTRY_CODE, PHONE_AREA_CODE, PHONE_NO, FAX_COUNTRY_CODE, FAX_AREA_CODE, FAX_NO, SPPM_OID, PROVIDER_FULL_NAME, CONTROL_OFFICE, COPY_FROM_SP_OID, DATA_REALM)"
+            // +
+            // " values (77, 'TSC;TSR;', 'TP;', 'SYS_PVD_PAS0000000278', 'Maersk Indonesia', 'PAS0000000278', 'OLINL/JKT', '', '', '', '', '', '', '', '', '', '', '', '', 'A', '', null, '', null, null, '', null, '', null, '', '', '', '', '', '', '', null, '', '', null, 'DCS');");
 
             // 地产客户
             Party p = new Party();
@@ -490,27 +496,27 @@ public class DataInitUtil {
             // "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),FOREIGN KEY(order_id) REFERENCES transfer_order(id),"
             // + "FOREIGN KEY(item_id) REFERENCES transfer_order_item(id
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('2', 'dkjf5421', '10000', '音箱', 'true', '2', '9');");
+                    + "values('2', 'dkjf5421', '10000', '音箱', true, '2', '9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('2', 'dkjf5421', '10000', '音箱', 'true', '2', '9');");
+                    + "values('2', 'dkjf5421', '10000', '音箱', true, '2', '9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('2', 'dkjf5421', '10000', '音箱', 'true', '2', '10');");
+                    + "values('2', 'dkjf5421', '10000', '音箱', true, '2', '10');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('2', 'dkjf5421', '10000', '音箱', 'true', '3', '9');");
+                    + "values('2', 'dkjf5421', '10000', '音箱', true, '3', '9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('2', 'dkjf5421', '10000', '音箱', 'true', '3', '10');");
+                    + "values('2', 'dkjf5421', '10000', '音箱', true, '3', '10');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('1','fdgh1265985','10000', 'ATM', 'true','1','9');");
+                    + "values('1','fdgh1265985','10000', 'ATM', true,'1','9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('5','asdf1265985','10000', 'ATM', 'false','7','9');");
+                    + "values('5','asdf1265985','10000', 'ATM', false,'7','9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('5','11adasasdf5','10000', 'ATM', 'false','9','9');");
+                    + "values('5','11adasasdf5','10000', 'ATM', false,'9','9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('6','iouu1265985','10000', 'ATM', 'false','8','10');");
+                    + "values('6','iouu1265985','10000', 'ATM', false,'8','10');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('6','2221265985','10000', 'ATM', 'false','8','10');");
+                    + "values('6','2221265985','10000', 'ATM', false,'8','10');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('7','aaasswqq63','10000', 'ATM', 'false','10','10');");
+                    + "values('7','aaasswqq63','10000', 'ATM', false,'10','10');");
 
             // 配送单
             stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,CREATE_STAMP) values('2014042600013','1','5','7','9','配送在途','2014-04-25 16:35:35.1');");
