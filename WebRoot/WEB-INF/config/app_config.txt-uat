@@ -1,1 +1,1 @@
-dbType=ProdMysqldbUrl=jdbc:mysql://112.124.28.26/eeda_yh?characterEncoding=UTF-8username=eeda_yhpwd=Eedayh
+dbType=ProdMysqldbUrl=jdbc:mysql://112.124.28.26/eeda_yh?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNullusername=eeda_yhpwd=Eedayh
