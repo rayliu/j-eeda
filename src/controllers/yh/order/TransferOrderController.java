@@ -627,6 +627,7 @@ public class TransferOrderController extends Controller {
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
         transferOrderMilestone.set("create_stamp", sqlDate);
+        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
         transferOrderMilestone.set("order_id", transferOrder.get("id"));
         transferOrderMilestone.save();
     }

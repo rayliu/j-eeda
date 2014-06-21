@@ -15,7 +15,7 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
-                    return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+                    return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
                  }
             },
             { "mDataProp": "ORDER_NO"},
@@ -68,7 +68,7 @@ $(document).ready(function() {
         var tableArr=[];
         $("table tr:not(:first)").each(function(){        
         	$("input:checked",this).each(function(){
-        		trArr.push($(this).val());          	        		
+        		trArr.push($(this).val());  
         	});          		
         }); 
         tableArr.push(trArr);        
@@ -199,4 +199,10 @@ $(document).ready(function() {
     }).on('changeDate', function(ev){
         $('#endTime_filter').trigger('keyup');
     });
+    
+	$("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == true){
+			$("#saveBtn").attr('disabled', false);
+		}
+	});
 } );

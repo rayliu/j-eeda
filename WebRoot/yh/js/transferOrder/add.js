@@ -39,7 +39,19 @@ $(document).ready(function() {
 			customerList.empty();
 			for(var i = 0; i < data.length; i++)
 			{
-				customerList.append("<li><a class='fromLocationItem' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name = '';
+				}
+				var contact_person = data[i].CONTACT_PERSON;
+				if(contact_person == null){
+					contact_person = '';
+				}
+				var phone = data[i].PHONE;
+				if(phone == null){
+					phone = '';
+				}
+				customerList.append("<li><a class='fromLocationItem' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
 			}
 		},'json');
 		
@@ -60,11 +72,23 @@ $(document).ready(function() {
 		$('#locationForm').val(location);		
 		var pageCustomerName = $("#pageCustomerName");
 		pageCustomerName.empty();
-		pageCustomerName.append($(this).attr('contact_person')+'&nbsp;');
-		pageCustomerName.append($(this).attr('phone')); 
+		var contact_person = $(this).attr('contact_person');
+		if(contact_person == 'null'){
+			contact_person = '';
+		}
+		pageCustomerName.append(contact_person+'&nbsp;');
+		var phone = $(this).attr('phone');
+		if(phone == 'null'){
+			phone = '';
+		}
+		pageCustomerName.append(phone); 
 		var pageCustomerAddress = $("#pageCustomerAddress");
 		pageCustomerAddress.empty();
-		pageCustomerAddress.append($(this).attr('address'));
+		var address = $(this).attr('address');
+		if(address == 'null'){
+			address = '';
+		}
+		pageCustomerAddress.append(address);
 
         var locationFrom = $('#hideLocationFrom').val();
         $.get('/yh/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
@@ -174,7 +198,19 @@ $(document).ready(function() {
 			spList.empty();
 			for(var i = 0; i < data.length; i++)
 			{
-				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name = '';
+				}
+				var contact_person = data[i].CONTACT_PERSON;
+				if(contact_person == null){
+					contact_person = '';
+				}
+				var phone = data[i].PHONE;
+				if(phone == null){
+					phone = '';
+				}
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
 			}
 		},'json');		
         $("#spList").css({ 
@@ -191,11 +227,25 @@ $(document).ready(function() {
 		$('#sp_id').val($(this).attr('partyId'));
 		var pageSpName = $("#pageSpName");
 		pageSpName.empty();
-		pageSpName.append($(this).attr('contact_person')+'&nbsp;');
-		pageSpName.append($(this).attr('phone')); 
 		var pageSpAddress = $("#pageSpAddress");
 		pageSpAddress.empty();
 		pageSpAddress.append($(this).attr('address'));
+		var contact_person = $(this).attr('contact_person');
+		if(contact_person == 'null'){
+			contact_person = '';
+		}
+		pageSpName.append(contact_person+'&nbsp;');
+		var phone = $(this).attr('phone');
+		if(phone == 'null'){
+			phone = '';
+		}
+		pageSpName.append(phone); 
+		pageCustomerAddress.empty();
+		var address = $(this).attr('address');
+		if(address == 'null'){
+			address = '';
+		}
+		pageSpAddress.append(address);
         $('#spList').hide();
     }); 
 	

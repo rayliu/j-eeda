@@ -5,7 +5,7 @@
            
                 <div class="col-lg-12">
                     <h1 class="page-header">拼车单</h1>                  
-                    <input type="text" id="pickupOrderId">
+                    <input type="hidden" id="pickupOrderId" value="${pickupOrder.id!''}">
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -23,6 +23,8 @@
                                 </li>
                                 <li class=""><a href="#cargos" data-toggle="tab">货品信息</a>
                                 </li>
+                                 <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">运输里程碑</a>
+                                </li>
                                 <li class=""><a href="#arap" data-toggle="tab">应付</a>
                                 </li>
                             </ul>
@@ -33,7 +35,8 @@
                                  
                                 <div class="row">
                                    <form id="pickupOrderForm" method="post" action="">
-                                        <input id="driver_id" type="hidden" name="driver_id"/>                                   	  
+                    					<input type="hidden" id="pickupId" name="pickupId" value="${pickupOrder.id!''}">
+                                        <input id="driver_id" type="hidden" name="driver_id" value="${pickupOrder.driver_id!''}"/>                                   	  
                                        	<input type="hidden" name="order_no" value="${pickupOrder.depart_no!''}"/>
                                        	<input type="hidden" name="status" value="${pickupOrder.status!''}"/>
                                        	<input type="hidden" name="create_by" value="${pickupOrder.create_by!''}"/>
@@ -100,7 +103,7 @@
 			                                                            </div>
 			                                       <div style=display:inline-block;width:50%>			                                                               
 			                                            <label>长度</label>
-			                                         	<input type="hidden" value="${dpickupOrder.car_size!''}" id="carSizeSelect">
+			                                         	<input type="hidden" value="${pickupOrder.car_size!''}" id="carSizeSelect">
 			                                            <select name="car_size" id="carsize" class="form-control">
 			                                                <option value="15">15</option>
 			                                                <option value="20">20</option>
@@ -121,35 +124,33 @@
 	                                            <label>跟车人电话</label>
 	                                            <input class="form-control" id="car_follow_phone" name="car_follow_phone" value="${pickupOrder.car_follow_phone!''}">
                                             </div>
-                                            
-                                            <label><h4>始发城市</h4></label>
-                                            <input id="locationForm" type="hidden" name="route_from" value="">
-                                            <input id="hideLocationFrom" type="hidden"> 
-                                            <div class="form-group">
-                                               <label>省</label>
-                                               <input id="hideProvinceFrom" type="hidden" value="${locationFrom.province!''}"/>
-                                               <select id="mbProvinceFrom" style="width:150px" name="mbProvinceFrom" value=""></select>
-                                               <label>市</label>
-                                               <input id="hideCityFrom" type="hidden" value="${locationFrom.city!''}"/>
-                                               <select  id="cmbCityFrom" style="width:150px" name="cmbCityFrom" value=""></select>
-                                               <label>区(县)</label>
-                                               <input id="hideDistrictFrom" type="hidden" value="${locationFrom.district!''}"/>
-                                               <select  id="cmbAreaFrom" style="width:150px" name="cmbAreaFrom" value=""></select>
-                                            </div>
-        									
-                                            <input id="locationTo" type="hidden" name="route_to" value="${contact.location!''}">
-                                           	<label><h4>目的地城市</h4></label>
-		                                    <div class="form-group">
-		                                        <label>省</label>
-		                                        <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
-		                                        <select id="mbProvinceTo" style="width:150px" name="mbProvinceTo" value=""></select>
-		                                        <label>市</label>
-		                                        <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
-		                                        <select  id="cmbCityTo" style="width:150px" name="cmbCityTo" value=""></select>
-		                                        <label>区(县)</label>
-		                                        <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}"/>
-		                                        <select  id="cmbAreaTo" style="width:150px" name="cmbAreaTo" value=""></select>
-		                                    </div>
+		                                    <label><h4>始发城市</h4></label>
+	                                            <input id="locationForm" type="hidden" name="route_from" value="${pickupOrder.route_from!''}">
+	                                            <input id="hideLocationFrom" type="hidden"> 
+	                                            <div class="form-group">
+	                                                <label>省</label>
+	                                                <input id="hideProvinceFrom" type="hidden" value="${locationFrom.province!''}"/>
+	                                                <select id="mbProvinceFrom" style="width:150px" name="mbProvinceFrom" value=""></select>
+	                                                <label>市</label>
+	                                                <input id="hideCityFrom" type="hidden" value="${locationFrom.city!''}"/>
+	                                                <select  id="cmbCityFrom" style="width:150px" name="cmbCityFrom" value=""></select>
+	                                                <label>区(县)</label>
+	                                                <input id="hideDistrictFrom" type="hidden" value="${locationFrom.district!''}"/>
+	                                                <select  id="cmbAreaFrom" style="width:150px" name="cmbAreaFrom" value=""></select>
+	                                            </div> 
+                                           <label><h4>目的地城市</h4></label>
+	                                       <input id="locationTo" type="hidden" name="route_to" value="${pickupOrder.route_to!''}">
+	                                       <div class="form-group">
+	                                           <label>省</label>
+	                                           <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
+	                                           <select id="mbProvinceTo" style="width:150px" name="mbProvinceTo" value=""></select>
+	                                           <label>市</label>
+	                                           <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
+	                                           <select  id="cmbCityTo" style="width:150px" name="cmbCityTo" value=""></select>
+	                                           <label>区(县)</label>
+	                                           <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}"/>
+	                                           <select  id="cmbAreaTo" style="width:150px" name="cmbAreaTo" value=""></select>
+	                                       </div>    
                                         <div class="form-group">
                                         <!-- <button class="btn btn-default" type="submit">&nbsp&nbsp&nbsp&nbsp保存&nbsp&nbsp&nbsp&nbsp</button> -->      
                                         <button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                     
@@ -161,10 +162,10 @@
                                    <div class="col-lg-6">
                                   		<h2>拼车信息</h2>                                           
                                             <div class="form-group">
-                                                <label>拼车单号</label> <strong>${pickuporder.depart_no!''}</strong>
+                                                <label>拼车单号</label> <strong>${pickupOrder.depart_no!''}</strong>
                                             </div>
                                             <div class="form-group">
-                                                <label>单据状态</label>   ${pickuporder.status!''}
+                                                <label>单据状态</label>   ${pickupOrder.status!''}
                                             </div>
                                             <div class="form-group">
                                             <label>创建人</label>   ${userLogin.user_name!''}                                                
@@ -172,7 +173,7 @@
 	                                                                                                                         
 										<div class="form-group">
                                             <label>备注</label>
-                                            <textarea class="form-control" rows="8" id="remark" name="remark">${pickuporder.remark!''}</textarea>
+                                            <textarea class="form-control" rows="8" id="remark" name="remark">${pickupOrder.remark!''}</textarea>
                                         </div> 
                                 </div>
                                        </div>   
@@ -244,6 +245,61 @@
                                     </div>                                  
                                     <!-- /.panel-body -->
                                       <!-- 模态框 -->									
+                                </div>
+                              
+                                <!-- 模态框 -->
+								<div class="modal fade" id="transferOrderMilestone" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+								  <div class="modal-dialog">
+								    <div class="modal-content">
+								      <div class="modal-header">
+								        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								        <h4 class="modal-title" id="myModalLabel">新里程碑</h4>
+								      </div>
+								      <div class="modal-body">
+								      	<form id="transferOrderMilestoneForm" action="">
+								      		<input id="milestonePickupId" type="text" name="milestonePickupId" />
+											<div class="form-group ">
+											<label class="control-label" for="inputSuccess">状态(不填默认为"在途")</label> <input
+												id="status" class="form-control" type="text"
+												name="status">
+											</div>
+											<div class="form-group ">
+											<label class="control-label" for="inputSuccess">地点</label> <input
+												id="location" class="form-control" type="text"
+												name="location">
+											</div>
+									      </div>
+									      <div class="modal-footer">
+									        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									        <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-primary">保存</button>
+									      </div>
+										</form>
+								    </div><!-- /.modal-content -->
+								  </div><!-- /.modal-dialog -->
+								</div><!-- /.modal -->
+									
+                                <div class="tab-pane fade" id="milestone">
+                                    <div class="panel-body">
+                                        <div class="table-responsive">                                        
+			                            <button class="btn btn-primary" data-toggle="modal" data-target="#transferOrderMilestone">
+										  新里程碑
+										</button>
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>状态</th>
+                                                        <th>地点</th>
+                                                        <th>更新用户</th>
+                                                        <th>更新时间</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="transferOrderMilestoneTbody" >
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                    <!-- /.panel-body -->
                                 </div>
                               
                                 <div class="tab-pane fade" id="arap">

@@ -1,4 +1,4 @@
-package config;
+﻿package config;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -101,10 +101,6 @@ public class DataInitUtil {
                     + "fin_item_code varchar(20), amount double, status varchar(50), "
                     + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp);");
 
-            // transfer_order_milestone 运输单里程碑
-            stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
-                    + "last_modified_stamp TIMESTAMP,order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
-
             // billing_order 应收应付单主表
             stmt.executeUpdate("create table if not exists billing_order(id bigint auto_increment PRIMARY KEY, blling_order_no varchar(255), "
                     + "order_type varchar(50), customer_id bigint, customer_type varchar(50), charge_account_id bigint, payment_account_id bigint, status varchar(255),"
@@ -128,7 +124,12 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,transfer_order_no varchar(255),FOREIGN KEY(depart_id) REFERENCES depart_order(id),FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
             // 发车单单品表
             stmt.executeUpdate("create table if not exists depart_transfer_itemdetail(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,item_id bigint,itemdetail_id bigint );");
-
+            
+            // transfer_order_milestone 运输单里程碑
+            stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
+                    + "last_modified_stamp TIMESTAMP,type varchar(255),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id),pickup_id bigint,FOREIGN KEY(pickup_id) REFERENCES depart_order(id));");
+            
+           
             stmt.close();
             // conn.commit();
             conn.close();
@@ -142,11 +143,11 @@ public class DataInitUtil {
             cp.start();
             Connection conn = cp.getDataSource().getConnection();
             Statement stmt = conn.createStatement();
-
+            
             // location init
             LocationDataInit.initLocation(stmt);
             ProfileDataInit.initProfile(stmt);
-
+            
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('demo', '123456', '1-6');");

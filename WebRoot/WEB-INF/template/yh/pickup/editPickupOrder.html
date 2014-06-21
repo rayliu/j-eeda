@@ -5,7 +5,7 @@
            
                 <div class="col-lg-12">
                     <h1 class="page-header">拼车单</h1>                  
-                    <input type="text" id="pickupOrderId">
+                    <input type="hidden" id="pickupOrderId">
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -22,6 +22,8 @@
                                 <li class="active"><a href="#basic" data-toggle="tab">基本信息</a>
                                 </li>
                                 <li class=""><a href="#cargos" data-toggle="tab">货品信息</a>
+                                </li>
+                                 <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">运输里程碑</a>
                                 </li>
                                 <li class=""><a href="#arap" data-toggle="tab">应付</a>
                                 </li>
@@ -150,9 +152,7 @@
 		                                        <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}"/>
 		                                        <select  id="cmbAreaTo" style="width:150px" name="cmbAreaTo" value=""></select>
 		                                    </div>
-                                        <div class="form-group">
-                                        <!-- <button class="btn btn-default" type="submit">&nbsp&nbsp&nbsp&nbsp保存&nbsp&nbsp&nbsp&nbsp</button> -->      
-                                        <button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                     
+                                        <div class="form-group">                               
                                          </div>
                                        </div>                                      
                                             
@@ -237,15 +237,69 @@
 	                                             </table>
 	                                          </div>
 	                                           <div class="form-group">
-	                                           <a id="style" style="display:none"><i class="fa fa-check"></i></a>
-                                        	   <button class="btn btn-default" id="item_save"  type="button">&nbsp&nbsp&nbsp&nbsp保存&nbsp&nbsp&nbsp&nbsp</button>                                          
+	                                           <a id="styleSave" style="display:none"><i class="fa fa-check"></i></a>
                                          </div>
                                             </div>
                                     </div>                                  
                                     <!-- /.panel-body -->
                                       <!-- 模态框 -->									
                                 </div>
-                              
+                                
+                                <!-- 模态框 -->
+								<div class="modal fade" id="transferOrderMilestone" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+								  <div class="modal-dialog">
+								    <div class="modal-content">
+								      <div class="modal-header">
+								        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								        <h4 class="modal-title" id="myModalLabel">新里程碑</h4>
+								      </div>
+								      <div class="modal-body">
+								      	<form id="transferOrderMilestoneForm" action="">
+								      		<input id="milestonePickupId" type="text" name="milestonePickupId" />
+											<div class="form-group ">
+											<label class="control-label" for="inputSuccess">状态(不填默认为"在途")</label> <input
+												id="status" class="form-control" type="text"
+												name="status">
+											</div>
+											<div class="form-group ">
+											<label class="control-label" for="inputSuccess">地点</label> <input
+												id="location" class="form-control" type="text"
+												name="location">
+											</div>
+									      </div>
+									      <div class="modal-footer">
+									        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									        <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-primary">保存</button>
+									      </div>
+										</form>
+								    </div><!-- /.modal-content -->
+								  </div><!-- /.modal-dialog -->
+								</div><!-- /.modal -->
+									
+                                <div class="tab-pane fade" id="milestone">
+                                    <div class="panel-body">
+                                        <div class="table-responsive">                                        
+			                            <button class="btn btn-primary" data-toggle="modal" data-target="#transferOrderMilestone">
+										  新里程碑
+										</button>
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>状态</th>
+                                                        <th>地点</th>
+                                                        <th>更新用户</th>
+                                                        <th>更新时间</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="transferOrderMilestoneTbody" >
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                    <!-- /.panel-body -->
+                                </div>
+                                
                                 <div class="tab-pane fade" id="arap">
                                     <h2>应收</h2>
                                     <div class="panel-body">
@@ -275,7 +329,12 @@
                                     </div>
                             </div>
                         </div>
-                        <!-- /.panel-body -->
+                        <!-- /.panel-body --> 
+                        <div class=".tooltip-demo">
+                            <hr/>
+                        	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
+		               		<button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
+                        </div>                       
                     </div>
                     <!-- /.panel -->
                 </div>
