@@ -54,7 +54,7 @@
 	        <copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-uat" overwrite="true"/>
 	        <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
 	            <arg value="WebRoot"/>
-	            <arg value="8080"/>
+	            <arg value="8000"/>
 	            <arg value="/"/>
 	            <arg value="5"/>
 	            <classpath path="WebRoot/WEB-INF/classes"></classpath>
