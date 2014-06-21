@@ -26,13 +26,11 @@
                                 <li class=""><a href="#arap" data-toggle="tab">应付</a>
                                 </li>
                             </ul>
-
                             <!-- Tab panes -->
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="basic">
-                                 
                                 <div class="row">
-                                   <form  method="post" action="/yh/departOrder/savedepartOrder">
+                                   <form id="orderForm" method="post" action="/yh/departOrder/savedepartOrder">
                                <div class="col-lg-6">
                                <input class="" id="depart_id" value="${depart_id!''}" type="hidden" name="depart_id" >
                              <input class="" id="type" value="${type!''}" type="hidden" >
@@ -112,10 +110,6 @@
                                             <label>电话</label>
                                              <input class="form-control" id="phone" value="${depart.PHONE!''}"  name="phone">
                                         </div>
-
-                                        <div class="form-group">
-                                        <button class="btn btn-default" type="submit">&nbsp&nbsp&nbsp&nbsp保存&nbsp&nbsp&nbsp&nbsp</button>                                          
-                                         </div>
                                     </div>
                                       <div class="col-lg-6">
                                   <h2>发车信息</h2>  
@@ -141,24 +135,13 @@
                                             <label>备注</label>
                                             <textarea class="form-control" rows="4" id="remark" name="remark">${depart.remark!''}</textarea>
                                         </div> 
-                                 		
-                                    
-                                </div>
-                                	
-                                  
-                                     
+                                </div>         
                                   </form>
-
                             </div>
                                 </div>
-                                
-                                
                                 <div class="tab-pane fade" id="cargos">
-                                   
-                                    
                                      <div class="panel-body" style="" id="ATMitem">
                                         <div class="table-responsive">
-                                        
                                 <table class="table table-striped table-bordered table-hover" id="eeda-table">
                               
                                 <thead   >
@@ -211,10 +194,7 @@
 	                                                </thead>
 	                                                </table>
 	                                          </div>
-	                                           <div class="form-group">
-	                                           <a id="style" style="display:none"><i class="fa fa-check"></i></a>
-                                        <button class="btn btn-default" id="item_save"  type="button">&nbsp&nbsp&nbsp&nbsp保存&nbsp&nbsp&nbsp&nbsp</button>                                          
-                                         </div>
+	                                       
                                             </div>
                                     </div>
                                   
@@ -256,9 +236,13 @@
                              
                                     <!-- /.panel-body -->
                                 </div>
-                             
+                                 <div class="form-group">
+	                                           <a id="style" style="display:none"><i class="fa fa-check"></i></a>
+                                        <button class="btn btn-default" id="order_save"  type="button">&nbsp&nbsp&nbsp&nbsp保存&nbsp&nbsp&nbsp&nbsp</button>                                          
+                                         </div>
                             </div>
                         </div>
+                       					
                         <!-- /.panel-body -->
                     </div>
                     <!-- /.panel -->
@@ -368,22 +352,49 @@
             	    
             }       
         });	
-    	
-    	
+    	var tr_itemid_list=[];//运输单货品idlist
+ 	    var item_detail_id=[];//运输单单品idlist
+ 	    var item_id="";
+    	   //保存发车单
+	    $('#order_save').click(function(e){
+	        e.preventDefault();
+	        $("table tr:not(:first)").each(function(){ 
+	         	$("input:checked",this).each(function(){
+	         	var code=$(this).val();
+	         	var detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','))
+	         	    item_id=code.substring(code.indexOf(',')+1,code.indexOf('}'))
+	         		item_detail_id.push(detail_id);
+	         	});          		
+	         	}); 
+	    	 tr_itemid_list.push(item_id);
+	    	$("#item_detail").val(item_detail_id);
+	    	$("#tr_itemid_list").val(tr_itemid_list);
+	        $('#orderForm').submit();
+	    });
     	// 查看货品
     		$("#eeda-table").on('click', '.dateilEdit', function(e){
     			e.preventDefault();
-    			
+    			/*保存上一次勾选单品id,货品id*/
+    			 $("table tr:not(:first)").each(function(){ 
+    	         	$("input:checked",this).each(function(){
+    	         	var code=$(this).val();
+    	         	var detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','))
+    	         	    item_id=code.substring(code.indexOf(',')+1,code.indexOf('}'))
+    	         		item_detail_id.push(detail_id);
+    	         	});          		
+    	         	}); 
+    	    	 tr_itemid_list.push(item_id);
+    	    	$("#item_detail").val(item_detail_id);
+    	    	$("#tr_itemid_list").val(tr_itemid_list);
+    			/*根据货品id显示对应单品*/
     			$("#transferOrderItemDateil").show();
-    			//alert("12345");
-    			 var code = $(this).attr('code');
+    			var code = $(this).attr('code');
     			var itemId = code.substring(code.indexOf('=')+1);
     			$("#item_id").val(itemId);
     			$("#item_save").attr("disabled", false);
     			$("#style").hide();
     			detailTable.fnSettings().sAjaxSource = "/yh/departOrder/itemDetailList?item_id="+itemId+"";
-    			detailTable.fnDraw(); 
-    			
+    			detailTable.fnDraw();     			
     		});
     		// 删除货品
     		$("#eeda-table").on('click', '.cancelbutton', function(e){
@@ -392,7 +403,6 @@
     			var itemId = code.substring(code.indexOf('=')+1);
     			 $("table tr:eq("+hang+")").remove(); 
     		});
-    		var the_id="";
     		var item_id = $("#item_id").val();
     		var detailTable= $('#detailTable').dataTable({           
                 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",  
@@ -415,33 +425,8 @@
                     { "mDataProp": "VOLUME"},
                     { "mDataProp": "WEIGHT"},
                     { "mDataProp": "REMARK"},
-                  
-                ]
-                
-
-               
+                ]                
             });	    
-    	    //选择单品保存
-    	    var tr_itemid_list=[];
-    	    var item_detail_id=[];
-    	    var item_id="";
-    	    $("#item_save").click(function(){
-    	    	 $("table tr:not(:first)").each(function(){ 
-    	         	$("input:checked",this).each(function(){
-    	         	var code=$(this).val();
-    	         	var detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','))
-    	         	    item_id=code.substring(code.indexOf(',')+1,code.indexOf('}'))
-    	         		item_detail_id.push(detail_id);
-    	         	});          		
-    	         	}); 
-    	    	 tr_itemid_list.push(item_id);
-    	    	//alert(item_detail_id);
-    	    	$("#item_detail").val(item_detail_id);
-    	    	$("#tr_itemid_list").val(tr_itemid_list);
-    	    	$("#style").show();
-    	    	$("#item_save").attr("disabled", true);
-    	    	});
-
     	    // 回显车长
     	    var carSizeOption=$("#carsize>option");
     	    var carSizeVal=$("#carSizeSelect").val();
@@ -451,7 +436,6 @@
     		       $("#carsize option[value='"+svalue+"']").attr("selected","selected");
     		      }
     	      }
-    	    
     	    // 回显车型
     	    var carTypeOption=$("#cartype>option");
     	    var carTypeVal=$("#carTypeSelect").val();
@@ -461,5 +445,6 @@
     	    		$("#cartype option[value='"+svalue+"']").attr("selected","selected");
     	    	}
     	    }
+    	 
     });
 </script>

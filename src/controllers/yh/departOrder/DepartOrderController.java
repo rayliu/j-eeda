@@ -276,14 +276,14 @@ public class DepartOrderController extends Controller {
 			.set("depart_no", depart_no).set("DRIVER_ID", Integer.parseInt(party_id))
 			.set("car_size", getPara("carsize")).set("remark", getPara("remark"));
 			dp.save();
-			
+		
 			if(!"".equals(getPara("item_detail")) && !"".equals(getPara("tr_itemid_list")) ){
 			for(int k=0;k<order_id.length;k++){//运输单id
 				for(int i=0; i<tr_itemid.length;i++){//货品id
 					for(int j=0;j<item_detail.length;j++){//单品id
 						TransferOrderItemDetail tr_item_de=TransferOrderItemDetail.dao.findById(Integer.parseInt(item_detail[j]));
 					if(tr_item_de.get("ITEM_ID").toString().equals(tr_itemid[i].toString())&&
-					tr_item_de.get("ORDER_ID").toString().equals(order_id[k].toString())){
+						tr_item_de.get("ORDER_ID").toString().equals(order_id[k].toString())){
 						DepartOrderItemdetail de_item_detail=new DepartOrderItemdetail(); 
 						de_item_detail.set("DEPART_ID",Integer.parseInt(dp.get("id").toString())).set("ORDER_ID",Integer.parseInt(order_id[k]))
 						.set("ITEM_ID",Integer.parseInt(tr_itemid[i])).set("ITEMDETAIL_ID",Integer.parseInt(item_detail[j])).save();
@@ -301,6 +301,23 @@ public class DepartOrderController extends Controller {
 			.set("depart_no", depart_no).set("DRIVER_ID", Integer.parseInt(party_id))
 			.set("car_size", getPara("carsize")).set("remark", getPara("remark"));
 			dp.update();
+			String sql="SELECT * FROM DEPART_TRANSFER_ITEMDETAIL where DEPART_ID="+depart_id;
+			List<DepartOrderItemdetail> doitsize=DepartOrderItemdetail.dao.find(sql);
+			for(int f=0;f<doitsize.size();f++){
+			for(int k=0;k<order_id.length;k++){//运输单id
+				for(int i=0; i<tr_itemid.length;i++){//货品id
+					for(int j=0;j<item_detail.length;j++){//单品id
+						TransferOrderItemDetail tr_item_de=TransferOrderItemDetail.dao.findById(Integer.parseInt(item_detail[j]));
+					if(tr_item_de.get("ITEM_ID").toString().equals(tr_itemid[i].toString())&&
+						tr_item_de.get("ORDER_ID").toString().equals(order_id[k].toString())){
+						DepartOrderItemdetail de_item_detail=DepartOrderItemdetail.dao.findById(Integer.parseInt((String) doitsize.get(f).get("id"))); 
+						de_item_detail.set("DEPART_ID",Integer.parseInt(dp.get("id").toString())).set("ORDER_ID",Integer.parseInt(order_id[k]))
+						.set("ITEM_ID",Integer.parseInt(tr_itemid[i])).set("ITEMDETAIL_ID",Integer.parseInt(item_detail[j])).update();
+						}
+					}
+				}
+				}
+			}
 			setAttr("depart_id", depart_id);
 		}
 		int de_id = Integer.parseInt(dp.get("id").toString());//获取发车单id
@@ -335,18 +352,23 @@ public class DepartOrderController extends Controller {
 		String sqlTotal = "select count(1) total from TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID =" + item_id + "";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
-		String sql_item="SELECT * FROM DEPART_TRANSFER_ITEMDETAIL where ITEM_ID="+item_id;
-		String sql = "SELECT * FROM TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID =" + item_id;
-		List<Record> depart_itemdetail=Db.find(sql_item);
-		List<Record> itemdetail = Db.find(sql);
-		int	detail_size=itemdetail.size();
-		for(int i=0;i<detail_size;i++){
-			for(int j=0;j<depart_itemdetail.size();j++){
-				if(itemdetail.get(i).get("id").equals(depart_itemdetail.get(j).get("itemdetail_id"))){
-					itemdetail.remove(i);
-				}
+		/*String sql_item="SELECT * FROM DEPART_TRANSFER_ITEMDETAIL where ITEM_ID="+item_id;*/
+		
+		String sql_tr_itemdetail_id="SELECT id as ITEMDETAIL_ID  FROM TRANSFER_ORDER_ITEM_DETAIL where ITEM_ID="+item_id;
+		String sql_dp_itemdetail_id="SELECT ITEMDETAIL_ID  FROM DEPART_TRANSFER_ITEMDETAIL  where ITEM_ID="+item_id;
+		List<Record> sql_tr_itemdetail_idlist=Db.find(sql_tr_itemdetail_id);
+		List<Record> sql_dp_itemdetail_idlist=Db.find(sql_dp_itemdetail_id);
+		/*List<Record> depart_itemdetail=Db.find(sql_item);*/
+		sql_tr_itemdetail_idlist.removeAll(sql_dp_itemdetail_idlist);
+		String  detail_id="0";
+		if(sql_tr_itemdetail_idlist.size()>0){
+			for(int i=0;i<sql_tr_itemdetail_idlist.size();i++){
+				detail_id +=sql_tr_itemdetail_idlist.get(i).get("ITEMDETAIL_ID")+",";
 			}
+			detail_id=detail_id.substring(0,detail_id.length()-1);
 		}
+		String sql = "SELECT * FROM TRANSFER_ORDER_ITEM_DETAIL  where ID in("+ detail_id+")" ;
+		List<Record> itemdetail = Db.find(sql);
 		Map Map = new HashMap();
 		Map.put("sEcho", pageIndex);
 		Map.put("iTotalRecords", rec.getLong("total"));
