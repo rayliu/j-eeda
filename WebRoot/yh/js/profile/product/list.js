@@ -425,12 +425,28 @@ $(document).ready(function() {
         }
         function onRename(e, treeId, treeNode, isCancel) {
             showLog((isCancel ? "<span style='color:red'>":"") + "[ "+getTime()+" onRename ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name + (isCancel ? "</span>":""));
+            $.post('/yh/product/saveCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:treeNode.name}, function(data){            
+                
+            },'json');
         }
         function showRemoveBtn(treeId, treeNode) {
             //根节点，不能删除
             if(treeNode.level==0)
                 return false;
             //有子节点，不能删除
+            var subNodes=[];
+            $.ajax({  
+                  type : "post",  
+                  url : "/yh/product/searchNodeCategory",  
+                  data : {categoryId: treeNode.categoryId, customerId: treeNode.customerId},  
+                  async : false,  
+                  success : function(data){  
+                    subNodes=data; 
+                  }  
+             });
+
+            if(subNodes.length>0)
+                return false;
             return true;
             
         }
