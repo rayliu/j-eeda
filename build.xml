@@ -44,7 +44,7 @@
             <arg value="WebRoot"/>
             <arg value="8080"/>
             <arg value="/"/>
-            <arg value="5"/>
+            <arg value="0"/>
             <classpath path="WebRoot/WEB-INF/classes"></classpath>
         </java>
     </target>
@@ -56,7 +56,7 @@
             <arg value="WebRoot"/>
             <arg value="8000"/>
             <arg value="/"/>
-            <arg value="5"/>
+            <arg value="0"/>
             <classpath path="WebRoot/WEB-INF/classes"></classpath>
         </java>
     </target>
