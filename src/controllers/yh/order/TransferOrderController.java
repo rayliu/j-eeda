@@ -68,7 +68,7 @@ public class TransferOrderController extends Controller {
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select t.*,c1.company_name cname,c2.company_name spname,t.create_stamp,o.office_name oname from transfer_order t "
+            String sql = "select t.*,c1.abbr cname,c2.abbr spname,t.create_stamp,o.office_name oname from transfer_order t "
                     + " left join party p1 on t.customer_id = p1.id "
                     + " left join party p2 on t.sp_id = p2.id "
                     + " left join contact c1 on p1.contact_id = c1.id"
@@ -107,15 +107,15 @@ public class TransferOrderController extends Controller {
                     + " left join office o on t.office_id = o.id where t.order_no like '%"
                     + orderNo + "%' and t.status like '%" + status
                     + "%' and t.address like '%" + address
-                    + "%' and c1.COMPANY_NAME like '%" + customer
-                    + "%' and c2.COMPANY_NAME  like '%" + sp
+                    + "%' and c1.abbr like '%" + customer
+                    + "%' and c2.abbr like '%" + sp
                     + "%' and o.office_name  like '%" + officeName
                     + "%' and create_stamp between '" + beginTime + "' and '"
                     + endTime + "'";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select t.*,c1.company_name cname,c2.company_name spname,o.office_name oname from transfer_order t "
+            String sql = "select t.*,c1.abbr cname,c2.abbr spname,o.office_name oname from transfer_order t "
                     + " left join party p1 on t.customer_id = p1.id "
                     + " left join party p2 on t.sp_id = p2.id "
                     + " left join contact c1 on p1.contact_id = c1.id"
@@ -126,9 +126,9 @@ public class TransferOrderController extends Controller {
                     + status
                     + "%' and t.address like '%"
                     + address
-                    + "%' and c1.COMPANY_NAME like '%"
+                    + "%' and c1.abbr like '%"
                     + customer
-                    + "%' and c2.COMPANY_NAME  like '%"
+                    + "%' and c2.abbr  like '%"
                     + sp
                     + "%' and o.office_name  like '%"
                     + officeName
@@ -768,6 +768,31 @@ public class TransferOrderController extends Controller {
                             + "%') limit 0,10");
         }
         renderJson(locationList);
+    }
+    
+    // 查找序列号
+    public void searchItemNo() {
+    	String input = getPara("input");
+    	List<Record> locationList = Collections.EMPTY_LIST;
+    	if (input.trim().length() > 0) {
+    		locationList = Db
+    				.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' and (company_name like '%"
+    						+ input
+    						+ "%' or contact_person like '%"
+    						+ input
+    						+ "%' or email like '%"
+    						+ input
+    						+ "%' or mobile like '%"
+    						+ input
+    						+ "%' or phone like '%"
+    						+ input
+    						+ "%' or address like '%"
+    						+ input
+    						+ "%' or postal_code like '%"
+    						+ input
+    						+ "%') limit 0,10");
+    	}
+    	renderJson(locationList);
     }
 
     // 删除订单

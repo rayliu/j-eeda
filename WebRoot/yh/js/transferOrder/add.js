@@ -1114,4 +1114,56 @@ $(document).ready(function() {
 	  	   $('#driver_phone').val($(this).attr('phone'));
 	       $('#driverList').hide();   
      }); 
+  	 
+  	//获取货品的序列号list，选中信息在下方展示其他信息
+ 	$('#itemNoMessage').on('keyup', function(){
+ 		var inputStr = $('#itemNoMessage').val();
+ 		$.get('/yh/transferOrder/searchItemNo', {input:inputStr}, function(data){
+ 			console.log(data);
+ 			var itemNoList =$("#itemNoList");
+ 			itemNoList.empty();
+ 			for(var i = 0; i < data.length; i++)
+ 			{
+ 				var item_no = data[i].ITEM_NO;
+ 				if(item_no == null){
+ 					item_no = '';
+ 				}
+ 				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
+ 			}
+ 		},'json');		
+         $("#spList").css({ 
+         	left:$(this).position().left+"px", 
+         	top:$(this).position().top+32+"px" 
+         }); 
+         $('#spList').show();        
+ 	});
+ 	
+ 	// 选中序列号
+ 	$('#spList').on('click', '.fromLocationItem', function(e){
+ 		var message = $(this).text();
+ 		$('#spMessage').val(message.substring(0, message.indexOf(" ")));
+ 		$('#sp_id').val($(this).attr('partyId'));
+ 		var pageSpName = $("#pageSpName");
+ 		pageSpName.empty();
+ 		var pageSpAddress = $("#pageSpAddress");
+ 		pageSpAddress.empty();
+ 		pageSpAddress.append($(this).attr('address'));
+ 		var contact_person = $(this).attr('contact_person');
+ 		if(contact_person == 'null'){
+ 			contact_person = '';
+ 		}
+ 		pageSpName.append(contact_person+'&nbsp;');
+ 		var phone = $(this).attr('phone');
+ 		if(phone == 'null'){
+ 			phone = '';
+ 		}
+ 		pageSpName.append(phone); 
+ 		pageCustomerAddress.empty();
+ 		var address = $(this).attr('address');
+ 		if(address == 'null'){
+ 			address = '';
+ 		}
+ 		pageSpAddress.append(address);
+         $('#spList').hide();
+     }); 
 });
