@@ -119,9 +119,34 @@ public class DepartOrderController extends Controller {
 					+" left join location l2 on to.route_to = l2.code"
 					+" where to.status not in ('已入库','已签收') and arrival_mode not in ('delivery')"
 					+" order by to.CREATE_STAMP desc";
-
 		List<Record> transferOrders = Db.find(sql);
-
+					for(int i=0;i<transferOrders.size();){
+						/*运输单查询货品、单品个数*/
+						int detail_total=0;//运输单货品/单品数
+						String total_tr_item="SELECT * FROM TRANSFER_ORDER_ITEM  where order_id="+Integer.parseInt(transferOrders.get(i).get("id").toString());//货品id
+						List<Record> tr_itemlist=Db.find(total_tr_item);
+						for(int j=0;j<tr_itemlist.size();j++){
+							String total_tr_detail="SELECT * FROM TRANSFER_ORDER_ITEM_DETAIL  where item_id="+Integer.parseInt(tr_itemlist.get(j).get("id").toString());//单品id
+							List<Record> tr_detaillist=Db.find(total_tr_detail);
+							if(tr_detaillist.size()>0){
+								detail_total=detail_total+tr_detaillist.size();
+							}else{
+								detail_total++;
+							}
+						}
+						/*发车单查询货品，单品个数*/
+						int depart_detail=0;
+						String total_depart_detail="SELECT * FROM DEPART_TRANSFER_ITEMDETAIL  where order_id="+Integer.parseInt(transferOrders.get(i).get("id").toString());//发车单单品个数
+						List<Record> depart_detaillist=Db.find(total_depart_detail);
+						depart_detail=depart_detaillist.size();
+						if(depart_detail==detail_total){
+							transferOrders.remove(i);
+							i=i-i;
+							continue;
+						}
+						i++;
+					}
+					
 		Map transferOrderListMap = new HashMap();
 		transferOrderListMap.put("sEcho", pageIndex);
 		transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
@@ -152,9 +177,8 @@ public class DepartOrderController extends Controller {
 	// editTransferOrder 初始数据
 	public void getIintDepartOrderItems() {
 		String order_id = getPara("localArr");//运输单id
-		String tr_item=getPara("tr_item");//货品id
-		String item_detail=getPara("item_detail");//单品id
 		
+	
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -347,6 +371,12 @@ public class DepartOrderController extends Controller {
 					setAttr("tr_itemid", getPara("tr_itemid_list"));
 				}
 			}
+				int de_id = Integer.parseInt(dp.get("id").toString());//获取发车单id
+				//根据勾选了多少个运输单，循环插入发车运输单中间表
+				for (int i = 0; i < order_id.length; i++) {
+					DepartTransferOrder dt = new DepartTransferOrder();
+					dt.set("depart_id", de_id).set("ORDER_ID", order_id[i]).set("TRANSFER_ORDER_NO", order_id[i]).save();
+				}
 	
 		} else {//编辑发车单
 			dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
@@ -356,34 +386,64 @@ public class DepartOrderController extends Controller {
 			.set("car_size", getPara("carsize")).set("remark", getPara("remark"));
 			dp.update();
 			if(!"".equals(getPara("item_detail")) && !"".equals(getPara("tr_itemid_list")) ){
-			String sql="SELECT * FROM DEPART_TRANSFER_ITEMDETAIL where DEPART_ID="+depart_id;
-			List<DepartOrderItemdetail> doitsize=DepartOrderItemdetail.dao.find(sql);
-			for(int f=0;f<doitsize.size();f++){
-			for(int k=0;k<order_id.length;k++){//运输单id
-				for(int i=0; i<tr_itemid.length;i++){//货品id
-					for(int j=0;j<item_detail.length;j++){//单品id
-						TransferOrderItemDetail tr_item_de=TransferOrderItemDetail.dao.findById(Integer.parseInt(item_detail[j]));
-					if(tr_item_de.get("ITEM_ID").toString().equals(tr_itemid[i].toString())&&
-						tr_item_de.get("ORDER_ID").toString().equals(order_id[k].toString())){
-						DepartOrderItemdetail de_item_detail=DepartOrderItemdetail.dao.findById(Integer.parseInt(doitsize.get(f).get("id").toString())); 
-						de_item_detail.set("DEPART_ID",Integer.parseInt(dp.get("id").toString())).set("ORDER_ID",Integer.parseInt(order_id[k]))
-						.set("ITEM_ID",Integer.parseInt(tr_itemid[i])).set("ITEMDETAIL_ID",Integer.parseInt(item_detail[j])).update();
-						}
+			String tr_detail="SELECT id as itemdetail_id  FROM TRANSFER_ORDER_ITEM_DETAIL where id in ("+getPara("item_detail")+")";//tr单品id
+			String dp_detail="SELECT itemdetail_id  FROM DEPART_TRANSFER_ITEMDETAIL where DEPART_ID ="+depart_id;//dp单品id
+			List<Record> tr_detail_list=Db.find(tr_detail);
+			List<Record> dp_deatil_list=Db.find(dp_detail);
+			tr_detail_list.removeAll(dp_deatil_list);
+			dp_deatil_list.addAll(tr_detail_list);
+			System.out.println("-------------"+dp_deatil_list);
+			for(int d =0;d<dp_deatil_list.size();){
+				if(dp_deatil_list.get(d).get("itemdetail_id")==null){
+					dp_deatil_list.remove(d);
+					d=d-d;
+					continue;
+				}
+				d++;
+			}
+			for(int p =0;p<dp_deatil_list.size();){
+			String delete_detail="SELECT * FROM DEPART_TRANSFER_ITEMDETAIL where itemdetail_id="+Integer.parseInt(dp_deatil_list.get(p).get("itemdetail_id").toString());
+			DepartOrderItemdetail depdetail=DepartOrderItemdetail.dao.findFirst(delete_detail);
+			if(depdetail !=null){
+				boolean check=false;
+				for(int t=0;t<item_detail.length;t++){
+					if(item_detail[t].equals(dp_deatil_list.get(p).get("itemdetail_id").toString())){
+						check=true;
 					}
 				}
+				if(check==false){
+					String delete_sql="SELECT * FROM DEPART_TRANSFER_ITEMDETAIL where itemdetail_id="+Integer.parseInt(dp_deatil_list.get(p).get("itemdetail_id").toString());
+					DepartOrderItemdetail dp_delete=DepartOrderItemdetail.dao.findFirst(delete_sql);
+					dp_delete.set("depart_id", null).set("item_id", null).set("itemdetail_id", null).update();
+					dp_delete.delete();
+				}
+				dp_deatil_list.remove(p);
+				p=p-p;
+				continue;
+			}
+			p++;
+			}
+			for(int k=0;k<order_id.length;k++){//运输单id
+				for(int i=0; i<tr_itemid.length;i++){//货品id
+					for(int f=0;f<dp_deatil_list.size();f++){//单品id
+							TransferOrderItemDetail tr_item_de=TransferOrderItemDetail.dao.findById(Integer.parseInt(dp_deatil_list.get(f).get("itemdetail_id").toString()));
+						if(tr_item_de.get("ITEM_ID").toString().equals(tr_itemid[i].toString())&&
+							tr_item_de.get("ORDER_ID").toString().equals(order_id[k].toString())){
+							DepartOrderItemdetail de_item_detail=new DepartOrderItemdetail(); 
+							de_item_detail.set("DEPART_ID",Integer.parseInt(dp.get("id").toString())).set("ORDER_ID",Integer.parseInt(order_id[k]))
+							.set("ITEM_ID",Integer.parseInt(tr_itemid[i])).set("ITEMDETAIL_ID",Integer.parseInt(dp_deatil_list.get(f).get("itemdetail_id").toString())).save();
+							}
+					}
 				}
 			}
 			}
+			
 			setAttr("depart_id", depart_id);
 		}
-		int de_id = Integer.parseInt(dp.get("id").toString());//获取发车单id
-		//根据勾选了多少个运输单，循环插入发车运输单中间表
-		for (int i = 0; i < order_id.length; i++) {
-			DepartTransferOrder dt = new DepartTransferOrder();
-			dt.set("depart_id", de_id).set("ORDER_ID", order_id[i]).set("TRANSFER_ORDER_NO", order_id[i]).save();
-		}
+	
 		//根据运输单个数，判断发车单类型
 		int lang = order_id.length;
+		
 		if (lang > 1) {
 			setAttr("type", "many");
 		} else {
@@ -399,6 +459,7 @@ public class DepartOrderController extends Controller {
 	// 点击货品table的查看 ，显示对应货品的单品
 	public void itemDetailList() {
 		String item_id = getPara("item_id");
+		String depart_id = getPara("depart_id");//发车单id
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -409,22 +470,28 @@ public class DepartOrderController extends Controller {
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 		/*String sql_item="SELECT * FROM DEPART_TRANSFER_ITEMDETAIL where ITEM_ID="+item_id;*/
-		
-		String sql_tr_itemdetail_id="SELECT id as ITEMDETAIL_ID  FROM TRANSFER_ORDER_ITEM_DETAIL where ITEM_ID="+item_id;
-		String sql_dp_itemdetail_id="SELECT ITEMDETAIL_ID  FROM DEPART_TRANSFER_ITEMDETAIL  where ITEM_ID="+item_id;
-		List<Record> sql_tr_itemdetail_idlist=Db.find(sql_tr_itemdetail_id);
-		List<Record> sql_dp_itemdetail_idlist=Db.find(sql_dp_itemdetail_id);
-		/*List<Record> depart_itemdetail=Db.find(sql_item);*/
-		sql_tr_itemdetail_idlist.removeAll(sql_dp_itemdetail_idlist);
-		String  detail_id="0";
-		if(sql_tr_itemdetail_idlist.size()>0){
-			for(int i=0;i<sql_tr_itemdetail_idlist.size();i++){
-				detail_id +=sql_tr_itemdetail_idlist.get(i).get("ITEMDETAIL_ID")+",";
+		List<Record> itemdetail =null;
+		if("".equals(depart_id)){
+			String sql_tr_itemdetail_id="SELECT id as ITEMDETAIL_ID  FROM TRANSFER_ORDER_ITEM_DETAIL where ITEM_ID="+item_id;
+			String sql_dp_itemdetail_id="SELECT ITEMDETAIL_ID  FROM DEPART_TRANSFER_ITEMDETAIL  where ITEM_ID="+item_id;
+			List<Record> sql_tr_itemdetail_idlist=Db.find(sql_tr_itemdetail_id);
+			List<Record> sql_dp_itemdetail_idlist=Db.find(sql_dp_itemdetail_id);
+			/*List<Record> depart_itemdetail=Db.find(sql_item);*/
+			sql_tr_itemdetail_idlist.removeAll(sql_dp_itemdetail_idlist);
+			String  detail_id="0";
+			if(sql_tr_itemdetail_idlist.size()>0){
+				for(int i=0;i<sql_tr_itemdetail_idlist.size();i++){
+					detail_id +=sql_tr_itemdetail_idlist.get(i).get("ITEMDETAIL_ID")+",";
+				}
+				detail_id=detail_id.substring(0,detail_id.length()-1);
 			}
-			detail_id=detail_id.substring(0,detail_id.length()-1);
+			String sql = "SELECT * FROM TRANSFER_ORDER_ITEM_DETAIL  where ID in("+ detail_id+")" ;
+			itemdetail=Db.find(sql);
+		}else{
+			String sql = "SELECT * FROM TRANSFER_ORDER_ITEM_DETAIL  where ITEM_ID in("+ item_id+")" ;
+			itemdetail=Db.find(sql);
 		}
-		String sql = "SELECT * FROM TRANSFER_ORDER_ITEM_DETAIL  where ID in("+ detail_id+")" ;
-		List<Record> itemdetail = Db.find(sql);
+		
 		Map Map = new HashMap();
 		Map.put("sEcho", pageIndex);
 		Map.put("iTotalRecords", rec.getLong("total"));
@@ -432,15 +499,22 @@ public class DepartOrderController extends Controller {
 		Map.put("aaData", itemdetail);
 		renderJson(Map);
 	}
-	// 取消
+	// 发车单删除
 		public void cancel() {
 			String id = getPara();
 			String sql="SELECT * FROM DEPART_TRANSFER  where DEPART_ID ="+id+"";
 			List<DepartTransferOrder> re_tr=DepartTransferOrder.dao.find(sql);
 			for(int i=0;i<re_tr.size();i++){
 				DepartTransferOrder dep_tr=DepartTransferOrder.dao.findFirst(sql);
-				dep_tr.set("DEPART_ID", null);
+				dep_tr.set("DEPART_ID", null).update();
 				dep_tr.delete();
+			}
+			String delete_detail_sql="SELECT * FROM DEPART_TRANSFER_ITEMDETAIL  where depart_id="+id;
+			List<DepartOrderItemdetail> dep=DepartOrderItemdetail.dao.find(delete_detail_sql) ;
+			for(int j=0;j<dep.size();j++){
+				DepartOrderItemdetail dep_detail=DepartOrderItemdetail.dao.findById(Integer.parseInt(dep.get(j).get("id").toString()));
+				dep_detail.set("depart_id", null).set("item_id", null).set("itemdetail_id", null).update();
+				dep_detail.delete();
 			}
 			DepartOrder re = DepartOrder.dao.findById(id);
 			re.set("driver_id", null).update();

@@ -318,7 +318,7 @@
         	"oLanguage": {
                 "sUrl": "/eeda/dataTables.ch.txt"
             },
-            "sAjaxSource": "/yh/departOrder/getIintDepartOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
+            "sAjaxSource": "/yh/departOrder/getIintDepartOrderItems?localArr="+message,
             "aoColumns": [
                 { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
                 { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
@@ -393,7 +393,7 @@
     			$("#item_id").val(itemId);
     			$("#item_save").attr("disabled", false);
     			$("#style").hide();
-    			detailTable.fnSettings().sAjaxSource = "/yh/departOrder/itemDetailList?item_id="+itemId+"";
+    			detailTable.fnSettings().sAjaxSource = "/yh/departOrder/itemDetailList?item_id="+itemId+"&depart_id="+depart_id;
     			detailTable.fnDraw();     			
     		});
     		// 删除货品
@@ -411,7 +411,7 @@
             	"oLanguage": {
                     "sUrl": "/eeda/dataTables.ch.txt"
                 },
-               "sAjaxSource": "/yh/departOrder/itemDetailList?item_id="+item_id+"",
+               "sAjaxSource": "/yh/departOrder/itemDetailList?item_id="+item_id+"&depart_id="+depart_id,
               
               "aoColumns": [
                      { "mDataProp": null,
