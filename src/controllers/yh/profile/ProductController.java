@@ -157,7 +157,6 @@ public class ProductController extends Controller {
             product.save();
         }
         renderJson(product);
-        ;
     }
 
     // 查出客户的根类别
@@ -247,5 +246,11 @@ public class ProductController extends Controller {
     public void searchCategory() {
         Category category = Category.dao.findById(getPara("categoryId"));
         renderJson(category);
+    }
+    
+    // 查找类别
+    public void findAllCategory() {
+    	List<Category> categories = Category.dao.find("select * from category where customer_id = ?", getPara("customerId"));
+    	renderJson(categories);
     }
 }

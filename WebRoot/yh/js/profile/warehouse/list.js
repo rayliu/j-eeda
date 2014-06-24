@@ -22,11 +22,7 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success picture' target='_Blank' href='/upload/"+obj.aData.PATH+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                                "查看图片"+
-                            "</a>"+
-                            "<a class='btn btn-success' href='/yh/warehouse/edit/"+obj.aData.ID+"'>"+
+                    return "<a class='btn btn-success' href='/yh/warehouse/edit/"+obj.aData.ID+"'>"+
                             "<i class='fa fa-edit fa-fw'></i>"+
                             "编辑"+
                             "</a>"+

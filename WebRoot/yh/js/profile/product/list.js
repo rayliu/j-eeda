@@ -216,41 +216,22 @@ $(document).ready(function() {
     		productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+categoryId;
         	productDataTable.fnDraw();
     	} 
-    	
-    	// 获取所有类别
-    	var customerId = $("#customerId").val();
-    	$.get('/yh/product/searchAllCategory', {customerId:customerId}, function(data){
-	   		if(data.length > 0){
-		   		var categorySelect = $("#categorySelect");
-		   		categorySelect.empty();
-		   		for(var i=0; i<data.length; i++){
-			   		 if(data[i].ID == categoryId){
-			   			 categorySelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].NAME+"</option>");
-			   		 }else{
-			   			 categorySelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].NAME+"</option>");					 
-			   		 }
-		   		}
-	   		}
-   	    },'json');
     });
 	
     // 保存产品
     $("#productFormBtn").click(function(){
-    	$.post('/yh/product/save', $("#productForm").serialize(), saveCallback(data),'json');
+    	$.post('/yh/product/save', $("#productForm").serialize(), function(data){    
+    		//保存成功后，刷新列表
+            console.log(data);
+            if(data.ID>0){
+            	// 查出所有的类别
+            	searchAllCategory();
+            }else{
+                alert('数据保存失败。');
+            }
+    		$('#myModal').modal('hide');	
+        },'json');
     });
-    
-    var saveCallback=function(data){    
-		//保存成功后，刷新列表
-        console.log(data);
-        if(data.ID>0){
-        	// 查出所有的类别
-        	searchAllCategory();
-        }else{
-            alert('数据保存失败。');
-        }
-		$('#myModal').modal('hide');
-    	//$("#productForm")[0].reset();		
-    };
     
     var searchAllCategory=function(){
     	var customerId = $('#customerId').val();
@@ -350,6 +331,29 @@ $(document).ready(function() {
                  alert('删除失败');
              }
 		},'json');    	
+    });
+    
+    var selectCategory = function(){
+    	// 获取所有类别
+    	var customerId = $("#customerId").val();
+    	$.get('/yh/product/findAllCategory', {customerId:customerId}, function(data){
+	   		if(data.length > 0){
+		   		var categorySelect = $("#categorySelect");
+		   		categorySelect.empty();
+		   		for(var i=0; i<data.length; i++){
+			   		 if(data[i].ID == categoryId){
+			   			 categorySelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].NAME+"</option>");
+			   		 }else{
+			   			 categorySelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].NAME+"</option>");					 
+			   		 }
+		   		}
+	   		}
+   	    },'json');
+    };
+    
+    //
+    $('#editProduct').on('click', function() {    	
+    	selectCategory();
     });
 
 

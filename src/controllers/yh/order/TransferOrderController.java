@@ -535,8 +535,8 @@ public class TransferOrderController extends Controller {
     // 删除发车单
     private void deleteDepartOrder(TransferOrder transferOrder) {
     	DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id = ?", transferOrder.get("id"));
-    	Long departId = departTransferOrder.get("depart_id");
     	if(departTransferOrder != null){
+    		Long departId = departTransferOrder.get("depart_id");
     		departTransferOrder.set("order_id", null);
     		departTransferOrder.update();
     		departTransferOrder.delete();
@@ -775,22 +775,7 @@ public class TransferOrderController extends Controller {
     	String input = getPara("input");
     	List<Record> locationList = Collections.EMPTY_LIST;
     	if (input.trim().length() > 0) {
-    		locationList = Db
-    				.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' and (company_name like '%"
-    						+ input
-    						+ "%' or contact_person like '%"
-    						+ input
-    						+ "%' or email like '%"
-    						+ input
-    						+ "%' or mobile like '%"
-    						+ input
-    						+ "%' or phone like '%"
-    						+ input
-    						+ "%' or address like '%"
-    						+ input
-    						+ "%' or postal_code like '%"
-    						+ input
-    						+ "%') limit 0,10");
+    		locationList = Db.find("select * from product where item_no like '%"+ input+ "%' limit 0,10");
     	}
     	renderJson(locationList);
     }

@@ -70,6 +70,7 @@ $(document).ready(function() {
 		var location = $(this).attr('location');
 		$('#hideLocationFrom').val(location);	
 		$('#locationForm').val(location);		
+		$("#customerId").val($(this).attr('partyId'));
 		var pageCustomerName = $("#pageCustomerName");
 		pageCustomerName.empty();
 		var contact_person = $(this).attr('contact_person');
@@ -432,6 +433,7 @@ $(document).ready(function() {
                 }else{
                     alert('数据保存失败。');
                 }
+                $("#transferOrderItemForm")[0].reset();
 				$('#myModal').modal('hide');
 			}
 		},'json');
@@ -1128,42 +1130,85 @@ $(document).ready(function() {
  				if(item_no == null){
  					item_no = '';
  				}
- 				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
+ 				itemNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' cid='"+data[i].CATEGORY_ID+"' item_name='"+data[i].ITEM_NAME+"' amount='"+data[i].AMOUNT+"' size='"+data[i].SIZE+"' width='"+data[i].WIDTH+"' unit='"+data[i].UNIT+"' volume='"+data[i].VOLUME+"' weight='"+data[i].WEIGHT+"', item_desc='"+data[i].ITEM_DESC+"', >"+data[i].ITEM_NO+"</a></li>");
  			}
  		},'json');		
-         $("#spList").css({ 
+         $("#itemNoList").css({ 
          	left:$(this).position().left+"px", 
          	top:$(this).position().top+32+"px" 
          }); 
-         $('#spList').show();        
+         $('#itemNoList').show();        
  	});
  	
  	// 选中序列号
- 	$('#spList').on('click', '.fromLocationItem', function(e){
- 		var message = $(this).text();
- 		$('#spMessage').val(message.substring(0, message.indexOf(" ")));
- 		$('#sp_id').val($(this).attr('partyId'));
- 		var pageSpName = $("#pageSpName");
- 		pageSpName.empty();
- 		var pageSpAddress = $("#pageSpAddress");
- 		pageSpAddress.empty();
- 		pageSpAddress.append($(this).attr('address'));
- 		var contact_person = $(this).attr('contact_person');
- 		if(contact_person == 'null'){
- 			contact_person = '';
+ 	$('#itemNoList').on('click', '.fromLocationItem', function(e){
+ 		$("#itemNoMessage").val($(this).text());
+ 		if($(this).attr('item_name') == 'null'){
+ 			$("#item_name").val('');
+ 		}else{
+ 			$("#itemNameMessage").val($(this).attr('item_name'));
  		}
- 		pageSpName.append(contact_person+'&nbsp;');
- 		var phone = $(this).attr('phone');
- 		if(phone == 'null'){
- 			phone = '';
+ 		if($(this).attr('size') == 'null'){
+ 			$("#size").val('');
+ 		}else{
+ 			$("#size").val($(this).attr('size'));
  		}
- 		pageSpName.append(phone); 
- 		pageCustomerAddress.empty();
- 		var address = $(this).attr('address');
- 		if(address == 'null'){
- 			address = '';
+ 		if($(this).attr('width') == 'null'){
+ 			$("#width").val('');
+ 		}else{
+ 			$("#width").val($(this).attr('width'));
  		}
- 		pageSpAddress.append(address);
-         $('#spList').hide();
+ 		if($(this).attr('amount') == 'null'){
+ 			$("#amount").val('');
+ 		}else{
+ 			$("#amount").val($(this).attr('amount'));
+ 		}
+ 		if($(this).attr('unit') == 'null'){
+ 			$("#unit").val('');
+ 		}else{
+ 			$("#unit").val($(this).attr('unit')); 			
+ 		}
+ 		if($(this).attr('volume') == 'null'){
+ 			$("volume").val('');
+ 		}else{
+ 			$("#volume").val($(this).attr('volume'));
+ 		}
+ 		if($(this).attr('weight') == 'null'){
+ 			$("weight").val('');
+ 		}else{
+ 			$("#weight").val($(this).attr('weight'));
+ 		}
+ 		if($(this).attr('item_desc') == 'null'){
+ 			$("remark").val('');
+ 		}else{
+ 			$("#remark").val($(this).attr('item_desc'));
+ 		}
+ 		$("#categorySelect").val($(this).attr('cid'));
+ 		$("#productId").val($(this).attr('id'));
+        $('#spList').hide();
      }); 
+ 	
+ 	 var selectCategory = function(){
+    	// 获取所有类别
+    	var customerId = $("#customerId").val();
+    	$.get('/yh/product/findAllCategory', {customerId:customerId}, function(data){
+	   		if(data.length > 0){
+		   		var categorySelect = $("#categorySelect");
+		   		categorySelect.empty();
+		   		for(var i=0; i<data.length; i++){
+			   		 /*if(data[i].ID == categoryId){
+			   			 categorySelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].NAME+"</option>");
+			   		 }else{
+			   			 categorySelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].NAME+"</option>");					 
+			   		 }*/
+		   			categorySelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].NAME+"</option>");					 
+		   		}
+	   		}
+   	    },'json');
+    };
+    
+    //
+    $('#editProduct').on('click', function() {    	
+    	selectCategory();
+    });
 });

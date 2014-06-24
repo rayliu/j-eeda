@@ -141,6 +141,7 @@ public class WarehouseController extends Controller{
 			warehouse = Warehouse.dao.findById(id);
 			warehouse.set("warehouse_name", getPara("warehouse_name"));
 			warehouse.set("warehouse_address", getPara("warehouse_address"));
+			warehouse.set("status", getPara("warehouseStatus"));
 			warehouse.set("warehouse_desc", getPara("warehouse_desc"));
 			if(uploadFile != null){
 				warehouse.set("path", uploadFile.getFileName());
@@ -172,6 +173,7 @@ public class WarehouseController extends Controller{
 			warehouse.set("warehouse_name", getPara("warehouse_name"))
 					 .set("warehouse_address", getPara("warehouse_address"))
 					 .set("warehouse_desc", getPara("warehouse_desc"))
+					 .set("status", getPara("warehouseStatus"))
 					 .set("warehouse_area", getPara("warehouse_area"));					 
 			if(uploadFile != null){
 				warehouse.set("path", uploadFile.getFileName());

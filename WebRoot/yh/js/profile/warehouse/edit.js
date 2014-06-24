@@ -211,4 +211,11 @@ $(document).ready(function() {
 			}
 		}
 	});
+	
+	// 回显状态
+	$("input[name='warehouseStatus']").each(function(){
+		if($("#warehouseStatusHide").val() == $(this).val()){
+			$(this).attr('checked', true);
+		}
+	});
 } );

@@ -142,6 +142,16 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <fieldset>
+                                        	<div id="arrivalModes" class="form-group">
+                                                <label>仓库状态</label>
+                                                <input type="hidden" id="warehouseStatusHide" value="${warehouse.status!''}"/>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="warehouseStatus" id="warehouseStatus1" value="active" checked="">在用
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="warehouseStatus" id="warehouseStatus2" value="inactive">停用
+                                                </label>  
+                                            </div>
                                             <div id="arrivalModes" class="form-group">
                                                 <label>仓库类型</label>
                                                 <input type="hidden" id="warehouseTypeHide" value="${warehouse.warehouse_type!''}"/>
