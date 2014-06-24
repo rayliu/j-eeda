@@ -35,22 +35,21 @@ $(document).ready(function() {
         "sAjaxSource": urlSource,
         "aoColumns": [   
             {"mDataProp":"NAME"},
-            {"mDataProp":"COMPANY_NAME"},
+            {"mDataProp":"COMPANY_NAME",
+            	"sWidth": "15%"},
             {"mDataProp":"CONTACT_PERSON"},
             {"mDataProp":"MOBILE"},
             {"mDataProp":"PERIOD_FROM"},
             {"mDataProp":"PERIOD_TO"},
             { 
                 "mDataProp": null, 
-                "sWidth": "8%",                
+                "sWidth": "11%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' href='"+urlSource2+""+obj.aData.CID+"'>"+
+                    return "<a class='btn btn-success' title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
-                                "编辑"+
                             "</a>"+
-                            "<a class='btn btn-danger' href='"+urlSource3+""+obj.aData.CID+"'>"+
+                            "<a class='btn btn-danger' title='删除' href='"+urlSource3+""+obj.aData.CID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "删除"+
                             "</a>";
                 }
             }                         

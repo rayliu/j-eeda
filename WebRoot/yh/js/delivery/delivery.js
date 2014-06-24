@@ -37,10 +37,11 @@ $(document).ready(function() {
 			var trandferOrderId = $("#tranferid").val();
 			var localArr =$("#localArr").val();
 			var localArr2 =$("#localArr2").val();
+			var localArr3 =$("#localArr3").val();
 			if(localArr!=""){
-				sAjaxSource ="/yh/delivery/orderList?localArr="+localArr+"&localArr2="+localArr2
+				sAjaxSource ="/yh/delivery/orderList?localArr="+localArr+"&localArr2="+localArr2+"&localArr3="+localArr3;
 			}else{
-				sAjaxSource ="/yh/delivery/orderList?localArr="+trandferOrderId
+				sAjaxSource ="/yh/delivery/orderList?localArr="+trandferOrderId;
 			}
 			//var ser =  $("#ser_no").val();
 			$('#eeda-table').dataTable({
@@ -160,23 +161,22 @@ $(document).ready(function() {
 		        "sAjaxSource": "/yh/delivery/deliveryList",
 		        "aoColumns": [   
 		            
-		            {"mDataProp":"ORDER_NO"},
-		            {"mDataProp":"TRANSFER_ORDER_NO"},
+		            {"mDataProp":"ORDER_NO",
+		            	"fnRender": function(obj) {
+	            			return "<a href='/yh/delivery/edit/"+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+	            		}
+		            },
 		            {"mDataProp":"C2"},
 		            {"mDataProp":"CREATE_STAMP"},
 		            {"mDataProp":"WAREHOUSE_NAME"},
 		            {"mDataProp":"STATUS"},
+		            {"mDataProp":"TRANSFER_ORDER_NO"},
 		            { 
 		                "mDataProp": null, 
-		                "sWidth": "8%",                
+		                "sWidth": "5%",                
 		                "fnRender": function(obj) {                    
-		                    return "<a class='btn btn-success edit' href='/yh/delivery/edit/"+obj.aData.ID+"'>"+
-		                                "<i class='fa fa-edit fa-fw'></i>"+
-		                                "编辑"+
-		                            "</a>"+
-		                            "<a class='btn btn-danger cancelbutton' code='"+obj.aData.ID+"'>"+
+		                    return "<a class='btn btn-danger cancelbutton' title='删除' code='"+obj.aData.ID+"'>"+
 		                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-		                                "取消"+
 		                            "</a>";
 		                }
 		            }                         
@@ -226,7 +226,12 @@ $(document).ready(function() {
 							       return  "<a class='serId' style='color:#464D51;text-decoration:none;' code='"+obj.aData.TID+"'>"+obj.aData.SERIAL_NO+ "</a>";
 							    }
 			            	},
-			            {"mDataProp":"ORDER_NO"},
+			            {"mDataProp":null,
+			            		"sWidth": "10%", 
+								"fnRender": function(obj) {
+								       return  "<a class='transferNo' style='color:#464D51;text-decoration:none;' code2='"+obj.aData.ORDER_NO+"'>"+obj.aData.ORDER_NO+ "</a>";
+								    }
+			            		},
 			            {"mDataProp":"STATUS"},        	
 			            {"mDataProp":"CARGO_NATURE"},
 			            {"mDataProp":"PICKUP_MODE",
@@ -249,12 +254,14 @@ $(document).ready(function() {
 					 e.preventDefault();
 				    	var trArr=[];
 				    	var ser =[];
+				    	var transferNo=[];
 					$("#eeda-table4 tr:not(:first)").each(function(){
 						var the=this;
 			        	$("input:checked",this).each(function(){
 			        		trArr.push($(this).val()); 
 			        		//ser.push($("td:eq(1)",the).html());
 			        		ser.push($(".serId",the).attr('code'));
+			        		transferNo.push($(".transferNo",the).attr('code2'));
 			        	});
 			        	}); 
 					
@@ -262,6 +269,7 @@ $(document).ready(function() {
 			        console.log(trArr);
 			        	$('#departOrder_message2').val(ser);
 			            $('#departOrder_message').val(trArr);
+			            $('#departOrder_message3').val(transferNo);
 			            $('#createForm').submit();
 			            
 			            
