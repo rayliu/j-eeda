@@ -128,7 +128,7 @@ public class DataInitUtil {
 
             // transfer_order_milestone 运输单里程碑
             stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
-                    + "last_modified_stamp TIMESTAMP,type varchar(255),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id),pickup_id bigint,FOREIGN KEY(pickup_id) REFERENCES depart_order(id));");
+                    + "last_modified_stamp TIMESTAMP,type varchar(255),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id),pickup_id bigint,depart_id bigint,FOREIGN KEY(pickup_id) REFERENCES depart_order(id));");
 
             stmt.close();
             // conn.commit();

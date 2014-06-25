@@ -1,6 +1,7 @@
 package controllers.yh.departOrder;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -13,6 +14,7 @@ import models.DepartOrderItemdetail;
 import models.DepartTransferOrder;
 import models.Party;
 import models.TransferOrderItemDetail;
+import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.profile.Contact;
 
@@ -311,6 +313,7 @@ public class DepartOrderController extends Controller {
 			List<Record> tr_item_list=Db.find(item_id);
 			List<Record> item_detail_list=Db.find(tr_item_detail);
 			item_idlist.removeAll(item_detail_idlist);
+			savePickupOrderMilestone(dp);
 			//没勾选单品
 			if(item_idlist.size()>0){
 				for(int i=0;i<item_idlist.size();i++){
@@ -337,6 +340,7 @@ public class DepartOrderController extends Controller {
 					}
 				}
 			}
+			
 			}else{
 				//勾选了单品
 				item_idlist.removeAll(item_detail_idlist);
@@ -377,7 +381,7 @@ public class DepartOrderController extends Controller {
 					DepartTransferOrder dt = new DepartTransferOrder();
 					dt.set("depart_id", de_id).set("ORDER_ID", order_id[i]).set("TRANSFER_ORDER_NO", order_id[i]).save();
 				}
-	
+			
 		} else {//编辑发车单
 			dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
 			dp.set("CREATE_BY", Integer.parseInt(creat_id)).set("create_stamp", createDate)
@@ -451,7 +455,6 @@ public class DepartOrderController extends Controller {
 		}
 		setAttr("creat", name);//创建人
 		setAttr("localArr", order_id2);//运输单id,回显货品table
-		//返回编辑发车单页面
 		if (LoginUserController.isAuthenticated(this))
 			render("departOrder/editTransferOrder.html");
 	}
@@ -521,5 +524,41 @@ public class DepartOrderController extends Controller {
 			re.delete();
 			render("departOrder/departOrderList.html");
 		}
+		// 保存发车里程碑
+	    private void savePickupOrderMilestone(DepartOrder departOrder) {
+	        TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+	        transferOrderMilestone.set("status", "新建");
+	        String name = (String) currentUser.getPrincipal();
+	        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+	        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+	        transferOrderMilestone.set("location", "");
+	        java.util.Date utilDate = new java.util.Date();
+	        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+	        transferOrderMilestone.set("create_stamp", sqlDate);
+	        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
+	        transferOrderMilestone.set("depart_id", departOrder.get("id"));
+	        transferOrderMilestone.save();
+	    }
+	    //单击tab里程碑
+	    public void transferOrderMilestoneList() {
+	        Map<String, List> map = new HashMap<String, List>();
+	        List<String> usernames = new ArrayList<String>();
+	        String departOrderId = getPara("departOrderId");
+	        if (departOrderId == "" || departOrderId == null) {
+	        	departOrderId = "-1";
+	        }
+	      if(!"-1".equals(departOrderId)){
+	        	List<TransferOrderMilestone> transferOrderMilestones = TransferOrderMilestone.dao
+		                .find("select * from transfer_order_milestone where type = '"+TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE+"' and depart_id=" + departOrderId);
+		        for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
+		            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
+		            String username = userLogin.get("user_name");
+		            usernames.add(username);
+		        }
+		        map.put("transferOrderMilestones", transferOrderMilestones);
+		        map.put("usernames", usernames);
+	        }
+	        renderJson(map);
+	    }
 
 }

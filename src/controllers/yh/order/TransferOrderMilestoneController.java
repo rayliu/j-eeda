@@ -85,6 +85,7 @@ public class TransferOrderMilestoneController extends Controller {
     public void saveTransferOrderMilestone() {
     	String order_id = getPara("order_id");
     	String milestonePickupId = getPara("milestonePickupId");
+    	String milestoneDepartId = getPara("milestoneDepartId");
     	Map<String, Object> map = new HashMap<String, Object>();
     	if(order_id != null && !"".equals(order_id)){
 	    	TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
@@ -148,6 +149,40 @@ public class TransferOrderMilestoneController extends Controller {
 	        transferOrderMilestone.set("create_stamp", sqlDate);
 	        transferOrderMilestone.set("pickup_id", milestonePickupId);
 	        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE);
+	        transferOrderMilestone.save();
+	
+	        map.put("transferOrderMilestone", transferOrderMilestone);
+	        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
+	        String username = userLogin.get("user_name");
+	        map.put("username", username);
+    	}else if(milestoneDepartId!=null&&!"".equals(milestoneDepartId)){
+    		DepartOrder departOrder = DepartOrder.dao.findById(milestoneDepartId);
+	        TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+	        String status = getPara("status");
+	        String location = getPara("location");
+	        if (!status.isEmpty()) {
+	            transferOrderMilestone.set("status", status);
+	            departOrder.set("status", status);
+	        } else {
+	            transferOrderMilestone.set("status", "在途");
+	            departOrder.set("status", "在途");
+	        }
+	        departOrder.update();
+	        if (!location.isEmpty()) {
+	            transferOrderMilestone.set("location", location);
+	        } else {
+	            transferOrderMilestone.set("location", "");
+	        }
+	        String name = (String) currentUser.getPrincipal();
+	        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+	
+	        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+	
+	        java.util.Date utilDate = new java.util.Date();
+	        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+	        transferOrderMilestone.set("create_stamp", sqlDate);
+	        transferOrderMilestone.set("depart_id", milestoneDepartId);
+	        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
 	        transferOrderMilestone.save();
 	
 	        map.put("transferOrderMilestone", transferOrderMilestone);
