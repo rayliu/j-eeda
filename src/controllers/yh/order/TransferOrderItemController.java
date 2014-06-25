@@ -26,37 +26,50 @@ public class TransferOrderItemController extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 
 	public void transferOrderItemList() {
+		Map transferOrderListMap = null;
 		String trandferOrderId = getPara("order_id");
-		if(trandferOrderId.isEmpty()){
+		String productId = getPara("product_id");
+		if(trandferOrderId == null || "".equals(trandferOrderId)){
 			trandferOrderId="-1";
-		}		
-		logger.debug(trandferOrderId);
-		
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
-        }
-
-        String sqlTotal = "select count(1) total from transfer_order_item where order_id ="
-                + trandferOrderId;
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
-
-        String sql = "select * from transfer_order_item where order_id ="
-                + trandferOrderId;
-
-        List<Record> transferOrders = Db.find(sql);
-
-        Map transferOrderListMap = new HashMap();
-        transferOrderListMap.put("sEcho", pageIndex);
-        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
-        transferOrderListMap.put("aaData", transferOrders);
-
+		}
+		if(productId == null || "".equals(productId)){
+			productId="-1";
+		}
+		if(productId == "-1"){
+			logger.debug(trandferOrderId);			
+	        String sLimit = "";
+	        String pageIndex = getPara("sEcho");
+	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+	        }	
+	        String sqlTotal = "select count(1) total from transfer_order_item where order_id =" + trandferOrderId;
+	        Record rec = Db.findFirst(sqlTotal);
+	        logger.debug("total records:" + rec.getLong("total"));	
+	        String sql = "select * from transfer_order_item where order_id =" + trandferOrderId;	
+	        List<Record> transferOrders = Db.find(sql);	
+	        transferOrderListMap = new HashMap();
+	        transferOrderListMap.put("sEcho", pageIndex);
+	        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+	        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));	
+	        transferOrderListMap.put("aaData", transferOrders);
+		}else{
+			logger.debug(trandferOrderId);			
+	        String sLimit = "";
+	        String pageIndex = getPara("sEcho");
+	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+	        }	
+	        String sqlTotal = "select distinct count(1) total from transfer_order_item toi left join product p on p.id in (select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +") where toi.order_id =" + trandferOrderId;
+	        Record rec = Db.findFirst(sqlTotal);
+	        logger.debug("total records:" + rec.getLong("total"));	
+	        String sql = "select distinct p.item_no item_no,toi.amount amount,p.unit unit,p.item_desc remark from transfer_order_item toi left join product p on p.id in (select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +") where toi.order_id =" + trandferOrderId;	
+	        List<Record> transferOrders = Db.find(sql);	
+	        transferOrderListMap = new HashMap();
+	        transferOrderListMap.put("sEcho", pageIndex);
+	        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+	        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));	
+	        transferOrderListMap.put("aaData", transferOrders);
+		}
         renderJson(transferOrderListMap);
 	}
 
@@ -106,21 +119,40 @@ public class TransferOrderItemController extends Controller {
 			item.set("order_id", getPara("transfer_order_id"));
 			item.update();
 		} else {
-			item = new TransferOrderItem();			
+			item = new TransferOrderItem();		
 			if(productId == null || "".equals(productId)){
-				saveProduct();
+	            String size = getPara("size");
+	            String width = getPara("width");
+	            String volume = getPara("volume");
+	            String weight = getPara("weight");
+	            String height = getPara("height");	
+				if (size != null && !"".equals(size)) {
+					item.set("size", size);
+	            }
+	            if (width != null && !"".equals(weight)) {
+	            	item.set("width", width);
+	            }
+	            if (volume != null && !"".equals(volume)) {
+	            	item.set("volume", volume);
+	            }
+	            if (weight != null && !"".equals(weight)) {
+	            	item.set("weight", weight);
+	            }
+	            if (height != null && !"".equals(height)) {
+	            	item.set("height", height);
+	            }
+				item.set("item_no", getPara("item_no"));    
+				item.set("item_name", getPara("item_name"));           
+				item.set("unit", getPara("unit"));           
+				item.set("remark", getPara("remark"));      
 			}else{
 				updateProduct(productId);
-			}
-			item.set("item_no", getPara("item_no"));    
-			item.set("item_name", getPara("item_name"));
-			item.set("size", getPara("size"));          
-			item.set("width", getPara("width"));        
-			item.set("amount", getPara("amount"));      
-			item.set("unit", getPara("unit"));          
-			item.set("volume", getPara("volume"));      
-			item.set("weight", getPara("weight"));      
-			item.set("remark", getPara("remark"));      
+				item.set("product_id", productId);				
+			}	
+			String amount = getPara("amount");	
+			if (amount != null && !"".equals(amount)) {
+				item.set("amount", amount);
+            }
 			item.set("order_id", getPara("transfer_order_id"));
 			item.save();
 		}
@@ -134,29 +166,12 @@ public class TransferOrderItemController extends Controller {
 		product.set("item_name", getPara("item_name"));
 		product.set("size", getPara("size"));
 		product.set("width", getPara("width"));
-		product.set("amount", getPara("amount"));
 		product.set("unit", getPara("unit"));
 		product.set("volume", getPara("volume"));
 		product.set("weight", getPara("weight"));
 		product.set("item_desc", getPara("remark"));
 		product.set("category_id", getPara("categorySelect"));
 		product.update();
-	}
-
-	// 保存产品
-	private void saveProduct() {
-		Product product = new Product();
-		product.set("item_no", getPara("item_no"));
-		product.set("item_name", getPara("item_name"));
-		product.set("size", getPara("size"));
-		product.set("width", getPara("width"));
-		product.set("amount", getPara("amount"));
-		product.set("unit", getPara("unit"));
-		product.set("volume", getPara("volume"));
-		product.set("weight", getPara("weight"));
-		product.set("item_desc", getPara("remark"));
-		product.set("category_id", getPara("categorySelect"));
-		product.save();
 	}
 
 	// 获取TransferOrderItem对象

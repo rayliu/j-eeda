@@ -70,7 +70,6 @@ $(document).ready(function() {
 		var location = $(this).attr('location');
 		$('#hideLocationFrom').val(location);	
 		$('#locationForm').val(location);		
-		$("#customerId").val($(this).attr('partyId'));
 		var pageCustomerName = $("#pageCustomerName");
 		pageCustomerName.empty();
 		var contact_person = $(this).attr('contact_person');
@@ -241,7 +240,7 @@ $(document).ready(function() {
 			phone = '';
 		}
 		pageSpName.append(phone); 
-		pageCustomerAddress.empty();
+		pageSpAddress.empty();
 		var address = $(this).attr('address');
 		if(address == 'null'){
 			address = '';
@@ -346,7 +345,8 @@ $(document).ready(function() {
 				  	$("#style").show();	
 				  	
 	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+	            	var productId = $("#productIdHidden").val();
+				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+productId;
 				  	itemDataTable.fnDraw();                
 				}else{
 					alert('数据保存失败。');
@@ -371,7 +371,8 @@ $(document).ready(function() {
 				  	$("#style").show();	
 				  	
 	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+	            	var productId = $("#productIdHidden").val();
+				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+productId;
 				  	itemDataTable.fnDraw();                
 				}else{
 					alert('数据保存失败。');
@@ -428,7 +429,12 @@ $(document).ready(function() {
                 if(data.ORDER_ID>0){
                 	$("#transferOrderItemForm")[0].reset();
                 	var order_id = $("#order_id").val();
-                	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+                	$("#productIdHidden").val(data.ORDER_ID);
+                	if(data.PRODUCT_ID > 0){
+                		itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+data.PRODUCT_ID;
+                	}else{
+                		itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+data.PRODUCT_ID;                		
+                	}
                 	itemDataTable.fnDraw();
                 }else{
                     alert('数据保存失败。');
@@ -1130,7 +1136,7 @@ $(document).ready(function() {
  				if(item_no == null){
  					item_no = '';
  				}
- 				itemNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' cid='"+data[i].CATEGORY_ID+"' item_name='"+data[i].ITEM_NAME+"' amount='"+data[i].AMOUNT+"' size='"+data[i].SIZE+"' width='"+data[i].WIDTH+"' unit='"+data[i].UNIT+"' volume='"+data[i].VOLUME+"' weight='"+data[i].WEIGHT+"', item_desc='"+data[i].ITEM_DESC+"', >"+data[i].ITEM_NO+"</a></li>");
+ 				itemNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' cid='"+data[i].CATEGORY_ID+"' item_name='"+data[i].ITEM_NAME+"' size='"+data[i].SIZE+"' height='"+data[i].HEIGHT+"' width='"+data[i].WIDTH+"' unit='"+data[i].UNIT+"' volume='"+data[i].VOLUME+"' weight='"+data[i].WEIGHT+"', item_desc='"+data[i].ITEM_DESC+"', >"+data[i].ITEM_NO+"</a></li>");
  			}
  		},'json');		
          $("#itemNoList").css({ 
@@ -1158,11 +1164,6 @@ $(document).ready(function() {
  		}else{
  			$("#width").val($(this).attr('width'));
  		}
- 		if($(this).attr('amount') == 'null'){
- 			$("#amount").val('');
- 		}else{
- 			$("#amount").val($(this).attr('amount'));
- 		}
  		if($(this).attr('unit') == 'null'){
  			$("#unit").val('');
  		}else{
@@ -1178,6 +1179,11 @@ $(document).ready(function() {
  		}else{
  			$("#weight").val($(this).attr('weight'));
  		}
+ 		if($(this).attr('height') == 'null'){
+ 			$("height").val('');
+ 		}else{
+ 			$("#height").val($(this).attr('height'));
+ 		}
  		if($(this).attr('item_desc') == 'null'){
  			$("remark").val('');
  		}else{
@@ -1188,27 +1194,4 @@ $(document).ready(function() {
         $('#spList').hide();
      }); 
  	
- 	 var selectCategory = function(){
-    	// 获取所有类别
-    	var customerId = $("#customerId").val();
-    	$.get('/yh/product/findAllCategory', {customerId:customerId}, function(data){
-	   		if(data.length > 0){
-		   		var categorySelect = $("#categorySelect");
-		   		categorySelect.empty();
-		   		for(var i=0; i<data.length; i++){
-			   		 /*if(data[i].ID == categoryId){
-			   			 categorySelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].NAME+"</option>");
-			   		 }else{
-			   			 categorySelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].NAME+"</option>");					 
-			   		 }*/
-		   			categorySelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].NAME+"</option>");					 
-		   		}
-	   		}
-   	    },'json');
-    };
-    
-    //
-    $('#editProduct').on('click', function() {    	
-    	selectCategory();
-    });
 });

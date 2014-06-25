@@ -106,7 +106,7 @@ public class ProductController extends Controller {
             String width = getPara("width");
             String volume = getPara("volume");
             String weight = getPara("weight");
-            String amount = getPara("amount");
+            String height = getPara("height");
             product.set("item_name", getPara("item_name")).set("item_no", getPara("item_no")).set("item_desc", getPara("item_desc"))
                     .set("unit", getPara("unit")).set("category_id", getPara("categorySelect"));
             if (size != null && !"".equals(size)) {
@@ -121,8 +121,8 @@ public class ProductController extends Controller {
             if (weight != null && !"".equals(weight)) {
                 product.set("weight", weight);
             }
-            if (amount != null && !"".equals(amount)) {
-            	product.set("amount", amount);
+            if (height != null && !"".equals(height)) {
+            	product.set("height", height);
             }
             product.update();
         } else {
@@ -135,7 +135,7 @@ public class ProductController extends Controller {
             String unit = getPara("unit");
             String volume = getPara("volume");
             String weight = getPara("weight");
-            String amount = getPara("amount");
+            String height = getPara("height");
 
             product.set("item_name", itemName).set("item_no", itemNo).set("item_desc", itemDesc).set("unit", getPara("unit"))
                     .set("category_id", getPara("categorySelect"));
@@ -151,8 +151,8 @@ public class ProductController extends Controller {
             if (weight != null && !"".equals(weight)) {
                 product.set("weight", weight);
             }
-            if (weight != null && !"".equals(amount)) {
-            	product.set("amount", amount);
+            if (height != null && !"".equals(height)) {
+            	product.set("height", height);
             }
             product.save();
         }

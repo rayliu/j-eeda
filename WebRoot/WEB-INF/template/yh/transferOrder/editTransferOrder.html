@@ -6,7 +6,7 @@
                     <h1 class="page-header">运输单</h1>
 					<input id="order_id" type="hidden" name="order_id" />
                     <input id="item_id" type="hidden" name="item_id" />
-                    <input id="customerId" type="text" name="customerId" />
+                    <input id="productIdHidden" type="text" name="productIdHidden" />
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -351,11 +351,6 @@
 									      	<form id="transferOrderItemForm" action="">
 									      		<input id="transfer_order_id" type="hidden" name="transfer_order_id" />
 									      		<input id="productId" type="hidden" name="productId" />
-												<!-- <div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品名称</label> <input
-													id="item_name" class="form-control" type="text"
-													name="item_name">
-												</div> -->
 												<div class="form-group ">
 													<label class="control-label" for="inputSuccess">货品名称</label>
 													<input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown">
@@ -378,6 +373,11 @@
 														id="width" class="form-control" type="text"
 														name="width" value="${product.width!''}">
 												</div>
+												<div class="form-group">
+													<label class="control-label" for="inputWarning">货品高度</label> <input
+														id="height" class="form-control" type="text"
+														name=height value="${height!''}">
+												</div>
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">货品数量</label> <input
 													id="amount" class="form-control" type="text"
@@ -397,10 +397,6 @@
 												<label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
 													id="weight" class="form-control" type="text"
 													name="weight">
-												</div>
-												<div class="form-group ">  
-						                           	<label class="control-label" for="inputSuccess">请选择类别</label>
-						                          	<select id="categorySelect" class="form-control" name="categorySelect"></select> 
 												</div>
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">货品备注</label> <input
