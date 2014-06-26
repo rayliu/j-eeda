@@ -50,6 +50,12 @@ public class ContractController extends Controller {
 
     // 客户合同列表
     public void customerList() {
+        String contractName_filter = getPara("contractName_filter");
+        String contactPerson_filter = getPara("contactPerson_filter");
+        String periodFrom_filter = getPara("periodFrom_filter");
+        String companyName_filter = getPara("companyName_filter");
+        String phone_filter = getPara("phone_filter");
+        String periodTo_filter = getPara("periodTo_filter");
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -58,31 +64,55 @@ public class ContractController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
                     + getPara("iDisplayLength");
         }
-
-        // 获取总条数
-        String totalWhere = "";
-        String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'";
-        System.out.println(sql);
-        Record rec = Db.findFirst(sql + totalWhere);
-        long total = rec.getLong("total");
-        logger.debug("total records:" + total);
-
-        // 获取当前页的数据
-        List<Record> orders = Db
-                .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'"
-                        + sLimit);
         Map orderMap = new HashMap();
-        orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", total);
-        orderMap.put("iTotalDisplayRecords", total);
-        orderMap.put("aaData", orders);
+        if (contractName_filter == null && contactPerson_filter == null
+                && periodFrom_filter == null && companyName_filter == null
+                && phone_filter == null && periodTo_filter == null) {
+            // 获取总条数
+            String totalWhere = "";
+            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'";
+            System.out.println(sql);
+            Record rec = Db.findFirst(sql + totalWhere);
+            long total = rec.getLong("total");
+            logger.debug("total records:" + total);
 
-        renderJson(orderMap);
-
+            // 获取当前页的数据
+            List<Record> orders = Db
+                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'"
+                            + sLimit);
+            orderMap.put("sEcho", pageIndex);
+            orderMap.put("iTotalRecords", total);
+            orderMap.put("iTotalDisplayRecords", total);
+            orderMap.put("aaData", orders);
+            renderJson(orderMap);
+        } else {
+            // 获取总条数
+            String totalWhere = "";
+            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'";
+            System.out.println(sql);
+            Record rec = Db.findFirst(sql + totalWhere);
+            long total = rec.getLong("total");
+            logger.debug("total records:" + total);
+            // 获取当前页的数据
+            List<Record> orders = Db
+                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'"
+                            + sLimit);
+            orderMap.put("sEcho", pageIndex);
+            orderMap.put("iTotalRecords", total);
+            orderMap.put("iTotalDisplayRecords", total);
+            orderMap.put("aaData", orders);
+            renderJson(orderMap);
+        }
     }
 
     // 配送供应商合同列表
     public void deliveryspList() {
+        String contractName_filter = getPara("contractName_filter");
+        String contactPerson_filter = getPara("contactPerson_filter");
+        String periodFrom_filter = getPara("periodFrom_filter");
+        String companyName_filter = getPara("companyName_filter");
+        String phone_filter = getPara("phone_filter");
+        String periodTo_filter = getPara("periodTo_filter");
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -91,31 +121,57 @@ public class ContractController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
                     + getPara("iDisplayLength");
         }
-
-        // 获取总条数
-        String totalWhere = "";
-        String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'";
-        System.out.println(sql);
-        Record rec = Db.findFirst(sql + totalWhere);
-        long total = rec.getLong("total");
-        logger.debug("total records:" + total);
-
-        // 获取当前页的数据
-        List<Record> orders = Db
-                .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
-                        + sLimit);
         Map orderMap = new HashMap();
-        orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", total);
-        orderMap.put("iTotalDisplayRecords", total);
-        orderMap.put("aaData", orders);
+        if (contractName_filter == null && contactPerson_filter == null
+                && periodFrom_filter == null && companyName_filter == null
+                && phone_filter == null && periodTo_filter == null) {
+            // 获取总条数
+            String totalWhere = "";
+            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'";
+            System.out.println(sql);
+            Record rec = Db.findFirst(sql + totalWhere);
+            long total = rec.getLong("total");
+            logger.debug("total records:" + total);
 
-        renderJson(orderMap);
+            // 获取当前页的数据
+            List<Record> orders = Db
+                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
+                            + sLimit);
+            orderMap.put("sEcho", pageIndex);
+            orderMap.put("iTotalRecords", total);
+            orderMap.put("iTotalDisplayRecords", total);
+            orderMap.put("aaData", orders);
+            renderJson(orderMap);
+        } else {
+            // 获取总条数
+            String totalWhere = "";
+            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'";
+            System.out.println(sql);
+            Record rec = Db.findFirst(sql + totalWhere);
+            long total = rec.getLong("total");
+            logger.debug("total records:" + total);
+
+            // 获取当前页的数据
+            List<Record> orders = Db
+                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
+                            + sLimit);
+            orderMap.put("sEcho", pageIndex);
+            orderMap.put("iTotalRecords", total);
+            orderMap.put("iTotalDisplayRecords", total);
+            orderMap.put("aaData", orders);
+            renderJson(orderMap);
+        }
 
     }
 
     // 干线供应商合同列表
     public void spList() {
+        String contractName_filter = getPara("contractName_filter");
+        String contactPerson_filter = getPara("contactPerson_filter");
+        String periodFrom_filter = getPara("periodFrom_filter");
+        String companyName_filter = getPara("companyName_filter");
+        String phone_filter = getPara("phone_filter");
+        String periodTo_filter = getPara("periodTo_filter");
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -124,25 +180,44 @@ public class ContractController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
                     + getPara("iDisplayLength");
         }
-
-        // 获取总条数
-        String totalWhere = "";
-        String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'";
-        System.out.println(sql);
-        Record rec = Db.findFirst(sql + totalWhere);
-        logger.debug("total records:" + rec.getLong("total"));
-
-        // 获取当前页的数据
-        List<Record> orders = Db
-                .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'"
-                        + sLimit);
         Map orderMap = new HashMap();
-        orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", rec.getLong("total"));
-        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-        orderMap.put("aaData", orders);
+        if (contractName_filter == null && contactPerson_filter == null
+                && periodFrom_filter == null && companyName_filter == null
+                && phone_filter == null && periodTo_filter == null) {
+            // 获取总条数
+            String totalWhere = "";
+            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'";
+            System.out.println(sql);
+            Record rec = Db.findFirst(sql + totalWhere);
+            logger.debug("total records:" + rec.getLong("total"));
 
-        renderJson(orderMap);
+            // 获取当前页的数据
+            List<Record> orders = Db
+                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'"
+                            + sLimit);
+            orderMap.put("sEcho", pageIndex);
+            orderMap.put("iTotalRecords", rec.getLong("total"));
+            orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+            orderMap.put("aaData", orders);
+            renderJson(orderMap);
+        } else {
+            // 获取总条数
+            String totalWhere = "";
+            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'";
+            System.out.println(sql);
+            Record rec = Db.findFirst(sql + totalWhere);
+            logger.debug("total records:" + rec.getLong("total"));
+
+            // 获取当前页的数据
+            List<Record> orders = Db
+                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'"
+                            + sLimit);
+            orderMap.put("sEcho", pageIndex);
+            orderMap.put("iTotalRecords", rec.getLong("total"));
+            orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+            orderMap.put("aaData", orders);
+            renderJson(orderMap);
+        }
 
     }
 
@@ -490,62 +565,5 @@ public class ContractController extends Controller {
             Db.deleteById("contract_item", id);
         }
         renderJson("{\"success\":true}");
-    }
-
-    // 添加搜索
-    public void SearchContract() {
-        String contractName_filter = getPara("contractName_filter");
-        String contactPerson_filter = getPara("contactPerson_filter");
-        String periodFrom_filter = getPara("periodFrom_filter");
-        String companyName_filter = getPara("companyName_filter");
-        String phone_filter = getPara("phone_filter");
-        String periodTo_filter = getPara("periodTo_filter");
-
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
-        }
-        Map transferOrderListMap = new HashMap();
-        if (contractName_filter == null && contactPerson_filter == null
-                && periodFrom_filter == null && companyName_filter == null
-                && phone_filter == null && periodTo_filter == null) {
-            String sqlTotal = "select count(1) total from transfer_order t "
-                    + "left join warehouse w on t.warehouse_id = w.id "
-                    + "where t.STATUS='已入库' and t.CARGO_NATURE='cargo'";
-            Record rec = Db.findFirst(sqlTotal);
-            logger.debug("total records:" + rec.getLong("total"));
-
-            String sql = "select t.*,w.warehouse_name,c.company_name from transfer_order t "
-                    + "left join warehouse w on t.warehouse_id = w.id "
-                    + "left join party p on t.customer_id = p.id "
-                    + "left join contact c  on p.contact_id = c.id "
-                    + "where t.STATUS='已入库' and t.CARGO_NATURE='cargo'";
-            List<Record> transferOrders = Db.find(sql);
-
-            transferOrderListMap.put("sEcho", pageIndex);
-            transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-            transferOrderListMap.put("iTotalDisplayRecords",
-                    rec.getLong("total"));
-            transferOrderListMap.put("aaData", transferOrders);
-        } else {
-            String sqlTotal = "select count(1) total from transfer_order t "
-                    + "left join warehouse w on t.warehouse_id = w.id "
-                    + "where t.STATUS='已入库' and t.CARGO_NATURE='cargo'";
-            Record rec = Db.findFirst(sqlTotal);
-            logger.debug("total records:" + rec.getLong("total"));
-
-            String sql = "";
-            List<Record> transferOrders = Db.find(sql);
-
-            transferOrderListMap.put("sEcho", pageIndex);
-            transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-            transferOrderListMap.put("iTotalDisplayRecords",
-                    rec.getLong("total"));
-            transferOrderListMap.put("aaData", transferOrders);
-        }
-        renderJson(transferOrderListMap);
     }
 }

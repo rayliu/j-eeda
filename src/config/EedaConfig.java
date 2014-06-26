@@ -174,6 +174,10 @@ public class EedaConfig extends JFinalConfig {
                 controllers.yh.arap.CopeCheckOrderController.class, "/yh");
         me.add("/yh/departOrder",
                 controllers.yh.departOrder.DepartOrderController.class, "/yh");
+        me.add("/yh/gateIn",
+                controllers.yh.inventory.InventoryController.class, "/yh");
+        me.add("/yh/gateOut",
+                controllers.yh.inventory.InventoryController.class, "/yh");
 
     }
 
@@ -249,7 +253,7 @@ public class EedaConfig extends JFinalConfig {
             connectH2();
         } else {
             cp = new C3p0Plugin(url, username, pwd);
-            // DataInitUtil.initH2Tables(cp);
+            DataInitUtil.initH2Tables(cp);
 
         }
 

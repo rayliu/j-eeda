@@ -63,8 +63,14 @@ $(document).ready(function() {
     	var periodFrom_filter = $("#periodFrom_filter").val();
       	var companyName_filter = $("#companyName_filter").val();
       	var phone_filter = $("#phone_filter").val();   
-      	var periodTo_filter = $("#periodTo_filter").val();   
-      	tab2.fnSettings().sAjaxSource = "/yh/contract/SearchContract?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+      	var periodTo_filter = $("#periodTo_filter").val();
+      	if(type=='CUSTOMER'){
+      		tab2.fnSettings().sAjaxSource = "/yh/customerContract/customerList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+    	}if(type=='SERVICE_PROVIDER'){
+    		tab2.fnSettings().sAjaxSource = "/yh/spContract/spList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+    	}if(type=='DELIVERY_SERVICE_PROVIDER'){
+    		tab2.fnSettings().sAjaxSource = "/yh/deliverySpContract/deliveryspList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+    	}
       	tab2.fnDraw();
       });
     
