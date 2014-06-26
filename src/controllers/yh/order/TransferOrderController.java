@@ -779,6 +779,16 @@ public class TransferOrderController extends Controller {
     	}
     	renderJson(locationList);
     }
+    
+    // 查找产品名
+    public void searchItemName() {
+    	String input = getPara("input");
+    	List<Record> locationList = Collections.EMPTY_LIST;
+    	if (input.trim().length() > 0) {
+    		locationList = Db.find("select * from product where item_name like '%"+ input+ "%' limit 0,10");
+    	}
+    	renderJson(locationList);
+    }
 
     // 删除订单
     public void delete() {

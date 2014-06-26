@@ -6,6 +6,7 @@
                     <h1 class="page-header">运输单</h1>
                     <input id="order_id" type="hidden" name="order_id" value="${transferOrder.id!''}"/>
                     <input id="item_id" type="hidden" name="item_id" />
+                    <input id="productIdHidden" type="hidden" name="productIdHidden" />
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -338,14 +339,7 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- <div class="tab-pane fade">
-                                    <div class="panel-body">             
-                                        <div class="table-responsive">
-                                            
-                                        </div>
-                                    </div> -->
-                                    
-                                    <!-- 模态框 -->
+                                     <!-- 模态框 -->
 									<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 									  <div class="modal-dialog">
 									    <div class="modal-content">
@@ -356,102 +350,64 @@
 									      <div class="modal-body">
 									      	<form id="transferOrderItemForm" action="">
 									      		<input id="transfer_order_id" type="hidden" name="transfer_order_id" />
-									      		<div class="form-group ">
-												<label class="control-label" for="inputSuccess">型号</label> <input
-													id="item_no" class="form-control" type="text"
-													name="item_no">
-												</div>
+									      		<input id="productId" type="hidden" name="productId" />
+									      		<input id="transferOrderItemId" type="hidden" name="transferOrderItemId" />
 												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品名称</label> <input
-													id="item_name" class="form-control" type="text"
-													name="item_name">
+													<label class="control-label" for="inputSuccess">货品名称</label>
+													<input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown">
+	                                                <ul id='itemNameList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+	    											</ul>
+												</div>
+									      		<div class="form-group ">
+													<label class="control-label" for="inputSuccess">货品型号</label>
+													<input id="itemNoMessage" class="form-control dropdown-toggle" placeholder="请输入货品型号" type="text" name="item_no" data-toggle="dropdown">
+	                                                <ul id='itemNoList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+	    											</ul>
+												</div>
+												<div class="form-group">
+													<label class="control-label" for="inputWarning">货品长度</label> <input
+														id="size" class="form-control" type="text"
+														name="size" value="${product.size!''}">
+												</div>
+												<div class="form-group">
+													<label class="control-label" for="inputWarning">货品宽度</label> <input
+														id="width" class="form-control" type="text"
+														name="width" value="${product.width!''}">
+												</div>
+												<div class="form-group">
+													<label class="control-label" for="inputWarning">货品高度</label> <input
+														id="height" class="form-control" type="text"
+														name=height value="${height!''}">
 												</div>
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">货品数量</label> <input
 													id="amount" class="form-control" type="text"
-													name="amount"">
+													name="amount">
 												</div>
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">货品单位</label> <input
 													id="unit" class="form-control" type="text"
-													name="unit"">
+													name="unit">
 												</div>
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
 													id="volume" class="form-control" type="text"
-													name="volume"">
+													name="volume">
 												</div>
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
 													id="weight" class="form-control" type="text"
-													name="weight"">
+													name="weight">
 												</div>
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">货品备注</label> <input
 													id="remark" class="form-control" type="text"
-													name="remark"">
+													name="remark">
 												</div>
 										      </div>
 										      <div class="modal-footer">
 										        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 										        <button id="transferOrderItemFormBtn" type="button" class="btn btn-primary">保存</button>
-										      </div>
-											</form>
-									    </div><!-- /.modal-content -->
-									  </div><!-- /.modal-dialog -->
-									</div><!-- /.modal -->
-                                    
-                                    <!-- 模态框 -->
-									<div class="modal fade" id="updateMyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-									  <div class="modal-dialog">
-									    <div class="modal-content">
-									      <div class="modal-header">
-									        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-									        <h4 class="modal-title" id="myModalLabel">修改货品</h4>
-									      </div>
-									      <div class="modal-body">
-									      	<form id="transferOrderItemUpdateForm" action="">
-									      		<input id="update_transfer_order_id" type="hidden" name="transfer_order_id" />
-									      		<input id="transfer_order_item_id" type="hidden" name="transfer_order_item_id" />
-									      		<div class="form-group ">
-												<label class="control-label" for="inputSuccess">型号</label> <input
-													id="update_item_no" class="form-control" type="text"
-													name="update_item_no">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品名称</label> <input
-													id="update_item_name" class="form-control" type="text"
-													name="update_item_name">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品数量</label> <input
-													id="update_amount" class="form-control" type="text"
-													name="update_amount"">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品单位</label> <input
-													id="update_unit" class="form-control" type="text"
-													name="update_unit"">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
-													id="update_volume" class="form-control" type="text"
-													name="update_volume"">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
-													id="update_weight" class="form-control" type="text"
-													name="update_weight"">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">备注</label> <input
-													id="update_remark" class="form-control" type="text"
-													name="update_remark"">
-												</div>
-										      </div>
-										      <div class="modal-footer">
-										        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-										        <button id="transferOrderItemUpdateFormBtn" type="button" class="btn btn-primary">保存</button>
 										      </div>
 											</form>
 									    </div><!-- /.modal-content -->

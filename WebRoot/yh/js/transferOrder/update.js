@@ -39,6 +39,18 @@ $(document).ready(function() {
 			customerList.empty();
 			for(var i = 0; i < data.length; i++)
 			{
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name = '';
+				}
+				var contact_person = data[i].CONTACT_PERSON;
+				if(contact_person == null){
+					contact_person = '';
+				}
+				var phone = data[i].PHONE;
+				if(phone == null){
+					phone = '';
+				}
 				customerList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
 			}
 		},'json');
@@ -59,13 +71,24 @@ $(document).ready(function() {
 		$('#locationForm').val(location);		
 		var pageCustomerName = $("#pageCustomerName");
 		pageCustomerName.empty();
-		pageCustomerName.append($(this).attr('contact_person')+'&nbsp;');
-		pageCustomerName.append($(this).attr('phone')); 
+		var contact_person = $(this).attr('contact_person');
+		if(contact_person == 'null'){
+			contact_person = '';
+		}
+		pageCustomerName.append(contact_person+'&nbsp;');
+		var phone = $(this).attr('phone');
+		if(phone == 'null'){
+			phone = '';
+		}
+		pageCustomerName.append(phone); 
 		var pageCustomerAddress = $("#pageCustomerAddress");
 		pageCustomerAddress.empty();
-		pageCustomerAddress.append($(this).attr('address'));
+		var address = $(this).attr('address');
+		if(address == 'null'){
+			address = '';
+		}
+		pageCustomerAddress.append(address);
 
-        
         var locationFrom = $('#hideLocationFrom').val();
         $.get('/yh/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
 			console.log(data);
@@ -92,6 +115,16 @@ $(document).ready(function() {
 	         		
 	         	},'json');
 	        });
+
+	        var checkProvince= function(provinceFrom){
+	        	if(provinceFrom == '广东省'){
+					$("#customerProvince2").prop('checked', false);
+					$("#customerProvince1").prop('checked', true);
+				}else{
+					$("#customerProvince1").prop('checked', false);    			
+					$("#customerProvince2").prop('checked', true);    			
+				}
+	        };
 	        
 	        // 回显出发城市
 	        var hideProvince = $("#hideProvinceFrom").val();
@@ -107,8 +140,11 @@ $(document).ready(function() {
 	    						var district = $("#hideDistrictFrom").val();
 	    						if(district == ''){
 	    							$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val());
+	    							checkProvince($("#hideProvinceFrom").val());
+	    							
 	    						}else{
 	    							$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val() +" "+ $("#hideDistrictFrom").val());
+	    							checkProvince($("#hideProvinceFrom").val());
 	    						}
 	    						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
 	    					}else{
@@ -162,6 +198,18 @@ $(document).ready(function() {
 			spList.empty();
 			for(var i = 0; i < data.length; i++)
 			{
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name = '';
+				}
+				var contact_person = data[i].CONTACT_PERSON;
+				if(contact_person == null){
+					contact_person = '';
+				}
+				var phone = data[i].PHONE;
+				if(phone == null){
+					phone = '';
+				}
 				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
 			}
 		},'json');
@@ -180,13 +228,27 @@ $(document).ready(function() {
 		$('#sp_id').val($(this).attr('partyId'));
 		var pageSpName = $("#pageSpName");
 		pageSpName.empty();
-		pageSpName.append($(this).attr('contact_person')+'&nbsp;');
-		pageSpName.append($(this).attr('phone')); 
 		var pageSpAddress = $("#pageSpAddress");
 		pageSpAddress.empty();
 		pageSpAddress.append($(this).attr('address'));
+		var contact_person = $(this).attr('contact_person');
+		if(contact_person == 'null'){
+			contact_person = '';
+		}
+		pageSpName.append(contact_person+'&nbsp;');
+		var phone = $(this).attr('phone');
+		if(phone == 'null'){
+			phone = '';
+		}
+		pageSpName.append(phone); 
+		pageSpAddress.empty();
+		var address = $(this).attr('address');
+		if(address == 'null'){
+			address = '';
+		}
+		pageSpAddress.append(address);
         $('#spList').hide();
-    }); 
+    });
 	
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
@@ -209,8 +271,13 @@ $(document).ready(function() {
 				$("#driver_id").val(transferOrder.DRIVER_ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
+					$("#departureConfirmationBtn").attr("disabled", false);
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	$("#style").show();	              
+				  	$("#style").show();	
+				  	
+	            	var order_id = $("#order_id").val();
+				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+				  	itemDataTable.fnDraw();                
 				}else{
 					alert('数据保存失败。');
 				}
@@ -231,7 +298,11 @@ $(document).ready(function() {
 						$("#departureConfirmationBtn").attr("disabled", false);
 					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	$("#style").show();	            
+				  	$("#style").show();	
+				  	
+	            	var order_id = $("#order_id").val();
+				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+				  	itemDataTable.fnDraw();                
 				}else{
 					alert('数据保存失败。');
 				}
@@ -273,9 +344,10 @@ $(document).ready(function() {
 				if(transferOrder.ID>0){
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	
-				  	
+
 	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+	            	var productId = $("#productIdHidden").val();
+				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+productId;
 				  	itemDataTable.fnDraw();                
 				}else{
 					alert('数据保存失败。');
@@ -300,8 +372,9 @@ $(document).ready(function() {
 				  	$("#style").show();	
 				  	
 	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
-				  	itemDataTable.fnDraw();                
+	            	var productId = $("#productIdHidden").val();
+				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+productId;
+				  	itemDataTable.fnDraw();             
 				}else{
 					alert('数据保存失败。');
 				}
@@ -346,7 +419,7 @@ $(document).ready(function() {
         ]      
     });	
     
-   	// 保存货品
+    // 保存货品
     $("#transferOrderItemFormBtn").click(function(){
     	$.post('/yh/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemForm").serialize(), function(data){
 			if(data.ID > 0){
@@ -355,27 +428,14 @@ $(document).ready(function() {
                 if(data.ORDER_ID>0){
                 	$("#transferOrderItemForm")[0].reset();
                 	var order_id = $("#order_id").val();
-                	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+                	$("#productIdHidden").val(data.ORDER_ID);
+	                itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+data.PRODUCT_ID;                		
                 	itemDataTable.fnDraw();
                 }else{
                     alert('数据保存失败。');
                 }
+                $("#transferOrderItemForm")[0].reset();
 				$('#myModal').modal('hide');
-			}
-		},'json');
-    });
-    
-   	// 更新货品
-    $("#transferOrderItemUpdateFormBtn").click(function(){    	
-    	$.post('/yh/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemUpdateForm").serialize(), function(data){
-			if(data.ID > 0){ 
-				// 关闭模态框
-				$('#updateMyModal').modal('hide');
-				
-				// 更新货品列表
-				var order_id = $("#order_id").val();
-				itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
-			  	itemDataTable.fnDraw();   
 			}
 		},'json');
     });
@@ -621,26 +681,6 @@ $(document).ready(function() {
             			return obj.aData.CONTACT_PERSON+"<br/>"+obj.aData.PHONE+"<br/>"+obj.aData.ADDRESS;
             		}},
             {"mDataProp":"REMARK"},
-            /*{"mDataProp":"IS_DAMAGE",
-            	"fnRender": function(obj) {
-            		if(obj.aData.IS_DAMAGE == true){
-            			return '是';
-            		}else{
-            			return '否';
-            		}
-            	}
-            },
-            {"mDataProp":"ESTIMATE_DAMAGE_AMOUNT",
-            	"fnRender": function(obj) {
-            		var amount = (obj.aData.ESTIMATE_DAMAGE_AMOUNT==null?'':obj.aData.ESTIMATE_DAMAGE_AMOUNT);
-            		var DAMAGE_REVENUE = (obj.aData.DAMAGE_REVENUE==null?'':obj.aData.DAMAGE_REVENUE);
-            		var DAMAGE_PAYMENT = (obj.aData.DAMAGE_PAYMENT==null?'':obj.aData.DAMAGE_PAYMENT);
-            		var DAMAGE_REMARK = (obj.aData.DAMAGE_REMARK==null?'':obj.aData.DAMAGE_REMARK);
-            		if(obj.aData.IS_DAMAGE){
-            			return "定损金额: "+amount+"<br/>"+"理赔金额: "+DAMAGE_REVENUE+"<br/>"+"赔付给客户金额: "+DAMAGE_PAYMENT+"<br/>"+"差异说明: "+DAMAGE_REMARK;
-            		}
-        			return "";
-        		}},*/
             {  
                 "mDataProp": null, 
                 "sWidth": "8%",                
@@ -683,16 +723,22 @@ $(document).ready(function() {
   	    $("#transfer_order_item_id").val(itemId);
   	    $.post('/yh/transferOrderItem/getTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
   	    	// 编辑时回显数据
-  	    	$("#update_item_no").val(data.ITEM_NO);
-  	    	$("#update_item_name").val(data.ITEM_NAME);
-  	    	$("#update_amount").val(data.AMOUNT);
-  	    	$("#update_unit").val(data.UNIT);
-  	    	$("#update_volume").val(data.VOLUME);
-  	    	$("#update_weight").val(data.WEIGHT);
-  	    	$("#update_remark").val(data.REMARK);
+  	    	$("#transfer_order_id").val(data.transferOrderItem.ORDER_ID);
+  	    	$("#transferOrderItemId").val(data.transferOrderItem.ID);
+  	    	$("#productId").val(data.transferOrderItem.PRODUCT_ID);
+  	    	$("#itemNameMessage").val(data.product.ITEM_NAME);
+  	 		$("#itemNoMessage").val(data.product.ITEM_NO);
+	  	 	$("#size").val(data.product.SIZE);
+	  	 	$("#width").val(data.product.WIDTH);
+	  	 	$("#unit").val(data.product.UNIT); 	
+	  	 	$("#volume").val(data.product.VOLUME);
+	  	 	$("#weight").val(data.product.WEIGHT);
+	  	 	$("#height").val(data.product.HEIGHT);
+	  	 	$("#remark").val(data.product.ITEM_DESC);
+	  	 	$("#amount").val(data.transferOrderItem.AMOUNT);
+  	    	// 模态框:修改货品明细
+  	    	$('#myModal').modal('show');	
 		},'json');
-  		// 模态框:修改货品明细
-		$('#updateMyModal').modal('show');	
 	});
 	
 	// 删除货品
@@ -705,7 +751,8 @@ $(document).ready(function() {
 		$("#transferOrderItemDateil").hide();
 		// 更新货品列表
 		var order_id = $("#order_id").val();
-		itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+		var product_id = $("#productIdHidden").val();
+		itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+product_id;
 	  	itemDataTable.fnDraw(); 	  	
 	});	
 	
@@ -1168,4 +1215,144 @@ $(document).ready(function() {
 			$("#cartype option[value='"+svalue+"']").attr("selected","selected");
 		}
 	}
+	
+  	//获取货品的序列号list，选中信息在下方展示其他信息
+ 	$('#itemNoMessage').on('keyup', function(){
+ 		var inputStr = $('#itemNoMessage').val();
+ 		$.get('/yh/transferOrder/searchItemNo', {input:inputStr}, function(data){
+ 			console.log(data);
+ 			var itemNoList =$("#itemNoList");
+ 			itemNoList.empty();
+ 			for(var i = 0; i < data.length; i++)
+ 			{
+ 				var item_no = data[i].ITEM_NO;
+ 				if(item_no == null){
+ 					item_no = '';
+ 				}
+ 				itemNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' cid='"+data[i].CATEGORY_ID+"' item_name='"+data[i].ITEM_NAME+"' size='"+data[i].SIZE+"' height='"+data[i].HEIGHT+"' width='"+data[i].WIDTH+"' unit='"+data[i].UNIT+"' volume='"+data[i].VOLUME+"' weight='"+data[i].WEIGHT+"', item_desc='"+data[i].ITEM_DESC+"', >"+data[i].ITEM_NO+"</a></li>");
+ 			}
+ 		},'json');		
+         $("#itemNoList").css({ 
+         	left:$(this).position().left+"px", 
+         	top:$(this).position().top+32+"px" 
+         }); 
+         $('#itemNoList').show();        
+ 	});
+ 	
+ 	// 选中序列号
+ 	$('#itemNoList').on('click', '.fromLocationItem', function(e){
+ 		$("#itemNoMessage").val($(this).text());
+ 		if($(this).attr('item_name') == 'null'){
+ 			$("#item_name").val('');
+ 		}else{
+ 			$("#itemNameMessage").val($(this).attr('item_name'));
+ 		}
+ 		if($(this).attr('size') == 'null'){
+ 			$("#size").val('');
+ 		}else{
+ 			$("#size").val($(this).attr('size'));
+ 		}
+ 		if($(this).attr('width') == 'null'){
+ 			$("#width").val('');
+ 		}else{
+ 			$("#width").val($(this).attr('width'));
+ 		}
+ 		if($(this).attr('unit') == 'null'){
+ 			$("#unit").val('');
+ 		}else{
+ 			$("#unit").val($(this).attr('unit')); 			
+ 		}
+ 		if($(this).attr('volume') == 'null'){
+ 			$("volume").val('');
+ 		}else{
+ 			$("#volume").val($(this).attr('volume'));
+ 		}
+ 		if($(this).attr('weight') == 'null'){
+ 			$("weight").val('');
+ 		}else{
+ 			$("#weight").val($(this).attr('weight'));
+ 		}
+ 		if($(this).attr('height') == 'null'){
+ 			$("height").val('');
+ 		}else{
+ 			$("#height").val($(this).attr('height'));
+ 		}
+ 		if($(this).attr('item_desc') == 'null'){
+ 			$("remark").val('');
+ 		}else{
+ 			$("#remark").val($(this).attr('item_desc'));
+ 		}
+ 		$("#productId").val($(this).attr('id'));
+        $('#itemNoList').hide();
+     }); 
+ 	
+ 	//获取货品的名称list，选中信息在下方展示其他信息
+ 	$('#itemNameMessage').on('keyup', function(){
+ 		var inputStr = $('#itemNameMessage').val();
+ 		$.get('/yh/transferOrder/searchItemName', {input:inputStr}, function(data){
+ 			console.log(data);
+ 			var itemNameList =$("#itemNameList");
+ 			itemNameList.empty();
+ 			for(var i = 0; i < data.length; i++)
+ 			{
+ 				var item_name = data[i].ITEM_NAME;
+ 				if(item_name == null){
+ 					item_name = '';
+ 				}
+ 				itemNameList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' cid='"+data[i].CATEGORY_ID+"' item_no='"+data[i].ITEM_NO+"' size='"+data[i].SIZE+"' height='"+data[i].HEIGHT+"' width='"+data[i].WIDTH+"' unit='"+data[i].UNIT+"' volume='"+data[i].VOLUME+"' weight='"+data[i].WEIGHT+"', item_desc='"+data[i].ITEM_DESC+"', >"+data[i].ITEM_NAME+"</a></li>");
+ 			}
+ 		},'json');		
+ 		$("#itemNameList").css({ 
+ 			left:$(this).position().left+"px", 
+ 			top:$(this).position().top+32+"px" 
+ 		}); 
+ 		$('#itemNameList').show();        
+ 	});
+ 	
+ 	// 选中产品名
+ 	$('#itemNameList').on('click', '.fromLocationItem', function(e){
+ 		$("#itemNameMessage").val($(this).text());
+ 		if($(this).attr('item_no') == 'null'){
+ 			$("#item_no").val('');
+ 		}else{
+ 			$("#itemNoMessage").val($(this).attr('item_no'));
+ 		}
+ 		if($(this).attr('size') == 'null'){
+ 			$("#size").val('');
+ 		}else{
+ 			$("#size").val($(this).attr('size'));
+ 		}
+ 		if($(this).attr('width') == 'null'){
+ 			$("#width").val('');
+ 		}else{
+ 			$("#width").val($(this).attr('width'));
+ 		}
+ 		if($(this).attr('unit') == 'null'){
+ 			$("#unit").val('');
+ 		}else{
+ 			$("#unit").val($(this).attr('unit')); 			
+ 		}
+ 		if($(this).attr('volume') == 'null'){
+ 			$("volume").val('');
+ 		}else{
+ 			$("#volume").val($(this).attr('volume'));
+ 		}
+ 		if($(this).attr('weight') == 'null'){
+ 			$("weight").val('');
+ 		}else{
+ 			$("#weight").val($(this).attr('weight'));
+ 		}
+ 		if($(this).attr('height') == 'null'){
+ 			$("height").val('');
+ 		}else{
+ 			$("#height").val($(this).attr('height'));
+ 		}
+ 		if($(this).attr('item_desc') == 'null'){
+ 			$("remark").val('');
+ 		}else{
+ 			$("#remark").val($(this).attr('item_desc'));
+ 		}
+ 		$("#productId").val($(this).attr('id'));
+ 		$('#itemNameList').hide();
+ 	});  	
 });

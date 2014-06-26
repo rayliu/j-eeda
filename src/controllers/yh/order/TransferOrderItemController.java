@@ -59,10 +59,14 @@ public class TransferOrderItemController extends Controller {
 	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
 	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 	        }	
-	        String sqlTotal = "select distinct count(1) total from transfer_order_item toi left join product p on p.id in (select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +") where toi.order_id =" + trandferOrderId;
+	        String sqlTotal = "select distinct count(1) total from transfer_order_item toi "
+							+" left join product p on p.id = toi.product_id "
+							+" where toi.order_id =" + trandferOrderId +" and toi.pRODUCT_ID in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";
 	        Record rec = Db.findFirst(sqlTotal);
 	        logger.debug("total records:" + rec.getLong("total"));	
-	        String sql = "select distinct p.item_no item_no,toi.amount amount,p.unit unit,p.item_desc remark from transfer_order_item toi left join product p on p.id in (select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +") where toi.order_id =" + trandferOrderId;	
+	        String sql = "select distinct toi.id,p.item_no item_no,toi.amount amount,p.unit unit,p.item_desc remark from transfer_order_item toi "
+							+" left join product p on p.id = toi.product_id "
+							+" where toi.order_id =" + trandferOrderId +" and toi.pRODUCT_ID in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";	
 	        List<Record> transferOrders = Db.find(sql);	
 	        transferOrderListMap = new HashMap();
 	        transferOrderListMap.put("sEcho", pageIndex);
@@ -106,16 +110,42 @@ public class TransferOrderItemController extends Controller {
 	public void saveTransferOrderItem() {
 		TransferOrderItem item = null;
 		String productId = getPara("productId");
-		String id = getPara("transfer_order_item_id");
+		String id = getPara("transferOrderItemId");
 		if (id != null && !id.equals("")) {
 			item = TransferOrderItem.dao.findById(id);
-			item.set("item_no", getPara("update_item_no"));
-			item.set("item_name", getPara("update_item_name"));
-			item.set("amount", getPara("update_amount"));
-			item.set("unit", getPara("update_unit"));
-			item.set("volume", getPara("update_volume"));
-			item.set("weight", getPara("update_weight"));
-			item.set("remark", getPara("update_remark"));
+			if(productId == null || "".equals(productId)){
+	            String size = getPara("size");
+	            String width = getPara("width");
+	            String volume = getPara("volume");
+	            String weight = getPara("weight");
+	            String height = getPara("height");	
+				if (size != null && !"".equals(size)) {
+					item.set("size", size);
+	            }
+	            if (width != null && !"".equals(weight)) {
+	            	item.set("width", width);
+	            }
+	            if (volume != null && !"".equals(volume)) {
+	            	item.set("volume", volume);
+	            }
+	            if (weight != null && !"".equals(weight)) {
+	            	item.set("weight", weight);
+	            }
+	            if (height != null && !"".equals(height)) {
+	            	item.set("height", height);
+	            }
+				item.set("item_no", getPara("item_no"));    
+				item.set("item_name", getPara("item_name"));           
+				item.set("unit", getPara("unit"));           
+				item.set("remark", getPara("remark"));      
+			}else{
+				updateProduct(productId);
+				item.set("product_id", productId);				
+			}	
+			String amount = getPara("amount");	
+			if (amount != null && !"".equals(amount)) {
+				item.set("amount", amount);
+            }
 			item.set("order_id", getPara("transfer_order_id"));
 			item.update();
 		} else {
@@ -162,13 +192,29 @@ public class TransferOrderItemController extends Controller {
 	// 更新产品
 	private void updateProduct(String productId) {
 		Product product = Product.dao.findById(productId);
+		String size = getPara("size");
+        String width = getPara("width");
+        String volume = getPara("volume");
+        String weight = getPara("weight");
+        String height = getPara("height");	
+		if (size != null && !"".equals(size)) {
+			product.set("size", size);
+        }
+        if (width != null && !"".equals(weight)) {
+        	product.set("width", width);
+        }
+        if (volume != null && !"".equals(volume)) {
+        	product.set("volume", volume);
+        }
+        if (weight != null && !"".equals(weight)) {
+        	product.set("weight", weight);
+        }
+        if (height != null && !"".equals(height)) {
+        	product.set("height", height);
+        }
 		product.set("item_no", getPara("item_no"));
 		product.set("item_name", getPara("item_name"));
-		product.set("size", getPara("size"));
-		product.set("width", getPara("width"));
 		product.set("unit", getPara("unit"));
-		product.set("volume", getPara("volume"));
-		product.set("weight", getPara("weight"));
 		product.set("item_desc", getPara("remark"));
 		product.set("category_id", getPara("categorySelect"));
 		product.update();
@@ -176,9 +222,13 @@ public class TransferOrderItemController extends Controller {
 
 	// 获取TransferOrderItem对象
 	public void getTransferOrderItem() {
+		Map<String, Object> map = new HashMap<String, Object>();
 		String id = getPara("transfer_order_item_id");
 		TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(id);
-		renderJson(transferOrderItem);
+		Product product = Product.dao.findById(transferOrderItem.get("product_id"));
+		map.put("transferOrderItem", transferOrderItem);
+		map.put("product", product);
+		renderJson(map);
 	}
 
 	// 删除TransferOrderItem

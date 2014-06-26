@@ -256,6 +256,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//提交前，校验数据
         if(!$("#transferOrderForm").valid()){
+        	alert("请先保存运输单!");
 	       	return;
         }
 		//异步向后台提交数据
@@ -379,9 +380,7 @@ $(document).ready(function() {
 				}
 			},'json');
         }
-    });
-
-	
+    });	
     
 	var order_id = $("#order_id").val();
 	//datatable, 动态处理
@@ -430,32 +429,13 @@ $(document).ready(function() {
                 	$("#transferOrderItemForm")[0].reset();
                 	var order_id = $("#order_id").val();
                 	$("#productIdHidden").val(data.ORDER_ID);
-                	if(data.PRODUCT_ID > 0){
-                		itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+data.PRODUCT_ID;
-                	}else{
-                		itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+data.PRODUCT_ID;                		
-                	}
+	                itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+data.PRODUCT_ID;                		
                 	itemDataTable.fnDraw();
                 }else{
                     alert('数据保存失败。');
                 }
                 $("#transferOrderItemForm")[0].reset();
 				$('#myModal').modal('hide');
-			}
-		},'json');
-    });
-    
-   	// 更新货品
-    $("#transferOrderItemUpdateFormBtn").click(function(){    	
-    	$.post('/yh/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemUpdateForm").serialize(), function(data){
-			if(data.ID > 0){ 
-				// 关闭模态框
-				$('#updateMyModal').modal('hide');
-				
-				// 更新货品列表
-				var order_id = $("#order_id").val();
-				itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
-			  	itemDataTable.fnDraw();   
 			}
 		},'json');
     });
@@ -669,7 +649,14 @@ $(document).ready(function() {
 			}
 		}
 	});
-	
+
+	// 回显省内省外客户
+	$("input[name='customerProvince']").each(function(){
+		if($("#customerProvinceRadio").val() == $(this).val()){
+			$(this).attr('checked', true);			
+		}
+	});
+
 	var item_id = $("#item_id").val();
 	//datatable, 动态处理
 	var detailDataTable = $('#detailTable').dataTable({
@@ -691,26 +678,6 @@ $(document).ready(function() {
             			return obj.aData.CONTACT_PERSON+"<br/>"+obj.aData.PHONE+"<br/>"+obj.aData.ADDRESS;
             		}},
             {"mDataProp":"REMARK"},
-            /*{"mDataProp":"IS_DAMAGE",
-            	"fnRender": function(obj) {
-            		if(obj.aData.IS_DAMAGE == true){
-            			return '是';
-            		}else{
-            			return '否';
-            		}
-            	}
-            },
-            {"mDataProp":"ESTIMATE_DAMAGE_AMOUNT",
-            	"fnRender": function(obj) {
-            		var amount = (obj.aData.ESTIMATE_DAMAGE_AMOUNT==null?'':obj.aData.ESTIMATE_DAMAGE_AMOUNT);
-            		var DAMAGE_REVENUE = (obj.aData.DAMAGE_REVENUE==null?'':obj.aData.DAMAGE_REVENUE);
-            		var DAMAGE_PAYMENT = (obj.aData.DAMAGE_PAYMENT==null?'':obj.aData.DAMAGE_PAYMENT);
-            		var DAMAGE_REMARK = (obj.aData.DAMAGE_REMARK==null?'':obj.aData.DAMAGE_REMARK);
-            		if(obj.aData.IS_DAMAGE){
-            			return "定损金额: "+amount+"<br/>"+"理赔金额: "+DAMAGE_REVENUE+"<br/>"+"赔付给客户金额: "+DAMAGE_PAYMENT+"<br/>"+"差异说明: "+DAMAGE_REMARK;
-            		}
-        			return "";
-        		}},*/
             {  
                 "mDataProp": null, 
                 "sWidth": "8%",                
@@ -753,16 +720,22 @@ $(document).ready(function() {
   	    $("#transfer_order_item_id").val(itemId);
   	    $.post('/yh/transferOrderItem/getTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
   	    	// 编辑时回显数据
-  	    	$("#update_item_no").val(data.ITEM_NO);
-  	    	$("#update_item_name").val(data.ITEM_NAME);
-  	    	$("#update_amount").val(data.AMOUNT);
-  	    	$("#update_unit").val(data.UNIT);
-  	    	$("#update_volume").val(data.VOLUME);
-  	    	$("#update_weight").val(data.WEIGHT);
-  	    	$("#update_remark").val(data.REMARK);
+  	    	$("#transfer_order_id").val(data.transferOrderItem.ORDER_ID);
+  	    	$("#transferOrderItemId").val(data.transferOrderItem.ID);
+  	    	$("#productId").val(data.transferOrderItem.PRODUCT_ID);
+  	    	$("#itemNameMessage").val(data.product.ITEM_NAME);
+  	 		$("#itemNoMessage").val(data.product.ITEM_NO);
+	  	 	$("#size").val(data.product.SIZE);
+	  	 	$("#width").val(data.product.WIDTH);
+	  	 	$("#unit").val(data.product.UNIT); 	
+	  	 	$("#volume").val(data.product.VOLUME);
+	  	 	$("#weight").val(data.product.WEIGHT);
+	  	 	$("#height").val(data.product.HEIGHT);
+	  	 	$("#remark").val(data.product.ITEM_DESC);
+	  	 	$("#amount").val(data.transferOrderItem.AMOUNT);
+  	    	// 模态框:修改货品明细
+  	    	$('#myModal').modal('show');	
 		},'json');
-  		// 模态框:修改货品明细
-		$('#updateMyModal').modal('show');	
 	});
 	
 	// 删除货品
@@ -775,7 +748,8 @@ $(document).ready(function() {
 		$("#transferOrderItemDateil").hide();
 		// 更新货品列表
 		var order_id = $("#order_id").val();
-		itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+		var product_id = $("#productIdHidden").val();
+		itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+product_id;
 	  	itemDataTable.fnDraw(); 	  	
 	});	
 	
@@ -1189,9 +1163,77 @@ $(document).ready(function() {
  		}else{
  			$("#remark").val($(this).attr('item_desc'));
  		}
- 		$("#categorySelect").val($(this).attr('cid'));
  		$("#productId").val($(this).attr('id'));
-        $('#spList').hide();
+        $('#itemNoList').hide();
      }); 
  	
+ 	//获取货品的名称list，选中信息在下方展示其他信息
+ 	$('#itemNameMessage').on('keyup', function(){
+ 		var inputStr = $('#itemNameMessage').val();
+ 		$.get('/yh/transferOrder/searchItemName', {input:inputStr}, function(data){
+ 			console.log(data);
+ 			var itemNameList =$("#itemNameList");
+ 			itemNameList.empty();
+ 			for(var i = 0; i < data.length; i++)
+ 			{
+ 				var item_name = data[i].ITEM_NAME;
+ 				if(item_name == null){
+ 					item_name = '';
+ 				}
+ 				itemNameList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' cid='"+data[i].CATEGORY_ID+"' item_no='"+data[i].ITEM_NO+"' size='"+data[i].SIZE+"' height='"+data[i].HEIGHT+"' width='"+data[i].WIDTH+"' unit='"+data[i].UNIT+"' volume='"+data[i].VOLUME+"' weight='"+data[i].WEIGHT+"', item_desc='"+data[i].ITEM_DESC+"', >"+data[i].ITEM_NAME+"</a></li>");
+ 			}
+ 		},'json');		
+ 		$("#itemNameList").css({ 
+ 			left:$(this).position().left+"px", 
+ 			top:$(this).position().top+32+"px" 
+ 		}); 
+ 		$('#itemNameList').show();        
+ 	});
+ 	
+ 	// 选中产品名
+ 	$('#itemNameList').on('click', '.fromLocationItem', function(e){
+ 		$("#itemNameMessage").val($(this).text());
+ 		if($(this).attr('item_no') == 'null'){
+ 			$("#item_no").val('');
+ 		}else{
+ 			$("#itemNoMessage").val($(this).attr('item_no'));
+ 		}
+ 		if($(this).attr('size') == 'null'){
+ 			$("#size").val('');
+ 		}else{
+ 			$("#size").val($(this).attr('size'));
+ 		}
+ 		if($(this).attr('width') == 'null'){
+ 			$("#width").val('');
+ 		}else{
+ 			$("#width").val($(this).attr('width'));
+ 		}
+ 		if($(this).attr('unit') == 'null'){
+ 			$("#unit").val('');
+ 		}else{
+ 			$("#unit").val($(this).attr('unit')); 			
+ 		}
+ 		if($(this).attr('volume') == 'null'){
+ 			$("volume").val('');
+ 		}else{
+ 			$("#volume").val($(this).attr('volume'));
+ 		}
+ 		if($(this).attr('weight') == 'null'){
+ 			$("weight").val('');
+ 		}else{
+ 			$("#weight").val($(this).attr('weight'));
+ 		}
+ 		if($(this).attr('height') == 'null'){
+ 			$("height").val('');
+ 		}else{
+ 			$("#height").val($(this).attr('height'));
+ 		}
+ 		if($(this).attr('item_desc') == 'null'){
+ 			$("remark").val('');
+ 		}else{
+ 			$("#remark").val($(this).attr('item_desc'));
+ 		}
+ 		$("#productId").val($(this).attr('id'));
+ 		$('#itemNameList').hide();
+ 	});  	
 });
