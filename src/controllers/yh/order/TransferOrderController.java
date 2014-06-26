@@ -476,7 +476,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("arrival_mode", getPara("arrivalMode"));
             transferOrder.set("address", getPara("address"));
             transferOrder.set("create_stamp", new Date());
-            transferOrder.set("remark", getPara("remark"));
+            transferOrder.set("remark", getPara("remark")); 
             transferOrder.set("route_from", getPara("route_from"));
             transferOrder.set("route_to", getPara("route_to"));
             transferOrder.set("order_type", getPara("orderType"));
