@@ -34,12 +34,13 @@
                                 <div class="row">
                                    <form id="orderForm" method="post" action="/yh/departOrder/savedepartOrder">
                                <div class="col-lg-6">
-                               <input class="" id="depart_id" value="${depart_id!''}" type="hidden" name="depart_id" >
-                             <input class="" id="type" value="${type!''}" type="hidden" >
-            				 <input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
-            				  <input class="" id="tr_itemid_list" value="${tr_itemid!''}" type="hidden" name="tr_itemid_list">
-            				 <input class="" id="item_detail" value="${item_detail!''}" type="hidden" name="item_detail" >
-                                    
+                               <input class="" id="last_detail_size" value="${last_detail_size!''}" type="hidden">
+	                               <input class="" id="depart_id" value="${depart_id!''}" type="hidden" name="depart_id" >
+	                             <input class="" id="type" value="${type!''}" type="hidden" >
+	            				 <input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
+	            				  <input class="" id="tr_itemid_list" value="${tr_itemid!''}" type="hidden" name="tr_itemid_list">
+	            				 <input class="" id="item_detail" value="${item_detail!''}" type="hidden" name="item_detail" >
+	                               <input class="" id="getIindepart_no" value="" type="hidden" name="getIindepart_no" >    
                                    		  <h2>车辆信息</h2>  
                                    		   
                                            
@@ -48,7 +49,7 @@
 										    <div class="form-group">
 										        <!--label>司机名称</label-->
 										        <input type="hidden" id="driverId" name="driverid">
-										        <input type="text" name="customerMessage" placeholder="选择司机" class="form-control" id="customerMessage" value="${depart.CONTACT_PERSON!''}">
+										        <input type="text" name="customerMessage" placeholder="选择司机" class="form-control dropdown-toggle" id="customerMessage" data-toggle="dropdown" value="${depart.CONTACT_PERSON!''}">
 										        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="customerList">
 												</ul>
 										    </div>
@@ -112,6 +113,17 @@
                                             <label>电话</label>
                                              <input class="form-control" id="phone" value="${depart.PHONE!''}"  name="phone">
                                         </div>
+                                         <div class="form-group">
+	                                            <label>跟车人</label>
+	                                            <input class="form-control" id="car_follow_name" name="car_follow_name">
+                                            </div>
+                                                                               
+                                            <div class="form-group">
+	                                            <label>跟车人电话</label>
+	                                            <input class="form-control" id="car_follow_phone" name="car_follow_phone">
+                                            </div>
+                                            
+                                           
                                     </div>
                                       <div class="col-lg-6">
                                   <h2>发车信息</h2>  
@@ -129,8 +141,8 @@
                                            <label class="radio-inline">
                                                                                                                 发车单号:
                                             </label>
-                                              <label >
- 												FC20140562589
+                                              <label id="getIin_depart_no">
+ 												${getIin_depart_no!''}${depart.DEPART_NO!''}
                                             </label>
                                            </div>
               
@@ -143,8 +155,40 @@
                                         </div>                                                                               
 										<div class="form-group">
                                             <label>备注</label>
-                                            <textarea class="form-control" rows="4" id="remark" name="remark">${depart.remark!''}</textarea>
+                                            <textarea class="form-control" rows="4" id="remark" name="remark" style=" height: 108px">${depart.remark!''}</textarea>
                                         </div> 
+                                          <div class="form-group">
+                                         <label>始发城市</label>
+                                          <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;" >
+                                            <input id="locationForm" type="hidden" name="route_from" value="${depart.route_from!''}">
+                                            <input id="hideLocationFrom" type="hidden"> 
+                        
+                                               <label>省</label>
+                                               <input id="hideProvinceFrom" type="hidden" value="${locationFrom.province!''}"/>
+                                               <select id="mbProvinceFrom" style="width:150px" name="mbProvinceFrom" value=""></select>
+                                               <label>市</label>
+                                               <input id="hideCityFrom" type="hidden" value="${locationFrom.city!''}"/>
+                                               <select  id="cmbCityFrom" style="width:150px" name="cmbCityFrom" value=""></select>
+                                               <label>区(县)</label>
+                                               <input id="hideDistrictFrom" type="hidden" value="${locationFrom.district!''}" style="width: 26%"/>
+                                               <select  id="cmbAreaFrom" style="width: 25%" name="cmbAreaFrom" value=""></select>
+                                            	</div>
+                                            </div>
+        									<div class="form-group" >
+                                            <input id="locationTo" type="hidden" name="route_to" value="${depart.route_to!''}">
+                                           	<label>目的地城市</label>
+		                                     <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">
+		                                        <label>省</label>
+		                                        <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
+		                                        <select id="mbProvinceTo" style="width:150px" name="mbProvinceTo" value=""></select>
+		                                        <label>市</label>
+		                                        <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
+		                                        <select  id="cmbCityTo" style="width:150px" name="cmbCityTo" value=""></select>
+		                                        <label>区(县)</label>
+		                                        <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}" />
+		                                        <select  id="cmbAreaTo" style="width: 25%" name="cmbAreaTo" value=""></select>
+		                                    	</div>
+		                                    </div>
                                 </div>         
                                   </form>
                             </div>
@@ -292,6 +336,8 @@
                                 </div>
       
                             </div>
+                   
+                    
                             <div class="row">
                             <div class="col-lg-6">
                                         <div class="form-group">

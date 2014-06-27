@@ -15,7 +15,7 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
-                    return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+                    return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
                  }
             },
             { "mDataProp": "ORDER_NO"},
@@ -60,4 +60,39 @@ $(document).ready(function() {
             $("#createForm").submit();
     });
     
+    $('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $('#beginTime_filter').trigger('keyup');
+    });
+
+    $('#datetimepicker2').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $('#endTime_filter').trigger('keyup');
+    });
+    
+    $("#routeTo_filter ,#endTime_filter ,#beginTime_filter ,#routeFrom_filter ,#customer_filter ,#address_filter ,#status_filter ,#orderNo_filter").on( 'keyup click', function () {    	 	
+    	var orderNo = $("#orderNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var address = $("#address_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	var routeFrom = $("#routeFrom_filter").val();
+    	var routeTo = $("#routeTo_filter").val();
+    	datatable.fnSettings().sAjaxSource = "/yh/departOrder/createTransferOrderList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+    	datatable.fnDraw();
+    	
+      });
+    
+    $("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == true){
+			$("#saveBtn").attr('disabled', false);
+		}
+	});
 });
