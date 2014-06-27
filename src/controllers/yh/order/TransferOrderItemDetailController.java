@@ -44,7 +44,7 @@ public class TransferOrderItemDetailController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select d.id,d.notify_party_id,d.serial_no,d.item_name,d.volume,d.weight,c.contact_person,c.phone,c.address,d.remark,d.is_damage,d.ESTIMATE_DAMAGE_AMOUNT,d.DAMAGE_REVENUE,d.DAMAGE_PAYMENT,d.DAMAGE_REMARK from transfer_order_item_detail d,party p,contact c where d.item_id ="+itemId+" and d.notify_party_id=p.id and p.contact_id=c.id";
+        String sql = "select d.id,d.notify_party_id,d.serial_no,d.item_name,d.volume,d.weight,c.contact_person,c.phone,c.address,d.remark,d.is_damage,d.estimate_damage_amount,d.damage_revenue,d.damage_payment,d.damage_remark from transfer_order_item_detail d,party p,contact c where d.item_id ="+itemId+" and d.notify_party_id=p.id and p.contact_id=c.id";
 
         List<Record> transferOrders = Db.find(sql);
 
@@ -226,8 +226,8 @@ public class TransferOrderItemDetailController extends Controller {
 	public void getAllTransferOrderItemDetail() {
 		String item_id = getPara("transfer_order_item_id");
 		Map<String, List> map = new HashMap<String, List>();
-		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from TRANSFER_ORDER_ITEM_DETAIL where item_id=" + item_id);
-		List<Contact> contacts = Contact.dao.find("select * from contact  where id in(select contact_id from party where id in(SELECT NOTIFY_PARTY_ID FROM TRANSFER_ORDER_ITEM_DETAIL where item_id="+ item_id + "))");
+		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where item_id=" + item_id);
+		List<Contact> contacts = Contact.dao.find("select * from contact  where id in(select contact_id from party where id in(select notify_party_id from transfer_order_item_detail where item_id="+ item_id + "))");
 		map.put("transferOrderItemDetails", transferOrderItemDetails);
 		map.put("contacts", contacts);
 		renderJson(map);

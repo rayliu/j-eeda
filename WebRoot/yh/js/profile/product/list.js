@@ -1,6 +1,20 @@
 $(document).ready(function() {
     $('#menu_profile').addClass('active').find('ul').addClass('in');
     
+    // 显示所有的客户
+    $.get('/yh/product/searchAllCustomer', function(data){
+        console.log(data);
+        var zNodes =[];
+        for(var i=0;i<data.length && data.length>0;i++){
+	        var node={};
+	        node.name=data[i].ID;
+	        node.isParent=true;
+	        
+	        zNodes.push(node);	       
+        }
+        $.fn.zTree.init($("#categoryTree"), setting, zNodes);
+    },'json');
+    
     //获取客户的list，选中信息在下方展示其他信息
 	$('#customerMessage').on('keyup', function(){
 		var inputStr = $('#customerMessage').val();

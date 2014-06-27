@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.Category;
+import models.Party;
 import models.Product;
 
 import org.apache.log4j.Logger;
@@ -252,5 +253,11 @@ public class ProductController extends Controller {
     public void findAllCategory() {
     	List<Category> categories = Category.dao.find("select * from category where customer_id = ?", getPara("customerId"));
     	renderJson(categories);
+    }
+    
+    // 查找客户
+    public void searchAllCustomer() {
+    	List<Party> parties = Party.dao.find("select * from party where party_type = ?", Party.PARTY_TYPE_CUSTOMER);
+    	renderJson(parties);
     }
 }

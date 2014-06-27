@@ -199,11 +199,11 @@ public class TransferOrderController extends Controller {
             Location location = null;
             if (provinces.contains(l)) {
                 location = Location.dao
-                        .findFirst("SELECT l.name as CITY,l1.name as PROVINCE,l.code FROM location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                        .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
                                 + code + "'");
             } else {
                 location = Location.dao
-                        .findFirst("SELECT l.name as DISTRICT, l1.name as CITY,l2.name as PROVINCE,l.code FROM location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                        .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
                                 + code + "'");
             }
             setAttr("location", location);
@@ -215,15 +215,15 @@ public class TransferOrderController extends Controller {
         Location locationFrom = null;
         if (routeFrom != null || !"".equals(routeFrom)) {
             List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
-            Location l = Location.dao.findFirst("SELECT * FROM location where code = (select pcode from location where CODE = '"
+            Location l = Location.dao.findFirst("select * from location where code = (select pcode from location where code = '"
                     + routeFrom + "')");
             if (provinces.contains(l)) {
                 locationFrom = Location.dao
-                        .findFirst("SELECT l.name as CITY,l1.name as PROVINCE,l.code FROM location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                        .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
                                 + routeFrom + "'");
             } else {
                 locationFrom = Location.dao
-                        .findFirst("SELECT l.name as DISTRICT, l1.name as CITY,l2.name as PROVINCE,l.code FROM location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                        .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
                                 + routeFrom + "'");
             }
             setAttr("locationFrom", locationFrom);
@@ -233,15 +233,15 @@ public class TransferOrderController extends Controller {
         Location locationTo = null;
         if (routeTo != null || !"".equals(routeTo)) {
             List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
-            Location l = Location.dao.findFirst("SELECT * FROM location where code = (select pcode from location where CODE = '" + routeTo
+            Location l = Location.dao.findFirst("select * from location where code = (select pcode from location where code = '" + routeTo
                     + "')");
             if (provinces.contains(l)) {
                 locationTo = Location.dao
-                        .findFirst("SELECT l.name as CITY,l1.name as PROVINCE,l.code FROM location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                        .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
                                 + routeTo + "'");
             } else {
                 locationTo = Location.dao
-                        .findFirst("SELECT l.name as DISTRICT, l1.name as CITY,l2.name as PROVINCE,l.code FROM location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                        .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
                                 + routeTo + "'");
             }
             setAttr("locationTo", locationTo);
@@ -277,20 +277,6 @@ public class TransferOrderController extends Controller {
         setAttr("saveOK", true);
         if (LoginUserController.isAuthenticated(this))
             render("transferOrder/transferOrderList.html");
-    }
-
-    // 客户列表,列出最近使用的5个客户
-    public void selectCustomer() {
-        List<Contact> contactjson = Contact.dao
-                .find("SELECT * FROM CONTACT WHERE ID IN(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT CUSTOMER_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC) LIMIT 0,5)");
-        renderJson(contactjson);
-    }
-
-    // 客户列表,列出最近使用的5个供应商
-    public void selectServiceProvider() {
-        List<Contact> contactjson = Contact.dao
-                .find("SELECT * FROM CONTACT WHERE ID IN(SELECT CONTACT_ID FROM PARTY WHERE ID IN(SELECT SP_ID FROM TRANSFER_ORDER ORDER BY CREATE_STAMP DESC) LIMIT 0,5)");
-        renderJson(contactjson);
     }
 
     // 保存客户
@@ -547,8 +533,7 @@ public class TransferOrderController extends Controller {
     private String creatDepartNo() {
         String order_no = null;
         String the_order_no = null;
-        DepartOrder order = DepartOrder.dao.findFirst("select * from DEPART_ORDER where  COMBINE_TYPE= '" + DepartOrder.COMBINE_TYPE_DEPART
-                + "' order by DEPART_no desc limit 0,1");
+        DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order where  combine_type= '" + DepartOrder.COMBINE_TYPE_DEPART	+ "' order by depart_no desc limit 0,1");
         if (order != null) {
             String num = order.get("DEPART_no");
             String str = num.substring(2, num.length());
@@ -782,15 +767,15 @@ public class TransferOrderController extends Controller {
     public void searchLocationFrom() {
         String code = getPara("locationFrom");
         List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
-        Location l = Location.dao.findFirst("SELECT * FROM location where code = (select pcode from location where CODE = '" + code + "')");
+        Location l = Location.dao.findFirst("select * from location where code = (select pcode from location where CODE = '" + code + "')");
         Location location = null;
         if (provinces.contains(l)) {
             location = Location.dao
-                    .findFirst("SELECT l.name as CITY,l1.name as PROVINCE,l.code FROM location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                    .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
                             + code + "'");
         } else {
             location = Location.dao
-                    .findFirst("SELECT l.name as DISTRICT, l1.name as CITY,l2.name as PROVINCE,l.code FROM location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                    .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
                             + code + "'");
         }
         renderJson(location);

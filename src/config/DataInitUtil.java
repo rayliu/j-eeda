@@ -19,34 +19,35 @@ public class DataInitUtil {
             Statement stmt = conn.createStatement();
 
             // 登陆及授权的3个表
-            stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment PRIMARY KEY, user_name VARCHAR(50) not null, password VARCHAR(50) not null, password_hint VARCHAR(255));");
-            stmt.executeUpdate("create table if not exists user_roles(id bigint auto_increment PRIMARY KEY, user_name VARCHAR(50) not null, role_name VARCHAR(255) not null, remark VARCHAR(255));");
-            stmt.executeUpdate("create table if not exists role_permissions(id bigint auto_increment PRIMARY KEY, role_name VARCHAR(50) not null, role_permission VARCHAR(50), remark VARCHAR(255));");
-            stmt.executeUpdate("create table if not exists location(id bigint auto_increment PRIMARY KEY, code VARCHAR(50) not null, name VARCHAR(50), pcode VARCHAR(255));");
-            stmt.executeUpdate("create table if not exists office(id bigint auto_increment PRIMARY KEY, office_code VARCHAR(50), office_name VARCHAR(50), office_person VARCHAR(50),phone VARCHAR(255),contact_phone_name varchar(50),contact_phone varchar(50),address VARCHAR(255),email VARCHAR(50),type VARCHAR(50),company_intro VARCHAR(255),remark VARCHAR(255));");
-            stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment PRIMARY KEY, name VARCHAR(20) not null, type VARCHAR(50),remark VARCHAR(255));");
-            stmt.executeUpdate("create table if not exists fin_account_item(id bigint auto_increment PRIMARY KEY,account_id bigint,currency VARCHAR(50),org_name VARCHAR(50),account_pin VARCHAR(50),org_person varchar(50));");
-            stmt.executeUpdate("create table if not exists contract(id bigint auto_increment PRIMARY KEY, name VARCHAR(50) not null, type VARCHAR(50), party_id bigint,period_from Timestamp,period_to Timestamp, remark VARCHAR(255));");
-            stmt.executeUpdate("create table if not exists role(id bigint auto_increment PRIMARY KEY,role_name VARCHAR(50),role_time TIMESTAMP,role_people VARCHAR(50),role_lasttime TIMESTAMP,role_lastpeople VARCHAR(50));");
-            stmt.executeUpdate("create table if not exists Fin_item(id bigint auto_increment PRIMARY KEY,code VARCHAR(20),name VARCHAR(20),type VARCHAR(20),Remark VARCHAR(255));");
-            stmt.executeUpdate("create table if not exists privileges(id bigint auto_increment PRIMARY KEY,privilege VARCHAR(50));");
-            stmt.executeUpdate("create table if not exists modules(id bigint auto_increment PRIMARY KEY,module_name VARCHAR(50));");
-            stmt.executeUpdate("create table if not exists modules_privilege(id bigint auto_increment PRIMARY KEY,module_id bigint,privilege_id bigint);");
-            stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment PRIMARY KEY,contract_id bigint,Fin_item_id bigint,priceType varchar(50),carType varchar(255),carLength varchar(255),ltlUnitType varchar(50), from_id VARCHAR(50),location_from VARCHAR(50),to_id VARCHAR(50),location_to VARCHAR(50) ,amount Double,remark VARCHAR(255));");
+            stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255));");
+            stmt.executeUpdate("create table if not exists user_roles(id bigint auto_increment primary key, user_name varchar(50) not null, role_name varchar(255) not null, remark varchar(255));");
+            stmt.executeUpdate("create table if not exists role_permissions(id bigint auto_increment primary key, role_name varchar(50) not null, role_permission varchar(50), remark varchar(255));");
+            stmt.executeUpdate("create table if not exists location(id bigint auto_increment primary key, code varchar(50) not null, name varchar(50), pcode varchar(255));");
+            stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),contact_phone_name varchar(50),contact_phone varchar(50),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255));");
+            stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment primary key, name varchar(20) not null, type varchar(50),remark varchar(255));");
+            stmt.executeUpdate("create table if not exists fin_account_item(id bigint auto_increment primary key,account_id bigint,currency varchar(50),org_name varchar(50),account_pin varchar(50),org_person varchar(50));");
+            stmt.executeUpdate("create table if not exists contract(id bigint auto_increment primary key, name varchar(50) not null, type varchar(50), party_id bigint,period_from timestamp,period_to timestamp, remark varchar(255));");
+            stmt.executeUpdate("create table if not exists role(id bigint auto_increment primary key,role_name varchar(50),role_time timestamp,role_people varchar(50),role_lasttime timestamp,role_lastpeople varchar(50));");
+            stmt.executeUpdate("create table if not exists fin_item(id bigint auto_increment primary key,code varchar(20),name varchar(20),type varchar(20),remark varchar(255));");
+            stmt.executeUpdate("create table if not exists privileges(id bigint auto_increment primary key,privilege varchar(50));");
+            stmt.executeUpdate("create table if not exists modules(id bigint auto_increment primary key,module_name varchar(50));");
+            stmt.executeUpdate("create table if not exists modules_privilege(id bigint auto_increment primary key,module_id bigint,privilege_id bigint);");
+            stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment primary key,contract_id bigint,fin_item_id bigint,pricetype varchar(50),cartype varchar(255),carlength varchar(255),ltlunittype varchar(50), from_id varchar(50),location_from varchar(50),to_id varchar(50),location_to varchar(50) ,amount double,remark varchar(255));");
 
             // eeda 平台的SP
             stmt.executeUpdate("create table if not exists dp_prof_provider_info(OID bigint auto_increment PRIMARY KEY, ADDITIONAL_SERVICES VARCHAR(600),  BIZNATURE VARCHAR(60),  PROVIDER_SYS_CODE VARCHAR(90),  PROVIDER_NAME  VARCHAR(270),  PROVIDER_BIZ_CODE VARCHAR(60),  MAINTENANCE_OFFICE  VARCHAR(90),  COUNTRY_BAK VARCHAR(90),  PROVINCE_BAK VARCHAR(90),  CITY_BAK VARCHAR(90),  POST_CODE   VARCHAR(90),  CONTACT VARCHAR(120),  FAX_BAK VARCHAR(60),  EMAIL   VARCHAR(450),  TELEPHONE_BAK   VARCHAR(90),  ADDRESS1 VARCHAR(300),  ADDRESS2 VARCHAR(300),  ADDRESS3 VARCHAR(300),  ADDRESS4 VARCHAR(300),  STATUS  CHAR(1) default 'A',  CREATOR VARCHAR(20),  CREATE_DATE DATE,  LAST_UPDATER VARCHAR(20),  LAST_UPDATE_DATE DATE,  COUNTRY_OID bigint,  COUNTRY VARCHAR(300),  PROVINCE_OID bigint,  PROVINCE VARCHAR(300),  CITY_OID bigint,  CITY VARCHAR(300),  PHONE_COUNTRY_CODE  VARCHAR(10),  PHONE_AREA_CODE VARCHAR(10),  PHONE_NO VARCHAR(120),  FAX_COUNTRY_CODE VARCHAR(10),  FAX_AREA_CODE   VARCHAR(10),  FAX_NO  VARCHAR(120),  SPPM_OID bigint,  PROVIDER_FULL_NAME  VARCHAR(300),  CONTROL_OFFICE  VARCHAR(90),  DATA_REALM  VARCHAR(20),  COPY_FROM_SP_OID bigint,  ONE_OFF VARCHAR(1) default 'N',  EFFECTIVE_FROM  DATE,  EFFECTIVE_TO DATE, MAIL_SENT_TIME TIMESTAMP);");
 
             // 配送单
-            stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment PRIMARY KEY,Order_no VARCHAR(50),Transfer_order_id VARCHAR(50), customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status VARCHAR(50),cargo_nature Varchar(20),from_warehouse_code Varchar(20),Remark Varchar(255),Create_by bigint,Create_stamp timestamp,Last_modified_by bigint,Last_modified_stamp timestamp);");
+            stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment primary key,order_no varchar(50),transfer_order_id varchar(50), customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status varchar(50),cargo_nature varchar(20),from_warehouse_code varchar(20),remark varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp);");
 
             // delivery_order_milestone 配送单里程碑
-            stmt.executeUpdate("create table if not exists delivery_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
-                    + "last_modified_stamp TIMESTAMP,delivery_id bigint,FOREIGN KEY(delivery_id) REFERENCES delivery_order(id));");
+            stmt.executeUpdate("create table if not exists delivery_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
+                    			+ "last_modified_stamp timestamp,delivery_id bigint,foreign key(delivery_id) references delivery_order(id));");
 
             // 干线表
-            stmt.executeUpdate("create table if not exists route(id bigint auto_increment PRIMARY KEY,from_id VARCHAR(50), location_from VARCHAR(50) not null,to_id VARCHAR(50), location_to VARCHAR(50) not null, remark VARCHAR(255));");
-
+            stmt.executeUpdate("create table if not exists route(id bigint auto_increment primary key,from_id varchar(50), location_from varchar(50) not null,to_id varchar(50), location_to varchar(50) not null, remark varchar(255));");
+            
+            // TODO 此处存在大写的默认值
             stmt.executeUpdate("create table if not exists leads(id bigint auto_increment PRIMARY KEY, "
                     + "title VARCHAR(255), priority varchar(50), create_date TIMESTAMP, creator varchar(50), status varchar(50),"
                     + "type varchar(50), region varchar(50), addr varchar(256), "
@@ -56,85 +57,84 @@ public class DataInitUtil {
                     + "building_name varchar(255), building_unit varchar(50), building_no varchar(50), room_no varchar(50), is_have_car char(1) default 'N',"
                     + "is_public char(1) default 'N');");
 
-            stmt.executeUpdate("create table if not exists support_case(id bigint auto_increment PRIMARY KEY, title VARCHAR(255), type varchar(50), create_date TIMESTAMP, creator varchar(50), status varchar(50), case_desc VARCHAR(5120), note VARCHAR(5120));");
+            stmt.executeUpdate("create table if not exists support_case(id bigint auto_increment primary key, title varchar(255), type varchar(50), create_date timestamp, creator varchar(50), status varchar(50), case_desc varchar(5120), note varchar(5120));");
 
-            stmt.executeUpdate("create table if not exists order_header(id bigint auto_increment PRIMARY KEY, order_no VARCHAR(50) not null, type varchar(50), status varchar(50), creator VARCHAR(50), create_date TIMESTAMP, remark varchar(256));");
-            stmt.executeUpdate("create table if not exists order_item(id bigint auto_increment PRIMARY KEY, order_id bigint, item_name VARCHAR(50), item_desc VARCHAR(50), quantity decimal(10,2), unit_price decimal(10,2), status varchar(50), FOREIGN KEY(order_id) REFERENCES order_header(id) );");
+            stmt.executeUpdate("create table if not exists order_header(id bigint auto_increment primary key, order_no varchar(50) not null, type varchar(50), status varchar(50), creator varchar(50), create_date timestamp, remark varchar(256));");
+            stmt.executeUpdate("create table if not exists order_item(id bigint auto_increment primary key, order_id bigint, item_name varchar(50), item_desc varchar(50), quantity decimal(10,2), unit_price decimal(10,2), status varchar(50), foreign key(order_id) references order_header(id) );");
 
             // party 当事人，可以有各种type
-            stmt.executeUpdate("create table if not exists party(id bigint auto_increment PRIMARY KEY, party_type VARCHAR(32), contact_id bigint, create_date TIMESTAMP, creator varchar(50), last_update_date TIMESTAMP, last_updator varchar(50), status varchar(50),remark VARCHAR(255),receipt varchar(50));");
-            stmt.executeUpdate("create table if not exists party_attribute(id bigint auto_increment PRIMARY KEY, party_id bigint, attr_name varchar(60), attr_value VARCHAR(255), create_date TIMESTAMP, creator varchar(50), FOREIGN KEY(party_id) REFERENCES party(id));");
-            stmt.executeUpdate("create table if not exists contact(id bigint auto_increment PRIMARY KEY, company_name varchar(100),sp_type varchar(60),abbr varchar(60), contact_person varchar(100),location varchar(255),introduction varchar(255),email varchar(100), mobile varchar(100), phone varchar(100), address VARCHAR(255), city varchar(100), postal_code varchar(60),"
-                    + " create_date TIMESTAMP, Last_updated_stamp TIMESTAMP);");
+            stmt.executeUpdate("create table if not exists party(id bigint auto_increment primary key, party_type varchar(32), contact_id bigint, create_date timestamp, creator varchar(50), last_update_date timestamp, last_updator varchar(50), status varchar(50),remark varchar(255),receipt varchar(50));");
+            stmt.executeUpdate("create table if not exists party_attribute(id bigint auto_increment primary key, party_id bigint, attr_name varchar(60), attr_value varchar(255), create_date timestamp, creator varchar(50), foreign key(party_id) references party(id));");
+            stmt.executeUpdate("create table if not exists contact(id bigint auto_increment primary key, company_name varchar(100),sp_type varchar(60),abbr varchar(60), contact_person varchar(100),location varchar(255),introduction varchar(255),email varchar(100), mobile varchar(100), phone varchar(100), address varchar(255), city varchar(100), postal_code varchar(60),"
+            					+ " create_date timestamp, last_updated_stamp timestamp);");
 
             // category 类别
-            stmt.executeUpdate("create table if not exists category(id bigint auto_increment PRIMARY KEY,name varchar(255),parent_id bigint,FOREIGN KEY(parent_id) REFERENCES category(id),customer_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id));");
+            stmt.executeUpdate("create table if not exists category(id bigint auto_increment primary key,name varchar(255),parent_id bigint,foreign key(parent_id) references category(id),customer_id bigint,foreign key(customer_id) references party(id));");
 
             // product 产品
-            stmt.executeUpdate("create table if not exists product(id bigint auto_increment PRIMARY KEY,item_name varchar(50),item_no varchar(255),size double,width double,height double,unit varchar(255),volume double,weight double,item_desc varchar(5120),category_id bigint,FOREIGN KEY(category_id) REFERENCES category(id));");
+            stmt.executeUpdate("create table if not exists product(id bigint auto_increment primary key,item_name varchar(50),item_no varchar(255),size double,width double,height double,unit varchar(255),volume double,weight double,item_desc varchar(5120),category_id bigint,foreign key(category_id) references category(id));");
 
             // warehouse 仓库
-            stmt.executeUpdate("create table if not exists warehouse(id bigint auto_increment PRIMARY KEY,warehouse_name varchar(50),warehouse_address varchar(255),warehouse_area double,path varchar(255),warehouse_type varchar(255),status varchar(20),warehouse_desc VARCHAR(5120),sp_id bigint,notify_party_id bigint,office_id bigint,FOREIGN KEY(sp_id) REFERENCES party(id),FOREIGN KEY(notify_party_id) REFERENCES party(id),FOREIGN KEY(office_id) REFERENCES office(id),sp_name varchar(255));");
+            stmt.executeUpdate("create table if not exists warehouse(id bigint auto_increment primary key,warehouse_name varchar(50),warehouse_address varchar(255),warehouse_area double,path varchar(255),warehouse_type varchar(255),status varchar(20),warehouse_desc varchar(5120),sp_id bigint,notify_party_id bigint,office_id bigint,foreign key(sp_id) references party(id),foreign key(notify_party_id) references party(id),foreign key(office_id) references office(id),sp_name varchar(255));");
 
             // order_status 里程碑
-            stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment PRIMARY KEY,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
+            stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment primary key,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
             // return_order 回单
-            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment PRIMARY KEY, order_no varchar(50), status_code varchar(20),create_date TIMESTAMP,transaction_status varchar(20),order_type varchar(20),creator varchar(50),remark varchar(255), transfer_order_id bigint, delivery_order_id bigint, notity_party_id bigint,customer_id bigint);");
+            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,transaction_status varchar(20),order_type varchar(20),creator varchar(50),remark varchar(255), transfer_order_id bigint, delivery_order_id bigint, notity_party_id bigint,customer_id bigint);");
             // transfer_order 运输单
-            stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment PRIMARY KEY,order_no varchar(255),status varchar(255),assign_status varchar(255),"
-                    + "cargo_nature VARCHAR(255),pickup_mode VARCHAR(255),arrival_mode VARCHAR(255),remark varchar(255),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
-                    + "create_stamp TIMESTAMP,last_modified_by bigint,last_modified_stamp TIMESTAMP,eta TIMESTAMP,address varchar(255),customer_province varchar(255),route_from varchar(255),route_to varchar(255),order_type varchar(255),"
-                    + "customer_id bigint,sp_id bigint,notify_party_id bigint,driver_id bigint,warehouse_id bigint,office_id bigint,FOREIGN KEY(customer_id) REFERENCES party(id),FOREIGN KEY(sp_id) REFERENCES party(id),"
-                    + "FOREIGN KEY(notify_party_id) REFERENCES party(id),FOREIGN KEY(driver_id) REFERENCES party(id),FOREIGN KEY(warehouse_id) REFERENCES warehouse(id),FOREIGN KEY(office_id) REFERENCES office(id));");
+            stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),assign_status varchar(255),"
+			                    + "cargo_nature varchar(255),pickup_mode varchar(255),arrival_mode varchar(255),remark varchar(255),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
+			                    + "create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,eta timestamp,address varchar(255),customer_province varchar(255),route_from varchar(255),route_to varchar(255),order_type varchar(255),"
+			                    + "customer_id bigint,sp_id bigint,notify_party_id bigint,driver_id bigint,warehouse_id bigint,office_id bigint,foreign key(customer_id) references party(id),foreign key(sp_id) references party(id),"
+			                    + "foreign key(notify_party_id) references party(id),foreign key(driver_id) references party(id),foreign key(warehouse_id) references warehouse(id),foreign key(office_id) references office(id));");
             // transfer_order_item 货品明细
-            stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment PRIMARY KEY,item_no varchar(255),item_name varchar(255),item_desc varchar(255),"
-                    + "amount double,size double,width double,height double,unit varchar(255),volume double,weight double,remark varchar(5120),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id),product_id bigint,FOREIGN KEY(product_id) REFERENCES product(id));");
+            stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment primary key,item_no varchar(255),item_name varchar(255),item_desc varchar(255),"
+                    			+ "amount double,size double,width double,height double,unit varchar(255),volume double,weight double,remark varchar(5120),order_id bigint,foreign key(order_id) references transfer_order(id),product_id bigint,foreign key(product_id) references product(id));");
 
             // Transfer_Order_item_detail 单件货品明细
-            stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment PRIMARY KEY,order_id bigint,item_id bigint,item_no varchar(255),"
-                    + "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,"
-                    + "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),FOREIGN KEY(order_id) REFERENCES transfer_order(id),"
-                    + "FOREIGN KEY(item_id) REFERENCES transfer_order_item(id),FOREIGN KEY(notify_party_id) REFERENCES party(id));");
+            stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment primary key,order_id bigint,item_id bigint,item_no varchar(255),"
+			                    + "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,"
+			                    + "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),foreign key(order_id) references transfer_order(id),"
+			                    + "foreign key(item_id) references transfer_order_item(id),foreign key(notify_party_id) references party(id));");
             // Transfer_Order_fin_item 运输单应收应付明细
             stmt.executeUpdate("create table if not exists transfer_order_fin_item (id b"
-                    + ""
-                    + "igint auto_increment PRIMARY KEY, order_id bigint, fin_item_id bigint,"
-                    + "fin_item_code varchar(20), amount double, status varchar(50), "
-                    + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp);");
+			                    + "igint auto_increment primary key, order_id bigint, fin_item_id bigint,"
+			                    + "fin_item_code varchar(20), amount double, status varchar(50), "
+			                    + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp);");
 
             // billing_order 应收应付单主表
-            stmt.executeUpdate("create table if not exists billing_order(id bigint auto_increment PRIMARY KEY, blling_order_no varchar(255), "
-                    + "order_type varchar(50), customer_id bigint, customer_type varchar(50), charge_account_id bigint, payment_account_id bigint, status varchar(255),"
-                    + "transfer_order_id bigint, delivery_order_id bigint, remark varchar(1024), creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
-                    + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
+            stmt.executeUpdate("create table if not exists billing_order(id bigint auto_increment primary key, blling_order_no varchar(255), "
+			                    + "order_type varchar(50), customer_id bigint, customer_type varchar(50), charge_account_id bigint, payment_account_id bigint, status varchar(255),"
+			                    + "transfer_order_id bigint, delivery_order_id bigint, remark varchar(1024), creator bigint, create_stamp timestamp,last_modified_by bigint,"
+			                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
             // billing_order_item 应收应付单从表
-            stmt.executeUpdate("create table if not exists billing_order_item(id bigint auto_increment PRIMARY KEY,blling_order_id bigint, "
-                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
-                    + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
-                    + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
+            stmt.executeUpdate("create table if not exists billing_order_item(id bigint auto_increment primary key,blling_order_id bigint, "
+			                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
+			                    + "creator bigint, create_stamp timestamp,last_modified_by bigint,"
+			                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
             // stmt.executeUpdate(
-            stmt.executeUpdate("create table if not exists Pickup_order_item(id bigint auto_increment PRIMARY KEY,Order_id bigint,Customer_id bigint,Serial_no varchar(50),Item_no bigint,Item_name varchar(50),Item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
+            stmt.executeUpdate("create table if not exists pickup_order_item(id bigint auto_increment primary key,order_id bigint,customer_id bigint,serial_no varchar(50),item_no bigint,item_name varchar(50),item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
             // 配送单货品表
-            stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment PRIMARY KEY,transfer_no varchar(50),delivery_id bigint,transfer_order_id bigint,transfer_item_id bigint);");
+            stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment primary key,transfer_no varchar(50),delivery_id bigint,transfer_order_id bigint,transfer_item_id bigint);");
 
             // 发车单
-            stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment PRIMARY KEY,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp TIMESTAMP,combine_type varchar(255),"
-                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),remark varchar(255),driver_id bigint,FOREIGN KEY(driver_id) REFERENCES party(id));");
+            stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),"
+            					+ "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),remark varchar(255),driver_id bigint,foreign key(driver_id) references party(id));");
 
             // 发车单运输单中间表
-            stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,transfer_order_no varchar(255),FOREIGN KEY(depart_id) REFERENCES depart_order(id),FOREIGN KEY(order_id) REFERENCES transfer_order(id));");
+            stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,depart_id bigint,order_id bigint,transfer_order_no varchar(255),foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id));");
             // 发车单单品表
-            stmt.executeUpdate("create table if not exists depart_transfer_itemdetail(id bigint auto_increment PRIMARY KEY,depart_id bigint,order_id bigint,item_id bigint,itemdetail_id bigint );");
+            stmt.executeUpdate("create table if not exists depart_transfer_itemdetail(id bigint auto_increment primary key,depart_id bigint,order_id bigint,item_id bigint,itemdetail_id bigint );");
 
             // transfer_order_milestone 运输单里程碑
-            stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment PRIMARY KEY,status varchar(255),location varchar(255),create_by bigint,create_stamp TIMESTAMP,last_modified_by bigint,"
-                    + "last_modified_stamp TIMESTAMP,type varchar(255),order_id bigint,FOREIGN KEY(order_id) REFERENCES transfer_order(id),pickup_id bigint,depart_id bigint,FOREIGN KEY(pickup_id) REFERENCES depart_order(id));");
+            stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
+                    			+ "last_modified_stamp timestamp,type varchar(255),order_id bigint,foreign key(order_id) references transfer_order(id),pickup_id bigint,depart_id bigint,foreign key(pickup_id) references depart_order(id));");
 
-            stmt.executeUpdate("create table if not exists warehouse_order(id bigint auto_increment PRIMARY KEY,party_id bigint,warehouse_id bigint,order_no varchar(50),order_type varchar(50),status varchar(50),"
-                    + "qualifier varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
+            stmt.executeUpdate("create table if not exists warehouse_order(id bigint auto_increment primary key,party_id bigint,warehouse_id bigint,order_no varchar(50),order_type varchar(50),status varchar(50),"
+                    			+ "qualifier varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
 
-            stmt.executeUpdate("create table if not exists warehouse_order_item(id bigint auto_increment PRIMARY KEY,product_id bigint,item_no varchar(50),item_name varchar(50),itme_desc varchar(255),expire_date datetime,"
-                    + "lot_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
+            stmt.executeUpdate("create table if not exists warehouse_order_item(id bigint auto_increment primary key,product_id bigint,item_no varchar(50),item_name varchar(50),itme_desc varchar(255),expire_date datetime,"
+            					+ "lot_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
 
             stmt.close();
             // conn.commit();
@@ -162,10 +162,10 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('1201', '广州分公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','自营','这是一家公司');");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','控股','这是一家公司');");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('101', '深圳分公司','张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','合作','这是一家公司');");
-            stmt.executeUpdate("insert into office(OFFICE_NAME, OFFICE_PERSON, PHONE, CONTACT_PHONE_NAME,CONTACT_PHONE,ADDRESS,TYPE) values('广州源鸿物流有限公司','侯晓辉','66343695','侯晓辉','66343695','广州市萝岗区宏明路严田商业街11号','总公司');");
-            stmt.executeUpdate("insert into office(OFFICE_NAME, OFFICE_PERSON, PHONE, CONTACT_PHONE_NAME,CONTACT_PHONE,ADDRESS,TYPE) values('源鸿物流珠海分公司','陈秋明','13925642153','陈秋明','13925642153','广东省珠海市','合资分公司');");
-            stmt.executeUpdate("insert into office(OFFICE_NAME, OFFICE_PERSON, PHONE, CONTACT_PHONE_NAME,CONTACT_PHONE,ADDRESS,TYPE) values('上海源鸿物流有限公司','刘涛','18688696863','刘涛','18688696863','上海市','合作公司');");
-            stmt.executeUpdate("insert into office(OFFICE_NAME, OFFICE_PERSON, PHONE, CONTACT_PHONE_NAME,CONTACT_PHONE,ADDRESS,TYPE) values('贵阳源鸿物流有限公司','林伟军','13358215635','林伟军','13358215635','贵阳市','合作公司');");
+            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('广州源鸿物流有限公司','侯晓辉','66343695','侯晓辉','66343695','广州市萝岗区宏明路严田商业街11号','总公司');");
+            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('源鸿物流珠海分公司','陈秋明','13925642153','陈秋明','13925642153','广东省珠海市','合资分公司');");
+            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('上海源鸿物流有限公司','刘涛','18688696863','刘涛','18688696863','上海市','合作公司');");
+            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('贵阳源鸿物流有限公司','林伟军','13358215635','林伟军','13358215635','贵阳市','合作公司');");
 
             stmt.executeUpdate("insert into fin_account(name,type,remark) values('李志坚','收费','');");
             stmt.executeUpdate("insert into fin_account(name,type,remark) values('李四','收费','');");
@@ -186,12 +186,12 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','120000','天津','123123');");
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('120000','天津','110000','北京','123123');");
 
-            stmt.executeUpdate("insert into contract_item(contract_id,Fin_item_id,priceType,amount,from_id,location_from,to_id,location_to,remark) values('1','1','计件','120000','110000','北京','110103','宣武区','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,Fin_item_id,priceType,amount,from_id,location_from,to_id,location_to,remark) values('2','2','整车','130000','110000','北京','120000','天津','路线2');");
-            stmt.executeUpdate("insert into contract_item(contract_id,Fin_item_id,priceType,amount,from_id,location_from,to_id,location_to,remark) values('1','3','零担','120000','120000','天津','110000','北京','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,Fin_item_id,priceType,amount,remark) values('2','1','整车','130000','路线2');");
-            stmt.executeUpdate("insert into contract_item(contract_id,priceType,amount,remark) values('3','计件','120000','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,priceType,amount,remark) values('4','零担','130000','路线2');");
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1','1','计件','120000','110000','北京','110103','宣武区','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('2','2','整车','130000','110000','北京','120000','天津','路线2');");
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1','3','零担','120000','120000','天津','110000','北京','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,remark) values('2','1','整车','130000','路线2');");
+            stmt.executeUpdate("insert into contract_item(contract_id,pricetype,amount,remark) values('3','计件','120000','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,pricetype,amount,remark) values('4','零担','130000','路线2');");
 
             String propertySql = "insert into leads(title, create_date, creator, status, type, "
                     + "region, intro, remark, lowest_price, agent_fee, introducer, sales, follower, "
@@ -518,8 +518,8 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
 
             // 仓库
-            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,notify_party_id,office_id,WAREHOUSE_TYPE) values('582','源鸿广州总仓', '这是广州总仓','萝岗','9','2','ownWarehouse');");
-            stmt.execute("insert into warehouse(WAREHOUSE_AREA,WAREHOUSE_NAME,WAREHOUSE_DESC,WAREHOUSE_ADDRESS,notify_party_id,sp_id,WAREHOUSE_TYPE) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse');");
+            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,office_id,warehouse_type) values('582','源鸿广州总仓', '这是广州总仓','萝岗','9','2','ownWarehouse');");
+            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,sp_id,warehouse_type) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse');");
 
             // 类别
             stmt.execute("insert into category(name,customer_id) values('公司名', 19);");
@@ -532,13 +532,13 @@ public class DataInitUtil {
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category_id,item_desc) values('特殊货品', '2014042600003','11','53','74','59',2, '这是特殊货品');");
 
             // 运输单
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,WAREHOUSE_ID,ROUTE_FROM,ROUTE_TO,office_id,order_type,customer_province) values('ATM', '4', '12', 'YS2014042600001', '3', 'routeSP', '1', '新建', '2014-04-20 16:33:35.1', 'delivery','珠海','2','110102','440402','2','salesOrder','provinceOut');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,WAREHOUSE_ID,ROUTE_FROM,ROUTE_TO,office_id,order_type,customer_province) values('cargo', '5', '13', 'YS2014042600002', '4', 'pickupSP', '2', '新建', '2014-04-16 16:40:35.1', 'gateIn','中山','2','110105','442000','3','salesOrder','provinceIn');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,ROUTE_FROM,ROUTE_TO,office_id,order_type,customer_province) values('cargo', '6', '12', 'YS2014042600003', '4', 'pickupSP', '3', '新建', '2014-04-28 16:46:35.1', 'gateIn','广州','110106','440403','2','salesOrder','provinceOut');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,ROUTE_FROM,ROUTE_TO,office_id,order_type,customer_province) values('cargo', '8', '13', 'YS2014042600004', '3', 'own', '1', '已发车', '2014-04-25 16:35:35.1', 'gateIn','深圳','110107','440404','1','salesOrder','provinceIn');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,ROUTE_FROM,ROUTE_TO,office_id,order_type,customer_province) values('ATM', '7', '12', 'YS2014042600005', '3', 'own', '2', '已发车', '2014-04-22 16:28:35.1', 'delivery','东莞','110108','440507','1','arrangementOrder','provinceOut');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,ROUTE_FROM,ROUTE_TO,WAREHOUSE_ID,office_id,order_type,customer_province) values('ATM', '9', '13', 'YS2014042600006', '3', 'own', '3', '已发车', '2014-04-24 16:58:35.1', 'gateIn','东莞','110109','440511','2','2','arrangementOrder','provinceIn');");
-            stmt.executeUpdate("insert into transfer_order(CARGO_NATURE, SP_ID, NOTIFY_PARTY_ID, ORDER_NO, CREATE_BY, PICKUP_MODE, CUSTOMER_ID, STATUS, CREATE_STAMP, ARRIVAL_MODE,address,ROUTE_FROM,ROUTE_TO,WAREHOUSE_ID,office_id,order_type,customer_province) values('ATM', '10', '12', 'YS2014042600007', '3', 'own', '3', '已入库', '2014-04-24 16:58:35.1', 'gateIn','广州','','','1','3','arrangementOrder','provinceOut');");
+            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, pickup_mode, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province) values('ATM', '4', '12', 'YS2014042600001', '3', 'routeSP', '1', '新建', '2014-04-20 16:33:35.1', 'delivery','珠海','2','110102','440402','2','salesOrder','provinceOut');");
+            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, pickup_mode, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province) values('cargo', '5', '13', 'YS2014042600002', '4', 'pickupSP', '2', '新建', '2014-04-16 16:40:35.1', 'gateIn','中山','2','110105','442000','3','salesOrder','provinceIn');");
+            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, pickup_mode, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province) values('cargo', '6', '12', 'YS2014042600003', '4', 'pickupSP', '3', '新建', '2014-04-28 16:46:35.1', 'gateIn','广州','110106','440403','2','salesOrder','provinceOut');");
+            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, pickup_mode, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province) values('cargo', '8', '13', 'YS2014042600004', '3', 'own', '1', '已发车', '2014-04-25 16:35:35.1', 'gateIn','深圳','110107','440404','1','salesOrder','provinceIn');");
+            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, pickup_mode, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province) values('ATM', '7', '12', 'YS2014042600005', '3', 'own', '2', '已发车', '2014-04-22 16:28:35.1', 'delivery','东莞','110108','440507','1','arrangementOrder','provinceOut');");
+            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, pickup_mode, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,warehouse_id,office_id,order_type,customer_province) values('ATM', '9', '13', 'YS2014042600006', '3', 'own', '3', '已发车', '2014-04-24 16:58:35.1', 'gateIn','东莞','110109','440511','2','2','arrangementOrder','provinceIn');");
+            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, pickup_mode, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,warehouse_id,office_id,order_type,customer_province) values('ATM', '10', '12', 'YS2014042600007', '3', 'own', '3', '已入库', '2014-04-24 16:58:35.1', 'gateIn','广州','','','1','3','arrangementOrder','provinceOut');");
             // 货品明细
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM', 1);");
@@ -593,10 +593,10 @@ public class DataInitUtil {
                     + "values('7','aaasswqq63','10000', 'ATM', false,'10','10');");
 
             // 配送单
-            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,CREATE_STAMP) values('2014042600013','1','5','7','9','配送在途','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,CREATE_STAMP) values('2014042600004','2','6','7','10','已签收','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,CREATE_STAMP) values('2014042600014','3','5','8','9','取消','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(Order_no,Transfer_order_id,Customer_id,Sp_id,Notify_party_id,Status,CREATE_STAMP) values('2014042600003','4','6','8','10','配送在途','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no,transfer_order_id,customer_id,sp_id,notify_party_id,status,create_stamp) values('2014042600013','1','5','7','9','配送在途','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no,transfer_order_id,customer_id,sp_id,notify_party_id,status,create_stamp) values('2014042600004','2','6','7','10','已签收','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no,transfer_order_id,customer_id,sp_id,notify_party_id,status,create_stamp) values('2014042600014','3','5','8','9','取消','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no,transfer_order_id,customer_id,sp_id,notify_party_id,status,create_stamp) values('2014042600003','4','6','8','10','配送在途','2014-04-25 16:35:35.1');");
 
             // billing_order 应收应付单主表
             stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
@@ -650,10 +650,10 @@ public class DataInitUtil {
                     + "('应付对账单005', 'pay_audit_order',7, 'SERVICE_PROVIDER	', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
                     + "1, CURRENT_TIMESTAMP());");
             // billing_order_item 应收应付单从表
-            stmt.execute("create table if not exists billing_order_item(id bigint auto_increment PRIMARY KEY,blling_order_id bigint, "
-                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
-                    + "creator bigint, create_stamp TIMESTAMP,last_modified_by bigint,"
-                    + "last_modified_stamp TIMESTAMP, approver bigint, approve_date TIMESTAMP);");
+            stmt.execute("create table if not exists billing_order_item(id bigint auto_increment primary key,blling_order_id bigint, "
+		                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
+		                    + "creator bigint, create_stamp timestamp,last_modified_by bigint,"
+		                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
 
             // 发车单
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('FC2014061000001', '2014-06-10 10:35:35.1','DEPART','粤A876596','平板车','26','20');");
