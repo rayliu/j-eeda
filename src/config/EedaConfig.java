@@ -253,7 +253,7 @@ public class EedaConfig extends JFinalConfig {
             connectH2();
         } else {
             cp = new C3p0Plugin(url, username, pwd);
-            DataInitUtil.initH2Tables(cp);
+            // DataInitUtil.initH2Tables(cp);
 
         }
 
@@ -280,7 +280,7 @@ public class EedaConfig extends JFinalConfig {
 
     public void configHandler(Handlers me) {
         if (H2.equals(getProperty("dbType"))) {
-            DataInitUtil.initData(cp);
+            // DataInitUtil.initData(cp);
         }
         // DataInitUtil.initData(cp);
     }

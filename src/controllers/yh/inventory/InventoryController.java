@@ -1,5 +1,8 @@
 package controllers.yh.inventory;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -7,6 +10,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
@@ -45,6 +50,30 @@ public class InventoryController extends Controller {
 
     public void gateOut_add() {
         render("/yh/inventory/gateOutEdit.html");
+    }
+
+    public void searchCustomer() {
+        String input = getPara("input");
+        List<Record> locationList = Collections.EMPTY_LIST;
+        if (input.trim().length() > 0) {
+            locationList = Db
+                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and (company_name like '%"
+                            + input
+                            + "%' or contact_person like '%"
+                            + input
+                            + "%' or email like '%"
+                            + input
+                            + "%' or mobile like '%"
+                            + input
+                            + "%' or phone like '%"
+                            + input
+                            + "%' or address like '%"
+                            + input
+                            + "%' or postal_code like '%"
+                            + input
+                            + "%') limit 0,10");
+        }
+        renderJson(locationList);
     }
 
 }

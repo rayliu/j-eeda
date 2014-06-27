@@ -129,7 +129,7 @@ public class AccountController extends Controller {
         // 获取总条数
         String totalWhere = "";
         if (id != null && id.length() > 0) {
-            sql = "select count(1) total from fin_account f,fin_account_item f1 where f.id = f1.ACCOUNT_ID and f.id = '"
+            sql = "select count(1) total from fin_account f,fin_account_item f1 where f.id = f1.account_id and f.id = '"
                     + id + "'";
         }
         System.out.println(sql);
@@ -140,7 +140,7 @@ public class AccountController extends Controller {
         List<Record> orders = null;
         if (id != null && id.length() > 0) {
             orders = Db
-                    .find("select *,f1.id as fid from fin_account f,fin_account_item f1 where f.id = f1.ACCOUNT_ID and f.id = '"
+                    .find("select *,f1.id as fid from fin_account f,fin_account_item f1 where f.id = f1.account_id and f.id = '"
                             + id + "'" + sLimit);
         }
         Map orderMap = new HashMap();

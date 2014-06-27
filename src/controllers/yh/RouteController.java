@@ -89,7 +89,7 @@ public class RouteController extends Controller {
                     .find("select * from location where name like '%"
                             + locationName + "%' or code like '%"
                             + locationName + "%' or pcode like '%"
-                            + locationName + "%' ORDER BY id limit 10");
+                            + locationName + "%' order by id limit 10");
             renderJson(locationList);
         }
     }

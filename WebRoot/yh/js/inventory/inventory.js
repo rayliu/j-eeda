@@ -28,6 +28,29 @@ $(document).ready(function() {
 	            } 
 	            ]
 	} );
-		
+	 $('#customerMessage').on('keyup', function(){
+			var inputStr = $('#customerMessage').val();
+			$.get('/yh/gateIn/searchCustomer', {input:inputStr}, function(data){
+				console.log(data);
+				var customerList =$("#customerList");
+				customerList.empty();
+				for(var i = 0; i < data.length; i++)
+				{
+					customerList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+"</a></li>");
+				}
+			},'json');
+			$("#customerList").css({ 
+	        	left:$(this).position().left+"px", 
+	        	top:$(this).position().top+32+"px" 
+	        }); 
+	        $('#customerList').show();
+		});
+		// 选中供应商
+		$('#customerList').on('click', '.fromLocationItem', function(e){
+			$('#spMessage').val($(this).text());
+			$('#sp_id').val($(this).attr('spid'));
+			$('#cid').val($(this).attr('code'));
+	        $('#spList').hide();
+	    }); 
 
 });

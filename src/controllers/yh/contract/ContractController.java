@@ -452,7 +452,7 @@ public class ContractController extends Controller {
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
             sql = "select count(1) total from contract_item c where c.contract_id = "
-                    + contractId + " and PRICETYPE ='零担'";
+                    + contractId + " and pricetype ='零担'";
         }
 
         System.out.println(sql);
@@ -464,7 +464,7 @@ public class ContractController extends Controller {
         if (contractId != null && contractId.length() > 0) {
             orders = Db
                     .find("select * from  contract_item c where c.contract_id = "
-                            + contractId + " and PRICETYPE ='零担'" + sLimit);
+                            + contractId + " and pricetype ='零担'" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
