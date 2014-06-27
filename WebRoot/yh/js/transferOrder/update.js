@@ -66,6 +66,7 @@ $(document).ready(function() {
 		var message = $(this).text();
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#customer_id').val($(this).attr('partyId'));
+		$('#customerId').val($(this).attr('partyId'));
 		var location = $(this).attr('location');
 		$('#hideLocationFrom').val(location);	
 		$('#locationForm').val(location);		
@@ -1219,7 +1220,8 @@ $(document).ready(function() {
   	//获取货品的序列号list，选中信息在下方展示其他信息
  	$('#itemNoMessage').on('keyup', function(){
  		var inputStr = $('#itemNoMessage').val();
- 		$.get('/yh/transferOrder/searchItemNo', {input:inputStr}, function(data){
+ 		var customerId = $('#customerId').val();
+ 		$.get('/yh/transferOrder/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
  			console.log(data);
  			var itemNoList =$("#itemNoList");
  			itemNoList.empty();
@@ -1289,7 +1291,8 @@ $(document).ready(function() {
  	//获取货品的名称list，选中信息在下方展示其他信息
  	$('#itemNameMessage').on('keyup', function(){
  		var inputStr = $('#itemNameMessage').val();
- 		$.get('/yh/transferOrder/searchItemName', {input:inputStr}, function(data){
+ 		var customerId = $('#customerId').val();
+ 		$.get('/yh/transferOrder/searchItemName', {input:inputStr,customerId:customerId}, function(data){
  			console.log(data);
  			var itemNameList =$("#itemNameList");
  			itemNameList.empty();

@@ -255,7 +255,7 @@
 								      </div>
 								      <div class="modal-body">
 								      	<form id="transferOrderMilestoneForm" action="">
-								      		<input id="milestonePickupId" type="text" name="milestonePickupId" />
+								      		<input id="milestonePickupId" type="hidden" name="milestonePickupId" />
 											<div class="form-group ">
 											<label class="control-label" for="inputSuccess">状态(不填默认为"在途")</label> <input
 												id="status" class="form-control" type="text"
@@ -334,6 +334,7 @@
                             <hr/>
                         	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
 		               		<button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
+		               		<button id="finishBtn" disabled="disabled" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">已完成</button>
                         </div>                       
                     </div>
                     <!-- /.panel -->

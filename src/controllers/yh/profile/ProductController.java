@@ -1,5 +1,6 @@
 package controllers.yh.profile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -172,6 +173,24 @@ public class ProductController extends Controller {
         }
 
         renderJson(category);
+    } 
+    
+    // 查出客户的根类别
+    public void searchCustomerCategory2() {
+        //String customerId = getPara("customerId");
+    	List<Category> categories = new ArrayList<Category>();
+        List<Product> list = Product.dao.find("select * from product");
+        for(Product product : list){
+	        Category category = Category.dao.findFirst("select * from category where customer_id =? and parent_id is null", product.get("customer_id"));
+	        if (category == null) {
+	            category = new Category();
+	            category.set("name", "root");
+	            category.set("customer_id", product.get("customer_id"));
+	            category.save();
+	        }
+	        categories.add(category);
+        }
+        renderJson(categories);
     }
 
     // 查出当前节点的子节点
@@ -257,7 +276,7 @@ public class ProductController extends Controller {
     
     // 查找客户
     public void searchAllCustomer() {
-    	List<Party> parties = Party.dao.find("select * from party where party_type = ?", Party.PARTY_TYPE_CUSTOMER);
+    	List<Party> parties = Party.dao.find("select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where party_type = ?", Party.PARTY_TYPE_CUSTOMER);
     	renderJson(parties);
     }
 }

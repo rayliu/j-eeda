@@ -525,6 +525,7 @@ public class DataInitUtil {
             stmt.execute("insert into category(name,customer_id) values('公司名', 19);");
             stmt.execute("insert into category(name,customer_id, parent_id) values('ATM', 19, 1);");
             stmt.execute("insert into category(name,customer_id, parent_id) values('普通货品', 19, 1);");
+            stmt.execute("insert into category(name,customer_id, parent_id) values('4k', 19, 3);");
 
             // 产品
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category_id,item_desc) values('ATM', '2014042600001','1','5','7','9',2, '这是一台ATM');");
@@ -663,9 +664,9 @@ public class DataInitUtil {
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '5','YS2014042600005');");
 
             // 拼车单
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('PC2014061000001', '2014-06-10 10:35:35.1','PICKUP','粤A876596','平板货车','26','20');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('PC2014061000001', '2014-06-10 10:35:35.1','PICKUP','粤A876596','平板货车','26','20','新建');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('3', '3','YS2014042600003');");
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('PC2014061000002', '2014-06-10 10:39:35.1','PICKUP','粤A879588','箱式货车','27','25');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('PC2014061000002', '2014-06-10 10:39:35.1','PICKUP','粤A879588','箱式货车','27','25','新建');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '4','YS2014042600004');");
             // stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '3','YS2014042600003');");
 
@@ -680,19 +681,19 @@ public class DataInitUtil {
     public static void newCustomer() {
         Contact contact = new Contact();
         contact.set("company_name", "珠海创诚易达信息科技有限公司")
-                .set("contact_person", "温生").set("email", "test@test.com");
+                .set("contact_person", "温生").set("email", "test@test.com").set("abbr", "珠海创诚易达");
         contact.set("mobile", "12345671").set("phone", "113527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
                 .set("postal_code", "5190001").set("location", "110101").save();
         Contact contact7 = new Contact();
         contact7.set("company_name", "珠海博兆计算机科技有限公司")
-                .set("contact_person", "温生").set("email", "test@test.com");
+                .set("contact_person", "温生").set("email", "test@test.com").set("abbr", "珠海博兆");
         contact7.set("mobile", "12345671").set("phone", "113527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
                 .set("postal_code", "5190001").set("location", "441900").save();
         Contact contact2 = new Contact();
         contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生")
-                .set("email", "test@test.com");
+                .set("email", "test@test.com").set("abbr", "北京制药珠分");
         contact2.set("mobile", "12345672").set("phone", "213527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场2")
                 .set("postal_code", "5190002").set("location", "110102").save();

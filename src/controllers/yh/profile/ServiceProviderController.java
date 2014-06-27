@@ -55,7 +55,7 @@ public class ServiceProviderController extends Controller {
         for (int i = 0; i < customers.size(); i++) {
 
             code = customers.get(i).get("location");
-            String sql2 = "SELECT trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code='"
+            String sql2 = "select trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code='"
                     + code + "'";
             List<Record> customers2 = Db.find(sql2);
             String id = "";
@@ -97,16 +97,16 @@ public class ServiceProviderController extends Controller {
         List<Location> provinces = Location.dao
                 .find("select * from location where pcode ='1'");
         Location l = Location.dao
-                .findFirst("SELECT * FROM LOCATION where code = (select pcode from location where CODE = '"
+                .findFirst("select * from location where code = (select pcode from location where code = '"
                         + code + "')");
         Location location = null;
         if (provinces.contains(l)) {
             location = Location.dao
-                    .findFirst("SELECT l.name as CITY,l1.name as PROVINCE,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                    .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
                             + code + "'");
         } else {
             location = Location.dao
-                    .findFirst("SELECT l.name as DISTRICT, l1.name as CITY,l2.name as PROVINCE,l.code FROM LOCATION l left join lOCATION  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                    .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
                             + code + "'");
         }
         setAttr("location", location);

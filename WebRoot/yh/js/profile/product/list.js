@@ -7,12 +7,27 @@ $(document).ready(function() {
         var zNodes =[];
         for(var i=0;i<data.length && data.length>0;i++){
 	        var node={};
-	        node.name=data[i].ID;
+	        node.name=data[i].ABBR;
 	        node.isParent=true;
 	        
-	        zNodes.push(node);	       
+	        zNodes.push(node);	       	        
         }
         $.fn.zTree.init($("#categoryTree"), setting, zNodes);
+        
+        /*for(var i=0;i<data.length && data.length>0;i++){
+	        var customerId = data[i].PID;
+	        $.get('/yh/product/searchCustomerCategory', {customerId:customerId}, function(data){
+	            console.log(data);
+	            for(var i=0;i<data.length && data.length>0;i++){
+	    	        var node={};
+	    	        node.name=data[i].ABBR;
+	    	        node.isParent=true;
+	    	        
+	    	        zNodes.push(node);	       
+	            }
+	            $.fn.zTree.init($("#categoryTree"), setting, zNodes);
+	        },'json');
+        }*/
     },'json');
     
     //获取客户的list，选中信息在下方展示其他信息

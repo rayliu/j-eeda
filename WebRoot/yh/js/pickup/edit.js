@@ -192,6 +192,7 @@ $(document).ready(function() {
 				}
 			},'json');
         }
+        $("#finishBtn").attr('disabled', false);
 	});
 
     //获取全国省份
@@ -500,4 +501,11 @@ $(document).ready(function() {
 		$('#transferOrderMilestone').modal('hide');
 	});
 	
+	// 点击已完成按钮
+	$("#finishBtn").click(function(){
+		var pickupOrderId = $("#pickupOrderId").val();
+		$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId}, function(e){
+			e.preventDefault();
+		},'json');
+	});
 } );

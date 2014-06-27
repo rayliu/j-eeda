@@ -715,9 +715,10 @@ public class TransferOrderController extends Controller {
     // 查找序列号
     public void searchItemNo() {
         String input = getPara("input");
+        String customerId = getPara("customerId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db.find("select * from product where item_no like '%" + input + "%' limit 0,10");
+            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = "+customerId+") and item_no like '%" + input + "%' limit 0,10");
         }
         renderJson(locationList);
     }
@@ -725,9 +726,10 @@ public class TransferOrderController extends Controller {
     // 查找产品名
     public void searchItemName() {
         String input = getPara("input");
+        String customerId = getPara("customerId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db.find("select * from product where item_name like '%" + input + "%' limit 0,10");
+            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = "+customerId+") and item_name like '%" + input + "%' limit 0,10");
         }
         renderJson(locationList);
     }
