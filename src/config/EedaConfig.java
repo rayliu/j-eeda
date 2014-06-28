@@ -40,6 +40,7 @@ import models.yh.profile.AccountItem;
 import models.yh.profile.Contact;
 import models.yh.profile.Route;
 
+import org.apache.log4j.Logger;
 import org.bee.tl.ext.jfinal.BeetlRenderFactory;
 import org.h2.tools.Server;
 
@@ -52,6 +53,7 @@ import com.jfinal.config.Routes;
 import com.jfinal.ext.plugin.shiro.ShiroPlugin;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
+import com.jfinal.plugin.activerecord.SqlReporter;
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import com.jfinal.plugin.c3p0.C3p0Plugin;
 
@@ -63,6 +65,8 @@ import controllers.eeda.SalesOrderController;
 import controllers.eeda.UserProfileController;
 
 public class EedaConfig extends JFinalConfig {
+    private Logger logger = Logger.getLogger(EedaConfig.class);
+
     private static String H2 = "H2";
     private static String Mysql = "Mysql";
     private static String ProdMysql = "ProdMysql";
@@ -85,8 +89,7 @@ public class EedaConfig extends JFinalConfig {
         templateFactory.groupTemplate.setCharset("utf-8");// 没有这句，html上的汉字会乱码
 
         // 注册后，可以使beetl html中使用shiro tag
-        templateFactory.groupTemplate.registerFunctionPackage("shiro",
-                new ShiroExt());
+        templateFactory.groupTemplate.registerFunctionPackage("shiro", new ShiroExt());
 
         // me.setErrorView(401, "/login.html");
         // me.setErrorView(403, "/login.html");
@@ -98,7 +101,7 @@ public class EedaConfig extends JFinalConfig {
         System.out.println(name);
         // get pid
         String pid = name.split("@")[0];
-        System.out.println("Pid is: " + pid);
+        logger.info("Pid is: " + pid);
     }
 
     public void configRoute(Routes me) {
@@ -123,61 +126,35 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/toll", controllers.yh.TollController.class, "/yh");
         me.add("/yh/privilege", controllers.yh.PrivilegeController.class, "/yh");
         me.add("/yh/pay", controllers.yh.PayController.class, "/yh");
-        me.add("/yh/customer", controllers.yh.profile.CustomerController.class,
-                "/yh");
-        me.add("/yh/serviceProvider",
-                controllers.yh.profile.ServiceProviderController.class, "/yh");
+        me.add("/yh/customer", controllers.yh.profile.CustomerController.class, "/yh");
+        me.add("/yh/serviceProvider", controllers.yh.profile.ServiceProviderController.class, "/yh");
         me.add("/yh/location", controllers.yh.LocationController.class, "/yh");
-        me.add("/yh/customerContract",
-                controllers.yh.contract.ContractController.class, "/yh");
-        me.add("/yh/spContract",
-                controllers.yh.contract.ContractController.class, "/yh");
+        me.add("/yh/customerContract", controllers.yh.contract.ContractController.class, "/yh");
+        me.add("/yh/spContract", controllers.yh.contract.ContractController.class, "/yh");
         me.add("/yh/route", controllers.yh.RouteController.class, "/yh");
         me.add("/yh/office", controllers.yh.OfficeController.class, "/yh");
-        me.add("/yh/product", controllers.yh.profile.ProductController.class,
-                "/yh");
-        me.add("/yh/warehouse",
-                controllers.yh.profile.WarehouseController.class, "/yh");
-        me.add("/yh/orderStatus",
-                controllers.yh.profile.OrderStatusController.class, "/yh");
+        me.add("/yh/product", controllers.yh.profile.ProductController.class, "/yh");
+        me.add("/yh/warehouse", controllers.yh.profile.WarehouseController.class, "/yh");
+        me.add("/yh/orderStatus", controllers.yh.profile.OrderStatusController.class, "/yh");
         me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
-        me.add("/yh/transferOrder",
-                controllers.yh.order.TransferOrderController.class, "/yh");
-        me.add("/yh/transferOrderItem",
-                controllers.yh.order.TransferOrderItemController.class, "/yh");
-        me.add("/yh/transferOrderItemDetail",
-                controllers.yh.order.TransferOrderItemDetailController.class,
-                "/yh");
-        me.add("/yh/transferOrderMilestone",
-                controllers.yh.order.TransferOrderMilestoneController.class,
-                "/yh");
-        me.add("/yh/returnorder", controllers.yh.ReturnOrderControllers.class,
-                "/yh");
-        me.add("/yh/delivery",
-                controllers.yh.delivery.DeliveryController.class, "/yh");
+        me.add("/yh/transferOrder", controllers.yh.order.TransferOrderController.class, "/yh");
+        me.add("/yh/transferOrderItem", controllers.yh.order.TransferOrderItemController.class, "/yh");
+        me.add("/yh/transferOrderItemDetail", controllers.yh.order.TransferOrderItemDetailController.class, "/yh");
+        me.add("/yh/transferOrderMilestone", controllers.yh.order.TransferOrderMilestoneController.class, "/yh");
+        me.add("/yh/returnorder", controllers.yh.ReturnOrderControllers.class, "/yh");
+        me.add("/yh/delivery", controllers.yh.delivery.DeliveryController.class, "/yh");
 
-        me.add("/yh/deliverySpContract",
-                controllers.yh.contract.ContractController.class, "/yh");
+        me.add("/yh/deliverySpContract", controllers.yh.contract.ContractController.class, "/yh");
 
-        me.add("/yh/deliveryOrderMilestone",
-                controllers.yh.delivery.DeliveryOrderMilestoneController.class,
-                "/yh");
-        me.add("/yh/pickupOrder",
-                controllers.yh.pickup.PickupOrderController.class, "/yh");
-        me.add("/yh/chargeCheckOrder",
-                controllers.yh.arap.ChargeCheckOrderController.class, "/yh");
-        me.add("/yh/paymentCheckOrder",
-                controllers.yh.arap.PaymentCheckOrderController.class, "/yh");
-        me.add("/yh/receivableCheckOrder",
-                controllers.yh.arap.ReceivableCheckOrderController.class, "/yh");
-        me.add("/yh/copeCheckOrder",
-                controllers.yh.arap.CopeCheckOrderController.class, "/yh");
-        me.add("/yh/departOrder",
-                controllers.yh.departOrder.DepartOrderController.class, "/yh");
-        me.add("/yh/gateIn",
-                controllers.yh.inventory.InventoryController.class, "/yh");
-        me.add("/yh/gateOut",
-                controllers.yh.inventory.InventoryController.class, "/yh");
+        me.add("/yh/deliveryOrderMilestone", controllers.yh.delivery.DeliveryOrderMilestoneController.class, "/yh");
+        me.add("/yh/pickupOrder", controllers.yh.pickup.PickupOrderController.class, "/yh");
+        me.add("/yh/chargeCheckOrder", controllers.yh.arap.ChargeCheckOrderController.class, "/yh");
+        me.add("/yh/paymentCheckOrder", controllers.yh.arap.PaymentCheckOrderController.class, "/yh");
+        me.add("/yh/receivableCheckOrder", controllers.yh.arap.ReceivableCheckOrderController.class, "/yh");
+        me.add("/yh/copeCheckOrder", controllers.yh.arap.CopeCheckOrderController.class, "/yh");
+        me.add("/yh/departOrder", controllers.yh.departOrder.DepartOrderController.class, "/yh");
+        me.add("/yh/gateIn", controllers.yh.inventory.InventoryController.class, "/yh");
+        me.add("/yh/gateOut", controllers.yh.inventory.InventoryController.class, "/yh");
 
     }
 
@@ -193,7 +170,8 @@ public class EedaConfig extends JFinalConfig {
         me.add(cp);
 
         arp = new ActiveRecordPlugin(cp);
-        arp.setShowSql(true);// ShowSql
+        arp.setShowSql(true);// 控制台打印Sql
+        SqlReporter.setLogger(true);// log4j 打印Sql
         me.add(arp);
 
         arp.setDialect(new MysqlDialect());
@@ -224,8 +202,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("contract", Contract.class);
         arp.addMapping("transfer_order", TransferOrder.class);
         arp.addMapping("transfer_order_item", TransferOrderItem.class);
-        arp.addMapping("transfer_order_item_detail",
-                TransferOrderItemDetail.class);
+        arp.addMapping("transfer_order_item_detail", TransferOrderItemDetail.class);
         arp.addMapping("return_order", ReturnOrder.class);
         arp.addMapping("delivery_order", DeliveryOrder.class);
         arp.addMapping("transfer_order_milestone", TransferOrderMilestone.class);
@@ -237,8 +214,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("delivery_order_item", DeliveryOrderItem.class);
         arp.addMapping("depart_order", DepartOrder.class);
         arp.addMapping("depart_transfer", DepartTransferOrder.class);
-        arp.addMapping("depart_transfer_itemdetail",
-                DepartOrderItemdetail.class);
+        arp.addMapping("depart_transfer_itemdetail", DepartOrderItemdetail.class);
         // yh mapping
 
     }
@@ -280,7 +256,7 @@ public class EedaConfig extends JFinalConfig {
 
     public void configHandler(Handlers me) {
         if (H2.equals(getProperty("dbType"))) {
-             DataInitUtil.initData(cp);
+            DataInitUtil.initData(cp);
         }
          //DataInitUtil.initData(cp);
     }

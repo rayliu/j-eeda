@@ -22,7 +22,8 @@
       <dispatcher>ERROR</dispatcher>
   </filter-mapping>
   
- 
+
+  
   <filter>
        <filter-name>GzipFilter</filter-name>
        <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
