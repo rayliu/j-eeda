@@ -58,7 +58,7 @@
             <arg value="/"/>
             <arg value="0"/>
             <classpath path="WebRoot/WEB-INF/classes"></classpath>
-        </java>
+        </java>	
     </target>
 	
    <target name="clean"> 
@@ -68,13 +68,17 @@
     </target>
     
     <target name="compile" >
-         <mkdir dir="WebRoot/WEB-INF/classes" />
+        <mkdir dir="WebRoot/WEB-INF/classes" />
         <javac srcdir="src"
                  destdir="WebRoot/WEB-INF/classes"
                  fork="true"
                  classpathref="project.lib.path">
             <compilerarg line="-encoding UTF-8"/>
-        </javac> 
+        </javac>
+    	<copy todir="WebRoot/WEB-INF/classes">
+    	    <fileset dir="src"
+    	             includes="**/*.properties" />
+    	</copy>	
     </target>
 	
 	<target name="h2ci">
