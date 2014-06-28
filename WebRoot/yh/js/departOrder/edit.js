@@ -127,19 +127,19 @@
     	         	var detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','));
     	         	    item_id=code.substring(code.indexOf(',')+1,code.indexOf('}'));
     	         	   item_detail_id.push(detail_id);
-    	         	  /*  for(var i=0;i<item_detail_id.length;){
+    	         	    for(var i=0;i<item_detail_id.length;){
     	         	    	if(detail_id==item_detail_id[i]){
     	         	    		item_detail_id.splice(i,1);
     	         	    		i=i-i;
     	         	    		continue;
     	         	    	};
     	         	    	i++;
-    	         	    };*/
+    	         	    };
     	         		
     	         	});          		
     	         	}); 
     	    	 tr_itemid_list.push(item_id);
-    	    	/* if(tr_itemid_list.length>0){
+    	    	 if(tr_itemid_list.length>0){
     	    		 for(var i=0;i<tr_itemid_list.length;){
  	         	    	if(item_id==tr_itemid_list[i]){
  	         	    		tr_itemid_list.splice(i,1);
@@ -148,7 +148,7 @@
  	         	    	};
  	         	    	i++;
  	         	    };
-    	    	 };*/
+    	    	 };
     	    	
     	    	$("#item_detail").val(item_detail_id);
     	    	$("#tr_itemid_list").val(tr_itemid_list);
