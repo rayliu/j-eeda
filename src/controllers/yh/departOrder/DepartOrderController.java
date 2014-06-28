@@ -74,19 +74,18 @@ public class DepartOrderController extends Controller {
 
 	// 添加编辑
 	public void add() {
-
 		if (getPara() == null) {
 			if (LoginUserController.isAuthenticated(this))
 
 				render("/yh/departOrder/allTransferOrderList.html");
 		} else if(!"".equals(getPara("depart_id"))||getPara()!=null){
-			int depart_id=0;
+			/*int depart_id=0;
 			if("".equals(getPara("edit_depart_id"))){
 				depart_id=Integer.parseInt(getPara());
 			}else{
 				depart_id=Integer.parseInt(getPara("edit_depart_id"));
-			}
-			
+			}*/
+			int depart_id=Integer.parseInt(getPara());
 			getIintedit(depart_id);
 		}
 		
