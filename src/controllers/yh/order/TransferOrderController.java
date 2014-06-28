@@ -668,7 +668,7 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and (company_name like '%"
+                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"' and (company_name like '%"
                             + input
                             + "%' or contact_person like '%"
                             + input
@@ -683,6 +683,8 @@ public class TransferOrderController extends Controller {
                             + "%' or postal_code like '%"
                             + input
                             + "%') limit 0,10");
+        }else{
+        	locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'");
         }
         renderJson(locationList);
     }
@@ -693,7 +695,7 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' and (company_name like '%"
+                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"' and (company_name like '%"
                             + input
                             + "%' or contact_person like '%"
                             + input
@@ -708,6 +710,8 @@ public class TransferOrderController extends Controller {
                             + "%' or postal_code like '%"
                             + input
                             + "%') limit 0,10");
+        }else{
+        	locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'");
         }
         renderJson(locationList);
     }
@@ -719,6 +723,8 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db.find("select * from product where category_id in (select id from category where customer_id = "+customerId+") and item_no like '%" + input + "%' limit 0,10");
+        }else{
+        	locationList = Db.find("select * from product where category_id in (select id from category where customer_id = "+customerId+")");
         }
         renderJson(locationList);
     }
@@ -730,6 +736,8 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db.find("select * from product where category_id in (select id from category where customer_id = "+customerId+") and item_name like '%" + input + "%' limit 0,10");
+        }else{
+        	locationList = Db.find("select * from product where category_id in (select id from category where customer_id = "+customerId+")");
         }
         renderJson(locationList);
     }
@@ -802,6 +810,9 @@ public class TransferOrderController extends Controller {
         if (input.trim().length() > 0) {
             locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
                     + Party.PARTY_TYPE_DRIVER + "' and (contact_person like '%" + input + "%' or phone like '%" + input + "%') limit 0,10");
+        }else{
+        	locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
+        			+ Party.PARTY_TYPE_DRIVER + "'");        	
         }
         renderJson(locationList);
     }

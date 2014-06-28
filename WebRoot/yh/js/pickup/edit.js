@@ -1,7 +1,7 @@
 $(document).ready(function() {
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
 	 // 列出所有的司机
-	 $('#driverMessage').on('keyup', function(){
+	 $('#driverMessage').on('keyup click', function(){
  		var inputStr = $('#driverMessage').val();
  		if(inputStr == ""){
  			$('#driver_phone').val($(this).attr(""));

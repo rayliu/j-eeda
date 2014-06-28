@@ -47,15 +47,14 @@ public class DataInitUtil {
             // 干线表
             stmt.executeUpdate("create table if not exists route(id bigint auto_increment primary key,from_id varchar(50), location_from varchar(50) not null,to_id varchar(50), location_to varchar(50) not null, remark varchar(255));");
             
-            // TODO 此处存在大写的默认值
-            stmt.executeUpdate("create table if not exists leads(id bigint auto_increment PRIMARY KEY, "
-                    + "title VARCHAR(255), priority varchar(50), create_date TIMESTAMP, creator varchar(50), status varchar(50),"
-                    + "type varchar(50), region varchar(50), addr varchar(256), "
-                    + "intro varchar(5120), remark VARCHAR(5120), lowest_price DECIMAL(20, 2), agent_fee DECIMAL(20, 2), "
-                    + "introducer varchar(256), sales varchar(256), follower varchar(50), follower_phone varchar(50),"
-                    + "owner varchar(50), owner_phone varchar(50), area decimal(10,2), total decimal(10,2), customer_source varchar(50), "
-                    + "building_name varchar(255), building_unit varchar(50), building_no varchar(50), room_no varchar(50), is_have_car char(1) default 'N',"
-                    + "is_public char(1) default 'N');");
+            stmt.executeUpdate("create table if not exists leads(id bigint auto_increment primary key, "
+			                    + "title varchar(255), priority varchar(50), create_date timestamp, creator varchar(50), status varchar(50),"
+			                    + "type varchar(50), region varchar(50), addr varchar(256), "
+			                    + "intro varchar(5120), remark varchar(5120), lowest_price decimal(20, 2), agent_fee decimal(20, 2), "
+			                    + "introducer varchar(256), sales varchar(256), follower varchar(50), follower_phone varchar(50),"
+			                    + "owner varchar(50), owner_phone varchar(50), area decimal(10,2), total decimal(10,2), customer_source varchar(50), "
+			                    + "building_name varchar(255), building_unit varchar(50), building_no varchar(50), room_no varchar(50), is_have_car char(1) default 'N',"
+			                    + "is_public char(1) default 'N');");
 
             stmt.executeUpdate("create table if not exists support_case(id bigint auto_increment primary key, title varchar(255), type varchar(50), create_date timestamp, creator varchar(50), status varchar(50), case_desc varchar(5120), note varchar(5120));");
 
@@ -670,6 +669,12 @@ public class DataInitUtil {
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '4','YS2014042600004');");
             // stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '3','YS2014042600003');");
 
+            // 运输里程碑
+            stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(2, 3, '2014-06-28 10:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
+            stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(3, 3, '2014-06-28 10:40:35.1', '新建', 'TRANSFERORDERMILESTONE');");
+            stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(4, 3, '2014-06-28 10:43:35.1', '新建', 'TRANSFERORDERMILESTONE');");
+            stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(6, 3, '2014-06-28 11:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
+            
             stmt.close();
             // conn.commit();
             conn.close();

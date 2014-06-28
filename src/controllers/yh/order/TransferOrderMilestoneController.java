@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
+import models.DepartTransferOrder;
 import models.TransferOrder;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -122,6 +123,7 @@ public class TransferOrderMilestoneController extends Controller {
 	        String username = userLogin.get("user_name");
 	        map.put("username", username);
     	}else if(milestonePickupId != null && !"".equals(milestonePickupId)){
+    		TransferOrder transferOrder = null;
     		DepartOrder departOrder = DepartOrder.dao.findById(milestonePickupId);
 	        TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
 	        String status = getPara("status");
@@ -150,7 +152,41 @@ public class TransferOrderMilestoneController extends Controller {
 	        transferOrderMilestone.set("pickup_id", milestonePickupId);
 	        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE);
 	        transferOrderMilestone.save();
-	
+	        
+	        // 更新运输单状态
+	        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departOrder.get("id"));
+	        for(DepartTransferOrder departTransferOrder : departTransferOrders){
+	        	transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+	        	TransferOrderMilestone tom = new TransferOrderMilestone();
+	        	String status2 = getPara("status");
+		        String location2 = getPara("location");
+		        if (!status.isEmpty()) {
+		        	tom.set("status", status2);
+		        	transferOrder.set("status", status2);
+		        } else {
+		        	tom.set("status", "在途");
+		        	transferOrder.set("status", "在途");
+		        }
+		        departOrder.update();
+		        if (!location.isEmpty()) {
+		        	tom.set("location", location2);
+		        } else {
+		        	tom.set("location", "");
+		        }
+		        String name2 = (String) currentUser.getPrincipal();
+		        List<UserLogin> users2 = UserLogin.dao.find("select * from user_login where user_name='" + name2 + "'");
+		
+		        tom.set("create_by", users.get(0).get("id"));
+		
+		        java.util.Date utilDate2 = new java.util.Date();
+		        java.sql.Timestamp sqlDate2 = new java.sql.Timestamp(utilDate2.getTime());
+		        tom.set("create_stamp", sqlDate2);
+		        tom.set("order_id", departTransferOrder.get("order_id"));
+		        tom.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+	        	tom.save();
+	        	transferOrder.update();
+	        }
+	        
 	        map.put("transferOrderMilestone", transferOrderMilestone);
 	        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
 	        String username = userLogin.get("user_name");

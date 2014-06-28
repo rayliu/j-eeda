@@ -9,8 +9,8 @@ $(document).ready(function() {
 	        var node={};
 	        node.name=data[i].ABBR;
 	        node.isParent=true;
-	        
-	        zNodes.push(node);	       	        
+	        node.click=nodePlusClickHandler;
+	        zNodes.push(node);	
         }
         $.fn.zTree.init($("#categoryTree"), setting, zNodes);
         
@@ -192,7 +192,7 @@ $(document).ready(function() {
         ],      
     });
     
-    var handler= function(e){
+    var nodePlusClickHandler= function(e){
     	e.preventDefault();
     	var customerId = $('#customerId').val();
     	var categoryId = $(this).find('li').attr('categoryId');
@@ -214,7 +214,7 @@ $(document).ready(function() {
 				"</i>  <a href='javascript:void(0)' id='"+data[i].ID+"'>"+data[i].NAME+
 				"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
 				"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  " +
-				"<a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul>").click(handler);
+				"<a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul>").click(nodePlusClickHandler);
     			}
     		);
     	}
