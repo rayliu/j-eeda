@@ -36,3 +36,4 @@ php-version
 /build
 WebRoot/WEB-INF/config/app_config.txt-uat
 WebRoot/WEB-INF/config/shiro.ini-uat
+logs/eeda
