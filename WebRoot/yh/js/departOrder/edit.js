@@ -124,12 +124,32 @@
     			 $("table tr:not(:first)").each(function(){ 
     	         	$("input:checked",this).each(function(){
     	         	var code=$(this).val();
-    	         	var detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','))
-    	         	    item_id=code.substring(code.indexOf(',')+1,code.indexOf('}'))
-    	         		item_detail_id.push(detail_id);
+    	         	var detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','));
+    	         	    item_id=code.substring(code.indexOf(',')+1,code.indexOf('}'));
+    	         	   item_detail_id.push(detail_id);
+    	         	  /*  for(var i=0;i<item_detail_id.length;){
+    	         	    	if(detail_id==item_detail_id[i]){
+    	         	    		item_detail_id.splice(i,1);
+    	         	    		i=i-i;
+    	         	    		continue;
+    	         	    	};
+    	         	    	i++;
+    	         	    };*/
+    	         		
     	         	});          		
     	         	}); 
     	    	 tr_itemid_list.push(item_id);
+    	    	/* if(tr_itemid_list.length>0){
+    	    		 for(var i=0;i<tr_itemid_list.length;){
+ 	         	    	if(item_id==tr_itemid_list[i]){
+ 	         	    		tr_itemid_list.splice(i,1);
+ 	         	    		i=i-i;
+ 	         	    		continue;
+ 	         	    	};
+ 	         	    	i++;
+ 	         	    };
+    	    	 };*/
+    	    	
     	    	$("#item_detail").val(item_detail_id);
     	    	$("#tr_itemid_list").val(tr_itemid_list);
     			/*根据货品id显示对应单品*/
@@ -162,7 +182,22 @@
               "aoColumns": [
                      { "mDataProp": null,
                        "fnRender": function(obj) {
-                           return '<input type="checkbox" name="order_check_box" checked="checked" value={'+obj.aData.ID+','+obj.aData.ITEM_ID+'}>';
+                    	   var Returnhtml="";
+                    	   var Returnhtml_one="<input type='checkbox' name='order_check_box' checked='checked' value={"+obj.aData.ID+","+obj.aData.ITEM_ID+"}>";
+                    	   var Returnhtml_two="<input type='checkbox' name='order_check_box' checked='' value={"+obj.aData.ID+","+obj.aData.ITEM_ID+"}>";
+                    	   /*if(item_detail_id.length>0){
+                    		   for(var i=0;i<item_detail_id;i++){
+                        		   if(item_detail_id[i]==obj.aData.ID){
+                        			   Returnhtml=Returnhtml_one;
+                        		   }else{
+                        			   Returnhtml=Returnhtml_two;
+                        		   }
+                        	   }
+                    	   }else{
+                    		   Returnhtml=Returnhtml_one;
+                    	   }*/
+                    	   
+                           return Returnhtml_one;
                       }
                      },
                     { "mDataProp": "ITEM_NAME"},      
@@ -517,14 +552,42 @@
     	         	var detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','));
     	         	    item_id=code.substring(code.indexOf(',')+1,code.indexOf('}'));
     	         		item_detail_id.push(detail_id);
+    	         		/* for(var i=0;i<item_detail_id.length;){
+    		         	    	if(detail_id==item_detail_id[i]){
+    		         	    		item_detail_id.splice(i,1);
+    		         	    		i=i-i;
+    		         	    		continue;
+    		         	    	};
+    		         	    	i++;
+    		         	    };*/
     	         	});          		
     	         	}); 
     	    	 tr_itemid_list.push(item_id);
+    	    	/* for(var i=0;i<tr_itemid_list.length;){
+	         	    	if(item_id==tr_itemid_list[i]){
+	         	    		tr_itemid_list.splice(i,1);
+	         	    		i=i-i;
+	         	    		continue;
+	         	    	};
+	         	    	i++;
+	         	    };
+	         	    alert(tr_itemid_list);
+	         	   alert(item_detail_id);*/
     	    	$("#item_detail").val(item_detail_id);
     	    	$("#tr_itemid_list").val(tr_itemid_list);
     	    	var getIindepart_no=$("#getIin_depart_no").text();
     	    	$("#getIindepart_no").val(getIindepart_no);
     	       $('#orderForm').submit();
     	    });
+    	    
+    	    $("#box_one_edit").click(function(e){
+    	    	 $('#boxoneForm').submit();
+    	    });
+    	    $("#box_two_edit").click(function(e){
+   	    	 $('#boxtwoForm').submit();
+   	    });
+    	    $("#box_two_config").click(function(e){
+    	    	$("#box_two").modal('hide');
+      	    });
     	 
     });

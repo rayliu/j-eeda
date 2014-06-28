@@ -78,17 +78,18 @@ public class DepartOrderController extends Controller {
 			if (LoginUserController.isAuthenticated(this))
 
 				render("/yh/departOrder/allTransferOrderList.html");
-		} else if(!"".equals(getPara("depart_id"))||getPara()!=null){
-			/*int depart_id=0;
-			if("".equals(getPara("edit_depart_id"))){
-				depart_id=Integer.parseInt(getPara());
-			}else{
-				depart_id=Integer.parseInt(getPara("edit_depart_id"));
-			}*/
+		} else{
 			int depart_id=Integer.parseInt(getPara());
+			
 			getIintedit(depart_id);
 		}
 		
+	}
+	//弹窗
+	public void boxedit(){
+		if(!"".equals(getPara("edit_depart_id"))){
+			getIintedit(Integer.parseInt(getPara("edit_depart_id").toString()));
+		}
 	}
 	public void getIintedit(int depart_id){
 		int edit_depart_id=depart_id;
@@ -137,6 +138,7 @@ public class DepartOrderController extends Controller {
 		setAttr("depart_id", getPara());
 		setAttr("localArr", depar.get("order_id"));
 		setAttr("depart", depar);
+		setAttr("depart_id", depart_id);
 		if (LoginUserController.isAuthenticated(this))
 			render("departOrder/editTransferOrder.html");
 	

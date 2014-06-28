@@ -345,10 +345,14 @@
                        			<div class="panel-body">
                             	<p>当前单据创建完毕,是否继续创建发车单？</p>
                         		</div>
+                        		 <form id="boxoneForm" method="post" action="/yh/departOrder/boxedit">
+                        		 <input value="${edit_depart_id!''}" name="edit_depart_id" type="hidden">
                        			 <div class="panel-footer">
-                          			 <a type="button" class="btn btn-default" href="/yh/departOrder/add?edit_depart_id="${edit_depart_id!''}>编辑</a>
-                           			<a type="button" class="btn btn-default" href="">确定</a>
+                          			 <a type="button" class="btn btn-default" id="box_one_edit">编辑</a>
+                           			<a type="button" class="btn btn-default" id="box_one_confige" href="/yh/departOrder/add">确定</a>
                         		</div>
+                        		
+                        		</form>
                    				</div> 
 				                 </div>
 				                </div>      
@@ -364,10 +368,13 @@
                        			<div class="panel-body">
                             	<p>还有货品未处理,是否继续创建发车单？</p>
                         		</div>
+                        		 <form id="boxtwoForm" method="post" action="/yh/departOrder/boxedit">
+                        		 <input value="${edit_depart_id!''}" name="edit_depart_id" type="hidden">
                        			 <div class="panel-footer">
-                          			 <a type="button" class="btn btn-default" href="">编辑</a>
-                           			<a type="button" class="btn btn-default" href="">确定</a>
+                          			 <a type="button" class="btn btn-default" id="box_two_edit">编辑</a>
+                           			<a type="button" class="btn btn-default" id="box_two_config">确定</a>
                         		</div>
+                        		</form>
                    				</div> 
 				                 </div>
 				                </div>      
