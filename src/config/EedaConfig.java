@@ -282,6 +282,6 @@ public class EedaConfig extends JFinalConfig {
         if (H2.equals(getProperty("dbType"))) {
              DataInitUtil.initData(cp);
         }
-        // DataInitUtil.initData(cp);
+         //DataInitUtil.initData(cp);
     }
 }
