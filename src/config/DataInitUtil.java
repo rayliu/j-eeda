@@ -5,6 +5,7 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
 
+import models.Category;
 import models.Party;
 import models.PartyAttribute;
 import models.yh.profile.Contact;
@@ -42,19 +43,19 @@ public class DataInitUtil {
 
             // delivery_order_milestone 配送单里程碑
             stmt.executeUpdate("create table if not exists delivery_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
-                    			+ "last_modified_stamp timestamp,delivery_id bigint,foreign key(delivery_id) references delivery_order(id));");
+                    + "last_modified_stamp timestamp,delivery_id bigint,foreign key(delivery_id) references delivery_order(id));");
 
             // 干线表
             stmt.executeUpdate("create table if not exists route(id bigint auto_increment primary key,from_id varchar(50), location_from varchar(50) not null,to_id varchar(50), location_to varchar(50) not null, remark varchar(255));");
-            
+
             stmt.executeUpdate("create table if not exists leads(id bigint auto_increment primary key, "
-			                    + "title varchar(255), priority varchar(50), create_date timestamp, creator varchar(50), status varchar(50),"
-			                    + "type varchar(50), region varchar(50), addr varchar(256), "
-			                    + "intro varchar(5120), remark varchar(5120), lowest_price decimal(20, 2), agent_fee decimal(20, 2), "
-			                    + "introducer varchar(256), sales varchar(256), follower varchar(50), follower_phone varchar(50),"
-			                    + "owner varchar(50), owner_phone varchar(50), area decimal(10,2), total decimal(10,2), customer_source varchar(50), "
-			                    + "building_name varchar(255), building_unit varchar(50), building_no varchar(50), room_no varchar(50), is_have_car char(1) default 'N',"
-			                    + "is_public char(1) default 'N');");
+                    + "title varchar(255), priority varchar(50), create_date timestamp, creator varchar(50), status varchar(50),"
+                    + "type varchar(50), region varchar(50), addr varchar(256), "
+                    + "intro varchar(5120), remark varchar(5120), lowest_price decimal(20, 2), agent_fee decimal(20, 2), "
+                    + "introducer varchar(256), sales varchar(256), follower varchar(50), follower_phone varchar(50),"
+                    + "owner varchar(50), owner_phone varchar(50), area decimal(10,2), total decimal(10,2), customer_source varchar(50), "
+                    + "building_name varchar(255), building_unit varchar(50), building_no varchar(50), room_no varchar(50), is_have_car char(1) default 'N',"
+                    + "is_public char(1) default 'N');");
 
             stmt.executeUpdate("create table if not exists support_case(id bigint auto_increment primary key, title varchar(255), type varchar(50), create_date timestamp, creator varchar(50), status varchar(50), case_desc varchar(5120), note varchar(5120));");
 
@@ -65,7 +66,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists party(id bigint auto_increment primary key, party_type varchar(32), contact_id bigint, create_date timestamp, creator varchar(50), last_update_date timestamp, last_updator varchar(50), status varchar(50),remark varchar(255),receipt varchar(50));");
             stmt.executeUpdate("create table if not exists party_attribute(id bigint auto_increment primary key, party_id bigint, attr_name varchar(60), attr_value varchar(255), create_date timestamp, creator varchar(50), foreign key(party_id) references party(id));");
             stmt.executeUpdate("create table if not exists contact(id bigint auto_increment primary key, company_name varchar(100),sp_type varchar(60),abbr varchar(60), contact_person varchar(100),location varchar(255),introduction varchar(255),email varchar(100), mobile varchar(100), phone varchar(100), address varchar(255), city varchar(100), postal_code varchar(60),"
-            					+ " create_date timestamp, last_updated_stamp timestamp);");
+                    + " create_date timestamp, last_updated_stamp timestamp);");
 
             // category 类别
             stmt.executeUpdate("create table if not exists category(id bigint auto_increment primary key,name varchar(255),parent_id bigint,foreign key(parent_id) references category(id),customer_id bigint,foreign key(customer_id) references party(id));");
@@ -82,35 +83,35 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,transaction_status varchar(20),order_type varchar(20),creator varchar(50),remark varchar(255), transfer_order_id bigint, delivery_order_id bigint, notity_party_id bigint,customer_id bigint);");
             // transfer_order 运输单
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),assign_status varchar(255),"
-			                    + "cargo_nature varchar(255),pickup_mode varchar(255),arrival_mode varchar(255),remark varchar(255),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
-			                    + "create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,eta timestamp,address varchar(255),customer_province varchar(255),route_from varchar(255),route_to varchar(255),order_type varchar(255),"
-			                    + "customer_id bigint,sp_id bigint,notify_party_id bigint,driver_id bigint,warehouse_id bigint,office_id bigint,foreign key(customer_id) references party(id),foreign key(sp_id) references party(id),"
-			                    + "foreign key(notify_party_id) references party(id),foreign key(driver_id) references party(id),foreign key(warehouse_id) references warehouse(id),foreign key(office_id) references office(id));");
+                    + "cargo_nature varchar(255),pickup_mode varchar(255),arrival_mode varchar(255),remark varchar(255),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
+                    + "create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,eta timestamp,address varchar(255),customer_province varchar(255),route_from varchar(255),route_to varchar(255),order_type varchar(255),"
+                    + "customer_id bigint,sp_id bigint,notify_party_id bigint,driver_id bigint,warehouse_id bigint,office_id bigint,foreign key(customer_id) references party(id),foreign key(sp_id) references party(id),"
+                    + "foreign key(notify_party_id) references party(id),foreign key(driver_id) references party(id),foreign key(warehouse_id) references warehouse(id),foreign key(office_id) references office(id));");
             // transfer_order_item 货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment primary key,item_no varchar(255),item_name varchar(255),item_desc varchar(255),"
-                    			+ "amount double,size double,width double,height double,unit varchar(255),volume double,weight double,remark varchar(5120),order_id bigint,foreign key(order_id) references transfer_order(id),product_id bigint,foreign key(product_id) references product(id));");
+                    + "amount double,size double,width double,height double,unit varchar(255),volume double,weight double,remark varchar(5120),order_id bigint,foreign key(order_id) references transfer_order(id),product_id bigint,foreign key(product_id) references product(id));");
 
             // Transfer_Order_item_detail 单件货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment primary key,order_id bigint,item_id bigint,item_no varchar(255),"
-			                    + "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,"
-			                    + "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),foreign key(order_id) references transfer_order(id),"
-			                    + "foreign key(item_id) references transfer_order_item(id),foreign key(notify_party_id) references party(id));");
+                    + "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,"
+                    + "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),foreign key(order_id) references transfer_order(id),"
+                    + "foreign key(item_id) references transfer_order_item(id),foreign key(notify_party_id) references party(id));");
             // Transfer_Order_fin_item 运输单应收应付明细
             stmt.executeUpdate("create table if not exists transfer_order_fin_item (id b"
-			                    + "igint auto_increment primary key, order_id bigint, fin_item_id bigint,"
-			                    + "fin_item_code varchar(20), amount double, status varchar(50), "
-			                    + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp);");
+                    + "igint auto_increment primary key, order_id bigint, fin_item_id bigint,"
+                    + "fin_item_code varchar(20), amount double, status varchar(50), "
+                    + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp);");
 
             // billing_order 应收应付单主表
             stmt.executeUpdate("create table if not exists billing_order(id bigint auto_increment primary key, blling_order_no varchar(255), "
-			                    + "order_type varchar(50), customer_id bigint, customer_type varchar(50), charge_account_id bigint, payment_account_id bigint, status varchar(255),"
-			                    + "transfer_order_id bigint, delivery_order_id bigint, remark varchar(1024), creator bigint, create_stamp timestamp,last_modified_by bigint,"
-			                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
+                    + "order_type varchar(50), customer_id bigint, customer_type varchar(50), charge_account_id bigint, payment_account_id bigint, status varchar(255),"
+                    + "transfer_order_id bigint, delivery_order_id bigint, remark varchar(1024), creator bigint, create_stamp timestamp,last_modified_by bigint,"
+                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
             // billing_order_item 应收应付单从表
             stmt.executeUpdate("create table if not exists billing_order_item(id bigint auto_increment primary key,blling_order_id bigint, "
-			                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
-			                    + "creator bigint, create_stamp timestamp,last_modified_by bigint,"
-			                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
+                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
+                    + "creator bigint, create_stamp timestamp,last_modified_by bigint,"
+                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
             // stmt.executeUpdate(
             stmt.executeUpdate("create table if not exists pickup_order_item(id bigint auto_increment primary key,order_id bigint,customer_id bigint,serial_no varchar(50),item_no bigint,item_name varchar(50),item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
             // 配送单货品表
@@ -118,7 +119,7 @@ public class DataInitUtil {
 
             // 发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),"
-            					+ "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),remark varchar(255),driver_id bigint,foreign key(driver_id) references party(id));");
+                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),remark varchar(255),driver_id bigint,foreign key(driver_id) references party(id));");
 
             // 发车单运输单中间表
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,depart_id bigint,order_id bigint,transfer_order_no varchar(255),foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id));");
@@ -127,13 +128,13 @@ public class DataInitUtil {
 
             // transfer_order_milestone 运输单里程碑
             stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
-                    			+ "last_modified_stamp timestamp,type varchar(255),order_id bigint,foreign key(order_id) references transfer_order(id),pickup_id bigint,depart_id bigint,foreign key(pickup_id) references depart_order(id));");
+                    + "last_modified_stamp timestamp,type varchar(255),order_id bigint,foreign key(order_id) references transfer_order(id),pickup_id bigint,depart_id bigint,foreign key(pickup_id) references depart_order(id));");
 
             stmt.executeUpdate("create table if not exists warehouse_order(id bigint auto_increment primary key,party_id bigint,warehouse_id bigint,order_no varchar(50),order_type varchar(50),status varchar(50),"
-                    			+ "qualifier varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
+                    + "qualifier varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
 
             stmt.executeUpdate("create table if not exists warehouse_order_item(id bigint auto_increment primary key,product_id bigint,item_no varchar(50),item_name varchar(50),itme_desc varchar(255),expire_date datetime,"
-            					+ "lot_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
+                    + "lot_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
 
             stmt.close();
             // conn.commit();
@@ -195,11 +196,9 @@ public class DataInitUtil {
             String propertySql = "insert into leads(title, create_date, creator, status, type, "
                     + "region, intro, remark, lowest_price, agent_fee, introducer, sales, follower, "
                     + "follower_phone, owner, owner_phone, customer_source, building_name, building_no, room_no, building_unit) values("
-                    + "'%d 初始测试数据-老香洲两盘', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'1房', '老香洲', "
+                    + "'%d 初始测试数据-老香洲两盘', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'1房', '老香洲', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', '58自来客', '五洲花城2期', '2', '1320', '3');";
 
             // for (int i = 0; i < 50; i++) {
@@ -210,100 +209,62 @@ public class DataInitUtil {
                     + "region, intro, remark, lowest_price, agent_fee, introducer, sales, follower, follower_phone, "
                     + "owner, owner_phone, area, total, customer_source, building_name, building_no, room_no, building_unit) values(";
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-老香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'1房', '老香洲', "
-                    + "'老香洲楼盘 2房2卫',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-老香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'1房', '老香洲', "
+                    + "'老香洲楼盘 2房2卫'," + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 36, 1200, '58自来客', '五洲花城2期', '2', '1320', '3');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-新香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出售', "
-                    + "'2房', '新香洲', "
-                    + "'新香洲楼盘 2房2卫',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-新香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出售', " + "'2房', '新香洲', "
+                    + "'新香洲楼盘 2房2卫'," + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 78, 56, '58自来客', '五洲花城2期', '3', '1321', '5');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-老香洲楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已租', "
-                    + "'3房', '老香洲', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-老香洲楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已租', " + "'3房', '老香洲', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 92, 2300, '58自来客', '五洲花城2期', '4', '1320', '3');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-拱北楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已售', "
-                    + "'4房', '拱北', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-拱北楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已售', " + "'4房', '拱北', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 150, 120, '58自来客', '五洲花城2期', '6', '1320', '3');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'5房', '柠溪', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'5房', '柠溪', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '', '1325', '8');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房', '柠溪', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'6房', '柠溪', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '', '5');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房以上', '柠溪', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'6房以上', '柠溪', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
-                    + "'地皮', '前山', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', " + "'地皮', '前山', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'd_user1', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
                     + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房以上', '柠溪', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'6房以上', '柠溪', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
-                    + "'地皮', '前山', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', " + "'地皮', '前山', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'd_user1', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
                     + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房以上', '柠溪', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', " + "'6房以上', '柠溪', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
                     + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
 
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
-                    + "'地皮', '前山', "
+            stmt.executeUpdate(sqlPrefix + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', " + "'地皮', '前山', "
                     + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'd_user1', '13509871234',"
+                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
                     + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
 
             stmt.executeUpdate("insert into support_case(title, create_date, creator, status, type, case_desc, note) values("
@@ -429,26 +390,20 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','5');");
             // 收费条目定义表code VARCHAR(50),name VARCHAR(50),type VARCHAR(50),Remark
 
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
-                    + "'2013201448','干线运输费','应收','这是一张运输单收费');");
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
-                    + "'2013201448','搬运费','应收','这是一张运输单收费');");
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
-                    + "'2013201448','上楼费','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'2013201448','干线运输费','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'2013201448','搬运费','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'2013201448','上楼费','应收','这是一张运输单收费');");
 
             // 贷款客户 attributes
             for (int i = 1; i <= 1; i++) {
                 stmt.executeUpdate("insert into party(party_type, create_date, creator) values('贷款客户', CURRENT_TIMESTAMP(), 'demo');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values("
-                        + i + ", 'priority', '1重要紧急');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values("
-                        + i + ", 'name', '温生');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values("
-                        + i + ", 'loan_max', '15万');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values("
-                        + i + ", 'mobile', '1357038829');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values("
-                        + i + ", 'email', 'test@test.com');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i + ", 'priority', '1重要紧急');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i + ", 'name', '温生');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i + ", 'loan_max', '15万');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
+                        + ", 'mobile', '1357038829');");
+                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
+                        + ", 'email', 'test@test.com');");
             }
 
             // +
@@ -456,60 +411,45 @@ public class DataInitUtil {
             // 地产客户
             Party p = new Party();
             Date createDate = Calendar.getInstance().getTime();
-            p.set("party_type", "地产客户").set("create_date", createDate)
-                    .set("creator", "jason").save();
+            p.set("party_type", "地产客户").set("create_date", createDate).set("creator", "jason").save();
             long partyId = p.getLong("id");
             PartyAttribute pa = new PartyAttribute();
-            pa.set("party_id", partyId).set("attr_name", "title")
-                    .set("attr_value", "求2房近3小").save();
+            pa.set("party_id", partyId).set("attr_name", "title").set("attr_value", "求2房近3小").save();
             PartyAttribute pa1 = new PartyAttribute();
-            pa1.set("party_id", partyId).set("attr_name", "client_name")
-                    .set("attr_value", "温生").save();
+            pa1.set("party_id", partyId).set("attr_name", "client_name").set("attr_value", "温生").save();
             PartyAttribute paPriority = new PartyAttribute();
-            paPriority.set("party_id", partyId).set("attr_name", "priority")
-                    .set("attr_value", "1重要紧急").save();
+            paPriority.set("party_id", partyId).set("attr_name", "priority").set("attr_value", "1重要紧急").save();
             PartyAttribute pa2 = new PartyAttribute();
-            pa2.set("party_id", partyId).set("attr_name", "status")
-                    .set("attr_value", "求租").save();
+            pa2.set("party_id", partyId).set("attr_name", "status").set("attr_value", "求租").save();
             PartyAttribute pa3 = new PartyAttribute();
-            pa3.set("party_id", partyId).set("attr_name", "region")
-                    .set("attr_value", "老香洲").save();
+            pa3.set("party_id", partyId).set("attr_name", "region").set("attr_value", "老香洲").save();
             PartyAttribute pa4 = new PartyAttribute();
-            pa4.set("party_id", partyId).set("attr_name", "type")
-                    .set("attr_value", "1房").save();
+            pa4.set("party_id", partyId).set("attr_name", "type").set("attr_value", "1房").save();
 
             // 外部user 创建的客户
             Party p1 = new Party();
             createDate = Calendar.getInstance().getTime();
-            p1.set("party_type", "地产客户").set("create_date", createDate)
-                    .set("creator", "demo").save();
+            p1.set("party_type", "地产客户").set("create_date", createDate).set("creator", "demo").save();
             partyId = p1.getLong("id");
             PartyAttribute p1_pa = new PartyAttribute();
-            p1_pa.set("party_id", partyId).set("attr_name", "title")
-                    .set("attr_value", "求前山小区").save();
+            p1_pa.set("party_id", partyId).set("attr_name", "title").set("attr_value", "求前山小区").save();
             PartyAttribute p1_pa1 = new PartyAttribute();
-            p1_pa1.set("party_id", partyId).set("attr_name", "client_name")
-                    .set("attr_value", "温生").save();
+            p1_pa1.set("party_id", partyId).set("attr_name", "client_name").set("attr_value", "温生").save();
             PartyAttribute p1_paPriority = new PartyAttribute();
-            p1_paPriority.set("party_id", partyId).set("attr_name", "priority")
-                    .set("attr_value", "1重要紧急").save();
+            p1_paPriority.set("party_id", partyId).set("attr_name", "priority").set("attr_value", "1重要紧急").save();
             PartyAttribute p1_pa2 = new PartyAttribute();
-            p1_pa2.set("party_id", partyId).set("attr_name", "status")
-                    .set("attr_value", "求购").save();
+            p1_pa2.set("party_id", partyId).set("attr_name", "status").set("attr_value", "求购").save();
             PartyAttribute p1_pa3 = new PartyAttribute();
-            p1_pa3.set("party_id", partyId).set("attr_name", "region")
-                    .set("attr_value", "拱北").save();
+            p1_pa3.set("party_id", partyId).set("attr_name", "region").set("attr_value", "拱北").save();
             PartyAttribute p1_pa4 = new PartyAttribute();
-            p1_pa4.set("party_id", partyId).set("attr_name", "type")
-                    .set("attr_value", "1房").save();
+            p1_pa4.set("party_id", partyId).set("attr_name", "type").set("attr_value", "1房").save();
             PartyAttribute p1_pa5 = new PartyAttribute();
-            p1_pa5.set("party_id", partyId).set("attr_name", "area")
-                    .set("attr_value", "120").save();
+            p1_pa5.set("party_id", partyId).set("attr_name", "area").set("attr_value", "120").save();
             PartyAttribute p1_pa6 = new PartyAttribute();
-            p1_pa6.set("party_id", partyId).set("attr_name", "total")
-                    .set("attr_value", "200").save();
+            p1_pa6.set("party_id", partyId).set("attr_name", "total").set("attr_value", "200").save();
 
             newCustomer();
+
             // 其他客户 attributes
             stmt.executeUpdate("insert into party(party_type, create_date, creator) values('其他客户', CURRENT_TIMESTAMP(), 'demo');");
             stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'note', '工商注册');");
@@ -520,11 +460,21 @@ public class DataInitUtil {
             stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,office_id,warehouse_type) values('582','源鸿广州总仓', '这是广州总仓','萝岗','9','2','ownWarehouse');");
             stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,sp_id,warehouse_type) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse');");
 
-            // 类别
-            stmt.execute("insert into category(name,customer_id) values('公司名', 19);");
-            stmt.execute("insert into category(name,customer_id, parent_id) values('ATM', 19, 1);");
-            stmt.execute("insert into category(name,customer_id, parent_id) values('普通货品', 19, 1);");
-            stmt.execute("insert into category(name,customer_id, parent_id) values('4k', 19, 3);");
+            // 类别 ----采用面向对象的方式来获取party的id， 不必担心id不对。 --ray 2014-06-29
+            Party party = Party.dao
+                    .findFirst("SELECT p.id FROM party p left join CONTACT c on p.contact_id =c.id where c.company_name ='珠海创诚易达信息科技有限公司'");
+            Category rootCat = new Category();
+            rootCat.set("name", "root").set("customer_id", party.get("id")).save();
+
+            Category subCat1 = new Category();
+            subCat1.set("name", "ATM").set("customer_id", party.get("id")).set("parent_id", rootCat.getLong("id")).save();
+
+            Category subCat2 = new Category();
+            subCat2.set("name", "普通货品").set("customer_id", party.get("id")).set("parent_id", rootCat.getLong("id")).save();
+            // stmt.execute("insert into category(name,customer_id) values('公司名', 19);");
+            // stmt.execute("insert into category(name,customer_id, parent_id) values('ATM', 19, 1);");
+            // stmt.execute("insert into category(name,customer_id, parent_id) values('普通货品', 19, 1);");
+            // stmt.execute("insert into category(name,customer_id, parent_id) values('4k', 19, 3);");
 
             // 产品
             stmt.execute("insert into product(item_name,item_no,size,width,volume,weight,category_id,item_desc) values('ATM', '2014042600001','1','5','7','9',2, '这是一台ATM');");
@@ -542,8 +492,7 @@ public class DataInitUtil {
             // 货品明细
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM', 1);");
-            stmt.executeUpdate("insert into transfer_order_item(amount,order_id,product_id) "
-            		+ "values(2, 1, 1);");
+            stmt.executeUpdate("insert into transfer_order_item(amount,order_id,product_id) " + "values(2, 1, 1);");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('54321', '音箱', '这是对音响','5','对','50','10','一对音响','2');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
@@ -651,9 +600,9 @@ public class DataInitUtil {
                     + "1, CURRENT_TIMESTAMP());");
             // billing_order_item 应收应付单从表
             stmt.execute("create table if not exists billing_order_item(id bigint auto_increment primary key,blling_order_id bigint, "
-		                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
-		                    + "creator bigint, create_stamp timestamp,last_modified_by bigint,"
-		                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
+                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
+                    + "creator bigint, create_stamp timestamp,last_modified_by bigint,"
+                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
 
             // 发车单
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('FC2014061000001', '2014-06-10 10:35:35.1','DEPART','粤A876596','平板车','26','20');");
@@ -674,7 +623,7 @@ public class DataInitUtil {
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(3, 3, '2014-06-28 10:40:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(4, 3, '2014-06-28 10:43:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(6, 3, '2014-06-28 11:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
-            
+
             stmt.close();
             // conn.commit();
             conn.close();
@@ -685,53 +634,37 @@ public class DataInitUtil {
 
     public static void newCustomer() {
         Contact contact = new Contact();
-        contact.set("company_name", "珠海创诚易达信息科技有限公司")
-                .set("contact_person", "温生").set("email", "test@test.com").set("abbr", "珠海创诚易达");
-        contact.set("mobile", "12345671").set("phone", "113527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
-                .set("postal_code", "5190001").set("location", "110101").save();
+        contact.set("company_name", "珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com").set("abbr", "珠海创诚易达");
+        contact.set("mobile", "12345671").set("phone", "113527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场1").set("postal_code", "5190001")
+                .set("location", "110101").save();
         Contact contact7 = new Contact();
-        contact7.set("company_name", "珠海博兆计算机科技有限公司")
-                .set("contact_person", "温生").set("email", "test@test.com").set("abbr", "珠海博兆");
-        contact7.set("mobile", "12345671").set("phone", "113527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
-                .set("postal_code", "5190001").set("location", "441900").save();
+        contact7.set("company_name", "珠海博兆计算机科技有限公司").set("contact_person", "温生").set("email", "test@test.com").set("abbr", "珠海博兆");
+        contact7.set("mobile", "12345671").set("phone", "113527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场1").set("postal_code", "5190001")
+                .set("location", "441900").save();
         Contact contact2 = new Contact();
-        contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生")
-                .set("email", "test@test.com").set("abbr", "北京制药珠分");
-        contact2.set("mobile", "12345672").set("phone", "213527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场2")
-                .set("postal_code", "5190002").set("location", "110102").save();
+        contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生").set("email", "test@test.com").set("abbr", "北京制药珠分");
+        contact2.set("mobile", "12345672").set("phone", "213527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场2").set("postal_code", "5190002")
+                .set("location", "110102").save();
         Contact contact3 = new Contact();
-        contact3.set("company_name", "上海运输公司").set("contact_person", "李生")
-                .set("email", "test@test.com");
-        contact3.set("mobile", "12345673").set("phone", "313527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场3")
-                .set("postal_code", "5190003").set("location", "440116").save();
+        contact3.set("company_name", "上海运输公司").set("contact_person", "李生").set("email", "test@test.com");
+        contact3.set("mobile", "12345673").set("phone", "313527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场3").set("postal_code", "5190003")
+                .set("location", "440116").save();
         Contact contact4 = new Contact();
-        contact4.set("company_name", "天津运输有限公司").set("contact_person", "何生")
-                .set("email", "test@test.com");
-        contact4.set("mobile", "12345674").set("phone", "413527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场4")
-                .set("postal_code", "5190004").save();
+        contact4.set("company_name", "天津运输有限公司").set("contact_person", "何生").set("email", "test@test.com");
+        contact4.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
+                .save();
         Contact contact5 = new Contact();
-        contact5.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生")
-                .set("email", "test@test.com");
-        contact5.set("mobile", "12345674").set("phone", "413527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场4")
-                .set("postal_code", "5190004").set("location", "442000").save();
+        contact5.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生").set("email", "test@test.com");
+        contact5.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
+                .set("location", "442000").save();
         Contact contact6 = new Contact();
-        contact6.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生")
-                .set("email", "test@test.com");
-        contact6.set("mobile", "12345674").set("phone", "413527229313")
-                .set("address", "香洲珠海市香洲区老香洲为农街为农市场4")
-                .set("postal_code", "5190004").set("location", "440402").save();
+        contact6.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生").set("email", "test@test.com");
+        contact6.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
+                .set("location", "440402").save();
         Contact contact8 = new Contact();
-        contact8.set("contact_person", "王师傅").set("phone", "13888888888")
-                .save();
+        contact8.set("contact_person", "王师傅").set("phone", "13888888888").save();
         Contact contact9 = new Contact();
-        contact9.set("contact_person", "康师傅").set("phone", "13777777777")
-                .save();
+        contact9.set("contact_person", "康师傅").set("phone", "13777777777").save();
 
         Party p1 = new Party();
         Party p2 = new Party();
@@ -743,33 +676,24 @@ public class DataInitUtil {
         Party p8 = new Party();
         Party p9 = new Party();
         Date createDate = Calendar.getInstance().getTime();
-        p1.set("contact_id", contact.getLong("id"))
-                .set("party_type", "CUSTOMER").set("create_date", createDate)
+        p1.set("contact_id", contact.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
+                .save();
+        p7.set("contact_id", contact7.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
+                .save();
+        p2.set("contact_id", contact2.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
+                .save();
+        p3.set("contact_id", contact3.getLong("id")).set("party_type", "SERVICE_PROVIDER").set("create_date", createDate)
                 .set("creator", "demo").save();
-        p7.set("contact_id", contact7.getLong("id"))
-                .set("party_type", "CUSTOMER").set("create_date", createDate)
+        p4.set("contact_id", contact4.getLong("id")).set("party_type", "SERVICE_PROVIDER").set("create_date", createDate)
                 .set("creator", "demo").save();
-        p2.set("contact_id", contact2.getLong("id"))
-                .set("party_type", "CUSTOMER").set("create_date", createDate)
+        p5.set("contact_id", contact5.getLong("id")).set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
                 .set("creator", "demo").save();
-        p3.set("contact_id", contact3.getLong("id"))
-                .set("party_type", "SERVICE_PROVIDER")
-                .set("create_date", createDate).set("creator", "demo").save();
-        p4.set("contact_id", contact4.getLong("id"))
-                .set("party_type", "SERVICE_PROVIDER")
-                .set("create_date", createDate).set("creator", "demo").save();
-        p5.set("contact_id", contact5.getLong("id"))
-                .set("party_type", "NOTIFY_PARTY")
-                .set("create_date", createDate).set("creator", "demo").save();
-        p6.set("contact_id", contact6.getLong("id"))
-                .set("party_type", "NOTIFY_PARTY")
-                .set("create_date", createDate).set("creator", "demo").save();
-        p8.set("contact_id", contact8.getLong("id"))
-                .set("party_type", "DRIVER").set("create_date", createDate)
+        p6.set("contact_id", contact6.getLong("id")).set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
                 .set("creator", "demo").save();
-        p9.set("contact_id", contact9.getLong("id"))
-                .set("party_type", "DRIVER").set("create_date", createDate)
-                .set("creator", "demo").save();
+        p8.set("contact_id", contact8.getLong("id")).set("party_type", "DRIVER").set("create_date", createDate).set("creator", "demo")
+                .save();
+        p9.set("contact_id", contact9.getLong("id")).set("party_type", "DRIVER").set("create_date", createDate).set("creator", "demo")
+                .save();
     }
 
 }

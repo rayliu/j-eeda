@@ -124,7 +124,7 @@ public class ProductController extends Controller {
                 product.set("weight", weight);
             }
             if (height != null && !"".equals(height)) {
-            	product.set("height", height);
+                product.set("height", height);
             }
             product.update();
         } else {
@@ -154,7 +154,7 @@ public class ProductController extends Controller {
                 product.set("weight", weight);
             }
             if (height != null && !"".equals(height)) {
-            	product.set("height", height);
+                product.set("height", height);
             }
             product.save();
         }
@@ -173,32 +173,34 @@ public class ProductController extends Controller {
         }
 
         renderJson(category);
-    } 
-    
+    }
+
     // 查出客户的根类别
     public void searchCustomerCategory2() {
-        //String customerId = getPara("customerId");
-    	List<Category> categories = new ArrayList<Category>();
+        // String customerId = getPara("customerId");
+        List<Category> categories = new ArrayList<Category>();
         List<Product> list = Product.dao.find("select * from product");
-        for(Product product : list){
-	        Category category = Category.dao.findFirst("select * from category where customer_id =? and parent_id is null", product.get("customer_id"));
-	        if (category == null) {
-	            category = new Category();
-	            category.set("name", "root");
-	            category.set("customer_id", product.get("customer_id"));
-	            category.save();
-	        }
-	        categories.add(category);
+        for (Product product : list) {
+            Category category = Category.dao.findFirst("select * from category where customer_id =? and parent_id is null",
+                    product.get("customer_id"));
+            if (category == null) {
+                category = new Category();
+                category.set("name", "root");
+                category.set("customer_id", product.get("customer_id"));
+                category.save();
+            }
+            categories.add(category);
         }
         renderJson(categories);
     }
 
     // 查出当前节点的子节点
     public void searchNodeCategory() {
-        String categoryId = getPara("categoryId");
-        String customerId = getPara("customerId");
-        List<Category> categories = Category.dao.find("select * from category where parent_id=" + categoryId + " and customer_id ="
-                + customerId);
+        Long categoryId = getParaToLong("categoryId");
+        Long customerId = getParaToLong("customerId");
+        logger.debug("categoryId=" + categoryId + ", customerId=" + customerId);
+        List<Category> categories = Category.dao
+                .find("select * from category where parent_id=? and customer_id =?", categoryId, customerId);
         renderJson(categories);
     }
 
@@ -267,16 +269,18 @@ public class ProductController extends Controller {
         Category category = Category.dao.findById(getPara("categoryId"));
         renderJson(category);
     }
-    
+
     // 查找类别
     public void findAllCategory() {
-    	List<Category> categories = Category.dao.find("select * from category where customer_id = ?", getPara("customerId"));
-    	renderJson(categories);
+        List<Category> categories = Category.dao.find("select * from category where customer_id = ?", getPara("customerId"));
+        renderJson(categories);
     }
-    
+
     // 查找客户
     public void searchAllCustomer() {
-    	List<Party> parties = Party.dao.find("select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where party_type = ?", Party.PARTY_TYPE_CUSTOMER);
-    	renderJson(parties);
+        List<Party> parties = Party.dao
+                .find("select p.id pid, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null",
+                        Party.PARTY_TYPE_CUSTOMER);
+        renderJson(parties);
     }
 }
