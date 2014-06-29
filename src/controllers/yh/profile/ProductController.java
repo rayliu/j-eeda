@@ -198,7 +198,7 @@ public class ProductController extends Controller {
     public void searchNodeCategory() {
         Long categoryId = getParaToLong("categoryId");
         Long customerId = getParaToLong("customerId");
-        logger.debug("categoryId=" + categoryId + ", customerId=" + customerId);
+        logger.debug("categoryId="+categoryId+", customerId="+customerId);
         List<Category> categories = Category.dao
                 .find("select * from category where parent_id=? and customer_id =?", categoryId, customerId);
         renderJson(categories);
