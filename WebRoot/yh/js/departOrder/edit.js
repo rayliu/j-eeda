@@ -128,7 +128,13 @@
     	         	    item_id=code.substring(code.indexOf(',')+1,code.indexOf('}'));
     	         	   item_detail_id.push(detail_id);
     	         	    for(var i=0;i<item_detail_id.length;){
-    	         	    	if(detail_id==item_detail_id[i]){
+    	         	    	var size=0;
+    	         	    	for(var j=0;j<item_detail_id.length;j++){
+    	         	    		if(item_detail_id[j]==detail_id){
+    	         	    			size++;
+    	         	    		}
+    	         	    	}
+    	         	    	if(size>1){
     	         	    		item_detail_id.splice(i,1);
     	         	    		i=i-i;
     	         	    		continue;
@@ -141,7 +147,13 @@
     	    	 tr_itemid_list.push(item_id);
     	    	 if(tr_itemid_list.length>0){
     	    		 for(var i=0;i<tr_itemid_list.length;){
- 	         	    	if(item_id==tr_itemid_list[i]){
+    	    			 var size=0;
+ 	         	    	for(var j=0;j<tr_itemid_list.length;j++){
+ 	         	    		if(tr_itemid_list[j]==item_id){
+ 	         	    			size++;
+ 	         	    		}
+ 	         	    	}
+ 	         	    	if(size>1){
  	         	    		tr_itemid_list.splice(i,1);
  	         	    		i=i-i;
  	         	    		continue;
@@ -182,22 +194,26 @@
               "aoColumns": [
                      { "mDataProp": null,
                        "fnRender": function(obj) {
-                    	   var Returnhtml="";
+                    	  
                     	   var Returnhtml_one="<input type='checkbox' name='order_check_box' checked='checked' value={"+obj.aData.ID+","+obj.aData.ITEM_ID+"}>";
-                    	   var Returnhtml_two="<input type='checkbox' name='order_check_box' checked='' value={"+obj.aData.ID+","+obj.aData.ITEM_ID+"}>";
-                    	   /*if(item_detail_id.length>0){
-                    		   for(var i=0;i<item_detail_id;i++){
+                    	   var Returnhtml_two="<input type='checkbox' name='order_check_box'  value={"+obj.aData.ID+","+obj.aData.ITEM_ID+"}>";
+                    	   if(item_detail_id.length>0){
+                    		   var size=0;
+                    		   for(var i=0;i<item_detail_id.length;i++){
                         		   if(item_detail_id[i]==obj.aData.ID){
-                        			   Returnhtml=Returnhtml_one;
-                        		   }else{
-                        			   Returnhtml=Returnhtml_two;
+                        			   size++;
                         		   }
                         	   }
+                    		   if(size>=1){
+                    			   return Returnhtml_one;
+                    		   }else{
+                    			   return Returnhtml_two;
+                    		   }
                     	   }else{
-                    		   Returnhtml=Returnhtml_one;
-                    	   }*/
-                    	   
-                           return Returnhtml_one;
+                    		   return Returnhtml_one;
+                    	   }
+                    	  // return Returnhtml_one;
+                          
                       }
                      },
                     { "mDataProp": "ITEM_NAME"},      
@@ -552,27 +568,38 @@
     	         	var detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','));
     	         	    item_id=code.substring(code.indexOf(',')+1,code.indexOf('}'));
     	         		item_detail_id.push(detail_id);
-    	         		/* for(var i=0;i<item_detail_id.length;){
-    		         	    	if(detail_id==item_detail_id[i]){
+    	         		 for(var i=0;i<item_detail_id.length;){
+    	         			 var size=0;
+    	 	         	    	for(var j=0;j<item_detail_id.length;j++){
+    	 	         	    		if(item_detail_id[j]==detail_id){
+    	 	         	    			size++;
+    	 	         	    		};
+    	 	         	    	}
+    		         	    	if(size>1){
     		         	    		item_detail_id.splice(i,1);
     		         	    		i=i-i;
     		         	    		continue;
     		         	    	};
     		         	    	i++;
-    		         	    };*/
+    		         	    };
     	         	});          		
     	         	}); 
     	    	 tr_itemid_list.push(item_id);
-    	    	/* for(var i=0;i<tr_itemid_list.length;){
-	         	    	if(item_id==tr_itemid_list[i]){
+    	    	 for(var i=0;i<tr_itemid_list.length;){
+    	    		 var size=0;
+	         	    	for(var j=0;j<tr_itemid_list.length;j++){
+	         	    		if(tr_itemid_list[j]==item_id){
+	         	    			size++;
+	         	    		}
+	         	    	}
+	         	    	if(size>1){
 	         	    		tr_itemid_list.splice(i,1);
 	         	    		i=i-i;
 	         	    		continue;
 	         	    	};
 	         	    	i++;
 	         	    };
-	         	    alert(tr_itemid_list);
-	         	   alert(item_detail_id);*/
+	         	
     	    	$("#item_detail").val(item_detail_id);
     	    	$("#tr_itemid_list").val(tr_itemid_list);
     	    	var getIindepart_no=$("#getIin_depart_no").text();
