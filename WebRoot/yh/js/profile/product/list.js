@@ -351,7 +351,13 @@ $(document).ready(function() {
     
     var selectCategory = function(){
     	// 获取所有类别
-    	var customerId = $("#customerId").val();
+    	var treeObj = $.fn.zTree.getZTreeObj("categoryTree");
+    	var sNodes = treeObj.getSelectedNodes();
+    	if (sNodes.length > 0) {
+    		var node = sNodes[0].getParentNode();
+    		var categoryId = node.ID;
+    		var customerId = sNodes[0].customerId;
+    	}
     	$.get('/yh/product/findAllCategory', {customerId:customerId}, function(data){
 	   		if(data.length > 0){
 		   		var categorySelect = $("#categorySelect");
@@ -508,7 +514,8 @@ $(document).ready(function() {
             zTree.setting.edit.editNameSelectAll =  $("#selectAll").attr("checked");
         }
         //-------------edit end--------------
-        function onNodeClick(event, treeId, treeNode){          
+        function onNodeClick(event, treeId, treeNode){     
+        	$("#addProductDiv").show();
             $("#displayDiv").show();
             productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+treeNode.categoryId;
             productDataTable.fnDraw();

@@ -61,12 +61,13 @@ public class TransferOrderItemController extends Controller {
 	        }	
 	        String sqlTotal = "select distinct count(1) total from transfer_order_item toi "
 							+" left join product p on p.id = toi.product_id "
-							+" where toi.order_id =" + trandferOrderId +" and toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";
+							+" where toi.order_id =" + trandferOrderId +" or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";
 	        Record rec = Db.findFirst(sqlTotal);
 	        logger.debug("total records:" + rec.getLong("total"));	
-	        String sql = "select distinct toi.id,p.item_no item_no,toi.amount amount,p.unit unit,p.item_desc remark from transfer_order_item toi "
+	        String sql = "select distinct toi.id,ifnull(p.item_no,toi.item_no) item_no,ifnull(p.item_name,toi.item_name) item_name,"
+	        				+" p.weight total_weight,p.volume total_volumn,toi.amount total_amount,ifnull(p.unit,toi.unit) unit,ifnull(p.item_desc,toi.item_desc) remark from transfer_order_item toi "
 							+" left join product p on p.id = toi.product_id "
-							+" where toi.order_id =" + trandferOrderId +" and toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";	
+							+" where toi.order_id =" + trandferOrderId +" or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";	
 	        List<Record> transferOrders = Db.find(sql);	
 	        transferOrderListMap = new HashMap();
 	        transferOrderListMap.put("sEcho", pageIndex);
@@ -137,7 +138,7 @@ public class TransferOrderItemController extends Controller {
 				item.set("item_no", getPara("item_no"));    
 				item.set("item_name", getPara("item_name"));           
 				item.set("unit", getPara("unit"));           
-				item.set("remark", getPara("remark"));      
+				item.set("item_desc", getPara("remark"));      
 			}else{
 				updateProduct(productId);
 				item.set("product_id", productId);				
@@ -174,7 +175,7 @@ public class TransferOrderItemController extends Controller {
 				item.set("item_no", getPara("item_no"));    
 				item.set("item_name", getPara("item_name"));           
 				item.set("unit", getPara("unit"));           
-				item.set("remark", getPara("remark"));      
+				item.set("item_desc", getPara("remark"));      
 			}else{
 				updateProduct(productId);
 				item.set("product_id", productId);				

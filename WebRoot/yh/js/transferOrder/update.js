@@ -396,7 +396,10 @@ $(document).ready(function() {
         },
         "aoColumns": [  			            
             {"mDataProp":"ITEM_NO"},
-            {"mDataProp":"AMOUNT"},       	
+            {"mDataProp":"ITEM_NAME"},
+            {"mDataProp":"TOTAL_WEIGHT"},
+            {"mDataProp":"TOTAL_VOLUMN"},
+            {"mDataProp":"TOTAL_AMOUNT"},       	
             {"mDataProp":"UNIT"},
             {"mDataProp":"REMARK"},
             {  

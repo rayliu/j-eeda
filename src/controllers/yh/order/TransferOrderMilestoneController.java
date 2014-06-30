@@ -164,8 +164,8 @@ public class TransferOrderMilestoneController extends Controller {
 		        	tom.set("status", status2);
 		        	transferOrder.set("status", status2);
 		        } else {
-		        	tom.set("status", "在途");
-		        	transferOrder.set("status", "在途");
+		        	tom.set("status", "提货在途");
+		        	transferOrder.set("status", "提货在途");
 		        }
 		        departOrder.update();
 		        if (!location.isEmpty()) {
