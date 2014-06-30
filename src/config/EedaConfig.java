@@ -26,6 +26,8 @@ import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.Warehouse;
+import models.WarehouseOrder;
+import models.WarehouseOrderItem;
 import models.eeda.Case;
 import models.eeda.Leads;
 import models.eeda.Order;
@@ -215,6 +217,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("depart_order", DepartOrder.class);
         arp.addMapping("depart_transfer", DepartTransferOrder.class);
         arp.addMapping("depart_transfer_itemdetail", DepartOrderItemdetail.class);
+        arp.addMapping("warehouse_order", WarehouseOrder.class);
+        arp.addMapping("warehouse_order_item", WarehouseOrderItem.class);
         // yh mapping
 
     }

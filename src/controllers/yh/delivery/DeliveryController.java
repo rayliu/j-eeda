@@ -494,7 +494,6 @@ public class DeliveryController extends Controller {
         String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-
             locationList = Db
                     .find("select *,p.id as pid from contact c,party p where p.contact_id= c.id and p.party_type ='SERVICE_PROVIDER' and (c.company_name like '%"
                             + input
@@ -511,6 +510,10 @@ public class DeliveryController extends Controller {
                             + "%' or c.postal_code like '%"
                             + input
                             + "%') limit 0,10");
+        } else {
+            locationList = Db
+                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
+                            + Party.PARTY_TYPE_SERVICE_PROVIDER + "'");
         }
         renderJson(locationList);
     }

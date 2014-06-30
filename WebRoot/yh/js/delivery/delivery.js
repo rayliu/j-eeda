@@ -3,7 +3,7 @@ $(document).ready(function() {
 	$('#menu_deliver').addClass('active').find('ul').addClass('in');
 	var hang="";
 		  //获取供应商的list，选中信息在下方展示其他信息
-			$('#spMessage').on('keyup', function(){
+			$('#spMessage').on('keyup click', function(){
 				var inputStr = $('#spMessage').val();
 				$.get('/yh/delivery/searchSp', {input:inputStr}, function(data){
 					console.log(data);
@@ -19,6 +19,9 @@ $(document).ready(function() {
 		        	top:$(this).position().top+32+"px" 
 		        }); 
 		        $('#spList').show();
+			});
+			$('#spMessage').on('blur', function(){
+				$("#spList").delay(120).hide(1);
 			});
 			// 选中供应商
 			$('#spList').on('click', '.fromLocationItem', function(e){
