@@ -194,14 +194,15 @@ public class ProductController extends Controller {
         renderJson(categories);
     }
 
-    // 查出当前节点的子节点
+    // 查出当前节点的子节点, 如果当前节点没有categoryId, 它就是公司的根节点（新建一个）
     public void searchNodeCategory() {
         Long categoryId = getParaToLong("categoryId");
         Long customerId = getParaToLong("customerId");
-        logger.debug("categoryId="+categoryId+", customerId="+customerId);
+        logger.debug("categoryId=" + categoryId + ", customerId=" + customerId);
         List<Category> categories = Category.dao
                 .find("select * from category where parent_id=? and customer_id =?", categoryId, customerId);
         renderJson(categories);
+
     }
 
     // 查找产品对象
@@ -213,21 +214,25 @@ public class ProductController extends Controller {
     // 保存类别
     public void saveCategory() {
         String categoryId = getPara("categoryId");
-        String parentId = getPara("parentId");
+        // String parentId = getPara("parentId");
+        Category category = Category.dao.findById(categoryId);
+        category.set("name", getPara("name"));
+        category.set("customer_id", getPara("customerId"));
+        category.update();
+
+        renderJson(category);
+    }
+
+    // 新增类别
+    public void addCategory() {
+        String parentId = getPara("categoryId");
         Category category = null;
-        if (categoryId == null || "".equals(categoryId)) {
+        if (parentId != null) {
             category = new Category();
             category.set("name", getPara("name"));
             category.set("customer_id", getPara("customerId"));
-            if (parentId != null && !"".equals(parentId)) {
-                category.set("parent_id", getPara("parentId"));
-            }
+            category.set("parent_id", parentId);
             category.save();
-        } else {
-            category = Category.dao.findById(categoryId);
-            category.set("name", getPara("name"));
-            category.set("customer_id", getPara("customerId"));
-            category.update();
         }
         renderJson(category);
     }
@@ -281,6 +286,24 @@ public class ProductController extends Controller {
         List<Party> parties = Party.dao
                 .find("select p.id pid, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null",
                         Party.PARTY_TYPE_CUSTOMER);
-        renderJson(parties);
+        createRootForParty(parties);
+
+        List<Party> rootParties = Party.dao
+                .find("select p.id pid, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null",
+                        Party.PARTY_TYPE_CUSTOMER);
+        renderJson(rootParties);
+    }
+
+    private void createRootForParty(List<Party> parties) {
+        for (Party party : parties) {
+            Long customerId = party.getLong("id");
+            List<Category> categories = Category.dao.find("select * from category where customer_id = ?", customerId);
+            if (categories.size() == 0) {
+                Category category = new Category();
+                category.set("name", "root");
+                category.set("customer_id", customerId);
+                category.save();
+            }
+        }
     }
 }

@@ -12,7 +12,8 @@ $(document).ready(function() {
 	        node.customerId=data[i].PID;
 	        node.categoryId=data[i].CAT_ID;
 	        node.click=nodePlusClickHandler;
-	        zNodes.push(node);	
+	        zNodes.push(node);
+	        console.log(node);
         }
         $.fn.zTree.init($("#categoryTree"), setting, zNodes);
     },'json');
@@ -88,44 +89,7 @@ $(document).ready(function() {
         $("#displayDiv").hide();
     }); 
 	
-    // 保存类别
-    $("#categoryFormBtn").click(function(){
-    	$.post('/yh/product/saveCategory', $("#categoryForm").serialize(), function(data){
-			//保存成功后，刷新列表
-            console.log(data);
-            if(data.ID>0){
-            	// 查出所有的类别
-                var customerId = $('#customerId').val();
-                if(customerId > 0){
-                	$.get('/yh/product/searchAllCategory', {customerId:customerId}, function(data){
-            			console.log(data);	
-            			var productTreeUl = $("#productTreeUl");
-            			productTreeUl.empty();
-            			addNode(data, productTreeUl);
-//            			if(data.length > 0){
-//            				for(var i = 0; i < data.length; i++)
-//            				{
-//            					var id = data[i].ID;
-//            					if(data[i].PARENT_ID == null){
-//        	    					productTreeUl.append("<li class='parent_li'><span><i class='fa fa-folder'>" +
-//        	    							"</i>  <a href='javascript:void(0)' class='productList' id='"+data[i].ID+"'>"+data[i].NAME+
-//        	    							"</a></span>  <div class='edit_icons'><a class='fa fa-plus addCategory' href='javascript:void(0)' title='添加' id='"+data[i].ID+"'></a>  " +
-//        	    							"<a class='fa fa-pencil editCategory' href='javascript:void(0)' title='编辑' id='"+data[i].ID+"'></a>  " +
-//        	    							"<a class='fa fa-trash-o deleteCategory' href='javascript:void(0)' title='删除' id='"+data[i].ID+"'></a></div></li></ul></li>");        	    					
-//            					}
-//            				}
-//            			}
-            			
-            			
-            		},'json');
-                }
-            }else{
-                alert('数据保存失败。');
-            }
-		},'json');
-    	$('#editCategory').modal('hide');
-    	$("#categoryForm")[0].reset();
-    });
+  
     
 	// 树状结构点击效果
     $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
@@ -186,9 +150,11 @@ $(document).ready(function() {
     	var nodeElement = $(this);
     	nodeElement.unbind('click');
     	$.get('/yh/product/searchNodeCategory', {categoryId: categoryId, customerId: customerId}, function(data){
-    		if(data.length > 0){
-	    		console.log(data);
+    		console.log(data);
+    		if(data.length > 0){		
 	    		addNode(data, nodeElement);
+    		}else{
+    			console.log(nodeElement);
     		}
     	},'json');
     };
@@ -405,7 +371,7 @@ $(document).ready(function() {
                 beforeAsync: beforeAsync,
                 onAsyncError: onAsyncError,
                 onAsyncSuccess: onAsyncSuccess,
-
+                beforeExpand: beforeExpand,
                 beforeDrag: beforeDrag,
                 beforeEditName: beforeEditName,
                 beforeRemove: beforeRemove,
@@ -498,8 +464,8 @@ $(document).ready(function() {
                 var zTree = $.fn.zTree.getZTreeObj("categoryTree");
                 var nodeName = "新类别" + (newCount++);                
 
-                $.post('/yh/product/saveCategory', {parentId: treeNode.categoryId, customerId: treeNode.customerId, name:nodeName}, function(data){            
-                    zTree.addNodes(treeNode, {id:111111, categoryId: data.ID, customerId: treeNode.customerId, isParent:true, name:nodeName});
+                $.post('/yh/product/addCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:nodeName}, function(data){            
+                    zTree.addNodes(treeNode, {id:data.ID, categoryId: data.ID, customerId: treeNode.customerId, isParent:true, name:nodeName});
                 },'json');
 
                 
@@ -543,22 +509,22 @@ $(document).ready(function() {
         var log, className = "dark";
         function beforeAsync(treeId, treeNode) {
             className = (className === "dark" ? "":"dark");
-            showLog("[ "+getTime()+" beforeAsync ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root") );
+            showLog("[ "+getTime()+" beforeAsync ]" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root") +", treeNode:"+treeNode);
             return true;
         }
         function onAsyncError(event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
-            showLog("[ "+getTime()+" onAsyncError ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root") );
+            showLog("[ "+getTime()+" onAsyncError ]" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root") +", treeNode:"+treeNode);
         }
         function onAsyncSuccess(event, treeId, treeNode, msg) {
-            showLog("[ "+getTime()+" onAsyncSuccess ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root") );
+            showLog("[ "+getTime()+" onAsyncSuccess ]" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root") +", treeNode:"+treeNode);
+            
         }
-        
+        function beforeExpand(treeId, treeNode){
+        	showLog("[ "+getTime()+" beforeExpand ]" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root") +", treeNode:"+treeNode);
+        	
+        }
         function showLog(str) {
-            if (!log) log = $("#log");
-            log.append("<li class='"+className+"'>"+str+"</li>");
-            if(log.children("li").length > 8) {
-                log.get(0).removeChild(log.children("li")[0]);
-            }
+            console.log(str);
         }
         function getTime() {
             var now= new Date(),
