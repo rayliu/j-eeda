@@ -157,7 +157,7 @@ public class TransferOrderController extends Controller {
 
         setAttr("status", "新建");
         if (LoginUserController.isAuthenticated(this))
-            render("transferOrder/editTransferOrder.html");
+            render("transferOrder/updateTransferOrder.html");
         // render("transferOrder/transferOrderEdit.html");
     }
 
@@ -248,7 +248,7 @@ public class TransferOrderController extends Controller {
         }
 
         UserLogin userLogin = UserLogin.dao.findById(transferOrder.get("create_by"));
-        setAttr("userLogin", userLogin);
+        setAttr("userLogin2", userLogin);
         if (LoginUserController.isAuthenticated(this))
             render("transferOrder/updateTransferOrder.html");
     }

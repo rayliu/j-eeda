@@ -519,7 +519,23 @@ $(document).ready(function() {
 			}
 		},'json');
 	});
-				                       
+	
+	var transferOrderMilestone = function(){
+	  	var order_id = $("#order_id").val();
+		$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+			transferOrderMilestoneTbody.empty();
+			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
+			{
+				var location = data.transferOrderMilestones[i].LOCATION;
+				if(location == null){
+					location = "";
+				}
+				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+location+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+			}
+		},'json');  
+	};
+	
 	// 运输里程碑
 	$("#transferOrderMilestoneList").click(function(e){
 		e.preventDefault();
@@ -542,16 +558,7 @@ $(document).ready(function() {
 				if(transferOrder.ID>0){
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	$("#style").show();	
-				  	
-				  	var order_id = $("#order_id").val();
-					$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
-						var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
-						transferOrderMilestoneTbody.empty();
-						for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
-						{
-							transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
-						}
-					},'json');              
+				  	transferOrderMilestone();            
 				}else{
 					alert('数据保存失败。');
 				}
@@ -574,16 +581,7 @@ $(document).ready(function() {
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	//alert("运输单保存成功!");
 				  	$("#style").show();	
-				  	
-				  	var order_id = $("#order_id").val();
-					$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
-						var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
-						transferOrderMilestoneTbody.empty();
-						for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
-						{
-							transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
-						}
-					},'json');               
+				  	transferOrderMilestone();              
 				}else{
 					alert('数据保存失败。');
 				}
@@ -730,15 +728,27 @@ $(document).ready(function() {
   	    	$("#transfer_order_id").val(data.transferOrderItem.ORDER_ID);
   	    	$("#transferOrderItemId").val(data.transferOrderItem.ID);
   	    	$("#productId").val(data.transferOrderItem.PRODUCT_ID);
-  	    	$("#itemNameMessage").val(data.product.ITEM_NAME);
-  	 		$("#itemNoMessage").val(data.product.ITEM_NO);
-	  	 	$("#size").val(data.product.SIZE);
-	  	 	$("#width").val(data.product.WIDTH);
-	  	 	$("#unit").val(data.product.UNIT); 	
-	  	 	$("#volume").val(data.product.VOLUME);
-	  	 	$("#weight").val(data.product.WEIGHT);
-	  	 	$("#height").val(data.product.HEIGHT);
-	  	 	$("#remark").val(data.product.ITEM_DESC);
+  	    	if(data.product != null){
+	  	    	$("#itemNameMessage").val(data.product.ITEM_NAME);
+	  	 		$("#itemNoMessage").val(data.product.ITEM_NO);
+		  	 	$("#size").val(data.product.SIZE);
+		  	 	$("#width").val(data.product.WIDTH);
+		  	 	$("#unit").val(data.product.UNIT); 	
+		  	 	$("#volume").val(data.product.VOLUME);
+		  	 	$("#weight").val(data.product.WEIGHT);
+		  	 	$("#height").val(data.product.HEIGHT);
+		  	 	$("#remark").val(data.product.ITEM_DESC);
+  	    	}else{
+  	    		$("#itemNameMessage").val(data.transferOrderItem.ITEM_NAME);
+	  	 		$("#itemNoMessage").val(data.transferOrderItem.ITEM_NO);
+		  	 	$("#size").val(data.transferOrderItem.SIZE);
+		  	 	$("#width").val(data.transferOrderItem.WIDTH);
+		  	 	$("#unit").val(data.transferOrderItem.UNIT); 	
+		  	 	$("#volume").val(data.transferOrderItem.VOLUME);
+		  	 	$("#weight").val(data.transferOrderItem.WEIGHT);
+		  	 	$("#height").val(data.transferOrderItem.HEIGHT);
+		  	 	$("#remark").val(data.transferOrderItem.ITEM_DESC);
+  	    	}
 	  	 	$("#amount").val(data.transferOrderItem.AMOUNT);
   	    	// 模态框:修改货品明细
   	    	$('#myModal').modal('show');	
@@ -1360,5 +1370,9 @@ $(document).ready(function() {
  		}
  		$("#productId").val($(this).attr('id'));
  		$('#itemNameList').hide();
- 	});  	
+ 	}); 
+ 	
+ 	$("#editTransferOrderItem").click(function(){
+ 		$("#transferOrderItemId").val("");
+ 	});
 });
