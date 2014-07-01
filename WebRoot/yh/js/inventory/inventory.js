@@ -289,8 +289,9 @@ $(document).ready(function() {
 	            //异步向后台提交数据
 	           $.post('/yh/gateIn/gateInSave',$("#inventoryForm").serialize(), function(data){
 	                console.log(data);
-                 if(data.ID>0){
-                 	$("#delivery_id").val(data.ID);
+                 if(data>0){
+                	 console.log(data);
+                 	$("#party_id").val(data);
                  	$("#style").show();
                  	//$("#ConfirmationBtn").attr("disabled", false);
                  }else{

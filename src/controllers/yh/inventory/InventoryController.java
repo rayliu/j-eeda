@@ -1,6 +1,9 @@
 package controllers.yh.inventory;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import models.Party;
+import models.UserLogin;
 import models.Warehouse;
 import models.WarehouseOrder;
 
@@ -50,14 +54,19 @@ public class InventoryController extends Controller {
         }
     }
 
+    // 入库单添加
     public void gateIn_add() {
-        render("/yh/inventory/gateInEdit.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("/yh/inventory/gateInEdit.html");
     }
 
+    // 出库单添加
     public void gateOut_add() {
-        render("/yh/inventory/gateOutEdit.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("/yh/inventory/gateOutEdit.html");
     }
 
+    // 查找客户
     public void searchCustomer() {
         String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
@@ -141,14 +150,63 @@ public class InventoryController extends Controller {
 
     // 保存入库单
     public void gateInSave() {
+        String orderNo = creat_order_no();// 构造发车单号
         WarehouseOrder warehouseOrder = new WarehouseOrder();
         String gateInId = getPara("gateInId");
+
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao
+                .find("select * from user_login where user_name='" + name + "'");
+        Date createDate = Calendar.getInstance().getTime();
+
+        warehouseOrder.set("party_id", getPara("party_id"))
+                .set("warehouse_id", getPara("warehouseSelect"))
+                .set("order_no", orderNo).set("order_type", "入库")
+                .set("status", "新建").set("qualifier", getPara("qualifier"))
+                .set("remark", getPara("remark"));
+
         if (gateInId != "") {
 
+            warehouseOrder.set("last_updater", users.get(0).get("id"))
+                    .set("last_update_date", createDate)
+                    .set("id", getAttr("gateInId"));
+            warehouseOrder.update();
         } else {
-
+            warehouseOrder.set("creator", users.get(0).get("id")).set(
+                    "create_date", createDate);
+            warehouseOrder.save();
         }
-        renderJson(0);
+        renderJson(warehouseOrder.get("id"));
+    }
+
+    // 构造单号
+    public String creat_order_no() {
+        String order_no = null;
+        String the_order_no = null;
+        WarehouseOrder order = WarehouseOrder.dao
+                .findFirst("select * from warehouse_order order by order_no desc limit 0,1");
+        if (order != null) {
+            String num = order.get("order_no");
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) {
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            the_order_no = "RK" + order_no;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            the_order_no = "RK" + order_no;
+        }
+        return the_order_no;
     }
 
     // 查找序列号
@@ -191,6 +249,7 @@ public class InventoryController extends Controller {
         renderJson(locationList);
     }
 
+    // 查找仓库
     public void searchAllwarehouse() {
         List<Warehouse> warehouses = Warehouse.dao
                 .find("select * from warehouse");
