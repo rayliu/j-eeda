@@ -45,7 +45,10 @@ public class TransferOrderItemController extends Controller {
 	        String sqlTotal = "select count(1) total from transfer_order_item where order_id =" + trandferOrderId;
 	        Record rec = Db.findFirst(sqlTotal);
 	        logger.debug("total records:" + rec.getLong("total"));	
-	        String sql = "select * from transfer_order_item where order_id =" + trandferOrderId;	
+	        String sql = "select toi.*,"
+	        				+"(select sum(tori.weight) from transfer_order_item tori where tori.order_id = toi.id) as total_weight,"
+							+"(select sum(tori.volume) from transfer_order_item tori where tori.order_id = toi.id) as total_volumn,"
+							+"(select sum(tori.amount) from transfer_order_item tori where tori.order_id = toi.id) as total_amount from transfer_order_item toi where toi.order_id =" + trandferOrderId;	
 	        List<Record> transferOrders = Db.find(sql);	
 	        transferOrderListMap = new HashMap();
 	        transferOrderListMap.put("sEcho", pageIndex);
@@ -65,7 +68,9 @@ public class TransferOrderItemController extends Controller {
 	        Record rec = Db.findFirst(sqlTotal);
 	        logger.debug("total records:" + rec.getLong("total"));	
 	        String sql = "select distinct toi.id,ifnull(p.item_no,toi.item_no) item_no,ifnull(p.item_name,toi.item_name) item_name,"
-	        				+" p.weight total_weight,p.volume total_volumn,toi.amount total_amount,ifnull(p.unit,toi.unit) unit,ifnull(p.item_desc,toi.item_desc) remark from transfer_order_item toi "
+	        				+"(select sum(tori.weight) from transfer_order_item tori where tori.order_id = toi.id) as total_weight,"
+							+"(select sum(tori.volume) from transfer_order_item tori where tori.order_id = toi.id) as total_volumn,"
+							+"(select sum(tori.amount) from transfer_order_item tori where tori.order_id = toi.id) as total_amount,ifnull(p.unit,toi.unit) unit,ifnull(p.item_desc,toi.item_desc) remark from transfer_order_item toi "
 							+" left join product p on p.id = toi.product_id "
 							+" where toi.order_id =" + trandferOrderId +" or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";	
 	        List<Record> transferOrders = Db.find(sql);	

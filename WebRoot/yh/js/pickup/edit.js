@@ -232,4 +232,33 @@ $(document).ready(function() {
 			pickupOrderMilestone();
 		},'json');
 	});
+	
+	// 列出所有的提货地点
+	$("#addressList").click(function(){
+		var pickupOrderId = $("#pickupOrderId").val();
+		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
+			var pickupAddressTbody = $("#pickupAddressTbody");
+			pickupAddressTbody.empty();
+			for(var i=0;i<data.length;i++){
+				pickupAddressTbody.append("<tr value='"+data[i].POSITION+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
+				/*if(i == 0){
+					pickupAddressTbody.append("<tr><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)'>上移</a> <a href='javascript:void(0)'>下移</a> <a href='javascript:void(0)'>移至顶部</a> <a href='javascript:void(0)'>移至底部</a></td></tr>");					
+				}else if(i == data.length-1){
+					pickupAddressTbody.append("<tr><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)'>上移</a> <a href='javascript:void(0)'>下移</a> <a href='javascript:void(0)'>移至顶部</a> <a href='javascript:void(0)'>移至底部</a></td></tr>");										
+				}else{
+					pickupAddressTbody.append("<tr><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)'>上移</a> <a href='javascript:void(0)'>下移</a> <a href='javascript:void(0)'>移至顶部</a> <a href='javascript:void(0)'>移至底部</a></td></tr>");					
+				}*/
+			}
+		},'json');
+	});
+	
+
+	$("#pickupAddressTbody").on('click', '.moveUp', function(e){
+		var currentNode = $(this).parent().parent();
+		var currentVal = currentNode.attr("value");
+		var prevNode = currentNode.prev();
+		var prevVal = prevNode.attr("value");
+		currentNode.attr("value", prevVal);
+		prevNode.attr("value", currentVal);
+	});
 } );

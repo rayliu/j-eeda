@@ -21,6 +21,8 @@
                             <ul class="nav nav-tabs">
                                 <li class="active"><a href="#basic" data-toggle="tab">基本信息</a>
                                 </li>
+                                <li class=""><a href="#line" data-toggle="tab" id="addressList">线路</a>
+                                </li>
                                 <li class=""><a href="#cargos" data-toggle="tab">货品信息</a>
                                 </li>
                                  <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">运输里程碑</a>
@@ -35,21 +37,21 @@
                                  
                                 <div class="row">
                                    <form id="pickupOrderForm" method="post" action="">
-                    					<input type="hidden" id="pickupId" name="pickupId" value="${pickupOrder.id!''}">
+                    			   		<input type="hidden" id="pickupId" name="pickupId" value="${pickupOrder.id!''}">
                                         <input id="driver_id" type="hidden" name="driver_id" value="${pickupOrder.driver_id!''}"/>                                   	  
                                        	<input type="hidden" name="order_no" value="${order_no!''}${pickupOrder.depart_no!''}"/>
                                        	<input type="hidden" name="status" value="${status!''}${pickupOrder.status!''}"/>
                                        	<input type="hidden" name="create_by" value="${create_by!''}${pickupOrder.create_by!''}"/>
-                               <div class="col-lg-6">
-                               <input class="" id="depart_id" value="${pickupOrder.depart_id!''}" type="hidden" name="depart_id" >
-                               <input class="" id="type" value="${type!''}" type="hidden" >
-            				   <input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
-            				   <input class="" id="tr_itemid_list" value="" type="hidden" name="tr_itemid_list">
-            				   <input class="" id="item_detail" value="" type="hidden" name="item_detail" >
-                               <input id="driver_id" type="hidden" name="driver_id"/>
+		                                <div class="col-lg-6">
+		                                <input class="" id="depart_id" value="${pickupOrder.depart_id!''}" type="hidden" name="depart_id" >
+		                                <input class="" id="type" value="${type!''}" type="hidden" >
+		            				    <input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
+		            				    <input class="" id="tr_itemid_list" value="" type="hidden" name="tr_itemid_list">
+		            				    <input class="" id="item_detail" value="" type="hidden" name="item_detail" >
+		                                <input id="driver_id" type="hidden" name="driver_id"/>
                                     
-                                   		  <h2>车辆信息</h2> 
-                                          <div class="form-group">
+                                 		<h2>车辆信息</h2> 
+                                        <div class="form-group">
 											<label>司机</label>
 										    <div class="form-group">											
 										        <input type="text" name="driver_name" class="form-control" id="driverMessage" value="${driver.contact_person!''}">
@@ -58,162 +60,171 @@
 										    </div>
 									    </div>
                                         
-                                         <div class="form-group">
+                                        <div class="form-group">
                                             <label>车牌</label>
                                              <input class="form-control" id="car_no" value="${pickupOrder.car_no!''}"  name="car_no">
                                         </div>
-                                         <div class="form-group">
-			                                        <div style=display:inline-block;width:49%>
-			                                            <label>车型</label>
-			                                         	<input type="hidden" value="${pickupOrder.car_type!''}" id="carTypeSelect">
-			                                            <select name="car_type" id="cartype" class="form-control">
-			                                                                <option value="全部">全部</option>
-			                                                                <option value="平板车">平板车</option>
-			                                                                <option value="高栏车">高栏车</option>
-			                                                                <option value="集装车">集装车</option>
-			                                                                <option value="单桥车">单桥车</option>
-			                                                                <option value="双桥车">双桥车</option>
-			                                                                <option value="半挂车">半挂车</option>
-			                                                                <option value="冷藏车">冷藏车</option>
-			                                                                <option value="特种车">特种车</option>
-			                                                                <option value="商品运输车">商品运输车</option>
-			                                                                <option value="危险品车">危险品车</option>
-			                                                                <option value="挂车">挂车</option>
-			                                                                <option value="爬梯车">爬梯车</option>
-			                                                                <option value="可拼车">可拼车</option>
-			                                                                <option value="低栏车">低栏车</option>
-			                                                                <option value="半挂一拖二">半挂一拖二</option>
-			                                                                <option value="半挂一拖三">半挂一拖三</option>
-			                                                                <option value="半挂二拖二">半挂二拖二</option>
-			                                                                <option value="半挂二拖三">半挂二拖三</option>
-			                                                                <option value="前四后四">前四后四</option>
-			                                                                <option value="前四后六">前四后六</option>
-			                                                                <option value="前四后八">前四后八</option>
-			                                                                <option value="前四后十">前四后十</option>
-			                                                                <option value="五轮车">五轮车</option>
-			                                                                <option value="后八轮">后八轮</option>
-			                                                                <option value="半封闭">半封闭</option>
-			                                                                <option value="封闭车">封闭车</option>
-			                                                                <option value="罐式车">罐式车</option>
-			                                                                <option value="厢式车">厢式车</option>
-			                                                                <option value="自卸车">自卸车</option>
-			                                                                <option value="棉被车">棉被车</option>
-			                                                                <option value="其他">其他</option>
-			                                                            </select>
-			                                                            </div>
-			                                       <div style=display:inline-block;width:50%>			                                                               
-			                                            <label>长度</label>
-			                                         	<input type="hidden" value="${pickupOrder.car_size!''}" id="carSizeSelect">
-			                                            <select name="car_size" id="carsize" class="form-control">
-			                                                <option value="15">15</option>
-			                                                <option value="20">20</option>
-			                                                <option value="25">25</option>                                                
-			                                            </select>
-			                                       </div>
-			                                       </div>                                 
-                                            <div class="form-group">
-                                            <label>电话</label>
-                                             <input class="form-control" id="driver_phone" value="${driver.phone!''}"  name="driver_phone">
+                                        <div class="form-group">
+	                                        <div style=display:inline-block;width:49%>
+	                                            <label>车型</label>
+	                                         	<input type="hidden" value="${pickupOrder.car_type!''}" id="carTypeSelect">
+	                                            <select name="car_type" id="cartype" class="form-control">
+                                                           <option value="全部">全部</option>
+                                                           <option value="平板车">平板车</option>
+                                                           <option value="高栏车">高栏车</option>
+                                                           <option value="集装车">集装车</option>
+                                                           <option value="单桥车">单桥车</option>
+                                                           <option value="双桥车">双桥车</option>
+                                                           <option value="半挂车">半挂车</option>
+                                                           <option value="冷藏车">冷藏车</option>
+                                                           <option value="特种车">特种车</option>
+                                                           <option value="商品运输车">商品运输车</option>
+                                                           <option value="危险品车">危险品车</option>
+                                                           <option value="挂车">挂车</option>
+                                                           <option value="爬梯车">爬梯车</option>
+                                                           <option value="可拼车">可拼车</option>
+                                                           <option value="低栏车">低栏车</option>
+                                                           <option value="半挂一拖二">半挂一拖二</option>
+                                                           <option value="半挂一拖三">半挂一拖三</option>
+                                                           <option value="半挂二拖二">半挂二拖二</option>
+                                                           <option value="半挂二拖三">半挂二拖三</option>
+                                                           <option value="前四后四">前四后四</option>
+                                                           <option value="前四后六">前四后六</option>
+                                                           <option value="前四后八">前四后八</option>
+                                                           <option value="前四后十">前四后十</option>
+                                                           <option value="五轮车">五轮车</option>
+                                                           <option value="后八轮">后八轮</option>
+                                                           <option value="半封闭">半封闭</option>
+                                                           <option value="封闭车">封闭车</option>
+                                                           <option value="罐式车">罐式车</option>
+                                                           <option value="厢式车">厢式车</option>
+                                                           <option value="自卸车">自卸车</option>
+                                                           <option value="棉被车">棉被车</option>
+                                                           <option value="其他">其他</option>
+                                                    </select>
+                                                 </div>
+	                                       <div style=display:inline-block;width:50%>			                                                               
+	                                            <label>长度</label>
+	                                         	<input type="hidden" value="${pickupOrder.car_size!''}" id="carSizeSelect">
+	                                            <select name="car_size" id="carsize" class="form-control">
+	                                                <option value="15">15</option>
+	                                                <option value="20">20</option>
+	                                                <option value="25">25</option>                                                
+	                                            </select>
+	                                       </div>
+	                                       </div>                                 
+                                           <div class="form-group">
+                                           <label>电话</label>
+                                           <input class="form-control" id="driver_phone" value="${driver.phone!''}"  name="driver_phone">
                                         </div>    
-			                                <div class="form-group">
-	                                            <label>跟车人</label>
-	                                            <input class="form-control" id="car_follow_name" name="car_follow_name" value="${pickupOrder.car_follow_name!''}">
+	                                	<div class="form-group">
+                                            <label>跟车人</label>
+                                            <input class="form-control" id="car_follow_name" name="car_follow_name" value="${pickupOrder.car_follow_name!''}">
                                             </div>
                                                                                
                                             <div class="form-group">
-	                                            <label>跟车人电话</label>
-	                                            <input class="form-control" id="car_follow_phone" name="car_follow_phone" value="${pickupOrder.car_follow_phone!''}">
+                                            <label>跟车人电话</label>
+                                            <input class="form-control" id="car_follow_phone" name="car_follow_phone" value="${pickupOrder.car_follow_phone!''}">
                                             </div>
-                                       </div>                                  
-                                            
-
+                                        </div>  
                                   
-                                   <div class="col-lg-6">
-                                  		<h2>拼车信息</h2>                                           
-                                            <div class="form-group">
-                                                <label>拼车单号</label> <strong>${order_no!''} ${pickupOrder.depart_no!''}</strong>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>单据状态</label>   ${status!''} ${pickupOrder.status!''}
-                                            </div>
-                                            <div class="form-group">
-                                            <label>创建人</label>   ${userLogin.user_name!''}   ${userLogin2.user_name!''}                                         
-                                        </div>
-	                                                                                                                         
-										<div class="form-group">
-                                            <label>备注</label>
-                                            <textarea class="form-control" rows="8" id="remark" name="remark">${pickupOrder.remark!''}</textarea>
-                                        </div> 
-                                </div>
-                                       </div>   
+	                                   <div class="col-lg-6">
+	                                  		<h2>拼车信息</h2>                                           
+	                                            <div class="form-group">
+	                                                <label>拼车单号</label> <strong>${order_no!''} ${pickupOrder.depart_no!''}</strong>
+	                                            </div>
+	                                            <div class="form-group">
+	                                                <label>单据状态</label>   ${status!''} ${pickupOrder.status!''}
+	                                            </div>
+	                                            <div class="form-group">
+	                                            <label>创建人</label>   ${userLogin.user_name!''}   ${userLogin2.user_name!''}                                         
+	                                        </div>
+		                                                                                                                         
+											<div class="form-group">
+	                                            <label>备注</label>
+	                                            <textarea class="form-control" rows="8" id="remark" name="remark">${pickupOrder.remark!''}</textarea>
+	                                        </div> 
+	                                   </div>
+                                    </div>   
                                 </form>
                             </div>
-
-                                <div class="tab-pane fade" id="cargos">
-                                   
-                                    
-                                     <div class="panel-body" style="" id="ATMitem">
-                                        <div class="table-responsive">
-                                        
-                                <table class="table table-striped table-bordered table-hover" id="pickupItem-table">
-                              
-                                <thead>
-                                        <tr>
-                                        	<th>客户</th> 
-                                        	<th>运输单号</th> 
-                                         	<th>型号</th> 
-                                            <th>名称</th>
-                                            <th>数量</th>                                   
-                                            <th>体积</th> 
-                                            <th>重量</th> 
-                                            <th>备注</th>                                          
-                                           <th>操作</th>
-                                        </tr>
-                                    </thead>                               
-                                    <tbody>
-                                        <tr>
-                                      
-                                         <td>yd20132014123</td>
-                                         <td>xlk25642</td>
-                                          <td>ATM</td>
-                                           <td>1</td>
-                                            <td>100</td>
-                                            <td>200kg</td>
-                                            <td>一台ATM机</td>
-                                        </tr>                                                                                                     
-                                    </tbody>
-                                </table>
-                       
-                                          
-                                        </div>
-                                        <!-- /.table-responsive -->
-                                        <div style="display: none" id="transferOrderItemDateil">
-	                                            <h3 class="page-header">单品列表</h3>
-	 											<input id="item_id" value=0 type="hidden" >
-	                                           <div class="table-responsive">
-	                                          
-	                                            <table id="pickupDetail-table" class="table table-striped table-bordered table-hover dataTable">
-	                                                <thead>
-	                                                    <tr role="row">
-	                                                    <th class="sorting"></th>
-	                                                    <th class="sorting">名称</th>
-	                                                    <th class="sorting">型号</th>
-	                                                    <th class="sorting_asc">序列号</th>
-	                                                    <th class="sorting">体积</th>
-	                                                    <th class="sorting">重量</th>
-	                                                    <th class="sorting">备注</th>	                                                  
-	                                                    </tr>
-	                                                </thead>
-	                                             </table>
-	                                          </div>
-	                                           <div class="form-group">
-	                                           <a id="styleSave" style="display:none"><i class="fa fa-check"></i></a>
-                                         </div>
-                                            </div>
-                                    </div>                                  
-                                    <!-- /.panel-body -->
-                                      <!-- 模态框 -->									
+                            
+                            <div class="tab-pane fade" id="line">  
+                            	<div class="panel-body">
+                                    <div class="table-responsive"> 
+                                        <table class="table table-striped table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>运输单号</th>
+                                                    <th>客户</th>
+                                                    <th>提货地点</th>
+                                                    <th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="pickupAddressTbody" >
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.table-responsive -->
                                 </div>
+                            </div>
+
+                                <div class="tab-pane fade" id="cargos">  
+                                     <div class="panel-body" style="" id="ATMitem">
+                                     <div class="table-responsive">                                        
+		                                <table class="table table-striped table-bordered table-hover" id="pickupItem-table">                              
+		                                <thead>
+		                                        <tr>
+		                                        	<th>客户</th> 
+		                                        	<th>运输单号</th> 
+		                                         	<th>型号</th> 
+		                                            <th>名称</th>
+		                                            <th>数量</th>                                   
+		                                            <th>体积</th> 
+		                                            <th>重量</th> 
+		                                            <th>备注</th>                                          
+		                                           <th>操作</th>
+		                                        </tr>
+		                                    </thead>                               
+		                                    <tbody>
+		                                        <tr>                                      
+			                                        <td>yd20132014123</td>
+			                                        <td>xlk25642</td>
+			                                        <td>ATM</td>
+			                                        <td>1</td>
+		                                            <td>100</td>
+		                                            <td>200kg</td>
+		                                            <td>一台ATM机</td>
+		                                        </tr>                                                                                                     
+		                                    </tbody>
+		                                </table>                                
+                                     </div>
+                                     
+                                     <!-- /.table-responsive -->
+                                     <div style="display: none" id="transferOrderItemDateil">
+                                         <h3 class="page-header">单品列表</h3>
+										 <input id="item_id" value=0 type="hidden" >
+                                         <div class="table-responsive">                                        
+                                         <table id="pickupDetail-table" class="table table-striped table-bordered table-hover dataTable">
+                                              <thead>
+                                                  <tr role="row">
+                                                  <th class="sorting"></th>
+                                                  <th class="sorting">名称</th>
+                                                  <th class="sorting">型号</th>
+                                                  <th class="sorting_asc">序列号</th>
+                                                  <th class="sorting">体积</th>
+                                                  <th class="sorting">重量</th>
+                                                  <th class="sorting">备注</th>	                                                  
+                                                  </tr>
+                                              </thead>
+                                           </table>
+                                        </div>
+                                        <div class="form-group">
+                                        	<a id="styleSave" style="display:none"><i class="fa fa-check"></i></a>
+                                        </div>
+                                    </div>
+                                 </div>                							
+                               </div>
                                 
                                 <!-- 模态框 -->
 								<div class="modal fade" id="transferOrderMilestone" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
