@@ -353,61 +353,68 @@
 									      </div>
 									      <div class="modal-body">
 									      	<form id="transferOrderItemForm" action="">
-									      		<input id="transfer_order_id" type="hidden" name="transfer_order_id" />
-									      		<input id="productId" type="hidden" name="productId" />
-									      		<input id="transferOrderItemId" type="hidden" name="transferOrderItemId" />
-									      		<div class="form-group ">
-													<label class="control-label" for="inputSuccess">货品型号</label>
-													<input id="itemNoMessage" class="form-control dropdown-toggle" placeholder="请输入货品型号" type="text" name="item_no" data-toggle="dropdown">
-	                                                <ul id='itemNoList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
-	    											</ul>
-												</div>
-												<div class="form-group ">
-													<label class="control-label" for="inputSuccess">货品名称</label>
-													<input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown">
-	                                                <ul id='itemNameList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
-	    											</ul>
-												</div>
-												<div class="form-group">
-													<label class="control-label" for="inputWarning">货品长度</label> <input
-														id="size" class="form-control" type="text"
-														name="size" value="${product.size!''}">
-												</div>
-												<div class="form-group">
-													<label class="control-label" for="inputWarning">货品宽度</label> <input
-														id="width" class="form-control" type="text"
-														name="width" value="${product.width!''}">
-												</div>
-												<div class="form-group">
-													<label class="control-label" for="inputWarning">货品高度</label> <input
-														id="height" class="form-control" type="text"
-														name=height value="${height!''}">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品数量</label> <input
-													id="amount" class="form-control" type="text"
-													name="amount">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品单位</label> <input
-													id="unit" class="form-control" type="text"
-													name="unit">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
-													id="volume" class="form-control" type="text"
-													name="volume">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
-													id="weight" class="form-control" type="text"
-													name="weight">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品备注</label> <input
-													id="remark" class="form-control" type="text"
-													name="remark">
-												</div>
+                                                <input id="transfer_order_id" type="hidden" name="transfer_order_id" />
+                                                <input id="productId" type="hidden" name="productId" />
+                                                <input id="transferOrderItemId" type="hidden" name="transferOrderItemId" />
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品型号</label>
+                                                            <input id="itemNoMessage" class="form-control dropdown-toggle" placeholder="请输入货品型号" type="text" name="item_no" data-toggle="dropdown">
+                                                            <ul id='itemNoList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+                                                            </ul>
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品名称</label>
+                                                            <input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown">
+                                                            <ul id='itemNameList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+                                                            </ul>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label" for="inputWarning">货品长度</label> <input
+                                                                id="size" class="form-control" type="text"
+                                                                name="size" value="${product.size!''}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label" for="inputWarning">货品宽度</label> <input
+                                                                id="width" class="form-control" type="text"
+                                                                name="width" value="${product.width!''}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label" for="inputWarning">货品高度</label> <input
+                                                                id="height" class="form-control" type="text"
+                                                                name=height value="${height!''}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品数量</label> <input
+                                                            id="amount" class="form-control" type="text"
+                                                            name="amount">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品单位</label> <input
+                                                            id="unit" class="form-control" type="text"
+                                                            name="unit">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
+                                                            id="volume" class="form-control" type="text"
+                                                            name="volume">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
+                                                            id="weight" class="form-control" type="text"
+                                                            name="weight">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品备注</label> <input
+                                                            id="remark" class="form-control" type="text"
+                                                            name="remark">
+                                                        </div>
+                                                    </div>
+                                                </div> 							      		
+												
 										      </div>
 										      <div class="modal-footer">
 										        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -430,46 +437,54 @@
 									      	<form id="transferOrderItemDetailForm" action="">
 									      		<input id="detail_transfer_order_id" type="hidden" name="transfer_order_id" />
 									      		<input id="detail_transfer_order_item_id" type="hidden" name="transfer_order_item_id" />
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">序列号</label> <input
-													id="serial_no" class="form-control" type="text"
-													name="serial_no">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">名称</label> <input
-													id="detail_item_name" class="form-control" type="text"
-													name="detail_item_name"">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
-													id="detail_volume" class="form-control" type="text"
-													name="detail_volume"">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
-													id="detail_weight" class="form-control" type="text"
-													name="detail_weight"">
-												</div>	
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品备注</label> <input
-													id="detail_remark" class="form-control" type="text"
-													name="detail_remark"">
-												</div>											
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">收货人</label> <input
-													id="detail_contact_person" class="form-control" type="text"
-													name="detail_contact_person"">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">电话</label> <input
-													id="detail_phone" class="form-control" type="text"
-													name="detail_phone"">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">地址</label> <input
-													id="detail_address" class="form-control" type="text"
-													name="detail_address"">
-												</div>												
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">序列号</label> <input
+                                                            id="serial_no" class="form-control" type="text"
+                                                            name="serial_no">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">名称</label> <input
+                                                            id="detail_item_name" class="form-control" type="text"
+                                                            name="detail_item_name">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
+                                                            id="detail_volume" class="form-control" type="text"
+                                                            name="detail_volume">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
+                                                            id="detail_weight" class="form-control" type="text"
+                                                            name="detail_weight">
+                                                        </div>  
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品备注</label> <input
+                                                            id="detail_remark" class="form-control" type="text"
+                                                            name="detail_remark">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group ">
+                                                        <label class="control-label" for="inputSuccess">收货人</label> <input
+                                                            id="detail_contact_person" class="form-control" type="text"
+                                                            name="detail_contact_person">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                        <label class="control-label" for="inputSuccess">电话</label> <input
+                                                            id="detail_phone" class="form-control" type="text"
+                                                            name="detail_phone">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                        <label class="control-label" for="inputSuccess">地址</label> <input
+                                                            id="detail_address" class="form-control" type="text"
+                                                            name="detail_address">
+                                                        </div>                                              
+                                                    </div>
+                                                </div>
+													
+												
 												<!-- <label>货损?</label>             
 									            <label class="radio-inline">
 									           		<input name="detail_is_damage" type="radio" value="true">是
