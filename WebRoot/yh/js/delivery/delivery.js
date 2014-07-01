@@ -125,7 +125,7 @@ $(document).ready(function() {
 		  		                "mDataProp": null, 
 		  		                "sWidth": "8%",                
 		  		                "fnRender": function(obj) {                    
-		  		                    return "<a class='btn btn-info creat' code='"+obj.aData.ID+"'>"+
+		  		                    return "<a class='btn btn-info creat' code='"+obj.aData.ID+"' pcode='"+obj.aData.ORDER_NO+"'>"+
 		  		                    		"<i class='fa fa-list fa-fw'> </i> "+
 		  		                    		"创建"+
 		  		                    		"</a>";
@@ -139,17 +139,17 @@ $(document).ready(function() {
 				 var id = $(this).attr('code');
 				  e.preventDefault();
 		         //异步向后台提交数据
+				var transferNo= ($(this).attr('pcode'));
 				$.post('/yh/delivery/creat/'+id,function(id){
 		                 //保存成功后，刷新列表
 		                 console.log(id);
 		                 if(id>0){
-		                	// $("#tranferid").val(id);
 		                	 //dataTable2.fnSettings().sAjaxSource="/yh/delivery/orderList?trandferOrderId="+id;
-		                	 window.location.href="/yh/delivery/creat2/"+id;
+		                	 window.location.href="/yh/delivery/creat2?id="+id+"&localArr="+transferNo;
 		                 }else{
 		                     alert('取消失败');
 		                 }
-		             },'json');
+		             },'text');
 				  });
 			//datatable, 动态处理
 		    var dataTable =$('#eeda-table3').dataTable({
@@ -267,15 +267,10 @@ $(document).ready(function() {
 			        		transferNo.push($(".transferNo",the).attr('code2'));
 			        	});
 			        	}); 
-					
-					console.log(ser);
-			        console.log(trArr);
-			        	$('#departOrder_message2').val(ser);
-			            $('#departOrder_message').val(trArr);
-			            $('#departOrder_message3').val(transferNo);
+			        	$('#localArr2').val(ser);
+			            $('#localArr').val(trArr);
+			            $('#localArr3').val(transferNo);
 			            $('#createForm').submit();
-			            
-			            
 				});
 			 
 			// 发车确认

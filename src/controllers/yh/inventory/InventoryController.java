@@ -14,6 +14,7 @@ import models.Party;
 import models.UserLogin;
 import models.Warehouse;
 import models.WarehouseOrder;
+import models.WarehouseOrderItem;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -46,12 +47,78 @@ public class InventoryController extends Controller {
         logger.debug("URI:" + url);
         if (url.equals("/yh/gateIn")) {
             if (LoginUserController.isAuthenticated(this))
-                render("inventory/gateIn.html");
+                setAttr("inventory", "gateIn");
+            render("inventory/inventoryList.html");
         }
         if (url.equals("/yh/gateOut")) {
             if (LoginUserController.isAuthenticated(this))
-                render("inventory/gateOut.html");
+                setAttr("inventory", "gateOut");
+            render("inventory/inventoryList.html");
         }
+    }
+
+    // 入库单list
+    public void gateInlist() {
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from warehouse_order";
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 获取当前页的数据
+        List<Record> orders = Db
+                .find("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
+                        + "left join party p on p.id =w_o.party_id "
+                        + "left join contact c on p.contact_id =c.id "
+                        + "left join warehouse w on w.id = w_o.warehouse_id where order_type='入库'");
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        orderMap.put("aaData", orders);
+
+        renderJson(orderMap);
+    }
+
+    // 出库单list
+    public void gateOutlist() {
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from warehouse_order";
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 获取当前页的数据
+        List<Record> orders = Db
+                .find("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
+                        + "left join party p on p.id =w_o.party_id "
+                        + "left join contact c on p.contact_id =c.id "
+                        + "left join warehouse w on w.id = w_o.warehouse_id where order_type='出库'");
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        orderMap.put("aaData", orders);
+
+        renderJson(orderMap);
     }
 
     // 入库单添加
@@ -64,6 +131,21 @@ public class InventoryController extends Controller {
     public void gateOut_add() {
         if (LoginUserController.isAuthenticated(this))
             render("/yh/inventory/gateOutEdit.html");
+    }
+
+    // 入库单修改edit
+    public void gateInEdit() {
+        String id = getPara();
+        System.out.println(id);
+        List<Record> orders = Db
+                .find("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
+                        + "left join party p on p.id =w_o.party_id "
+                        + "left join contact c on p.contact_id =c.id "
+                        + "left join warehouse w on w.id = w_o.warehouse_id where w_o.id ='"
+                        + id + "'");
+        setAttr("warehouseOrder", orders);
+        WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
+        render("/yh/inventory/gateInEdit.html");
     }
 
     // 查找客户
@@ -160,7 +242,7 @@ public class InventoryController extends Controller {
         Date createDate = Calendar.getInstance().getTime();
 
         warehouseOrder.set("party_id", getPara("party_id"))
-                .set("warehouse_id", getPara("warehouseSelect"))
+                .set("warehouse_id", getPara("warehouseId"))
                 .set("order_no", orderNo).set("order_type", "入库")
                 .set("status", "新建").set("qualifier", getPara("qualifier"))
                 .set("remark", getPara("remark"));
@@ -177,6 +259,17 @@ public class InventoryController extends Controller {
             warehouseOrder.save();
         }
         renderJson(warehouseOrder.get("id"));
+    }
+
+    // 保存入库单货品
+    public void savewareOrderItem() {
+        WarehouseOrderItem warehouseOrderItem = new WarehouseOrderItem();
+        String warehouseOderItemId = getPara("warehouseOderItemId");
+        if (warehouseOderItemId != "") {
+            warehouseOrderItem.set("", getPara());
+        } else {
+
+        }
     }
 
     // 构造单号

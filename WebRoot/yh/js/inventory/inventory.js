@@ -1,6 +1,15 @@
 $(document).ready(function() {
 	$('#menu_warehouse').addClass('active').find('ul').addClass('in');
 	
+	var inventory=$("#inventory").val();
+	var source = "";
+	if(inventory=='gateIn'){
+		$("#btn1").show();
+		source = "/yh/gateIn/gateInlist";
+	}if(inventory=='gateOut'){
+		$("#btn2").show();
+		source = "/yh/gateOut/gateOutlist";
+	}
 	//入库单list
 	 $('#example').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -11,22 +20,22 @@ $(document).ready(function() {
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": null,
+	        "sAjaxSource":source,
 			"aoColumns": [
-				{ "mDataProp": "USER_NAME" },
-				{ "mDataProp": null },
-	            { "mDataProp": "PASSWORD_HINT" },
+				{ "mDataProp": "ORDER_NO",
+					"fnRender": function(obj) {
+            			return "<a href='/yh/gateIn/gateInEdit/"+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		}},
+				{ "mDataProp": "COMPANY_NAME" },
+				{ "mDataProp": "WAREHOUSE_NAME" },
+				{ "mDataProp": "ORDER_TYPE" },
+				{ "mDataProp": "STATUS" },
+	            { "mDataProp": "QUALIFIER" },
 	            { 
 	                "mDataProp": null,
-	                "sWidth": "15%",
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-info editbutton' href='/yh/loginUser/edit/"+obj.aData.ID+"'>"+
-	                                "<i class='fa fa-edit'> </i> "+
-	                                "编辑"+
-	                            "</a>"+
-	                            "<a class='btn btn-danger' href='/yh/loginUser/del/"+obj.aData.ID+"'>"+
+	                    return "<a class='btn btn-danger' href='/yh/gateIn/gateInDelect/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-	                                "删除"+
 	                            "</a>";
 	                }
 	            } 
@@ -153,41 +162,6 @@ $(document).ready(function() {
 	 		}else{
 	 			$("#itemNoMessage").val($(this).attr('item_no'));
 	 		}
-	 		if($(this).attr('size') == 'null'){
-	 			$("#size").val('');
-	 		}else{
-	 			$("#size").val($(this).attr('size'));
-	 		}
-	 		if($(this).attr('width') == 'null'){
-	 			$("#width").val('');
-	 		}else{
-	 			$("#width").val($(this).attr('width'));
-	 		}
-	 		if($(this).attr('unit') == 'null'){
-	 			$("#unit").val('');
-	 		}else{
-	 			$("#unit").val($(this).attr('unit')); 			
-	 		}
-	 		if($(this).attr('volume') == 'null'){
-	 			$("volume").val('');
-	 		}else{
-	 			$("#volume").val($(this).attr('volume'));
-	 		}
-	 		if($(this).attr('weight') == 'null'){
-	 			$("weight").val('');
-	 		}else{
-	 			$("#weight").val($(this).attr('weight'));
-	 		}
-	 		if($(this).attr('height') == 'null'){
-	 			$("height").val('');
-	 		}else{
-	 			$("#height").val($(this).attr('height'));
-	 		}
-	 		if($(this).attr('item_desc') == 'null'){
-	 			$("remark").val('');
-	 		}else{
-	 			$("#remark").val($(this).attr('item_desc'));
-	 		}
 	 		$("#productId").val($(this).attr('id'));
 	 		$('#itemNameList').hide();
 	 	});  	
@@ -227,60 +201,43 @@ $(document).ready(function() {
 	 		}else{
 	 			$("#itemNameMessage").val($(this).attr('item_name'));
 	 		}
-	 		if($(this).attr('size') == 'null'){
-	 			$("#size").val('');
-	 		}else{
-	 			$("#size").val($(this).attr('size'));
-	 		}
-	 		if($(this).attr('width') == 'null'){
-	 			$("#width").val('');
-	 		}else{
-	 			$("#width").val($(this).attr('width'));
-	 		}
-	 		if($(this).attr('unit') == 'null'){
-	 			$("#unit").val('');
-	 		}else{
-	 			$("#unit").val($(this).attr('unit')); 			
-	 		}
-	 		if($(this).attr('volume') == 'null'){
-	 			$("volume").val('');
-	 		}else{
-	 			$("#volume").val($(this).attr('volume'));
-	 		}
-	 		if($(this).attr('weight') == 'null'){
-	 			$("weight").val('');
-	 		}else{
-	 			$("#weight").val($(this).attr('weight'));
-	 		}
-	 		if($(this).attr('height') == 'null'){
-	 			$("height").val('');
-	 		}else{
-	 			$("#height").val($(this).attr('height'));
-	 		}
-	 		if($(this).attr('item_desc') == 'null'){
-	 			$("remark").val('');
-	 		}else{
-	 			$("#remark").val($(this).attr('item_desc'));
-	 		}
 	 		$("#productId").val($(this).attr('id'));
 	        $('#itemNoList').hide();
 	     }); 
 	 	
-	 	 // 获取所有仓库
-		 $.post('/yh/gateIn/searchAllwarehouse',function(data){
-			 if(data.length > 0){
-				 var warehouseSelect = $("#warehouseSelect");
-				 warehouseSelect.empty();
-				 for(var i=0; i<data.length; i++){
-					 warehouseSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
-				 }
-			 }
-		 },'json');
-		 //获取仓库ID
-		 $("#warehouseSelect").on('change',function(){
-			 $("#warehouseId").val($("#warehouseSelect").val());
-		 });
-		 
+	 	
+	 	//选择仓库 
+		 $('#warehouseSelect').on('keyup click', function(){
+				var inputStr = $('#warehouseSelect').val();
+				$.get('/yh/gateIn/searchAllwarehouse', {input:inputStr}, function(data){
+					console.log(data);
+					var warehouseList =$("#warehouseList");
+					warehouseList.empty();
+					for(var i = 0; i < data.length; i++)
+					{
+						warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</a></li>");
+					}
+				},'json');
+				$("#warehouseList").css({ 
+		        	left:$(this).position().left+"px", 
+		        	top:$(this).position().top+32+"px" 
+		        }); 
+		        $('#warehouseList').show();
+			});
+		 	$('#warehouseSelect').on('blur', function(){
+				$("#warehouseList").delay(120).hide(1);
+			});
+		 	
+			// 选中仓库
+			$('#warehouseList').on('click', '.fromLocationItem', function(e){
+				var id =$(this).attr('code');
+				$('#warehouseSelect').val($(this).text());
+				 $("#warehouseId").val(id);
+				//productDataTable.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist?categoryId="+partyId;
+				//productDataTable.fnDraw();
+				$('#customerList').hide();
+		    }); 
+			
 		 //保存入库单
 		 $("#saveInventoryBtn").click(function(e){
 	            //阻止a 的默认响应行为，不需要跳转	
@@ -291,7 +248,7 @@ $(document).ready(function() {
 	                console.log(data);
                  if(data>0){
                 	 console.log(data);
-                 	$("#party_id").val(data);
+                 	$("#gateInId").val(data);
                  	$("#style").show();
                  	//$("#ConfirmationBtn").attr("disabled", false);
                  }else{
@@ -299,4 +256,25 @@ $(document).ready(function() {
                  }
 	             },'json');
 	        });
+		 
+			// 保存货品
+		    $("#warehouseOrderItemFormBtn").click(function(){
+		    	$.post('/yh/gateIn/savewareOrderItem', $("#warehouseOrderItemForm").serialize(), function(data){
+					if(data.ID > 0){
+						//保存成功后，刷新列表
+		                console.log(data);
+		                if(data.ORDER_ID>0){
+		                	$("#transferOrderItemForm")[0].reset();
+		                	var order_id = $("#order_id").val();
+		                	$("#productIdHidden").val(data.ORDER_ID);
+			                itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id+"&product_id="+data.PRODUCT_ID;                		
+		                	itemDataTable.fnDraw();
+		                }else{
+		                    alert('数据保存失败。');
+		                }
+		                $("#transferOrderItemForm")[0].reset();
+						$('#myModal').modal('hide');
+					}
+				},'json');
+		    });
 });

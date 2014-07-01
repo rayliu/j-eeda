@@ -261,8 +261,9 @@ public class DeliveryController extends Controller {
      * ); renderJson(contactjson); }
      */
     public void creat2() {
-        String id = getPara();
-
+        String id = getPara("id");
+        String list = this.getPara("localArr");
+        System.out.println(list);
         // String ser = getPara("ser");
         /*
          * String[] ser; ser = getParaValues("ser");
@@ -286,6 +287,7 @@ public class DeliveryController extends Controller {
 
         setAttr("transferId", id);
         setAttr("deliveryOrder", tOrder);
+        setAttr("localArr3", list);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/delivery/deliveryOrderEdit.html");
     }
@@ -311,33 +313,6 @@ public class DeliveryController extends Controller {
         setAttr("localArr3", list3);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/delivery/deliveryOrderEdit.html");
-    }
-
-    // 创建 结构 行为
-    public void deliveryOrderList() {
-
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
-        }
-        Map orderMap = new HashMap();
-
-        // 获取总条数
-        String totalWhere = "";
-        String sql = "select count(1) total from user_login ";
-        Record rec = Db.findFirst(sql + totalWhere);
-        logger.debug("total records:" + rec.getLong("total"));
-        // 获取当前页的数据
-        List<Record> orders = Db.find("select * from user_login");
-        orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", rec.getLong("total"));
-        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-        orderMap.put("aaData", orders);
-
-        renderJson(orderMap);
     }
 
     // 获取运输单普通货品
@@ -586,6 +561,7 @@ public class DeliveryController extends Controller {
         String notifyId = getPara("notify_id");
         // String itemId = getPara("item_id");
         String idlist3 = getPara("localArr");
+        String idlist5 = getPara("localArr3");
         System.out.println(idlist3);
         String[] idlist = getPara("localArr").split(",");
         String[] idlist2 = getPara("localArr2").split(",");
@@ -644,7 +620,8 @@ public class DeliveryController extends Controller {
             } else {
                 DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
                 deliveryOrderItem.set("DELIVERY_ID", deliveryOrder.get("id"))
-                        .set("transfer_order_id", getPara("tranferid"));
+                        .set("transfer_order_id", getPara("tranferid"))
+                        .set("transfer_no", idlist5);
                 deliveryOrderItem.save();
             }
             saveDeliveryOrderMilestone(deliveryOrder);

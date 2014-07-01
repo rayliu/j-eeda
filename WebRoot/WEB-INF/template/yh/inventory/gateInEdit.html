@@ -33,7 +33,7 @@
                                   <div class="col-lg-12">
                                   		<div class="col-lg-6">
                                   		<form action="" id="inventoryForm">
-                                  		<input type="text" id="gateInId" name="gateInId">
+                                  		<input type="hidden" id="gateInId" name="gateInId">
 	              							<div class="form-group">
                                                 <label>客户信息</label>
                                                 <input type="hidden" id="party_id" name="party_id">
@@ -50,7 +50,10 @@
         											name="address">
         										<label class="control-label" for="inputSuccess">仓库</label>
         										<input type="hidden" id="warehouseId" name="warehouseId"> 
-                                                <select id="warehouseSelect" class="form-control" name="warehouseSelect"></select>  
+        										 <input id="warehouseSelect" class="form-control" name="warehouseSelect"> 
+        										 <ul id='warehouseList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+    											</ul>
+                                                
         									</div>	
         								</div>
         								<div class="col-lg-6">
@@ -104,68 +107,66 @@
 									        <h4 class="modal-title" id="myModalLabel">新增货品</h4>
 									      </div>
 									      <div class="modal-body">
-									      <form id="transferOrderItemForm" action="">
+									      <form id="warehouseOrderItemForm" action="">
 									      <div class="col-lg-6">
 									     		<input id="transfer_order_id" type="hidden" name="transfer_order_id" />
 									      		<input id="productId" type="hidden" name="productId" />
-									      		<input id="transferOrderItemId" type="hidden" name="transferOrderItemId" />
+									      		<input id="warehouseOderItemId" type="hidden" name="warehouseOderItemId" />
 												<div class="form-group ">
 													<label class="control-label" for="inputSuccess">货品名称</label>
 													<input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown">
 	                                                <ul id='itemNameList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
 	    											</ul>
 												</div>
-												<div class="form-group">
-													<label class="control-label" for="inputWarning">货品长度</label> <input
-														id="size" class="form-control" type="text"
-														name="size" value="${product.size!''}">
-												</div>
-												<div class="form-group">
-													<label class="control-label" for="inputWarning">货品高度</label> <input
-														id="height" class="form-control" type="text"
-														name=height value="${height!''}">
-												</div>
 												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品单位</label> <input
-													id="unit" class="form-control" type="text"
-													name="unit">
+												<label class="control-label" for="inputSuccess">产品编号</label> 
+												<input id="item_no" class="form-control" type="text" name="item_no">
 												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
-													id="volume" class="form-control" type="text"
-													name="volume">
+												<div class="form-group">
+													<label class="control-label" for="inputWarning">批号</label> <input
+														id="lot_no" class="form-control" type="text" name="lot_no" value="${product.size!''}">
+												</div>
+												<div class="form-group">
+													<label class="control-label" for="inputWarning">计量单位</label> <input
+														id="uom" class="form-control" type="text" name=uom value="${height!''}">
+												</div>
+												<div class="form-group">
+												<label class="control-label" for="inputSuccess">过期时间</label> 
+												<input id="expire_date" class="form-control" type="text" name="expire_date">
+												</div>
+												<div class="form-group">
+												<label class="control-label" for="inputSuccess">产品描述</label> 
+												<input id="item_desc" class="form-control" type="text" name="item_desc">
 												</div>
 									      </div>
 									       <div class="col-lg-6">
-									      		<div class="form-group ">
+									      		<div class="form-group">
 													<label class="control-label" for="inputSuccess">货品型号</label>
 													<input id="itemNoMessage" class="form-control dropdown-toggle" placeholder="请输入货品型号" type="text" name="item_no" data-toggle="dropdown">
 	                                                <ul id='itemNoList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
 	    											</ul>
 												</div>
 												<div class="form-group">
-													<label class="control-label" for="inputWarning">货品宽度</label> 
-													<input id="width" class="form-control" type="text" name="width" value="${product.width!''}">
+													<label class="control-label" for="inputWarning">箱号</label> 
+													<input id="caton_no" class="form-control" type="text" name="caton_no" value="${product.width!''}">
 												</div>
 												<div class="form-group ">
-													<label class="control-label" for="inputSuccess">货品数量</label> 
-													<input id="amount" class="form-control" type="text" name="amount">
+													<label class="control-label" for="inputSuccess">现货总数</label> 
+													<input id="total_quantity" class="form-control" type="text" name="total_quantity">
+												</div>
+												<div class="form-group">
+													<label class="control-label" for="inputWarning">单位价格</label> 
+													<input id="unit_price" class="form-control" type="text" name="unit_price" value="${product.width!''}">
 												</div>
 												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
-													id="weight" class="form-control" type="text"
-													name="weight">
-												</div>
-												<div class="form-group ">
-												<label class="control-label" for="inputSuccess">货品备注</label> <input
-													id="remark" class="form-control" type="text"
-													name="remark">
+													<label class="control-label" for="inputSuccess">单位成本</label> 
+													<input id="unit_cost" class="form-control" type="text" name="unit_cost">
 												</div>
 										      </div>
 									      </div>
 										      <div class="modal-footer">
 										        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-										        <button id="transferOrderItemFormBtn" type="button" class="btn btn-primary">保存</button>
+										        <button id="warehouseOrderItemFormBtn" type="button" class="btn btn-primary">保存</button>
 										      </div>
 											</form>
 									    </div><!-- /.modal-content -->
