@@ -93,6 +93,8 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
 			$("#saveBtn").attr('disabled', false);
+		}else{
+			$("#saveBtn").attr('disabled', true);
 		}
 	});
 });

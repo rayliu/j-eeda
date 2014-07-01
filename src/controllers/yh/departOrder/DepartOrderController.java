@@ -47,16 +47,16 @@ public class DepartOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
 
-		String sqlTotal = "select count(1) total from depart_order do "
-				+ " left join party p on do.driver_id = p.id  and p.party_type = '"+Party.PARTY_TYPE_DRIVER+"'" 
+		String sqlTotal = "select count(1) total from depart_order deo "
+				+ " left join party p on deo.driver_id = p.id  and p.party_type = '"+Party.PARTY_TYPE_DRIVER+"'" 
 				+ " left join contact c on p.contact_id = c.id "
 				+ " where combine_type = '"
 				+ DepartOrder.COMBINE_TYPE_DEPART + "'";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select do.*,c.contact_person,c.phone, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=do.id ))  as transfer_order_no  from depart_order do "
-				+ " left join party p on do.driver_id = p.id and p.party_type = '"+Party.PARTY_TYPE_DRIVER+"'"
+		String sql = "select deo.*,c.contact_person,c.phone, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
+				+ " left join party p on deo.driver_id = p.id and p.party_type = '"+Party.PARTY_TYPE_DRIVER+"'"
 				+ " left join contact c on p.contact_id = c.id where combine_type = '"
 				+ DepartOrder.COMBINE_TYPE_DEPART + "'";
 
@@ -93,10 +93,10 @@ public class DepartOrderController extends Controller {
 	}
 	public void getIintedit(int depart_id){
 		int edit_depart_id=depart_id;
-		String sql = "select do.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
-					+ "where dt.depart_id =do.id)as order_id from depart_order  do "
-					+ "left join contact co on co.id in( select p.contact_id  from party p where p.id=do.driver_id ) "
-					+ "left join user_login  u on u.id=do.create_by where do.combine_type ='DEPART' and do.id in("
+		String sql = "select deo.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
+					+ "where dt.depart_id =deo.id)as order_id from depart_order  deo "
+					+ "left join contact co on co.id in( select p.contact_id  from party p where p.id=deo.driver_id ) "
+					+ "left join user_login  u on u.id=deo.create_by where deo.combine_type ='DEPART' and deo.id in("
 					+ edit_depart_id + ")";
 		DepartOrder depar = DepartOrder.dao.findFirst(sql);
 		String routeFrom = depar.get("ROUTE_FROM");
@@ -288,15 +288,15 @@ public class DepartOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
 		String sqlTotal = "select count(1) total from transfer_order_item tof"
-				+ " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
-				+ " left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id)"
+				+ " left join TRANSFER_ORDER  oro  on tof.ORDER_ID =oro.id "
+				+ " left join CONTACT c on c.id in (select contact_id from party p where oro.customer_id=p.id)"
 				+ " where tof.ORDER_ID in(" + order_id + ")";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select tof.* ,or.ORDER_NO as order_no,or.id as tr_order_id,c.COMPANY_NAME as customer  from transfer_order_item tof"
-				+ " left join TRANSFER_ORDER  or  on tof.ORDER_ID =or.id "
-				+ "left join CONTACT c on c.id in (select contact_id from party p where or.customer_id=p.id)"
+		String sql = "select tof.* ,oro.ORDER_NO as order_no,oro.id as tr_order_id,c.COMPANY_NAME as customer  from transfer_order_item tof"
+				+ " left join TRANSFER_ORDER  oro  on tof.ORDER_ID =oro.id "
+				+ "left join CONTACT c on c.id in (select contact_id from party p where oro.customer_id=p.id)"
 				+ " where tof.ORDER_ID in(" + order_id + ")  order by c.id" + sLimit;
 		String sql_dp_detail="select * from depart_transfer_itemdetail";
 		List<Record> departOrderitem = Db.find(sql);
@@ -393,7 +393,7 @@ public class DepartOrderController extends Controller {
 			/*发车单查询货品，单品个数*/
 			String total_depart_detail="select * from depart_transfer_itemdetail  where order_id="+Integer.parseInt(order_id[i]);//发车单单品个数
 			List<Record> depart_detaillist=Db.find(total_depart_detail);
-			depart_detail=depart_detaillist.size();
+			depart_detail=depart_detail+depart_detaillist.size();
 		}
 		last=detail_total-depart_detail;
 		if(last>0){
