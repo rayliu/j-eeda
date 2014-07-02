@@ -126,7 +126,21 @@
                                             <label>跟车人电话</label>
                                             <input class="form-control" id="car_follow_phone" name="car_follow_phone" value="${pickupOrder.car_follow_phone!''}">
                                             </div>
-                                        </div>  
+                                            
+                                        	<div class="form-group">
+                                                <label>提货方式</label>
+                                               	<input id="pickupModeRadio" type="hidden" value="${transferOrder.pickup_mode!''}"/>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="pickupMode" id="pickupMode1" value="routeSP" checked="">干线供应商自提
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="pickupMode" id="pickupMode2" value="pickupSP">外包供应商提货
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="pickupMode" id="pickupMode3" value="own">源鸿自提
+                                                </label>
+                                            </div> 
+                                        </div> 
                                   
 	                                   <div class="col-lg-6">
 	                                  		<h2>拼车信息</h2>                                           

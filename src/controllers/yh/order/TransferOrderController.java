@@ -362,7 +362,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("order_no", getPara("order_no"));
             transferOrder.set("create_by", getPara("create_by"));
             transferOrder.set("cargo_nature", getPara("cargoNature"));
-            transferOrder.set("pickup_mode", getPara("pickupMode"));
+            transferOrder.set("operation_type", getPara("operationType"));
             transferOrder.set("arrival_mode", getPara("arrivalMode"));
             transferOrder.set("address", getPara("address"));
             transferOrder.set("create_stamp", new Date());
@@ -371,30 +371,30 @@ public class TransferOrderController extends Controller {
             transferOrder.set("route_to", getPara("route_to"));
             transferOrder.set("order_type", getPara("orderType"));
             transferOrder.set("customer_province", getPara("customerProvince"));
-            transferOrder.set("car_size", getPara("car_size"));
+           /* transferOrder.set("car_size", getPara("car_size"));
             transferOrder.set("car_no", getPara("car_no"));
-            transferOrder.set("car_type", getPara("car_type"));
+            transferOrder.set("car_type", getPara("car_type"));*/
             transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
                 // 到达方式为货品直送时把warehouseId置为null
                 warehouseId = null;
                 Party party = null;
-                Party dirver = null;
+                //Party dirver = null;
                 String notifyPartyId = getPara("notify_party_id");
-                String driverId = getPara("driver_id");
+                //String driverId = getPara("driver_id");
                 if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
                 } else {
                     party = updateContact(notifyPartyId);
                 }
-                if (driverId == null || "".equals(driverId)) {
+                /*if (driverId == null || "".equals(driverId)) {
                     dirver = saveDriver();
                 } else {
                     dirver = updateDriver(driverId);
-                }
+                }*/
                 transferOrder.set("notify_party_id", party.get("id"));
-                transferOrder.set("driver_id", dirver.get("id"));
+                //transferOrder.set("driver_id", dirver.get("id"));
             }
             if (warehouseId != null && !"".equals(warehouseId)) {
                 transferOrder.set("warehouse_id", warehouseId);
@@ -403,10 +403,10 @@ public class TransferOrderController extends Controller {
                 transferOrder.set("office_id", officeId);
             }
             transferOrder.save();
-            // 如果是货品直送,则需生成一张发车单
+            /*// 如果是货品直送,则需生成一张发车单
             if (transferOrder.get("arrival_mode").equals("delivery")) {
                 createDepartOrder(transferOrder);
-            }
+            }*/
             saveTransferOrderMilestone(transferOrder);
         } else {
             transferOrder = TransferOrder.dao.findById(order_id);
@@ -415,7 +415,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("order_no", getPara("order_no"));
             transferOrder.set("create_by", getPara("create_by"));
             transferOrder.set("cargo_nature", getPara("cargoNature"));
-            transferOrder.set("pickup_mode", getPara("pickupMode"));
+            transferOrder.set("operation_type", getPara("operationType"));
             transferOrder.set("arrival_mode", getPara("arrivalMode"));
             transferOrder.set("address", getPara("address"));
             transferOrder.set("create_stamp", new Date());
@@ -424,30 +424,30 @@ public class TransferOrderController extends Controller {
             transferOrder.set("route_to", getPara("route_to"));
             transferOrder.set("order_type", getPara("orderType"));
             transferOrder.set("customer_province", getPara("customerProvince"));
-            transferOrder.set("car_size", getPara("car_size"));
+            /*transferOrder.set("car_size", getPara("car_size"));
             transferOrder.set("car_no", getPara("car_no"));
-            transferOrder.set("car_type", getPara("car_type"));
+            transferOrder.set("car_type", getPara("car_type"));*/
             transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
                 // 到达方式为货品直送时把warehouseId置为null
                 warehouseId = null;
                 Party party = null;
-                Party dirver = null;
+                //Party dirver = null;
                 String notifyPartyId = getPara("notify_party_id");
-                String driverId = getPara("driver_id");
+                //String driverId = getPara("driver_id");
                 if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
                 } else {
                     party = updateContact(notifyPartyId);
                 }
-                if (driverId == null || "".equals(driverId)) {
+                /*if (driverId == null || "".equals(driverId)) {
                     dirver = saveDriver();
                 } else {
                     dirver = updateDriver(driverId);
-                }
+                }*/
                 transferOrder.set("notify_party_id", party.get("id"));
-                transferOrder.set("driver_id", dirver.get("id"));
+                //transferOrder.set("driver_id", dirver.get("id"));
             } else {
                 transferOrder.set("notify_party_id", null);
                 transferOrder.set("driver_id", null);
@@ -459,7 +459,7 @@ public class TransferOrderController extends Controller {
                 transferOrder.set("office_id", officeId);
             }
             transferOrder.update();
-            // 如果是货品直送,则需判断是否新建一张发车单
+            /*// 如果是货品直送,则需判断是否新建一张发车单
             if (transferOrder.get("arrival_mode").equals("delivery")) {
                 DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst(
                         "select * from depart_transfer where order_id = ?", transferOrder.get("id"));
@@ -470,7 +470,7 @@ public class TransferOrderController extends Controller {
                 }
             } else {
                 deleteDepartOrder(transferOrder);
-            }
+            }*/
         }
         renderJson(transferOrder);
     }
