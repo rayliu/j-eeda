@@ -32,54 +32,31 @@ public class TransferOrderItemController extends Controller {
 		if(trandferOrderId == null || "".equals(trandferOrderId)){
 			trandferOrderId="-1";
 		}
-		if(productId == null || "".equals(productId)){
-			productId="-1";
-		}
-		if(productId == "-1"){
-			logger.debug(trandferOrderId);			
-	        String sLimit = "";
-	        String pageIndex = getPara("sEcho");
-	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-	        }	
-	        String sqlTotal = "select count(1) total from transfer_order_item where order_id =" + trandferOrderId;
-	        Record rec = Db.findFirst(sqlTotal);
-	        logger.debug("total records:" + rec.getLong("total"));	
-	        String sql = "select toi.*,"
-	        				+"(select sum(tori.weight) from transfer_order_item tori where tori.order_id = toi.id) as total_weight,"
-							+"(select sum(tori.volume) from transfer_order_item tori where tori.order_id = toi.id) as total_volumn,"
-							+"(select sum(tori.amount) from transfer_order_item tori where tori.order_id = toi.id) as total_amount from transfer_order_item toi where toi.order_id =" + trandferOrderId;	
-	        List<Record> transferOrders = Db.find(sql);	
-	        transferOrderListMap = new HashMap();
-	        transferOrderListMap.put("sEcho", pageIndex);
-	        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-	        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));	
-	        transferOrderListMap.put("aaData", transferOrders);
-		}else{
-			logger.debug(trandferOrderId);			
-	        String sLimit = "";
-	        String pageIndex = getPara("sEcho");
-	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-	        }	
-	        String sqlTotal = "select distinct count(1) total from transfer_order_item toi "
-							+" left join product p on p.id = toi.product_id "
-							+" where toi.order_id =" + trandferOrderId +" or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";
-	        Record rec = Db.findFirst(sqlTotal);
-	        logger.debug("total records:" + rec.getLong("total"));	
-	        String sql = "select distinct toi.id,ifnull(p.item_no,toi.item_no) item_no,ifnull(p.item_name,toi.item_name) item_name,"
-	        				+"(select sum(tori.weight) from transfer_order_item tori where tori.order_id = toi.id) as total_weight,"
-							+"(select sum(tori.volume) from transfer_order_item tori where tori.order_id = toi.id) as total_volumn,"
-							+"(select sum(tori.amount) from transfer_order_item tori where tori.order_id = toi.id) as total_amount,ifnull(p.unit,toi.unit) unit,ifnull(p.item_desc,toi.item_desc) remark from transfer_order_item toi "
-							+" left join product p on p.id = toi.product_id "
-							+" where toi.order_id =" + trandferOrderId +" or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";	
-	        List<Record> transferOrders = Db.find(sql);	
-	        transferOrderListMap = new HashMap();
-	        transferOrderListMap.put("sEcho", pageIndex);
-	        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-	        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));	
-	        transferOrderListMap.put("aaData", transferOrders);
-		}
+		logger.debug(trandferOrderId);			
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }	
+        String sqlTotal = "select distinct count(1) total from transfer_order_item toi "
+						+" left join product p on p.id = toi.product_id "
+						+" where toi.order_id =" + trandferOrderId +" or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));	
+        String sql = "";
+        sql = "select distinct toi.id,ifnull(p.item_no,toi.item_no) item_no,ifnull(p.item_name,toi.item_name) item_name,"
+        				+" ifnull(p.weight,toi.weight) weight,ifnull(p.volume,toi.volume) volume,toi.amount amount,"
+        				+" (select sum(torid.weight) from transfer_order_item_detail torid where torid.item_id = toi.id) as total_weight, "
+        				+" (select sum(torid.volume) from transfer_order_item_detail torid where torid.item_id = toi.id) as total_volume, "
+						+" ifnull(p.unit,toi.unit) unit,ifnull(p.item_desc,toi.item_desc) remark from transfer_order_item toi "
+						+" left join product p on p.id = toi.product_id "
+						+" where toi.order_id =" + trandferOrderId +" or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";	
+        List<Record> transferOrders = Db.find(sql);	
+        transferOrderListMap = new HashMap();
+        transferOrderListMap.put("sEcho", pageIndex);
+        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));	
+        transferOrderListMap.put("aaData", transferOrders);
         renderJson(transferOrderListMap);
 	}
 
@@ -222,7 +199,6 @@ public class TransferOrderItemController extends Controller {
 		product.set("item_name", getPara("item_name"));
 		product.set("unit", getPara("unit"));
 		product.set("item_desc", getPara("remark"));
-		product.set("category_id", getPara("categorySelect"));
 		product.update();
 	}
 

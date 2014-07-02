@@ -94,40 +94,18 @@ public class TransferOrderItemDetailController extends Controller {
         if (id != null && !id.equals("")) {
             item = TransferOrderItemDetail.dao.findById(id);
             item.set("item_no", transferOrderItem.get("item_no"));
-            item.set("serial_no", getPara("update_serial_no"));
-            item.set("item_name", getPara("update_detail_item_name"));
-            item.set("volume", getPara("update_detail_volume"));
-            item.set("weight", getPara("update_detail_weight"));
-            item.set("remark", getPara("update_detail_remark"));
-
-            /*
-             * boolean detail_is_damage =
-             * getParaToBoolean("update_detail_is_damage");
-             * item.set("is_damage", detail_is_damage); String
-             * estimate_damage_amount =
-             * getPara("update_detail_estimate_damage_amount");
-             * if(estimate_damage_amount != null &&
-             * !estimate_damage_amount.equals("")){
-             * item.set("estimate_damage_amount", estimate_damage_amount);
-             * }else{ item.set("estimate_damage_amount", null); } String
-             * damage_revenue = getPara("update_detail_damage_revenue");
-             * if(damage_revenue != null && !damage_revenue.equals("")){
-             * item.set("damage_revenue", damage_revenue); }else{
-             * item.set("damage_revenue", null); } String damage_payment =
-             * getPara("update_detail_damage_payment"); if(damage_payment !=
-             * null && !damage_payment.equals("")){ item.set("damage_payment",
-             * damage_payment); }else{ item.set("damage_payment", null); }
-             * String damage_remark = getPara("update_detail_damage_remark");
-             * if(damage_remark != null && !damage_remark.equals("")){
-             * item.set("damage_remark", damage_remark); }else{
-             * item.set("damage_remark", null); }
-             */
+            item.set("serial_no", getPara("serial_no"));
+            item.set("item_name", getPara("detail_item_name"));
+            item.set("volume", getPara("detail_volume").equals("") ? 0 : getPara("detail_volume"));
+            item.set("weight", getPara("detail_weight").equals("") ? 0 : getPara("detail_weight"));
+            item.set("remark", getPara("detail_remark"));
+            
             Party party = Party.dao.findById(getPara("notify_party_id"));
             Contact contact = Contact.dao.findFirst("select * from contact where id=(select contact_id from party where id="
                     + party.get("id") + ")");
-            contact.set("contact_person", getPara("update_detail_contact_person"));
-            contact.set("phone", getPara("update_detail_phone"));
-            contact.set("address", getPara("update_detail_address"));
+            contact.set("contact_person", getPara("detail_contact_person"));
+            contact.set("phone", getPara("detail_phone"));
+            contact.set("address", getPara("detail_address"));
             contact.update();
             party.set("contact_id", contact.get("id"));
             party.update();
@@ -144,27 +122,6 @@ public class TransferOrderItemDetailController extends Controller {
             item.set("volume", getPara("detail_volume").equals("") ? 0 : getPara("detail_volume"));
             item.set("weight", getPara("detail_weight").equals("") ? 0 : getPara("detail_weight"));
             item.set("remark", getPara("detail_remark"));
-            /*
-             * //boolean detail_is_damage =
-             * getParaToBoolean("detail_is_damage"); //item.set("is_damage",
-             * detail_is_damage); //String estimate_damage_amount =
-             * getPara("detail_estimate_damage_amount");
-             * if(estimate_damage_amount != null &&
-             * !estimate_damage_amount.equals("")){
-             * item.set("estimate_damage_amount", estimate_damage_amount);
-             * }else{ item.set("estimate_damage_amount", null); } String
-             * damage_revenue = getPara("update_detail_damage_revenue");
-             * if(damage_revenue != null && !damage_revenue.equals("")){
-             * item.set("damage_revenue", damage_revenue); }else{
-             * item.set("damage_revenue", null); } String damage_payment =
-             * getPara("update_detail_damage_payment"); if(damage_payment !=
-             * null && !damage_payment.equals("")){ item.set("damage_payment",
-             * damage_payment); }else{ item.set("damage_payment", null); }
-             * String damage_remark = getPara("update_detail_damage_remark");
-             * if(damage_remark != null && !damage_remark.equals("")){
-             * item.set("damage_remark", damage_remark); }else{
-             * item.set("damage_remark", null); }
-             */
             Party party = setParty();
 
             item.set("notify_party_id", party.get("id"));
