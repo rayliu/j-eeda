@@ -124,32 +124,36 @@
     			e.preventDefault();
     			 var even_detail_id=[];
     			/*保存上一次勾选单品id,货品id*/
-    			
-    			  var detail_id=0;
+    			 $("table tr:not(:first)").each(function(){ 
+     	         	$("input",this).each(function(){
+     	         		var code=$(this).val();
+     	         		var detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','));
+     	         	  even_detail_id.push(detail_id);
+     	         	});          		
+ 	         	}); 
+    			 
     			 $("table tr:not(:first)").each(function(){ 
     	         	$("input:checked",this).each(function(){
     	         	var code=$(this).val();
-    	         	 detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','));
+    	         	var detail_id=code.substring(code.indexOf('{')+1,code.indexOf(','));
     	         	    item_id=code.substring(code.indexOf(',')+1,code.indexOf('}'));
-    	         	  /* if(check_detail_id.length>0){
-    	         	    	var check_size=0;
+    	         	   if(check_detail_id.length>0){
     	         	    	for(var g=0;g<check_detail_id.length;g++){
     	         	    		for(var h=0;h<check_detail_id[g].length;h++){
     	         	    			if(check_detail_id[g][h]==detail_id){
-    	         	    					for(var a=0;a<check_detail_id[g];){
-    	   	         	    						var index=item_detail_id.indexOf(check_detail_id[g][a]);
-    	   	         	    						item_detail_id.splice(index,1);
-    	    	         	    					check_detail_id[g].splice(a,1);
-    	    	         	    					
-    	   	         	    				}    			
+    	         	    				for(var j=0;j<check_detail_id[g].length;){
+   	         	    						var index=item_detail_id.indexOf(check_detail_id[g][j]);
+   	         	    						item_detail_id.splice(index,1);
+    	         	    					check_detail_id[g].splice(j,1);	
+    	         	    					j=j-j;
+    	         	    				}
     	         	    			}
+    	         	    			
     	         	    		}
     	         	    	}
-    	         	    }*/
-    	         	  item_detail_id.push(detail_id);
-    	         	  alert(item_detail_id);
-    	         	  even_detail_id.push(detail_id);
-    	         	    for(var i=0;i<item_detail_id.length;){
+    	         	    }
+    	         	  item_detail_id.push(detail_id);         	 
+    	         	   /* for(var i=0;i<item_detail_id.length;){
     	         	    	var size=0;
     	         	    	for(var j=0;j<item_detail_id.length;j++){
     	         	    		if(item_detail_id[j]==detail_id){
@@ -162,7 +166,7 @@
     	         	    		continue;
     	         	    	};
     	         	    	i++;
-    	         	    };
+    	         	    };*/
     	         		
     	         	});          		
     	         	}); 

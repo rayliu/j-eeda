@@ -443,13 +443,13 @@ public class DepartOrderController extends Controller {
 				.set("route_from", getPara("route_from"))
 				.set("route_to", getPara("route_to"));
 				dp.save();
+				savePickupOrderMilestone(dp);
 				if("".equals(getPara("item_detail"))){
 				//保存没单品的货品到发车单货品表
 			String tr_item_detail="select * from transfer_order_item_detail where order_id in ("+order_id2+")";//查询单品id
 			List<Record> tr_item_list=Db.find(item_id);
 			List<Record> item_detail_list=Db.find(tr_item_detail);
 			item_idlist.removeAll(item_detail_idlist);
-			savePickupOrderMilestone(dp);
 			//没勾选单品
 			if(item_idlist.size()>0){
 				for(int i=0;i<item_idlist.size();i++){
@@ -464,7 +464,6 @@ public class DepartOrderController extends Controller {
 					}
 				}
 			}
-			
 			for(int h=0;h<tr_item_list.size();h++){
 				for(int j=0;j<item_detail_list.size();j++){
 					if(tr_item_list.get(h).get("item_id").equals(item_detail_list.get(j).get("item_id"))){
