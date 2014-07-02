@@ -233,14 +233,13 @@ $(document).ready(function() {
 		},'json');
 	});
 	
-	// 列出所有的提货地点
-	$("#addressList").click(function(){
+	var findAllAddress = function(){
 		var pickupOrderId = $("#pickupOrderId").val();
 		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
 			var pickupAddressTbody = $("#pickupAddressTbody");
 			pickupAddressTbody.empty();
 			for(var i=0;i<data.length;i++){
-				pickupAddressTbody.append("<tr value='"+data[i].POSITION+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
+				pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
 				/*if(i == 0){
 					pickupAddressTbody.append("<tr><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)'>上移</a> <a href='javascript:void(0)'>下移</a> <a href='javascript:void(0)'>移至顶部</a> <a href='javascript:void(0)'>移至底部</a></td></tr>");					
 				}else if(i == data.length-1){
@@ -250,15 +249,82 @@ $(document).ready(function() {
 				}*/
 			}
 		},'json');
+	};
+	
+	// 列出所有的提货地点
+	$("#addressList").click(function(){
+		findAllAddress();
 	});
 	
-
+	var swapPosition = function(currentId,targetId,currentVal,targetVal){
+		$.post('/yh/pickupOrder/swapPickupSeq', {currentId:currentId,targetId:targetId,currentVal:currentVal,targetVal:targetVal}, function(data){
+			//保存成功后，刷新列表
+            console.log(data);
+            if(data.success){
+        		findAllAddress();
+            }else{
+                alert('移动失败');
+            }
+		},'json');
+	};
+	
+	// 上移
 	$("#pickupAddressTbody").on('click', '.moveUp', function(e){
 		var currentNode = $(this).parent().parent();
 		var currentVal = currentNode.attr("value");
-		var prevNode = currentNode.prev();
-		var prevVal = prevNode.attr("value");
-		currentNode.attr("value", prevVal);
-		prevNode.attr("value", currentVal);
+		var targetNode = currentNode.prev();
+		var targetVal = targetNode.attr("value");
+		currentNode.attr("value", targetVal);
+		targetNode.attr("value", currentVal);
+		var currentId = currentNode.attr("id");
+		var targetId = targetNode.attr("id");
+		var currentNewVal = currentNode.attr("value");
+		var targetNewVal = targetNode.attr("value");
+		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
+	});
+	
+	// 下移
+	$("#pickupAddressTbody").on('click', '.moveDown', function(e){
+		var currentNode = $(this).parent().parent();
+		var currentVal = currentNode.attr("value");
+		var targetNode = currentNode.next();
+		var targetVal = targetNode.attr("value");
+		currentNode.attr("value", targetVal);
+		targetNode.attr("value", currentVal);
+		var currentId = currentNode.attr("id");
+		var targetId = targetNode.attr("id");
+		var currentNewVal = currentNode.attr("value");
+		var targetNewVal = targetNode.attr("value");
+		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
+	});
+	
+	// 移至顶部
+	$("#pickupAddressTbody").on('click', '.moveTop', function(e){
+		var currentNode = $(this).parent().parent();
+		var currentVal = currentNode.attr("value");
+		var targetNode = currentNode.siblings().first();
+		var targetVal = targetNode.attr("value");
+		currentNode.attr("value", targetVal);
+		targetNode.attr("value", currentVal);
+		var currentId = currentNode.attr("id");
+		var targetId = targetNode.attr("id");
+		var currentNewVal = currentNode.attr("value");
+		var targetNewVal = targetNode.attr("value");
+		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
+	});
+	
+	// 移至底部
+	$("#pickupAddressTbody").on('click', '.moveButtom', function(e){
+		var currentNode = $(this).parent().parent();
+		var currentVal = currentNode.attr("value");
+		var targetNode = currentNode.siblings().last();
+		var targetVal = targetNode.attr("value");
+		currentNode.attr("value", targetVal);
+		targetNode.attr("value", currentVal);
+		var currentId = currentNode.attr("id");
+		var targetId = targetNode.attr("id");
+		var currentNewVal = currentNode.attr("value");
+		var targetNewVal = targetNode.attr("value");
+		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
 	});
 } );
