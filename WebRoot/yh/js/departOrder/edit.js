@@ -31,6 +31,16 @@
         if(status!="新建"){
         	$("#order_edit").attr("disabled",true);
         }
+        if(status=="已发车"||status=="在途"){
+        	$("#order_rk").attr("disabled",false);
+        }
+        if(status=="已入库"&&$(order_rk).prop("disabled") == true){
+        	$("#order_sh").attr("disabled",false);
+        }
+        if(status=="已签收"){
+        	$("#order_sh").attr("disabled",true);
+        $("#edit_status").attr("disabled",true);
+        }
       if(type=="one"){
     	  $("#ordertypeone").attr('checked', 'checked');
       }else{
@@ -578,7 +588,7 @@
     				alert("请先保存发车单！");
     				return;
     			}
-    			$.post('/yh/transferOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
+    			$.post('/yh/departOrder/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
     				var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
     			},'json');
@@ -651,7 +661,7 @@
     	    	$.post('/yh/departOrder/savedepartOrder', $("#orderForm").serialize(), function(dp){
     	    		
         	    	$("#style").show();
-        	    	if(dp.STATUS=="新建"){
+        	    	if(dp.STATUS=="新建"||dp.STATUS=="在途"){
         	    		$("#order_fc").attr("disabled",false);
         	    	}
         	    	
@@ -674,6 +684,7 @@
     	    });
     	    $("#order_sh").click(function(e){
     	    	$(this).attr("disabled",true);
+    	    	 $("#edit_status").attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已签收", $("#orderForm").serialize(), function(){
     	    	
     	    	});

@@ -686,6 +686,7 @@ public class DepartOrderController extends Controller {
 	        	 transferOrderMilestone.set("status", "新建");
 	        }else{
 	        	transferOrderMilestone.set("status", status);
+	        	 transferOrderstatus(departOrder.get("id").toString(), status,null);
 	        }
 	        String name = (String) currentUser.getPrincipal();
 	        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
@@ -696,7 +697,7 @@ public class DepartOrderController extends Controller {
 	        transferOrderMilestone.set("create_stamp", sqlDate);
 	        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
 	        transferOrderMilestone.set("depart_id", departOrder.get("id"));
-	        transferOrderMilestone.save();
+	        transferOrderMilestone.save();     
 			return transferOrderMilestone;
 	    }
 	    //单击tab里程碑
@@ -720,7 +721,82 @@ public class DepartOrderController extends Controller {
 	        }
 	        renderJson(map);
 	    }
+	    //编辑里程碑
+	    public void saveTransferOrderMilestone() {
+	    	String milestoneDepartId = getPara("milestoneDepartId");
+	    	Map<String, Object> map = new HashMap<String, Object>();
+	    	 if(milestoneDepartId!=null&&!"".equals(milestoneDepartId)){
+	    		DepartOrder departOrder = DepartOrder.dao.findById(milestoneDepartId);
+		        TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+		        String status = getPara("status");
+		        String location = getPara("location");
+		        transferOrderstatus(milestoneDepartId, status,location);
+		        if (!status.isEmpty()) {
+		            transferOrderMilestone.set("status", status);
+		            departOrder.set("status", status);
+		        } else {
+		            transferOrderMilestone.set("status", "在途");
+		            departOrder.set("status", "在途");
+		        }
+		        departOrder.update();
+		        if (!location.isEmpty()) {
+		            transferOrderMilestone.set("location", location);
+		        } else {
+		            transferOrderMilestone.set("location", "");
+		        }
+		        String name = (String) currentUser.getPrincipal();
+		        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+		
+		        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+		
+		        java.util.Date utilDate = new java.util.Date();
+		        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+		        transferOrderMilestone.set("create_stamp", sqlDate);
+		        transferOrderMilestone.set("depart_id", milestoneDepartId);
+		        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
+		        transferOrderMilestone.save();
+		
+		        map.put("transferOrderMilestone", transferOrderMilestone);
+		        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
+		        String username = userLogin.get("user_name");
+		        map.put("username", username);
+	    	}
+	        renderJson(map);
+	    }
 	    //同步运输单状态里程碑
-	   
+	   public void transferOrderstatus(String de_or,String status,String location){
+		   int depart_id=Integer.parseInt(de_or);
+		  List<DepartTransferOrder> dep=DepartTransferOrder.dao.find("select * from depart_transfer  where depart_id in("+depart_id+")");
+		  for(int i=0;i<dep.size();i++){
+			 int order_id=Integer.parseInt(dep.get(i).get("order_id").toString());
+			  TransferOrder tr=TransferOrder.dao.findById(order_id);
+			  TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+			  if(!status.isEmpty()){
+		       transferOrderMilestone.set("status", status);
+		       tr.set("status", status);
+			  }else{
+				  transferOrderMilestone.set("status", "在途");
+				  tr.set("status", "在途");
+			  }
+			  tr.update();
+		        String name = (String) currentUser.getPrincipal();
+		        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+		        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+		        if(location==null||location.isEmpty()){
+		        	 transferOrderMilestone.set("location", "");
+		        }else{
+		        	 transferOrderMilestone.set("location", location);
+		        }
+		       
+		        java.util.Date utilDate = new java.util.Date();
+		        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+		        transferOrderMilestone.set("create_stamp", sqlDate);
+		        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+		        transferOrderMilestone.set("order_id",order_id);
+		        transferOrderMilestone.save();
+			  
+		  }
+		  
+	   }
 
 }
