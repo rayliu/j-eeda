@@ -129,7 +129,38 @@ public class InventoryController extends Controller {
 
     // 库存list
     public void stocklist() {
-
+        String id = getPara();
+        if (id == null) {
+            Map orderMap = new HashMap();
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+            renderJson(orderMap);
+            return;
+        }
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from warehouse_order_item";
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+        // 获取当前页的数据
+        List<Record> orders = Db
+                .find("select * from warehouse_order_item w left join warehouse_order w2 on w.warehouse_order_id =w2.id where warehouse_id ="
+                        + id);
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        orderMap.put("aaData", orders);
+        renderJson(orderMap);
     }
 
     // 入库单添加
@@ -156,6 +187,20 @@ public class InventoryController extends Controller {
                         + id + "'");
         setAttr("warehouseOrder", orders);
         render("/yh/inventory/gateInEdit.html");
+    }
+
+    // 出库单修改edit
+    public void gateOutEdit() {
+        String id = getPara();
+        System.out.println(id);
+        WarehouseOrder orders = WarehouseOrder.dao
+                .findFirst("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
+                        + "left join party p on p.id =w_o.party_id "
+                        + "left join contact c on p.contact_id =c.id "
+                        + "left join warehouse w on w.id = w_o.warehouse_id where w_o.id='"
+                        + id + "'");
+        setAttr("warehouseOrder", orders);
+        render("/yh/inventory/gateOutEdit.html");
     }
 
     // 查找客户
@@ -258,10 +303,47 @@ public class InventoryController extends Controller {
         renderJson(warehouseOrder.get("id"));
     }
 
+    // 保存入库单
+    public void gateOutSave() {
+        String orderNo = creat_order_no2();// 构造发车单号
+        WarehouseOrder warehouseOrder = new WarehouseOrder();
+        String gateOutId = getPara("warehouseorderId");
+        System.out.println();
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao
+                .find("select * from user_login where user_name='" + name + "'");
+        Date createDate = Calendar.getInstance().getTime();
+
+        warehouseOrder.set("party_id", getPara("party_id"))
+                .set("warehouse_id", getPara("warehouseId"))
+                .set("order_no", orderNo).set("order_type", "出库")
+                .set("status", "新建").set("qualifier", getPara("qualifier"))
+                .set("remark", getPara("remark"));
+
+        if (gateOutId != "") {
+            warehouseOrder.set("id", gateOutId)
+                    .set("last_updater", users.get(0).get("id"))
+                    .set("last_update_date", createDate);
+            warehouseOrder.update();
+        } else {
+            warehouseOrder.set("creator", users.get(0).get("id")).set(
+                    "create_date", createDate);
+            warehouseOrder.save();
+        }
+        renderJson(warehouseOrder.get("id"));
+    }
+
     // 保存入库单货品
     public void savewareOrderItem() {
         String warehouseorderid = getPara();
+        String productId = getPara("productId");
+        System.out.println(productId);
+        if (productId.equals("")) {
+            renderJson(0);
+            return;
+        }
         String name = (String) currentUser.getPrincipal();
+
         List<UserLogin> users = UserLogin.dao
                 .find("select * from user_login where user_name='" + name + "'");
         Date createDate = Calendar.getInstance().getTime();
@@ -292,12 +374,12 @@ public class InventoryController extends Controller {
         renderJson(warehouseOrderItem.get("id"));
     }
 
-    // 构造单号
+    // 构造入库单号
     public String creat_order_no() {
         String order_no = null;
         String the_order_no = null;
         WarehouseOrder order = WarehouseOrder.dao
-                .findFirst("select * from warehouse_order order by order_no desc limit 0,1");
+                .findFirst("select * from warehouse_order where order_type ='入库' order by order_no desc limit 0,1");
         if (order != null) {
             String num = order.get("order_no");
             String str = num.substring(2, num.length());
@@ -318,6 +400,36 @@ public class InventoryController extends Controller {
             String format = sdf.format(new Date());
             order_no = format + "00001";
             the_order_no = "RK" + order_no;
+        }
+        return the_order_no;
+    }
+
+    // 构造出库单号
+    public String creat_order_no2() {
+        String order_no = null;
+        String the_order_no = null;
+        WarehouseOrder order = WarehouseOrder.dao
+                .findFirst("select * from warehouse_order where order_type ='出库' order by order_no desc limit 0,1");
+        if (order != null) {
+            String num = order.get("order_no");
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) {
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            the_order_no = "CK" + order_no;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            the_order_no = "CK" + order_no;
         }
         return the_order_no;
     }
@@ -364,8 +476,30 @@ public class InventoryController extends Controller {
 
     // 查找仓库
     public void searchAllwarehouse() {
+        String input = getPara("input");
         List<Warehouse> warehouses = Warehouse.dao
-                .find("select * from warehouse");
+                .find("select * from warehouse where warehouse_name like '%"
+                        + input + "%'");
         renderJson(warehouses);
     }
+
+    // 查找客户
+    public void searchgateOutCustomer() {
+        String input = getPara("input");
+        String warehouseId = getPara("warehouseId");
+        if (warehouseId.equals("")) {
+            return;
+        }
+        List<Record> locationList = Collections.EMPTY_LIST;
+        locationList = Db
+                .find("SELECT w_o.party_id as pid,c.company_name FROM `warehouse_order` w_o "
+                        + "left join party p on p.id = w_o.party_id "
+                        + "left join contact c on p.contact_id = c.id where w_o.warehouse_id ='"
+                        + warehouseId
+                        + "' and c.company_name like '%"
+                        + input
+                        + "%'");
+        renderJson(locationList);
+    }
+
 }

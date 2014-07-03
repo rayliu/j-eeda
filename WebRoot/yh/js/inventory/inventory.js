@@ -3,12 +3,15 @@ $(document).ready(function() {
 	$('#reset').hide();
 	var inventory=$("#inventory").val();
 	var source = "";
+	var source2 = "";
 	if(inventory=='gateIn'){
 		$("#btn1").show();
 		source = "/yh/gateIn/gateInlist";
+		source2 = "/yh/gateIn/gateInEdit/";
 	}if(inventory=='gateOut'){
 		$("#btn2").show();
 		source = "/yh/gateOut/gateOutlist";
+		source2 = "/yh/gateOut/gateOutEdit/";
 	}
 	//入库单list
 	 $('#example').dataTable( {
@@ -24,7 +27,7 @@ $(document).ready(function() {
 			"aoColumns": [
 				{ "mDataProp": "ORDER_NO",
 					"fnRender": function(obj) {
-            			return "<a href='/yh/gateIn/gateInEdit/"+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            			return "<a href='"+source2+""+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
             		}},
 				{ "mDataProp": "COMPANY_NAME" },
 				{ "mDataProp": "WAREHOUSE_NAME" },
@@ -98,7 +101,7 @@ $(document).ready(function() {
 	 	$('#customerMessage').on('blur', function(){
 			$("#customerList").delay(120).hide(1);
 		});
-		// 选中供应商
+		// 选中客户
 		$('#customerList').on('click', '.fromLocationItem', function(e){
 			var partyId =$(this).attr('code');
 			$('#customerMessage').val($(this).text());
@@ -274,7 +277,7 @@ $(document).ready(function() {
 		                	productDataTable2.fnDraw();
 		                	$('#reset').click();
 		                }else{
-		                    alert('数据保存失败。');
+		                    alert('客户无产品,保存失败！。');
 		                }
 				},'json');
 		    });
