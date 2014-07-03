@@ -19,6 +19,7 @@
             	car_no:{required:  "请输入车牌号码"},
             }
         });
+    	var status=$("#status").val();
         var message=$("#message").val();
         var type=$("#type").val();
         var depart_id=$("#depart_id").val();
@@ -27,6 +28,9 @@
         var tr_item=$("#tr_itemid_list").val();
         var item_detail=$("#item_detail").val();
         var hang="";
+        if(status!="新建"){
+        	$("#order_edit").attr("disabled",true);
+        }
       if(type=="one"){
     	  $("#ordertypeone").attr('checked', 'checked');
       }else{
@@ -153,7 +157,7 @@
     	         	    	}
     	         	    }
     	         	  item_detail_id.push(detail_id);         	 
-    	         	   /* for(var i=0;i<item_detail_id.length;){
+    	         	  /*  for(var i=0;i<item_detail_id.length;){
     	         	    	var size=0;
     	         	    	for(var j=0;j<item_detail_id.length;j++){
     	         	    		if(item_detail_id[j]==detail_id){
@@ -630,16 +634,49 @@
     	    	var getIindepart_no=$("#getIin_depart_no").text();
     	    	$("#getIindepart_no").val(getIindepart_no);
     	       $('#orderForm').submit();
-    	    });
+    	    	});
     	    
     	    $("#box_one_edit").click(function(e){
     	    	 $('#boxoneForm').submit();
     	    });
     	    $("#box_two_edit").click(function(e){
    	    	 $('#boxtwoForm').submit();
-   	    });
+    	    });
     	    $("#box_two_config").click(function(e){
     	    	$("#box_two").modal('hide');
       	    });
+    	    //编辑保存
+    	    $("#order_edit").click(function(e){
+    	    	$(this).attr("disabled",true);
+    	    	$.post('/yh/departOrder/savedepartOrder', $("#orderForm").serialize(), function(dp){
+    	    		
+        	    	$("#style").show();
+        	    	if(dp.STATUS=="新建"){
+        	    		$("#order_fc").attr("disabled",false);
+        	    	}
+        	    	
+    	    	});
+    	    	
+    	    });
+    	    $("#order_fc").click(function(e){
+    	    	$(this).attr("disabled",true);
+    	    	$.post('/yh/departOrder/updatestate?order_state='+"已发车", $("#orderForm").serialize(), function(){
+    	    	
+    	    	$("#order_rk").attr("disabled",false);
+    	    	});
+    	    });
+    	    $("#order_rk").click(function(e){
+    	    	$(this).attr("disabled",true);
+    	    	$.post('/yh/departOrder/updatestate?order_state='+"已入库", $("#orderForm").serialize(), function(){
+    	    	
+    	    	$("#order_sh").attr("disabled",false);
+    	    	});
+    	    });
+    	    $("#order_sh").click(function(e){
+    	    	$(this).attr("disabled",true);
+    	    	$.post('/yh/departOrder/updatestate?order_state='+"已签收", $("#orderForm").serialize(), function(){
+    	    	
+    	    	});
+    	    });
     	 
     });

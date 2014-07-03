@@ -441,9 +441,9 @@ public class DepartOrderController extends Controller {
 				.set("car_follow_name", getPara("car_follow_name"))
 				.set("car_follow_phone", getPara("car_follow_phone"))
 				.set("route_from", getPara("route_from"))
-				.set("route_to", getPara("route_to"));
+				.set("route_to", getPara("route_to")).set("status", "新建");
 				dp.save();
-				savePickupOrderMilestone(dp);
+				savePickupOrderMilestone(dp,null);
 				if("".equals(getPara("item_detail"))){
 				//保存没单品的货品到发车单货品表
 			String tr_item_detail="select * from transfer_order_item_detail where order_id in ("+order_id2+")";//查询单品id
@@ -522,13 +522,25 @@ public class DepartOrderController extends Controller {
 				setAttr("last_detail_size", last_detail_size);
 				setAttr("edit_depart_id", dp.get("id"));
 				setAttr("creat", name);//创建人
-			
+
+				//根据运输单个数，判断发车单类型
+				int lang = order_id.length;
+				
+				if (lang > 1) {
+					setAttr("type", "many");
+				} else {
+					setAttr("type", "one");
+				}
+				
+				setAttr("localArr", order_id2);//运输单id,回显货品table
+				if (LoginUserController.isAuthenticated(this))
+					render("departOrder/editTransferOrder.html");
 		} else {//编辑发车单
 			
 			dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
 			dp.set("CREATE_BY", Integer.parseInt(creat_id)).set("create_stamp", createDate)
 			.set("combine_type", "DEPART").set("car_no", getPara("car_no")).set("car_type", getPara("cartype"))
-			.set("depart_no", depart_no).set("DRIVER_ID", Integer.parseInt(party_id))
+			.set("DRIVER_ID", Integer.parseInt(party_id))
 			.set("car_size", getPara("carsize")).set("remark", getPara("remark"))
 			.set("car_follow_name", getPara("car_follow_name"))
 			.set("car_follow_phone", getPara("car_follow_phone"))
@@ -590,23 +602,18 @@ public class DepartOrderController extends Controller {
 				}
 			}
 			}
-			getIintedit( Integer.parseInt(depart_id));
-			setAttr("depart_id", depart_id);
-			
+			renderJson(dp);
 		}
 	
-		//根据运输单个数，判断发车单类型
-		int lang = order_id.length;
-		
-		if (lang > 1) {
-			setAttr("type", "many");
-		} else {
-			setAttr("type", "one");
-		}
-		
-		setAttr("localArr", order_id2);//运输单id,回显货品table
-		if (LoginUserController.isAuthenticated(this))
-			render("departOrder/editTransferOrder.html");
+	}
+	//修改发车单状态
+	public void updatestate(){
+		String depart_id = getPara("depart_id");//发车单id
+		String order_state = getPara("order_state");//发车单id
+		DepartOrder dp=DepartOrder.dao.findById(Integer.parseInt(depart_id));
+		dp.set("status", order_state).update();
+		savePickupOrderMilestone(dp,order_state);
+		renderJson(dp);
 	}
 
 	// 点击货品table的查看 ，显示对应货品的单品
@@ -675,9 +682,13 @@ public class DepartOrderController extends Controller {
 			render("departOrder/departOrderList.html");
 		}
 		// 保存发车里程碑
-	    private void savePickupOrderMilestone(DepartOrder departOrder) {
+	    private TransferOrderMilestone savePickupOrderMilestone(DepartOrder departOrder,String status) {
 	        TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-	        transferOrderMilestone.set("status", "新建");
+	        if(status==null){
+	        	 transferOrderMilestone.set("status", "新建");
+	        }else{
+	        	transferOrderMilestone.set("status", status);
+	        }
 	        String name = (String) currentUser.getPrincipal();
 	        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 	        transferOrderMilestone.set("create_by", users.get(0).get("id"));
@@ -688,6 +699,7 @@ public class DepartOrderController extends Controller {
 	        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
 	        transferOrderMilestone.set("depart_id", departOrder.get("id"));
 	        transferOrderMilestone.save();
+			return transferOrderMilestone;
 	    }
 	    //单击tab里程碑
 	    public void transferOrderMilestoneList() {
@@ -710,5 +722,7 @@ public class DepartOrderController extends Controller {
 	        }
 	        renderJson(map);
 	    }
+	    //同步运输单状态里程碑
+	   
 
 }
