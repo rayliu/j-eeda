@@ -160,28 +160,26 @@ public class DepartOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
 		 if (orderNo == null && status == null && address == null && customer == null && routeFrom == null && routeTo == null && beginTime == null && endTime == null) {
-		String sqlTotal = "select count(1) total  from transfer_order to "
-					+" left join party p on to.customer_id = p.id "
+		String sqlTotal = "select count(1) total  from transfer_order tor "
+					+" left join party p on tor.customer_id = p.id "
 					+" left join contact c on p.contact_id = c.id "
-					+" left join location l1 on to.route_from = l1.code "
-					+" left join location l2 on to.route_to = l2.code"
-					+" where to.status not in ('已入库','已签收') and arrival_mode not in ('delivery')";
+					+" left join location l1 on tor.route_from = l1.code "
+					+" left join location l2 on tor.route_to = l2.code"
+					+" where tor.status not in ('已入库','已签收') and arrival_mode not in ('delivery')";
 		 rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
-
-		String sql = "select to.id,to.order_no,to.cargo_nature,"
-					+" (select sum(toi.weight) from transfer_order_item toi where toi.order_id = to.id) as total_weight,"  
-					+" (select sum(toi.volume) from transfer_order_item toi where toi.order_id = to.id) as total_volumn," 
-					+" (select sum(toi.amount) from transfer_order_item toi where toi.order_id = to.id) as total_amount," 
-					+" to.address,to.pickup_mode,to.status,c.company_name cname,"
-					+" l1.name route_from,l2.name route_to,to.CREATE_STAMP from transfer_order to "
-					+" left join party p on to.customer_id = p.id "
+		String sql = "select tor.id,tor.order_no,tor.cargo_nature,"
+					+" (select sum(toi.weight) from transfer_order_item toi where toi.order_id = tor.id) as total_weight,"  
+					+" (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn," 
+					+" (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount," 
+					+" tor.address,tor.pickup_mode,tor.status,c.company_name cname,"
+					+" l1.name route_from,l2.name route_to,tor.create_stamp from transfer_order tor "
+					+" left join party p on tor.customer_id = p.id "
 					+" left join contact c on p.contact_id = c.id "
-					+" left join location l1 on to.route_from = l1.code "
-					+" left join location l2 on to.route_to = l2.code"
-					+" where to.status not in ('已入库','已签收') and arrival_mode not in ('delivery')"
-					+" order by to.CREATE_STAMP desc";
-					
+					+" left join location l1 on tor.route_from = l1.code "
+					+" left join location l2 on tor.route_to = l2.code"
+					+" where tor.status not in ('已入库','已签收') and arrival_mode not in ('delivery')"
+					+" order by tor.create_stamp desc";					
 		 			transferOrders = Db.find(sql);
 		 }else{
 			 if (beginTime == null || "".equals(beginTime)) {
@@ -199,7 +197,7 @@ public class DepartOrderController extends Controller {
 						+" left join location l2 on tor.route_to = l2.code  "
 						+" where tor.status not in ('已入库','已签收') and arrival_mode !='delivery' and isnull(tor.assign_status, '') !='"+TransferOrder.ASSIGN_STATUS_ALL+"'"
 						+" and l1.name like '%"+routeFrom+"%' and l2.name like '%"+routeTo+"%' and tor.order_no like '%" + orderNo + "%' and tor.status like '%"
-	                    + status + "%' and tor.address like '%" + address + "%' and c.COMPANY_NAME like '%" + customer
+	                    + status + "%' and tor.address like '%" + address + "%' and c.company_name like '%" + customer
 	                    + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
 		         rec = Db.findFirst(sqlTotal);
 		        logger.debug("total records:" + rec.getLong("total"));
