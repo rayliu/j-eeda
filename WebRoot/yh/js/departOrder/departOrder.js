@@ -39,8 +39,8 @@ $(document).ready(function() {
             			return "源鸿自提";
             		}else{
             			return "";
-            		}}},
-            { "mDataProp": "STATUS"}
+            		}}}
+          
                                       
         ]      
     });	

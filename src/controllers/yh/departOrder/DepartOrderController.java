@@ -58,7 +58,7 @@ public class DepartOrderController extends Controller {
 		String sql = "select deo.*,c.contact_person,c.phone, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
 				+ " left join party p on deo.driver_id = p.id and p.party_type = '"+Party.PARTY_TYPE_DRIVER+"'"
 				+ " left join contact c on p.contact_id = c.id where combine_type = '"
-				+ DepartOrder.COMBINE_TYPE_DEPART + "'";
+				+ DepartOrder.COMBINE_TYPE_DEPART + "'order by deo.create_stamp desc";
 
 		List<Record> warehouses = Db.find(sql);
 
