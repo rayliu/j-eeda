@@ -1,5 +1,26 @@
 $(document).ready(function() {
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
+	 
+	//from表单验证
+ 	var validate = $('#pickupOrderForm').validate({
+         rules: {
+        	 driver_name: {
+             required: true
+           },
+           car_follow_name: {
+             required: true
+           }, 
+           car_no: {
+               required: true
+             }
+         },
+         messages : {	             
+        	driver_name : {required:  "请选择司机"}, 
+         	car_follow_name : {required:  "请输入跟车人员"}, 
+         	car_no:{required:  "请输入车牌号码"},
+         }
+     });
+	 
 	 // 列出所有的司机
 	 $('#driverMessage').on('keyup click', function(){
  		var inputStr = $('#driverMessage').val();
@@ -131,10 +152,8 @@ $(document).ready(function() {
 	
     //选择单品保存
     var item_detail_id=[];
-    $("#item_save").click(function(){
-    	
-    	 $("table tr:not(:first)").each(function(){
-    	        
+    $("#item_save").click(function(){    	
+    	 $("table tr:not(:first)").each(function(){    	        
          	$("input:checked",this).each(function(){
          		item_detail_id.push($(this).val());         	
          	});          		
@@ -165,17 +184,23 @@ $(document).ready(function() {
     	}
     }
 
-    //点击保存的事件，保存运输单信息
-	//transferOrderForm 不需要提交	
- 	$("#saveTransferOrderBtn").click(function(e){
-		//阻止a 的默认响应行为，不需要跳转
+    //点击保存的事件，保存拼车单信息
+    var clickSavePickupOrder = function(e){
+    	//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
+		//提交前，校验数据
+        if(!$("#pickupOrderForm").valid()){
+        	alert("请先保存拼车单!");
+	       	return false;
+        }
 		//异步向后台提交数据
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
 				if(data.ID>0){
+					$("#pickupId").val(data.ID);
+			        showFinishBut();
 				  	$("#style").show();	             
 				}else{
 					alert('数据保存失败。');
@@ -185,13 +210,23 @@ $(document).ready(function() {
         	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
-				if(data.ID>0){					
+				if(data.ID>0){		
+					$("#pickupId").val(data.ID);	
+			        showFinishBut();
 				  	$("#style").show();	            
 				}else{
 					alert('数据保存失败。');
 				}
 			},'json');
         }
+    };
+    
+	//transferOrderForm 不需要提交	
+ 	$("#saveTransferOrderBtn").click(function(e){
+ 		var returnVal = clickSavePickupOrder(e);
+ 		if(returnVal == false){
+ 			return false;
+ 		}
         $("#finishBtn").attr('disabled', false);
 	});
    
@@ -213,7 +248,41 @@ $(document).ready(function() {
  	
 	// 运输里程碑
 	$("#transferOrderMilestoneList").click(function(e){
-		pickupOrderMilestone();
+		//阻止a 的默认响应行为，不需要跳转
+		e.preventDefault();
+		//提交前，校验数据
+        if(!$("#pickupOrderForm").valid()){
+        	alert("请先保存拼车单!");
+	       	return false;
+        }
+		//异步向后台提交数据
+        if($("#pickupOrderId").val() == ""){
+	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+				$("#pickupOrderId").val(data.ID);
+				$("#milestonePickupId").val(data.ID);
+				if(data.ID>0){
+					$("#pickupId").val(data.ID);
+			        showFinishBut();
+					pickupOrderMilestone();
+				  	$("#style").show();	             
+				}else{
+					alert('数据保存失败。');
+				}
+			},'json');
+        }else{
+        	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+				$("#pickupOrderId").val(data.ID);
+				$("#milestonePickupId").val(data.ID);
+				if(data.ID>0){		
+					$("#pickupId").val(data.ID);	
+			        showFinishBut();
+					pickupOrderMilestone();
+				  	$("#style").show();	            
+				}else{
+					alert('数据保存失败。');
+				}
+			},'json');
+        }
 	});
 
 	// 保存新里程碑
@@ -231,6 +300,8 @@ $(document).ready(function() {
 		$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId}, function(){
 			pickupOrderMilestone();
 		},'json');
+		$("#finishBtn").attr('disabled', true);	
+		$("#finishBtnVal").val("finish");
 	});
 	
 	var findAllAddress = function(){
@@ -239,7 +310,7 @@ $(document).ready(function() {
 			var pickupAddressTbody = $("#pickupAddressTbody");
 			pickupAddressTbody.empty();
 			for(var i=0;i<data.length;i++){
-				pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
+				pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td>"+data[i].CREATE_STAMP+"</td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
 				/*if(i == 0){
 					pickupAddressTbody.append("<tr><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)'>上移</a> <a href='javascript:void(0)'>下移</a> <a href='javascript:void(0)'>移至顶部</a> <a href='javascript:void(0)'>移至底部</a></td></tr>");					
 				}else if(i == data.length-1){
@@ -252,8 +323,42 @@ $(document).ready(function() {
 	};
 	
 	// 列出所有的提货地点
-	$("#addressList").click(function(){
-		findAllAddress();
+	$("#addressList").click(function(e){
+		//阻止a 的默认响应行为，不需要跳转
+		e.preventDefault();
+		//提交前，校验数据
+        if(!$("#pickupOrderForm").valid()){
+        	alert("请先保存拼车单!");
+	       	return false;
+        }
+		//异步向后台提交数据
+        if($("#pickupOrderId").val() == ""){
+	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+				$("#pickupOrderId").val(data.ID);
+				$("#milestonePickupId").val(data.ID);
+				if(data.ID>0){
+					$("#pickupId").val(data.ID);
+			        showFinishBut();
+					findAllAddress();
+				  	$("#style").show();	             
+				}else{
+					alert('数据保存失败。');
+				}
+			},'json');
+        }else{
+        	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+				$("#pickupOrderId").val(data.ID);
+				$("#milestonePickupId").val(data.ID);
+				if(data.ID>0){		
+					$("#pickupId").val(data.ID);	
+			        showFinishBut();
+					findAllAddress();
+				  	$("#style").show();	            
+				}else{
+					alert('数据保存失败。');
+				}
+			},'json');
+        }
 	});
 	
 	var swapPosition = function(currentId,targetId,currentVal,targetVal){
@@ -326,5 +431,34 @@ $(document).ready(function() {
 		var currentNewVal = currentNode.attr("value");
 		var targetNewVal = targetNode.attr("value");
 		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
+	});
+
+	// 回显提货方式
+	$("input[name='pickupMode']").each(function(){
+		if($("#pickupModeRadio").val() == $(this).val()){
+			$(this).attr('checked', true);
+		}
+	});	
+	
+	// 显示已完成按钮
+	var showFinishBut = function(){
+		if($("#pickupOrderId").val() != ""){
+			if($("#finishBtnVal").val() == "finish"){
+				$("#finishBtn").attr('disabled', true);					
+			}else{
+				$("#finishBtn").attr('disabled', false);
+			}
+		}else{
+			$("#finishBtn").attr('disabled', true);	
+		}
+	};
+	showFinishBut();
+	
+	// 货品信息
+	$("#pickupOrderItemList").click(function(e){
+		var returnVal = clickSavePickupOrder(e);
+ 		if(returnVal == false){
+ 			return false;
+ 		}
 	});
 } );

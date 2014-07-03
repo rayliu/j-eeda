@@ -17,6 +17,17 @@
 	            			return "<a href='/yh/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
 	            		}},
 			    {"mDataProp":"STATUS"},
+			    {"mDataProp":"PICKUP_MODE",
+	            	"fnRender": function(obj) {
+	            		if(obj.aData.PICKUP_MODE == "routeSP"){
+	            			return "干线供应商自提";
+	            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
+	            			return "外包供应商提货";
+	            		}else if(obj.aData.PICKUP_MODE == "own"){
+	            			return "源鸿自提";
+	            		}else{
+	            			return "";
+	            		}}},
 			    {"mDataProp":"CONTACT_PERSON"},
 			    {"mDataProp":"PHONE"},
 			    {"mDataProp":"CAR_NO"},

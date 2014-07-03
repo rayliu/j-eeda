@@ -5,7 +5,8 @@
            
                 <div class="col-lg-12">
                     <h1 class="page-header">拼车单</h1>                  
-                    <input type="hidden" id="pickupOrderId" value="${pickupOrder.id!''}">
+                    <input type="text" id="pickupOrderId" value="${pickupOrder.id!''}">
+                    <input type="text" id="finishBtnVal">
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -23,7 +24,7 @@
                                 </li>
                                 <li class=""><a href="#line" data-toggle="tab" id="addressList">线路</a>
                                 </li>
-                                <li class=""><a href="#cargos" data-toggle="tab">货品信息</a>
+                                <li class=""><a href="#cargos" data-toggle="tab" id="pickupOrderItemList">货品信息</a>
                                 </li>
                                  <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">运输里程碑</a>
                                 </li>
@@ -59,6 +60,11 @@
 												</ul>
 										    </div>
 									    </div>
+									                                     
+                                        <div class="form-group">
+                                        <label>电话</label>
+                                        <input class="form-control" id="driver_phone" value="${driver.phone!''}"  name="driver_phone">
+                                        </div>  
                                         
                                         <div class="form-group">
                                             <label>车牌</label>
@@ -112,11 +118,7 @@
 	                                                <option value="25">25</option>                                                
 	                                            </select>
 	                                       </div>
-	                                       </div>                                 
-                                           <div class="form-group">
-                                           <label>电话</label>
-                                           <input class="form-control" id="driver_phone" value="${driver.phone!''}"  name="driver_phone">
-                                        </div>    
+	                                       </div>  
 	                                	<div class="form-group">
                                             <label>跟车人</label>
                                             <input class="form-control" id="car_follow_name" name="car_follow_name" value="${pickupOrder.car_follow_name!''}">
@@ -129,7 +131,7 @@
                                             
                                         	<div class="form-group">
                                                 <label>提货方式</label>
-                                               	<input id="pickupModeRadio" type="hidden" value="${transferOrder.pickup_mode!''}"/>
+                                               	<input id="pickupModeRadio" type="hidden" value="${pickupOrder.pickup_mode!''}"/>
                                                 <label class="radio-inline">
                                                     <input type="radio" name="pickupMode" id="pickupMode1" value="routeSP" checked="">干线供应商自提
                                                 </label>
@@ -172,6 +174,7 @@
                                                     <th>运输单号</th>
                                                     <th>客户</th>
                                                     <th>提货地点</th>
+                                                    <th>创建时间</th>
                                                     <th>操作</th>
                                                 </tr>
                                             </thead>
