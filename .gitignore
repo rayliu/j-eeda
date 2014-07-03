@@ -37,3 +37,8 @@ php-version
 WebRoot/WEB-INF/config/app_config.txt-uat
 WebRoot/WEB-INF/config/shiro.ini-uat
 logs/eeda
+src/config/DataInitUtil.java.orig
+src/config/EedaConfig.java.orig
+src/controllers/yh/PayController.java.orig
+src/controllers/yh/delivery/DeliveryController.java.orig
+src/controllers/yh/profile/CustomerController.java.orig

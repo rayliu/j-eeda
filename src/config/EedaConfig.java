@@ -157,6 +157,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/departOrder", controllers.yh.departOrder.DepartOrderController.class, "/yh");
         me.add("/yh/gateIn", controllers.yh.inventory.InventoryController.class, "/yh");
         me.add("/yh/gateOut", controllers.yh.inventory.InventoryController.class, "/yh");
+        me.add("/yh/stock", controllers.yh.inventory.InventoryController.class, "/yh");
 
     }
 

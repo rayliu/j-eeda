@@ -175,18 +175,17 @@ public class DeliveryController extends Controller {
 
         DeliveryOrder tOrder = DeliveryOrder.dao.findById(id);
         List<Record> serIdList = Db
-                .find("select transfer_order_id from delivery_order_item where delivery_id ="
+                .find("select transfer_item_id from delivery_order_item where delivery_id ="
                         + id);
-        try {
-            serIdList.get(0).get("transfer_order_id");
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        /*
+         * try { serIdList.get(0).get("transfer_order_id"); } catch (Exception
+         * e) { System.out.println(e); }
+         */
         if (serIdList.size() != 0) {
             // 序列号id
             String idStr = "";
             for (Record record : serIdList) {
-                idStr += record.get("transfer_order_id") + ",";
+                idStr += record.get("transfer_item_id") + ",";
             }// 4,5,6
             idStr = idStr.substring(0, idStr.length() - 1);
             setAttr("localArr2", idStr);
@@ -202,32 +201,29 @@ public class DeliveryController extends Controller {
             setAttr("localArr", idStr2);
         } else {
             // 运输单id
-            List<Record> transferId = Db
-                    .find("select transfer_order_id from delivery_order_item where delivery_id ="
+            DeliveryOrderItem deliveryOrderItem = DeliveryOrderItem.dao
+                    .findFirst("select transfer_order_id from delivery_order_item where delivery_id ="
                             + id);
+            // List<Record> transferId =
+            // Db.find("select transfer_order_id from delivery_order_item where delivery_id ="+
+            // id);
             // TODO: 如果transferId==null, 下面这句报错！！！
-            String transferId2 = transferId.get(0).get("transfer_order_id")
-                    .toString();
-            setAttr("transferId", transferId2);
+            // String transferId2 =
+            // transferId.get(0).get("transfer_order_id").toString();
+            if (deliveryOrderItem != null) {
+                setAttr("transferId", deliveryOrderItem.get("id"));
+            } else {
+                setAttr("transferId", null);
+            }
+
         }
         // 运输单信息
         TransferOrder transferOrder = TransferOrder.dao.findById(tOrder
                 .get("transfer_order_id"));
-        // 客户信息
-        // Party customerContact = Party.dao
-        // .findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
-        // + tOrder.get("customer_id")
-        // + "'and p.contact_id = c.id");
         // 供应商信息
         Party spContact = Party.dao
                 .findFirst("select *,p.id as spid from party p,contact c where p.id ='"
                         + tOrder.get("sp_id") + "'and p.contact_id = c.id");
-
-        // List<Record> deliveryIdList = Db
-        // .find("select TRANSFER_ORDER_ID from DELIVERY_ORDER where id ="
-        // + id);
-        // String dd =
-        // deliveryIdList.get(0).get("TRANSFER_ORDER_ID").toString();
 
         // 收货人信息
         Contact notifyPartyContact = null;
