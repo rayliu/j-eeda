@@ -119,7 +119,7 @@ public class DataInitUtil {
 
             // 发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),"
-                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),remark varchar(255),driver_id bigint,foreign key(driver_id) references party(id));");
+                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),remark varchar(255),driver_id bigint,sp_id bigint,foreign key(driver_id) references party(id));");
 
             // 发车单运输单中间表
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,depart_id bigint,order_id bigint,transfer_order_no varchar(255),foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id));");

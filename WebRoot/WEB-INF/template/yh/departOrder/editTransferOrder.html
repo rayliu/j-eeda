@@ -41,9 +41,15 @@
 	            				  <input class="" id="tr_itemid_list" value="${tr_itemid!''}" type="hidden" name="tr_itemid_list">
 	            				 <input class="" id="item_detail" value="${item_detail!''}" type="hidden" name="item_detail" >
 	                               <input class="" id="getIindepart_no" value="" type="hidden" name="getIindepart_no" >
-	                                <input class="" id="status" value="${depart.STATUS!''}" type="hidden" >    
+	                                <input class="" id="status" value="${depart.STATUS!''}" type="hidden" >
+	                                 <input class="" id="sp_id" value="${depart.SP_ID!''}" type="hidden" name="sp_id" >    
                                    		  <h2>车辆信息</h2>  
-                                   		   
+                                   		   <div class="form-group">
+                                              <label>供应商</label>
+                                               <input type="text" value="" name="spMessage" placeholder="选择供应商" class="form-control" id="spMessage">
+                                               <ul style="top: 35%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="spList">
+   											</ul>
+                                           </div>
                                            
                                           <div class="form-group">
 											<label>司机</label>
@@ -116,12 +122,12 @@
                                         </div>
                                          <div class="form-group">
 	                                            <label>跟车人</label>
-	                                            <input class="form-control" id="car_follow_name" name="car_follow_name">
+	                                            <input class="form-control" id="car_follow_name" value="${depart.car_follow_name!''}" name="car_follow_name">
                                             </div>
                                                                                
                                             <div class="form-group">
 	                                            <label>跟车人电话</label>
-	                                            <input class="form-control" id="car_follow_phone" name="car_follow_phone">
+	                                            <input class="form-control" id="car_follow_phone" value="${depart.car_follow_phone!''}" name="car_follow_phone">
                                             </div>
                                             
                                            

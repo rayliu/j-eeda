@@ -689,5 +689,58 @@
     	    	
     	    	});
     	    });
+    	  //获取供应商的list，选中信息在下方展示其他信息
+    		$('#spMessage').on('keyup click', function(){
+    			var inputStr = $('#spMessage').val();
+    			if(inputStr == ""){
+    				var pageSpName = $("#pageSpName");
+    				pageSpName.empty();
+    				var pageSpAddress = $("#pageSpAddress");
+    				pageSpAddress.empty();
+    				$('#sp_id').val($(this).attr(''));
+    			}
+    			$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+    				console.log(data);
+    				var spList =$("#spList");
+    				spList.empty();
+    				for(var i = 0; i < data.length; i++)
+    				{
+    					var company_name = data[i].COMPANY_NAME;
+    					if(company_name == null){
+    						company_name = '';
+    					}
+    					var contact_person = data[i].CONTACT_PERSON;
+    					if(contact_person == null){
+    						contact_person = '';
+    					}
+    					var phone = data[i].PHONE;
+    					if(phone == null){
+    						phone = '';
+    					}
+    					spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
+    				}
+    			},'json');
+
+    			$("#spList").css({ 
+    	        	left:$(this).position().left+"px", 
+    	        	top:$(this).position().top+32+"px" 
+    	        }); 
+    	        $('#spList').show();
+    		});
+    		$('#spList').on('click', '.fromLocationItem', function(e){
+    			var message = $(this).text();
+    			$('#spMessage').val(message.substring(0, message.indexOf(" ")));
+    			$('#sp_id').val($(this).attr('partyId'));
+    			
+    	        $('#spList').hide();
+    	    });
+    		//回显供应商
+    		var sp_id=$("#sp_id").val();
+    		if(sp_id!=""){
+    			$.get('/yh/departOrder/getIntsp', {sp_id:sp_id}, function(data){
+    				console.log(data);
+    				$('#spMessage').val(data.COMPANY_NAME);
+    			},'json');
+    		}
     	 
     });

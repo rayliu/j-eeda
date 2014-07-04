@@ -406,11 +406,14 @@ public class DepartOrderController extends Controller {
 	public void savedepartOrder() {
 		String depart_no = getPara("getIindepart_no").trim();//车单号
 		String depart_id = getPara("depart_id");//发车单id
+		String sp_id = getPara("sp_id");//供应商id
 		String name = (String) currentUser.getPrincipal();
 		//查找创建人id
 		UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
 		String creat_id = users.get("id").toString();//创建人id
 		String party_id = getPara("driverid");//司机id
+		String car_follow_name = getPara("car_follow_name");//跟车人
+		String car_follow_phone = getPara("car_follow_phone");//跟车人电话
 		String order_id2 = this.getPara("orderid");//运输单id
 		String[] order_id = this.getPara("orderid").split(",");//运输单id
 		String[] item_detail = this.getPara("item_detail").split(",");//单品id
@@ -442,6 +445,15 @@ public class DepartOrderController extends Controller {
 				.set("car_follow_phone", getPara("car_follow_phone"))
 				.set("route_from", getPara("route_from"))
 				.set("route_to", getPara("route_to")).set("status", "新建");
+				if(!"".equals(sp_id)){
+					dp.set("sp_id", Integer.parseInt(sp_id));
+				}
+				if(!"".equals(car_follow_name)){
+					dp.set("car_follow_name", car_follow_name);
+				}
+				if(!"".equals(car_follow_phone)){
+					dp.set("car_follow_phone", car_follow_phone);
+				}
 				dp.save();
 				savePickupOrderMilestone(dp,null);
 				if("".equals(getPara("item_detail"))){
@@ -546,6 +558,15 @@ public class DepartOrderController extends Controller {
 			.set("car_follow_phone", getPara("car_follow_phone"))
 			.set("route_from", getPara("route_from"))
 			.set("route_to", getPara("route_to"));
+			if(!"".equals(sp_id)){
+				dp.set("sp_id", Integer.parseInt(sp_id));
+			}
+			if(!"".equals(car_follow_name)){
+				dp.set("car_follow_name", car_follow_name);
+			}
+			if(!"".equals(car_follow_phone)){
+				dp.set("car_follow_phone", car_follow_phone);
+			}
 			dp.update();
 		
 			if(!"".equals(getPara("item_detail")) && !"".equals(getPara("tr_itemid_list")) ){
@@ -808,8 +829,6 @@ public class DepartOrderController extends Controller {
 	   }
 	   public void transferMilestone(){
 		   Map map = new HashMap();
-	       
-	            
 	        List<TransferOrderMilestone> transferOrderMilestone = TransferOrderMilestone.dao
 	                        .find("select trom.*,tor.order_no as order_no,us.user_name as usernames from transfer_order_milestone trom "
 	                        		+ "left join transfer_order tor on tor.id=trom.order_id "
@@ -818,6 +837,11 @@ public class DepartOrderController extends Controller {
 	               
 	        map.put("milestones", transferOrderMilestone);
 	        renderJson(map);
+	   }
+	   //回显供应商
+	   public void getIntsp(){
+		   Contact co=Contact.dao.findFirst("select * from contact  where id in(select contact_id  from party p where p.id="+Integer.parseInt(getPara("sp_id").toString())+" )");
+		   renderJson(co);
 	   }
 
 }
