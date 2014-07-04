@@ -82,11 +82,12 @@ $('#warehouseList').on('click', '.fromLocationItem', function(e){
 		//productDataTable.fnDraw();
 		$('#customerList').hide();
     }); 
+	
 	//获取货品的名称list，选中信息在下方展示其他信息
 	$('#itemNameMessage').on('keyup click', function(){
 		var inputStr = $('#itemNameMessage').val();
 		var customerId = $('#party_id').val();
-		$.get('/yh/transferOrder/searchItemName', {input:inputStr,customerId:customerId}, function(data){
+		$.get('/yh/gateOut/searchName2', {input:inputStr,customerId:customerId}, function(data){
 			console.log(data);
 			var itemNameList =$("#itemNameList");
 			itemNameList.empty();
@@ -96,7 +97,7 @@ $('#warehouseList').on('click', '.fromLocationItem', function(e){
 				if(item_name == null){
 					item_name = '';
 				}
-				itemNameList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' cid='"+data[i].CATEGORY_ID+"' item_no='"+data[i].ITEM_NO+"' size='"+data[i].SIZE+"' height='"+data[i].HEIGHT+"' width='"+data[i].WIDTH+"' unit='"+data[i].UNIT+"' volume='"+data[i].VOLUME+"' weight='"+data[i].WEIGHT+"', item_desc='"+data[i].ITEM_DESC+"', >"+data[i].ITEM_NAME+"</a></li>");
+				itemNameList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' item_desc='"+data[i].ITEM_DESC+"' item_no='"+data[i].ITEM_NO+"' expire_date='"+data[i].EXPIRE_DATE+"' lot_no='"+data[i].LOT_NO+"' total_quantity='"+data[i].TOTAL_QUANTITY+"' unit_price='"+data[i].UNIT_PRICE+"' unit_cost='"+data[i].UNIT_COST+"' uom='"+data[i].UOM+"', caton_no='"+data[i].CATON_NO+"', >"+data[i].ITEM_NAME+"</a></li>");
 			}
 		},'json');		
 		$("#itemNameList").css({ 
@@ -115,7 +116,46 @@ $('#warehouseList').on('click', '.fromLocationItem', function(e){
 			$("#item_no").val('');
 		}else{
 			$("#itemNoMessage").val($(this).attr('item_no'));
-		}
+		}if($(this).attr('item_desc') == 'null'){
+ 			$("#item_desc").val('');
+ 		}else{
+ 			$("#item_desc").val($(this).attr('item_desc'));
+ 		}
+ 		if($(this).attr('expire_date') == 'null'){
+ 			$("#expire_date").val('');
+ 		}else{
+ 			$("#expire_date").val($(this).attr('expire_date'));
+ 		}
+ 		if($(this).attr('lot_no') == 'null'){
+ 			$("#lot_no").val('');
+ 		}else{
+ 			$("#lot_no").val($(this).attr('lot_no')); 			
+ 		}
+ 		if($(this).attr('total_quantity') == 'null'){
+ 			$("total_quantity").val('');
+ 		}else{
+ 			$("#total_quantity").val($(this).attr('total_quantity'));
+ 		}
+ 		if($(this).attr('unit_price') == 'null'){
+ 			$("unit_price").val('');
+ 		}else{
+ 			$("#unit_price").val($(this).attr('unit_price'));
+ 		}
+ 		if($(this).attr('unit_cost') == 'null'){
+ 			$("unit_cost").val('');
+ 		}else{
+ 			$("#unit_cost").val($(this).attr('unit_cost'));
+ 		}
+ 		if($(this).attr('uom') == 'null'){
+ 			$("uom").val('');
+ 		}else{
+ 			$("#uom").val($(this).attr('uom'));
+ 		}
+ 		if($(this).attr('caton_no') == 'null'){
+ 			$("caton_no").val('');
+ 		}else{
+ 			$("#caton_no").val($(this).attr('caton_no'));
+ 		}
 		$("#productId").val($(this).attr('id'));
 		$('#itemNameList').hide();
 	});  	
@@ -124,7 +164,7 @@ $('#warehouseList').on('click', '.fromLocationItem', function(e){
 	$('#itemNoMessage').on('keyup click', function(){
 		var inputStr = $('#itemNoMessage').val();
 		var customerId = $('#party_id').val();
-		$.get('/yh/transferOrder/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
+		$.get('/yh/gateOut/searchNo2', {input:inputStr,customerId:customerId}, function(data){
 			console.log(data);
 			var itemNoList =$("#itemNoList");
 			itemNoList.empty();
@@ -134,7 +174,7 @@ $('#warehouseList').on('click', '.fromLocationItem', function(e){
 				if(item_no == null){
 					item_no = '';
 				}
-				itemNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' cid='"+data[i].CATEGORY_ID+"' item_name='"+data[i].ITEM_NAME+"' size='"+data[i].SIZE+"' height='"+data[i].HEIGHT+"' width='"+data[i].WIDTH+"' unit='"+data[i].UNIT+"' volume='"+data[i].VOLUME+"' weight='"+data[i].WEIGHT+"', item_desc='"+data[i].ITEM_DESC+"', >"+data[i].ITEM_NO+"</a></li>");
+				itemNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' item_desc='"+data[i].ITEM_DESC+"' item_name='"+data[i].ITEM_NAME+"' expire_date='"+data[i].EXPIRE_DATE+"' lot_no='"+data[i].LOT_NO+"' total_quantity='"+data[i].TOTAL_QUANTITY+"' unit_price='"+data[i].UNIT_PRICE+"' unit_cost='"+data[i].UNIT_COST+"' uom='"+data[i].UOM+"', caton_no='"+data[i].CATON_NO+"', >"+data[i].ITEM_NO+"</a></li>");
 			}
 		},'json');		
      $("#itemNoList").css({ 
@@ -153,7 +193,46 @@ $('#warehouseList').on('click', '.fromLocationItem', function(e){
 			$("#item_name").val('');
 		}else{
 			$("#itemNameMessage").val($(this).attr('item_name'));
-		}
+		}if($(this).attr('item_desc') == 'null'){
+ 			$("#item_desc").val('');
+ 		}else{
+ 			$("#item_desc").val($(this).attr('item_desc'));
+ 		}
+ 		if($(this).attr('expire_date') == 'null'){
+ 			$("#expire_date").val('');
+ 		}else{
+ 			$("#expire_date").val($(this).attr('expire_date'));
+ 		}
+ 		if($(this).attr('lot_no') == 'null'){
+ 			$("#lot_no").val('');
+ 		}else{
+ 			$("#lot_no").val($(this).attr('lot_no')); 			
+ 		}
+ 		if($(this).attr('total_quantity') == 'null'){
+ 			$("total_quantity").val('');
+ 		}else{
+ 			$("#total_quantity").val($(this).attr('total_quantity'));
+ 		}
+ 		if($(this).attr('unit_price') == 'null'){
+ 			$("unit_price").val('');
+ 		}else{
+ 			$("#unit_price").val($(this).attr('unit_price'));
+ 		}
+ 		if($(this).attr('unit_cost') == 'null'){
+ 			$("unit_cost").val('');
+ 		}else{
+ 			$("#unit_cost").val($(this).attr('unit_cost'));
+ 		}
+ 		if($(this).attr('uom') == 'null'){
+ 			$("uom").val('');
+ 		}else{
+ 			$("#uom").val($(this).attr('uom'));
+ 		}
+ 		if($(this).attr('caton_no') == 'null'){
+ 			$("caton_no").val('');
+ 		}else{
+ 			$("#caton_no").val($(this).attr('caton_no'));
+ 		}
 		$("#productId").val($(this).attr('id'));
     $('#itemNoList').hide();
  }); 

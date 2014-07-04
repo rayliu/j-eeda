@@ -137,7 +137,7 @@ $(document).ready(function() {
 	 	$('#itemNameMessage').on('keyup click', function(){
 	 		var inputStr = $('#itemNameMessage').val();
 	 		var customerId = $('#party_id').val();
-	 		$.get('/yh/transferOrder/searchItemName', {input:inputStr,customerId:customerId}, function(data){
+	 		$.get('/yh/gateIn/searchItemName', {input:inputStr,customerId:customerId}, function(data){
 	 			console.log(data);
 	 			var itemNameList =$("#itemNameList");
 	 			itemNameList.empty();
@@ -147,7 +147,7 @@ $(document).ready(function() {
 	 				if(item_name == null){
 	 					item_name = '';
 	 				}
-	 				itemNameList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' cid='"+data[i].CATEGORY_ID+"' item_no='"+data[i].ITEM_NO+"' size='"+data[i].SIZE+"' height='"+data[i].HEIGHT+"' width='"+data[i].WIDTH+"' unit='"+data[i].UNIT+"' volume='"+data[i].VOLUME+"' weight='"+data[i].WEIGHT+"', item_desc='"+data[i].ITEM_DESC+"', >"+data[i].ITEM_NAME+"</a></li>");
+	 				itemNameList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"'>"+data[i].ITEM_NAME+"</a></li>");
 	 			}
 	 		},'json');		
 	 		$("#itemNameList").css({ 
@@ -175,7 +175,7 @@ $(document).ready(function() {
 	 	$('#itemNoMessage').on('keyup click', function(){
 	 		var inputStr = $('#itemNoMessage').val();
 	 		var customerId = $('#party_id').val();
-	 		$.get('/yh/transferOrder/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
+	 		$.get('/yh/gateIn/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
 	 			console.log(data);
 	 			var itemNoList =$("#itemNoList");
 	 			itemNoList.empty();
@@ -185,7 +185,7 @@ $(document).ready(function() {
 	 				if(item_no == null){
 	 					item_no = '';
 	 				}
-	 				itemNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' cid='"+data[i].CATEGORY_ID+"' item_name='"+data[i].ITEM_NAME+"' size='"+data[i].SIZE+"' height='"+data[i].HEIGHT+"' width='"+data[i].WIDTH+"' unit='"+data[i].UNIT+"' volume='"+data[i].VOLUME+"' weight='"+data[i].WEIGHT+"', item_desc='"+data[i].ITEM_DESC+"', >"+data[i].ITEM_NO+"</a></li>");
+	 				itemNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"'>"+data[i].ITEM_NO+"</a></li>");
 	 			}
 	 		},'json');		
 	         $("#itemNoList").css({ 

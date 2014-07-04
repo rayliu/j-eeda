@@ -474,6 +474,46 @@ public class InventoryController extends Controller {
         renderJson(locationList);
     }
 
+    // 查找序列号2
+    public void searchNo2() {
+        String input = getPara("input");
+        String customerId = getPara("customerId");
+        List<Record> locationList = Collections.EMPTY_LIST;
+        if (input.trim().length() > 0) {
+            locationList = Db
+                    .find("select * from warehouse_order_item where warehouse_order_id in (select id from warehouse_order where party_id ="
+                            + customerId
+                            + ") and item_no like '%"
+                            + input
+                            + "%' limit 0,10");
+        } else {
+            locationList = Db
+                    .find("select * from warehouse_order_item where warehouse_order_id in (select id from warehouse_order where party_id ="
+                            + customerId + ")");
+        }
+        renderJson(locationList);
+    }
+
+    // 查找产品名2
+    public void searchName2() {
+        String input = getPara("input");
+        String customerId = getPara("customerId");
+        List<Record> locationList = Collections.EMPTY_LIST;
+        if (input.trim().length() > 0) {
+            locationList = Db
+                    .find("select * from warehouse_order_item where warehouse_order_id in (select id from warehouse_order where party_id ="
+                            + customerId
+                            + ") and item_name like '%"
+                            + input
+                            + "%' limit 0,10");
+        } else {
+            locationList = Db
+                    .find("select * from warehouse_order_item where warehouse_order_id in (select id from warehouse_order where party_id = "
+                            + customerId + ")");
+        }
+        renderJson(locationList);
+    }
+
     // 查找仓库
     public void searchAllwarehouse() {
         String input = getPara("input");
