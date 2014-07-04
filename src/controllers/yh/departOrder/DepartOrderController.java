@@ -165,7 +165,7 @@ public class DepartOrderController extends Controller {
 					+" left join contact c on p.contact_id = c.id "
 					+" left join location l1 on tor.route_from = l1.code "
 					+" left join location l2 on tor.route_to = l2.code"
-					+" where tor.status not in ('已入库','已签收') and arrival_mode not in ('delivery')";
+					+" where tor.status  in ('已入货场') and arrival_mode not in ('delivery')";
 		 rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 		String sql = "select tor.id,tor.order_no,tor.cargo_nature,"
@@ -178,7 +178,7 @@ public class DepartOrderController extends Controller {
 					+" left join contact c on p.contact_id = c.id "
 					+" left join location l1 on tor.route_from = l1.code "
 					+" left join location l2 on tor.route_to = l2.code"
-					+" where tor.status not in ('已入库','已签收') and arrival_mode not in ('delivery')"
+					+" where tor.status in ('已入货场') and arrival_mode not in ('delivery')"
 					+" order by tor.create_stamp desc";					
 		 			transferOrders = Db.find(sql);
 		 }else{
