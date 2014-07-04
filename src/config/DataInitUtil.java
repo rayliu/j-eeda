@@ -679,7 +679,7 @@ public class DataInitUtil {
 
             // 拼车单
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by) values('PC2014061000001', '2014-06-10 10:35:35.1','PICKUP','粤A876596','平板货车','26','20','新建',3);");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('3', '3','YS2014042600003');");
+            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('3', '1','YS2014042600001');");
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by,pickup_mode) values('PC2014061000002', '2014-06-10 10:39:35.1','PICKUP','粤A879588','箱式货车','27','25','新建',4,'own');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '4','YS2014042600004');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '5','YS2014042600005');");

@@ -165,7 +165,7 @@ public class DepartOrderController extends Controller {
 					+" left join contact c on p.contact_id = c.id "
 					+" left join location l1 on tor.route_from = l1.code "
 					+" left join location l2 on tor.route_to = l2.code"
-					+" where tor.status  in ('已入货场') and arrival_mode not in ('delivery')";
+					+" where tor.status = '已入货场'";
 		 rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 		String sql = "select tor.id,tor.order_no,tor.cargo_nature,"
@@ -178,7 +178,7 @@ public class DepartOrderController extends Controller {
 					+" left join contact c on p.contact_id = c.id "
 					+" left join location l1 on tor.route_from = l1.code "
 					+" left join location l2 on tor.route_to = l2.code"
-					+" where tor.status in ('已入货场') and arrival_mode not in ('delivery')"
+					+" where tor.status = '已入货场'"
 					+" order by tor.create_stamp desc";					
 		 			transferOrders = Db.find(sql);
 		 }else{
@@ -353,7 +353,7 @@ public class DepartOrderController extends Controller {
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
-					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = "+Party.PARTY_TYPE_DRIVER+" and (company_name like '%"
+					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_DRIVER+"' and (company_name like '%"
 							+ input
 							+ "%' or contact_person like '%"
 							+ input
@@ -365,6 +365,8 @@ public class DepartOrderController extends Controller {
 							+ input
 							+ "%' or address like '%"
 							+ input + "%' or postal_code like '%" + input + "%') limit 0,10");
+		}else{
+			locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_DRIVER+"' limit 0,10");
 		}
 		renderJson(locationList);
 	}

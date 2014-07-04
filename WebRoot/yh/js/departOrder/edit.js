@@ -52,7 +52,7 @@
       		$("#box_two").modal('show');
       	}
       
-      $('#customerMessage').on('keyup', function(){
+      $('#customerMessage').on('keyup click', function(){
   		var inputStr = $('#customerMessage').val();
   		if(inputStr == ""){
   			$('#phone').val($(this).attr(""));
