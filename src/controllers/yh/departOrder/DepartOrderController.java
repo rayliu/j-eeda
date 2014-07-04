@@ -99,7 +99,7 @@ public class DepartOrderController extends Controller {
 					+ "left join user_login  u on u.id=deo.create_by where deo.combine_type ='DEPART' and deo.id in("
 					+ edit_depart_id + ")";
 		DepartOrder depar = DepartOrder.dao.findFirst(sql);
-		String routeFrom = depar.get("ROUTE_FROM");
+		String routeFrom = depar.get("route_from");
         Location locationFrom = null;
         if (routeFrom != null || !"".equals(routeFrom)) {
             List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
@@ -286,26 +286,26 @@ public class DepartOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
 		String sqlTotal = "select count(1) total from transfer_order_item tof"
-				+ " left join TRANSFER_ORDER  oro  on tof.ORDER_ID =oro.id "
-				+ " left join CONTACT c on c.id in (select contact_id from party p where oro.customer_id=p.id)"
-				+ " where tof.ORDER_ID in(" + order_id + ")";
+				+ " left join transfer_order  oro  on tof.order_id =oro.id "
+				+ " left join contact c on c.id in (select contact_id from party p where oro.customer_id=p.id)"
+				+ " where tof.order_id in(" + order_id + ")";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select tof.* ,oro.ORDER_NO as order_no,oro.id as tr_order_id,c.COMPANY_NAME as customer  from transfer_order_item tof"
-				+ " left join TRANSFER_ORDER  oro  on tof.ORDER_ID =oro.id "
-				+ "left join CONTACT c on c.id in (select contact_id from party p where oro.customer_id=p.id)"
-				+ " where tof.ORDER_ID in(" + order_id + ")  order by c.id" + sLimit;
+		String sql = "select tof.* ,oro.order_no as order_no,oro.id as tr_order_id,c.company_name as customer  from transfer_order_item tof"
+				+ " left join transfer_order  oro  on tof.order_id =oro.id "
+				+ "left join contact c on c.id in (select contact_id from party p where oro.customer_id=p.id)"
+				+ " where tof.order_id in(" + order_id + ")  order by c.id" + sLimit;
 		String sql_dp_detail="select * from depart_transfer_itemdetail";
 		List<Record> departOrderitem = Db.find(sql);
 		List<Record> depart_item_detail = Db.find(sql_dp_detail);
 		for(int i=0;i<departOrderitem.size();i++){
 			for(int j=0;j<depart_item_detail.size();j++ ){
-				if(departOrderitem.get(i).get("ORDER_ID").equals(depart_item_detail.get(j).get("ORDER_ID")) 
+				if(departOrderitem.get(i).get("order_id").equals(depart_item_detail.get(j).get("order_id")) 
 						&& departOrderitem.get(i).get("ID").equals(depart_item_detail.get(j).get("item_id"))){
-				double amount=Double.parseDouble(departOrderitem.get(i).get("AMOUNT").toString());
+				double amount=Double.parseDouble(departOrderitem.get(i).get("amount").toString());
 				amount--;
-				departOrderitem.get(i).set("AMOUNT",amount);
+				departOrderitem.get(i).set("amount",amount);
 				}
 			}
 		}
@@ -321,8 +321,8 @@ public class DepartOrderController extends Controller {
 	public String creat_order_no() {
 		String order_no = null;
 		String the_order_no = null;
-		DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order where  COMBINE_TYPE= '"
-				+ DepartOrder.COMBINE_TYPE_DEPART + "' order by DEPART_no desc limit 0,1");
+		DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order where  combine_type= '"
+				+ DepartOrder.COMBINE_TYPE_DEPART + "' order by depart_no desc limit 0,1");
 		if (order != null) {
 			String num = order.get("DEPART_no");
 			String str = num.substring(2, num.length());
@@ -353,7 +353,7 @@ public class DepartOrderController extends Controller {
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
-					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'DRIVER' and (company_name like '%"
+					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = "+Party.PARTY_TYPE_DRIVER+" and (company_name like '%"
 							+ input
 							+ "%' or contact_person like '%"
 							+ input
@@ -421,7 +421,7 @@ public class DepartOrderController extends Controller {
 			con.set("phone", getPara("phone")).set("CONTACT_PERSON", getPara("customerMessage")).save();
 			Long con_id = con.get("id");
 			Party pt = new Party();
-			pt.set("PARTY_TYPE", "DRIVER").set("CONTACT_ID", con_id).save();
+			pt.set("party_type", "DRIVER").set("contact_id", con_id).save();
 			party_id = pt.get("id").toString();
 		}
 		DepartOrder dp = null;
@@ -432,9 +432,9 @@ public class DepartOrderController extends Controller {
 		List<Record> item_detail_idlist=Db.find(item_detail_id);
 		if ("".equals(depart_id)) {
 				dp = new DepartOrder();
-				dp.set("CREATE_BY", Integer.parseInt(creat_id)).set("create_stamp", createDate)
-				.set("combine_type", "DEPART").set("car_no", getPara("car_no")).set("car_type", getPara("cartype"))
-				.set("depart_no", depart_no).set("DRIVER_ID", Integer.parseInt(party_id))
+				dp.set("create_by", Integer.parseInt(creat_id)).set("create_stamp", createDate)
+				.set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("car_no", getPara("car_no")).set("car_type", getPara("cartype"))
+				.set("depart_no", depart_no).set("driver_id", Integer.parseInt(party_id))
 				.set("car_size", getPara("carsize")).set("remark", getPara("remark"))
 				.set("car_follow_name", getPara("car_follow_name"))
 				.set("car_follow_phone", getPara("car_follow_phone"))
@@ -496,9 +496,9 @@ public class DepartOrderController extends Controller {
 						for(int j=0;j<item_detail.length;j++){//单品id
 							TransferOrderItemDetail tr_item_de=TransferOrderItemDetail.dao.findById(Integer.parseInt(item_detail[j]));
 						if(tr_item_de.get("item_id").toString().equals(tr_itemid[i].toString())&&
-							tr_item_de.get("ORDER_ID").toString().equals(order_id[k].toString())){
+							tr_item_de.get("order_id").toString().equals(order_id[k].toString())){
 							DepartOrderItemdetail de_item_detail=new DepartOrderItemdetail(); 
-							de_item_detail.set("depart_id",Integer.parseInt(dp.get("id").toString())).set("ORDER_ID",Integer.parseInt(order_id[k]))
+							de_item_detail.set("depart_id",Integer.parseInt(dp.get("id").toString())).set("order_id",Integer.parseInt(order_id[k]))
 							.set("item_id",Integer.parseInt(tr_itemid[i])).set("itemdetail_id",Integer.parseInt(item_detail[j])).save();
 							}
 						}
@@ -512,7 +512,7 @@ public class DepartOrderController extends Controller {
 				//根据勾选了多少个运输单，循环插入发车运输单中间表
 				for (int i = 0; i < order_id.length; i++) {
 					DepartTransferOrder dt = new DepartTransferOrder();
-					dt.set("depart_id", de_id).set("ORDER_ID", order_id[i]).set("TRANSFER_ORDER_NO", order_id[i]).save();
+					dt.set("depart_id", de_id).set("order_id", order_id[i]).set("transfer_order_no", order_id[i]).save();
 				}
 				String getIindepart_no=creat_order_no();
 				boolean last_detail_size=CheckDepartOrder(order_id);
@@ -536,9 +536,9 @@ public class DepartOrderController extends Controller {
 		} else {//编辑发车单
 			
 			dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
-			dp.set("CREATE_BY", Integer.parseInt(creat_id)).set("create_stamp", createDate)
-			.set("combine_type", "DEPART").set("car_no", getPara("car_no")).set("car_type", getPara("cartype"))
-			.set("DRIVER_ID", Integer.parseInt(party_id))
+			dp.set("create_by", Integer.parseInt(creat_id)).set("create_stamp", createDate)
+			.set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("car_no", getPara("car_no")).set("car_type", getPara("cartype"))
+			.set("driver_id", Integer.parseInt(party_id))
 			.set("car_size", getPara("carsize")).set("remark", getPara("remark"))
 			.set("car_follow_name", getPara("car_follow_name"))
 			.set("car_follow_phone", getPara("car_follow_phone"))
@@ -590,10 +590,10 @@ public class DepartOrderController extends Controller {
 					for(int f=0;f<dp_deatil_list.size();f++){//单品id
 							TransferOrderItemDetail tr_item_de=TransferOrderItemDetail.dao.findById(Integer.parseInt(dp_deatil_list.get(f).get("itemdetail_id").toString()));
 						if(tr_item_de.get("item_id").toString().equals(tr_itemid[i].toString())&&
-							tr_item_de.get("ORDER_ID").toString().equals(order_id[k].toString())){
+							tr_item_de.get("order_id").toString().equals(order_id[k].toString())){
 							DepartOrderItemdetail de_item_detail=null;
 							de_item_detail=new DepartOrderItemdetail();
-							de_item_detail.set("depart_id",Integer.parseInt(dp.get("id").toString())).set("ORDER_ID",Integer.parseInt(order_id[k]))
+							de_item_detail.set("depart_id",Integer.parseInt(dp.get("id").toString())).set("order_id",Integer.parseInt(order_id[k]))
 							.set("item_id",Integer.parseInt(tr_itemid[i])).set("itemdetail_id",Integer.parseInt(dp_deatil_list.get(f).get("itemdetail_id").toString())).save();
 							}
 					}
