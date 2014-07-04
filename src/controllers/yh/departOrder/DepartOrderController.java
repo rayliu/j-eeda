@@ -800,5 +800,24 @@ public class DepartOrderController extends Controller {
 		  }
 		  
 	   }
+	   
+	   //在途运输单管理
+	   public void transferMilestoneindex(){
+		   if (LoginUserController.isAuthenticated(this))
+				render("departOrder/TransferOrderStatus.html");
+	   }
+	   public void transferMilestone(){
+		   Map map = new HashMap();
+	       
+	            
+	        List<TransferOrderMilestone> transferOrderMilestone = TransferOrderMilestone.dao
+	                        .find("select trom.*,tor.order_no as order_no,us.user_name as usernames from transfer_order_milestone trom "
+	                        		+ "left join transfer_order tor on tor.id=trom.order_id "
+	                        		+ "left join user_login  us on us.id=trom.create_by "
+	                        		+ "where trom.status='在途' and trom. type='"+TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE+"'");
+	               
+	        map.put("milestones", transferOrderMilestone);
+	        renderJson(map);
+	   }
 
 }
