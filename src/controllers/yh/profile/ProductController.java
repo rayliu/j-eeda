@@ -8,6 +8,7 @@ import java.util.Map;
 import models.Category;
 import models.Party;
 import models.Product;
+import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
 
@@ -284,7 +285,7 @@ public class ProductController extends Controller {
     // 查找客户
     public void searchAllCustomer() {
         List<Party> parties = Party.dao
-                .find("select p.id pid, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null",
+                .find("select p.id party_id, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null",
                         Party.PARTY_TYPE_CUSTOMER);
         createRootForParty(parties);
 
@@ -296,11 +297,13 @@ public class ProductController extends Controller {
 
     private void createRootForParty(List<Party> parties) {
         for (Party party : parties) {
-            Long customerId = party.getLong("id");
+            Long customerId = party.getLong("party_id");
             List<Category> categories = Category.dao.find("select * from category where customer_id = ?", customerId);
             if (categories.size() == 0) {
                 Category category = new Category();
-                category.set("name", "root");
+                Contact customerParty = Contact.dao
+                        .findFirst("select c.* from party p left join contact c on c.id = p.contact_id where p.id=" + customerId);
+                category.set("name", customerParty.get("company_name"));
                 category.set("customer_id", customerId);
                 category.save();
             }

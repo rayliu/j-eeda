@@ -158,7 +158,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/gateIn", controllers.yh.inventory.InventoryController.class, "/yh");
         me.add("/yh/gateOut", controllers.yh.inventory.InventoryController.class, "/yh");
         me.add("/yh/stock", controllers.yh.inventory.InventoryController.class, "/yh");
-
+        me.add("/yh/debug", controllers.yh.LogController.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {
@@ -263,6 +263,6 @@ public class EedaConfig extends JFinalConfig {
         if (H2.equals(getProperty("dbType"))) {
             DataInitUtil.initData(cp);
         }
-         //DataInitUtil.initData(cp);
+        // DataInitUtil.initData(cp);
     }
 }
