@@ -136,7 +136,7 @@ public class DepartOrderController extends Controller {
         }
 		setAttr("type", "many");
 		setAttr("depart_id", getPara());
-		setAttr("localArr", depar.get("order_id"));
+		setAttr("localArr", depar.get("order_id").toString());
 		setAttr("depart", depar);
 		setAttr("depart_id", depart_id);
 		if (LoginUserController.isAuthenticated(this))
@@ -173,9 +173,10 @@ public class DepartOrderController extends Controller {
 					+" (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn," 
 					+" (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount," 
 					+" tor.address,tor.pickup_mode,tor.status,c.company_name cname,"
-					+" l1.name route_from,l2.name route_to,tor.create_stamp from transfer_order tor "
+					+" l1.name route_from,l2.name route_to,tor.create_stamp ,cont.company_name as spname from transfer_order tor "
 					+" left join party p on tor.customer_id = p.id "
 					+" left join contact c on p.contact_id = c.id "
+					+"left join contact cont on  cont.id=tor.sp_id "
 					+" left join location l1 on tor.route_from = l1.code "
 					+" left join location l2 on tor.route_to = l2.code"
 					+" where tor.status = '已入货场'"
@@ -528,6 +529,7 @@ public class DepartOrderController extends Controller {
 					DepartTransferOrder dt = new DepartTransferOrder();
 					dt.set("depart_id", de_id).set("order_id", order_id[i]).set("transfer_order_no", order_id[i]).save();
 				}
+				updateTransferSp(dp.get("id").toString(),sp_id);
 				String getIindepart_no=creat_order_no();
 				boolean last_detail_size=CheckDepartOrder(order_id);
 				setAttr("getIin_depart_no", getIindepart_no);
@@ -544,7 +546,7 @@ public class DepartOrderController extends Controller {
 					setAttr("type", "one");
 				}
 				
-				setAttr("localArr", order_id2);//运输单id,回显货品table
+				//setAttr("localArr", order_id2);//运输单id,回显货品table
 				if (LoginUserController.isAuthenticated(this))
 					render("departOrder/editTransferOrder.html");
 		} else {//编辑发车单
@@ -568,7 +570,7 @@ public class DepartOrderController extends Controller {
 				dp.set("car_follow_phone", car_follow_phone);
 			}
 			dp.update();
-		
+			updateTransferSp(dp.get("id").toString(),sp_id);
 			if(!"".equals(getPara("item_detail")) && !"".equals(getPara("tr_itemid_list")) ){
 			String tr_detail="select id as itemdetail_id  from transfer_order_item_detail where id in ("+getPara("item_detail")+")";//tr单品id
 			String dp_detail="select itemdetail_id  from depart_transfer_itemdetail where depart_id ="+depart_id;//dp单品id
@@ -842,6 +844,19 @@ public class DepartOrderController extends Controller {
 	   public void getIntsp(){
 		   Contact co=Contact.dao.findFirst("select * from contact  where id in(select contact_id  from party p where p.id="+Integer.parseInt(getPara("sp_id").toString())+" )");
 		   renderJson(co);
+	   }
+	   //修改运输单供应商
+	   public void updateTransferSp(String  depart_id,String SP_id){
+		int de_id= Integer.parseInt(depart_id); 
+		int edit_sp_id=Integer.parseInt(SP_id);
+		if(!"".equals(SP_id)){
+		List<DepartTransferOrder> dp=DepartTransferOrder.dao.find("select * from depart_transfer where depart_id="+de_id+"");
+		for(int i=0;i<dp.size();i++){
+			TransferOrder tr=TransferOrder.dao.findById(Integer.parseInt(dp.get(i).get("order_id").toString()));
+			tr.set("sp_id", edit_sp_id).update();
+		}
+		}
+		  
 	   }
 
 }
