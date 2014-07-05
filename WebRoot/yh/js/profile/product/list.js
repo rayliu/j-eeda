@@ -464,9 +464,14 @@ $(document).ready(function() {
                 //异步创建节点
                 var zTree = $.fn.zTree.getZTreeObj("categoryTree");
                 var nodeName = "新类别" + (newCount++);                
-
-                $.post('/yh/product/addCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:nodeName}, function(data){            
-                    zTree.addNodes(treeNode, {id:data.ID, categoryId: data.ID, customerId: treeNode.customerId, isParent:true, name:nodeName});
+               
+                // 7-5 使用异步会导致树节点添加两次， 因为自己手动加了一个，ztree自己异步自动又加了一个
+                $.post('/yh/product/addCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:nodeName}, function(data){
+                    if ((!treeNode && event.target.tagName.toLowerCase() != "button" && $(event.target).parents("a").length == 0) || treeNode.zAsync) 
+                        zTree.addNodes(treeNode, {id:data.ID, categoryId: data.ID, customerId: treeNode.customerId, isParent:true, name:nodeName});
+                    else
+                        zTree.reAsyncChildNodes(treeNode, "refresh");
+                    //
                 },'json');
 
                 
@@ -537,6 +542,7 @@ $(document).ready(function() {
         }
 
         function refreshNode(e) {
+            showLog('refreshNode');
             var zTree = $.fn.zTree.getZTreeObj("categoryTree"),
             type = e.data.type,
             silent = e.data.silent,
