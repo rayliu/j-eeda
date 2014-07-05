@@ -392,14 +392,15 @@ $(document).ready(function() {
             showLog("[ "+getTime()+" beforeEditName ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
             var zTree = $.fn.zTree.getZTreeObj("categoryTree");
             zTree.selectNode(treeNode);
-            return confirm("进入节点 -- " + treeNode.name + " 的编辑状态吗？");
+            return true;
+            //confirm("进入节点 -- " + treeNode.name + " 的编辑状态吗？");
         }
         function beforeRemove(treeId, treeNode) {
             className = (className === "dark" ? "":"dark");
             showLog("[ "+getTime()+" beforeRemove ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
             var zTree = $.fn.zTree.getZTreeObj("categoryTree");
             zTree.selectNode(treeNode);
-            return confirm("确认删除 节点 -- " + treeNode.name + " 吗？");
+            return confirm("确认删除 类别: " + treeNode.name + " 吗？其类别下所有产品也将被删除。");
         }
         function onRemove(e, treeId, treeNode) {
             showLog("[ "+getTime()+" onRemove ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
