@@ -1,6 +1,7 @@
  $(document).ready(function() {
 		$('#menu_assign').addClass('active').find('ul').addClass('in');
-    	$('#dataTables-example').dataTable({
+    	
+		var pickupOrder = $('#dataTables-example').dataTable({
             "bFilter": false, //不需要默认的搜索框
 	        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -38,16 +39,27 @@
 	                "mDataProp": null, 
 	                "sWidth": "8%",                
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-success edit' href='/yh/pickupOrder/edit/"+obj.aData.ID+"'>"+
-	                                "<i class='fa fa-edit fa-fw'></i>"+
-	                                "查看"+
-	                            "</a>"+
-	                            "<a class='btn btn-danger cancelbutton' href='/yh/pickupOrder/edit/"+obj.aData.ID+"'>"+
-	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-	                                "取消"+
-	                            "</a>";
+	                    return "<a class='btn btn-danger cancelbutton' code='"+obj.aData.ID+"'>"+
+			                        "<i class='fa fa-trash-o fa-fw'></i>"+ 
+			                        "取消"+
+		                        "</a>";
 	                }
 	            } 
 	        ]      
 	    });	
+
+        $("#dataTables-example").on('click', '.cancelbutton', function(e){
+    		e.preventDefault();
+           //异步向后台提交数据
+    	   var id = $(this).attr('code');
+    	   $.post('/yh/pickupOrder/cancel/'+id,function(data){
+               //保存成功后，刷新列表
+               console.log(data);
+               if(data.success){
+            	   pickupOrder.fnDraw();
+               }else{
+                   alert('取消失败');
+               }                   
+           },'json');
+		});
     });

@@ -60,14 +60,14 @@ public class TransferOrderController extends Controller {
                 sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
 
-            String sqlTotal = "select count(1) total from transfer_order";
+            String sqlTotal = "select count(1) total from transfer_order t where t.status!='取消'";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
             String sql = "select t.*,c1.abbr cname,c2.abbr spname,t.create_stamp,o.office_name oname from transfer_order t "
                     + " left join party p1 on t.customer_id = p1.id " + " left join party p2 on t.sp_id = p2.id "
                     + " left join contact c1 on p1.contact_id = c1.id" + " left join contact c2 on p2.contact_id = c2.id "
-                    + " left join office o on t.office_id = o.id order by create_stamp desc";
+                    + " left join office o on t.office_id = o.id where t.status!='取消' order by create_stamp desc";
 
             List<Record> transferOrders = Db.find(sql);
 
@@ -93,7 +93,7 @@ public class TransferOrderController extends Controller {
             String sqlTotal = "select count(1) total from transfer_order t " + " left join party p1 on t.customer_id = p1.id "
                     + " left join party p2 on t.sp_id = p2.id " + " left join contact c1 on p1.contact_id = c1.id"
                     + " left join contact c2 on p2.contact_id = c2.id"
-                    + " left join office o on t.office_id = o.id where t.order_no like '%" + orderNo + "%' and t.status like '%" + status
+                    + " left join office o on t.office_id = o.id where t.status!='取消' and t.order_no like '%" + orderNo + "%' and t.status like '%" + status
                     + "%' and t.address like '%" + address + "%' and c1.abbr like '%" + customer + "%' and c2.abbr like '%" + sp
                     + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime + "' and '" + endTime
                     + "'";
@@ -103,7 +103,7 @@ public class TransferOrderController extends Controller {
             String sql = "select t.*,c1.abbr cname,c2.abbr spname,o.office_name oname from transfer_order t "
                     + " left join party p1 on t.customer_id = p1.id " + " left join party p2 on t.sp_id = p2.id "
                     + " left join contact c1 on p1.contact_id = c1.id" + " left join contact c2 on p2.contact_id = c2.id"
-                    + " left join office o on t.office_id = o.id where t.order_no like '%" + orderNo + "%' and t.status like '%" + status
+                    + " left join office o on t.office_id = o.id where t.status!='取消' and t.order_no like '%" + orderNo + "%' and t.status like '%" + status
                     + "%' and t.address like '%" + address + "%' and c1.abbr like '%" + customer + "%' and c2.abbr  like '%" + sp
                     + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime + "' and '" + endTime
                     + "' order by create_stamp desc";
