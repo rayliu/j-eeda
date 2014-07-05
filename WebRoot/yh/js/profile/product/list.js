@@ -404,6 +404,18 @@ $(document).ready(function() {
         }
         function onRemove(e, treeId, treeNode) {
             showLog("[ "+getTime()+" onRemove ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
+            var pNode = treeNode.getParentNode();
+            pNode.isParent = true;
+            var zTree = $.fn.zTree.getZTreeObj("categoryTree");
+            $.post('/yh/product/deleteCategory', {categoryId: treeNode.categoryId}, function(data){                
+                zTree.reAsyncChildNodes(pNode, "refresh");
+                
+                zTree.selectNode(pNode,false);
+                //设置选中节点后右边编辑内容的载入
+                onNodeClick(e, pNode.categoryId, pNode);
+            },'json');
+
+            
         }
         function beforeRename(treeId, treeNode, newName, isCancel) {
             className = (className === "dark" ? "":"dark");

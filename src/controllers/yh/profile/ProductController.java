@@ -241,7 +241,7 @@ public class ProductController extends Controller {
     // 删除类别
     public void deleteCategory() {
         String cid = getPara("categoryId");
-        removeChildern(cid);
+        // removeChildern(cid);
         List<Product> products = Product.dao.find("select * from product where category_id = ?", cid);
         for (Product product : products) {
             product.delete();
@@ -250,6 +250,7 @@ public class ProductController extends Controller {
         renderJson("{\"success\":true}");
     }
 
+    // 删除子类别
     private void removeChildern(String cid) {
         List<Category> categories = Category.dao.find("select * from category where parent_id = ?", cid);
         if (categories.size() > 0) {
