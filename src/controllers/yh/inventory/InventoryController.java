@@ -153,8 +153,7 @@ public class InventoryController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select * from warehouse_order_item w left join warehouse_order w2 on w.warehouse_order_id =w2.id where warehouse_id ="
-                        + id);
+                .find("select * from inventory_item where warehouse_id =" + id);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -167,6 +166,25 @@ public class InventoryController extends Controller {
     public void gateIn_add() {
         if (LoginUserController.isAuthenticated(this))
             render("/yh/inventory/gateInEdit.html");
+    }
+
+    // 入库单产品删除
+    public void gateInProductDelect() {
+        String id = getPara();
+        if (id != null) {
+            WarehouseOrderItem.dao.deleteById(id);
+        }
+        renderJson("{\"success\":true}");
+    }
+
+    // 入库单产品编辑
+    public void gateInProductEdit() {
+        String id = getPara();
+        System.out.println(id);
+        WarehouseOrderItem orders = WarehouseOrderItem.dao
+                .findFirst("select * from warehouse_order_item where id='" + id
+                        + "'");
+        renderJson(orders);
     }
 
     // 出库单添加
@@ -234,6 +252,47 @@ public class InventoryController extends Controller {
 
     // 入库产品list
     public void gateInProductlist() {
+        String warehouseorderid = getPara();
+        System.out.println(warehouseorderid);
+        if (warehouseorderid == null) {
+            Map orderMap = new HashMap();
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+            renderJson(orderMap);
+            return;
+        }
+
+        String sLimit = "";
+        Map productListMap = null;
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+
+        String category = getPara("category");
+        String sqlTotal = "select count(1) total from warehouse_order_item where warehouse_order_id = "
+                + warehouseorderid;
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select * from warehouse_order_item where warehouse_order_id = "
+                + warehouseorderid;
+        List<Record> products = Db.find(sql);
+        productListMap = new HashMap();
+        productListMap.put("sEcho", pageIndex);
+        productListMap.put("iTotalRecords", rec.getLong("total"));
+        productListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        productListMap.put("aaData", products);
+
+        renderJson(productListMap);
+    }
+
+    // 出库产品list
+    public void gateInProductlist2() {
         String warehouseorderid = getPara();
         System.out.println(warehouseorderid);
         if (warehouseorderid == null) {
@@ -342,6 +401,7 @@ public class InventoryController extends Controller {
             renderJson(0);
             return;
         }
+
         String name = (String) currentUser.getPrincipal();
 
         List<UserLogin> users = UserLogin.dao
@@ -474,7 +534,7 @@ public class InventoryController extends Controller {
         renderJson(locationList);
     }
 
-    // 查找序列号2
+    // gateOut查找序列号2
     public void searchNo2() {
         String input = getPara("input");
         String customerId = getPara("customerId");
@@ -494,7 +554,7 @@ public class InventoryController extends Controller {
         renderJson(locationList);
     }
 
-    // 查找产品名2
+    // gateOut查找产品名2
     public void searchName2() {
         String input = getPara("input");
         String customerId = getPara("customerId");
@@ -536,10 +596,15 @@ public class InventoryController extends Controller {
                         + "left join party p on p.id = w_o.party_id "
                         + "left join contact c on p.contact_id = c.id where w_o.warehouse_id ='"
                         + warehouseId
-                        + "' and c.company_name like '%"
-                        + input
-                        + "%'");
+                        + "' and w_o.order_type='入库' and c.company_name like '%"
+                        + input + "%' group by c.company_name");
         renderJson(locationList);
     }
 
+    // 入仓确认
+    public void gateInConfirm() {
+        String id = getPara();
+
+        renderJson("{\"success\":true}");
+    }
 }

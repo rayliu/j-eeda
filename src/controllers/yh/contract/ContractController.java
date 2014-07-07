@@ -57,17 +57,17 @@ public class ContractController extends Controller {
         String phone_filter = getPara("phone_filter");
         String periodTo_filter = getPara("periodTo_filter");
 
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
-        }
         Map orderMap = new HashMap();
         if (contractName_filter == null && contactPerson_filter == null
                 && periodFrom_filter == null && companyName_filter == null
                 && phone_filter == null && periodTo_filter == null) {
+            String sLimit = "";
+            String pageIndex = getPara("sEcho");
+            if (getPara("iDisplayStart") != null
+                    && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                        + getPara("iDisplayLength");
+            }
             // 获取总条数
             String totalWhere = "";
             String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'";
@@ -86,6 +86,14 @@ public class ContractController extends Controller {
             orderMap.put("aaData", orders);
             renderJson(orderMap);
         } else {
+
+            String sLimit = "";
+            String pageIndex = getPara("sEcho");
+            if (getPara("iDisplayStart") != null
+                    && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                        + getPara("iDisplayLength");
+            }
             // 获取总条数
             String totalWhere = "";
             String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'";
@@ -95,8 +103,19 @@ public class ContractController extends Controller {
             logger.debug("total records:" + total);
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'"
-                            + sLimit);
+                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' "
+                            + "and c.name like '%"
+                            + contractName_filter
+                            + "%' and c1.contact_person like '%"
+                            + contactPerson_filter
+                            + "%' and c1.company_name like '%"
+                            + companyName_filter
+                            + "%' and c1.mobile like '%"
+                            + phone_filter
+                            + "%' and c.period_from like '%"
+                            + periodFrom_filter
+                            + "%' and c.period_to like '%"
+                            + periodTo_filter + "%'" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
             orderMap.put("iTotalDisplayRecords", total);
@@ -154,7 +173,18 @@ public class ContractController extends Controller {
             // 获取当前页的数据
             List<Record> orders = Db
                     .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
-                            + sLimit);
+                            + "and c.name like '%"
+                            + contractName_filter
+                            + "%' and c1.contact_person like '%"
+                            + contactPerson_filter
+                            + "%' and c1.company_name like '%"
+                            + companyName_filter
+                            + "%' and c1.mobile like '%"
+                            + phone_filter
+                            + "%' and c.period_from like '%"
+                            + periodFrom_filter
+                            + "%' and c.period_to like '%"
+                            + periodTo_filter + "%'" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
             orderMap.put("iTotalDisplayRecords", total);
@@ -210,8 +240,19 @@ public class ContractController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'"
-                            + sLimit);
+                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER' "
+                            + "and c.name like '%"
+                            + contractName_filter
+                            + "%' and c1.contact_person like '%"
+                            + contactPerson_filter
+                            + "%' and c1.company_name like '%"
+                            + companyName_filter
+                            + "%' and c1.mobile like '%"
+                            + phone_filter
+                            + "%' and c.period_from like '%"
+                            + periodFrom_filter
+                            + "%' and c.period_to like '%"
+                            + periodTo_filter + "%'" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));
             orderMap.put("iTotalDisplayRecords", rec.getLong("total"));

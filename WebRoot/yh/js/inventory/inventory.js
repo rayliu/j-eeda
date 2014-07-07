@@ -71,13 +71,52 @@ $(document).ready(function() {
 	                "mDataProp": null, 
 	                "sWidth": "8%",                
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-danger deleteProduct' id='"+obj.aData.ID+"'>"+
-	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
+	                    return "<a class='btn btn-success editProduct' code='"+obj.aData.ID+"'>"+
+				                    "<i class='fa fa-edit fa-fw'></i>"+
+				                "</a>"+
+			                    "<a class='btn btn-danger deleteProduct' code='"+obj.aData.ID+"'>"+
+			                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
 	                            "</a>";
 	                }
 	            }      
 	        ],      
 	    });
+	//gateInProduct编辑
+	 $("#itemTable").on('click', '.editProduct', function(){
+		 var id = $(this).attr('code');
+		 $.post('/yh/gateIn/gateInProductEdit/'+id,function(data){
+             //保存成功后，刷新列表
+             console.log(data);
+             if(data!=null){
+            	 	$("#itemNameMessage").val(data.ITEM_NAME);
+         			$("#itemNoMessage").val(data.ITEM_NO);
+         			$("#item_desc").val(data.ITEM_DESC);
+         			$("#expire_date").val(data.EXPIRE_DATE);
+         			$("#lot_no").val(data.LOT_NO); 			
+         			$("#total_quantity").val(data.TOTAL_QUANTITY);
+         			$("#unit_price").val(data.UNIT_PRICE);
+         			$("#unit_cost").val(data.UNIT_COST);
+         			$("#uom").val(data.UOM);
+         			$("#caton_no").val(data.CATON_NO);
+         			$('#myModal').modal('show');
+             }else{
+                 alert('取消失败');
+             }
+         },'json');
+		});
+	//gateInProduct删除
+	 $("#itemTable").on('click', '.deleteProduct', function(){
+		 var id = $(this).attr('code');
+		 $.post('/yh/gateIn/gateInProductDelect/'+id,function(data){
+             //保存成功后，刷新列表
+             console.log(data);
+             if(data.success){
+            	 productDataTable2.fnDraw();
+             }else{
+                 alert('取消失败');
+             }
+         },'json');
+		});
 	 //出库单list
 	 
 	 //选择客户 
@@ -134,81 +173,82 @@ $(document).ready(function() {
 		//});
 		
 		//获取货品的名称list，选中信息在下方展示其他信息
-	 	$('#itemNameMessage').on('keyup click', function(){
-	 		var inputStr = $('#itemNameMessage').val();
-	 		var customerId = $('#party_id').val();
-	 		$.get('/yh/gateIn/searchItemName', {input:inputStr,customerId:customerId}, function(data){
-	 			console.log(data);
-	 			var itemNameList =$("#itemNameList");
-	 			itemNameList.empty();
-	 			for(var i = 0; i < data.length; i++)
-	 			{
-	 				var item_name = data[i].ITEM_NAME;
-	 				if(item_name == null){
-	 					item_name = '';
-	 				}
-	 				itemNameList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"'>"+data[i].ITEM_NAME+"</a></li>");
-	 			}
-	 		},'json');		
-	 		$("#itemNameList").css({ 
-	 			left:$(this).position().left+"px", 
-	 			top:$(this).position().top+32+"px" 
-	 		}); 
-	 		$('#itemNameList').show();        
-	 	});
-	 	$('#itemNameMessage').on('blur', function(){
-			$("#itemNameList").delay(120).hide(1);
+		$('#itemNameMessage').on('keyup click', function(){
+			var inputStr = $('#itemNameMessage').val();
+			var customerId = $('#party_id').val();
+			$.get('/yh/gateOut/searchItemName', {input:inputStr,customerId:customerId}, function(data){
+				console.log(data);
+				var itemNameList =$("#itemNameList");
+				itemNameList.empty();
+				for(var i = 0; i < data.length; i++)
+				{
+					var item_name = data[i].ITEM_NAME;
+					if(item_name == null){
+						item_name = '';
+					}
+					itemNameList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' item_desc='"+data[i].ITEM_DESC+"' item_no='"+data[i].ITEM_NO+"' expire_date='"+data[i].EXPIRE_DATE+"' lot_no='"+data[i].LOT_NO+"' total_quantity='"+data[i].TOTAL_QUANTITY+"' unit_price='"+data[i].UNIT_PRICE+"' unit_cost='"+data[i].UNIT_COST+"' uom='"+data[i].UOM+"', caton_no='"+data[i].CATON_NO+"', >"+data[i].ITEM_NAME+"</a></li>");
+				}
+			},'json');		
+			$("#itemNameList").css({ 
+				left:$(this).position().left+"px", 
+				top:$(this).position().top+32+"px" 
+			}); 
+			$('#itemNameList').show();        
 		});
-	 // 选中产品名
-	 	$('#itemNameList').on('click', '.fromLocationItem', function(e){
-	 		$("#itemNameMessage").val($(this).text());
-	 		if($(this).attr('item_no') == 'null'){
-	 			$("#item_no").val('');
-	 		}else{
-	 			$("#itemNoMessage").val($(this).attr('item_no'));
-	 		}
-	 		$("#productId").val($(this).attr('id'));
-	 		$('#itemNameList').hide();
-	 	});  	
-	 	
-	 	//获取货品的序列号list，选中信息在下方展示其他信息
-	 	$('#itemNoMessage').on('keyup click', function(){
-	 		var inputStr = $('#itemNoMessage').val();
-	 		var customerId = $('#party_id').val();
-	 		$.get('/yh/gateIn/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
-	 			console.log(data);
-	 			var itemNoList =$("#itemNoList");
-	 			itemNoList.empty();
-	 			for(var i = 0; i < data.length; i++)
-	 			{
-	 				var item_no = data[i].ITEM_NO;
-	 				if(item_no == null){
-	 					item_no = '';
-	 				}
-	 				itemNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"'>"+data[i].ITEM_NO+"</a></li>");
-	 			}
-	 		},'json');		
-	         $("#itemNoList").css({ 
-	         	left:$(this).position().left+"px", 
-	         	top:$(this).position().top+32+"px" 
-	         }); 
-	         $('#itemNoList').show();        
-	 	});
-	 	$('#itemNoMessage').on('blur', function(){
-			$("#itemNoList").delay(120).hide(1);
-		});
-	 	
-	 // 选中序列号
-	 	$('#itemNoList').on('click', '.fromLocationItem', function(e){
-	 		$("#itemNoMessage").val($(this).text());
-	 		if($(this).attr('item_name') == 'null'){
-	 			$("#item_name").val('');
-	 		}else{
-	 			$("#itemNameMessage").val($(this).attr('item_name'));
-	 		}
-	 		$("#productId").val($(this).attr('id'));
-	        $('#itemNoList').hide();
+		$('#itemNameMessage').on('blur', function(){
+		$("#itemNameList").delay(120).hide(1);
+	});
+	// 选中产品名
+		$('#itemNameList').on('click', '.fromLocationItem', function(e){
+			$("#itemNameMessage").val($(this).text());
+			if($(this).attr('item_no') == 'null'){
+				$("#item_no").val('');
+			}else{
+				$("#itemNoMessage").val($(this).attr('item_no'));
+			}
+			
+			$("#productId").val($(this).attr('id'));
+			$('#itemNameList').hide();
+		});  	
+		
+		//获取货品的序列号list，选中信息在下方展示其他信息
+		$('#itemNoMessage').on('keyup click', function(){
+			var inputStr = $('#itemNoMessage').val();
+			var customerId = $('#party_id').val();
+			$.get('/yh/gateOut/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
+				console.log(data);
+				var itemNoList =$("#itemNoList");
+				itemNoList.empty();
+				for(var i = 0; i < data.length; i++)
+				{
+					var item_no = data[i].ITEM_NO;
+					if(item_no == null){
+						item_no = '';
+					}
+					itemNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' item_desc='"+data[i].ITEM_DESC+"' item_name='"+data[i].ITEM_NAME+"' expire_date='"+data[i].EXPIRE_DATE+"' lot_no='"+data[i].LOT_NO+"' total_quantity='"+data[i].TOTAL_QUANTITY+"' unit_price='"+data[i].UNIT_PRICE+"' unit_cost='"+data[i].UNIT_COST+"' uom='"+data[i].UOM+"', caton_no='"+data[i].CATON_NO+"', >"+data[i].ITEM_NO+"</a></li>");
+				}
+			},'json');		
+	     $("#itemNoList").css({ 
+	     	left:$(this).position().left+"px", 
+	     	top:$(this).position().top+32+"px" 
 	     }); 
+	     $('#itemNoList').show();        
+		});
+		$('#itemNoMessage').on('blur', function(){
+		$("#itemNoList").delay(120).hide(1);
+	});
+	// 选中序列号
+		$('#itemNoList').on('click', '.fromLocationItem', function(e){
+			$("#itemNoMessage").val($(this).text());
+			if($(this).attr('item_name') == 'null'){
+				$("#item_name").val('');
+			}else{
+				$("#itemNameMessage").val($(this).attr('item_name'));
+			}
+	 			
+			$("#productId").val($(this).attr('id'));
+	    $('#itemNoList').hide();
+	 }); 
 	 	
 	 	
 	 	//选择仓库 
@@ -263,7 +303,6 @@ $(document).ready(function() {
 	        });
 		 
 			// 保存货品
-		 
 		    $("#warehouseOrderItemFormBtn").click(function(){
 		    	console.log(warehouseorderid);
 		    	var warehouseorderid = $("#warehouseorderId").val();
@@ -281,4 +320,16 @@ $(document).ready(function() {
 		                }
 				},'json');
 		    });
+		    //入仓确认
+		    $("#ConfirmBtn").click(function(){
+		    	var warehouseorderid = $("#warehouseorderId").val();
+		    	$.post('/yh/gateIn/gateInConfirm/'+warehouseorderid,function(data){
+		    		 if(data.success){
+		    			 $("#ConfirmBtn").attr("disabled", true);
+		    			 alert("入库成功！");
+		                }else{
+		                    alert('客户无产品,保存失败！。');
+		                }
+		    	},'json');
+		   });
 });

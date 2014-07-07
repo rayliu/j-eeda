@@ -1,7 +1,7 @@
 
 
 <%layout("/yh/layout.html"){%>
-
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
         <div id="page-wrapper">
             
             <div class="row">
@@ -14,39 +14,56 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-	<div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="search-label">合同名称</label>
-                                        <input type="text" class="form-control search-control orderNo_filter" id="contractName_filter">
-                                    </div>
-                                     <div class="form-group">
-                                        <label class="search-label">联系人</label>
-                                        <input type="text" class="form-control search-control address_filter" id="contactPerson_filter">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="search-label">开始时间</label>
-                                        <input type="text" class="form-control search-control status_filter" id="periodFrom_filter">
-                                    </div>
-                                </div>
-                                <!-- end of col-lg-6-->
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="search-label">公司名称</label>
-                                        <input type="text" class="form-control search-control customer_filter" id="companyName_filter">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="search-label">联系电话</label>
-                                        <input type="text" class="form-control search-control sp_filter" id="phone_filter">
-                                    </div>
-                                   <div class="form-group">
-                                        <label class="search-label">结束时间</label>
-                                        <input type="text" class="form-control search-control warehouse" id="periodTo_filter">
-                                    </div>
-                                    <!--  下单时间<input type="text" class="beginTime_filter" id="beginTime_filter"> - 到达时间<input type="text" class="endTime_filter" id="endTime_filter" -->
-                                </div>
-                                <!-- end of col-lg-6-->
+			<div class="row">
+                         <div class="col-lg-6">
+                             <div class="form-group">
+                                 <label class="search-label">合同名称</label>
+                                 <input type="text" class="form-control search-control orderNo_filter" id="contractName_filter">
+                             </div>
+                              <div class="form-group">
+                                 <label class="search-label">联系人</label>
+                                 <input type="text" class="form-control search-control address_filter" id="contactPerson_filter">
+                             </div>
+                         </div>
+                         <!-- end of col-lg-6-->
+                 <div class="col-lg-6">
+                     <div class="form-group">
+                         <label class="search-label">公司名称</label>
+                         <input type="text" class="form-control search-control customer_filter" id="companyName_filter">
+                     </div>
+                     <div class="form-group">
+                         <label class="search-label">联系电话</label>
+                         <input type="text" class="form-control search-control sp_filter" id="phone_filter">
+                     </div>
+                 </div>
+                 <!-- end of col-lg-6-->
+             </div>
+             <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">                                        
+                            <div id="datetimepicker" class="input-append date "> 
+                                <label class="search-label">开始时间</label> 
+                                <input id="periodFrom_filter" class="form-control search-control  beginTime_filter" type="text">
+                                <span class="add-on">  
+                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                </span>  
                             </div>
+                        </div>    
+                    </div>
+                    <!-- end of col-lg-6-->
+                    <div class="col-lg-6">
+                        <div class="form-group">                                                    
+                            <span id="datetimepicker2" class="input-append date search-control "> 
+                                <label class="search-label">结束时间</label> 
+                                <input id="periodTo_filter" class="form-control search-control endTime_filter" type="text">
+                                <span class="add-on">  
+                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                </span>  
+                            </span>
+                        </div>
+                    </div>
+                    <!-- end of col-lg-6-->
+                </div>
            <!-- /.row -->
             <div class="row">
                 <div class="col-lg-12">
@@ -94,5 +111,8 @@
  <!-- Page-Level Plugin Scripts - Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="/yh/js/bootstrap.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/yh/js/contract/list.js"></script>
 

@@ -75,8 +75,10 @@ public class DeliveryController extends Controller {
             logger.debug("total records:" + rec.getLong("total"));
 
             String sql = "select d.*,c.company_name as customer,c2.company_name as c2,w.warehouse_name ,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
-                    + "left join party p on d.customer_id = p.id left join contact c on p.contact_id = c.id "
-                    + "left join party p2 on d.sp_id = p2.id join contact c2 on p2.contact_id = c2.id "
+                    + "left join party p on d.customer_id = p.id "
+                    + "left join contact c on p.contact_id = c.id "
+                    + "left join party p2 on d.sp_id = p2.id "
+                    + "left join contact c2 on p2.contact_id = c2.id "
                     + "left join transfer_order t on d.transfer_order_id = t.id "
                     + "left join warehouse w on t.warehouse_id = w.id order by d.create_stamp desc";
             List<Record> transferOrders = Db.find(sql);
@@ -98,7 +100,7 @@ public class DeliveryController extends Controller {
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select d.*,c.company_name as customer,c2.company_name as c2,t.order_no as transfer_order_no,w.warehouse_name from delivery_order d "
+            String sql = "select d.*,c.company_name as customer,c2.company_name as c2,w.warehouse_name ,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
                     + "left join party p on d.customer_id = p.id "
                     + "left join contact c on p.contact_id = c.id "
                     + "left join party p2 on d.sp_id = p2.id "
@@ -107,14 +109,10 @@ public class DeliveryController extends Controller {
                     + "left join warehouse w on t.warehouse_id = w.id "
                     + "where d.order_no like '%"
                     + orderNo_filter
-                    + "%' and  t.order_no like '%"
-                    + transfer_filter
                     + "%' and d.status like '%"
                     + status_filter
                     + "%' and c.company_name like '%"
                     + customer_filter
-                    + "%' and w.warehouse_name like '%"
-                    + warehouse
                     + "%' and c2.company_name like'%"
                     + sp_filter
                     + "%' and d.create_stamp between '"

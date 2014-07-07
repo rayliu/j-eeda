@@ -3,23 +3,8 @@
 $(document).ready(function() {
 	$('#menu_profile').addClass('active').find('ul').addClass('in');
 
-    var setTdTitle=function(nRow){
-        $('td:eq(0)', nRow).attr('data-title','小区/大厦名称');
-        $('td:eq(1)', nRow).attr('data-title','租售状态');
-        $('td:eq(2)', nRow).attr('data-title','房型');
-        $('td:eq(3)', nRow).attr('data-title','区域');
-        $('td:eq(4)', nRow).attr('data-title','面积(平)');
-        $('td:eq(5)', nRow).attr('data-title','金额');
-        $('td:eq(6)', nRow).attr('data-title','描述');
-        $('td:eq(7)', nRow).attr('data-title','跟进情况');
-        $('td:eq(8)', nRow).attr('data-title','创建人');
-        $('td:eq(9)', nRow).attr('data-title','创建日期');
-    };
-    
-  
-    
 	//datatable, 动态处理
-    $('#eeda-table').dataTable({
+    var dataTable= $('#eeda-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
@@ -52,12 +37,19 @@ $(document).ready(function() {
                             "</a>";
                 }
             }                         
-        ],
-        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-            setTdTitle(nRow);
-        }        
+        ]    
     });
 
-   
+  //条件筛选
+	$("#COMPANY_NAME,#CONTACT_PERSON ,#RECEIPT,#ABBR,#ADDRESS,#LOCATION").on('keyup click', function () {    	 	
+      	var COMPANY_NAME = $("#COMPANY_NAME").val();
+      	var CONTACT_PERSON = $("#CONTACT_PERSON").val();
+    	var RECEIPT = $("#RECEIPT").val();
+      	var ABBR = $("#ABBR").val();    	
+      	var ADDRESS = $("#ADDRESS").val();
+      	var LOCATION = $("#LOCATION").val();
+      	dataTable.fnSettings().sAjaxSource = "/yh/serviceProvider/list?COMPANY_NAME="+COMPANY_NAME+"&CONTACT_PERSON="+CONTACT_PERSON+"&RECEIPT="+RECEIPT+"&ABBR="+ABBR+"&ADDRESS="+ADDRESS+"&LOCATION="+LOCATION;
+      	dataTable.fnDraw();
+      });
 	
 } );

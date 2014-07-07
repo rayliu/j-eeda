@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	$('#menu_warehouse').addClass('active').find('ul').addClass('in');
 	//库存list
 	var tab =$('#example2').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",

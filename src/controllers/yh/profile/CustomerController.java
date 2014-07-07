@@ -35,52 +35,100 @@ public class CustomerController extends Controller {
     }
 
     public void list() {
-        /*
-         * Paging
-         */
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
-        }
-
-        String sqlTotal = "select count(1) total from party where party_type='CUSTOMER'";
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
-
-        String sql = "select *,p.id as pid from party p, contact c where p.party_type='CUSTOMER' and p.contact_id=c.id order by p.create_date desc "
-                + sLimit;
-        List<Record> customers = Db.find(sql);
-
-        String code = "";
-        for (int i = 0; i < customers.size(); i++) {
-
-            code = customers.get(i).get("location");
-            String sql2 = "select trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code='"
-                    + code + "'";
-            List<Record> customers2 = Db.find(sql2);
-            String id = "";
-            try {
-                id = customers2.get(0).get("dname");
-            } catch (Exception e) {
-                // TODO: handle exception
-                customers.get(i).set("dname", null);
+        String company_name = getPara("COMPANY_NAME");
+        String contact_person = getPara("CONTACT_PERSON");
+        String receipt = getPara("RECEIPT");
+        String abbr = getPara("ABBR");
+        String address = getPara("ADDRESS");
+        String location = getPara("LOCATION");
+        if (company_name == null && contact_person == null && receipt == null
+                && abbr == null && address == null && location == null) {
+            String sLimit = "";
+            String pageIndex = getPara("sEcho");
+            if (getPara("iDisplayStart") != null
+                    && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                        + getPara("iDisplayLength");
             }
 
-            customers.get(i).set("dname", id);
+            String sqlTotal = "select count(1) total from party where party_type='CUSTOMER'";
+            Record rec = Db.findFirst(sqlTotal);
+            logger.debug("total records:" + rec.getLong("total"));
 
+            String sql = "select *,p.id as pid from party p, contact c where p.party_type='CUSTOMER' and p.contact_id=c.id order by p.create_date desc "
+                    + sLimit;
+            List<Record> customers = Db.find(sql);
+
+            String code = "";
+            for (int i = 0; i < customers.size(); i++) {
+                code = customers.get(i).get("location");
+                String sql2 = "select trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code='"
+                        + code + "'" + sLimit;
+                List<Record> customers2 = Db.find(sql2);
+                String id = "";
+                try {
+                    id = customers2.get(0).get("dname");
+                } catch (Exception e) {
+                    // TODO: handle exception
+                    customers.get(i).set("dname", null);
+                }
+                customers.get(i).set("dname", id);
+            }
+            Map customerListMap = new HashMap();
+            customerListMap.put("sEcho", pageIndex);
+            customerListMap.put("iTotalRecords", rec.getLong("total"));
+            customerListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+            customerListMap.put("aaData", customers);
+            renderJson(customerListMap);
+        } else {
+
+            String sLimit = "";
+            String pageIndex = getPara("sEcho");
+            if (getPara("iDisplayStart") != null
+                    && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                        + getPara("iDisplayLength");
+            }
+
+            String sqlTotal = "select count(1) total from party where party_type='CUSTOMER'";
+            Record rec = Db.findFirst(sqlTotal);
+            logger.debug("total records:" + rec.getLong("total"));
+
+            String sql = "select *,p.id as pid from party p, contact c where p.party_type='CUSTOMER' and p.contact_id=c.id "
+                    + "and c.company_name like '%"
+                    + company_name
+                    + "%' and c.contact_person like '%"
+                    + contact_person
+                    + "%' and p.receipt like '%"
+                    + receipt
+                    + "%' and c.address like '%"
+                    + address
+                    + "%' and c.abbr like '%" + abbr + "%' or c.abbr is null";
+
+            List<Record> customers = Db.find(sql);
+
+            String code = "";
+            for (int i = 0; i < customers.size(); i++) {
+                code = customers.get(i).get("location");
+                String sql2 = "select trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code='"
+                        + code + "'" + sLimit;
+                List<Record> customers2 = Db.find(sql2);
+                String id = "";
+                try {
+                    id = customers2.get(0).get("dname");
+                } catch (Exception e) {
+                    // TODO: handle exception
+                    customers.get(i).set("dname", null);
+                }
+                customers.get(i).set("dname", id);
+            }
+            Map customerListMap = new HashMap();
+            customerListMap.put("sEcho", pageIndex);
+            customerListMap.put("iTotalRecords", rec.getLong("total"));
+            customerListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+            customerListMap.put("aaData", customers);
+            renderJson(customerListMap);
         }
-
-        Map customerListMap = new HashMap();
-        customerListMap.put("sEcho", pageIndex);
-        customerListMap.put("iTotalRecords", rec.getLong("total"));
-        customerListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
-        customerListMap.put("aaData", customers);
-
-        renderJson(customerListMap);
     }
 
     public void add() {
