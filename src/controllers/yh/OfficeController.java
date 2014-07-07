@@ -107,7 +107,6 @@ public class OfficeController extends Controller {
         // 获取总条数
         String totalWhere = "";
         String sql = "select count(1) total from office";
-        System.out.println(sql);
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
