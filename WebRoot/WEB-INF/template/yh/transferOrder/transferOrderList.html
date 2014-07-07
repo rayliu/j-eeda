@@ -40,7 +40,16 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="search-label">状态</label>
-                                        <input type="text" class="form-control search-control status_filter" id="status_filter">
+                                        <select id="status_filter" class="form-control search-control status_filter">
+                                            <option value=""></option>
+                                            <option value="新建">新建</option>
+                                            <option value="已发车">已发车</option>
+                                            <option value="在途">在途</option>                                                
+                                            <option value="已入货场">已入货场</option>                                                
+                                            <option value="已入库">已入库</option>                                                
+                                            <option value="已签收">已签收</option>                                                
+                                        </select>
+                                        <!-- <input type="text" class="form-control search-control status_filter" id="status_filter"> -->
                                     </div>
                                     <div class="form-group">
                                         <label class="search-label">提货地点</label>

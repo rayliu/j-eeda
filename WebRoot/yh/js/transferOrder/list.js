@@ -124,7 +124,7 @@ $(document).ready(function() {
     	transferOrder.fnDraw(); 
     } );
  
-    $('input.status_filter').on( 'keyup click', function () {
+    $('select.status_filter').on( 'change', function () {
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();

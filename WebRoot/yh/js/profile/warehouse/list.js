@@ -1,11 +1,13 @@
 $(document).ready(function() {
     $('#menu_profile').addClass('active').find('ul').addClass('in');
 	//datatable, 动态处理
-    $('#eeda-table').dataTable({
+    var warehouseTab = $('#eeda-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
+        "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -34,4 +36,18 @@ $(document).ready(function() {
             }                         
         ],      
     });	
+    
+    $('#warehouseName_filter').on( 'keyup click', function () {
+    	var warehouseName = $("#warehouseName_filter").val();
+    	var warehouseAddress = $("#warehouseAddress_filter").val();
+    	warehouseTab.fnSettings().sAjaxSource = "/yh/warehouse/list?warehouseName="+warehouseName+"&warehouseAddress="+warehouseAddress;
+    	warehouseTab.fnDraw(); 
+    });
+    
+    $('#warehouseAddress_filter').on( 'keyup click', function () {
+    	var warehouseName = $("#warehouseName_filter").val();
+    	var warehouseAddress = $("#warehouseAddress_filter").val();
+    	warehouseTab.fnSettings().sAjaxSource = "/yh/warehouse/list?warehouseName="+warehouseName+"&warehouseAddress="+warehouseAddress;
+    	warehouseTab.fnDraw(); 
+    }); 
 } );
