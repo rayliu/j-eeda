@@ -15,7 +15,7 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
-                    return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+                    return '<input type="checkbox" name="order_check_box" code='+obj.aData.SPID+' class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
                  }
             },
             { "mDataProp": "ORDER_NO"},
@@ -48,14 +48,27 @@ $(document).ready(function() {
     
     $("#saveBtn").click(function(e){
         e.preventDefault();
-    	var trArr=[];
       var tableArr=[];
+      var sp_idArr=[];
         $("table tr:not(:first)").each(function(){
         	$("input:checked",this).each(function(){
-        		trArr.push($(this).val());     		
+        		var sp_id=$(this).attr("code");
+        		tableArr.push($(this).val());
+        		if(sp_id!=""){
+        			sp_idArr.push(sp_id);
+        		}
+        		
         	});          		
         	}); 
-        tableArr.push(trArr);        
+       if(sp_idArr.length>=2){
+    	   for(var i=0;i<sp_idArr.length;i++){
+    		   if(sp_idArr[i]!=sp_idArr[i+1]){
+    			   alert("请选择同一中转仓的运输单！");
+    			   return;
+    		   }
+    			  
+    	   }
+       }
         console.log(tableArr);
             $("#departOrder_message").val(tableArr);
             $("#createForm").submit();

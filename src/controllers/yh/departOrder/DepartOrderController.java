@@ -179,7 +179,7 @@ public class DepartOrderController extends Controller {
                     + " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.status,c.company_name cname,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.company_name as spname from transfer_order tor "
+                    + " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.company_name as spname,cont.id as spid from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + "left join contact cont on  cont.id=tor.sp_id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code" + " where tor.status = '已入货场'" + " order by tor.create_stamp desc";
@@ -529,7 +529,7 @@ public class DepartOrderController extends Controller {
             boolean last_detail_size = CheckDepartOrder(order_id);
             setAttr("getIin_depart_no", getIindepart_no);
             setAttr("last_detail_size", last_detail_size);
-            setAttr("edit_depart_id", dp.get("id"));
+				setAttr("edit_depart_id", dp.get("id").toString());
             setAttr("creat", name);// 创建人
 
             // 根据运输单个数，判断发车单类型
@@ -869,6 +869,19 @@ public class DepartOrderController extends Controller {
                 TransferOrder tr = TransferOrder.dao.findById(Integer.parseInt(dp.get(i).get("order_id").toString()));
                 tr.set("sp_id", edit_sp_id).update();
             }
+        }else{
+        	 List<DepartTransferOrder> dp = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id=" + de_id + "");
+            int r_sp_id=0;
+        	 for (int i = 0; i < dp.size(); i++) {
+                 TransferOrder tr = TransferOrder.dao.findById(Integer.parseInt(dp.get(i).get("order_id").toString()));
+                 if(tr.get("sp_id")!=null){
+                	 r_sp_id=Integer.parseInt(tr.get("sp_id").toString());
+                 }
+                 if(tr.get("sp_id")==null){
+                	 tr.set("sp_id", r_sp_id).update();
+                 }
+                 
+             }
         }
 
     }
