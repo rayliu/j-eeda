@@ -526,7 +526,7 @@ public class DataInitUtil {
             Party party = Party.dao
                     .findFirst("SELECT p.id FROM party p left join CONTACT c on p.contact_id =c.id where c.company_name ='珠海创诚易达信息科技有限公司'");
             Category rootCat = new Category();
-            rootCat.set("name", "root").set("customer_id", party.get("id"))
+            rootCat.set("name", "珠海创诚易达").set("customer_id", party.get("id"))
                     .save();
 
             Category subCat1 = new Category();

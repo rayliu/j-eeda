@@ -111,7 +111,7 @@ public class ProductController extends Controller {
             String weight = getPara("weight");
             String height = getPara("height");
             product.set("item_name", getPara("item_name")).set("item_no", getPara("item_no")).set("item_desc", getPara("item_desc"))
-                    .set("unit", getPara("unit")).set("category_id", getPara("categorySelect"));
+                    .set("unit", getPara("unit")).set("category_id", getPara("categoryId"));
             if (size != null && !"".equals(size)) {
                 product.set("size", size);
             }
@@ -141,7 +141,7 @@ public class ProductController extends Controller {
             String height = getPara("height");
 
             product.set("item_name", itemName).set("item_no", itemNo).set("item_desc", itemDesc).set("unit", getPara("unit"))
-                    .set("category_id", getPara("categorySelect"));
+                    .set("category_id", getPara("categoryId"));
             if (size != null && !"".equals(size)) {
                 product.set("size", size);
             }
@@ -208,7 +208,7 @@ public class ProductController extends Controller {
 
     // 查找产品对象
     public void getProduct() {
-        Product product = Product.dao.findById(getPara("productId"));
+        Product product = Product.dao.findFirst("select p.*,c.name cname from product p left join category c on c.id = p.category_id where p.id = ?", getPara("productId"));
         renderJson(product);
     }
 
@@ -278,11 +278,11 @@ public class ProductController extends Controller {
     }
 
     // 查找类别
-    public void findAllCategory() {
-        List<Category> categories = Category.dao.find("select * from category where customer_id = ?", getPara("customerId"));
-        renderJson(categories);
+    public void findCategory() {
+    	Category category = Category.dao.findById(getPara("categoryId"));
+    	renderJson(category);    		
     }
-
+    
     // 查找客户
     public void searchAllCustomer() {
         List<Party> parties = Party.dao
