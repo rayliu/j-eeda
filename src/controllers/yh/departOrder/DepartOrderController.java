@@ -862,8 +862,9 @@ public class DepartOrderController extends Controller {
     // 修改运输单供应商
     public void updateTransferSp(String depart_id, String SP_id) {
         int de_id = Integer.parseInt(depart_id);
-        int edit_sp_id = Integer.parseInt(SP_id);
+       
         if (!"".equals(SP_id)) {
+        	 int edit_sp_id = Integer.parseInt(SP_id);
             List<DepartTransferOrder> dp = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id=" + de_id + "");
             for (int i = 0; i < dp.size(); i++) {
                 TransferOrder tr = TransferOrder.dao.findById(Integer.parseInt(dp.get(i).get("order_id").toString()));

@@ -88,21 +88,40 @@
 								      </div>
 								      <div class="modal-body">
 								      	<form id="transferOrderMilestoneForm" action="">
-								      		<input id="milestoneDepartId" type="text" name="milestoneDepartId" />
-											<div class="form-group ">
+								      		<input id="milestoneDepartId" type="hidden" name="milestoneDepartId" />
+											<div class="row">
+											<div class="form-group " style="border-left-width: 0px; padding-left: 12px;">
+								
 											<label class="control-label" for="inputSuccess">状态(不填默认为"在途")</label> <input
-												id="status" class="form-control" type="text"
+												id="status" class="" type="text"
 												name="status">
-											</div>
-											<div class="form-group ">
-											<label class="control-label" for="inputSuccess">地点</label> <input
-												id="location" class="form-control" type="text"
+													<label class="control-label" for="inputSuccess">地点</label> <input
+												id="location" class="" type="text"
 												name="location">
+												<label>
+												 <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-primary">添加</button>
+											</label>
 											</div>
+											</div>
+											<div class="table-responsive">                                        
+			                           
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>状态</th>
+                                                        <th>地点</th>
+                                                        <th>更新用户</th>
+                                                        <th>更新时间</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="transferOrderMilestoneTbody"></tbody>
+                                            </table>
+                                        </div>
+										
 									      </div>
 									      <div class="modal-footer">
 									        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-									        <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-primary">保存</button>
+									       
 									      </div>
 										</form>
 								    </div><!-- /.modal-content -->
