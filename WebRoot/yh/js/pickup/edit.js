@@ -1,26 +1,6 @@
 $(document).ready(function() {
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
 	 
-	//from表单验证
- 	var validate = $('#pickupOrderForm').validate({
-         rules: {
-        	 driver_name: {
-             required: true
-           },
-           car_follow_name: {
-             required: true
-           }, 
-           car_no: {
-               required: true
-             }
-         },
-         messages : {	             
-        	driver_name : {required:  "请选择司机"}, 
-         	car_follow_name : {required:  "请输入跟车人员"}, 
-         	car_no:{required:  "请输入车牌号码"},
-         }
-     });
-	 
 	 // 列出所有的司机
 	 $('#driverMessage').on('keyup click', function(){
  		var inputStr = $('#driverMessage').val();
@@ -123,6 +103,7 @@ $(document).ready(function() {
 		var itemId = code.substring(code.indexOf('=')+1);
 		 $("table tr:eq("+hang+")").remove(); 
 	});
+	
 	var the_id="";
 	var item_id = $("#item_id").val();
 	var detailTable= $('#pickupDetail-table').dataTable({           
@@ -187,12 +168,7 @@ $(document).ready(function() {
     //点击保存的事件，保存拼车单信息
     var clickSavePickupOrder = function(e){
     	//阻止a 的默认响应行为，不需要跳转
-		e.preventDefault();
-		//提交前，校验数据
-        if(!$("#pickupOrderForm").valid()){
-        	alert("请先保存拼车单!");
-	       	return false;
-        }
+		e.preventDefault();		
 		//异步向后台提交数据
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
@@ -223,10 +199,7 @@ $(document).ready(function() {
     
 	//transferOrderForm 不需要提交	
  	$("#saveTransferOrderBtn").click(function(e){
- 		var returnVal = clickSavePickupOrder(e);
- 		if(returnVal == false){
- 			return false;
- 		}
+ 		clickSavePickupOrder(e);
         $("#finishBtn").attr('disabled', false);
 	});
    
@@ -250,11 +223,6 @@ $(document).ready(function() {
 	$("#transferOrderMilestoneList").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
-		//提交前，校验数据
-        if(!$("#pickupOrderForm").valid()){
-        	alert("请先保存拼车单!");
-	       	return false;
-        }
 		//异步向后台提交数据
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
@@ -326,11 +294,6 @@ $(document).ready(function() {
 	$("#addressList").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
-		//提交前，校验数据
-        if(!$("#pickupOrderForm").valid()){
-        	alert("请先保存拼车单!");
-	       	return false;
-        }
 		//异步向后台提交数据
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
@@ -456,9 +419,74 @@ $(document).ready(function() {
 	
 	// 货品信息
 	$("#pickupOrderItemList").click(function(e){
-		var returnVal = clickSavePickupOrder(e);
- 		if(returnVal == false){
- 			return false;
- 		}
+		clickSavePickupOrder(e);
 	});
+
+	//获取供应商的list，选中信息在下方展示其他信息
+	$('#spMessage').on('keyup click', function(){
+		var inputStr = $('#spMessage').val();
+		if(inputStr == ""){
+			var pageSpName = $("#pageSpName");
+			pageSpName.empty();
+			var pageSpAddress = $("#pageSpAddress");
+			pageSpAddress.empty();
+			$('#sp_id').val($(this).attr(''));
+		}
+		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+			console.log(data);
+			var spList =$("#spList");
+			spList.empty();
+			for(var i = 0; i < data.length; i++)
+			{
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name = '';
+				}
+				var contact_person = data[i].CONTACT_PERSON;
+				if(contact_person == null){
+					contact_person = '';
+				}
+				var phone = data[i].PHONE;
+				if(phone == null){
+					phone = '';
+				}
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
+			}
+		},'json');
+
+		$("#spList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        }); 
+        $('#spList').show();
+	});
+	
+	// 选中供应商
+	$('#spList').on('click', '.fromLocationItem', function(e){
+		var message = $(this).text();
+		$('#spMessage').val(message.substring(0, message.indexOf(" ")));
+		$('#sp_id').val($(this).attr('partyId'));
+		var pageSpName = $("#pageSpName");
+		pageSpName.empty();
+		var pageSpAddress = $("#pageSpAddress");
+		pageSpAddress.empty();
+		pageSpAddress.append($(this).attr('address'));
+		var contact_person = $(this).attr('contact_person');
+		if(contact_person == 'null'){
+			contact_person = '';
+		}
+		pageSpName.append(contact_person+'&nbsp;');
+		var phone = $(this).attr('phone');
+		if(phone == 'null'){
+			phone = '';
+		}
+		pageSpName.append(phone); 
+		pageSpAddress.empty();
+		var address = $(this).attr('address');
+		if(address == 'null'){
+			address = '';
+		}
+		pageSpAddress.append(address);
+        $('#spList').hide();
+    });
 } );

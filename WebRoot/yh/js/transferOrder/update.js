@@ -6,14 +6,10 @@ $(document).ready(function() {
         rules: {
         	customerMessage: {
             required: true
-          },
-			spMessage: {
-            required: true
           }
         },
         messages : {	             
-        	customerMessage : {required:  "请选择一个客户"}, 
-        	spMessage : {required:  "请选择一个供应商"}, 
+        	customerMessage : {required:  "请选择一个客户"}
         }
     });
 		
@@ -398,18 +394,12 @@ $(document).ready(function() {
             {"mDataProp":"ITEM_NAME"},
             {"mDataProp":"WEIGHT",
             	"fnRender": function(obj) {
-            		if(obj.aData.TOTAL_WEIGHT != null){
-            			return obj.aData.TOTAL_WEIGHT;
-            		}else{
-            			return obj.aData.WEIGHT;
-            		}}},
+        			return obj.aData.WEIGHT * obj.aData.AMOUNT;
+            }},
             {"mDataProp":"VOLUME",
             	"fnRender": function(obj) {
-            		if(obj.aData.TOTAL_VOLUME != null){
-            			return obj.aData.TOTAL_VOLUME;
-            		}else{
-            			return obj.aData.VOLUME;
-            		}}},
+            		return obj.aData.VOLUME * obj.aData.AMOUNT;
+            	}},
             {"mDataProp":"AMOUNT"},      	
             {"mDataProp":"UNIT"},
             {"mDataProp":"REMARK"},

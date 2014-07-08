@@ -46,8 +46,6 @@ public class TransferOrderItemController extends Controller {
         String sql = "";
         sql = "select distinct toi.id,ifnull(p.item_no,toi.item_no) item_no,ifnull(p.item_name,toi.item_name) item_name,"
         				+" ifnull(p.weight,toi.weight) weight,ifnull(p.volume,toi.volume) volume,toi.amount amount,"
-        				+" (select sum(torid.weight) from transfer_order_item_detail torid where torid.item_id = toi.id) as total_weight, "
-        				+" (select sum(torid.volume) from transfer_order_item_detail torid where torid.item_id = toi.id) as total_volume, "
 						+" ifnull(p.unit,toi.unit) unit,ifnull(p.item_desc,toi.item_desc) remark from transfer_order_item toi "
 						+" left join product p on p.id = toi.product_id "
 						+" where toi.order_id =" + trandferOrderId +" or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";	

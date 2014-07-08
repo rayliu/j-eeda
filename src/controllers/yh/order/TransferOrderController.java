@@ -371,30 +371,19 @@ public class TransferOrderController extends Controller {
             transferOrder.set("route_to", getPara("route_to"));
             transferOrder.set("order_type", getPara("orderType"));
             transferOrder.set("customer_province", getPara("customerProvince"));
-           /* transferOrder.set("car_size", getPara("car_size"));
-            transferOrder.set("car_no", getPara("car_no"));
-            transferOrder.set("car_type", getPara("car_type"));*/
             transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
                 // 到达方式为货品直送时把warehouseId置为null
                 warehouseId = null;
                 Party party = null;
-                //Party dirver = null;
                 String notifyPartyId = getPara("notify_party_id");
-                //String driverId = getPara("driver_id");
                 if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
                 } else {
                     party = updateContact(notifyPartyId);
                 }
-                /*if (driverId == null || "".equals(driverId)) {
-                    dirver = saveDriver();
-                } else {
-                    dirver = updateDriver(driverId);
-                }*/
                 transferOrder.set("notify_party_id", party.get("id"));
-                //transferOrder.set("driver_id", dirver.get("id"));
             }
             if (warehouseId != null && !"".equals(warehouseId)) {
                 transferOrder.set("warehouse_id", warehouseId);
@@ -424,30 +413,19 @@ public class TransferOrderController extends Controller {
             transferOrder.set("route_to", getPara("route_to"));
             transferOrder.set("order_type", getPara("orderType"));
             transferOrder.set("customer_province", getPara("customerProvince"));
-            /*transferOrder.set("car_size", getPara("car_size"));
-            transferOrder.set("car_no", getPara("car_no"));
-            transferOrder.set("car_type", getPara("car_type"));*/
             transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
 
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
                 // 到达方式为货品直送时把warehouseId置为null
                 warehouseId = null;
                 Party party = null;
-                //Party dirver = null;
                 String notifyPartyId = getPara("notify_party_id");
-                //String driverId = getPara("driver_id");
                 if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
                 } else {
                     party = updateContact(notifyPartyId);
                 }
-                /*if (driverId == null || "".equals(driverId)) {
-                    dirver = saveDriver();
-                } else {
-                    dirver = updateDriver(driverId);
-                }*/
                 transferOrder.set("notify_party_id", party.get("id"));
-                //transferOrder.set("driver_id", dirver.get("id"));
             } else {
                 transferOrder.set("notify_party_id", null);
                 transferOrder.set("driver_id", null);
@@ -586,18 +564,6 @@ public class TransferOrderController extends Controller {
         return party;
     }
 
-    // 保存司机
-    public Party saveDriver() {
-        Party party = new Party();
-        Contact contact = setDriver();
-        party.set("contact_id", contact.getLong("id"));
-        party.set("create_date", new Date());
-        party.set("creator", currentUser.getPrincipal());
-        party.set("party_type", Party.PARTY_TYPE_DRIVER);
-        party.save();
-        return party;
-    }
-
     // 更新收货人party
     public Party updateContact(String notifyPartyId) {
         Party party = Party.dao.findById(notifyPartyId);
@@ -605,17 +571,6 @@ public class TransferOrderController extends Controller {
         party.set("create_date", new Date());
         party.set("creator", currentUser.getPrincipal());
         party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
-        party.update();
-        return party;
-    }
-
-    // 更新司机party
-    public Party updateDriver(String driverId) {
-        Party party = Party.dao.findById(driverId);
-        Contact contact = editDriver(party);
-        party.set("create_date", new Date());
-        party.set("creator", currentUser.getPrincipal());
-        party.set("party_type", Party.PARTY_TYPE_DRIVER);
         party.update();
         return party;
     }
@@ -628,15 +583,6 @@ public class TransferOrderController extends Controller {
         contact.set("phone", getPara("notify_phone"));
         contact.set("address", getPara("notify_address"));
         contact.set("location", getPara("notify_location"));
-        contact.save();
-        return contact;
-    }
-
-    // 保存司机
-    private Contact setDriver() {
-        Contact contact = new Contact();
-        contact.set("contact_person", getPara("driver_name"));
-        contact.set("phone", getPara("driver_phone"));
         contact.save();
         return contact;
     }

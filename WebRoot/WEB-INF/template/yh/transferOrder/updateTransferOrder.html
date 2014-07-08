@@ -132,14 +132,14 @@
                                                 <label class="radio-inline">
                                                     <input type="radio" name="customerProvince" id="customerProvince2" value="provinceOut">省外
                                                 </label>  
-                                            </div>  -->
+                                            </div>  -->                                            
                                             
+   	                                        <div class="form-group">
+   	                                            <label>收货单位</label>
+   	                                            <input name="notify_company_name" value="${contact.company_name!''}" class="form-control" placeholder="请输入公司名称">
+   	                                        </div>
                                             <div id="contactInformation" style="display: none">
     	                                        <h2>收货人信息</h2>
-    	                                        <div class="form-group">
-    	                                            <label>收货人公司名称</label>
-    	                                            <input name="notify_company_name" value="${contact.company_name!''}" class="form-control" placeholder="请输入公司名称">
-    	                                        </div>
     	                                        <div class="form-group">
     	                                            <label>收货地址</label>
     	                                            <input id="notify_location" type="hidden" name="notify_location" value="${contact.location!''}">
@@ -676,6 +676,7 @@
                                     <hr/>
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                                     <button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
+                                    <a class="btn btn-default" href="/yh/transferOrder">返回</a>
                                     <!-- <button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
                                     <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
                                     <button id="receiptBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button> -->

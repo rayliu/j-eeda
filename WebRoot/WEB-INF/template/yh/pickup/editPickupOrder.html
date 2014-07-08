@@ -38,6 +38,7 @@
                                  
                                 <div class="row">
                                    <form id="pickupOrderForm" method="post" action="">
+                                        <input id="sp_id" type="hidden" name="sp_id" value="${pickupOrder.sp_id!''}"/>
                     			   		<input type="hidden" id="pickupId" name="pickupId" value="${pickupOrder.id!''}">
                                         <input id="driver_id" type="hidden" name="driver_id" value="${pickupOrder.driver_id!''}"/>                                   	  
                                        	<input type="hidden" name="order_no" value="${order_no!''}${pickupOrder.depart_no!''}"/>
@@ -49,8 +50,34 @@
 		            				    <input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
 		            				    <input class="" id="tr_itemid_list" value="" type="hidden" name="tr_itemid_list">
 		            				    <input class="" id="item_detail" value="" type="hidden" name="item_detail" >
-		                                <input id="driver_id" type="hidden" name="driver_id"/>
-                                    
+		                                <input id="driver_id" type="hidden" name="driver_id"/>                                    	
+                                        
+                                        	
+	                                       	<div class="form-group">
+	                                            <label><h2>提货方式</h2></label>
+	                                           	<input id="pickupModeRadio" type="hidden" value="${pickupOrder.pickup_mode!''}"/>
+	                                            <label class="radio-inline">
+	                                                <input type="radio" name="pickupMode" id="pickupMode1" value="routeSP" checked="">干线供应商自提
+	                                            </label>
+	                                            <label class="radio-inline">
+	                                                <input type="radio" name="pickupMode" id="pickupMode2" value="pickupSP">外包供应商提货
+	                                            </label>
+	                                            <label class="radio-inline">
+	                                                <input type="radio" name="pickupMode" id="pickupMode3" value="own">源鸿自提
+	                                            </label>
+	                                        </div> 
+                                            
+                                        <h2>供应商信息</h2>
+                                           <div class="form-group">
+                                               <!--label>供应商名称</label-->
+                                               <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage"  value="${spContact.company_name!''}"/>
+                                               <ul id='spList' class="pull-right dropdown-menu default" tabindex="-1" style="top: 35%; left: 2%;">
+   											</ul>
+                                           </div>
+                                           <div class="form-group">     
+                                           	   <h5 id="pageSpName">${spContact.contact_person!''} ${spContact.phone!''}</h5><h5 id="pageSpAddress">${spContact.address!''}</h5>     
+                                           </div>
+                                               
                                  		<h2>车辆信息</h2> 
                                         <div class="form-group">
 											<label>司机</label>
@@ -128,20 +155,10 @@
                                             <label>跟车人电话</label>
                                             <input class="form-control" id="car_follow_phone" name="car_follow_phone" value="${pickupOrder.car_follow_phone!''}">
                                             </div>
-                                            
-                                        	<div class="form-group">
-                                                <label>提货方式</label>
-                                               	<input id="pickupModeRadio" type="hidden" value="${pickupOrder.pickup_mode!''}"/>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="pickupMode" id="pickupMode1" value="routeSP" checked="">干线供应商自提
-                                                </label>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="pickupMode" id="pickupMode2" value="pickupSP">外包供应商提货
-                                                </label>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="pickupMode" id="pickupMode3" value="own">源鸿自提
-                                                </label>
-                                            </div> 
+                                            <div class="form-group">
+                                            <label>目的地</label>
+                                            <input class="form-control" id="address" name="address" value="${pickupOrder.address!''}">
+                                            </div>
                                         </div> 
                                   
 	                                   <div class="col-lg-6">
@@ -333,6 +350,7 @@
                         	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
 		               		<button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
 		               		<button id="finishBtn" disabled="disabled" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">已完成</button>
+		               		<a class="btn btn-default" href="/yh/pickupOrder">返回</a>
                         </div>                       
                     </div>
                     <!-- /.panel -->
