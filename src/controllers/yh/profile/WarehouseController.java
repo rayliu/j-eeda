@@ -41,7 +41,7 @@ public class WarehouseController extends Controller{
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-		if((warehouseName == null || "".equals(warehouseName)) && warehouseAddress == null || "".equals(warehouseAddress)){			
+		if(warehouseName == null && warehouseAddress == null){			
 			String sqlTotal = "select count(1) total from warehouse";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));

@@ -189,6 +189,7 @@ $(document).ready(function() {
   	    	$("#item_name").val(data.ITEM_NAME);
   	    	$("#size").val(data.SIZE);	    	
   	    	$("#width").val(data.WIDTH);	    	
+  	    	$("#height").val(data.HEIGHT);	    	
   	    	$("#unit").val(data.UNIT);	    	
   	    	$("#volume").val(data.VOLUME);	    	
   	    	$("#weight").val(data.WEIGHT);	    	
@@ -225,7 +226,8 @@ $(document).ready(function() {
     };
     
     // 新增产品
-    $('#editProduct').on('click', function() {   
+    $('#editProduct').on('click', function() { 
+    	$("#hiddenProductId").val('');
     	selectCategory();
     });
 
