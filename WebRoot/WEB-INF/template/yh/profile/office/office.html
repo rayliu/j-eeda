@@ -16,12 +16,12 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="search-label">分公司名称</label>
+                                        <label class="search-label">公司名称</label>
                                         <input type="text" class="form-control search-control orderNo_filter" id="name_filter" value="">
                                     </div>
                                     <div class="form-group">
-                                        <label class="search-label">分公司代码</label>
-                                        <input type="text" class="form-control search-control status_filter" id="code_filter">
+                                        <label class="search-label">公司地址</label>
+                                        <input type="text" class="form-control search-control status_filter" id="address_filter">
                                     </div>
                                 
                                     
@@ -91,6 +91,8 @@ var datatable=$('#example').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	        //"sPaginationType": "bootstrap",
 	        "iDisplayLength": 10,
+	      
+            "bServerSide": true,
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
@@ -121,12 +123,12 @@ var datatable=$('#example').dataTable( {
 	            ]
 	} );
 		
-	 $("#name_filter ,#code_filter ,#person_filter ,#type_filter").on( 'keyup click', function () {    	 	
+	 $("#name_filter ,#address_filter ,#person_filter ,#type_filter").on( 'keyup click', function () {    	 	
 	    	var type = $("#type_filter").val();
 	    	var person = $("#person_filter").val();
-	    	var code = $("#code_filter").val();
+	    	var address = $("#address_filter").val();
 	    	var name = $("#name_filter").val();
-	    	datatable.fnSettings().sAjaxSource = "/yh/office/listOffice?name="+name+"&code="+code+"&person="+person+"&type="+type;
+	    	datatable.fnSettings().sAjaxSource = "/yh/office/listOffice?name="+name+"&address="+address+"&person="+person+"&type="+type;
 	    	datatable.fnDraw();
 	    	
 	      });

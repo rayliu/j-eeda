@@ -46,6 +46,14 @@ public class DepartOrderController extends Controller {
     }
 
     public void list() {
+    	
+     String orderNo=getPara("orderNo");
+     String departNo=getPara("departNo");
+     String status=getPara("status");
+     String sp=	getPara("sp");
+     String beginTime=getPara("beginTime");
+     String endTime=getPara("endTime");
+   
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -65,15 +73,24 @@ public class DepartOrderController extends Controller {
                 + " left join contact c on p.contact_id = c.id where combine_type = '"
                 + DepartOrder.COMBINE_TYPE_DEPART
                 + "'order by deo.create_stamp desc";
-
-        List<Record> warehouses = Db.find(sql);
-
+        String sql_seach ="select deo.*,c.contact_person,c.phone, group_concat(tr.order_no separator ' ') as transfer_order_no "
+				 +" from depart_order deo" 
+				+" left join party p on deo.driver_id = p.id and p.party_type = 'DRIVER' " 
+				+" left join contact c on p.contact_id = c.id "
+				+" left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )" 
+				 +" where deo.combine_type = 'DEPART' and deo.status like '%%' and deo.depart_no like '%%'  and c.company_name  like '%%'  and tr.order_no like '%%' group by deo.id order by deo.create_stamp desc ";
+        List<Record> depart = null;
+        if(orderNo==null&&departNo==null&&status==null&&sp==null&&beginTime==null&&endTime==null){
+        	depart = Db.find(sql);
+        }else{
+        	depart = Db.find(sql_seach);
+        }
         Map map = new HashMap();
         map.put("sEcho", pageIndex);
         map.put("iTotalRecords", rec.getLong("total"));
         map.put("iTotalDisplayRecords", rec.getLong("total"));
 
-        map.put("aaData", warehouses);
+        map.put("aaData", depart);
 
         renderJson(map);
     }
