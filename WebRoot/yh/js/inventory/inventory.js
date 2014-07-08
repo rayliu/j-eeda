@@ -51,11 +51,11 @@ $(document).ready(function() {
 	        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	        //"sPaginationType": "bootstrap",
 	        "iDisplayLength": 10,
-	        "bServerSide": true,
-	        "bRetrieve": true,
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
+	        "bServerSide": true,
+	        "bRetrieve": true,
 	        "sAjaxSource":"/yh/gateIn/gateInProductlist/"+wid,
 	        "aoColumns": [
 	            {"mDataProp":"ITEM_NAME"},
@@ -69,7 +69,7 @@ $(document).ready(function() {
 	            {"mDataProp":"UNIT_COST"},
 	            { 
 	                "mDataProp": null, 
-	                "sWidth": "8%",                
+	                "sWidth": "100px",                
 	                "fnRender": function(obj) {                    
 	                    return "<a class='btn btn-success editProduct' code='"+obj.aData.ID+"'>"+
 				                    "<i class='fa fa-edit fa-fw'></i>"+
@@ -88,6 +88,8 @@ $(document).ready(function() {
              //保存成功后，刷新列表
              console.log(data);
              if(data!=null){
+            	 $("#productId").val(data.PRODUCT_ID);
+            	 	$("#warehouseOrderItemId").val(data.ID);
             	 	$("#itemNameMessage").val(data.ITEM_NAME);
          			$("#itemNoMessage").val(data.ITEM_NO);
          			$("#item_desc").val(data.ITEM_DESC);
@@ -332,4 +334,9 @@ $(document).ready(function() {
 		                }
 		    	},'json');
 		   });
+		   var wStatus = $("#warehouseorderStatus").val();
+		   console.log(wStatus);
+		   if(wStatus=='已入库'){
+			   $("#ConfirmBtn").attr("disabled", true); 
+		   }
 });

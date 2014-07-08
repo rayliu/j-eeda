@@ -34,6 +34,7 @@
                                   		<div class="col-lg-6">
                                   		<form action="" id="inventoryForm">
                                   		<input type="hidden" id="warehouseorderId" name="warehouseorderId" value="${warehouseOrder.id!''}">
+                                  		<input type="hidden" id="warehouseorderStatus" value="${warehouseOrder.status!''}">
                                   			<div class="form-group ">
         										<label class="control-label" for="inputSuccess">仓库</label>
         										<input type="hidden" id="warehouseId" name="warehouseId" value="${warehouseOrder.warehouse_id!''}"> 
@@ -107,7 +108,7 @@
 									      <form id="warehouseOrderItemForm" action="">
 									      <div class="col-lg-6">
 									      		<input id="productId" type="hidden" name="productId" />
-									      		<input id="warehouseOderItemId" type="hidden" name="warehouseOderItemId" />
+									      		<input id="warehouseOrderItemId" type="hidden" name="warehouseOderItemId" />
 												<div class="form-group ">
 													<label class="control-label" for="inputSuccess">货品名称</label>
 													<input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown">
@@ -148,7 +149,8 @@
 													<input id="caton_no" class="form-control" type="text" name="caton_no" value="${product.width!''}">
 												</div>
 												<div class="form-group ">
-													<label class="control-label" for="inputSuccess">数量</label> 
+												<input type="hidden" id ="total" >
+													<label class="control-label" for="inputSuccess">数量</label><label id="mylabel"></label>
 													<input id="total_quantity" class="form-control" type="text" name="total_quantity">
 												</div>
 												<div class="form-group">
@@ -232,7 +234,7 @@
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                                     <button id="saveInventoryBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
                                     <button id="departureConfirmationBtn" type="button" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
-                                    <button id="warehousingConfirmBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">出仓确认</button> 
+                                    <button id="gateOutConfirmBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">出仓确认</button> 
                                     <button id="receiptBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button>
                                 </div>
                                 <p>保存：新建时只能保存（其他按钮都灰掉不能点）, 保存后单据状态变为“新建”</p>

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import models.InventoryItem;
 import models.Party;
 import models.UserLogin;
 import models.Warehouse;
@@ -153,7 +154,8 @@ public class InventoryController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select * from inventory_item where warehouse_id =" + id);
+                .find("select * from inventory_item i_t where warehouse_id ="
+                        + id);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -204,7 +206,8 @@ public class InventoryController extends Controller {
                         + "left join warehouse w on w.id = w_o.warehouse_id where w_o.id='"
                         + id + "'");
         setAttr("warehouseOrder", orders);
-        render("/yh/inventory/gateInEdit.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("/yh/inventory/gateInEdit.html");
     }
 
     // 出库单修改edit
@@ -218,7 +221,8 @@ public class InventoryController extends Controller {
                         + "left join warehouse w on w.id = w_o.warehouse_id where w_o.id='"
                         + id + "'");
         setAttr("warehouseOrder", orders);
-        render("/yh/inventory/gateOutEdit.html");
+        if (LoginUserController.isAuthenticated(this))
+            render("/yh/inventory/gateOutEdit.html");
     }
 
     // 查找客户
@@ -395,38 +399,53 @@ public class InventoryController extends Controller {
     // 保存入库单货品
     public void savewareOrderItem() {
         String warehouseorderid = getPara();
+        WarehouseOrderItem warehouseOrderItem = null;
         String productId = getPara("productId");
+        String warehouseOrderItemId = getPara("warehouseOderItemId");
         System.out.println(productId);
-        if (productId.equals("")) {
-            renderJson(0);
-            return;
-        }
-
+        /*
+         * if (productId.equals("")) { renderJson(0); return; }
+         */
         String name = (String) currentUser.getPrincipal();
 
         List<UserLogin> users = UserLogin.dao
                 .find("select * from user_login where user_name='" + name + "'");
         Date createDate = Calendar.getInstance().getTime();
 
-        WarehouseOrderItem warehouseOrderItem = new WarehouseOrderItem();
-        String warehouseOderItemId = getPara("warehouseOderItemId");
-        warehouseOrderItem
-                .set("product_id", getPara("productId"))
-                .set("item_name", getPara("item_name"))
-                .set("item_no", getPara("itemNoMessage"))
-                .set("warehouse_order_id", warehouseorderid)
-                // .set("expire_date", getPara("expire_date"))
-                .set("lot_no", getPara("lot_no")).set("uom", getPara("uom"))
-                .set("caton_no", getPara("caton_no"))
-                .set("total_quantity", getPara("total_quantity"))
-                .set("unit_price", getPara("unit_price"))
-                .set("unit_cost", getPara("unit_cost"))
-                .set("item_desc", getPara("item_desc"));
-        if (warehouseOderItemId != "") {
+        if (warehouseOrderItemId != "") {
+            warehouseOrderItem = WarehouseOrderItem.dao
+                    .findById(warehouseOrderItemId);
+            warehouseOrderItem
+                    .set("product_id", getPara("productId"))
+                    .set("item_name", getPara("item_name"))
+                    .set("item_no", getPara("itemNoMessage"))
+                    .set("warehouse_order_id", warehouseorderid)
+                    // .set("expire_date", getPara("expire_date"))
+                    .set("lot_no", getPara("lot_no"))
+                    .set("uom", getPara("uom"))
+                    .set("caton_no", getPara("caton_no"))
+                    .set("total_quantity", getPara("total_quantity"))
+                    .set("unit_price", getPara("unit_price"))
+                    .set("unit_cost", getPara("unit_cost"))
+                    .set("item_desc", getPara("item_desc"));
             warehouseOrderItem.set("last_updater", users.get(0).get("id")).set(
                     "last_update_date", createDate);
             warehouseOrderItem.update();
         } else {
+            warehouseOrderItem = new WarehouseOrderItem();
+            warehouseOrderItem
+                    .set("product_id", getPara("productId"))
+                    .set("item_name", getPara("item_name"))
+                    .set("item_no", getPara("itemNoMessage"))
+                    .set("warehouse_order_id", warehouseorderid)
+                    // .set("expire_date", getPara("expire_date"))
+                    .set("lot_no", getPara("lot_no"))
+                    .set("uom", getPara("uom"))
+                    .set("caton_no", getPara("caton_no"))
+                    .set("total_quantity", getPara("total_quantity"))
+                    .set("unit_price", getPara("unit_price"))
+                    .set("unit_cost", getPara("unit_cost"))
+                    .set("item_desc", getPara("item_desc"));
             warehouseOrderItem.set("creator", users.get(0).get("id")).set(
                     "create_date", createDate);
             warehouseOrderItem.save();
@@ -541,15 +560,13 @@ public class InventoryController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-                    .find("select * from warehouse_order_item where warehouse_order_id in (select id from warehouse_order where party_id ="
-                            + customerId
-                            + ") and item_no like '%"
-                            + input
+                    .find("select * from inventory_item where party_id='"
+                            + customerId + "' and item_no like '%" + input
                             + "%' limit 0,10");
         } else {
             locationList = Db
-                    .find("select * from warehouse_order_item where warehouse_order_id in (select id from warehouse_order where party_id ="
-                            + customerId + ")");
+                    .find("select * from inventory_item where party_id='"
+                            + customerId + "'");
         }
         renderJson(locationList);
     }
@@ -561,15 +578,13 @@ public class InventoryController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-                    .find("select * from warehouse_order_item where warehouse_order_id in (select id from warehouse_order where party_id ="
-                            + customerId
-                            + ") and item_name like '%"
-                            + input
+                    .find("select * from inventory_item where party_id='"
+                            + customerId + "' and item_name like '%" + input
                             + "%' limit 0,10");
         } else {
             locationList = Db
-                    .find("select * from warehouse_order_item where warehouse_order_id in (select id from warehouse_order where party_id = "
-                            + customerId + ")");
+                    .find("select * from inventory_item where party_id='"
+                            + customerId + "'");
         }
         renderJson(locationList);
     }
@@ -604,7 +619,34 @@ public class InventoryController extends Controller {
     // 入仓确认
     public void gateInConfirm() {
         String id = getPara();
+        List<Record> list = Db
+                .find("select * from warehouse_order_item where warehouse_order_id = '"
+                        + id + "'");
+        System.out.println(list);
+        WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
+        warehouseOrder.set("status", "已入库");
+        warehouseOrder.update();
+        for (int i = 0; i < list.size(); i++) {
+            InventoryItem inventoryItem = new InventoryItem();
+            inventoryItem.set("party_id", warehouseOrder.get("party_id"))
+                    .set("warehouse_id", warehouseOrder.get("warehouse_id"))
+                    .set("product_id", list.get(i).get("product_id"))
+                    .set("item_name", list.get(i).get("item_name"))
+                    .set("item_no", list.get(i).get("item_no"))
+                    .set("uom", list.get(i).get("uom"))
+                    .set("lot_no", list.get(i).get("lot_no"))
+                    .set("total_quantity", list.get(i).get("total_quantity"))
+                    .set("unit_price", list.get(i).get("unit_price"))
+                    .set("unit_cost", list.get(i).get("unit_cost"))
+                    .set("caton_no", list.get(i).get("caton_no"));
+            inventoryItem.save();
+        }
+        renderJson("{\"success\":true}");
+    }
 
+    public void gateOutConfirm() {
+        String id = getPara();
+        WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
         renderJson("{\"success\":true}");
     }
 }

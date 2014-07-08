@@ -166,7 +166,7 @@ $(document).ready(function() {
 			        "aoColumns": [
 						{ "mDataProp": null,
 						    "fnRender": function(obj) {
-						       return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+						       return '<input type="checkbox" class="checkedOrUnchecked" code3='+obj.aData.CUSTOMER_ID+' name="order_check_box" value="'+obj.aData.ID+'">';
 						    }
 						},          
 			            {"mDataProp":null,
@@ -196,6 +196,13 @@ $(document).ready(function() {
 			            {"mDataProp":"COMPANY_NAME"}
 			        ]      
 			    });	
+			$("#eeda-table4").on('click', '.checkedOrUnchecked', function(e){
+				if($(this).prop("checked") == true){
+					$("#saveDelivery").attr('disabled', false);
+				}else{
+					$("#saveDelivery").attr('disabled', true);
+				}
+			});
 			//添加运输单序列号
 			/* $("#eeda-table2").on('click', '.creat', function(e){
 				 var id = $(this).attr('code');*/
@@ -204,14 +211,28 @@ $(document).ready(function() {
 				    	var trArr=[];
 				    	var ser =[];
 				    	var transferNo=[];
+				    	var customer_idArr=[];
 					$("#eeda-table4 tr:not(:first)").each(function(){
 						var the=this;
 			        	$("input:checked",this).each(function(){
+			        		var sp_id=$(this).attr("code3");
 			        		trArr.push($(this).val()); 
 			        		//ser.push($("td:eq(1)",the).html());
 			        		ser.push($(".serId",the).attr('code'));
 			        		transferNo.push($(".transferNo",the).attr('code2'));
+			        		if(sp_id!=""){
+			        			customer_idArr.push(sp_id);
+			        		}
 			        	});
+			        	if(customer_idArr.length>=2){
+			         	   for(var i=0;i<customer_idArr.length;i++){
+			         		   if(customer_idArr[i]!=customer_idArr[i+1]){
+			         			   alert("请选择同客户的运输单！");
+			         			   return;
+			         		   }
+			         			  
+			         	   }
+			            }
 			        	}); 
 			        	$('#localArr2').val(ser);
 			            $('#localArr').val(trArr);

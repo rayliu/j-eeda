@@ -34,6 +34,7 @@
                                   		<div class="col-lg-6">
                                   		<form action="" id="inventoryForm">
                                   		<input type="hidden" id="warehouseorderId" name="warehouseorderId" value="${warehouseOrder.id!''}">
+	              						<input type="hidden" id="warehouseorderStatus" value="${warehouseOrder.status!''}">
 	              							<div class="form-group">
                                                 <label>客户信息</label>
                                                 <input type="hidden" id="party_id" name="party_id" value="${warehouseOrder.party_id!''}">
@@ -111,7 +112,7 @@
 									      <form id="warehouseOrderItemForm" action="">
 									      <div class="col-lg-6">
 									      		<input id="productId" type="hidden" name="productId" />
-									      		<input id="warehouseOderItemId" type="hidden" name="warehouseOderItemId" />
+									      		<input id="warehouseOrderItemId" type="hidden" name="warehouseOderItemId" />
 												<div class="form-group ">
 													<label class="control-label" for="inputSuccess">货品名称</label>
 													<input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown">
