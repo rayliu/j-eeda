@@ -12,6 +12,8 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "bProcessing": true,
+        "bServerSide": true,
         "sAjaxSource": "/yh/serviceProvider/list",
         "aoColumns": [   
             
@@ -41,7 +43,7 @@ $(document).ready(function() {
     });
 
   //条件筛选
-	$("#COMPANY_NAME,#CONTACT_PERSON ,#RECEIPT,#ABBR,#ADDRESS,#LOCATION").on('keyup click', function () {    	 	
+	$("#COMPANY_NAME ,#CONTACT_PERSON ,#RECEIPT,#ABBR,#ADDRESS,#LOCATION").on('keyup click', function () {    	 	
       	var COMPANY_NAME = $("#COMPANY_NAME").val();
       	var CONTACT_PERSON = $("#CONTACT_PERSON").val();
     	var RECEIPT = $("#RECEIPT").val();
@@ -49,6 +51,7 @@ $(document).ready(function() {
       	var ADDRESS = $("#ADDRESS").val();
       	var LOCATION = $("#LOCATION").val();
       	dataTable.fnSettings().sAjaxSource = "/yh/serviceProvider/list?COMPANY_NAME="+COMPANY_NAME+"&CONTACT_PERSON="+CONTACT_PERSON+"&RECEIPT="+RECEIPT+"&ABBR="+ABBR+"&ADDRESS="+ADDRESS+"&LOCATION="+LOCATION;
+
       	dataTable.fnDraw();
       });
 	

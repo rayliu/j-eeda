@@ -53,7 +53,8 @@ public class ServiceProviderController extends Controller {
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select *,p.id as pid from party p, contact c where p.party_type='SERVICE_PROVIDER' and p.contact_id=c.id order by p.create_date desc ";
+            String sql = "select *,p.id as pid from party p, contact c where p.party_type='SERVICE_PROVIDER' and p.contact_id=c.id order by p.create_date desc "
+                    + sLimit;
             List<Record> customers = Db.find(sql);
             String code = "";
             for (int i = 0; i < customers.size(); i++) {
@@ -77,21 +78,7 @@ public class ServiceProviderController extends Controller {
             customerListMap.put("aaData", customers);
             renderJson(customerListMap);
         } else {
-            if (company_name == null || "".equals(company_name)) {
-                company_name = null;
-            }
-            if (contact_person == null || "".equals(contact_person)) {
-                contact_person = null;
-            }
-            if (receipt == null || "".equals(receipt)) {
-                receipt = null;
-            }
-            if (address == null || "".equals(address)) {
-                address = null;
-            }
-            if (abbr == null || "".equals(abbr)) {
-                abbr = null;
-            }
+
             String sLimit = "";
             String pageIndex = getPara("sEcho");
             if (getPara("iDisplayStart") != null
@@ -112,13 +99,13 @@ public class ServiceProviderController extends Controller {
                     + receipt
                     + "%' and c.address like '%"
                     + address
-                    + "%' and c.abbr like '%" + abbr + "%'";
+                    + "%' and c.abbr like '%" + abbr + "%'" + sLimit;
             List<Record> customers = Db.find(sql);
             String code = "";
             for (int i = 0; i < customers.size(); i++) {
                 code = customers.get(i).get("location");
                 String sql2 = "select trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code='"
-                        + code + "'" + sLimit;
+                        + code + "'";
                 List<Record> customers2 = Db.find(sql2);
                 String id = "";
                 try {

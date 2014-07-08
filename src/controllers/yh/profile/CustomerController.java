@@ -103,7 +103,7 @@ public class CustomerController extends Controller {
                     + receipt
                     + "%' and c.address like '%"
                     + address
-                    + "%' and c.abbr like '%" + abbr + "%' or c.abbr is null";
+                    + "%' and c.abbr like '%" + abbr + "%'";
 
             List<Record> customers = Db.find(sql);
 
