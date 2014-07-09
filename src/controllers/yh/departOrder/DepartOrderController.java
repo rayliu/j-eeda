@@ -859,14 +859,31 @@ public class DepartOrderController extends Controller {
     }
 
     public void transferMilestone() {
-        Map map = new HashMap();
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from office";
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
         List<TransferOrderMilestone> transferOrderMilestone = TransferOrderMilestone.dao
                 .find("select trom.*,tor.order_no as order_no,us.user_name as usernames from transfer_order_milestone trom "
                         + "left join transfer_order tor on tor.id=trom.order_id " + "left join user_login  us on us.id=trom.create_by "
                         + "where trom.status='在途' and trom. type='" + TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE + "'");
+       
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        orderMap.put("aaData", transferOrderMilestone);
 
-        map.put("milestones", transferOrderMilestone);
-        renderJson(map);
+        renderJson(orderMap);
     }
 
     // 回显供应商
@@ -890,16 +907,24 @@ public class DepartOrderController extends Controller {
         }else{
         	 List<DepartTransferOrder> dp = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id=" + de_id + "");
             int r_sp_id=0;
+            boolean check=true;
         	 for (int i = 0; i < dp.size(); i++) {
                  TransferOrder tr = TransferOrder.dao.findById(Integer.parseInt(dp.get(i).get("order_id").toString()));
                  if(tr.get("sp_id")!=null){
+                 if(check=true){
                 	 r_sp_id=Integer.parseInt(tr.get("sp_id").toString());
+                	 check=false;
+                 }
+                	 
                  }
                  if(tr.get("sp_id")==null){
                 	 tr.set("sp_id", r_sp_id).update();
-                 }
-                 
+                 } 
              }
+        	 DepartOrder de=DepartOrder.dao.findById(de_id);
+        	 if(de.get("sp_id")==null){
+        		 de.set("sp_id", r_sp_id).update();
+        	 }
         }
 
     }
