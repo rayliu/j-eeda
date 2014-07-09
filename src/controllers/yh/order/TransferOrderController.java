@@ -351,13 +351,15 @@ public class TransferOrderController extends Controller {
         String order_id = getPara("id");
         String warehouseId = getPara("gateInSelect");
         String officeId = getPara("officeSelect");
+        String customerId = getPara("customer_id");
+        String spId = getPara("sp_id");
         TransferOrder transferOrder = null;
         if (order_id == null || "".equals(order_id)) {
             transferOrder = new TransferOrder();
-            Party customer = Party.dao.findById(getPara("customer_id"));
-            transferOrder.set("customer_id", customer.get("id"));
-            Party sp = Party.dao.findById(getPara("sp_id"));
-            transferOrder.set("sp_id", sp.get("id"));
+            if(!"".equals(spId) && spId != null){
+            	transferOrder.set("sp_id", spId);
+            }
+            transferOrder.set("customer_id", customerId);
             transferOrder.set("status", getPara("status"));
             transferOrder.set("order_no", getPara("order_no"));
             transferOrder.set("create_by", getPara("create_by"));
@@ -373,20 +375,25 @@ public class TransferOrderController extends Controller {
             transferOrder.set("customer_province", getPara("customerProvince"));
             transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
 
+            Party party = null;
+            String notifyPartyId = getPara("notify_party_id");
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
-                // 到达方式为货品直送时把warehouseId置为null
-                warehouseId = null;
-                Party party = null;
-                String notifyPartyId = getPara("notify_party_id");
                 if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
                 } else {
                     party = updateContact(notifyPartyId);
                 }
                 transferOrder.set("notify_party_id", party.get("id"));
-            }
-            if (warehouseId != null && !"".equals(warehouseId)) {
-                transferOrder.set("warehouse_id", warehouseId);
+            }else{
+	            if (warehouseId != null && !"".equals(warehouseId)) {
+	                transferOrder.set("warehouse_id", warehouseId);
+	            }
+	            if (notifyPartyId == null || "".equals(notifyPartyId)) {
+                    party = saveContact();
+                } else {
+                    party = updateContact(notifyPartyId);
+                }
+                transferOrder.set("notify_party_id", party.get("id"));
             }
             if (officeId != null && !"".equals(officeId)) {
                 transferOrder.set("office_id", officeId);
@@ -399,8 +406,10 @@ public class TransferOrderController extends Controller {
             saveTransferOrderMilestone(transferOrder);
         } else {
             transferOrder = TransferOrder.dao.findById(order_id);
-            transferOrder.set("customer_id", getPara("customer_id"));
-            transferOrder.set("sp_id", getPara("sp_id"));
+            if(!"".equals(spId) && spId != null){
+            	transferOrder.set("sp_id", spId);
+            }
+            transferOrder.set("customer_id", customerId);
             transferOrder.set("order_no", getPara("order_no"));
             transferOrder.set("create_by", getPara("create_by"));
             transferOrder.set("cargo_nature", getPara("cargoNature"));
@@ -415,23 +424,25 @@ public class TransferOrderController extends Controller {
             transferOrder.set("customer_province", getPara("customerProvince"));
             transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
 
+            Party party = null;
+            String notifyPartyId = getPara("notify_party_id");
             if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
-                // 到达方式为货品直送时把warehouseId置为null
-                warehouseId = null;
-                Party party = null;
-                String notifyPartyId = getPara("notify_party_id");
                 if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
                 } else {
                     party = updateContact(notifyPartyId);
                 }
                 transferOrder.set("notify_party_id", party.get("id"));
-            } else {
-                transferOrder.set("notify_party_id", null);
-                transferOrder.set("driver_id", null);
-            }
-            if (warehouseId != null && !"".equals(warehouseId)) {
-                transferOrder.set("warehouse_id", warehouseId);
+            }else{
+	            if (warehouseId != null && !"".equals(warehouseId)) {
+	                transferOrder.set("warehouse_id", warehouseId);
+	            }
+	            if (notifyPartyId == null || "".equals(notifyPartyId)) {
+                    party = saveContact();
+                } else {
+                    party = updateContact(notifyPartyId);
+                }
+                transferOrder.set("notify_party_id", party.get("id"));
             }
             if (officeId != null && !"".equals(officeId)) {
                 transferOrder.set("office_id", officeId);

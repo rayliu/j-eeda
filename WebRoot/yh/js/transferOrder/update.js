@@ -451,8 +451,8 @@ $(document).ready(function() {
 	  if(inputId=='arrivalMode1'){
 		 $("#contactInformation").show();
 		 $("#warehousingConfirmBtn").attr("disabled", true);
-		 var gateInSelect = $("#gateInSelect");
-		 gateInSelect.empty();
+		 //var gateInSelect = $("#gateInSelect");
+		 //gateInSelect.empty();
 		 $("#gateInSelect").hide();
 		 $("#warehousingConfirmBtn").attr("disabled", true);
 	  }else{
@@ -1353,4 +1353,12 @@ $(document).ready(function() {
  		$("#transferOrderItemId").val("");
  		$("#productId").val("");
  	});
+ 	
+    // 计算货品体积
+    $('#height, #width, #size').on('keyup click', function() { 
+    	var height = $('#height').val();
+    	var width = $('#width').val();
+    	var size = $('#size').val();
+    	$("#volume").val((height/1000)*(width/1000)*(size/1000));
+    });
 });

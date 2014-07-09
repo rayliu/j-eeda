@@ -230,6 +230,14 @@ $(document).ready(function() {
     	$("#hiddenProductId").val('');
     	selectCategory();
     });
+    
+    // 计算产品体积
+    $('#height, #width, #size').on('keyup click', function() { 
+    	var height = $('#height').val();
+    	var width = $('#width').val();
+    	var size = $('#size').val();
+    	$("#volume").val((height/1000)*(width/1000)*(size/1000));
+    });
 
 
     //---------------tree handle
@@ -385,9 +393,14 @@ $(document).ready(function() {
             zTree.setting.edit.editNameSelectAll =  $("#selectAll").attr("checked");
         }
         //-------------edit end--------------
-        function onNodeClick(event, treeId, treeNode){     
-        	$("#addProductDiv").show();
-            $("#displayDiv").show();
+        function onNodeClick(event, treeId, treeNode){
+        	if(treeNode.parentTId != null){
+	        	$("#addProductDiv").show();
+	            $("#displayDiv").show();
+        	}else{
+        		$("#addProductDiv").hide();
+	            $("#displayDiv").hide();
+        	}
             $("#categoryId").val(treeNode.categoryId);
             $("#hiddenCategoryId").val(treeNode.categoryId);
             productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+treeNode.categoryId;
