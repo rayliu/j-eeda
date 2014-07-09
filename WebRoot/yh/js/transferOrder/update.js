@@ -390,18 +390,34 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "aoColumns": [  			            
-            {"mDataProp":"ITEM_NO"},
-            {"mDataProp":"ITEM_NAME"},
-            {"mDataProp":"WEIGHT",
+            {
+            	"mDataProp":"ITEM_NO",
+            	"sWidth": "80px"
+        	},
+            {
+            	"mDataProp":"ITEM_NAME",
+            	"sWidth": "180px"
+            },
+            {
+            	"mDataProp":"WEIGHT",
+            	"sWidth": "50px",
             	"fnRender": function(obj) {
         			return obj.aData.WEIGHT * obj.aData.AMOUNT;
             }},
-            {"mDataProp":"VOLUME",
+            {
+            	"mDataProp":"VOLUME",
+            	"sWidth": "50px",
             	"fnRender": function(obj) {
             		return obj.aData.VOLUME * obj.aData.AMOUNT;
             	}},
-            {"mDataProp":"AMOUNT"},      	
-            {"mDataProp":"UNIT"},
+            {
+            	"mDataProp":"AMOUNT",
+            	"sWidth": "50px"
+            },      	
+            {
+            	"mDataProp":"UNIT",
+            	"sWidth": "50px"
+            },
             {"mDataProp":"REMARK"},
             {  
                 "mDataProp": null, 
@@ -423,7 +439,36 @@ $(document).ready(function() {
             }                         
         ]      
     });	
-    
+
+	
+    itemDataTable.makeEditable({
+    	oEditableSettings: {event: 'mouseover'},
+    	"aoColumns": [  			            
+            {
+            	// "mDataProp":"ITEM_NO",
+        	},
+            {
+            	// "mDataProp":"ITEM_NAME",
+            },
+            {
+            // 	"mDataProp":"WEIGHT"
+            },
+            {
+            	// "mDataProp":"VOLUME"
+            },
+            {
+            	// "mDataProp":"AMOUNT"
+            },      	
+            {
+            	// "mDataProp":"UNIT"
+            },
+            {
+            	//"mDataProp":"REMARK"
+            },
+            null                        
+        ]      
+    });                                                                      
+        
     // 保存货品
     $("#transferOrderItemFormBtn").click(function(){
     	$.post('/yh/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemForm").serialize(), function(data){
@@ -696,7 +741,7 @@ $(document).ready(function() {
                 }
             }                         
         ]      
-    });		
+    });
 	
 	// 编辑单品
 	$("#itemTable").on('click', '.dateilEdit', function(e){

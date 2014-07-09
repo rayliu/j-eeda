@@ -556,7 +556,7 @@
 												<div class="form-group ">
 												<label class="control-label" for="inputSuccess">地点</label> <input
 													id="location" class="form-control" type="text"
-													name="location"">
+													name="location">
 												</div>
 										      </div>
 										      <div class="modal-footer">
@@ -698,11 +698,20 @@
         <!-- /#page-wrapper -->
 
 <%}%>
+<style type="text/css">
+    tr input {
+       width: 30px;
+    }
+</style>
 <!-- Page-Level Plugin Scripts - Tables -->
-<script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>
+
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.editable.js" type="text/javascript"></script>
+<script src="/yh/js/plugins/dataTables/jquery.jeditable.js" type="text/javascript"></script>
+
 <!-- 引入校验的js 文件及其 中文 文件-->
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
-<script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
 <script src="/yh/js/transferOrder/update.js"></script>
 
