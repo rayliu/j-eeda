@@ -305,6 +305,9 @@ $(document).ready(function() {
 	        });
 		 
 			// 保存货品
+		 $("#addproduct").click(function(){
+			 $('#reset').click();
+		 });
 		    $("#warehouseOrderItemFormBtn").click(function(){
 		    	console.log(warehouseorderid);
 		    	var warehouseorderid = $("#warehouseorderId").val();

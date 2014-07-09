@@ -415,42 +415,34 @@ public class InventoryController extends Controller {
         if (warehouseOrderItemId != "") {
             warehouseOrderItem = WarehouseOrderItem.dao
                     .findById(warehouseOrderItemId);
-            warehouseOrderItem
-                    .set("product_id", getPara("productId"))
-                    .set("item_name", getPara("item_name"))
-                    .set("item_no", getPara("itemNoMessage"))
-                    .set("warehouse_order_id", warehouseorderid)
-                    // .set("expire_date", getPara("expire_date"))
-                    .set("lot_no", getPara("lot_no"))
-                    .set("uom", getPara("uom"))
-                    .set("caton_no", getPara("caton_no"))
-                    .set("total_quantity", getPara("total_quantity"))
-                    .set("unit_price", getPara("unit_price"))
-                    .set("unit_cost", getPara("unit_cost"))
-                    .set("item_desc", getPara("item_desc"));
+            setwarehouseItem(warehouseOrderItem);
+            warehouseOrderItem.set("warehouse_order_id", warehouseorderid);
             warehouseOrderItem.set("last_updater", users.get(0).get("id")).set(
                     "last_update_date", createDate);
             warehouseOrderItem.update();
         } else {
             warehouseOrderItem = new WarehouseOrderItem();
-            warehouseOrderItem
-                    .set("product_id", getPara("productId"))
-                    .set("item_name", getPara("item_name"))
-                    .set("item_no", getPara("itemNoMessage"))
-                    .set("warehouse_order_id", warehouseorderid)
-                    // .set("expire_date", getPara("expire_date"))
-                    .set("lot_no", getPara("lot_no"))
-                    .set("uom", getPara("uom"))
-                    .set("caton_no", getPara("caton_no"))
-                    .set("total_quantity", getPara("total_quantity"))
-                    .set("unit_price", getPara("unit_price"))
-                    .set("unit_cost", getPara("unit_cost"))
-                    .set("item_desc", getPara("item_desc"));
+            setwarehouseItem(warehouseOrderItem);
+            warehouseOrderItem.set("warehouse_order_id", warehouseorderid);
             warehouseOrderItem.set("creator", users.get(0).get("id")).set(
                     "create_date", createDate);
             warehouseOrderItem.save();
         }
         renderJson(warehouseOrderItem.get("id"));
+    }
+
+    public void setwarehouseItem(WarehouseOrderItem warehouseOrderItem) {
+        warehouseOrderItem
+                .set("product_id", getPara("productId"))
+                .set("item_name", getPara("item_name"))
+                .set("item_no", getPara("itemNoMessage"))
+                // .set("expire_date", getPara("expire_date"))
+                .set("lot_no", getPara("lot_no")).set("uom", getPara("uom"))
+                .set("caton_no", getPara("caton_no"))
+                .set("total_quantity", getPara("total_quantity"))
+                .set("unit_price", getPara("unit_price"))
+                .set("unit_cost", getPara("unit_cost"))
+                .set("item_desc", getPara("item_desc"));
     }
 
     // 构造入库单号
@@ -638,15 +630,39 @@ public class InventoryController extends Controller {
                     .set("total_quantity", list.get(i).get("total_quantity"))
                     .set("unit_price", list.get(i).get("unit_price"))
                     .set("unit_cost", list.get(i).get("unit_cost"))
-                    .set("caton_no", list.get(i).get("caton_no"));
+                    .set("caton_no", list.get(i).get("caton_no"))
+                    .set("status", "入库");
             inventoryItem.save();
         }
         renderJson("{\"success\":true}");
     }
 
+    // 出仓确认
     public void gateOutConfirm() {
         String id = getPara();
+        List<Record> list = Db
+                .find("select * from warehouse_order_item where warehouse_order_id = '"
+                        + id + "'");
+        System.out.println(list);
         WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
+        warehouseOrder.set("status", "已出库");
+        warehouseOrder.update();
+        for (int i = 0; i < list.size(); i++) {
+            InventoryItem inventoryItem = new InventoryItem();
+            inventoryItem.set("party_id", warehouseOrder.get("party_id"))
+                    .set("warehouse_id", warehouseOrder.get("warehouse_id"))
+                    .set("product_id", list.get(i).get("product_id"))
+                    .set("item_name", list.get(i).get("item_name"))
+                    .set("item_no", list.get(i).get("item_no"))
+                    .set("uom", list.get(i).get("uom"))
+                    .set("lot_no", list.get(i).get("lot_no"))
+                    .set("total_quantity", list.get(i).get("total_quantity"))
+                    .set("unit_price", list.get(i).get("unit_price"))
+                    .set("unit_cost", list.get(i).get("unit_cost"))
+                    .set("caton_no", list.get(i).get("caton_no"))
+                    .set("status", "出库");
+            inventoryItem.save();
+        }
         renderJson("{\"success\":true}");
     }
 }

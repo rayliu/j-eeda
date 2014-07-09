@@ -55,25 +55,15 @@ public class CustomerController extends Controller {
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select *,p.id as pid from party p, contact c where p.party_type='CUSTOMER' and p.contact_id=c.id order by p.create_date desc "
+            String sql = "select p.*,c.*,p.id as pid,l.name,trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname from party p "
+                    + "left join contact c on p.contact_id=c.id "
+                    + "left join location l on l.code=c.location "
+                    + "left join location  l1 on l.pcode =l1.code "
+                    + "left join location l2 on l1.pcode = l2.code "
+                    + "where p.party_type='CUSTOMER' order by p.create_date desc "
                     + sLimit;
             List<Record> customers = Db.find(sql);
 
-            String code = "";
-            for (int i = 0; i < customers.size(); i++) {
-                code = customers.get(i).get("location");
-                String sql2 = "select trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code='"
-                        + code + "'" + sLimit;
-                List<Record> customers2 = Db.find(sql2);
-                String id = "";
-                try {
-                    id = customers2.get(0).get("dname");
-                } catch (Exception e) {
-                    // TODO: handle exception
-                    customers.get(i).set("dname", null);
-                }
-                customers.get(i).set("dname", id);
-            }
             Map customerListMap = new HashMap();
             customerListMap.put("sEcho", pageIndex);
             customerListMap.put("iTotalRecords", rec.getLong("total"));
@@ -94,7 +84,12 @@ public class CustomerController extends Controller {
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select *,p.id as pid from party p, contact c where p.party_type='CUSTOMER' and p.contact_id=c.id "
+            String sql = "select p.*,c.*,p.id as pid,l.name,trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname from party p "
+                    + "left join contact c on p.contact_id=c.id "
+                    + "left join location l on l.code=c.location "
+                    + "left join location  l1 on l.pcode =l1.code "
+                    + "left join location l2 on l1.pcode = l2.code "
+                    + "where p.party_type='CUSTOMER' "
                     + "and c.company_name like '%"
                     + company_name
                     + "%' and c.contact_person like '%"
@@ -103,25 +98,12 @@ public class CustomerController extends Controller {
                     + receipt
                     + "%' and c.address like '%"
                     + address
-                    + "%' and c.abbr like '%" + abbr + "%'";
+                    + "%' and c.abbr like '%"
+                    + abbr
+                    + "%' order by p.create_date desc " + sLimit;
 
             List<Record> customers = Db.find(sql);
 
-            String code = "";
-            for (int i = 0; i < customers.size(); i++) {
-                code = customers.get(i).get("location");
-                String sql2 = "select trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code='"
-                        + code + "'" + sLimit;
-                List<Record> customers2 = Db.find(sql2);
-                String id = "";
-                try {
-                    id = customers2.get(0).get("dname");
-                } catch (Exception e) {
-                    // TODO: handle exception
-                    customers.get(i).set("dname", null);
-                }
-                customers.get(i).set("dname", id);
-            }
             Map customerListMap = new HashMap();
             customerListMap.put("sEcho", pageIndex);
             customerListMap.put("iTotalRecords", rec.getLong("total"));
@@ -215,6 +197,7 @@ public class CustomerController extends Controller {
             party = Party.dao.findById(id);
             party.set("last_update_date", createDate);
             party.set("remark", getPara("remark"));
+            party.set("payment", getPara("payment"));
             party.update();
 
             contact = Contact.dao
@@ -234,6 +217,7 @@ public class CustomerController extends Controller {
             party.set("create_date", createDate);
             party.set("remark", getPara("remark"));
             party.set("receipt", getPara("receipt"));
+            party.set("payment", getPara("payment"));
             party.save();
 
         }

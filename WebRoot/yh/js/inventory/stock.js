@@ -19,8 +19,8 @@ $(document).ready(function() {
 		            {"mDataProp":"CATON_NO"},
 		            {"mDataProp":"TOTAL_QUANTITY"},
 		            {"mDataProp":"UOM"},
-		            {"mDataProp":"UNIT_PRICE"},
-		            {"mDataProp":"UNIT_COST"},
+		           // {"mDataProp":"UNIT_PRICE"},
+		            //{"mDataProp":"UNIT_COST"},
 	           ]
 	} );
 	

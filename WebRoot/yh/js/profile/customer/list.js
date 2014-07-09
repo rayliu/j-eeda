@@ -22,7 +22,15 @@ $(document).ready(function() {
             {"mDataProp":"MOBILE"},
             {"mDataProp":"ADDRESS"},
             {"mDataProp":"RECEIPT"},
-            {"mDataProp":"DNAME"},
+            {"mDataProp":"PAYMENT"},
+            {"mDataProp":null,
+            	"fnRender": function(obj) {
+	            		if(obj.aData.DNAME == null){
+	            			return obj.aData.NAME;
+	            		}else{
+	            			return obj.aData.DNAME;
+	            		}}
+            },
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                

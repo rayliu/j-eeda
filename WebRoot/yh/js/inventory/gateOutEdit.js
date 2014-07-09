@@ -309,9 +309,13 @@ $("#gateOutConfirmBtn").click(function(){
             }
 	},'json');
 });
-var wStatus = $("#warehouseorderStatus").val();
-console.log(wStatus);
-if(wStatus=='已出库'){
-   $("#gateOutConfirmBtn").attr("disabled", true); 
-}
+	var wStatus = $("#warehouseorderStatus").val();
+	console.log(wStatus);
+	if(wStatus=='已出库'){
+	   $("#gateOutConfirmBtn").attr("disabled", true); 
+	}
+	//reset
+	 $("#addproduct").click(function(){
+		 $('#reset').click();
+	 });
 });

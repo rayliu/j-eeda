@@ -57,6 +57,18 @@
                                             </div>
                                         </fieldset>
                                     </div>
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>付款方式</label>
+	                                           	<select class="form-control" id="payment" name="payment">
+	                                           		<option value="月结">月结</option>
+	                                           		<option value="到付">到付</option>
+	                                           		<option value="现付">现付</option>
+	                                           	</select>
+                                            </div>
+                                        </fieldset>
+                                    </div>
                                     <!-- /.col-lg-6 (even) 偶数列-->                                    
                                     <div class="col-lg-6">
                                         <fieldset>
@@ -116,6 +128,7 @@
                                         </fieldset>
 	                                    </div> 
                                     </div>
+                                    
 									<div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
@@ -185,8 +198,12 @@
     	var province = '${location.province!''}';
     	var city= '${location.city!''}';
     	var district = '${location.district!''}';
+    	
     	var spType = '${contact.sp_type!''}';
     	$("#sp_type").val(spType);
+    	
+    	var payment = '${party.payment!''}';
+    	$("#payment").val(payment);
     	
     	$("#mbProvince").val(province);
     	$("#cmbCity").val(city);

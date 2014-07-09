@@ -108,8 +108,20 @@
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
+                                                <label>收款方式</label>
+                                           	<select class="form-control" id="payment" name="payment">
+                                           		<option value="月结">月结</option>
+	                                           		<option value="到付">到付</option>
+	                                           		<option value="现付">现付</option>
+                                           	</select>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
                                                 <label>公司简介</label>
-												<textarea class="form-control" rows="3" name="introduction">${contact.introduction!''}</textarea>
+												<textarea class="form-control" rows="2" name="introduction">${contact.introduction!''}</textarea>
                                             </div>
                                         </fieldset>
                                     </div>
@@ -117,7 +129,7 @@
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>备注</label>
-												<textarea class="form-control" rows="3" name="remark">${contact.remark!''}</textarea>
+												<textarea class="form-control" rows="2" name="remark">${contact.remark!''}</textarea>
                                             </div>
                                         </fieldset>
                                     </div>
@@ -175,6 +187,9 @@
     	$("#mbProvince").val(province);
     	$("#cmbCity").val(city);
     	$("#cmbArea").val(district);
+    	
+    	var payment = '${party.payment!''}';
+    	$("#payment").val(payment);
     	
         $('#customerForm').validate({
             rules: {
