@@ -86,7 +86,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		
 		$("#transferOrderItemDateil").show();
-		 var code = $(this).attr('code');
+		var code = $(this).attr('code');
 		var itemId = code.substring(code.indexOf('=')+1);
 		tr_itemid_list.push(itemId);
 		$("#item_id").val(itemId);
@@ -173,6 +173,7 @@ $(document).ready(function() {
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
+				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
 				if(data.ID>0){
 					$("#pickupId").val(data.ID);
@@ -185,6 +186,7 @@ $(document).ready(function() {
         }else{
         	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
+				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
 				if(data.ID>0){		
 					$("#pickupId").val(data.ID);	
@@ -227,6 +229,7 @@ $(document).ready(function() {
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
+				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
 				if(data.ID>0){
 					$("#pickupId").val(data.ID);
@@ -240,6 +243,7 @@ $(document).ready(function() {
         }else{
         	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
+				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
 				if(data.ID>0){		
 					$("#pickupId").val(data.ID);	
@@ -262,23 +266,13 @@ $(document).ready(function() {
 		$('#transferOrderMilestone').modal('hide');
 	});
 	
-	// 点击已完成按钮
-	$("#finishBtn").click(function(){
-		var pickupOrderId = $("#pickupOrderId").val();
-		$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId}, function(){
-			pickupOrderMilestone();
-		},'json');
-		$("#finishBtn").attr('disabled', true);	
-		$("#finishBtnVal").val("finish");
-	});
-	
 	var findAllAddress = function(){
 		var pickupOrderId = $("#pickupOrderId").val();
 		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
 			var pickupAddressTbody = $("#pickupAddressTbody");
 			pickupAddressTbody.empty();
 			for(var i=0;i<data.length;i++){
-				pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td>"+data[i].CREATE_STAMP+"</td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
+				pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td>"+data[i].CREATE_STAMP+"</td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' checked='' value='yard"+data[i].ID+"'></td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' value='warehouse"+data[i].ID+"'></td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
 				/*if(i == 0){
 					pickupAddressTbody.append("<tr><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)'>上移</a> <a href='javascript:void(0)'>下移</a> <a href='javascript:void(0)'>移至顶部</a> <a href='javascript:void(0)'>移至底部</a></td></tr>");					
 				}else if(i == data.length-1){
@@ -298,6 +292,7 @@ $(document).ready(function() {
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
+				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
 				if(data.ID>0){
 					$("#pickupId").val(data.ID);
@@ -311,6 +306,7 @@ $(document).ready(function() {
         }else{
         	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
+				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
 				if(data.ID>0){		
 					$("#pickupId").val(data.ID);	
@@ -489,4 +485,32 @@ $(document).ready(function() {
 		pageSpAddress.append(address);
         $('#spList').hide();
     });
+
+	// 点击已完成按钮
+	$("#finishBtn").click(function(){
+		var pickupOrderId = $("#pickupOrderId").val();
+		$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId}, function(){
+			pickupOrderMilestone();
+		},'json');
+		$("#finishBtn").attr('disabled', true);	
+		$("#finishBtnVal").val("finish");
+		
+		// 处理入库运输单
+		$.post('/yh/pickupOrder/getTransferOrderDestination', $("#pickupAddressForm").serialize(), function(data){
+			//保存成功后，刷新列表
+            console.log(data);
+            if(data.success){
+            	var pickupOrderId = $("#pickupOrderId").val();
+        		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
+        			var pickupAddressTbody = $("#pickupAddressTbody");
+        			pickupAddressTbody.empty();
+        			for(var i=0;i<data.length;i++){
+        				pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td>"+data[i].CREATE_STAMP+"</td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' checked='' value='yard"+data[i].ID+"'></td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' value='warehouse"+data[i].ID+"'></td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
+        			}
+        		},'json');
+            }else{
+                alert('移动失败');
+            }
+		},'json');
+	});
 } );
