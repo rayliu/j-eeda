@@ -137,12 +137,30 @@
                                                     </select>
                                                  </div>
 	                                       <div style=display:inline-block;width:50%>			                                                               
-	                                            <label>长度</label>
+	                                            <label>车辆长度</label>
 	                                         	<input type="hidden" value="${pickupOrder.car_size!''}" id="carSizeSelect">
 	                                            <select name="car_size" id="carsize" class="form-control">
-	                                                <option value="15">15</option>
-	                                                <option value="20">20</option>
-	                                                <option value="25">25</option>                                                
+                                                    <option>21</option>
+                                                    <option>18.5</option>
+                                                    <option>18.0</option>
+                                                    <option>17.8</option>
+                                                    <option>17.5</option>
+                                                    <option>17.0</option>
+                                                    <option>16.0</option>
+                                                    <option>15.0</option>
+                                                    <option>14.5</option>
+                                                    <option>13.5</option>
+                                                    <option>13.0</option>
+                                                    <option>12.5</option>
+                                                    <option>9.6</option>
+                                                    <option>8.6</option>
+                                                    <option>8.0</option>
+                                                    <option>7.6</option>
+                                                    <option>7.2</option>
+                                                    <option>6.8</option>
+                                                    <option>6.5</option>
+                                                    <option>5.3</option>
+                                                    <option>4.3</option>                                                
 	                                            </select>
 	                                       </div>
 	                                       </div>  
@@ -155,19 +173,24 @@
                                             <label>跟车人电话</label>
                                             <input class="form-control" id="car_follow_phone" name="car_follow_phone" value="${pickupOrder.car_follow_phone!''}">
                                             </div>
-                                            <div class="form-group">
-                                            <label>目的地</label>
-                                            <input class="form-control" id="address" name="address" value="${pickupOrder.address!''}">
-                                            </div>
                                             
                                             <div class="form-group">
 												<label>发往</label>
 												<div class="checkbox">
-													<label><input type="checkbox" value="">货场</label>
+													<label><input id="checkbox1" type="checkbox" name="checkbox" value="yandCheckbox">货场</label>
 												</div>
+	                                            <div id="addressDiv" class="form-group" style="display: none;">
+		                                            <label>目的地</label>
+		                                            <input class="form-control" id="address" name="address" value="${pickupOrder.address!''}">
+	                                            </div>
+	                                            
 												<div class="checkbox">
-													<label><input type="checkbox" value="">仓库</label>
+													<label><input id="checkbox2" type="checkbox" name="checkbox" value="warehouseCheckbox">仓库</label>
 												</div>
+												<div id="warehouseDiv" class="form-group" style="display: none;">
+													<input id="hideWarehouseId" type="hidden" value="${pickupOrder.warehouse_id!''}" />     
+	                                                <select id="gateInSelect" class="form-control" name="gateInSelect"></select>
+                                                </div>
 											</div>
                                         </div> 
                                   
@@ -195,7 +218,9 @@
                             <div class="tab-pane fade" id="line">  
                             	<div class="panel-body">
                             	<div class="controls">
-                                    <button id="saveBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">添加额外运输单</button>
+                                	<button class="btn btn-primary" data-toggle="modal" data-target="#addExternalTransferOrder">
+									  添加额外运输单
+									</button>
                                 </div>
                                     <div class="table-responsive"> 
                                     	<form id="pickupAddressForm" action="">
@@ -220,7 +245,49 @@
                                     <!-- /.table-responsive -->
                                 </div>
                             </div>
-
+                            
+							<!-- 模态框 -->
+							<div class="modal fade" id="addExternalTransferOrder" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+							  <div class="modal-dialog">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							        <h4 class="modal-title" id="myModalLabel">添加额外运输单</h4>
+							      </div>
+							      <div class="modal-body">
+							      	<form id="addExternalTransferOrderForm" action="">
+							      		<input type="text" name="transferOrderIds" id="transferOrderIds"/>
+							      		<input type="text" name="pickupOrderId" id="addExternalPickupOrderId"/>
+							      		<div class="table-responsive">
+			                                <table class="table table-striped table-bordered table-hover" id="external-table">
+			                                    <thead>
+			                                        <tr>
+			                                            <th></th>
+			                                            <th>运输单号</th>
+			                                            <th>货品</th>
+			                                            <th>提货地点</th>
+			                                            <th>提货方式</th>
+			                                            <th>状态</th>                                         
+			                                            <th>客户</th>                                         
+			                                            <th>始发城市</th>                                         
+			                                            <th>目的地城市</th>                                         
+			                                            <th>创建时间</th>                                         
+			                                         </tr>
+			                                    </thead>
+			                                    <tbody>                                        
+			                                    </tbody>
+			                                </table>
+			                            </div>
+								      <div class="modal-footer">
+								        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+								        <button id="addExternalTransferOrderFormBtn" type="button" class="btn btn-primary">保存</button>
+								      </div>
+									</form>
+								  </div>
+							    </div><!-- /.modal-content -->
+							  </div><!-- /.modal-dialog -->
+							</div><!-- /.modal -->
+									
                                 <div class="tab-pane fade" id="cargos">  
                                      <div class="panel-body" style="" id="ATMitem">
                                      <div class="table-responsive">                                        

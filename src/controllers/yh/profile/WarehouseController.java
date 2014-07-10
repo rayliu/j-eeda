@@ -99,24 +99,24 @@ public class WarehouseController extends Controller{
 		Warehouse warehouse = Warehouse.dao.findById(id);
 		setAttr("warehouse", warehouse);
 		Party party = Party.dao.findById(warehouse.get("notify_party_id"));
-		Contact locationCode = Contact.dao.findById(party.get("contact_id"),
-                "location");
-        String code = locationCode.get("location");
-
-        List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
-        Location l = Location.dao.findFirst("select * from location where code = (select pcode from location where code = '"+code+"')");
-        Location location = null;
-        if(provinces.contains(l)){
-        	location = Location.dao
-	                .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-	                        + code + "'");
-        }else{
-        	location = Location.dao
-	                .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-	                        + code + "'");
-        }
-        setAttr("location", location);
-		
+		if(party != null){
+			Contact locationCode = Contact.dao.findById(party.get("contact_id"), "location");
+	        String code = locationCode.get("location");
+	
+	        List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
+	        Location l = Location.dao.findFirst("select * from location where code = (select pcode from location where code = '"+code+"')");
+	        Location location = null;
+	        if(provinces.contains(l)){
+	        	location = Location.dao
+		                .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+		                        + code + "'");
+	        }else{
+	        	location = Location.dao
+		                .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+		                        + code + "'");
+	        }
+	        setAttr("location", location);
+		}
 		Contact contact = Contact.dao.findFirst("select * from contact where id = (select contact_id from party where id="+warehouse.get("notify_party_id")+")");
 		setAttr("contact", contact);
 		Contact sp = Contact.dao.findFirst("select * from contact where id = (select contact_id from party where id="+warehouse.get("sp_id")+")");

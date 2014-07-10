@@ -496,8 +496,6 @@ $(document).ready(function() {
 	  if(inputId=='arrivalMode1'){
 		 $("#contactInformation").show();
 		 $("#warehousingConfirmBtn").attr("disabled", true);
-		 //var gateInSelect = $("#gateInSelect");
-		 //gateInSelect.empty();
 		 $("#gateInSelect").hide();
 		 $("#warehousingConfirmBtn").attr("disabled", true);
 	  }else{
