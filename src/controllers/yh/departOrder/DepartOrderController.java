@@ -212,7 +212,7 @@ public class DepartOrderController extends Controller {
             String sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status not in ('已入库','已签收') and arrival_mode !='delivery' and isnull(tor.assign_status, '') !='"
+                    + " where tor.status = '已入货场' and arrival_mode !='delivery' and isnull(tor.assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom + "%' and l2.name like '%" + routeTo
                     + "%' and tor.order_no like '%" + orderNo + "%' and tor.status like '%" + status + "%' and tor.address like '%"
                     + address + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime + "' and '"
@@ -228,7 +228,7 @@ public class DepartOrderController extends Controller {
                     + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.assign_status from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status not in ('已入库','已签收') and arrival_mode !='delivery' and isnull(tor.assign_status, '') !='"
+                    + " where tor.status ='已入货场' and arrival_mode !='delivery' and isnull(tor.assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom + "%' and l2.name like '%" + routeTo
                     + "%' and tor.order_no like '%" + orderNo + "%' and tor.status like '%" + status + "%' and tor.address like '%"
                     + address + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime + "' and '"
@@ -303,7 +303,7 @@ public class DepartOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select count(1) total from transfer_order_item tof" + " left join transfer_order  oro  on tof.order_id =oro.id "
+        String sqlTotal = "select count(1) total from transfer_order_item tof left join transfer_order  oro  on tof.order_id =oro.id "
                 + " left join contact c on c.id in (select contact_id from party p where oro.customer_id=p.id)" + " where tof.order_id in("
                 + order_id + ")";
         Record rec = Db.findFirst(sqlTotal);

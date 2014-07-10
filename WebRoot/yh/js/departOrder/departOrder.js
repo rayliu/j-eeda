@@ -62,10 +62,14 @@ $(document).ready(function() {
         	}); 
        if(sp_idArr.length>=2){
     	   for(var i=0;i<sp_idArr.length;i++){
+    		   
     		   if(sp_idArr[i]!=sp_idArr[i+1]){
-    			   alert("请选择同一中转仓的运输单！");
+    			   alert("请选择同一供应商的运输单！");
     			   return;
     		   }
+    		   if(i+2==sp_idArr.length){
+				   break;
+			   }
     			  
     	   }
        }
