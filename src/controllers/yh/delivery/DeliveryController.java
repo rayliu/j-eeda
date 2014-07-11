@@ -430,16 +430,18 @@ public class DeliveryController extends Controller {
                     + "left join party p on t2.customer_id = p.id "
                     + "left join contact c on p.contact_id = c.id "
                     + "where t2.status='已入库' and t2.cargo_nature='ATM'"
-                    + "and t2.order_no like '%"
+                    + "and ifnull(t2.order_no,'') like '%"
                     + deliveryOrderNo
                     + "%'"
-                    + "and w.warehouse_name like '%"
+                    + "and ifnull(w.warehouse_name,'') like '%"
                     + warehouse
                     + "%'"
-                    + "and c.company_name like '%"
+                    + "and ifnull(c.company_name,'') like '%"
                     + customerName
                     + "%'"
-                    + "and t2.status like '%" + orderStatue + "%'";
+                    + "and ifnull(t2.status,'') like '%"
+                    + orderStatue
+                    + "%'";
 
             List<Record> transferOrders = Db.find(sql);
 

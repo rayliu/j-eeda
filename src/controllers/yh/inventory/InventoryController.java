@@ -640,28 +640,40 @@ public class InventoryController extends Controller {
     // 出仓确认
     public void gateOutConfirm() {
         String id = getPara();
-        List<Record> list = Db
+        // 获取从表的货品数据
+        List<Record> warehouseItem = Db
                 .find("select * from warehouse_order_item where warehouse_order_id = '"
                         + id + "'");
-        System.out.println(list);
+        // 出库单完成出库
         WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
         warehouseOrder.set("status", "已出库");
-        warehouseOrder.update();
+        // warehouseOrder.update();
+
+        // 获取已入库的库存
+        List<Record> inverntory = Db
+                .find("select * from inventory_item where item_no in(select item_no from warehouse_order_item where warehouse_order_id = '"
+                        + id + "')");
+        // 出库后更新数据
+        for (int i = 0; i < warehouseItem.size(); i++) {
+            InventoryItem inventoryItem = InventoryItem.dao.findById(inverntory
+                    .get(i).get("id"));
+            inventoryItem.set(
+                    "total_quantity",
+                    Double.parseDouble(inverntory.get(i).get("total_quantity")
+                            .toString())
+                            - Double.parseDouble(warehouseItem.get(i)
+                                    .get("total_quantity").toString()));
+            inventoryItem.update();
+        }
+        // 删除库存为0的数据
+        List<Record> list = Db
+                .find("select id,total_quantity from inventory_item where item_no in(select item_no from warehouse_order_item where warehouse_order_id = '"
+                        + id + "')");
         for (int i = 0; i < list.size(); i++) {
-            InventoryItem inventoryItem = new InventoryItem();
-            inventoryItem.set("party_id", warehouseOrder.get("party_id"))
-                    .set("warehouse_id", warehouseOrder.get("warehouse_id"))
-                    .set("product_id", list.get(i).get("product_id"))
-                    .set("item_name", list.get(i).get("item_name"))
-                    .set("item_no", list.get(i).get("item_no"))
-                    .set("uom", list.get(i).get("uom"))
-                    .set("lot_no", list.get(i).get("lot_no"))
-                    .set("total_quantity", list.get(i).get("total_quantity"))
-                    .set("unit_price", list.get(i).get("unit_price"))
-                    .set("unit_cost", list.get(i).get("unit_cost"))
-                    .set("caton_no", list.get(i).get("caton_no"))
-                    .set("status", "出库");
-            inventoryItem.save();
+            if (Double
+                    .parseDouble(list.get(i).get("total_quantity").toString()) <= 0.0) {
+                InventoryItem.dao.deleteById(list.get(i).get("id"));
+            }
         }
         renderJson("{\"success\":true}");
     }
