@@ -1,4 +1,4 @@
-$(document).ready(function() {
+﻿$(document).ready(function() {
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
 	 
 	 // 列出所有的司机
@@ -549,4 +549,113 @@ $(document).ready(function() {
 	});
 		 
 
+	
+	// 回显地址
+	if($("#address").val() != null){
+		$("#addressDiv").show();
+		$("#checkbox1").prop('checked', true);
+	}
+	
+	// 回显仓库
+	if($("#hideWarehouseId").val() != null){
+		$("#warehouseDiv").show();
+		$("#checkbox2").prop('checked', true);
+	}
+	
+	//datatable, 动态处理
+    $('#external-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 25,
+        "bServerSide": true,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "sAjaxSource": "/yh/pickupOrder/createList",
+        "aoColumns": [
+            { "mDataProp": null,
+                 "fnRender": function(obj) {
+                    return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+                 }
+            },
+            { "mDataProp": "ORDER_NO"},
+            {"mDataProp":"ORDER_TYPE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ORDER_TYPE == "salesOrder"){
+            			return "销售订单";
+            		}else if(obj.aData.ORDER_TYPE == "arrangementOrder"){
+            			return "调拨订单";
+            		}else if(obj.aData.ORDER_TYPE == "cargoReturnOrder"){
+            			return "退货订单";
+            		}else if(obj.aData.ORDER_TYPE == "damageReturnOrder"){
+            			return "质量退单";
+            		}else{
+            			return "";
+            		}}},
+            {"mDataProp":"CARGO_NATURE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.CARGO_NATURE == "cargo"){
+            			return "普通货品";
+            		}else if(obj.aData.CARGO_NATURE == "ATM"){
+            			return "ATM";
+            		}else{
+            			return "";
+            		}}},
+            { "mDataProp": "ADDRESS"},
+            {"mDataProp":"PICKUP_MODE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.PICKUP_MODE == "routeSP"){
+            			return "干线供应商自提";
+            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
+            			return "外包供应商提货";
+            		}else if(obj.aData.PICKUP_MODE == "own"){
+            			return "源鸿自提";
+            		}else{
+            			return "";
+            		}}},
+            { "mDataProp": "STATUS"},
+            { "mDataProp": "CNAME"},
+    		{ "mDataProp": "ROUTE_FROM"},
+    		{ "mDataProp": "ROUTE_TO"},                                      
+    		{ "mDataProp": "CREATE_STAMP"}                                    
+        ]      
+    });	    
+
+    var refreshAddress = function(data){
+    	//保存成功后，刷新列表
+        console.log(data);
+        if(data.success){
+        	var pickupOrderId = $("#pickupOrderId").val();
+    		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
+    			var pickupAddressTbody = $("#pickupAddressTbody");
+    			pickupAddressTbody.empty();
+    			for(var i=0;i<data.length;i++){
+    				pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td>"+data[i].CREATE_STAMP+"</td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' checked='' value='yard"+data[i].ID+"'></td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' value='warehouse"+data[i].ID+"'></td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
+    			}
+    		},'json');
+        }else{
+            alert('操作失败');
+        }
+    };
+    
+    // 添加额外运输单
+    $('#addExternalTransferOrderFormBtn').click(function(e){
+        e.preventDefault();
+    	var trArr=[];
+        var tableArr=[];
+        $("input[name='order_check_box']").each(function(){
+        	if($(this).prop('checked') == true){
+        		trArr.push($(this).val());
+        	}
+        });
+        tableArr.push(trArr);        
+        console.log(tableArr);
+        $('#transferOrderIds').val(tableArr);
+        $('#addExternalPickupOrderId').val($("#pickupOrderId").val());
+        $.post('/yh/pickupOrder/addExternalTransferOrder', $('#addExternalTransferOrderForm').serialize(),function(data){
+        	refreshAddress(data);
+    	},'json');
+        $('#addExternalTransferOrder').modal('hide');
+    });
 } );

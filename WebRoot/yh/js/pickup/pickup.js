@@ -20,6 +20,19 @@ $(document).ready(function() {
                  }
             },
             { "mDataProp": "ORDER_NO"},
+		    {"mDataProp":"ORDER_TYPE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ORDER_TYPE == "salesOrder"){
+            			return "销售订单";
+            		}else if(obj.aData.ORDER_TYPE == "arrangementOrder"){
+            			return "调拨订单";
+            		}else if(obj.aData.ORDER_TYPE == "cargoReturnOrder"){
+            			return "退货订单";
+            		}else if(obj.aData.ORDER_TYPE == "damageReturnOrder"){
+            			return "质量退单";
+            		}else{
+            			return "";
+            		}}},
             {"mDataProp":"CARGO_NATURE",
             	"fnRender": function(obj) {
             		if(obj.aData.CARGO_NATURE == "cargo"){
