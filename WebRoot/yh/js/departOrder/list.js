@@ -41,5 +41,33 @@ var dataTable =$('#dataTables-example').dataTable({
             } 
         ]      
     });
+			$('#endTime_filter ,#beginTime_filter ,#sp_filter ,#customer_filter ,#orderNo_filter ,#departNo_filter').on( 'keyup click', function () {
+				var orderNo = $("#orderNo_filter").val();
+				var departNo_filter = $("#departNo_filter").val();
+				var status = $("#status_filter").val();
+				var sp = $("#sp_filter").val();
+				var beginTime = $("#beginTime_filter").val();
+				var endTime = $("#endTime_filter").val();
+				dataTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&status="+status+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+				dataTable.fnDraw();
+			} );
+			
+			$('#datetimepicker').datetimepicker({  
+			    format: 'yyyy-MM-dd',  
+			    language: 'zh-CN'
+			}).on('changeDate', function(ev){
+			    $('#beginTime_filter').trigger('keyup');
+			});
+			
+			
+			$('#datetimepicker2').datetimepicker({  
+			    format: 'yyyy-MM-dd',  
+			    language: 'zh-CN', 
+			    autoclose: true,
+			    pickerPosition: "bottom-left"
+			}).on('changeDate', function(ev){
+			    $('#endTime_filter').trigger('keyup');
+			});
+
 	
 });

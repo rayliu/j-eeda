@@ -42,13 +42,15 @@
 	            				 <input class="" id="item_detail" value="${item_detail!''}" type="hidden" name="item_detail" >
 	                               <input class="" id="getIindepart_no" value="" type="hidden" name="getIindepart_no" >
 	                                <input class="" id="status" value="${depart.STATUS!''}" type="hidden" >
-	                                 <input class="" id="sp_id" value="${depart.SP_ID!''}" type="hidden" name="sp_id" >    
+	                                 <input class="" id="sp_id" value="${depart.SP_ID!''}" type="hidden" name="sp_id" > 
+	                                  <input class="" id="house_id" value="${house_id!''}" type="hidden" name="house_id" >   
                                    		  <h2>车辆信息</h2>  
                                    		   <div class="form-group">
                                               <label>供应商</label>
                                                <input type="text" value="" name="spMessage" placeholder="选择供应商" class="form-control" id="spMessage">
                                                <ul style="top: 35%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="spList">
    											</ul>
+   											<select id="gateInSelect" class="form-control" name="gateInSelect"></select>
                                            </div>
                                            
                                           <div class="form-group">
@@ -153,16 +155,14 @@
                                       <div class="col-lg-6">
                                   <h2>发车信息</h2>  
                                          <div class="form-group">
-                                            <label>发车类型</label></br>
+                                           
                                             <div class="form-control" style=box-shadow:none;border:none>
-                                          <label class="radio-inline">
-                                           <input type="radio" value="one" id="ordertypeone" name="ordertype">一车一单
-                                          </label>
-                                          
-                                           <label class="radio-inline">
-                                           <input type="radio" value="many" id="ordertypetwo" name="ordertype">一车多单
-                                          </label>
-                                          
+                                                <label class="radio-inline">
+                                                         	状态：
+                                            </label>
+                                              <label >
+ 												${getIin_status!''}${depart.STATUS!''}
+                                            </label>
                                            <label class="radio-inline">
                                                                                                                 发车单号:
                                             </label>
@@ -172,7 +172,7 @@
                                            </div>
               
                                         </div>
-                                        
+                                     
                                          
                                         <div class="form-group">
                                             <label>创建人</label>
@@ -419,6 +419,7 @@
                                         <button class="btn btn-default" id="order_rk" disabled="true"  type="button" >入库确认</button> 
                                         <button class="btn btn-default" id="order_sh" disabled="true"  type="button" >收货确认</button>  
                                             <%}%>
+                                            <a class="btn btn-default" href="/yh/departOrder/index">返回</a>
                                             </div>
                                         </div>
                                     </div>

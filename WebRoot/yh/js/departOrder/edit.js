@@ -5,18 +5,11 @@
             rules: {
             	customerMessage: {
                 required: true
-              },
-              car_follow_name: {
-                required: true
-              }, 
-              car_no: {
-                  required: true
-                }
+              }
+                   
             },
             messages : {	             
-            	customerMessage : {required:  "请选择司机"}, 
-            	car_follow_name : {required:  "请输入跟车人员"}, 
-            	car_no:{required:  "请输入车牌号码"},
+            	customerMessage : {required:  "请选择司机"},    	 
             }
         });
     	var status=$("#status").val();
@@ -30,6 +23,10 @@
         var hang="";
         if(status!="新建"){
         	$("#order_edit").attr("disabled",true);
+        	//$("#order_fc").attr("disabled",false);
+        }
+        if(status=='新建'){
+        	$("#order_fc").attr("disabled",false);
         }
         if(status=="已发车"||status=="在途"){
         	$("#order_rk").attr("disabled",false);
@@ -670,6 +667,7 @@
     	    });
     	    $("#order_fc").click(function(e){
     	    	$(this).attr("disabled",true);
+    	    	$("#order_edit").attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已发车", $("#orderForm").serialize(), function(){
     	    	
     	    	$("#order_rk").attr("disabled",false);
@@ -742,5 +740,19 @@
     				$('#spMessage').val(data.COMPANY_NAME);
     			},'json');
     		}
-    	 
+    		 // 获取所有仓库
+    		 $.post('/yh/transferOrder/searchAllWarehouse',function(data){
+    			 if(data.length > 0){
+    				 var gateInSelect = $("#gateInSelect");
+    				 gateInSelect.empty();
+    				 for(var i=0; i<data.length; i++){
+    					 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+    				 }
+    			 }
+    		 },'json');
+    		 //单击仓库
+    		 $('#gateInSelect').on('change', function(){
+    				var inputStr = $(this).val();
+    				$("#house_id").val(inputStr);
+    			});
     });

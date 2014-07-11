@@ -70,19 +70,27 @@ public class DepartOrderController extends Controller {
                 + " left join party p on deo.driver_id = p.id and p.party_type = '"
                 + Party.PARTY_TYPE_DRIVER
                 + "'"
-                + " left join contact c on p.contact_id = c.id where combine_type = '"
+                + " left join contact c on p.contact_id = c.id where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
                 + DepartOrder.COMBINE_TYPE_DEPART
-                + "'order by deo.create_stamp desc";
-        String sql_seach ="select deo.*,c.contact_person,c.phone, group_concat(tr.order_no separator ' ') as transfer_order_no "
-				 +" from depart_order deo" 
-				+" left join party p on deo.driver_id = p.id and p.party_type = 'DRIVER' " 
-				+" left join contact c on p.contact_id = c.id "
-				+" left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )" 
-				 +" where deo.combine_type = 'DEPART' and deo.status like '%%' and deo.depart_no like '%%'  and c.company_name  like '%%'  and tr.order_no like '%%' group by deo.id order by deo.create_stamp desc ";
-        List<Record> depart = null;
+                + "' order by deo.create_stamp desc";
+       
+       List<Record> depart = null;
         if(orderNo==null&&departNo==null&&status==null&&sp==null&&beginTime==null&&endTime==null){
         	depart = Db.find(sql);
         }else{
+        	 if (beginTime == null || "".equals(beginTime)) {
+                 beginTime = "1-1-1";
+             }
+             if (endTime == null || "".equals(endTime)) {
+                 endTime = "9999-12-31";
+             }
+             String sql_seach ="select deo.*,c.contact_person,c.phone, group_concat(tr.order_no separator ' ') as transfer_order_no "
+    				 +" from depart_order deo" 
+    				+" left join party p on deo.driver_id = p.id and p.party_type = 'DRIVER' " 
+    				+" left join contact c on p.contact_id = c.id "
+    				+" left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )" 
+    				+"  where deo.combine_type = 'DEPART' and ifnull(deo.status,'') like '%"+status+"%' and ifnull(deo.depart_no,'') like '%"+departNo+"%' and ifnull(c.company_name,'')  like '%"+sp+"%' and ifnull(tr.order_no,'') like '%"+orderNo+"%'"
+    				+ " and deo.create_stamp between '"+beginTime+"' and '"+endTime+"'group by deo.id order by deo.create_stamp desc ";
         	depart = Db.find(sql_seach);
         }
         Map map = new HashMap();
@@ -278,15 +286,10 @@ public class DepartOrderController extends Controller {
     // allTranferOrderList 创建发车单
     public void addDepartOrder() {
         String list = getPara("localArr");
-        String depart_no = creat_order_no();// 获取发车单号
-        int lang = list.length();
-        if (lang > 1) {
-            setAttr("type", "many");
-        } else {
-            setAttr("type", "one");
-        }
+        String depart_no = creat_order_no();// 获取发车单号     
         String name = (String) currentUser.getPrincipal();
         setAttr("creat", name);
+        setAttr("getIin_status", "新建");
         setAttr("localArr", list);
         setAttr("getIin_depart_no", depart_no);
 
@@ -420,6 +423,7 @@ public class DepartOrderController extends Controller {
         String depart_id = getPara("depart_id");// 发车单id
         String sp_id = getPara("sp_id");// 供应商id
         String name = (String) currentUser.getPrincipal();
+        String house_id=getPara("house_id");//仓库id
         // 查找创建人id
         UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
         String creat_id = users.get("id").toString();// 创建人id
@@ -542,9 +546,9 @@ public class DepartOrderController extends Controller {
                 dt.set("depart_id", de_id).set("order_id", order_id[i]).set("transfer_order_no", order_id[i]).save();
             }
             updateTransferSp(dp.get("id").toString(), sp_id);
-            String getIindepart_no = creat_order_no();
+            //String getIindepart_no = creat_order_no();
             boolean last_detail_size = CheckDepartOrder(order_id);
-            setAttr("getIin_depart_no", getIindepart_no);
+            //setAttr("getIin_depart_no", getIindepart_no);
             setAttr("last_detail_size", last_detail_size);
 				setAttr("edit_depart_id", dp.get("id").toString());
             setAttr("creat", name);// 创建人
@@ -760,7 +764,7 @@ public class DepartOrderController extends Controller {
         if (!"-1".equals(departOrderId)) {
             List<TransferOrderMilestone> transferOrderMilestones = TransferOrderMilestone.dao
                     .find("select * from transfer_order_milestone where type = '" + TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE
-                            + "' and depart_id=" + departOrderId);
+                            + "'and depart_id=" + departOrderId );
             for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
                 UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
                 String username = userLogin.get("user_name");
@@ -927,6 +931,10 @@ public class DepartOrderController extends Controller {
         	 }
         }
 
+    }
+    //修改运输单仓库
+    public void  updateWarehouse(String depart_id,String house_id){
+    	 int de_id = Integer.parseInt(depart_id);
     }
 
 }
