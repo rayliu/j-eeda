@@ -90,15 +90,15 @@ public class CustomerController extends Controller {
                     + "left join location  l1 on l.pcode =l1.code "
                     + "left join location l2 on l1.pcode = l2.code "
                     + "where p.party_type='CUSTOMER' "
-                    + "and c.company_name like '%"
+                    + "and ifnull(c.company_name,'') like '%"
                     + company_name
-                    + "%' and c.contact_person like '%"
+                    + "%' and ifnull(c.contact_person,'') like '%"
                     + contact_person
-                    + "%' and p.receipt like '%"
+                    + "%' and ifnull(p.receipt,'') like '%"
                     + receipt
-                    + "%' and c.address like '%"
+                    + "%' and ifnull(c.address,'') like '%"
                     + address
-                    + "%' and c.abbr like '%"
+                    + "%' and ifnull(c.abbr,'') like '%"
                     + abbr
                     + "%' order by p.create_date desc " + sLimit;
 

@@ -86,7 +86,11 @@ public class ContractController extends Controller {
             orderMap.put("aaData", orders);
             renderJson(orderMap);
         } else {
-
+            /*
+             * if (periodFrom_filter == null || "".equals(periodFrom_filter)) {
+             * periodFrom_filter = "1-1-1"; } if (periodTo_filter == null ||
+             * "".equals(periodTo_filter)) { periodTo_filter = "9999-12-31"; }
+             */
             String sLimit = "";
             String pageIndex = getPara("sEcho");
             if (getPara("iDisplayStart") != null
@@ -106,11 +110,11 @@ public class ContractController extends Controller {
                     .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' "
                             + "and c.name like '%"
                             + contractName_filter
-                            + "%' and c1.contact_person like '%"
+                            + "%' and ifnull(c1.contact_person,'') like '%"
                             + contactPerson_filter
-                            + "%' and c1.company_name like '%"
+                            + "%' and ifnull(c1.company_name,'') like '%"
                             + companyName_filter
-                            + "%' and c1.mobile like '%"
+                            + "%' and ifnull(c1.mobile,'') like '%"
                             + phone_filter
                             + "%' and c.period_from like '%"
                             + periodFrom_filter
@@ -175,11 +179,11 @@ public class ContractController extends Controller {
                     .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
                             + "and c.name like '%"
                             + contractName_filter
-                            + "%' and c1.contact_person like '%"
+                            + "%' and ifnull(c1.contact_person,'') like '%"
                             + contactPerson_filter
-                            + "%' and c1.company_name like '%"
+                            + "%' and ifnull(c1.company_name,'') like '%"
                             + companyName_filter
-                            + "%' and c1.mobile like '%"
+                            + "%' and ifnull(c1.mobile,'') like '%"
                             + phone_filter
                             + "%' and c.period_from like '%"
                             + periodFrom_filter
@@ -243,11 +247,11 @@ public class ContractController extends Controller {
                     .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER' "
                             + "and c.name like '%"
                             + contractName_filter
-                            + "%' and c1.contact_person like '%"
+                            + "%' and ifnull(c1.contact_person,'') like '%"
                             + contactPerson_filter
-                            + "%' and c1.company_name like '%"
+                            + "%' and ifnull(c1.company_name,'') like '%"
                             + companyName_filter
-                            + "%' and c1.mobile like '%"
+                            + "%' and ifnull(c1.mobile,'') like '%"
                             + phone_filter
                             + "%' and c.period_from like '%"
                             + periodFrom_filter

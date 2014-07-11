@@ -107,13 +107,13 @@ public class DeliveryController extends Controller {
                     + "left join contact c2 on p2.contact_id = c2.id "
                     + "left join transfer_order t on d.transfer_order_id = t.id "
                     + "left join warehouse w on t.warehouse_id = w.id "
-                    + "where d.order_no like '%"
+                    + "where ifnull(d.order_no,'') like '%"
                     + orderNo_filter
-                    + "%' and d.status like '%"
+                    + "%' and ifnull(d.status,'') like '%"
                     + status_filter
-                    + "%' and c.company_name like '%"
+                    + "%' and ifnull(c.company_name,'') like '%"
                     + customer_filter
-                    + "%' and c2.company_name like'%"
+                    + "%' and ifnull(c2.company_name,'') like'%"
                     + sp_filter
                     + "%' and d.create_stamp between '"
                     + beginTime_filter
@@ -356,16 +356,18 @@ public class DeliveryController extends Controller {
                     + "left join party p on t.customer_id = p.id "
                     + "left join contact c  on p.contact_id = c.id "
                     + "where t.status='已入库' and t.cargo_nature='cargo' "
-                    + "and t.order_no like '%"
+                    + "and ifnull(t.order_no,'') like '%"
                     + deliveryOrderNo
                     + "%'"
-                    + "and w.warehouse_name like '%"
+                    + "and ifnull(w.warehouse_name,'') like '%"
                     + warehouse
                     + "%'"
-                    + "and c.company_name like '%"
+                    + "and ifnull(c.company_name,'') like '%"
                     + customerName
                     + "%'"
-                    + "and t.status like '%" + orderStatue + "%'";
+                    + "and ifnull(t.status,'') like '%"
+                    + orderStatue
+                    + "%'";
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
