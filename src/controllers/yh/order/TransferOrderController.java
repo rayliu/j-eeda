@@ -94,7 +94,7 @@ public class TransferOrderController extends Controller {
                     + " left join party p2 on t.sp_id = p2.id " + " left join contact c1 on p1.contact_id = c1.id"
                     + " left join contact c2 on p2.contact_id = c2.id"
                     + " left join office o on t.office_id = o.id where t.status!='取消' and t.order_no like '%" + orderNo + "%' and t.status like '%" + status
-                    + "%' and t.address like '%" + address + "%' and c1.abbr like '%" + customer + "%' and c2.abbr like '%" + sp
+                    + "%' and t.address like '%" + address + "%' and c1.abbr like '%" + customer + "%' and ifnull(c2.abbr,'') like '%" + sp
                     + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime + "' and '" + endTime
                     + "'";
             Record rec = Db.findFirst(sqlTotal);
@@ -104,7 +104,7 @@ public class TransferOrderController extends Controller {
                     + " left join party p1 on t.customer_id = p1.id " + " left join party p2 on t.sp_id = p2.id "
                     + " left join contact c1 on p1.contact_id = c1.id" + " left join contact c2 on p2.contact_id = c2.id"
                     + " left join office o on t.office_id = o.id where t.status!='取消' and t.order_no like '%" + orderNo + "%' and t.status like '%" + status
-                    + "%' and t.address like '%" + address + "%' and c1.abbr like '%" + customer + "%' and c2.abbr  like '%" + sp
+                    + "%' and t.address like '%" + address + "%' and c1.abbr like '%" + customer + "%' and ifnull(c2.abbr,'') like '%" + sp
                     + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime + "' and '" + endTime
                     + "' order by create_stamp desc";
 

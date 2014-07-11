@@ -480,6 +480,14 @@ $(document).ready(function() {
                 	var order_id = $("#order_id").val();
 	                itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;                		
                 	itemDataTable.fnDraw();
+                	
+                	detailDataTable.dataTable().fnAddData( [
+                	                                      {SERIAL_NO:1},
+                	                                      {ITEM_NAME:1},
+                	                                      {VOLUME:1},
+                	                                      {WEIGHT:1},
+                	                                      {WEIGHT:1},
+                	                                      {REMARK:1}] );
                 }else{
                     alert('数据保存失败。');
                 }
