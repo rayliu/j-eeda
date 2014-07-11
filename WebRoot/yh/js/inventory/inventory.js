@@ -254,7 +254,27 @@ $(document).ready(function() {
 	 	
 	 	
 	 	//选择仓库 
-		 $('#warehouseSelect').on('keyup click', function(){
+		$.get('/yh/gateIn/searchAllwarehouse', function(data){
+			console.log(data);
+			if(data.length > 0){
+			var warehouseSelect = $("#warehouseSelect");
+			warehouseSelect.empty();
+			
+			var warehouseId = $("#warehouseId").val();
+			for(var i = 0; i < data.length; i++)
+			{
+				 if(data[i].ID == warehouseId){
+					 warehouseSelect.append("<option class='fromLocationItem' value='"+data[i].ID+"' selected='selected' >"+data[i].WAREHOUSE_NAME+"</option>");
+				 }else{
+					 warehouseSelect.append("<option class='fromLocationItem' value='"+data[i].ID+"' >"+data[i].WAREHOUSE_NAME+"</option>");
+				 }
+			}
+			}
+		},'json');
+		$('#warehouseSelect').on('change', function(e){
+			 $("#warehouseId").val($("#warehouseSelect").val());
+	    });
+		 /*$('#warehouseSelect').on('keyup click', function(){
 				var inputStr = $('#warehouseSelect').val();
 				$.get('/yh/gateIn/searchAllwarehouse', {input:inputStr}, function(data){
 					console.log(data);
@@ -273,17 +293,17 @@ $(document).ready(function() {
 			});
 		 	$('#warehouseSelect').on('blur', function(){
 				$("#warehouseList").delay(120).hide(1);
-			});
+			});*/
 		 	
 			// 选中仓库
-			$('#warehouseList').on('click', '.fromLocationItem', function(e){
+			/*$('#warehouseList').on('click', '.fromLocationItem', function(e){
 				var id =$(this).attr('code');
 				$('#warehouseSelect').val($(this).text());
 				 $("#warehouseId").val(id);
 				//productDataTable.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist?categoryId="+partyId;
 				//productDataTable.fnDraw();
 				$('#customerList').hide();
-		    }); 
+		    }); */
 			
 		 //保存入库单
 		 $("#saveInventoryBtn").click(function(e){

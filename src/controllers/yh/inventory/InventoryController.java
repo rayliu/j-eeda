@@ -585,8 +585,7 @@ public class InventoryController extends Controller {
     public void searchAllwarehouse() {
         String input = getPara("input");
         List<Warehouse> warehouses = Warehouse.dao
-                .find("select * from warehouse where warehouse_name like '%"
-                        + input + "%'");
+                .find("select * from warehouse");
         renderJson(warehouses);
     }
 
@@ -647,7 +646,7 @@ public class InventoryController extends Controller {
         // 出库单完成出库
         WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
         warehouseOrder.set("status", "已出库");
-        // warehouseOrder.update();
+        warehouseOrder.update();
 
         // 获取已入库的库存
         List<Record> inverntory = Db
