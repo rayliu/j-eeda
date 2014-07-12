@@ -441,33 +441,33 @@ $(document).ready(function() {
     });	
 
 	
-    itemDataTable.makeEditable({
-    	oEditableSettings: {event: 'mouseover'},
-    	"aoColumns": [  			            
-            {
-            	// "mDataProp":"ITEM_NO",
-        	},
-            {
-            	// "mDataProp":"ITEM_NAME",
-            },
-            {
-            // 	"mDataProp":"WEIGHT"
-            },
-            {
-            	// "mDataProp":"VOLUME"
-            },
-            {
-            	// "mDataProp":"AMOUNT"
-            },      	
-            {
-            	// "mDataProp":"UNIT"
-            },
-            {
-            	//"mDataProp":"REMARK"
-            },
-            null                        
-        ]      
-    });                                                                      
+    // itemDataTable.makeEditable({
+    // 	//oEditableSettings: {event: 'mouseover'},
+    // 	"aoColumns": [  			            
+    //         {
+    //         	// "mDataProp":"ITEM_NO",
+    //     	},
+    //         {
+    //         	// "mDataProp":"ITEM_NAME",
+    //         },
+    //         {
+    //         // 	"mDataProp":"WEIGHT"
+    //         },
+    //         {
+    //         	// "mDataProp":"VOLUME"
+    //         },
+    //         {
+    //         	// "mDataProp":"AMOUNT"
+    //         },      	
+    //         {
+    //         	// "mDataProp":"UNIT"
+    //         },
+    //         {
+    //         	//"mDataProp":"REMARK"
+    //         },
+    //         null                        
+    //     ]      
+    // });                                                                      
         
     // 保存货品
     $("#transferOrderItemFormBtn").click(function(){
