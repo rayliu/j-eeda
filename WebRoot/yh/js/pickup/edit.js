@@ -402,7 +402,7 @@
 	// 显示已完成按钮
 	var showFinishBut = function(){
 		if($("#pickupOrderId").val() != ""){
-			if($("#finishBtnVal").val() == "finish"){
+			if($("#finishBtnVal").val() == "已入货场"){
 				$("#finishBtn").attr('disabled', true);					
 			}else{
 				$("#finishBtn").attr('disabled', false);
@@ -493,7 +493,7 @@
 			pickupOrderMilestone();
 		},'json');
 		$("#finishBtn").attr('disabled', true);	
-		$("#finishBtnVal").val("finish");
+		$("#finishBtnVal").val("已入货场");
 		
 		// 处理入库运输单
 		$.post('/yh/pickupOrder/getTransferOrderDestination', $("#pickupAddressForm").serialize(), function(data){
@@ -547,19 +547,21 @@
 			$("#warehouseDiv").hide();			
 		}
 	});
-		 
-
 	
 	// 回显地址
-	if($("#address").val() != null){
+	if($("#address").val() != null && $("#address").val() != ''){
 		$("#addressDiv").show();
 		$("#checkbox1").prop('checked', true);
+	}else{
+		$("#checkbox1").prop('checked', false);		
 	}
 	
 	// 回显仓库
-	if($("#hideWarehouseId").val() != null){
+	if($("#hideWarehouseId").val() != null && $("#hideWarehouseId").val() != ''){
 		$("#warehouseDiv").show();
 		$("#checkbox2").prop('checked', true);
+	}else{
+		$("#checkbox2").prop('checked', false);		
 	}
 	
 	//datatable, 动态处理
