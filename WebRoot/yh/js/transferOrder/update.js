@@ -707,13 +707,6 @@ $(document).ready(function() {
 			$(this).attr('checked', true);		
 		}
 	});
-	
-	// 回显省内省外客户
-	$("input[name='customerProvince']").each(function(){
-		if($("#customerProvinceRadio").val() == $(this).val()){
-			$(this).attr('checked', true);			
-		}
-	});
 
 	var item_id = $("#item_id").val();
 	//datatable, 动态处理
@@ -1422,5 +1415,10 @@ $(document).ready(function() {
     	$("#saveTransferOrderBtn").attr('disabled', false);
     }else{
     	$("#saveTransferOrderBtn").attr('disabled', true);    	
+    }
+    
+    if($("#arrivalMode2").prop('checked') == true){
+    	$("#contactInformation").hide();
+    	$("#gateInSelect").show();    	
     }
 });

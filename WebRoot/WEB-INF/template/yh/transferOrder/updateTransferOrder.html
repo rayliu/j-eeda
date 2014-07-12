@@ -115,14 +115,14 @@
                                                 <label>到达方式 </label>
                                                 <input id="arrivalModeRadio" type="hidden" value="${transferOrder.arrival_mode!''}"/>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="arrivalMode" id="arrivalMode1" value="delivery" checked="">货品直送
-                                                </label>
+                                                    <input type="radio" name="arrivalMode" id="arrivalMode2" value="gateIn" checked="">入中转仓
+                                                </label>  
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="arrivalMode" id="arrivalMode2" value="gateIn">入中转仓
-                                                </label>
+                                                    <input type="radio" name="arrivalMode" id="arrivalMode1" value="delivery">货品直送
+                                                </label>    
                                                 <input id="hideWarehouseId" type="hidden" value="${transferOrder.warehouse_id!''}" />     
-                                                <select id="gateInSelect" class="form-control" name="gateInSelect" style="display: none;"></select>                                        
-                                            </div> 
+                                                <select id="gateInSelect" class="form-control" name="gateInSelect" style="display: none;"></select>                                  
+                                            </div>
                                             
                                             <!-- <div id="customerProvinces" class="form-group">
                                                 <label>省内或省外客户</label>
