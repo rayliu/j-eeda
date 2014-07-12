@@ -48,7 +48,8 @@ public class TransferOrderItemController extends Controller {
         				+" ifnull(p.weight,toi.weight) weight,ifnull(p.volume,toi.volume) volume,toi.amount amount,"
 						+" ifnull(p.unit,toi.unit) unit,ifnull(p.item_desc,toi.item_desc) remark from transfer_order_item toi "
 						+" left join product p on p.id = toi.product_id "
-						+" where toi.order_id =" + trandferOrderId +" or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")";	
+						+" where toi.order_id =" + trandferOrderId +" or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId +")"
+						+ sLimit;
         List<Record> transferOrders = Db.find(sql);	
         transferOrderListMap = new HashMap();
         transferOrderListMap.put("sEcho", pageIndex);

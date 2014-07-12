@@ -34,14 +34,14 @@ public class WarehouseController extends Controller{
 		Map warehouseListMap = null;
 		String warehouseName = getPara("warehouseName");
 		String warehouseAddress = getPara("warehouseAddress");
-		String sLimit = "";
-		String pageIndex = getPara("sEcho");
-		if (getPara("iDisplayStart") != null
-				&& getPara("iDisplayLength") != null) {
-			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-					+ getPara("iDisplayLength");
-		}
-		if(warehouseName == null && warehouseAddress == null){			
+		if(warehouseName == null && warehouseAddress == null){
+			String sLimit = "";
+			String pageIndex = getPara("sEcho");
+			if (getPara("iDisplayStart") != null
+					&& getPara("iDisplayLength") != null) {
+				sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+						+ getPara("iDisplayLength");
+			}			
 			String sqlTotal = "select count(1) total from warehouse";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
@@ -49,7 +49,8 @@ public class WarehouseController extends Controller{
 			String sql = "select w.*,c.contact_person,c.phone,(select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.location) dname,lc.name from warehouse w"
 							+ " left join party p on w.notify_party_id = p.id"
 							+ " left join contact c on p.contact_id = c.id"
-							+ " left join location lc on c.location = lc.code";
+							+ " left join location lc on c.location = lc.code"
+							+ sLimit;
 	
 			List<Record> warehouses = Db.find(sql);
 	
@@ -60,6 +61,13 @@ public class WarehouseController extends Controller{
 	
 			warehouseListMap.put("aaData", warehouses);
 		}else{
+			String sLimit = "";
+			String pageIndex = getPara("sEcho");
+			if (getPara("iDisplayStart") != null
+					&& getPara("iDisplayLength") != null) {
+				sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+						+ getPara("iDisplayLength");
+			}
 			String sqlTotal = "select count(1) total from warehouse where warehouse_name like '%"+warehouseName+"%' and warehouse_address like '%"+warehouseAddress+"%'";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
@@ -68,7 +76,8 @@ public class WarehouseController extends Controller{
 							+ " left join party p on w.notify_party_id = p.id"
 							+ " left join contact c on p.contact_id = c.id"
 							+ " left join location lc on c.location = lc.code"
-							+ "  where warehouse_name like '%"+warehouseName+"%' and warehouse_address like '%"+warehouseAddress+"%'";
+							+ "  where warehouse_name like '%"+warehouseName+"%' and warehouse_address like '%"+warehouseAddress+"%'"
+							+ sLimit;
 	
 			List<Record> warehouses = Db.find(sql);
 	

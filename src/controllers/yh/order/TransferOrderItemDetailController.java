@@ -42,7 +42,8 @@ public class TransferOrderItemDetailController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         String sql = "select d.id,d.notify_party_id,d.serial_no,d.item_name,d.volume,d.weight,c.contact_person,c.phone,c.address,d.remark,d.is_damage,d.estimate_damage_amount,d.damage_revenue,d.damage_payment,d.damage_remark from transfer_order_item_detail d,party p,contact c where d.item_id ="
-                + itemId + " and d.notify_party_id=p.id and p.contact_id=c.id";
+                + itemId + " and d.notify_party_id=p.id and p.contact_id=c.id"
+                + sLimit;
 
         List<Record> transferOrders = Db.find(sql);
 
