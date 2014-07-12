@@ -166,7 +166,7 @@ public class DepartOrderController extends Controller {
             }
             setAttr("locationTo", locationTo);
         }
-        String sql_order_id="SELECT * FROM DEPART_TRANSFER  where depart_id="+depart_id;
+        String sql_order_id="select * from depart_transfer  where depart_id="+depart_id;
         List<Record> order_id=Db.find(sql_order_id);
         String tr_order_id="";
         for(int i=0;i<order_id.size();i++){
@@ -320,9 +320,10 @@ public class DepartOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select tof.* ,oro.order_no as order_no,oro.id as tr_order_id,c.company_name as customer  from transfer_order_item tof"
+        String sql = "select tof.* ,oro.order_no as order_no,oro.id as tr_order_id,c.company_name as customer ,wh.warehouse_name as warehouse_name from transfer_order_item tof"
                 + " left join transfer_order  oro  on tof.order_id =oro.id "
                 + "left join contact c on c.id in (select contact_id from party p where oro.customer_id=p.id)"
+                +" left join WAREHOUSE wh on oro.warehouse_id=wh.id "
                 + " where tof.order_id in("
                 + order_id + ")  order by c.id" + sLimit;
         String sql_dp_detail = "select * from depart_transfer_itemdetail";

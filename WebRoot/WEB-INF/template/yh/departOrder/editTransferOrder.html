@@ -157,27 +157,34 @@
                                          <div class="form-group">
                                            
                                             <div class="form-control" style=box-shadow:none;border:none>
-                                                <label class="radio-inline">
+                                                <label >
                                                          	状态：
                                             </label>
                                               <label >
  												${getIin_status!''}${depart.STATUS!''}
                                             </label>
-                                           <label class="radio-inline">
+                                            </div>
+                                                <div class="form-control" style=box-shadow:none;border:none>
+                                           <label >
                                                                                                                 发车单号:
                                             </label>
                                               <label id="getIin_depart_no">
  												${getIin_depart_no!''}${depart.DEPART_NO!''}
                                             </label>
-                                           </div>
-              
+                                            </div>
+                                              <div class="form-control" style=box-shadow:none;border:none>
+             								 <label>创建人</label>
+                                             <label  id="create">
+                                             ${depart.USER_NAME!''}${creat!''}
+                                             </label>
+             								</div>
                                         </div>
                                      
                                          
-                                        <div class="form-group">
+                                       <!--  <div class="form-group">
                                             <label>创建人</label>
                                              <input class="form-control" id="create" value="${depart.USER_NAME!''}${creat!''}"  name="create">
-                                        </div>                                                                               
+                                        </div>        -->                                                                        
 										<div class="form-group">
                                             <label>备注</label>
                                             <textarea class="form-control" rows="4" id="remark" name="remark" style=" height: 108px">${depart.remark!''}</textarea>
@@ -227,6 +234,7 @@
                                         <tr>
                                         	<th>客户</th> 
                                         	<th>运输单号</th> 
+                                        	<th>仓库</th>
                                          	<th>型号</th> 
                                             <th>名称</th>
                                             <th>数量</th>                                   
@@ -237,7 +245,7 @@
                                         </tr>
                                     </thead>                               
                                     <tbody>
-                                                                            
+                                                                                                                                      
                                     </tbody>
                                 </table>
                        
@@ -364,8 +372,8 @@
                         		 <form id="boxoneForm" method="post" action="/yh/departOrder/boxedit">
                         		 <input value="${edit_depart_id!''}" name="edit_depart_id" type="hidden">
                        			 <div class="panel-footer">
-                          			 <a type="button" class="btn btn-default" id="box_one_edit">编辑</a>
-                           			<a type="button" class="btn btn-default" id="box_one_confige" href="/yh/departOrder/add">确定</a>
+                          			 <a type="button" class="btn btn-default" id="box_one_edit">否,编辑上次发车单</a>
+                           			<a type="button" class="btn btn-default" id="box_one_confige" href="/yh/departOrder/add">是</a>
                         		</div>
                         		
                         		</form>
@@ -387,8 +395,8 @@
                         		 <form id="boxtwoForm" method="post" action="/yh/departOrder/boxedit">
                         		 <input value="${edit_depart_id!''}" name="edit_depart_id" type="hidden">
                        			 <div class="panel-footer">
-                          			 <a type="button" class="btn btn-default" id="box_two_edit">编辑</a>
-                           			<a type="button" class="btn btn-default" id="box_two_config">确定</a>
+                          			 <a type="button" class="btn btn-default" id="box_two_edit">否,编辑上次发车单</a>
+                           			<a type="button" class="btn btn-default" id="box_two_config">是</a>
                         		</div>
                         		</form>
                    				</div> 

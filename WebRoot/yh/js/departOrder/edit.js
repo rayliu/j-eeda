@@ -95,7 +95,8 @@
             "sAjaxSource": "/yh/departOrder/getIintDepartOrderItems?localArr="+message,
             "aoColumns": [
                 { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
-                { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
+                { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},
+                { "mDataProp": "WAREHOUSE_NAME"},
                 { "mDataProp": "ITEM_NO"},
                 { "mDataProp": "ITEM_NAME"},
                 { "mDataProp": "AMOUNT"},
