@@ -321,60 +321,62 @@ $(document).ready(function() {
 
     // 单击货品明细时,应列表显示所有的货品
     $("#transferOrderItemList").click(function(e){
-        e.preventDefault();
-    	// 切换到货品明细时,应先保存运输单
-    	//提交前，校验数据
-        if(!$("#transferOrderUpdateForm").valid()){
-        	alert("请先保存运输单!");
-	       	return false; 
-        }
-
-        if($("#order_id").val() == ""){
-	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
-				$("#transfer_order_id").val(transferOrder.ID);
-				$("#update_transfer_order_id").val(transferOrder.ID);
-				$("#order_id").val(transferOrder.ID);
-				$("#transfer_milestone_order_id").val(transferOrder.ID);
-				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
-				//$("#driver_id").val(transferOrder.DRIVER_ID);
-				$("#id").val(transferOrder.ID);
-				if(transferOrder.ID>0){
-					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	$("#style").show();	
-
-	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
-				  	itemDataTable.fnDraw();             
-				}else{
-					alert('数据保存失败。');
-				}
-			},'json');
-        }else{
-        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
-				$("#transfer_order_id").val(transferOrder.ID);
-				$("#update_transfer_order_id").val(transferOrder.ID);
-				$("#order_id").val(transferOrder.ID);
-				$("#transfer_milestone_order_id").val(transferOrder.ID);
-				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
-				//$("#driver_id").val(transferOrder.DRIVER_ID);
-				$("#id").val(transferOrder.ID);
-				if(transferOrder.ID>0){
-					if(transferOrder.STATUS == '已发车' || transferOrder.STATUS == '已入库' || transferOrder.STATUS == '已签收'){
-						$("#departureConfirmationBtn").attr("disabled", true);						
+    	if($("#transferOrderStatus").val() == '新建'){
+	    	e.preventDefault();
+	    	// 切换到货品明细时,应先保存运输单
+	    	//提交前，校验数据
+	        if(!$("#transferOrderUpdateForm").valid()){
+	        	alert("请先保存运输单!");
+		       	return false; 
+	        }
+	
+	        if($("#order_id").val() == ""){
+		    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+					$("#transfer_order_id").val(transferOrder.ID);
+					$("#update_transfer_order_id").val(transferOrder.ID);
+					$("#order_id").val(transferOrder.ID);
+					$("#transfer_milestone_order_id").val(transferOrder.ID);
+					$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
+					//$("#driver_id").val(transferOrder.DRIVER_ID);
+					$("#id").val(transferOrder.ID);
+					if(transferOrder.ID>0){
+						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
+					  	$("#style").show();	
+	
+		            	var order_id = $("#order_id").val();
+					  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+					  	itemDataTable.fnDraw();             
 					}else{
-						$("#departureConfirmationBtn").attr("disabled", false);
+						alert('数据保存失败。');
 					}
-					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	$("#style").show();	
-				  	
-	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
-				  	itemDataTable.fnDraw();             
-				}else{
-					alert('数据保存失败。');
-				}
-			},'json');
-        }
+				},'json');
+	        }else{
+	        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+					$("#transfer_order_id").val(transferOrder.ID);
+					$("#update_transfer_order_id").val(transferOrder.ID);
+					$("#order_id").val(transferOrder.ID);
+					$("#transfer_milestone_order_id").val(transferOrder.ID);
+					$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
+					//$("#driver_id").val(transferOrder.DRIVER_ID);
+					$("#id").val(transferOrder.ID);
+					if(transferOrder.ID>0){
+						if(transferOrder.STATUS == '已发车' || transferOrder.STATUS == '已入库' || transferOrder.STATUS == '已签收'){
+							$("#departureConfirmationBtn").attr("disabled", true);						
+						}else{
+							$("#departureConfirmationBtn").attr("disabled", false);
+						}
+						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
+					  	$("#style").show();	
+					  	
+		            	var order_id = $("#order_id").val();
+					  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+					  	itemDataTable.fnDraw();             
+					}else{
+						alert('数据保存失败。');
+					}
+				},'json');
+	        }
+    	}
     });	
     
 	var order_id = $("#order_id").val();
@@ -580,65 +582,67 @@ $(document).ready(function() {
 	
 	// 运输里程碑
 	$("#transferOrderMilestoneList").click(function(e){
-		e.preventDefault();
-    	// 切换到货品明细时,应先保存运输单
-    	//提交前，校验数据
-        if(!$("#transferOrderUpdateForm").valid()){
-        	alert("请先保存运输单!");
-	       	return false; 
-        }
-        
-        if($("#order_id").val() == ""){
-	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
-				$("#transfer_order_id").val(transferOrder.ID);
-				$("#update_transfer_order_id").val(transferOrder.ID);
-				$("#order_id").val(transferOrder.ID);
-				$("#transfer_milestone_order_id").val(transferOrder.ID);
-				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
-				//$("#driver_id").val(transferOrder.DRIVER_ID);
-				$("#id").val(transferOrder.ID);
-				if(transferOrder.ID>0){
-					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	$("#style").show();	
-				  	transferOrderMilestone();            
-				}else{
-					alert('数据保存失败。');
-				}
-			},'json');
-        }else{
-        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
-				$("#transfer_order_id").val(transferOrder.ID);
-				$("#update_transfer_order_id").val(transferOrder.ID);
-				$("#order_id").val(transferOrder.ID);
-				$("#transfer_milestone_order_id").val(transferOrder.ID);
-				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
-				//$("#driver_id").val(transferOrder.DRIVER_ID);
-				$("#id").val(transferOrder.ID);
-				if(transferOrder.ID>0){
-					if(transferOrder.STATUS == '已发车' || transferOrder.STATUS == '已入库' || transferOrder.STATUS == '已签收'){
-						$("#departureConfirmationBtn").attr("disabled", true);						
+		if($("#transferOrderStatus").val() == '新建'){
+			e.preventDefault();
+	    	// 切换到货品明细时,应先保存运输单
+	    	//提交前，校验数据
+	        if(!$("#transferOrderUpdateForm").valid()){
+	        	alert("请先保存运输单!");
+		       	return false; 
+	        }
+	        
+	        if($("#order_id").val() == ""){
+		    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+					$("#transfer_order_id").val(transferOrder.ID);
+					$("#update_transfer_order_id").val(transferOrder.ID);
+					$("#order_id").val(transferOrder.ID);
+					$("#transfer_milestone_order_id").val(transferOrder.ID);
+					$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
+					//$("#driver_id").val(transferOrder.DRIVER_ID);
+					$("#id").val(transferOrder.ID);
+					if(transferOrder.ID>0){
+						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
+					  	$("#style").show();	
+					  	transferOrderMilestone();            
 					}else{
-						$("#departureConfirmationBtn").attr("disabled", false);
+						alert('数据保存失败。');
 					}
-					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	//alert("运输单保存成功!");
-				  	$("#style").show();	
-				  	transferOrderMilestone();              
-				}else{
-					alert('数据保存失败。');
+				},'json');
+	        }else{
+	        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+					$("#transfer_order_id").val(transferOrder.ID);
+					$("#update_transfer_order_id").val(transferOrder.ID);
+					$("#order_id").val(transferOrder.ID);
+					$("#transfer_milestone_order_id").val(transferOrder.ID);
+					$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
+					//$("#driver_id").val(transferOrder.DRIVER_ID);
+					$("#id").val(transferOrder.ID);
+					if(transferOrder.ID>0){
+						if(transferOrder.STATUS == '已发车' || transferOrder.STATUS == '已入库' || transferOrder.STATUS == '已签收'){
+							$("#departureConfirmationBtn").attr("disabled", true);						
+						}else{
+							$("#departureConfirmationBtn").attr("disabled", false);
+						}
+						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
+					  	//alert("运输单保存成功!");
+					  	$("#style").show();	
+					  	transferOrderMilestone();              
+					}else{
+						alert('数据保存失败。');
+					}
+				},'json');
+	        }
+	    	
+			var order_id = $("#order_id").val();
+			$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+				var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+				transferOrderMilestoneTbody.empty();
+				for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
+				{
+					transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 				}
 			},'json');
-        }
-    	
-		var order_id = $("#order_id").val();
-		$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
-			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
-			transferOrderMilestoneTbody.empty();
-			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
-			{
-				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
-			}
-		},'json');
+		}
 	});
 	
 	// 保存新里程碑
@@ -1412,4 +1416,11 @@ $(document).ready(function() {
     	var size = $('#size').val();
     	$("#volume").val((height/1000)*(width/1000)*(size/1000));
     });
+    
+    // 只有是新建状态才能编辑
+    if($("#transferOrderStatus").val() == '新建'){
+    	$("#saveTransferOrderBtn").attr('disabled', false);
+    }else{
+    	$("#saveTransferOrderBtn").attr('disabled', true);    	
+    }
 });
