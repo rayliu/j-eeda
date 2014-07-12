@@ -24,7 +24,15 @@ $(document).ready(function() {
             {"mDataProp":"MOBILE"},
             {"mDataProp":"ADDRESS"},
             {"mDataProp":"RECEIPT"},
-            {"mDataProp":"PAYMENT"},
+            {"mDataProp":"PAYMENT",
+            	"fnRender": function(obj) {
+	            		if(obj.aData.PAYMENT == "monthlyStatement"){
+	            			return "月结";
+	            		}else if(obj.aData.PAYMENT == "freightCollect"){
+	            			return "到付";
+	            		}else{
+	            			return "现付";
+	            		}}},
             {"mDataProp":null,
             	"fnRender": function(obj) {
 	            		if(obj.aData.DNAME == null){

@@ -349,8 +349,8 @@ public class InventoryController extends Controller {
 
         warehouseOrder.set("party_id", getPara("party_id"))
                 .set("warehouse_id", getPara("warehouseId"))
-                .set("order_no", orderNo).set("order_type", "入库")
-                .set("status", "新建").set("qualifier", getPara("qualifier"))
+                .set("order_type", "入库").set("status", "新建")
+                .set("qualifier", getPara("qualifier"))
                 .set("remark", getPara("remark"));
 
         if (gateInId != "") {
@@ -359,8 +359,8 @@ public class InventoryController extends Controller {
                     .set("last_update_date", createDate);
             warehouseOrder.update();
         } else {
-            warehouseOrder.set("creator", users.get(0).get("id")).set(
-                    "create_date", createDate);
+            warehouseOrder.set("creator", users.get(0).get("id"))
+                    .set("create_date", createDate).set("order_no", orderNo);
             warehouseOrder.save();
         }
         renderJson(warehouseOrder.get("id"));
@@ -407,7 +407,6 @@ public class InventoryController extends Controller {
          * if (productId.equals("")) { renderJson(0); return; }
          */
         String name = (String) currentUser.getPrincipal();
-
         List<UserLogin> users = UserLogin.dao
                 .find("select * from user_login where user_name='" + name + "'");
         Date createDate = Calendar.getInstance().getTime();
@@ -610,28 +609,72 @@ public class InventoryController extends Controller {
     // 入仓确认
     public void gateInConfirm() {
         String id = getPara();
+
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao
+                .find("select * from user_login where user_name='" + name + "'");
+        Date createDate = Calendar.getInstance().getTime();
+
+        WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
+        warehouseOrder.set("status", "已入库");
+        // warehouseOrder.update();
         List<Record> list = Db
                 .find("select * from warehouse_order_item where warehouse_order_id = '"
                         + id + "'");
-        System.out.println(list);
-        WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
-        warehouseOrder.set("status", "已入库");
-        warehouseOrder.update();
-        for (int i = 0; i < list.size(); i++) {
+
+        // 获取已入库的库存
+        List<Record> inverntory = Db
+                .find("select * from inventory_item where item_no in(select item_no from warehouse_order_item where warehouse_order_id = '"
+                        + id + "')");
+
+        // 入库库存添加
+        for (int i = 0; i < inverntory.size(); i++) {
+            if (inverntory.size() > 0) {
+                if (list.get(i).get("item_no")
+                        .equals(inverntory.get(i).get("item_no"))) {
+                    InventoryItem inventoryItem = InventoryItem.dao
+                            .findById(inverntory.get(i).get("id"));
+                    inventoryItem.set(
+                            "total_quantity",
+                            Double.parseDouble(inverntory.get(i)
+                                    .get("total_quantity").toString())
+                                    + Double.parseDouble(list.get(i)
+                                            .get("total_quantity").toString()));
+                    inventoryItem.update();
+                }
+            }
+        }
+        List<Record> list2 = Db
+                .find("select item_no from warehouse_order_item where warehouse_order_id = '"
+                        + id + "'");
+        List<Record> inverntory2 = Db
+                .find("select item_no from inventory_item where item_no in(select item_no from warehouse_order_item where warehouse_order_id = '"
+                        + id + "')");
+        list2.removeAll(inverntory2);
+
+        for (int i = 0; i < list2.size(); i++) {
+            List<Record> list3 = Db
+                    .find("select * from warehouse_order_item where warehouse_order_id = '"
+                            + id
+                            + "' and item_no ='"
+                            + list2.get(i).getStr("item_no") + "'");
+
             InventoryItem inventoryItem = new InventoryItem();
             inventoryItem.set("party_id", warehouseOrder.get("party_id"))
                     .set("warehouse_id", warehouseOrder.get("warehouse_id"))
-                    .set("product_id", list.get(i).get("product_id"))
-                    .set("item_name", list.get(i).get("item_name"))
-                    .set("item_no", list.get(i).get("item_no"))
-                    .set("uom", list.get(i).get("uom"))
-                    .set("lot_no", list.get(i).get("lot_no"))
-                    .set("total_quantity", list.get(i).get("total_quantity"))
-                    .set("unit_price", list.get(i).get("unit_price"))
-                    .set("unit_cost", list.get(i).get("unit_cost"))
-                    .set("caton_no", list.get(i).get("caton_no"))
-                    .set("status", "入库");
+                    .set("product_id", list3.get(i).get("product_id"))
+                    .set("item_name", list3.get(i).get("item_name"))
+                    .set("item_no", list3.get(i).get("item_no"))
+                    .set("uom", list3.get(i).get("uom"))
+                    .set("lot_no", list3.get(i).get("lot_no"))
+                    .set("total_quantity", list3.get(i).get("total_quantity"))
+                    .set("unit_price", list3.get(i).get("unit_price"))
+                    .set("unit_cost", list3.get(i).get("unit_cost"))
+                    .set("caton_no", list3.get(i).get("caton_no"))
+                    .set("creator", users.get(0).get("id"))
+                    .set("create_date", createDate);
             inventoryItem.save();
+
         }
         renderJson("{\"success\":true}");
     }
@@ -676,4 +719,5 @@ public class InventoryController extends Controller {
         }
         renderJson("{\"success\":true}");
     }
+
 }

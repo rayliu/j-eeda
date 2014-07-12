@@ -218,6 +218,12 @@ public class DeliveryController extends Controller {
         // 运输单信息
         TransferOrder transferOrder = TransferOrder.dao.findById(tOrder
                 .get("transfer_order_id"));
+        // 客户信息
+        Party customerContact = Party.dao
+                .findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
+                        + tOrder.get("customer_id")
+                        + "'and p.contact_id = c.id");
+
         // 供应商信息
         Party spContact = Party.dao
                 .findFirst("select *,p.id as spid from party p,contact c where p.id ='"
@@ -232,7 +238,7 @@ public class DeliveryController extends Controller {
                             tOrder.get("notify_party_id"));
         }
         setAttr("deliveryId", tOrder);
-        // setAttr("customer", customerContact);
+        setAttr("customer", customerContact);
         setAttr("deliveryOrder", transferOrder);
         setAttr("notifyParty", notifyPartyContact);
         setAttr("spContact", spContact);
@@ -579,7 +585,7 @@ public class DeliveryController extends Controller {
             contact.set("company_name", getPara("notify_company_name"))
                     .set("contact_person", getPara("notify_contact_person"))
                     .set("address", getPara("notify_address"))
-                    .set("phone", getPara("notify_phone"));
+                    .set("mobile", getPara("notify_phone"));
             contact.save();
             party.set("contact_id", contact.get("id"))
                     .set("party_type", "NOTIFY_PARTY")
@@ -591,7 +597,7 @@ public class DeliveryController extends Controller {
                     .set("company_name", getPara("notify_company_name"))
                     .set("contact_person", getPara("notify_contact_person"))
                     .set("address", getPara("notify_address"))
-                    .set("phone", getPara("notify_phone")).update();
+                    .set("mobile", getPara("notify_phone")).update();
         }
 
         if (deliveryid == null || "".equals(deliveryid)) {

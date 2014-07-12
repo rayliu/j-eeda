@@ -159,7 +159,6 @@ $(document).ready(function() {
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data[0] !=null){
-                	
                 	 $('#myModal').modal('show');
                 	 $('#routeId').val(data[0].ID);
                 	 $('#from_id').val(data[0].FROM_ID);
@@ -170,7 +169,8 @@ $(document).ready(function() {
                 	 $('#routeItemId').val(data[0].ID);
                 	 $('#day').val(data[0].DAYFROM);
                 	 $('#day2').val(data[0].DAYTO);
-                	 
+                	 $('#carLength2').val(data[0].CARLENGTH);
+                	 $('#carType2').val(data[0].CARTYPE);
                 	 $('#optionsRadiosInline2').prop('checked', true).trigger('change');
                  }else{
                      alert('取消失败');
