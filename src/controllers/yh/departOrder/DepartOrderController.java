@@ -166,9 +166,17 @@ public class DepartOrderController extends Controller {
             }
             setAttr("locationTo", locationTo);
         }
+        String sql_order_id="SELECT * FROM DEPART_TRANSFER  where depart_id="+depart_id;
+        List<Record> order_id=Db.find(sql_order_id);
+        String tr_order_id="";
+        for(int i=0;i<order_id.size();i++){
+        	String id=order_id.get(i).get("order_id").toString();
+        	tr_order_id +=id+",";
+        }
+        tr_order_id = tr_order_id.substring(0, tr_order_id.length() - 1);
         setAttr("type", "many");
         setAttr("depart_id", getPara());
-        setAttr("localArr", depar.get("order_id").toString());
+        setAttr("localArr", tr_order_id);
         setAttr("depart", depar);
         setAttr("depart_id", depart_id);
         if (LoginUserController.isAuthenticated(this))

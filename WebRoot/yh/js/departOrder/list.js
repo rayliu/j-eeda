@@ -41,7 +41,7 @@ var dataTable =$('#dataTables-example').dataTable({
             } 
         ]      
     });
-			$('#endTime_filter ,#beginTime_filter ,#sp_filter ,#customer_filter ,#orderNo_filter ,#departNo_filter').on( 'keyup click', function () {
+			$('#endTime_filter ,#beginTime_filter ,#sp_filter ,#status_filter ,#orderNo_filter ,#departNo_filter').on( 'keyup click', function () {
 				var orderNo = $("#orderNo_filter").val();
 				var departNo_filter = $("#departNo_filter").val();
 				var status = $("#status_filter").val();

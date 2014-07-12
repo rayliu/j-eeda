@@ -740,19 +740,5 @@
     				$('#spMessage').val(data.COMPANY_NAME);
     			},'json');
     		}
-    		 // 获取所有仓库
-    		 $.post('/yh/transferOrder/searchAllWarehouse',function(data){
-    			 if(data.length > 0){
-    				 var gateInSelect = $("#gateInSelect");
-    				 gateInSelect.empty();
-    				 for(var i=0; i<data.length; i++){
-    					 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
-    				 }
-    			 }
-    		 },'json');
-    		 //单击仓库
-    		 $('#gateInSelect').on('change', function(){
-    				var inputStr = $(this).val();
-    				$("#house_id").val(inputStr);
-    			});
+    	
     });
