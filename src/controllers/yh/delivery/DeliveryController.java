@@ -276,12 +276,15 @@ public class DeliveryController extends Controller {
          * "'"); DeliveryOrderItem itemsIds = itemsId.get(0);
          * setAttr("itemsIds", itemsIds); }
          */
-        /*
-         * if (id != null) { List<Contact> customers = Contact.dao .find(
-         * "select *,p.id as customerId from contact c,party p,TRANSFER_ORDER t where p.contact_id=c.id and t.customer_id = p.id and t.id ="
-         * + id + ""); Contact customer = customers.get(0); setAttr("customer",
-         * customer); }
-         */
+
+        if (id != null) {
+            List<Contact> customers = Contact.dao
+                    .find("select *,p.id as customerId from contact c,party p,TRANSFER_ORDER t where p.contact_id=c.id and t.customer_id = p.id and t.id ="
+                            + id + "");
+            Contact customer = customers.get(0);
+            setAttr("customer", customer);
+        }
+
         TransferOrder tOrder = TransferOrder.dao.findById(id);
         // setAttr("ser", ser);
 
@@ -304,6 +307,7 @@ public class DeliveryController extends Controller {
 
     // 创建运输单ATM机
     public void creat3() {
+        String id = getPara();
         String list = this.getPara("localArr");
         String list2 = this.getPara("localArr2");
         String list3 = this.getPara("localArr3");
@@ -311,6 +315,7 @@ public class DeliveryController extends Controller {
         setAttr("localArr", list);
         setAttr("localArr2", list2);
         setAttr("localArr3", list3);
+
         if (LoginUserController.isAuthenticated(this))
             render("/yh/delivery/deliveryOrderEdit.html");
     }
@@ -497,6 +502,7 @@ public class DeliveryController extends Controller {
         renderJson(locationList);
     }
 
+    // 配送单货品list
     public void orderList() {
         String idlist = getPara("localArr");
         String idlist2 = getPara("localArr2");
@@ -558,6 +564,7 @@ public class DeliveryController extends Controller {
         renderJson(Map);
     }
 
+    // 配送单保存
     public void deliverySave() {
         String orderNo = creat_order_no();// 构造发车单号
         String deliveryid = getPara("delivery_id");
@@ -602,10 +609,9 @@ public class DeliveryController extends Controller {
 
         if (deliveryid == null || "".equals(deliveryid)) {
 
-            deliveryOrder
-                    .set("Order_no", orderNo)
-                    // .set("Transfer_order_id", getPara("tranferid"))
-                    // .set("Customer_id", getPara("customer_id"))
+            deliveryOrder.set("Order_no", orderNo)
+                    .set("Transfer_order_id", getPara("tranferid"))
+                    .set("Customer_id", getPara("customer_id"))
                     .set("Sp_id", getPara("cid"))
                     .set("Notify_party_id", party.get("id"))
                     .set("CREATE_STAMP", createDate).set("Status", "新建");

@@ -26,7 +26,7 @@ $(document).ready(function() {
 	                "mDataProp": null, 
 	                "sWidth": "5%",                
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-danger cancelbutton' title='删除' code='"+obj.aData.ID+"'>"+
+	                    return "<a class='btn btn-danger cancelbutton' title='取消单据' code='"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
 	                            "</a>";
 	                }
