@@ -48,17 +48,17 @@
                                                     
 	                                            <h2>运输信息</h2>
 	                                            <div class="form-group">
-	                                                <label>运输单号</label> <strong>${order_no!''}${transferOrder.order_no!''}</strong>
+	                                                <label  class="label-margin">运输单号</label> <strong>${order_no!''}${transferOrder.order_no!''}</strong>
 	                                            </div>
 	                                            <div class="form-group">
-	                                                <label>单据状态</label>   ${status!''}${transferOrder.status!''}
+	                                                <label class="label-margin">单据状态</label>   ${status!''}${transferOrder.status!''}
 	                                            </div>
 	                                            <div class="form-group">
-	                                                <label>创建人</label>   ${userLogin.user_name!''}${userLogin2.user_name!''}                                                
+	                                                <label class="label-margin">创建人</label>   ${userLogin.user_name!''}${userLogin2.user_name!''}                                                
 	                                            </div>
 	                                            
 	                                            <div class="form-group">
-	                                                <label>订单类型</label>
+	                                                <label class="label-margin">订单类型</label>
 	                                                	<input id="orderTypeRadio" type="hidden" value="${transferOrder.order_type!''}"/>
 	                                                	<label class="radio-inline">
 	                                                        <input type="radio" name="orderType" id="salesOrder" value="salesOrder" checked="">销售订单
@@ -74,7 +74,7 @@
 	                                                    </label>
 	                                            </div>
 	                                            <div class="form-group">
-                                                <label>货品属性</label>
+                                                <label class="label-margin">货品属性</label>
                                                 	<input id="cargoNatureRadio" type="hidden" value="${transferOrder.cargo_nature!''}"/>
 	                                                <label class="radio-inline">
 	                                                    <input type="radio" name="cargoNature" id="cargoNature1" value="ATM" checked="">ATM
@@ -87,7 +87,7 @@
 	                                                </label> -->
                                             </div>
                                             <div class="form-group">
-                                                <label>运营方式</label>
+                                                <label class="label-margin">运营方式</label>
                                                 	<input id="operationTypeRadio" type="hidden" value="${transferOrder.operation_type!''}"/>
                                                     <label class="radio-inline">
                                                         <input type="radio" name="operationType" id="operationType1" value="owm" checked="">自营
@@ -112,7 +112,7 @@
                                                
                                             <div id="arrivalModes" class="form-group">
                                             	<input id="arrivalModeVal" type="hidden" />
-                                                <label>到达方式 </label>
+                                                <label class="label-margin">到达方式 </label>
                                                 <input id="arrivalModeRadio" type="hidden" value="${transferOrder.arrival_mode!''}"/>
                                                 <label class="radio-inline">
                                                     <input type="radio" name="arrivalMode" id="arrivalMode2" value="gateIn" checked="">入中转仓
@@ -350,6 +350,7 @@
 	                                                <tbody id="transferOrderItemDetailTbody">
 	                                                </tbody>
 	                                            </table>
+
                                             </div>
                                         </div>
                                     </div>

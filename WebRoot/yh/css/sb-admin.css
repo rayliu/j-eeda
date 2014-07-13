@@ -366,4 +366,10 @@ label.error {
 .tree .edit_icons{
 	display: inline;
 }
+
+.form-group{
+	margin-bottom: 5px !important;
+}
+.label-margin{
+	margin-right: 20px;
 /* ray added */
