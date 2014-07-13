@@ -56,9 +56,13 @@ $(document).ready(function() {
         }); 
         $('#customerList').show();
 	});
+
+ 	$('#customerMessage').on('blur', function(){
+ 		$('#customerList').hide();
+ 	});
 	
 	// 选中客户
-	$('#customerList').on('click', '.fromLocationItem', function(e){
+	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
 		var message = $(this).text();
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#customer_id').val($(this).attr('partyId'));
@@ -217,9 +221,13 @@ $(document).ready(function() {
         }); 
         $('#spList').show();
 	});
-	
+
+	// 没选中供应商，焦点离开，隐藏列表
+	$('#spMessage').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
 	// 选中供应商
-	$('#spList').on('click', '.fromLocationItem', function(e){
+	$('#spList').on('mousedown', '.fromLocationItem', function(e){
 		var message = $(this).text();
 		$('#spMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#sp_id').val($(this).attr('partyId'));
@@ -730,7 +738,7 @@ $(document).ready(function() {
             		}},
             {"mDataProp":"REMARK"},
             {  
-                "mDataProp": null, 
+                "mDataProp": "null", 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {
                     return	"<a class='btn btn-success editDetail' code='?item_id="+obj.aData.ID+"&notify_party_id="+obj.aData.NOTIFY_PARTY_ID+"'>"+
@@ -760,6 +768,10 @@ $(document).ready(function() {
 		
 		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
 		detailDataTable.fnDraw();  
+
+		//detailDataTable.fnAddData({'SERIAL_NO':'test', 'ITEM_NAME':'test', 'VOLUME':'test','WEIGHT':'test', 'CONTACT_PERSON':'test', 'REMARK':'test'} );
+		
+		//detailDataTable.fnDraw();  
 	});
 	
 	// 编辑货品
@@ -800,6 +812,8 @@ $(document).ready(function() {
   	    	$('#myModal').modal('show');	
 		},'json');
 	});
+
+
 	
 	// 删除货品
 	$("#itemTable").on('click', '.deleteItem', function(e){
