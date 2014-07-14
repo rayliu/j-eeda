@@ -1,0 +1,1 @@
+package models.yh.profile;import com.jfinal.plugin.activerecord.Model;public class Carinfo extends Model<Carinfo> {    public static final Carinfo dao = new Carinfo();}

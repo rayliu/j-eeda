@@ -40,6 +40,7 @@ import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.AccountItem;
+import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 import models.yh.profile.Route;
 
@@ -159,6 +160,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/gateIn", controllers.yh.inventory.InventoryController.class, "/yh");
         me.add("/yh/gateOut", controllers.yh.inventory.InventoryController.class, "/yh");
         me.add("/yh/stock", controllers.yh.inventory.InventoryController.class, "/yh");
+        me.add("/yh/carinfo", controllers.yh.profile.CarinfoController.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {
@@ -221,6 +223,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("warehouse_order", WarehouseOrder.class);
         arp.addMapping("warehouse_order_item", WarehouseOrderItem.class);
         arp.addMapping("inventory_item", InventoryItem.class);
+        arp.addMapping("carinfo", Carinfo.class);
         // yh mapping
 
     }

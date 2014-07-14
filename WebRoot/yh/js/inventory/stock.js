@@ -43,11 +43,11 @@ $(document).ready(function() {
     $('#warehouseList').show();
 });
 $('#warehouseSelect').on('blur', function(){
-	$("#warehouseList").delay(120).hide(1);
+	$("#warehouseList").hide();
 });
 
 // 选中仓库
-$('#warehouseList').on('click', '.fromLocationItem', function(e){
+$('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
 	var id =$(this).attr('code');
 	$('#warehouseSelect').val($(this).text());
 	$("#warehouseId").val(id);

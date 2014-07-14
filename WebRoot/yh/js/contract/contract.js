@@ -397,10 +397,10 @@ $(document).ready(function() {
 		});
 		//失去焦点隐藏
 		$('#fromName').on('blur', function(){
-			$("#fromLocationList").delay(120).hide(1);
+			$("#fromLocationList").hide();
 		});
 		
-		$('#fromLocationList').on('click', '.fromLocationItem', function(e){
+		$('#fromLocationList').on('mousedown', '.fromLocationItem', function(e){
 			$('#from_id').val($(this).attr('code'));
 			$('#fromName').val($(this).text());
         	$("#fromLocationList").hide();
@@ -437,10 +437,10 @@ $(document).ready(function() {
 		
 		//失去焦点隐藏
 		$('#toName').on('blur', function(){
-			$("#toLocationList").delay(120).hide(1);
+			$("#toLocationList").hide(1);
 		});
 		
-		$('#toLocationList').on('click', '.fromLocationItem', function(e){
+		$('#toLocationList').on('mousedown', '.fromLocationItem', function(e){
 			$('#to_id').val($(this).attr('code'));
 			$('#toName').val($(this).text());
         	$("#toLocationList").hide();

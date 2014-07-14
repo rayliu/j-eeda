@@ -140,10 +140,10 @@ $(document).ready(function() {
 	        $('#customerList').show();
 		});
 	 	$('#customerMessage').on('blur', function(){
-			$("#customerList").delay(120).hide(1);
+			$("#customerList").hide();
 		});
 		// 选中客户
-		$('#customerList').on('click', '.fromLocationItem', function(e){
+		$('#customerList').on('mousedown', '.fromLocationItem', function(e){
 			var partyId =$(this).attr('code');
 			$('#customerMessage').val($(this).text());
 			$('#party_id').val(partyId);
@@ -198,10 +198,10 @@ $(document).ready(function() {
 			$('#itemNameList').show();        
 		});
 		$('#itemNameMessage').on('blur', function(){
-		$("#itemNameList").delay(120).hide(1);
+		$("#itemNameList").hide();
 	});
 	// 选中产品名
-		$('#itemNameList').on('click', '.fromLocationItem', function(e){
+		$('#itemNameList').on('mousedown', '.fromLocationItem', function(e){
 			$("#itemNameMessage").val($(this).text());
 			if($(this).attr('item_no') == 'null'){
 				$("#item_no").val('');
@@ -237,10 +237,10 @@ $(document).ready(function() {
 	     $('#itemNoList').show();        
 		});
 		$('#itemNoMessage').on('blur', function(){
-		$("#itemNoList").delay(120).hide(1);
+		$("#itemNoList").hide();
 	});
 	// 选中序列号
-		$('#itemNoList').on('click', '.fromLocationItem', function(e){
+		$('#itemNoList').on('mousedown', '.fromLocationItem', function(e){
 			$("#itemNoMessage").val($(this).text());
 			if($(this).attr('item_name') == 'null'){
 				$("#item_name").val('');

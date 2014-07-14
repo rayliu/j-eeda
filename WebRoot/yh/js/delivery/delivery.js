@@ -21,10 +21,10 @@ $(document).ready(function() {
 		        $('#spList').show();
 			});
 			$('#spMessage').on('blur', function(){
-				$("#spList").delay(120).hide(1);
+				$("#spList").hide();
 			});
 			// 选中供应商
-			$('#spList').on('click', '.fromLocationItem', function(e){
+			$('#spList').on('mousedown', '.fromLocationItem', function(e){
 				$('#spMessage').val($(this).text());
 				$('#sp_id').val($(this).attr('spid'));
 				$('#cid').val($(this).attr('code'));

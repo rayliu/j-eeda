@@ -138,6 +138,11 @@ public class DataInitUtil {
 
             stmt.executeUpdate("create table if not exists inventory_item(id bigint auto_increment primary key,party_id bigint,warehouse_id bigint,product_id bigint,item_no varchar(50),item_name varchar(50),status varchar(50),expire_date datetime,"
                     + "lot_no varchar(50),uom varchar(20),caton_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
+
+            // carinfo 车辆信息表
+            stmt.executeUpdate("create table if not exists carinfo(id bigint auto_increment primary key,driver varchar(50),phone varchar(50),car_number varchar(50),ctype varchar(50),"
+                    + "status varchar(50),length double,assistant varchar(50),assistant_phone varchar(50));");
+
             stmt.close();
             // conn.commit();
             conn.close();
