@@ -403,9 +403,13 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
         "aoColumns": [  			            
             {
-            	"mDataProp":"ITEM_NO",
+            	"mDataProp":"ITEM_NO",            	
             	"sWidth": "80px"
         	},
             {
@@ -455,33 +459,37 @@ $(document).ready(function() {
     });	
 
 	
-    // itemDataTable.makeEditable({
-    // 	//oEditableSettings: {event: 'mouseover'},
-    // 	"aoColumns": [  			            
-    //         {
-    //         	// "mDataProp":"ITEM_NO",
-    //     	},
-    //         {
-    //         	// "mDataProp":"ITEM_NAME",
-    //         },
-    //         {
-    //         // 	"mDataProp":"WEIGHT"
-    //         },
-    //         {
-    //         	// "mDataProp":"VOLUME"
-    //         },
-    //         {
-    //         	// "mDataProp":"AMOUNT"
-    //         },      	
-    //         {
-    //         	// "mDataProp":"UNIT"
-    //         },
-    //         {
-    //         	//"mDataProp":"REMARK"
-    //         },
-    //         null                        
-    //     ]      
-    // });                                                                      
+    itemDataTable.makeEditable({
+    	sUpdateURL: '/yh/transferOrderItem/saveTransferOrderItemByField',    	
+    	oEditableSettings: {event: 'click'},
+    	"aoColumns": [  			            
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"item_no"
+        	},
+            {
+            	// "mDataProp":"ITEM_NAME",
+            },
+            {
+            // 	"mDataProp":"WEIGHT"
+            },
+            {
+            	// "mDataProp":"VOLUME"
+            },
+            {
+            	// "mDataProp":"AMOUNT"
+            },      	
+            {
+            	// "mDataProp":"UNIT"
+            },
+            {
+            	//"mDataProp":"REMARK"
+            },
+            null                        
+        ]      
+    });                                                                      
         
     // 保存货品
     $("#transferOrderItemFormBtn").click(function(){
