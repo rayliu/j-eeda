@@ -329,7 +329,7 @@ $(document).ready(function() {
 
     // 单击货品明细时,应列表显示所有的货品
     $("#transferOrderItemList").click(function(e){
-    	if($("#transferOrderStatus").val() == '新建'){
+    	if($("#transferOrderStatus").val() == '新建' || $("#transferOrderStatus").val() == ''){
 	    	e.preventDefault();
 	    	// 切换到货品明细时,应先保存运输单
 	    	//提交前，校验数据
@@ -590,7 +590,7 @@ $(document).ready(function() {
 	
 	// 运输里程碑
 	$("#transferOrderMilestoneList").click(function(e){
-		if($("#transferOrderStatus").val() == '新建'){
+		if($("#transferOrderStatus").val() == '新建' || $("#transferOrderStatus").val() == ''){
 			e.preventDefault();
 	    	// 切换到货品明细时,应先保存运输单
 	    	//提交前，校验数据
@@ -1217,37 +1217,6 @@ $(document).ready(function() {
 		}
 	 });
 
-	 // 列出所有的司机
-	 $('#driverMessage').on('keyup', function(){
-  		var inputStr = $('#driverMessage').val();
-  		if(inputStr == ""){
-  			$('#driver_phone').val($(this).attr(""));
-  		}
-  		$.get('/yh/transferOrder/searchAllDriver', {input:inputStr}, function(data){
-  			console.log(data);
-  			var driverList = $("#driverList");
-  			driverList.empty();
-  			for(var i = 0; i < data.length; i++)
-  			{
-  				driverList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', > "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
-  			}
-  		},'json');
-  		
-  		$("#driverList").css({ 
-          	left:$(this).position().left+"px", 
-          	top:$(this).position().top+32+"px" 
-          }); 
-          $('#driverList').show();
-	 });
-	  	
-  	 // 选中司机
-  	 /*$('#driverList').on('click', '.fromLocationItem', function(e){	
-  		   $("#driver_id").val($(this).attr('partyId'));
-	  	   $('#driverMessage').val($(this).attr('CONTACT_PERSON'));
-	  	   $('#driver_phone').val($(this).attr('phone'));
-	       $('#driverList').hide();   
-     }); */
-
 	// 回显车长
 	var carSizeOption=$("#carsize>option");
 	var carSizeVal=$("#carSizeSelect").val();
@@ -1293,7 +1262,7 @@ $(document).ready(function() {
  	});
  	
  	// 选中序列号
- 	$('#itemNoList').on('click', '.fromLocationItem', function(e){
+ 	$('#itemNoList').on('mousedown', '.fromLocationItem', function(e){
  		$("#itemNoMessage").val($(this).text());
  		if($(this).attr('item_name') == 'null'){
  			$("#item_name").val('');
@@ -1338,6 +1307,11 @@ $(document).ready(function() {
  		$("#productId").val($(this).attr('id'));
         $('#itemNoList').hide();
      }); 
+
+ 	// 没选中序列号，焦点离开，隐藏列表
+ 	$('#itemNoMessage').on('blur', function(){
+  		$('#itemNoList').hide();
+  	});
  	
  	//获取货品的名称list，选中信息在下方展示其他信息
  	$('#itemNameMessage').on('keyup click', function(){
@@ -1364,7 +1338,7 @@ $(document).ready(function() {
  	});
  	
  	// 选中产品名
- 	$('#itemNameList').on('click', '.fromLocationItem', function(e){
+ 	$('#itemNameList').on('mousedown', '.fromLocationItem', function(e){
  		$("#itemNameMessage").val($(this).text());
  		if($(this).attr('item_no') == 'null'){
  			$("#item_no").val('');
@@ -1409,6 +1383,11 @@ $(document).ready(function() {
  		$("#productId").val($(this).attr('id'));
  		$('#itemNameList').hide();
  	}); 
+
+ 	// 没选中序列号，焦点离开，隐藏列表
+ 	$('#itemNameMessage').on('blur', function(){
+  		$('#itemNameList').hide();
+  	});
  	
  	// 清除上一次留下的ID
  	$("#editTransferOrderItem").click(function(){
@@ -1425,7 +1404,7 @@ $(document).ready(function() {
     });
     
     // 只有是新建状态才能编辑
-    if($("#transferOrderStatus").val() == '新建'){
+    if($("#transferOrderStatus").val() == '新建' || $("#transferOrderStatus").val() == ''){
     	$("#saveTransferOrderBtn").attr('disabled', false);
     }else{
     	$("#saveTransferOrderBtn").attr('disabled', true);    	

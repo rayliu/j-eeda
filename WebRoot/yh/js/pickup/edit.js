@@ -25,12 +25,17 @@
 	 });
 	  	
  	 // 选中司机
- 	 $('#driverList').on('click', '.fromLocationItem', function(e){	
+ 	 $('#driverList').on('mousedown', '.fromLocationItem', function(e){	
  		 $("#driver_id").val($(this).attr('partyId'));
 	  	 $('#driverMessage').val($(this).attr('CONTACT_PERSON'));
 	  	 $('#driver_phone').val($(this).attr('phone'));
 	     $('#driverList').hide();   
-     }); 
+     });
+
+ 	// 没选中司机，焦点离开，隐藏列表
+ 	$('#driverMessage').on('blur', function(){
+  		$('#driverList').hide();
+  	});
 
 	 var message=$("#message").val();
      var type=$("#type").val();
@@ -458,7 +463,7 @@
 	});
 	
 	// 选中供应商
-	$('#spList').on('click', '.fromLocationItem', function(e){
+	$('#spList').on('mousedown', '.fromLocationItem', function(e){
 		var message = $(this).text();
 		$('#spMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#sp_id').val($(this).attr('partyId'));
@@ -486,6 +491,11 @@
         $('#spList').hide();
     });
 
+	// 没选中供应商，焦点离开，隐藏列表
+	$('#spMessage').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+	
 	// 点击已完成按钮
 	$("#finishBtn").click(function(){
 		var pickupOrderId = $("#pickupOrderId").val();
