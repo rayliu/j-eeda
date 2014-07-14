@@ -282,7 +282,9 @@ $(document).ready(function() {
 				  	
 	            	var order_id = $("#order_id").val();
 				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
-				  	itemDataTable.fnDraw();                
+				  	itemDataTable.fnDraw(); 
+			        
+			        location.href = "/yh/transferOrder";               
 				}else{
 					alert('数据保存失败。');
 				}
@@ -307,7 +309,9 @@ $(document).ready(function() {
 				  	
 	            	var order_id = $("#order_id").val();
 				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
-				  	itemDataTable.fnDraw();                
+				  	itemDataTable.fnDraw();
+			        
+			        location.href = "/yh/transferOrder";                
 				}else{
 					alert('数据保存失败。');
 				}
@@ -716,14 +720,14 @@ $(document).ready(function() {
 		}
 	});
 
-	var item_id = $("#item_id").val();
+	var orderId = $("#order_id").val();
 	//datatable, 动态处理
     var detailDataTable = $('#detailTable').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+item_id,
+        "sAjaxSource": "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -734,7 +738,10 @@ $(document).ready(function() {
             {"mDataProp":"WEIGHT"},
             {"mDataProp":"CONTACT_PERSON",
             	"fnRender": function(obj) {
-            			return obj.aData.CONTACT_PERSON+"<br/>"+obj.aData.PHONE+"<br/>"+obj.aData.ADDRESS;
+            			var contact_person = obj.aData.CONTACT_PERSON==null?'':obj.aData.CONTACT_PERSON;
+            			var phone = obj.aData.PHONE==null?'':obj.aData.PHONE;
+            			var address = obj.aData.ADDRESS==null?'':obj.aData.ADDRESS;
+            			return contact_person+"<br/>"+phone+"<br/>"+address;
             		}},
             {"mDataProp":"REMARK"},
             {  
@@ -1414,4 +1421,12 @@ $(document).ready(function() {
     	$("#contactInformation").hide();
     	$("#gateInSelect").show();    	
     }
+    
+    // 查看所有单品
+    $("#findAllDetailBtn").click(function(){
+    	var orderId = $("#order_id").val();
+		// 刷新单品列表
+		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId;
+		detailDataTable.fnDraw();
+    });
 });

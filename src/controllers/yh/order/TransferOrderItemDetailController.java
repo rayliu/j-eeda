@@ -26,7 +26,8 @@ public class TransferOrderItemDetailController extends Controller {
 
     public void transferOrderDetailList() {
         String itemId = getPara("item_id");
-        if (itemId.isEmpty()) {
+        String orderId = getPara("orderId");
+        if (itemId == null || "".equals(itemId)) {
             itemId = "-1";
         }
         logger.debug(itemId);
@@ -36,17 +37,25 @@ public class TransferOrderItemDetailController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
+        String sql = "";
+        String sqlTotal = "";
+        if(itemId != "-1"){
+	        sqlTotal = "select count(1) total from transfer_order_item_detail where item_id =" + itemId;
+	
+	        sql = "select d.id,d.notify_party_id,d.serial_no,d.item_name,d.volume,d.weight,c.contact_person,c.phone,c.address,d.remark,d.is_damage,d.estimate_damage_amount,d.damage_revenue,d.damage_payment,d.damage_remark from transfer_order_item_detail d,party p,contact c where d.item_id ="
+	                + itemId + " and d.notify_party_id=p.id and p.contact_id=c.id"
+	                + sLimit;	
+        }else{
+        	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id="+orderId;
+	
+	        sql = "select d.id,d.notify_party_id,d.serial_no,d.item_name,d.volume,d.weight,c.contact_person,c.phone,c.address,d.remark,d.is_damage,d.estimate_damage_amount,d.damage_revenue,d.damage_payment,d.damage_remark from transfer_order_item_detail d,party p,contact c"
+	                + " where order_id = "+orderId+" and d.notify_party_id=p.id and p.contact_id=c.id"
+	                + sLimit;	
+        }
 
-        String sqlTotal = "select count(1) total from transfer_order_item_detail where item_id =" + itemId;
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-
-        String sql = "select d.id,d.notify_party_id,d.serial_no,d.item_name,d.volume,d.weight,c.contact_person,c.phone,c.address,d.remark,d.is_damage,d.estimate_damage_amount,d.damage_revenue,d.damage_payment,d.damage_remark from transfer_order_item_detail d,party p,contact c where d.item_id ="
-                + itemId + " and d.notify_party_id=p.id and p.contact_id=c.id"
-                + sLimit;
-
         List<Record> transferOrders = Db.find(sql);
-
         Map transferOrderListMap = new HashMap();
         transferOrderListMap.put("sEcho", pageIndex);
         transferOrderListMap.put("iTotalRecords", rec.getLong("total"));

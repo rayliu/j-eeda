@@ -4,6 +4,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">运输单</h1>
+                    <a class="btn btn-default" href="/yh/transferOrder">返回</a>
                     <input id="order_id" type="hidden" name="order_id" value="${transferOrder.id!''}"/>
                     <input id="item_id" type="hidden" name="item_id" />
                     <!-- <input id="productIdHidden" type="hidden" name="productIdHidden" /> -->
@@ -330,11 +331,12 @@
                                             <tbody id="transferOrderItemTbody">
                                             </tbody>
                                         </table>
-                                            <div id="transferOrderItemDateil" style="display: none">
+                                            <div id="transferOrderItemDateil">
 	                                            <h3 class="page-header">单品列表</h3>
 	                                            <button class="btn btn-primary" data-toggle="modal" data-target="#detailModal">
 												  新增货品明细
 												</button>
+												<button id="findAllDetailBtn" type="button" class="btn btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查看所有单品</button>
 	                                            <table class="table table-striped table-bordered table-hover" id="detailTable">
 	                                                <thead>
 	                                                    <tr>	                                                        
@@ -678,7 +680,6 @@
                                     <hr/>
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                                     <button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
-                                    <a class="btn btn-default" href="/yh/transferOrder">返回</a>
                                     <!-- <button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
                                     <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
                                     <button id="receiptBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button> -->

@@ -80,11 +80,11 @@ $(document).ready(function() {
         e.preventDefault();
     	var trArr=[];
         var tableArr=[];
-        $("table tr:not(:first)").each(function(){        
-        	$("input:checked",this).each(function(){
-        		trArr.push($(this).val());  
-        	});          		
-        }); 
+        $("input[name='order_check_box']").each(function(){
+        	if($(this).prop('checked') == true){
+        		trArr.push($(this).val());
+        	}
+        });
         tableArr.push(trArr);        
         console.log(tableArr);
         $('#pickupOrder_message').val(tableArr);
@@ -219,4 +219,20 @@ $(document).ready(function() {
 			$("#saveBtn").attr('disabled', false);
 		}
 	});
+	
+	// 选中或取消事件
+	$("#transferOrderList").on('click', '.checkedOrUnchecked', function(){
+		var ckeckedTransferOrderList = $("#ckeckedTransferOrderList");
+		var allMessages = $(this).parent().siblings();		
+		if($(this).prop('checked') == true){
+			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+allMessages[0].textContent+"</td></tr>");			
+		}else{
+			var allTrs = ckeckedTransferOrderList.children();
+			for(var i=0;i<allTrs.length;i++){
+				if(allTrs[i].attributes[0].value == $(this).val()){
+					allTrs[i].remove();
+				}
+			}
+		}
+	});	
 } );
