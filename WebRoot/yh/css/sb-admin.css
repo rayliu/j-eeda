@@ -350,8 +350,8 @@ label.error {
 }
 
 .search-label{
-    height: 34px;
-    width: 12%;
+    height: 30px;
+    width: 20%;
 }
 
 /* datepicker icon style*/
@@ -372,4 +372,5 @@ label.error {
 }
 .label-margin{
 	margin-right: 20px;
+}
 /* ray added */
