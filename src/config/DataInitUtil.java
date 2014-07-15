@@ -140,8 +140,8 @@ public class DataInitUtil {
                     + "lot_no varchar(50),uom varchar(20),caton_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
 
             // carinfo 车辆信息表
-            stmt.executeUpdate("create table if not exists carinfo(id bigint auto_increment primary key,driver varchar(50),phone varchar(50),car_number varchar(50),ctype varchar(50),"
-                    + "status varchar(50),length double,assistant varchar(50),assistant_phone varchar(50));");
+            stmt.executeUpdate("create table if not exists carinfo(id bigint auto_increment primary key,driver varchar(50),phone varchar(50),car_no varchar(50),cartype varchar(50),"
+                    + "status varchar(50),length double);");
 
             stmt.close();
             // conn.commit();
@@ -771,7 +771,8 @@ public class DataInitUtil {
         Date createDate = Calendar.getInstance().getTime();
         p1.set("contact_id", contact.getLong("id"))
                 .set("party_type", "CUSTOMER").set("create_date", createDate)
-                .set("creator", "demo").set("payment", "monthlyStatement").save();
+                .set("creator", "demo").set("payment", "monthlyStatement")
+                .save();
         p7.set("contact_id", contact7.getLong("id"))
                 .set("party_type", "CUSTOMER").set("create_date", createDate)
                 .set("creator", "demo").set("payment", "freightCollect").save();

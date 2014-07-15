@@ -96,7 +96,20 @@ public class DeliveryController extends Controller {
                 endTime_filter = "9999-12-31";
             }
 
-            String sqlTotal = "select count(1) total from delivery_order";
+            String sqlTotal = "select count(1) total from delivery_order d "
+                    + "left join party p on d.customer_id = p.id "
+                    + "left join contact c on p.contact_id = c.id "
+                    + "left join party p2 on d.sp_id = p2.id "
+                    + "left join contact c2 on p2.contact_id = c2.id "
+                    + "left join transfer_order t on d.transfer_order_id = t.id "
+                    + "left join warehouse w on t.warehouse_id = w.id "
+                    + "where ifnull(d.order_no,'') like '%" + orderNo_filter
+                    + "%' and ifnull(d.status,'') like '%" + status_filter
+                    + "%' and ifnull(c.company_name,'') like '%"
+                    + customer_filter
+                    + "%' and ifnull(c2.company_name,'') like'%" + sp_filter
+                    + "%' and d.create_stamp between '" + beginTime_filter
+                    + "' and '" + endTime_filter + "' ";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
