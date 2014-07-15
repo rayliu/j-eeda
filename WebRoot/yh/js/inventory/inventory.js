@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	$('#menu_warehouse').addClass('active').find('ul').addClass('in');
 	$('#reset').hide();
+	$('#warehouseSelect').val();
 	var inventory=$("#inventory").val();
 	var source = "";
 	var source2 = "";
@@ -362,4 +363,15 @@ $(document).ready(function() {
 		   if(wStatus=='已入库'){
 			   $("#ConfirmBtn").attr("disabled", true); 
 		   }
+		   
+		   $("#transferOrderItemList").click(function(e){
+		    	if($("#warehouseorderId").val() == ''){
+			    	e.preventDefault();
+			    	// 切换到货品明细时,应先保存运输单
+			    	//提交前，校验数据
+			        	alert("请先保存入库单!");
+				       	return false; 
+			        
+		    	}
+		   });
 });

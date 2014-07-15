@@ -320,4 +320,15 @@ $("#gateOutConfirmBtn").click(function(){
 	 $("#addproduct").click(function(){
 		 $('#reset').click();
 	 });
+	 
+	 $("#transferOrderItemList").click(function(e){
+	    	if($("#warehouseorderId").val() == ''){
+		    	e.preventDefault();
+		    	// 切换到货品明细时,应先保存运输单
+		    	//提交前，校验数据
+		        	alert("请先保存入库单!");
+			       	return false; 
+		        
+	    	}
+	   });
 });
