@@ -15,7 +15,7 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
-                    return '<input type="checkbox" name="order_check_box" code='+obj.aData.SPID+' class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+                    return '<input type="checkbox" arrival='+obj.aData.ARRIVAL_MODE+'  name="order_check_box" code='+obj.aData.SPID+' class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
                  }
             },
             { "mDataProp": "ORDER_NO"},
@@ -29,6 +29,15 @@ $(document).ready(function() {
             			return "";
             		}}},
             { "mDataProp": "ADDRESS"},
+            { "mDataProp": "ARRIVAL_MODE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ARRIVAL_MODE=="delivery"){
+            			return "直送";
+            		}else{
+            			return "入中转仓";
+            		}
+            	},
+            },
             {"mDataProp":"PICKUP_MODE",
             	"fnRender": function(obj) {
             		if(obj.aData.PICKUP_MODE == "routeSP"){
@@ -45,21 +54,32 @@ $(document).ready(function() {
                                       
         ]      
     });	
-    
+
     $("#saveBtn").click(function(e){
         e.preventDefault();
       var tableArr=[];
       var sp_idArr=[];
+      var arrival_idArr=[];
         $("table tr:not(:first)").each(function(){
         	$("input:checked",this).each(function(){
         		var sp_id=$(this).attr("code");
+        		var arrival=$(this).attr("arrival");
         		tableArr.push($(this).val());
+        		arrival_idArr.push(arrival);
         		if(sp_id!=""){
         			sp_idArr.push(sp_id);
         		}
         		
         	});          		
         	}); 
+        if(arrival_idArr.length>=2){
+        	var j=$.inArray("直送",arrival_idArr);
+        	var h=$.inArray("入中转仓",arrival_idArr);
+        	if(j>=0&&h>=0){
+        		alert("请选择同一到达方式的运输单！");
+        		return;
+        	}
+       
        if(sp_idArr.length>=2){
     	   for(var i=0;i<sp_idArr.length;i++){
     		   
@@ -73,6 +93,7 @@ $(document).ready(function() {
     			  
     	   }
        }
+        }
         console.log(tableArr);
             $("#departOrder_message").val(tableArr);
             $("#createForm").submit();

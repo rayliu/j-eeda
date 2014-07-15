@@ -126,7 +126,7 @@ public class DepartOrderController extends Controller {
 
     public void getIintedit(int depart_id) {
         int edit_depart_id = depart_id;
-        String sql = "select deo.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
+        String sql = "select deo.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',') from depart_transfer  dt "
                 + "where dt.depart_id =deo.id)as order_id from depart_order  deo "
                 + "left join contact co on co.id in( select p.contact_id  from party p where p.id=deo.driver_id ) "
                 + "left join user_login  u on u.id=deo.create_by where deo.combine_type ='DEPART' and deo.id in(" + edit_depart_id + ")";
@@ -207,7 +207,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l2 on tor.route_to = l2.code" + " where tor.status = '已入货场'";
             rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
-            String sql = "select tor.id,tor.order_no,tor.cargo_nature,"
+            String sql = "select tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
                     + " (select sum(toi.weight) from transfer_order_item toi where toi.order_id = tor.id) as total_weight,"
                     + " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
@@ -236,7 +236,7 @@ public class DepartOrderController extends Controller {
             rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select tor.id,tor.order_no,tor.cargo_nature,"
+            String sql = "select tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
                     + " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
                     + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
@@ -320,9 +320,10 @@ public class DepartOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select tof.* ,oro.order_no as order_no,oro.id as tr_order_id,c.company_name as customer ,wh.warehouse_name as warehouse_name from transfer_order_item tof"
+        String sql = "select tof.* ,oro.order_no as order_no,oro.id as tr_order_id,c.company_name as customer ,wh.warehouse_name as warehouse_name,co.contact_person ,co.mobile ,co.address from transfer_order_item tof"
                 + " left join transfer_order  oro  on tof.order_id =oro.id "
                 + "left join contact c on c.id in (select contact_id from party p where oro.customer_id=p.id)"
+                +"left join contact co on co.id in (select id  from party p where oro.notify_party_id=p.id)"
                 +" left join WAREHOUSE wh on oro.warehouse_id=wh.id "
                 + " where tof.order_id in("
                 + order_id + ")  order by c.id" + sLimit;
@@ -1099,4 +1100,10 @@ public class DepartOrderController extends Controller {
          }
          renderJson(map);
     }
+    //产品入库
+    public  void productWarehouse(String depart_id){
+    	int id=Integer.parseInt(depart_id);
+    	String Sql="";
+    }
+    
 }

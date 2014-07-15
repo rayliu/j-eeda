@@ -98,11 +98,14 @@
                 { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},
                 { "mDataProp": "WAREHOUSE_NAME"},
                 { "mDataProp": "ITEM_NO"},
-                { "mDataProp": "ITEM_NAME"},
+                { "mDataProp": "ITEM_NAME"},//co.contact_person ,co.mobile ,co.address
                 { "mDataProp": "AMOUNT"},
                 { "mDataProp": "VOLUME"},
                 { "mDataProp": "WEIGHT"},
                 { "mDataProp": "REMARK"},
+                { "mDataProp": "CONTACT_PERSON"},
+                { "mDataProp": "MOBILE"},
+                { "mDataProp": "ADDRESS"},
                 { 
                     "mDataProp": null, 
                     "sWidth": "8%",                
