@@ -42,13 +42,13 @@ public class TransferOrderItemDetailController extends Controller {
         if(itemId != "-1"){
 	        sqlTotal = "select count(1) total from transfer_order_item_detail where item_id =" + itemId;
 	
-	        sql = "select d.id,d.notify_party_id,d.serial_no,d.item_name,d.volume,d.weight,c.contact_person,c.phone,c.address,d.remark,d.is_damage,d.estimate_damage_amount,d.damage_revenue,d.damage_payment,d.damage_remark from transfer_order_item_detail d,party p,contact c where d.item_id ="
+	        sql = "select d.id,d.notify_party_id,d.serial_no,d.item_name,d.volume,d.weight,c.contact_person,c.phone,c.address,d.remark from transfer_order_item_detail d,party p,contact c where d.item_id ="
 	                + itemId + " and d.notify_party_id=p.id and p.contact_id=c.id"
 	                + sLimit;	
         }else{
         	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id="+orderId;
 	
-	        sql = "select d.id,d.notify_party_id,d.serial_no,d.item_name,d.volume,d.weight,c.contact_person,c.phone,c.address,d.remark,d.is_damage,d.estimate_damage_amount,d.damage_revenue,d.damage_payment,d.damage_remark from transfer_order_item_detail d,party p,contact c"
+	        sql = "select d.id,d.notify_party_id,d.serial_no,d.item_name,d.volume,d.weight,c.contact_person,c.phone,c.address,d.remark from transfer_order_item_detail d,party p,contact c"
 	                + " where order_id = "+orderId+" and d.notify_party_id=p.id and p.contact_id=c.id"
 	                + sLimit;	
         }

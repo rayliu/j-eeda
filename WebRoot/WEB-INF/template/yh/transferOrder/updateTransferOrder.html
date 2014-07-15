@@ -109,7 +109,21 @@
                                                     <label class="radio-inline">
                                                         <input type="radio" name="pickupMode" id="pickupMode3" value="own">源鸿自提
                                                     </label>
-                                            </div> -->                                        
+                                            </div> -->     
+                                                                               
+                                            <div class="form-group">
+                                                <label class="label-margin">付款方式</label>
+                                                <input id="paymentRadio" type="hidden" value="${transferOrder.payment!''}"/>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="payment" id="payment1" value="monthlyStatement" checked="">月结
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="payment" id="payment2" value="freightCollect">到付
+                                                </label>  
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="payment" id="payment3" value="cashPayment">现付
+                                                </label>  
+                                            </div>                                         
                                                
                                             <div id="arrivalModes" class="form-group">
                                             	<input id="arrivalModeVal" type="hidden" />
@@ -134,7 +148,7 @@
                                                 <label class="radio-inline">
                                                     <input type="radio" name="customerProvince" id="customerProvince2" value="provinceOut">省外
                                                 </label>  
-                                            </div>  -->                                            
+                                            </div>  --> 
                                             
    	                                        <div class="form-group">
    	                                            <label>收货单位</label>

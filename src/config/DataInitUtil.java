@@ -83,7 +83,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,transaction_status varchar(20),order_type varchar(20),creator varchar(50),remark varchar(255), transfer_order_id bigint, delivery_order_id bigint, notity_party_id bigint,customer_id bigint);");
             // transfer_order 运输单
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),assign_status varchar(255),"
-                    + "cargo_nature varchar(255),pickup_mode varchar(255),arrival_mode varchar(255),remark varchar(255),operation_type varchar(255),pickup_seq varchar(255),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
+                    + "cargo_nature varchar(255),pickup_mode varchar(255),arrival_mode varchar(255),remark varchar(255),operation_type varchar(255),pickup_seq varchar(255),payment varchar(50),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
                     + "create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,eta timestamp,address varchar(255),customer_province varchar(255),route_from varchar(255),route_to varchar(255),order_type varchar(255),"
                     + "customer_id bigint,sp_id bigint,notify_party_id bigint,driver_id bigint,warehouse_id bigint,office_id bigint,foreign key(customer_id) references party(id),foreign key(sp_id) references party(id),"
                     + "foreign key(notify_party_id) references party(id),foreign key(driver_id) references party(id),foreign key(warehouse_id) references warehouse(id),foreign key(office_id) references office(id));");
@@ -119,7 +119,7 @@ public class DataInitUtil {
 
             // 发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
-                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),remark varchar(255),driver_id bigint,foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id));");
+                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,remark varchar(255),driver_id bigint,foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id));");
 
             // 发车单运输单中间表
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,depart_id bigint,order_id bigint,transfer_order_no varchar(255),foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id));");
@@ -771,16 +771,16 @@ public class DataInitUtil {
         Date createDate = Calendar.getInstance().getTime();
         p1.set("contact_id", contact.getLong("id"))
                 .set("party_type", "CUSTOMER").set("create_date", createDate)
-                .set("creator", "demo").save();
+                .set("creator", "demo").set("payment", "monthlyStatement").save();
         p7.set("contact_id", contact7.getLong("id"))
                 .set("party_type", "CUSTOMER").set("create_date", createDate)
-                .set("creator", "demo").save();
+                .set("creator", "demo").set("payment", "freightCollect").save();
         p2.set("contact_id", contact2.getLong("id"))
                 .set("party_type", "CUSTOMER").set("create_date", createDate)
-                .set("creator", "demo").save();
+                .set("creator", "demo").set("payment", "cashPayment").save();
         p3.set("contact_id", contact3.getLong("id"))
                 .set("party_type", "SERVICE_PROVIDER")
-                .set("create_date", createDate).set("creator", "demo").save();
+                .set("create_date", createDate).set("payment", "demo").save();
         p4.set("contact_id", contact4.getLong("id"))
                 .set("party_type", "SERVICE_PROVIDER")
                 .set("create_date", createDate).set("creator", "demo").save();

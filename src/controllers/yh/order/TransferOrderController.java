@@ -376,6 +376,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("order_type", getPara("orderType"));
             transferOrder.set("customer_province", getPara("customerProvince"));
             transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
+            transferOrder.set("payment", getPara("payment"));
 
             Party party = null;
             String notifyPartyId = getPara("notify_party_id");
@@ -425,6 +426,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("order_type", getPara("orderType"));
             transferOrder.set("customer_province", getPara("customerProvince"));
             transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
+            transferOrder.set("payment", getPara("payment"));
 
             Party party = null;
             String notifyPartyId = getPara("notify_party_id");
@@ -627,7 +629,7 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"' and (company_name like '%"
+                    .find("select *,p.id as pid,p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"' and (company_name like '%"
                             + input
                             + "%' or contact_person like '%"
                             + input
@@ -654,7 +656,7 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"' and (company_name like '%"
+                    .find("select *,p.id as pid from,p.payment party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"' and (company_name like '%"
                             + input
                             + "%' or contact_person like '%"
                             + input

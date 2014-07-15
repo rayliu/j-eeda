@@ -47,7 +47,7 @@ $(document).ready(function() {
 				if(phone == null){
 					phone = '';
 				}
-				customerList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
+				customerList.append("<li><a tabindex='-1' class='fromLocationItem' payment='"+data[i].PAYMENT+"' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
 			}
 		},'json');
 		$("#customerList").css({ 
@@ -89,6 +89,14 @@ $(document).ready(function() {
 			address = '';
 		}
 		pageCustomerAddress.append(address);
+		
+		var payment = $(this).attr('payment');
+		// 回显付款方式
+		$("input[name='payment']").each(function(){
+			if(payment == $(this).val()){
+				$(this).prop('checked', true);
+			}
+		});
 
         var locationFrom = $('#hideLocationFrom').val();
         $.get('/yh/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
@@ -742,8 +750,16 @@ $(document).ready(function() {
         "aoColumns": [  			            
             {"mDataProp":"SERIAL_NO"},
             {"mDataProp":"ITEM_NAME"},       	
-            {"mDataProp":"VOLUME"},
-            {"mDataProp":"WEIGHT"},
+            {"mDataProp":"VOLUME",
+            	"fnRender": function(obj) {
+        			var volume = obj.aData.VOLUME==null?'':obj.aData.VOLUME;
+        			return volume;
+        		}},
+            {"mDataProp":"WEIGHT",
+            	"fnRender": function(obj) {
+        			var weight = obj.aData.WEIGHT==null?'':obj.aData.WEIGHT;
+        			return weight;
+        		}},
             {"mDataProp":"CONTACT_PERSON",
             	"fnRender": function(obj) {
             			var contact_person = obj.aData.CONTACT_PERSON==null?'':obj.aData.CONTACT_PERSON;
@@ -751,7 +767,11 @@ $(document).ready(function() {
             			var address = obj.aData.ADDRESS==null?'':obj.aData.ADDRESS;
             			return contact_person+"<br/>"+phone+"<br/>"+address;
             		}},
-            {"mDataProp":"REMARK"},
+            {"mDataProp":"REMARK",
+            	"fnRender": function(obj) {
+        			var remark = obj.aData.REMARK==null?'':obj.aData.REMARK;
+        			return remark;
+        		}},
             {  
                 "mDataProp": "null", 
                 "sWidth": "8%",                
@@ -1231,27 +1251,14 @@ $(document).ready(function() {
 			$(this).attr('checked', true);
 		}
 	 });
+	 
+	 // 回显付款方式
+	 $("input[name='payment']").each(function(){
+		 if($("#paymentRadio").val() == $(this).val()){
+			 $(this).attr('checked', true);
+		 }
+	 });
 
-	// 回显车长
-	var carSizeOption=$("#carsize>option");
-	var carSizeVal=$("#carSizeSelect").val();
-	for(var i=0;i<carSizeOption.length;i++){
-	      var svalue=carSizeOption[i].text;
-	      if(carSizeVal==svalue){
-	       $("#carsize option[value='"+svalue+"']").attr("selected","selected");
-	      }
-	  }
-	
-	// 回显车型
-	var carTypeOption=$("#cartype>option");
-	var carTypeVal=$("#carTypeSelect").val();
-	for(var i=0;i<carTypeOption.length;i++){
-		var svalue=carTypeOption[i].text;
-		if(carTypeVal==svalue){
-			$("#cartype option[value='"+svalue+"']").attr("selected","selected");
-		}
-	}
-	
   	//获取货品的序列号list，选中信息在下方展示其他信息
  	$('#itemNoMessage').on('keyup click', function(){
  		var inputStr = $('#itemNoMessage').val();

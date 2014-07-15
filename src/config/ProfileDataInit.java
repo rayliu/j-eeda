@@ -23,9 +23,9 @@ public class ProfileDataInit {
             stmt.executeUpdate("insert into contact(COMPANY_NAME, ABBR, CONTACT_PERSON, LOCATION, INTRODUCTION, EMAIL, MOBILE, ADDRESS, SP_TYPE) values('广州宅急送快运有限公司福州分公司','广州宅急送快运有限公司福州分公司','吕华','350000','工商银行 福州星光支行','','13960829976','福州市仓山区六风村物流仓库','配送');");
             stmt.executeUpdate("insert into contact(COMPANY_NAME, ABBR, CONTACT_PERSON, LOCATION, INTRODUCTION, EMAIL, MOBILE, ADDRESS, SP_TYPE) values('贵州宝彩物流有限公司','贵州宝彩物流有限公司','邓碧云','330000','工商银行 贵阳市甲秀支行','','13985541890','乌当区保利温泉3期6幢3单元1801','配送');");
 
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('CUSTOMER','1','demo','广州广电运通金融电子股份有限公司');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('CUSTOMER','2','demo','湖南长城信息金融设备有限责任公司');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('CUSTOMER','3','demo','中钞科宝现金处理技术（北京）有限公司');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, payment) values('CUSTOMER','1','demo','广州广电运通金融电子股份有限公司','monthlyStatement');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, payment) values('CUSTOMER','2','demo','湖南长城信息金融设备有限责任公司','freightCollect');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, payment) values('CUSTOMER','3','demo','中钞科宝现金处理技术（北京）有限公司','cashPayment');");
 
             stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','4','demo','邓孚任');");
             stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','5','demo','广州市其辉物流有限公司');");
