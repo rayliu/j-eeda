@@ -57,6 +57,15 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
+    		{"mDataProp":"ARRIVAL_MODE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ARRIVAL_MODE == "delivery"){
+            			return "货品直送";
+            		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
+            			return "入中转仓";
+            		}else{
+            			return "";
+            		}}},
             { "mDataProp": "STATUS"},
             { "mDataProp": "CNAME"},
     		{ "mDataProp": "ROUTE_FROM"},
@@ -225,7 +234,7 @@ $(document).ready(function() {
 		var ckeckedTransferOrderList = $("#ckeckedTransferOrderList");
 		var allMessages = $(this).parent().siblings();		
 		if($(this).prop('checked') == true){
-			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+allMessages[0].textContent+"</td></tr>");			
+			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+allMessages[0].textContent+"</td><td>"+allMessages[1].textContent+"</td><td>"+allMessages[2].textContent+"</td><td>"+allMessages[3].textContent+"</td><td>"+allMessages[4].textContent+"</td><td>"+allMessages[5].textContent+"</td><td>"+allMessages[6].textContent+"</td><td>"+allMessages[7].textContent+"</td><td>"+allMessages[8].textContent+"</td><td>"+allMessages[9].textContent+"</td><td>"+allMessages[10].textContent+"</td><td>"+allMessages[11].textContent+"</td><td>"+allMessages[12].textContent+"</td><td>"+allMessages[13].textContent+"</td><td>"+allMessages[14].textContent+"</td></tr>");			
 		}else{
 			var allTrs = ckeckedTransferOrderList.children();
 			for(var i=0;i<allTrs.length;i++){

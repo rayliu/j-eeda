@@ -62,4 +62,29 @@
                }                   
            },'json');
 		});
+        
+        $('#endTime_filter, #beginTime_filter, #orderNo_filter ,#departNo_filter').on( 'keyup click', function () {
+			var orderNo = $("#orderNo_filter").val();
+			var departNo_filter = $("#departNo_filter").val();
+			var beginTime = $("#beginTime_filter").val();
+			var endTime = $("#endTime_filter").val();
+			pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/pickuplist?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime;
+			pickupOrder.fnDraw();
+		} );
+		
+		$('#datetimepicker').datetimepicker({  
+		    format: 'yyyy-MM-dd',  
+		    language: 'zh-CN'
+		}).on('changeDate', function(ev){
+		    $('#beginTime_filter').trigger('keyup');
+		});		
+		
+		$('#datetimepicker2').datetimepicker({  
+		    format: 'yyyy-MM-dd',  
+		    language: 'zh-CN', 
+		    autoclose: true,
+		    pickerPosition: "bottom-left"
+		}).on('changeDate', function(ev){
+		    $('#endTime_filter').trigger('keyup');
+		});
     });

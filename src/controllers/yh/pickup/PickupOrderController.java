@@ -259,7 +259,7 @@ public class PickupOrderController extends Controller {
                     + "'"
                     + " order by tor.CREATE_STAMP desc"
                     + sLimit;
-
+ 
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap = new HashMap();
