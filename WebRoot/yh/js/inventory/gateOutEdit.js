@@ -164,7 +164,8 @@ $('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
 	$('#itemNameMessage').on('keyup click', function(){
 		var inputStr = $('#itemNameMessage').val();
 		var customerId = $('#party_id').val();
-		$.get('/yh/gateOut/searchName2', {input:inputStr,customerId:customerId}, function(data){
+		var warehouseId = $('#warehouseId').val();
+		$.get('/yh/gateOut/searchName2', {warehouseId:warehouseId,input:inputStr,customerId:customerId}, function(data){
 			console.log(data);
 			var itemNameList =$("#itemNameList");
 			itemNameList.empty();
@@ -217,7 +218,8 @@ $('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
 	$('#itemNoMessage').on('keyup click', function(){
 		var inputStr = $('#itemNoMessage').val();
 		var customerId = $('#party_id').val();
-		$.get('/yh/gateOut/searchNo2', {input:inputStr,customerId:customerId}, function(data){
+		var warehouseId = $('#warehouseId').val();
+		$.get('/yh/gateOut/searchNo2', {warehouseId:warehouseId,input:inputStr,customerId:customerId}, function(data){
 			console.log(data);
 			var itemNoList =$("#itemNoList");
 			itemNoList.empty();

@@ -548,16 +548,19 @@ public class InventoryController extends Controller {
     public void searchNo2() {
         String input = getPara("input");
         String customerId = getPara("customerId");
+        String warehouseId = getPara("warehouseId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
                     .find("select * from inventory_item where party_id='"
-                            + customerId + "' and item_no like '%" + input
+                            + customerId + "' and warehouse_id ='"
+                            + warehouseId + "' item_no like '%" + input
                             + "%' limit 0,10");
         } else {
             locationList = Db
                     .find("select * from inventory_item where party_id='"
-                            + customerId + "'");
+                            + customerId + "' and warehouse_id ='"
+                            + warehouseId + "' ");
         }
         renderJson(locationList);
     }
@@ -566,16 +569,19 @@ public class InventoryController extends Controller {
     public void searchName2() {
         String input = getPara("input");
         String customerId = getPara("customerId");
+        String warehouseId = getPara("warehouseId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
                     .find("select * from inventory_item where party_id='"
-                            + customerId + "' and item_name like '%" + input
+                            + customerId + "' and warehouse_id ='"
+                            + warehouseId + "' item_name like '%" + input
                             + "%' limit 0,10");
         } else {
             locationList = Db
                     .find("select * from inventory_item where party_id='"
-                            + customerId + "'");
+                            + customerId + "' and warehouse_id ='"
+                            + warehouseId + "' ");
         }
         renderJson(locationList);
     }
@@ -621,17 +627,20 @@ public class InventoryController extends Controller {
         List<Record> list = Db
                 .find("select * from warehouse_order_item where warehouse_order_id = '"
                         + id + "'");
-
         // 获取已入库的库存
         List<Record> inverntory = Db
                 .find("select * from inventory_item where item_no in(select item_no from warehouse_order_item where warehouse_order_id = '"
-                        + id + "')");
+                        + id
+                        + "' and warehouse_id ='"
+                        + warehouseOrder.get("warehouse_id") + "')");
 
         // 入库库存添加
         for (int i = 0; i < inverntory.size(); i++) {
             if (inverntory.size() > 0) {
                 if (list.get(i).get("item_no")
-                        .equals(inverntory.get(i).get("item_no"))) {
+                        .equals(inverntory.get(i).get("item_no"))
+                        && inverntory.get(i).get("warehouse_id")
+                                .equals(warehouseOrder.get("warehouse_id"))) {
                     InventoryItem inventoryItem = InventoryItem.dao
                             .findById(inverntory.get(i).get("id"));
                     inventoryItem.set(
@@ -644,33 +653,43 @@ public class InventoryController extends Controller {
                 }
             }
         }
+        for (int i = 0; i < inverntory.size(); i++) {
+            if (inverntory.get(i).get("warehouse_id")
+                    .equals(warehouseOrder.get("warehouse_id"))) {
+
+            }
+        }
+        // 判断过滤重复的货品，已存在不添加只加数量
         List<Record> list2 = Db
-                .find("select item_no from warehouse_order_item where warehouse_order_id = '"
-                        + id + "'");
+                .find("select warehouse_id,product_id from warehouse_order_item w "
+                        + "left join warehouse_order w2 on w.warehouse_order_id = w2.id "
+                        + "where w.warehouse_order_id ='" + id + "'");
         List<Record> inverntory2 = Db
-                .find("select item_no from inventory_item where item_no in(select item_no from warehouse_order_item where warehouse_order_id = '"
+                .find("select warehouse_id,product_id from inventory_item where item_no in(select item_no from warehouse_order_item where warehouse_order_id = '"
                         + id + "')");
         list2.removeAll(inverntory2);
 
         for (int i = 0; i < list2.size(); i++) {
             List<Record> list3 = Db
-                    .find("select * from warehouse_order_item where warehouse_order_id = '"
+                    .find("select w2.warehouse_id,w.* from warehouse_order_item w "
+                            + "left join warehouse_order w2 on w.warehouse_order_id = w2.id "
+                            + "where w.warehouse_order_id ='"
                             + id
-                            + "' and item_no ='"
-                            + list2.get(i).getStr("item_no") + "'");
+                            + "' and product_id ='"
+                            + list2.get(i).get("product_id") + "'");
 
             InventoryItem inventoryItem = new InventoryItem();
             inventoryItem.set("party_id", warehouseOrder.get("party_id"))
                     .set("warehouse_id", warehouseOrder.get("warehouse_id"))
-                    .set("product_id", list3.get(i).get("product_id"))
-                    .set("item_name", list3.get(i).get("item_name"))
-                    .set("item_no", list3.get(i).get("item_no"))
-                    .set("uom", list3.get(i).get("uom"))
-                    .set("lot_no", list3.get(i).get("lot_no"))
-                    .set("total_quantity", list3.get(i).get("total_quantity"))
-                    .set("unit_price", list3.get(i).get("unit_price"))
-                    .set("unit_cost", list3.get(i).get("unit_cost"))
-                    .set("caton_no", list3.get(i).get("caton_no"))
+                    .set("product_id", list3.get(0).get("product_id"))
+                    .set("item_name", list3.get(0).get("item_name"))
+                    .set("item_no", list3.get(0).get("item_no"))
+                    .set("uom", list3.get(0).get("uom"))
+                    .set("lot_no", list3.get(0).get("lot_no"))
+                    .set("total_quantity", list3.get(0).get("total_quantity"))
+                    .set("unit_price", list3.get(0).get("unit_price"))
+                    .set("unit_cost", list3.get(0).get("unit_cost"))
+                    .set("caton_no", list3.get(0).get("caton_no"))
                     .set("creator", users.get(0).get("id"))
                     .set("create_date", createDate);
             inventoryItem.save();
