@@ -475,25 +475,26 @@ $(document).ready(function() {
             	indicator: '正在保存...',
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
-            	name:"item_no"
+            	name:"item_no",
+            	placeholder: ""
         	},
             {
-            	// "mDataProp":"ITEM_NAME",
+            	placeholder: ""
             },
             {
-            // 	"mDataProp":"WEIGHT"
+            	placeholder: ""
             },
             {
-            	// "mDataProp":"VOLUME"
+            	placeholder: ""
             },
             {
-            	// "mDataProp":"AMOUNT"
+            	placeholder: ""
             },      	
             {
-            	// "mDataProp":"UNIT"
+            	placeholder: ""
             },
             {
-            	//"mDataProp":"REMARK"
+            	placeholder: ""
             },
             null                        
         ]      
