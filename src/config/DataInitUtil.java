@@ -756,12 +756,6 @@ public class DataInitUtil {
         contact6.set("mobile", "12345674").set("phone", "413527229313")
                 .set("address", "香洲珠海市香洲区老香洲为农街为农市场4")
                 .set("postal_code", "5190004").set("location", "440402").save();
-        Contact contact8 = new Contact();
-        contact8.set("contact_person", "王师傅").set("phone", "13888888888")
-                .save();
-        Contact contact9 = new Contact();
-        contact9.set("contact_person", "康师傅").set("phone", "13777777777")
-                .save();
 
         Party p1 = new Party();
         Party p2 = new Party();
@@ -770,8 +764,6 @@ public class DataInitUtil {
         Party p5 = new Party();
         Party p6 = new Party();
         Party p7 = new Party();
-        Party p8 = new Party();
-        Party p9 = new Party();
         Date createDate = Calendar.getInstance().getTime();
         p1.set("contact_id", contact.getLong("id"))
                 .set("party_type", "CUSTOMER").set("create_date", createDate)
@@ -795,12 +787,6 @@ public class DataInitUtil {
         p6.set("contact_id", contact6.getLong("id"))
                 .set("party_type", "NOTIFY_PARTY")
                 .set("create_date", createDate).set("creator", "demo").save();
-        p8.set("contact_id", contact8.getLong("id"))
-                .set("party_type", "DRIVER").set("create_date", createDate)
-                .set("creator", "demo").save();
-        p9.set("contact_id", contact9.getLong("id"))
-                .set("party_type", "DRIVER").set("create_date", createDate)
-                .set("creator", "demo").save();
     }
 
 }

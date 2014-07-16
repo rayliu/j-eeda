@@ -61,15 +61,13 @@ public class DepartOrderController extends Controller {
         }
 
         String sqlTotal = "select count(1) total from depart_order deo "
-                + " left join party p on deo.driver_id = p.id  and p.party_type = '" + Party.PARTY_TYPE_DRIVER + "'"
+                + " left join party p on deo.driver_id = p.id "
                 + " left join contact c on p.contact_id = c.id " + " where combine_type = '" + DepartOrder.COMBINE_TYPE_DEPART + "'";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
         String sql = "select deo.*,c.contact_person,c.phone, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
-                + " left join party p on deo.driver_id = p.id and p.party_type = '"
-                + Party.PARTY_TYPE_DRIVER
-                + "'"
+                + " left join party p on deo.driver_id = p.id "
                 + " left join contact c on p.contact_id = c.id where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
                 + DepartOrder.COMBINE_TYPE_DEPART
                 + "' order by deo.create_stamp desc";
@@ -383,13 +381,11 @@ public class DepartOrderController extends Controller {
         String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-                    + Party.PARTY_TYPE_DRIVER + "' and (company_name like '%" + input + "%' or contact_person like '%" + input
+            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and (company_name like '%" + input + "%' or contact_person like '%" + input
                     + "%' or email like '%" + input + "%' or mobile like '%" + input + "%' or phone like '%" + input
                     + "%' or address like '%" + input + "%' or postal_code like '%" + input + "%') limit 0,10");
         } else {
-            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-                    + Party.PARTY_TYPE_DRIVER + "' limit 0,10");
+            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id  limit 0,10");
         }
         renderJson(locationList);
     }
