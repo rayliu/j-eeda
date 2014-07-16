@@ -58,7 +58,7 @@
 										    <div class="form-group">
 										        <!--label>司机名称</label-->
 										        <input type="hidden" id="driverId" name="driverid">
-										        <input type="text" name="customerMessage" placeholder="选择司机" class="form-control dropdown-toggle" id="customerMessage" data-toggle="dropdown" value="${depart.CONTACT_PERSON!''}">
+										        <input type="text" name="customerMessage" placeholder="选择司机" class="form-control dropdown-toggle" id="customerMessage" data-toggle="dropdown" value="">
 										        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="customerList">
 												</ul>
 										    </div>
@@ -66,12 +66,12 @@
                                         
                                          <div class="form-group">
                                             <label>车牌</label>
-                                             <input class="form-control" id="car_no" value="${depart.CAR_NO!''}"  name="car_no">
+                                             <input class="form-control" id="car_no" value=""  name="car_no">
                                         </div>
                                          <div class="form-group">
                                         <div  style=display:inline-block;width:49%>
                                             <label>车型</label>
-                                         	<input type="hidden" value="${depart.CAR_TYPE!''}" id="carTypeSelect">
+                                         	<input type="hidden" value="" id="carTypeSelect">
                                              <select name="cartype" id="cartype" class="form-control">
                                                                 <option value="全部">全部</option>
                                                                 <option value="平板车">平板车</option>
@@ -110,7 +110,7 @@
                                                          <div   style=display:inline-block;width:50%>
                                                                
                                             <label>长度</label>
-                                         	<input type="hidden" value="${depart.CAR_SIZE!''}" id="carSizeSelect">
+                                         	<input type="hidden" value="" id="carSizeSelect">
                                             <select name="carsize" id="carsize" class="form-control">
                                                					 <option>21</option>
                                                                 <option>18.5</option>
@@ -138,7 +138,7 @@
                                        </div>                                      
                                             <div class="form-group">
                                             <label>电话</label>
-                                             <input class="form-control" id="phone" value="${depart.PHONE!''}"  name="phone">
+                                             <input class="form-control" id="phone" value=""  name="phone">
                                         </div>
                                          <div class="form-group">
 	                                            <label>跟车人</label>
@@ -150,45 +150,42 @@
 	                                            <input class="form-control" id="car_follow_phone" value="${depart.car_follow_phone!''}" name="car_follow_phone">
                                             </div>
                                             
-                                           
+                                           	<div class="form-group">
+                                            <label>备注</label>
+                                            <textarea class="form-control" rows="4" id="remark" name="remark" style=" height: 108px">${depart.remark!''}</textarea>
+                                        </div> 
                                     </div>
                                       <div class="col-lg-6">
                                   <h2>发车信息</h2>  
                                          <div class="form-group">
                                            
-                                            <div class="form-control" style=box-shadow:none;border:none>
+                                            <div class="form-control" style="box-shadow:none;border:none ; padding-left: 0px;">
                                                 <label >
                                                          	状态：
                                             </label>
-                                              <label >
+                                              <label class="radio-inline" >
  												${getIin_status!''}${depart.STATUS!''}
                                             </label>
                                             </div>
-                                                <div class="form-control" style=box-shadow:none;border:none>
+                                                <div class="form-control" style="box-shadow:none;border:none;  padding-left: 0px;">
                                            <label >
                                                                                                                 发车单号:
                                             </label>
-                                              <label id="getIin_depart_no">
+                                              <label id="getIin_depart_no" class="radio-inline">
  												${getIin_depart_no!''}${depart.DEPART_NO!''}
                                             </label>
                                             </div>
-                                              <div class="form-control" style=box-shadow:none;border:none>
-             								 <label>创建人</label>
-                                             <label  id="create">
+                                              <div class="form-control" style="box-shadow:none;border:none ; padding-left: 0px">
+             								 <label>创建人:</label>
+                                             <label  id="create" class="radio-inline">
                                              ${depart.USER_NAME!''}${creat!''}
                                              </label>
              								</div>
                                         </div>
                                      
                                          
-                                       <!--  <div class="form-group">
-                                            <label>创建人</label>
-                                             <input class="form-control" id="create" value="${depart.USER_NAME!''}${creat!''}"  name="create">
-                                        </div>        -->                                                                        
-										<div class="form-group">
-                                            <label>备注</label>
-                                            <textarea class="form-control" rows="4" id="remark" name="remark" style=" height: 108px">${depart.remark!''}</textarea>
-                                        </div> 
+                                                                                                         
+									
                                           <div class="form-group">
                                          <label>始发城市</label>
                                           <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;" >
@@ -197,13 +194,13 @@
                         
                                                <label>省</label>
                                                <input id="hideProvinceFrom" type="hidden" value="${locationFrom.province!''}"/>
-                                               <select id="mbProvinceFrom" style="width:150px" name="mbProvinceFrom" value=""></select>
+                                               <select id="mbProvinceFrom" class="valid" name="mbProvinceFrom" value=""></select>
                                                <label>市</label>
                                                <input id="hideCityFrom" type="hidden" value="${locationFrom.city!''}"/>
-                                               <select  id="cmbCityFrom" style="width:150px" name="cmbCityFrom" value=""></select>
+                                               <select  id="cmbCityFrom" class="valid" name="cmbCityFrom" value=""></select>
                                                <label>区(县)</label>
                                                <input id="hideDistrictFrom" type="hidden" value="${locationFrom.district!''}" style="width: 26%"/>
-                                               <select  id="cmbAreaFrom" style="width: 25%" name="cmbAreaFrom" value=""></select>
+                                               <select  id="cmbAreaFrom" class="valid" name="cmbAreaFrom" value=""></select>
                                             	</div>
                                             </div>
         									<div class="form-group" >
@@ -212,15 +209,33 @@
 		                                     <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">
 		                                        <label>省</label>
 		                                        <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
-		                                        <select id="mbProvinceTo" style="width:150px" name="mbProvinceTo" value=""></select>
+		                                        <select id="mbProvinceTo" class="valid" name="mbProvinceTo" value=""></select>
 		                                        <label>市</label>
 		                                        <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
-		                                        <select  id="cmbCityTo" style="width:150px" name="cmbCityTo" value=""></select>
+		                                        <select  id="cmbCityTo"  class="valid" name="cmbCityTo" value=""></select>
 		                                        <label>区(县)</label>
 		                                        <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}" />
-		                                        <select  id="cmbAreaTo" style="width: 25%" name="cmbAreaTo" value=""></select>
+		                                        <select  id="cmbAreaTo" class="valid" name="cmbAreaTo" value=""></select>
 		                                    	</div>
 		                                    </div>
+		                                     <%if(notifi_check!''==true){%>
+		                                    <div style="" id="contactInformation">
+		                                     <h2>收货人信息</h2>
+    	                                         <div class="form-group">
+				                                           	 <label>收货地址 :</label>
+				                                           	 <label id="notify_address" class="radio-inline"></label>    
+        	                                        </div>
+        	                                        <div class="form-group">
+        	                                            <label>联系人:</label>
+        	                                            <label id="notify_contact_person" class="radio-inline"></label>
+        	                                          
+        	                                        </div>
+        	                                        <div class="form-group">
+        	                                            <label>电话:</label>
+        	                                            <label id="notify_phone" class="radio-inline"></label>
+        	                                        </div>
+                                            </div>
+                                            <%}%>
                                 </div>         
                                   </form>
                             </div>

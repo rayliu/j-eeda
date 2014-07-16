@@ -22,10 +22,10 @@ var dataTable =$('#dataTables-example').dataTable({
                             "</a>";
                 }
             } ,
-            {"mDataProp":"CONTACT_PERSON"},
+            {"mDataProp":"DRIVER"},
             {"mDataProp":"PHONE"},
             {"mDataProp":"CAR_NO"},
-            {"mDataProp":"CAR_TYPE"},     
+            {"mDataProp":"CARTYPE"},     
             {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"STATUS"},
             {"mDataProp":"TRANSFER_ORDER_NO"},
