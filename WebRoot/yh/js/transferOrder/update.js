@@ -479,6 +479,10 @@ $(document).ready(function() {
             	placeholder: ""
         	},
             {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"item_name",
             	placeholder: ""
             },
             {
@@ -511,14 +515,6 @@ $(document).ready(function() {
                 	var order_id = $("#order_id").val();
 	                itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;                		
                 	itemDataTable.fnDraw();
-                	
-                	/*$('#detailTable').dataTable().fnAddData( [
-                	                                      1,
-                	                                      1,
-                	                                      1,
-                	                                      1,
-                	                                      1,
-                	                                      1] );*/
                 }else{
                     alert('数据保存失败。');
                 }
@@ -806,8 +802,7 @@ $(document).ready(function() {
 		detailDataTable.fnDraw();  
 
 		//detailDataTable.fnAddData({'SERIAL_NO':'test', 'ITEM_NAME':'test', 'VOLUME':'test','WEIGHT':'test', 'CONTACT_PERSON':'test', 'REMARK':'test'} );
-		
-		//detailDataTable.fnDraw();  
+		//detailDataTable.fnDraw(); 
 	});
 	
 	// 编辑货品

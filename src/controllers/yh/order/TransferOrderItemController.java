@@ -92,9 +92,14 @@ public class TransferOrderItemController extends Controller {
         String id = getPara("id");
         TransferOrderItem item = TransferOrderItem.dao.findById(id);
         String item_no = getPara("item_no");
-        if (!"".equals(item_no))
+        String item_name = getPara("item_name");
+        if (!"".equals(item_no) && item_no != null){
             item.set("item_no", item_no).update();
-        renderJson(item_no);// 必须返回传进来的值，否则js会报错
+            renderJson(item_no);// 必须返回传进来的值，否则js会报错
+        }else if(!"".equals(item_name) && item_name != null){
+            item.set("item_name", item_name).update();
+            renderJson(item_name);
+        }
     }
 
     // 保存货品
@@ -174,13 +179,31 @@ public class TransferOrderItemController extends Controller {
             if (amount != null && !"".equals(amount)) {
                 item.set("amount", amount);
             }
-            item.set("order_id", getPara("transfer_order_id"));
+            item.set("order_id", getPara("transfer_order_id"));            
             item.save();
+            if (amount != null && !"".equals(amount)) {
+                saveTransferOrderDetail(item);
+            }
         }
         renderJson(item);
     }
 
-    // 更新产品
+    // 保存货品同时保存单品
+    private void saveTransferOrderDetail(TransferOrderItem item) {
+		TransferOrderItemDetail transferOrderItemDetail = null;
+		Integer amount = Integer.parseInt(item.getStr("amount"));
+		for(int i=0;i<amount;i++){
+			transferOrderItemDetail = new TransferOrderItemDetail();
+			transferOrderItemDetail.set("item_name", item.get("item_name"));
+			transferOrderItemDetail.set("volume", item.get("volume"));
+			transferOrderItemDetail.set("weight", item.get("weight"));
+			transferOrderItemDetail.set("item_id", item.get("id"));
+			transferOrderItemDetail.set("order_id", item.get("order_id"));
+			transferOrderItemDetail.save();
+    	}
+	}
+
+	// 更新产品
     private void updateProduct(String productId) {
         Product product = Product.dao.findById(productId);
         String size = getPara("size");
