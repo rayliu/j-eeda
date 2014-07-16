@@ -107,6 +107,8 @@ public class PickupOrderController extends Controller {
     public void pickuplist() {
     	String orderNo = getPara("orderNo");
     	String departNo = getPara("departNo");
+    	String beginTime = getPara("beginTime");
+        String endTime = getPara("endTime");
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -114,7 +116,7 @@ public class PickupOrderController extends Controller {
         }
         String sql = "";
         String sqlTotal = "";
-        if(orderNo == null && departNo == null){
+        if(orderNo == null && departNo == null && beginTime == null && endTime == null){
 	        sqlTotal = "select count(1) total from depart_order do " + ""
 	        		+ " left join carinfo c on do.driver_id = c.id "
 		            + " where do.status!='取消' and combine_type = '"
@@ -125,16 +127,22 @@ public class PickupOrderController extends Controller {
 		                + " where do.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' order by do.create_stamp desc"
 		                + sLimit;
         }else{
+        	if (beginTime == null || "".equals(beginTime)) {
+                beginTime = "1-1-1";
+            }
+            if (endTime == null || "".equals(endTime)) {
+                endTime = "9999-12-31";
+            }
         	sqlTotal = "select count(distinct do.id) total from depart_order do "
         			+ " left join carinfo c on do.driver_id = c.id "
         			+ " left join depart_transfer dt2 on dt2.depart_id = do.id"
 	                + " where do.status!='取消' and combine_type = '"
-	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%"+departNo+"%' and dt2.transfer_order_no like '%"+orderNo+"%'";
+	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%"+departNo+"%' and dt2.transfer_order_no like '%"+orderNo+"%' and do.create_stamp between '" + beginTime + "' and '" + endTime + "'";
 	
 	        sql = "select distinct do.*,c.driver,c.phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
 	        			+ " left join carinfo c on do.driver_id = c.id "
 		                + " left join depart_transfer dt2 on dt2.depart_id = do.id"
-		                + " where do.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%"+departNo+"%' and dt2.transfer_order_no like '%"+orderNo+"%' order by do.create_stamp desc"
+		                + " where do.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%"+departNo+"%' and dt2.transfer_order_no like '%"+orderNo+"%' and do.create_stamp between '" + beginTime + "' and '" + endTime + "' order by do.create_stamp desc"
 		                + sLimit;
         }
         Record rec = Db.findFirst(sqlTotal);

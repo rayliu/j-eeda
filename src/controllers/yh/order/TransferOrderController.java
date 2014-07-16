@@ -96,8 +96,7 @@ public class TransferOrderController extends Controller {
                     + " left join contact c2 on p2.contact_id = c2.id"
                     + " left join office o on t.office_id = o.id where t.status!='取消' and t.order_no like '%" + orderNo + "%' and t.status like '%" + status
                     + "%' and t.address like '%" + address + "%' and c1.abbr like '%" + customer + "%' and ifnull(c2.abbr,'') like '%" + sp
-                    + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime + "' and '" + endTime
-                    + "'";
+                    + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
