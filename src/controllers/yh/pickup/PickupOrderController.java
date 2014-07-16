@@ -15,6 +15,7 @@ import models.TransferOrder;
 import models.TransferOrderItem;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -104,30 +105,40 @@ public class PickupOrderController extends Controller {
 
     // 拼车单列表显示
     public void pickuplist() {
+    	String orderNo = getPara("orderNo");
+    	String departNo = getPara("departNo");
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-
-        String sqlTotal = "select count(1) total from depart_order do "
-                + " left join party p on do.driver_id = p.id and p.party_type = '"
-                + Party.PARTY_TYPE_DRIVER + "'"
-                + " left join contact c on p.contact_id = c.id "
-                + " where do.status!='取消' and combine_type = '"
-                + DepartOrder.COMBINE_TYPE_PICKUP + "'";
+        String sql = "";
+        String sqlTotal = "";
+        if(orderNo == null && departNo == null){
+	        sqlTotal = "select count(1) total from depart_order do " + ""
+	        		+ " left join carinfo c on do.driver_id = c.id "
+		            + " where do.status!='取消' and combine_type = '"
+	                + DepartOrder.COMBINE_TYPE_PICKUP + "'";
+	
+	        sql = "select do.*,c.driver,c.phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
+		                + " left join carinfo c on do.driver_id = c.id "
+		                + " where do.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' order by do.create_stamp desc"
+		                + sLimit;
+        }else{
+        	sqlTotal = "select count(distinct do.id) total from depart_order do "
+        			+ " left join carinfo c on do.driver_id = c.id "
+        			+ " left join depart_transfer dt2 on dt2.depart_id = do.id"
+	                + " where do.status!='取消' and combine_type = '"
+	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%"+departNo+"%' and dt2.transfer_order_no like '%"+orderNo+"%'";
+	
+	        sql = "select distinct do.*,c.driver,c.phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
+	        			+ " left join carinfo c on do.driver_id = c.id "
+		                + " left join depart_transfer dt2 on dt2.depart_id = do.id"
+		                + " where do.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%"+departNo+"%' and dt2.transfer_order_no like '%"+orderNo+"%' order by do.create_stamp desc"
+		                + sLimit;
+        }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-
-        String sql = "select do.*,c.contact_person,c.phone, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
-                + " left join party p on do.driver_id = p.id and p.party_type = '"
-                + Party.PARTY_TYPE_DRIVER
-                + "'"
-                + " left join contact c on p.contact_id = c.id where do.status!='取消' and combine_type = '"
-                + DepartOrder.COMBINE_TYPE_PICKUP
-                + "' order by do.create_stamp desc" + sLimit;
         List<Record> warehouses = Db.find(sql);
 
         Map map = new HashMap();
@@ -388,7 +399,7 @@ public class PickupOrderController extends Controller {
     public void savePickupOrder() {
         DepartOrder pickupOrder = null;
         String pickId = getPara("pickupId");
-        Party party = null;
+        Carinfo carinfo = null;
         if (pickId == null || "".equals(pickId)) {
             pickupOrder = new DepartOrder();
             pickupOrder.set("depart_no", getPara("order_no"));
@@ -413,11 +424,11 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("create_stamp", sqlDate);
             String driveId = getPara("driver_id");
             if (driveId == null || "".equals(driveId)) {
-                party = saveDriver();
+            	carinfo = saveDriver();
             } else {
-                party = updateDriver(driveId);
+            	carinfo = updateDriver(driveId);
             }
-            pickupOrder.set("driver_id", party.get("id"));
+            pickupOrder.set("driver_id", carinfo.get("id"));
             if (!getPara("sp_id").equals("")) {
                 pickupOrder.set("sp_id", getPara("sp_id"));
             }
@@ -480,11 +491,11 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("create_stamp", sqlDate);
             String driveId = getPara("driver_id");
             if (driveId == null || "".equals(driveId)) {
-                party = saveDriver();
+            	carinfo = saveDriver();
             } else {
-                party = updateDriver(driveId);
+            	carinfo = updateDriver(driveId);
             }
-            pickupOrder.set("driver_id", party.get("id"));
+            pickupOrder.set("driver_id", carinfo.get("id"));
             if (!getPara("sp_id").equals("")) {
                 pickupOrder.set("sp_id", getPara("sp_id"));
             }
@@ -553,45 +564,27 @@ public class PickupOrderController extends Controller {
     }
 
     // 保存司机
-    private Party saveDriver() {
-        Contact contact = setContact();
-        Party party = new Party();
-        party.set("contact_id", contact.getLong("id"));
-        party.set("create_date", new Date());
-        party.set("creator", currentUser.getPrincipal());
-        party.set("party_type", Party.PARTY_TYPE_DRIVER);
-        party.save();
-        return party;
-    }
-
-    // 保存联系人
-    private Contact setContact() {
-        Contact contact = new Contact();
-        contact.set("contact_person", getPara("driver_name"));
-        contact.set("phone", getPara("driver_phone"));
-        contact.save();
-        return contact;
+    private Carinfo saveDriver() {
+        Carinfo carinfo = new Carinfo();
+        carinfo.set("driver", getPara("driver_name"));
+        carinfo.set("phone", getPara("driver_phone"));
+        carinfo.set("car_no", getPara("car_no"));
+        carinfo.set("cartype", getPara("car_type"));
+        carinfo.set("length", getPara("car_size"));
+        carinfo.save();
+        return carinfo;
     }
 
     // 更新司机
-    private Party updateDriver(String driveId) {
-        Party party = Party.dao.findById(driveId);
-        Contact contact = updateContact(party);
-        party.set("contact_id", contact.getLong("id"));
-        party.set("create_date", new Date());
-        party.set("creator", currentUser.getPrincipal());
-        party.set("party_type", Party.PARTY_TYPE_DRIVER);
-        party.update();
-        return party;
-    }
-
-    // 更新联系人
-    private Contact updateContact(Party party) {
-        Contact contact = Contact.dao.findById(party.get("contact_id"));
-        contact.set("contact_person", getPara("driver_name"));
-        contact.set("phone", getPara("driver_phone"));
-        contact.update();
-        return contact;
+    private Carinfo updateDriver(String driveId) {
+    	Carinfo carinfo = Carinfo.dao.findById(driveId);
+        carinfo.set("driver", getPara("driver_name"));
+        carinfo.set("phone", getPara("driver_phone"));
+        carinfo.set("car_no", getPara("car_no"));
+        carinfo.set("cartype", getPara("car_type"));
+        carinfo.set("length", getPara("car_size"));
+        carinfo.update();
+        return carinfo;
     }
 
     // 修改拼车单
@@ -605,8 +598,7 @@ public class PickupOrderController extends Controller {
                 + getPara("id") + ")";
         DepartOrder pickupOrder = DepartOrder.dao.findFirst(sql);
         setAttr("pickupOrder", pickupOrder);
-        Party party = Party.dao.findById(pickupOrder.get("driver_id"));
-        Contact driver = Contact.dao.findById(party.get("contact_id"));
+        Carinfo driver = Carinfo.dao.findById(pickupOrder.get("driver_id"));
         setAttr("driver", driver);
 
         Long sp_id = pickupOrder.get("sp_id");

@@ -13,7 +13,7 @@
  			driverList.empty();
  			for(var i = 0; i < data.length; i++)
  			{
- 				driverList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', > "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
+ 				driverList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH+"' phone='"+data[i].PHONE+"' driver='"+data[i].DRIVER+"' > "+data[i].DRIVER+" "+data[i].PHONE+" "+data[i].CAR_NO+"</a></li>");
  			}
  		},'json');
  		
@@ -26,9 +26,12 @@
 	  	
  	 // 选中司机
  	 $('#driverList').on('mousedown', '.fromLocationItem', function(e){	
- 		 $("#driver_id").val($(this).attr('partyId'));
-	  	 $('#driverMessage').val($(this).attr('CONTACT_PERSON'));
+ 		 $("#driver_id").val($(this).attr('id'));
+	  	 $('#driverMessage').val($(this).attr('driver'));
 	  	 $('#driver_phone').val($(this).attr('phone'));
+	  	 $('#car_no').val($(this).attr('carNo'));
+	  	 $('#cartype').val($(this).attr('carType'));
+	  	 $('#carsize').val($(this).attr('length'));	  	 
 	     $('#driverList').hide();   
      });
 

@@ -117,9 +117,13 @@ public class DataInitUtil {
             // 配送单货品表
             stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment primary key,transfer_no varchar(50),delivery_id bigint,transfer_order_id bigint,transfer_item_id bigint);");
 
+            // carinfo 车辆信息表
+            stmt.executeUpdate("create table if not exists carinfo(id bigint auto_increment primary key,driver varchar(50),phone varchar(50),car_no varchar(50),cartype varchar(50),"
+                    + "status varchar(50),length double);");
+
             // 发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
-                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,remark varchar(255),driver_id bigint,foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id));");
+                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,remark varchar(255),driver_id bigint,foreign key(driver_id) references carinfo(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id));");
 
             // 发车单运输单中间表
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,depart_id bigint,order_id bigint,transfer_order_no varchar(255),foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id));");
@@ -138,10 +142,6 @@ public class DataInitUtil {
 
             stmt.executeUpdate("create table if not exists inventory_item(id bigint auto_increment primary key,party_id bigint,warehouse_id bigint,product_id bigint,item_no varchar(50),item_name varchar(50),status varchar(50),expire_date datetime,"
                     + "lot_no varchar(50),uom varchar(20),caton_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
-
-            // carinfo 车辆信息表
-            stmt.executeUpdate("create table if not exists carinfo(id bigint auto_increment primary key,driver varchar(50),phone varchar(50),car_no varchar(50),cartype varchar(50),"
-                    + "status varchar(50),length double);");
 
             stmt.close();
             // conn.commit();
@@ -677,17 +677,21 @@ public class DataInitUtil {
                     + "creator bigint, create_stamp timestamp,last_modified_by bigint,"
                     + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
 
+            // 司机
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver) values('15512345678', '粤A5687', '平板车', 18.5, '张三');");
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver) values('15812345678', '粤A2341', '高栏车', 12.5, '李四');");
+
             // 发车单
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('FC2014061000001', '2014-06-10 10:35:35.1','DEPART','粤A876596','平板车','26','20');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('FC2014061000001', '2014-06-10 10:35:35.1','DEPART','粤A876596','平板车',1,'20');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '1','YS2014042600001');");
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('FC2014061000002', '2014-06-10 10:39:35.1','DEPART','粤A879588','集装车','27','25');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('FC2014061000002', '2014-06-10 10:39:35.1','DEPART','粤A879588','集装车',2,'25');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('2', '2','YS2014042600002');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '5','YS2014042600005');");
 
             // 拼车单
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by) values('PC2014061000001', '2014-06-10 10:35:35.1','PICKUP','粤A876596','平板货车','26','20','新建',3);");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by) values('PC2014061000001', '2014-06-10 10:35:35.1','PICKUP','粤A876596','平板货车',1,'20','新建',3);");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('3', '1','YS2014042600001');");
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by,pickup_mode) values('PC2014061000002', '2014-06-10 10:39:35.1','PICKUP','粤A879588','箱式货车','27','25','新建',4,'own');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by,pickup_mode) values('PC2014061000002', '2014-06-10 10:39:35.1','PICKUP','粤A879588','箱式货车',2,'25','新建',4,'own');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '4','YS2014042600004');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '5','YS2014042600005');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '3','YS2014042600003');");
@@ -698,7 +702,7 @@ public class DataInitUtil {
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(3, 3, '2014-06-28 10:40:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(4, 3, '2014-06-28 10:43:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(6, 3, '2014-06-28 11:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
-
+            
             stmt.close();
             // conn.commit();
             conn.close();

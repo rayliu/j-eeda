@@ -769,11 +769,9 @@ public class TransferOrderController extends Controller {
         String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-                    + Party.PARTY_TYPE_DRIVER + "' and (contact_person like '%" + input + "%' or phone like '%" + input + "%') limit 0,10");
+            locationList = Db.find("select * from carinfo where driver like '%" + input + "%' or phone like '%" + input + "%'");
         }else{
-        	locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-        			+ Party.PARTY_TYPE_DRIVER + "'");        	
+        	locationList = Db.find("select * from carinfo");        	
         }
         renderJson(locationList);
     }
