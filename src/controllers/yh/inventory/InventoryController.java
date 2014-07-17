@@ -623,7 +623,7 @@ public class InventoryController extends Controller {
 
         WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
         warehouseOrder.set("status", "已入库");
-        // warehouseOrder.update();
+        warehouseOrder.update();
         List<Record> list = Db
                 .find("select * from warehouse_order_item where warehouse_order_id = '"
                         + id + "'");
