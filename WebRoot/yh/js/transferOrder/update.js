@@ -657,17 +657,17 @@ $(document).ready(function() {
 					}
 				},'json');
 	        }
-	    	
-			var order_id = $("#order_id").val();
-			$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
-				var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
-				transferOrderMilestoneTbody.empty();
-				for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
-				{
-					transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
-				}
-			},'json');
 		}
+    	
+		var order_id = $("#order_id").val();
+		$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+			transferOrderMilestoneTbody.empty();
+			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
+			{
+				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+			}
+		},'json');
 	});
 	
 	// 保存新里程碑
