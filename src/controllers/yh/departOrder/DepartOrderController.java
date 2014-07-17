@@ -12,6 +12,7 @@ import java.util.Map;
 import models.DepartOrder;
 import models.DepartOrderItemdetail;
 import models.DepartTransferOrder;
+import models.InventoryItem;
 import models.Location;
 import models.TransferOrder;
 import models.TransferOrderItemDetail;
@@ -61,8 +62,8 @@ public class DepartOrderController extends Controller {
         }
 
         String sqlTotal = "select count(1) total from depart_order deo "
-                + " left join party p on deo.driver_id = p.id "
-                + " left join contact c on p.contact_id = c.id " + " where combine_type = '" + DepartOrder.COMBINE_TYPE_DEPART + "'";
+            	+"left join carinfo  car on deo.driver_id=car.id"
+                + " where combine_type = '" + DepartOrder.COMBINE_TYPE_DEPART + "'";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
@@ -71,7 +72,7 @@ public class DepartOrderController extends Controller {
         		+"left join carinfo  car on deo.driver_id=car.id"
                 + " left join contact c on p.contact_id = c.id where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
                 + DepartOrder.COMBINE_TYPE_DEPART
-                + "' order by deo.create_stamp desc";
+                + "' order by deo.create_stamp desc"+sLimit;
        
        List<Record> depart = null;
         if(orderNo==null&&departNo==null&&status==null&&sp==null&&beginTime==null&&endTime==null){
@@ -90,14 +91,13 @@ public class DepartOrderController extends Controller {
     				+" left join contact c on p.contact_id = c.id "
     				+" left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )" 
     				+"  where deo.combine_type = 'DEPART' and ifnull(deo.status,'') like '%"+status+"%' and ifnull(deo.depart_no,'') like '%"+departNo+"%' and ifnull(c.company_name,'')  like '%"+sp+"%' and ifnull(tr.order_no,'') like '%"+orderNo+"%'"
-    				+ " and deo.create_stamp between '"+beginTime+"' and '"+endTime+"'group by deo.id order by deo.create_stamp desc ";
+    				+ " and deo.create_stamp between '"+beginTime+"' and '"+endTime+"'group by deo.id order by deo.create_stamp desc "+sLimit;
         	depart = Db.find(sql_seach);
         }
         Map map = new HashMap();
         map.put("sEcho", pageIndex);
         map.put("iTotalRecords", rec.getLong("total"));
         map.put("iTotalDisplayRecords", rec.getLong("total"));
-
         map.put("aaData", depart);
 
         renderJson(map);
@@ -668,9 +668,12 @@ public class DepartOrderController extends Controller {
     // 修改发车单状态
     public void updatestate() {
         String depart_id = getPara("depart_id");// 发车单id
-        String order_state = getPara("order_state");// 发车单id
+        String order_state = getPara("order_state");// 状态
         DepartOrder dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
         dp.set("status", order_state).update();
+        if("已入库".equals(order_state)){
+        	 productWarehouse(depart_id);//产品入库
+        }
         savePickupOrderMilestone(dp, order_state);
         renderJson(dp);
     }
@@ -888,13 +891,15 @@ public class DepartOrderController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from office";
+        String sql = "select count(1) total from transfer_order_milestone trom "
+        		 + "left join transfer_order tor on tor.id=trom.order_id " + "left join user_login  us on us.id=trom.create_by "
+                 + "where trom.status='在途' and trom. type='" + TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE + "'";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
         List<TransferOrderMilestone> transferOrderMilestone = TransferOrderMilestone.dao
                 .find("select trom.*,tor.order_no as order_no,us.user_name as usernames from transfer_order_milestone trom "
                         + "left join transfer_order tor on tor.id=trom.order_id " + "left join user_login  us on us.id=trom.create_by "
-                        + "where trom.status='在途' and trom. type='" + TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE + "'");
+                        + "where trom.status='在途' and trom. type='" + TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE + "'"+sLimit);
        
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -1137,13 +1142,45 @@ public class DepartOrderController extends Controller {
     		renderJson(car);
     	}
     }
-    //保存司机信息
-    public void saveDriver(){
-    	
-    }
     //产品入库
     public  void productWarehouse(String depart_id){
     	int id=Integer.parseInt(depart_id);
+    	String sql="select order_id, item_id  from depart_transfer_itemdetail  where depart_id ="+id+"  group by item_id";
+    	List<Record>  de=Db.find(sql);
+    	 String order_id="";
+         String tr_item_id="";
+         for(int i=0;i<de.size();i++){
+         	String item_id=de.get(i).get("item_id").toString();
+         	order_id=de.get(i).get("order_id").toString();
+         	tr_item_id +=item_id+",";
+         }
+         tr_item_id = tr_item_id.substring(0, tr_item_id.length() - 1);
+         String tr_sql="select * from transfer_order_item where id in ("+tr_item_id+")";
+         List<Record> item=Db.find(tr_sql);
+         String tr_order_sql="select * from transfer_order where id="+Integer.parseInt(order_id);
+         TransferOrder tr_order_list=TransferOrder.dao.findFirst(tr_order_sql);
+         InventoryItem in_item=null;
+         for(int i=0;i<item.size();i++){
+        	 if(!"null".equals(item.get(i).get("product_id"))){
+        		 in_item=new InventoryItem();
+        		 String in_item_check_sql="select * from inventory_item where product_id="+Integer.parseInt(item.get(i).get("product_id").toString())+""
+        		 		+ " and warehouse_id="+Integer.parseInt(tr_order_list.get("warehouse_id").toString())+"";
+        		 InventoryItem in_item_check=InventoryItem.dao.findFirst(in_item_check_sql);
+        		 if(in_item_check==null){
+        			 in_item.set("party_id",Integer.parseInt(tr_order_list.get("notify_party_id").toString()));
+        			 in_item.set("total_quantity",Double.parseDouble(item.get(i).get("amount").toString()));
+        			 in_item.set("warehouse_id",Integer.parseInt(tr_order_list.get("warehouse_id").toString()));
+            		 in_item.set("product_id",Integer.parseInt(item.get(i).get("product_id").toString()));
+            		 in_item.save();
+        		 }else{
+        			 in_item=InventoryItem.dao.findById(Integer.parseInt(in_item_check.get("id").toString()));
+        			 double amount=Double.parseDouble(in_item.get("total_quantity").toString())+Double.parseDouble(tr_order_list.get("amount").toString());
+        			 in_item.set("total_quantity", amount).update();
+        		 }
+        		
+        	 }
+         }
+         
     	
     }
     
