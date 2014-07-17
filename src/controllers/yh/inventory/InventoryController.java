@@ -149,13 +149,13 @@ public class InventoryController extends Controller {
         }
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from warehouse_order_item";
+        String sql = "select count(1) total from inventory_item";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
         // 获取当前页的数据
-        List<Record> orders = Db
-                .find("select * from inventory_item i_t where warehouse_id ="
-                        + id);
+        List<Record> orders = Db.find("select * from inventory_item i_t "
+                + "left join product p on  p.id =i_t.product_id "
+                + "where warehouse_id =" + id);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -622,8 +622,7 @@ public class InventoryController extends Controller {
         Date createDate = Calendar.getInstance().getTime();
 
         WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
-        warehouseOrder.set("status", "已入库");
-        warehouseOrder.update();
+
         List<Record> list = Db
                 .find("select * from warehouse_order_item where warehouse_order_id = '"
                         + id + "'");
@@ -653,12 +652,6 @@ public class InventoryController extends Controller {
                 }
             }
         }
-        for (int i = 0; i < inverntory.size(); i++) {
-            if (inverntory.get(i).get("warehouse_id")
-                    .equals(warehouseOrder.get("warehouse_id"))) {
-
-            }
-        }
         // 判断过滤重复的货品，已存在不添加只加数量
         List<Record> list2 = Db
                 .find("select warehouse_id,product_id from warehouse_order_item w "
@@ -679,11 +672,12 @@ public class InventoryController extends Controller {
                             + list2.get(i).get("product_id") + "'");
 
             InventoryItem inventoryItem = new InventoryItem();
-            inventoryItem.set("party_id", warehouseOrder.get("party_id"))
+            inventoryItem
+                    .set("party_id", warehouseOrder.get("party_id"))
                     .set("warehouse_id", warehouseOrder.get("warehouse_id"))
                     .set("product_id", list3.get(0).get("product_id"))
-                    .set("item_name", list3.get(0).get("item_name"))
-                    .set("item_no", list3.get(0).get("item_no"))
+                    // .set("item_name", list3.get(0).get("item_name"))
+                    // .set("item_no", list3.get(0).get("item_no"))
                     .set("uom", list3.get(0).get("uom"))
                     .set("lot_no", list3.get(0).get("lot_no"))
                     .set("total_quantity", list3.get(0).get("total_quantity"))
@@ -695,6 +689,8 @@ public class InventoryController extends Controller {
             inventoryItem.save();
 
         }
+        warehouseOrder.set("status", "已入库");
+        warehouseOrder.update();
         renderJson("{\"success\":true}");
     }
 
@@ -705,10 +701,6 @@ public class InventoryController extends Controller {
         List<Record> warehouseItem = Db
                 .find("select * from warehouse_order_item where warehouse_order_id = '"
                         + id + "'");
-        // 出库单完成出库
-        WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
-        warehouseOrder.set("status", "已出库");
-        warehouseOrder.update();
 
         // 获取已入库的库存
         List<Record> inverntory = Db
@@ -736,6 +728,11 @@ public class InventoryController extends Controller {
                 InventoryItem.dao.deleteById(list.get(i).get("id"));
             }
         }
+        // 出库单完成出库
+        WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
+        warehouseOrder.set("status", "已出库");
+        warehouseOrder.update();
+
         renderJson("{\"success\":true}");
     }
 
