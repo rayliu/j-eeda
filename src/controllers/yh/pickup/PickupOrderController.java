@@ -708,6 +708,7 @@ public class PickupOrderController extends Controller {
             transferOrder.update();
             TransferOrderMilestone milestone = new TransferOrderMilestone();
             milestone.set("status", "已入货场");
+            milestone.set("location", "");
             milestone.set("order_id", transferOrder.get("id"));
             String name = (String) currentUser.getPrincipal();
             List<UserLogin> users = UserLogin.dao

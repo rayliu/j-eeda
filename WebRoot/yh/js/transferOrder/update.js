@@ -498,6 +498,10 @@ $(document).ready(function() {
             	placeholder: ""
             },
             {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"remark",
             	placeholder: ""
             },
             null                        

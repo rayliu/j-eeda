@@ -93,13 +93,15 @@ public class TransferOrderItemController extends Controller {
         TransferOrderItem item = TransferOrderItem.dao.findById(id);
         String item_no = getPara("item_no");
         String item_name = getPara("item_name");
+        String remark = getPara("remark");
         if (!"".equals(item_no) && item_no != null){
-            item.set("item_no", item_no).update();
-            renderJson(item_no);// 必须返回传进来的值，否则js会报错
+        	item.set("item_no", item_no).update();
         }else if(!"".equals(item_name) && item_name != null){
-            item.set("item_name", item_name).update();
-            renderJson(item_name);
+        	item.set("item_name", item_name).update();
+        }else if(!"".equals(remark) && remark != null){
+        	item.set("remark", remark).update();        	
         }
+        renderJson(item);// 必须返回传进来的值，否则js会报错        
     }
 
     // 保存货品
