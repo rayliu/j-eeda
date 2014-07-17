@@ -43,14 +43,14 @@ public class TransferOrderItemDetailController extends Controller {
         if(itemId != "-1"){
 	        sqlTotal = "select count(1) total from transfer_order_item_detail where item_id =" + itemId;
 	
-	        sql = "select d.*,c.contact_person,c.phone,c.address,d.remark from transfer_order_item_detail d"
+	        sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
 					+ " left join party p on d.notify_party_id = p.id"
 					+ " left join contact c on p.contact_id = c.id"
 					+ " where d.item_id ="+itemId + sLimit;	
         }else{
         	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id="+orderId;
 	
-	        sql = "select d.*,c.contact_person,c.phone,c.address,d.remark from transfer_order_item_detail d"
+	        sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
 					+ " left join party p on d.notify_party_id = p.id"
 					+ " left join contact c on p.contact_id = c.id"
 	                + " where order_id = "+orderId + sLimit;	

@@ -770,7 +770,7 @@ $(document).ready(function() {
         			return remark;
         		}},
             {  
-                "mDataProp": "null", 
+                "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {
                     return	"<a class='btn btn-success editDetail' code='?item_id="+obj.aData.ID+"&notify_party_id="+obj.aData.NOTIFY_PARTY_ID+"'>"+
