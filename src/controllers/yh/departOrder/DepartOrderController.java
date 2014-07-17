@@ -66,7 +66,7 @@ public class DepartOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select deo.depart_no ,deo.create_stamp ,deo.status,car.*, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
+        String sql = "select deo.id as depart_id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,car.*, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
                 + " left join party p on deo.driver_id = p.id "
         		+"left join carinfo  car on deo.driver_id=car.id"
                 + " left join contact c on p.contact_id = c.id where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
@@ -83,7 +83,7 @@ public class DepartOrderController extends Controller {
              if (endTime == null || "".equals(endTime)) {
                  endTime = "9999-12-31";
              }
-             String sql_seach ="select deo.depart_no ,deo.create_stamp ,deo.status,car.*, group_concat(tr.order_no separator ' ') as transfer_order_no "
+             String sql_seach ="select deo.id as depart_id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,car.*, group_concat(tr.order_no separator ' ') as transfer_order_no "
     				 +" from depart_order deo" 
     				+" left join party p on deo.driver_id = p.id and p.party_type = 'DRIVER' " 
     				+"left join carinfo  car on deo.driver_id=car.id"
@@ -111,7 +111,6 @@ public class DepartOrderController extends Controller {
                 render("/yh/departOrder/allTransferOrderList.html");
         } else {
             int depart_id = Integer.parseInt(getPara());
-
             getIintedit(depart_id);
         }
 

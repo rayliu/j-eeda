@@ -17,7 +17,7 @@ var dataTable =$('#dataTables-example').dataTable({
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='' href='/yh/departOrder/add/"+obj.aData.ID+"'>"+
+                    return "<a class='' href='/yh/departOrder/add/"+obj.aData.DEPART_ID+"'>"+
                                 obj.aData.DEPART_NO +
                             "</a>";
                 }
@@ -27,13 +27,13 @@ var dataTable =$('#dataTables-example').dataTable({
             {"mDataProp":"CAR_NO"},
             {"mDataProp":"CARTYPE"},     
             {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"STATUS"},
+            {"mDataProp":"DEPART_STATUS"},
             {"mDataProp":"TRANSFER_ORDER_NO"},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",               
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-danger cancelbutton' href=' /yh/departOrder/cancel/"+obj.aData.ID+"'>"+
+                    return "<a class='btn btn-danger cancelbutton' href=' /yh/departOrder/cancel/"+obj.aData.DEPART_ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "取消"+
                             "</a>";
