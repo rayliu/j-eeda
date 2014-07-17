@@ -182,25 +182,38 @@ public class TransferOrderItemController extends Controller {
             item.set("order_id", getPara("transfer_order_id"));            
             item.save();
             if (amount != null && !"".equals(amount)) {
-                saveTransferOrderDetail(item);
+                saveTransferOrderDetail(item, productId);
             }
         }
         renderJson(item);
     }
 
     // 保存货品同时保存单品
-    private void saveTransferOrderDetail(TransferOrderItem item) {
+    private void saveTransferOrderDetail(TransferOrderItem item, String productId) {
 		TransferOrderItemDetail transferOrderItemDetail = null;
 		Integer amount = Integer.parseInt(item.getStr("amount"));
-		for(int i=0;i<amount;i++){
-			transferOrderItemDetail = new TransferOrderItemDetail();
-			transferOrderItemDetail.set("item_name", item.get("item_name"));
-			transferOrderItemDetail.set("volume", item.get("volume"));
-			transferOrderItemDetail.set("weight", item.get("weight"));
-			transferOrderItemDetail.set("item_id", item.get("id"));
-			transferOrderItemDetail.set("order_id", item.get("order_id"));
-			transferOrderItemDetail.save();
-    	}
+		if (productId == null || "".equals(productId)) {
+			for(int i=0;i<amount;i++){
+				transferOrderItemDetail = new TransferOrderItemDetail();
+				transferOrderItemDetail.set("item_name", item.get("item_name"));
+				transferOrderItemDetail.set("volume", item.get("volume"));
+				transferOrderItemDetail.set("weight", item.get("weight"));
+				transferOrderItemDetail.set("item_id", item.get("id"));
+				transferOrderItemDetail.set("order_id", item.get("order_id"));
+				transferOrderItemDetail.save();
+	    	}
+		}else{
+			Product product = Product.dao.findById(productId);
+			for(int i=0;i<amount;i++){
+				transferOrderItemDetail = new TransferOrderItemDetail();
+				transferOrderItemDetail.set("item_name", product.get("item_name"));
+				transferOrderItemDetail.set("volume", product.get("volume"));
+				transferOrderItemDetail.set("weight", product.get("weight"));
+				transferOrderItemDetail.set("item_id", item.get("id"));
+				transferOrderItemDetail.set("order_id", item.get("order_id"));
+				transferOrderItemDetail.save();
+	    	}
+		}
 	}
 
 	// 更新产品
