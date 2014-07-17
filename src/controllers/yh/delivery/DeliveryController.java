@@ -292,7 +292,7 @@ public class DeliveryController extends Controller {
 
         if (id != null) {
             List<Contact> customers = Contact.dao
-                    .find("select *,p.id as customerId from contact c,party p,TRANSFER_ORDER t where p.contact_id=c.id and t.customer_id = p.id and t.id ="
+                    .find("select *,p.id as customerId from contact c,party p,transfer_order t where p.contact_id=c.id and t.customer_id = p.id and t.id ="
                             + id + "");
             Contact customer = customers.get(0);
             setAttr("customer", customer);
