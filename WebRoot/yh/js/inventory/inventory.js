@@ -151,6 +151,15 @@ $(document).ready(function() {
 			//productDataTable.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist?categoryId="+partyId;
 			//productDataTable.fnDraw();
 			$('#customerList').hide();
+			
+			$.post('/yh/gateIn/confirmproduct/'+partyId,function(data){
+                console.log(data);
+             if(data.success){
+            	 
+             }else{
+                 alert('客户无产品！');
+             }
+             },'json');
 	    }); 
 		
 		/*var trArr=[];

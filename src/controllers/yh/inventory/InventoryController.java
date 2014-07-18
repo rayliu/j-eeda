@@ -736,4 +736,17 @@ public class InventoryController extends Controller {
         renderJson("{\"success\":true}");
     }
 
+    // 选中客户验证是否有产品
+    public void confirmproduct() {
+        String id = getPara();
+        List<Record> list = Db
+                .find("select  * from product p left join category c on p.category_id =c.id where c.customer_id ='"
+                        + id + "'");
+        if (list.size() > 0) {
+            renderJson("{\"success\":true}");
+        } else {
+            renderJson("{\"success\":false}");
+        }
+
+    }
 }
