@@ -622,7 +622,7 @@
     	    	var getIindepart_no=$("#getIin_depart_no").text();
     	    	$("#getIindepart_no").val(getIindepart_no);
     	       $('#orderForm').submit();
-    	    	});
+    	    });
     	    
     	    $("#box_one_edit").click(function(e){
     	    	 $('#boxoneForm').submit();

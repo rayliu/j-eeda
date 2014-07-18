@@ -6,6 +6,7 @@
                 <div class="col-lg-12">
                     <h1 class="page-header">拼车单</h1>                  
                     <input type="hidden" id="pickupOrderId" value="${pickupOrder.id!''}">
+                    <input type="hidden" id="transferOrderType" value="${transferOrderAttr.order_type!''}">
                     <input type="hidden" id="finishBtnVal" value="${transferOrderMilestone.status!''}">
                 </div>
                 <!-- /.col-lg-12 -->
@@ -181,6 +182,11 @@
                                             <div class="form-group">
                                             <label>路桥费</label>
                                             <input class="form-control" id="roadBridge" name="roadBridge" value="${pickupOrder.road_bridge!''}">
+                                            </div>
+                                                                               
+                                            <div class="form-group">
+                                            <label>客户支付中转费</label>
+                                            <input class="form-control" id="income" name="income" value="${pickupOrder.income!''}">
                                             </div>
                                             
                                             <div class="form-group">
@@ -439,6 +445,29 @@
                                     </div>
                             </div>
                         </div>
+                        
+                        <div class="modal fade" id="box_one" tabindex="-1">
+							<div class="modal-dialog">
+                                <div class="col-lg-4" class="col-lg-4" style="border-top-width: 0px; margin-top: 100px; width: 350px; height: 200px; margin-left: 150px;">
+	                    			<div class="panel panel-default">
+		                       			<div class="panel-heading">
+		                            		温馨提示
+		                        		</div>
+		                       			<div class="panel-body">
+		                            		<p>单据创建完毕,是否继续创建？</p>
+		                        		</div>
+		                        		<form id="boxoneForm" method="post" action="/yh/departOrder/boxedit">
+		                        			<input value="${edit_depart_id!''}" name="edit_depart_id" type="hidden">
+			                       			<div class="panel-footer">
+			                          			<a type="button" class="btn btn-default" id="box_one_edit">否,编辑上次发车单</a>
+			                           			<a type="button" class="btn btn-default" id="box_one_confige" href="/yh/departOrder/add">是</a>
+			                        		</div>                        		
+		                        		</form>
+	                   				</div> 
+				                </div>
+			                </div>      
+			            </div> 
+                        
                         <!-- /.panel-body --> 
                         <div class=".tooltip-demo">
                             <hr/>

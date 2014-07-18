@@ -24,6 +24,8 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		if(obj.aData.ORDER_TYPE == "salesOrder"){
             			return "销售订单";
+            		}else if(obj.aData.ORDER_TYPE == "replenishmentOrder"){
+            			return "补货订单";
             		}else if(obj.aData.ORDER_TYPE == "arrangementOrder"){
             			return "调拨订单";
             		}else if(obj.aData.ORDER_TYPE == "cargoReturnOrder"){

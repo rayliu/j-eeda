@@ -125,18 +125,36 @@
        
          "aoColumns": [
               { "mDataProp": null,
-                /*"fnRender": function(obj) {
-             	   the_id=obj.aData.ID;
-                    return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
-                }*/
-              },
+                "fnRender": function(obj) {
+                var Returnhtml_one="<input type='checkbox' class='checkedOrUnchecked' name='order_check_box' checked='checked' value={"+obj.aData.ID+","+obj.aData.ITEM_ID+"}>";
+         	    var Returnhtml_two="<input type='checkbox' class='checkedOrUnchecked' name='order_check_box'  value={"+obj.aData.ID+","+obj.aData.ITEM_ID+"}>";
+	         	    if(item_detail_id.length>0){
+	         	       var size=0;
+	         	       for(var i=0;i<item_detail_id.length;i++){
+	                	   if(item_detail_id[i]==obj.aData.ID){
+	                		   size++;
+	                	   }
+	                   }
+	         	       if(size>=1){
+	         	    	   return Returnhtml_one;
+	         	       }else{
+	         	    	   return Returnhtml_two;
+	         	       }
+	         	    }else{
+	         	       return Returnhtml_one;
+	         	    }
+                }
+             },
              { "mDataProp": "ITEM_NAME"},      
              { "mDataProp": "ITEM_NO"},
              { "mDataProp": "SERIAL_NO"},
              { "mDataProp": "VOLUME"},
              { "mDataProp": "WEIGHT"},
              { "mDataProp": "REMARK"},           
-         ]        
+         ],
+         "fnInitComplete": function(oSettings, json) {
+         	//设置checkbok 选中  
+         }       
      });
 	
     //选择单品保存
@@ -306,7 +324,10 @@
 					$("#pickupId").val(data.ID);
 			        showFinishBut();
 					findAllAddress();
-				  	$("#style").show();	             
+				  	$("#style").show();
+			        if($("#transferOrderType").val() == 'replenishmentOrder'){
+			        	
+			        }	             
 				}else{
 					alert('数据保存失败。');
 				}
@@ -320,7 +341,10 @@
 					$("#pickupId").val(data.ID);	
 			        showFinishBut();
 					findAllAddress();
-				  	$("#style").show();	            
+				  	$("#style").show();	 
+			        if($("#transferOrderType").val() == 'replenishmentOrder'){
+			        	
+			        }           
 				}else{
 					alert('数据保存失败。');
 				}
@@ -599,6 +623,8 @@
             	"fnRender": function(obj) {
             		if(obj.aData.ORDER_TYPE == "salesOrder"){
             			return "销售订单";
+            		}else if(obj.aData.ORDER_TYPE == "replenishmentOrder"){
+            			return "补货订单";
             		}else if(obj.aData.ORDER_TYPE == "arrangementOrder"){
             			return "调拨订单";
             		}else if(obj.aData.ORDER_TYPE == "cargoReturnOrder"){
@@ -673,4 +699,10 @@
     	},'json');
         $('#addExternalTransferOrder').modal('hide');
     });
+    
+    // 判断订单类型是否是补货
+    if($("#transferOrderType").val() == 'replenishmentOrder'){
+    	$("#checkbox2").prop('checked', true);
+    	$("#warehouseDiv").show();
+    }
 } );

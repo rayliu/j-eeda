@@ -55,6 +55,11 @@ public class PickupOrderController extends Controller {
     public void createPickupOrder() {
         String list = this.getPara("localArr");
         setAttr("localArr", list);
+        String[] transferOrderIds = list.split(",");
+
+    	TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
+    	setAttr("transferOrderAttr", transferOrderAttr);
+
         logger.debug("localArr" + list);
         String order_no = null;
         setAttr("saveOK", false);
@@ -422,10 +427,9 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("combine_type", DepartOrder.COMBINE_TYPE_PICKUP);
             pickupOrder.set("pickup_mode", getPara("pickupMode"));
             pickupOrder.set("address", getPara("address"));
-            pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0
-                    : getPara("kilometres"));
-            pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0
-                    : getPara("roadBridge"));
+            pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
+            pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0 : getPara("roadBridge"));
+            pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(
                     utilDate.getTime());
@@ -488,10 +492,9 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("combine_type", DepartOrder.COMBINE_TYPE_PICKUP);
             pickupOrder.set("pickup_mode", getPara("pickupMode"));
             pickupOrder.set("address", getPara("address"));
-            pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0
-                    : getPara("kilometres"));
-            pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0
-                    : getPara("roadBridge"));
+            pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
+            pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0 : getPara("roadBridge"));
+            pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));
             updateTransferOrderPickupMode(pickupOrder);
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(
@@ -702,6 +705,9 @@ public class PickupOrderController extends Controller {
                 .find("select * from depart_transfer where depart_id = ?",
                         pickupOrder.get("id"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
+        	// 入库
+            gateInWarehouse(departTransferOrder);
+            
             TransferOrder transferOrder = TransferOrder.dao
                     .findById(departTransferOrder.get("order_id"));
             transferOrder.set("status", "已入货场");
@@ -792,24 +798,8 @@ public class PickupOrderController extends Controller {
                                 pickupOrderId);
                 for (DepartTransferOrder departTransferOrder : departTransferOrders) {
                     if (endVal.equals(departTransferOrder.get("order_id") + "")) {
-                        // product_id不为空时入库
-                        TransferOrderItem transferOrderItem = TransferOrderItem.dao
-                                .findFirst("select * from transfer_order_item where order_id='"
-                                        + departTransferOrder.get("order_id")
-                                        + "'");
-                        TransferOrder tOrder = TransferOrder.dao
-                                .findById(departTransferOrder.get("order_id"));
-
-                        if (transferOrderItem.get("product_id") != null) {
-                            InventoryItem item = new InventoryItem();
-                            item.set("party_id", tOrder.get("customer_id"));
-                            item.set("warehouse_id", tOrder.get("warehouse_id"));
-                            item.set("product_id",
-                                    transferOrderItem.get("product_id"));
-                            item.set("total_quantity",
-                                    transferOrderItem.get("amount"));
-                        }
-                        System.out.println(123);
+                    	// 入库
+                        gateInWarehouse(departTransferOrder);
                         // 去掉入库的单据
                         departTransferOrder.delete();
                     }
@@ -818,6 +808,27 @@ public class PickupOrderController extends Controller {
         }
         renderJson("{\"success\":true}");
     }
+
+    // 入库
+	private void gateInWarehouse(DepartTransferOrder departTransferOrder) {
+		// product_id不为空时入库
+		TransferOrderItem transferOrderItem = TransferOrderItem.dao
+		        .findFirst("select * from transfer_order_item where order_id='"
+		                + departTransferOrder.get("order_id")
+		                + "'");
+		TransferOrder tOrder = TransferOrder.dao
+		        .findById(departTransferOrder.get("order_id"));
+
+		if (transferOrderItem.get("product_id") != null) {
+		    InventoryItem item = new InventoryItem();
+		    item.set("party_id", tOrder.get("customer_id"));
+		    item.set("warehouse_id", tOrder.get("warehouse_id"));
+		    item.set("product_id",
+		            transferOrderItem.get("product_id"));
+		    item.set("total_quantity",
+		            transferOrderItem.get("amount"));
+		}
+	}
 
     // 添加额的外运输单
     public void addExternalTransferOrder() {
