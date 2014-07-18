@@ -15,6 +15,7 @@ import models.DepartTransferOrder;
 import models.InventoryItem;
 import models.Location;
 import models.TransferOrder;
+import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -1142,6 +1143,26 @@ public class DepartOrderController extends Controller {
     		renderJson(car);
     	}
     }
+    //从发车单货品计算货品数量
+    public double productAmount(String depart_id,String item_id){
+    	int de_id=Integer.parseInt(depart_id);
+    	int it_id=Integer.parseInt(item_id);
+    	double amount=0;
+    	String sql="select * from depart_transfer_itemdetail where depart_id ="+de_id+" and item_id="+it_id+"";
+    	List<Record> de_item_amount=Db.find(sql);
+    	if(de_item_amount.size()==1){
+    		if(de_item_amount.get(0).get("itemdetail_id")==null){
+    			 TransferOrderItem tr_item=TransferOrderItem.dao.findById(it_id);
+    	         amount= Double.parseDouble(tr_item.get("amount").toString());
+    		}else{
+    			amount=de_item_amount.size();
+    		}
+    	}else if(de_item_amount.size()>1){
+    			amount=de_item_amount.size();
+    	}
+		return amount;
+    	
+    }
     //产品入库
     public  void productWarehouse(String depart_id){
     	int id=Integer.parseInt(depart_id);
@@ -1161,21 +1182,23 @@ public class DepartOrderController extends Controller {
          TransferOrder tr_order_list=TransferOrder.dao.findFirst(tr_order_sql);
          InventoryItem in_item=null;
          for(int i=0;i<item.size();i++){
-        	 if(!"null".equals(item.get(i).get("product_id"))){
+        	 if(item.get(i).get("product_id")!=null){
         		 in_item=new InventoryItem();
         		 String in_item_check_sql="select * from inventory_item where product_id="+Integer.parseInt(item.get(i).get("product_id").toString())+""
         		 		+ " and warehouse_id="+Integer.parseInt(tr_order_list.get("warehouse_id").toString())+"";
         		 InventoryItem in_item_check=InventoryItem.dao.findFirst(in_item_check_sql);
         		 if(in_item_check==null){
+        			 double amount= productAmount(depart_id,item.get(i).get("id").toString());
         			 in_item.set("party_id",Integer.parseInt(tr_order_list.get("notify_party_id").toString()));
-        			 in_item.set("total_quantity",Double.parseDouble(item.get(i).get("amount").toString()));
+        			 in_item.set("total_quantity",amount);
         			 in_item.set("warehouse_id",Integer.parseInt(tr_order_list.get("warehouse_id").toString()));
             		 in_item.set("product_id",Integer.parseInt(item.get(i).get("product_id").toString()));
             		 in_item.save();
         		 }else{
+        			double amount= productAmount(depart_id,item.get(i).get("id").toString());
         			 in_item=InventoryItem.dao.findById(Integer.parseInt(in_item_check.get("id").toString()));
-        			 double amount=Double.parseDouble(in_item.get("total_quantity").toString())+Double.parseDouble(tr_order_list.get("amount").toString());
-        			 in_item.set("total_quantity", amount).update();
+        			double total=Double.parseDouble(in_item.get("total_quantity").toString())+amount;
+        			 in_item.set("total_quantity", total).update();
         		 }
         		
         	 }

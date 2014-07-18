@@ -686,16 +686,17 @@
     				{
     					var company_name = data[i].COMPANY_NAME;
     					if(company_name == null){
-    						company_name = '';
+    						data[i].COMPANY_NAME = '';
     					}
     					var contact_person = data[i].CONTACT_PERSON;
     					if(contact_person == null){
-    						contact_person = '';
+    						data[i].CONTACT_PERSON = '';
     					}
     					var phone = data[i].PHONE;
     					if(phone == null){
-    						phone = '';
+    						data[i].PHONE = '';
     					}
+    					
     					spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
     				}
     			},'json');
@@ -706,13 +707,16 @@
     	        }); 
     	        $('#spList').show();
     		});
-    		$('#spList').on('click', '.fromLocationItem', function(e){
+    		$('#spList').on('mousedown', '.fromLocationItem', function(e){
     			var message = $(this).text();
     			$('#spMessage').val(message.substring(0, message.indexOf(" ")));
     			$('#sp_id').val($(this).attr('partyId'));
-    			
     	        $('#spList').hide();
     	    });
+    		// 没选中供应商，焦点离开，隐藏列表
+    		$('#spMessage').on('blur', function(){
+    	 		$('#spList').hide();
+    	 	});
     		//回显供应商
     		var sp_id=$("#sp_id").val();
     		if(sp_id!=""){
