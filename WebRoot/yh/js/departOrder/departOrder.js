@@ -64,9 +64,9 @@ $(document).ready(function() {
         	$("input:checked",this).each(function(){
         		var sp_id=$(this).attr("code");
         		var arrival=$(this).attr("arrival");
-        		tableArr.push($(this).val());
-        		arrival_idArr.push(arrival);
-        		if(sp_id!=""){
+        		tableArr.push($(this).val());	
+        			arrival_idArr.push(arrival);
+        		if(sp_id!='null'){
         			sp_idArr.push(sp_id);
         		}
         		

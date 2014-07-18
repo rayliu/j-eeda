@@ -453,9 +453,9 @@ public class DepartOrderController extends Controller {
         String depart_no = getPara("getIindepart_no").trim();// 车单号
         String depart_id = getPara("depart_id");// 发车单id
         String sp_id = getPara("sp_id");// 供应商id
-        String name = (String) currentUser.getPrincipal();
         String house_id=getPara("house_id");//仓库id
         // 查找创建人id
+        String name = (String) currentUser.getPrincipal();
         UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
         String creat_id = users.get("id").toString();// 创建人id
         String driver_id = getPara("driverid");// 司机id
@@ -955,14 +955,19 @@ public class DepartOrderController extends Controller {
                  }
                 	 
                  }
+                 if(check==false){
                  if(tr.get("sp_id")==null){
                 	 tr.set("sp_id", r_sp_id).update();
                  } 
+                 }
              }
         	 DepartOrder de=DepartOrder.dao.findById(de_id);
-        	 if(de.get("sp_id")==null){
-        		 de.set("sp_id", r_sp_id).update();
+        	 if(check==false){
+        		 if(de.get("sp_id")==null){
+            		 de.set("sp_id", r_sp_id).update();
+            	 }
         	 }
+        	 
         }
 
     }
@@ -1178,6 +1183,11 @@ public class DepartOrderController extends Controller {
     }
     //产品入库
     public  void productWarehouse(String depart_id){
+    	  Date createDate = Calendar.getInstance().getTime();
+    	 // 查找创建人id
+        String name = (String) currentUser.getPrincipal();
+        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
+        String creat_id = users.get("id").toString();// 创建人id
     	int id=Integer.parseInt(depart_id);
     	String sql="select order_id, item_id  from depart_transfer_itemdetail  where depart_id ="+id+"  group by item_id";
     	List<Record>  de=Db.find(sql);
@@ -1202,8 +1212,10 @@ public class DepartOrderController extends Controller {
         		 InventoryItem in_item_check=InventoryItem.dao.findFirst(in_item_check_sql);
         		 if(in_item_check==null){
         			 double amount= productAmount(depart_id,item.get(i).get("id").toString());
-        			 in_item.set("party_id",Integer.parseInt(tr_order_list.get("notify_party_id").toString()));
-        			 in_item.set("total_quantity",amount);
+        			 in_item.set("party_id",Integer.parseInt(tr_order_list.get("customer_id").toString()));
+        			 in_item.set("total_quantity",amount);  
+        			 in_item.set("creator",Integer.parseInt(creat_id));
+        			 in_item.set("create_date",createDate);
         			 in_item.set("warehouse_id",Integer.parseInt(tr_order_list.get("warehouse_id").toString()));
             		 in_item.set("product_id",Integer.parseInt(item.get(i).get("product_id").toString()));
             		 in_item.save();

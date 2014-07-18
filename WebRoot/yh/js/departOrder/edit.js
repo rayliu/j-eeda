@@ -651,7 +651,7 @@
     	    	$(this).attr("disabled",true);
     	    	$("#order_edit").attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已发车", $("#orderForm").serialize(), function(){
-    	    	
+    	    		$("#order_sh").attr("disabled",false);
     	    	$("#order_rk").attr("disabled",false);
     	    	});
     	    });
@@ -728,9 +728,18 @@
     		//会显收货人
     		$.get('/yh/departOrder/ginNotifyPerson', {order_id:message}, function(data){
 				console.log(data);
+				if(data.ADDRESS==null){
+					data.ADDRESS='';
+				}
+				if(data.CONTACT_PERSON==null){
+					data.CONTACT_PERSON='';				
+								}
+				if(data.PHONE==null){
+					data.PHONE='';
+				}
 				$('#notify_address').text(data.ADDRESS);
 				$('#notify_contact_person').text(data.CONTACT_PERSON);
-				$('#notify_phone').text(data.MOBILE);
+				$('#notify_phone').text(data.PHONE);
 			},'json');
     		//回显司机信息
     		$.get('/yh/departOrder/ginDriver', {depart_id:depart_id}, function(data){
@@ -744,7 +753,9 @@
 			},'json');
     		//是直送隐藏“确认收货”
     		var check_sh=$("#check_sh").val();
-    		if(check_sh!=false){
+    		if(check_sh==false){
     			$("#order_sh").show();
+    		}else{
+    			$("#order_rk").show();
     		}
     });
