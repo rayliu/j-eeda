@@ -262,6 +262,7 @@ $(document).ready(function() {
 			warehouseSelect.empty();
 			
 			var warehouseId = $("#warehouseId").val();
+			warehouseSelect.append("<option>---请选择仓库---</option>");
 			for(var i = 0; i < data.length; i++)
 			{
 				 if(data[i].ID == warehouseId){

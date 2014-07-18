@@ -41,10 +41,12 @@ $(document).ready(function() {
 			var localArr =$("#localArr").val();
 			var localArr2 =$("#localArr2").val();
 			var localArr3 =$("#localArr3").val();
+			var aa =$("#transferstatus").val();
+			
 			if(localArr!=""){
-				sAjaxSource ="/yh/delivery/orderList?localArr="+localArr+"&localArr2="+localArr2+"&localArr3="+localArr3;
+				sAjaxSource ="/yh/delivery/orderList?localArr="+localArr+"&localArr2="+localArr2+"&localArr3="+localArr3+"&aa="+aa;
 			}else{
-				sAjaxSource ="/yh/delivery/orderList?localArr="+trandferOrderId;
+				sAjaxSource ="/yh/delivery/orderList?localArr="+trandferOrderId+"&aa="+aa;
 			}
 			//var ser =  $("#ser_no").val();
 			$('#eeda-table').dataTable({
@@ -69,6 +71,28 @@ $(document).ready(function() {
 		            {"mDataProp":"AMOUNT"},        	
 		            {"mDataProp":"VOLUME"},
 		            {"mDataProp":"WEIGHT"},
+		        ]      
+		    });	
+			
+			$('#cargo-table').dataTable({
+		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		        "iDisplayLength": 10,
+		    	"oLanguage": {
+		            "sUrl": "/eeda/dataTables.ch.txt"
+		        },
+		        "sAjaxSource": "/yh/delivery/orderList2?localArr="+localArr+"&localArr2="+localArr2,
+		        "aoColumns": [
+					
+		            {"mDataProp":"ITEM_NO"},  
+		            {"mDataProp":"SERIAL_NO"},
+		            {"mDataProp":"ITEM_NAME"},
+		            {"mDataProp":"VOLUME"},
+		            {"mDataProp":"WEIGHT"},
+		            {"mDataProp":"ORDER_NO",
+						 "sWidth": "12%",
+							 },
+					{"mDataProp":"CUSTOMER",
+								 },
 		        ]      
 		    });	
 			//添加配送单
@@ -215,28 +239,32 @@ $(document).ready(function() {
 					$("#eeda-table4 tr:not(:first)").each(function(){
 						var the=this;
 			        	$("input:checked",this).each(function(){
-			        		var sp_id=$(this).attr("code3");
+			        		var cus_id=$(this).attr("code3");
 			        		trArr.push($(this).val()); 
 			        		//ser.push($("td:eq(1)",the).html());
 			        		ser.push($(".serId",the).attr('code'));
 			        		transferNo.push($(".transferNo",the).attr('code2'));
-			        		if(sp_id!=""){
-			        			customer_idArr.push(sp_id);
+			        		if(cus_id!=""){
+			        			customer_idArr.push(cus_id);
 			        		}
+			        		  $('#cusId').val(cus_id);
 			        	});
-			        	if(customer_idArr.length>=2){
-			         	   for(var i=0;i<customer_idArr.length;i++){
-			         		   if(customer_idArr[i]!=customer_idArr[i+1]){
-			         			   alert("请选择同客户的运输单！");
-			         			   return;
-			         		   }
-			         			  
-			         	   }
-			            }
 			        	}); 
+		        	if(customer_idArr.length>=2){
+		         	   for(var i=0;i<customer_idArr.length;i++){
+		         		   if(customer_idArr[i]!=customer_idArr[i+1]){
+		         			   alert("请选择同客户的运输单！");
+		         			   return;
+		         		   }
+		         		  if(i+2==customer_idArr.length){
+		   				   break;
+		         		  }
+		         	   }
+		            }
 			        	$('#localArr2').val(ser);
 			            $('#localArr').val(trArr);
 			            $('#localArr3').val(transferNo);
+			          
 			            $('#createForm').submit();
 				});
 			 
@@ -359,7 +387,6 @@ $(document).ready(function() {
 			 	//radio选择普通货品和ATM
 				$("input[name=aabbcc]").change(function(){
 					var cargo =$(this).val();
-					
 					console.log(cargo);
 					if(cargo=="ATM"){
 						$("#cargos").show();
@@ -368,8 +395,32 @@ $(document).ready(function() {
 						$("#basic").show();
 						$("#cargos").hide();
 					}
-					
 				});
 				
+				$(function(){
+				console.log(aa);
+					if(aa!=''){
+						$("#cargotable").show();
+						$("#cargotable2").hide();
+						$("#tranferdiv").show();
+						
+					}else{
+						$("#cargotable").hide();
+						$("#cargotable2").show();
+						$("#tranferdiv").hide();
+					}
+				}) ;
+				$(function(){
+					if($("#deliverystatus").val()=='新建'){
+						$("#ConfirmationBtn").attr("disabled", false);
+					}
+					if($("#deliverystatus").val()=='已发车'){
+						$("#ConfirmationBtn").attr("disabled", true);
+						$("#receiptBtn").attr("disabled", false);
+					}
+					if($("#deliverystatus").val()=='已签收'){
+						$("#receiptBtn").attr("disabled", true);
+					}
+				}) ;
 			    	
 });
