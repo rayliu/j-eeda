@@ -60,7 +60,7 @@
   	});
   	
   	// 选中客户
-  	$('#customerList').on('keyup click', '.fromLocationItem', function(e){
+  	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
   		var message = $(this).text();
   		$('#driverId').val($(this).attr('id'));
   		$('#customerMessage').val($(this).attr('driver'));
@@ -69,9 +69,10 @@
   		$('#cartype').val($(this).attr('carType'));
   		$('#car_no').val($(this).attr('carNo'));
           $('#customerList').hide();
-          
-         
       }); 
+  	$('#customerMessage').on('blur', function(){
+ 		$('#customerList').hide();
+ 	});
   	//显示货品table
     	var datatable = $('#eeda-table').dataTable({
             //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -696,7 +697,6 @@
     					if(phone == null){
     						data[i].PHONE = '';
     					}
-    					
     					spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+" "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
     				}
     			},'json');
@@ -742,4 +742,9 @@
 		  		$('#cartype').val(data.CARTYPE);
 		  		$('#car_no').val(data.CAR_NO);
 			},'json');
+    		//是直送隐藏“确认收货”
+    		var check_sh=$("#check_sh").val();
+    		if(check_sh!=false){
+    			$("#order_sh").show();
+    		}
     });

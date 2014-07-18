@@ -113,6 +113,7 @@ public class DepartOrderController extends Controller {
         } else {
             int depart_id = Integer.parseInt(getPara());
             getIintedit(depart_id);
+         
         }
 
     }
@@ -174,6 +175,18 @@ public class DepartOrderController extends Controller {
         	tr_order_id +=id+",";
         }
         tr_order_id = tr_order_id.substring(0, tr_order_id.length() - 1);
+        String order_check_sql="select depart_id , order_id from depart_transfer  where depart_id="+depart_id+"";
+        List<Record> order_check=Db.find(order_check_sql);
+         if(order_check.size()==1){
+         	int id=Integer.parseInt(order_check.get(0).get("order_id").toString());
+         	TransferOrder tr=TransferOrder.dao.findById(id);
+     		if(!"delivery".equals(tr.get("arrival_mode"))){
+     			setAttr("check_sh", false);
+     			setAttr("notifi_check", false);
+     		}else{
+     			setAttr("notifi_check", true);
+     		}
+         }
         setAttr("type", "many");
         setAttr("depart_id", getPara());
         setAttr("localArr", tr_order_id);
