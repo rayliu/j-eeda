@@ -483,10 +483,7 @@ $(document).ready(function() {
             	tooltip: '点击可以编辑',
             	name:"item_no",
             	placeholder: "",
-            	callback: function () {},
-            	fnOnCellUpdated: function(sStatus, sValue, settings){
-					alert("(Cell Callback): Cell is updated with value " + sValue);
-				}
+            	callback: function () {}
         	},
             {
             	indicator: '正在保存...',
