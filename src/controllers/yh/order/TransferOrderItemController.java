@@ -103,6 +103,7 @@ public class TransferOrderItemController extends Controller {
         String size = getPara("size");
         String width = getPara("width");
         String height = getPara("height");
+        String weight = getPara("weight");
         if (!"".equals(item_no) && item_no != null) {
             item.set("item_no", item_no).update();
             returnValue = item_no;
@@ -121,6 +122,9 @@ public class TransferOrderItemController extends Controller {
         } else if (!"".equals(height) && height != null) {
             item.set("height", height).update();
             returnValue = height;
+        } else if (!"".equals(weight) && weight != null) {
+            item.set("weight", weight).update();
+            returnValue = weight;
         } else if (!"".equals(amount) && amount != null) {
             item.set("amount", amount).update();
             if (amount != null && !"".equals(amount)) {
@@ -131,6 +135,8 @@ public class TransferOrderItemController extends Controller {
             item.set("unit", unit).update();
             returnValue = unit;
         }
+        Double volume = Double.parseDouble(item.get("size")+"")/1000 * Double.parseDouble(item.get("width")+"")/1000 * Double.parseDouble(item.get("height")+"")/1000;
+        item.set("volume", volume).update();
         renderText(returnValue);// 必须返回传进来的值，否则js会报错
     }
 
@@ -303,7 +309,7 @@ public class TransferOrderItemController extends Controller {
 
     public void addNewRow() {
         String orderId = getPara("orderId");
-        new TransferOrderItem().set("order_id", orderId).save();
+        new TransferOrderItem().set("order_id", orderId).set("size", 0).set("width", 0).set("height", 0).set("weight", 0).save();
         renderJson("{\"success\":true}");
     }
 }

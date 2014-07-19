@@ -31,6 +31,9 @@ public class TransferOrderItemDetailController extends Controller {
         if (itemId == null || "".equals(itemId)) {
             itemId = "-1";
         }
+        if (orderId == null || "".equals(orderId)) {
+        	orderId = "-1";
+        }
         logger.debug(itemId);
 
         String sLimit = "";

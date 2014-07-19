@@ -1,4 +1,4 @@
-
+﻿
 $(document).ready(function() {
 	$('#menu_transfer').addClass('active').find('ul').addClass('in');
     //from表单验证
@@ -419,32 +419,47 @@ $(document).ready(function() {
             {
             	"mDataProp":"ITEM_NO",            	
             	"sWidth": "80px",
+            	"sClass": "item_no"
         	},
             {
             	"mDataProp":"ITEM_NAME",
-            	"sWidth": "180px"
+            	"sWidth": "180px",
+            	"sClass": "item_name"
             },
             {
             	"mDataProp":"SIZE",            	
-            	"sWidth": "50px"
+            	"sWidth": "50px",
+            	"sClass": "size"
         	},
             {
             	"mDataProp":"WIDTH",
-            	"sWidth": "50px"
+            	"sWidth": "50px",
+            	"sClass": "width"
             },
             {
             	"mDataProp":"HEIGHT",            	
-            	"sWidth": "50px"
-        	}, {
-            	"mDataProp":"AMOUNT",
-            	"sWidth": "50px"
-            }, {
-            	"mDataProp":"UNIT",
             	"sWidth": "50px",
-            },
+            	"sClass": "height"
+        	}, 
             {
             	"mDataProp":"WEIGHT",
             	"sWidth": "50px",
+            	"sClass": "weight",
+            },
+        	{
+            	"mDataProp":"AMOUNT",
+            	"sWidth": "50px",
+            	"sClass": "amount"
+            }, 
+            {
+            	"mDataProp":"UNIT",
+            	"sWidth": "50px",
+            	"sClass": "unit"
+            },
+            {
+            	"mDataProp":null,
+            	"sWidth": "50px",
+            	"sClass": "sumWeight",
             	"fnRender": function(obj) {
         			return obj.aData.WEIGHT * obj.aData.AMOUNT;
                 }
@@ -452,6 +467,7 @@ $(document).ready(function() {
             {
             	"mDataProp":"VOLUME",
             	"sWidth": "50px",
+            	"sClass": "volume",
             	"fnRender": function(obj) {
             		return obj.aData.VOLUME * obj.aData.AMOUNT;
             	}
@@ -459,7 +475,8 @@ $(document).ready(function() {
             {"mDataProp":"REMARK"},
             {  
                 "mDataProp": null, 
-                "sWidth": "60px",                
+                "sWidth": "60px",  
+            	"sClass": "remark",              
                 "fnRender": function(obj) {
                     return	"<a class='dateilEdit' code='?id="+obj.aData.ID+"' title='单品编辑'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
@@ -472,7 +489,16 @@ $(document).ready(function() {
         ]      
     });	
 
+    // 计算体积
+	var sumVolume = function(currentEle){
+		$(currentEle).parent().children('.volume')[0].innerHTML = parseFloat($(currentEle).parent().children('.size')[0].innerHTML)/1000 * parseFloat($(currentEle).parent().children('.width')[0].innerHTML)/1000 * parseFloat($(currentEle).parent().children('.height')[0].innerHTML)/1000 * parseFloat($(currentEle).parent().children('.amount')[0].innerHTML);
+	};
 	
+	// 计算总重量
+	var sumWeight = function(currentEle){
+		$(currentEle).parent().children('.sumWeight')[0].innerHTML = parseFloat($(currentEle).parent().children('.weight')[0].innerHTML) * parseFloat($(currentEle).parent().children('.amount')[0].innerHTML);
+	};
+    
     itemDataTable.makeEditable({
     	sUpdateURL: '/yh/transferOrderItem/saveTransferOrderItemByField',    	
     	oEditableSettings: {event: 'click'},
@@ -499,7 +525,9 @@ $(document).ready(function() {
             	tooltip: '点击可以编辑',
             	name:"size",
             	placeholder: "",
-            	callback: function () {} 
+            	callback: function () {
+            		sumVolume(this);
+            	} 
             },
             {
             	indicator: '正在保存...',
@@ -507,7 +535,9 @@ $(document).ready(function() {
             	tooltip: '点击可以编辑',
             	name:"width",
             	placeholder: "",
-            	callback: function () {} 
+            	callback: function () {
+            		sumVolume(this);
+            	} 
             },
             {
             	indicator: '正在保存...',
@@ -515,15 +545,30 @@ $(document).ready(function() {
             	tooltip: '点击可以编辑',
             	name:"height",
             	placeholder: "",
-            	callback: function () {} 
-            },      	
+            	callback: function () {
+            		sumVolume(this);
+            	} 
+            },  
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"weight",
+            	placeholder: "",
+            	callback: function () {
+            		sumWeight(this);
+            	} 
+            },    	
             {
             	indicator: '正在保存...',
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"amount",
             	placeholder: "",
-            	callback: function () {} 
+            	callback: function () {
+            		sumVolume(this);
+            		sumWeight(this);
+            	} 
             },     	
             {
             	indicator: '正在保存...',
