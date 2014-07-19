@@ -301,7 +301,7 @@ $('#warehouseOrderItemForm').validate({
 
 // 出库确认
 $("#gateOutConfirmBtn").click(function(){
-	var orderType=$("input[name=orderType]").val();
+	var orderType=$("input[name='orderType']:checked").val();
 	
 	var warehouseorderid = $("#warehouseorderId").val();
 	$.post('/yh/gateIn/gateOutConfirm/'+warehouseorderid,{orderType:orderType},function(data){

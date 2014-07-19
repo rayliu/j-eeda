@@ -328,7 +328,7 @@ $(document).ready(function() {
                 	 console.log(data);
                  	$("#warehouseorderId").val(data);
                  	$("#style").show();
-                 	$("#ConfirmationBtn").attr("disabled", false);
+                 	$("#ConfirmBtn").attr("disabled", false);
                  }else{
                      alert('数据保存失败。');
                  }
@@ -369,6 +369,7 @@ $(document).ready(function() {
 		                }
 		    	},'json');
 		   });
+		    
 		   var wStatus = $("#warehouseorderStatus").val();
 		   console.log(wStatus);
 		   if(wStatus=='已入库'||wStatus==''){

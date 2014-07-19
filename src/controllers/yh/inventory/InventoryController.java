@@ -744,20 +744,22 @@ public class InventoryController extends Controller {
         warehouseOrder.update();
 
         // 生成运输单
-        // creatTransferOrder(id, users, createDate, inventory);
-
+        String orderType = getPara("orderType");
+        if (orderType.equals("gateOutTransferOrder")) {
+            creatTransferOrder(id, users, createDate, warehouseItem, inventory);
+        }
         renderJson("{\"success\":true}");
     }
 
     // 生成运输单
     public void creatTransferOrder(String id, List<UserLogin> users,
-            Date createDate, List<Record> inventory) {
+            Date createDate, List<Record> warehouseItem, List<Record> inventory) {
         if (inventory.size() > 0) {
             String orderNo = creat_order_no();// 构造运输单号
             TransferOrder transferOrder = new TransferOrder();
             Party party = Party.dao
                     .findFirst(" select c.location from party p,contact c where p.contact_id =c.id and p.id='"
-                            + inventory.get(0).get("party_id") + "')");
+                            + inventory.get(0).get("party_id") + "'");
 
             transferOrder.set("order_no", orderNo);
             transferOrder.set("customer_id", inventory.get(0)
@@ -769,6 +771,7 @@ public class InventoryController extends Controller {
             transferOrder.set("order_type", "gateOutTransferOrder");
             transferOrder.set("create_stamp", createDate);
             transferOrder.set("create_by", users.get(0).get(id));
+            transferOrder.update();
 
             for (int i = 0; i < inventory.size(); i++) {
                 Product product = Product.dao.findById(inventory.get(i).get(
@@ -782,14 +785,18 @@ public class InventoryController extends Controller {
                     tItem.set("height", product.get("height"));
                     tItem.set("volume", product.get("volume"));
                     tItem.set("weight", product.get("weight"));
-                    tItem.set("amount", inventory.get(i).get("total_quantity"));
+                    tItem.set("amount",
+                            warehouseItem.get(i).get("total_quantity"));
                     tItem.set("unit", product.get("unit"));
                     tItem.set("product_id", inventory.get(i).get("product_id"));
                     tItem.set("order_id", transferOrder.get(id));
+                    tItem.update();
                 }
             }
         }
     }
+
+    // 生成运输单
 
     // 选中客户验证是否有产品
     public void confirmproduct() {
