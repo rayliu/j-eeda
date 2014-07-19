@@ -7,7 +7,7 @@
                     <h1 class="page-header">拼车单</h1>                  
                     <input type="hidden" id="pickupOrderId" value="${pickupOrder.id!''}">
                     <input type="hidden" id="transferOrderType" value="${transferOrderAttr.order_type!''}">
-                    <!-- <input type="hidden" id="finishBtnVal" value="${transferOrderMilestone.status!''}"> -->
+                    <input type="hidden" id="finishBtnVal" value="${transferOrderMilestone.status!''}">
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -457,8 +457,10 @@
 		                            		<p>单据创建完毕,是否继续创建？</p>
 		                        		</div>
 		                        		<form id="detailCheckBoxForm" method="post" action="/yh/pickupOrder/createPickupOrder">
+		                        			<input type="hidden" name="localArr" value="${localArr!''}">
 			                       			<div class="panel-footer">
-			                          			<button id="exitCreateBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">否,编辑上次拼车单</button>
+			                          			<!-- <button id="exitCreateBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">否</button> -->
+			                          			<a class="btn btn-default" href="/yh/pickupOrder">否</a>
 			                          			<button id="continueCreateBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">是</button>
 			                        		</div>                        		
 		                        		</form>

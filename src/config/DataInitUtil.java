@@ -92,7 +92,7 @@ public class DataInitUtil {
                     + "amount double,size double,width double,height double,unit varchar(255),volume double,weight double,remark varchar(5120),order_id bigint,foreign key(order_id) references transfer_order(id),product_id bigint,foreign key(product_id) references product(id));");
 
             // Transfer_Order_item_detail 单件货品明细
-            stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment primary key,order_id bigint,item_id bigint,item_no varchar(255),"
+            stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment primary key,order_id bigint,item_id bigint,status varchar(255),item_no varchar(255),"
                     + "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,"
                     + "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),foreign key(order_id) references transfer_order(id),"
                     + "foreign key(item_id) references transfer_order_item(id),foreign key(notify_party_id) references party(id));");
@@ -573,7 +573,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('51456', '电脑', '这是一台电脑','12','台','50','10','十二台电脑','2');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('123456', '电脑', '这是一台电脑','3','台','452','100','一台ATM','3');");
+                    + "values('123456', 'ATM', '这是很多台ATM',2,'台',1000,2000,'一台ATM','3');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('123456', '电视', '这是一台电视','2','台','452','100','一台ATM','4');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
@@ -584,13 +584,7 @@ public class DataInitUtil {
                     + "values('12222', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','5');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('12aa', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','7');");
-            // transfer_order_item_detail(id bigint auto_increment PRIMARY
-            // KEY,order_id bigint,item_id bigint,item_no varchar(255),"
-            // +
-            // "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,contact_id bigint,"
-            // +
-            // "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),FOREIGN KEY(order_id) REFERENCES transfer_order(id),"
-            // + "FOREIGN KEY(item_id) REFERENCES transfer_order_item(id
+            
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
                     + "values('2', 'dkjf5421', '10000', '音箱', true, '2', '9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
@@ -613,6 +607,10 @@ public class DataInitUtil {
                     + "values('6','2221265985','10000', 'ATM', false,'8','10');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
                     + "values('7','aaasswqq63','10000', 'ATM', false,'10','10');");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
+            		+ "values(3,'123', 'ATM001', 6, 24);");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
+            		+ "values(3,'456', 'ATM002', 6, 24);");
 
             // 配送单
             stmt.execute("insert into delivery_order(order_no,transfer_order_id,customer_id,sp_id,notify_party_id,status,create_stamp) values('2014042600013','1','5','7','9','配送在途','2014-04-25 16:35:35.1');");

@@ -91,6 +91,7 @@ public class TransferOrderItemController extends Controller {
 
     // 保存货品
     public void saveTransferOrderItemByField() {
+        String productId = getPara("productId");
         String returnValue = "";
         String id = getPara("id");
         TransferOrderItem item = TransferOrderItem.dao.findById(id);
@@ -122,6 +123,9 @@ public class TransferOrderItemController extends Controller {
             returnValue = height;
         } else if (!"".equals(amount) && amount != null) {
             item.set("amount", amount).update();
+            if (amount != null && !"".equals(amount)) {
+                saveTransferOrderDetail(item, productId);
+            }
             returnValue = amount;
         } else if (!"".equals(unit) && unit != null) {
             item.set("unit", unit).update();

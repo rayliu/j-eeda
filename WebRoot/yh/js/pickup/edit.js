@@ -174,24 +174,33 @@
     }
     
     var savePickupOrderFunction = function(){
-    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
-			$("#pickupOrderId").val(data.ID);
-			$("#addressPickupOrderId").val(data.ID);
-			$("#milestonePickupId").val(data.ID);
-			if(data.ID>0){
-				$("#pickupId").val(data.ID);
-		        showFinishBut();
-			  	$("#style").show();	
-			    
-			    $("input[name='detailCheckBox']").each(function(){
-			    	if($(this).prop('checked') == false){
-			    		$("#detailDialog").modal('show');
-			    	}
-			    });
-			}else{
-				alert('数据保存失败。');
-			}
-		},'json');
+    	var detailIds = [];
+    	var uncheckedDetailIds = [];
+	    $("input[name='detailCheckBox']").each(function(){
+	    	if($(this).prop('checked') == true){
+	    		detailIds.push($(this).val());
+	    	}else{
+	    		uncheckedDetailIds.push($(this).val());
+	    	}
+	    	/*if($(this).prop('checked') == false){
+	    		// 对一张单进行多次提货,把选中的和没选中的单品区分开来,然后在进行判断
+	    		//$("#detailDialog").modal('show');
+	    	}else{
+	    		// 保存全部单品
+	        	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+	    			$("#pickupOrderId").val(data.ID);
+	    			$("#addressPickupOrderId").val(data.ID);
+	    			$("#milestonePickupId").val(data.ID);
+	    			if(data.ID>0){
+	    				$("#pickupId").val(data.ID);
+	    		        showFinishBut();
+	    			  	$("#style").show();				    
+	    			}else{
+	    				alert('数据保存失败。');
+	    			}
+	    		},'json');
+	    	}*/
+	    });
     };
     
     $("#continueCreateBtn").click(function(){
@@ -428,7 +437,7 @@
 			$("#finishBtn").attr('disabled', true);	
 		}
 	};
-	//showFinishBut();
+	showFinishBut();
 	
 	// 货品信息
 	$("#pickupOrderItemList").click(function(e){
@@ -532,7 +541,7 @@
 		$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId}, function(){
 			pickupOrderMilestone();
 		},'json');
-		//$("#finishBtn").attr('disabled', true);	
+		$("#finishBtn").attr('disabled', true);	
 		$("#finishBtnVal").val("已入货场");		
 	});
 	
