@@ -178,15 +178,25 @@ public class DepartOrderController extends Controller {
         String order_check_sql="select depart_id , order_id from depart_transfer  where depart_id="+depart_id+"";
         List<Record> order_check=Db.find(order_check_sql);
          if(order_check.size()==1){
-         	int id=Integer.parseInt(order_check.get(0).get("order_id").toString());
-         	TransferOrder tr=TransferOrder.dao.findById(id);
+        	 int id=Integer.parseInt(order_check.get(0).get("order_id").toString());
+          	TransferOrder tr=TransferOrder.dao.findById(id);
      		if(!"delivery".equals(tr.get("arrival_mode"))){
      			setAttr("check_sh", false);
      			setAttr("notifi_check", false);
      		}else{
      			setAttr("notifi_check", true);
      		}
+         }else{
+        	 for(int i=0;i<order_check.size();i++){
+        		 int id=Integer.parseInt(order_check.get(0).get("order_id").toString());
+        		 TransferOrder tr=TransferOrder.dao.findById(id);
+        		 if(!"delivery".equals(tr.get("arrival_mode"))){
+        			 setAttr("check_sh", false);
+        			 break;
+        		 }
+        	 }
          }
+        
         setAttr("type", "many");
         setAttr("depart_id", getPara());
         setAttr("localArr", tr_order_id);
@@ -683,13 +693,17 @@ public class DepartOrderController extends Controller {
     public void updatestate() {
         String depart_id = getPara("depart_id");// 发车单id
         String order_state = getPara("order_state");// 状态
+        int  nummber=0;//没入库的货品数量
         DepartOrder dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
         dp.set("status", order_state).update();
         if("已入库".equals(order_state)){
-        	 productWarehouse(depart_id);//产品入库
+        nummber=productWarehouse(depart_id);//产品入库
         }
         savePickupOrderMilestone(dp, order_state);
-        renderJson(dp);
+        Map Map = new HashMap();
+        Map.put("amount", nummber);
+        Map.put("depart", dp);
+        renderJson(Map);
     }
 
     // 点击货品table的查看 ，显示对应货品的单品
@@ -1182,8 +1196,9 @@ public class DepartOrderController extends Controller {
     	
     }
     //产品入库
-    public  void productWarehouse(String depart_id){
+    public  int  productWarehouse(String depart_id){
     	  Date createDate = Calendar.getInstance().getTime();
+    	  int number=0;//没入库的货品个数
     	 // 查找创建人id
         String name = (String) currentUser.getPrincipal();
         UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
@@ -1226,8 +1241,11 @@ public class DepartOrderController extends Controller {
         			 in_item.set("total_quantity", total).update();
         		 }
         		
+        	 }else{
+        		 number++;
         	 }
          }
+		return number;
          
     	
     }

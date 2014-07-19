@@ -79,6 +79,11 @@ $(document).ready(function() {
         		alert("请选择同一到达方式的运输单！");
         		return;
         	}
+        	if(j==0&&arrival_idArr.length>=2){
+        		alert("每次只能选择一张直送的运输单！");
+        		return;
+        	}
+        	
        
        if(sp_idArr.length>=2){
     	   for(var i=0;i<sp_idArr.length;i++){

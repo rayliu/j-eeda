@@ -657,8 +657,10 @@
     	    });
     	    $("#order_rk").click(function(e){
     	    	$(this).attr("disabled",true);
-    	    	$.post('/yh/departOrder/updatestate?order_state='+"已入库", $("#orderForm").serialize(), function(){
-    	    	
+    	    	$.post('/yh/departOrder/updatestate?order_state='+"已入库", $("#orderForm").serialize(), function(data){
+    	    		if(data.amount>0){
+    	    			alert("有"+data.amount+"个货品没入库,可以到产品中维护信息！");
+    	    		}
     	    	$("#order_sh").attr("disabled",false);
     	    	});
     	    });
