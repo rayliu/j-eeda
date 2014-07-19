@@ -482,49 +482,56 @@ $(document).ready(function() {
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"item_no",
-            	placeholder: ""
+            	placeholder: "",
+            	callback: function () {} 
         	},
             {
             	indicator: '正在保存...',
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"item_name",
-            	placeholder: ""
+            	placeholder: "",
+            	callback: function () {} 
             },
             {
             	indicator: '正在保存...',
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"size",
-            	placeholder: ""
+            	placeholder: "",
+            	callback: function () {} 
             },
             {
             	indicator: '正在保存...',
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"width",
-            	placeholder: ""
+            	placeholder: "",
+            	callback: function () {} 
             },
             {
             	indicator: '正在保存...',
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"height",
-            	placeholder: ""
+            	placeholder: "",
+            	callback: function () {} 
             },      	
             {
             	indicator: '正在保存...',
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"amount",
-            	placeholder: ""
+            	placeholder: "",
+            	callback: function () {} 
             },     	
             {
             	indicator: '正在保存...',
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"unit",
-            	placeholder: ""
+            	placeholder: "",
+            	callback: function () {} 
             },
             null,
             null,
@@ -533,7 +540,8 @@ $(document).ready(function() {
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"remark",
-            	placeholder: ""
+            	placeholder: "",
+            	callback: function () {} 
             },
             null                        
         ]      
