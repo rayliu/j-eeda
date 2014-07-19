@@ -122,7 +122,7 @@ $('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
         	 console.log(data);
          	$("#warehouseorderId").val(data);
          	$("#style").show();
-         	//$("#ConfirmationBtn").attr("disabled", false);
+         	$("#gateOutConfirmBtn").attr("disabled", false);
          }else{
              alert('数据保存失败。');
          }
@@ -299,10 +299,12 @@ $('#warehouseOrderItemForm').validate({
    
 });
 
-//入仓确认
+// 出库确认
 $("#gateOutConfirmBtn").click(function(){
+	var orderType=$("input[name=orderType]").val();
+	
 	var warehouseorderid = $("#warehouseorderId").val();
-	$.post('/yh/gateIn/gateOutConfirm/'+warehouseorderid,function(data){
+	$.post('/yh/gateIn/gateOutConfirm/'+warehouseorderid,{orderType:orderType},function(data){
 		 if(data.success){
 			 $("#gateOutConfirmBtn").attr("disabled", true);
 			 alert("出库成功！");
@@ -310,10 +312,11 @@ $("#gateOutConfirmBtn").click(function(){
                 alert('失败！。');
             }
 	},'json');
+	
 });
 	var wStatus = $("#warehouseorderStatus").val();
 	console.log(wStatus);
-	if(wStatus=='已出库'){
+	if(wStatus=='已出库'||wStatus==''){
 	   $("#gateOutConfirmBtn").attr("disabled", true); 
 	}
 	//reset
@@ -326,7 +329,7 @@ $("#gateOutConfirmBtn").click(function(){
 		    	e.preventDefault();
 		    	// 切换到货品明细时,应先保存运输单
 		    	//提交前，校验数据
-		        	alert("请先保存入库单!");
+		        	alert("请先保存出库单!");
 			       	return false; 
 		        
 	    	}

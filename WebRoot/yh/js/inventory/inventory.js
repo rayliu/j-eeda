@@ -271,13 +271,13 @@ $(document).ready(function() {
 			warehouseSelect.empty();
 			
 			var warehouseId = $("#warehouseId").val();
-			warehouseSelect.append("<option>---请选择仓库---</option>");
+			warehouseSelect.append("<option class='form-control'>---请选择仓库---</option>");
 			for(var i = 0; i < data.length; i++)
 			{
 				 if(data[i].ID == warehouseId){
-					 warehouseSelect.append("<option class='fromLocationItem' value='"+data[i].ID+"' selected='selected' >"+data[i].WAREHOUSE_NAME+"</option>");
+					 warehouseSelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected' >"+data[i].WAREHOUSE_NAME+"</option>");
 				 }else{
-					 warehouseSelect.append("<option class='fromLocationItem' value='"+data[i].ID+"' >"+data[i].WAREHOUSE_NAME+"</option>");
+					 warehouseSelect.append("<option class='form-control' value='"+data[i].ID+"' >"+data[i].WAREHOUSE_NAME+"</option>");
 				 }
 			}
 			}
@@ -328,7 +328,7 @@ $(document).ready(function() {
                 	 console.log(data);
                  	$("#warehouseorderId").val(data);
                  	$("#style").show();
-                 	//$("#ConfirmationBtn").attr("disabled", false);
+                 	$("#ConfirmationBtn").attr("disabled", false);
                  }else{
                      alert('数据保存失败。');
                  }
@@ -363,6 +363,7 @@ $(document).ready(function() {
 		    		 if(data.success){
 		    			 $("#ConfirmBtn").attr("disabled", true);
 		    			 alert("入库成功！");
+		    			 
 		                }else{
 		                    alert('客户无产品,保存失败！。');
 		                }
@@ -370,7 +371,7 @@ $(document).ready(function() {
 		   });
 		   var wStatus = $("#warehouseorderStatus").val();
 		   console.log(wStatus);
-		   if(wStatus=='已入库'){
+		   if(wStatus=='已入库'||wStatus==''){
 			   $("#ConfirmBtn").attr("disabled", true); 
 		   }
 		   

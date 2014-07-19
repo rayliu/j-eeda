@@ -83,7 +83,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,transaction_status varchar(20),order_type varchar(20),creator varchar(50),remark varchar(255), transfer_order_id bigint, delivery_order_id bigint, notity_party_id bigint,customer_id bigint);");
             // transfer_order 运输单
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),assign_status varchar(255),"
-                    + "cargo_nature varchar(255),pickup_mode varchar(255),arrival_mode varchar(255),remark varchar(255),operation_type varchar(255),pickup_seq varchar(255),payment varchar(50),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
+                    + "cargo_nature varchar(255),inventory_id bigint,pickup_mode varchar(255),arrival_mode varchar(255),remark varchar(255),operation_type varchar(255),pickup_seq varchar(255),payment varchar(50),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
                     + "create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,eta timestamp,address varchar(255),customer_province varchar(255),route_from varchar(255),route_to varchar(255),order_type varchar(255),"
                     + "customer_id bigint,sp_id bigint,notify_party_id bigint,driver_id bigint,warehouse_id bigint,office_id bigint,foreign key(customer_id) references party(id),foreign key(sp_id) references party(id),"
                     + "foreign key(notify_party_id) references party(id),foreign key(driver_id) references party(id),foreign key(warehouse_id) references warehouse(id),foreign key(office_id) references office(id));");
@@ -702,7 +702,7 @@ public class DataInitUtil {
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(3, 3, '2014-06-28 10:40:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(4, 3, '2014-06-28 10:43:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(6, 3, '2014-06-28 11:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
-            
+
             stmt.close();
             // conn.commit();
             conn.close();

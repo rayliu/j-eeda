@@ -12,10 +12,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import models.InventoryItem;
 import models.Party;
+import models.Product;
+import models.TransferOrder;
+import models.TransferOrderItem;
 import models.UserLogin;
 import models.Warehouse;
 import models.WarehouseOrder;
 import models.WarehouseOrderItem;
+import models.yh.delivery.DeliveryOrder;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -366,7 +370,7 @@ public class InventoryController extends Controller {
         renderJson(warehouseOrder.get("id"));
     }
 
-    // 保存入库单
+    // 保存出库单
     public void gateOutSave() {
         String orderNo = creat_order_no2();// 构造发车单号
         WarehouseOrder warehouseOrder = new WarehouseOrder();
@@ -697,22 +701,28 @@ public class InventoryController extends Controller {
     // 出仓确认
     public void gateOutConfirm() {
         String id = getPara();
+
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao
+                .find("select * from user_login where user_name='" + name + "'");
+        Date createDate = Calendar.getInstance().getTime();
+
         // 获取从表的货品数据
         List<Record> warehouseItem = Db
                 .find("select * from warehouse_order_item where warehouse_order_id = '"
                         + id + "'");
 
         // 获取已入库的库存
-        List<Record> inverntory = Db
-                .find("select * from inventory_item where item_no in(select item_no from warehouse_order_item where warehouse_order_id = '"
+        List<Record> inventory = Db
+                .find("select * from inventory_item where product_id in(select product_id from warehouse_order_item where warehouse_order_id = '"
                         + id + "')");
         // 出库后更新数据
         for (int i = 0; i < warehouseItem.size(); i++) {
-            InventoryItem inventoryItem = InventoryItem.dao.findById(inverntory
+            InventoryItem inventoryItem = InventoryItem.dao.findById(inventory
                     .get(i).get("id"));
             inventoryItem.set(
                     "total_quantity",
-                    Double.parseDouble(inverntory.get(i).get("total_quantity")
+                    Double.parseDouble(inventory.get(i).get("total_quantity")
                             .toString())
                             - Double.parseDouble(warehouseItem.get(i)
                                     .get("total_quantity").toString()));
@@ -733,7 +743,52 @@ public class InventoryController extends Controller {
         warehouseOrder.set("status", "已出库");
         warehouseOrder.update();
 
+        // 生成运输单
+        // creatTransferOrder(id, users, createDate, inventory);
+
         renderJson("{\"success\":true}");
+    }
+
+    // 生成运输单
+    public void creatTransferOrder(String id, List<UserLogin> users,
+            Date createDate, List<Record> inventory) {
+        if (inventory.size() > 0) {
+            String orderNo = creat_order_no();// 构造运输单号
+            TransferOrder transferOrder = new TransferOrder();
+            Party party = Party.dao
+                    .findFirst(" select c.location from party p,contact c where p.contact_id =c.id and p.id='"
+                            + inventory.get(0).get("party_id") + "')");
+
+            transferOrder.set("order_no", orderNo);
+            transferOrder.set("customer_id", inventory.get(0)
+                    .get("customer_id"));
+            transferOrder.set("status", "新建");
+            transferOrder.set("warehouse_id",
+                    inventory.get(0).get("warehouse_id"));
+            transferOrder.set("route_from", party.get("location"));
+            transferOrder.set("order_type", "gateOutTransferOrder");
+            transferOrder.set("create_stamp", createDate);
+            transferOrder.set("create_by", users.get(0).get(id));
+
+            for (int i = 0; i < inventory.size(); i++) {
+                Product product = Product.dao.findById(inventory.get(i).get(
+                        "product_id"));
+                if (product != null) {
+                    TransferOrderItem tItem = new TransferOrderItem();
+                    tItem.set("item_no", product.get("item_no"));
+                    tItem.set("item_name", product.get("item_name"));
+                    tItem.set("size", product.get("size"));
+                    tItem.set("width", product.get("width"));
+                    tItem.set("height", product.get("height"));
+                    tItem.set("volume", product.get("volume"));
+                    tItem.set("weight", product.get("weight"));
+                    tItem.set("amount", inventory.get(i).get("total_quantity"));
+                    tItem.set("unit", product.get("unit"));
+                    tItem.set("product_id", inventory.get(i).get("product_id"));
+                    tItem.set("order_id", transferOrder.get(id));
+                }
+            }
+        }
     }
 
     // 选中客户验证是否有产品
@@ -748,5 +803,35 @@ public class InventoryController extends Controller {
             renderJson("{\"success\":false}");
         }
 
+    }
+
+    // 运输单构造单号
+    public String creat_order_no3() {
+        String order_no = null;
+        String the_order_no = null;
+        DeliveryOrder order = DeliveryOrder.dao
+                .findFirst("select * from transfer_order order by order_no desc limit 0,1");
+        if (order != null) {
+            String num = order.get("order_no");
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) {
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            the_order_no = "YS" + order_no;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            the_order_no = "YS" + order_no;
+        }
+        return the_order_no;
     }
 }

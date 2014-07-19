@@ -57,8 +57,9 @@ public class PickupOrderController extends Controller {
         setAttr("localArr", list);
         String[] transferOrderIds = list.split(",");
 
-    	TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
-    	setAttr("transferOrderAttr", transferOrderAttr);
+        TransferOrder transferOrderAttr = TransferOrder.dao
+                .findById(transferOrderIds[0]);
+        setAttr("transferOrderAttr", transferOrderAttr);
 
         logger.debug("localArr" + list);
         String order_no = null;
@@ -110,45 +111,66 @@ public class PickupOrderController extends Controller {
 
     // 拼车单列表显示
     public void pickuplist() {
-    	String orderNo = getPara("orderNo");
-    	String departNo = getPara("departNo");
-    	String beginTime = getPara("beginTime");
+        String orderNo = getPara("orderNo");
+        String departNo = getPara("departNo");
+        String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
         }
         String sql = "";
         String sqlTotal = "";
-        if(orderNo == null && departNo == null && beginTime == null && endTime == null){
-	        sqlTotal = "select count(1) total from depart_order do " + ""
-	        		+ " left join carinfo c on do.driver_id = c.id "
-		            + " where do.status!='取消' and combine_type = '"
-	                + DepartOrder.COMBINE_TYPE_PICKUP + "'";
-	
-	        sql = "select do.*,c.driver,c.phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
-		                + " left join carinfo c on do.driver_id = c.id "
-		                + " where do.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' order by do.create_stamp desc"
-		                + sLimit;
-        }else{
-        	if (beginTime == null || "".equals(beginTime)) {
+        if (orderNo == null && departNo == null && beginTime == null
+                && endTime == null) {
+            sqlTotal = "select count(1) total from depart_order do " + ""
+                    + " left join carinfo c on do.driver_id = c.id "
+                    + " where do.status!='取消' and combine_type = '"
+                    + DepartOrder.COMBINE_TYPE_PICKUP + "'";
+
+            sql = "select do.*,c.driver,c.phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
+                    + " left join carinfo c on do.driver_id = c.id "
+                    + " where do.status!='取消' and combine_type = '"
+                    + DepartOrder.COMBINE_TYPE_PICKUP
+                    + "' order by do.create_stamp desc" + sLimit;
+        } else {
+            if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
             }
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-        	sqlTotal = "select count(distinct do.id) total from depart_order do "
-        			+ " left join carinfo c on do.driver_id = c.id "
-        			+ " left join depart_transfer dt2 on dt2.depart_id = do.id"
-	                + " where do.status!='取消' and combine_type = '"
-	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%"+departNo+"%' and dt2.transfer_order_no like '%"+orderNo+"%' and do.create_stamp between '" + beginTime + "' and '" + endTime + "'";
-	
-	        sql = "select distinct do.*,c.driver,c.phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
-	        			+ " left join carinfo c on do.driver_id = c.id "
-		                + " left join depart_transfer dt2 on dt2.depart_id = do.id"
-		                + " where do.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%"+departNo+"%' and dt2.transfer_order_no like '%"+orderNo+"%' and do.create_stamp between '" + beginTime + "' and '" + endTime + "' order by do.create_stamp desc"
-		                + sLimit;
+            sqlTotal = "select count(distinct do.id) total from depart_order do "
+                    + " left join carinfo c on do.driver_id = c.id "
+                    + " left join depart_transfer dt2 on dt2.depart_id = do.id"
+                    + " where do.status!='取消' and combine_type = '"
+                    + DepartOrder.COMBINE_TYPE_PICKUP
+                    + "' and depart_no like '%"
+                    + departNo
+                    + "%' and dt2.transfer_order_no like '%"
+                    + orderNo
+                    + "%' and do.create_stamp between '"
+                    + beginTime
+                    + "' and '" + endTime + "'";
+
+            sql = "select distinct do.*,c.driver,c.phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
+                    + " left join carinfo c on do.driver_id = c.id "
+                    + " left join depart_transfer dt2 on dt2.depart_id = do.id"
+                    + " where do.status!='取消' and combine_type = '"
+                    + DepartOrder.COMBINE_TYPE_PICKUP
+                    + "' and depart_no like '%"
+                    + departNo
+                    + "%' and dt2.transfer_order_no like '%"
+                    + orderNo
+                    + "%' and do.create_stamp between '"
+                    + beginTime
+                    + "' and '"
+                    + endTime
+                    + "' order by do.create_stamp desc"
+                    + sLimit;
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -283,7 +305,7 @@ public class PickupOrderController extends Controller {
                     + "'"
                     + " order by tor.CREATE_STAMP desc"
                     + sLimit;
- 
+
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap = new HashMap();
@@ -427,18 +449,21 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("combine_type", DepartOrder.COMBINE_TYPE_PICKUP);
             pickupOrder.set("pickup_mode", getPara("pickupMode"));
             pickupOrder.set("address", getPara("address"));
-            pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
-            pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0 : getPara("roadBridge"));
-            pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));
+            pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0
+                    : getPara("kilometres"));
+            pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0
+                    : getPara("roadBridge"));
+            pickupOrder.set("income", getPara("income").equals("") ? 0
+                    : getPara("income"));
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(
                     utilDate.getTime());
             pickupOrder.set("create_stamp", sqlDate);
             String driveId = getPara("driver_id");
             if (driveId == null || "".equals(driveId)) {
-            	carinfo = saveDriver();
+                carinfo = saveDriver();
             } else {
-            	carinfo = updateDriver(driveId);
+                carinfo = updateDriver(driveId);
             }
             pickupOrder.set("driver_id", carinfo.get("id"));
             if (!getPara("sp_id").equals("")) {
@@ -492,9 +517,12 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("combine_type", DepartOrder.COMBINE_TYPE_PICKUP);
             pickupOrder.set("pickup_mode", getPara("pickupMode"));
             pickupOrder.set("address", getPara("address"));
-            pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
-            pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0 : getPara("roadBridge"));
-            pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));
+            pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0
+                    : getPara("kilometres"));
+            pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0
+                    : getPara("roadBridge"));
+            pickupOrder.set("income", getPara("income").equals("") ? 0
+                    : getPara("income"));
             updateTransferOrderPickupMode(pickupOrder);
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(
@@ -502,9 +530,9 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("create_stamp", sqlDate);
             String driveId = getPara("driver_id");
             if (driveId == null || "".equals(driveId)) {
-            	carinfo = saveDriver();
+                carinfo = saveDriver();
             } else {
-            	carinfo = updateDriver(driveId);
+                carinfo = updateDriver(driveId);
             }
             pickupOrder.set("driver_id", carinfo.get("id"));
             if (!getPara("sp_id").equals("")) {
@@ -588,7 +616,7 @@ public class PickupOrderController extends Controller {
 
     // 更新司机
     private Carinfo updateDriver(String driveId) {
-    	Carinfo carinfo = Carinfo.dao.findById(driveId);
+        Carinfo carinfo = Carinfo.dao.findById(driveId);
         carinfo.set("driver", getPara("driver_name"));
         carinfo.set("phone", getPara("driver_phone"));
         carinfo.set("car_no", getPara("car_no"));
@@ -704,7 +732,7 @@ public class PickupOrderController extends Controller {
         List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao
                 .find("select * from depart_transfer where depart_id = ?",
                         pickupOrder.get("id"));
-        for (DepartTransferOrder departTransferOrder : departTransferOrders) {
+        for (DepartTransferOrder departTransferOrder : departTransferOrders) { 
             TransferOrder transferOrder = TransferOrder.dao
                     .findById(departTransferOrder.get("order_id"));
             transferOrder.set("status", "已入货场");
@@ -825,25 +853,23 @@ public class PickupOrderController extends Controller {
     }
 
     // 入库
-	private void gateInWarehouse(DepartTransferOrder departTransferOrder) {
-		// product_id不为空时入库
-		TransferOrderItem transferOrderItem = TransferOrderItem.dao
-		        .findFirst("select * from transfer_order_item where order_id='"
-		                + departTransferOrder.get("order_id")
-		                + "'");
-		TransferOrder tOrder = TransferOrder.dao
-		        .findById(departTransferOrder.get("order_id"));
-
-		if (transferOrderItem.get("product_id") != null) {
-		    InventoryItem item = new InventoryItem();
-		    item.set("party_id", tOrder.get("customer_id"));
-		    item.set("warehouse_id", tOrder.get("warehouse_id"));
-		    item.set("product_id",
-		            transferOrderItem.get("product_id"));
-		    item.set("total_quantity",
-		            transferOrderItem.get("amount"));
-		}
-	}
+    private void gateInWarehouse(DepartTransferOrder departTransferOrder) {
+        // product_id不为空时入库
+        TransferOrderItem transferOrderItem = TransferOrderItem.dao
+                .findFirst("select * from transfer_order_item where order_id='"
+                        + departTransferOrder.get("order_id") + "'");
+        TransferOrder tOrder = TransferOrder.dao.findById(departTransferOrder
+                .get("order_id"));
+        if (transferOrderItem != null) {
+            if (transferOrderItem.get("product_id") != null) {
+                InventoryItem item = new InventoryItem();
+                item.set("party_id", tOrder.get("customer_id"));
+                item.set("warehouse_id", tOrder.get("warehouse_id"));
+                item.set("product_id", transferOrderItem.get("product_id"));
+                item.set("total_quantity", transferOrderItem.get("amount"));
+            }
+        }
+    }
 
     // 添加额的外运输单
     public void addExternalTransferOrder() {

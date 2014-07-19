@@ -49,10 +49,16 @@
                                                 <ul id='customerList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
     											</ul>
                                             </div>                      
-                                            <div class="form-group">     
-                                            	<h5 id="pageCustomerName"></h5><h5 id="pageCustomerAddress"></h5>     
-                                            </div>
-        								</div>
+                                            <div class="form-group">   
+	                                             <label>出库方式</label> 
+	                                          			<label class="radio-inline">
+	                                                       <input type="radio" name="orderType" id="directGateOut" value="directGateOut" checked="">直接出库
+	                                                   </label>
+	                                                   <label class="radio-inline">
+	                                                       <input type="radio" name="orderType" id="gateOutTransferOrder" value="gateOutTransferOrder">生成运输单
+	                                                   </label>
+	                                         	</div>
+                                         	</div>
         								<div class="col-lg-6">
         									<div class="form-group">
                                                 <label>质检员</label>
@@ -233,15 +239,9 @@
                                     <hr/>
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                                     <button id="saveInventoryBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
-                                    <button id="departureConfirmationBtn" type="button" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
                                     <button id="gateOutConfirmBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">出仓确认</button> 
-                                    <button id="receiptBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button>
                                		<a class="btn btn-default" href="/yh/gateOut">返回</a>
                                 </div>
-                                <p>保存：新建时只能保存（其他按钮都灰掉不能点）, 保存后单据状态变为“新建”</p>
-                                <p>发车确认：新建后可以点击，点击后生成单据状态 “已发车”，之后生成应付条目（付费给供应商）</p>
-                                <p>入库确认：如果是直送不显示该按钮，发车后可以点击，点击后生成单据状态 “已入库”</p>
-                                <p>回单签收：如果是入中转仓不显示该按钮，发车后可以点击，点击后生成单据状态 “已签收”，之后生成应收条目（向客户收钱）</p>
                             </div>
                         </div>
                         <!-- /.panel-body -->
