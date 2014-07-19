@@ -425,41 +425,47 @@ $(document).ready(function() {
             	"sWidth": "180px"
             },
             {
+            	"mDataProp":"SIZE",            	
+            	"sWidth": "50px"
+        	},
+            {
+            	"mDataProp":"WIDTH",
+            	"sWidth": "50px"
+            },
+            {
+            	"mDataProp":"HEIGHT",            	
+            	"sWidth": "50px"
+        	}, {
+            	"mDataProp":"AMOUNT",
+            	"sWidth": "50px"
+            }, {
+            	"mDataProp":"UNIT",
+            	"sWidth": "50px"
+            },
+            {
             	"mDataProp":"WEIGHT",
             	"sWidth": "50px",
             	"fnRender": function(obj) {
         			return obj.aData.WEIGHT * obj.aData.AMOUNT;
-            }},
+                }
+            },
             {
             	"mDataProp":"VOLUME",
             	"sWidth": "50px",
             	"fnRender": function(obj) {
             		return obj.aData.VOLUME * obj.aData.AMOUNT;
-            	}},
-            {
-            	"mDataProp":"AMOUNT",
-            	"sWidth": "50px"
-            },      	
-            {
-            	"mDataProp":"UNIT",
-            	"sWidth": "50px"
-            },
+            	}
+            },            
             {"mDataProp":"REMARK"},
             {  
                 "mDataProp": null, 
-                "sWidth": "8%",                
+                "sWidth": "60px",                
                 "fnRender": function(obj) {
-                    return	"<a class='btn btn-success dateilEdit' code='?id="+obj.aData.ID+"'>"+
+                    return	"<a class='dateilEdit' code='?id="+obj.aData.ID+"' title='单品编辑'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
-                                "单品编辑"+
                             "</a>"+
-                    		"<a class='btn btn-success editItem' code='?item_id="+obj.aData.ID+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                                "编辑"+
-                            "</a>"+
-                            "<a class='btn btn-danger deleteItem' code='?item_id="+obj.aData.ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "删除"+
+                            "<a class='deleteItem' code='?item_id="+obj.aData.ID+"' title='删除'>"+
+                                "<i class='fa fa-trash-o fa-fw'></i>"+
                             "</a>";
                 }
             }                         
@@ -486,17 +492,42 @@ $(document).ready(function() {
             	placeholder: ""
             },
             {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"size",
             	placeholder: ""
             },
             {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"width",
             	placeholder: ""
             },
             {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"height",
             	placeholder: ""
             },      	
             {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"amount",
+            	placeholder: ""
+            },     	
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"unit",
             	placeholder: ""
             },
+            null,
+            null,
             {
             	indicator: '正在保存...',
             	onblur: 'submit',
@@ -1413,6 +1444,10 @@ $(document).ready(function() {
  	
  	// 清除上一次留下的ID
  	$("#editTransferOrderItem").click(function(){
+ 		$.post('/yh/transferOrderItem/addNewRow', {orderId:orderId}, function(data){
+ 			itemDataTable.fnDraw(); 
+ 		});
+
  		$("#transferOrderItemId").val("");
  		$("#productId").val("");
  	});
