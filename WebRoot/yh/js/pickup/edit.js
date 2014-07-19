@@ -126,35 +126,17 @@
          "aoColumns": [
               { "mDataProp": null,
                 "fnRender": function(obj) {
-                var Returnhtml_one="<input type='checkbox' class='checkedOrUnchecked' name='order_check_box' checked='checked' value={"+obj.aData.ID+","+obj.aData.ITEM_ID+"}>";
-         	    var Returnhtml_two="<input type='checkbox' class='checkedOrUnchecked' name='order_check_box'  value={"+obj.aData.ID+","+obj.aData.ITEM_ID+"}>";
-	         	    if(item_detail_id.length>0){
-	         	       var size=0;
-	         	       for(var i=0;i<item_detail_id.length;i++){
-	                	   if(item_detail_id[i]==obj.aData.ID){
-	                		   size++;
-	                	   }
-	                   }
-	         	       if(size>=1){
-	         	    	   return Returnhtml_one;
-	         	       }else{
-	         	    	   return Returnhtml_two;
-	         	       }
-	         	    }else{
-	         	       return Returnhtml_one;
-	         	    }
+             	   the_id=obj.aData.ID;
+                    return '<input checked="" type="checkbox" name="detailCheckBox" value="'+obj.aData.ID+'">';
                 }
-             },
+              },
              { "mDataProp": "ITEM_NAME"},      
              { "mDataProp": "ITEM_NO"},
              { "mDataProp": "SERIAL_NO"},
              { "mDataProp": "VOLUME"},
              { "mDataProp": "WEIGHT"},
              { "mDataProp": "REMARK"},           
-         ],
-         "fnInitComplete": function(oSettings, json) {
-         	//设置checkbok 选中  
-         }       
+         ]        
      });
 	
     //选择单品保存
@@ -190,6 +172,31 @@
     		$("#cartype option[value='"+svalue+"']").attr("selected","selected");
     	}
     }
+    
+    var savePickupOrderFunction = function(){
+    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+			$("#pickupOrderId").val(data.ID);
+			$("#addressPickupOrderId").val(data.ID);
+			$("#milestonePickupId").val(data.ID);
+			if(data.ID>0){
+				$("#pickupId").val(data.ID);
+		        showFinishBut();
+			  	$("#style").show();	
+			    
+			    $("input[name='detailCheckBox']").each(function(){
+			    	if($(this).prop('checked') == false){
+			    		$("#detailDialog").modal('show');
+			    	}
+			    });
+			}else{
+				alert('数据保存失败。');
+			}
+		},'json');
+    };
+    
+    $("#continueCreateBtn").click(function(){
+    	$("#detailCheckBoxForm").submit();
+    });
 
     //点击保存的事件，保存拼车单信息
     var clickSavePickupOrder = function(e){
@@ -197,31 +204,9 @@
 		e.preventDefault();		
 		//异步向后台提交数据
         if($("#pickupOrderId").val() == ""){
-	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
-				$("#pickupOrderId").val(data.ID);
-				$("#addressPickupOrderId").val(data.ID);
-				$("#milestonePickupId").val(data.ID);
-				if(data.ID>0){
-					$("#pickupId").val(data.ID);
-			        showFinishBut();
-				  	$("#style").show();	             
-				}else{
-					alert('数据保存失败。');
-				}
-			},'json');
+        	savePickupOrderFunction();
         }else{
-        	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
-				$("#pickupOrderId").val(data.ID);
-				$("#addressPickupOrderId").val(data.ID);
-				$("#milestonePickupId").val(data.ID);
-				if(data.ID>0){		
-					$("#pickupId").val(data.ID);	
-			        showFinishBut();
-				  	$("#style").show();	            
-				}else{
-					alert('数据保存失败。');
-				}
-			},'json');
+        	savePickupOrderFunction();
         }
     };
     
@@ -443,7 +428,7 @@
 			$("#finishBtn").attr('disabled', true);	
 		}
 	};
-	showFinishBut();
+	//showFinishBut();
 	
 	// 货品信息
 	$("#pickupOrderItemList").click(function(e){
@@ -525,13 +510,6 @@
 	
 	// 点击已完成按钮
 	$("#finishBtn").click(function(){
-		var pickupOrderId = $("#pickupOrderId").val();
-		$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId}, function(){
-			pickupOrderMilestone();
-		},'json');
-		$("#finishBtn").attr('disabled', true);	
-		$("#finishBtnVal").val("已入货场");
-		
 		// 处理入库运输单
 		$.post('/yh/pickupOrder/getTransferOrderDestination', $("#pickupAddressForm").serialize(), function(data){
 			//保存成功后，刷新列表
@@ -549,6 +527,13 @@
                 alert('操作失败');
             }
 		},'json');
+		
+		var pickupOrderId = $("#pickupOrderId").val();
+		$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId}, function(){
+			pickupOrderMilestone();
+		},'json');
+		//$("#finishBtn").attr('disabled', true);	
+		$("#finishBtnVal").val("已入货场");		
 	});
 	
 	// 判断货场是否选中

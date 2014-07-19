@@ -705,9 +705,6 @@ public class PickupOrderController extends Controller {
                 .find("select * from depart_transfer where depart_id = ?",
                         pickupOrder.get("id"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
-        	// 入库
-            gateInWarehouse(departTransferOrder);
-            
             TransferOrder transferOrder = TransferOrder.dao
                     .findById(departTransferOrder.get("order_id"));
             transferOrder.set("status", "已入货场");
@@ -728,6 +725,10 @@ public class PickupOrderController extends Controller {
             milestone.set("type",
                     TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
             milestone.save();
+            if("replenishmentOrder".equals(transferOrder.get("order_type"))){
+	        	// 入库
+	            gateInWarehouse(departTransferOrder);
+            }            
         }
         pickupOrder.set("status", "已入货场");
         pickupOrder.update();
@@ -798,9 +799,23 @@ public class PickupOrderController extends Controller {
                                 pickupOrderId);
                 for (DepartTransferOrder departTransferOrder : departTransferOrders) {
                     if (endVal.equals(departTransferOrder.get("order_id") + "")) {
-                    	// 入库
+                    	// 入库 TODO PickupOrderController.java:823: java.lang.NullPointerException
                         gateInWarehouse(departTransferOrder);
                         // 去掉入库的单据
+                    	TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+                    	transferOrder.set("status", "已入库");
+                    	transferOrder.update();
+                    	TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+                    	transferOrderMilestone.set("status", "已入库");
+                    	String name = (String) currentUser.getPrincipal();
+                        List<UserLogin> users = UserLogin.dao
+                                .find("select * from user_login where user_name='" + name + "'");
+                        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+                        java.util.Date utilDate = new java.util.Date();
+                        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+                        transferOrderMilestone.set("create_stamp", sqlDate);
+                        transferOrderMilestone.set("order_id", transferOrder.get("id"));
+                        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
                         departTransferOrder.delete();
                     }
                 }
