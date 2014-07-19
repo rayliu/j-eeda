@@ -1452,6 +1452,7 @@ $(document).ready(function() {
  	
  	// 清除上一次留下的ID
  	$("#editTransferOrderItem").click(function(){
+ 		var orderId = $("#order_id").val();
  		$.post('/yh/transferOrderItem/addNewRow', {orderId:orderId}, function(data){
  			itemDataTable.fnDraw(); 
  		});
