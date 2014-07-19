@@ -418,7 +418,7 @@ $(document).ready(function() {
         "aoColumns": [  			            
             {
             	"mDataProp":"ITEM_NO",            	
-            	"sWidth": "80px"
+            	"sWidth": "80px",
         	},
             {
             	"mDataProp":"ITEM_NAME",
@@ -440,7 +440,7 @@ $(document).ready(function() {
             	"sWidth": "50px"
             }, {
             	"mDataProp":"UNIT",
-            	"sWidth": "50px"
+            	"sWidth": "50px",
             },
             {
             	"mDataProp":"WEIGHT",
@@ -483,7 +483,10 @@ $(document).ready(function() {
             	tooltip: '点击可以编辑',
             	name:"item_no",
             	placeholder: "",
-            	callback: function () {} 
+            	callback: function () {},
+            	fnOnCellUpdated: function(sStatus, sValue, settings){
+					alert("(Cell Callback): Cell is updated with value " + sValue);
+				}
         	},
             {
             	indicator: '正在保存...',
@@ -530,6 +533,8 @@ $(document).ready(function() {
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"unit",
+            	type: 'select',
+            	data: "{'':'', '台':'台','件':'件','套':'套'}",
             	placeholder: "",
             	callback: function () {} 
             },
@@ -540,6 +545,7 @@ $(document).ready(function() {
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"remark",
+            	type: 'textarea',
             	placeholder: "",
             	callback: function () {} 
             },
