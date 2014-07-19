@@ -317,13 +317,14 @@ public class DepartOrderController extends Controller {
     // allTranferOrderList 创建发车单
     public void addDepartOrder() {
         String list = getPara("localArr");
+        String[] order_list = getPara("localArr").split(",");
         String depart_no = creat_order_no();// 获取发车单号     
         String name = (String) currentUser.getPrincipal();
         setAttr("creat", name);
         setAttr("getIin_status", "新建");
         setAttr("localArr", list);
         setAttr("getIin_depart_no", depart_no);
-        if(list.length()==1){
+        if(order_list.length==1){
         	int id=Integer.parseInt(list);
         	TransferOrder tr=TransferOrder.dao.findById(id);
     		if(!"delivery".equals(tr.get("arrival_mode"))){
@@ -1154,7 +1155,8 @@ public class DepartOrderController extends Controller {
     //初始化收货人信息
     public void  ginNotifyPerson(){
     	int id=0;
-    	if(getPara("order_id").toString().length()==1){
+    	String[] order_id=getPara("order_id").split(",");
+    	if(order_id.length==1){
     		id=Integer.parseInt(getPara("order_id").toString());
     		String Sql="select co.* from contact  co "
     				+"left join transfer_order tro  on tro.id= "+id
