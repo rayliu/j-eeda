@@ -19,7 +19,8 @@ import com.jfinal.core.Controller;
 
 public class DeliveryOrderMilestoneController extends Controller {
 
-    private Logger logger = Logger.getLogger(DeliveryOrderMilestoneController.class);
+    private Logger logger = Logger
+            .getLogger(DeliveryOrderMilestoneController.class);
     Subject currentUser = SecurityUtils.getSubject();
 
     public void transferOrderMilestoneList() {
@@ -27,12 +28,14 @@ public class DeliveryOrderMilestoneController extends Controller {
         List<String> usernames = new ArrayList<String>();
         String delivery_id = getPara("delivery_id");
         if (delivery_id == "") {
-        	delivery_id = "-1";
+            delivery_id = "-1";
         }
         List<DeliveryOrderMilestone> transferOrderMilestones = DeliveryOrderMilestone.dao
-                .find("select * from delivery_order_milestone where delivery_id=" + delivery_id);
+                .find("select * from delivery_order_milestone where delivery_id="
+                        + delivery_id);
         for (DeliveryOrderMilestone transferOrderMilestone : transferOrderMilestones) {
-            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
+            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone
+                    .get("create_by"));
             String username = userLogin.get("user_name");
             usernames.add(username);
         }
@@ -43,15 +46,16 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     // 发车确认
     public void departureConfirmation() {
-    	Long delivery_id = Long.parseLong(getPara("delivery_id"));
-    	DeliveryOrder transferOrder = DeliveryOrder.dao.findById(delivery_id);
-    	transferOrder.set("status", "已发车");
-    	transferOrder.update();
+        Long delivery_id = Long.parseLong(getPara("delivery_id"));
+        DeliveryOrder transferOrder = DeliveryOrder.dao.findById(delivery_id);
+        transferOrder.set("status", "已发车");
+        transferOrder.update();
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
         transferOrderMilestone.set("status", "已发车");
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao
+                .find("select * from user_login where user_name='" + name + "'");
         transferOrderMilestone.set("create_by", users.get(0).get("id"));
         transferOrderMilestone.set("location", "");
         java.util.Date utilDate = new java.util.Date();
@@ -60,7 +64,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.set("delivery_id", getPara("delivery_id"));
         transferOrderMilestone.save();
         map.put("transferOrderMilestone", transferOrderMilestone);
-        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
+        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone
+                .get("create_by"));
         String username = userLogin.get("user_name");
         map.put("username", username);
         renderJson(map);
@@ -68,8 +73,8 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     // 保存里程碑
     public void saveTransferOrderMilestone() {
-    	Long delivery_id = Long.parseLong(getPara("delivery_id"));
-    	DeliveryOrder transferOrder = DeliveryOrder.dao.findById(delivery_id);
+        Long delivery_id = Long.parseLong(getPara("delivery_id"));
+        DeliveryOrder transferOrder = DeliveryOrder.dao.findById(delivery_id);
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
         String status = getPara("status");
@@ -88,7 +93,8 @@ public class DeliveryOrderMilestoneController extends Controller {
             transferOrderMilestone.set("location", "");
         }
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao
+                .find("select * from user_login where user_name='" + name + "'");
 
         transferOrderMilestone.set("create_by", users.get(0).get("id"));
 
@@ -99,7 +105,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.save();
 
         map.put("transferOrderMilestone", transferOrderMilestone);
-        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
+        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone
+                .get("create_by"));
         String username = userLogin.get("user_name");
         map.put("username", username);
         renderJson(map);
@@ -107,15 +114,17 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     // 回单签收
     public void receipt() {
-    	Long delivery_id = Long.parseLong(getPara("delivery_id"));
-    	DeliveryOrder transferOrder = DeliveryOrder.dao.findById(delivery_id);
-    	transferOrder.set("status", "已签收");
-    	transferOrder.update();
+        Long delivery_id = Long.parseLong(getPara("delivery_id"));
+        DeliveryOrder transferOrder = DeliveryOrder.dao.findById(delivery_id);
+        transferOrder.set("status", "已签收");
+        transferOrder.update();
+
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
         transferOrderMilestone.set("status", "已签收");
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao
+                .find("select * from user_login where user_name='" + name + "'");
         transferOrderMilestone.set("create_by", users.get(0).get("id"));
         transferOrderMilestone.set("location", "");
         java.util.Date utilDate = new java.util.Date();
@@ -124,7 +133,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.set("delivery_id", getPara("delivery_id"));
         transferOrderMilestone.save();
         map.put("transferOrderMilestone", transferOrderMilestone);
-        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
+        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone
+                .get("create_by"));
         String username = userLogin.get("user_name");
         map.put("username", username);
         renderJson(map);
@@ -132,15 +142,16 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     // 入库确认
     public void warehousingConfirm() {
-    	Long order_id = Long.parseLong(getPara("order_id"));
-    	TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
-    	transferOrder.set("status", "已入库");
-    	transferOrder.update();
+        Long order_id = Long.parseLong(getPara("order_id"));
+        TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
+        transferOrder.set("status", "已入库");
+        transferOrder.update();
         Map<String, Object> map = new HashMap<String, Object>();
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         transferOrderMilestone.set("status", "已入库");
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao
+                .find("select * from user_login where user_name='" + name + "'");
         transferOrderMilestone.set("create_by", users.get(0).get("id"));
         transferOrderMilestone.set("location", "");
         java.util.Date utilDate = new java.util.Date();
@@ -149,7 +160,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.set("delivery_id", getPara("delivery_id"));
         transferOrderMilestone.save();
         map.put("transferOrderMilestone", transferOrderMilestone);
-        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
+        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone
+                .get("create_by"));
         String username = userLogin.get("user_name");
         map.put("username", username);
         renderJson(map);

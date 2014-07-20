@@ -143,6 +143,13 @@ $(document).ready(function() {
 	 	$('#customerMessage').on('blur', function(){
 			$("#customerList").hide();
 		});
+	 	$('#customerList').on('blur', function(){
+			$('#customerList').hide();
+		});
+
+	 	$('#customerList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	 	});
 		// 选中客户
 		$('#customerList').on('mousedown', '.fromLocationItem', function(e){
 			var partyId =$(this).attr('code');
@@ -209,7 +216,14 @@ $(document).ready(function() {
 		});
 		$('#itemNameMessage').on('blur', function(){
 		$("#itemNameList").hide();
-	});
+		});
+		$('#itemNameList').on('blur', function(){
+			$('#itemNameList').hide();
+		});
+
+	 	$('#itemNameList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	 	});
 	// 选中产品名
 		$('#itemNameList').on('mousedown', '.fromLocationItem', function(e){
 			$("#itemNameMessage").val($(this).text());
@@ -248,7 +262,14 @@ $(document).ready(function() {
 		});
 		$('#itemNoMessage').on('blur', function(){
 		$("#itemNoList").hide();
-	});
+		});
+		$('#itemNoList').on('blur', function(){
+			$('#itemNoList').hide();
+		});
+
+	 	$('#itemNoList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	 	});
 	// 选中序列号
 		$('#itemNoList').on('mousedown', '.fromLocationItem', function(e){
 			$("#itemNoMessage").val($(this).text());

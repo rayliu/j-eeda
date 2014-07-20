@@ -23,6 +23,15 @@ $(document).ready(function() {
 			$('#spMessage').on('blur', function(){
 				$("#spList").hide();
 			});
+			
+			$('#spList').on('blur', function(){
+		 		$('#spList').hide();
+		 	});
+
+			$('#spList').on('mousedown', function(){
+				return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+			});
+
 			// 选中供应商
 			$('#spList').on('mousedown', '.fromLocationItem', function(e){
 				$('#spMessage').val($(this).text());

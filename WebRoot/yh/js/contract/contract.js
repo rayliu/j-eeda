@@ -326,8 +326,23 @@ $(document).ready(function() {
 				{
 					companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+"</a></li>");
 				}
-				companyList.show();
 			},'json');
+			$("#companyList").css({ 
+	        	left:$(this).position().left+"px", 
+	        	top:$(this).position().top+32+"px" 
+	        }); 
+	        $('#companyList').show();
+		});
+        $('#companyName').on('blur', function(){
+			$("#companyList").hide();
+		});
+		
+		$('#companyList').on('blur', function(){
+	 		$('#companyList').hide();
+	 	});
+
+		$('#companyList').on('mousedown', function(){
+			return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
 		});
 	
 		$('#companyList').on('click', '.fromLocationItem', function(e){
@@ -340,12 +355,6 @@ $(document).ready(function() {
         	$('#post_code').val($(this).attr('post_code'));
         	$('#email').val($(this).attr('email'));
         	$('#partyid').val($(this).attr('partyId'));
-        	/*$('#label').html($(this).attr('contact_person'));
-        	$('#label2').html($(this).attr('phone'));
-        	$('#label3').html($(this).attr('email'));
-        	$('#label4').html($(this).attr('address'));
-        	$('#label5').html($(this).attr('post_code'));*/
-        	
         });
 		
 		
@@ -400,6 +409,15 @@ $(document).ready(function() {
 			$("#fromLocationList").hide();
 		});
 		
+
+		$('#fromLocationList').on('blur', function(){
+	 		$('#fromLocationList').hide();
+	 	});
+
+		$('#fromLocationList').on('mousedown', function(){
+			return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+		});
+		
 		$('#fromLocationList').on('mousedown', '.fromLocationItem', function(e){
 			$('#from_id').val($(this).attr('code'));
 			$('#fromName').val($(this).text());
@@ -439,7 +457,14 @@ $(document).ready(function() {
 		$('#toName').on('blur', function(){
 			$("#toLocationList").hide(1);
 		});
-		
+
+		$('#toLocationList').on('blur', function(){
+	 		$('#toLocationList').hide();
+	 	});
+
+		$('#toLocationList').on('mousedown', function(){
+			return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+		});
 		$('#toLocationList').on('mousedown', '.fromLocationItem', function(e){
 			$('#to_id').val($(this).attr('code'));
 			$('#toName').val($(this).text());

@@ -45,6 +45,14 @@ $(document).ready(function() {
 $('#warehouseSelect').on('blur', function(){
 	$("#warehouseList").hide();
 });
+$('#warehouseList').on('blur', function(){
+		$('#warehouseList').hide();
+	});
+
+$('#warehouseList').on('mousedown', function(){
+	return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+});
+
 
 // 选中仓库
 $('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
