@@ -19,7 +19,6 @@ import models.UserLogin;
 import models.Warehouse;
 import models.WarehouseOrder;
 import models.WarehouseOrderItem;
-import models.yh.delivery.DeliveryOrder;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -632,7 +631,7 @@ public class InventoryController extends Controller {
                         + id + "'");
         // 获取已入库的库存
         List<Record> inverntory = Db
-                .find("select * from inventory_item where item_no in(select item_no from warehouse_order_item where warehouse_order_id = '"
+                .find("select * from inventory_item where product_id in(select product_id from warehouse_order_item where warehouse_order_id = '"
                         + id
                         + "' and warehouse_id ='"
                         + warehouseOrder.get("warehouse_id") + "')");
@@ -640,8 +639,8 @@ public class InventoryController extends Controller {
         // 入库库存添加
         for (int i = 0; i < inverntory.size(); i++) {
             if (inverntory.size() > 0) {
-                if (list.get(i).get("item_no")
-                        .equals(inverntory.get(i).get("item_no"))
+                if (list.get(i).get("product_id")
+                        .equals(inverntory.get(i).get("product_id"))
                         && inverntory.get(i).get("warehouse_id")
                                 .equals(warehouseOrder.get("warehouse_id"))) {
                     InventoryItem inventoryItem = InventoryItem.dao
@@ -662,7 +661,7 @@ public class InventoryController extends Controller {
                         + "left join warehouse_order w2 on w.warehouse_order_id = w2.id "
                         + "where w.warehouse_order_id ='" + id + "'");
         List<Record> inverntory2 = Db
-                .find("select warehouse_id,product_id from inventory_item where item_no in(select item_no from warehouse_order_item where warehouse_order_id = '"
+                .find("select warehouse_id,product_id from inventory_item where product_id in(select product_id from warehouse_order_item w left join warehouse_order w2 on w.warehouse_order_id = w2.id where w.warehouse_order_id ='"
                         + id + "')");
         list2.removeAll(inverntory2);
 
@@ -730,14 +729,17 @@ public class InventoryController extends Controller {
         }
         // 删除库存为0的数据
         List<Record> list = Db
-                .find("select id,total_quantity from inventory_item where item_no in(select item_no from warehouse_order_item where warehouse_order_id = '"
+                .find("select id,total_quantity from inventory_item where product_id in(select product_id from warehouse_order_item where warehouse_order_id = '"
                         + id + "')");
-        for (int i = 0; i < list.size(); i++) {
-            if (Double
-                    .parseDouble(list.get(i).get("total_quantity").toString()) <= 0.0) {
-                InventoryItem.dao.deleteById(list.get(i).get("id"));
+        if (list.size() > 0) {
+            for (int i = 0; i < list.size(); i++) {
+                if (Double.parseDouble(list.get(i).get("total_quantity")
+                        .toString()) <= 0) {
+                    InventoryItem.dao.deleteById(list.get(i).get("id"));
+                }
             }
         }
+
         // 出库单完成出库
         WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
         warehouseOrder.set("status", "已出库");
@@ -755,23 +757,22 @@ public class InventoryController extends Controller {
     public void creatTransferOrder(String id, List<UserLogin> users,
             Date createDate, List<Record> warehouseItem, List<Record> inventory) {
         if (inventory.size() > 0) {
-            String orderNo = creat_order_no();// 构造运输单号
+            String orderNo = creat_order_no3();// 构造运输单号
             TransferOrder transferOrder = new TransferOrder();
             Party party = Party.dao
                     .findFirst(" select c.location from party p,contact c where p.contact_id =c.id and p.id='"
                             + inventory.get(0).get("party_id") + "'");
 
             transferOrder.set("order_no", orderNo);
-            transferOrder.set("customer_id", inventory.get(0)
-                    .get("customer_id"));
+            transferOrder.set("customer_id", inventory.get(0).get("party_id"));
             transferOrder.set("status", "新建");
             transferOrder.set("warehouse_id",
                     inventory.get(0).get("warehouse_id"));
             transferOrder.set("route_from", party.get("location"));
             transferOrder.set("order_type", "gateOutTransferOrder");
             transferOrder.set("create_stamp", createDate);
-            transferOrder.set("create_by", users.get(0).get(id));
-            transferOrder.update();
+            transferOrder.set("create_by", users.get(0).get("id"));
+            transferOrder.save();
 
             for (int i = 0; i < inventory.size(); i++) {
                 Product product = Product.dao.findById(inventory.get(i).get(
@@ -789,8 +790,8 @@ public class InventoryController extends Controller {
                             warehouseItem.get(i).get("total_quantity"));
                     tItem.set("unit", product.get("unit"));
                     tItem.set("product_id", inventory.get(i).get("product_id"));
-                    tItem.set("order_id", transferOrder.get(id));
-                    tItem.update();
+                    tItem.set("order_id", transferOrder.get("id"));
+                    tItem.save();
                 }
             }
         }
@@ -816,7 +817,7 @@ public class InventoryController extends Controller {
     public String creat_order_no3() {
         String order_no = null;
         String the_order_no = null;
-        DeliveryOrder order = DeliveryOrder.dao
+        TransferOrder order = TransferOrder.dao
                 .findFirst("select * from transfer_order order by order_no desc limit 0,1");
         if (order != null) {
             String num = order.get("order_no");

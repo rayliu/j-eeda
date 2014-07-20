@@ -377,13 +377,15 @@ $(document).ready(function() {
 		   }
 		   
 		   $("#transferOrderItemList").click(function(e){
-		    	if($("#warehouseorderId").val() == ''){
+			   $("#saveInventoryBtn").click();
+/*		    	if($("#warehouseorderId").val() == ''){
 			    	e.preventDefault();
+			    	
 			    	// 切换到货品明细时,应先保存运输单
 			    	//提交前，校验数据
-			        	alert("请先保存入库单!");
+			    	alert("请先保存出库单!");
 				       	return false; 
 			        
 		    	}
-		   });
+*/		   });
 });

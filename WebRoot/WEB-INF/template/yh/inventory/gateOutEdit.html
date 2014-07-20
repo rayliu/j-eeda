@@ -39,14 +39,14 @@
         										<label class="control-label" for="inputSuccess">仓库</label>
         										<input type="hidden" id="warehouseId" name="warehouseId" value="${warehouseOrder.warehouse_id!''}"> 
         										 <input id="warehouseSelect" class="form-control" name="warehouseSelect" placeholder="选择仓库" value="${warehouseOrder.warehouse_name!''}"> 
-        										 <ul id='warehouseList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+        										 <ul id='warehouseList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
     											</ul>
         									</div>	
 	              							<div class="form-group">
                                                 <label>客户信息</label>
                                                 <input type="hidden" id="party_id" name="party_id" value="${warehouseOrder.party_id!''}">
                                                 <input id="customerMessage" class="form-control dropdown-toggle" placeholder="选择客户" type="text" name="customerMessage" data-toggle="dropdown" value="${warehouseOrder.company_name!''}">
-                                                <ul id='customerList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+                                                <ul id='customerList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
     											</ul>
                                             </div>                      
                                             <div class="form-group">   
