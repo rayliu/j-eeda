@@ -1,6 +1,17 @@
 ﻿
 $(document).ready(function() {
 	$('#menu_transfer').addClass('active').find('ul').addClass('in');
+
+	$.editable.addInputType('autocompleteType', {
+	    element : $.editable.types.text.element,
+	    plugin: function (settings, original) {
+	      $('input', this).autocomplete({
+	        //source: "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id
+	        source: [ "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby" ]
+	      });
+	    }
+	});
+	
     //from表单验证
 	var validate = $('#transferOrderUpdateForm').validate({
         rules: {
@@ -57,9 +68,19 @@ $(document).ready(function() {
         $('#customerList').show();
 	});
 
- 	$('#customerMessage').on('blur', function(){
+ 	// 没选中客户，焦点离开，隐藏列表
+	$('#customerMessage').on('blur', function(){
  		$('#customerList').hide();
  	});
+
+	//当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+	$('#customerList').on('blur', function(){
+ 		$('#customerList').hide();
+ 	});
+
+	$('#customerList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
 	
 	// 选中客户
 	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
@@ -234,8 +255,19 @@ $(document).ready(function() {
 	$('#spMessage').on('blur', function(){
  		$('#spList').hide();
  	});
+
+	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
+	$('#spList').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+
+	$('#spList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
+
 	// 选中供应商
 	$('#spList').on('mousedown', '.fromLocationItem', function(e){
+		console.log($('#spList').is(":focus"))
 		var message = $(this).text();
 		$('#spMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#sp_id').val($(this).attr('partyId'));
@@ -398,7 +430,7 @@ $(document).ready(function() {
 	        }
     	}
     });	
-    
+
 	var order_id = $("#order_id").val();
 	//datatable, 动态处理
     var itemDataTable = $('#itemTable').dataTable({
@@ -498,15 +530,18 @@ $(document).ready(function() {
 	var sumWeight = function(currentEle){
 		$(currentEle).parent().children('.sumWeight')[0].innerHTML = parseFloat($(currentEle).parent().children('.weight')[0].innerHTML) * parseFloat($(currentEle).parent().children('.amount')[0].innerHTML);
 	};
+
+	
     
     itemDataTable.makeEditable({
     	sUpdateURL: '/yh/transferOrderItem/saveTransferOrderItemByField',    	
     	oEditableSettings: {event: 'click'},
     	"aoColumns": [  			            
-            {
+            {            	
             	indicator: '正在保存...',
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
+            	type: "autocompleteType",
             	name:"item_no",
             	placeholder: "",
             	callback: function () {}

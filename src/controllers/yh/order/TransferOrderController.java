@@ -67,8 +67,7 @@ public class TransferOrderController extends Controller {
             String sql = "select t.*,c1.abbr cname,c2.abbr spname,t.create_stamp,o.office_name oname from transfer_order t "
                     + " left join party p1 on t.customer_id = p1.id " + " left join party p2 on t.sp_id = p2.id "
                     + " left join contact c1 on p1.contact_id = c1.id" + " left join contact c2 on p2.contact_id = c2.id "
-                    + " left join office o on t.office_id = o.id where t.status!='取消' order by create_stamp desc"
-                    + sLimit;
+                    + " left join office o on t.office_id = o.id where t.status!='取消' order by create_stamp desc" + sLimit;
 
             List<Record> transferOrders = Db.find(sql);
 
@@ -94,20 +93,20 @@ public class TransferOrderController extends Controller {
             String sqlTotal = "select count(1) total from transfer_order t " + " left join party p1 on t.customer_id = p1.id "
                     + " left join party p2 on t.sp_id = p2.id " + " left join contact c1 on p1.contact_id = c1.id"
                     + " left join contact c2 on p2.contact_id = c2.id"
-                    + " left join office o on t.office_id = o.id where t.status!='取消' and t.order_no like '%" + orderNo + "%' and t.status like '%" + status
-                    + "%' and t.address like '%" + address + "%' and c1.abbr like '%" + customer + "%' and ifnull(c2.abbr,'') like '%" + sp
-                    + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
+                    + " left join office o on t.office_id = o.id where t.status!='取消' and t.order_no like '%" + orderNo
+                    + "%' and t.status like '%" + status + "%' and t.address like '%" + address + "%' and c1.abbr like '%" + customer
+                    + "%' and ifnull(c2.abbr,'') like '%" + sp + "%' and o.office_name  like '%" + officeName
+                    + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
             String sql = "select t.*,c1.abbr cname,c2.abbr spname,o.office_name oname from transfer_order t "
                     + " left join party p1 on t.customer_id = p1.id " + " left join party p2 on t.sp_id = p2.id "
                     + " left join contact c1 on p1.contact_id = c1.id" + " left join contact c2 on p2.contact_id = c2.id"
-                    + " left join office o on t.office_id = o.id where t.status!='取消' and t.order_no like '%" + orderNo + "%' and t.status like '%" + status
-                    + "%' and t.address like '%" + address + "%' and c1.abbr like '%" + customer + "%' and ifnull(c2.abbr,'') like '%" + sp
-                    + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime + "' and '" + endTime
-                    + "' order by create_stamp desc"
-                    + sLimit;
+                    + " left join office o on t.office_id = o.id where t.status!='取消' and t.order_no like '%" + orderNo
+                    + "%' and t.status like '%" + status + "%' and t.address like '%" + address + "%' and c1.abbr like '%" + customer
+                    + "%' and ifnull(c2.abbr,'') like '%" + sp + "%' and o.office_name  like '%" + officeName
+                    + "%' and create_stamp between '" + beginTime + "' and '" + endTime + "' order by create_stamp desc" + sLimit;
 
             List<Record> transferOrders = Db.find(sql);
 
@@ -357,8 +356,8 @@ public class TransferOrderController extends Controller {
         TransferOrder transferOrder = null;
         if (order_id == null || "".equals(order_id)) {
             transferOrder = new TransferOrder();
-            if(!"".equals(spId) && spId != null){
-            	transferOrder.set("sp_id", spId);
+            if (!"".equals(spId) && spId != null) {
+                transferOrder.set("sp_id", spId);
             }
             transferOrder.set("customer_id", customerId);
             transferOrder.set("status", getPara("status"));
@@ -386,11 +385,11 @@ public class TransferOrderController extends Controller {
                     party = updateContact(notifyPartyId);
                 }
                 transferOrder.set("notify_party_id", party.get("id"));
-            }else{
-	            if (warehouseId != null && !"".equals(warehouseId)) {
-	                transferOrder.set("warehouse_id", warehouseId);
-	            }
-	            if (notifyPartyId == null || "".equals(notifyPartyId)) {
+            } else {
+                if (warehouseId != null && !"".equals(warehouseId)) {
+                    transferOrder.set("warehouse_id", warehouseId);
+                }
+                if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
                 } else {
                     party = updateContact(notifyPartyId);
@@ -401,15 +400,16 @@ public class TransferOrderController extends Controller {
                 transferOrder.set("office_id", officeId);
             }
             transferOrder.save();
-            /*// 如果是货品直送,则需生成一张发车单
-            if (transferOrder.get("arrival_mode").equals("delivery")) {
-                createDepartOrder(transferOrder);
-            }*/
+            /*
+             * // 如果是货品直送,则需生成一张发车单 if
+             * (transferOrder.get("arrival_mode").equals("delivery")) {
+             * createDepartOrder(transferOrder); }
+             */
             saveTransferOrderMilestone(transferOrder);
         } else {
             transferOrder = TransferOrder.dao.findById(order_id);
-            if(!"".equals(spId) && spId != null){
-            	transferOrder.set("sp_id", spId);
+            if (!"".equals(spId) && spId != null) {
+                transferOrder.set("sp_id", spId);
             }
             transferOrder.set("customer_id", customerId);
             transferOrder.set("order_no", getPara("order_no"));
@@ -436,11 +436,11 @@ public class TransferOrderController extends Controller {
                     party = updateContact(notifyPartyId);
                 }
                 transferOrder.set("notify_party_id", party.get("id"));
-            }else{
-	            if (warehouseId != null && !"".equals(warehouseId)) {
-	                transferOrder.set("warehouse_id", warehouseId);
-	            }
-	            if (notifyPartyId == null || "".equals(notifyPartyId)) {
+            } else {
+                if (warehouseId != null && !"".equals(warehouseId)) {
+                    transferOrder.set("warehouse_id", warehouseId);
+                }
+                if (notifyPartyId == null || "".equals(notifyPartyId)) {
                     party = saveContact();
                 } else {
                     party = updateContact(notifyPartyId);
@@ -451,18 +451,17 @@ public class TransferOrderController extends Controller {
                 transferOrder.set("office_id", officeId);
             }
             transferOrder.update();
-            /*// 如果是货品直送,则需判断是否新建一张发车单
-            if (transferOrder.get("arrival_mode").equals("delivery")) {
-                DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst(
-                        "select * from depart_transfer where order_id = ?", transferOrder.get("id"));
-                if (departTransferOrder == null) {
-                    createDepartOrder(transferOrder);
-                } else {
-                    updateDepartOrder(transferOrder, departTransferOrder);
-                }
-            } else {
-                deleteDepartOrder(transferOrder);
-            }*/
+            /*
+             * // 如果是货品直送,则需判断是否新建一张发车单 if
+             * (transferOrder.get("arrival_mode").equals("delivery")) {
+             * DepartTransferOrder departTransferOrder =
+             * DepartTransferOrder.dao.findFirst(
+             * "select * from depart_transfer where order_id = ?",
+             * transferOrder.get("id")); if (departTransferOrder == null) {
+             * createDepartOrder(transferOrder); } else {
+             * updateDepartOrder(transferOrder, departTransferOrder); } } else {
+             * deleteDepartOrder(transferOrder); }
+             */
         }
         renderJson(transferOrder);
     }
@@ -525,7 +524,8 @@ public class TransferOrderController extends Controller {
     private String creatDepartNo() {
         String order_no = null;
         String the_order_no = null;
-        DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order where  combine_type= '" + DepartOrder.COMBINE_TYPE_DEPART	+ "' order by depart_no desc limit 0,1");
+        DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order where  combine_type= '" + DepartOrder.COMBINE_TYPE_DEPART
+                + "' order by depart_no desc limit 0,1");
         if (order != null) {
             String num = order.get("DEPART_no");
             String str = num.substring(2, num.length());
@@ -627,24 +627,13 @@ public class TransferOrderController extends Controller {
         String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db
-                    .find("select *,p.id as pid,p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"' and (company_name like '%"
-                            + input
-                            + "%' or contact_person like '%"
-                            + input
-                            + "%' or email like '%"
-                            + input
-                            + "%' or mobile like '%"
-                            + input
-                            + "%' or phone like '%"
-                            + input
-                            + "%' or address like '%"
-                            + input
-                            + "%' or postal_code like '%"
-                            + input
-                            + "%') limit 0,10");
-        }else{
-        	locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'");
+            locationList = Db.find("select *,p.id as pid,p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"
+                    + Party.PARTY_TYPE_CUSTOMER + "' and (company_name like '%" + input + "%' or contact_person like '%" + input
+                    + "%' or email like '%" + input + "%' or mobile like '%" + input + "%' or phone like '%" + input
+                    + "%' or address like '%" + input + "%' or postal_code like '%" + input + "%') limit 0,10");
+        } else {
+            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
+                    + Party.PARTY_TYPE_CUSTOMER + "'");
         }
         renderJson(locationList);
     }
@@ -654,24 +643,13 @@ public class TransferOrderController extends Controller {
         String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db
-                    .find("select *,p.id as pid from,p.payment party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"' and (company_name like '%"
-                            + input
-                            + "%' or contact_person like '%"
-                            + input
-                            + "%' or email like '%"
-                            + input
-                            + "%' or mobile like '%"
-                            + input
-                            + "%' or phone like '%"
-                            + input
-                            + "%' or address like '%"
-                            + input
-                            + "%' or postal_code like '%"
-                            + input
-                            + "%') limit 0,10");
-        }else{
-        	locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'");
+            locationList = Db.find("select *,p.id as pid, p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"
+                    + Party.PARTY_TYPE_SERVICE_PROVIDER + "' and (company_name like '%" + input + "%' or contact_person like '%" + input
+                    + "%' or email like '%" + input + "%' or mobile like '%" + input + "%' or phone like '%" + input
+                    + "%' or address like '%" + input + "%' or postal_code like '%" + input + "%') limit 0,10");
+        } else {
+            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
+                    + Party.PARTY_TYPE_SERVICE_PROVIDER + "'");
         }
         renderJson(locationList);
     }
@@ -682,9 +660,11 @@ public class TransferOrderController extends Controller {
         String customerId = getPara("customerId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = "+customerId+") and item_no like '%" + input + "%' limit 0,10");
-        }else{
-        	locationList = Db.find("select * from product where category_id in (select id from category where customer_id = "+customerId+")");
+            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
+                    + ") and item_no like '%" + input + "%' limit 0,10");
+        } else {
+            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
+                    + ")");
         }
         renderJson(locationList);
     }
@@ -695,9 +675,11 @@ public class TransferOrderController extends Controller {
         String customerId = getPara("customerId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = "+customerId+") and item_name like '%" + input + "%' limit 0,10");
-        }else{
-        	locationList = Db.find("select * from product where category_id in (select id from category where customer_id = "+customerId+")");
+            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
+                    + ") and item_name like '%" + input + "%' limit 0,10");
+        } else {
+            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
+                    + ")");
         }
         renderJson(locationList);
     }
@@ -769,8 +751,8 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db.find("select * from carinfo where driver like '%" + input + "%' or phone like '%" + input + "%'");
-        }else{
-        	locationList = Db.find("select * from carinfo");        	
+        } else {
+            locationList = Db.find("select * from carinfo");
         }
         renderJson(locationList);
     }
