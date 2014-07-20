@@ -31,14 +31,11 @@
                                     <input id="contractId" name="contractId" type="hidden" value="${ul.id!''}">
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
                                     <div class="col-lg-6">
-                                        <fieldset>
                                             <div class="form-group">
-                                                <label>合同名称</label>
+                                                <label class="search-label">合同名称</label>
                                                 <input class="form-control search-control" id="contract_name" name="contract_name" type="text" value="${ul.name!''}">
                                             </div>                                     
-                                        </fieldset>
                                     </div>
-									 
                         			<div>
                         				<!-- 下面input判断 customer和供应商sp -->
 	                        			<input id="type2" name="type2" type="hidden" value="${contractType!}"/>
@@ -47,21 +44,13 @@
                         			</div>
                         			<!-- /.col-lg-6 (odd) 奇数列 -->
                                     <div class="col-lg-6">
-                                        <fieldset>
                                             <div class="form-group">
-												<label>公司名称</label>
+												<label class="search-label">公司名称</label>
                                                	<input id="companyName" name="companyName" type="text" class="form-control search-control" value="${c.company_name!''}">
 												<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 77%; left: 2%;">
 												</ul>
                                             </div>                                     
-                                        </fieldset>
                                     </div>
-									<div><label id="label"></label>
-										<label id="label2"></label>
-										<label id="label3"></label>
-										<label id="label4"></label>
-										<label id="label5"></label>
-									</div>
                                     <!-- /.col-lg-6 (even) 偶数列-->                                    
                                    <!--  <div class="col-lg-6">
                                         <fieldset>
@@ -138,12 +127,10 @@
                                 <!-- end of col-lg-6-->
                            
                                      <div class="col-lg-6">
-                                        <fieldset>
                                             <div class="form-group">
-                                                <label>备注</label>
-                                                <textarea class="form-control" id="remark" name="remark" rows="3" value="${email!''}"></textarea>
+                                                <label class="search-label">备注</label>
+                                                <textarea class="form-control" id="remark" name="remark" rows="2" value="${email!''}"></textarea>
                                             </div>                                     
-                                        </fieldset>
                                     </div>
 									<!-- /.col-lg-6 (even) 偶数列 -->
                                     <div class="col-lg-6">

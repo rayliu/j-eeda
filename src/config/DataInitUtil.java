@@ -160,7 +160,7 @@ public class DataInitUtil {
             // location init
             LocationDataInit.initLocation(stmt);
             ProfileDataInit.initProfile(stmt);
-
+            stmt.executeUpdate("insert into inventory_item(party_id, warehouse_id, product_id,total_quantity) values('1', '1', '1','1.0');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('demo', '123456', '1-6');");
@@ -584,7 +584,7 @@ public class DataInitUtil {
                     + "values('12222', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','5');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('12aa', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','7');");
-            
+
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
                     + "values('2', 'dkjf5421', '10000', '音箱', true, '2', '9');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
@@ -608,9 +608,9 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
                     + "values('7','aaasswqq63','10000', 'ATM', false,'10','10');");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
-            		+ "values(3,'123', 'ATM001', 6, 24);");
+                    + "values(3,'123', 'ATM001', 6, 24);");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
-            		+ "values(3,'456', 'ATM002', 6, 24);");
+                    + "values(3,'456', 'ATM002', 6, 24);");
 
             // 配送单
             stmt.execute("insert into delivery_order(order_no,transfer_order_id,customer_id,sp_id,notify_party_id,status,create_stamp) values('2014042600013','1','5','7','9','配送在途','2014-04-25 16:35:35.1');");

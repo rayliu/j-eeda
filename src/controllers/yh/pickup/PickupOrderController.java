@@ -12,7 +12,6 @@ import models.DepartTransferOrder;
 import models.InventoryItem;
 import models.Party;
 import models.TransferOrder;
-import models.TransferOrderItem;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.profile.Carinfo;
@@ -854,7 +853,8 @@ public class PickupOrderController extends Controller {
                                         TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
                         departTransferOrder.delete();
 
-                        gateInWarehouse(departTransferOrder);
+                        // savegateIn(departTransferOrder);
+
                     }
                 }
             }
@@ -862,23 +862,58 @@ public class PickupOrderController extends Controller {
         renderJson("{\"success\":true}");
     }
 
-    // 入库
-    private void gateInWarehouse(DepartTransferOrder departTransferOrder) {
+    public void savegateIn(DepartTransferOrder departTransferOrder) {
         // product_id不为空时入库
-        TransferOrderItem transferOrderItem = TransferOrderItem.dao
-                .findFirst("select * from transfer_order_item where order_id='"
+        List<Record> transferOrderItem = Db
+                .find("select * from transfer_order_item where order_id='"
                         + departTransferOrder.get("order_id") + "'");
         TransferOrder tOrder = TransferOrder.dao.findById(departTransferOrder
                 .get("order_id"));
-        if (transferOrderItem != null) {
-            if (transferOrderItem.get("product_id") != null) {
-                InventoryItem item = new InventoryItem();
-                item.set("party_id", tOrder.get("customer_id"));
-                item.set("warehouse_id", tOrder.get("warehouse_id"));
-                item.set("product_id", transferOrderItem.get("product_id"));
-                item.set("total_quantity", transferOrderItem.get("amount"));
+
+        InventoryItem item = null;
+        if (transferOrderItem.size() > 0) {
+            for (int i = 0; i < transferOrderItem.size(); i++) {
+                if (transferOrderItem.get(i).get("product_id") != null) {
+                    item = new InventoryItem();
+                    String in_item_check_sql = "select * from inventory_item where product_id="
+                            + Integer.parseInt(transferOrderItem.get(i)
+                                    .get("product_id").toString())
+                            + ""
+                            + " and warehouse_id="
+                            + Integer.parseInt(tOrder.get("warehouse_id")
+                                    .toString()) + "";
+                    InventoryItem inventoryItem = InventoryItem.dao
+                            .findFirst(in_item_check_sql);
+                    if (inventoryItem == null) {
+                        item.set("party_id", tOrder.get("customer_id"));
+                        item.set("warehouse_id", tOrder.get("warehouse_id"));
+                        item.set("product_id",
+                                transferOrderItem.get(i).get("product_id"));
+                        item.set("total_quantity", transferOrderItem.get(i)
+                                .get("amount"));
+                        item.save();
+                    } else {
+                        item = InventoryItem.dao.findById(inventoryItem
+                                .get("id"));
+                        item.set(
+                                "total_quantity",
+                                Double.parseDouble(item.get("total_quantity")
+                                        .toString())
+                                        + Double.parseDouble(transferOrderItem
+                                                .get(i).get("amount")
+                                                .toString()));
+                        item.update();
+                    }
+                }
             }
         }
+
+        // /----
+    }
+
+    // 入库
+    private void gateInWarehouse(DepartTransferOrder departTransferOrder) {
+
     }
 
     // 添加额的外运输单
