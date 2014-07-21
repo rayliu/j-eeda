@@ -32,10 +32,25 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":"C2"},
             {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"TRANSFER_ORDER_NO"}
+            {"mDataProp":"TRANSFER_ORDER_NO"},
+            { 
+	                "mDataProp": null, 
+	                "fnRender": function(obj) {                    
+	                    return "<a class='btn btn-primary confirmDelivery' code='"+obj.aData.ID+"'>"+
+	                    		"签收完成"+
+	                    		"</a>";
+	                }
+	            }    
         ]  
     });	
-    
+    $("#eeda-table").on('click', '.confirmDelivery', function(e){
+    	var delivery_id =$(this).attr("code");
+		$.post('/yh/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
+			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
+		},'json');
+		$("#receiptBtn").attr("disabled", true);
+    });
     $("#eeda-table").on('click', '#edit_status', function(e){
     	e.preventDefault();	
     	var depart_id=$(this).attr("del_id");
