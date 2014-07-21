@@ -80,7 +80,7 @@ public class ReturnOrderControllers extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("SELECT ro.*, t.order_no as transfer_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order ro "
+                    .find("select ro.*, t.order_no as transfer_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order ro "
                             + "left join transfer_order t on ro.transfer_order_id = t.id "
                             + "left join delivery_order d_o on ro.delivery_order_id = d_o.id "
                             + "left join party p on ro.customer_id = p.id "
@@ -190,7 +190,7 @@ public class ReturnOrderControllers extends Controller {
         int id = Integer.parseInt(getPara("locationName"));
         List<Record> paylist = new ArrayList<Record>();
         paylist = Db
-                .find("select f.name,f.remark,tf.amount,tf.status from FIN_ITEM f,TRANSFER_ORDER_FIN_ITEM tf  where tf.fin_item_id =f.id and tf.order_id ='"
+                .find("select f.name,f.remark,tf.amount,tf.status from fin_item f,transfer_order_fin_item tf  where tf.fin_item_id =f.id and tf.order_id ='"
                         + id + "'");
 
         renderJson(paylist);
@@ -216,7 +216,7 @@ public class ReturnOrderControllers extends Controller {
         // 获取当前页的数据
         List<Record> itemlist = new ArrayList<Record>();
         TransferOrder tr = TransferOrder.dao
-                .findFirst("select to.cargo_nature   from transfer_order to where to.id in (select ro.transfer_order_id  from return_order  ro where ro.id="
+                .findFirst("select tor.cargo_nature   from transfer_order tor where tor.id in (select ro.transfer_order_id  from return_order  ro where ro.id="
                         + id + ")");
         String nature = tr.getStr("cargo_nature");
         String sql_atm = "select toi.*,toid.serial_no  from transfer_order_item toi"
@@ -247,7 +247,7 @@ public class ReturnOrderControllers extends Controller {
 
         ReturnOrder re = ReturnOrder.dao.findById(id);
         TransferOrder tr = TransferOrder.dao
-                .findFirst("select to.cargo_nature   from transfer_order to where to.id in (select ro.transfer_order_id  from return_order  ro where ro.id="
+                .findFirst("select tor.cargo_nature   from transfer_order tor where tor.id in (select ror.transfer_order_id  from return_order  ror where ror.id="
                         + id + ")");
         String nature = tr.getStr("cargo_nature");
         if (re.get("DELIVERY_ORDER_ID") != null) {
@@ -266,7 +266,7 @@ public class ReturnOrderControllers extends Controller {
         int id = Integer.parseInt(getPara("id"));
         List<Record> DELIVERYORDERID = new ArrayList<Record>();
         DELIVERYORDERID = Db
-                .find("Select delivery_order_id  from return_order ro where ro.id='"
+                .find("select delivery_order_id  from return_order ro where ro.id='"
                         + id + "'");
         if (DELIVERYORDERID.get(0).get("delivery_order_id") != null) {
             setAttr("check", true);

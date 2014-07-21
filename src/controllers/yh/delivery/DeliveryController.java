@@ -879,24 +879,15 @@ public class DeliveryController extends Controller {
     public void transferOrderMilestoneList() {
         Map<String, List> map = new HashMap<String, List>();
         List<String> usernames = new ArrayList<String>();
-        String departOrderId = getPara("departOrderId");
-        if (departOrderId == "" || departOrderId == null) {
-            departOrderId = "-1";
+        String deliveryOrderId = getPara("departOrderId");
+        if (deliveryOrderId == "" || deliveryOrderId == null) {
+        	deliveryOrderId = "-1";
         }
-        if (!"-1".equals(departOrderId)) {
-            List<DeliveryOrderMilestone> transferOrderMilestones = DeliveryOrderMilestone.dao
-                    .find("select * from delivery_order_milestone where delivery_id="
-                            + departOrderId);
-            for (DeliveryOrderMilestone transferOrderMilestone : transferOrderMilestones) {
-                UserLogin userLogin = UserLogin.dao
-                        .findById(transferOrderMilestone.get("create_by"));
-                String username = userLogin.get("user_name");
-                usernames.add(username);
-            }
-            map.put("transferOrderMilestones", transferOrderMilestones);
-            map.put("usernames", usernames);
-        }
-        renderJson(map);
+      if(!"-1".equals(deliveryOrderId)){
+    	  String sql="select * from delivery_order_milestone where delivery_id="+deliveryOrderId+"";
+    	  List<Record> deliverylist=Db.find(sql);
+    	  renderJson(deliverylist);
+      }
     }
 
     // 编辑里程碑
@@ -904,41 +895,43 @@ public class DeliveryController extends Controller {
         String milestoneDepartId = getPara("milestoneDepartId");
         Map<String, Object> map = new HashMap<String, Object>();
         if (milestoneDepartId != null && !"".equals(milestoneDepartId)) {
-            DeliveryOrder deliveryOrder = DeliveryOrder.dao
+            DepartOrder departOrder = DepartOrder.dao
                     .findById(milestoneDepartId);
-            DeliveryOrderMilestone deliveryOrderMilestone = new DeliveryOrderMilestone();
+            TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
             String status = getPara("status");
             String location = getPara("location");
-
+           // transferOrderstatus(milestoneDepartId, status, location);
             if (!status.isEmpty()) {
-                deliveryOrderMilestone.set("status", status);
-                deliveryOrder.set("status", status);
+                transferOrderMilestone.set("status", status);
+                departOrder.set("status", status);
             } else {
-                deliveryOrderMilestone.set("status", "在途");
-                deliveryOrder.set("status", "在途");
+                transferOrderMilestone.set("status", "在途");
+                departOrder.set("status", "在途");
             }
-            deliveryOrder.update();
+            departOrder.update();
             if (!location.isEmpty()) {
-                deliveryOrderMilestone.set("location", location);
+                transferOrderMilestone.set("location", location);
             } else {
-                deliveryOrderMilestone.set("location", "");
+                transferOrderMilestone.set("location", "");
             }
             String name = (String) currentUser.getPrincipal();
             List<UserLogin> users = UserLogin.dao
                     .find("select * from user_login where user_name='" + name
                             + "'");
 
-            deliveryOrderMilestone.set("create_by", users.get(0).get("id"));
+            transferOrderMilestone.set("create_by", users.get(0).get("id"));
 
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(
                     utilDate.getTime());
-            deliveryOrderMilestone.set("create_stamp", sqlDate);
-            deliveryOrderMilestone.set("delivery_id", milestoneDepartId);
-            deliveryOrderMilestone.save();
+            transferOrderMilestone.set("create_stamp", sqlDate);
+            transferOrderMilestone.set("depart_id", milestoneDepartId);
+            transferOrderMilestone.set("type",
+                    TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
+            transferOrderMilestone.save();
 
-            map.put("transferOrderMilestone", deliveryOrderMilestone);
-            UserLogin userLogin = UserLogin.dao.findById(deliveryOrderMilestone
+            map.put("transferOrderMilestone", transferOrderMilestone);
+            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone
                     .get("create_by"));
             String username = userLogin.get("user_name");
             map.put("username", username);
