@@ -530,20 +530,18 @@ $(document).ready(function() {
 	var sumWeight = function(currentEle){
 		$(currentEle).parent().children('.sumWeight')[0].innerHTML = parseFloat($(currentEle).parent().children('.weight')[0].innerHTML) * parseFloat($(currentEle).parent().children('.amount')[0].innerHTML);
 	};
-
-	
     
     itemDataTable.makeEditable({
     	sUpdateURL: '/yh/transferOrderItem/saveTransferOrderItemByField',    	
     	oEditableSettings: {event: 'click'},
     	"aoColumns": [  			            
-            {            	
+            {            
+            	style: "inherit",
             	indicator: '正在保存...',
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
-            	type: "autocompleteType",
             	name:"item_no",
-            	placeholder: "",
+            	placeholder: "", 
             	callback: function () {}
         	},
             {
@@ -628,6 +626,30 @@ $(document).ready(function() {
             },
             null                        
         ]      
+    }).click(function(){
+        $(this).find('input').autocomplete({
+	        source: function( request, response ) {
+	            $.ajax({
+	                url: "/yh/transferOrder/searchItemNo",
+	                dataType: "json",
+	                data: {
+	                    customerId: $('#customerId').val(),
+	                    input: request.term
+	                },
+	                success: function( data ) {
+	                	console.log(data);
+	                    response($.map( data, function( data ) {
+	                        return {
+	                            label: data.ITEM_NAME,
+	                            value: data.ID
+	                        }
+	                    }));
+	                }
+	            });
+	        },
+        	//delay: 200,
+        	minLength: 2
+        });
     });                                                                      
         
     // 保存货品

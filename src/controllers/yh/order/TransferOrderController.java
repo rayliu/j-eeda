@@ -661,7 +661,7 @@ public class TransferOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
-                    + ") and item_no like '%" + input + "%' limit 0,10");
+                    + ") and (item_no like '%" + input + "%' or item_name like '%" + input + "%') limit 0,10");
         } else {
             locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
                     + ")");

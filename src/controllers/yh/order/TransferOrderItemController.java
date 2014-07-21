@@ -135,8 +135,11 @@ public class TransferOrderItemController extends Controller {
             item.set("unit", unit).update();
             returnValue = unit;
         }
-        Double volume = Double.parseDouble(item.get("size")+"")/1000 * Double.parseDouble(item.get("width")+"")/1000 * Double.parseDouble(item.get("height")+"")/1000;
-        item.set("volume", volume).update();
+
+        // Double volume = Double.parseDouble(item.get("size")+"")/1000 *
+        // Double.parseDouble(item.get("width")+"")/1000 *
+        // Double.parseDouble(item.get("height")+"")/1000;
+        // item.set("volume", volume).update();
         renderText(returnValue);// 必须返回传进来的值，否则js会报错
     }
 
