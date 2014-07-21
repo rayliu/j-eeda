@@ -1,6 +1,7 @@
 package controllers.yh.delivery;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -8,10 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
+import models.DepartOrder;
+import models.DepartTransferOrder;
 import models.Party;
 import models.TransferOrder;
+import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
@@ -43,12 +49,20 @@ public class DeliveryController extends Controller {
     }
 
     public void index() {
-        if (!isAuthenticated())
-            return;
-        if (LoginUserController.isAuthenticated(this))
-            render("/yh/delivery/deliveryOrderList.html");
+        HttpServletRequest re = getRequest();
+        String url = re.getRequestURI();
+        logger.debug("URI:" + url);
+        if (url.equals("/yh/delivery")) {
+            if (LoginUserController.isAuthenticated(this))
+                render("delivery/deliveryOrderList.html");
+        }
+        if (url.equals("/yh/deliveryMilestone")) {
+            if (LoginUserController.isAuthenticated(this))
+                render("delivery/deliveryOrderStatus.html");
+        }
     }
 
+    // 配送单list
     public void deliveryList() {
         String orderNo_filter = getPara("orderNo_filter");
         String transfer_filter = getPara("transfer_filter");
@@ -143,6 +157,68 @@ public class DeliveryController extends Controller {
         // 获取总条数
 
         renderJson(transferOrderListMap);
+    }
+
+    // 在途配送单list
+    public void deliveryMilestone() {
+
+        String orderNo = getPara("orderNo");
+        String departNo = getPara("departNo");
+        String status = getPara("status");
+        String sp = getPara("sp");
+        String beginTime = getPara("beginTime");
+        String endTime = getPara("endTime");
+
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null
+                && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+                    + getPara("iDisplayLength");
+        }
+
+        String sqlTotal = "select count(1) total from depart_order deo "
+                + "left join carinfo  car on deo.driver_id=car.id"
+                + " where combine_type = '" + DepartOrder.COMBINE_TYPE_DEPART
+                + "'";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select d.*,c.company_name as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
+                + "left join party p on d.customer_id = p.id "
+                + "left join contact c on p.contact_id = c.id "
+                + "left join party p2 on d.sp_id = p2.id "
+                + "left join contact c2 on p2.contact_id = c2.id "
+                + "left join transfer_order t on d.transfer_order_id = t.id "
+                + "order by d.create_stamp desc";
+
+        List<Record> depart = null;
+        if (orderNo == null && departNo == null && status == null && sp == null
+                && beginTime == null && endTime == null) {
+            depart = Db.find(sql);
+        } else {
+            if (beginTime == null || "".equals(beginTime)) {
+                beginTime = "1-1-1";
+            }
+            if (endTime == null || "".equals(endTime)) {
+                endTime = "9999-12-31";
+            }
+            String sql_seach = "select d.*,c.company_name as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
+                    + "left join party p on d.customer_id = p.id "
+                    + "left join contact c on p.contact_id = c.id "
+                    + "left join party p2 on d.sp_id = p2.id "
+                    + "left join contact c2 on p2.contact_id = c2.id "
+                    + "left join transfer_order t on d.transfer_order_id = t.id "
+                    + "order by d.create_stamp desc";
+            depart = Db.find(sql_seach);
+        }
+        Map map = new HashMap();
+        map.put("sEcho", pageIndex);
+        map.put("iTotalRecords", rec.getLong("total"));
+        map.put("iTotalDisplayRecords", rec.getLong("total"));
+        map.put("aaData", depart);
+
+        renderJson(map);
     }
 
     // 构造单号
@@ -797,5 +873,122 @@ public class DeliveryController extends Controller {
         String username = userLogin.get("user_name");
         map.put("username", username);
         renderJson(map);
+    }
+
+    // 单击tab里程碑
+    public void transferOrderMilestoneList() {
+        Map<String, List> map = new HashMap<String, List>();
+        List<String> usernames = new ArrayList<String>();
+        String departOrderId = getPara("departOrderId");
+        if (departOrderId == "" || departOrderId == null) {
+            departOrderId = "-1";
+        }
+        if (!"-1".equals(departOrderId)) {
+            List<DeliveryOrderMilestone> transferOrderMilestones = DeliveryOrderMilestone.dao
+                    .find("select * from delivery_order_milestone where type = '"
+                            + TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE
+                            + "'and depart_id=" + departOrderId);
+            for (DeliveryOrderMilestone transferOrderMilestone : transferOrderMilestones) {
+                UserLogin userLogin = UserLogin.dao
+                        .findById(transferOrderMilestone.get("create_by"));
+                String username = userLogin.get("user_name");
+                usernames.add(username);
+            }
+            map.put("transferOrderMilestones", transferOrderMilestones);
+            map.put("usernames", usernames);
+        }
+        renderJson(map);
+    }
+
+    // 编辑里程碑
+    public void saveTransferOrderMilestone() {
+        String milestoneDepartId = getPara("milestoneDepartId");
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (milestoneDepartId != null && !"".equals(milestoneDepartId)) {
+            DepartOrder departOrder = DepartOrder.dao
+                    .findById(milestoneDepartId);
+            TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+            String status = getPara("status");
+            String location = getPara("location");
+            transferOrderstatus(milestoneDepartId, status, location);
+            if (!status.isEmpty()) {
+                transferOrderMilestone.set("status", status);
+                departOrder.set("status", status);
+            } else {
+                transferOrderMilestone.set("status", "在途");
+                departOrder.set("status", "在途");
+            }
+            departOrder.update();
+            if (!location.isEmpty()) {
+                transferOrderMilestone.set("location", location);
+            } else {
+                transferOrderMilestone.set("location", "");
+            }
+            String name = (String) currentUser.getPrincipal();
+            List<UserLogin> users = UserLogin.dao
+                    .find("select * from user_login where user_name='" + name
+                            + "'");
+
+            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+
+            java.util.Date utilDate = new java.util.Date();
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(
+                    utilDate.getTime());
+            transferOrderMilestone.set("create_stamp", sqlDate);
+            transferOrderMilestone.set("depart_id", milestoneDepartId);
+            transferOrderMilestone.set("type",
+                    TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
+            transferOrderMilestone.save();
+
+            map.put("transferOrderMilestone", transferOrderMilestone);
+            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone
+                    .get("create_by"));
+            String username = userLogin.get("user_name");
+            map.put("username", username);
+        }
+        renderJson(map);
+    }
+
+    // 同步运输单状态里程碑
+    public void transferOrderstatus(String de_or, String status, String location) {
+        int depart_id = Integer.parseInt(de_or);
+        List<DepartTransferOrder> dep = DepartTransferOrder.dao
+                .find("select * from depart_transfer  where depart_id in("
+                        + depart_id + ")");
+        for (int i = 0; i < dep.size(); i++) {
+            int order_id = Integer.parseInt(dep.get(i).get("order_id")
+                    .toString());
+            TransferOrder tr = TransferOrder.dao.findById(order_id);
+            TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+            if (!status.isEmpty()) {
+                transferOrderMilestone.set("status", status);
+                tr.set("status", status);
+            } else {
+                transferOrderMilestone.set("status", "在途");
+                tr.set("status", "在途");
+            }
+            tr.update();
+            String name = (String) currentUser.getPrincipal();
+            List<UserLogin> users = UserLogin.dao
+                    .find("select * from user_login where user_name='" + name
+                            + "'");
+            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+            if (location == null || location.isEmpty()) {
+                transferOrderMilestone.set("location", "");
+            } else {
+                transferOrderMilestone.set("location", location);
+            }
+
+            java.util.Date utilDate = new java.util.Date();
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(
+                    utilDate.getTime());
+            transferOrderMilestone.set("create_stamp", sqlDate);
+            transferOrderMilestone.set("type",
+                    TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+            transferOrderMilestone.set("order_id", order_id);
+            transferOrderMilestone.save();
+
+        }
+
     }
 }
