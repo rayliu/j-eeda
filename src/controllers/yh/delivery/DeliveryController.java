@@ -885,9 +885,8 @@ public class DeliveryController extends Controller {
         }
         if (!"-1".equals(departOrderId)) {
             List<DeliveryOrderMilestone> transferOrderMilestones = DeliveryOrderMilestone.dao
-                    .find("select * from delivery_order_milestone where type = '"
-                            + TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE
-                            + "'and depart_id=" + departOrderId);
+                    .find("select * from delivery_order_milestone where delivery_id="
+                            + departOrderId);
             for (DeliveryOrderMilestone transferOrderMilestone : transferOrderMilestones) {
                 UserLogin userLogin = UserLogin.dao
                         .findById(transferOrderMilestone.get("create_by"));
@@ -905,43 +904,41 @@ public class DeliveryController extends Controller {
         String milestoneDepartId = getPara("milestoneDepartId");
         Map<String, Object> map = new HashMap<String, Object>();
         if (milestoneDepartId != null && !"".equals(milestoneDepartId)) {
-            DepartOrder departOrder = DepartOrder.dao
+            DeliveryOrder deliveryOrder = DeliveryOrder.dao
                     .findById(milestoneDepartId);
-            TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+            DeliveryOrderMilestone deliveryOrderMilestone = new DeliveryOrderMilestone();
             String status = getPara("status");
             String location = getPara("location");
-            transferOrderstatus(milestoneDepartId, status, location);
+
             if (!status.isEmpty()) {
-                transferOrderMilestone.set("status", status);
-                departOrder.set("status", status);
+                deliveryOrderMilestone.set("status", status);
+                deliveryOrder.set("status", status);
             } else {
-                transferOrderMilestone.set("status", "在途");
-                departOrder.set("status", "在途");
+                deliveryOrderMilestone.set("status", "在途");
+                deliveryOrder.set("status", "在途");
             }
-            departOrder.update();
+            deliveryOrder.update();
             if (!location.isEmpty()) {
-                transferOrderMilestone.set("location", location);
+                deliveryOrderMilestone.set("location", location);
             } else {
-                transferOrderMilestone.set("location", "");
+                deliveryOrderMilestone.set("location", "");
             }
             String name = (String) currentUser.getPrincipal();
             List<UserLogin> users = UserLogin.dao
                     .find("select * from user_login where user_name='" + name
                             + "'");
 
-            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+            deliveryOrderMilestone.set("create_by", users.get(0).get("id"));
 
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(
                     utilDate.getTime());
-            transferOrderMilestone.set("create_stamp", sqlDate);
-            transferOrderMilestone.set("depart_id", milestoneDepartId);
-            transferOrderMilestone.set("type",
-                    TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
-            transferOrderMilestone.save();
+            deliveryOrderMilestone.set("create_stamp", sqlDate);
+            deliveryOrderMilestone.set("delivery_id", milestoneDepartId);
+            deliveryOrderMilestone.save();
 
-            map.put("transferOrderMilestone", transferOrderMilestone);
-            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone
+            map.put("transferOrderMilestone", deliveryOrderMilestone);
+            UserLogin userLogin = UserLogin.dao.findById(deliveryOrderMilestone
                     .get("create_by"));
             String username = userLogin.get("user_name");
             map.put("username", username);
