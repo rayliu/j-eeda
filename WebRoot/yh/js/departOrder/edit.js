@@ -710,6 +710,7 @@
     	        $('#spList').show();
     		});
     		$('#spList').on('mousedown', '.fromLocationItem', function(e){
+    	        console.log($('#spList').is(":focus"));
     			var message = $(this).text();
     			$('#spMessage').val(message.substring(0, message.indexOf(" ")));
     			$('#sp_id').val($(this).attr('partyId'));
@@ -718,7 +719,11 @@
     		// 没选中供应商，焦点离开，隐藏列表
     		$('#spMessage').on('blur', function(){
     	 		$('#spList').hide();
-    	 	});
+    	 	}); 
+    	    $('#spList').on('mousedown', function(){
+    	        return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+    	    });
+
     		//回显供应商
     		var sp_id=$("#sp_id").val();
     		if(sp_id!=""){

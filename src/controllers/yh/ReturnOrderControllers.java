@@ -53,7 +53,7 @@ public class ReturnOrderControllers extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("SELECT r_o.*, t.order_no as transfer_order_no, d_o.order_no as delivery_order_no, c.company_name FROM RETURN_ORDER r_o "
+                    .find("SELECT r_o.*, t.order_no as transfer_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order r_o "
                             + "left join transfer_order t on r_o.transfer_order_id = t.id "
                             + "left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
                             + "left join party p on r_o.customer_id = p.id "
@@ -80,12 +80,12 @@ public class ReturnOrderControllers extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("SELECT ro.*, t.order_no as transfer_order_no, d_o.order_no as delivery_order_no, c.company_name FROM RETURN_ORDER ro "
+                    .find("SELECT ro.*, t.order_no as transfer_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order ro "
                             + "left join transfer_order t on ro.transfer_order_id = t.id "
                             + "left join delivery_order d_o on ro.delivery_order_id = d_o.id "
                             + "left join party p on ro.customer_id = p.id "
                             + "left join contact c on p.contact_id = c.id "
-                            + "where ro.ORDER_NO like '%"
+                            + "where ro.order_no like '%"
                             + order_no
                             + "%' and  t.order_no like '%"
                             + tr_order_no
@@ -93,9 +93,9 @@ public class ReturnOrderControllers extends Controller {
                             + de_order_no
                             + "%' and ro.CREATOR like '%"
                             + stator
-                            + "%' and ro.TRANSACTION_STATUS like'%"
+                            + "%' and ro.transaction_status like'%"
                             + status
-                            + "%' and ro.CREATE_DATE between '"
+                            + "%' and ro.Create_date between '"
                             + time_one
                             + "' and '" + time_two + "' ");
 
@@ -114,33 +114,33 @@ public class ReturnOrderControllers extends Controller {
         int id = Integer.parseInt(getPara("locationName"));
 
         List<Record> message = new ArrayList<Record>();
-        String sql_tr = "SELECT ro.*,co.COMPANY_NAME as company_name ,co.ADDRESS as address,co.CONTACT_PERSON as contact ,co.PHONE as phone ,"
-                + " con.COMPANY_NAME as pay_company ,con.ADDRESS as pay_address,con.CONTACT_PERSON as pay_contad ,con.PHONE as pay_phone ,"
-                + " to.ORDER_NO  as transfer_order_no,to.CARGO_NATURE  as nature,to.PICKUP_MODE  as pickup,to.ARRIVAL_MODE  as arrival,to.REMARK as remark ,"
+        String sql_tr = "select ro.*,co.company_name as company_name ,co.address as address,co.contact_person as contact ,co.phone as phone ,"
+                + " con.company_name as pay_company ,con.address as pay_address,con.contact_person as pay_contad ,con.phone as pay_phone ,"
+                + " to.order_no  as transfer_order_no,to.cargo_nature  as nature,to.pickup_mode  as pickup,to.arrival_mode  as arrival,to.remark as remark ,"
                 + " u.user_name as counterman,lo.name as location_from,loc.name as location_to "
-                + " FROM RETURN_ORDER  ro "
-                + " left join CONTACT  co on co.id in (select p.CONTACT_ID from PARTY p where p.id=ro.CUSTOMER_ID ) "
-                + " left join CONTACT  con on con.id in (select p.CONTACT_ID from PARTY p where p.id=ro.NOTITY_PARTY_ID )"
-                + " left join TRANSFER_ORDER  to on to.id=ro.TRANSFER_ORDER_ID "
-                + " left join USER_LOGIN  u on u.id =to.CREATE_BY "
+                + " from return_order  ro "
+                + " left join contact  co on co.id in (select p.contact_id from party p where p.id=ro.customer_id ) "
+                + " left join contact  con on con.id in (select p.contact_id from party p where p.id=ro.notity_party_id )"
+                + " left join transfer_order  to on to.id=ro.transfer_order_id "
+                + " left join user_login  u on u.id =to.create_by "
                 + " left join location lo on lo.code=to.route_from"
                 + " left join location loc on loc.code=to.route_to"
                 + " where ro.id=" + id + "";
-        String sql_del = "SELECT ro.*,co.COMPANY_NAME as company_name ,co.ADDRESS as address,co.CONTACT_PERSON as contact ,co.PHONE as phone ,"
-                + " con.COMPANY_NAME as pay_company ,con.ADDRESS as pay_address,con.CONTACT_PERSON as pay_contad ,con.PHONE as pay_phone ,"
-                + " to.ORDER_NO as transfer_order_no, de.ORDER_NO  as DELIVERY_ORDER_ID_NO ,to.CARGO_NATURE  as nature,to.PICKUP_MODE  as pickup,to.ARRIVAL_MODE  as arrival,to.REMARK as remark ,"
+        String sql_del = "select ro.*,co.company_name as company_name ,co.address as address,co.contact_person as contact ,co.phone as phone ,"
+                + " con.company_name as pay_company ,con.address as pay_address,con.contact_person as pay_contad ,con.phone as pay_phone ,"
+                + " to.order_no as transfer_order_no, de.order_no  as delivery_order_id_no ,to.cargo_nature  as nature,to.pickup_mode  as pickup,to.arrival_mode  as arrival,to.remark as remark ,"
                 + " u.user_name as counterman,lo.name as location_from,loc.name as location_to"
-                + " FROM RETURN_ORDER  ro "
-                + " left join CONTACT  co on co.id in (select p.CONTACT_ID from PARTY p where p.id=ro.CUSTOMER_ID )"
-                + " left join CONTACT  con on con.id in (select p.CONTACT_ID from PARTY p where p.id=ro.NOTITY_PARTY_ID )"
-                + " left join TRANSFER_ORDER  to on to.id in (SELECT do.TRANSFER_ORDER_ID  FROM DELIVERY_ORDER do where do.id=ro.DELIVERY_ORDER_ID )"
-                + " left join USER_LOGIN  u on u.id =to.CREATE_BY"
+                + " from return_order  ro "
+                + " left join contact  co on co.id in (select p.contact_id from party p where p.id=ro.customer_id )"
+                + " left join contact  con on con.id in (select p.contact_id from party p where p.id=ro.notity_party_id )"
+                + " left join transfer_order  to on to.id in (select do.transfer_order_id  from delivery_order do where do.id=ro.delivery_order_id )"
+                + " left join user_login  u on u.id =to.create_by"
                 + " left join location lo on lo.code=to.route_from"
                 + " left join location loc on loc.code=to.route_to"
-                + " left join DELIVERY_ORDER  de on de.id=ro.DELIVERY_ORDER_ID"
+                + " left join delivery_order  de on de.id=ro.delivery_order_id"
                 + " where ro.id=" + id + "";
         ReturnOrder re = ReturnOrder.dao.findById(id);
-        if ("null".equals(re.get("DELIVERY_ORDER_ID"))) {
+        if ("null".equals(re.get("delivery_order_id"))) {
             message = Db.find(sql_tr);
         } else {
             message = Db.find(sql_del);
@@ -209,23 +209,23 @@ public class ReturnOrderControllers extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from TRANSFER_ORDER_ITEM ";
+        String sql = "select count(1) total from transfer_order_item ";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> itemlist = new ArrayList<Record>();
         TransferOrder tr = TransferOrder.dao
-                .findFirst("SELECT to.CARGO_NATURE   FROM TRANSFER_ORDER to where to.id in (select ro.TRANSFER_ORDER_ID  from RETURN_ORDER  ro where ro.id="
+                .findFirst("select to.cargo_nature   from transfer_order to where to.id in (select ro.transfer_order_id  from return_order  ro where ro.id="
                         + id + ")");
         String nature = tr.getStr("cargo_nature");
-        String sql_atm = "SELECT toi.*,toid.SERIAL_NO  FROM TRANSFER_ORDER_ITEM toi"
-                + " left join TRANSFER_ORDER_ITEM_DETAIL  toid on toid.ITEM_ID =toi.id and toid.ORDER_ID =toi.ORDER_ID"
-                + " where toi.ORDER_ID in (select ro.TRANSFER_ORDER_ID from RETURN_ORDER  ro where ro.id="
+        String sql_atm = "select toi.*,toid.serial_no  from transfer_order_item toi"
+                + " left join transfer_order_item_detail  toid on toid.item_id =toi.id and toid.order_id =toi.order_id"
+                + " where toi.order_id in (select ro.transfer_order_id from return_order  ro where ro.id="
                 + id + ")";
-        String sql_item = "SELECT toi.* FROM TRANSFER_ORDER_ITEM toi"
-                + " where toi.ORDER_ID in (select ro.TRANSFER_ORDER_ID from RETURN_ORDER  ro where ro.id=10)";
-        if ("ATM".equals(nature)) {
+        String sql_item = "select toi.* from transfer_order_item toi"
+                + " where toi.order_id in (select ro.transfer_order_id from return_order  ro where ro.id=10)";
+        if ("atm".equals(nature)) {
             itemlist = Db.find(sql_atm);
         } else {
             itemlist = Db.find(sql_item);
@@ -247,7 +247,7 @@ public class ReturnOrderControllers extends Controller {
 
         ReturnOrder re = ReturnOrder.dao.findById(id);
         TransferOrder tr = TransferOrder.dao
-                .findFirst("SELECT to.CARGO_NATURE   FROM TRANSFER_ORDER to where to.id in (select ro.TRANSFER_ORDER_ID  from RETURN_ORDER  ro where ro.id="
+                .findFirst("select to.cargo_nature   from transfer_order to where to.id in (select ro.transfer_order_id  from return_order  ro where ro.id="
                         + id + ")");
         String nature = tr.getStr("cargo_nature");
         if (re.get("DELIVERY_ORDER_ID") != null) {
@@ -266,9 +266,9 @@ public class ReturnOrderControllers extends Controller {
         int id = Integer.parseInt(getPara("id"));
         List<Record> DELIVERYORDERID = new ArrayList<Record>();
         DELIVERYORDERID = Db
-                .find("SELECT DELIVERY_ORDER_ID  FROM RETURN_ORDER ro where ro.id='"
+                .find("Select delivery_order_id  from return_order ro where ro.id='"
                         + id + "'");
-        if (DELIVERYORDERID.get(0).get("DELIVERY_ORDER_ID") != null) {
+        if (DELIVERYORDERID.get(0).get("delivery_order_id") != null) {
             setAttr("check", true);
         } else {
             setAttr("check", false);

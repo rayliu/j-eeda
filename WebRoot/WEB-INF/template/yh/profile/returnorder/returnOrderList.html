@@ -27,11 +27,11 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label class="search-label">回单号</label>
-                                        <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value="">
+                                        <input type="text" class="form-control search-control orderNo_filter" id="order_no" value="">
                                     </div>
                                     <div class="form-group">
                                         <label class="search-label">状态</label>
-                                        <select id="status_filter" class="form-control search-control status_filter">
+                                        <select id="status" class="form-control search-control status_filter">
                                             <option value=""></option>
                                             <option value="新建">新建</option>
                                             <option value="已发车">已发车</option>
@@ -44,7 +44,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="search-label">运输单号</label>
-                                        <input type="text" class="form-control search-control address_filter" id="address_filter">
+                                        <input type="text" class="form-control search-control address_filter" id="tr_order_no">
                                     </div>
                                     
                                 </div>
@@ -53,12 +53,12 @@
                                  
                                     <div class="form-group">
                                         <label class="search-label">创建人</label>
-                                        <input type="text" class="form-control search-control sp_filter" id="sp_filter">
+                                        <input type="text" class="form-control search-control sp_filter" id="stator">
                                     </div>
                                     <div class="form-group">                                        
                                         <div id="datetimepicker" class="input-append date "> 
                                             <label class="search-label">开始时间</label> 
-                                            <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
+                                            <input id="time_one" class="form-control search-control  beginTime_filter" type="text">
                                             <span class="add-on">  
                                                 <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
                                             </span>  
@@ -74,7 +74,7 @@
                                 <div class="col-lg-6">
                                        <div class="form-group">
                                         <label class="search-label">配送单号</label>
-                                        <input type="text" class="form-control search-control customer_filter" id="customer_filter">
+                                        <input type="text" class="form-control search-control customer_filter" id="de_order_no">
                                     </div>
                                 </div>
                                 <!-- end of col-lg-6-->
@@ -82,7 +82,7 @@
                                     <div class="form-group">                                                    
                                         <span id="datetimepicker2" class="input-append date search-control "> 
                                             <label class="search-label">结束时间</label> 
-                                            <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
+                                            <input id="time_two" class="form-control search-control endTime_filter" type="text">
                                             <span class="add-on">  
                                                 <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
                                             </span>  
@@ -263,6 +263,21 @@
       });
       $("#cancel").click(function(){
       	$("#routeItemFormDiv").hide();
+      });
+      $('#datetimepicker').datetimepicker({  
+          format: 'yyyy-MM-dd',  
+          language: 'zh-CN'
+      }).on('changeDate', function(ev){
+          $('#time_one').trigger('keyup');
+      });
+
+      $('#datetimepicker2').datetimepicker({  
+          format: 'yyyy-MM-dd',  
+          language: 'zh-CN', 
+          autoclose: true,
+          pickerPosition: "bottom-left"
+      }).on('changeDate', function(ev){
+          $('#time_two').trigger('keyup');
       });
       $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two").on( 'keyup click', function () {    	 	
       	var order_no = $("#order_no").val();
