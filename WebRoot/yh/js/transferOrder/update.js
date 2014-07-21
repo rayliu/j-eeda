@@ -510,10 +510,10 @@ $(document).ready(function() {
                 "sWidth": "60px",  
             	"sClass": "remark",              
                 "fnRender": function(obj) {
-                    return	"<a class='dateilEdit' code='?id="+obj.aData.ID+"' title='单品编辑'>"+
+                    return	"<a class='btn btn-success btn-xs dateilEdit' code='?id="+obj.aData.ID+"' title='单品编辑'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
-                            "</a>"+
-                            "<a class='deleteItem' code='?item_id="+obj.aData.ID+"' title='删除'>"+
+                            "</a> "+
+                            "<a class='btn btn-danger btn-xs deleteItem' code='?item_id="+obj.aData.ID+"' title='删除'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+
                             "</a>";
                 }
