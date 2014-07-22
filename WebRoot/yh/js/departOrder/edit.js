@@ -18,11 +18,12 @@
         if(status=="已发车"||status=="在途"){
         	$("#order_rk").attr("disabled",false);
         }
-        if(status=="已入库"&&$(order_rk).prop("disabled") == true){
+        if(status=="已发车"&&$(order_fc).prop("disabled") == true){
         	$("#order_sh").attr("disabled",false);
         }
         if(status=="已签收"){
         	$("#order_sh").attr("disabled",true);
+        	$("#order_hd").attr("disabled",false);
         $("#edit_status").attr("disabled",true);
         }
       if(type=="one"){
@@ -666,9 +667,20 @@
     	    });
     	    $("#order_sh").click(function(e){
     	    	$(this).attr("disabled",true);
+    	    	$("#order_hd").attr("disabled",false);
     	    	 $("#edit_status").attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已签收", $("#orderForm").serialize(), function(){
     	    	
+    	    	});
+    	    });
+    	    $("#order_hd").click(function(e){
+    	    	$(this).attr("disabled",true);
+    	    	$.post('/yh/departOrder/CreatReturnOrder?order_id=', $("#orderForm").serialize(), function(data){
+        	    	if(data==true){
+        	    		alert("已生成回单！");
+        	    	}else{
+        	    		alert("生成回单遇到错误！");
+        	    	}
     	    	});
     	    });
     	  //获取供应商的list，选中信息在下方展示其他信息
@@ -758,10 +770,11 @@
 		  		$('#cartype').val(data.CARTYPE);
 		  		$('#car_no').val(data.CAR_NO);
 			},'json');
-    		//是直送隐藏“确认收货”
+    		//是直送显示“确认收货”
     		var check_sh=$("#check_sh").val();
     		if(check_sh==false){
     			$("#order_sh").show();
+    			$("#order_hd").show();
     		}else{
     			$("#order_rk").show();
     		}

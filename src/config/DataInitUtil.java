@@ -81,7 +81,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment primary key,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
            
             // return_order 回单
-            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,transaction_status varchar(20),order_type varchar(20),creator varchar(50),remark varchar(255), transfer_order_id bigint, delivery_order_id bigint, notity_party_id bigint,customer_id bigint);");
+            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,transaction_status varchar(20),order_type varchar(20),creator bigint,remark varchar(255), depart_order_id bigint, delivery_order_id bigint, notity_party_id bigint,customer_id bigint);");
             
             // transfer_order 运输单
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),assign_status varchar(255),"
@@ -285,18 +285,8 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into order_item(order_id, item_name, item_desc, quantity, unit_price) values("
                     + "1, 'P001', 'iPad Air', 1, 3200);");
             // 回单notity_party_id bigint,customer_id
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014001', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','1', 1, '1','4');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, notity_party_id,customer_id) values('回单20132014002', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','2', '2','4');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014003', CURRENT_TIMESTAMP(), 'cancel','应收','张三','这是一张回单','1', 1, '1','4');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014004', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','2', 1, '2','5');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014005', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','1', 1, '1','5');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014006', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','2', 1, '2','5');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014007', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','1', 1, '1','6');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014008', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','2', 1, '2','6');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014009', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','1', 1, '1','6');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014010', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','2', 1, '2','7');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014009', CURRENT_TIMESTAMP(), 'confirmed','应收','张三','这是一张回单','1', 1, '1','6');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,transfer_order_id, delivery_order_id, notity_party_id,customer_id) values('回单20132014010', CURRENT_TIMESTAMP(), 'new','应收','张三','这是一张回单','2', 1, '2','7');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark, delivery_order_id, notity_party_id,customer_id) values('HD2013021400001', CURRENT_TIMESTAMP(), 'new','应收',2,'这是一张回单', 1, '1','4');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,creator,remark,depart_order_id, notity_party_id,customer_id) values('HD2013021400002', CURRENT_TIMESTAMP(), 'confirmed','应收',1,'这是一张回单','2', '2','4');");
             // 运输单应收应付明细id bigint auto_increment PRIMARY KEY, order_id bigint,
             // fin_item_id bigint,"
             // +
