@@ -100,7 +100,7 @@
 		$("#item_id").val(itemId);
 		$("#item_save").attr("disabled", false);
 		$("#style").hide();
-		detailTable.fnSettings().sAjaxSource = "/yh/departOrder/itemDetailList?item_id="+itemId+"";
+		detailTable.fnSettings().sAjaxSource = "/yh/pickupOrder/findAllItemDetail?item_id="+itemId+"&pickupId="+$("#pickupOrderId").val();
 		detailTable.fnDraw();  			
 	});
 	
@@ -173,6 +173,22 @@
     	}
     }
     
+    var handlePickkupOrderDetail = function(){
+    	// 保存单品
+    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+			$("#pickupOrderId").val(data.ID);
+			$("#addressPickupOrderId").val(data.ID);
+			$("#milestonePickupId").val(data.ID);
+			if(data.ID>0){
+				$("#pickupId").val(data.ID);
+		        showFinishBut();
+			  	$("#style").show();				    
+			}else{
+				alert('数据保存失败。');
+			}
+		},'json');
+    };
+    
     var savePickupOrderFunction = function(){
     	var detailIds = [];
     	var uncheckedDetailIds = [];
@@ -182,25 +198,16 @@
 	    	}else{
 	    		uncheckedDetailIds.push($(this).val());
 	    	}
-	    	/*if($(this).prop('checked') == false){
-	    		// 对一张单进行多次提货,把选中的和没选中的单品区分开来,然后在进行判断
-	    		//$("#detailDialog").modal('show');
-	    	}else{
-	    		// 保存全部单品
-	        	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
-	    			$("#pickupOrderId").val(data.ID);
-	    			$("#addressPickupOrderId").val(data.ID);
-	    			$("#milestonePickupId").val(data.ID);
-	    			if(data.ID>0){
-	    				$("#pickupId").val(data.ID);
-	    		        showFinishBut();
-	    			  	$("#style").show();				    
-	    			}else{
-	    				alert('数据保存失败。');
-	    			}
-	    		},'json');
-	    	}*/
 	    });
+    	$("#checkedDetail").val(detailIds);
+    	$("#uncheckedDetail").val(uncheckedDetailIds);
+    	if(uncheckedDetailIds.length > 0){
+    		handlePickkupOrderDetail();
+    		// 对一张单进行多次提货,把选中的和没选中的单品区分开来,然后在进行判断
+    		$("#detailDialog").modal('show');
+    	}else{
+    		handlePickkupOrderDetail();
+    	}
     };
     
     $("#continueCreateBtn").click(function(){
