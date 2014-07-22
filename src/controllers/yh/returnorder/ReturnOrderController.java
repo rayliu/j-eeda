@@ -1,4 +1,4 @@
-package controllers.yh;
+package controllers.yh.returnorder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,8 +13,10 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-public class ReturnOrderControllers extends Controller {
-    private Logger logger = Logger.getLogger(ReturnOrderControllers.class);
+import controllers.yh.LoginUserController;
+
+public class ReturnOrderController extends Controller {
+    private Logger logger = Logger.getLogger(ReturnOrderController.class);
 
     public void index() {
         if (LoginUserController.isAuthenticated(this))
