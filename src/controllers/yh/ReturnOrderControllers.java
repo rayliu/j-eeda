@@ -225,7 +225,7 @@ public class ReturnOrderControllers extends Controller {
                 + id + ")";
         String sql_item = "select toi.* from transfer_order_item toi"
                 + " where toi.order_id in (select ro.transfer_order_id from return_order  ro where ro.id=10)";
-        if ("atm".equals(nature)) {
+        if ("ATM".equals(nature)) {
             itemlist = Db.find(sql_atm);
         } else {
             itemlist = Db.find(sql_item);
