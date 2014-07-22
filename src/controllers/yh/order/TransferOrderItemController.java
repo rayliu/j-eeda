@@ -176,14 +176,15 @@ public class TransferOrderItemController extends Controller {
                 item.set("unit", getPara("unit"));
                 item.set("item_desc", getPara("remark"));
             } else {
-                updateProduct(productId);
+                // updateProduct(productId); 运输单中的货品信息不能去更新 profile中货品信息。
                 item.set("product_id", productId);
             }
             String amount = getPara("amount");
             if (amount != null && !"".equals(amount)) {
                 item.set("amount", amount);
             }
-            item.set("order_id", getPara("transfer_order_id"));
+            // update 不要更新order_id, order_id本来就存在了，upadte 有啥用？
+            // item.set("order_id", getPara("transfer_order_id"));
             item.update();
         } else {
             item = new TransferOrderItem();
@@ -213,7 +214,7 @@ public class TransferOrderItemController extends Controller {
                 item.set("unit", getPara("unit"));
                 item.set("item_desc", getPara("remark"));
             } else {
-                updateProduct(productId);
+                // updateProduct(productId);
                 item.set("product_id", productId);
             }
             String amount = getPara("amount");

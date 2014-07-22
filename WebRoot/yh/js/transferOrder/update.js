@@ -627,7 +627,8 @@ $(document).ready(function() {
             null                        
         ]      
     }).click(function(){
-        $(this).find('input').autocomplete({
+    	var inputBox = $(this).find('input');
+        inputBox.autocomplete({
 	        source: function( request, response ) {
 	            $.ajax({
 	                url: "/yh/transferOrder/searchItemNo",
@@ -638,16 +639,30 @@ $(document).ready(function() {
 	                },
 	                success: function( data ) {
 	                	console.log(data);
+						var columnName = inputBox.parent().parent()[0].className;
+		        		
 	                    response($.map( data, function( data ) {
 	                        return {
-	                            label: data.ITEM_NAME,
-	                            value: data.ID
+	                            label: '型号:'+data.ITEM_NO+' 名称:'+data.ITEM_NAME,
+	                            value: columnName=='item_name'?data.ITEM_NAME:data.ITEM_NO,
+	                            id: data.ID,
+	                            item_no: data.ITEM_NO,
+	                            item_name: data.ITEM_NAME
 	                        }
 	                    }));
 	                }
 	            });
 	        },
-        	//delay: 200,
+        	select: function( event, ui ) {
+        		
+        		//将选择的产品id先保存到数据库
+        		var itemId = $(this).parent().parent().parent()[0].id;
+        		var productId = ui.item.id;
+        		$.post('/yh/transferOrderItem/saveTransferOrderItem', 
+        			{transferOrderItemId:itemId,productId:productId},
+        			function(){ itemDataTable.fnDraw();  });        		
+                
+            },
         	minLength: 2
         });
     });                                                                      
@@ -886,6 +901,7 @@ $(document).ready(function() {
     var detailDataTable = $('#detailTable').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
+        "bFilter": false, //不需要默认的搜索框
         "iDisplayLength": 10,
         "bServerSide": true,
         "sAjaxSource": "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId,
