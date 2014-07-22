@@ -154,6 +154,7 @@ $(document).ready(function() {
 		  		            		}}},
 		  		            { "mDataProp": "WAREHOUSE_NAME",},
 		  		            {"mDataProp":"COMPANY_NAME"},
+		  		          {"mDataProp":null},
 		  		            { 
 		  		                "mDataProp": null, 
 		  		                "sWidth": "8%",                
@@ -226,7 +227,8 @@ $(document).ready(function() {
 			            			return "源鸿自提";
 			            		}}},
 			            {"mDataProp":"WAREHOUSE_NAME"},
-			            {"mDataProp":"COMPANY_NAME"}
+			            {"mDataProp":"COMPANY_NAME"},
+			            {"mDataProp":"NADDRESS"}
 			        ]      
 			    });	
 			$("#eeda-table4").on('click', '.checkedOrUnchecked', function(e){
