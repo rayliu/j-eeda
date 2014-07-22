@@ -124,7 +124,7 @@ public class ReturnOrderControllers extends Controller {
                 + " left join transfer_order  tor on tor.id=ro.transfer_order_id "
                 + " left join user_login  u on u.id =tor.create_by "
                 + " left join location lo on lo.code=tor.route_from"
-                + " left join location loc on loc.code=tor.route_tor"
+                + " left join location loc on loc.code=tor.route_to"
                 + " where ro.id=" + id + "";
         String sql_del = "select ro.*,co.company_name as company_name ,co.address as address,co.contact_person as contact ,co.phone as phone ,"
                 + " con.company_name as pay_company ,con.address as pay_address,con.contact_person as pay_contad ,con.phone as pay_phone ,"
