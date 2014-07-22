@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
-import models.DepartOrder;
 import models.DepartTransferOrder;
 import models.Party;
 import models.TransferOrder;
@@ -74,16 +73,12 @@ public class DeliveryController extends Controller {
         String warehouse = getPara("warehouse");
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         Map transferOrderListMap = new HashMap();
-        if (orderNo_filter == null && transfer_filter == null
-                && status_filter == null && customer_filter == null
-                && sp_filter == null && beginTime_filter == null
-                && endTime_filter == null) {
+        if (orderNo_filter == null && transfer_filter == null && status_filter == null && customer_filter == null
+                && sp_filter == null && beginTime_filter == null && endTime_filter == null) {
             String sqlTotal = "select count(1) total from delivery_order";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
@@ -99,8 +94,7 @@ public class DeliveryController extends Controller {
 
             transferOrderListMap.put("sEcho", pageIndex);
             transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-            transferOrderListMap.put("iTotalDisplayRecords",
-                    rec.getLong("total"));
+            transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
             transferOrderListMap.put("aaData", transferOrders);
         } else {
             if (beginTime_filter == null || "".equals(beginTime_filter)) {
@@ -111,18 +105,15 @@ public class DeliveryController extends Controller {
             }
 
             String sqlTotal = "select count(1) total from delivery_order d "
-                    + "left join party p on d.customer_id = p.id "
-                    + "left join contact c on p.contact_id = c.id "
-                    + "left join party p2 on d.sp_id = p2.id "
-                    + "left join contact c2 on p2.contact_id = c2.id "
+                    + "left join party p on d.customer_id = p.id " + "left join contact c on p.contact_id = c.id "
+                    + "left join party p2 on d.sp_id = p2.id " + "left join contact c2 on p2.contact_id = c2.id "
                     + "left join transfer_order t on d.transfer_order_id = t.id "
-                    + "left join warehouse w on t.warehouse_id = w.id "
-                    + "where ifnull(d.order_no,'') like '%" + orderNo_filter
-                    + "%' and ifnull(d.status,'') like '%" + status_filter
-                    + "%' and ifnull(c.company_name,'') like '%"
-                    + customer_filter
-                    + "%' and ifnull(c2.company_name,'') like'%" + sp_filter
-                    + "%' and d.create_stamp between '" + beginTime_filter
+                    + "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
+                    + "left join warehouse w on t.warehouse_id = w.id " + "where ifnull(d.order_no,'') like '%"
+                    + orderNo_filter + "%' and ifnull(d.status,'') like '%" + status_filter
+                    + "%' and ifnull(c.company_name,'') like '%" + customer_filter
+                    + "%' and ifnull(c2.company_name,'') like'%" + "%' and ifnull(dt2.transfer_no,'') like '%"
+                    + transfer_filter + sp_filter + "%' " + "and d.create_stamp between '" + beginTime_filter
                     + "' and '" + endTime_filter + "' ";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
@@ -134,24 +125,25 @@ public class DeliveryController extends Controller {
                     + "left join contact c2 on p2.contact_id = c2.id "
                     + "left join transfer_order t on d.transfer_order_id = t.id "
                     + "left join warehouse w on t.warehouse_id = w.id "
+                    + "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
                     + "where ifnull(d.order_no,'') like '%"
                     + orderNo_filter
                     + "%' and ifnull(d.status,'') like '%"
                     + status_filter
                     + "%' and ifnull(c.company_name,'') like '%"
                     + customer_filter
+                    + "%' and ifnull(dt2.transfer_no,'') like '%"
+                    + transfer_filter
                     + "%' and ifnull(c2.company_name,'') like'%"
                     + sp_filter
                     + "%' and d.create_stamp between '"
-                    + beginTime_filter
-                    + "' and '" + endTime_filter + "' ";
+                    + beginTime_filter + "' and '" + endTime_filter + "' ";
 
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
             transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-            transferOrderListMap.put("iTotalDisplayRecords",
-                    rec.getLong("total"));
+            transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
             transferOrderListMap.put("aaData", transferOrders);
         }
         // 获取总条数
@@ -162,25 +154,20 @@ public class DeliveryController extends Controller {
     // 在途配送单list
     public void deliveryMilestone() {
 
-        String orderNo = getPara("orderNo");
-        String departNo = getPara("departNo");
-        String status = getPara("status");
+        String transferorderNo = getPara("transferorderNo");
+        String deliveryNo = getPara("deliveryNo");
+        String customer = getPara("customer");
         String sp = getPara("sp");
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from depart_order deo "
-                + "left join carinfo  car on deo.driver_id=car.id"
-                + " where combine_type = '" + DepartOrder.COMBINE_TYPE_DEPART
-                + "'";
+        String sqlTotal = "select count(1) total from delivery_order";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
@@ -189,12 +176,11 @@ public class DeliveryController extends Controller {
                 + "left join contact c on p.contact_id = c.id "
                 + "left join party p2 on d.sp_id = p2.id "
                 + "left join contact c2 on p2.contact_id = c2.id "
-                + "left join transfer_order t on d.transfer_order_id = t.id "
                 + "order by d.create_stamp desc";
 
         List<Record> depart = null;
-        if (orderNo == null && departNo == null && status == null && sp == null
-                && beginTime == null && endTime == null) {
+        if (transferorderNo == null && deliveryNo == null && customer == null && sp == null && beginTime == null
+                && endTime == null) {
             depart = Db.find(sql);
         } else {
             if (beginTime == null || "".equals(beginTime)) {
@@ -203,13 +189,23 @@ public class DeliveryController extends Controller {
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-            String sql_seach = "select d.*,c.company_name as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
+            String sql_seach = "select distinct d.*,c.company_name as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
                     + "left join party p on d.customer_id = p.id "
                     + "left join contact c on p.contact_id = c.id "
                     + "left join party p2 on d.sp_id = p2.id "
                     + "left join contact c2 on p2.contact_id = c2.id "
-                    + "left join transfer_order t on d.transfer_order_id = t.id "
-                    + "order by d.create_stamp desc";
+                    + "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
+                    + "where ifnull(d.order_no,'') like '%"
+                    + deliveryNo
+                    + "%' and ifnull(c.company_name,'') like '%"
+                    + customer
+                    + "%' and ifnull(dt2.transfer_no,'') like '%"
+                    + transferorderNo
+                    + "%' and ifnull(c2.company_name,'') like'%"
+                    + sp
+                    + "%' and d.create_stamp between '"
+                    + beginTime
+                    + "' and '" + endTime + "' ";
             depart = Db.find(sql_seach);
         }
         Map map = new HashMap();
@@ -261,9 +257,7 @@ public class DeliveryController extends Controller {
         String id = getPara();
 
         DeliveryOrder tOrder = DeliveryOrder.dao.findById(id);
-        List<Record> serIdList = Db
-                .find("select transfer_item_id from delivery_order_item where delivery_id ="
-                        + id);
+        List<Record> serIdList = Db.find("select transfer_item_id from delivery_order_item where delivery_id =" + id);
         /*
          * try { serIdList.get(0).get("transfer_order_id"); } catch (Exception
          * e) { System.out.println(e); }
@@ -278,8 +272,7 @@ public class DeliveryController extends Controller {
             setAttr("localArr2", idStr);
             // 序列号运输单id数组
             List<Record> transferIdList = Db
-                    .find("select transfer_order_id from delivery_order_item where delivery_id ="
-                            + id);
+                    .find("select transfer_order_id from delivery_order_item where delivery_id =" + id);
             String idStr2 = "";
             for (Record record : transferIdList) {
                 idStr2 += record.get("transfer_order_id") + ",";
@@ -289,8 +282,7 @@ public class DeliveryController extends Controller {
         } else {
             // 运输单id
             DeliveryOrderItem deliveryOrderItem = DeliveryOrderItem.dao
-                    .findFirst("select transfer_order_id from delivery_order_item where delivery_id ="
-                            + id);
+                    .findFirst("select transfer_order_id from delivery_order_item where delivery_id =" + id);
             // List<Record> transferId =
             // Db.find("select transfer_order_id from delivery_order_item where delivery_id ="+
             // id);
@@ -305,18 +297,14 @@ public class DeliveryController extends Controller {
 
         }
         // 运输单信息
-        TransferOrder transferOrder = TransferOrder.dao.findById(tOrder
-                .get("transfer_order_id"));
+        TransferOrder transferOrder = TransferOrder.dao.findById(tOrder.get("transfer_order_id"));
         // 客户信息
-        Party customerContact = Party.dao
-                .findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
-                        + tOrder.get("customer_id")
-                        + "'and p.contact_id = c.id");
+        Party customerContact = Party.dao.findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
+                + tOrder.get("customer_id") + "'and p.contact_id = c.id");
 
         // 供应商信息
-        Party spContact = Party.dao
-                .findFirst("select *,p.id as spid from party p,contact c where p.id ='"
-                        + tOrder.get("sp_id") + "'and p.contact_id = c.id");
+        Party spContact = Party.dao.findFirst("select *,p.id as spid from party p,contact c where p.id ='"
+                + tOrder.get("sp_id") + "'and p.contact_id = c.id");
 
         // 收货人信息
         Contact notifyPartyContact = null;
@@ -422,14 +410,11 @@ public class DeliveryController extends Controller {
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         Map transferOrderListMap = new HashMap();
-        if (deliveryOrderNo == null && customerName == null
-                && orderStatue == null && warehouse == null) {
+        if (deliveryOrderNo == null && customerName == null && orderStatue == null && warehouse == null) {
             String sqlTotal = "select count(1) total from transfer_order t "
                     + "left join warehouse w on t.warehouse_id = w.id "
                     + "where t.status='已入库' and t.cargo_nature='cargo'";
@@ -437,16 +422,14 @@ public class DeliveryController extends Controller {
             logger.debug("total records:" + rec.getLong("total"));
 
             String sql = "select t.*,w.warehouse_name,c.company_name from transfer_order t "
-                    + "left join warehouse w on t.warehouse_id = w.id "
-                    + "left join party p on t.customer_id = p.id "
+                    + "left join warehouse w on t.warehouse_id = w.id " + "left join party p on t.customer_id = p.id "
                     + "left join contact c  on p.contact_id = c.id "
                     + "where t.status='已入库' and t.cargo_nature='cargo'";
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
             transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-            transferOrderListMap.put("iTotalDisplayRecords",
-                    rec.getLong("total"));
+            transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
             transferOrderListMap.put("aaData", transferOrders);
         } else {
             String sqlTotal = "select count(1) total from transfer_order t "
@@ -456,28 +439,17 @@ public class DeliveryController extends Controller {
             logger.debug("total records:" + rec.getLong("total"));
 
             String sql = "select t.*,w.warehouse_name,c.company_name from transfer_order t "
-                    + "left join warehouse w on t.warehouse_id = w.id "
-                    + "left join party p on t.customer_id = p.id "
+                    + "left join warehouse w on t.warehouse_id = w.id " + "left join party p on t.customer_id = p.id "
                     + "left join contact c  on p.contact_id = c.id "
-                    + "where t.status='已入库' and t.cargo_nature='cargo' "
-                    + "and ifnull(t.order_no,'') like '%"
-                    + deliveryOrderNo
-                    + "%'"
-                    + "and ifnull(w.warehouse_name,'') like '%"
-                    + warehouse
-                    + "%'"
-                    + "and ifnull(c.company_name,'') like '%"
-                    + customerName
-                    + "%'"
-                    + "and ifnull(t.status,'') like '%"
-                    + orderStatue
-                    + "%'";
+                    + "where t.status='已入库' and t.cargo_nature='cargo' " + "and ifnull(t.order_no,'') like '%"
+                    + deliveryOrderNo + "%'" + "and ifnull(w.warehouse_name,'') like '%" + warehouse + "%'"
+                    + "and ifnull(c.company_name,'') like '%" + customerName + "%'" + "and ifnull(t.status,'') like '%"
+                    + orderStatue + "%'";
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
             transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-            transferOrderListMap.put("iTotalDisplayRecords",
-                    rec.getLong("total"));
+            transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
             transferOrderListMap.put("aaData", transferOrders);
         }
         renderJson(transferOrderListMap);
@@ -490,12 +462,10 @@ public class DeliveryController extends Controller {
         String orderStatue = getPara("orderStatue");
         String warehouse = getPara("warehouse");
 
-        List<Record> list = Db
-                .find("select transfer_item_id from delivery_order_item");
-        List<Record> list2 = Db
-                .find("select t1.id as transfer_item_id from transfer_order_item_detail t1 "
-                        + "left join transfer_order t2 on t1.order_id=t2.id "
-                        + "where t2.status='已入库' and t2.cargo_nature='ATM'");
+        List<Record> list = Db.find("select transfer_item_id from delivery_order_item");
+        List<Record> list2 = Db.find("select t1.id as transfer_item_id from transfer_order_item_detail t1 "
+                + "left join transfer_order t2 on t1.order_id=t2.id "
+                + "where t2.status='已入库' and t2.cargo_nature='ATM'");
         list2.removeAll(list);
         String detail_id = "0";
         if (list2.size() > 0) {
@@ -507,19 +477,15 @@ public class DeliveryController extends Controller {
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         Map transferOrderListMap = new HashMap();
-        if (deliveryOrderNo == null && customerName == null
-                && orderStatue == null && warehouse == null) {
+        if (deliveryOrderNo == null && customerName == null && orderStatue == null && warehouse == null) {
             String sqlTotal = "select count(1) total from transfer_order_item_detail t1 "
                     + "left join transfer_order t2 on t1.order_id=t2.id "
                     + "left join warehouse w on t2.warehouse_id = w.id "
-                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in("
-                    + detail_id + ")";
+                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in(" + detail_id + ")";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
@@ -528,21 +494,18 @@ public class DeliveryController extends Controller {
                     + "left join warehouse w on t2.warehouse_id = w.id "
                     + "left join party p on t2.customer_id = p.id "
                     + "left join contact c on p.contact_id = c.id "
-                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in("
-                    + detail_id + ")";
+                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in(" + detail_id + ")";
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
             transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-            transferOrderListMap.put("iTotalDisplayRecords",
-                    rec.getLong("total"));
+            transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
             transferOrderListMap.put("aaData", transferOrders);
         } else {
             String sqlTotal = "select count(1) total from transfer_order_item_detail t1 "
                     + "left join transfer_order t2 on t1.order_id=t2.id "
                     + "left join warehouse w on t2.warehouse_id = w.id "
-                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in("
-                    + detail_id + ")";
+                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in(" + detail_id + ")";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
@@ -563,15 +526,13 @@ public class DeliveryController extends Controller {
                     + "and ifnull(c.company_name,'') like '%"
                     + customerName
                     + "%'"
-                    + "and ifnull(t2.status,'') like '%"
-                    + orderStatue + "%'";
+                    + "and ifnull(t2.status,'') like '%" + orderStatue + "%'";
 
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
             transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-            transferOrderListMap.put("iTotalDisplayRecords",
-                    rec.getLong("total"));
+            transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
             transferOrderListMap.put("aaData", transferOrders);
         }
 
@@ -630,10 +591,8 @@ public class DeliveryController extends Controller {
         }
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
         String sqlTotal = "select count(1) total from transfer_order_item tof"
@@ -648,17 +607,13 @@ public class DeliveryController extends Controller {
         sql = "select tof.* ,t_o.order_no as order_no,c.company_name as customer from transfer_order_item tof "
                 + " left join transfer_order t_o on tof.order_id =t_o.id "
                 + "left join contact c on c.id in (select contact_id from party p where t_o.customer_id=p.id) "
-                + " where tof.order_id in("
-                + idlist
-                + ")  order by c.id"
-                + sLimit;
+                + " where tof.order_id in(" + idlist + ")  order by c.id" + sLimit;
         departOrderitem = Db.find(sql);
         for (int i = 0; i < departOrderitem.size(); i++) {
             String itemname = departOrderitem.get(i).get("item_name");
             if ("ATM".equals(itemname)) {
                 Long itemid = departOrderitem.get(i).get("id");
-                String sql2 = "select serial_no from transfer_order_item_detail  where item_id ="
-                        + itemid;
+                String sql2 = "select serial_no from transfer_order_item_detail  where item_id =" + itemid;
                 List<Record> itemserial_no = Db.find(sql2);
                 String itemno = itemserial_no.get(0).get("SERIAL_NO");
                 departOrderitem.get(i).set("serial_no", itemno);
@@ -691,10 +646,8 @@ public class DeliveryController extends Controller {
         }
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
         String sqlTotal = "select count(1) total from transfer_order_item_detail t "
@@ -747,8 +700,7 @@ public class DeliveryController extends Controller {
         String[] idlist4 = getPara("localArr3").split(",");
 
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao
-                .find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 
         Date createDate = Calendar.getInstance().getTime();
 
@@ -758,38 +710,29 @@ public class DeliveryController extends Controller {
 
         if (notifyId == null || notifyId.equals("")) {
             contact.set("company_name", getPara("notify_company_name"))
-                    .set("contact_person", getPara("notify_contact_person"))
-                    .set("address", getPara("notify_address"))
+                    .set("contact_person", getPara("notify_contact_person")).set("address", getPara("notify_address"))
                     .set("mobile", getPara("notify_phone"));
             contact.save();
-            party.set("contact_id", contact.get("id"))
-                    .set("party_type", "NOTIFY_PARTY")
-                    .set("create_date", createDate)
+            party.set("contact_id", contact.get("id")).set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
                     .set("creator", users.get(0).get("id"));
             party.save();
         } else {
-            contact.set("id", getPara("contact_id"))
-                    .set("company_name", getPara("notify_company_name"))
-                    .set("contact_person", getPara("notify_contact_person"))
-                    .set("address", getPara("notify_address"))
+            contact.set("id", getPara("contact_id")).set("company_name", getPara("notify_company_name"))
+                    .set("contact_person", getPara("notify_contact_person")).set("address", getPara("notify_address"))
                     .set("mobile", getPara("notify_phone")).update();
         }
 
         if (deliveryid == null || "".equals(deliveryid)) {
 
-            deliveryOrder.set("Order_no", orderNo)
-                    .set("Transfer_order_id", getPara("tranferid"))
-                    .set("Customer_id", getPara("customer_id"))
-                    .set("Sp_id", getPara("cid"))
-                    .set("Notify_party_id", party.get("id"))
-                    .set("CREATE_STAMP", createDate).set("Status", "新建");
+            deliveryOrder.set("Order_no", orderNo).set("Transfer_order_id", getPara("tranferid"))
+                    .set("Customer_id", getPara("customer_id")).set("Sp_id", getPara("cid"))
+                    .set("Notify_party_id", party.get("id")).set("CREATE_STAMP", createDate).set("Status", "新建");
             deliveryOrder.save();
 
             String string = getPara("tranferid");
             // 改变运输单状态
             if (!string.equals("")) {
-                TransferOrder tOrder = TransferOrder.dao
-                        .findById(getPara("tranferid"));
+                TransferOrder tOrder = TransferOrder.dao.findById(getPara("tranferid"));
                 tOrder.set("status", "配送中");
                 tOrder.update();
             }
@@ -797,9 +740,7 @@ public class DeliveryController extends Controller {
             if (!idlist3.equals("")) {
                 for (int i = 0; i < idlist.length; i++) {
                     DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-                    deliveryOrderItem.set("DELIVERY_ID",
-                            deliveryOrder.get("id")).set("transfer_order_id",
-                            idlist[i]);
+                    deliveryOrderItem.set("DELIVERY_ID", deliveryOrder.get("id")).set("transfer_order_id", idlist[i]);
                     deliveryOrderItem.set("TRANSFER_ITEM_ID", idlist2[i]);
                     deliveryOrderItem.set("transfer_no", idlist4[i]);
                     deliveryOrderItem.save();
@@ -807,17 +748,14 @@ public class DeliveryController extends Controller {
             } else {
                 DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
                 deliveryOrderItem.set("DELIVERY_ID", deliveryOrder.get("id"))
-                        .set("transfer_order_id", getPara("tranferid"))
-                        .set("transfer_no", idlist5);
+                        .set("transfer_order_id", getPara("tranferid")).set("transfer_no", idlist5);
                 deliveryOrderItem.save();
             }
             saveDeliveryOrderMilestone(deliveryOrder);
         } else {
 
-            deliveryOrder.set("Sp_id", getPara("cid"))
-                    .set("Notify_party_id", getPara("notify_id"))
-                    .set("Customer_id", getPara("customer_id"))
-                    .set("id", deliveryid);
+            deliveryOrder.set("Sp_id", getPara("cid")).set("Notify_party_id", getPara("notify_id"))
+                    .set("Customer_id", getPara("customer_id")).set("id", deliveryid);
             deliveryOrder.update();
         }
         renderJson(deliveryOrder);
@@ -828,8 +766,7 @@ public class DeliveryController extends Controller {
         DeliveryOrderMilestone deliveryOrderMilestone = new DeliveryOrderMilestone();
         deliveryOrderMilestone.set("status", "新建");
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao
-                .find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         deliveryOrderMilestone.set("create_by", users.get(0).get("id"));
         deliveryOrderMilestone.set("location", "");
         java.util.Date utilDate = new java.util.Date();
@@ -858,8 +795,7 @@ public class DeliveryController extends Controller {
         DeliveryOrderMilestone deliveryOrderMilestone = new DeliveryOrderMilestone();
         deliveryOrderMilestone.set("status", "已发车");
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao
-                .find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         deliveryOrderMilestone.set("create_by", users.get(0).get("id"));
         deliveryOrderMilestone.set("location", "");
         java.util.Date utilDate = new java.util.Date();
@@ -868,8 +804,7 @@ public class DeliveryController extends Controller {
         deliveryOrderMilestone.set("order_id", getPara("order_id"));
         deliveryOrderMilestone.save();
         map.put("transferOrderMilestone", deliveryOrderMilestone);
-        UserLogin userLogin = UserLogin.dao.findById(deliveryOrderMilestone
-                .get("create_by"));
+        UserLogin userLogin = UserLogin.dao.findById(deliveryOrderMilestone.get("create_by"));
         String username = userLogin.get("user_name");
         map.put("username", username);
         renderJson(map);
@@ -879,15 +814,22 @@ public class DeliveryController extends Controller {
     public void transferOrderMilestoneList() {
         Map<String, List> map = new HashMap<String, List>();
         List<String> usernames = new ArrayList<String>();
-        String deliveryOrderId = getPara("departOrderId");
-        if (deliveryOrderId == "" || deliveryOrderId == null) {
-        	deliveryOrderId = "-1";
+        String departOrderId = getPara("departOrderId");
+        if (departOrderId == "" || departOrderId == null) {
+            departOrderId = "-1";
         }
-      if(!"-1".equals(deliveryOrderId)){
-    	  String sql="select * from delivery_order_milestone where delivery_id="+deliveryOrderId+"";
-    	  List<Record> deliverylist=Db.find(sql);
-    	  renderJson(deliverylist);
-      }
+        if (!"-1".equals(departOrderId)) {
+            List<DeliveryOrderMilestone> transferOrderMilestones = DeliveryOrderMilestone.dao
+                    .find("select * from delivery_order_milestone where delivery_id=" + departOrderId);
+            for (DeliveryOrderMilestone transferOrderMilestone : transferOrderMilestones) {
+                UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
+                String username = userLogin.get("user_name");
+                usernames.add(username);
+            }
+            map.put("transferOrderMilestones", transferOrderMilestones);
+            map.put("usernames", usernames);
+        }
+        renderJson(map);
     }
 
     // 编辑里程碑
@@ -895,44 +837,37 @@ public class DeliveryController extends Controller {
         String milestoneDepartId = getPara("milestoneDepartId");
         Map<String, Object> map = new HashMap<String, Object>();
         if (milestoneDepartId != null && !"".equals(milestoneDepartId)) {
-            DepartOrder departOrder = DepartOrder.dao
-                    .findById(milestoneDepartId);
-            TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+            DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(milestoneDepartId);
+            DeliveryOrderMilestone deliveryOrderMilestone = new DeliveryOrderMilestone();
             String status = getPara("status");
             String location = getPara("location");
-           // transferOrderstatus(milestoneDepartId, status, location);
+
             if (!status.isEmpty()) {
-                transferOrderMilestone.set("status", status);
-                departOrder.set("status", status);
+                deliveryOrderMilestone.set("status", status);
+                deliveryOrder.set("status", status);
             } else {
-                transferOrderMilestone.set("status", "在途");
-                departOrder.set("status", "在途");
+                deliveryOrderMilestone.set("status", "在途");
+                deliveryOrder.set("status", "在途");
             }
-            departOrder.update();
+            deliveryOrder.update();
             if (!location.isEmpty()) {
-                transferOrderMilestone.set("location", location);
+                deliveryOrderMilestone.set("location", location);
             } else {
-                transferOrderMilestone.set("location", "");
+                deliveryOrderMilestone.set("location", "");
             }
             String name = (String) currentUser.getPrincipal();
-            List<UserLogin> users = UserLogin.dao
-                    .find("select * from user_login where user_name='" + name
-                            + "'");
+            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 
-            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+            deliveryOrderMilestone.set("create_by", users.get(0).get("id"));
 
             java.util.Date utilDate = new java.util.Date();
-            java.sql.Timestamp sqlDate = new java.sql.Timestamp(
-                    utilDate.getTime());
-            transferOrderMilestone.set("create_stamp", sqlDate);
-            transferOrderMilestone.set("depart_id", milestoneDepartId);
-            transferOrderMilestone.set("type",
-                    TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
-            transferOrderMilestone.save();
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+            deliveryOrderMilestone.set("create_stamp", sqlDate);
+            deliveryOrderMilestone.set("delivery_id", milestoneDepartId);
+            deliveryOrderMilestone.save();
 
-            map.put("transferOrderMilestone", transferOrderMilestone);
-            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone
-                    .get("create_by"));
+            map.put("transferOrderMilestone", deliveryOrderMilestone);
+            UserLogin userLogin = UserLogin.dao.findById(deliveryOrderMilestone.get("create_by"));
             String username = userLogin.get("user_name");
             map.put("username", username);
         }
@@ -943,11 +878,9 @@ public class DeliveryController extends Controller {
     public void transferOrderstatus(String de_or, String status, String location) {
         int depart_id = Integer.parseInt(de_or);
         List<DepartTransferOrder> dep = DepartTransferOrder.dao
-                .find("select * from depart_transfer  where depart_id in("
-                        + depart_id + ")");
+                .find("select * from depart_transfer  where depart_id in(" + depart_id + ")");
         for (int i = 0; i < dep.size(); i++) {
-            int order_id = Integer.parseInt(dep.get(i).get("order_id")
-                    .toString());
+            int order_id = Integer.parseInt(dep.get(i).get("order_id").toString());
             TransferOrder tr = TransferOrder.dao.findById(order_id);
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
             if (!status.isEmpty()) {
@@ -959,9 +892,7 @@ public class DeliveryController extends Controller {
             }
             tr.update();
             String name = (String) currentUser.getPrincipal();
-            List<UserLogin> users = UserLogin.dao
-                    .find("select * from user_login where user_name='" + name
-                            + "'");
+            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
             transferOrderMilestone.set("create_by", users.get(0).get("id"));
             if (location == null || location.isEmpty()) {
                 transferOrderMilestone.set("location", "");
@@ -970,11 +901,9 @@ public class DeliveryController extends Controller {
             }
 
             java.util.Date utilDate = new java.util.Date();
-            java.sql.Timestamp sqlDate = new java.sql.Timestamp(
-                    utilDate.getTime());
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
             transferOrderMilestone.set("create_stamp", sqlDate);
-            transferOrderMilestone.set("type",
-                    TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+            transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
             transferOrderMilestone.set("order_id", order_id);
             transferOrderMilestone.save();
 

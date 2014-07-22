@@ -17,6 +17,7 @@ $(document).ready(function() {
          			return "<a href='/yh/delivery/edit/"+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
          		}
 	            },
+	            {"mDataProp":"CUSTOMER"},
 	            {"mDataProp":"C2"},
 	            {"mDataProp":"CREATE_STAMP"},
 	            {"mDataProp":"WAREHOUSE_NAME"},

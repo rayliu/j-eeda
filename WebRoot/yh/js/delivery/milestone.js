@@ -29,7 +29,7 @@ $(document).ready(function() {
                     return obj.aData.STATUS+"<a id='edit_status' del_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
                 }
             },
-            {"mDataProp":null},
+            {"mDataProp":"CUSTOMER"},
             {"mDataProp":"C2"},
             {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"TRANSFER_ORDER_NO"},
@@ -49,7 +49,7 @@ $(document).ready(function() {
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 		},'json');
-		$("#receiptBtn").attr("disabled", true);
+		detailTable.fnDraw(); 
     });
     $("#eeda-table").on('click', '#edit_status', function(e){
     	e.preventDefault();	
@@ -79,14 +79,14 @@ $(document).ready(function() {
 	
  
     
-    $('#endTime_filter ,#beginTime_filter ,#sp_filter ,#status_filter ,#orderNo_filter ,#departNo_filter').on( 'keyup click', function () {
-    	var orderNo = $("#orderNo_filter").val();
-    	var departNo_filter = $("#departNo_filter").val();
-    	var status = $("#status_filter").val();
+    $('#endTime_filter ,#beginTime_filter ,#sp_filter ,#deliveryNo_filter ,#customer_filter ,#transferorderNo_filter').on( 'keyup click', function () {
+    	var deliveryNo = $("#deliveryNo_filter").val();
+    	var customer = $("#customer_filter").val();
+    	var transferorderNo = $("#transferorderNo_filter").val();
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&status="+status+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	detailTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
     	detailTable.fnDraw();
     } );
 	
