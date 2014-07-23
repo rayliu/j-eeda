@@ -1,6 +1,5 @@
 <%layout("/yh/layout.html"){%>
-
-
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
 <div id="page-wrapper">
 <div class="row">
 	<h2>产品信息</h2>
@@ -17,7 +16,7 @@
     	<div id="displayDiv" style="display: none;">
     		<h1>
 		    	<div id="addProductDiv" style="display: none;">
-			    	<button id="editProduct" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+			    	<button id="editProduct" class="btn btn-primary" data-toggle="modal">
 					  添加产品 
 					</button>
 				</div>
@@ -111,10 +110,12 @@
 								<tr>
 									<th>产品型号</th>
 									<th>产品名称</th>
-									<th>长度</th>
-									<th>宽度</th>
+									<th>长度(mm)</th>
+									<th>宽度(mm)</th>
+									<th>高度(mm)</th>
+									<th>产品类别</th>
 									<th>单位</th>
-									<th>体积</th>
+									<th>体积(m³)</th>
 									<th>重量</th>
 									<th>备注</th>
 									<th></th>
@@ -162,6 +163,7 @@
 	</div><!-- /.modal -->
 <%}%>
 
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 <!-- Page-Level Plugin Scripts - Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
@@ -175,6 +177,9 @@
 <script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.core-3.5.js"></script>
 <script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.excheck-3.5.js"></script>
 <script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.exedit-3.5.js"></script>
+
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.editable.js" type="text/javascript"></script>
+<script src="/yh/js/plugins/dataTables/jquery.jeditable.js" type="text/javascript"></script>
 <SCRIPT type="text/javascript">
        
         

@@ -1,6 +1,7 @@
 package controllers.yh.profile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,49 +32,28 @@ public class ProductController extends Controller {
         String sLimit = "";
         Map productListMap = null;
         String categoryId = getPara("categoryId");
-        if (categoryId == null || "".equals(categoryId)) {
-            String pageIndex = getPara("sEcho");
-            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-            }
-
-            String category = getPara("category");
-            String sqlTotal = "select count(1) total from product";
-            Record rec = Db.findFirst(sqlTotal);
-            logger.debug("total records:" + rec.getLong("total"));
-
-            String sql = "select * from product";
-
-            List<Record> products = Db.find(sql);
-
-            productListMap = new HashMap();
-            productListMap.put("sEcho", pageIndex);
-            productListMap.put("iTotalRecords", rec.getLong("total"));
-            productListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
-            productListMap.put("aaData", products);
-        } else {
-            String pageIndex = getPara("sEcho");
-            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-            }
-
-            String category = getPara("category");
-            String sqlTotal = "select count(1) total from product where category_id = " + categoryId;
-            Record rec = Db.findFirst(sqlTotal);
-            logger.debug("total records:" + rec.getLong("total"));
-
-            String sql = "select * from product where category_id = " + categoryId;
-
-            List<Record> products = Db.find(sql);
-
-            productListMap = new HashMap();
-            productListMap.put("sEcho", pageIndex);
-            productListMap.put("iTotalRecords", rec.getLong("total"));
-            productListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
-            productListMap.put("aaData", products);
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+        	sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
+        String category = getPara("category");
+        String sql = "";
+        String sqlTotal = "";
+        if (categoryId == null || "".equals(categoryId)) {
+            sqlTotal = "select count(1) total from product";
+            sql = "select *,(select name from category where id = "+categoryId+") category_name from product";
+        } else {
+            sqlTotal = "select count(1) total from product where category_id = " + categoryId;
+            sql = "select *,(select name from category where id = "+categoryId+") category_name from product where category_id = " + categoryId;
+        }
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+        List<Record> products = Db.find(sql);
+        productListMap = new HashMap();
+        productListMap.put("sEcho", pageIndex);
+        productListMap.put("iTotalRecords", rec.getLong("total"));
+        productListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        productListMap.put("aaData", products);
         renderJson(productListMap);
     }
 
@@ -310,4 +290,84 @@ public class ProductController extends Controller {
             }
         }
     }
+    
+    // 添加一行新数据
+    public void addNewRow() {
+        String categoryId = getPara("categoryId");
+        new Product().set("category_id", categoryId).set("size", 0).set("width", 0).set("height", 0).set("weight", 0).save();
+        renderJson("{\"success\":true}");
+    }
+
+    // 保存产品
+    public void saveProductByField() {
+        String returnValue = "";
+        String id = getPara("id");
+        Product item = Product.dao.findById(id);
+        String item_no = getPara("item_no");
+        String item_name = getPara("item_name");
+        String unit = getPara("unit");
+        String itemDesc = getPara("item_desc");
+        String size = getPara("size");
+        String width = getPara("width");
+        String height = getPara("height");
+        String weight = getPara("weight");
+        if (!"".equals(item_no) && item_no != null) {
+            item.set("item_no", item_no).update();
+            returnValue = item_no;
+        } else if (!"".equals(item_name) && item_name != null) {
+            item.set("item_name", item_name).update();
+            returnValue = item_name;
+        } else if (!"".equals(itemDesc) && itemDesc != null) {
+            item.set("item_desc", itemDesc).update();
+            returnValue = itemDesc;
+        } else if (!"".equals(size) && size != null) {
+            item.set("size", size).update();
+            returnValue = size;
+        } else if (!"".equals(width) && width != null) {
+            item.set("width", width).update();
+            returnValue = width;
+        } else if (!"".equals(height) && height != null) {
+            item.set("height", height).update();
+            returnValue = height;
+        } else if (!"".equals(weight) && weight != null) {
+            item.set("weight", weight).update();
+            returnValue = weight;
+        } else if (!"".equals(unit) && unit != null) {
+            item.set("unit", unit).update();
+            returnValue = unit;
+        }
+
+        Double volume = Double.parseDouble(item.get("size")+"")/1000 *
+        Double.parseDouble(item.get("width")+"")/1000 *
+        Double.parseDouble(item.get("height")+"")/1000;
+        item.set("volume", volume).update();
+        renderText(returnValue);// 必须返回传进来的值，否则js会报错
+    }
+
+    // 查找序列号
+    public void searchItemNo() {
+        String input = getPara("input");
+        List<Record> locationList = Collections.EMPTY_LIST;
+        if (input.trim().length() > 0) {
+        	input=input.toUpperCase();
+            locationList = Db.find("select * from product where category_id in (select id from category)"
+                    + " ( upper(item_no) like '%" + input + "%' or upper(item_name) like '%" + input + "%') limit 0,10");
+        } else {
+            locationList = Db.find("select * from product where category_id in (select id from category)");
+        }
+        renderJson(locationList);
+    }
+
+    // 查找产品名
+    public void searchItemName() {
+        String input = getPara("input");
+        List<Record> locationList = Collections.EMPTY_LIST;
+        if (input.trim().length() > 0) {
+            locationList = Db.find("select * from product where category_id in (select id from category) and item_name like '%" + input + "%' limit 0,10");
+        } else {
+            locationList = Db.find("select * from product where category_id in (select id from category)");
+        }
+        renderJson(locationList);
+    }
+
 }

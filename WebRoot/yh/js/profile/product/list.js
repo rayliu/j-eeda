@@ -35,41 +35,220 @@ $(document).ready(function() {
 
 	//datatable, 动态处理
     productDataTable = $('#eeda-table').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "bFilter": false, //不需要默认的搜索框
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "bRetrieve": true,
+        "sAjaxSource": "/yh/product/list",
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/product/list",
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
         "aoColumns": [   
-            {"mDataProp":"ITEM_NO"},        	
-            {"mDataProp":"ITEM_NAME"},
-            {"mDataProp":"SIZE"},
-            {"mDataProp":"WIDTH"},
-            {"mDataProp":"UNIT"},
-            {"mDataProp":"VOLUME"},
-            {"mDataProp":"WEIGHT"},
+            {
+            	"mDataProp":"ITEM_NO",            	
+            	"sWidth": "80px",
+            	"sClass": "item_no"
+            },        	
+            {
+            	"mDataProp":"ITEM_NAME",
+            	"sWidth": "180px",
+            	"sClass": "item_name"
+            },
+            {
+            	"mDataProp":"SIZE",            	
+            	"sWidth": "50px",
+            	"sClass": "size"
+        	},
+            {
+            	"mDataProp":"WIDTH",
+            	"sWidth": "50px",
+            	"sClass": "width"
+            },
+            {
+            	"mDataProp":"HEIGHT",            	
+            	"sWidth": "50px",
+            	"sClass": "height"
+        	},
+            {
+            	"mDataProp":"CATEGORY_NAME",            	
+            	"sWidth": "50px",
+            	"sClass": "category"
+        	},
+        	{
+            	"mDataProp":"UNIT",
+            	"sWidth": "50px",
+            	"sClass": "unit"
+            },
+            {
+            	"mDataProp":"VOLUME",
+            	"sWidth": "50px",
+            	"sClass": "volume"
+            }, 
+            {
+            	"mDataProp":"WEIGHT",
+            	"sWidth": "50px",
+            	"sClass": "weight",
+            },
             {"mDataProp":"ITEM_DESC"},
             { 
                 "mDataProp": null, 
-                "sWidth": "8%",                
-                "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success editProduct' id='"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                                "编辑"+
-                            "</a>"+
-                            "<a class='btn btn-danger deleteProduct' id='"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "删除"+
+                "sWidth": "60px",  
+            	"sClass": "item_desc",              
+                "fnRender": function(obj) {
+                    return	"<a class='btn btn-danger btn-xs deleteProduct' id="+obj.aData.ID+" title='删除'>"+
+                                "<i class='fa fa-trash-o fa-fw'></i>"+
                             "</a>";
                 }
             }                         
         ],      
     });
-    
+
+    // 计算体积
+	var sumVolume = function(currentEle){
+		$(currentEle).parent().children('.volume')[0].innerHTML = parseFloat($(currentEle).parent().children('.size')[0].innerHTML)/1000 * parseFloat($(currentEle).parent().children('.width')[0].innerHTML)/1000 * parseFloat($(currentEle).parent().children('.height')[0].innerHTML)/1000;
+	};
+
+	// 刷新产品列表
+	var refreshProductTable = function(){
+		var categoryId = $("#categoryId").val();
+		// 刷新产品列表
+		productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+categoryId;
+		productDataTable.fnDraw();
+	};
+	
+    productDataTable.makeEditable({
+    	sUpdateURL: '/yh/product/saveProductByField',    	
+    	oEditableSettings: {event: 'click'},
+    	"aoColumns": [  			            
+            {            
+            	style: "inherit",
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"item_no",
+            	placeholder: "", 
+            	callback: function () {}
+        	},
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"item_name",
+            	placeholder: "",
+            	callback: function () {
+            		refreshDetailTable();
+            	} 
+            },
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"size",
+            	placeholder: "",
+            	callback: function () {
+            		sumVolume(this);
+            		refreshProductTable();
+            	} 
+            },
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"width",
+            	placeholder: "",
+            	callback: function () {
+            		sumVolume(this);
+            		refreshProductTable();
+            	} 
+            },
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"height",
+            	placeholder: "",
+            	callback: function () {
+            		sumVolume(this);
+            		refreshProductTable();
+            	} 
+            },
+            null,
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"unit",
+            	type: 'select',
+            	data: "{'':'', '台':'台','件':'件','套':'套'}",
+            	placeholder: "",
+            	callback: function () {} 
+            },
+            null,  
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"weight",
+            	placeholder: "",
+            	callback: function () {} 
+            },
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"item_desc",
+            	type: 'textarea',
+            	placeholder: "",
+            	callback: function () {} 
+            },
+            null                        
+        ]      
+    }).click(function(){
+    	var inputBox = $(this).find('input');
+        inputBox.autocomplete({
+	        source: function( request, response ) {
+	            $.ajax({
+	                url: "/yh/product/searchItemNo",
+	                dataType: "json",
+	                data: {
+	                    customerId: $('#customerId').val(),
+	                    input: request.term
+	                },
+	                success: function( data ) {
+	                	console.log(data);
+						var columnName = inputBox.parent().parent()[0].className;
+		        		
+	                    response($.map( data, function( data ) {
+	                        return {
+	                            label: '型号:'+data.ITEM_NO+' 名称:'+data.ITEM_NAME,
+	                            value: columnName=='item_name'?data.ITEM_NAME:data.ITEM_NO,
+	                            id: data.ID,
+	                            item_no: data.ITEM_NO,
+	                            item_name: data.ITEM_NAME
+	                        }
+	                    }));
+	                }
+	            });
+	        },
+        	select: function( event, ui ) {
+        		
+        		//将选择的产品id先保存到数据库
+        		var itemId = $(this).parent().parent().parent()[0].id;
+        		var productId = ui.item.id;
+        		$.post('/yh/transferOrderItem/saveTransferOrderItem', 
+        			{transferOrderItemId:itemId,productId:productId},
+        			function(){ itemDataTable.fnDraw();  });        		
+                
+            },
+        	minLength: 2
+        });
+    });                                                                      
+        
     var nodePlusClickHandler= function(e){
     	e.preventDefault();
     	var customerId = $('#customerId').val();
@@ -205,8 +384,7 @@ $(document).ready(function() {
     	var productId = $(this).attr('id');	
     	$.post('/yh/product/delete', {productId:productId}, function(data){ 	
 		},'json');
-    	productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+$("#categoryId").val();
-        productDataTable.fnDraw();
+    	refreshProductTable();
     });
     
     var selectCategory = function(){
@@ -227,8 +405,14 @@ $(document).ready(function() {
     
     // 新增产品
     $('#editProduct').on('click', function() { 
-    	$("#hiddenProductId").val('');
-    	selectCategory();
+    	/*$("#hiddenProductId").val('');
+    	selectCategory();*/
+    	
+    	var categoryId = $("#categoryId").val();
+ 		$.post('/yh/product/addNewRow', {categoryId:categoryId}, function(data){
+ 			productDataTable.fnDraw(); 
+ 		});
+
     });
     
     // 计算产品体积

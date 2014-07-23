@@ -660,8 +660,9 @@ public class TransferOrderController extends Controller {
         String customerId = getPara("customerId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
+        	input=input.toUpperCase();
             locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
-                    + ") and (item_no like '%" + input + "%' or item_name like '%" + input + "%') limit 0,10");
+                    + ") and ( upper(item_no) like '%" + input + "%' or upper(item_name) like '%" + input + "%') limit 0,10");
         } else {
             locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
                     + ")");
