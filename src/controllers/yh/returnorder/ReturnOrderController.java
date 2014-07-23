@@ -45,21 +45,19 @@ public class ReturnOrderController extends Controller {
                 && time_two == null) {
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from return_order ro "
-                    + "left join transfer_order t on ro.transfer_order_id = t.id "
-                    + "left join delivery_order do on ro.delivery_order_id = do.id "
-                    + "left join party p on ro.customer_id = p.id "
-                    + "left join contact c on p.contact_id = c.id ";
+            String sql = "select count(1) total from return_order ro ";
             Record rec = Db.findFirst(sql + totalWhere);
             logger.debug("total records:" + rec.getLong("total"));
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("SELECT r_o.*, t.order_no as transfer_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order r_o "
-                            + "left join transfer_order t on r_o.transfer_order_id = t.id "
+                    .find("SELECT r_o.*, usl.user_name as creator_name, dp.depart_no as depart_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order r_o "
+                        +"left join DEPART_TRANSFER  dpt on dpt.depart_id=r_o.depart_order_id "
++"left join DEPART_ORDER  dp on dp.id = dpt.depart_id "
                             + "left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
                             + "left join party p on r_o.customer_id = p.id "
                             + "left join contact c on p.contact_id = c.id "
+                            +"left join USER_LOGIN  usl on usl.id=r_o.creator "
                             + sLimit);
 
             orderMap.put("sEcho", pageIndex);
@@ -116,33 +114,33 @@ public class ReturnOrderController extends Controller {
         int id = Integer.parseInt(getPara("locationName"));
 
         List<Record> message = new ArrayList<Record>();
-        String sql_tr = "select ro.*,co.company_name as company_name ,co.address as address,co.contact_person as contact ,co.phone as phone ,"
-                + " con.company_name as pay_company ,con.address as pay_address,con.contact_person as pay_contad ,con.phone as pay_phone ,"
-                + " tor.order_no  as transfer_order_no,tor.cargo_nature  as nature,tor.pickup_mode  as pickup,tor.arrival_mode  as arrival,tor.remark as remark ,"
-                + " u.user_name as counterman,lo.name as location_from,loc.name as location_tor "
-                + " from return_order  ro "
-                + " left join contact  co on co.id in (select p.contact_id from party p where p.id=ro.custormer_id ) "
-                + " left join contact  con on con.id in (select p.contact_id from party p where p.id=ro.notity_party_id )"
-                + " left join transfer_order  tor on tor.id=ro.transfer_order_id "
-                + " left join user_login  u on u.id =tor.create_by "
-                + " left join location lo on lo.code=tor.route_from"
-                + " left join location loc on loc.code=tor.route_to"
-                + " where ro.id=" + id + "";
+        String sql_tr = "select ro.*, co.address as address,co.company_name,co.contact_person as contact ,co.phone as phone , con.company_name as pay_company ,con.address as pay_address,con.contact_person as pay_contad ,con.phone as pay_phone  , dp.depart_no  as depart_order_no,tor.cargo_nature  as nature,tor.pickup_mode  as pickup,tor.arrival_mode  as arrival,tor.remark as remark , u.user_name as counterman,lo.name as location_from,loc.name as location_to, usl.user_name  as creator_name  from return_order  ro " 
+				+"left join contact  co on co.id in (select p.contact_id from party p where p.id=ro.customer_id  ) " 
+				+"left join contact  con on con.id in (select p.contact_id from party p where p.id=ro.notity_party_id ) "
+				+"left join depart_transfer  dpt on dpt.depart_id=ro.depart_order_id "
+				+"left join depart_order  dp on dp.id=dpt.depart_id "
+				+"left join transfer_order  tor on tor.id=dpt.order_id "
+				+"left join user_login  u on u.id =tor.create_by " 
+				+"left join location lo on lo.code=tor.route_from "
+				+"left join location loc on loc.code=tor.route_to " 
+				+"left join user_login  usl on usl.id=ro.creator  "
+				+"where ro.id="+id+"";
         String sql_del = "select ro.*,co.company_name as company_name ,co.address as address,co.contact_person as contact ,co.phone as phone ,"
                 + " con.company_name as pay_company ,con.address as pay_address,con.contact_person as pay_contad ,con.phone as pay_phone ,"
                 + " tor.order_no as transfer_order_no, de.order_no  as delivery_order_id_no ,tor.cargo_nature  as nature,tor.pickup_mode  as pickup,tor.arrival_mode  as arrival,tor.remark as remark ,"
-                + " u.user_name as counterman,lo.name as location_from,loc.name as location_to"
+                + " u.user_name as counterman,lo.name as location_from,loc.name as location_to ,usl.user_name  as creator_name"
                 + " from return_order  ro "
                 + " left join contact  co on co.id in (select p.contact_id from party p where p.id=ro.customer_id )"
                 + " left join contact  con on con.id in (select p.contact_id from party p where p.id=ro.notity_party_id )"
                 + " left join transfer_order  tor on tor.id in (select delo.transfer_order_id  from delivery_order delo where delo.id=ro.delivery_order_id )"
-                + " left join user_login  u on u.id =tor.create_by"
-                + " left join location lo on lo.code=tor.route_from"
-                + " left join location loc on loc.code=tor.route_to"
-                + " left join delivery_order  de on de.id=ro.delivery_order_id"
+                + " left join user_login  u on u.id =tor.create_by "
+                + " left join location lo on lo.code=tor.route_from "
+                + " left join location loc on loc.code=tor.route_to "
+                + " left join user_login  usl on usl.id=ro.creator  "
+                + " left join delivery_order  de on de.id=ro.delivery_order_id "
                 + " where ro.id=" + id + "";
         ReturnOrder re = ReturnOrder.dao.findById(id);
-        if ("null".equals(re.get("delivery_order_id"))) {
+        if (re.get("delivery_order_id")==null) {
             message = Db.find(sql_tr);
         } else {
             message = Db.find(sql_del);
@@ -193,7 +191,7 @@ public class ReturnOrderController extends Controller {
         List<Record> paylist = new ArrayList<Record>();
         paylist = Db
                 .find("select f.name,f.remark,tf.amount,tf.status from fin_item f,transfer_order_fin_item tf  where tf.fin_item_id =f.id and tf.order_id ='"
-                        + id + "'");
+                        + 1 + "'");
 
         renderJson(paylist);
     }
@@ -214,19 +212,31 @@ public class ReturnOrderController extends Controller {
         String sql = "select count(1) total from transfer_order_item ";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
-
+      
         // 获取当前页的数据
         List<Record> itemlist = new ArrayList<Record>();
-        TransferOrder tr = TransferOrder.dao
-                .findFirst("select tor.cargo_nature   from transfer_order tor where tor.id in (select ro.transfer_order_id  from return_order  ro where ro.id="
-                        + id + ")");
+        TransferOrder tr =null;
+        ReturnOrder re = ReturnOrder.dao.findById(id);
+        if (re.get("delivery_order_id")==null) {
+        	 tr = TransferOrder.dao
+                     .findFirst(" select tor.*  from transfer_order tor " 
+								+"left join return_order re on re.id= "+id
+								+"left join depart_transfer  dpt on dpt.depart_id=re.depart_order_id "
+								+"where tor.id =dpt.order_id   ");
+        } else {
+        	 tr = TransferOrder.dao
+                     .findFirst(" select tor.*   from transfer_order tor "
+								+"left join return_order re on re.id= "+id
+								+"left join delivery_order  deo on deo.id=re.delivery_order_id "
+								+"where tor.id =deo.transfer_order_id  ");
+        }
+       
         String nature = tr.getStr("cargo_nature");
         String sql_atm = "select toi.*,toid.serial_no  from transfer_order_item toi"
                 + " left join transfer_order_item_detail  toid on toid.item_id =toi.id and toid.order_id =toi.order_id"
-                + " where toi.order_id in (select ro.transfer_order_id from return_order  ro where ro.id="
-                + id + ")";
+                + " where toi.order_id in ("+Integer.parseInt(tr.get("id").toString())+")";
         String sql_item = "select toi.* from transfer_order_item toi"
-                + " where toi.order_id in (select ro.transfer_order_id from return_order  ro where ro.id=10)";
+                + " where toi.order_id in ("+Integer.parseInt(tr.get("id").toString())+")";
         if ("ATM".equals(nature)) {
             itemlist = Db.find(sql_atm);
         } else {
@@ -246,19 +256,26 @@ public class ReturnOrderController extends Controller {
     // 点击查看
     public void check() {
         String id = getPara();
-
         ReturnOrder re = ReturnOrder.dao.findById(id);
-        TransferOrder tr = TransferOrder.dao
-                .findFirst("select tor.cargo_nature   from transfer_order tor where tor.id in (select ror.transfer_order_id  from return_order  ror where ror.id="
-                        + id + ")");
-        String nature = tr.getStr("cargo_nature");
-        if (re.get("DELIVERY_ORDER_ID") != null) {
-            setAttr("check", true);
+        if (re.get("delivery_order_id") != null) {
+        	  TransferOrder tr = TransferOrder.dao
+                      .findFirst("select tro.* from transfer_order  tro "
+      							+"left join delivery_order  deo on deo.id= "+Integer.parseInt(id)
+      							+"where deo.transfer_order_id =tro.id ");
+              String nature = tr.get("cargo_nature");
+              setAttr("nature", nature);
+              setAttr("check", true);
         } else {
+        	 TransferOrder tr = TransferOrder.dao
+                     .findFirst("select tro.* from transfer_order  tro "
+								+"left join depart_transfer   dp on dp.depart_id= "+Integer.parseInt(id)
+								+"where dp.order_id =tro.id");
+             String nature = tr.getStr("cargo_nature");
+             setAttr("nature", nature);
             setAttr("check", false);
         }
 
-        setAttr("nature", nature);
+       
         setAttr("id", id);
         if (LoginUserController.isAuthenticated(this))
             render("profile/returnorder/returnOrder.html");

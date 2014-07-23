@@ -245,7 +245,7 @@
 		$.post('/yh/returnorder/cancel/'+id,function(data){
                //保存成功后，刷新列表
                console.log(data);
-               if(data.success){
+               if(data.success){e
               	 dataTable.fnDraw();
                }else{
                    alert('取消失败');

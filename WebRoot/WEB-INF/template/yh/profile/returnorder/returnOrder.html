@@ -118,10 +118,12 @@
                                 <!-- /.col-lg-6 (nested) -->
                                 <div class="col-lg-6">
                                    <h2>运输信息</h2>
+                                    <%if(check==false){%> 
                                     <div class="form-group">
-                                        <label>运输单号</label> <strong id="transfer_order_no" class="radio-inline"></strong>
-                                    </div>  
-                                     <%if(check!''==true){%>  
+                                        <label>发车单号</label> <strong id="depart_order_no" class="radio-inline"></strong>
+                                    </div> 
+                                    <%}%> 
+                                     <%if(check==true){%>  
                       					<div class="form-group">
                                         <label>配送单号</label> <strong id="DELIVERY_ORDER_ID_NO" class="radio-inline"></strong>
                                     </div> 
@@ -281,7 +283,7 @@
     	$.get('/yh/returnorder/checkorder', {locationName:inputStr}, function(data){   		
 			for(var i=0; i < data.length; i++){
 				nature=data[i].NATURE;
-				$('#transfer_order_no').html(data[i].TRANSFER_ORDER_NO);
+				$('#depart_order_no').html(data[i].DEPART_ORDER_NO);
 				$('#DELIVERY_ORDER_ID_NO').html(data[i].DELIVERY_ORDER_ID_NO);
 				$('#nature').html(data[i].NATURE);
 	        	$('#pickup').html(data[i].PICKUP);
@@ -298,7 +300,7 @@
 	        	$('#pay_contad').html(data[i].PAY_CONTAD);
 	        	$('#pay_address').html(data[i].PAY_ADDRESS);
 	        	$('#order_no').html(data[i].ORDER_NO);
-	        	$('#creator').html(data[i].CREATOR);
+	        	$('#creator').html(data[i].CREATOR_NAME);
 	        	$('#create_date').html(data[i].CREATE_DATE);
 	        	$('#transaction_status').html(data[i].TRANSACTION_STATUS);
 	        	$('#counterman').html(data[i].COUNTERMAN);
