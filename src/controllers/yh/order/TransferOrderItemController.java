@@ -136,14 +136,26 @@ public class TransferOrderItemController extends Controller {
             returnValue = unit;
         }
 
-        // Double volume = Double.parseDouble(item.get("size")+"")/1000 *
-        // Double.parseDouble(item.get("width")+"")/1000 *
-        // Double.parseDouble(item.get("height")+"")/1000;
-        // item.set("volume", volume).update();
+        Double volume = Double.parseDouble(item.get("size")+"")/1000 *
+        Double.parseDouble(item.get("width")+"")/1000 *
+        Double.parseDouble(item.get("height")+"")/1000;
+        item.set("volume", volume).update();
+        updateTransferOrderItemDetail(item);
         renderText(returnValue);// 必须返回传进来的值，否则js会报错
     }
 
-    // 保存货品
+    // 更新单品信息
+    private void updateTransferOrderItemDetail(TransferOrderItem item) {
+		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where item_id = ?", item.get("id"));
+		for(TransferOrderItemDetail detail : transferOrderItemDetails){
+			detail.set("item_name", item.get("item_name"));
+			detail.set("volume", item.get("volume"));
+			detail.set("weight", item.get("weight"));
+			detail.update();
+		}
+	}
+
+	// 保存货品
     public void saveTransferOrderItem() {
         TransferOrderItem item = null;
         String productId = getPara("productId");

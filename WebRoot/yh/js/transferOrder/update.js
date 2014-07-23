@@ -531,6 +531,14 @@ $(document).ready(function() {
 		$(currentEle).parent().children('.sumWeight')[0].innerHTML = parseFloat($(currentEle).parent().children('.weight')[0].innerHTML) * parseFloat($(currentEle).parent().children('.amount')[0].innerHTML);
 	};
     
+	// 刷新单品列表
+	var refreshDetailTable = function(){
+		var orderId = $("#order_id").val();
+		// 刷新单品列表
+		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId;
+		detailDataTable.fnDraw();
+	};
+	
     itemDataTable.makeEditable({
     	sUpdateURL: '/yh/transferOrderItem/saveTransferOrderItemByField',    	
     	oEditableSettings: {event: 'click'},
@@ -550,7 +558,9 @@ $(document).ready(function() {
             	tooltip: '点击可以编辑',
             	name:"item_name",
             	placeholder: "",
-            	callback: function () {} 
+            	callback: function () {
+            		refreshDetailTable();
+            	} 
             },
             {
             	indicator: '正在保存...',
@@ -560,6 +570,7 @@ $(document).ready(function() {
             	placeholder: "",
             	callback: function () {
             		sumVolume(this);
+            		refreshDetailTable();
             	} 
             },
             {
@@ -570,6 +581,7 @@ $(document).ready(function() {
             	placeholder: "",
             	callback: function () {
             		sumVolume(this);
+            		refreshDetailTable();
             	} 
             },
             {
@@ -580,6 +592,7 @@ $(document).ready(function() {
             	placeholder: "",
             	callback: function () {
             		sumVolume(this);
+            		refreshDetailTable();
             	} 
             },  
             {
@@ -590,6 +603,7 @@ $(document).ready(function() {
             	placeholder: "",
             	callback: function () {
             		sumWeight(this);
+            		refreshDetailTable();
             	} 
             },    	
             {
