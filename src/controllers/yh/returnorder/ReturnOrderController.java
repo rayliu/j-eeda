@@ -51,13 +51,13 @@ public class ReturnOrderController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("SELECT r_o.*, usl.user_name as creator_name, dp.depart_no as depart_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order r_o "
-                        +"left join DEPART_TRANSFER  dpt on dpt.depart_id=r_o.depart_order_id "
-+"left join DEPART_ORDER  dp on dp.id = dpt.depart_id "
+                    .find("select r_o.*, usl.user_name as creator_name, dp.depart_no as depart_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order r_o "
+                    		+"left join depart_transfer  dpt on dpt.depart_id=r_o.depart_order_id "
+                    		+"left join depart_order  dp on dp.id = dpt.depart_id "
                             + "left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
                             + "left join party p on r_o.customer_id = p.id "
                             + "left join contact c on p.contact_id = c.id "
-                            +"left join USER_LOGIN  usl on usl.id=r_o.creator "
+                            +"left join user_login  usl on usl.id=r_o.creator "
                             + sLimit);
 
             orderMap.put("sEcho", pageIndex);
