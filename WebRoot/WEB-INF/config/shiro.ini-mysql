@@ -8,11 +8,11 @@
 # Such as the securityManager, Realms and anything
 # else needed to build the SecurityManager
 ds = com.mysql.jdbc.jdbc2.optional.MysqlDataSource
-ds.serverName = xavier
-ds.user = eeda_123
-ds.password =mysql123
-ds.databaseName = test
-ds.url = jdbc:mysql://localhost:3306/test
+ds.serverName = localhost
+ds.user = eeda_root
+ds.password =123456
+ds.databaseName = eeda
+ds.url = jdbc:mysql://localhost:3306/eeda
 jdbcRealm = org.apache.shiro.realm.jdbc.JdbcRealm
 jdbcRealm.permissionsLookupEnabled = true
 jdbcRealm.authenticationQuery = SELECT password FROM user_login WHERE user_name = ?

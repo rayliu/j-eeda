@@ -18,6 +18,11 @@ $(document).ready(function() {
 		            {"mDataProp":"LOT_NO"},
 		            {"mDataProp":"CATON_NO"},
 		            {"mDataProp":"TOTAL_QUANTITY"},
+		            {"mDataProp":"SIZE"},        	
+		            {"mDataProp":"WIDTH"},
+		            {"mDataProp":"HEIGHT"},
+		            {"mDataProp":"VOLUME"},
+		            {"mDataProp":"WEIGHT"},
 		            {"mDataProp":"UOM"},
 		           // {"mDataProp":"UNIT_PRICE"},
 		            //{"mDataProp":"UNIT_COST"},
@@ -61,7 +66,7 @@ $('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
 	$("#warehouseId").val(id);
 	tab.fnSettings().sAjaxSource = "/yh/stock/stocklist/"+id;
 	tab.fnDraw();
-	$('#customerList').hide();
+	$('#warehouseList').hide();
 });
 
 });

@@ -16,6 +16,7 @@ import models.DeliveryOrderMilestone;
 import models.DepartTransferOrder;
 import models.Party;
 import models.TransferOrder;
+import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.delivery.DeliveryOrder;
@@ -365,9 +366,15 @@ public class DeliveryController extends Controller {
         TransferOrder tOrder = TransferOrder.dao.findById(id);
         // setAttr("ser", ser);
 
+        TransferOrder notity = TransferOrder.dao
+                .findFirst("select c.*,p.id as pid,c.id as contactId from transfer_order t "
+                        + "left join party p on p.id =t.notify_party_id "
+                        + "left join contact c on p.contact_id =c.id " + "where t.id='" + id + "'");
+
         setAttr("transferId", id);
         setAttr("deliveryOrder", tOrder);
         setAttr("localArr3", list);
+        setAttr("notifyParty", notity);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/delivery/deliveryOrderEdit.html");
     }
@@ -386,7 +393,7 @@ public class DeliveryController extends Controller {
     public void creat3() {
         String id = getPara();
         String list = this.getPara("localArr");
-        String list2 = this.getPara("localArr2");
+        String list2 = this.getPara("localArr2");// 序列号id
         String list3 = this.getPara("localArr3");
         String cusId = getPara("cusId");
         Party party = Party.dao
@@ -397,6 +404,13 @@ public class DeliveryController extends Controller {
         setAttr("localArr2", list2);
         setAttr("localArr3", list3);
         setAttr("customer", party);
+
+        TransferOrderItemDetail notify = TransferOrderItemDetail.dao
+                .findFirst("select c.*,p.id as pid,c.id as contactId from transfer_order_item_detail t "
+                        + "left join party p on p.id=t.notify_party_id " + "left join contact c on p.contact_id=c.id "
+                        + "where t.id in('" + list2 + "')");
+
+        setAttr("notifyParty", notify);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/delivery/deliveryOrderEdit.html");
     }

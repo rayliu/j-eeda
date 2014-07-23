@@ -114,7 +114,7 @@ $('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
 	 $("#warehouseId").val(id);
 	//productDataTable.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist?categoryId="+partyId;
 	//productDataTable.fnDraw();
-	$('#customerList').hide();
+	$('#warehouseList').hide();
 }); 
 
 //保存出库单
