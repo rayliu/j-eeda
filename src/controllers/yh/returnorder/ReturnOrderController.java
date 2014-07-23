@@ -260,7 +260,8 @@ public class ReturnOrderController extends Controller {
         if (re.get("delivery_order_id") != null) {
         	  TransferOrder tr = TransferOrder.dao
                       .findFirst("select trf.* from transfer_order  trf "
-      							+"left join delivery_order  deo on deo.id="+Integer.parseInt(id)+" "
+                    		  	+"left join return_order re on re.id="+Integer.parseInt(id)+" "
+      							+"left join delivery_order  deo on deo.id=re.delivery_order_id "
       							+"where deo.transfer_order_id =trf.id ");
               String nature = tr.get("cargo_nature");
               setAttr("nature", nature);
@@ -268,7 +269,8 @@ public class ReturnOrderController extends Controller {
         } else {
         	 TransferOrder tr = TransferOrder.dao
                      .findFirst("select trf.* from transfer_order  trf "
-								+"left join depart_transfer   dp on dp.depart_id="+Integer.parseInt(id)+" "
+                    		 	+"left join return_order re on re.id="+Integer.parseInt(id)+" "
+								+"left join depart_transfer   dp on dp.depart_id=re.depart_order_id "
 								+"where dp.order_id =trf.id");
              String nature = tr.getStr("cargo_nature");
              setAttr("nature", nature);
