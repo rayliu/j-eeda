@@ -220,13 +220,13 @@ public class ReturnOrderController extends Controller {
         if (re.get("delivery_order_id")==null) {
         	 tr = TransferOrder.dao
                      .findFirst(" select tor.*  from transfer_order tor " 
-								+"left join return_order re on re.id= "+id
+								+"left join return_order re on re.id="+id+" "
 								+"left join depart_transfer  dpt on dpt.depart_id=re.depart_order_id "
 								+"where tor.id =dpt.order_id   ");
         } else {
         	 tr = TransferOrder.dao
                      .findFirst(" select tor.*   from transfer_order tor "
-								+"left join return_order re on re.id= "+id
+								+"left join return_order re on re.id="+id+" "
 								+"left join delivery_order  deo on deo.id=re.delivery_order_id "
 								+"where tor.id =deo.transfer_order_id  ");
         }
@@ -259,17 +259,17 @@ public class ReturnOrderController extends Controller {
         ReturnOrder re = ReturnOrder.dao.findById(id);
         if (re.get("delivery_order_id") != null) {
         	  TransferOrder tr = TransferOrder.dao
-                      .findFirst("select tro.* from transfer_order  tro "
-      							+"left join delivery_order  deo on deo.id= "+Integer.parseInt(id)
-      							+"where deo.transfer_order_id =tro.id ");
+                      .findFirst("select trf.* from transfer_order  trf "
+      							+"left join delivery_order  deo on deo.id="+Integer.parseInt(id)+" "
+      							+"where deo.transfer_order_id =trf.id ");
               String nature = tr.get("cargo_nature");
               setAttr("nature", nature);
               setAttr("check", true);
         } else {
         	 TransferOrder tr = TransferOrder.dao
-                     .findFirst("select tro.* from transfer_order  tro "
-								+"left join depart_transfer   dp on dp.depart_id= "+Integer.parseInt(id)
-								+"where dp.order_id =tro.id");
+                     .findFirst("select trf.* from transfer_order  trf "
+								+"left join depart_transfer   dp on dp.depart_id="+Integer.parseInt(id)+" "
+								+"where dp.order_id =trf.id");
              String nature = tr.getStr("cargo_nature");
              setAttr("nature", nature);
             setAttr("check", false);
