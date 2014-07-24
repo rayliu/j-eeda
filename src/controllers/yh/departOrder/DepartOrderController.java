@@ -50,20 +50,20 @@ public class DepartOrderController extends Controller {
     }
 
     public void list() {
-    	
      String orderNo=getPara("orderNo");
      String departNo=getPara("departNo");
      String status=getPara("status");
      String sp=	getPara("sp");
      String beginTime=getPara("beginTime");
      String endTime=getPara("endTime");
-   
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-        }
-
+     String sLimit = "";
+     String pageIndex = getPara("sEcho");
+     if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+         sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+     }
+     List<Record> depart = null;
+     Map map=null;
+     if(orderNo==null&&departNo==null&&status==null&&sp==null&&beginTime==null&&endTime==null){
         String sqlTotal = "select count(1) total from depart_order deo "
             	+"left join carinfo  car on deo.driver_id=car.id"
                 + " where combine_type = '" + DepartOrder.COMBINE_TYPE_DEPART + "'";
@@ -76,17 +76,40 @@ public class DepartOrderController extends Controller {
                 + " left join contact c on p.contact_id = c.id where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
                 + DepartOrder.COMBINE_TYPE_DEPART
                 + "' order by deo.create_stamp desc"+sLimit;
-       
-       List<Record> depart = null;
-        if(orderNo==null&&departNo==null&&status==null&&sp==null&&beginTime==null&&endTime==null){
         	depart = Db.find(sql);
+        	 map = new HashMap();
+             map.put("sEcho", pageIndex);
+             map.put("iTotalRecords", rec.getLong("total"));
+             map.put("iTotalDisplayRecords", rec.getLong("total"));
+             map.put("aaData", depart);
         }else{
+        	
         	 if (beginTime == null || "".equals(beginTime)) {
                  beginTime = "1-1-1";
              }
              if (endTime == null || "".equals(endTime)) {
                  endTime = "9999-12-31";
              }
+             String totalWhere = "";
+             String sqlTotal = "select count(1) total from depart_order deo "
+         			+" left join party p on deo.driver_id = p.id and p.party_type = 'DRIVER' " 
+     				+"left join carinfo  car on deo.driver_id=car.id"
+     				+" left join contact c on p.contact_id = c.id "
+     				+" left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )" 
+     				+"  where deo.combine_type = 'DEPART' and "
+     				+ "ifnull(deo.status,'') like '%"+status+"%' and "
+     				+ "ifnull(deo.depart_no,'') like '%"+departNo+"%' and "
+     				+ "ifnull(c.company_name,'')  like '%"+sp+"%' and "
+     				+ "ifnull(tr.order_no,'') like '%"+orderNo+"%'"
+     				+ " and deo.create_stamp between '"+beginTime+"' "
+     				+ "and '"+endTime+"'group by deo.id order by deo.create_stamp desc ";
+           Record rec = Db.findFirst(sqlTotal + totalWhere);
+          long  total=0;
+           if(rec!=null){
+        	   total=rec.getLong("total");
+        	   logger.debug("total records:" + rec.getLong("total"));
+	            }
+           logger.debug("total records:" +total );
              String sql_seach ="select deo.id as depart_id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,car.*, group_concat(tr.order_no separator ' ') as transfer_order_no "
     				 +" from depart_order deo" 
     				+" left join party p on deo.driver_id = p.id and p.party_type = 'DRIVER' " 
@@ -96,13 +119,12 @@ public class DepartOrderController extends Controller {
     				+"  where deo.combine_type = 'DEPART' and ifnull(deo.status,'') like '%"+status+"%' and ifnull(deo.depart_no,'') like '%"+departNo+"%' and ifnull(c.company_name,'')  like '%"+sp+"%' and ifnull(tr.order_no,'') like '%"+orderNo+"%'"
     				+ " and deo.create_stamp between '"+beginTime+"' and '"+endTime+"'group by deo.id order by deo.create_stamp desc "+sLimit;
         	depart = Db.find(sql_seach);
-        }
-        Map map = new HashMap();
-        map.put("sEcho", pageIndex);
-        map.put("iTotalRecords", rec.getLong("total"));
-        map.put("iTotalDisplayRecords", rec.getLong("total"));
-        map.put("aaData", depart);
-
+        	  map = new HashMap();
+              map.put("sEcho", pageIndex);
+              map.put("iTotalRecords", total);
+              map.put("iTotalDisplayRecords", total);
+              map.put("aaData", depart);
+        }    
         renderJson(map);
     }
 

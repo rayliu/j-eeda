@@ -72,32 +72,40 @@ public class ReturnOrderController extends Controller {
             if (time_two == null || "".equals(time_two)) {
                 time_two = "9999-12-31";
             }
+           
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from return_order ";
+            String sql = "select count(1) total from return_order r_o "
+            +"left join depart_transfer  dpt on dpt.depart_id=r_o.depart_order_id " 
+			+"left join depart_order  dp on dp.id = dpt.depart_id "
+			+"left join delivery_order d_o on r_o.delivery_order_id = d_o.id " 
+			+"left join party p on r_o.customer_id = p.id "
+			+"left join contact c on p.contact_id = c.id "
+			+"left join user_login  usl on usl.id=r_o.creator "
+			+"where ifnull(r_o.order_no,'')  like'%"+order_no+"%' and  "
+			+ "ifnull(dp.depart_no,'')  like'%"+tr_order_no+"%'  and  "
+			+ "ifnull(d_o.order_no,'')  like'%"+de_order_no+"%'  and "
+			+ "ifnull(r_o.transaction_status ,'')  like'%"+status+"%' and "
+			+ "ifnull(usl.user_name ,'')  like'%"+stator+"%'  and "
+			+ "r_o.create_date between '"+time_one+"' and '"+time_two+"'";
             Record rec = Db.findFirst(sql + totalWhere);
-            logger.debug("total records:" + rec.getLong("total"));
-
+           logger.debug("total records:" + rec.getLong("total"));
+            
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select ro.*, t.order_no as transfer_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order ro "
-                            + "left join transfer_order t on ro.transfer_order_id = t.id "
-                            + "left join delivery_order d_o on ro.delivery_order_id = d_o.id "
-                            + "left join party p on ro.customer_id = p.id "
-                            + "left join contact c on p.contact_id = c.id "
-                            + "where ro.order_no like '%"
-                            + order_no
-                            + "%' and  t.order_no like '%"
-                            + tr_order_no
-                            + "%' and d_o.order_no like '%"
-                            + de_order_no
-                            + "%' and ro.CREATOR like '%"
-                            + stator
-                            + "%' and ro.transaction_status like'%"
-                            + status
-                            + "%' and ro.Create_date between '"
-                            + time_one
-                            + "' and '" + time_two + "' ");
+                    .find("select r_o.*, usl.user_name as creator_name, dp.depart_no as depart_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order r_o "
+						+"left join depart_transfer  dpt on dpt.depart_id=r_o.depart_order_id " 
+						+"left join depart_order  dp on dp.id = dpt.depart_id "
+						+"left join delivery_order d_o on r_o.delivery_order_id = d_o.id " 
+						+"left join party p on r_o.customer_id = p.id "
+						+"left join contact c on p.contact_id = c.id "
+						+"left join user_login  usl on usl.id=r_o.creator "
+						+"where ifnull(r_o.order_no,'')  like'%"+order_no+"%' and  "
+						+ "ifnull(dp.depart_no,'')  like'%"+tr_order_no+"%'  and  "
+						+ "ifnull(d_o.order_no,'')  like'%"+de_order_no+"%'  and "
+						+ "ifnull(r_o.transaction_status ,'')  like'%"+status+"%' and "
+						+ "ifnull(usl.user_name ,'')  like'%"+stator+"%'  and "
+						+ "r_o.create_date between '"+time_one+"' and '"+time_two+"'");
 
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));
