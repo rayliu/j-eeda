@@ -41,14 +41,12 @@ public class CustomerController extends Controller {
         String abbr = getPara("ABBR");
         String address = getPara("ADDRESS");
         String location = getPara("LOCATION");
-        if (company_name == null && contact_person == null && receipt == null
-                && abbr == null && address == null && location == null) {
+        if (company_name == null && contact_person == null && receipt == null && abbr == null && address == null
+                && location == null) {
             String sLimit = "";
             String pageIndex = getPara("sEcho");
-            if (getPara("iDisplayStart") != null
-                    && getPara("iDisplayLength") != null) {
-                sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                        + getPara("iDisplayLength");
+            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
 
             String sqlTotal = "select count(1) total from party where party_type='CUSTOMER'";
@@ -60,8 +58,7 @@ public class CustomerController extends Controller {
                     + "left join location l on l.code=c.location "
                     + "left join location  l1 on l.pcode =l1.code "
                     + "left join location l2 on l1.pcode = l2.code "
-                    + "where p.party_type='CUSTOMER' order by p.create_date desc "
-                    + sLimit;
+                    + "where p.party_type='CUSTOMER' order by p.create_date desc " + sLimit;
             List<Record> customers = Db.find(sql);
 
             Map customerListMap = new HashMap();
@@ -74,10 +71,8 @@ public class CustomerController extends Controller {
 
             String sLimit = "";
             String pageIndex = getPara("sEcho");
-            if (getPara("iDisplayStart") != null
-                    && getPara("iDisplayLength") != null) {
-                sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                        + getPara("iDisplayLength");
+            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
 
             String sqlTotal = "select count(1) total from party where party_type='CUSTOMER'";
@@ -98,9 +93,7 @@ public class CustomerController extends Controller {
                     + receipt
                     + "%' and ifnull(c.address,'') like '%"
                     + address
-                    + "%' and ifnull(c.abbr,'') like '%"
-                    + abbr
-                    + "%' order by p.create_date desc " + sLimit;
+                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%' order by p.create_date desc " + sLimit;
 
             List<Record> customers = Db.find(sql);
 
@@ -126,15 +119,13 @@ public class CustomerController extends Controller {
         String id = getPara();
 
         Party party = Party.dao.findById(id);
-        Contact locationCode = Contact.dao.findById(party.get("contact_id"),
-                "location");
+        Contact locationCode = Contact.dao.findById(party.get("contact_id"), "location");
         String code = locationCode.get("location");
 
-        List<Location> provinces = Location.dao
-                .find("select * from location where pcode ='1'");
+        List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
         Location l = Location.dao
-                .findFirst("select * from location where code = (select pcode from location where code = '"
-                        + code + "')");
+                .findFirst("select * from location where code = (select pcode from location where code = '" + code
+                        + "')");
         Location location = null;
         if (provinces.contains(l)) {
             location = Location.dao
@@ -149,9 +140,8 @@ public class CustomerController extends Controller {
 
         setAttr("party", party);
 
-        Contact contact = Contact.dao
-                .findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
-                        + id);
+        Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
+                + id);
         setAttr("contact", contact);
 
         render("profile/customer/CustomerEdit.html");
@@ -161,24 +151,21 @@ public class CustomerController extends Controller {
         long id = getParaToLong();
 
         Party party = Party.dao.findById(id);
-        List<TransferOrder> transferOrders = TransferOrder.dao
-                .find("select * from transfer_order where sp_id="
-                        + party.get("id"));
+        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where sp_id="
+                + party.get("id"));
         for (TransferOrder transferOrder : transferOrders) {
             transferOrder.set("sp_id", null);
             transferOrder.update();
         }
-        List<DeliveryOrder> deliveryOrders = DeliveryOrder.dao
-                .find("select * from delivery_order where sp_id="
-                        + party.get("id"));
+        List<DeliveryOrder> deliveryOrders = DeliveryOrder.dao.find("select * from delivery_order where sp_id="
+                + party.get("id"));
         for (DeliveryOrder deliveryOrder : deliveryOrders) {
             deliveryOrder.set("sp_id", null);
             deliveryOrder.update();
         }
 
-        Contact contact = Contact.dao
-                .findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
-                        + id);
+        Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
+                + id);
         ;
         contact.delete();
 
@@ -200,9 +187,7 @@ public class CustomerController extends Controller {
             party.set("payment", getPara("payment"));
             party.update();
 
-            contact = Contact.dao
-                    .findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
-                            + id);
+            contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id=" + id);
             setContact(contact);
             contact.update();
         } else {

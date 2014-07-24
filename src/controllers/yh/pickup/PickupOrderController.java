@@ -502,94 +502,99 @@ public class PickupOrderController extends Controller {
     }
 
     // 更新中间表
-    private void updateDepartTransfer(DepartOrder pickupOrder, String orderId, String checkedDetail, String uncheckedDetailId) {
-    	if(checkedDetail != null && !"".equals(checkedDetail)){
-    		String[] checkedDetailIds = checkedDetail.split(",");
-    		TransferOrderItemDetail transferOrderItemDetail = null;
-    		for(int j=0;j<checkedDetailIds.length && checkedDetailIds.length>0;j++){
-    			transferOrderItemDetail = TransferOrderItemDetail.dao.findById(checkedDetailIds[j]);
-    			transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
-    			transferOrderItemDetail.update();    			
-    		}
-    		TransferOrder transferOrder = TransferOrder.dao.findById(transferOrderItemDetail.get("order_id"));
-    		transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
-    		transferOrder.update();
-    	}
-    	String[] uncheckedDetailIds = uncheckedDetailId.split(",");
-    	if(uncheckedDetailId != null && !"".equals(uncheckedDetailId)){
-    		TransferOrderItemDetail transferOrderItemDetail = null;
-    		for(int j=0;j<uncheckedDetailIds.length && uncheckedDetailIds.length>0;j++){
-    			transferOrderItemDetail = TransferOrderItemDetail.dao.findById(uncheckedDetailIds[j]);
-    			transferOrderItemDetail.set("depart_id", null);
-    			transferOrderItemDetail.update();
-    		}
-    	}
-    	if(uncheckedDetailIds.length == 0 || "".equals(uncheckedDetailIds[0])){
-    		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = ?", orderId);
-        	String str = "";
-    		for(TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails){
-        		Long departId = transferOrderItemDetail.get("depart_id");
-        		if(departId == null || "".equals(departId)){
-        			str += departId;
-        		}
-        	}
-    		if("".equals(str)){
-	    		TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
-	        	transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-	        	transferOrder.update();
-    		}
-    	}
+    private void updateDepartTransfer(DepartOrder pickupOrder, String orderId, String checkedDetail,
+            String uncheckedDetailId) {
+        if (checkedDetail != null && !"".equals(checkedDetail)) {
+            String[] checkedDetailIds = checkedDetail.split(",");
+            TransferOrderItemDetail transferOrderItemDetail = null;
+            for (int j = 0; j < checkedDetailIds.length && checkedDetailIds.length > 0; j++) {
+                transferOrderItemDetail = TransferOrderItemDetail.dao.findById(checkedDetailIds[j]);
+                transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
+                transferOrderItemDetail.update();
+            }
+            TransferOrder transferOrder = TransferOrder.dao.findById(transferOrderItemDetail.get("order_id"));
+            transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+            transferOrder.update();
+        }
+        String[] uncheckedDetailIds = uncheckedDetailId.split(",");
+        if (uncheckedDetailId != null && !"".equals(uncheckedDetailId)) {
+            TransferOrderItemDetail transferOrderItemDetail = null;
+            for (int j = 0; j < uncheckedDetailIds.length && uncheckedDetailIds.length > 0; j++) {
+                transferOrderItemDetail = TransferOrderItemDetail.dao.findById(uncheckedDetailIds[j]);
+                transferOrderItemDetail.set("depart_id", null);
+                transferOrderItemDetail.update();
+            }
+        }
+        if (uncheckedDetailIds.length == 0 || "".equals(uncheckedDetailIds[0])) {
+            List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
+                    "select * from transfer_order_item_detail where order_id = ?", orderId);
+            String str = "";
+            for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
+                Long departId = transferOrderItemDetail.get("depart_id");
+                if (departId == null || "".equals(departId)) {
+                    str += departId;
+                }
+            }
+            if ("".equals(str)) {
+                TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
+                transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+                transferOrder.update();
+            }
+        }
     }
 
     // 将数据保存进中间表
-    private void saveDepartTransfer(DepartOrder pickupOrder, String param, String checkedDetail, String uncheckedDetailId) {
+    private void saveDepartTransfer(DepartOrder pickupOrder, String param, String checkedDetail,
+            String uncheckedDetailId) {
         DepartTransferOrder departTransferOrder = null;
         String[] params = param.split(",");
-        if(checkedDetail == null || "".equals(checkedDetail)){
-	        for (int i = 0; i < params.length; i++) {
-	            departTransferOrder = new DepartTransferOrder();
-	            departTransferOrder.set("depart_id", pickupOrder.get("id"));
-	            departTransferOrder.set("order_id", params[i]);
-	            TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
-	            transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-	            transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
-	            transferOrder.update();
-	            departTransferOrder.set("transfer_order_no",
-	                    transferOrder.get("order_no"));
-	            departTransferOrder.save();
-	            
-	            List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = ?", params[i]);
-	            for(TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails){
-	            	if(transferOrderItemDetail.get("depart_id") == null){
-		            	transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
-		            	transferOrderItemDetail.update();
-	            	}
-	            }
-	        }
-        }else{
-        	for (int i = 0; i < params.length; i++) {
-	            departTransferOrder = new DepartTransferOrder();
-	            departTransferOrder.set("depart_id", pickupOrder.get("id"));
-	            departTransferOrder.set("order_id", params[i]);
-	            TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
-	            transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
-	            transferOrder.update();
-	            departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
-	            departTransferOrder.save();
-	        }        	
-        	String[] checkedDetailIds = checkedDetail.split(",");
-        	for(int j=0;j<checkedDetailIds.length;j++){
-        		TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(checkedDetailIds[j]);
-        		transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
-        		transferOrderItemDetail.update();
-        	}
-        	
-        	String[] uncheckedDetailIds = uncheckedDetailId.split(",");
-        	for(int j=0;j<uncheckedDetailIds.length;j++){
-        		TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(uncheckedDetailIds[j]);
-        		transferOrderItemDetail.set("depart_id", "");
-        		transferOrderItemDetail.update();
-        	}
+        if (checkedDetail == null || "".equals(checkedDetail)) {
+            for (int i = 0; i < params.length; i++) {
+                departTransferOrder = new DepartTransferOrder();
+                departTransferOrder.set("depart_id", pickupOrder.get("id"));
+                departTransferOrder.set("order_id", params[i]);
+                TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
+                transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+                transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
+                transferOrder.update();
+                departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
+                departTransferOrder.save();
+
+                List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
+                        "select * from transfer_order_item_detail where order_id = ?", params[i]);
+                for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
+                    if (transferOrderItemDetail.get("depart_id") == null) {
+                        transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
+                        transferOrderItemDetail.update();
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < params.length; i++) {
+                departTransferOrder = new DepartTransferOrder();
+                departTransferOrder.set("depart_id", pickupOrder.get("id"));
+                departTransferOrder.set("order_id", params[i]);
+                TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
+                transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
+                transferOrder.update();
+                departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
+                departTransferOrder.save();
+            }
+            String[] checkedDetailIds = checkedDetail.split(",");
+            for (int j = 0; j < checkedDetailIds.length; j++) {
+                TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
+                        .findById(checkedDetailIds[j]);
+                transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
+                transferOrderItemDetail.update();
+            }
+
+            String[] uncheckedDetailIds = uncheckedDetailId.split(",");
+            for (int j = 0; j < uncheckedDetailIds.length; j++) {
+                TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
+                        .findById(uncheckedDetailIds[j]);
+                transferOrderItemDetail.set("depart_id", "");
+                transferOrderItemDetail.update();
+            }
         }
     }
 
@@ -623,9 +628,7 @@ public class PickupOrderController extends Controller {
                 + "where dt.depart_id =do.id)as order_id from depart_order  do "
                 + "left join contact co on co.id in( select p.contact_id  from party p where p.id=do.driver_id ) "
                 + "left join user_login  u on u.id=do.create_by where do.combine_type ='"
-                + DepartOrder.COMBINE_TYPE_PICKUP
-                + "' and do.id in("
-                + getPara("id") + ")";
+                + DepartOrder.COMBINE_TYPE_PICKUP + "' and do.id in(" + getPara("id") + ")";
         DepartOrder pickupOrder = DepartOrder.dao.findFirst(sql);
         setAttr("pickupOrder", pickupOrder);
         Carinfo driver = Carinfo.dao.findById(pickupOrder.get("driver_id"));
@@ -637,24 +640,21 @@ public class PickupOrderController extends Controller {
             Contact spContact = Contact.dao.findById(sp.get("contact_id"));
             setAttr("spContact", spContact);
         }
-        UserLogin userLogin = UserLogin.dao.findById(pickupOrder
-                .get("create_by"));
+        UserLogin userLogin = UserLogin.dao.findById(pickupOrder.get("create_by"));
         setAttr("userLogin2", userLogin);
         setAttr("depart_id", getPara());
         String orderId = "";
-        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao
-                .find("select * from depart_transfer where depart_id = ?",
-                        pickupOrder.get("id"));
+        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
+                "select * from depart_transfer where depart_id = ?", pickupOrder.get("id"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             orderId += departTransferOrder.get("order_id") + ",";
         }
         orderId = orderId.substring(0, orderId.length() - 1);
         setAttr("localArr", orderId);
 
-        TransferOrderMilestone transferOrderMilestone = TransferOrderMilestone.dao
-                .findFirst(
-                        "select * from transfer_order_milestone where pickup_id = ? order by create_stamp desc",
-                        pickupOrder.get("id"));
+        TransferOrderMilestone transferOrderMilestone = TransferOrderMilestone.dao.findFirst(
+                "select * from transfer_order_milestone where pickup_id = ? order by create_stamp desc",
+                pickupOrder.get("id"));
         setAttr("transferOrderMilestone", transferOrderMilestone);
         render("/yh/pickup/editPickupOrder.html");
     }
@@ -687,23 +687,16 @@ public class PickupOrderController extends Controller {
         List<TransferOrderMilestone> milestones = new ArrayList<TransferOrderMilestone>();
         List<TransferOrderMilestone> transferOrderMilestones = TransferOrderMilestone.dao
                 .find("select pickup_id from transfer_order_milestone where type = '"
-                        + TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE
-                        + "' group by pickup_id");
+                        + TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE + "' group by pickup_id");
         for (TransferOrderMilestone pm : transferOrderMilestones) {
             if (pm.get("pickup_id") != null) {
                 TransferOrderMilestone transferOrderMilestone = TransferOrderMilestone.dao
                         .findFirst("select tom.*,dto.depart_no from transfer_order_milestone tom "
-                                + " left join depart_order dto on dto.id = "
-                                + pm.get("pickup_id")
-                                + " where tom.type = '"
-                                + TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE
-                                + "' and tom.pickup_id="
-                                + pm.get("pickup_id")
-                                + " and dto.combine_type = '"
-                                + DepartOrder.COMBINE_TYPE_PICKUP
-                                + "' order by tom.create_stamp desc");
-                UserLogin userLogin = UserLogin.dao
-                        .findById(transferOrderMilestone.get("create_by"));
+                                + " left join depart_order dto on dto.id = " + pm.get("pickup_id")
+                                + " where tom.type = '" + TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE
+                                + "' and tom.pickup_id=" + pm.get("pickup_id") + " and dto.combine_type = '"
+                                + DepartOrder.COMBINE_TYPE_PICKUP + "' order by tom.create_stamp desc");
+                UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
                 String username = userLogin.get("user_name");
                 milestones.add(transferOrderMilestone);
                 usernames.add(username);
@@ -716,14 +709,11 @@ public class PickupOrderController extends Controller {
 
     // 完成
     public void finishPickupOrder() {
-        DepartOrder pickupOrder = DepartOrder.dao
-                .findById(getPara("pickupOrderId"));
-        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao
-                .find("select * from depart_transfer where depart_id = ?",
-                        pickupOrder.get("id"));
+        DepartOrder pickupOrder = DepartOrder.dao.findById(getPara("pickupOrderId"));
+        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
+                "select * from depart_transfer where depart_id = ?", pickupOrder.get("id"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
-            TransferOrder transferOrder = TransferOrder.dao
-                    .findById(departTransferOrder.get("order_id"));
+            TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
             transferOrder.set("status", "已入货场");
             transferOrder.update();
             TransferOrderMilestone milestone = new TransferOrderMilestone();
@@ -731,16 +721,12 @@ public class PickupOrderController extends Controller {
             milestone.set("location", "");
             milestone.set("order_id", transferOrder.get("id"));
             String name = (String) currentUser.getPrincipal();
-            List<UserLogin> users = UserLogin.dao
-                    .find("select * from user_login where user_name='" + name
-                            + "'");
+            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
             milestone.set("create_by", users.get(0).get("id"));
             java.util.Date utilDate = new java.util.Date();
-            java.sql.Timestamp sqlDate = new java.sql.Timestamp(
-                    utilDate.getTime());
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
             milestone.set("create_stamp", sqlDate);
-            milestone.set("type",
-                    TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+            milestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
             milestone.save();
             if ("replenishmentOrder".equals(transferOrder.get("order_type"))) {
                 // 入库
@@ -909,11 +895,13 @@ public class PickupOrderController extends Controller {
         }
 
         String category = getPara("category");
-        String sqlTotal = "select count(1) total from transfer_order_item_detail tod where tod.item_id = "+itemId+" and tod.depart_id = "+pickupId;
+        String sqlTotal = "select count(1) total from transfer_order_item_detail tod where tod.item_id = " + itemId
+                + " and tod.depart_id = " + pickupId;
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select * from transfer_order_item_detail tod where tod.item_id = "+itemId+" and tod.depart_id = "+pickupId;
+        String sql = "select * from transfer_order_item_detail tod where tod.item_id = " + itemId
+                + " and tod.depart_id = " + pickupId;
 
         List<Record> details = Db.find(sql);
 

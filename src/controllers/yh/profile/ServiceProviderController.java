@@ -40,14 +40,12 @@ public class ServiceProviderController extends Controller {
         String address = getPara("ADDRESS");
         String location = getPara("LOCATION");
 
-        if (company_name == null && contact_person == null && receipt == null
-                && abbr == null && address == null && location == null) {
+        if (company_name == null && contact_person == null && receipt == null && abbr == null && address == null
+                && location == null) {
             String sLimit = "";
             String pageIndex = getPara("sEcho");
-            if (getPara("iDisplayStart") != null
-                    && getPara("iDisplayLength") != null) {
-                sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                        + getPara("iDisplayLength");
+            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
             String sqlTotal = "select count(1) total from party where party_type='SERVICE_PROVIDER'";
             Record rec = Db.findFirst(sqlTotal);
@@ -58,8 +56,7 @@ public class ServiceProviderController extends Controller {
                     + "left join location l on l.code=c.location "
                     + "left join location  l1 on l.pcode =l1.code "
                     + "left join location l2 on l1.pcode = l2.code "
-                    + "where p.party_type='SERVICE_PROVIDER' order by p.create_date desc "
-                    + sLimit;
+                    + "where p.party_type='SERVICE_PROVIDER' order by p.create_date desc " + sLimit;
             List<Record> customers = Db.find(sql);
             /*
              * String code = ""; for (int i = 0; i < customers.size(); i++) {
@@ -84,10 +81,8 @@ public class ServiceProviderController extends Controller {
 
             String sLimit = "";
             String pageIndex = getPara("sEcho");
-            if (getPara("iDisplayStart") != null
-                    && getPara("iDisplayLength") != null) {
-                sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                        + getPara("iDisplayLength");
+            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
             String sqlTotal = "select count(1) total from party where party_type='SERVICE_PROVIDER'";
             Record rec = Db.findFirst(sqlTotal);
@@ -107,9 +102,7 @@ public class ServiceProviderController extends Controller {
                     + receipt
                     + "%' and ifnull(c.address,'') like '%"
                     + address
-                    + "%' and ifnull(c.abbr,'') like '%"
-                    + abbr
-                    + "%' order by p.create_date desc " + sLimit;
+                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%' order by p.create_date desc " + sLimit;
             List<Record> customers = Db.find(sql);
 
             Map customerListMap = new HashMap();
@@ -131,15 +124,13 @@ public class ServiceProviderController extends Controller {
         long id = getParaToLong();
 
         Party party = Party.dao.findById(id);
-        Contact locationCode = Contact.dao.findById(party.get("contact_id"),
-                "location");
+        Contact locationCode = Contact.dao.findById(party.get("contact_id"), "location");
         String code = locationCode.get("location");
 
-        List<Location> provinces = Location.dao
-                .find("select * from location where pcode ='1'");
+        List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
         Location l = Location.dao
-                .findFirst("select * from location where code = (select pcode from location where code = '"
-                        + code + "')");
+                .findFirst("select * from location where code = (select pcode from location where code = '" + code
+                        + "')");
         Location location = null;
         if (provinces.contains(l)) {
             location = Location.dao
@@ -154,9 +145,8 @@ public class ServiceProviderController extends Controller {
 
         setAttr("party", party);
 
-        Contact contact = Contact.dao
-                .findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
-                        + id);
+        Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
+                + id);
         setAttr("contact", contact);
         if (LoginUserController.isAuthenticated(this))
             render("profile/serviceProvider/serviceProviderEdit.html");
@@ -168,26 +158,23 @@ public class ServiceProviderController extends Controller {
         // Db.deleteById("contract", id);
         Party party = Party.dao.findById(id);
 
-        List<TransferOrder> transferOrders = TransferOrder.dao
-                .find("select * from transfer_order where sp_id="
-                        + party.get("id"));
+        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where sp_id="
+                + party.get("id"));
         for (TransferOrder transferOrder : transferOrders) {
             transferOrder.set("sp_id", null);
             transferOrder.set("customer_id", null);
             transferOrder.update();
         }
-        List<DeliveryOrder> deliveryOrders = DeliveryOrder.dao
-                .find("select * from delivery_order where sp_id="
-                        + party.get("id"));
+        List<DeliveryOrder> deliveryOrders = DeliveryOrder.dao.find("select * from delivery_order where sp_id="
+                + party.get("id"));
         for (DeliveryOrder deliveryOrder : deliveryOrders) {
             deliveryOrder.set("sp_id", null);
             deliveryOrder.set("customer_id", null);
             deliveryOrder.update();
         }
 
-        Contact contact = Contact.dao
-                .findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
-                        + id);
+        Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
+                + id);
 
         contact.delete();
         party.delete();
@@ -209,9 +196,7 @@ public class ServiceProviderController extends Controller {
             party.set("payment", getPara("payment"));
             party.update();
 
-            contact = Contact.dao
-                    .findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
-                            + id);
+            contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id=" + id);
             ;
             setContact(contact);
             contact.update();
@@ -252,24 +237,21 @@ public class ServiceProviderController extends Controller {
     }
 
     public void province() {
-        List<Record> locationList = Db
-                .find("select * from location where pcode ='1'");
+        List<Record> locationList = Db.find("select * from location where pcode ='1'");
         renderJson(locationList);
     }
 
     public void city() {
         String cityId = getPara("id");
         System.out.println(cityId);
-        List<Record> locationList = Db
-                .find("select * from location where pcode ='" + cityId + "'");
+        List<Record> locationList = Db.find("select * from location where pcode ='" + cityId + "'");
         renderJson(locationList);
     }
 
     public void area() {
         String areaId = getPara("id");
         System.out.println(areaId);
-        List<Record> locationList = Db
-                .find("select * from location where pcode ='" + areaId + "'");
+        List<Record> locationList = Db.find("select * from location where pcode ='" + areaId + "'");
         renderJson(locationList);
     }
 
@@ -284,8 +266,7 @@ public class ServiceProviderController extends Controller {
     public void searchAllDistrict() {
         String city = getPara("city");
         List<Location> locations = Location.dao
-                .find("select * from location where pcode=(select code from location where name = '"
-                        + city + "')");
+                .find("select * from location where pcode=(select code from location where name = '" + city + "')");
         renderJson(locations);
     }
 }

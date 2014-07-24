@@ -13,7 +13,8 @@ $(document).ready(function() {
 	       "sAjaxSource":"/yh/stock/stocklist",
 			"aoColumns": [
 				{"mDataProp":"ITEM_NAME"},
-		            {"mDataProp":"ITEM_NO"},        	
+		            {"mDataProp":"ITEM_NO"}, 
+		            {"mDataProp":"COMPANY_NAME"},
 		            {"mDataProp":"EXPIRE_DATE"},
 		            {"mDataProp":"LOT_NO"},
 		            {"mDataProp":"CATON_NO"},

@@ -71,10 +71,8 @@ public class InventoryController extends Controller {
     public void gateInlist() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
         // 获取总条数
@@ -84,11 +82,9 @@ public class InventoryController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db
-                .find("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
-                        + "left join party p on p.id =w_o.party_id "
-                        + "left join contact c on p.contact_id =c.id "
-                        + "left join warehouse w on w.id = w_o.warehouse_id where order_type='入库'");
+        List<Record> orders = Db.find("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
+                + "left join party p on p.id =w_o.party_id " + "left join contact c on p.contact_id =c.id "
+                + "left join warehouse w on w.id = w_o.warehouse_id where order_type='入库'");
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -103,10 +99,8 @@ public class InventoryController extends Controller {
     public void gateOutlist() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
         // 获取总条数
@@ -116,11 +110,9 @@ public class InventoryController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db
-                .find("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
-                        + "left join party p on p.id =w_o.party_id "
-                        + "left join contact c on p.contact_id =c.id "
-                        + "left join warehouse w on w.id = w_o.warehouse_id where order_type='出库'");
+        List<Record> orders = Db.find("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
+                + "left join party p on p.id =w_o.party_id " + "left join contact c on p.contact_id =c.id "
+                + "left join warehouse w on w.id = w_o.warehouse_id where order_type='出库'");
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -145,10 +137,8 @@ public class InventoryController extends Controller {
         }
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         // 获取总条数
         String totalWhere = "";
@@ -156,9 +146,10 @@ public class InventoryController extends Controller {
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
         // 获取当前页的数据
-        List<Record> orders = Db.find("select * from inventory_item i_t "
-                + "left join product p on  p.id =i_t.product_id "
-                + "where warehouse_id =" + id);
+        List<Record> orders = Db.find("select i_t.*,c.company_name,p.* from inventory_item i_t "
+                + "left join product p on  p.id =i_t.product_id " + "left join party p2 on i_t.party_id =p2.id "
+                + "left join contact c on p2.contact_id = c.id " + "where i_t.warehouse_id =1");
+
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -186,9 +177,8 @@ public class InventoryController extends Controller {
     public void gateInProductEdit() {
         String id = getPara();
         System.out.println(id);
-        WarehouseOrderItem orders = WarehouseOrderItem.dao
-                .findFirst("select * from warehouse_order_item where id='" + id
-                        + "'");
+        WarehouseOrderItem orders = WarehouseOrderItem.dao.findFirst("select * from warehouse_order_item where id='"
+                + id + "'");
         renderJson(orders);
     }
 
@@ -204,10 +194,8 @@ public class InventoryController extends Controller {
         System.out.println(id);
         WarehouseOrder orders = WarehouseOrder.dao
                 .findFirst("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
-                        + "left join party p on p.id =w_o.party_id "
-                        + "left join contact c on p.contact_id =c.id "
-                        + "left join warehouse w on w.id = w_o.warehouse_id where w_o.id='"
-                        + id + "'");
+                        + "left join party p on p.id =w_o.party_id " + "left join contact c on p.contact_id =c.id "
+                        + "left join warehouse w on w.id = w_o.warehouse_id where w_o.id='" + id + "'");
         setAttr("warehouseOrder", orders);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/inventory/gateInEdit.html");
@@ -219,10 +207,8 @@ public class InventoryController extends Controller {
         System.out.println(id);
         WarehouseOrder orders = WarehouseOrder.dao
                 .findFirst("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
-                        + "left join party p on p.id =w_o.party_id "
-                        + "left join contact c on p.contact_id =c.id "
-                        + "left join warehouse w on w.id = w_o.warehouse_id where w_o.id='"
-                        + id + "'");
+                        + "left join party p on p.id =w_o.party_id " + "left join contact c on p.contact_id =c.id "
+                        + "left join warehouse w on w.id = w_o.warehouse_id where w_o.id='" + id + "'");
         setAttr("warehouseOrder", orders);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/inventory/gateOutEdit.html");
@@ -245,10 +231,7 @@ public class InventoryController extends Controller {
                             + "%' or phone like '%"
                             + input
                             + "%' or address like '%"
-                            + input
-                            + "%' or postal_code like '%"
-                            + input
-                            + "%') limit 0,10");
+                            + input + "%' or postal_code like '%" + input + "%') limit 0,10");
         } else {
             locationList = Db
                     .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
@@ -274,10 +257,8 @@ public class InventoryController extends Controller {
         String sLimit = "";
         Map productListMap = null;
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
         String category = getPara("category");
@@ -286,8 +267,7 @@ public class InventoryController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select * from warehouse_order_item where warehouse_order_id = "
-                + warehouseorderid;
+        String sql = "select * from warehouse_order_item where warehouse_order_id = " + warehouseorderid;
         List<Record> products = Db.find(sql);
         productListMap = new HashMap();
         productListMap.put("sEcho", pageIndex);
@@ -315,10 +295,8 @@ public class InventoryController extends Controller {
         String sLimit = "";
         Map productListMap = null;
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
         String category = getPara("category");
@@ -327,8 +305,7 @@ public class InventoryController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select * from warehouse_order_item where warehouse_order_id = "
-                + warehouseorderid;
+        String sql = "select * from warehouse_order_item where warehouse_order_id = " + warehouseorderid;
         List<Record> products = Db.find(sql);
         productListMap = new HashMap();
         productListMap.put("sEcho", pageIndex);
@@ -346,24 +323,20 @@ public class InventoryController extends Controller {
         String gateInId = getPara("warehouseorderId");
         System.out.println();
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao
-                .find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         Date createDate = Calendar.getInstance().getTime();
 
-        warehouseOrder.set("party_id", getPara("party_id"))
-                .set("warehouse_id", getPara("warehouseId"))
-                .set("order_type", "入库").set("status", "新建")
-                .set("qualifier", getPara("qualifier"))
+        warehouseOrder.set("party_id", getPara("party_id")).set("warehouse_id", getPara("warehouseId"))
+                .set("order_type", "入库").set("status", "新建").set("qualifier", getPara("qualifier"))
                 .set("remark", getPara("remark"));
 
         if (gateInId != "") {
-            warehouseOrder.set("id", gateInId)
-                    .set("last_updater", users.get(0).get("id"))
+            warehouseOrder.set("id", gateInId).set("last_updater", users.get(0).get("id"))
                     .set("last_update_date", createDate);
             warehouseOrder.update();
         } else {
-            warehouseOrder.set("creator", users.get(0).get("id"))
-                    .set("create_date", createDate).set("order_no", orderNo);
+            warehouseOrder.set("creator", users.get(0).get("id")).set("create_date", createDate)
+                    .set("order_no", orderNo);
             warehouseOrder.save();
         }
         renderJson(warehouseOrder.get("id"));
@@ -376,24 +349,19 @@ public class InventoryController extends Controller {
         String gateOutId = getPara("warehouseorderId");
         System.out.println();
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao
-                .find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         Date createDate = Calendar.getInstance().getTime();
 
-        warehouseOrder.set("party_id", getPara("party_id"))
-                .set("warehouse_id", getPara("warehouseId"))
-                .set("order_no", orderNo).set("order_type", "出库")
-                .set("status", "新建").set("qualifier", getPara("qualifier"))
-                .set("remark", getPara("remark"));
+        warehouseOrder.set("party_id", getPara("party_id")).set("warehouse_id", getPara("warehouseId"))
+                .set("order_no", orderNo).set("order_type", "出库").set("status", "新建")
+                .set("qualifier", getPara("qualifier")).set("remark", getPara("remark"));
 
         if (gateOutId != "") {
-            warehouseOrder.set("id", gateOutId)
-                    .set("last_updater", users.get(0).get("id"))
+            warehouseOrder.set("id", gateOutId).set("last_updater", users.get(0).get("id"))
                     .set("last_update_date", createDate);
             warehouseOrder.update();
         } else {
-            warehouseOrder.set("creator", users.get(0).get("id")).set(
-                    "create_date", createDate);
+            warehouseOrder.set("creator", users.get(0).get("id")).set("create_date", createDate);
             warehouseOrder.save();
         }
         renderJson(warehouseOrder.get("id"));
@@ -410,41 +378,33 @@ public class InventoryController extends Controller {
          * if (productId.equals("")) { renderJson(0); return; }
          */
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao
-                .find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         Date createDate = Calendar.getInstance().getTime();
 
         if (warehouseOrderItemId != "") {
-            warehouseOrderItem = WarehouseOrderItem.dao
-                    .findById(warehouseOrderItemId);
+            warehouseOrderItem = WarehouseOrderItem.dao.findById(warehouseOrderItemId);
             setwarehouseItem(warehouseOrderItem);
             warehouseOrderItem.set("warehouse_order_id", warehouseorderid);
-            warehouseOrderItem.set("last_updater", users.get(0).get("id")).set(
-                    "last_update_date", createDate);
+            warehouseOrderItem.set("last_updater", users.get(0).get("id")).set("last_update_date", createDate);
             warehouseOrderItem.update();
         } else {
             warehouseOrderItem = new WarehouseOrderItem();
             setwarehouseItem(warehouseOrderItem);
             warehouseOrderItem.set("warehouse_order_id", warehouseorderid);
-            warehouseOrderItem.set("creator", users.get(0).get("id")).set(
-                    "create_date", createDate);
+            warehouseOrderItem.set("creator", users.get(0).get("id")).set("create_date", createDate);
             warehouseOrderItem.save();
         }
         renderJson(warehouseOrderItem.get("id"));
     }
 
     public void setwarehouseItem(WarehouseOrderItem warehouseOrderItem) {
-        warehouseOrderItem
-                .set("product_id", getPara("productId"))
+        warehouseOrderItem.set("product_id", getPara("productId"))
                 .set("item_name", getPara("item_name"))
                 .set("item_no", getPara("itemNoMessage"))
                 // .set("expire_date", getPara("expire_date"))
-                .set("lot_no", getPara("lot_no")).set("uom", getPara("uom"))
-                .set("caton_no", getPara("caton_no"))
-                .set("total_quantity", getPara("total_quantity"))
-                .set("unit_price", getPara("unit_price"))
-                .set("unit_cost", getPara("unit_cost"))
-                .set("item_desc", getPara("item_desc"));
+                .set("lot_no", getPara("lot_no")).set("uom", getPara("uom")).set("caton_no", getPara("caton_no"))
+                .set("total_quantity", getPara("total_quantity")).set("unit_price", getPara("unit_price"))
+                .set("unit_cost", getPara("unit_cost")).set("item_desc", getPara("item_desc"));
     }
 
     // 构造入库单号
@@ -515,10 +475,7 @@ public class InventoryController extends Controller {
         if (input.trim().length() > 0) {
             locationList = Db
                     .find("select * from product where category_id in (select id from category where customer_id = "
-                            + customerId
-                            + ") and item_no like '%"
-                            + input
-                            + "%' limit 0,10");
+                            + customerId + ") and item_no like '%" + input + "%' limit 0,10");
         } else {
             locationList = Db
                     .find("select * from product where category_id in (select id from category where customer_id = "
@@ -535,10 +492,7 @@ public class InventoryController extends Controller {
         if (input.trim().length() > 0) {
             locationList = Db
                     .find("select * from product where category_id in (select id from category where customer_id = "
-                            + customerId
-                            + ") and item_name like '%"
-                            + input
-                            + "%' limit 0,10");
+                            + customerId + ") and item_name like '%" + input + "%' limit 0,10");
         } else {
             locationList = Db
                     .find("select * from product where category_id in (select id from category where customer_id = "
@@ -554,16 +508,12 @@ public class InventoryController extends Controller {
         String warehouseId = getPara("warehouseId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db.find("select * from inventory_item i "
-                    + "left join product p on p.id = i.product_id "
-                    + "where i.party_id='" + customerId
-                    + "' and i.warehouse_id ='" + warehouseId
+            locationList = Db.find("select * from inventory_item i " + "left join product p on p.id = i.product_id "
+                    + "where i.party_id='" + customerId + "' and i.warehouse_id ='" + warehouseId
                     + "' p.item_name like '%" + input + "%' limit 0,10");
         } else {
-            locationList = Db.find("select * from inventory_item i "
-                    + "left join product p on p.id = i.product_id "
-                    + "where i.party_id='" + customerId
-                    + "' and i.warehouse_id ='" + warehouseId + "' ");
+            locationList = Db.find("select * from inventory_item i " + "left join product p on p.id = i.product_id "
+                    + "where i.party_id='" + customerId + "' and i.warehouse_id ='" + warehouseId + "' ");
         }
         renderJson(locationList);
     }
@@ -575,16 +525,12 @@ public class InventoryController extends Controller {
         String warehouseId = getPara("warehouseId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db.find("select * from inventory_item i "
-                    + "left join product p on p.id = i.product_id "
-                    + "where i.party_id='" + customerId
-                    + "' and i.warehouse_id ='" + warehouseId
+            locationList = Db.find("select * from inventory_item i " + "left join product p on p.id = i.product_id "
+                    + "where i.party_id='" + customerId + "' and i.warehouse_id ='" + warehouseId
                     + "' p.item_name like '%" + input + "%' limit 0,10");
         } else {
-            locationList = Db.find("select * from inventory_item i "
-                    + "left join product p on p.id = i.product_id "
-                    + "where i.party_id='" + customerId
-                    + "' and i.warehouse_id ='" + warehouseId + "' ");
+            locationList = Db.find("select * from inventory_item i " + "left join product p on p.id = i.product_id "
+                    + "where i.party_id='" + customerId + "' and i.warehouse_id ='" + warehouseId + "' ");
         }
         renderJson(locationList);
     }
@@ -592,8 +538,7 @@ public class InventoryController extends Controller {
     // 查找仓库
     public void searchAllwarehouse() {
         String input = getPara("input");
-        List<Warehouse> warehouses = Warehouse.dao
-                .find("select * from warehouse");
+        List<Warehouse> warehouses = Warehouse.dao.find("select * from warehouse");
         renderJson(warehouses);
     }
 
@@ -605,13 +550,10 @@ public class InventoryController extends Controller {
             return;
         }
         List<Record> locationList = Collections.EMPTY_LIST;
-        locationList = Db
-                .find("SELECT w_o.party_id as pid,c.company_name FROM `warehouse_order` w_o "
-                        + "left join party p on p.id = w_o.party_id "
-                        + "left join contact c on p.contact_id = c.id where w_o.warehouse_id ='"
-                        + warehouseId
-                        + "' and w_o.order_type='入库' and c.company_name like '%"
-                        + input + "%' group by c.company_name");
+        locationList = Db.find("SELECT w_o.party_id as pid,c.company_name FROM `warehouse_order` w_o "
+                + "left join party p on p.id = w_o.party_id "
+                + "left join contact c on p.contact_id = c.id where w_o.warehouse_id ='" + warehouseId
+                + "' and w_o.order_type='入库' and c.company_name like '%" + input + "%' group by c.company_name");
         renderJson(locationList);
     }
 
@@ -620,59 +562,44 @@ public class InventoryController extends Controller {
         String id = getPara();
 
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao
-                .find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         Date createDate = Calendar.getInstance().getTime();
 
         WarehouseOrder warehouseOrder = WarehouseOrder.dao.findById(id);
 
-        List<Record> list = Db
-                .find("select * from warehouse_order_item where warehouse_order_id = '"
-                        + id + "'");
+        List<Record> list = Db.find("select * from warehouse_order_item where warehouse_order_id = '" + id + "'");
         // 获取已入库的库存
         List<Record> inverntory = Db
                 .find("select * from inventory_item where product_id in(select product_id from warehouse_order_item where warehouse_order_id = '"
-                        + id
-                        + "' and warehouse_id ='"
-                        + warehouseOrder.get("warehouse_id") + "')");
+                        + id + "' and warehouse_id ='" + warehouseOrder.get("warehouse_id") + "')");
 
         // 入库库存添加
         for (int i = 0; i < inverntory.size(); i++) {
             if (inverntory.size() > 0) {
-                if (list.get(i).get("product_id")
-                        .equals(inverntory.get(i).get("product_id"))
-                        && inverntory.get(i).get("warehouse_id")
-                                .equals(warehouseOrder.get("warehouse_id"))) {
-                    InventoryItem inventoryItem = InventoryItem.dao
-                            .findById(inverntory.get(i).get("id"));
+                if (list.get(i).get("product_id").equals(inverntory.get(i).get("product_id"))
+                        && inverntory.get(i).get("warehouse_id").equals(warehouseOrder.get("warehouse_id"))) {
+                    InventoryItem inventoryItem = InventoryItem.dao.findById(inverntory.get(i).get("id"));
                     inventoryItem.set(
                             "total_quantity",
-                            Double.parseDouble(inverntory.get(i)
-                                    .get("total_quantity").toString())
-                                    + Double.parseDouble(list.get(i)
-                                            .get("total_quantity").toString()));
+                            Double.parseDouble(inverntory.get(i).get("total_quantity").toString())
+                                    + Double.parseDouble(list.get(i).get("total_quantity").toString()));
                     inventoryItem.update();
                 }
             }
         }
         // 判断过滤重复的货品，已存在不添加只加数量
-        List<Record> list2 = Db
-                .find("select warehouse_id,product_id from warehouse_order_item w "
-                        + "left join warehouse_order w2 on w.warehouse_order_id = w2.id "
-                        + "where w.warehouse_order_id ='" + id + "'");
+        List<Record> list2 = Db.find("select warehouse_id,product_id from warehouse_order_item w "
+                + "left join warehouse_order w2 on w.warehouse_order_id = w2.id " + "where w.warehouse_order_id ='"
+                + id + "'");
         List<Record> inverntory2 = Db
                 .find("select warehouse_id,product_id from inventory_item where product_id in(select product_id from warehouse_order_item w left join warehouse_order w2 on w.warehouse_order_id = w2.id where w.warehouse_order_id ='"
                         + id + "')");
         list2.removeAll(inverntory2);
 
         for (int i = 0; i < list2.size(); i++) {
-            List<Record> list3 = Db
-                    .find("select w2.warehouse_id,w.* from warehouse_order_item w "
-                            + "left join warehouse_order w2 on w.warehouse_order_id = w2.id "
-                            + "where w.warehouse_order_id ='"
-                            + id
-                            + "' and product_id ='"
-                            + list2.get(i).get("product_id") + "'");
+            List<Record> list3 = Db.find("select w2.warehouse_id,w.* from warehouse_order_item w "
+                    + "left join warehouse_order w2 on w.warehouse_order_id = w2.id " + "where w.warehouse_order_id ='"
+                    + id + "' and product_id ='" + list2.get(i).get("product_id") + "'");
 
             InventoryItem inventoryItem = new InventoryItem();
             inventoryItem
@@ -681,13 +608,10 @@ public class InventoryController extends Controller {
                     .set("product_id", list3.get(0).get("product_id"))
                     // .set("item_name", list3.get(0).get("item_name"))
                     // .set("item_no", list3.get(0).get("item_no"))
-                    .set("uom", list3.get(0).get("uom"))
-                    .set("lot_no", list3.get(0).get("lot_no"))
+                    .set("uom", list3.get(0).get("uom")).set("lot_no", list3.get(0).get("lot_no"))
                     .set("total_quantity", list3.get(0).get("total_quantity"))
-                    .set("unit_price", list3.get(0).get("unit_price"))
-                    .set("unit_cost", list3.get(0).get("unit_cost"))
-                    .set("caton_no", list3.get(0).get("caton_no"))
-                    .set("creator", users.get(0).get("id"))
+                    .set("unit_price", list3.get(0).get("unit_price")).set("unit_cost", list3.get(0).get("unit_cost"))
+                    .set("caton_no", list3.get(0).get("caton_no")).set("creator", users.get(0).get("id"))
                     .set("create_date", createDate);
             inventoryItem.save();
 
@@ -702,14 +626,12 @@ public class InventoryController extends Controller {
         String id = getPara();
 
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao
-                .find("select * from user_login where user_name='" + name + "'");
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         Date createDate = Calendar.getInstance().getTime();
 
         // 获取从表的货品数据
-        List<Record> warehouseItem = Db
-                .find("select * from warehouse_order_item where warehouse_order_id = '"
-                        + id + "'");
+        List<Record> warehouseItem = Db.find("select * from warehouse_order_item where warehouse_order_id = '" + id
+                + "'");
 
         // 获取已入库的库存
         List<Record> inventory = Db
@@ -717,14 +639,9 @@ public class InventoryController extends Controller {
                         + id + "')");
         // 出库后更新数据
         for (int i = 0; i < warehouseItem.size(); i++) {
-            InventoryItem inventoryItem = InventoryItem.dao.findById(inventory
-                    .get(i).get("id"));
-            inventoryItem.set(
-                    "total_quantity",
-                    Double.parseDouble(inventory.get(i).get("total_quantity")
-                            .toString())
-                            - Double.parseDouble(warehouseItem.get(i)
-                                    .get("total_quantity").toString()));
+            InventoryItem inventoryItem = InventoryItem.dao.findById(inventory.get(i).get("id"));
+            inventoryItem.set("total_quantity", Double.parseDouble(inventory.get(i).get("total_quantity").toString())
+                    - Double.parseDouble(warehouseItem.get(i).get("total_quantity").toString()));
             inventoryItem.update();
         }
         // 删除库存为0的数据
@@ -733,8 +650,7 @@ public class InventoryController extends Controller {
                         + id + "')");
         if (list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {
-                if (Double.parseDouble(list.get(i).get("total_quantity")
-                        .toString()) <= 0) {
+                if (Double.parseDouble(list.get(i).get("total_quantity").toString()) <= 0) {
                     InventoryItem.dao.deleteById(list.get(i).get("id"));
                 }
             }
@@ -754,8 +670,8 @@ public class InventoryController extends Controller {
     }
 
     // 生成运输单
-    public void creatTransferOrder(String id, List<UserLogin> users,
-            Date createDate, List<Record> warehouseItem, List<Record> inventory) {
+    public void creatTransferOrder(String id, List<UserLogin> users, Date createDate, List<Record> warehouseItem,
+            List<Record> inventory) {
         if (inventory.size() > 0) {
             String orderNo = creat_order_no3();// 构造运输单号
             TransferOrder transferOrder = new TransferOrder();
@@ -766,8 +682,7 @@ public class InventoryController extends Controller {
             transferOrder.set("order_no", orderNo);
             transferOrder.set("customer_id", inventory.get(0).get("party_id"));
             transferOrder.set("status", "新建");
-            transferOrder.set("warehouse_id",
-                    inventory.get(0).get("warehouse_id"));
+            transferOrder.set("warehouse_id", inventory.get(0).get("warehouse_id"));
             transferOrder.set("route_from", party.get("location"));
             transferOrder.set("order_type", "gateOutTransferOrder");
             transferOrder.set("create_stamp", createDate);
@@ -775,8 +690,7 @@ public class InventoryController extends Controller {
             transferOrder.save();
 
             for (int i = 0; i < inventory.size(); i++) {
-                Product product = Product.dao.findById(inventory.get(i).get(
-                        "product_id"));
+                Product product = Product.dao.findById(inventory.get(i).get("product_id"));
                 if (product != null) {
                     TransferOrderItem tItem = new TransferOrderItem();
                     tItem.set("item_no", product.get("item_no"));
@@ -786,8 +700,7 @@ public class InventoryController extends Controller {
                     tItem.set("height", product.get("height"));
                     tItem.set("volume", product.get("volume"));
                     tItem.set("weight", product.get("weight"));
-                    tItem.set("amount",
-                            warehouseItem.get(i).get("total_quantity"));
+                    tItem.set("amount", warehouseItem.get(i).get("total_quantity"));
                     tItem.set("unit", product.get("unit"));
                     tItem.set("product_id", inventory.get(i).get("product_id"));
                     tItem.set("order_id", transferOrder.get("id"));
