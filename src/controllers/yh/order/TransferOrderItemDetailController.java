@@ -234,4 +234,35 @@ public class TransferOrderItemDetailController extends Controller {
         map.put("contacts", contacts);
         renderJson(map);
     }
+    
+    // 保存单品
+    public void saveTransferOrderItemDetailByField() {
+        String returnValue = "";
+        String id = getPara("id");
+        TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(id);
+        Party party = Party.dao.findById(detail.get("notify_party_id"));
+        Contact contact = Contact.dao.findById(party.get("contact_id"));
+        String serial_no = getPara("serial_no");
+        String contact_person = getPara("contact_person");
+        String phone = getPara("phone");
+        String address = getPara("address");
+        String remark = getPara("remark");
+        if (!"".equals(serial_no) && serial_no != null) {
+        	detail.set("serial_no", serial_no).update();
+            returnValue = serial_no;
+        } else if (!"".equals(contact_person) && contact_person != null) {
+            contact.set("contact_person", contact_person).update();
+            returnValue = contact_person;
+        } else if (!"".equals(remark) && remark != null) {
+        	detail.set("remark", remark).update();
+            returnValue = remark;
+        } else if (!"".equals(phone) && phone != null) {
+            contact.set("phone", phone).update();
+            returnValue = phone;
+        } else if (!"".equals(address) && address != null) {
+            contact.set("address", address).update();
+            returnValue = address;
+        }
+        renderText(returnValue);// 必须返回传进来的值，否则js会报错
+    }
 }

@@ -103,21 +103,7 @@
                                                     <label class="radio-inline">
                                                         <input type="radio" name="operationType" id="operationType2" value="out_source">外包
                                                     </label>
-                                            </div>
-                                            <!-- <div class="form-group">
-                                                <label>提货方式</label>
-                                                	<input id="pickupModeRadio" type="hidden" value="${transferOrder.pickup_mode!''}"/>
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="pickupMode" id="pickupMode1" value="routeSP" checked="">干线供应商自提
-                                                    </label>
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="pickupMode" id="pickupMode2" value="pickupSP">外包供应商提货
-                                                    </label>
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="pickupMode" id="pickupMode3" value="own">源鸿自提
-                                                    </label>
-                                            </div> -->     
-                                                                               
+                                            </div>                         
                                             <div class="form-group">
                                                 <label class="label-margin">付款方式</label>
                                                 <input id="paymentRadio" type="hidden" value="${transferOrder.payment!''}"/>
@@ -145,18 +131,6 @@
                                                 <input id="hideWarehouseId" type="hidden" value="${transferOrder.warehouse_id!''}" />     
                                                 <select id="gateInSelect" class="form-control" name="gateInSelect" style="display: none;"></select>                                  
                                             </div>
-                                            
-                                            <!-- <div id="customerProvinces" class="form-group">
-                                                <label>省内或省外客户</label>
-                                                <input id="customerProvinceRadio" type="hidden" value="${transferOrder.customer_province!''}"/>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="customerProvince" id="customerProvince1" value="provinceIn" checked="">省内
-                                                </label>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="customerProvince" id="customerProvince2" value="provinceOut">省外
-                                                </label>  
-                                            </div>  --> 
-                                            
    	                                        <div class="form-group">
    	                                            <label>收货单位</label>
    	                                            <input name="notify_company_name" value="${contact.company_name!''}" class="form-control" placeholder="请输入公司名称">
@@ -304,7 +278,9 @@
 	                                                        <th>名称</th>
 	                                                        <th>体积</th>
 	                                                        <th>重量</th>
-	                                                        <th>收货人<br/>电话<br/>地址</th>
+	                                                        <th>收货人</th>
+	                                                        <th>电话</th>
+	                                                        <th>地址</th>
 	                                                        <th>备注</th>
 	                                                        <th></th>
 	                                                    </tr>

@@ -212,29 +212,6 @@ $(document).ready(function() {
     	var inputBox = $(this).find('input');
         inputBox.autocomplete({
 	        source: function( request, response ) {
-	            $.ajax({
-	                url: "/yh/product/searchItemNo",
-	                dataType: "json",
-	                data: {
-	                    //customerId: $('#customerId').val(),
-	                	categoryId: $('#categoryId').val(),
-	                    input: request.term
-	                },
-	                success: function( data ) {
-	                	console.log(data);
-						var columnName = inputBox.parent().parent()[0].className;
-		        		
-	                    response($.map( data, function( data ) {
-	                        return {
-	                            label: '型号:'+data.ITEM_NO+' 名称:'+data.ITEM_NAME,
-	                            value: columnName=='item_name'?data.ITEM_NAME:data.ITEM_NO,
-	                            id: data.ID,
-	                            item_no: data.ITEM_NO,
-	                            item_name: data.ITEM_NAME
-	                        }
-	                    }));
-	                }
-	            });
 	        },
         	select: function( event, ui ) {
         		

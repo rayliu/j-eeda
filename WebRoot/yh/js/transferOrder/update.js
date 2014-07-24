@@ -913,57 +913,130 @@ $(document).ready(function() {
 	var orderId = $("#order_id").val();
 	//datatable, 动态处理
     var detailDataTable = $('#detailTable').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "bFilter": false, //不需要默认的搜索框
+        //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
         "sAjaxSource": "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
         "aoColumns": [  			            
-            {"mDataProp":"SERIAL_NO"},
-            {"mDataProp":"ITEM_NAME"},       	
-            {"mDataProp":"VOLUME",
-            	"fnRender": function(obj) {
-        			var volume = obj.aData.VOLUME==null?'':obj.aData.VOLUME;
-        			return volume;
-        		}},
-            {"mDataProp":"WEIGHT",
-            	"fnRender": function(obj) {
-        			var weight = obj.aData.WEIGHT==null?'':obj.aData.WEIGHT;
-        			return weight;
-        		}},
-            {"mDataProp":"CONTACT_PERSON",
-            	"fnRender": function(obj) {
-            			var contact_person = obj.aData.CONTACT_PERSON==null?'':obj.aData.CONTACT_PERSON;
-            			var phone = obj.aData.PHONE==null?'':obj.aData.PHONE;
-            			var address = obj.aData.ADDRESS==null?'':obj.aData.ADDRESS;
-            			return contact_person+"<br/>"+phone+"<br/>"+address;
-            		}},
-            {"mDataProp":"REMARK",
-            	"fnRender": function(obj) {
-        			var remark = obj.aData.REMARK==null?'':obj.aData.REMARK;
-        			return remark;
-        		}},
+            {
+            	"mDataProp":"SERIAL_NO",
+        		"sWidth": "80px",
+            	"sClass": "serial_no"	
+            },
+            {
+            	"mDataProp":"ITEM_NAME",
+        		"sWidth": "80px",
+            	"sClass": "item_name"            		
+            },       	
+            {
+            	"mDataProp":"VOLUME",
+        		"sWidth": "80px",
+            	"sClass": "volume"            		
+            },
+            {
+            	"mDataProp":"WEIGHT",
+        		"sWidth": "80px",
+            	"sClass": "weight"
+            },
+            {
+            	"mDataProp":"CONTACT_PERSON",
+        		"sWidth": "80px",
+            	"sClass": "contact_person"
+            },
+            {
+            	"mDataProp":"PHONE",
+        		"sWidth": "80px",
+            	"sClass": "phone"
+            },
+            {
+            	"mDataProp":"ADDRESS",
+        		"sWidth": "80px",
+            	"sClass": "address"
+            },
+            {
+            	"mDataProp":"REMARK",
+        		"sWidth": "80px",
+            	"sClass": "remark"
+            },
             {  
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {
-                    return	"<a class='btn btn-success editDetail' code='?item_id="+obj.aData.ID+"&notify_party_id="+obj.aData.NOTIFY_PARTY_ID+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                                "编辑"+
-                            "</a>"+
-                            "<a class='btn btn-danger deleteDetail' code='?item_id="+obj.aData.ID+"&notify_party_id="+obj.aData.NOTIFY_PARTY_ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "删除"+
-                            "</a>";
+                    return	"<a class='btn btn-danger btn-xs deleteDetail' code='?item_id="+obj.aData.ID+"&notify_party_id="+obj.aData.NOTIFY_PARTY_ID+"'' title='删除'>"+
+		                        "<i class='fa fa-trash-o fa-fw'></i>"+
+		                    "</a>";
                 }
             }                         
         ]      
     });
-	
+
+    detailDataTable.makeEditable({
+    	sUpdateURL: '/yh/transferOrderItemDetail/saveTransferOrderItemDetailByField',    	
+    	oEditableSettings: {event: 'click'},
+    	"aoColumns": [  			            
+            {            
+            	style: "inherit",
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"serial_no",
+            	placeholder: "", 
+            	callback: function () {}
+        	},
+            null,
+            null,
+            null,
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"contact_person",
+            	placeholder: "",
+            	callback: function () {} 
+            },
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"phone",
+            	placeholder: "",
+            	callback: function () {} 
+            },  
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"address",
+            	placeholder: "",
+            	callback: function () {} 
+            },
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"remark",
+            	type: 'textarea',
+            	placeholder: "",
+            	callback: function () {} 
+            }                       
+        ]      
+    }).click(function(){
+    	var inputBox = $(this).find('input');
+        inputBox.autocomplete({
+	        source: function( request, response ) {
+	        },
+        });
+    });                                                                      
+        
 	// 编辑单品
 	$("#itemTable").on('click', '.dateilEdit', function(e){
 		e.preventDefault();
@@ -1057,14 +1130,9 @@ $(document).ready(function() {
 		$.post('/yh/transferOrderItemDetail/deleteTransferOrderItemDetail', {detail_id:detailId,notify_party_id:notifyPartyId}, function(data){
 		},'json');
 		// 更新单品列表
-		var itemId = $("#item_id").val();
-		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
-		detailDataTable.fnDraw();
-
-		// 刷新货品列表
 		var orderId = $("#order_id").val();
-        itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+orderId;                		
-    	itemDataTable.fnDraw();
+		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId;
+		detailDataTable.fnDraw();
 	});	
 	
 	// 编辑单品

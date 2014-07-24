@@ -1,5 +1,6 @@
 package controllers.yh.order;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +105,7 @@ public class TransferOrderItemController extends Controller {
         String width = getPara("width");
         String height = getPara("height");
         String weight = getPara("weight");
-        String productId = item.get("product_id")+"";
+        String productId = item.get("product_id");
         if(productId == null || "".equals(productId)){
 	        if (!"".equals(item_no) && item_no != null) {
 	            item.set("item_no", item_no).update();
@@ -315,6 +316,7 @@ public class TransferOrderItemController extends Controller {
                 transferOrderItemDetail.set("weight", item.get("weight"));
                 transferOrderItemDetail.set("item_id", item.get("id"));
                 transferOrderItemDetail.set("order_id", item.get("order_id"));
+                saveNotifyParty(transferOrderItemDetail);
                 transferOrderItemDetail.save();
             }
         } else {
@@ -326,12 +328,32 @@ public class TransferOrderItemController extends Controller {
                 transferOrderItemDetail.set("weight", product.get("weight"));
                 transferOrderItemDetail.set("item_id", item.get("id"));
                 transferOrderItemDetail.set("order_id", item.get("order_id"));
+                saveNotifyParty(transferOrderItemDetail);
                 transferOrderItemDetail.save();
             }
         }
     }
 
-    // 更新产品
+    // 保存收货人
+    private void saveNotifyParty(TransferOrderItemDetail transferOrderItemDetail) {
+    	String notifyPartyId = transferOrderItemDetail.get("notify_party_id");
+        Party party = null;
+        if (notifyPartyId != null && !notifyPartyId.equals("")) {
+            party = Party.dao.findById(notifyPartyId);
+        } else {
+            party = new Party();
+            party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
+            Contact contact = new Contact();
+            contact.save();
+            party.set("contact_id", contact.getLong("id"));
+            party.set("create_date", new Date());
+            party.set("creator", currentUser.getPrincipal());
+            party.save();
+        }
+        transferOrderItemDetail.set("notify_party_id", party.get("id"));
+	}
+
+	// 更新产品
     private void updateProduct(String productId) {
         Product product = Product.dao.findById(productId);
         String size = getPara("size");
