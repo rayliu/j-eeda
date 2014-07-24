@@ -347,13 +347,13 @@ public class ProductController extends Controller {
     // 查找序列号
     public void searchItemNo() {
         String input = getPara("input");
+        String categoryId = getPara("categoryId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
         	input=input.toUpperCase();
-            locationList = Db.find("select * from product where category_id in (select id from category)"
-                    + " ( upper(item_no) like '%" + input + "%' or upper(item_name) like '%" + input + "%') limit 0,10");
+            locationList = Db.find("select * from product where category_id = "+categoryId+" and upper(item_no) like '%" + input + "%' or upper(item_name) like '%" + input + "%' limit 0,10");
         } else {
-            locationList = Db.find("select * from product where category_id in (select id from category)");
+            locationList = Db.find("select * from product where category_id = "+categoryId);
         }
         renderJson(locationList);
     }

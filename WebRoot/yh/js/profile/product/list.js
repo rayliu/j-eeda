@@ -216,7 +216,8 @@ $(document).ready(function() {
 	                url: "/yh/product/searchItemNo",
 	                dataType: "json",
 	                data: {
-	                    customerId: $('#customerId').val(),
+	                    //customerId: $('#customerId').val(),
+	                	categoryId: $('#categoryId').val(),
 	                    input: request.term
 	                },
 	                success: function( data ) {

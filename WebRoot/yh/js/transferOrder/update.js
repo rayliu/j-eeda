@@ -662,7 +662,7 @@ $(document).ready(function() {
 	                            id: data.ID,
 	                            item_no: data.ITEM_NO,
 	                            item_name: data.ITEM_NAME
-	                        }
+	                        };
 	                    }));
 	                }
 	            });
