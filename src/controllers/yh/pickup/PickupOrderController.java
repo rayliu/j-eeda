@@ -339,6 +339,8 @@ public class PickupOrderController extends Controller {
     	}
     	if(!"".equals(orderIds) && orderIds != null){
     		orderIds = orderIds.substring(0, orderIds.length()-1);
+    	}else{
+    		orderIds = "-1";
     	}
     	String pageIndex = getPara("sEcho");
     	String sLimit = "";
