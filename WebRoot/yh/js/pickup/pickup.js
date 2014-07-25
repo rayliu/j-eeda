@@ -184,8 +184,16 @@ $(document).ready(function() {
         		sumVolumnVal = sumVolumnVal + parseFloat($(this).parent().siblings('.total_volumn')[0].textContent);
         	}
         });
-		$("#sumWeight").val(sumWeightVal);
-		$("#sumVolume").val(sumVolumnVal);
+		if(sumWeightVal == 'NaN'){
+			$("#sumWeight").val(0);						
+		}else{
+			$("#sumWeight").val(sumWeightVal);			
+		}
+		if(sumVolumnVal == NaN){
+			$("#sumVolume").val(0);						
+		}else{
+			$("#sumVolume").val(sumVolumnVal);
+		}
 	};
 	
 	// 选中或取消事件
