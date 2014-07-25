@@ -515,7 +515,7 @@ public class PickupOrderController extends Controller {
         }
         if (uncheckedDetailIds.length == 0 || "".equals(uncheckedDetailIds[0])) {
             List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
-                    "select * from transfer_order_item_detail where order_id = ?", orderId);
+                    "select * from transfer_order_item_detail where order_id in("+orderId+")");
             String str = "";
             for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
                 Long departId = transferOrderItemDetail.get("depart_id");
@@ -524,9 +524,11 @@ public class PickupOrderController extends Controller {
                 }
             }
             if ("".equals(str)) {
-                TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
-                transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-                transferOrder.update();
+                List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in ("+orderId+")");
+                for(TransferOrder transferOrder : transferOrders){
+	                transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+	                transferOrder.update();
+                }
             }
         }
     }
@@ -718,7 +720,7 @@ public class PickupOrderController extends Controller {
             milestone.save();
             if ("replenishmentOrder".equals(transferOrder.get("order_type"))) {
                 // 入库
-                gateInWarehouse(departTransferOrder);
+                savegateIn(departTransferOrder);
             }
         }
         pickupOrder.set("status", "已入货场");
@@ -775,6 +777,7 @@ public class PickupOrderController extends Controller {
     public void getTransferOrderDestination() {
         String pickupOrderId = getPara("pickupOrderId");
         Map<String, String[]> map = getParaMap();
+        String orderId = "";
         for (Map.Entry<String, String[]> entry : map.entrySet()) {
             String[] values = entry.getValue();
             String value = values[0];
@@ -785,18 +788,15 @@ public class PickupOrderController extends Controller {
                         "select * from depart_transfer where depart_id = ?", pickupOrderId);
                 for (DepartTransferOrder departTransferOrder : departTransferOrders) {
                     if (endVal.equals(departTransferOrder.get("order_id") + "")) {
-                        // 入库 TODO PickupOrderController.java:823:
-                        // java.lang.NullPointerException
-
                         // 去掉入库的单据
                         TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+                        orderId += transferOrder.get("id") + ",";
                         transferOrder.set("status", "已入库");
                         transferOrder.update();
                         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
                         transferOrderMilestone.set("status", "已入库");
                         String name = (String) currentUser.getPrincipal();
-                        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name
-                                + "'");
+                        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
                         transferOrderMilestone.set("create_by", users.get(0).get("id"));
                         java.util.Date utilDate = new java.util.Date();
                         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -806,7 +806,6 @@ public class PickupOrderController extends Controller {
                         departTransferOrder.delete();
 
                         savegateIn(departTransferOrder);
-
                     }
                 }
             }
@@ -846,13 +845,6 @@ public class PickupOrderController extends Controller {
                 }
             }
         }
-
-        // /----
-    }
-
-    // 入库
-    private void gateInWarehouse(DepartTransferOrder departTransferOrder) {
-
     }
 
     // 添加额的外运输单
