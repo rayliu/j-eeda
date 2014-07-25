@@ -31,7 +31,7 @@
             	
                 <div class="login-panel panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">源鸿物流</h3>
+                        <h3 class="panel-title">源鸿物流</h3>                      
                     </div>
                     <div class="panel-body">
                         <form role="form" action="/yh/login" id="login" method="post">
@@ -46,6 +46,7 @@
                                     <label>
                                         <input name="remember" type="checkbox" value="Y">下次自动登录
                                     </label>
+                                     <span id="qqLoginBtn"></span>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
                                 <button type="submit" class="btn btn-lg btn-success btn-block">登录</button>
@@ -59,6 +60,7 @@
     </div>
 
     <!-- Core Scripts - Include with every page -->
+    <script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="101116610" data-redirecturi="http://56.eeda123.com" charset="utf-8"></script>
     <script src="/yh/js/jquery-1.10.2.js"></script>
     <script src="/yh/js/bootstrap.min.js"></script>
     <script src="/yh/js/plugins/metisMenu/jquery.metisMenu.js"></script>
@@ -68,6 +70,11 @@
     <script src="/yh/js/sb-admin.js"></script>
 <script>
     $(document).ready(function() {
+    
+        QC.Login({
+           btnId:"qqLoginBtn"    //插入按钮的节点id
+    });
+
         $('#login').validate({
             rules: {
             username: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
