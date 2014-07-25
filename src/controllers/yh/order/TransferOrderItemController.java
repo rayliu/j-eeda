@@ -105,7 +105,7 @@ public class TransferOrderItemController extends Controller {
         String width = getPara("width");
         String height = getPara("height");
         String weight = getPara("weight");
-        String productId = item.get("product_id");
+        Long productId = item.getLong("product_id");
         if(productId == null || "".equals(productId)){
 	        if (!"".equals(item_no) && item_no != null) {
 	            item.set("item_no", item_no).update();
@@ -220,7 +220,7 @@ public class TransferOrderItemController extends Controller {
 	// 保存货品
     public void saveTransferOrderItem() {
         TransferOrderItem item = null;
-        String productId = getPara("productId");
+        Long productId = getParaToLong("productId");
         String id = getPara("transferOrderItemId");
         if (id != null && !"".equals(id)) {
             item = TransferOrderItem.dao.findById(id);
@@ -305,7 +305,7 @@ public class TransferOrderItemController extends Controller {
     }
 
     // 保存货品同时保存单品
-    private void saveTransferOrderDetail(TransferOrderItem item, String productId) {
+    private void saveTransferOrderDetail(TransferOrderItem item, Long productId) {
         TransferOrderItemDetail transferOrderItemDetail = null;
         Integer amount = Integer.parseInt(item.getStr("amount"));
         if (productId == null || "".equals(productId)) {
