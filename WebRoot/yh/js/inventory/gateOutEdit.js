@@ -335,7 +335,11 @@ $("#gateOutConfirmBtn").click(function(){
 	
 	var warehouseorderid = $("#warehouseorderId").val();
 	$.post('/yh/gateIn/gateOutConfirm/'+warehouseorderid,{orderType:orderType},function(data){
-		 if(data.success){
+		console.log(data)
+		 if(data>0){
+			 window.location.href="/yh/transferOrder/edit?id="+data;
+			}
+		if(data.success){
 			 $("#gateOutConfirmBtn").attr("disabled", true);
 			 alert("出库成功！");
             }else{

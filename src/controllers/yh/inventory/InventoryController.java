@@ -665,8 +665,10 @@ public class InventoryController extends Controller {
         String orderType = getPara("orderType");
         if (orderType.equals("gateOutTransferOrder")) {
             creatTransferOrder(id, users, createDate, warehouseItem, inventory);
+        } else {
+            renderJson("{\"success\":true}");
         }
-        renderJson("{\"success\":true}");
+
     }
 
     // 生成运输单
@@ -707,6 +709,7 @@ public class InventoryController extends Controller {
                     tItem.save();
                 }
             }
+            renderJson(transferOrder.get("id"));
         }
     }
 

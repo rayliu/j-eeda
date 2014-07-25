@@ -179,22 +179,22 @@ public class PickupOrderController extends Controller {
         String routeTo = getPara("routeTo");
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
-        String orderType = getPara("orderType")==null?"":getPara("orderType");
-        
-        if(!"".equals(orderType)){
-	        if("销售订单".contains(orderType)){
-	        	orderType = "salesOrder";
-	        }else if("补货订单".contains(orderType)){
-	        	orderType = "replenishmentOrder";
-	        }else if("调拨订单".contains(orderType)){
-	        	orderType = "arrangementOrder";
-	        }else if("退货订单".contains(orderType)){
-	        	orderType = "cargoReturnOrder";
-	        }else if("质量退单".contains(orderType)){
-	        	orderType = "damageReturnOrder";
-	        }else if("出库运输单".contains(orderType)){
-	        	orderType = "gateOutTransferOrder";
-	        }
+        String orderType = getPara("orderType") == null ? "" : getPara("orderType");
+
+        if (!"".equals(orderType)) {
+            if ("销售订单".contains(orderType)) {
+                orderType = "salesOrder";
+            } else if ("补货订单".contains(orderType)) {
+                orderType = "replenishmentOrder";
+            } else if ("调拨订单".contains(orderType)) {
+                orderType = "arrangementOrder";
+            } else if ("退货订单".contains(orderType)) {
+                orderType = "cargoReturnOrder";
+            } else if ("质量退单".contains(orderType)) {
+                orderType = "damageReturnOrder";
+            } else if ("出库运输单".contains(orderType)) {
+                orderType = "gateOutTransferOrder";
+            }
         }
 
         String sLimit = "";
@@ -202,7 +202,7 @@ public class PickupOrderController extends Controller {
         String sql = "";
         String sqlTotal = "";
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-        	sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         if (orderNo == null && status == null && address == null && customer == null && routeFrom == null
                 && routeTo == null && beginTime == null && endTime == null) {
@@ -242,7 +242,7 @@ public class PickupOrderController extends Controller {
                     + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
-                    + "' and '" + endTime + "' and tor.order_type like '%" +orderType+ "%'";
+                    + "' and '" + endTime + "' and tor.order_type like '%" + orderType + "%'";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
@@ -257,11 +257,27 @@ public class PickupOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom
-                    + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
-                    + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
-                    + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
-                    + "' and '" + endTime + "' and tor.order_type like '%" +orderType+ "%' order by tor.CREATE_STAMP desc" + sLimit;
+                    + TransferOrder.ASSIGN_STATUS_ALL
+                    + "'"
+                    + " and l1.name like '%"
+                    + routeFrom
+                    + "%' and l2.name like '%"
+                    + routeTo
+                    + "%' and tor.order_no like '%"
+                    + orderNo
+                    + "%' and tor.status like '%"
+                    + status
+                    + "%' and tor.address like '%"
+                    + address
+                    + "%' and c.company_name like '%"
+                    + customer
+                    + "%' and create_stamp between '"
+                    + beginTime
+                    + "' and '"
+                    + endTime
+                    + "' and tor.order_type like '%"
+                    + orderType
+                    + "%' order by tor.CREATE_STAMP desc" + sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -280,7 +296,7 @@ public class PickupOrderController extends Controller {
                     + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
-                    + "' and '" + endTime + "' and tor.order_type like '%" +orderType+ "%'";
+                    + "' and '" + endTime + "' and tor.order_type like '%" + orderType + "%'";
 
             sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
                     + " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
@@ -293,22 +309,38 @@ public class PickupOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom
-                    + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
-                    + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
-                    + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
-                    + "' and '" + endTime + "' and tor.order_type like '%" +orderType+ "%' order by tor.create_stamp desc" + sLimit;
+                    + TransferOrder.ASSIGN_STATUS_ALL
+                    + "'"
+                    + " and l1.name like '%"
+                    + routeFrom
+                    + "%' and l2.name like '%"
+                    + routeTo
+                    + "%' and tor.order_no like '%"
+                    + orderNo
+                    + "%' and tor.status like '%"
+                    + status
+                    + "%' and tor.address like '%"
+                    + address
+                    + "%' and c.company_name like '%"
+                    + customer
+                    + "%' and create_stamp between '"
+                    + beginTime
+                    + "' and '"
+                    + endTime
+                    + "' and tor.order_type like '%"
+                    + orderType
+                    + "%' order by tor.create_stamp desc" + sLimit;
 
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         List<Record> transferOrders = Db.find(sql);
-        
+
         transferOrderListMap = new HashMap();
         transferOrderListMap.put("sEcho", pageIndex);
         transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
         transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-        
+
         transferOrderListMap.put("aaData", transferOrders);
         renderJson(transferOrderListMap);
     }
