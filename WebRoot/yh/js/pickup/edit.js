@@ -311,6 +311,12 @@
 		},'json');
 	};
 	
+	var choiceExternalTransferOrder = function(){
+    	var pickupOrderId = $("#pickupOrderId").val();
+        externalTable.fnSettings().sAjaxSource = "/yh/pickupOrder/externTransferOrderList?pickupOrderId="+pickupOrderId;
+        externalTable.fnDraw();
+	};
+	
 	// 列出所有的提货地点
 	$("#addressList").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
@@ -326,6 +332,7 @@
 			        showFinishBut();
 					findAllAddress();
 				  	$("#style").show();
+				  	choiceExternalTransferOrder();
 			        if($("#transferOrderType").val() == 'replenishmentOrder'){
 			        	
 			        }	             
@@ -343,6 +350,7 @@
 			        showFinishBut();
 					findAllAddress();
 				  	$("#style").show();	 
+				  	choiceExternalTransferOrder();
 			        if($("#transferOrderType").val() == 'replenishmentOrder'){
 			        	
 			        }           
@@ -603,7 +611,7 @@
 	}
 	
 	//datatable, 动态处理
-    $('#external-table').dataTable({
+    var externalTable = $('#external-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
@@ -612,7 +620,7 @@
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/pickupOrder/createList",
+        "sAjaxSource": "/yh/pickupOrder/externTransferOrderList",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {

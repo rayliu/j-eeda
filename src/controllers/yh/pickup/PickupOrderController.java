@@ -1,4 +1,4 @@
-package controllers.yh.pickup;
+﻿package controllers.yh.pickup;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -242,10 +242,7 @@ public class PickupOrderController extends Controller {
                     + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
-                    + "' and '" + endTime + "' and tor.order_type like '%" + orderType + "%'";
-            Record rec = Db.findFirst(sqlTotal);
-            logger.debug("total records:" + rec.getLong("total"));
-
+                    + "' and '" + endTime + "' and tor.order_type like '%" +orderType+ "%'";
             sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
                     + " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
                     + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
@@ -309,27 +306,11 @@ public class PickupOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL
-                    + "'"
-                    + " and l1.name like '%"
-                    + routeFrom
-                    + "%' and l2.name like '%"
-                    + routeTo
-                    + "%' and tor.order_no like '%"
-                    + orderNo
-                    + "%' and tor.status like '%"
-                    + status
-                    + "%' and tor.address like '%"
-                    + address
-                    + "%' and c.company_name like '%"
-                    + customer
-                    + "%' and create_stamp between '"
-                    + beginTime
-                    + "' and '"
-                    + endTime
-                    + "' and tor.order_type like '%"
-                    + orderType
-                    + "%' order by tor.create_stamp desc" + sLimit;
+                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom
+                    + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
+                    + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
+                    + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
+                    + "' and '" + endTime + "' and tor.order_type like '%" +orderType+ "%' order by tor.create_stamp desc" + sLimit;
 
         }
         Record rec = Db.findFirst(sqlTotal);
@@ -343,6 +324,58 @@ public class PickupOrderController extends Controller {
 
         transferOrderListMap.put("aaData", transferOrders);
         renderJson(transferOrderListMap);
+    }
+    
+    // 选取额外运输单
+    public void externTransferOrderList() {
+    	String orderIds = "";
+    	String pickupOrderId = getPara("pickupOrderId");
+    	if(pickupOrderId == null || "".equals(pickupOrderId)){
+    		pickupOrderId = "-1";
+    	}
+    	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", pickupOrderId);
+    	for(DepartTransferOrder departTransferOrder : departTransferOrders){
+    		orderIds += departTransferOrder.get("order_id") + ",";
+    	}
+    	if(!"".equals(orderIds) && orderIds != null){
+    		orderIds = orderIds.substring(0, orderIds.length()-1);
+    	}
+    	String pageIndex = getPara("sEcho");
+    	String sLimit = "";
+    	if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+        	sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+		String sqlTotal = "select count(1) total  from transfer_order tor "
+				+ " left join party p on tor.customer_id = p.id "
+				+ " left join contact c on p.contact_id = c.id "
+				+ " left join location l1 on tor.route_from = l1.code "
+				+ " left join location l2 on tor.route_to = l2.code"
+				+ " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
+				+ TransferOrder.ASSIGN_STATUS_ALL + "' and tor.id not in("+orderIds+")";
+		String sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
+				+ " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
+				+ " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
+				+ " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
+				+ " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
+				+ " l1.name route_from,l2.name route_to,tor.create_stamp,tor.assign_status from transfer_order tor "
+				+ " left join party p on tor.customer_id = p.id "
+				+ " left join contact c on p.contact_id = c.id "
+				+ " left join location l1 on tor.route_from = l1.code "
+				+ " left join location l2 on tor.route_to = l2.code"
+				+ " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
+				+ TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.id not in("+orderIds+") order by tor.create_stamp desc" + sLimit;
+    	
+    	Record rec = Db.findFirst(sqlTotal);
+    	logger.debug("total records:" + rec.getLong("total"));
+    	List<Record> transferOrders = Db.find(sql);
+    	
+    	Map transferOrderListMap = new HashMap();
+    	transferOrderListMap.put("sEcho", pageIndex);
+    	transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+    	transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+    	
+    	transferOrderListMap.put("aaData", transferOrders);
+    	renderJson(transferOrderListMap);
     }
 
     // 初始化货品数据
