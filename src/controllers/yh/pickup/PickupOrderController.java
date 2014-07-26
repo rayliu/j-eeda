@@ -102,7 +102,8 @@ public class PickupOrderController extends Controller {
 
         setAttr("status", "新建");
         setAttr("saveOK", false);
-        render("/yh/pickup/editPickupOrder.html");
+        if (LoginUserController.isAuthenticated(this))
+        	render("/yh/pickup/editPickupOrder.html");
     }
 
     // 拼车单列表显示
@@ -697,7 +698,8 @@ public class PickupOrderController extends Controller {
         TransferOrderMilestone transferOrderMilestone = TransferOrderMilestone.dao.findFirst(
                 "select * from transfer_order_milestone where pickup_id = ? order by create_stamp desc", pickupOrder.get("id"));
         setAttr("transferOrderMilestone", transferOrderMilestone);
-        render("/yh/pickup/editPickupOrder.html");
+        if (LoginUserController.isAuthenticated(this))
+        	render("/yh/pickup/editPickupOrder.html");
     }
 
     // 保存拼车里程碑
@@ -754,23 +756,21 @@ public class PickupOrderController extends Controller {
                 pickupOrder.get("id"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
-            transferOrder.set("status", "已入货场");
-            transferOrder.update();
-            TransferOrderMilestone milestone = new TransferOrderMilestone();
-            milestone.set("status", "已入货场");
-            milestone.set("location", "");
-            milestone.set("order_id", transferOrder.get("id"));
-            String name = (String) currentUser.getPrincipal();
-            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-            milestone.set("create_by", users.get(0).get("id"));
-            java.util.Date utilDate = new java.util.Date();
-            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-            milestone.set("create_stamp", sqlDate);
-            milestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-            milestone.save();
-            if ("replenishmentOrder".equals(transferOrder.get("order_type"))) {
-                // 入库
-                savegateIn(departTransferOrder);
+            if("新建".equals(transferOrder.get("status"))){
+	            transferOrder.set("status", "已入货场");
+	            transferOrder.update();
+	            TransferOrderMilestone milestone = new TransferOrderMilestone();
+	            milestone.set("status", "已入货场");
+	            milestone.set("location", "");
+	            milestone.set("order_id", transferOrder.get("id"));
+	            String name = (String) currentUser.getPrincipal();
+	            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+	            milestone.set("create_by", users.get(0).get("id"));
+	            java.util.Date utilDate = new java.util.Date();
+	            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+	            milestone.set("create_stamp", sqlDate);
+	            milestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+	            milestone.save();
             }
         }
         pickupOrder.set("status", "已入货场");
@@ -856,7 +856,6 @@ public class PickupOrderController extends Controller {
                         transferOrderMilestone.set("create_stamp", sqlDate);
                         transferOrderMilestone.set("order_id", transferOrder.get("id"));
                         transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-                        departTransferOrder.delete();
 
                         savegateIn(departTransferOrder);
                     }
