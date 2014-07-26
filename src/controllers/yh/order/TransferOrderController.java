@@ -751,10 +751,22 @@ public class TransferOrderController extends Controller {
         String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db.find("select * from carinfo where driver like '%" + input + "%' or phone like '%" + input + "%'");
+            locationList = Db.find("select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where c.contact_person like '%" + input + "%' or c.phone like '%" + input + "%' and p.party_type = '"+Party.PARTY_TYPE_DRIVER+"'");
         } else {
-            locationList = Db.find("select * from carinfo");
+            locationList = Db.find("select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where p.party_type = '"+Party.PARTY_TYPE_DRIVER+"'");
         }
         renderJson(locationList);
+    }
+    
+    // 查出所有的carinfo
+    public void searchAllCarInfo() {
+    	String input = getPara("input");
+    	List<Record> locationList = Collections.EMPTY_LIST;
+    	if (input.trim().length() > 0) {
+    		locationList = Db.find("select * from carinfo where driver like '%" + input + "%' or phone like '%" + input + "%'");
+        }else{
+        	locationList = Db.find("select * from carinfo"); 
+    	}
+    	renderJson(locationList);
     }
 }

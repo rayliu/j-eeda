@@ -37,43 +37,73 @@
       		$("#box_two").modal('show');
       	}
       
-      $('#customerMessage').on('keyup click', function(){
-  		var inputStr = $('#customerMessage').val();
-  		$('#driverId').val("");
-  		if(inputStr == ""){
-  			$('#phone').val($(this).attr(""));
-  		}
-  		$.get('/yh/transferOrder/searchAllDriver', {input:inputStr}, function(data){
-  			console.log(data);
-  			var customerList =$("#customerList");
-  			customerList.empty();
-  			for(var i = 0; i < data.length; i++)
-  			{
-  				customerList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH+"' phone='"+data[i].PHONE+"' driver='"+data[i].DRIVER+"' > "+data[i].DRIVER+" "+data[i].PHONE+" "+data[i].CAR_NO+"</a></li>");
-  			}
-  		},'json');
-  		
-  		$("#customerList").css({ 
+     // 列出所有的司机
+   	 $('#driverMessage').on('keyup click', function(){
+    		var inputStr = $('#driverMessage').val();
+    		$.get('/yh/transferOrder/searchAllDriver', {input:inputStr}, function(data){
+    			console.log(data);
+    			var driverList = $("#driverList");
+    			driverList.empty();
+    			for(var i = 0; i < data.length; i++)
+    			{
+    				driverList.append("<li><a tabindex='-1' class='fromLocationItem' pid='"+data[i].PID+"' phone='"+data[i].PHONE+"' contact_person='"+data[i].CONTACT_PERSON+"' > "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
+    			}
+    		},'json');
+    		
+    		$("#driverList").css({ 
+            	left:$(this).position().left+"px", 
+            	top:$(this).position().top+32+"px" 
+           }); 
+           $('#driverList').show();
+   	 });
+   	  	
+    	 // 选中司机
+    	 $('#driverList').on('mousedown', '.fromLocationItem', function(e){	
+    		 $("#driver_id").val($(this).attr('pid'));
+   	  	 $('#driverMessage').val($(this).attr('contact_person'));
+   	  	 $('#driver_phone').val($(this).attr('phone'));  	 
+   	     $('#driverList').hide();   
+        });
+
+    	// 没选中司机，焦点离开，隐藏列表
+    	$('#driverMessage').on('blur', function(){
+     		$('#driverList').hide();
+     	});
+    	
+    	// 列出所有的车辆
+   	$('#carNoMessage').on('keyup click', function(){
+   	var inputStr = $('#carNoMessage').val();
+   	$.get('/yh/transferOrder/searchAllCarInfo', {input:inputStr}, function(data){
+   		console.log(data);
+   		var carNoList = $("#carNoList");
+   		carNoList.empty();
+   		for(var i = 0; i < data.length; i++)
+   		{
+   			carNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH+"' driver='"+data[i].DRIVER+"' > "+data[i].CAR_NO+"</a></li>");
+   		}
+   	},'json');
+
+   	$("#carNoList").css({ 
           	left:$(this).position().left+"px", 
           	top:$(this).position().top+32+"px" 
-          }); 
-          $('#customerList').show();
-  	});
-  	
-  	// 选中客户
-  	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
-  		var message = $(this).text();
-  		$('#driverId').val($(this).attr('id'));
-  		$('#customerMessage').val($(this).attr('driver'));
-  		$('#phone').val($(this).attr('phone'));
-  		$('#carsize').val($(this).attr('length'));
-  		$('#cartype').val($(this).attr('carType'));
-  		$('#car_no').val($(this).attr('carNo'));
-          $('#customerList').hide();
-      }); 
-  	$('#customerMessage').on('blur', function(){
- 		$('#customerList').hide();
- 	});
+         }); 
+         $('#carNoList').show();
+   	});
+   	 	
+   	// 选中车辆
+   	$('#carNoList').on('mousedown', '.fromLocationItem', function(e){	
+   	     $("#carinfoId").val($(this).attr('id'));
+   	 	 $('#carNoMessage').val($(this).attr('carNo'));
+   	 	 $('#cartype').val($(this).attr('carType'));
+   	 	 $('#carsize').val($(this).attr('length'));	  	 
+   	     $('#carNoList').hide();   
+       });
+
+   	// 没选中车辆，焦点离开，隐藏列表
+   	$('#carNoMessage').on('blur', function(){
+    		$('#carNoList').hide();
+    });
+
   	//显示货品table
     	var datatable = $('#eeda-table').dataTable({
             //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -532,25 +562,7 @@
     						}
     					}
     				}
-    			},'json');   
-    	    // 回显车长
-    	   /* var carSizeOption=$("#carsize>option");
-    	    var carSizeVal=$("#carSizeSelect").val();
-    	    for(var i=0;i<carSizeOption.length;i++){
-    		      var svalue=carSizeOption[i].text;
-    		      if(carSizeVal==svalue){
-    		       $("#carsize option[value='"+svalue+"']").attr("selected","selected");
-    		      }
-    	      }
-    	    // 回显车型
-    	    var carTypeOption=$("#cartype>option");
-    	    var carTypeVal=$("#carTypeSelect").val();
-    	    for(var i=0;i<carTypeOption.length;i++){
-    	    	var svalue=carTypeOption[i].text;
-    	    	if(carTypeVal==svalue){
-    	    		$("#cartype option[value='"+svalue+"']").attr("selected","selected");
-    	    	}
-    	    }*/
+    			},'json');
     	    //单机tab里程碑
     	    $("#transferOrderMilestoneList").click(function(e){
     			$.post('/yh/departOrder/transferOrderMilestoneList',{departOrderId:depart_id},function(data){

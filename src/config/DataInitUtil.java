@@ -99,7 +99,7 @@ public class DataInitUtil {
 
             // 发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
-                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,remark varchar(255),driver_id bigint,foreign key(driver_id) references carinfo(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id));");
+                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,remark varchar(255),driver_id bigint,foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id));");
 
             // Transfer_Order_item_detail 单件货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment primary key,order_id bigint,item_id bigint,item_no varchar(255),"
@@ -502,10 +502,6 @@ public class DataInitUtil {
             Category subCat2 = new Category();
             subCat2.set("name", "普通货品").set("customer_id", party.get("id")).set("parent_id", rootCat.getLong("id"))
                     .save();
-            // stmt.execute("insert into category(name,customer_id) values('公司名', 19);");
-            // stmt.execute("insert into category(name,customer_id, parent_id) values('ATM', 19, 1);");
-            // stmt.execute("insert into category(name,customer_id, parent_id) values('普通货品', 19, 1);");
-            // stmt.execute("insert into category(name,customer_id, parent_id) values('4k', 19, 3);");
 
             // 产品
             stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('ATM', '2014042600001','1000','5000','7000','35','台', 10, 2, '这是一台ATM');");
@@ -701,6 +697,10 @@ public class DataInitUtil {
         contact6.set("company_name", "天津佛纳甘科技有限公司").set("contact_person", "何生").set("email", "test@test.com");
         contact6.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4")
                 .set("postal_code", "5190004").set("location", "440402").save();
+        Contact contact8 = new Contact();
+        contact8.set("contact_person", "张三").set("phone", "15512345678").save();
+        Contact contact9 = new Contact();
+        contact9.set("contact_person", "李四").set("phone", "15812345678").save();
 
         Party p1 = new Party();
         Party p2 = new Party();
@@ -709,6 +709,8 @@ public class DataInitUtil {
         Party p5 = new Party();
         Party p6 = new Party();
         Party p7 = new Party();
+        Party p8 = new Party();
+        Party p9 = new Party();
         Date createDate = Calendar.getInstance().getTime();
         p1.set("contact_id", contact.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate)
                 .set("creator", "demo").set("payment", "monthlyStatement").save();
@@ -724,6 +726,10 @@ public class DataInitUtil {
                 .set("creator", "demo").save();
         p6.set("contact_id", contact6.getLong("id")).set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
                 .set("creator", "demo").save();
+        p8.set("contact_id", contact8.getLong("id")).set("party_type", Party.PARTY_TYPE_DRIVER).set("create_date", createDate)
+        		.set("creator", "demo").save();
+        p9.set("contact_id", contact9.getLong("id")).set("party_type", Party.PARTY_TYPE_DRIVER).set("create_date", createDate)
+        		.set("creator", "demo").save();
     }
 
 }

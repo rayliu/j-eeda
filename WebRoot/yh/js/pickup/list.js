@@ -29,7 +29,7 @@
 	            		}else{
 	            			return "";
 	            		}}},
-			    {"mDataProp":"DRIVER"},
+			    {"mDataProp":"CONTACT_PERSON"},
 			    {"mDataProp":"PHONE"},
 			    {"mDataProp":"CAR_NO"},
 			    {"mDataProp":"CARTYPE"},     
