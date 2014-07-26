@@ -1,0 +1,112 @@
+<%layout("/yh/layout.html"){%>
+
+	<div id="page-wrapper">
+		<div class="row">
+             <div class="col-lg-12">
+              	<h1 class="page-header">
+              		<h1 class="page-header">司机信息</h1>
+				</h1>
+                 <div class="panel panel-default">
+                   <div class="panel-heading">
+                 		司机信息
+            		</div>
+            		<div class="panel-body">
+            			<div class="row-fluid">
+            				<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/yh/driverinfo/driversave" method="post">
+						<input id="driverId" name="driverId" type="hidden" value="${lu.id!''}">
+					<div class="col-lg-6">
+							 <div class="form-group ">
+			                 <label class="control-label">司机</label>
+			                 <input id="driver" name="driver" type="text" class="form-control" value="${lu2.contact_person!''}">
+			             </div>
+			             <div class="form-group ">
+			                 <label class="control-label">司机电话</label>
+			                 <input type="text" class="form-control" id="phone" name="phone" value="${lu2.phone!''}">
+			             </div>
+			             <div class="form-group ">
+			                 <label class="control-label">身份证</label>
+			                 <input type="text" class="form-control" id="identification" name="identification" value="${lu2.identification!''}">
+			             </div>
+			           </div>
+			           <div class="col-lg-6">
+			             <div class="form-group ">
+			                 <label class="control-label">驾照类别</label>
+			                 <select class="form-control" id="license" name="license" >
+                                  <option>---选择类别---</option>
+                                  <option value="A1">A1</option>
+                                  <option value="A2">A2</option>
+                                  <option value="A3">A3</option>
+                                  <option value="B1">B1</option>
+                                  <option value="B2">B2</option>
+                                  <option value="C1">C1</option>
+                                  <option value="C2">C2</option>
+                                  <option value="C3">C3</option>
+                                  <option value="C4">C4</option>
+                                  <option value="D">D</option>
+                                  <option value="E">E</option>
+                                  <option value="F">F</option>
+                                  <option value="M">M</option>
+                                  <option value="N">N</option>
+                                  <option value="P">P</option>
+                              </select>
+			             </div>
+			             	 <div class="form-group ">
+			            	<input type ="hidden" value="">
+			                 <label class="control-label">公司</label>
+			                 <input type="text" class="form-control" id="company" name="company" value="">
+			            </div>
+			            </div>
+			           
+			            
+			            </div>
+			            <div class="col-lg-7">
+			             	<button type="submit" class="btn btn-default">保存</button>
+				            <a class="btn btn-default" href="/yh/driverinfo">返回</a>
+				        </div>
+			         </form>
+            			</div>
+            		</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<%}%>
+<!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/yh/js/jquery.validate.min.js"></script>
+<script src="/yh/js/jvalidate.messages_cn.js"></script>
+<script>
+	var license ='${lu.license!''}'
+		$("#license").val(license);
+	
+	$(document).ready(function() {
+		jQuery.validator.addMethod("stringCheck", function(value, element) {
+			return this.optional(element) || /^[u0391-uFFE5w]+$/.test(value);
+			}, "只能包括中文字、英文字母、数字和下划线");
+
+    $('#menu_profile').addClass('active').find('ul').addClass('in');
+        $('#leadsForm').validate({
+            rules: {
+            	username: {
+                required: true,
+                stringCheck:true,
+                minlength: 5
+				},
+              password:{//form 中 name为必填
+                required: true,
+                minlength: 5
+              },
+              confirm_password: { 
+            	  required: true, 
+            	  minlength: 5, 
+            	  equalTo: "#password" 
+            	  } 
+             },
+            highlight: function(element) {
+                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+            },
+            success: function(element) {
+                element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+            }
+        });
+    });
+</script>

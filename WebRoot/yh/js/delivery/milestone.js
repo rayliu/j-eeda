@@ -35,10 +35,14 @@ $(document).ready(function() {
             {"mDataProp":"TRANSFER_ORDER_NO"},
             { 
 	                "mDataProp": null, 
-	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-primary confirmDelivery' code='"+obj.aData.ID+"'>"+
-	                    		"签收完成"+
-	                    		"</a>";
+	                "fnRender": function(obj) {   
+	                	if(obj.aData.STATUS=='已签收'){
+	                		return "已签收";
+	                	}else{
+	                		return "<a class='btn btn-primary confirmDelivery' code='"+obj.aData.ID+"'>"+
+                    		"签收完成"+
+                    		"</a>";
+	                	}
 	                }
 	            }    
         ]  
