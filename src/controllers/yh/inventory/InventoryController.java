@@ -148,7 +148,7 @@ public class InventoryController extends Controller {
         // 获取当前页的数据
         List<Record> orders = Db.find("select i_t.*,c.company_name,p.* from inventory_item i_t "
                 + "left join product p on  p.id =i_t.product_id " + "left join party p2 on i_t.party_id =p2.id "
-                + "left join contact c on p2.contact_id = c.id " + "where i_t.warehouse_id =1");
+                + "left join contact c on p2.contact_id = c.id " + "where i_t.warehouse_id ='" + id + "'");
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -537,7 +537,6 @@ public class InventoryController extends Controller {
 
     // 查找仓库
     public void searchAllwarehouse() {
-        String input = getPara("input");
         List<Warehouse> warehouses = Warehouse.dao.find("select * from warehouse");
         renderJson(warehouses);
     }

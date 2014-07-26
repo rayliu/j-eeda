@@ -42,3 +42,4 @@ src/config/EedaConfig.java.orig
 src/controllers/yh/PayController.java.orig
 src/controllers/yh/delivery/DeliveryController.java.orig
 src/controllers/yh/profile/CustomerController.java.orig
+src/controllers/yh/pickup/PickupOrderController.java.orig

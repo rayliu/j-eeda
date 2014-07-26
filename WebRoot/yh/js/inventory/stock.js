@@ -15,6 +15,8 @@ $(document).ready(function() {
 				{"mDataProp":"ITEM_NAME"},
 		            {"mDataProp":"ITEM_NO"}, 
 		            {"mDataProp":"COMPANY_NAME"},
+		            {"mDataProp":"TOTAL_QUANTITY"},
+		            {"mDataProp":"UOM"},
 		            {"mDataProp":"EXPIRE_DATE"},
 		            {"mDataProp":"LOT_NO"},
 		            {"mDataProp":"CATON_NO"},
@@ -23,8 +25,7 @@ $(document).ready(function() {
 		            {"mDataProp":"HEIGHT"},
 		            {"mDataProp":"VOLUME"},
 		            {"mDataProp":"WEIGHT"},
-		            {"mDataProp":"TOTAL_QUANTITY"},
-		            {"mDataProp":"UOM"},
+		            
 		           // {"mDataProp":"UNIT_PRICE"},
 		            //{"mDataProp":"UNIT_COST"},
 	           ]
@@ -32,8 +33,7 @@ $(document).ready(function() {
 	
 //选择仓库 
  $('#warehouseSelect').on('keyup click', function(){
-	var inputStr = $('#warehouseSelect').val();
-	$.get('/yh/gateIn/searchAllwarehouse', {input:inputStr}, function(data){
+	$.get('/yh/gateIn/searchAllwarehouse', function(data){
 		console.log(data);
 		var warehouseList =$("#warehouseList");
 		warehouseList.empty();

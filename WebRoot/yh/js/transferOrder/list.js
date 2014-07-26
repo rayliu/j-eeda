@@ -75,6 +75,8 @@ $(document).ready(function() {
             			return "退货订单";
             		}else if(obj.aData.ORDER_TYPE == "damageReturnOrder"){
             			return "质量退单";
+            		}else if(obj.aData.ORDER_TYPE == "gateOutTransferOrder"){
+            			return "出库运输单";
             		}else{
             			return "";
             		}}},

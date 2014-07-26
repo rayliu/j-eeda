@@ -5,8 +5,8 @@
             <h1 class="page-header">
 				<div class="form-group ">
 					<label class="control-label" for="inputSuccess">仓库</label>
-					<input type="hidden" id="warehouseId" name="warehouseId" value="${warehouseOrder.warehouse_id!''}"> 
-					 <input id="warehouseSelect" class="form-control" placeholder="选择仓库" name="warehouseSelect" value="${warehouseOrder.warehouse_name!''}"> 
+					<input type="hidden" id="warehouseId" name="warehouseId" value=""> 
+					 <input id="warehouseSelect" class="form-control" placeholder="选择仓库" name="warehouseSelect" value=""> 
 					 <ul id='warehouseList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
 					</ul>
 				</div>	
@@ -22,7 +22,9 @@
 							<tr>
 								<th>产品名称</th>
 								<th>产品编号</th>
-								<th>客户</th>
+								<th>客&nbsp户 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</th>
+								<th>现货总数</th>
+								<th>单位</th>
 								<th>过期时间</th>
 								<th>批号</th>
 								<th>箱号</th>
@@ -31,8 +33,7 @@
 								<th>高(mm)</th>
 								<th>体积(m³)</th>
 								<th>重量</th>
-								<th>现货总数</th>
-								<th>单位</th>
+								
 								<!-- <th>单位价格</th>
 								<th>单位成本</th> -->
 							</tr>
