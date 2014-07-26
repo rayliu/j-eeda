@@ -180,20 +180,12 @@ $(document).ready(function() {
 		var sumVolumnVal = 0;
 		$("input[name='order_check_box']").each(function(){
         	if($(this).prop('checked') == true){
-        		sumWeightVal = sumWeightVal + parseFloat($(this).parent().siblings('.total_weight')[0].textContent);
-        		sumVolumnVal = sumVolumnVal + parseFloat($(this).parent().siblings('.total_volumn')[0].textContent);
+        		sumWeightVal = sumWeightVal + parseFloat($(this).parent().siblings('.total_weight')[0].textContent == "" ? 0 : $(this).parent().siblings('.total_weight')[0].textContent);
+        		sumVolumnVal = sumVolumnVal + parseFloat($(this).parent().siblings('.total_volumn')[0].textContent == "" ? 0 : $(this).parent().siblings('.total_volumn')[0].textContent);
         	}
         });
-		if(sumWeightVal == 'NaN'){
-			$("#sumWeight").val(0);						
-		}else{
-			$("#sumWeight").val(sumWeightVal);			
-		}
-		if(sumVolumnVal == NaN){
-			$("#sumVolume").val(0);						
-		}else{
-			$("#sumVolume").val(sumVolumnVal);
-		}
+		$("#sumWeight").text(sumWeightVal);	
+		$("#sumVolume").text(sumVolumnVal);
 	};
 	
 	// 选中或取消事件

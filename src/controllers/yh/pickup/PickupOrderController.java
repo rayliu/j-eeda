@@ -428,15 +428,16 @@ public class PickupOrderController extends Controller {
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
             pickupOrder.set("create_stamp", sqlDate);
-            String driveId = getPara("driver_id");
-            if (driveId == null || "".equals(driveId)) {
-                carinfo = saveDriver();
-            } else {
-                carinfo = updateDriver(driveId);
-            }
-            pickupOrder.set("driver_id", carinfo.get("id"));
-            if (!getPara("sp_id").equals("")) {
-                pickupOrder.set("sp_id", getPara("sp_id"));
+            if("own".equals(getPara("pickupMode"))){
+	            String driveId = getPara("driver_id");
+	            if (driveId == null || "".equals(driveId)) {
+	                carinfo = saveDriver();
+	            }
+	            pickupOrder.set("driver_id", carinfo.get("id"));
+            }else{
+	            if (!getPara("sp_id").equals("")) {
+	                pickupOrder.set("sp_id", getPara("sp_id"));
+	            }
             }
             String[] values = getParaValues("checkbox");
             if (values != null) {
@@ -494,8 +495,6 @@ public class PickupOrderController extends Controller {
             String driveId = getPara("driver_id");
             if (driveId == null || "".equals(driveId)) {
                 carinfo = saveDriver();
-            } else {
-                carinfo = updateDriver(driveId);
             }
             pickupOrder.set("driver_id", carinfo.get("id"));
             if (!getPara("sp_id").equals("")) {
@@ -651,19 +650,7 @@ public class PickupOrderController extends Controller {
         carinfo.save();
         return carinfo;
     }
-
-    // 更新司机
-    private Carinfo updateDriver(String driveId) {
-        Carinfo carinfo = Carinfo.dao.findById(driveId);
-        carinfo.set("driver", getPara("driver_name"));
-        carinfo.set("phone", getPara("driver_phone"));
-        carinfo.set("car_no", getPara("car_no"));
-        carinfo.set("cartype", getPara("car_type"));
-        carinfo.set("length", getPara("car_size"));
-        carinfo.update();
-        return carinfo;
-    }
-
+    
     // 修改拼车单
     public void edit() {
         String sql = "select do.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
@@ -758,6 +745,7 @@ public class PickupOrderController extends Controller {
             TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
             if("新建".equals(transferOrder.get("status"))){
 	            transferOrder.set("status", "已入货场");
+	            transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
 	            transferOrder.update();
 	            TransferOrderMilestone milestone = new TransferOrderMilestone();
 	            milestone.set("status", "已入货场");
