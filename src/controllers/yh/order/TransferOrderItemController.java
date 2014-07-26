@@ -145,53 +145,16 @@ public class TransferOrderItemController extends Controller {
 	        item.set("volume", volume).update();
 	        updateTransferOrderItemDetail(item, product);
         }else{
-        	product = Product.dao.findById(productId);
-        	if (!"".equals(item_no) && item_no != null) {
-        		product.set("item_no", item_no).update();
-	            returnValue = item_no;
-	        } else if (!"".equals(item_name) && item_name != null) {
-	        	product.set("item_name", item_name).update();
-	            returnValue = item_name;
-	        } else if (!"".equals(remark) && remark != null) {
+        	if (!"".equals(remark) && remark != null) {
 	        	item.set("remark", remark).update();
 	            returnValue = remark;
-	        } else if (!"".equals(size) && size != null) {
-	        	product.set("size", size).update();
-	            returnValue = size;
-	        } else if (!"".equals(width) && width != null) {
-	        	product.set("width", width).update();
-	            returnValue = width;
-	        } else if (!"".equals(height) && height != null) {
-	        	product.set("height", height).update();
-	            returnValue = height;
-	        } else if (!"".equals(weight) && weight != null) {
-	        	product.set("weight", weight).update();
-	            returnValue = weight;
 	        } else if (!"".equals(amount) && amount != null) {
 	        	item.set("amount", amount).update();
 	            if (amount != null && !"".equals(amount)) {
 	                saveTransferOrderDetail(item, productId);
 	            }
 	            returnValue = amount;
-	        } else if (!"".equals(unit) && unit != null) {
-	        	product.set("unit", unit).update();
-	            returnValue = unit;
 	        }
-        	Double psize = Double.parseDouble(product.get("size")+"");
-        	if(psize == null){
-        		psize = 0.0;
-        	}
-        	Double pwidth = Double.parseDouble(product.get("width")+"");
-        	if(pwidth == null){
-        		pwidth = 0.0;
-        	}
-        	Double pheight = Double.parseDouble(product.get("height")+"");
-        	if(pheight == null){
-        		pheight = 0.0;
-        	}
-	        Double volume = psize/1000 * pwidth/1000 * pheight/1000;
-	        product.set("volume", volume).update();
-	        updateTransferOrderItemDetail(item, product);
         }
         renderText(returnValue);// 必须返回传进来的值，否则js会报错
     }
@@ -352,36 +315,6 @@ public class TransferOrderItemController extends Controller {
         }
         transferOrderItemDetail.set("notify_party_id", party.get("id"));
 	}
-
-	// 更新产品
-    private void updateProduct(String productId) {
-        Product product = Product.dao.findById(productId);
-        String size = getPara("size");
-        String width = getPara("width");
-        String volume = getPara("volume");
-        String weight = getPara("weight");
-        String height = getPara("height");
-        if (size != null && !"".equals(size)) {
-            product.set("size", size);
-        }
-        if (width != null && !"".equals(weight)) {
-            product.set("width", width);
-        }
-        if (volume != null && !"".equals(volume)) {
-            product.set("volume", volume);
-        }
-        if (weight != null && !"".equals(weight)) {
-            product.set("weight", weight);
-        }
-        if (height != null && !"".equals(height)) {
-            product.set("height", height);
-        }
-        product.set("item_no", getPara("item_no"));
-        product.set("item_name", getPara("item_name"));
-        product.set("unit", getPara("unit"));
-        product.set("item_desc", getPara("remark"));
-        product.update();
-    }
 
     // 获取TransferOrderItem对象
     public void getTransferOrderItem() {

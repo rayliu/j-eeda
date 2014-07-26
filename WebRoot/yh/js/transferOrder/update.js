@@ -539,6 +539,13 @@ $(document).ready(function() {
 		detailDataTable.fnDraw();
 	};
 	
+	// 刷新货品列表
+	var refreshItemTable = function(){
+		var order_id = $("#order_id").val();
+        itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;                		
+    	itemDataTable.fnDraw();
+	};
+	
     itemDataTable.makeEditable({
     	sUpdateURL: '/yh/transferOrderItem/saveTransferOrderItemByField',    	
     	oEditableSettings: {event: 'click'},
@@ -550,7 +557,9 @@ $(document).ready(function() {
             	tooltip: '点击可以编辑',
             	name:"item_no",
             	placeholder: "", 
-            	callback: function () {}
+            	callback: function () {
+            		refreshItemTable();
+            	}
         	},
             {
             	indicator: '正在保存...',
@@ -560,6 +569,7 @@ $(document).ready(function() {
             	placeholder: "",
             	callback: function () {
             		refreshDetailTable();
+            		refreshItemTable();
             	} 
             },
             {
@@ -571,6 +581,7 @@ $(document).ready(function() {
             	callback: function () {
             		sumVolume(this);
             		refreshDetailTable();
+            		refreshItemTable();
             	} 
             },
             {
@@ -582,6 +593,7 @@ $(document).ready(function() {
             	callback: function () {
             		sumVolume(this);
             		refreshDetailTable();
+            		refreshItemTable();
             	} 
             },
             {
@@ -593,6 +605,7 @@ $(document).ready(function() {
             	callback: function () {
             		sumVolume(this);
             		refreshDetailTable();
+            		refreshItemTable();
             	} 
             },  
             {
@@ -604,6 +617,7 @@ $(document).ready(function() {
             	callback: function () {
             		sumWeight(this);
             		refreshDetailTable();
+            		refreshItemTable();
             	} 
             },    	
             {
@@ -625,7 +639,9 @@ $(document).ready(function() {
             	type: 'select',
             	data: "{'':'', '台':'台','件':'件','套':'套'}",
             	placeholder: "",
-            	callback: function () {} 
+            	callback: function () {
+            		refreshItemTable();
+            	} 
             },
             null,
             null,
