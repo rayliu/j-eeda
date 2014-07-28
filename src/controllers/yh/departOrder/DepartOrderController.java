@@ -110,13 +110,13 @@ public class DepartOrderController extends Controller {
         	   logger.debug("total records:" + rec.getLong("total"));
 	            }
            logger.debug("total records:" +total );
-             String sql_seach ="select deo.id as depart_id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,car.*, group_concat(tr.order_no separator ' ') as transfer_order_no "
-    				 +" from depart_order deo" 
-    				+" left join party p on deo.driver_id = p.id and p.party_type = 'DRIVER' " 
-    				+"left join carinfo  car on deo.driver_id=car.id"
-    				+" left join contact c on p.contact_id = c.id "
+             String sql_seach ="select deo.id as depart_id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length, group_concat(tr.order_no separator ' ') as transfer_order_no "
+    				+" from depart_order deo" 
+    				+ " left join carinfo c on deo.carinfo_id = c.id "
+    	            + " left join party p on deo.driver_id = p.id "
+    	            + " left join contact ct on p.contact_id = ct.id "
     				+" left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )" 
-    				+"  where deo.combine_type = 'DEPART' and ifnull(deo.status,'') like '%"+status+"%' and ifnull(deo.depart_no,'') like '%"+departNo+"%' and ifnull(c.company_name,'')  like '%"+sp+"%' and ifnull(tr.order_no,'') like '%"+orderNo+"%'"
+    				+"  where deo.combine_type = 'DEPART' and ifnull(deo.status,'') like '%"+status+"%' and ifnull(deo.depart_no,'') like '%"+departNo+"%' and ifnull(tr.order_no,'') like '%"+orderNo+"%'"
     				+ " and deo.create_stamp between '"+beginTime+"' and '"+endTime+"'group by deo.id order by deo.create_stamp desc "+sLimit;
         	depart = Db.find(sql_seach);
         	  map = new HashMap();
