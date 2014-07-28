@@ -20,7 +20,6 @@ $(document).ready(function() {
 	            {"mDataProp":"CUSTOMER"},
 	            {"mDataProp":"C2"},
 	            {"mDataProp":"CREATE_STAMP"},
-	            {"mDataProp":"WAREHOUSE_NAME"},
 	            {"mDataProp":"STATUS"},
 	            {"mDataProp":"TRANSFER_ORDER_NO"},
 	            { 
