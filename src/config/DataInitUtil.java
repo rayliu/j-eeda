@@ -648,8 +648,10 @@ public class DataInitUtil {
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '4','YS2014042600004');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '5','YS2014042600005');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '3','YS2014042600003');");
-            // stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '3','YS2014042600003');");
 
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,driver_id,carinfo_id) values('FC2014061000003', '2014-06-10 16:35:35.1','DEPART',26,1);");
+            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('5', '3','YS2014042600006');");
+            
             // 运输里程碑
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(2, 3, '2014-06-28 10:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(3, 3, '2014-06-28 10:40:35.1', '新建', 'TRANSFERORDERMILESTONE');");

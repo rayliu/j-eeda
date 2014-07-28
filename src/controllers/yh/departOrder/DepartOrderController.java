@@ -374,40 +374,29 @@ public class DepartOrderController extends Controller {
     }
 
     // editTransferOrder 初始数据
-    public void getIintDepartOrderItems() {
-        String order_id = getPara("localArr");// 运输单id
+    public void getInitDepartOrderItems() {
+    	String order_id = getPara("localArr");// 运输单id
+        String tr_item = getPara("tr_item");// 货品id
+        String item_detail = getPara("item_detail");// 单品id
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select count(1) total from transfer_order_item tof left join transfer_order  oro  on tof.order_id =oro.id "
-                + " left join contact c on c.id in (select contact_id from party p where oro.customer_id=p.id)" + " where tof.order_id in("
+        String sqlTotal = "select count(1) total from transfer_order_item tof" + " left join transfer_order  t_o  on tof.order_id =t_o.id "
+                + " left join contact c on c.id in (select contact_id from party p where t_o.customer_id=p.id)" + " where tof.order_id in("
                 + order_id + ")";
+        logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select tof.* ,oro.order_no as order_no,oro.id as tr_order_id,c.company_name as customer ,wh.warehouse_name as warehouse_name,co.contact_person ,co.mobile ,co.address from transfer_order_item tof"
-                + " left join transfer_order  oro  on tof.order_id =oro.id "
-                + "left join contact c on c.id in (select contact_id from party p where oro.customer_id=p.id)"
-                +"left join contact co on co.id in (select id  from party p where oro.notify_party_id=p.id)"
-                +" left join warehouse wh on oro.warehouse_id=wh.id "
+        String sql = "select tof.* , t_o.order_no as order_no, t_o.id as tr_order_id, c.company_name as customer  from transfer_order_item tof"
+                + " left join transfer_order  t_o  on tof.order_id = t_o.id "
+                + "left join contact c on c.id in (select contact_id from party p where t_o.customer_id=p.id)"
                 + " where tof.order_id in("
                 + order_id + ")  order by c.id" + sLimit;
-        String sql_dp_detail = "select * from depart_transfer_itemdetail";
         List<Record> departOrderitem = Db.find(sql);
-        List<Record> depart_item_detail = Db.find(sql_dp_detail);
-        for (int i = 0; i < departOrderitem.size(); i++) {
-            for (int j = 0; j < depart_item_detail.size(); j++) {
-                if (departOrderitem.get(i).get("order_id").equals(depart_item_detail.get(j).get("order_id"))
-                        && departOrderitem.get(i).get("ID").equals(depart_item_detail.get(j).get("item_id"))) {
-                    double amount = Double.parseDouble(departOrderitem.get(i).get("amount").toString());
-                    amount--;
-                    departOrderitem.get(i).set("amount", amount);
-                }
-            }
-        }
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
         Map.put("iTotalRecords", rec.getLong("total"));

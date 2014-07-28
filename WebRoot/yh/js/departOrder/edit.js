@@ -1,6 +1,5 @@
  $(document).ready(function() {
-        $('#menu_assign').addClass('active').find('ul').addClass('in');
-       
+     $('#menu_assign').addClass('active').find('ul').addClass('in');
     	var status=$("#status").val();
         var message=$("#message").val();
         var type=$("#type").val();
@@ -25,52 +24,52 @@
         	$("#order_sh").attr("disabled",true);
         	$("#order_hd").attr("disabled",false);
         $("#edit_status").attr("disabled",true);
-        }
-      if(type=="one"){
-    	  $("#ordertypeone").attr('checked', 'checked');
-      }else{
-    	  $("#ordertypetwo").attr('checked', 'checked');
-      }
-      	if(last_detail_size=='false'){
-      		$("#box_one").modal('show');
-      	}else if(last_detail_size=='true'){
-      		$("#box_two").modal('show');
-      	}
+     }
+     if(type=="one"){
+    	$("#ordertypeone").attr('checked', 'checked');
+     }else{
+    	$("#ordertypetwo").attr('checked', 'checked');
+     }
+     if(last_detail_size=='false'){
+     	$("#box_one").modal('show');
+     }else if(last_detail_size=='true'){
+     	$("#box_two").modal('show');
+     }
       
      // 列出所有的司机
    	 $('#driverMessage').on('keyup click', function(){
-    		var inputStr = $('#driverMessage').val();
-    		$.get('/yh/transferOrder/searchAllDriver', {input:inputStr}, function(data){
-    			console.log(data);
-    			var driverList = $("#driverList");
-    			driverList.empty();
-    			for(var i = 0; i < data.length; i++)
-    			{
-    				driverList.append("<li><a tabindex='-1' class='fromLocationItem' pid='"+data[i].PID+"' phone='"+data[i].PHONE+"' contact_person='"+data[i].CONTACT_PERSON+"' > "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
-    			}
-    		},'json');
-    		
-    		$("#driverList").css({ 
-            	left:$(this).position().left+"px", 
-            	top:$(this).position().top+32+"px" 
-           }); 
-           $('#driverList').show();
-   	 });
+        var inputStr = $('#driverMessage').val();
+        $.get('/yh/transferOrder/searchAllDriver', {input:inputStr}, function(data){
+        	console.log(data);
+        	var driverList = $("#driverList");
+        	driverList.empty();
+        	for(var i = 0; i < data.length; i++)
+        	{
+        		driverList.append("<li><a tabindex='-1' class='fromLocationItem' pid='"+data[i].PID+"' phone='"+data[i].PHONE+"' contact_person='"+data[i].CONTACT_PERSON+"' > "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
+        	}
+        },'json');
+    
+    $("#driverList").css({ 
+       left:$(this).position().left+"px", 
+       top:$(this).position().top+32+"px" 
+    }); 
+    $('#driverList').show();
+   	});
    	  	
-    	 // 选中司机
-    	 $('#driverList').on('mousedown', '.fromLocationItem', function(e){	
-    		 $("#driver_id").val($(this).attr('pid'));
-   	  	 $('#driverMessage').val($(this).attr('contact_person'));
-   	  	 $('#driver_phone').val($(this).attr('phone'));  	 
-   	     $('#driverList').hide();   
-        });
+     // 选中司机
+     $('#driverList').on('mousedown', '.fromLocationItem', function(e){	
+   	    $("#driver_id").val($(this).attr('pid'));
+   	    $('#driverMessage').val($(this).attr('contact_person'));
+   	    $('#driver_phone').val($(this).attr('phone'));  	 
+   	    $('#driverList').hide();   
+     });
 
-    	// 没选中司机，焦点离开，隐藏列表
-    	$('#driverMessage').on('blur', function(){
-     		$('#driverList').hide();
-     	});
-    	
-    	// 列出所有的车辆
+      // 没选中司机，焦点离开，隐藏列表
+     $('#driverMessage').on('blur', function(){
+    	$('#driverList').hide();
+    });
+   
+   // 列出所有的车辆
    	$('#carNoMessage').on('keyup click', function(){
    	var inputStr = $('#carNoMessage').val();
    	$.get('/yh/transferOrder/searchAllCarInfo', {input:inputStr}, function(data){
@@ -104,7 +103,56 @@
     		$('#carNoList').hide();
     });
 
-  	//显示货品table
+   	var message=$("#message").val();
+    var type=$("#type").val();
+    var depart_id=$("#depart_id").val();
+    var tr_item=$("#tr_itemid_list").val();
+    var item_detail=$("#item_detail").val();
+	 //显示货品table
+	 var datatable = $('#departItem-table').dataTable({
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+        "bDestroy": true,
+    	 "oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "sAjaxSource": "/yh/departOrder/getInitDepartOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
+        "aoColumns": [
+            { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
+            { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
+            { "mDataProp": "ITEM_NO"},
+            { "mDataProp": "ITEM_NAME"},
+            { "mDataProp": "AMOUNT"},
+            { "mDataProp": "VOLUME"},
+            { "mDataProp": "WEIGHT"},
+            { "mDataProp": "REMARK"},
+            { 
+                "mDataProp": null, 
+                "sWidth": "8%",                
+                "fnRender": function(obj) {                    
+                    return "<a class='btn btn-success dateilEdit' code='?id="+obj.aData.ID+"'>"+
+                                "<i class='fa fa-search fa-fw'></i>"+
+                                "查看"+
+                            "</a>"+					
+                            "<a class='btn btn-danger cancelbutton' code='?id="+obj.aData.TR_ORDER_ID+"'>"+
+                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
+                                "删除"+
+                            "</a>";
+                },
+            }                                       
+        ],
+        "fnInitComplete": function(oSettings, json) {
+        	$("#eeda-table td").on('click', '', function(){
+        	 hang = $(this).parent("tr").prevAll().length; 
+       		  	hang = Number(hang)+1;
+        	});         	    
+        }       
+    });
+	
+   	
+  	/*//显示货品table
     	var datatable = $('#eeda-table').dataTable({
             //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
             "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -161,7 +209,7 @@
     		$("#eeda-table").on('click', '.dateilEdit', function(e){
     			e.preventDefault();
     			 var even_detail_id=[];
-    			/*保存上一次勾选单品id,货品id*/
+    			保存上一次勾选单品id,货品id
     			 $("table tr:not(:first)").each(function(){ 
      	         	$("input",this).each(function(){
      	         		var code=$(this).val();
@@ -224,7 +272,24 @@
     			$("#style").hide();
     			detailTable.fnSettings().sAjaxSource = "/yh/departOrder/itemDetailList?item_id="+itemId+"&depart_id="+depart_id;
     			detailTable.fnDraw();  
-    		});
+    		});*/
+    	
+    	var tr_itemid_list=[];
+     	// 查看货品
+    	$("#departItem-table").on('click', '.dateilEdit', function(e){
+    		e.preventDefault();
+    		
+    		$("#transferOrderItemDateil").show();
+    		var code = $(this).attr('code');
+    		var itemId = code.substring(code.indexOf('=')+1);
+    		tr_itemid_list.push(itemId);
+    		$("#item_id").val(itemId);
+    		$("#item_save").attr("disabled", false);
+    		$("#style").hide();
+    		detailTable.fnSettings().sAjaxSource = "/yh/pickupOrder/findAllItemDetail?item_id="+itemId+"&pickupId="+$("#pickupOrderId").val();
+    		detailTable.fnDraw();  			
+    	});
+    	
     		// 删除货品
     		$("#eeda-table").on('click', '.cancelbutton', function(e){
     			e.preventDefault();		
@@ -233,6 +298,7 @@
     			 $("table tr:eq("+hang+")").remove(); 
     		});
     		var item_id = $("#item_id").val();
+    		
     		var detailTable= $('#detailTable').dataTable({           
                 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",  
                 "iDisplayLength": 10,
@@ -771,16 +837,6 @@
 				$('#notify_address').text(data.ADDRESS);
 				$('#notify_contact_person').text(data.CONTACT_PERSON);
 				$('#notify_phone').text(data.PHONE);
-			},'json');
-    		//回显司机信息
-    		$.get('/yh/departOrder/ginDriver', {depart_id:depart_id}, function(data){
-				console.log(data);
-				$('#driverId').val(data.ID);
-		  		$('#customerMessage').val(data.DRIVER);
-		  		$('#phone').val(data.PHONE);
-		  		$('#carsize').val(data.LENGTH);
-		  		$('#cartype').val(data.CARTYPE);
-		  		$('#car_no').val(data.CAR_NO);
 			},'json');
     		//是直送显示“确认收货”
     		var check_sh=$("#check_sh").val();
