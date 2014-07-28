@@ -790,4 +790,25 @@
     		}else{
     			$("#order_rk").show();
     		}
+
+    	    // 回显车长
+    	    var carSizeOption=$("#carsize>option");
+    	    var carSizeVal=$("#carSizeSelect").val();
+    	    for(var i=0;i<carSizeOption.length;i++){
+    	       var svalue=carSizeOption[i].text;
+    	       if(carSizeVal==svalue){
+    	    	   $("#carsize option[value='"+svalue+"']").attr("selected","selected");
+    	       }
+    	    }
+    	    
+    	    // 回显车型
+    	    var carTypeOption=$("#cartype>option");
+    	    var carTypeVal=$("#carTypeSelect").val();
+    	    for(var i=0;i<carTypeOption.length;i++){
+    	    	var svalue=carTypeOption[i].text;
+    	    	if(carTypeVal==svalue){
+    	    		$("#cartype option[value='"+svalue+"']").attr("selected","selected");
+    	    	}
+    	    }
+    	    
     });

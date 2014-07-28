@@ -22,7 +22,7 @@ var dataTable =$('#dataTables-example').dataTable({
                             "</a>";
                 }
             } ,
-            {"mDataProp":"DRIVER"},
+            {"mDataProp":"CONTACT_PERSON"},
             {"mDataProp":"PHONE"},
             {"mDataProp":"CAR_NO"},
             {"mDataProp":"CARTYPE"},     

@@ -3,7 +3,6 @@ package controllers.yh.departOrder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +13,7 @@ import models.DepartOrderItemdetail;
 import models.DepartTransferOrder;
 import models.InventoryItem;
 import models.Location;
+import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderItem;
@@ -70,10 +70,10 @@ public class DepartOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select deo.id as depart_id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,car.*, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
+        String sql = "select deo.id as depart_id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
+        		+ " left join carinfo c on deo.carinfo_id = c.id "
                 + " left join party p on deo.driver_id = p.id "
-        		+"left join carinfo  car on deo.driver_id=car.id"
-                + " left join contact c on p.contact_id = c.id where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
+                + " left join contact ct on p.contact_id = ct.id  where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
                 + DepartOrder.COMBINE_TYPE_DEPART
                 + "' order by deo.create_stamp desc"+sLimit;
         	depart = Db.find(sql);
@@ -220,7 +220,17 @@ public class DepartOrderController extends Controller {
         		 }
         	 }
          }
-        
+         Long driverId = depar.get("driver_id");
+         if (driverId != null) {
+         	Party driver = Party.dao.findById(driverId);
+         	Contact driverContact = Contact.dao.findById(driver.get("contact_id"));
+         	setAttr("driverContact", driverContact);
+         }
+         Long carinfoId = depar.get("carinfo_id");
+         if (carinfoId != null) {
+         	Carinfo carinfo = Carinfo.dao.findById(carinfoId);
+         	setAttr("carinfo", carinfo);
+         }
         setAttr("type", "many");
         setAttr("depart_id", getPara());
         setAttr("localArr", tr_order_id);
@@ -436,20 +446,6 @@ public class DepartOrderController extends Controller {
         return the_order_no;
     }
 
-    // 查找客户
-    public void searchCustomer() {
-        String input = getPara("input");
-        List<Record> locationList = Collections.EMPTY_LIST;
-        if (input.trim().length() > 0) {
-            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and (company_name like '%" + input + "%' or contact_person like '%" + input
-                    + "%' or email like '%" + input + "%' or mobile like '%" + input + "%' or phone like '%" + input
-                    + "%' or address like '%" + input + "%' or postal_code like '%" + input + "%') limit 0,10");
-        } else {
-            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id  limit 0,10");
-        }
-        renderJson(locationList);
-    }
-
     // 判断是否单据继续创建
     public boolean CheckDepartOrder(String[] order_id) {
         int detail_total = 0;// 运输单货品/单品数
@@ -493,7 +489,8 @@ public class DepartOrderController extends Controller {
         String name = (String) currentUser.getPrincipal();
         UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
         String creat_id = users.get("id").toString();// 创建人id
-        String driver_id = getPara("driverid");// 司机id
+        String driver_id = getPara("driver_id");// 司机id
+        String carinfoId = getPara("carinfoId");// 司机id
         String car_follow_name = getPara("car_follow_name");// 跟车人
         String car_follow_phone = getPara("car_follow_phone");// 跟车人电话
         String order_id2 = this.getPara("orderid");// 运输单id
@@ -501,13 +498,13 @@ public class DepartOrderController extends Controller {
         String[] item_detail = this.getPara("item_detail").split(",");// 单品id
         String[] tr_itemid = this.getPara("tr_itemid_list").split(",");// 货品id
         Date createDate = Calendar.getInstance().getTime();
-        // 如果司机id=“”,插入新司机
+        /*// 如果司机id=“”,插入新司机
         Carinfo car =new Carinfo();
         if ("".equals(getPara("driverid"))) {
             car.set("phone", getPara("phone")).set("driver", getPara("customerMessage"))
             .set("car_no", getPara("car_no")).set("length", getPara("carsize")).set("cartype", getPara("cartype"))
             .save();
-        }
+        }*/
         DepartOrder dp = null;
         // 如果发车单id="",新建发车单
         String item_id = "select order_id , id as item_id from transfer_order_item  where order_id in (" + order_id2 + ")";// 货品表查询货品id
@@ -523,10 +520,11 @@ public class DepartOrderController extends Controller {
                    .set("remark", getPara("remark"))
                     .set("car_follow_name", getPara("car_follow_name")).set("car_follow_phone", getPara("car_follow_phone"))
                     .set("route_from", getPara("route_from")).set("route_to", getPara("route_to")).set("status", "新建");
-            if("".equals(getPara("driverid"))){
-            	dp.set("driver_id", car.get("id"));
-            }else{
+            if(!"".equals(driver_id) && driver_id != null){
             	dp.set("driver_id",driver_id);
+            }
+            if(!"".equals(carinfoId) && carinfoId != null){
+            	dp.set("carinfo_id",carinfoId);
             }
             if (!"".equals(sp_id)) {
                 dp.set("sp_id", Integer.parseInt(sp_id));
@@ -633,10 +631,11 @@ public class DepartOrderController extends Controller {
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
                     .set("route_to", getPara("route_to"));
-            if("".equals(getPara("driverid"))){
-            	dp.set("driver_id", car.get("id"));
-            }else{
+            if(!"".equals(driver_id) && driver_id != null){
             	dp.set("driver_id",driver_id);
+            }
+            if(!"".equals(carinfoId) && carinfoId != null){
+            	dp.set("carinfo_id",carinfoId);
             }
             if (!"".equals(sp_id)) {
                 dp.set("sp_id", Integer.parseInt(sp_id));
