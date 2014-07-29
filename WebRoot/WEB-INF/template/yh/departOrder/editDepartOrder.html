@@ -5,7 +5,7 @@
            
                 <div class="col-lg-12">
                     <h1 class="page-header">发车单</h1>                  
-                    <input type="hidden" id="departOrderId" value="${depart.id!''}">
+                    <input type="hidden" id="departOrderId" value="${departOrder.id!''}">
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -32,7 +32,7 @@
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="basic">
                                 <div class="row">
-                                   <form id="orderForm" method="post" action="/yh/departOrder/savedepartOrder">
+                                   <form id="orderForm" method="post" action="">
                                <div class="col-lg-6">
                                 <input class="" id="last_detail_size" value="${last_detail_size!''}" type="hidden">
 	                            <input class="" id="depart_id" value="${depart_id!''}" type="hidden" name="depart_id" >
@@ -40,12 +40,15 @@
 	            				<input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
 	            				<input class="" id="tr_itemid_list" value="${tr_itemid!''}" type="hidden" name="tr_itemid_list">
 	            				<input class="" id="item_detail" value="${item_detail!''}" type="hidden" name="item_detail" >
-	                            <input class="" id="getIindepart_no" value="" type="hidden" name="getIindepart_no" >
-	                            <input class="" id="status" value="${depart.STATUS!''}" type="hidden" >
-	                            <input class="" id="sp_id" value="${depart.SP_ID!''}" type="hidden" name="sp_id" > 
+	                            <input class="" id="sp_id" value="${departOrder.sp_id!''}" type="hidden" name="sp_id" > 
 	                            <input class="" id="check_sh" value="${check_sh!''}" type="hidden" name="" >
-	                            <input id="carinfoId" type="hidden" name="carinfoId" value="${depart.carinfo_id!''}"/> 
-	                       		<input id="driver_id" type="hidden" name="driver_id" value="${depart.driver_id!''}"/>
+	                            <input type="hidden" name="order_no" value="${order_no!''}${departOrder.depart_no!''}"/>
+                               	<input type="hidden" name="status" value="${status!''}${departOrder.status!''}"/>
+                               	<input type="hidden" name="create_by" value="${create_by!''}${departOrder.create_by!''}"/>
+	                            <input id="carinfoId" type="hidden" name="carinfoId" value="${departOrder.carinfo_id!''}"/> 
+	                       		<input id="driver_id" type="hidden" name="driver_id" value="${departOrder.driver_id!''}"/>
+                                <input id="checkedDetail" type="hidden" name="checkedDetail"/>                                    	
+		                        <input id="uncheckedDetail" type="hidden" name="uncheckedDetail"/>
                                    		   <div class="form-group">
                                               <h2>供应商信息</h2>
                                                <input type="text" value="" name="spMessage" placeholder="选择供应商" class="form-control" id="spMessage">
@@ -146,54 +149,35 @@
 	                                       </div>
                                          <div class="form-group">
 	                                            <label>跟车人</label>
-	                                            <input class="form-control" id="car_follow_name" value="${depart.car_follow_name!''}" name="car_follow_name">
+	                                            <input class="form-control" id="car_follow_name" value="${departOrder.car_follow_name!''}" name="car_follow_name">
                                             </div>
                                                                                
                                             <div class="form-group">
 	                                            <label>跟车人电话</label>
-	                                            <input class="form-control" id="car_follow_phone" value="${depart.car_follow_phone!''}" name="car_follow_phone">
+	                                            <input class="form-control" id="car_follow_phone" value="${departOrder.car_follow_phone!''}" name="car_follow_phone">
                                             </div>
                                             
                                            	<div class="form-group">
                                             <label>备注</label>
-                                            <textarea class="form-control" rows="4" id="remark" name="remark" style=" height: 108px">${depart.remark!''}</textarea>
+                                            <textarea class="form-control" rows="4" id="remark" name="remark" style=" height: 108px">${departOrder.remark!''}</textarea>
                                         </div> 
                                     </div>
                                       <div class="col-lg-6">
-                                  <h2>发车信息</h2>  
+                                      <h2>发车信息</h2>  
                                          <div class="form-group">
-                                           
-                                            <div class="form-control" style="box-shadow:none;border:none ; padding-left: 0px;">
-                                                <label >
-                                                         	状态：
-                                            </label>
-                                              <label class="radio-inline" >
- 												${getIin_status!''}${depart.STATUS!''}
-                                            </label>
-                                            </div>
-                                                <div class="form-control" style="box-shadow:none;border:none;  padding-left: 0px;">
-                                           <label >
-                                                                                                                发车单号:
-                                            </label>
-                                              <label id="getIin_depart_no" class="radio-inline">
- 												${getIin_depart_no!''}${depart.DEPART_NO!''}
-                                            </label>
-                                            </div>
-                                              <div class="form-control" style="box-shadow:none;border:none ; padding-left: 0px">
-             								 <label>创建人:</label>
-                                             <label  id="create" class="radio-inline">
-                                             ${depart.USER_NAME!''}${creat!''}
-                                             </label>
-             								</div>
-                                        </div>
-                                     
-                                         
-                                                                                                         
+	                                        <label>拼车单号</label> <strong>${order_no!''} ${departOrder.depart_no!''}</strong>
+	                                        </div>
+	                                        <div class="form-group">
+	                                            <label>单据状态</label>   ${status!''} ${departOrder.status!''}
+	                                        </div>
+	                                        <div class="form-group">
+	                                        <label>创建人</label>   ${userLogin.user_name!''}   ${userLogin2.user_name!''}                                         
+	                                        </div>                                                            
 									
                                           <div class="form-group">
                                          <label>始发城市</label>
                                           <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;" >
-                                            <input id="locationForm" type="hidden" name="route_from" value="${depart.route_from!''}">
+                                            <input id="locationForm" type="hidden" name="route_from" value="${departOrder.route_from!''}">
                                             <input id="hideLocationFrom" type="hidden"> 
                         
                                                <label>省</label>
@@ -208,7 +192,7 @@
                                             	</div>
                                             </div>
         									<div class="form-group" >
-                                            <input id="locationTo" type="hidden" name="route_to" value="${depart.route_to!''}">
+                                            <input id="locationTo" type="hidden" name="route_to" value="${departOrder.route_to!''}">
                                            	<label>目的地城市</label>
 		                                     <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">
 		                                        <label>省</label>
@@ -415,12 +399,42 @@
                    				</div> 
 				                 </div>
 				                </div>      
-				                </div>                              
-               
-                            <div class="row">
-                            <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <div class="controls">
+				                </div>                          					
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                
+                        <div class="modal fade" id="detailDialog" tabindex="-1">
+							<div class="modal-dialog">
+                                <div class="col-lg-4" class="col-lg-4" style="border-top-width: 0px; margin-top: 100px; width: 350px; height: 200px; margin-left: 150px;">
+	                    			<div class="panel panel-default">
+		                       			<div class="panel-heading">
+		                            		温馨提示
+		                        		</div>
+		                       			<div class="panel-body">
+		                            		<p>单据创建完毕,是否继续创建？</p>
+		                        		</div>
+		                        		<form id="detailCheckBoxForm" method="post" action="/yh/departOrder/createDepartOrder">
+		                        			<input type="hidden" name="localArr" value="${localArr!''}">
+			                       			<div class="panel-footer">
+			                          			<a class="btn btn-default" href="/yh/departOrder">否</a>
+			                          			<button id="continueCreateBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">是</button>
+			                        		</div>                        		
+		                        		</form>
+	                   				</div> 
+				                </div>
+			                </div>      
+			            </div> 
+                        
+                <!-- /.col-lg-12 -->
+                        <div class=".tooltip-demo">
+                            <hr/>
+                            <a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
+		               		<button id="saveDepartOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
+		               		<a class="btn btn-default" href="/yh/departOrder">返回</a>
+                        	<div class="form-group">
+                                            <!-- <div class="controls">
                                               <%if(depart_id!''==""){%>  
                                         <button class="btn btn-default" id="order_save"  type="button" style="padding:6px 30px">保存</button>
                                         <%}%>
@@ -436,18 +450,10 @@
                                             <a class="btn btn-default" href="/yh/departOrder/index">返回</a>
                                             </div>
                                         </div>
-                                    </div>
-                        
+                                    </div> -->
                         </div>
-                        </div>
-                       					
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
-                </div>
-                <!-- /.col-lg-12 -->
-
             </div>
+            
         </div>
         <!-- /#page-wrapper -->
 

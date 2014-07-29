@@ -740,18 +740,60 @@
     	    $("#box_two_config").click(function(e){
     	    	$("#box_two").modal('hide');
       	    });
+
+    	    var handlePickkupOrderDetail = function(){
+    	    	// 保存单品
+    	    	$.post('/yh/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
+    				$("#departOrderId").val(data.ID);
+    				if(data.ID>0){
+    					$("#departOrderId").val(data.ID);
+    				  	$("#style").show();				    
+    				}else{
+    					alert('数据保存失败。');
+    				}
+    			},'json');
+    	    };
+    	    
+    	    var saveDepartOrderFunction = function(){
+    	    	var detailIds = [];
+    	    	var uncheckedDetailIds = [];
+    		    $("input[name='detailCheckBox']").each(function(){
+    		    	if($(this).prop('checked') == true){
+    		    		detailIds.push($(this).val());
+    		    	}else{
+    		    		uncheckedDetailIds.push($(this).val());
+    		    	}
+    		    });
+    	    	$("#checkedDetail").val(detailIds);
+    	    	$("#uncheckedDetail").val(uncheckedDetailIds);
+    	    	if(uncheckedDetailIds.length > 0){
+    	    		handlePickkupOrderDetail();
+    	    		// 对一张单进行多次提货,把选中的和没选中的单品区分开来,然后在进行判断
+    	    		$("#detailDialog").modal('show');
+    	    	}else{
+    	    		handlePickkupOrderDetail();
+    	    	}
+    	    };
+
+    	    //点击保存的事件，保存拼车单信息
+    	    var clickSaveDepartOrder = function(e){
+    	    	//阻止a 的默认响应行为，不需要跳转
+    			e.preventDefault();		
+    			//异步向后台提交数据
+    	        saveDepartOrderFunction();
+    	    };    	       	    
+    	    
     	    //编辑保存
-    	    $("#order_edit").click(function(e){
-    	    	$(this).attr("disabled",true);
-    	    	$.post('/yh/departOrder/savedepartOrder', $("#orderForm").serialize(), function(dp){
+    	    $("#saveDepartOrderBtn").click(function(e){
+    	    	clickSaveDepartOrder(e);
+    	    	/*//$(this).attr("disabled",true);
+    	    	$.post('/yh/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(date){
     	    		
         	    	$("#style").show();
         	    	if(dp.STATUS=="新建"||dp.STATUS=="在途"){
         	    		$("#order_fc").attr("disabled",false);
-        	    	}
-        	    	
-    	    	});
-    	    	
+        	    	}        	    	
+    	    	});*/    	    	
     	    });
     	    $("#order_fc").click(function(e){
     	    	$(this).attr("disabled",true);

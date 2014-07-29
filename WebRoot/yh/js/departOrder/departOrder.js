@@ -15,7 +15,7 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
-                    return '<input type="checkbox" arrival='+obj.aData.ARRIVAL_MODE+'  name="order_check_box" code='+obj.aData.SPID+' class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+                	 return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
                  }
             },
             { "mDataProp": "ORDER_NO"},
@@ -55,7 +55,7 @@ $(document).ready(function() {
         ]      
     });	
 
-    $("#saveBtn").click(function(e){
+   /* $("#saveBtn").click(function(e){
         e.preventDefault();
       var tableArr=[];
       var sp_idArr=[];
@@ -102,6 +102,22 @@ $(document).ready(function() {
         console.log(tableArr);
             $("#departOrder_message").val(tableArr);
             $("#createForm").submit();
+    });*/
+    
+
+    $('#saveBtn').click(function(e){
+        e.preventDefault();
+    	var trArr=[];
+        var tableArr=[];
+        $("input[name='order_check_box']").each(function(){
+        	if($(this).prop('checked') == true){
+        		trArr.push($(this).val());
+        	}
+        });
+        tableArr.push(trArr);        
+        console.log(tableArr);
+        $('#pickupOrder_message').val(tableArr);
+        $('#createForm').submit();
     });
     
     $('#datetimepicker').datetimepicker({  

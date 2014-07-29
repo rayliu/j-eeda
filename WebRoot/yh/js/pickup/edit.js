@@ -247,11 +247,7 @@
     	//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();		
 		//异步向后台提交数据
-        if($("#pickupOrderId").val() == ""){
-        	savePickupOrderFunction();
-        }else{
-        	savePickupOrderFunction();
-        }
+        savePickupOrderFunction();
     };
     
 	//transferOrderForm 不需要提交	

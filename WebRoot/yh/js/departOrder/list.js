@@ -17,9 +17,7 @@ var dataTable =$('#dataTables-example').dataTable({
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='' href='/yh/departOrder/add/"+obj.aData.DEPART_ID+"'>"+
-                                obj.aData.DEPART_NO +
-                            "</a>";
+                	return "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
                 }
             } ,
             {"mDataProp":"CONTACT_PERSON"},

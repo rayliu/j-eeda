@@ -70,7 +70,7 @@ public class DepartOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select deo.id as depart_id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
+        String sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
         		+ " left join carinfo c on deo.carinfo_id = c.id "
                 + " left join party p on deo.driver_id = p.id "
                 + " left join contact ct on p.contact_id = ct.id  where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
@@ -110,7 +110,7 @@ public class DepartOrderController extends Controller {
         	   logger.debug("total records:" + rec.getLong("total"));
 	            }
            logger.debug("total records:" +total );
-             String sql_seach ="select deo.id as depart_id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length, group_concat(tr.order_no separator ' ') as transfer_order_no "
+             String sql_seach ="select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length, group_concat(tr.order_no separator ' ') as transfer_order_no "
     				+" from depart_order deo" 
     				+ " left join carinfo c on deo.carinfo_id = c.id "
     	            + " left join party p on deo.driver_id = p.id "
@@ -128,18 +128,92 @@ public class DepartOrderController extends Controller {
         renderJson(map);
     }
 
-    // 添加编辑
     public void add() {
-        if (getPara() == null) {
-            if (LoginUserController.isAuthenticated(this))
+        if (LoginUserController.isAuthenticated(this))
+            render("/yh/departOrder/allTransferOrderList.html");
+    }
 
-                render("/yh/departOrder/allTransferOrderList.html");
-        } else {
-            int depart_id = Integer.parseInt(getPara());
-            getIintedit(depart_id);
-         
+    // 修改发车单页面
+    public void edit() {
+        String sql = "select do.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
+                + "where dt.depart_id =do.id)as order_id from depart_order  do "
+                + "left join contact co on co.id in( select p.contact_id  from party p where p.id=do.driver_id ) "
+                + "left join user_login  u on u.id=do.create_by where do.combine_type ='"
+                + DepartOrder.COMBINE_TYPE_DEPART
+                + "' and do.id in(" + getPara("id") + ")";
+        DepartOrder departOrder = DepartOrder.dao.findFirst(sql);
+        setAttr("departOrder", departOrder);
+
+        Long sp_id = departOrder.get("sp_id");
+        if (sp_id != null) {
+            Party sp = Party.dao.findById(sp_id);
+            Contact spContact = Contact.dao.findById(sp.get("contact_id"));
+            setAttr("spContact", spContact);
+        }
+        Long driverId = departOrder.get("driver_id");
+        if (driverId != null) {
+        	Party driver = Party.dao.findById(driverId);
+        	Contact driverContact = Contact.dao.findById(driver.get("contact_id"));
+        	setAttr("driverContact", driverContact);
+        }
+        Long carinfoId = departOrder.get("carinfo_id");
+        if (carinfoId != null) {
+        	Carinfo carinfo = Carinfo.dao.findById(carinfoId);
+        	setAttr("carinfo", carinfo);
+        }
+        UserLogin userLogin = UserLogin.dao.findById(departOrder.get("create_by"));
+        setAttr("userLogin2", userLogin);
+        setAttr("depart_id", getPara());
+        String orderId = "";
+        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?",
+        		departOrder.get("id"));
+        for (DepartTransferOrder departTransferOrder : departTransferOrders) {
+            orderId += departTransferOrder.get("order_id") + ",";
+        }
+        orderId = orderId.substring(0, orderId.length() - 1);
+        setAttr("localArr", orderId);
+
+        String routeFrom = departOrder.get("route_from");
+        Location locationFrom = null;
+        if (routeFrom != null || !"".equals(routeFrom)) {
+            List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
+            Location l = Location.dao.findFirst("select * from location where code = (select pcode from location where code = '"
+                    + routeFrom + "')");
+            if (provinces.contains(l)) {
+                locationFrom = Location.dao
+                        .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                                + routeFrom + "'");
+            } else {
+                locationFrom = Location.dao
+                        .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                                + routeFrom + "'");
+            }
+            setAttr("locationFrom", locationFrom);
         }
 
+        String routeTo = departOrder.get("route_to");
+        Location locationTo = null;
+        if (routeTo != null || !"".equals(routeTo)) {
+            List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
+            Location l = Location.dao.findFirst("select * from location where code = (select pcode from location where code = '" + routeTo
+                    + "')");
+            if (provinces.contains(l)) {
+                locationTo = Location.dao
+                        .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                                + routeTo + "'");
+            } else {
+                locationTo = Location.dao
+                        .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                                + routeTo + "'");
+            }
+            setAttr("locationTo", locationTo);
+        }
+
+        TransferOrderMilestone transferOrderMilestone = TransferOrderMilestone.dao.findFirst(
+                "select * from transfer_order_milestone where pickup_id = ? order by create_stamp desc", departOrder.get("id"));
+        setAttr("transferOrderMilestone", transferOrderMilestone);
+        if (LoginUserController.isAuthenticated(this))
+        	render("/yh/departOrder/editDepartOrder.html");
     }
 
     // 弹窗
@@ -348,7 +422,61 @@ public class DepartOrderController extends Controller {
         renderJson(transferOrderListMap);
     }
 
-    // allTranferOrderList 创建发车单
+    public void createDepartOrder() {
+        String list = this.getPara("localArr");
+        setAttr("localArr", list);
+        String[] transferOrderIds = list.split(",");
+
+        TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
+        setAttr("transferOrderAttr", transferOrderAttr);
+
+        logger.debug("localArr" + list);
+        String order_no = null;
+        setAttr("saveOK", false);
+        /*String[] orderIds = list.split(",");
+        for (int i = 0; i < orderIds.length; i++) {
+            TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
+            transferOrder.set("pickup_seq", i + 1);
+            transferOrder.update();
+        }*/
+        TransferOrder transferOrder = new TransferOrder();
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        setAttr("create_by", users.get(0).get("id"));
+
+        DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order order by depart_no desc limit 0,1");
+        if (order != null) {
+            String num = order.get("depart_no");
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) {
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            setAttr("order_no", "FC" + order_no);
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            setAttr("order_no", "FC" + order_no);
+        }
+
+        UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+        setAttr("userLogin", userLogin);
+
+        setAttr("status", "新建");
+        setAttr("saveOK", false);
+        if (LoginUserController.isAuthenticated(this))
+        	render("/yh/departOrder/editDepartOrder.html");
+    }
+    
+    /*// allTranferOrderList 创建发车单
     public void addDepartOrder() {
         String list = getPara("localArr");
         String[] order_list = getPara("localArr").split(",");
@@ -366,12 +494,10 @@ public class DepartOrderController extends Controller {
     		}else{
     			setAttr("notifi_check", true);
     		}
-        }
-        
-       
+        }       
         if (LoginUserController.isAuthenticated(this))
             render("departOrder/editTransferOrder.html");
-    }
+    }*/
 
     // editTransferOrder 初始数据
     public void getInitDepartOrderItems() {
@@ -701,7 +827,169 @@ public class DepartOrderController extends Controller {
         }
 
     }
+    
+    // 保存发车单
+    public void saveDepartOrder() {
+    	String depart_id = getPara("depart_id");// 发车单id
+    	String sp_id = getPara("sp_id");// 供应商id
+    	// 查找创建人id
+    	String name = (String) currentUser.getPrincipal();
+    	UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
+    	String creat_id = users.get("id").toString();// 创建人id
+    	String driver_id = getPara("driver_id");// 司机id
+    	String carinfoId = getPara("carinfoId");// 司机id
+    	String car_follow_name = getPara("car_follow_name");// 跟车人
+    	String car_follow_phone = getPara("car_follow_phone");// 跟车人电话
+    	Date createDate = Calendar.getInstance().getTime();
+    	String checkedDetail = getPara("checkedDetail");
+        String uncheckedDetailIds = getPara("uncheckedDetail");
+    	DepartOrder dp = null;
+    	if ("".equals(depart_id)) {
+    		dp = new DepartOrder();
+    		dp.set("create_by", getPara("create_by")).set("create_stamp", createDate)
+	    		.set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
+	    		.set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name")).set("car_follow_phone", getPara("car_follow_phone"))
+	    		.set("route_from", getPara("route_from")).set("route_to", getPara("route_to")).set("status", getPara("status"));
+    		if(!"".equals(driver_id) && driver_id != null){
+    			dp.set("driver_id",driver_id);
+    		}
+    		if(!"".equals(carinfoId) && carinfoId != null){
+    			dp.set("carinfo_id",carinfoId);
+    		}
+    		if (!"".equals(sp_id)) {
+    			dp.set("sp_id", Integer.parseInt(sp_id));
+    		}
+    		if (!"".equals(car_follow_name)) {
+    			dp.set("car_follow_name", car_follow_name);
+    		}
+    		if (!"".equals(car_follow_phone)) {
+    			dp.set("car_follow_phone", car_follow_phone);
+    		}
+    		dp.save();
+            saveDepartTransfer(dp, getPara("orderid"), checkedDetail, uncheckedDetailIds);
+            //savePickupOrderMilestone(dp);
+    	} else {		
+    		dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
+    		dp.set("create_by", getPara("create_by")).set("create_stamp", createDate)
+	    		.set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
+	    		.set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name")).set("car_follow_phone", getPara("car_follow_phone"))
+	    		.set("route_from", getPara("route_from")).set("route_to", getPara("route_to")).set("status", getPara("status"));
+    		if(!"".equals(driver_id) && driver_id != null){
+    			dp.set("driver_id",driver_id);
+    		}
+    		if(!"".equals(carinfoId) && carinfoId != null){
+    			dp.set("carinfo_id",carinfoId);
+    		}
+    		if (!"".equals(sp_id)) {
+    			dp.set("sp_id", Integer.parseInt(sp_id));
+    		}
+    		if (!"".equals(car_follow_name)) {
+    			dp.set("car_follow_name", car_follow_name);
+    		}
+    		if (!"".equals(car_follow_phone)) {
+    			dp.set("car_follow_phone", car_follow_phone);
+    		}
+    		dp.update();
+    		updateDepartTransfer(dp, getPara("orderid"), checkedDetail, uncheckedDetailIds);
+    	}  
+        renderJson(dp);  	
+    }
+    
+    // 更新中间表
+    private void updateDepartTransfer(DepartOrder pickupOrder, String orderId, String checkedDetail, String uncheckedDetailId) {
+        if (checkedDetail != null && !"".equals(checkedDetail)) {
+            String[] checkedDetailIds = checkedDetail.split(",");
+            TransferOrderItemDetail transferOrderItemDetail = null;
+            for (int j = 0; j < checkedDetailIds.length && checkedDetailIds.length > 0; j++) {
+                transferOrderItemDetail = TransferOrderItemDetail.dao.findById(checkedDetailIds[j]);
+                transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
+                transferOrderItemDetail.update();
+            }
+            TransferOrder transferOrder = TransferOrder.dao.findById(transferOrderItemDetail.get("order_id"));
+            transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+            transferOrder.update();
+        }
+        String[] uncheckedDetailIds = uncheckedDetailId.split(",");
+        if (uncheckedDetailId != null && !"".equals(uncheckedDetailId)) {
+            TransferOrderItemDetail transferOrderItemDetail = null;
+            for (int j = 0; j < uncheckedDetailIds.length && uncheckedDetailIds.length > 0; j++) {
+                transferOrderItemDetail = TransferOrderItemDetail.dao.findById(uncheckedDetailIds[j]);
+                transferOrderItemDetail.set("depart_id", null);
+                transferOrderItemDetail.update();
+            }
+        }
+        if (uncheckedDetailIds.length == 0 || "".equals(uncheckedDetailIds[0])) {
+            List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
+                    .find("select * from transfer_order_item_detail where order_id in(" + orderId + ")");
+            String str = "";
+            for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
+                Long departId = transferOrderItemDetail.get("depart_id");
+                if (departId == null || "".equals(departId)) {
+                    str += departId;
+                }
+            }
+            if ("".equals(str)) {
+                List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in (" + orderId + ")");
+                for (TransferOrder transferOrder : transferOrders) {
+                    transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+                    transferOrder.update();
+                }
+            }
+        }
+    }
 
+    // 将数据保存进中间表
+    private void saveDepartTransfer(DepartOrder pickupOrder, String param, String checkedDetail, String uncheckedDetailId) {
+        DepartTransferOrder departTransferOrder = null;
+        String[] params = param.split(",");
+        if (checkedDetail == null || "".equals(checkedDetail)) {
+            for (int i = 0; i < params.length; i++) {
+                departTransferOrder = new DepartTransferOrder();
+                departTransferOrder.set("depart_id", pickupOrder.get("id"));
+                departTransferOrder.set("order_id", params[i]);
+                TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
+                transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+                transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
+                transferOrder.update();
+                departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
+                departTransferOrder.save();
+
+                List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
+                        "select * from transfer_order_item_detail where order_id = ?", params[i]);
+                for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
+                    if (transferOrderItemDetail.get("depart_id") == null) {
+                        transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
+                        transferOrderItemDetail.update();
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < params.length; i++) {
+                departTransferOrder = new DepartTransferOrder();
+                departTransferOrder.set("depart_id", pickupOrder.get("id"));
+                departTransferOrder.set("order_id", params[i]);
+                TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
+                transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
+                transferOrder.update();
+                departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
+                departTransferOrder.save();
+            }
+            String[] checkedDetailIds = checkedDetail.split(",");
+            for (int j = 0; j < checkedDetailIds.length; j++) {
+                TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(checkedDetailIds[j]);
+                transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
+                transferOrderItemDetail.update();
+            }
+
+            String[] uncheckedDetailIds = uncheckedDetailId.split(",");
+            for (int j = 0; j < uncheckedDetailIds.length; j++) {
+                TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(uncheckedDetailIds[j]);
+                transferOrderItemDetail.set("depart_id", "");
+                transferOrderItemDetail.update();
+            }
+        }
+    }
+    
     // 修改发车单状态
     public void updatestate() {
         String depart_id = getPara("depart_id");// 发车单id

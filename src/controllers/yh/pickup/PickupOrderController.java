@@ -562,7 +562,7 @@ public class PickupOrderController extends Controller {
             TransferOrderItemDetail transferOrderItemDetail = null;
             for (int j = 0; j < checkedDetailIds.length && checkedDetailIds.length > 0; j++) {
                 transferOrderItemDetail = TransferOrderItemDetail.dao.findById(checkedDetailIds[j]);
-                transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
+                transferOrderItemDetail.set("pickup_id", pickupOrder.get("id"));
                 transferOrderItemDetail.update();
             }
             TransferOrder transferOrder = TransferOrder.dao.findById(transferOrderItemDetail.get("order_id"));
@@ -574,7 +574,7 @@ public class PickupOrderController extends Controller {
             TransferOrderItemDetail transferOrderItemDetail = null;
             for (int j = 0; j < uncheckedDetailIds.length && uncheckedDetailIds.length > 0; j++) {
                 transferOrderItemDetail = TransferOrderItemDetail.dao.findById(uncheckedDetailIds[j]);
-                transferOrderItemDetail.set("depart_id", null);
+                transferOrderItemDetail.set("pickup_id", null);
                 transferOrderItemDetail.update();
             }
         }
@@ -583,7 +583,7 @@ public class PickupOrderController extends Controller {
                     .find("select * from transfer_order_item_detail where order_id in(" + orderId + ")");
             String str = "";
             for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
-                Long departId = transferOrderItemDetail.get("depart_id");
+                Long departId = transferOrderItemDetail.get("pickup_id");
                 if (departId == null || "".equals(departId)) {
                     str += departId;
                 }
@@ -617,8 +617,8 @@ public class PickupOrderController extends Controller {
                 List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
                         "select * from transfer_order_item_detail where order_id = ?", params[i]);
                 for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
-                    if (transferOrderItemDetail.get("depart_id") == null) {
-                        transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
+                    if (transferOrderItemDetail.get("pickup_id") == null) {
+                        transferOrderItemDetail.set("pickup_id", pickupOrder.get("id"));
                         transferOrderItemDetail.update();
                     }
                 }
@@ -637,20 +637,20 @@ public class PickupOrderController extends Controller {
             String[] checkedDetailIds = checkedDetail.split(",");
             for (int j = 0; j < checkedDetailIds.length; j++) {
                 TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(checkedDetailIds[j]);
-                transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
+                transferOrderItemDetail.set("pickup_id", pickupOrder.get("id"));
                 transferOrderItemDetail.update();
             }
 
             String[] uncheckedDetailIds = uncheckedDetailId.split(",");
             for (int j = 0; j < uncheckedDetailIds.length; j++) {
                 TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(uncheckedDetailIds[j]);
-                transferOrderItemDetail.set("depart_id", "");
+                transferOrderItemDetail.set("pickup_id", "");
                 transferOrderItemDetail.update();
             }
         }
     }
 
-    // 修改拼车单
+    // 修改拼车单页面
     public void edit() {
         String sql = "select do.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
                 + "where dt.depart_id =do.id)as order_id from depart_order  do "
