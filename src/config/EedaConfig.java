@@ -5,11 +5,13 @@ import java.sql.SQLException;
 
 import models.Account;
 import models.Category;
+import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.DepartOrder;
 import models.DepartOrderItemdetail;
 import models.DepartTransferOrder;
+import models.Fin_item;
 import models.InventoryItem;
 import models.Location;
 import models.Office;
@@ -227,6 +229,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("warehouse_order_item", WarehouseOrderItem.class);
         arp.addMapping("inventory_item", InventoryItem.class);
         arp.addMapping("carinfo", Carinfo.class);
+        arp.addMapping("fin_item", Fin_item.class);
+        arp.addMapping("delivery_order_fin_item", DeliveryOrderFinItem.class);
         // yh mapping
 
     }

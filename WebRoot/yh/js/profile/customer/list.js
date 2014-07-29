@@ -19,7 +19,7 @@ $(document).ready(function() {
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":"ABBR"},
             {"mDataProp":"CONTACT_PERSON"},        	
-            {"mDataProp":"MOBILE"},
+            {"mDataProp":"PHONE"},
             {"mDataProp":"ADDRESS"},
             {"mDataProp":"RECEIPT"},
             {"mDataProp":"PAYMENT",

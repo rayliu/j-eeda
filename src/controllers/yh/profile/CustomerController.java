@@ -185,6 +185,7 @@ public class CustomerController extends Controller {
             party.set("last_update_date", createDate);
             party.set("remark", getPara("remark"));
             party.set("payment", getPara("payment"));
+            party.set("receipt", getPara("receipt"));
             party.update();
 
             contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id=" + id);

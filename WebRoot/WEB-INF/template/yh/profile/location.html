@@ -15,12 +15,20 @@
 	 				<table class="table table-striped table-bordered table-hover datatable" id="example">
 						<thead>
 							<tr>
-								<th>城市编号</th>
 								<th>省</th>
+								<th>市</th>
 								<th>区</th>
 								<th>城市描述</th>
 								<!-- <th></th> -->
 							</tr>
+						
+							<!-- <tr>
+								<th>城市编号</th>
+								<th>省</th>
+								<th>区</th>
+								<th>城市描述</th>
+								<th></th>
+							</tr> -->
 						</thead>
 						<tbody>
 							<tr class="odd gradeX">
@@ -63,11 +71,12 @@ $(document).ready(function() {
 	        "bServerSide": true,
 	        "sAjaxSource": "/yh/location/listLocation",
 			"aoColumns": [
-				{ "mDataProp": "CODE" },
-				{ "mDataProp": "PNAME" },
-	            { "mDataProp": "NAME" },
-	            { "mDataProp": "REMARK" },
-	            ]
+						{ "mDataProp": "PROVINCE" },
+						{ "mDataProp": "CITY" },
+						{ "mDataProp": "DISTRICT" },
+						{ "mDataProp": "NAME" }
+						]
+
 	} );
 		
 

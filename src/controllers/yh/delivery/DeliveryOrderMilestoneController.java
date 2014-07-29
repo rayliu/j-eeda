@@ -1,11 +1,15 @@
 package controllers.yh.delivery;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DeliveryOrderFinItem;
 import models.DeliveryOrderMilestone;
+import models.Fin_item;
 import models.InventoryItem;
 import models.TransferOrder;
 import models.TransferOrderMilestone;
@@ -52,6 +56,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrder.update();
         // 扣库存
         gateOutProduct(delivery_id);
+        // 生成应付
 
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
@@ -227,5 +232,109 @@ public class DeliveryOrderMilestoneController extends Controller {
         String username = userLogin.get("user_name");
         map.put("username", username);
         renderJson(map);
+    }
+
+    // 应收list
+    public void accountReceivable() {
+        String id = getPara();
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from delivery_order_fin_item ";
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 获取当前页的数据
+        List<Record> orders = Db
+                .find("select * from delivery_order_fin_item d left join fin_item f on d.fin_item_id = f.id where f.type='应收' and d.order_id ='"
+                        + id + "'");
+
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        orderMap.put("aaData", orders);
+
+        renderJson(orderMap);
+    }
+
+    // 应付list
+    public void accountPayable() {
+        String id = getPara();
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from delivery_order_fin_item ";
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 获取当前页的数据
+        List<Record> orders = Db
+                .find("select * from delivery_order_fin_item d left join fin_item f on d.fin_item_id = f.id where f.type='应付' and d.order_id='"
+                        + id + "'");
+
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        orderMap.put("aaData", orders);
+
+        renderJson(orderMap);
+    }
+
+    // 添加应收
+    public void receiptSave() {
+        String id = getPara("delivery_item_id");
+
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        Date createDate = Calendar.getInstance().getTime();
+
+        Fin_item fItem = new Fin_item();
+        DeliveryOrderFinItem dFinItem = new DeliveryOrderFinItem();
+        if (!id.equals("")) {
+
+        } else {
+            fItem.set("name", getPara("item_name")).set("Remark", getPara("item_remark")).set("type", "应收");
+            fItem.save();
+            dFinItem.set("amount", getPara("item_amount")).set("fin_item_id", fItem.get("id")).set("status", "新建")
+                    .set("order_id", getPara());
+            dFinItem.save();
+        }
+        renderJson("{\"success\":true}");
+    }
+
+    // 添加应付
+    public void paymentSave() {
+        String id = getPara("delivery_item_id2");
+
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        Date createDate = Calendar.getInstance().getTime();
+
+        Fin_item fItem = new Fin_item();
+        DeliveryOrderFinItem dFinItem = new DeliveryOrderFinItem();
+        if (!id.equals("")) {
+
+        } else {
+            fItem.set("name", getPara("item_name2")).set("Remark", getPara("item_remark2")).set("type", "应付");
+            fItem.save();
+            dFinItem.set("amount", getPara("item_amount2")).set("fin_item_id", fItem.get("id")).set("status", "新建")
+                    .set("order_id", getPara());
+            dFinItem.save();
+        }
+        renderJson("{\"success\":true}");
     }
 }

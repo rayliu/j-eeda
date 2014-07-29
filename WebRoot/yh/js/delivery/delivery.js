@@ -1,6 +1,8 @@
 ﻿
 $(document).ready(function() {
 	$('#menu_deliver').addClass('active').find('ul').addClass('in');
+	$('#resetbutton').hide();
+	$('#resetbutton2').hide();
 	var hang="";
 		  //获取供应商的list，选中信息在下方展示其他信息
 			$('#spMessage').on('keyup click', function(){
@@ -82,6 +84,47 @@ $(document).ready(function() {
 		            {"mDataProp":"WEIGHT"},
 		        ]      
 		    });	
+			var deliveryid =$("#delivery_id").val();
+			//应收应付datatable
+			var receipttable =$('#table_fin').dataTable({
+				"bFilter": false, //不需要默认的搜索框
+		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		        //"sPaginationType": "bootstrap",
+		        "iDisplayLength": 10,
+		        "bServerSide": true,
+		    	"oLanguage": {
+		            "sUrl": "/eeda/dataTables.ch.txt"
+		        },
+		        "sAjaxSource":"/yh/deliveryOrderMilestone/accountReceivable/"+deliveryid,
+		        "aoColumns": [
+					{"mDataProp":"ID"},
+					{"mDataProp":"NAME"},
+		            {"mDataProp":"AMOUNT"},  
+		            {"mDataProp":"REMARK"},
+		            {"mDataProp":"STATUS"},
+		        ]      
+		    });
+			//应收应付datatable
+			var paymenttable=$('#table_fin2').dataTable({
+				"bFilter": false, //不需要默认的搜索框
+		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		        //"sPaginationType": "bootstrap",
+		        "iDisplayLength": 10,
+		        "bServerSide": true,
+		    	"oLanguage": {
+		            "sUrl": "/eeda/dataTables.ch.txt"
+		        },
+		        "sAjaxSource": "/yh/deliveryOrderMilestone/accountPayable/"+deliveryid,
+		        "aoColumns": [
+					{"mDataProp":"ID"},
+					{"mDataProp":"NAME"},
+					{"mDataProp":"AMOUNT"},  
+					{"mDataProp":"REMARK"},
+					{"mDataProp":"STATUS"},
+		        ]      
+		    });
 			
 			$('#cargo-table').dataTable({
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -123,6 +166,7 @@ $(document).ready(function() {
 		             },'json');
 		        });
 			var dab2= $('#eeda-table2').dataTable({
+				"bFilter": false, //不需要默认的搜索框
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        //"sPaginationType": "bootstrap",
@@ -188,6 +232,7 @@ $(document).ready(function() {
 			
 			  //deliveryOrderSearchTransfer ATM选择序列号
 			var dab= $('#eeda-table4').dataTable({
+				"bFilter": false, //不需要默认的搜索框
 			        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 			        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 			        //"sPaginationType": "bootstrap",
@@ -434,4 +479,33 @@ $(document).ready(function() {
 					}
 				}) ;
 			    	
+		//应付
+		$("#item_fin_save").click(function(){
+			var deliveryid =$("#delivery_id").val();
+			$.post('/yh/deliveryOrderMilestone/receiptSave/'+deliveryid, $("#fin_form").serialize(), function(data){
+				console.log(data);
+				if(data.success){
+					receipttable.fnDraw();
+					$('#fin_item').modal('hide');
+					$('#resetbutton').click();
+				}else{
+					
+				}
+				
+			});		
+		});	
+		//应收
+		$("#item_fin_save2").click(function(){	
+			var deliveryid =$("#delivery_id").val();
+			$.post('/yh/deliveryOrderMilestone/paymentSave/'+deliveryid, $("#fin_form2").serialize(), function(data){
+				console.log(data);
+				if(data.success){
+					paymenttable.fnDraw();
+					$('#fin_item2').modal('hide');
+					$('#resetbutton2').click();
+				}else{
+					
+				}
+			});		
+		});	
 });

@@ -1,0 +1,1 @@
+package models;import com.jfinal.plugin.activerecord.Model;@SuppressWarnings("serial")public class DeliveryOrderFinItem extends Model<DeliveryOrderFinItem> {	public static final DeliveryOrderFinItem dao = new DeliveryOrderFinItem();}

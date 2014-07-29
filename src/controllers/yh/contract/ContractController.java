@@ -58,15 +58,12 @@ public class ContractController extends Controller {
         String periodTo_filter = getPara("periodTo_filter");
 
         Map orderMap = new HashMap();
-        if (contractName_filter == null && contactPerson_filter == null
-                && periodFrom_filter == null && companyName_filter == null
-                && phone_filter == null && periodTo_filter == null) {
+        if (contractName_filter == null && contactPerson_filter == null && periodFrom_filter == null
+                && companyName_filter == null && phone_filter == null && periodTo_filter == null) {
             String sLimit = "";
             String pageIndex = getPara("sEcho");
-            if (getPara("iDisplayStart") != null
-                    && getPara("iDisplayLength") != null) {
-                sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                        + getPara("iDisplayLength");
+            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
             // 获取总条数
             String totalWhere = "";
@@ -93,10 +90,8 @@ public class ContractController extends Controller {
              */
             String sLimit = "";
             String pageIndex = getPara("sEcho");
-            if (getPara("iDisplayStart") != null
-                    && getPara("iDisplayLength") != null) {
-                sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                        + getPara("iDisplayLength");
+            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
             // 获取总条数
             String totalWhere = "";
@@ -117,9 +112,7 @@ public class ContractController extends Controller {
                             + "%' and ifnull(c1.mobile,'') like '%"
                             + phone_filter
                             + "%' and c.period_from like '%"
-                            + periodFrom_filter
-                            + "%' and c.period_to like '%"
-                            + periodTo_filter + "%'" + sLimit);
+                            + periodFrom_filter + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
             orderMap.put("iTotalDisplayRecords", total);
@@ -139,15 +132,12 @@ public class ContractController extends Controller {
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         Map orderMap = new HashMap();
-        if (contractName_filter == null && contactPerson_filter == null
-                && periodFrom_filter == null && companyName_filter == null
-                && phone_filter == null && periodTo_filter == null) {
+        if (contractName_filter == null && contactPerson_filter == null && periodFrom_filter == null
+                && companyName_filter == null && phone_filter == null && periodTo_filter == null) {
             // 获取总条数
             String totalWhere = "";
             String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'";
@@ -186,9 +176,7 @@ public class ContractController extends Controller {
                             + "%' and ifnull(c1.mobile,'') like '%"
                             + phone_filter
                             + "%' and c.period_from like '%"
-                            + periodFrom_filter
-                            + "%' and c.period_to like '%"
-                            + periodTo_filter + "%'" + sLimit);
+                            + periodFrom_filter + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
             orderMap.put("iTotalDisplayRecords", total);
@@ -209,15 +197,12 @@ public class ContractController extends Controller {
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         Map orderMap = new HashMap();
-        if (contractName_filter == null && contactPerson_filter == null
-                && periodFrom_filter == null && companyName_filter == null
-                && phone_filter == null && periodTo_filter == null) {
+        if (contractName_filter == null && contactPerson_filter == null && periodFrom_filter == null
+                && companyName_filter == null && phone_filter == null && periodTo_filter == null) {
             // 获取总条数
             String totalWhere = "";
             String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'";
@@ -254,9 +239,7 @@ public class ContractController extends Controller {
                             + "%' and ifnull(c1.mobile,'') like '%"
                             + phone_filter
                             + "%' and c.period_from like '%"
-                            + periodFrom_filter
-                            + "%' and c.period_to like '%"
-                            + periodTo_filter + "%'" + sLimit);
+                            + periodFrom_filter + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));
             orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
@@ -296,7 +279,10 @@ public class ContractController extends Controller {
         String id = getPara();
         if (id != null) {
             Contract contract = Contract.dao.findById(id);
-            Contact contact = Contact.dao.findById(id);
+            Contact contact = Contact.dao
+                    .findFirst("select * from party p left join contact c on p.contact_id =c.id where p.id ='"
+                            + contract.get("party_id") + "'");
+            System.out.println(contact);
             setAttr("c", contact);
             setAttr("ul", contract);
         }
@@ -389,17 +375,15 @@ public class ContractController extends Controller {
         String sLimit = "";
         String sql = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
         // 获取总条数
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
-            sql = "select count(1) total from contract_item c where c.contract_id = "
-                    + contractId + " and PRICETYPE ='计件'";
+            sql = "select count(1) total from contract_item c where c.contract_id = " + contractId
+                    + " and PRICETYPE ='计件'";
         }
 
         System.out.println(sql);
@@ -409,9 +393,8 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db
-                    .find("select * from  contract_item c where c.contract_id = "
-                            + contractId + " and PRICETYPE ='计件'" + sLimit);
+            orders = Db.find("select * from  contract_item c where c.contract_id = " + contractId
+                    + " and PRICETYPE ='计件'" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -438,17 +421,15 @@ public class ContractController extends Controller {
         String sLimit = "";
         String sql = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
         // 获取总条数
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
-            sql = "select count(1) total from contract_item c where c.contract_id = "
-                    + contractId + " and PRICETYPE ='整车'";
+            sql = "select count(1) total from contract_item c where c.contract_id = " + contractId
+                    + " and PRICETYPE ='整车'";
         }
 
         System.out.println(sql);
@@ -458,9 +439,8 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db
-                    .find("select * from  contract_item c where c.contract_id = "
-                            + contractId + " and PRICETYPE ='整车'" + sLimit);
+            orders = Db.find("select * from  contract_item c where c.contract_id = " + contractId
+                    + " and PRICETYPE ='整车'" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -487,17 +467,15 @@ public class ContractController extends Controller {
         String sLimit = "";
         String sql = "";
         String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null
-                && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-                    + getPara("iDisplayLength");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
         // 获取总条数
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
-            sql = "select count(1) total from contract_item c where c.contract_id = "
-                    + contractId + " and pricetype ='零担'";
+            sql = "select count(1) total from contract_item c where c.contract_id = " + contractId
+                    + " and pricetype ='零担'";
         }
 
         System.out.println(sql);
@@ -507,9 +485,8 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db
-                    .find("select * from  contract_item c where c.contract_id = "
-                            + contractId + " and pricetype ='零担'" + sLimit);
+            orders = Db.find("select * from  contract_item c where c.contract_id = " + contractId
+                    + " and pricetype ='零担'" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -525,38 +502,31 @@ public class ContractController extends Controller {
         String routeItemId = getPara("routeItemId");
         String priceType = getPara("priceType");
         // 判断合同干线是否存在
-        item.set("contract_id", contractId)
-                .set("pricetype", getPara("priceType"))
-                .set("from_id", getPara("from_id"))
-                .set("location_from", getPara("fromName"))
-                .set("to_id", getPara("to_id"))
-                .set("location_to", getPara("toName"))
-                .set("amount", getPara("price")).set("dayfrom", getPara("day"))
+        item.set("contract_id", contractId).set("pricetype", getPara("priceType")).set("from_id", getPara("from_id"))
+                .set("location_from", getPara("fromName")).set("to_id", getPara("to_id"))
+                .set("location_to", getPara("toName")).set("amount", getPara("price")).set("dayfrom", getPara("day"))
                 .set("dayto", getPara("day2"));
 
         if (routeItemId != "") {
             if (priceType.equals("计件")) {
-                item.set("id", getPara("routeItemId")).set("cartype", null)
-                        .set("carlength", null).set("ltlUnitType", null);
+                item.set("id", getPara("routeItemId")).set("cartype", null).set("carlength", null)
+                        .set("ltlUnitType", null);
                 item.set("unit", getPara("unit2"));
                 item.update();
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("整车")) {
                 item.set("id", getPara("routeItemId"));
-                item.set("cartype", getPara("carType2"))
-                        .set("carlength", getPara("carLength2"))
+                item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2"))
                         .set("ltlUnitType", null);
                 item.update();
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("零担")) {
-                item.set("id", getPara("routeItemId"))
-                        .set("amountFrom", getPara("amountFrom"))
+                item.set("id", getPara("routeItemId")).set("amountFrom", getPara("amountFrom"))
                         .set("amountTo", getPara("amountTo"));
 
-                item.set("ltlUnitType", getPara("ltlUnitType"))
-                        .set("cartype", null).set("carlength", null);
+                item.set("ltlUnitType", getPara("ltlUnitType")).set("cartype", null).set("carlength", null);
                 item.update();
                 renderJson("{\"success\":true}");
             }
@@ -567,14 +537,12 @@ public class ContractController extends Controller {
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("整车")) {
-                item.set("cartype", getPara("carType2")).set("carlength",
-                        getPara("carLength2"));
+                item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2"));
                 item.save();
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("零担")) {
-                item.set("ltlUnitType", getPara("ltlUnitType"))
-                        .set("amountFrom", getPara("amountFrom"))
+                item.set("ltlUnitType", getPara("ltlUnitType")).set("amountFrom", getPara("amountFrom"))
                         .set("amountTo", getPara("amountTo"));
                 item.save();
                 renderJson("{\"success\":true}");
@@ -598,9 +566,8 @@ public class ContractController extends Controller {
         String contractId = getPara("contractId");
         System.out.println(id);
         // Route route = Route.dao.findById(id);
-        List<Record> list = Db
-                .find("select * from contract_item where contract_id ='"
-                        + contractId + "'and id = '" + id + "'");
+        List<Record> list = Db.find("select * from contract_item where contract_id ='" + contractId + "'and id = '"
+                + id + "'");
         renderJson(list);
     }
 
