@@ -286,7 +286,7 @@
     		$("#item_id").val(itemId);
     		$("#item_save").attr("disabled", false);
     		$("#style").hide();
-    		detailTable.fnSettings().sAjaxSource = "/yh/pickupOrder/findAllItemDetail?item_id="+itemId+"&pickupId="+$("#pickupOrderId").val();
+    		detailTable.fnSettings().sAjaxSource = "/yh/pickupOrder/findAllItemDetail?item_id="+itemId+"&pickupId="+$("#departOrderId").val();
     		detailTable.fnDraw();  			
     	});
     	
@@ -297,8 +297,35 @@
     			var itemId = code.substring(code.indexOf('=')+1);
     			 $("table tr:eq("+hang+")").remove(); 
     		});
-    		var item_id = $("#item_id").val();
     		
+    		var the_id="";
+    		var item_id = $("#item_id").val();
+    		var detailTable= $('#detailTable').dataTable({           
+    	         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",  
+    	         "iDisplayLength": 10,
+    	         "bServerSide": true, 
+    	     	 "oLanguage": {
+    	             "sUrl": "/eeda/dataTables.ch.txt"
+    	         },
+    	         "sAjaxSource": "/yh/departOrder/itemDetailList?item_id="+item_id+"",
+    	       
+    	         "aoColumns": [
+    	              { "mDataProp": null,
+    	                "fnRender": function(obj) {
+    	             	   the_id=obj.aData.ID;
+    	                    return '<input checked="" type="checkbox" name="detailCheckBox" value="'+obj.aData.ID+'">';
+    	                }
+    	              },
+    	             { "mDataProp": "ITEM_NAME"},      
+    	             { "mDataProp": "ITEM_NO"},
+    	             { "mDataProp": "SERIAL_NO"},
+    	             { "mDataProp": "VOLUME"},
+    	             { "mDataProp": "WEIGHT"},
+    	             { "mDataProp": "REMARK"},           
+    	         ]        
+    	     });
+    		
+    		/*var item_id = $("#item_id").val();    		
     		var detailTable= $('#detailTable').dataTable({           
                 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",  
                 "iDisplayLength": 10,
@@ -344,7 +371,7 @@
                 	//设置checkbok 选中  
                 }       
               
-            });
+            });*/
 
     	    //获取全国省份
     	    $(function(){

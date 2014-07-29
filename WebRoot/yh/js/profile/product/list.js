@@ -132,7 +132,9 @@ $(document).ready(function() {
             	tooltip: '点击可以编辑',
             	name:"item_no",
             	placeholder: "", 
-            	callback: function () {}
+            	callback: function () {
+            		refreshProductTable();
+            	}
         	},
             {
             	indicator: '正在保存...',
