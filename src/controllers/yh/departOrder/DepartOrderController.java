@@ -56,7 +56,6 @@ public class DepartOrderController extends Controller {
      String sp=	getPara("sp");
      String beginTime=getPara("beginTime");
      String endTime=getPara("endTime");
-     List<Record> depart = null;
      String sLimit = "";
      String pageIndex = getPara("sEcho");
      String sql = "";
@@ -106,13 +105,13 @@ public class DepartOrderController extends Controller {
         } 
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-        List<Record> transferOrders = Db.find(sql);
+        List<Record> departOrders = Db.find(sql);
         
 	    Map map = new HashMap();
 	    map.put("sEcho", pageIndex);
 	    map.put("iTotalRecords", rec.getLong("total"));
 	    map.put("iTotalDisplayRecords", rec.getLong("total"));
-	    map.put("aaData", depart);
+	    map.put("aaData", departOrders);
 	    renderJson(map);
     }
 
@@ -312,21 +311,23 @@ public class DepartOrderController extends Controller {
         String routeTo = getPara("routeTo");
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
-        String sLimit = "";
-        List<Record> transferOrders = null;
         Record rec = null;
+        String sLimit = "";
+        String sql = "";
+        String sqlTotal = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         if (orderNo == null && status == null && address == null && customer == null && routeFrom == null && routeTo == null
                 && beginTime == null && endTime == null) {
-            String sqlTotal = "select count(1) total  from transfer_order tor " + " left join party p on tor.customer_id = p.id "
+            sqlTotal = "select count(1) total  from transfer_order tor " + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code" + " where tor.status = '已入货场'";
+                    + " left join location l2 on tor.route_to = l2.code" + " where tor.status = '已入货场' and ifnull(tor.assign_status, '') !='"
+                    + TransferOrder.ASSIGN_STATUS_ALL + "'";
             rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
-            String sql = "select tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
+            sql = "select tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
                     + " (select sum(toi.weight) from transfer_order_item toi where toi.order_id = tor.id) as total_weight,"
                     + " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
@@ -334,8 +335,8 @@ public class DepartOrderController extends Controller {
                     + " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.company_name as spname,cont.id as spid from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + "left join contact cont on  cont.id=tor.sp_id " + " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code" + " where tor.status = '已入货场'" + " order by tor.create_stamp desc";
-            transferOrders = Db.find(sql);
+                    + " left join location l2 on tor.route_to = l2.code" + " where tor.status = '已入货场'" + "  and ifnull(tor.assign_status, '') !='"
+                    + TransferOrder.ASSIGN_STATUS_ALL + "' order by tor.create_stamp desc";
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -343,35 +344,32 @@ public class DepartOrderController extends Controller {
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-
-            String sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
+            sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status = '已入货场' and arrival_mode !='delivery' and isnull(tor.assign_status, '') !='"
+                    + " where tor.status = '已入货场' and isnull(tor.assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom + "%' and l2.name like '%" + routeTo
                     + "%' and tor.order_no like '%" + orderNo + "%' and tor.status like '%" + status + "%' and tor.address like '%"
                     + address + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime + "' and '"
                     + endTime + "'";
-            rec = Db.findFirst(sqlTotal);
-            logger.debug("total records:" + rec.getLong("total"));
-
-            String sql = "select tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
+            
+            sql = "select tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
                     + " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
                     + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.status,c.company_name cname,"
-                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.assign_status from transfer_order tor "
+                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.assign_status,c2.company_name spname from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
+                    + " left join party p2 on tor.sp_id = p2.id  left join contact c2 on p2.contact_id = c2.id "
                     + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status ='已入货场' and arrival_mode !='delivery' and isnull(tor.assign_status, '') !='"
+                    + " where tor.status ='已入货场' and isnull(tor.assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom + "%' and l2.name like '%" + routeTo
                     + "%' and tor.order_no like '%" + orderNo + "%' and tor.status like '%" + status + "%' and tor.address like '%"
                     + address + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime + "' and '"
                     + endTime + "'" + " order by tor.create_stamp desc";
-            transferOrders = Db.find(sql);
         }
-        for (int i = 0; i < transferOrders.size();) {
-            /* 运输单查询货品、单品个数 */
+        /*for (int i = 0; i < transferOrders.size();) {
+             运输单查询货品、单品个数 
             int detail_total = 0;// 运输单货品/单品数
             String total_tr_item = "select * from transfer_order_item  where order_id="
                     + Integer.parseInt(transferOrders.get(i).get("id").toString());// 货品id
@@ -386,7 +384,7 @@ public class DepartOrderController extends Controller {
                     detail_total++;
                 }
             }
-            /* 发车单查询货品，单品个数 */
+             发车单查询货品，单品个数 
             int depart_detail = 0;
             String total_depart_detail = "select * from depart_transfer_itemdetail  where order_id="
                     + Integer.parseInt(transferOrders.get(i).get("id").toString());// 发车单单品个数
@@ -398,7 +396,10 @@ public class DepartOrderController extends Controller {
                 continue;
             }
             i++;
-        }
+        }*/
+        rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+        List<Record> transferOrders = Db.find(sql);
 
         Map transferOrderListMap = new HashMap();
         transferOrderListMap.put("sEcho", pageIndex);
@@ -406,7 +407,6 @@ public class DepartOrderController extends Controller {
         transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
 
         transferOrderListMap.put("aaData", transferOrders);
-
         renderJson(transferOrderListMap);
     }
 
