@@ -84,47 +84,7 @@ $(document).ready(function() {
 		            {"mDataProp":"WEIGHT"},
 		        ]      
 		    });	
-			var deliveryid =$("#delivery_id").val();
-			//应收应付datatable
-			var receipttable =$('#table_fin').dataTable({
-				"bFilter": false, //不需要默认的搜索框
-		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-		        //"sPaginationType": "bootstrap",
-		        "iDisplayLength": 10,
-		        "bServerSide": true,
-		    	"oLanguage": {
-		            "sUrl": "/eeda/dataTables.ch.txt"
-		        },
-		        "sAjaxSource":"/yh/deliveryOrderMilestone/accountReceivable/"+deliveryid,
-		        "aoColumns": [
-					{"mDataProp":"ID"},
-					{"mDataProp":"NAME"},
-		            {"mDataProp":"AMOUNT"},  
-		            {"mDataProp":"REMARK"},
-		            {"mDataProp":"STATUS"},
-		        ]      
-		    });
-			//应收应付datatable
-			var paymenttable=$('#table_fin2').dataTable({
-				"bFilter": false, //不需要默认的搜索框
-		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-		        //"sPaginationType": "bootstrap",
-		        "iDisplayLength": 10,
-		        "bServerSide": true,
-		    	"oLanguage": {
-		            "sUrl": "/eeda/dataTables.ch.txt"
-		        },
-		        "sAjaxSource": "/yh/deliveryOrderMilestone/accountPayable/"+deliveryid,
-		        "aoColumns": [
-					{"mDataProp":"ID"},
-					{"mDataProp":"NAME"},
-					{"mDataProp":"AMOUNT"},  
-					{"mDataProp":"REMARK"},
-					{"mDataProp":"STATUS"},
-		        ]      
-		    });
+			
 			
 			$('#cargo-table').dataTable({
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -478,7 +438,118 @@ $(document).ready(function() {
 						$("#receiptBtn").attr("disabled", true);
 					}
 				}) ;
-			    	
+			
+				var deliveryid =$("#delivery_id").val();
+				//应收应付datatable
+				var receipttable =$('#table_fin').dataTable({
+					"bFilter": false, //不需要默认的搜索框
+			        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+			        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+			        //"sPaginationType": "bootstrap",
+			        "iDisplayLength": 10,
+			        "bServerSide": true,
+			    	"oLanguage": {
+			            "sUrl": "/eeda/dataTables.ch.txt"
+			        },
+			        "sAjaxSource":"/yh/deliveryOrderMilestone/accountReceivable/"+deliveryid,
+			        "aoColumns": [
+						{"mDataProp":"ID"},
+						{"mDataProp":"NAME"},
+			            {"mDataProp":"AMOUNT"},  
+			            {"mDataProp":"REMARK"},
+			            {"mDataProp":"STATUS"},
+			        ]      
+			    });
+				//应收应付datatable
+				var paymenttable=$('#table_fin2').dataTable({
+					"bFilter": false, //不需要默认的搜索框
+			        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+			        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+			        //"sPaginationType": "bootstrap",
+			        "iDisplayLength": 10,
+			        "bProcessing": true,
+			        "bServerSide": true,
+			    	"oLanguage": {
+			            "sUrl": "/eeda/dataTables.ch.txt"
+			        },
+			        "sAjaxSource": "/yh/deliveryOrderMilestone/accountPayable/"+deliveryid,
+			        "fnDrawCallback": function (  nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+			        	$(nRow).attr('id', aData.ID);
+						return nRow;
+			        },
+			        "aoColumns": [
+						{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
+						{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},  
+						{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
+						{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
+			        ]      
+			    });
+				paymenttable.makeEditable({
+			    	sUpdateURL: '/yh/deliveryOrderMilestone/paymentSave',    	
+			    	oEditableSettings: {event: 'click'},
+			    	"aoColumns": [  			            
+			            {            
+			            	style: "inherit",
+			            	indicator: '正在保存...',
+			            	onblur: 'submit',
+			            	tooltip: '点击可以编辑',
+			            	name:"name",
+			            	placeholder: "", 
+			            	callback: function () {}
+			        	},
+			            {
+			            	indicator: '正在保存...',
+			            	onblur: 'submit',
+			            	tooltip: '点击可以编辑',
+			            	name:"amount",
+			            	placeholder: "",
+			            	callback: function () {} 
+			            },  
+			            {
+			            	indicator: '正在保存...',
+			            	onblur: 'submit',
+			            	tooltip: '点击可以编辑',
+			            	name:"remark",
+			            	placeholder: "",
+			            	callback: function () {} 
+			            }
+			        ]      
+			    }).click(function(){
+			    	var inputBox = $(this).find('input');
+			        inputBox.autocomplete({
+				        source: function( request, response ) {
+				            $.ajax({
+				                url: "/yh/deliveryOrderMilestone/fin_item",
+				                dataType: "json",
+				                data: {
+				                    input: request.term
+				                },
+				                success: function( data ) {
+				                	console.log(data);
+									var columnName = inputBox.parent().parent()[0].className;
+				                    response($.map( data, function( data ) {
+				                        return {
+				                            label: data.NAME,
+				                            value: columnName=='name'?data.NAME:data.NAME,
+				                            id: data.ID,
+				                            name: data.NAME,
+				                        };
+				                    }));
+				                }
+				            });
+				        },
+			        	select: function( event, ui ) {
+			        		//将选择的产品id先保存到数据库
+			        		var itemId = $(this).parent().parent().parent()[0].id;
+			        		var productId = ui.item.id;
+			        		$.post('/yh/transferOrderItem/saveTransferOrderItem', 
+			        			{transferOrderItemId:itemId,productId:productId},
+			        			function(){ itemDataTable.fnDraw();  });        		
+			                
+			            },
+			        	minLength: 2
+			        });
+			    }); 
 		//应付
 		$("#item_fin_save").click(function(){
 			var deliveryid =$("#delivery_id").val();
@@ -495,14 +566,14 @@ $(document).ready(function() {
 			});		
 		});	
 		//应收
-		$("#item_fin_save2").click(function(){	
+		$("#addrow").click(function(){	
 			var deliveryid =$("#delivery_id").val();
-			$.post('/yh/deliveryOrderMilestone/paymentSave/'+deliveryid, $("#fin_form2").serialize(), function(data){
+			$.post('/yh/deliveryOrderMilestone/addNewRow/'+deliveryid,function(data){
 				console.log(data);
 				if(data.success){
 					paymenttable.fnDraw();
-					$('#fin_item2').modal('hide');
-					$('#resetbutton2').click();
+					//$('#fin_item2').modal('hide');
+					//$('#resetbutton2').click();
 				}else{
 					
 				}

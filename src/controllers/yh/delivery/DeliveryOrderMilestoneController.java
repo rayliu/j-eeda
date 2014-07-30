@@ -2,6 +2,7 @@ package controllers.yh.delivery;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -294,6 +295,17 @@ public class DeliveryOrderMilestoneController extends Controller {
         renderJson(orderMap);
     }
 
+    public void addNewRow() {
+        String deliveryId = getPara();
+        Fin_item fItem = new Fin_item();
+        DeliveryOrderFinItem dFinItem = new DeliveryOrderFinItem();
+        fItem.set("type", "应付");
+        fItem.save();
+        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("order_id", deliveryId);
+        dFinItem.save();
+        renderJson("{\"success\":true}");
+    }
+
     // 添加应收
     public void receiptSave() {
         String id = getPara("delivery_item_id");
@@ -318,23 +330,44 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     // 添加应付
     public void paymentSave() {
-        String id = getPara("delivery_item_id2");
+        String returnValue = "";
+        String id = getPara("id");
+        System.out.println(id);
+        DeliveryOrderFinItem dFinItem = DeliveryOrderFinItem.dao.findById(id);
 
-        String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        Fin_item fItem = Fin_item.dao.findById(dFinItem.get("fin_item_id"));
+
+        String name = getPara("name");
+        String amount = getPara("amount");
+        String remark = getPara("remark");
+
+        String username = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + username + "'");
         Date createDate = Calendar.getInstance().getTime();
 
-        Fin_item fItem = new Fin_item();
-        DeliveryOrderFinItem dFinItem = new DeliveryOrderFinItem();
-        if (!id.equals("")) {
-
-        } else {
-            fItem.set("name", getPara("item_name2")).set("Remark", getPara("item_remark2")).set("type", "应付");
-            fItem.save();
-            dFinItem.set("amount", getPara("item_amount2")).set("fin_item_id", fItem.get("id")).set("status", "新建")
-                    .set("order_id", getPara());
-            dFinItem.save();
+        if (!"".equals(name) && name != null) {
+            fItem.set("name", name).update();
+            returnValue = name;
+        } else if (!"".equals(amount) && amount != null) {
+            dFinItem.set("amount", amount).update();
+            returnValue = amount;
+        } else if (!"".equals(remark) && remark != null) {
+            fItem.set("remark", remark).update();
+            returnValue = remark;
         }
-        renderJson("{\"success\":true}");
+
+        renderJson(returnValue);
+    }
+
+    public void fin_item() {
+        String input = getPara("input");
+        List<Record> locationList = Collections.EMPTY_LIST;
+        if (input.trim().length() > 0) {
+            input = input.toUpperCase();
+            locationList = Db.find("select * from fin_item where name like '%" + input + "%'");
+        } else {
+            locationList = Db.find("select * from fin_item");
+        }
+        renderJson(locationList);
     }
 }
