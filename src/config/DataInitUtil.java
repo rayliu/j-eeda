@@ -38,7 +38,7 @@ public class DataInitUtil {
             // fin_item
             stmt.executeUpdate("create table if not exists fin_item(id bigint auto_increment primary key,code varchar(50),name varchar(50),type varchar(50),remark varchar(50));");
             // fin_item
-            stmt.executeUpdate("create table if not exists delivery_order_fin_item(id bigint auto_increment primary key,order_id bigint,fin_item_id bigint,fin_item_code varchar(50),amount double,status varchar(20),creator bigint,create_date timstamp,last_updator bigint,last_updator_date timestamp);");
+            stmt.executeUpdate("create table if not exists delivery_order_fin_item(id bigint auto_increment primary key,order_id bigint,fin_item_id bigint,fin_item_code varchar(50),amount double,status varchar(20),creator bigint,create_date timestamp,last_updator bigint,last_updator_date timestamp);");
             // eeda 平台的SP
             stmt.executeUpdate("create table if not exists dp_prof_provider_info(OID bigint auto_increment PRIMARY KEY, ADDITIONAL_SERVICES VARCHAR(600),  BIZNATURE VARCHAR(60),  PROVIDER_SYS_CODE VARCHAR(90),  PROVIDER_NAME  VARCHAR(270),  PROVIDER_BIZ_CODE VARCHAR(60),  MAINTENANCE_OFFICE  VARCHAR(90),  COUNTRY_BAK VARCHAR(90),  PROVINCE_BAK VARCHAR(90),  CITY_BAK VARCHAR(90),  POST_CODE   VARCHAR(90),  CONTACT VARCHAR(120),  FAX_BAK VARCHAR(60),  EMAIL   VARCHAR(450),  TELEPHONE_BAK   VARCHAR(90),  ADDRESS1 VARCHAR(300),  ADDRESS2 VARCHAR(300),  ADDRESS3 VARCHAR(300),  ADDRESS4 VARCHAR(300),  STATUS  CHAR(1) default 'A',  CREATOR VARCHAR(20),  CREATE_DATE DATE,  LAST_UPDATER VARCHAR(20),  LAST_UPDATE_DATE DATE,  COUNTRY_OID bigint,  COUNTRY VARCHAR(300),  PROVINCE_OID bigint,  PROVINCE VARCHAR(300),  CITY_OID bigint,  CITY VARCHAR(300),  PHONE_COUNTRY_CODE  VARCHAR(10),  PHONE_AREA_CODE VARCHAR(10),  PHONE_NO VARCHAR(120),  FAX_COUNTRY_CODE VARCHAR(10),  FAX_AREA_CODE   VARCHAR(10),  FAX_NO  VARCHAR(120),  SPPM_OID bigint,  PROVIDER_FULL_NAME  VARCHAR(300),  CONTROL_OFFICE  VARCHAR(90),  DATA_REALM  VARCHAR(20),  COPY_FROM_SP_OID bigint,  ONE_OFF VARCHAR(1) default 'N',  EFFECTIVE_FROM  DATE,  EFFECTIVE_TO DATE, MAIL_SENT_TIME TIMESTAMP);");
 
@@ -655,7 +655,7 @@ public class DataInitUtil {
 
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,driver_id,carinfo_id) values('FC2014061000003', '2014-06-10 16:35:35.1','DEPART',26,1);");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('5', '3','YS2014042600006');");
-            
+
             // 运输里程碑
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(2, 3, '2014-06-28 10:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(3, 3, '2014-06-28 10:40:35.1', '新建', 'TRANSFERORDERMILESTONE');");
