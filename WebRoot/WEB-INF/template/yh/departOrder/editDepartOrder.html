@@ -21,7 +21,7 @@
                             <ul class="nav nav-tabs">
                                 <li class="active"><a href="#basic" data-toggle="tab">基本信息</a>
                                 </li>
-                                <li class=""><a href="#cargos" data-toggle="tab">货品信息</a>
+                                <li class=""><a href="#cargos" data-toggle="tab" id="departOrderItemList">货品信息</a>
                                 </li>
                                   <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">里程碑</a>
                                 </li>
@@ -35,7 +35,7 @@
                                    <form id="orderForm" method="post" action="">
                                <div class="col-lg-6">
                                 <input class="" id="last_detail_size" value="${last_detail_size!''}" type="hidden">
-	                            <input class="" id="depart_id" value="${depart_id!''}" type="hidden" name="depart_id" >
+	                            <input class="" id="depart_id" value="${departOrder.id!''}" type="hidden" name="depart_id" >
 	                            <input class="" id="type" value="${type!''}" type="hidden" >
 	            				<input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
 	            				<input class="" id="tr_itemid_list" value="${tr_itemid!''}" type="hidden" name="tr_itemid_list">
@@ -268,27 +268,22 @@
 		                                                </tr>
 	                                                </thead>
 	                                                </table>
-	                                          </div>
-	                                       
-                                            
-                                    </div>
+	                                          </div>  
+                    					</div>   
+                                    </div> 
+                                </div>  
                                   
-                                    <!-- /.panel-body -->
-                                      <!-- 模态框 -->
-									
-                                </div>
-                           
                               <div id="milestone" class="tab-pane fade">
                                 <div class="modal fade" id="transferOrderMilestone" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 								  <div class="modal-dialog">
 								    <div class="modal-content">
 								      <div class="modal-header">
 								        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-								        <button class="modal-title" id="myModalLabel" >新里程碑</button>
+								        <h4 class="modal-title" id="myModalLabel">新里程碑</h4>
 								      </div>
 								      <div class="modal-body">
 								      	<form id="transferOrderMilestoneForm" action="">
-								      		<input id="milestoneDepartId" type="text" name="milestoneDepartId" />
+								      		<input id="milestoneDepartId" type="hidden" name="milestoneDepartId" />
 											<div class="form-group ">
 											<label class="control-label" for="inputSuccess">状态(不填默认为"在途")</label> <input
 												id="status" class="form-control" type="text"
@@ -324,12 +319,11 @@
                                                 <tbody id="transferOrderMilestoneTbody"></tbody>
                                             </table>
                                         </div>
-                                        <!-- /.table-responsive -->
-                                   
-                                </div>
+                                        <!-- /.table-responsive -->                                   
+                                </div>									
+                                
                                 <div class="tab-pane fade" id="arap">
-                                    <h2>应收</h2>
-                                    
+                                    <h2>应收</h2>                                    
                                         <div class="table-responsive">
                                             <table class="table table-striped table-bordered table-hover">
                                                 <thead>
@@ -352,56 +346,9 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <!-- /.table-responsive -->
-                                                                                        
-                                </div> 
-                                 
-                                <div class="modal fade" id="box_one" tabindex="-1">
-								 <div class="modal-dialog">
-                                <div class="col-lg-4" class="col-lg-4" style="border-top-width: 0px; margin-top: 100px; width: 350px; height: 200px; margin-left: 150px;">
-                    			<div class="panel panel-default">
-                       			 <div class="panel-heading">
-                            		温馨提示
-                        		</div>
-                       			<div class="panel-body">
-                            	<p>单据创建完毕,是否继续创建？</p>
-                        		</div>
-                        		 <form id="boxoneForm" method="post" action="/yh/departOrder/boxedit">
-                        		 <input value="${edit_depart_id!''}" name="edit_depart_id" type="hidden">
-                       			 <div class="panel-footer">
-                          			 <a type="button" class="btn btn-default" id="box_one_edit">否,编辑当前发车单</a>
-                           			<a type="button" class="btn btn-default" id="box_one_confige" href="/yh/departOrder/add">是</a>
-                        		</div>
-                        		
-                        		</form>
-                   				</div> 
-				                 </div>
-				                </div>      
-				                </div> 
-				                
-				                  <div class="modal fade" id="box_two" tabindex="-1">
-								 <div class="modal-dialog">
-                                <div class="col-lg-4" class="col-lg-4" style="border-top-width: 0px; margin-top: 100px; width: 350px; height: 200px; margin-left: 150px;">
-                    			<div class="panel panel-default">
-                       			 <div class="panel-heading">
-                            		温馨提示
-                        		</div>
-                       			<div class="panel-body">
-                            	<p>还有货品未处理,是否继续创建发车单？</p>
-                        		</div>
-                        		 <form id="boxtwoForm" method="post" action="/yh/departOrder/boxedit">
-                        		 <input value="${edit_depart_id!''}" name="edit_depart_id" type="hidden">
-                       			 <div class="panel-footer">
-                          			 <a type="button" class="btn btn-default" id="box_two_edit">否,编辑当前发车单</a>
-                           			<a type="button" class="btn btn-default" id="box_two_config">是</a>
-                        		</div>
-                        		</form>
-                   				</div> 
-				                 </div>
-				                </div>      
-				                </div>                          					
+                                        <!-- /.table-responsive -->                                                                                        
+                                </div>                      					
                         <!-- /.panel-body -->
-                    </div>
                     <!-- /.panel -->
                 </div>
                 
@@ -426,32 +373,15 @@
 				                </div>
 			                </div>      
 			            </div> 
+                    	<div class=".tooltip-demo">
+	                        <hr/>
+	                        <a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
+		             		<button id="saveDepartOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
+		             		<a class="btn btn-default" href="/yh/departOrder">返回</a>
+                    	<div class="form-group">
+                    </div>
                         
                 <!-- /.col-lg-12 -->
-                        <div class=".tooltip-demo">
-                            <hr/>
-                            <a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
-		               		<button id="saveDepartOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
-		               		<a class="btn btn-default" href="/yh/departOrder">返回</a>
-                        	<div class="form-group">
-                                            <!-- <div class="controls">
-                                              <%if(depart_id!''==""){%>  
-                                        <button class="btn btn-default" id="order_save"  type="button" style="padding:6px 30px">保存</button>
-                                        <%}%>
-                                        <%if(depart_id!''!=""){%> 
-                                         <a id="style" style="display:none"><i class="fa fa-check"></i></a>
-                                        <button class="btn btn-default" id="order_edit"  type="button" >保存</button>
-                                        <button class="btn btn-default" id="order_fc" disabled="true"  type="button" >发车确认</button>
-                                        <button class="btn btn-default" id="order_rk" disabled="true"  type="button" style="display:none">入库确认</button> 
-                                        	
-                                        <button class="btn btn-default" id="order_sh" disabled="true"  type="button" style="display:none" >收货确认</button>
-                                        <button class="btn btn-default" id="order_hd" disabled="true"  type="button" style="display:none" >生成回单</button>  
-                                            <%}%>
-                                            <a class="btn btn-default" href="/yh/departOrder/index">返回</a>
-                                            </div>
-                                        </div>
-                                    </div> -->
-                        </div>
             </div>
             
         </div>

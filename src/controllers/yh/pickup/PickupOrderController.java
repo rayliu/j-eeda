@@ -74,7 +74,7 @@ public class PickupOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
 
-        DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order order by depart_no desc limit 0,1");
+        DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order where combine_type='"+DepartOrder.COMBINE_TYPE_PICKUP+"' order by depart_no desc limit 0,1");
         if (order != null) {
             String num = order.get("depart_no");
             String str = num.substring(2, num.length());
