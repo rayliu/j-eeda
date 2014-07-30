@@ -462,21 +462,19 @@ $(document).ready(function() {
 			    });
 				//应收应付datatable
 				var paymenttable=$('#table_fin2').dataTable({
-					"bFilter": false, //不需要默认的搜索框
-			        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-			        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+					"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+			        "bFilter": false, //不需要默认的搜索框
 			        //"sPaginationType": "bootstrap",
 			        "iDisplayLength": 10,
-			        "bProcessing": true,
 			        "bServerSide": true,
+			        "sAjaxSource": "/yh/deliveryOrderMilestone/accountPayable/"+deliveryid,
 			    	"oLanguage": {
 			            "sUrl": "/eeda/dataTables.ch.txt"
 			        },
-			        "sAjaxSource": "/yh/deliveryOrderMilestone/accountPayable/"+deliveryid,
-			        "fnDrawCallback": function (  nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-			        	$(nRow).attr('id', aData.ID);
+			        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+						$(nRow).attr('id', aData.ID);
 						return nRow;
-			        },
+					},
 			        "aoColumns": [
 						{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
 						{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},  

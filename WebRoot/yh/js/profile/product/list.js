@@ -385,9 +385,6 @@ $(document).ready(function() {
     
     // 新增产品
     $('#editProduct').on('click', function() { 
-    	/*$("#hiddenProductId").val('');
-    	selectCategory();*/
-    	
     	var categoryId = $("#categoryId").val();
  		$.post('/yh/product/addNewRow', {categoryId:categoryId}, function(data){
  			productDataTable.fnDraw(); 
