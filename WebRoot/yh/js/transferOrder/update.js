@@ -313,7 +313,6 @@ $(document).ready(function() {
 				$("#order_id").val(transferOrder.ID);
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
-				//$("#driver_id").val(transferOrder.DRIVER_ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
 					$("#departureConfirmationBtn").attr("disabled", false);
@@ -324,7 +323,7 @@ $(document).ready(function() {
 				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
 				  	itemDataTable.fnDraw(); 
 			        
-			        location.href = "/yh/transferOrder";               
+			        //location.href = "/yh/transferOrder";               
 				}else{
 					alert('数据保存失败。');
 				}
@@ -336,7 +335,6 @@ $(document).ready(function() {
 				$("#order_id").val(transferOrder.ID);
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
-				//$("#driver_id").val(transferOrder.DRIVER_ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
 					if(transferOrder.STATUS == '已发车' || transferOrder.STATUS == '已入库' || transferOrder.STATUS == '已签收'){
@@ -949,10 +947,15 @@ $(document).ready(function() {
             	"sClass": "serial_no"	
             },
             {
-            	"mDataProp":"ITEM_NAME",
+            	"mDataProp":"ITEM_NO",
         		"sWidth": "80px",
-            	"sClass": "item_name"            		
-            },       	
+            	"sClass": "item_no"            		
+            },  
+		    {
+		    	"mDataProp":"ITEM_NAME",
+		    	"sWidth": "80px",
+		    	"sClass": "item_name"            		
+		    },       	
             {
             	"mDataProp":"VOLUME",
         		"sWidth": "80px",
@@ -1008,6 +1011,7 @@ $(document).ready(function() {
             	placeholder: "", 
             	callback: function () {}
         	},
+            null,
             null,
             null,
             null,

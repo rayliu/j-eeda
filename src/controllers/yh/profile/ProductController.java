@@ -89,7 +89,7 @@ public class ProductController extends Controller {
             String volume = getPara("volume");
             String weight = getPara("weight");
             String height = getPara("height");
-            product.set("item_name", getPara("item_name")).set("item_no", getPara("item_no")).set("item_desc", getPara("item_desc"))
+            product.set("item_name", getPara("item_name")).set("serial_no", getPara("serial_no")).set("item_no", getPara("item_no")).set("item_desc", getPara("item_desc"))
                     .set("unit", getPara("unit")).set("category_id", getPara("categoryId"));
             if (size != null && !"".equals(size)) {
                 product.set("size", size);
@@ -119,7 +119,7 @@ public class ProductController extends Controller {
             String weight = getPara("weight");
             String height = getPara("height");
 
-            product.set("item_name", itemName).set("item_no", itemNo).set("item_desc", itemDesc).set("unit", getPara("unit"))
+            product.set("item_name", itemName).set("serial_no", getPara("serial_no")).set("item_no", itemNo).set("item_desc", itemDesc).set("unit", getPara("unit"))
                     .set("category_id", getPara("categoryId"));
             if (size != null && !"".equals(size)) {
                 product.set("size", size);
@@ -303,6 +303,7 @@ public class ProductController extends Controller {
         String id = getPara("id");
         Product item = Product.dao.findById(id);
         String item_no = getPara("item_no");
+        String serial_no = getPara("serial_no");
         String item_name = getPara("item_name");
         String unit = getPara("unit");
         String itemDesc = getPara("item_desc");
@@ -338,7 +339,10 @@ public class ProductController extends Controller {
         } else if (!"".equals(unit) && unit != null) {
             item.set("unit", unit).update();
             returnValue = unit;
-        }
+        } else if (!"".equals(serial_no) && serial_no != null) {
+	    	item.set("serial_no", serial_no).update();
+	    	returnValue = serial_no;
+	    }
 
         Double volume = Double.parseDouble(item.get("size")+"")/1000 *
         Double.parseDouble(item.get("width")+"")/1000 *

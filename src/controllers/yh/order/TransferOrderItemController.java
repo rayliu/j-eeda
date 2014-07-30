@@ -275,6 +275,7 @@ public class TransferOrderItemController extends Controller {
             for (int i = 0; i < amount; i++) {
                 transferOrderItemDetail = new TransferOrderItemDetail();
                 transferOrderItemDetail.set("item_name", item.get("item_name"));
+                transferOrderItemDetail.set("item_no", item.get("item_no"));
                 transferOrderItemDetail.set("volume", item.get("volume"));
                 transferOrderItemDetail.set("weight", item.get("weight"));
                 transferOrderItemDetail.set("item_id", item.get("id"));
@@ -287,6 +288,7 @@ public class TransferOrderItemController extends Controller {
             for (int i = 0; i < amount; i++) {
                 transferOrderItemDetail = new TransferOrderItemDetail();
                 transferOrderItemDetail.set("item_name", product.get("item_name"));
+                transferOrderItemDetail.set("item_no", product.get("item_no"));
                 transferOrderItemDetail.set("volume", product.get("volume"));
                 transferOrderItemDetail.set("weight", product.get("weight"));
                 transferOrderItemDetail.set("item_id", item.get("id"));

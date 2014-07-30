@@ -53,6 +53,11 @@ $(document).ready(function() {
             	"mDataProp":"ITEM_NO",            	
             	"sWidth": "80px",
             	"sClass": "item_no"
+            },       	
+            {
+            	"mDataProp":"SERIAL_NO",
+            	"sWidth": "180px",
+            	"sClass": "serial_no"
             },        	
             {
             	"mDataProp":"ITEM_NAME",
@@ -131,6 +136,17 @@ $(document).ready(function() {
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"item_no",
+            	placeholder: "", 
+            	callback: function () {
+            		refreshProductTable();
+            	}
+        	},
+        	{            
+            	style: "inherit",
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"serial_no",
             	placeholder: "", 
             	callback: function () {
             		refreshProductTable();

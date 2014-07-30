@@ -75,7 +75,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists category(id bigint auto_increment primary key,name varchar(255),parent_id bigint,foreign key(parent_id) references category(id),customer_id bigint,foreign key(customer_id) references party(id));");
 
             // product 产品
-            stmt.executeUpdate("create table if not exists product(id bigint auto_increment primary key,item_name varchar(50),item_no varchar(255),size double,width double,height double,unit varchar(255),volume double,weight double,item_desc varchar(5120),category_id bigint,foreign key(category_id) references category(id));");
+            stmt.executeUpdate("create table if not exists product(id bigint auto_increment primary key,item_name varchar(50),item_no varchar(255),serial_no varchar(255),size double,width double,height double,unit varchar(255),volume double,weight double,item_desc varchar(5120),category_id bigint,foreign key(category_id) references category(id));");
 
             // warehouse 仓库
             stmt.executeUpdate("create table if not exists warehouse(id bigint auto_increment primary key,warehouse_name varchar(50),warehouse_address varchar(255),warehouse_area double,path varchar(255),warehouse_type varchar(255),status varchar(20),warehouse_desc varchar(5120),sp_id bigint,notify_party_id bigint,office_id bigint,foreign key(sp_id) references party(id),foreign key(notify_party_id) references party(id),foreign key(office_id) references office(id),sp_name varchar(255));");
