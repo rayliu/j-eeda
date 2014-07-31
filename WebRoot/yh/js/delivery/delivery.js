@@ -535,9 +535,10 @@ $(document).ready(function() {
 				                }
 				            });
 				        },select: function( event, ui ) {
-			        		//将选择的finItme的id先保存到数据库
+			        		//将选择的条目id先保存到数据库
+				        	var finId = $(this).parent().parent().parent()[0].id;
 			        		var finItemId = ui.item.id;
-			        		$.post('/yh/deliveryOrderMilestone/paymentSave',{finItemId:finItemId},
+			        		$.post('/yh/deliveryOrderMilestone/paymentSave',{id:finId, finItemId:finItemId},
 			        			function(){ paymenttable.fnDraw();  });        		
 			                
 			            },

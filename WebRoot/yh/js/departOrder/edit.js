@@ -722,7 +722,7 @@
     	    	$("#warehousingConfirmBtn").attr("disabled", false);
     	    }
     	    
-    	    if($("#departOrderStatus").val() != '' || $("#departOrderStatus").val() != '新建'){
+    	    if($("#departOrderStatus").val() != '' && $("#departOrderStatus").val() != '新建'){
 	    		$("#saveDepartOrderBtn").attr("disabled", true);
 	    	}
     });
