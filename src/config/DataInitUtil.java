@@ -84,7 +84,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment primary key,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
 
             // return_order 回单
-            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,transaction_status varchar(20),order_type varchar(20),creator bigint,remark varchar(255), depart_order_id bigint, delivery_order_id bigint, notity_party_id bigint,customer_id bigint);");
+            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,transaction_status varchar(20),order_type varchar(20),creator bigint,remark varchar(255), depart_order_id bigint, delivery_order_id bigint,transfer_order_id bigint, notity_party_id bigint,customer_id bigint);");
 
             // transfer_order 运输单
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),assign_status varchar(255),"

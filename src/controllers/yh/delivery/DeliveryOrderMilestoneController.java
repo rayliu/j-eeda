@@ -1,5 +1,6 @@
 package controllers.yh.delivery;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import models.DeliveryOrderFinItem;
 import models.DeliveryOrderMilestone;
 import models.Fin_item;
 import models.InventoryItem;
+import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -187,10 +189,10 @@ public class DeliveryOrderMilestoneController extends Controller {
     // 回单签收
     public void receipt() {
         Long delivery_id = Long.parseLong(getPara("delivery_id"));
-        DeliveryOrder transferOrder = DeliveryOrder.dao.findById(delivery_id);
-        transferOrder.set("status", "已签收");
-        transferOrder.update();
-        String transferId = transferOrder.get("transfer_order_id");
+        DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
+        deliveryOrder.set("status", "已签收");
+        deliveryOrder.update();
+        String transferId = deliveryOrder.get("transfer_order_id");
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
         transferOrderMilestone.set("status", "已签收");
@@ -208,6 +210,53 @@ public class DeliveryOrderMilestoneController extends Controller {
         String username = userLogin.get("user_name");
         map.put("username", username);
         renderJson(map);
+
+        // 生成回单
+        returnOrder(delivery_id, deliveryOrder, users);
+    }
+
+    private void returnOrder(Long delivery_id, DeliveryOrder deliveryOrder, List<UserLogin> users) {
+        Date createDate = Calendar.getInstance().getTime();
+        String orderNo = creatOrderNo();
+        ReturnOrder returnOrder = new ReturnOrder();
+        returnOrder.set("order_no", orderNo);
+        returnOrder.set("delivery_order_id", delivery_id);
+        returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
+        returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
+        returnOrder.set("order_type", "应收");
+        returnOrder.set("transaction_status", "新建");
+        returnOrder.set("creator", users.get(0).get("id"));
+        returnOrder.set("create_date", createDate);
+        returnOrder.save();
+    }
+
+    // 构造单号
+    public static String creatOrderNo() {
+        String order_no = null;
+        String the_order_no = null;
+        ReturnOrder order = ReturnOrder.dao.findFirst("select * from return_order " + " order by id desc limit 0,1");
+        if (order != null) {
+            String num = order.get("order_no");
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) {
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            the_order_no = "HD" + order_no;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            the_order_no = "HD" + order_no;
+        }
+        return the_order_no;
     }
 
     // 入库确认
@@ -282,7 +331,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select * from delivery_order_fin_item d left join fin_item f on d.fin_item_id = f.id where f.type='应付' and d.order_id='"
+                .find("select d.*,f.name,f.remark from delivery_order_fin_item d left join fin_item f on d.fin_item_id = f.id where f.type='应付' and d.order_id='"
                         + id + "'");
 
         Map orderMap = new HashMap();
@@ -359,14 +408,9 @@ public class DeliveryOrderMilestoneController extends Controller {
     }
 
     public void fin_item() {
-        String input = getPara("input");
+        // String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
-        if (input.trim().length() > 0) {
-            input = input.toUpperCase();
-            locationList = Db.find("select * from fin_item where name like '%" + input + "%'");
-        } else {
-            locationList = Db.find("select * from fin_item");
-        }
+        locationList = Db.find("select * from fin_item");
         renderJson(locationList);
     }
 }

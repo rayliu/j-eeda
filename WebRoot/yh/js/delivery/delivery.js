@@ -523,26 +523,22 @@ $(document).ready(function() {
 				                    input: request.term
 				                },
 				                success: function( data ) {
-				                	console.log(data);
-									var columnName = inputBox.parent().parent()[0].className;
 				                    response($.map( data, function( data ) {
 				                        return {
 				                            label: data.NAME,
-				                            value: columnName=='name'?data.NAME:data.NAME,
+				                            value: data.NAME,
 				                            id: data.ID,
-				                            name: data.NAME,
+				                            name: data.NAME
 				                        };
 				                    }));
 				                }
 				            });
-				        },
-			        	select: function( event, ui ) {
+				        },select: function( event, ui ) {
 			        		//将选择的产品id先保存到数据库
-			        		var itemId = $(this).parent().parent().parent()[0].id;
 			        		var productId = ui.item.id;
 			        		$.post('/yh/transferOrderItem/saveTransferOrderItem', 
-			        			{transferOrderItemId:itemId,productId:productId},
-			        			function(){ itemDataTable.fnDraw();  });        		
+			        			{productId:productId},
+			        			function(){ paymenttable.fnDraw();  });        		
 			                
 			            },
 			        	minLength: 2
