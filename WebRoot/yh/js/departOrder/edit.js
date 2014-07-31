@@ -9,19 +9,19 @@
         var hang="";
         if(status!="新建"){
         	$("#order_edit").attr("disabled",true);
-        	//$("#order_fc").attr("disabled",false);
+        	//$("#departureConfirmationBtn").attr("disabled",false);
         }
         if(status=='新建'){
-        	$("#order_fc").attr("disabled",false);
+        	$("#departureConfirmationBtn").attr("disabled",false);
         }
         if(status=="已发车"||status=="在途"){
-        	$("#order_rk").attr("disabled",false);
+        	$("#warehousingConfirmBtn").attr("disabled",false);
         }
-        if(status=="已发车"&&$(order_fc).prop("disabled") == true){
-        	$("#order_sh").attr("disabled",false);
+        if(status=="已发车"&&$(departureConfirmationBtn).prop("disabled") == true){
+        	$("#receiptBtn").attr("disabled",false);
         }
         if(status=="已签收"){
-        	$("#order_sh").attr("disabled",true);
+        	$("#receiptBtn").attr("disabled",true);
         	$("#order_hd").attr("disabled",false);
         $("#edit_status").attr("disabled",true);
      }
@@ -488,7 +488,9 @@
     	    
     	    //发车单里程碑
     	    $("#transferOrderMilestoneList").click(function(e){
-    	    	clickSaveDepartOrder(e); 
+    	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
+    	    		clickSaveDepartOrder(e);
+    	    	}
     			$.post('/yh/departOrder/transferOrderMilestoneList',{departOrderId:$("#departOrderId").val()},function(data){
     				var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     				transferOrderMilestoneTbody.empty();
@@ -515,7 +517,9 @@
     				if(data.ID>0){
     					$("#departOrderId").val(data.ID);
     					$("#depart_id").val(data.ID);
-    				  	$("#style").show();				    
+    				  	$("#style").show();	
+
+    		    	    $("#departureConfirmationBtn").attr("disabled", false);
     				}else{
     					alert('数据保存失败。');
     				}
@@ -557,32 +561,36 @@
     	    
     	    //编辑保存
     	    $("#saveDepartOrderBtn").click(function(e){
-    	    	clickSaveDepartOrder(e); 	    	
+    	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
+    	    		clickSaveDepartOrder(e);
+    	    	}
     	    });
     	    
     	    // 点击货品信息
     	    $("#departOrderItemList").click(function(e){
-    	    	clickSaveDepartOrder(e); 
+    	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
+    	    		clickSaveDepartOrder(e);
+    	    	} 
     	    });
     	    
-    	    $("#order_fc").click(function(e){
+    	    $("#departureConfirmationBtn").click(function(e){
     	    	$(this).attr("disabled",true);
     	    	$("#order_edit").attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已发车", $("#orderForm").serialize(), function(){
-    	    		$("#order_sh").attr("disabled",false);
-    	    	$("#order_rk").attr("disabled",false);
+    	    		//$("#receiptBtn").attr("disabled",false);
+    	    	    //$("#warehousingConfirmBtn").attr("disabled",false);
     	    	});
     	    });
-    	    $("#order_rk").click(function(e){
+    	    $("#warehousingConfirmBtn").click(function(e){
     	    	$(this).attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已入库", $("#orderForm").serialize(), function(data){
     	    		if(data.amount>0){
     	    			alert("有"+data.amount+"个货品没入库,可以到产品中维护信息！");
     	    		}
-    	    	$("#order_sh").attr("disabled",false);
+    	    	$("#receiptBtn").attr("disabled",false);
     	    	});
     	    });
-    	    $("#order_sh").click(function(e){
+    	    $("#receiptBtn").click(function(e){
     	    	$(this).attr("disabled",true);
     	    	$("#order_hd").attr("disabled",false);
     	    	 $("#edit_status").attr("disabled",true);
@@ -680,10 +688,10 @@
     		//是直送显示“确认收货”
     		var check_sh=$("#check_sh").val();
     		if(check_sh==false){
-    			$("#order_sh").show();
+    			$("#receiptBtn").show();
     			$("#order_hd").show();
     		}else{
-    			$("#order_rk").show();
+    			$("#warehousingConfirmBtn").show();
     		}
 
     	    // 回显车长
@@ -704,6 +712,17 @@
     	    	if(carTypeVal==svalue){
     	    		$("#cartype option[value='"+svalue+"']").attr("selected","selected");
     	    	}
+    	    } 
+    	    
+    	    if($("#departOrderArrivalMode").val() == 'delivery'){
+    	    	$("#receiptBtn").attr("disabled", false);
     	    }
     	    
+    	    if($("#departOrderArrivalMode").val() == 'gateIn'){
+    	    	$("#warehousingConfirmBtn").attr("disabled", false);
+    	    }
+    	    
+    	    if($("#departOrderStatus").val() != '' || $("#departOrderStatus").val() != '新建'){
+	    		$("#saveDepartOrderBtn").attr("disabled", true);
+	    	}
     });

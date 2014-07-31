@@ -136,7 +136,12 @@ public class DepartOrderController extends Controller {
                 + DepartOrder.COMBINE_TYPE_DEPART + "' and do.id in(" + getPara("id") + ")";
         DepartOrder departOrder = DepartOrder.dao.findFirst(sql);
         setAttr("departOrder", departOrder);
-
+        
+        DepartTransferOrder departTransferOrder2 = DepartTransferOrder.dao.findFirst("select * from depart_transfer where depart_id = ? order by id desc", departOrder.get("id"));
+        
+        TransferOrder transferOrderAttr = TransferOrder.dao.findById(departTransferOrder2.get("order_id"));
+        setAttr("transferOrderAttr", transferOrderAttr);
+        
         Long sp_id = departOrder.get("sp_id");
         if (sp_id != null) {
             Party sp = Party.dao.findById(sp_id);
@@ -424,10 +429,10 @@ public class DepartOrderController extends Controller {
     public void createDepartOrder() {
         String list = this.getPara("localArr");
         setAttr("localArr", list);
-        String[] transferOrderIds = list.split(",");
+        /*String[] transferOrderIds = list.split(",");
 
         TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
-        setAttr("transferOrderAttr", transferOrderAttr);
+        setAttr("transferOrderAttr", transferOrderAttr);*/
 
         logger.debug("localArr" + list);
         String order_no = null;
