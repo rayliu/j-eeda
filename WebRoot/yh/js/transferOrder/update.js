@@ -578,8 +578,8 @@ $(document).ready(function() {
             	placeholder: "",
             	callback: function () {
             		sumVolume(this);
-            		refreshDetailTable();
-            		refreshItemTable();
+            		// refreshDetailTable();
+            		// refreshItemTable();
             	} 
             },
             {
@@ -590,8 +590,8 @@ $(document).ready(function() {
             	placeholder: "",
             	callback: function () {
             		sumVolume(this);
-            		refreshDetailTable();
-            		refreshItemTable();
+            		// refreshDetailTable();
+            		// refreshItemTable();
             	} 
             },
             {
@@ -602,8 +602,8 @@ $(document).ready(function() {
             	placeholder: "",
             	callback: function () {
             		sumVolume(this);
-            		refreshDetailTable();
-            		refreshItemTable();
+            		// refreshDetailTable();
+            		// refreshItemTable();
             	} 
             },  
             {
@@ -614,8 +614,8 @@ $(document).ready(function() {
             	placeholder: "",
             	callback: function () {
             		sumWeight(this);
-            		refreshDetailTable();
-            		refreshItemTable();
+            		// refreshDetailTable();
+            		// refreshItemTable();
             	} 
             },    	
             {
@@ -638,7 +638,7 @@ $(document).ready(function() {
             	data: "{'':'', '台':'台','件':'件','套':'套'}",
             	placeholder: "",
             	callback: function () {
-            		refreshItemTable();
+            		//refreshItemTable();
             	} 
             },
             null,
@@ -655,9 +655,25 @@ $(document).ready(function() {
             null                        
         ]      
     }).click(function(){
+
     	var inputBox = $(this).find('input');
+      //   inputBox.bind('keydown', function(e){
+      //   	var code = e.keyCode || e.which;
+		    // if (code == '9') {
+		    // 	var currentCell = e.target.parentNode.parentNode;
+		    // 	var nextCellIndex = currentCell.cellIndex+1;
+		    // 	var parentRow = $(e.target.parentNode.parentNode.parentNode);
+		    // 	var nextCell = parentRow.children('td:eq('+nextCellIndex+')');
+		    // 	$(currentCell).text(inputBox.val());
+		    // 	nextCell.click().focus();
+		    // 	//return false;
+		    // }
+      //   });
         inputBox.autocomplete({
 	        source: function( request, response ) {
+	        	if(inputBox.parent().parent()[0].cellIndex >1){//从第3列开始，不需要去后台查数据
+		    		return;
+		    	}
 	            $.ajax({
 	                url: "/yh/transferOrder/searchItemNo",
 	                dataType: "json",
