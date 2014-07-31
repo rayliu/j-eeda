@@ -106,81 +106,84 @@ public class TransferOrderItemController extends Controller {
         String height = getPara("height");
         String weight = getPara("weight");
         Long productId = item.getLong("product_id");
-        if(productId == null || "".equals(productId)){
-	        if (!"".equals(item_no) && item_no != null) {
-	            item.set("item_no", item_no).update();
-	            returnValue = item_no;
-	        } else if (!"".equals(item_name) && item_name != null) {
-	            item.set("item_name", item_name).update();
-	            returnValue = item_name;
-	        } else if (!"".equals(remark) && remark != null) {
-	            item.set("remark", remark).update();
-	            returnValue = remark;
-	        } else if (!"".equals(size) && size != null) {
-	            item.set("size", size).update();
-	            returnValue = size;
-	        } else if (!"".equals(width) && width != null) {
-	            item.set("width", width).update();
-	            returnValue = width;
-	        } else if (!"".equals(height) && height != null) {
-	            item.set("height", height).update();
-	            returnValue = height;
-	        } else if (!"".equals(weight) && weight != null) {
-	            item.set("weight", weight).update();
-	            returnValue = weight;
-	        } else if (!"".equals(amount) && amount != null) {
-	            item.set("amount", amount).update();
-	            if (amount != null && !"".equals(amount)) {
-	                saveTransferOrderDetail(item, productId);
-	            }
-	            returnValue = amount;
-	        } else if (!"".equals(unit) && unit != null) {
-	            item.set("unit", unit).update();
-	            returnValue = unit;
-	        }
-	
-	        Double volume = Double.parseDouble(item.get("size")+"")/1000 *
-	        Double.parseDouble(item.get("width")+"")/1000 *
-	        Double.parseDouble(item.get("height")+"")/1000;
-	        item.set("volume", volume).update();
-	        updateTransferOrderItemDetail(item, product);
-        }else{
-        	if (!"".equals(remark) && remark != null) {
-	        	item.set("remark", remark).update();
-	            returnValue = remark;
-	        } else if (!"".equals(amount) && amount != null) {
-	        	item.set("amount", amount).update();
-	            if (amount != null && !"".equals(amount)) {
-	                saveTransferOrderDetail(item, productId);
-	            }
-	            returnValue = amount;
-	        }
+        if (productId == null || "".equals(productId)) {
+            if (!"".equals(item_no) && item_no != null) {
+                item.set("item_no", item_no).update();
+                returnValue = item_no;
+            } else if (!"".equals(item_name) && item_name != null) {
+                item.set("item_name", item_name).update();
+                returnValue = item_name;
+            } else if (!"".equals(remark) && remark != null) {
+                item.set("remark", remark).update();
+                returnValue = remark;
+            } else if (!"".equals(size) && size != null) {
+                item.set("size", size).update();
+                returnValue = size;
+            } else if (!"".equals(width) && width != null) {
+                item.set("width", width).update();
+                returnValue = width;
+            } else if (!"".equals(height) && height != null) {
+                item.set("height", height).update();
+                returnValue = height;
+            } else if (!"".equals(weight) && weight != null) {
+                item.set("weight", weight).update();
+                returnValue = weight;
+            } else if (!"".equals(amount) && amount != null) {
+                item.set("amount", amount).update();
+                if (amount != null && !"".equals(amount)) {
+                    saveTransferOrderDetail(item, productId);
+                }
+                returnValue = amount;
+            } else if (!"".equals(unit) && unit != null) {
+                item.set("unit", unit).update();
+                returnValue = unit;
+            }
+
+            if (item.get("size") != null && item.get("width") != null && item.get("height") != null) {
+                Double volume = Double.parseDouble(item.get("size") + "") / 1000 * Double.parseDouble(item.get("width") + "") / 1000
+                        * Double.parseDouble(item.get("height") + "") / 1000;
+                item.set("volume", volume).update();
+            }
+            updateTransferOrderItemDetail(item, product);
+        } else {
+            if (!"".equals(remark) && remark != null) {
+                item.set("remark", remark).update();
+                returnValue = remark;
+            } else if (!"".equals(amount) && amount != null) {
+                item.set("amount", amount).update();
+                if (amount != null && !"".equals(amount)) {
+                    saveTransferOrderDetail(item, productId);
+                }
+                returnValue = amount;
+            }
         }
         renderText(returnValue);// 必须返回传进来的值，否则js会报错
     }
 
     // 更新单品信息
     private void updateTransferOrderItemDetail(TransferOrderItem item, Product product) {
-		if(item.get("product_id") == null || "".equals(item.get("product_id"))){
-	    	List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where item_id = ?", item.get("id"));
-			for(TransferOrderItemDetail detail : transferOrderItemDetails){
-				detail.set("item_name", item.get("item_name"));
-				detail.set("volume", item.get("volume"));
-				detail.set("weight", item.get("weight"));
-				detail.update();
-			}
-		}else{
-			List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where item_id = ?", item.get("id"));
-			for(TransferOrderItemDetail detail : transferOrderItemDetails){
-				detail.set("item_name", product.get("item_name"));
-				detail.set("volume", product.get("volume"));
-				detail.set("weight", product.get("weight"));
-				detail.update();
-			}
-		}
-	}
+        if (item.get("product_id") == null || "".equals(item.get("product_id"))) {
+            List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
+                    "select * from transfer_order_item_detail where item_id = ?", item.get("id"));
+            for (TransferOrderItemDetail detail : transferOrderItemDetails) {
+                detail.set("item_name", item.get("item_name"));
+                detail.set("volume", item.get("volume"));
+                detail.set("weight", item.get("weight"));
+                detail.update();
+            }
+        } else {
+            List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
+                    "select * from transfer_order_item_detail where item_id = ?", item.get("id"));
+            for (TransferOrderItemDetail detail : transferOrderItemDetails) {
+                detail.set("item_name", product.get("item_name"));
+                detail.set("volume", product.get("volume"));
+                detail.set("weight", product.get("weight"));
+                detail.update();
+            }
+        }
+    }
 
-	// 保存货品
+    // 保存货品
     public void saveTransferOrderItem() {
         TransferOrderItem item = null;
         Long productId = getParaToLong("productId");
@@ -301,7 +304,7 @@ public class TransferOrderItemController extends Controller {
 
     // 保存收货人
     private void saveNotifyParty(TransferOrderItemDetail transferOrderItemDetail) {
-    	String notifyPartyId = transferOrderItemDetail.get("notify_party_id");
+        String notifyPartyId = transferOrderItemDetail.get("notify_party_id");
         Party party = null;
         if (notifyPartyId != null && !notifyPartyId.equals("")) {
             party = Party.dao.findById(notifyPartyId);
@@ -316,7 +319,7 @@ public class TransferOrderItemController extends Controller {
             party.save();
         }
         transferOrderItemDetail.set("notify_party_id", party.get("id"));
-	}
+    }
 
     // 获取TransferOrderItem对象
     public void getTransferOrderItem() {
