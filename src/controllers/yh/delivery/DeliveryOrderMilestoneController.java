@@ -381,6 +381,8 @@ public class DeliveryOrderMilestoneController extends Controller {
     public void paymentSave() {
         String returnValue = "";
         String id = getPara("id");
+        Long finItemId = getParaToLong("finItemId");
+        System.out.println(finItemId);
         DeliveryOrderFinItem dFinItem = DeliveryOrderFinItem.dao.findById(id);
 
         Fin_item fItem = Fin_item.dao.findById(dFinItem.get("fin_item_id"));

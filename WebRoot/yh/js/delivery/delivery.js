@@ -523,6 +523,7 @@ $(document).ready(function() {
 				                    input: request.term
 				                },
 				                success: function( data ) {
+				                	var columnName = inputBox.parent().parent()[0].className;
 				                    response($.map( data, function( data ) {
 				                        return {
 				                            label: data.NAME,
@@ -535,9 +536,8 @@ $(document).ready(function() {
 				            });
 				        },select: function( event, ui ) {
 			        		//将选择的产品id先保存到数据库
-			        		var productId = ui.item.id;
-			        		$.post('/yh/transferOrderItem/saveTransferOrderItem', 
-			        			{productId:productId},
+			        		var finItemId = ui.item.id;
+			        		$.post('/yh/deliveryOrderMilestone/paymentSave',{finItemId:finItemId},
 			        			function(){ paymenttable.fnDraw();  });        		
 			                
 			            },
