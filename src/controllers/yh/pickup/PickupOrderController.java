@@ -209,17 +209,17 @@ public class PickupOrderController extends Controller {
             sqlTotal = "select count(1) total  from transfer_order tor " + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'";
             sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
                     + " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
                     + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.assign_status from transfer_order tor "
+                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code"
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " order by tor.create_stamp desc" + sLimit;
         } else if ("".equals(routeFrom) && "".equals(routeTo)) {
             if (beginTime == null || "".equals(beginTime)) {
@@ -231,7 +231,7 @@ public class PickupOrderController extends Controller {
             sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom + "%' and l2.name like '%" + routeTo
                     + "%' and tor.order_no like '%" + orderNo + "%' and tor.status like '%" + status + "%' and tor.address like '%"
                     + address + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime + "' and '"
@@ -241,10 +241,10 @@ public class PickupOrderController extends Controller {
                     + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.assign_status from transfer_order tor "
+                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
                     + " and l1.name like '%"
@@ -274,7 +274,7 @@ public class PickupOrderController extends Controller {
             sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom + "%' and l2.name like '%" + routeTo
                     + "%' and tor.order_no like '%" + orderNo + "%' and tor.status like '%" + status + "%' and tor.address like '%"
                     + address + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime + "' and '"
@@ -285,10 +285,10 @@ public class PickupOrderController extends Controller {
                     + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
-                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.assign_status from transfer_order tor "
+                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
                     + " and l1.name like '%"
@@ -347,17 +347,17 @@ public class PickupOrderController extends Controller {
         String sqlTotal = "select count(1) total  from transfer_order tor " + " left join party p on tor.customer_id = p.id "
                 + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                 + " left join location l2 on tor.route_to = l2.code"
-                + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
+                + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                 + TransferOrder.ASSIGN_STATUS_ALL + "' and tor.id not in(" + orderIds + ")";
         String sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
                 + " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
                 + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
                 + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                 + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
-                + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.assign_status from transfer_order tor "
+                + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
                 + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                 + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code"
-                + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.assign_status, '') !='"
+                + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                 + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.id not in(" + orderIds + ") order by tor.create_stamp desc" + sLimit;
 
         Record rec = Db.findFirst(sqlTotal);
@@ -566,7 +566,7 @@ public class PickupOrderController extends Controller {
                 transferOrderItemDetail.update();
             }
             TransferOrder transferOrder = TransferOrder.dao.findById(transferOrderItemDetail.get("order_id"));
-            transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+            transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
             transferOrder.update();
         }
         String[] uncheckedDetailIds = uncheckedDetailId.split(",");
@@ -591,7 +591,7 @@ public class PickupOrderController extends Controller {
             if ("".equals(str)) {
                 List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in (" + orderId + ")");
                 for (TransferOrder transferOrder : transferOrders) {
-                    transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+                    transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
                     transferOrder.update();
                 }
             }
@@ -608,7 +608,7 @@ public class PickupOrderController extends Controller {
                 departTransferOrder.set("depart_id", pickupOrder.get("id"));
                 departTransferOrder.set("order_id", params[i]);
                 TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
-                transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+                transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
                 transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
                 transferOrder.update();
                 departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
@@ -753,7 +753,7 @@ public class PickupOrderController extends Controller {
             TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
             if("新建".equals(transferOrder.get("status"))){
 	            transferOrder.set("status", "已入货场");
-	            transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+	            transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
 	            transferOrder.update();
 	            TransferOrderMilestone milestone = new TransferOrderMilestone();
 	            milestone.set("status", "已入货场");

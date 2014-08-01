@@ -107,7 +107,7 @@ $(document).ready(function() {
             	"mDataProp": "CREATE_STAMP",
             	"sClass": "create_stamp"
             },                                      
-    		{ "mDataProp": "ASSIGN_STATUS",
+    		{ "mDataProp": "PICKUP_ASSIGN_STATUS",
             	"sClass": "assign_status",
             	"fnRender": function(obj) {
             		if(obj.aData.ASSIGN_STATUS == "NEW"){

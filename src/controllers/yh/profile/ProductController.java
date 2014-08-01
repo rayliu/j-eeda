@@ -343,11 +343,10 @@ public class ProductController extends Controller {
 	    	item.set("serial_no", serial_no).update();
 	    	returnValue = serial_no;
 	    }
-
-        Double volume = Double.parseDouble(item.get("size")+"")/1000 *
-        Double.parseDouble(item.get("width")+"")/1000 *
-        Double.parseDouble(item.get("height")+"")/1000;
-        item.set("volume", volume).update();
+        if (item.get("size") != null && item.get("width") != null && item.get("height") != null) {
+	        Double volume = Double.parseDouble(item.get("size")+"")/1000 * Double.parseDouble(item.get("width")+"")/1000 * Double.parseDouble(item.get("height")+"")/1000;
+	        item.set("volume", volume).update();
+        }
         renderText(returnValue);// 必须返回传进来的值，否则js会报错
     }
 }

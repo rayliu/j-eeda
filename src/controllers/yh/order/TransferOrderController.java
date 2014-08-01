@@ -373,7 +373,8 @@ public class TransferOrderController extends Controller {
             transferOrder.set("route_to", getPara("route_to"));
             transferOrder.set("order_type", getPara("orderType"));
             transferOrder.set("customer_province", getPara("customerProvince"));
-            transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
+            transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_NEW);
+            transferOrder.set("depart_assign_status", TransferOrder.ASSIGN_STATUS_NEW);
             transferOrder.set("payment", getPara("payment"));
 
             Party party = null;
@@ -424,7 +425,8 @@ public class TransferOrderController extends Controller {
             transferOrder.set("route_to", getPara("route_to"));
             transferOrder.set("order_type", getPara("orderType"));
             transferOrder.set("customer_province", getPara("customerProvince"));
-            transferOrder.set("assign_status", TransferOrder.ASSIGN_STATUS_NEW);
+            transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_NEW);
+            transferOrder.set("depart_assign_status", TransferOrder.ASSIGN_STATUS_NEW);
             transferOrder.set("payment", getPara("payment"));
 
             Party party = null;
