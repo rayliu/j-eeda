@@ -54,8 +54,8 @@ $(document).ready(function() {
             	"sClass": "total_weight"
             },
             { 
-            	"mDataProp": "TOTAL_VOLUMN",
-            	"sClass": "total_volumn"
+            	"mDataProp": "TOTAL_VOLUME",
+            	"sClass": "total_volume"
             },
             { 
             	"mDataProp": "TOTAL_AMOUNT",
@@ -182,7 +182,7 @@ $(document).ready(function() {
 		$("input[name='order_check_box']").each(function(){
         	if($(this).prop('checked') == true){
         		sumWeightVal = sumWeightVal + parseFloat($(this).parent().siblings('.total_weight')[0].textContent == "" ? 0 : $(this).parent().siblings('.total_weight')[0].textContent);
-        		sumVolumnVal = sumVolumnVal + parseFloat($(this).parent().siblings('.total_volumn')[0].textContent == "" ? 0 : $(this).parent().siblings('.total_volumn')[0].textContent);
+        		sumVolumnVal = sumVolumnVal + parseFloat($(this).parent().siblings('.total_volume')[0].textContent == "" ? 0 : $(this).parent().siblings('.total_volume')[0].textContent);
         	}
         });
 		$("#sumWeight").text(sumWeightVal);	
@@ -196,7 +196,7 @@ $(document).ready(function() {
 		var order_type = $(this).parent().siblings('.order_type')[0].textContent;		
 		var cargo_nature = $(this).parent().siblings('.cargo_nature')[0].textContent;		
 		var total_weight = $(this).parent().siblings('.total_weight')[0].textContent;		
-		var total_volumn = $(this).parent().siblings('.total_volumn')[0].textContent;		
+		var total_volume = $(this).parent().siblings('.total_volume')[0].textContent;		
 		var total_amount = $(this).parent().siblings('.total_amount')[0].textContent;		
 		var address = $(this).parent().siblings('.address')[0].textContent;		
 		var pickup_mode = $(this).parent().siblings('.pickup_mode')[0].textContent;		
@@ -215,7 +215,7 @@ $(document).ready(function() {
 				}
 			}
 			sumValue();
-			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volumn+"</td><td>"
+			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
 					+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");			
 		}else{
 			sumValue();
