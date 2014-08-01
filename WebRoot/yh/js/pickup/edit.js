@@ -738,4 +738,107 @@
     	$("#checkbox2").prop('checked', true);
     	$("#warehouseDiv").show();
     }
+    
+  //应收应付datatable
+	var paymenttable=$('#table_fin2').dataTable({
+		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "bFilter": false, //不需要默认的搜索框
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+        "sAjaxSource": "/yh/deliveryOrderMilestone/accountPayable/"+order_id,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
+        "aoColumns": [
+			{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
+			{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},  
+			{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
+			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
+        ]      
+    });
+	paymenttable.makeEditable({
+    	sUpdateURL: '/yh/deliveryOrderMilestone/paymentSave',    	
+    	oEditableSettings: {event: 'click'},
+    	"aoColumns": [  			            
+            {            
+            	style: "inherit",
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"name",
+            	placeholder: "", 
+            	callback: function () {
+            		
+            	}
+        	},
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"amount",
+            	placeholder: "",
+            	callback: function () {} 
+            },  
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"remark",
+            	placeholder: "",
+            	callback: function () {} 
+            }
+        ]      
+    }).click(function(){
+    	
+    	var inputBox = $(this).find('input');
+        inputBox.autocomplete({
+	        source: function( request, response ) {
+	        	if(inputBox.parent().parent()[0].cellIndex >0){//从第2列开始，不需要去后台查数据
+		    		return;
+		    	}
+	            $.ajax({
+	                url: "/yh/deliveryOrderMilestone/fin_item",
+	                dataType: "json",
+	                data: {
+	                    input: request.term
+	                },
+	                success: function( data ) {
+	                    response($.map( data, function( data ) {
+	                        return {
+	                            label: data.NAME,
+	                            value: data.NAME,
+	                            id: data.ID,
+	                            name: data.NAME
+	                        };
+	                    }));
+	                }
+	            });
+	        },select: function( event, ui ) {
+        		//将选择的条目id先保存到数据库
+	        	var finId = $(this).parent().parent().parent()[0].id;
+        		var finItemId = ui.item.id;
+        		$.post('/yh/deliveryOrderMilestone/paymentSave',{id:finId, finItemId:finItemId},
+        			function(){ paymenttable.fnDraw();  });        		
+            },
+        	minLength: 2
+        });
+    }); 
+	//应收
+	$("#addrow").click(function(){	
+	$.post('/yh/deliveryOrderMilestone/addNewRow/'+order_id,function(data){
+		console.log(data);
+		if(data.success){
+			paymenttable.fnDraw();
+			//$('#fin_item2').modal('hide');
+			//$('#resetbutton2').click();
+		}else{
+			
+		}
+	});		
+	});	
 } );

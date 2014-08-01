@@ -301,8 +301,8 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select * from delivery_order_fin_item d left join fin_item f on d.fin_item_id = f.id where f.type='应收' and d.order_id ='"
-                        + id + "'");
+                .find("select * from delivery_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id ='"
+                        + id + "'  and f.type='应收'");
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -331,8 +331,8 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select d.*,f.name,f.remark from delivery_order_fin_item d left join fin_item f on d.fin_item_id = f.id where f.type='应付' and d.order_id='"
-                        + id + "'");
+                .find("select d.*,f.name,f.remark from delivery_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id='"
+                        + id + "' and f.type='应付'");
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -381,13 +381,11 @@ public class DeliveryOrderMilestoneController extends Controller {
     public void paymentSave() {
         String returnValue = "";
         String id = getPara("id");
-        Long finItemId = getParaToLong("finItemId");
-        System.out.println(finItemId);
+        String finItemId = getPara("finItemId");
         DeliveryOrderFinItem dFinItem = DeliveryOrderFinItem.dao.findById(id);
 
         Fin_item fItem = Fin_item.dao.findById(dFinItem.get("fin_item_id"));
 
-        String name = getPara("name");
         String amount = getPara("amount");
         String remark = getPara("remark");
 
@@ -395,17 +393,19 @@ public class DeliveryOrderMilestoneController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + username + "'");
         Date createDate = Calendar.getInstance().getTime();
 
-        if (!"".equals(name) && name != null) {
-            fItem.set("name", name).update();
-            returnValue = name;
+        if (!"".equals(finItemId) && finItemId != null) {
+            dFinItem.set("fin_item_id", finItemId).update();
+            returnValue = finItemId;
         } else if (!"".equals(amount) && amount != null) {
             dFinItem.set("amount", amount).update();
             returnValue = amount;
-        } else if (!"".equals(remark) && remark != null) {
-            fItem.set("remark", remark).update();
-            returnValue = remark;
         }
-
+        List<Record> list = Db.find("select * from fin_item");
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).get("name") == null) {
+                Fin_item.dao.deleteById(list.get(i).get("id"));
+            }
+        }
         renderJson(returnValue);
     }
 

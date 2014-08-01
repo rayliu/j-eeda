@@ -758,6 +758,61 @@ public class DepartOrderController extends Controller {
         renderJson(Map);
     }
 
+    // 产品入库
+    public int productWarehouse(String depart_id) {
+        Date createDate = Calendar.getInstance().getTime();
+        int number = 0;// 没入库的货品个数
+        // 查找创建人id
+        String name = (String) currentUser.getPrincipal();
+        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
+        String creat_id = users.get("id").toString();// 创建人id
+        int id = Integer.parseInt(depart_id);
+        String sql = "select order_id, item_id  from depart_transfer_itemdetail  where depart_id =" + id
+                + "  group by item_id";
+        List<Record> de = Db.find(sql);
+        String order_id = "";
+        String tr_item_id = "";
+        for (int i = 0; i < de.size(); i++) {
+            String item_id = de.get(i).get("item_id").toString();
+            order_id = de.get(i).get("order_id").toString();
+            tr_item_id += item_id + ",";
+        }
+        tr_item_id = tr_item_id.substring(0, tr_item_id.length() - 1);
+        String tr_sql = "select * from transfer_order_item where id in (" + tr_item_id + ")";
+        List<Record> item = Db.find(tr_sql);
+        String tr_order_sql = "select * from transfer_order where id=" + Integer.parseInt(order_id);
+        TransferOrder tr_order_list = TransferOrder.dao.findFirst(tr_order_sql);
+        InventoryItem in_item = null;
+        for (int i = 0; i < item.size(); i++) {
+            if (item.get(i).get("product_id") != null) {
+                in_item = new InventoryItem();
+                String in_item_check_sql = "select * from inventory_item where product_id="
+                        + Integer.parseInt(item.get(i).get("product_id").toString()) + "" + " and warehouse_id="
+                        + Integer.parseInt(tr_order_list.get("warehouse_id").toString()) + "";
+                InventoryItem in_item_check = InventoryItem.dao.findFirst(in_item_check_sql);
+                if (in_item_check == null) {
+                    double amount = productAmount(depart_id, item.get(i).get("id").toString());
+                    in_item.set("party_id", Integer.parseInt(tr_order_list.get("customer_id").toString()));
+                    in_item.set("total_quantity", amount);
+                    in_item.set("creator", Integer.parseInt(creat_id));
+                    in_item.set("create_date", createDate);
+                    in_item.set("warehouse_id", Integer.parseInt(tr_order_list.get("warehouse_id").toString()));
+                    in_item.set("product_id", Integer.parseInt(item.get(i).get("product_id").toString()));
+                    in_item.save();
+                } else {
+                    double amount = productAmount(depart_id, item.get(i).get("id").toString());
+                    in_item = InventoryItem.dao.findById(Integer.parseInt(in_item_check.get("id").toString()));
+                    double total = Double.parseDouble(in_item.get("total_quantity").toString()) + amount;
+                    in_item.set("total_quantity", total).update();
+                }
+
+            } else {
+                number++;
+            }
+        }
+        return number;
+    }
+
     // 构造单号
     public static String creatOrderNo() {
         String order_no = null;
@@ -1289,7 +1344,6 @@ public class DepartOrderController extends Controller {
 
     }
 
-    // 产品入库
     public void productWarehouse(String departId) {
     	if(!"".equals(departId) && departId != null){
 	    	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departId);
@@ -1298,55 +1352,6 @@ public class DepartOrderController extends Controller {
 	    	}
     	}
         /*Date createDate = Calendar.getInstance().getTime();
-        int number = 0;// 没入库的货品个数
-        // 查找创建人id
-        String name = (String) currentUser.getPrincipal();
-        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
-        String creat_id = users.get("id").toString();// 创建人id
-        int id = Integer.parseInt(depart_id);
-        String sql = "select order_id, item_id  from depart_transfer_itemdetail  where depart_id =" + id
-                + "  group by item_id";
-        List<Record> de = Db.find(sql);
-        String order_id = "";
-        String tr_item_id = "";
-        for (int i = 0; i < de.size(); i++) {
-            String item_id = de.get(i).get("item_id").toString();
-            order_id = de.get(i).get("order_id").toString();
-            tr_item_id += item_id + ",";
-        }
-        tr_item_id = tr_item_id.substring(0, tr_item_id.length() - 1);
-        String tr_sql = "select * from transfer_order_item where id in (" + tr_item_id + ")";
-        List<Record> item = Db.find(tr_sql);
-        String tr_order_sql = "select * from transfer_order where id=" + Integer.parseInt(order_id);
-        TransferOrder tr_order_list = TransferOrder.dao.findFirst(tr_order_sql);
-        InventoryItem in_item = null;
-        for (int i = 0; i < item.size(); i++) {
-            if (item.get(i).get("product_id") != null) {
-                in_item = new InventoryItem();
-                String in_item_check_sql = "select * from inventory_item where product_id="
-                        + Integer.parseInt(item.get(i).get("product_id").toString()) + "" + " and warehouse_id="
-                        + Integer.parseInt(tr_order_list.get("warehouse_id").toString()) + "";
-                InventoryItem in_item_check = InventoryItem.dao.findFirst(in_item_check_sql);
-                if (in_item_check == null) {
-                    double amount = productAmount(depart_id, item.get(i).get("id").toString());
-                    in_item.set("party_id", Integer.parseInt(tr_order_list.get("customer_id").toString()));
-                    in_item.set("total_quantity", amount);
-                    in_item.set("creator", Integer.parseInt(creat_id));
-                    in_item.set("create_date", createDate);
-                    in_item.set("warehouse_id", Integer.parseInt(tr_order_list.get("warehouse_id").toString()));
-                    in_item.set("product_id", Integer.parseInt(item.get(i).get("product_id").toString()));
-                    in_item.save();
-                } else {
-                    double amount = productAmount(depart_id, item.get(i).get("id").toString());
-                    in_item = InventoryItem.dao.findById(Integer.parseInt(in_item_check.get("id").toString()));
-                    double total = Double.parseDouble(in_item.get("total_quantity").toString()) + amount;
-                    in_item.set("total_quantity", total).update();
-                }
-
-            } else {
-                number++;
-            }
-        }
         return number;*/
     }
 
@@ -1382,8 +1387,6 @@ public class DepartOrderController extends Controller {
                 }
             }
         }
-    }
-
     public void CreatReturnOrder() {
         boolean check = CreatReturnOrder.CreatOrder(ReturnOrder.Depart_Order, getPara("depart_id").toString());
         renderJson(check);

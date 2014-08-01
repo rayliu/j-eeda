@@ -533,10 +533,49 @@
                                 </div>
 
                                 <div class="tab-pane fade" id="arap">
-                                    <h2>应收</h2>
+                                      <h2>应收</h2>
+                                    <!-- 模拟框 -->
+                                    <div class="modal fade" id="fin_item" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									      	<label>添加应收</label>
+									      </div>
+									      <div class="modal-body">
+									      <form id="fin_form" action="">
+									      	<div class="form-group">
+									      	 <input name="delivery_item_id" class="form-control" type="hidden" value="">
+		                                            <label>费用条目</label>
+		                                            <input name="item_name" class="form-control"  value="">
+		                                        </div>
+		                                        <div class="form-group">
+		                                            <label>金额</label>
+		                                            <input name="item_amount" class="form-control"  value="">
+		                                        </div>
+		                                        <div class="form-group">
+		                                            <label>备注</label>
+		                                            <input name="item_remark" class="form-control" placeholder="" value="">
+		                                        </div>
+		                                        <div class="form-group">
+		                                            <label>结算状态</label>
+		                                            <input name="item_status" class="form-control" placeholder="" value="">
+		                                        </div>  
+										  </div>
+										  	<input id="resetbutton" type="reset"/>
+										  </form>
+											<div class="modal-footer">
+										        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+										        <button id="item_fin_save" type="button" class="btn btn-primary">保存</button>
+										      </div>
+									    </div><!-- /.modal-content -->
+									  </div><!-- /.modal-dialog -->
+									</div><!-- /.modal -->
+									 <button class="btn btn-primary" data-toggle="modal" data-target="#fin_item">
+										添加应收
+										</button>
                                     <div class="panel-body">
                                         <div class="table-responsive">
-                                            <table class="table table-striped table-bordered table-hover">
+                                            <table class="table table-striped table-bordered table-hover" id ="table_fin">
                                                 <thead>
                                                     <tr>
                                                         <th>#</th>
@@ -547,21 +586,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>1</td>
-                                                        <td>装车费</td>
-                                                        <td>200</td>
-                                                        <td></td>
-                                                        <td>已结</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>2</td>
-                                                        <td>设备包装</td>
-                                                        <td>50</td>
-                                                        <td></td>
-                                                        <td>已结</td>
-                                                    </tr>
-                                                    
+                                                   
                                                 </tbody>
                                             </table>
                                         </div>
@@ -571,12 +596,12 @@
                                     
                                     <hr>
                                     <h2>应付</h2>
+									 <button class="btn btn-primary" id="addrow"> 添加应付</button>
                                     <div class="panel-body">
                                         <div class="table-responsive">
-                                            <table class="table table-striped table-bordered table-hover">
+                                            <table class="table table-striped table-bordered table-hover"  id ="table_fin2">
                                                 <thead>
                                                     <tr>
-                                                        <th>#</th>
                                                         <th>费用条目</th>
                                                         <th>金额</th>
                                                         <th>备注</th>
@@ -584,27 +609,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>1</td>
-                                                        <td>运输费用</td>
-                                                        <td>2000</td>
-                                                        <td></td>
-                                                        <td>未结</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>2</td>
-                                                        <td>卸货费</td>
-                                                        <td>300</td>
-                                                        <td></td>
-                                                        <td>未结</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>3</td>
-                                                        <td>上楼费</td>
-                                                        <td>300</td>
-                                                        <td></td>
-                                                        <td>未结</td>
-                                                    </tr>
+                                                    
                                                 </tbody>
                                             </table>
                                         </div>

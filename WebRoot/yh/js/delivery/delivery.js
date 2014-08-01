@@ -493,7 +493,9 @@ $(document).ready(function() {
 			            	tooltip: '点击可以编辑',
 			            	name:"name",
 			            	placeholder: "", 
-			            	callback: function () {}
+			            	callback: function () {
+			            		
+			            	}
 			        	},
 			            {
 			            	indicator: '正在保存...',
@@ -513,9 +515,13 @@ $(document).ready(function() {
 			            }
 			        ]      
 			    }).click(function(){
+			    	
 			    	var inputBox = $(this).find('input');
 			        inputBox.autocomplete({
 				        source: function( request, response ) {
+				        	if(inputBox.parent().parent()[0].cellIndex >0){//从第2列开始，不需要去后台查数据
+					    		return;
+					    	}
 				            $.ajax({
 				                url: "/yh/deliveryOrderMilestone/fin_item",
 				                dataType: "json",
@@ -523,7 +529,6 @@ $(document).ready(function() {
 				                    input: request.term
 				                },
 				                success: function( data ) {
-				                	var columnName = inputBox.parent().parent()[0].className;
 				                    response($.map( data, function( data ) {
 				                        return {
 				                            label: data.NAME,
@@ -540,7 +545,6 @@ $(document).ready(function() {
 			        		var finItemId = ui.item.id;
 			        		$.post('/yh/deliveryOrderMilestone/paymentSave',{id:finId, finItemId:finItemId},
 			        			function(){ paymenttable.fnDraw();  });        		
-			                
 			            },
 			        	minLength: 2
 			        });

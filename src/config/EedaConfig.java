@@ -23,6 +23,7 @@ import models.ReturnOrder;
 import models.Role;
 import models.Toll;
 import models.TransferOrder;
+import models.TransferOrderFinItem;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
@@ -229,6 +230,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("carinfo", Carinfo.class);
         arp.addMapping("fin_item", Fin_item.class);
         arp.addMapping("delivery_order_fin_item", DeliveryOrderFinItem.class);
+        arp.addMapping("transfer_order_fin_item", TransferOrderFinItem.class);
         // yh mapping
 
     }
