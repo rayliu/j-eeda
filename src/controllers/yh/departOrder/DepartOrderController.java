@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
-import models.DepartOrderItemdetail;
 import models.DepartTransferOrder;
 import models.InventoryItem;
 import models.Location;
@@ -731,7 +730,7 @@ public class DepartOrderController extends Controller {
         DepartOrder dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
         dp.set("status", order_state).update();
         if ("已入库".equals(order_state)) {
-            nummber = productWarehouse(depart_id);// 产品入库
+            productWarehouse(depart_id);// 产品入库
         }
         if ("已签收".equals(order_state)) {
             // 生成回单
@@ -842,14 +841,6 @@ public class DepartOrderController extends Controller {
             DepartTransferOrder dep_tr = DepartTransferOrder.dao.findFirst(sql);
             dep_tr.set("depart_id", null).update();
             dep_tr.delete();
-        }
-        String delete_detail_sql = "select * from depart_transfer_itemdetail  where depart_id=" + id;
-        List<DepartOrderItemdetail> dep = DepartOrderItemdetail.dao.find(delete_detail_sql);
-        for (int j = 0; j < dep.size(); j++) {
-            DepartOrderItemdetail dep_detail = DepartOrderItemdetail.dao.findById(Integer.parseInt(dep.get(j).get("id")
-                    .toString()));
-            dep_detail.set("depart_id", null).set("item_id", null).set("itemdetail_id", null).update();
-            dep_detail.delete();
         }
         DepartOrder re = DepartOrder.dao.findById(id);
         re.set("driver_id", null).update();
@@ -1299,8 +1290,14 @@ public class DepartOrderController extends Controller {
     }
 
     // 产品入库
-    public int productWarehouse(String depart_id) {
-        Date createDate = Calendar.getInstance().getTime();
+    public void productWarehouse(String departId) {
+    	if(!"".equals(departId) && departId != null){
+	    	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departId);
+	    	for(DepartTransferOrder departTransferOrder : departTransferOrders){
+	    		savegateIn(departTransferOrder);
+	    	}
+    	}
+        /*Date createDate = Calendar.getInstance().getTime();
         int number = 0;// 没入库的货品个数
         // 查找创建人id
         String name = (String) currentUser.getPrincipal();
@@ -1350,7 +1347,41 @@ public class DepartOrderController extends Controller {
                 number++;
             }
         }
-        return number;
+        return number;*/
+    }
+
+    public void savegateIn(DepartTransferOrder departTransferOrder) {
+        // product_id不为空时入库
+        List<Record> transferOrderItem = Db.find("select * from transfer_order_item where order_id='" + departTransferOrder.get("order_id")
+                + "'");
+        TransferOrder tOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+
+        InventoryItem item = null;
+        if (transferOrderItem.size() > 0) {
+            for (int i = 0; i < transferOrderItem.size(); i++) {
+                if (transferOrderItem.get(i).get("product_id") != null) {
+                    item = new InventoryItem();
+                    String in_item_check_sql = "select * from inventory_item where product_id="
+                            + Integer.parseInt(transferOrderItem.get(i).get("product_id").toString()) + "" + " and warehouse_id="
+                            + Integer.parseInt(tOrder.get("warehouse_id").toString()) + "";
+                    InventoryItem inventoryItem = InventoryItem.dao.findFirst(in_item_check_sql);
+                    if (inventoryItem == null) {
+                        item.set("party_id", tOrder.get("customer_id"));
+                        item.set("warehouse_id", tOrder.get("warehouse_id"));
+                        item.set("product_id", transferOrderItem.get(i).get("product_id"));
+                        item.set("total_quantity", transferOrderItem.get(i).get("amount"));
+                        item.save();
+                    } else {
+                        item = InventoryItem.dao.findById(inventoryItem.get("id"));
+                        item.set(
+                                "total_quantity",
+                                Double.parseDouble(item.get("total_quantity").toString())
+                                        + Double.parseDouble(transferOrderItem.get(i).get("amount").toString()));
+                        item.update();
+                    }
+                }
+            }
+        }
     }
 
     public void CreatReturnOrder() {

@@ -133,8 +133,6 @@ public class DataInitUtil {
 
             // 发车单运输单中间表
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,depart_id bigint,order_id bigint,transfer_order_no varchar(255),foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id));");
-            // 发车单单品表
-            stmt.executeUpdate("create table if not exists depart_transfer_itemdetail(id bigint auto_increment primary key,depart_id bigint,order_id bigint,item_id bigint,itemdetail_id bigint );");
 
             // transfer_order_milestone 运输单里程碑
             stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"

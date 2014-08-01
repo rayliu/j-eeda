@@ -9,7 +9,6 @@ import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.DepartOrder;
-import models.DepartOrderItemdetail;
 import models.DepartTransferOrder;
 import models.Fin_item;
 import models.InventoryItem;
@@ -224,7 +223,6 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("delivery_order_item", DeliveryOrderItem.class);
         arp.addMapping("depart_order", DepartOrder.class);
         arp.addMapping("depart_transfer", DepartTransferOrder.class);
-        arp.addMapping("depart_transfer_itemdetail", DepartOrderItemdetail.class);
         arp.addMapping("warehouse_order", WarehouseOrder.class);
         arp.addMapping("warehouse_order_item", WarehouseOrderItem.class);
         arp.addMapping("inventory_item", InventoryItem.class);
