@@ -1,4 +1,4 @@
-package controllers.yh.departOrder;
+﻿package controllers.yh.departOrder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +31,6 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
-import controllers.yh.returnorder.CreatReturnOrder;
 
 public class DepartOrderController extends Controller {
 
@@ -1387,8 +1386,10 @@ public class DepartOrderController extends Controller {
                 }
             }
         }
+    }
+    /*
     public void CreatReturnOrder() {
         boolean check = CreatReturnOrder.CreatOrder(ReturnOrder.Depart_Order, getPara("depart_id").toString());
         renderJson(check);
-    }
+    }*/
 }
