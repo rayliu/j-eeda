@@ -1,4 +1,4 @@
-﻿package controllers.yh.departOrder;
+package controllers.yh.departOrder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -757,7 +757,7 @@ public class DepartOrderController extends Controller {
         renderJson(Map);
     }
 
-    // 产品入库
+    /*// 产品入库
     public int productWarehouse(String depart_id) {
         Date createDate = Calendar.getInstance().getTime();
         int number = 0;// 没入库的货品个数
@@ -810,7 +810,7 @@ public class DepartOrderController extends Controller {
             }
         }
         return number;
-    }
+    }*/
 
     // 构造单号
     public static String creatOrderNo() {
