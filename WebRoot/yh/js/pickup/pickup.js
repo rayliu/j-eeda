@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
     $('#menu_assign').addClass('active').find('ul').addClass('in');
-    
+    var orderType = [];
 	//datatable, 动态处理
     var pickupOrder = $('#eeda-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -171,6 +171,7 @@ $(document).ready(function() {
     
 	$("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
+			orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
 			$("#saveBtn").attr('disabled', false);
 		}
 	});
@@ -207,6 +208,12 @@ $(document).ready(function() {
 		var create_stamp = $(this).parent().siblings('.create_stamp')[0].textContent;		
 		var assign_status = $(this).parent().siblings('.assign_status')[0].textContent;		
 		if($(this).prop('checked') == true){
+			if(orderType.length != 0){
+				if(orderType[0] != $(this).parent().siblings('.order_type')[0].innerHTML){
+					alert("请选择相同的订单类型!");
+					return false;
+				}
+			}
 			sumValue();
 			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volumn+"</td><td>"
 					+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");			
