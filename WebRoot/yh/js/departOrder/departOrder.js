@@ -1,6 +1,8 @@
 
 $(document).ready(function() {
-    $('#menu_assign').addClass('active').find('ul').addClass('in');    
+    $('#menu_assign').addClass('active').find('ul').addClass('in'); 
+    var spName = [];
+    var spNameUnchecked = [];
 	//datatable, 动态处理
     var datatable = $('#eeda-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -154,8 +156,25 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
 			$("#saveBtn").attr('disabled', false);
+			if(spName.length != 0){
+				if(spName[0] != $(this).parent().siblings('.spname')[0].innerHTML && $(this).parent().siblings('.spname')[0].innerHTML != ''){
+					alert("请选择同一供应商!");
+					return false;
+				}
+			}else{
+				if($(this).parent().siblings('.spname')[0].innerHTML != ''){
+					spName.push($(this).parent().siblings('.spname')[0].innerHTML);
+					if(spNameUnchecked.length != 0){
+						spNameUnchecked.remove($(this).parent().siblings('.spname')[0].innerHTML);
+					}
+				}
+			}
 		}else{
 			$("#saveBtn").attr('disabled', true);
+			spNameUnchecked.push($(this).parent().siblings('.spname')[0].innerHTML);
+		}
+		if(spNameUnchecked.length != 0){
+			spName = [];
 		}
 	});
 });
