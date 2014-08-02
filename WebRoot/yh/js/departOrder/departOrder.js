@@ -28,7 +28,7 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
-            { "mDataProp": "ADDRESS"},
+            { "mDataProp": "DOADDRESS"},
             { "mDataProp": "ARRIVAL_MODE",
             	"fnRender": function(obj) {
             		if(obj.aData.ARRIVAL_MODE=="delivery"){

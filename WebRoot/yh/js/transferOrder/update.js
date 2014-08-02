@@ -349,7 +349,7 @@ $(document).ready(function() {
 				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
 				  	itemDataTable.fnDraw();
 			        
-			        location.href = "/yh/transferOrder";                
+			        //location.href = "/yh/transferOrder";                
 				}else{
 					alert('数据保存失败。');
 				}

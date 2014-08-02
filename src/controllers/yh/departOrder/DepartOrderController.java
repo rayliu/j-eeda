@@ -341,20 +341,21 @@ public class DepartOrderController extends Controller {
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
-                    + " where tor.status = '已入货场'or tor.status like '%部分%' and ifnull(tor.depart_assign_status, '') !='"
+                    + " where (tor.status = '已入货场'or tor.status like '%部分%') and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'";
             rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
-            sql = "select tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
+            sql = "select distinct tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
                     + " (select sum(toi.weight) from transfer_order_item toi where toi.order_id = tor.id) as total_weight,"
                     + " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
-                    + " tor.address,tor.pickup_mode,tor.status,c.company_name cname,"
+                    + " dor.address doaddress,tor.pickup_mode,tor.status,c.company_name cname,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.company_name as spname,cont.id as spid from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
-                    + "left join contact cont on  cont.id=tor.sp_id "
+                    + " left join contact cont on  cont.id=tor.sp_id "
+                    + " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
                     + " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code" + " where tor.status = '已入货场' or tor.status like '%部分%'"
+                    + " left join location l2 on tor.route_to = l2.code" + " where (tor.status = '已入货场' or tor.status like '%部分%')"
                     + "  and ifnull(tor.depart_assign_status, '') !='" + TransferOrder.ASSIGN_STATUS_ALL
                     + "' order by tor.create_stamp desc";
         } else {
@@ -368,28 +369,29 @@ public class DepartOrderController extends Controller {
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status = '已入货场' or tor.status like '%部分%' and isnull(tor.depart_assign_status, '') !='"
+                    + " where (tor.status = '已入货场' or tor.status like '%部分%') and isnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom
                     + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
                     + "' and '" + endTime + "'";
 
-            sql = "select tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
+            sql = "select distinct tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
                     + " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
                     + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-                    + " tor.address,tor.pickup_mode,tor.status,c.company_name cname,"
+                    + " dor.address doaddress,tor.pickup_mode,tor.status,c.company_name cname,"
                     + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.company_name spname from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id  left join contact c2 on p2.contact_id = c2.id "
+                    + " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status ='已入货场' or tor.status like '%部分%' and isnull(tor.depart_assign_status, '') !='"
+                    + " where (tor.status ='已入货场' or tor.status like '%部分%') and isnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom
                     + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
-                    + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
+                    + "%' and c.company_name like '%" + customer + "%' and tor.create_stamp between '" + beginTime
                     + "' and '" + endTime + "'" + " order by tor.create_stamp desc";
         }
         /*
