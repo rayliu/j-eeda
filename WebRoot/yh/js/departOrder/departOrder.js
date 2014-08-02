@@ -49,9 +49,10 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
-            { "mDataProp": "SPNAME"}
-          
-                                      
+            { 
+            	"mDataProp": "SPNAME",
+            	"sClass": "spname"
+            }   
         ]      
     });	
 

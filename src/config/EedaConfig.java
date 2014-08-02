@@ -201,7 +201,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("office", Office.class);
         arp.addMapping("fin_account", Account.class);
         arp.addMapping("role", Role.class);
-        arp.addMapping("Fin_item", Toll.class);
+        arp.addMapping("fin_item", Toll.class);
         arp.addMapping("privileges", Privilege.class);
         arp.addMapping("route", Route.class);
         arp.addMapping("product", Product.class);
