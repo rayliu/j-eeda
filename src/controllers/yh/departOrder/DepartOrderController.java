@@ -341,7 +341,7 @@ public class DepartOrderController extends Controller {
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
-                    + " where tor.status = '已入货场' and ifnull(tor.depart_assign_status, '') !='"
+                    + " where tor.status = '已入货场'or tor.status like '%部分%' and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'";
             rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
@@ -354,7 +354,7 @@ public class DepartOrderController extends Controller {
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + "left join contact cont on  cont.id=tor.sp_id "
                     + " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code" + " where tor.status = '已入货场'"
+                    + " left join location l2 on tor.route_to = l2.code" + " where tor.status = '已入货场' or tor.status like '%部分%'"
                     + "  and ifnull(tor.depart_assign_status, '') !='" + TransferOrder.ASSIGN_STATUS_ALL
                     + "' order by tor.create_stamp desc";
         } else {
@@ -368,7 +368,7 @@ public class DepartOrderController extends Controller {
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status = '已入货场' and isnull(tor.depart_assign_status, '') !='"
+                    + " where tor.status = '已入货场' or tor.status like '%部分%' and isnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom
                     + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
@@ -385,7 +385,7 @@ public class DepartOrderController extends Controller {
                     + " left join party p2 on tor.sp_id = p2.id  left join contact c2 on p2.contact_id = c2.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status ='已入货场' and isnull(tor.depart_assign_status, '') !='"
+                    + " where tor.status ='已入货场' or tor.status like '%部分%' and isnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom
                     + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
@@ -1000,11 +1000,21 @@ public class DepartOrderController extends Controller {
             TransferOrder tr = TransferOrder.dao.findById(order_id);
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
             if (!status.isEmpty()) {
-                transferOrderMilestone.set("status", status);
-                tr.set("status", status);
+            	if(tr.get("depart_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
+            		transferOrderMilestone.set("status", "部分"+status);
+	                tr.set("status", "部分"+status);
+            	}else{
+	                transferOrderMilestone.set("status", status);
+	                tr.set("status", status);
+            	}
             } else {
-                transferOrderMilestone.set("status", "在途");
-                tr.set("status", "在途");
+            	if(tr.get("depart_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
+            		transferOrderMilestone.set("status", "部分在途");
+	                tr.set("status", "部分在途");
+            	}else{
+	                transferOrderMilestone.set("status", "在途");
+	                tr.set("status", "在途");
+            	}
             }
             tr.update();
             String name = (String) currentUser.getPrincipal();

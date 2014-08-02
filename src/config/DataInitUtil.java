@@ -505,9 +505,9 @@ public class DataInitUtil {
                     .save();
 
             // 产品
-            stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('ATM', '2014042600001','1000','5000','7000','35','台', 10, 2, '这是一台ATM');");
-            stmt.execute("insert into product(item_name,item_no,size,width,height,unit,weight,category_id,item_desc) values('普通货品', '2014042600002','2000','4000','5000', '件', 20, 3, '这是普通货品');");
-            stmt.execute("insert into product(item_name,item_no,size,width,height,unit,weight,category_id,item_desc) values('特殊货品', '2014042600003','1100','5300','7400', '套', 30, 2, '这是特殊货品');");
+            stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('ATM', '2014042600001','1000','5000','7000', 35,'台', 10, 2, '这是一台ATM');");
+            stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('普通货品', '2014042600002','2000','4000','5000', 40, '件', 20, 3, '这是普通货品');");
+            stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('特殊货品', '2014042600003','1000','5000','6000', 30, '套', 30, 2, '这是特殊货品');");
 
             // 运输单
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type) values('ATM', '4', '12', 'YS2014042600001', '3', '1', '已入货场', '2014-04-20 16:33:35.1', 'delivery','珠海','2','110102','440402','2','salesOrder','provinceOut','own');");

@@ -585,7 +585,6 @@
     	    		if(data.amount>0){
     	    			alert("有"+data.amount+"个货品没入库,可以到产品中维护信息！");
     	    		}
-    	    	$("#receiptBtn").attr("disabled",false);
     	    	});
     	    });
     	    $("#receiptBtn").click(function(e){
@@ -712,15 +711,19 @@
     	    	}
     	    } 
     	    
-    	    if($("#departOrderArrivalMode").val() == 'delivery'){
+    	    if($("#departOrderArrivalMode").val() == 'delivery' && $("#departOrderStatus").val() == '已发车'){
     	    	$("#receiptBtn").attr("disabled", false);
     	    }
     	    
-    	    if($("#departOrderArrivalMode").val() == 'gateIn'){
+    	    if($("#departOrderArrivalMode").val() == 'gateIn' && $("#departOrderStatus").val() == '已发车'){
     	    	$("#warehousingConfirmBtn").attr("disabled", false);
     	    }
     	    
     	    if($("#departOrderStatus").val() != '' && $("#departOrderStatus").val() != '新建'){
 	    		$("#saveDepartOrderBtn").attr("disabled", true);
 	    	}
+    	    
+    	    $("#cancelBtn").click(function(){
+    	    	$("#detailDialog").modal('hide');
+    	    });
     });
