@@ -56,12 +56,12 @@ $(document).ready(function() {
             },       	
             {
             	"mDataProp":"SERIAL_NO",
-            	"sWidth": "180px",
+            	"sWidth": "120px",
             	"sClass": "serial_no"
             },        	
             {
             	"mDataProp":"ITEM_NAME",
-            	"sWidth": "180px",
+            	"sWidth": "120px",
             	"sClass": "item_name"
             },
             {
