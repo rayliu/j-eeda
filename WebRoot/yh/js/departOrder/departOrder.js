@@ -154,6 +154,9 @@ $(document).ready(function() {
       });
     
     $("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
+    	if(spName.length == 0){
+    		$("#saveBtn").attr('disabled', true);
+    	}
 		if($(this).prop("checked") == true){
 			$("#saveBtn").attr('disabled', false);
 			if(spName.length != 0){
@@ -164,17 +167,12 @@ $(document).ready(function() {
 			}else{
 				if($(this).parent().siblings('.spname')[0].innerHTML != ''){
 					spName.push($(this).parent().siblings('.spname')[0].innerHTML);
-					if(spNameUnchecked.length != 0){
-						spNameUnchecked.remove($(this).parent().siblings('.spname')[0].innerHTML);
-					}
 				}
 			}
 		}else{
-			$("#saveBtn").attr('disabled', true);
-			spNameUnchecked.push($(this).parent().siblings('.spname')[0].innerHTML);
-		}
-		if(spNameUnchecked.length != 0){
-			spName = [];
+			if(spName.length != 0){
+				spName.splice($(this).parent().siblings('.spname')[0].innerHTML, 1);
+			}
 		}
 	});
 });

@@ -658,6 +658,36 @@
     	        return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
     	    });
 
+    		// 选中供应商
+    		$('#spList').on('mousedown', '.fromLocationItem', function(e){
+    			console.log($('#spList').is(":focus"))
+    			var message = $(this).text();
+    			$('#spMessage').val(message.substring(0, message.indexOf(" ")));
+    			$('#sp_id').val($(this).attr('partyId'));
+    			var pageSpName = $("#pageSpName");
+    			pageSpName.empty();
+    			var pageSpAddress = $("#pageSpAddress");
+    			pageSpAddress.empty();
+    			pageSpAddress.append($(this).attr('address'));
+    			var contact_person = $(this).attr('contact_person');
+    			if(contact_person == 'null'){
+    				contact_person = '';
+    			}
+    			pageSpName.append(contact_person+'&nbsp;');
+    			var phone = $(this).attr('phone');
+    			if(phone == 'null'){
+    				phone = '';
+    			}
+    			pageSpName.append(phone); 
+    			pageSpAddress.empty();
+    			var address = $(this).attr('address');
+    			if(address == 'null'){
+    				address = '';
+    			}
+    			pageSpAddress.append(address);
+    	        $('#spList').hide();
+    	    });
+    		
     		//回显供应商
     		var sp_id=$("#sp_id").val();
     		if(sp_id!=""){

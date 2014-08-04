@@ -431,6 +431,17 @@ public class DepartOrderController extends Controller {
         String list = this.getPara("localArr");
         setAttr("localArr", list);
 
+        String[] orderIds = list.split(",");
+        for(int i=0;i<orderIds.length;i++){
+        	TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
+        	if(transferOrder.get("sp_id") != null){
+                Party sp = Party.dao.findById(transferOrder.get("sp_id"));
+                Contact spContact = Contact.dao.findById(sp.get("contact_id"));
+                setAttr("spContact", spContact);
+                break;
+        	}
+        }
+        
         logger.debug("localArr" + list);
         String order_no = null;
         setAttr("saveOK", false);
