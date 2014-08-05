@@ -245,8 +245,13 @@ public class PickupOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
                     + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom
-                    + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
+                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " "
+                    + " and ifnull(l1.name, '') like '%"
+                    + routeFrom
+                    + "%' and ifnull(l2.name, '') like '%"
+                    + routeTo
+                    + "%'"
+                    + "and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
                     + "' and '" + endTime + "' and tor.order_type like '%" + orderType + "%'";
@@ -296,8 +301,13 @@ public class PickupOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom
-                    + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
+                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " "
+                    + " and ifnull(l1.name, '') like '%"
+                    + routeFrom
+                    + "%' and ifnull(l2.name, '') like '%"
+                    + routeTo
+                    + "%'"
+                    + "and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
                     + "' and '" + endTime + "' and tor.order_type like '%" + orderType + "%'";

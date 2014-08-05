@@ -370,8 +370,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " where (tor.status = '已入货场' or tor.status like '%部分%') and ifnull(tor.depart_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom
-                    + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
+                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
                     + "' and '" + endTime + "'";
@@ -388,8 +387,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " where (tor.status ='已入货场' or tor.status like '%部分%') and ifnull(tor.depart_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and l1.name like '%" + routeFrom
-                    + "%' and l2.name like '%" + routeTo + "%' and tor.order_no like '%" + orderNo
+                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.company_name like '%" + customer + "%' and tor.create_stamp between '" + beginTime
                     + "' and '" + endTime + "'" + " order by tor.create_stamp desc";
