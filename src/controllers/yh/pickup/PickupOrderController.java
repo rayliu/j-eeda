@@ -2,6 +2,8 @@ package controllers.yh.pickup;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.Map;
 
 import models.DepartOrder;
 import models.DepartTransferOrder;
+import models.Fin_item;
 import models.InventoryItem;
 import models.Party;
 import models.TransferOrder;
@@ -222,7 +225,7 @@ public class PickupOrderController extends Controller {
                     + TransferOrder.ASSIGN_STATUS_ALL + "'";
             sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
-                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount)  from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
+                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
@@ -257,7 +260,7 @@ public class PickupOrderController extends Controller {
                     + "' and '" + endTime + "' and tor.order_type like '%" + orderType + "%'";
             sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
-                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount)  from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
+                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
@@ -314,7 +317,7 @@ public class PickupOrderController extends Controller {
 
             sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
-                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount)  from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
+                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                     + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
@@ -494,10 +497,14 @@ public class PickupOrderController extends Controller {
                     for (int i = 0; i < values.length; i++) {
                         if ("yandCheckbox".equals(values[i])) {
                             pickupOrder.set("address", getPara("address"));
+                        } else {
+                            pickupOrder.set("warehouse_id", null);
                         }
                         if ("warehouseCheckbox".equals(values[i])) {
                             pickupOrder.set("warehouse_id", getPara("gateInSelect"));
-                        } 
+                        } else {
+                            pickupOrder.set("address", null);
+                        }
                     }
                 } else {
                     for (int i = 0; i < values.length; i++) {
@@ -835,13 +842,25 @@ public class PickupOrderController extends Controller {
             TransferOrder tOrder = TransferOrder.dao.findById(departList.get(i).get("order_id"));
             if (pickupOrder.get("sp_id") != null) {
                 List<Record> contractList = Db
-                        .find("select * from contract_item where contract_id in(select id from contract c where c.party_id ='"
+                        .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
                                 + pickupOrder.get("sp_id")
                                 + "') and from_id = '"
                                 + tOrder.get("route_from")
-                                + "' and to_id ='" + tOrder.get("route_to") + "' ");
+                                + "' and to_id ='"
+                                + tOrder.get("route_to")
+                                + "' and priceType='"
+                                + getPara("priceType") + "'");
+                if (contractList.size() > 0) {
+                    tFinItem.set("order_id", departList.get(i).get("order_id"));
+                    tFinItem.set("fin_item_id", "1");
+                    tFinItem.set("amount", contractList.get(0).get("amount"));
+                    tFinItem.set("depart_id", getPara("pickupOrderId"));
+                    tFinItem.set("status", "未完成");
+                    tFinItem.set("creator", users.get(0).get("id"));
+                    tFinItem.set("create_date", sqlDate);
+                    tFinItem.save();
+                }
             }
-
         }
         renderJson("{\"success\":true}");
     }
@@ -1002,5 +1021,86 @@ public class PickupOrderController extends Controller {
 
         productListMap.put("aaData", details);
         renderJson(productListMap);
+    }
+
+    // 应付list
+    public void accountPayable() {
+        String id = getPara();
+
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from transfer_order_fin_item where depart_id = '" + id + "'";
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 获取当前页的数据
+        List<Record> orders = Db
+                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d "
+                        + "left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id =d.order_id "
+                        + "where d.depart_id ='" + id + "' and f.type='应付'");
+
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        orderMap.put("aaData", orders);
+
+        renderJson(orderMap);
+    }
+
+    public void addNewRow() {
+        String pickupOrderId = getPara();
+        Fin_item fItem = new Fin_item();
+        TransferOrderFinItem dFinItem = new TransferOrderFinItem();
+        fItem.set("type", "应付");
+        fItem.save();
+        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("depart_id", pickupOrderId);
+        dFinItem.save();
+        renderJson("{\"success\":true}");
+    }
+
+    // 添加应付
+    public void paymentSave() {
+        String returnValue = "";
+        String id = getPara("id");
+        String finItemId = getPara("finItemId");
+        TransferOrderFinItem dFinItem = TransferOrderFinItem.dao.findById(id);
+
+        Fin_item fItem = Fin_item.dao.findById(dFinItem.get("fin_item_id"));
+
+        String amount = getPara("amount");
+
+        String username = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + username + "'");
+        Date createDate = Calendar.getInstance().getTime();
+
+        if (!"".equals(finItemId) && finItemId != null) {
+            dFinItem.set("fin_item_id", finItemId).update();
+            returnValue = finItemId;
+        } else if (!"".equals(amount) && amount != null) {
+            dFinItem.set("amount", amount).update();
+            returnValue = amount;
+        }
+        List<Record> list = Db.find("select * from fin_item");
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).get("name") == null) {
+                Fin_item.dao.deleteById(list.get(i).get("id"));
+            }
+        }
+        renderJson(returnValue);
+    }
+
+    public void fin_item() {
+        // String input = getPara("input");
+        List<Record> locationList = Collections.EMPTY_LIST;
+        locationList = Db.find("select * from fin_item");
+        renderJson(locationList);
     }
 }

@@ -564,7 +564,8 @@
             console.log(data);
             if(data.success){
             	var pickupOrderId = $("#pickupOrderId").val();
-            	$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId}, function(){
+            	var priceType = $("input[name='priceType']:checked").val();
+            	$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType}, function(){
             		pickupOrderMilestone();	
                 	var pickupOrderId = $("#pickupOrderId").val();
             		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
@@ -739,6 +740,7 @@
     	$("#warehouseDiv").show();
     }
     
+    var pickupOrderId = $("#pickupOrderId").val();
   //应收应付datatable
 	var paymenttable=$('#table_fin2').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -746,7 +748,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/deliveryOrderMilestone/accountPayable/"+order_id,
+        "sAjaxSource": "/yh/pickupOrder/accountPayable/"+pickupOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -757,12 +759,13 @@
         "aoColumns": [
 			{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
 			{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},  
+			{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "name"},
 			{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
         ]      
     });
 	paymenttable.makeEditable({
-    	sUpdateURL: '/yh/deliveryOrderMilestone/paymentSave',    	
+    	sUpdateURL: '/yh/pickupOrder/paymentSave',    	
     	oEditableSettings: {event: 'click'},
     	"aoColumns": [  			            
             {            
@@ -786,7 +789,6 @@
             }
         ]      
     }).click(function(){
-    	
     	var inputBox = $(this).find('input');
         inputBox.autocomplete({
 	        source: function( request, response ) {
@@ -794,7 +796,7 @@
 		    		return;
 		    	}
 	            $.ajax({
-	                url: "/yh/deliveryOrderMilestone/fin_item",
+	                url: "/yh/pickupOrder/fin_item",
 	                dataType: "json",
 	                data: {
 	                    input: request.term
@@ -814,7 +816,7 @@
         		//将选择的条目id先保存到数据库
 	        	var finId = $(this).parent().parent().parent()[0].id;
         		var finItemId = ui.item.id;
-        		$.post('/yh/deliveryOrderMilestone/paymentSave',{id:finId, finItemId:finItemId},
+        		$.post('/yh/pickupOrder/paymentSave',{id:finId, finItemId:finItemId},
         			function(){ paymenttable.fnDraw();  });        		
             },
         	minLength: 2
@@ -822,15 +824,17 @@
     }); 
 	//应收
 	$("#addrow").click(function(){	
-	$.post('/yh/deliveryOrderMilestone/addNewRow/'+order_id,function(data){
-		console.log(data);
-		if(data.success){
-			paymenttable.fnDraw();
-			//$('#fin_item2').modal('hide');
-			//$('#resetbutton2').click();
-		}else{
-			
-		}
-	});		
+		alert(123);
+		var pickupOrderId =$("#pickupOrderId").val();
+		$.post('/yh/pickupOrder/addNewRow/'+pickupOrderId,function(data){
+			console.log(data);
+			if(data.success){
+				paymenttable.fnDraw();
+				//$('#fin_item2').modal('hide');
+				//$('#resetbutton2').click();
+			}else{
+				
+			}
+		});		
 	});	
-} );
+});
