@@ -16,7 +16,7 @@ $(document).ready(function() {
 		            {"mDataProp":"ITEM_NO"}, 
 		            {"mDataProp":"COMPANY_NAME"},
 		            {"mDataProp":"TOTAL_QUANTITY"},
-		            {"mDataProp":"UOM"},
+		            {"mDataProp":"UNIT"},
 		            {"mDataProp":"EXPIRE_DATE"},
 		            {"mDataProp":"LOT_NO"},
 		            {"mDataProp":"CATON_NO"},

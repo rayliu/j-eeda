@@ -740,7 +740,7 @@ public class DepartOrderController extends Controller {
         DepartOrder dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
         dp.set("status", order_state).update();
         if ("已入库".equals(order_state)) {
-            productWarehouse(depart_id);// 产品入库
+            productInWarehouse(depart_id);// 产品入库
         }
         if ("已签收".equals(order_state)) {
             // 生成回单
@@ -1364,50 +1364,45 @@ public class DepartOrderController extends Controller {
 
     }
 
-    public void productWarehouse(String departId) {
+    // 产品入库
+    public void productInWarehouse(String departId) {
     	if(!"".equals(departId) && departId != null){
-	    	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departId);
-	    	for(DepartTransferOrder departTransferOrder : departTransferOrders){
-	    		savegateIn(departTransferOrder);
-	    	}
+    		String orderIds = "";
+    		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departId);
+    		for(DepartTransferOrder departTransferOrder : departTransferOrders){
+    			orderIds += departTransferOrder.get("order_id") + ",";
+    		}
+    		orderIds = orderIds.substring(0, orderIds.length() - 1);
+    		List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in("+orderIds+")");
+	        for(TransferOrder transferOrder : transferOrders){
+	    		InventoryItem inventoryItem = null;
+	    		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item where order_id = ?", transferOrder.get("id"));
+		        for(TransferOrderItem transferOrderItem : transferOrderItems){
+		    		if (transferOrderItem != null) {
+		                if (transferOrderItem.get("product_id") != null) {
+		                    String inventoryItemSql = "select * from inventory_item where product_id = "+ transferOrderItem.get("product_id") + " and warehouse_id = "+transferOrder.get("warehouse_id");
+		                    inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
+	                    	String sqlTotal = "select count(1) total from transfer_order_item_detail where depart_id = "+ departId;
+	                    	Record rec = Db.findFirst(sqlTotal);
+	                    	Long amount = rec.getLong("total");
+		                    if (inventoryItem == null) {
+		                    	inventoryItem = new InventoryItem();
+		                        inventoryItem.set("party_id", transferOrder.get("customer_id"));
+		                        inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
+		                        inventoryItem.set("product_id", transferOrderItem.get("product_id"));
+		                        inventoryItem.set("total_quantity", amount);
+		                        inventoryItem.save();
+		                    } else {
+		                        inventoryItem.set("total_quantity",Double.parseDouble(inventoryItem.get("total_quantity").toString()) + amount);
+		                        inventoryItem.update();
+		                    }
+		                }
+			        }
+		        }
+	        }
     	}
-        /*Date createDate = Calendar.getInstance().getTime();
-        return number;*/
     }
-
-    public void savegateIn(DepartTransferOrder departTransferOrder) {
-        // product_id不为空时入库
-        List<Record> transferOrderItem = Db.find("select * from transfer_order_item where order_id='" + departTransferOrder.get("order_id")
-                + "'");
-        TransferOrder tOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
-
-        InventoryItem item = null;
-        if (transferOrderItem.size() > 0) {
-            for (int i = 0; i < transferOrderItem.size(); i++) {
-                if (transferOrderItem.get(i).get("product_id") != null) {
-                    item = new InventoryItem();
-                    String in_item_check_sql = "select * from inventory_item where product_id="
-                            + Integer.parseInt(transferOrderItem.get(i).get("product_id").toString()) + "" + " and warehouse_id="
-                            + Integer.parseInt(tOrder.get("warehouse_id").toString()) + "";
-                    InventoryItem inventoryItem = InventoryItem.dao.findFirst(in_item_check_sql);
-                    if (inventoryItem == null) {
-                        item.set("party_id", tOrder.get("customer_id"));
-                        item.set("warehouse_id", tOrder.get("warehouse_id"));
-                        item.set("product_id", transferOrderItem.get(i).get("product_id"));
-                        item.set("total_quantity", transferOrderItem.get(i).get("amount"));
-                        item.save();
-                    } else {
-                        item = InventoryItem.dao.findById(inventoryItem.get("id"));
-                        item.set(
-                                "total_quantity",
-                                Double.parseDouble(item.get("total_quantity").toString())
-                                        + Double.parseDouble(transferOrderItem.get(i).get("amount").toString()));
-                        item.update();
-                    }
-                }
-            }
-        }
-    }
+    
     /*
     public void CreatReturnOrder() {
         boolean check = CreatReturnOrder.CreatOrder(ReturnOrder.Depart_Order, getPara("depart_id").toString());

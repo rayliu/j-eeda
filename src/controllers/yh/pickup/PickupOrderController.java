@@ -16,6 +16,7 @@ import models.InventoryItem;
 import models.Party;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
+import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -931,8 +932,7 @@ public class PickupOrderController extends Controller {
 
             if (value.indexOf("warehouse") >= 0) {
                 String transOrderId = value.substring(9);
-                List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
-                        "select * from depart_transfer where depart_id = ?", pickupOrderId);
+                List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", pickupOrderId);
                 for (DepartTransferOrder departTransferOrder : departTransferOrders) {
                     if (transOrderId.equals(departTransferOrder.get("order_id") + "")) {
                         // 去掉入库的单据
@@ -952,7 +952,8 @@ public class PickupOrderController extends Controller {
                         transferOrderMilestone.set("order_id", transferOrder.get("id"));
                         transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
 
-                        savegateIn(departTransferOrder);
+                        // 产品入库
+                        productInWarehouse(pickupOrderId);
                     }
                 }
             }
@@ -960,6 +961,45 @@ public class PickupOrderController extends Controller {
         renderJson("{\"success\":true}");
     }
 
+    // 产品入库
+    public void productInWarehouse(String pickupOrderId) {
+    	if(!"".equals(pickupOrderId) && pickupOrderId != null){
+    		String orderIds = "";
+    		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", pickupOrderId);
+    		for(DepartTransferOrder departTransferOrder : departTransferOrders){
+    			orderIds += departTransferOrder.get("order_id") + ",";
+    		}
+    		orderIds = orderIds.substring(0, orderIds.length() - 1);
+    		List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in("+orderIds+")");
+	        for(TransferOrder transferOrder : transferOrders){
+	    		InventoryItem inventoryItem = null;
+	    		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item where order_id = ?", transferOrder.get("id"));
+		        for(TransferOrderItem transferOrderItem : transferOrderItems){
+		    		if (transferOrderItem != null) {
+		                if (transferOrderItem.get("product_id") != null) {
+		                    String inventoryItemSql = "select * from inventory_item where product_id = "+ transferOrderItem.get("product_id") + " and warehouse_id = "+transferOrder.get("warehouse_id");
+		                    inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
+	                    	String sqlTotal = "select count(1) total from transfer_order_item_detail where pickup_id = "+ pickupOrderId;
+	                    	Record rec = Db.findFirst(sqlTotal);
+	                    	Long amount = rec.getLong("total");
+		                    if (inventoryItem == null) {
+		                    	inventoryItem = new InventoryItem();
+		                        inventoryItem.set("party_id", transferOrder.get("customer_id"));
+		                        inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
+		                        inventoryItem.set("product_id", transferOrderItem.get("product_id"));
+		                        inventoryItem.set("total_quantity", amount);
+		                        inventoryItem.save();
+		                    } else {
+		                        inventoryItem.set("total_quantity",Double.parseDouble(inventoryItem.get("total_quantity").toString()) + amount);
+		                        inventoryItem.update();
+		                    }
+		                }
+			        }
+		        }
+	        }
+    	}
+    }
+    
     public void savegateIn(DepartTransferOrder departTransferOrder) {
         // product_id不为空时入库
         List<Record> transferOrderItem = Db.find("select * from transfer_order_item where order_id='"
