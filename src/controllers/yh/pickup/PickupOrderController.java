@@ -248,15 +248,24 @@ public class PickupOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
                     + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " "
+                    + TransferOrder.ASSIGN_STATUS_ALL
+                    + "'"
+                    + " "
                     + " and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
                     + "%'"
-                    + "and tor.order_no like '%" + orderNo
-                    + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
-                    + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
+                    + "and tor.order_no like '%"
+                    + orderNo
+                    + "%' and tor.status like '%"
+                    + status
+                    + "%' and tor.address like '%"
+                    + address
+                    + "%' and c.company_name like '%"
+                    + customer
+                    + "%' and create_stamp between '"
+                    + beginTime
                     + "' and '" + endTime + "' and tor.order_type like '%" + orderType + "%'";
             sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
@@ -304,15 +313,24 @@ public class PickupOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " "
+                    + TransferOrder.ASSIGN_STATUS_ALL
+                    + "'"
+                    + " "
                     + " and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
                     + "%'"
-                    + "and tor.order_no like '%" + orderNo
-                    + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
-                    + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
+                    + "and tor.order_no like '%"
+                    + orderNo
+                    + "%' and tor.status like '%"
+                    + status
+                    + "%' and tor.address like '%"
+                    + address
+                    + "%' and c.company_name like '%"
+                    + customer
+                    + "%' and create_stamp between '"
+                    + beginTime
                     + "' and '" + endTime + "' and tor.order_type like '%" + orderType + "%'";
 
             sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
@@ -1026,7 +1044,15 @@ public class PickupOrderController extends Controller {
     // 应付list
     public void accountPayable() {
         String id = getPara();
-
+        if (id == null || id.equals("")) {
+            Map orderMap = new HashMap();
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+            renderJson(orderMap);
+            return;
+        }
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {

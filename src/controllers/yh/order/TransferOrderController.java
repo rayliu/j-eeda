@@ -848,13 +848,13 @@ public class TransferOrderController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from transfer_order_fin_item ";
+        String sql = "select count(1) total from transfer_order_fin_item where order_id ='" + id + "' ";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select * from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id  where d.order_id ='"
+                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id ='"
                         + id + "' and f.type='应收'");
 
         Map orderMap = new HashMap();
@@ -887,13 +887,13 @@ public class TransferOrderController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from transfer_order_fin_item ";
+        String sql = "select count(1) total from transfer_order_fin_item where order_id ='" + id + "'  ";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select d.*,f.name,f.remark from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id='"
+                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id='"
                         + id + "' and f.type='应付' ");
 
         Map orderMap = new HashMap();
@@ -911,6 +911,17 @@ public class TransferOrderController extends Controller {
         Fin_item fItem = new Fin_item();
         TransferOrderFinItem dFinItem = new TransferOrderFinItem();
         fItem.set("type", "应付");
+        fItem.save();
+        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("order_id", orderId);
+        dFinItem.save();
+        renderJson("{\"success\":true}");
+    }
+
+    public void addNewRow2() {
+        String orderId = getPara();
+        Fin_item fItem = new Fin_item();
+        TransferOrderFinItem dFinItem = new TransferOrderFinItem();
+        fItem.set("type", "应收");
         fItem.save();
         dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("order_id", orderId);
         dFinItem.save();
@@ -976,7 +987,14 @@ public class TransferOrderController extends Controller {
     public void fin_item() {
         // String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
-        locationList = Db.find("select * from fin_item");
+        locationList = Db.find("select * from fin_item where type='应收'");
+        renderJson(locationList);
+    }
+
+    public void fin_item2() {
+        // String input = getPara("input");
+        List<Record> locationList = Collections.EMPTY_LIST;
+        locationList = Db.find("select * from fin_item where type='应付'");
         renderJson(locationList);
     }
 }
