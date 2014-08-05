@@ -824,7 +824,6 @@
     }); 
 	//应收
 	$("#addrow").click(function(){	
-		alert(123);
 		var pickupOrderId =$("#pickupOrderId").val();
 		$.post('/yh/pickupOrder/addNewRow/'+pickupOrderId,function(data){
 			console.log(data);

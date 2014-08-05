@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.DeliveryOrderFinItem;
 import models.DeliveryOrderMilestone;
 import models.Fin_item;
 import models.InventoryItem;
 import models.ReturnOrder;
 import models.TransferOrder;
+import models.TransferOrderFinItem;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.delivery.DeliveryOrder;
@@ -287,6 +287,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     // 应收list
     public void accountReceivable() {
         String id = getPara();
+
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -295,13 +296,13 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from delivery_order_fin_item ";
+        String sql = "select count(1) total from transfer_order_fin_item where delivery_id ='" + id + "'  ";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select * from delivery_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id ='"
+                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.delivery_id ='"
                         + id + "'  and f.type='应收'");
 
         Map orderMap = new HashMap();
@@ -317,6 +318,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     // 应付list
     public void accountPayable() {
         String id = getPara();
+
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -325,13 +327,13 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from delivery_order_fin_item ";
+        String sql = "select count(1) total from transfer_order_fin_item where delivery_id ='" + id + "' ";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select d.*,f.name,f.remark from delivery_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id='"
+                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.delivery_id='"
                         + id + "' and f.type='应付'");
 
         Map orderMap = new HashMap();
@@ -341,39 +343,30 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         orderMap.put("aaData", orders);
 
+        List<Record> list = Db.find("select * from fin_item");
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).get("name") == null) {
+                Fin_item.dao.deleteById(list.get(i).get("id"));
+                List<Record> list2 = Db.find("select * from transfer_order_fin_item where fin_item_id ='"
+                        + list.get(i).get("id") + "'");
+                List<Record> list3 = Db.find("select * from fin_item where id ='" + list2.get(0).get("fin_item_id")
+                        + "'");
+                if (list3.size() == 0) {
+                    // TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
+                }
+            }
+        }
         renderJson(orderMap);
     }
 
     public void addNewRow() {
         String deliveryId = getPara();
         Fin_item fItem = new Fin_item();
-        DeliveryOrderFinItem dFinItem = new DeliveryOrderFinItem();
+        TransferOrderFinItem dFinItem = new TransferOrderFinItem();
         fItem.set("type", "应付");
         fItem.save();
-        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("order_id", deliveryId);
+        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("delivery_id", deliveryId);
         dFinItem.save();
-        renderJson("{\"success\":true}");
-    }
-
-    // 添加应收
-    public void receiptSave() {
-        String id = getPara("delivery_item_id");
-
-        String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        Date createDate = Calendar.getInstance().getTime();
-
-        Fin_item fItem = new Fin_item();
-        DeliveryOrderFinItem dFinItem = new DeliveryOrderFinItem();
-        if (!id.equals("")) {
-
-        } else {
-            fItem.set("name", getPara("item_name")).set("Remark", getPara("item_remark")).set("type", "应收");
-            fItem.save();
-            dFinItem.set("amount", getPara("item_amount")).set("fin_item_id", fItem.get("id")).set("status", "新建")
-                    .set("order_id", getPara());
-            dFinItem.save();
-        }
         renderJson("{\"success\":true}");
     }
 
@@ -382,12 +375,9 @@ public class DeliveryOrderMilestoneController extends Controller {
         String returnValue = "";
         String id = getPara("id");
         String finItemId = getPara("finItemId");
-        DeliveryOrderFinItem dFinItem = DeliveryOrderFinItem.dao.findById(id);
-
-        Fin_item fItem = Fin_item.dao.findById(dFinItem.get("fin_item_id"));
+        TransferOrderFinItem dFinItem = TransferOrderFinItem.dao.findById(id);
 
         String amount = getPara("amount");
-        String remark = getPara("remark");
 
         String username = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + username + "'");
@@ -412,7 +402,14 @@ public class DeliveryOrderMilestoneController extends Controller {
     public void fin_item() {
         // String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
-        locationList = Db.find("select * from fin_item");
+        locationList = Db.find("select * from fin_item where type='应付'");
+        renderJson(locationList);
+    }
+
+    public void fin_item2() {
+        // String input = getPara("input");
+        List<Record> locationList = Collections.EMPTY_LIST;
+        locationList = Db.find("select * from fin_item where type='应收'");
         renderJson(locationList);
     }
 }

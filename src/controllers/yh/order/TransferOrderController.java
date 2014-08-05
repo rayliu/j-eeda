@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.DeliveryOrderFinItem;
 import models.DepartOrder;
 import models.DepartTransferOrder;
 import models.Fin_item;
@@ -831,6 +830,7 @@ public class TransferOrderController extends Controller {
     // 应收list
     public void accountReceivable() {
         String id = getPara();
+
         String sLimit = "";
         if (id == null || id.equals("")) {
             Map orderMap = new HashMap();
@@ -864,6 +864,19 @@ public class TransferOrderController extends Controller {
 
         orderMap.put("aaData", orders);
 
+        List<Record> list = Db.find("select * from fin_item");
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).get("name") == null) {
+                Fin_item.dao.deleteById(list.get(i).get("id"));
+                List<Record> list2 = Db.find("select * from transfer_order_fin_item where fin_item_id ='"
+                        + list.get(i).get("id") + "'");
+                List<Record> list3 = Db.find("select * from fin_item where id ='" + list2.get(0).get("fin_item_id")
+                        + "'");
+                if (list3.size() == 0) {
+                    // TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
+                }
+            }
+        }
         renderJson(orderMap);
     }
 
@@ -903,6 +916,19 @@ public class TransferOrderController extends Controller {
 
         orderMap.put("aaData", orders);
 
+        List<Record> list = Db.find("select * from fin_item");
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).get("name") == null) {
+                Fin_item.dao.deleteById(list.get(i).get("id"));
+                List<Record> list2 = Db.find("select * from transfer_order_fin_item where fin_item_id ='"
+                        + list.get(i).get("id") + "'");
+                List<Record> list3 = Db.find("select * from fin_item where id ='" + list2.get(0).get("fin_item_id")
+                        + "'");
+                if (list3.size() == 0) {
+                    // TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
+                }
+            }
+        }
         renderJson(orderMap);
     }
 
@@ -928,28 +954,6 @@ public class TransferOrderController extends Controller {
         renderJson("{\"success\":true}");
     }
 
-    // 添加应收
-    public void receiptSave() {
-        String id = getPara("order_id");
-
-        String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        Date createDate = Calendar.getInstance().getTime();
-
-        Fin_item fItem = new Fin_item();
-        DeliveryOrderFinItem dFinItem = new DeliveryOrderFinItem();
-        if (!id.equals("")) {
-
-        } else {
-            fItem.set("name", getPara("item_name")).set("Remark", getPara("item_remark")).set("type", "应收");
-            fItem.save();
-            dFinItem.set("amount", getPara("item_amount")).set("fin_item_id", fItem.get("id")).set("status", "新建")
-                    .set("order_id", getPara());
-            dFinItem.save();
-        }
-        renderJson("{\"success\":true}");
-    }
-
     // 添加应付
     public void paymentSave() {
         String returnValue = "";
@@ -960,6 +964,7 @@ public class TransferOrderController extends Controller {
         Fin_item fItem = Fin_item.dao.findById(dFinItem.get("fin_item_id"));
 
         String amount = getPara("amount");
+
         String name = getPara("name");
 
         String username = (String) currentUser.getPrincipal();
@@ -987,14 +992,14 @@ public class TransferOrderController extends Controller {
     public void fin_item() {
         // String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
-        locationList = Db.find("select * from fin_item where type='应收'");
+        locationList = Db.find("select * from fin_item where type='应付'");
         renderJson(locationList);
     }
 
     public void fin_item2() {
         // String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
-        locationList = Db.find("select * from fin_item where type='应付'");
+        locationList = Db.find("select * from fin_item where type='应收'");
         renderJson(locationList);
     }
 }

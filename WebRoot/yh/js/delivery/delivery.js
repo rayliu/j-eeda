@@ -442,24 +442,29 @@ $(document).ready(function() {
 				var deliveryid =$("#delivery_id").val();
 				//应收应付datatable
 				var receipttable =$('#table_fin').dataTable({
-					"bFilter": false, //不需要默认的搜索框
-			        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-			        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+					"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+			        "bFilter": false, //不需要默认的搜索框
 			        //"sPaginationType": "bootstrap",
 			        "iDisplayLength": 10,
 			        "bServerSide": true,
+			        "sAjaxSource":"/yh/deliveryOrderMilestone/accountReceivable/"+deliveryid,
 			    	"oLanguage": {
 			            "sUrl": "/eeda/dataTables.ch.txt"
 			        },
-			        "sAjaxSource":"/yh/deliveryOrderMilestone/accountReceivable/"+deliveryid,
+			        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+						$(nRow).attr('id', aData.ID);
+						return nRow;
+					},
 			        "aoColumns": [
-						{"mDataProp":"ID"},
-						{"mDataProp":"NAME"},
-			            {"mDataProp":"AMOUNT"},  
-			            {"mDataProp":"REMARK"},
-			            {"mDataProp":"STATUS"},
+						{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
+						{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},
+						{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "amount"},  
+						{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
+						{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
 			        ]      
 			    });
+				
+				
 				//应收应付datatable
 				var paymenttable=$('#table_fin2').dataTable({
 					"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -477,7 +482,8 @@ $(document).ready(function() {
 					},
 			        "aoColumns": [
 						{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
-						{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},  
+						{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},
+						{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "amount"},  
 						{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
 						{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
 			        ]      
@@ -504,15 +510,7 @@ $(document).ready(function() {
 			            	name:"amount",
 			            	placeholder: "",
 			            	callback: function () {} 
-			            },  
-			            {
-			            	indicator: '正在保存...',
-			            	onblur: 'submit',
-			            	tooltip: '点击可以编辑',
-			            	name:"remark",
-			            	placeholder: "",
-			            	callback: function () {} 
-			            }
+			            }, 
 			        ]      
 			    }).click(function(){
 			    	
@@ -564,10 +562,24 @@ $(document).ready(function() {
 				
 			});		
 		});	
-		//应收
+		//应付
 		$("#addrow").click(function(){	
 			var deliveryid =$("#delivery_id").val();
 			$.post('/yh/deliveryOrderMilestone/addNewRow/'+deliveryid,function(data){
+				console.log(data);
+				if(data.success){
+					paymenttable.fnDraw();
+					//$('#fin_item2').modal('hide');
+					//$('#resetbutton2').click();
+				}else{
+					
+				}
+			});		
+		});	
+		//应收
+		$("#addrow2").click(function(){	
+			var deliveryid =$("#delivery_id").val();
+			$.post('/yh/deliveryOrderMilestone/addNewRow2/'+deliveryid,function(data){
 				console.log(data);
 				if(data.success){
 					paymenttable.fnDraw();

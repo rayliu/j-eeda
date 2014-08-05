@@ -1078,6 +1078,19 @@ public class PickupOrderController extends Controller {
 
         orderMap.put("aaData", orders);
 
+        List<Record> list = Db.find("select * from fin_item");
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).get("name") == null) {
+                Fin_item.dao.deleteById(list.get(i).get("id"));
+                List<Record> list2 = Db.find("select * from transfer_order_fin_item where fin_item_id ='"
+                        + list.get(i).get("id") + "'");
+                List<Record> list3 = Db.find("select * from fin_item where id ='" + list2.get(0).get("fin_item_id")
+                        + "'");
+                if (list3.size() == 0) {
+                    // TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
+                }
+            }
+        }
         renderJson(orderMap);
     }
 
@@ -1126,7 +1139,7 @@ public class PickupOrderController extends Controller {
     public void fin_item() {
         // String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
-        locationList = Db.find("select * from fin_item");
+        locationList = Db.find("select * from fin_item where type='应付'");
         renderJson(locationList);
     }
 }
