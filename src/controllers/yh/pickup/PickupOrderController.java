@@ -263,9 +263,9 @@ public class PickupOrderController extends Controller {
                     + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
-                    + " and l1.name like '%"
+                    + " and ifnull(l1.name, '') like '%"
                     + routeFrom
-                    + "%' and l2.name like '%"
+                    + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
                     + "%' and tor.order_no like '%"
                     + orderNo
@@ -315,9 +315,9 @@ public class PickupOrderController extends Controller {
                     + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
-                    + " and l1.name like '%"
+                    + " and ifnull(l1.name, '') like '%"
                     + routeFrom
-                    + "%' and l2.name like '%"
+                    + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
                     + "%' and tor.order_no like '%"
                     + orderNo
