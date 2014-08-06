@@ -3,6 +3,7 @@ package controllers.yh.departOrder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,11 +11,13 @@ import java.util.Map;
 
 import models.DepartOrder;
 import models.DepartTransferOrder;
+import models.Fin_item;
 import models.InventoryItem;
 import models.Location;
 import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
+import models.TransferOrderFinItem;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
@@ -338,7 +341,8 @@ public class DepartOrderController extends Controller {
         if (orderNo == null && status == null && address == null && customer == null && routeFrom == null
                 && routeTo == null && beginTime == null && endTime == null) {
             sqlTotal = "select count(1) total  from transfer_order tor "
-                    + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
+                    + " left join party p on tor.customer_id = p.id "
+                    + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
                     + " where (tor.status = '已入货场'or tor.status like '%部分%') and ifnull(tor.depart_assign_status, '') !='"
@@ -351,11 +355,13 @@ public class DepartOrderController extends Controller {
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
                     + " dor.address doaddress,tor.pickup_mode,tor.status,c.company_name cname,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.company_name as spname,cont.id as spid from transfer_order tor "
-                    + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
+                    + " left join party p on tor.customer_id = p.id "
+                    + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id left join contact cont on  cont.id=p2.contact_id "
                     + " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
                     + " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code" + " where (tor.status = '已入货场' or tor.status like '%部分%')"
+                    + " left join location l2 on tor.route_to = l2.code"
+                    + " where (tor.status = '已入货场' or tor.status like '%部分%')"
                     + "  and ifnull(tor.depart_assign_status, '') !='" + TransferOrder.ASSIGN_STATUS_ALL
                     + "' order by tor.create_stamp desc";
         } else {
@@ -366,7 +372,8 @@ public class DepartOrderController extends Controller {
                 endTime = "9999-12-31";
             }
             sqlTotal = "select count(1) total from transfer_order tor "
-                    + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
+                    + " left join party p on tor.customer_id = p.id "
+                    + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " where (tor.status = '已入货场' or tor.status like '%部分%') and ifnull(tor.depart_assign_status, '') !='"
@@ -381,7 +388,8 @@ public class DepartOrderController extends Controller {
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " dor.address doaddress,tor.pickup_mode,tor.status,c.company_name cname,"
                     + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.company_name spname from transfer_order tor "
-                    + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
+                    + " left join party p on tor.customer_id = p.id "
+                    + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id  left join contact c2 on p2.contact_id = c2.id "
                     + " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
                     + " left join location l1 on tor.route_from = l1.code "
@@ -430,16 +438,16 @@ public class DepartOrderController extends Controller {
         setAttr("localArr", list);
 
         String[] orderIds = list.split(",");
-        for(int i=0;i<orderIds.length;i++){
-        	TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
-        	if(transferOrder.get("sp_id") != null){
+        for (int i = 0; i < orderIds.length; i++) {
+            TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
+            if (transferOrder.get("sp_id") != null) {
                 Party sp = Party.dao.findById(transferOrder.get("sp_id"));
                 Contact spContact = Contact.dao.findById(sp.get("contact_id"));
                 setAttr("spContact", spContact);
                 break;
-        	}
+            }
         }
-        
+
         logger.debug("localArr" + list);
         String order_no = null;
         setAttr("saveOK", false);
@@ -768,60 +776,50 @@ public class DepartOrderController extends Controller {
         renderJson(Map);
     }
 
-    /*// 产品入库
-    public int productWarehouse(String depart_id) {
-        Date createDate = Calendar.getInstance().getTime();
-        int number = 0;// 没入库的货品个数
-        // 查找创建人id
-        String name = (String) currentUser.getPrincipal();
-        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
-        String creat_id = users.get("id").toString();// 创建人id
-        int id = Integer.parseInt(depart_id);
-        String sql = "select order_id, item_id  from depart_transfer_itemdetail  where depart_id =" + id
-                + "  group by item_id";
-        List<Record> de = Db.find(sql);
-        String order_id = "";
-        String tr_item_id = "";
-        for (int i = 0; i < de.size(); i++) {
-            String item_id = de.get(i).get("item_id").toString();
-            order_id = de.get(i).get("order_id").toString();
-            tr_item_id += item_id + ",";
-        }
-        tr_item_id = tr_item_id.substring(0, tr_item_id.length() - 1);
-        String tr_sql = "select * from transfer_order_item where id in (" + tr_item_id + ")";
-        List<Record> item = Db.find(tr_sql);
-        String tr_order_sql = "select * from transfer_order where id=" + Integer.parseInt(order_id);
-        TransferOrder tr_order_list = TransferOrder.dao.findFirst(tr_order_sql);
-        InventoryItem in_item = null;
-        for (int i = 0; i < item.size(); i++) {
-            if (item.get(i).get("product_id") != null) {
-                in_item = new InventoryItem();
-                String in_item_check_sql = "select * from inventory_item where product_id="
-                        + Integer.parseInt(item.get(i).get("product_id").toString()) + "" + " and warehouse_id="
-                        + Integer.parseInt(tr_order_list.get("warehouse_id").toString()) + "";
-                InventoryItem in_item_check = InventoryItem.dao.findFirst(in_item_check_sql);
-                if (in_item_check == null) {
-                    double amount = productAmount(depart_id, item.get(i).get("id").toString());
-                    in_item.set("party_id", Integer.parseInt(tr_order_list.get("customer_id").toString()));
-                    in_item.set("total_quantity", amount);
-                    in_item.set("creator", Integer.parseInt(creat_id));
-                    in_item.set("create_date", createDate);
-                    in_item.set("warehouse_id", Integer.parseInt(tr_order_list.get("warehouse_id").toString()));
-                    in_item.set("product_id", Integer.parseInt(item.get(i).get("product_id").toString()));
-                    in_item.save();
-                } else {
-                    double amount = productAmount(depart_id, item.get(i).get("id").toString());
-                    in_item = InventoryItem.dao.findById(Integer.parseInt(in_item_check.get("id").toString()));
-                    double total = Double.parseDouble(in_item.get("total_quantity").toString()) + amount;
-                    in_item.set("total_quantity", total).update();
-                }
-
-            } else {
-                number++;
-            }
-        }
-        return number;
-    }*/
+    /*
+     * // 产品入库 public int productWarehouse(String depart_id) { Date createDate =
+     * Calendar.getInstance().getTime(); int number = 0;// 没入库的货品个数 // 查找创建人id
+     * String name = (String) currentUser.getPrincipal(); UserLogin users =
+     * UserLogin.dao.findFirst("select * from user_login where user_name='" +
+     * name + "'"); String creat_id = users.get("id").toString();// 创建人id int id
+     * = Integer.parseInt(depart_id); String sql =
+     * "select order_id, item_id  from depart_transfer_itemdetail  where depart_id ="
+     * + id + "  group by item_id"; List<Record> de = Db.find(sql); String
+     * order_id = ""; String tr_item_id = ""; for (int i = 0; i < de.size();
+     * i++) { String item_id = de.get(i).get("item_id").toString(); order_id =
+     * de.get(i).get("order_id").toString(); tr_item_id += item_id + ","; }
+     * tr_item_id = tr_item_id.substring(0, tr_item_id.length() - 1); String
+     * tr_sql = "select * from transfer_order_item where id in (" + tr_item_id +
+     * ")"; List<Record> item = Db.find(tr_sql); String tr_order_sql =
+     * "select * from transfer_order where id=" + Integer.parseInt(order_id);
+     * TransferOrder tr_order_list = TransferOrder.dao.findFirst(tr_order_sql);
+     * InventoryItem in_item = null; for (int i = 0; i < item.size(); i++) { if
+     * (item.get(i).get("product_id") != null) { in_item = new InventoryItem();
+     * String in_item_check_sql =
+     * "select * from inventory_item where product_id=" +
+     * Integer.parseInt(item.get(i).get("product_id").toString()) + "" +
+     * " and warehouse_id=" +
+     * Integer.parseInt(tr_order_list.get("warehouse_id").toString()) + "";
+     * InventoryItem in_item_check =
+     * InventoryItem.dao.findFirst(in_item_check_sql); if (in_item_check ==
+     * null) { double amount = productAmount(depart_id,
+     * item.get(i).get("id").toString()); in_item.set("party_id",
+     * Integer.parseInt(tr_order_list.get("customer_id").toString()));
+     * in_item.set("total_quantity", amount); in_item.set("creator",
+     * Integer.parseInt(creat_id)); in_item.set("create_date", createDate);
+     * in_item.set("warehouse_id",
+     * Integer.parseInt(tr_order_list.get("warehouse_id").toString()));
+     * in_item.set("product_id",
+     * Integer.parseInt(item.get(i).get("product_id").toString()));
+     * in_item.save(); } else { double amount = productAmount(depart_id,
+     * item.get(i).get("id").toString()); in_item =
+     * InventoryItem.dao.findById(Integer
+     * .parseInt(in_item_check.get("id").toString())); double total =
+     * Double.parseDouble(in_item.get("total_quantity").toString()) + amount;
+     * in_item.set("total_quantity", total).update(); }
+     * 
+     * } else { number++; } } return number; }
+     */
 
     // 构造单号
     public static String creatOrderNo() {
@@ -1011,21 +1009,21 @@ public class DepartOrderController extends Controller {
             TransferOrder tr = TransferOrder.dao.findById(order_id);
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
             if (!status.isEmpty()) {
-            	if(tr.get("depart_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
-            		transferOrderMilestone.set("status", "部分"+status);
-	                tr.set("status", "部分"+status);
-            	}else{
-	                transferOrderMilestone.set("status", status);
-	                tr.set("status", status);
-            	}
+                if (tr.get("depart_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL) {
+                    transferOrderMilestone.set("status", "部分" + status);
+                    tr.set("status", "部分" + status);
+                } else {
+                    transferOrderMilestone.set("status", status);
+                    tr.set("status", status);
+                }
             } else {
-            	if(tr.get("depart_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
-            		transferOrderMilestone.set("status", "部分在途");
-	                tr.set("status", "部分在途");
-            	}else{
-	                transferOrderMilestone.set("status", "在途");
-	                tr.set("status", "在途");
-            	}
+                if (tr.get("depart_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL) {
+                    transferOrderMilestone.set("status", "部分在途");
+                    tr.set("status", "部分在途");
+                } else {
+                    transferOrderMilestone.set("status", "在途");
+                    tr.set("status", "在途");
+                }
             }
             tr.update();
             String name = (String) currentUser.getPrincipal();
@@ -1366,7 +1364,7 @@ public class DepartOrderController extends Controller {
 
     // 产品入库
     public void productInWarehouse(String departId) {
-    	if(!"".equals(departId) && departId != null){
+        if (!"".equals(departId) && departId != null) {
     		String orderIds = "";
     		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departId);
     		for(DepartTransferOrder departTransferOrder : departTransferOrders){
@@ -1404,8 +1402,110 @@ public class DepartOrderController extends Controller {
     }
     
     /*
-    public void CreatReturnOrder() {
-        boolean check = CreatReturnOrder.CreatOrder(ReturnOrder.Depart_Order, getPara("depart_id").toString());
-        renderJson(check);
-    }*/
+     * public void CreatReturnOrder() { boolean check =
+     * CreatReturnOrder.CreatOrder(ReturnOrder.Depart_Order,
+     * getPara("depart_id").toString()); renderJson(check); }
+     */
+
+    // 应付list
+    public void accountPayable() {
+        String id = getPara();
+        if (id == null || id.equals("")) {
+            Map orderMap = new HashMap();
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+            renderJson(orderMap);
+            return;
+        }
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from transfer_order_fin_item where depart_id = '" + id + "'";
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 获取当前页的数据
+        List<Record> orders = Db
+                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d "
+                        + "left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id =d.order_id "
+                        + "where d.depart_id ='" + id + "' and f.type='应付'");
+
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        orderMap.put("aaData", orders);
+
+        List<Record> list = Db.find("select * from fin_item");
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).get("name") == null) {
+                Fin_item.dao.deleteById(list.get(i).get("id"));
+            }
+        }
+        renderJson(orderMap);
+    }
+
+    public void addNewRow() {
+        String pickupOrderId = getPara();
+        Fin_item fItem = new Fin_item();
+        TransferOrderFinItem dFinItem = new TransferOrderFinItem();
+        fItem.set("type", "应付");
+        fItem.save();
+        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("depart_id", pickupOrderId);
+        dFinItem.save();
+        renderJson("{\"success\":true}");
+    }
+
+    // 添加应付
+    public void paymentSave() {
+        String returnValue = "";
+        String id = getPara("id");
+        String finItemId = getPara("finItemId");
+        TransferOrderFinItem dFinItem = TransferOrderFinItem.dao.findById(id);
+
+        Fin_item fItem = Fin_item.dao.findById(dFinItem.get("fin_item_id"));
+
+        String amount = getPara("amount");
+
+        String username = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + username + "'");
+        Date createDate = Calendar.getInstance().getTime();
+
+        if (!"".equals(finItemId) && finItemId != null) {
+            dFinItem.set("fin_item_id", finItemId).update();
+            returnValue = finItemId;
+        } else if (!"".equals(amount) && amount != null) {
+            dFinItem.set("amount", amount).update();
+            returnValue = amount;
+        }
+        List<Record> list = Db.find("select * from fin_item");
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).get("name") == null) {
+                Fin_item.dao.deleteById(list.get(i).get("id"));
+                List<Record> list2 = Db.find("select * from transfer_order_fin_item where fin_item_id ='"
+                        + list.get(i).get("id") + "'");
+                List<Record> list3 = Db.find("select * from fin_item where id ='" + list2.get(0).get("fin_item_id")
+                        + "'");
+                if (list3.size() == 0) {
+                    TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
+                }
+            }
+        }
+        renderJson(returnValue);
+    }
+
+    public void fin_item() {
+        // String input = getPara("input");
+        List<Record> locationList = Collections.EMPTY_LIST;
+        locationList = Db.find("select * from fin_item where type='应付'");
+        renderJson(locationList);
+    }
 }

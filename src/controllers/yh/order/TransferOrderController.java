@@ -868,13 +868,6 @@ public class TransferOrderController extends Controller {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
                 Fin_item.dao.deleteById(list.get(i).get("id"));
-                List<Record> list2 = Db.find("select * from transfer_order_fin_item where fin_item_id ='"
-                        + list.get(i).get("id") + "'");
-                List<Record> list3 = Db.find("select * from fin_item where id ='" + list2.get(0).get("fin_item_id")
-                        + "'");
-                if (list3.size() == 0) {
-                    // TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
-                }
             }
         }
         renderJson(orderMap);
@@ -920,13 +913,7 @@ public class TransferOrderController extends Controller {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
                 Fin_item.dao.deleteById(list.get(i).get("id"));
-                List<Record> list2 = Db.find("select * from transfer_order_fin_item where fin_item_id ='"
-                        + list.get(i).get("id") + "'");
-                List<Record> list3 = Db.find("select * from fin_item where id ='" + list2.get(0).get("fin_item_id")
-                        + "'");
-                if (list3.size() == 0) {
-                    // TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
-                }
+
             }
         }
         renderJson(orderMap);
@@ -965,8 +952,6 @@ public class TransferOrderController extends Controller {
 
         String amount = getPara("amount");
 
-        String name = getPara("name");
-
         String username = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + username + "'");
         Date createDate = Calendar.getInstance().getTime();
@@ -977,13 +962,19 @@ public class TransferOrderController extends Controller {
         } else if (!"".equals(amount) && amount != null) {
             dFinItem.set("amount", amount).update();
             returnValue = amount;
-        } else if (!"".equals(name) && name != null) {
-            returnValue = name;
         }
+        // 清除不要的条目
         List<Record> list = Db.find("select * from fin_item");
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
                 Fin_item.dao.deleteById(list.get(i).get("id"));
+                List<Record> list2 = Db.find("select * from transfer_order_fin_item where fin_item_id ='"
+                        + list.get(i).get("id") + "'");
+                List<Record> list3 = Db.find("select * from fin_item where id ='" + list2.get(0).get("fin_item_id")
+                        + "'");
+                if (list3.size() == 0) {
+                    TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
+                }
             }
         }
         renderJson(returnValue);

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.Fin_item;
 import models.InventoryItem;
@@ -287,6 +288,15 @@ public class DeliveryOrderMilestoneController extends Controller {
     // 应收list
     public void accountReceivable() {
         String id = getPara();
+        String transferId = "";
+        List<DeliveryOrderItem> dItem = DeliveryOrderItem.dao
+                .find("select * from delivery_order_item where delivery_id = '" + id + "'");
+        if (dItem.size() > 0) {
+            for (DeliveryOrderItem dItem2 : dItem) {
+                transferId += dItem2.get("transfer_order_id") + ",";
+            }
+            transferId = transferId.substring(0, transferId.length() - 1);
+        }
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -296,14 +306,14 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from transfer_order_fin_item where delivery_id ='" + id + "'  ";
+        String sql = "select count(1) total from transfer_order_fin_item where order_id in(" + transferId + ")";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.delivery_id ='"
-                        + id + "'  and f.type='应收'");
+                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id in("
+                        + transferId + ") and f.type='应收'");
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);

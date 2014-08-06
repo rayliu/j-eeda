@@ -822,7 +822,7 @@
         	minLength: 2
         });
     }); 
-	//应收
+	
 	$("#addrow").click(function(){	
 		var pickupOrderId =$("#pickupOrderId").val();
 		$.post('/yh/pickupOrder/addNewRow/'+pickupOrderId,function(data){
