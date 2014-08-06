@@ -225,8 +225,8 @@ public class PickupOrderController extends Controller {
                     + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'";
             sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
-                    + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
-                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
+                    + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
+                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
@@ -269,8 +269,8 @@ public class PickupOrderController extends Controller {
                     + beginTime
                     + "' and '" + endTime + "' and tor.order_type like '%" + orderType + "%'";
             sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
-                    + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
-                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
+                    + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
+                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
@@ -335,8 +335,8 @@ public class PickupOrderController extends Controller {
                     + "' and '" + endTime + "' and tor.order_type like '%" + orderType + "%'";
 
             sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
-                    + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
-                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*tori.amount from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
+                    + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
+                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                     + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
@@ -816,33 +816,48 @@ public class PickupOrderController extends Controller {
 
     // 完成
     public void finishPickupOrder() {
-        DepartOrder pickupOrder = DepartOrder.dao.findById(getPara("pickupOrderId"));
+    	String pickupOrderId = getPara("pickupOrderId");
+        DepartOrder pickupOrder = DepartOrder.dao.findById(pickupOrderId);
         List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
                 "select * from depart_transfer where depart_id = ?", pickupOrder.get("id"));
+        TransferOrder transferOrderType = TransferOrder.dao.findById(departTransferOrders.get(0).get("order_id"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
-            if ("新建".equals(transferOrder.get("status"))) {
-                transferOrder.set("status", "已入货场");
-                transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-                transferOrder.update();
-                TransferOrderMilestone milestone = new TransferOrderMilestone();
-                milestone.set("status", "已入货场");
-                milestone.set("location", "");
-                milestone.set("order_id", transferOrder.get("id"));
-                String name = (String) currentUser.getPrincipal();
-                List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-                milestone.set("create_by", users.get(0).get("id"));
-                java.util.Date utilDate = new java.util.Date();
-                java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-                milestone.set("create_stamp", sqlDate);
-                milestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-                milestone.save();
+            if ("新建".equals(transferOrder.get("status"))) {     
+            	TransferOrderMilestone milestone = new TransferOrderMilestone();
+	            if("salesOrder".equals(transferOrder.get("order_type"))){
+	                transferOrder.set("status", "已入货场");
+	                milestone.set("status", "已入货场");
+	            }else if("replenishmentOrder".equals(transferOrder.get("order_type"))){
+	            	transferOrder.set("status", "已入库");
+	            	milestone.set("status", "已入库");	            	
+	            }
+	            transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+	            transferOrder.update();
+	            milestone.set("location", "");
+	            milestone.set("order_id", transferOrder.get("id"));
+	            String name = (String) currentUser.getPrincipal();
+	            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+	            milestone.set("create_by", users.get(0).get("id"));
+	            java.util.Date utilDate = new java.util.Date();
+	            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+	            milestone.set("create_stamp", sqlDate);
+	            milestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+	            milestone.save();
             }
         }
-        pickupOrder.set("status", "已入货场");
-        pickupOrder.update();
         TransferOrderMilestone pickupMilestone = new TransferOrderMilestone();
-        pickupMilestone.set("status", "已入货场");
+        if(transferOrderType.get("order_type").equals("salesOrder")){
+	        pickupOrder.set("status", "已入货场");
+	        pickupMilestone.set("status", "已入货场");
+        }else if(transferOrderType.get("order_type").equals("replenishmentOrder")){
+        	pickupOrder.set("status", "已入库");
+        	pickupMilestone.set("status", "已入库");  
+        	if(!"".equals(pickupOrderId) && pickupOrderId != null){
+        		productInWarehouse(pickupOrderId);
+        	}
+        }
+        pickupOrder.update();
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         pickupMilestone.set("create_by", users.get(0).get("id"));
@@ -884,6 +899,45 @@ public class PickupOrderController extends Controller {
         renderJson("{\"success\":true}");
     }
 
+    // 产品入库
+    public void productInWarehouse(String departId) {
+    	if(!"".equals(departId) && departId != null){
+    		String orderIds = "";
+    		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departId);
+    		for(DepartTransferOrder departTransferOrder : departTransferOrders){
+    			orderIds += departTransferOrder.get("order_id") + ",";
+    		}
+    		orderIds = orderIds.substring(0, orderIds.length() - 1);
+    		List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in("+orderIds+")");
+	        for(TransferOrder transferOrder : transferOrders){
+	    		InventoryItem inventoryItem = null;
+	    		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item where order_id = ?", transferOrder.get("id"));
+		        for(TransferOrderItem transferOrderItem : transferOrderItems){
+		    		if (transferOrderItem != null) {
+		                if (transferOrderItem.get("product_id") != null) {
+		                    String inventoryItemSql = "select * from inventory_item where product_id = "+ transferOrderItem.get("product_id") + " and warehouse_id = "+transferOrder.get("warehouse_id");
+		                    inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
+	                    	String sqlTotal = "select count(1) total from transfer_order_item_detail where pickup_id = "+ departId + " and order_id = "+transferOrder.get("id");
+	                    	Record rec = Db.findFirst(sqlTotal);
+	                    	Long amount = rec.getLong("total");
+		                    if (inventoryItem == null) {
+		                    	inventoryItem = new InventoryItem();
+		                        inventoryItem.set("party_id", transferOrder.get("customer_id"));
+		                        inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
+		                        inventoryItem.set("product_id", transferOrderItem.get("product_id"));
+		                        inventoryItem.set("total_quantity", amount);
+		                        inventoryItem.save();
+		                    } else {
+		                        inventoryItem.set("total_quantity",Double.parseDouble(inventoryItem.get("total_quantity").toString()) + amount);
+		                        inventoryItem.update();
+		                    }
+		                }
+			        }
+		        }
+	        }
+    	}
+    }
+    
     // 查出所有运输单的提货地点
     public void findAllAddress() {
         List<TransferOrder> transferOrders = new ArrayList<TransferOrder>();
@@ -943,8 +997,7 @@ public class PickupOrderController extends Controller {
                         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
                         transferOrderMilestone.set("status", "已入库");
                         String name = (String) currentUser.getPrincipal();
-                        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name
-                                + "'");
+                        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
                         transferOrderMilestone.set("create_by", users.get(0).get("id"));
                         java.util.Date utilDate = new java.util.Date();
                         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -953,7 +1006,7 @@ public class PickupOrderController extends Controller {
                         transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
 
                         // 产品入库
-                        productInWarehouse(pickupOrderId);
+                        productInWarehouseOnTransferOrderId(transOrderId);
                     }
                 }
             }
@@ -962,39 +1015,31 @@ public class PickupOrderController extends Controller {
     }
 
     // 产品入库
-    public void productInWarehouse(String pickupOrderId) {
-    	if(!"".equals(pickupOrderId) && pickupOrderId != null){
-    		String orderIds = "";
-    		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", pickupOrderId);
-    		for(DepartTransferOrder departTransferOrder : departTransferOrders){
-    			orderIds += departTransferOrder.get("order_id") + ",";
-    		}
-    		orderIds = orderIds.substring(0, orderIds.length() - 1);
-    		List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in("+orderIds+")");
-	        for(TransferOrder transferOrder : transferOrders){
-	    		InventoryItem inventoryItem = null;
-	    		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item where order_id = ?", transferOrder.get("id"));
-		        for(TransferOrderItem transferOrderItem : transferOrderItems){
-		    		if (transferOrderItem != null) {
-		                if (transferOrderItem.get("product_id") != null) {
-		                    String inventoryItemSql = "select * from inventory_item where product_id = "+ transferOrderItem.get("product_id") + " and warehouse_id = "+transferOrder.get("warehouse_id");
-		                    inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
-	                    	String sqlTotal = "select count(1) total from transfer_order_item_detail where pickup_id = "+ pickupOrderId;
-	                    	Record rec = Db.findFirst(sqlTotal);
-	                    	Long amount = rec.getLong("total");
-		                    if (inventoryItem == null) {
-		                    	inventoryItem = new InventoryItem();
-		                        inventoryItem.set("party_id", transferOrder.get("customer_id"));
-		                        inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
-		                        inventoryItem.set("product_id", transferOrderItem.get("product_id"));
-		                        inventoryItem.set("total_quantity", amount);
-		                        inventoryItem.save();
-		                    } else {
-		                        inventoryItem.set("total_quantity",Double.parseDouble(inventoryItem.get("total_quantity").toString()) + amount);
-		                        inventoryItem.update();
-		                    }
-		                }
-			        }
+    public void productInWarehouseOnTransferOrderId(String transOrderId) {
+    	if(!"".equals(transOrderId) && transOrderId != null){
+    		TransferOrder transferOrder = TransferOrder.dao.findById(transOrderId);
+    		InventoryItem inventoryItem = null;
+    		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item where order_id = ?", transferOrder.get("id"));
+	        for(TransferOrderItem transferOrderItem : transferOrderItems){
+	    		if (transferOrderItem != null) {
+	                if (transferOrderItem.get("product_id") != null) {
+	                    String inventoryItemSql = "select * from inventory_item where product_id = "+ transferOrderItem.get("product_id") + " and warehouse_id = "+transferOrder.get("warehouse_id");
+	                    inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
+                    	String sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = "+ transOrderId;
+                    	Record rec = Db.findFirst(sqlTotal);
+                    	Long amount = rec.getLong("total");
+	                    if (inventoryItem == null) {
+	                    	inventoryItem = new InventoryItem();
+	                        inventoryItem.set("party_id", transferOrder.get("customer_id"));
+	                        inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
+	                        inventoryItem.set("product_id", transferOrderItem.get("product_id"));
+	                        inventoryItem.set("total_quantity", amount);
+	                        inventoryItem.save();
+	                    } else {
+	                        inventoryItem.set("total_quantity",Double.parseDouble(inventoryItem.get("total_quantity").toString()) + amount);
+	                        inventoryItem.update();
+	                    }
+	                }
 		        }
 	        }
     	}
@@ -1068,7 +1113,7 @@ public class PickupOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         String sql = "select * from transfer_order_item_detail tod where tod.item_id = " + itemId
-                + " and tod.depart_id = " + pickupId;
+                + " and tod.pickup_id = " + pickupId;
 
         List<Record> details = Db.find(sql);
 

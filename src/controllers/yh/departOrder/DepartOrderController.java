@@ -1382,7 +1382,7 @@ public class DepartOrderController extends Controller {
 		                if (transferOrderItem.get("product_id") != null) {
 		                    String inventoryItemSql = "select * from inventory_item where product_id = "+ transferOrderItem.get("product_id") + " and warehouse_id = "+transferOrder.get("warehouse_id");
 		                    inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
-	                    	String sqlTotal = "select count(1) total from transfer_order_item_detail where depart_id = "+ departId;
+	                    	String sqlTotal = "select count(1) total from transfer_order_item_detail where depart_id = "+ departId + " and order_id = "+transferOrder.get("id");
 	                    	Record rec = Db.findFirst(sqlTotal);
 	                    	Long amount = rec.getLong("total");
 		                    if (inventoryItem == null) {
