@@ -52,7 +52,7 @@
                                 <input id="checkedDetail" type="hidden" name="checkedDetail"/>                                    	
 		                        <input id="uncheckedDetail" type="hidden" name="uncheckedDetail"/>
                                    		   <div class="form-group">
-                                               <h2>供应商信息</h2>
+                                               <h3>供应商信息</h3>
                                                <input type="text" value="${spContact.company_name!''}" name="spMessage" placeholder="选择供应商" class="form-control" id="spMessage">
                                                <ul style="top: 35%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" id="spList">
    											   </ul>   										
@@ -61,7 +61,7 @@
                                            	   <h5 id="pageSpName">${spContact.contact_person!''} ${spContact.phone!''}</h5><h5 id="pageSpAddress">${spContact.address!''}</h5>     
                                            </div>                                                
                                                
-                                          <h2>车辆信息</h2> 
+                                          <h3>车辆信息</h3> 
                                         <div class="form-group">
 											<label>司机</label>
 										    <div class="form-group">											
@@ -168,7 +168,7 @@
                                         </div> 
                                     </div>
                                       <div class="col-lg-6">
-                                      <h2>发车信息</h2>  
+                                      <h3>发车信息</h3>  
                                          <div class="form-group">
 	                                        <label>拼车单号</label> <strong>${order_no!''} ${departOrder.depart_no!''}</strong>
 	                                        </div>
@@ -213,7 +213,7 @@
 		                                    </div>
 		                                     <%if(notifi_check!''==true){%>
 		                                    <div style="" id="contactInformation">
-		                                     <h2>收货人信息</h2>
+		                                     <h3>收货人信息</h3>
     	                                         <div class="form-group">
 				                                           	 <label>收货地址 :</label>
 				                                           	 <label id="notify_address" class="radio-inline"></label>    

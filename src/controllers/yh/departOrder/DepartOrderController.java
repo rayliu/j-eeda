@@ -1,4 +1,4 @@
-package controllers.yh.departOrder;
+﻿package controllers.yh.departOrder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1008,7 +1008,7 @@ public class DepartOrderController extends Controller {
             int order_id = Integer.parseInt(dep.get(i).get("order_id").toString());
             TransferOrder tr = TransferOrder.dao.findById(order_id);
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-            if (!status.isEmpty()) {
+            if (!"".equals(status) && status != null) {
                 if (tr.get("depart_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL) {
                     transferOrderMilestone.set("status", "部分" + status);
                     tr.set("status", "部分" + status);

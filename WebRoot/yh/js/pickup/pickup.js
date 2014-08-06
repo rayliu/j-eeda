@@ -110,11 +110,11 @@ $(document).ready(function() {
     		{ "mDataProp": "PICKUP_ASSIGN_STATUS",
             	"sClass": "assign_status",
             	"fnRender": function(obj) {
-            		if(obj.aData.ASSIGN_STATUS == "NEW"){
+            		if(obj.aData.PICKUP_ASSIGN_STATUS == "NEW"){
             			return "未发车";
-            		}else if(obj.aData.ASSIGN_STATUS == "PARTIAL"){
+            		}else if(obj.aData.PICKUP_ASSIGN_STATUS == "PARTIAL"){
             			return "部分发车";
-            		}else if(obj.aData.ASSIGN_STATUS == "ALL"){
+            		}else if(obj.aData.PICKUP_ASSIGN_STATUS == "ALL"){
             			return "全部发车";
             		}else{
             			return "";
@@ -238,6 +238,9 @@ $(document).ready(function() {
 				if(allTrs[i].attributes[0].value == $(this).val()){
 					allTrs[i].remove();
 				}
+			}
+			if(orderType.length != 0){
+				orderType.splice($(this).parent().siblings('.order_type')[0].innerHTML, 1);
 			}
 		}
 	});	

@@ -620,8 +620,7 @@ public class PickupOrderController extends Controller {
     }
 
     // 更新中间表
-    private void updateDepartTransfer(DepartOrder pickupOrder, String orderId, String checkedDetail,
-            String uncheckedDetailId) {
+    private void updateDepartTransfer(DepartOrder pickupOrder, String orderId, String checkedDetail, String uncheckedDetailId) {
         if (checkedDetail != null && !"".equals(checkedDetail)) {
             String[] checkedDetailIds = checkedDetail.split(",");
             TransferOrderItemDetail transferOrderItemDetail = null;
@@ -823,28 +822,39 @@ public class PickupOrderController extends Controller {
         TransferOrder transferOrderType = TransferOrder.dao.findById(departTransferOrders.get(0).get("order_id"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
-            if ("新建".equals(transferOrder.get("status"))) {     
-            	TransferOrderMilestone milestone = new TransferOrderMilestone();
-	            if("salesOrder".equals(transferOrder.get("order_type"))){
-	                transferOrder.set("status", "已入货场");
-	                milestone.set("status", "已入货场");
-	            }else if("replenishmentOrder".equals(transferOrder.get("order_type"))){
+        	TransferOrderMilestone milestone = new TransferOrderMilestone();
+            if("salesOrder".equals(transferOrder.get("order_type"))){
+            	if(transferOrder.get("pickup_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
+	                transferOrder.set("status", "部分已入货场");
+	                milestone.set("status", "部分已入货场");
+	                transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+            	}else{
+            		transferOrder.set("status", "已入货场");
+            		milestone.set("status", "已入货场");	            		
+            		transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+            	}
+            }else if("replenishmentOrder".equals(transferOrder.get("order_type"))){
+            	if(transferOrder.get("pickup_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
+	            	transferOrder.set("status", "部分已入库");
+	            	milestone.set("status", "部分已入库");
+	            	transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+            	}else{
 	            	transferOrder.set("status", "已入库");
-	            	milestone.set("status", "已入库");	            	
-	            }
-	            transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-	            transferOrder.update();
-	            milestone.set("location", "");
-	            milestone.set("order_id", transferOrder.get("id"));
-	            String name = (String) currentUser.getPrincipal();
-	            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-	            milestone.set("create_by", users.get(0).get("id"));
-	            java.util.Date utilDate = new java.util.Date();
-	            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-	            milestone.set("create_stamp", sqlDate);
-	            milestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-	            milestone.save();
+	            	milestone.set("status", "已入库");            		
+	            	transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+            	}	            	
             }
+            transferOrder.update();
+            milestone.set("location", "");
+            milestone.set("order_id", transferOrder.get("id"));
+            String name = (String) currentUser.getPrincipal();
+            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+            milestone.set("create_by", users.get(0).get("id"));
+            java.util.Date utilDate = new java.util.Date();
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+            milestone.set("create_stamp", sqlDate);
+            milestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+            milestone.save();
         }
         TransferOrderMilestone pickupMilestone = new TransferOrderMilestone();
         if(transferOrderType.get("order_type").equals("salesOrder")){
