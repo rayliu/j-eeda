@@ -745,15 +745,49 @@ public class DepartOrderController extends Controller {
         String depart_id = getPara("depart_id");// 发车单id
         String order_state = getPara("order_state");// 状态
         int nummber = 0;// 没入库的货品数量
+
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+
         DepartOrder dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
         dp.set("status", order_state).update();
         if ("已入库".equals(order_state)) {
             productInWarehouse(depart_id);// 产品入库
         }
+        if ("已发车".equals(order_state)) {
+            // 生成应付
+            TransferOrderFinItem tFinItem = new TransferOrderFinItem();
+            List<Record> departList = Db.find("select order_id from depart_transfer where depart_id ='"
+                    + getPara("pickupOrderId") + "'");
+            for (int i = 0; i < departList.size(); i++) {
+                TransferOrder tOrder = TransferOrder.dao.findById(departList.get(i).get("order_id"));
+                if (dp.get("sp_id") != null) {
+                    List<Record> contractList = Db
+                            .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
+                                    + dp.get("sp_id")
+                                    + "') and from_id = '"
+                                    + tOrder.get("route_from")
+                                    + "' and to_id ='"
+                                    + tOrder.get("route_to")
+                                    + "' and priceType='"
+                                    + getPara("priceType") + "'");
+                    if (contractList.size() > 0) {
+                        tFinItem.set("order_id", departList.get(i).get("order_id"));
+                        tFinItem.set("fin_item_id", "1");
+                        tFinItem.set("amount", contractList.get(0).get("amount"));
+                        tFinItem.set("depart_id", getPara("pickupOrderId"));
+                        tFinItem.set("status", "未完成");
+                        tFinItem.set("creator", users.get(0).get("id"));
+                        tFinItem.set("create_date", sqlDate);
+                        tFinItem.save();
+                    }
+                }
+            }
+        }
         if ("已签收".equals(order_state)) {
             // 生成回单
-            String name = (String) currentUser.getPrincipal();
-            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
             Date createDate = Calendar.getInstance().getTime();
             String orderNo = creatOrderNo();
             ReturnOrder returnOrder = new ReturnOrder();
@@ -1365,42 +1399,49 @@ public class DepartOrderController extends Controller {
     // 产品入库
     public void productInWarehouse(String departId) {
         if (!"".equals(departId) && departId != null) {
-    		String orderIds = "";
-    		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departId);
-    		for(DepartTransferOrder departTransferOrder : departTransferOrders){
-    			orderIds += departTransferOrder.get("order_id") + ",";
-    		}
-    		orderIds = orderIds.substring(0, orderIds.length() - 1);
-    		List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in("+orderIds+")");
-	        for(TransferOrder transferOrder : transferOrders){
-	    		InventoryItem inventoryItem = null;
-	    		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item where order_id = ?", transferOrder.get("id"));
-		        for(TransferOrderItem transferOrderItem : transferOrderItems){
-		    		if (transferOrderItem != null) {
-		                if (transferOrderItem.get("product_id") != null) {
-		                    String inventoryItemSql = "select * from inventory_item where product_id = "+ transferOrderItem.get("product_id") + " and warehouse_id = "+transferOrder.get("warehouse_id");
-		                    inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
-	                    	String sqlTotal = "select count(1) total from transfer_order_item_detail where depart_id = "+ departId + " and order_id = "+transferOrder.get("id");
-	                    	Record rec = Db.findFirst(sqlTotal);
-	                    	Long amount = rec.getLong("total");
-		                    if (inventoryItem == null) {
-		                    	inventoryItem = new InventoryItem();
-		                        inventoryItem.set("party_id", transferOrder.get("customer_id"));
-		                        inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
-		                        inventoryItem.set("product_id", transferOrderItem.get("product_id"));
-		                        inventoryItem.set("total_quantity", amount);
-		                        inventoryItem.save();
-		                    } else {
-		                        inventoryItem.set("total_quantity",Double.parseDouble(inventoryItem.get("total_quantity").toString()) + amount);
-		                        inventoryItem.update();
-		                    }
-		                }
-			        }
-		        }
-	        }
-    	}
+            String orderIds = "";
+            List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
+                    "select * from depart_transfer where depart_id = ?", departId);
+            for (DepartTransferOrder departTransferOrder : departTransferOrders) {
+                orderIds += departTransferOrder.get("order_id") + ",";
+            }
+            orderIds = orderIds.substring(0, orderIds.length() - 1);
+            List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in("
+                    + orderIds + ")");
+            for (TransferOrder transferOrder : transferOrders) {
+                InventoryItem inventoryItem = null;
+                List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find(
+                        "select * from transfer_order_item where order_id = ?", transferOrder.get("id"));
+                for (TransferOrderItem transferOrderItem : transferOrderItems) {
+                    if (transferOrderItem != null) {
+                        if (transferOrderItem.get("product_id") != null) {
+                            String inventoryItemSql = "select * from inventory_item where product_id = "
+                                    + transferOrderItem.get("product_id") + " and warehouse_id = "
+                                    + transferOrder.get("warehouse_id");
+                            inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
+                            String sqlTotal = "select count(1) total from transfer_order_item_detail where depart_id = "
+                                    + departId + " and order_id = " + transferOrder.get("id");
+                            Record rec = Db.findFirst(sqlTotal);
+                            Long amount = rec.getLong("total");
+                            if (inventoryItem == null) {
+                                inventoryItem = new InventoryItem();
+                                inventoryItem.set("party_id", transferOrder.get("customer_id"));
+                                inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
+                                inventoryItem.set("product_id", transferOrderItem.get("product_id"));
+                                inventoryItem.set("total_quantity", amount);
+                                inventoryItem.save();
+                            } else {
+                                inventoryItem.set("total_quantity",
+                                        Double.parseDouble(inventoryItem.get("total_quantity").toString()) + amount);
+                                inventoryItem.update();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-    
+
     /*
      * public void CreatReturnOrder() { boolean check =
      * CreatReturnOrder.CreatOrder(ReturnOrder.Depart_Order,

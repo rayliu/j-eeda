@@ -16,6 +16,7 @@ import models.DeliveryOrderMilestone;
 import models.DepartTransferOrder;
 import models.Party;
 import models.TransferOrder;
+import models.TransferOrderFinItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -564,7 +565,7 @@ public class DeliveryController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-                    .find("select *,p.id as pid from contact c,party p where p.contact_id= c.id and p.party_type ='SERVICE_PROVIDER' and (c.company_name like '%"
+                    .find("select *,p.id as pid from contact c,party p where p.contact_id= c.id and p.party_type ='SERVICE_PROVIDER' and c.sp_type='配送' and (c.company_name like '%"
                             + input
                             + "%' or c.contact_person like '%"
                             + input
@@ -582,7 +583,7 @@ public class DeliveryController extends Controller {
         } else {
             locationList = Db
                     .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-                            + Party.PARTY_TYPE_SERVICE_PROVIDER + "'");
+                            + Party.PARTY_TYPE_SERVICE_PROVIDER + "' and c.sp_type='配送'");
         }
         renderJson(locationList);
     }
@@ -820,6 +821,35 @@ public class DeliveryController extends Controller {
         String username = userLogin.get("user_name");
         map.put("username", username);
         renderJson(map);
+
+        // 生成应付
+        TransferOrderFinItem tFinItem = new TransferOrderFinItem();
+        List<Record> trasferList = Db.find("select order_id from delivery_order_item where delivery_id ='"
+                + getPara("deliveryid") + "'");
+        for (int i = 0; i < trasferList.size(); i++) {
+            TransferOrder tOrder = TransferOrder.dao.findById(trasferList.get(i).get("order_id"));
+            if (deliveryOrder.get("sp_id") != null) {
+                List<Record> contractList = Db
+                        .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
+                                + deliveryOrder.get("sp_id")
+                                + "') and from_id = '"
+                                + tOrder.get("route_from")
+                                + "' and to_id ='"
+                                + tOrder.get("route_to")
+                                + "' and priceType='"
+                                + getPara("priceType") + "'");
+                if (contractList.size() > 0) {
+                    tFinItem.set("order_id", trasferList.get(i).get("order_id"));
+                    tFinItem.set("fin_item_id", "1");
+                    tFinItem.set("amount", contractList.get(0).get("amount"));
+                    tFinItem.set("delivery_id", getPara("deliveryid"));
+                    tFinItem.set("status", "未完成");
+                    tFinItem.set("creator", users.get(0).get("id"));
+                    tFinItem.set("create_date", sqlDate);
+                    tFinItem.save();
+                }
+            }
+        }
     }
 
     // 单击tab里程碑

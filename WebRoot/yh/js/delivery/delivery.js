@@ -42,7 +42,7 @@ $(document).ready(function() {
 				$('#a1').html($(this).attr('contact_person'));
 				$('#a2').html($(this).attr('company_name'));
 				$('#a3').html($(this).attr('address'));
-				$('#a4').html($(this).attr('phone'));
+				$('#a4').html($(this).attr('mobile'));
 				
 		        $('#spList').hide();
 		    }); 
