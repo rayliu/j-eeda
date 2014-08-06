@@ -1,4 +1,4 @@
-﻿package controllers.yh.departOrder;
+package controllers.yh.departOrder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
