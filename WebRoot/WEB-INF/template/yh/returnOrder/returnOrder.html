@@ -1,0 +1,232 @@
+<%layout("/yh/layout.html"){%>
+
+        <div id="page-wrapper">
+            <div class="row">
+           
+                <div class="col-lg-12">
+                    <h1 class="page-header">回单</h1>                  
+                    <input type="hidden" id="transferOrderId" value="${transferOrder.id!''}">
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        
+                        <!-- /.panel-heading -->
+                        <div class="panel-body" id="total">
+                       
+                         <%if(saveOK!''==true){%>  
+		    <div class="alert alert-success">
+              <button type="button" class="close" data-dismiss="alert">×</button>
+              保存成功
+            </div>
+		    <%}%>
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#basic" data-toggle="tab">基本信息</a>
+                                </li>
+                                <li class=""><a href="#cargos" data-toggle="tab">货品明细</a>
+                                </li>
+                                <li class=""><a href="#arap" data-toggle="tab">应收</a>
+                                </li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div class="tab-pane fade active in" id="basic">
+                                <div class="row">
+                               <div class="col-lg-6">
+                                <input class="form-control" id="snature" type="hidden" >
+                                    <form role="form" method="post" action="" id="returnOrderForm">
+                                     <input type="hidden" name="id" value="${returnOrder.id}">
+                                    
+                                   		  <h2>回单信息</h2>  
+                                   		  <div class="form-group">
+                                             <label>回单号</label>	<strong>${returnOrder.order_no!''}</strong>
+                                          </div>
+                                          <div class="form-group">
+                                             <label>状态</label>		${returnOrder.transaction_status!''}	
+                                          </div>  
+                                          <div class="form-group">
+                                              <label>回单创建人</label>
+                                              <label class="radio-inline"></label>	${userLogin.user_name!''}
+                                          </div>                                                                               
+                                          <div class="form-group">
+                                              <label>回单创建时间</label>
+                                              <label class="radio-inline"></label>		${returnOrder.create_date!''}
+                                          </div>
+                                        
+                                        <h2>客户信息</h2>  
+                                         <div class="form-group">
+                                            <label>公司名称</label>	${customerContact.company_name!''}
+                                        </div>
+                                        <div class="form-group">
+                                            <label>地址</label>	${customerContact.address!''}
+                                        </div>                                                                               
+                                        <div class="form-group">
+                                            <label>联系人</label>	${customerContact.contact_person!''}
+                                        </div>                                        
+                                        <div class="form-group">
+                                            <label>电话</label>	${customerContact.phone!''}
+                                        </div>  
+                                       
+                                                                           
+                                   		<h2>收货人信息</h2>
+                                        <div class="form-group">
+                                            <label>收货人公司名称</label>	${contact.company_name!''}
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label>收货地址</label>	${contact.address!''}
+                                        </div>
+                                        <div class="form-group">
+                                            <label>联系人</label>	${contact.contact_person!''}
+                                        </div>
+                                        <div class="form-group">
+                                            <label>电话</label>	${contact.phone!''}
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                        	<button id="saveReturnOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
+                                        </div>
+                                    </form>
+                                      
+                                    </div>
+                                    
+                                <!-- /.col-lg-6 (nested) -->
+                                <div class="col-lg-6">
+	                                <div class="form-group">
+	                                   <h2>运输信息</h2> 
+	                                    </div> 
+	                      					<div class="form-group">
+	                                        <label>单号</label>	<strong>${transferOrder.order_no!''}</strong>
+	                                    </div> 
+	                                                                            
+	                                    <div class="form-group">
+	                                     <label >业务员</label>  ${userLoginOrder.user_name!''}                                    
+	                                    </div>
+	                                    <div class="form-group">
+	                                        <label>货品属性</label>	${transferOrder.cargo_nature!''}
+	                                    </div>
+	                                    <div class="form-group">
+	                                        <label>提货方式</label>	${transferOrder.pickup_mode!''}                                        
+	                                    </div>                                        
+                                        <div class="form-group">
+                                            <label>到达方式</label>	${transferOrder.arrival_mode!''}                                            
+                                        </div>                                         
+	                                    <h2>路线</h2>
+	                                   			 <div class="form-group">
+	                                           		<label>始发点</label>	${locationFrom.province!''} ${locationFrom.city!''} ${locationFrom.district!''}                              
+	                                       			 </div>       
+	                                              <div class="form-group">                                        
+	                                              	<label>终点</label>		${locationTo.province!''} ${locationTo.city!''} ${locatioTo.district!''}      
+	                                 			</div>  
+	                                 			
+	                                 			<div class="form-group">
+	                                            <label>备注</label>
+	                                            <textarea class="form-control" rows="8" id="remark">${returnOrder.remark!''}</textarea>
+	                                        </div> 
+	                                      
+	                                </div>
+
+                                <!-- /.col-lg-6 (nested) -->
+                            </div>
+                         </div>
+                                <div class="tab-pane fade" id="cargos">
+                                    <div class="panel-body">             
+                                        <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-hover" id="itemTable">
+                                            <thead>
+                                                <tr>
+                                                    <!-- <th></th> -->
+                                                    <th>型号</th>
+                                                    <th>名称</th>
+                                                    <th>长(mm)</th>
+                                                    <th>宽(mm)</th>
+                                                    <th>高(mm)</th>
+                                                    <th>重量(kg)</th>
+                                                    <th>数量</th>
+                                                    <th>单位</th>
+                                                    <th>总重量(kg)</th>
+                                                    <th>总体积(m³)</th>                                  
+                                                    <th>备注</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="transferOrderItemTbody">
+                                            </tbody>
+                                        </table>
+                                            <div id="transferOrderItemDateil">
+	                                            <h3 class="page-header">单品列表</h3>
+												<button id="findAllDetailBtn" type="button" class="btn btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查看所有单品</button>
+	                                            <table class="table table-striped table-bordered table-hover" id="detailTable">
+	                                                <thead>
+	                                                    <tr>	                                                        
+	                                                        <th>序列号</th>
+	                                                        <th>型号</th>
+	                                                        <th>名称</th>
+	                                                        <th>体积</th>
+	                                                        <th>重量</th>
+	                                                        <th>收货人</th>
+	                                                        <th>电话</th>
+	                                                        <th>地址</th>
+	                                                        <th>备注</th>
+	                                                    </tr>
+	                                                </thead>
+	                                                <tbody id="transferOrderItemDetailTbody">
+	                                                </tbody>
+	                                            </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                              
+                                <div class="tab-pane fade" id="arap">
+                                    <h2>应收</h2>
+                                    <div class="panel-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>费用条目</th>
+                                                        <th>金额</th>
+                                                        <th>备注</th>
+                                                        <th>结算状态</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="pay">
+                                                                                                      
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                    <!-- /.panel-body -->
+                                    
+                                  
+                             
+                                    <!-- /.panel-body -->
+                                </div>
+                                
+                                
+                             
+                            </div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+
+            </div>
+        </div>
+        <!-- /#page-wrapper -->
+
+<%}%>
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="/yh/js/jquery.validate.min.js"></script>
+<script src="/yh/js/jvalidate.messages_cn.js"></script>
+<script src="/yh/js/returnOrder/edit.js"></script>

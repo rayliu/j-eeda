@@ -7,6 +7,7 @@ import java.util.Map;
 
 import models.DepartOrder;
 import models.DepartTransferOrder;
+import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -16,6 +17,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
+
+import controllers.yh.returnOrder.ReturnOrderController;
 
 public class TransferOrderMilestoneController extends Controller {
 
@@ -231,11 +234,11 @@ public class TransferOrderMilestoneController extends Controller {
 
     // 回单签收
     public void receipt() {
-    	Long order_id = Long.parseLong(getPara("order_id"));
+    	Long order_id = Long.parseLong(getPara("orderId"));
     	TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
     	transferOrder.set("status", "已签收");
     	transferOrder.update();
-        Map<String, Object> map = new HashMap<String, Object>();
+        //Map<String, Object> map = new HashMap<String, Object>();
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         transferOrderMilestone.set("status", "已签收");
         String name = (String) currentUser.getPrincipal();
@@ -247,11 +250,20 @@ public class TransferOrderMilestoneController extends Controller {
         transferOrderMilestone.set("create_stamp", sqlDate);
         transferOrderMilestone.set("order_id", getPara("order_id"));
         transferOrderMilestone.save();
-        map.put("transferOrderMilestone", transferOrderMilestone);
+        //map.put("transferOrderMilestone", transferOrderMilestone);
         UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
         String username = userLogin.get("user_name");
-        map.put("username", username);
-        renderJson(map);
+        //map.put("username", username);
+        //renderJson(map);
+        
+        ReturnOrder returnOrder = new ReturnOrder();
+        returnOrder.set("order_no", ReturnOrderController.createReturnOrderNo());
+        returnOrder.set("transaction_status", "新建");
+        returnOrder.set("creator", users.get(0).get("id"));
+        returnOrder.set("create_date", sqlDate);
+        returnOrder.set("transfer_order_id", order_id);
+        returnOrder.save();
+        renderJson("{\"success\":true}");
     }
 
     // 入库确认

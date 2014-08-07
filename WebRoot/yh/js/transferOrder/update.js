@@ -746,7 +746,7 @@ $(document).ready(function() {
 	  } 
   	});    
 						
-	// 发车确认
+	/*// 发车确认
 	$("#departureConfirmationBtn").click(function(){
 		// 浏览器启动时,停到当前位置
 		//debugger;
@@ -764,7 +764,7 @@ $(document).ready(function() {
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 		},'json');
-	});
+	});*/
 	
 	$("input[name='arrivalMode']").each(
 		function(){
@@ -886,16 +886,6 @@ $(document).ready(function() {
 		},'json');
 		$('#transferOrderMilestone').modal('hide');
 		$('#transferOrderMilestoneList').click();
-	});
-	
-	// 回单签收
-	$("#receiptBtn").click(function(){
-		$("#receiptBtn").attr("disabled", true);
-		var order_id = $("#order_id").val();
-		$.post('/yh/transferOrderMilestone/receipt',{order_id:order_id},function(data){
-			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
-			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
-		},'json');
 	});
 	
 	// 入库确认
@@ -1893,8 +1883,9 @@ $(document).ready(function() {
         	minLength: 2
         });
     }); 
-		//应付
-		$("#item_fin_save").click(function(){
+	
+	//应付
+	$("#item_fin_save").click(function(){
 		$.post('/yh/transferOrder/receiptSave/'+order_id, $("#fin_form").serialize(), function(data){
 			console.log(data);
 			if(data.success){
@@ -1903,12 +1894,12 @@ $(document).ready(function() {
 				$('#resetbutton').click();
 			}else{
 				
-			}
-			
+			}		
 		});		
-		});	
-		//应收
-		$("#addrow").click(function(){	
+	});	
+	
+	//应收
+	$("#addrow").click(function(){	
 		$.post('/yh/transferOrder/addNewRow/'+order_id,function(data){
 			console.log(data);
 			if(data.success){
@@ -1919,9 +1910,10 @@ $(document).ready(function() {
 				
 			}
 		});		
-		});	
-		//应收
-		$("#addrow2").click(function(){	
+	});	
+	
+	//应收
+	$("#addrow2").click(function(){	
 		$.post('/yh/transferOrder/addNewRow2/'+order_id,function(data){
 			console.log(data);
 			if(data.success){
@@ -1932,5 +1924,17 @@ $(document).ready(function() {
 				
 			}
 		});		
-		});	
+	});	
+
+	if($("#transferOrderStatus").val() == '已发车'){
+		$("#receiptBtn").attr("disabled", false);
+	}
+	
+	// 回单签收
+	$("#receiptBtn").click(function(e){
+    	$(this).attr("disabled",true);
+    	var orderId = $("#order_id").val();
+    	$.post('/yh/transferOrderMilestone/receipt', {orderId:orderId}, function(){    	
+    	});
+    });
 });
