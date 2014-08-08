@@ -9,6 +9,7 @@ import models.DepartOrder;
 import models.DepartTransferOrder;
 import models.ReturnOrder;
 import models.TransferOrder;
+import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 
@@ -236,28 +237,46 @@ public class TransferOrderMilestoneController extends Controller {
     public void receipt() {
     	Long order_id = Long.parseLong(getPara("orderId"));
     	TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
-    	transferOrder.set("status", "已签收");
-    	transferOrder.update();
-        TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-        transferOrderMilestone.set("status", "已签收");
-        String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        transferOrderMilestone.set("create_by", users.get(0).get("id"));
-        transferOrderMilestone.set("location", "");
-        java.util.Date utilDate = new java.util.Date();
-        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-        transferOrderMilestone.set("create_stamp", sqlDate);
-        transferOrderMilestone.set("order_id", order_id);
-        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-        transferOrderMilestone.save();
-        
-        ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.set("order_no", ReturnOrderController.createReturnOrderNo());
-        returnOrder.set("transaction_status", "新建");
-        returnOrder.set("creator", users.get(0).get("id"));
-        returnOrder.set("create_date", sqlDate);
-        returnOrder.set("transfer_order_id", order_id);
-        returnOrder.save();
+    	List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select toid.pickup_id from transfer_order_item_detail toid where order_id = ? group by toid.pickup_id", transferOrder.get("id"));
+    	if(transferOrderItemDetails.size() > 1){
+    		transferOrder.set("status", "部分已签收");
+	    	transferOrder.update();
+	        TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+	        transferOrderMilestone.set("status", "部分已签收");
+	        String name = (String) currentUser.getPrincipal();
+	        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+	        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+	        transferOrderMilestone.set("location", "");
+	        java.util.Date utilDate = new java.util.Date();
+	        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+	        transferOrderMilestone.set("create_stamp", sqlDate);
+	        transferOrderMilestone.set("order_id", order_id);
+	        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+	        transferOrderMilestone.save();
+    	}else{
+	    	transferOrder.set("status", "已签收");
+	    	transferOrder.update();
+	        TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+	        transferOrderMilestone.set("status", "已签收");
+	        String name = (String) currentUser.getPrincipal();
+	        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+	        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+	        transferOrderMilestone.set("location", "");
+	        java.util.Date utilDate = new java.util.Date();
+	        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+	        transferOrderMilestone.set("create_stamp", sqlDate);
+	        transferOrderMilestone.set("order_id", order_id);
+	        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+	        transferOrderMilestone.save();
+	        
+	        ReturnOrder returnOrder = new ReturnOrder();
+	        returnOrder.set("order_no", ReturnOrderController.createReturnOrderNo());
+	        returnOrder.set("transaction_status", "新建");
+	        returnOrder.set("creator", users.get(0).get("id"));
+	        returnOrder.set("create_date", sqlDate);
+	        returnOrder.set("transfer_order_id", order_id);
+	        returnOrder.save();
+    	}
         renderJson("{\"success\":true}");
     }
 
