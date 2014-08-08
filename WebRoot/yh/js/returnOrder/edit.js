@@ -174,14 +174,36 @@
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
-        if($("#order_id").val() == ""){
-	    	$.post('/yh/returnOrder/save', $("#returnOrderForm").serialize(), function(returnOrder){
-				if(returnOrder.ID>0){
-				  	$("#style").show();	             
-				}else{
-					alert('数据保存失败。');
-				}
-			},'json');
-        }
+    	$.post('/yh/returnOrder/save', $("#returnOrderForm").serialize(), function(returnOrder){
+			if(returnOrder.ID>0){
+			  	$("#style").show();	             
+			}else{
+				alert('数据保存失败。');
+			}
+		},'json');
 	});
+ 	
+ 	if($("#cargoNature").val() == 'ATM'){
+ 		$("#cargoNatureSpan").text('ATM');
+ 	}else if($("#cargoNature").val() == 'cargo'){
+ 		$("#cargoNatureSpan").text('普通货品'); 		
+ 	}else{
+ 		$("#cargoNatureSpan").text(''); 		
+ 	}
+ 	
+ 	if($("#pickupMode").val() == 'own'){
+ 		$("#pickupModeSpan").text('自提');
+ 	}else if($("#pickupMode").val() == 'out_source'){
+ 		$("#pickupModeSpan").text('外包'); 		
+ 	}else{
+ 		$("#pickupModeSpan").text(''); 		 		
+ 	}
+ 	
+ 	if($("#arrivalMode").val() == 'gateIn'){
+ 		$("#arrivalModeSpan").text('入中转仓');
+ 	}else if($("#arrivalMode").val() == 'delivery'){
+ 		$("#arrivalModeSpan").text('货品直送'); 		
+ 	}else{
+ 		$("#arrivalModeSpan").text(''); 		
+ 	}
 });

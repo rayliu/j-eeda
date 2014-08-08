@@ -757,6 +757,23 @@ public class DepartOrderController extends Controller {
             productInWarehouse(depart_id);// 产品入库
         }
         if ("已发车".equals(order_state)) {
+        	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", depart_id);
+        	for(DepartTransferOrder departTransferOrder : departTransferOrders){
+        		TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+        		transferOrder.set("status", "已发车");
+        		transferOrder.update();
+        		
+        		TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+                transferOrderMilestone.set("status", "已发车");
+                transferOrderMilestone.set("create_by", users.get(0).get("id"));
+                transferOrderMilestone.set("location", "");
+                java.util.Date utilDate2 = new java.util.Date();
+                java.sql.Timestamp sqlDate2 = new java.sql.Timestamp(utilDate2.getTime());
+                transferOrderMilestone.set("create_stamp", sqlDate2);
+                transferOrderMilestone.set("order_id", transferOrder.get("id"));
+                transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+                transferOrderMilestone.save();
+        	}
             // 生成应付
             TransferOrderFinItem tFinItem = new TransferOrderFinItem();
             List<Record> departList = Db.find("select order_id from depart_transfer where depart_id ='"

@@ -238,7 +238,6 @@ public class TransferOrderMilestoneController extends Controller {
     	TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
     	transferOrder.set("status", "已签收");
     	transferOrder.update();
-        //Map<String, Object> map = new HashMap<String, Object>();
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         transferOrderMilestone.set("status", "已签收");
         String name = (String) currentUser.getPrincipal();
@@ -248,13 +247,9 @@ public class TransferOrderMilestoneController extends Controller {
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
         transferOrderMilestone.set("create_stamp", sqlDate);
-        transferOrderMilestone.set("order_id", getPara("order_id"));
+        transferOrderMilestone.set("order_id", order_id);
+        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
         transferOrderMilestone.save();
-        //map.put("transferOrderMilestone", transferOrderMilestone);
-        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-        String username = userLogin.get("user_name");
-        //map.put("username", username);
-        //renderJson(map);
         
         ReturnOrder returnOrder = new ReturnOrder();
         returnOrder.set("order_no", ReturnOrderController.createReturnOrderNo());

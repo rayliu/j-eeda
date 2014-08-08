@@ -88,10 +88,10 @@
                                             <label>电话</label>	${contact.phone!''}
                                         </div>
                                         
-                                        <div class="form-group">
+                                        <div class="form-group"><hr/>
+                                			<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                                         	<button id="saveReturnOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
                                         </div>
-                                    </form>
                                       
                                     </div>
                                     
@@ -108,13 +108,13 @@
 	                                     <label >业务员</label>  ${userLoginOrder.user_name!''}                                    
 	                                    </div>
 	                                    <div class="form-group">
-	                                        <label>货品属性</label>	${transferOrder.cargo_nature!''}
+	                                        <label>货品属性</label>	<span id="cargoNatureSpan"><input id="cargoNature" type="hidden" value="${transferOrder.cargo_nature!''}"></span>
 	                                    </div>
 	                                    <div class="form-group">
-	                                        <label>提货方式</label>	${transferOrder.pickup_mode!''}                                        
+	                                        <label>提货方式</label>	<span id="pickupModeSpan"><input id="pickupMode" type="hidden" value="${transferOrder.pickup_mode!''}"></span>                                        
 	                                    </div>                                        
                                         <div class="form-group">
-                                            <label>到达方式</label>	${transferOrder.arrival_mode!''}                                            
+                                            <label>到达方式</label>	<span id="arrivalModeSpan"><input id="arrivalMode" type="hidden" value="${transferOrder.arrival_mode!''}"></span>                                            
                                         </div>                                         
 	                                    <h2>路线</h2>
 	                                   			 <div class="form-group">
@@ -126,11 +126,12 @@
 	                                 			
 	                                 			<div class="form-group">
 	                                            <label>备注</label>
-	                                            <textarea class="form-control" rows="8" id="remark">${returnOrder.remark!''}</textarea>
+	                                            <textarea class="form-control" rows="8" name="remark">${returnOrder.remark!''}</textarea>
 	                                        </div> 
 	                                      
 	                                </div>
 
+                                </form>
                                 <!-- /.col-lg-6 (nested) -->
                             </div>
                          </div>
