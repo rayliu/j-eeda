@@ -1505,9 +1505,9 @@ $(document).ready(function() {
 			 var hideOfficeId = $("#hideOfficeId").val();
 			 for(var i=0; i<data.length; i++){
 				 if(data[i].ID == hideOfficeId){
-					 officeSelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+					 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
 				 }else{
-					 officeSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+					 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
 				 }
 			 }
 		 }
