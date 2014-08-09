@@ -823,26 +823,28 @@ public class PickupOrderController extends Controller {
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
         	TransferOrderMilestone milestone = new TransferOrderMilestone();
-            if("salesOrder".equals(transferOrder.get("order_type"))){
-            	if(transferOrder.get("pickup_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
-	                transferOrder.set("status", "部分已入货场");
-	                milestone.set("status", "部分已入货场");
-	                transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
-            	}else{
-            		transferOrder.set("status", "已入货场");
-            		milestone.set("status", "已入货场");	            		
-            		transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-            	}
-            }else if("replenishmentOrder".equals(transferOrder.get("order_type"))){
-            	if(transferOrder.get("pickup_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
-	            	transferOrder.set("status", "部分已入库");
-	            	milestone.set("status", "部分已入库");
-	            	transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
-            	}else{
-	            	transferOrder.set("status", "已入库");
-	            	milestone.set("status", "已入库");            		
-	            	transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-            	}	            	
+            if("新建".equals(transferOrder.get("status"))){
+	        	if("salesOrder".equals(transferOrder.get("order_type"))){
+	            	if(transferOrder.get("pickup_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
+		                transferOrder.set("status", "部分已入货场");
+		                milestone.set("status", "部分已入货场");
+		                transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+	            	}else{
+	            		transferOrder.set("status", "已入货场");
+	            		milestone.set("status", "已入货场");	            		
+	            		transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+	            	}
+	            }else if("replenishmentOrder".equals(transferOrder.get("order_type"))){
+	            	if(transferOrder.get("pickup_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
+		            	transferOrder.set("status", "部分已入库");
+		            	milestone.set("status", "部分已入库");
+		            	transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+	            	}else{
+		            	transferOrder.set("status", "已入库");
+		            	milestone.set("status", "已入库");            		
+		            	transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+	            	}	            	
+	            }
             }
             transferOrder.update();
             milestone.set("location", "");

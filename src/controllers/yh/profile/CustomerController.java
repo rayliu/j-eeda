@@ -180,12 +180,13 @@ public class CustomerController extends Controller {
         Party party = null;
         Contact contact = null;
         Date createDate = Calendar.getInstance().getTime();
-        if (!id.isEmpty()) {
+        if (!"".equals(id) && id != null) {
             party = Party.dao.findById(id);
             party.set("last_update_date", createDate);
             party.set("remark", getPara("remark"));
             party.set("payment", getPara("payment"));
             party.set("receipt", getPara("receipt"));
+            party.set("charge_type", getPara("chargeType"));
             party.update();
 
             contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id=" + id);
@@ -204,6 +205,7 @@ public class CustomerController extends Controller {
             party.set("remark", getPara("remark"));
             party.set("receipt", getPara("receipt"));
             party.set("payment", getPara("payment"));
+            party.set("charge_type", getPara("chargeType"));
             party.save();
 
         }

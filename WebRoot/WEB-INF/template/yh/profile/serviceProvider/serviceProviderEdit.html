@@ -28,6 +28,23 @@
                                 <form id="customerForm" role="form" action="/yh/serviceProvider/save" method="post">
                                     <input id="partyId" name="party_id" type="hidden" value="${party.id!''}">
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
+									<div class="col-lg-7">
+                                        <fieldset>
+                                         <label>供应商所在地</label>
+                                                <input id="location" type="hidden" name="location" value="${contact.location!''}">
+		                                            <div class="form-group">
+		                                                <label>省</label>
+		                                                <input id="hideProvince" type="hidden" value="${location.province!''}"/>
+		                                                <select id="mbProvince" style="width:150px" name="mbProvince" value=""></select>
+		                                                <label>市</label>
+		                                                <input id="hideCity" type="hidden" value="${location.city!''}"/>
+		                                                <select  id="cmbCity" style="width:150px" name="cmbCity" value=""></select>
+		                                                <label>区(县)</label>
+		                                                <input id="hideDistrict" type="hidden" value="${location.district!''}"/>
+		                                                <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
+		                                            </div>
+                                        </fieldset>
+                                    </div>
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
@@ -143,23 +160,6 @@
                                                 <label>备注</label>
 												<textarea class="form-control" rows="3" name="remark">${party.remark!''}</textarea>
                                             </div>
-                                        </fieldset>
-                                    </div>
-									<div class="col-lg-7">
-                                        <fieldset>
-                                         <label>供应商所在地</label>
-                                                <input id="location" type="hidden" name="location" value="${contact.location!''}">
-		                                            <div class="form-group">
-		                                                <label>省</label>
-		                                                <input id="hideProvince" type="hidden" value="${location.province!''}"/>
-		                                                <select id="mbProvince" style="width:150px" name="mbProvince" value=""></select>
-		                                                <label>市</label>
-		                                                <input id="hideCity" type="hidden" value="${location.city!''}"/>
-		                                                <select  id="cmbCity" style="width:150px" name="cmbCity" value=""></select>
-		                                                <label>区(县)</label>
-		                                                <input id="hideDistrict" type="hidden" value="${location.district!''}"/>
-		                                                <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
-		                                            </div>
                                         </fieldset>
                                     </div>
                                     <!-- /.col-lg-6 (odd) 奇数列 -->

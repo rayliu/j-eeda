@@ -126,11 +126,24 @@
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>收款方式</label>
-                                           	<select class="form-control" id="payment" name="payment">
-                                           		<option value="monthlyStatement">月结</option>
+	                                           	<select class="form-control" id="payment" name="payment">
+	                                           		<option value="monthlyStatement" selected="selected">月结</option>
 	                                           		<option value="freightCollect">到付</option>
 	                                           		<option value="cashPayment">现付</option>
-                                           	</select>
+	                                           	</select>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>计费方式</label>
+	                                         	<input type="hidden" value="${party.charge_type!''}" id="chargeTypeSelect">
+	                                           	<select class="form-control" id="chargeType" name="chargeType">
+	                                           		<option value="perUnit">计件</option>
+	                                           		<option value="perCar">整车</option>
+	                                           		<option value="perCargo">零担</option>
+	                                           	</select>
                                             </div>
                                         </fieldset>
                                     </div>
@@ -191,7 +204,7 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
     	$("#cmbCity").val(city);
     	$("#cmbArea").val(district);
     	
-    	var payment = '${party.payment!''}';
+    	var payment = '${party.payment!}';
     	$("#payment").val(payment);
     	
         $('#customerForm').validate({
@@ -314,4 +327,15 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
 			}
 		},'json');
     });
+    
+    // 回显车长
+    var chargeTypeOption=$("#chargeType>option");
+    var chargeTypeVal=$("#chargeTypeSelect").val();
+    for(var i=0;i<chargeTypeOption.length;i++){
+       var svalue=chargeTypeOption[i].value;
+       if(chargeTypeVal==svalue){
+    	   $("#chargeType option[value='"+svalue+"']").attr("selected","selected");
+       }
+    }
+    
 </script>
