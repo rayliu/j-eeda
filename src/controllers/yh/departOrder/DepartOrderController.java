@@ -400,26 +400,6 @@ public class DepartOrderController extends Controller {
                     + "%' and c.company_name like '%" + customer + "%' and tor.create_stamp between '" + beginTime
                     + "' and '" + endTime + "'" + " order by tor.create_stamp desc";
         }
-        /*
-         * for (int i = 0; i < transferOrders.size();) { 运输单查询货品、单品个数 int
-         * detail_total = 0;// 运输单货品/单品数 String total_tr_item =
-         * "select * from transfer_order_item  where order_id=" +
-         * Integer.parseInt(transferOrders.get(i).get("id").toString());// 货品id
-         * List<Record> tr_itemlist = Db.find(total_tr_item); for (int j = 0; j
-         * < tr_itemlist.size(); j++) { String total_tr_detail =
-         * "select * from transfer_order_item_detail  where item_id=" +
-         * Integer.parseInt(tr_itemlist.get(j).get("id").toString());// 单品id
-         * List<Record> tr_detaillist = Db.find(total_tr_detail); if
-         * (tr_detaillist.size() > 0) { detail_total = detail_total +
-         * tr_detaillist.size(); } else { detail_total++; } } 发车单查询货品，单品个数 int
-         * depart_detail = 0; String total_depart_detail =
-         * "select * from depart_transfer_itemdetail  where order_id=" +
-         * Integer.parseInt(transferOrders.get(i).get("id").toString());//
-         * 发车单单品个数 List<Record> depart_detaillist =
-         * Db.find(total_depart_detail); depart_detail =
-         * depart_detaillist.size(); if (depart_detail == detail_total) {
-         * transferOrders.remove(i); i = i - i; continue; } i++; }
-         */
         rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         List<Record> transferOrders = Db.find(sql);
@@ -442,6 +422,7 @@ public class DepartOrderController extends Controller {
             TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
             if (transferOrder.get("sp_id") != null) {
                 Party sp = Party.dao.findById(transferOrder.get("sp_id"));
+                setAttr("partySp", sp);
                 Contact spContact = Contact.dao.findById(sp.get("contact_id"));
                 setAttr("spContact", spContact);
                 break;
@@ -584,8 +565,13 @@ public class DepartOrderController extends Controller {
             if (!"".equals(carinfoId) && carinfoId != null) {
                 dp.set("carinfo_id", carinfoId);
             }
-            if (!"".equals(sp_id)) {
-                dp.set("sp_id", Integer.parseInt(sp_id));
+            String partySpId = getPara("partySpId");
+            if("".equals(sp_id)){
+	            if (!"".equals(partySpId)) {
+	                dp.set("sp_id", partySpId);
+	            }
+            }else{
+            	dp.set("sp_id", sp_id);            	
             }
             if (!"".equals(car_follow_name)) {
                 dp.set("car_follow_name", car_follow_name);
@@ -596,6 +582,9 @@ public class DepartOrderController extends Controller {
             dp.save();
             saveDepartTransfer(dp, getPara("orderid"), checkedDetail, uncheckedDetailIds);
             saveDepartOrderMilestone(dp);
+            if (!"".equals(partySpId)) {
+                updateTransferOrderSp(dp);
+            }
         } else {
             dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
             dp.set("create_by", getPara("create_by")).set("create_stamp", createDate)
@@ -620,11 +609,24 @@ public class DepartOrderController extends Controller {
             }
             dp.update();
             updateDepartTransfer(dp, getPara("orderid"), checkedDetail, uncheckedDetailIds);
+            if (!"".equals(sp_id)) {
+                updateTransferOrderSp(dp);
+            }
         }
         renderJson(dp);
     }
 
-    // 保存发车里程碑
+    // 更新运输单的供应商
+    private void updateTransferOrderSp(DepartOrder dp) {
+		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", dp.get("id"));
+		for(DepartTransferOrder departTransferOrder : departTransferOrders){
+			TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+			transferOrder.set("sp_id", dp.get("sp_id"));
+			transferOrder.update();
+		}
+	}
+
+	// 保存发车里程碑
     private void saveDepartOrderMilestone(DepartOrder pickupOrder) {
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         transferOrderMilestone.set("status", "新建");
@@ -826,51 +828,6 @@ public class DepartOrderController extends Controller {
         Map.put("depart", dp);
         renderJson(Map);
     }
-
-    /*
-     * // 产品入库 public int productWarehouse(String depart_id) { Date createDate =
-     * Calendar.getInstance().getTime(); int number = 0;// 没入库的货品个数 // 查找创建人id
-     * String name = (String) currentUser.getPrincipal(); UserLogin users =
-     * UserLogin.dao.findFirst("select * from user_login where user_name='" +
-     * name + "'"); String creat_id = users.get("id").toString();// 创建人id int id
-     * = Integer.parseInt(depart_id); String sql =
-     * "select order_id, item_id  from depart_transfer_itemdetail  where depart_id ="
-     * + id + "  group by item_id"; List<Record> de = Db.find(sql); String
-     * order_id = ""; String tr_item_id = ""; for (int i = 0; i < de.size();
-     * i++) { String item_id = de.get(i).get("item_id").toString(); order_id =
-     * de.get(i).get("order_id").toString(); tr_item_id += item_id + ","; }
-     * tr_item_id = tr_item_id.substring(0, tr_item_id.length() - 1); String
-     * tr_sql = "select * from transfer_order_item where id in (" + tr_item_id +
-     * ")"; List<Record> item = Db.find(tr_sql); String tr_order_sql =
-     * "select * from transfer_order where id=" + Integer.parseInt(order_id);
-     * TransferOrder tr_order_list = TransferOrder.dao.findFirst(tr_order_sql);
-     * InventoryItem in_item = null; for (int i = 0; i < item.size(); i++) { if
-     * (item.get(i).get("product_id") != null) { in_item = new InventoryItem();
-     * String in_item_check_sql =
-     * "select * from inventory_item where product_id=" +
-     * Integer.parseInt(item.get(i).get("product_id").toString()) + "" +
-     * " and warehouse_id=" +
-     * Integer.parseInt(tr_order_list.get("warehouse_id").toString()) + "";
-     * InventoryItem in_item_check =
-     * InventoryItem.dao.findFirst(in_item_check_sql); if (in_item_check ==
-     * null) { double amount = productAmount(depart_id,
-     * item.get(i).get("id").toString()); in_item.set("party_id",
-     * Integer.parseInt(tr_order_list.get("customer_id").toString()));
-     * in_item.set("total_quantity", amount); in_item.set("creator",
-     * Integer.parseInt(creat_id)); in_item.set("create_date", createDate);
-     * in_item.set("warehouse_id",
-     * Integer.parseInt(tr_order_list.get("warehouse_id").toString()));
-     * in_item.set("product_id",
-     * Integer.parseInt(item.get(i).get("product_id").toString()));
-     * in_item.save(); } else { double amount = productAmount(depart_id,
-     * item.get(i).get("id").toString()); in_item =
-     * InventoryItem.dao.findById(Integer
-     * .parseInt(in_item_check.get("id").toString())); double total =
-     * Double.parseDouble(in_item.get("total_quantity").toString()) + amount;
-     * in_item.set("total_quantity", total).update(); }
-     * 
-     * } else { number++; } } return number; }
-     */
 
     // 构造单号
     public static String creatOrderNo() {
@@ -1140,49 +1097,6 @@ public class DepartOrderController extends Controller {
                 .findFirst("select * from contact  where id in(select contact_id  from party p where p.id="
                         + Integer.parseInt(getPara("sp_id").toString()) + " )");
         renderJson(co);
-    }
-
-    // 修改运输单供应商
-    public void updateTransferSp(String depart_id, String SP_id) {
-        int de_id = Integer.parseInt(depart_id);
-
-        if (!"".equals(SP_id)) {
-            int edit_sp_id = Integer.parseInt(SP_id);
-            List<DepartTransferOrder> dp = DepartTransferOrder.dao
-                    .find("select * from depart_transfer where depart_id=" + de_id + "");
-            for (int i = 0; i < dp.size(); i++) {
-                TransferOrder tr = TransferOrder.dao.findById(Integer.parseInt(dp.get(i).get("order_id").toString()));
-                tr.set("sp_id", edit_sp_id).update();
-            }
-        } else {
-            List<DepartTransferOrder> dp = DepartTransferOrder.dao
-                    .find("select * from depart_transfer where depart_id=" + de_id + "");
-            int r_sp_id = 0;
-            boolean check = true;
-            for (int i = 0; i < dp.size(); i++) {
-                TransferOrder tr = TransferOrder.dao.findById(Integer.parseInt(dp.get(i).get("order_id").toString()));
-                if (tr.get("sp_id") != null) {
-                    if (check = true) {
-                        r_sp_id = Integer.parseInt(tr.get("sp_id").toString());
-                        check = false;
-                    }
-
-                }
-                if (check == false) {
-                    if (tr.get("sp_id") == null) {
-                        tr.set("sp_id", r_sp_id).update();
-                    }
-                }
-            }
-            DepartOrder de = DepartOrder.dao.findById(de_id);
-            if (check == false) {
-                if (de.get("sp_id") == null) {
-                    de.set("sp_id", r_sp_id).update();
-                }
-            }
-
-        }
-
     }
 
     // 修改运输单仓库
