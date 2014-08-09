@@ -390,6 +390,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_NEW);
             transferOrder.set("depart_assign_status", TransferOrder.ASSIGN_STATUS_NEW);
             transferOrder.set("payment", getPara("payment"));
+            transferOrder.set("charge_type", getPara("chargeType"));
 
             Party party = null;
             String notifyPartyId = getPara("notify_party_id");
@@ -442,6 +443,7 @@ public class TransferOrderController extends Controller {
             transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_NEW);
             transferOrder.set("depart_assign_status", TransferOrder.ASSIGN_STATUS_NEW);
             transferOrder.set("payment", getPara("payment"));
+            transferOrder.set("charge_type", getPara("chargeType"));
 
             Party party = null;
             String notifyPartyId = getPara("notify_party_id");

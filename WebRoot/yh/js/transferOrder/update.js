@@ -58,7 +58,7 @@ $(document).ready(function() {
 				if(phone == null){
 					phone = '';
 				}
-				customerList.append("<li><a tabindex='-1' class='fromLocationItem' payment='"+data[i].PAYMENT+"' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
+				customerList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' payment='"+data[i].PAYMENT+"' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
 			}
 		},'json');
 		$("#customerList").css({ 
@@ -115,6 +115,14 @@ $(document).ready(function() {
 		// 回显付款方式
 		$("input[name='payment']").each(function(){
 			if(payment == $(this).val()){
+				$(this).prop('checked', true);
+			}
+		});
+		
+		var chargeType = $(this).attr('chargeType');
+		// 回显计费方式
+		$("input[name='chargeType']").each(function(){
+			if(chargeType == $(this).val()){
 				$(this).prop('checked', true);
 			}
 		});
@@ -926,6 +934,13 @@ $(document).ready(function() {
 	// 回显运营方式
 	$("input[name='operationType']").each(function(){
 		if($("#operationTypeRadio").val() == $(this).val()){
+			$(this).attr('checked', true);		
+		}
+	});
+	
+	// 回显付款方式
+	$("input[name='chargeType']").each(function(){
+		if($("#chargeTypeRadio").val() == $(this).val()){
 			$(this).attr('checked', true);		
 		}
 	});
