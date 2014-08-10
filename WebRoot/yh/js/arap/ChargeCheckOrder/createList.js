@@ -67,7 +67,20 @@ $(document).ready(function() {
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
         //过滤回单列表
-        datatable.fnFilter(companyId, 2);
+        //datatable.fnFilter(companyId, 2);
+    });
+    // 没选中客户，焦点离开，隐藏列表
+    $('#companyName').on('blur', function(){
+        $('#companyList').hide();
+    });
+
+    //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+    $('#companyList').on('blur', function(){
+        $('#companyList').hide();
+    });
+
+    $('#companyList').on('mousedown', function(){
+        return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
     });
 
     $('#createBtn').click(function(e){
@@ -78,9 +91,96 @@ $(document).ready(function() {
            chk_value.push($(this).val());    
         }); 
 
-        console.log(chk_value.length==0 ?'你还没有选择任何内容！':chk_value);
+        var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+                        'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+                    '</div>';
+        $('body').append(alerMsg);
+        $('#message_trigger_err').on('click', function(e) {
+            e.preventDefault();
+            
+        });
+        //$(body).append(chk_value.length==0 ?'你还没有选择任何应付单据！':chk_value);
 
         $('#ids').val(chk_value);
+        if(!$('#returnOrderSearchForm').valid()){
+            return false;
+        }
+        if(chk_value.length==0 ){
+            $.scojs_message('你还没有勾选任何应付回单.', $.scojs_message.TYPE_ERROR);
+            return false;
+        }
+
         $('#createForm').submit();
+    });
+
+    $('input.beginTime_filter').on( 'change input', function () {
+        var orderNo = $("#orderNo_filter").val();
+        var status = $("#status_filter").val();
+        var address = $("#address_filter").val();
+        var customer = $("#customer_filter").val();
+        var sp = $("#sp_filter").val();
+        var beginTime = $("#beginTime_filter").val();
+        var endTime = $("#endTime_filter").val();
+        var officeName = $("#officeName_filter").val();
+        transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+        transferOrder.fnDraw();
+    } );
+    
+    $('#beginTime_filter').on('keyup', function () {
+        var orderNo = $("#orderNo_filter").val();
+        var status = $("#status_filter").val();
+        var address = $("#address_filter").val();
+        var customer = $("#customer_filter").val();
+        var sp = $("#sp_filter").val();
+        var beginTime = $("#beginTime_filter").val();
+        var endTime = $("#endTime_filter").val();
+        var officeName = $("#officeName_filter").val();
+        // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+        // transferOrder.fnDraw();
+    } );    
+    
+    $('#endTime_filter').on( 'keyup click', function () {
+        var orderNo = $("#orderNo_filter").val();
+        var status = $("#status_filter").val();
+        var address = $("#address_filter").val();
+        var customer = $("#customer_filter").val();
+        var sp = $("#sp_filter").val();
+        var beginTime = $("#beginTime_filter").val();
+        var endTime = $("#endTime_filter").val();
+        var officeName = $("#officeName_filter").val();
+        // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+        // transferOrder.fnDraw();
+    } );
+
+    $('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#beginTime_filter').trigger('keyup');
+    });
+
+
+    $('#datetimepicker2').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#endTime_filter').trigger('keyup');
+    });
+
+    //from表单验证
+    var validate = $('#returnOrderSearchForm').validate({
+        rules: {
+            companyName: {
+            required: true
+          }
+        },
+        messages : {                 
+            companyName : {required:  "请选择一个客户"}
+        }
     });
 } );
