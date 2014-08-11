@@ -269,4 +269,23 @@ public class ServiceProviderController extends Controller {
                 .find("select * from location where pcode=(select code from location where name = '" + city + "')");
         renderJson(locations);
     }
+    
+    // 一次查出省份,城市,区
+    public void searchAllLocation() {    	
+    	List<Location> provinceLocations = Location.dao.find("select * from location where pcode ='1'");
+    	
+        String province = getPara("province");
+        List<Location> cityLocations = Location.dao
+                .find("select * from location where name in (select name from location where pcode=(select code from location where name = '"
+                        + province + "'))");
+        
+        String city = getPara("city");
+        List<Location> districtLocations = Location.dao
+                .find("select * from location where pcode=(select code from location where name = '" + city + "')");
+        Map<String, List<Location>> map = new HashMap<String, List<Location>>();
+        map.put("provinceLocations", provinceLocations);
+        map.put("cityLocations", cityLocations);
+        map.put("districtLocations", districtLocations);
+    	renderJson(map);
+    }
 }
