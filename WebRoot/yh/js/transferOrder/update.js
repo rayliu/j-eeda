@@ -118,7 +118,7 @@ $(document).ready(function() {
 				for(var i = 0; i < data.cityLocations.length; i++)
 				{
 					if(data.cityLocations[i].NAME == cityVal){
-						if(districtVal == ''){
+						if(districtVal == undefined){
 							$("#address").val(provinceVal +" "+ cityVal);
 							checkProvince(provinceVal);
 							
@@ -151,61 +151,11 @@ $(document).ready(function() {
     			}
 	        },'json');
     	},'json');
-
-         	/*// 回显出发城市
-	        $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
-	    			if(data.length > 0){
-	    				var cmbCity =$("#cmbCityFrom");
-	    				cmbCity.empty();
-	    				cmbCity.append("<option>--请选择城市--</option>");
-	    				var hideCity = $("#hideCityFrom").val();
-	    				for(var i = 0; i < data.length; i++)
-	    				{
-	    					if(data[i].NAME == hideCity){
-	    						var district = $("#hideDistrictFrom").val();
-	    						if(district == ''){
-	    							$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val());
-	    							checkProvince($("#hideProvinceFrom").val());
-	    							
-	    						}else{
-	    							$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val() +" "+ $("#hideDistrictFrom").val());
-	    							checkProvince($("#hideProvinceFrom").val());
-	    						}
-	    						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-	    					}else{
-	    						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-	    					}
-	    				}
-	    			}
-	    		},'json');
-
-	        // 回显区
-	        $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
-	    			if(data.length > 0){
-	    				var cmbArea =$("#cmbAreaFrom");
-	    				cmbArea.empty();
-	    				cmbArea.append("<option>--请选择区(县)--</option>");
-	    				var hideDistrict = $("#hideDistrictFrom").val();
-	    				for(var i = 0; i < data.length; i++)
-	    				{
-	    					if(data[i].NAME == hideDistrict){
-	    						$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val() +" "+ $("#hideDistrictFrom").val());
-	    						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-	    					}else{
-	    						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-	    					}
-	    				}
-	    			}else{
-	    				var cmbArea =$("#cmbAreaFrom");
-	    				cmbArea.empty();
-	    			}
-	    		},'json');
-	        
-		},'json');*/
     };
     
 	// 选中客户
 	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
+		var date1=new Date();
 		var message = $(this).text();
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#customer_id').val($(this).attr('partyId'));
@@ -249,84 +199,8 @@ $(document).ready(function() {
 			}
 		});
 		searchAllLocation();
-        //var locationFrom = $('#hideLocationFrom').val();
-        /*$.get('/yh/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
-			console.log(data);
-			$("#hideProvinceFrom").val(data.PROVINCE);
-			$("#hideCityFrom").val(data.CITY);
-			$("#hideDistrictFrom").val(data.DISTRICT);
-			
-
-	        //获取全国省份
-         	var province = $("#mbProvinceFrom");
-         	$.post('/yh/serviceProvider/province',function(data){
-         		province.empty();
-         		province.append("<option>--请选择省份--</option>");
-    			var hideProvince = $("#hideProvinceFrom").val();
-         		for(var i = 0; i < data.length; i++)
-    				{
-    					if(data[i].NAME == hideProvince){
-    						province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-    					}else{
-    						province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-    					}
-    				}
-         		
-         	},'json');
-
-	        // 回显出发城市
-	        var hideProvince = $("#hideProvinceFrom").val();
-	        $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
-	    			if(data.length > 0){
-	    				var cmbCity =$("#cmbCityFrom");
-	    				cmbCity.empty();
-	    				cmbCity.append("<option>--请选择城市--</option>");
-	    				var hideCity = $("#hideCityFrom").val();
-	    				for(var i = 0; i < data.length; i++)
-	    				{
-	    					if(data[i].NAME == hideCity){
-	    						var district = $("#hideDistrictFrom").val();
-	    						if(district == ''){
-	    							$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val());
-	    							checkProvince($("#hideProvinceFrom").val());
-	    							
-	    						}else{
-	    							$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val() +" "+ $("#hideDistrictFrom").val());
-	    							checkProvince($("#hideProvinceFrom").val());
-	    						}
-	    						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-	    					}else{
-	    						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-	    					}
-	    				}
-	    			}
-	    		},'json');
-
-	        // 回显区
-	        var hideCity = $("#hideCityFrom").val();
-	        $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
-	    			if(data.length > 0){
-	    				var cmbArea =$("#cmbAreaFrom");
-	    				cmbArea.empty();
-	    				cmbArea.append("<option>--请选择区(县)--</option>");
-	    				var hideDistrict = $("#hideDistrictFrom").val();
-	    				for(var i = 0; i < data.length; i++)
-	    				{
-	    					if(data[i].NAME == hideDistrict){
-	    						$("#address").val($("#hideProvinceFrom").val() +" "+ $("#hideCityFrom").val() +" "+ $("#hideDistrictFrom").val());
-	    						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-	    					}else{
-	    						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-	    					}
-	    				}
-	    			}else{
-	    				var cmbArea =$("#cmbAreaFrom");
-	    				cmbArea.empty();
-	    			}
-	    		},'json');
-	        
-		},'json');*/
-        
+		var date2=new Date();
+		alert(date2.getTime()-date1.getTime());
         $('#customerList').hide();
     }); 
 	
