@@ -943,7 +943,7 @@ public class TransferOrderController extends Controller {
         renderJson("{\"success\":true}");
     }
 
-    // 添加应付
+    // 保存应收应付
     public void paymentSave() {
         String returnValue = "";
         String id = getPara("id");
@@ -979,17 +979,17 @@ public class TransferOrderController extends Controller {
                 }
             }
         }
-        renderJson(returnValue);
+        renderText(returnValue);
     }
 
-    public void fin_item() {
+    public void getPaymentList() {// getPaymentList
         // String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
         locationList = Db.find("select * from fin_item where type='应付'");
         renderJson(locationList);
     }
 
-    public void fin_item2() {
+    public void getChargeList() {// getChargeList
         // String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
         locationList = Db.find("select * from fin_item where type='应收'");

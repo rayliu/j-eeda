@@ -1789,7 +1789,7 @@ $(document).ready(function() {
 		    		return;
 		    	}
 	            $.ajax({
-	                url: "/yh/transferOrder/fin_item2",
+	                url: "/yh/transferOrder/getChargeList",
 	                dataType: "json",
 	                data: {
 	                    input: request.term
@@ -1872,7 +1872,7 @@ $(document).ready(function() {
 		    		return;
 		    	}
 	            $.ajax({
-	                url: "/yh/transferOrder/fin_item",
+	                url: "/yh/transferOrder/getPaymentList",
 	                dataType: "json",
 	                data: {
 	                    input: request.term

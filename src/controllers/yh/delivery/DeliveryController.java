@@ -16,10 +16,10 @@ import models.DeliveryOrderMilestone;
 import models.DepartTransferOrder;
 import models.Party;
 import models.TransferOrder;
-import models.TransferOrderFinItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.Warehouse;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
@@ -294,6 +294,7 @@ public class DeliveryController extends Controller {
         }
         // 运输单信息
         TransferOrder transferOrder = TransferOrder.dao.findById(tOrder.get("transfer_order_id"));
+
         // 客户信息
         Party customerContact = Party.dao.findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
                 + tOrder.get("customer_id") + "'and p.contact_id = c.id");
@@ -310,6 +311,7 @@ public class DeliveryController extends Controller {
                             "select *,p.id as pid,c.id as contactId from party p, contact c where p.contact_id=c.id and p.id =?",
                             tOrder.get("notify_party_id"));
         }
+
         setAttr("deliveryId", tOrder);
         setAttr("customer", customerContact);
         setAttr("deliveryOrder", transferOrder);
@@ -366,6 +368,10 @@ public class DeliveryController extends Controller {
                         + "left join party p on p.id =t.notify_party_id "
                         + "left join contact c on p.contact_id =c.id " + "where t.id='" + id + "'");
 
+        // 仓库code
+        Warehouse warehouse = Warehouse.dao.findById(tOrder.get("warehouse_id"));
+        System.out.println(warehouse);
+        setAttr("warehouse", warehouse);
         setAttr("transferId", id);
         setAttr("deliveryOrder", tOrder);
         setAttr("localArr3", list);
@@ -391,6 +397,7 @@ public class DeliveryController extends Controller {
         String list2 = this.getPara("localArr2");// 序列号id
         String list3 = this.getPara("localArr3");
         String cusId = getPara("cusId");
+
         Party party = Party.dao
                 .findFirst("select *,p.id as customerId from party p left join contact c on p.contact_id=c.id where p.id ='"
                         + cusId + "'");
@@ -403,9 +410,14 @@ public class DeliveryController extends Controller {
         TransferOrderItemDetail notify = TransferOrderItemDetail.dao
                 .findFirst("select c.*,p.id as pid,c.id as contactId from transfer_order_item_detail t "
                         + "left join party p on p.id=t.notify_party_id " + "left join contact c on p.contact_id=c.id "
-                        + "where t.id in('" + list2 + "')");
+                        + "where t.id in(" + list2 + ")");
 
+        // 运输单code
+        TransferOrder tOrder = TransferOrder.dao.findFirst("select warehouse_id from transfer_order where id in("
+                + list + ")");
+        Warehouse warehouse = Warehouse.dao.findById(tOrder.get("warehouse_id"));
         setAttr("notifyParty", notify);
+        setAttr("warehouse", warehouse);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/delivery/deliveryOrderEdit.html");
     }
@@ -822,34 +834,6 @@ public class DeliveryController extends Controller {
         map.put("username", username);
         renderJson(map);
 
-        // 生成应付
-        TransferOrderFinItem tFinItem = new TransferOrderFinItem();
-        List<Record> trasferList = Db.find("select order_id from delivery_order_item where delivery_id ='"
-                + getPara("deliveryid") + "'");
-        for (int i = 0; i < trasferList.size(); i++) {
-            TransferOrder tOrder = TransferOrder.dao.findById(trasferList.get(i).get("order_id"));
-            if (deliveryOrder.get("sp_id") != null) {
-                List<Record> contractList = Db
-                        .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
-                                + deliveryOrder.get("sp_id")
-                                + "') and from_id = '"
-                                + tOrder.get("route_from")
-                                + "' and to_id ='"
-                                + tOrder.get("route_to")
-                                + "' and priceType='"
-                                + getPara("priceType") + "'");
-                if (contractList.size() > 0) {
-                    tFinItem.set("order_id", trasferList.get(i).get("order_id"));
-                    tFinItem.set("fin_item_id", "1");
-                    tFinItem.set("amount", contractList.get(0).get("amount"));
-                    tFinItem.set("delivery_id", getPara("deliveryid"));
-                    tFinItem.set("status", "未完成");
-                    tFinItem.set("creator", users.get(0).get("id"));
-                    tFinItem.set("create_date", sqlDate);
-                    tFinItem.save();
-                }
-            }
-        }
     }
 
     // 单击tab里程碑

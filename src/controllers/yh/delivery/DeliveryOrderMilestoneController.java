@@ -60,7 +60,6 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrder.update();
         // 扣库存
         gateOutProduct(delivery_id);
-        // 生成应付
 
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
@@ -79,6 +78,32 @@ public class DeliveryOrderMilestoneController extends Controller {
         String username = userLogin.get("user_name");
         map.put("username", username);
         renderJson(map);
+        // 生成应付
+        setPay(transferOrder, users, sqlDate);
+
+    }
+
+    private void setPay(DeliveryOrder transferOrder, List<UserLogin> users, java.sql.Timestamp sqlDate) {
+        // 生成应付
+        TransferOrderFinItem tFinItem = new TransferOrderFinItem();
+        if (transferOrder.get("sp_id") != null) {
+            List<Record> contractList = Db
+                    .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
+                            + transferOrder.get("sp_id")
+                            + "') and from_id = '"
+                            + getPara("code")
+                            + "' and to_id ='"
+                            + getPara("locationTo") + "' and priceType='" + getPara("priceType") + "'");
+            if (contractList.size() > 0) {
+                tFinItem.set("fin_item_id", "1");
+                tFinItem.set("amount", contractList.get(0).get("amount"));
+                tFinItem.set("delivery_id", getPara("deliveryid"));
+                tFinItem.set("status", "未完成");
+                tFinItem.set("creator", users.get(0).get("id"));
+                tFinItem.set("create_date", sqlDate);
+                tFinItem.save();
+            }
+        }
     }
 
     // 扣库存
@@ -101,17 +126,19 @@ public class DeliveryOrderMilestoneController extends Controller {
                     List<Record> inventList = Db.find("select * from inventory_item where party_id='"
                             + tOrder.get("customer_id") + "' and warehouse_id ='" + tOrder.get("warehouse_id")
                             + "' and product_id ='" + transferItem.get(i).get("product_id") + "'");
-
-                    InventoryItem inventoryItem = InventoryItem.dao.findById(inventList.get(i).get("id"));
-                    inventoryItem.set(
-                            "total_quantity",
-                            Double.parseDouble(inventList.get(0).get("total_quantity").toString())
-                                    - Double.parseDouble(transferItem.get(i).get("amount").toString()));
-                    inventoryItem.update();
-                    // 删除库存为0的数据
                     if (inventList.size() > 0) {
-                        if (Double.parseDouble(inventList.get(i).get("total_quantity").toString()) <= 0) {
-                            InventoryItem.dao.deleteById(inventList.get(i).get("id"));
+
+                        InventoryItem inventoryItem = InventoryItem.dao.findById(inventList.get(i).get("id"));
+                        inventoryItem.set(
+                                "total_quantity",
+                                Double.parseDouble(inventList.get(0).get("total_quantity").toString())
+                                        - Double.parseDouble(transferItem.get(i).get("amount").toString()));
+                        inventoryItem.update();
+                        // 删除库存为0的数据
+                        if (inventList.size() > 0) {
+                            if (Double.parseDouble(inventList.get(i).get("total_quantity").toString()) <= 0) {
+                                InventoryItem.dao.deleteById(inventList.get(i).get("id"));
+                            }
                         }
                     }
                 }
@@ -214,6 +241,38 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         // 生成回单
         returnOrder(delivery_id, deliveryOrder, users);
+        // 生成应收
+
+        TransferOrderFinItem tFinItem = new TransferOrderFinItem();
+        List<Record> trasferList = Db
+                .find("select * from delivery_order_item where delivery_id ='" + delivery_id + "'");
+
+        // 普通货品
+        for (int i = 0; i < trasferList.size(); i++) {
+            if (trasferList.get(i).get("trasfer_item_id") == null) {
+                TransferOrder tOrder = TransferOrder.dao.findById(trasferList.get(i).get("transfer_order_id"));
+                if (deliveryOrder.get("customer_id") != null) {
+                    List<Record> contractList = Db
+                            .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
+                                    + tOrder.get("customer_id")
+                                    + "') and from_id = '"
+                                    + tOrder.get("route_from")
+                                    + "' and to_id ='"
+                                    + tOrder.get("route_to")
+                                    + "' and priceType='"
+                                    + tOrder.get("charge_type") + "'");
+                    if (contractList.size() > 0) {
+                        tFinItem.set("order_id", tOrder.get("id"));
+                        tFinItem.set("fin_item_id", "4");
+                        tFinItem.set("amount", contractList.get(0).get("amount"));
+                        tFinItem.set("status", "未完成");
+                        tFinItem.set("creator", users.get(0).get("id"));
+                        tFinItem.set("create_date", sqlDate);
+                        tFinItem.save();
+                    }
+                }
+            }
+        }
     }
 
     private void returnOrder(Long delivery_id, DeliveryOrder deliveryOrder, List<UserLogin> users) {
@@ -406,7 +465,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                 Fin_item.dao.deleteById(list.get(i).get("id"));
             }
         }
-        renderJson(returnValue);
+        renderText(returnValue);
     }
 
     public void fin_item() {

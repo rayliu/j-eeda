@@ -574,9 +574,11 @@
     	    });
     	    
     	    $("#departureConfirmationBtn").click(function(e){
+    	    	//计费方式
+    	    	var priceType = $("input[name='priceType']:checked").val();
     	    	$(this).attr("disabled",true);
     	    	$("#order_edit").attr("disabled",true);
-    	    	$.post('/yh/departOrder/updatestate?order_state='+"已发车", $("#orderForm").serialize(), function(){
+    	    	$.post('/yh/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
     	    	});
     	    });
     	    $("#warehousingConfirmBtn").click(function(e){
@@ -812,7 +814,7 @@
     			    		return;
     			    	}
     		            $.ajax({
-    		                url: "/yh/departOrder/fin_item",
+    		                url: "/yh/departOrder/getPaymentList",
     		                dataType: "json",
     		                data: {
     		                    input: request.term

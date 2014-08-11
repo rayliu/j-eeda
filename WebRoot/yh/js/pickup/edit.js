@@ -568,6 +568,7 @@
             	$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType}, function(){
             		pickupOrderMilestone();	
                 	var pickupOrderId = $("#pickupOrderId").val();
+                	paymenttable.fnDraw();
             		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
             			var pickupAddressTbody = $("#pickupAddressTbody");
             			pickupAddressTbody.empty();
@@ -796,7 +797,7 @@
 		    		return;
 		    	}
 	            $.ajax({
-	                url: "/yh/pickupOrder/fin_item",
+	                url: "/yh/pickupOrder/getPaymentList",
 	                dataType: "json",
 	                data: {
 	                    input: request.term

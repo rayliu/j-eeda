@@ -38,8 +38,11 @@
                                 	<div class="col-lg-6">
                                 	 <input id="deliverystatus" name="deliverystatus" type="hidden" value="${deliveryId.status!''}">
 		                                    <input id="tranferid" name="tranferid" type="hidden" value="${transferId!''}">
+		                                    <!-- 运输单ID -->
 		                                    <input id = "localArr" type="hidden" name="localArr" value="${localArr!''}"/>
+		                                    <!-- 运输单货品明细ID -->
 		                                    <input id = "localArr2" type="hidden" name="localArr2" value="${localArr2!''}"/>
+		                                    <!-- 运输单单号 -->
 		                                    <input id = "localArr3" type="hidden" name="localArr3" value="${localArr3!''}"/>
 		                                    <!-- <input id = "item_id" name="item_id" type="hidden" value="${itemsIds.id!''}"/> -->
                                     		<input id="delivery_id" type="hidden" name="delivery_id" value="${deliveryId.id!''}"/>
@@ -61,6 +64,7 @@
 							                      </div>
 					                    </div>
 					                     <div class="panel-body"> </div>
+					                     <input type="hidden" id="warehouseCode" name="warehouseCode" value ="${warehouse.code!''}">
 						                  <h3> <label >供应商信息</label></h3>
 	                                        <div class="form-group">
 	                                            <label>供应商名称</label>
@@ -87,6 +91,36 @@
 							                      <div class="form-group">
 							                          <label>联系方式：</label> 	<lable id="a4">${spContact.mobile!''}</lable>
 							                      </div> </div>
+							                      <div class="form-group">     
+	                                        	
+	                                        </div>
+							                       <div class="form-group" >
+	                                            	<input id="locationTo" type="hidden" name="route_to" value="${departOrder.route_to!''}">
+	                                           		<label>目的地城市</label>
+			                                   		 <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">
+			                                        <label>省</label>
+			                                        <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
+			                                        <select id="mbProvinceTo" class="valid" name="mbProvinceTo" value=""></select>
+			                                        <label>市</label>
+			                                        <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
+			                                        <select  id="cmbCityTo"  class="valid" name="cmbCityTo" value=""></select>
+			                                        <label>区(县)</label>
+			                                        <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}" />
+			                                        <select  id="cmbAreaTo" class="valid" name="cmbAreaTo" value=""></select>
+			                                    	</div>
+		                                   		 </div>
+		                                   		 <div class="form-group">
+                                                 <label><h3>计费方式</h3></label>
+                                                 <label class="radio-inline">
+                                                     <input type="radio" name="priceType" id="optionsRadiosInline1" value="计件" checked="">计件
+                                                 </label>
+                                                 <label class="radio-inline">
+                                                     <input type="radio" name="priceType" id="optionsRadiosInline2" value="整车" >整车
+                                                 </label>
+                                                 <label class="radio-inline">
+                                                     <input type="radio" name="priceType" id="optionsRadiosInline3" value="零担" >零担
+                                                 </label>
+                                             	</div>
 	                                    </div>
 	                                    
 	                                 	<div class="col-lg-6">
@@ -107,8 +141,11 @@
 						                      <div class="form-group">
 						                          <label>到达方式：</label> ${deliveryOrder. arrival_mode!''}
 						                      </div> 
-						                      <div class="panel-body"> </div> 
+						                      
+						                      <div class="panel-body"> </div>
+						                       
 						                      </div>
+						                      
 						                      <div>   
 		                                        <h3><label >收货人信息</label></h3>
 		                                        <div class="form-group">

@@ -566,12 +566,12 @@ public class DepartOrderController extends Controller {
                 dp.set("carinfo_id", carinfoId);
             }
             String partySpId = getPara("partySpId");
-            if("".equals(sp_id)){
-	            if (!"".equals(partySpId)) {
-	                dp.set("sp_id", partySpId);
-	            }
-            }else{
-            	dp.set("sp_id", sp_id);            	
+            if ("".equals(sp_id)) {
+                if (!"".equals(partySpId)) {
+                    dp.set("sp_id", partySpId);
+                }
+            } else {
+                dp.set("sp_id", sp_id);
             }
             if (!"".equals(car_follow_name)) {
                 dp.set("car_follow_name", car_follow_name);
@@ -618,15 +618,16 @@ public class DepartOrderController extends Controller {
 
     // 更新运输单的供应商
     private void updateTransferOrderSp(DepartOrder dp) {
-		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", dp.get("id"));
-		for(DepartTransferOrder departTransferOrder : departTransferOrders){
-			TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
-			transferOrder.set("sp_id", dp.get("sp_id"));
-			transferOrder.update();
-		}
-	}
+        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
+                "select * from depart_transfer where depart_id = ?", dp.get("id"));
+        for (DepartTransferOrder departTransferOrder : departTransferOrders) {
+            TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+            transferOrder.set("sp_id", dp.get("sp_id"));
+            transferOrder.update();
+        }
+    }
 
-	// 保存发车里程碑
+    // 保存发车里程碑
     private void saveDepartOrderMilestone(DepartOrder pickupOrder) {
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         transferOrderMilestone.set("status", "新建");
@@ -759,13 +760,14 @@ public class DepartOrderController extends Controller {
             productInWarehouse(depart_id);// 产品入库
         }
         if ("已发车".equals(order_state)) {
-        	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", depart_id);
-        	for(DepartTransferOrder departTransferOrder : departTransferOrders){
-        		TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
-        		transferOrder.set("status", "已发车");
-        		transferOrder.update();
-        		
-        		TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+            List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
+                    "select * from depart_transfer where depart_id = ?", depart_id);
+            for (DepartTransferOrder departTransferOrder : departTransferOrders) {
+                TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+                transferOrder.set("status", "已发车");
+                transferOrder.update();
+
+                TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
                 transferOrderMilestone.set("status", "已发车");
                 transferOrderMilestone.set("create_by", users.get(0).get("id"));
                 transferOrderMilestone.set("location", "");
@@ -775,35 +777,29 @@ public class DepartOrderController extends Controller {
                 transferOrderMilestone.set("order_id", transferOrder.get("id"));
                 transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
                 transferOrderMilestone.save();
-        	}
+            }
             // 生成应付
             TransferOrderFinItem tFinItem = new TransferOrderFinItem();
-            List<Record> departList = Db.find("select order_id from depart_transfer where depart_id ='"
-                    + getPara("pickupOrderId") + "'");
-            for (int i = 0; i < departList.size(); i++) {
-                TransferOrder tOrder = TransferOrder.dao.findById(departList.get(i).get("order_id"));
-                if (dp.get("sp_id") != null) {
-                    List<Record> contractList = Db
-                            .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
-                                    + dp.get("sp_id")
-                                    + "') and from_id = '"
-                                    + tOrder.get("route_from")
-                                    + "' and to_id ='"
-                                    + tOrder.get("route_to")
-                                    + "' and priceType='"
-                                    + getPara("priceType") + "'");
-                    if (contractList.size() > 0) {
-                        tFinItem.set("order_id", departList.get(i).get("order_id"));
-                        tFinItem.set("fin_item_id", "1");
-                        tFinItem.set("amount", contractList.get(0).get("amount"));
-                        tFinItem.set("depart_id", getPara("pickupOrderId"));
-                        tFinItem.set("status", "未完成");
-                        tFinItem.set("creator", users.get(0).get("id"));
-                        tFinItem.set("create_date", sqlDate);
-                        tFinItem.save();
-                    }
+
+            if (dp.get("sp_id") != null) {
+                List<Record> contractList = Db
+                        .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
+                                + dp.get("sp_id")
+                                + "') and from_id = '"
+                                + dp.get("route_from")
+                                + "' and to_id ='"
+                                + dp.get("route_to") + "' and priceType='" + getPara("priceType") + "'");
+                if (contractList.size() > 0) {
+                    tFinItem.set("fin_item_id", "1");
+                    tFinItem.set("amount", contractList.get(0).get("amount"));
+                    tFinItem.set("depart_id", getPara("pickupOrderId"));
+                    tFinItem.set("status", "未完成");
+                    tFinItem.set("creator", users.get(0).get("id"));
+                    tFinItem.set("create_date", sqlDate);
+                    tFinItem.save();
                 }
             }
+
         }
         if ("已签收".equals(order_state)) {
             // 生成回单
@@ -820,6 +816,7 @@ public class DepartOrderController extends Controller {
             returnOrder.set("creator", users.get(0).get("id"));
             returnOrder.set("create_date", createDate);
             returnOrder.save();
+
         }
 
         savePickupOrderMilestone(dp, order_state);
@@ -1471,10 +1468,10 @@ public class DepartOrderController extends Controller {
                 }
             }
         }
-        renderJson(returnValue);
+        renderText(returnValue);
     }
 
-    public void fin_item() {
+    public void getPaymentList() {
         // String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
         locationList = Db.find("select * from fin_item where type='应付'");
