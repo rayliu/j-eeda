@@ -108,7 +108,7 @@ $(document).ready(function() {
             return false;
         }
         if(chk_value.length==0 ){
-            $.scojs_message('你还没有勾选任何应收回单.', $.scojs_message.TYPE_ERROR);
+            $.scojs_message('你还没有勾选任何应付单据.', $.scojs_message.TYPE_ERROR);
             return false;
         }
 

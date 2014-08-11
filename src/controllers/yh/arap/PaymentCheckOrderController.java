@@ -18,17 +18,17 @@ public class PaymentCheckOrderController extends Controller {
     private Logger logger = Logger.getLogger(PaymentCheckOrderController.class);
 
     public void index() {
-    	setAttr("type", "SERVICE_PROVIDER");
-    	setAttr("classify", "");
-    	if(LoginUserController.isAuthenticated(this))
-        render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
+        setAttr("type", "SERVICE_PROVIDER");
+        setAttr("classify", "");
+        if (LoginUserController.isAuthenticated(this))
+            render("/yh/arap/PaymentCheckOrder/PaymentCheckOrderList.html");
     }
 
     public void add() {
-    	setAttr("type", "SERVICE_PROVIDER");
-    	setAttr("classify", "");
-    	if(LoginUserController.isAuthenticated(this))
-        render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderCreateSearchList.html");
+        setAttr("type", "SERVICE_PROVIDER");
+        setAttr("classify", "");
+        if (LoginUserController.isAuthenticated(this))
+            render("/yh/arap/PaymentCheckOrder/PaymentCheckOrderCreateSearchList.html");
     }
 
     public void create() {
@@ -42,9 +42,9 @@ public class PaymentCheckOrderController extends Controller {
         Contact contact = Contact.dao.findById(party.get("contact_id").toString());
         setAttr("customer", contact);
         setAttr("type", "SERVICE_PROVIDER");
-    	setAttr("classify", "");
-    	if(LoginUserController.isAuthenticated(this))
-        render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
+        setAttr("classify", "");
+        if (LoginUserController.isAuthenticated(this))
+            render("/yh/arap/PaymentCheckOrder/PaymentCheckOrderEdit.html");
     }
 
     // 创建应收对帐单时，先选取合适的回单，条件：客户，时间段

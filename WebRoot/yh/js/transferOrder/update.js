@@ -155,7 +155,7 @@ $(document).ready(function() {
     
 	// 选中客户
 	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
-		var date1=new Date();
+		
 		var message = $(this).text();
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#customer_id').val($(this).attr('partyId'));
@@ -184,6 +184,7 @@ $(document).ready(function() {
 		pageCustomerAddress.append(address);
 		
 		var payment = $(this).attr('payment');
+		
 		// 回显付款方式
 		$("input[name='payment']").each(function(){
 			if(payment == $(this).val()){
@@ -198,9 +199,13 @@ $(document).ready(function() {
 				$(this).prop('checked', true);
 			}
 		});
+
+		var date3=new Date();
+		//异步回填地址特别慢！！！
 		searchAllLocation();
-		var date2=new Date();
-		alert(date2.getTime()-date1.getTime());
+
+		var date4=new Date();
+		
         $('#customerList').hide();
     }); 
 	
