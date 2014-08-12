@@ -239,14 +239,51 @@ public class DeliveryOrderMilestoneController extends Controller {
         map.put("username", username);
         renderJson(map);
 
-        // 生成回单
-        returnOrder(delivery_id, deliveryOrder, users);
-        // 生成应收
+        Date createDate = Calendar.getInstance().getTime();
+        String orderNo = creatOrderNo();
+        List<Record> transferlist = Db
+                .find("select * from delivery_order_item where delivery_id='" + delivery_id + "'");
+        for (int i = 0; i < transferlist.size(); i++) {
+            if (transferlist.get(i).get("transfer_item_id") == null) {
+                TransferOrder transferOrder = TransferOrder.dao.findById(transferlist.get(i).get("transfer_order_id"));
+                if (transferOrder != null) {
+                    ReturnOrder returnOrder = new ReturnOrder();
+                    returnOrder.set("order_no", orderNo);
+                    returnOrder.set("transfer_order_id", transferlist.get(i).get("transfer_order_id"));
+                    returnOrder.set("delivery_order_id", delivery_id);
+                    returnOrder.set("customer_id", transferOrder.get("customer_id"));
+                    returnOrder.set("notity_party_id", transferOrder.get("notity_party_id"));
+                    returnOrder.set("order_type", "应收");
+                    returnOrder.set("transaction_status", "新建");
+                    returnOrder.set("creator", users.get(0).get("id"));
+                    returnOrder.set("create_date", createDate);
+                    returnOrder.save();
+                }
 
+            } else {
+                // ATM回单
+                TransferOrder transferOrder = TransferOrder.dao.findById(transferlist.get(i).get("transfer_order_id"));
+                if (transferOrder != null) {
+                    ReturnOrder returnOrder = new ReturnOrder();
+                    returnOrder.set("order_no", orderNo);
+                    returnOrder.set("transfer_order_id", transferlist.get(i).get("transfer_order_id"));
+                    returnOrder.set("delivery_order_id", delivery_id);
+                    returnOrder.set("customer_id", transferOrder.get("customer_id"));
+                    returnOrder.set("notity_party_id", transferOrder.get("notity_party_id"));
+                    returnOrder.set("order_type", "应收");
+                    returnOrder.set("transaction_status", "新建");
+                    returnOrder.set("creator", users.get(0).get("id"));
+                    returnOrder.set("create_date", createDate);
+                    returnOrder.save();
+                }
+            }
+        }
+        // 生成回单
+
+        // 生成应收
         TransferOrderFinItem tFinItem = new TransferOrderFinItem();
         List<Record> trasferList = Db
                 .find("select * from delivery_order_item where delivery_id ='" + delivery_id + "'");
-
         // 普通货品
         for (int i = 0; i < trasferList.size(); i++) {
             if (trasferList.get(i).get("trasfer_item_id") == null) {
@@ -273,21 +310,6 @@ public class DeliveryOrderMilestoneController extends Controller {
                 }
             }
         }
-    }
-
-    private void returnOrder(Long delivery_id, DeliveryOrder deliveryOrder, List<UserLogin> users) {
-        Date createDate = Calendar.getInstance().getTime();
-        String orderNo = creatOrderNo();
-        ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.set("order_no", orderNo);
-        returnOrder.set("delivery_order_id", delivery_id);
-        returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
-        returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
-        returnOrder.set("order_type", "应收");
-        returnOrder.set("transaction_status", "新建");
-        returnOrder.set("creator", users.get(0).get("id"));
-        returnOrder.set("create_date", createDate);
-        returnOrder.save();
     }
 
     // 构造单号

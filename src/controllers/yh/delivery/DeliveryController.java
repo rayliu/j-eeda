@@ -253,7 +253,15 @@ public class DeliveryController extends Controller {
         String id = getPara();
 
         DeliveryOrder tOrder = DeliveryOrder.dao.findById(id);
-        List<Record> serIdList = Db.find("select transfer_item_id from delivery_order_item where delivery_id =" + id);
+
+        List<Record> serIdList = Db.find("select * from delivery_order_item where delivery_id =" + id);
+
+        // 运输单信息
+        if (serIdList.get(0).get("transfer_item_id") == null) {
+            TransferOrder transferOrder = TransferOrder.dao.findById(serIdList.get(0).get("transfer_order_id"));
+            setAttr("deliveryOrder", transferOrder);
+        }
+
         /*
          * try { serIdList.get(0).get("transfer_order_id"); } catch (Exception
          * e) { System.out.println(e); }
@@ -292,8 +300,6 @@ public class DeliveryController extends Controller {
             }
 
         }
-        // 运输单信息
-        TransferOrder transferOrder = TransferOrder.dao.findById(tOrder.get("transfer_order_id"));
 
         // 客户信息
         Party customerContact = Party.dao.findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
@@ -314,7 +320,7 @@ public class DeliveryController extends Controller {
 
         setAttr("deliveryId", tOrder);
         setAttr("customer", customerContact);
-        setAttr("deliveryOrder", transferOrder);
+
         setAttr("notifyParty", notifyPartyContact);
         setAttr("spContact", spContact);
         if (LoginUserController.isAuthenticated(this))

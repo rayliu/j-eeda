@@ -206,4 +206,29 @@
  	}else{
  		$("#arrivalModeSpan").text(''); 		
  	}
+ 	
+ 	//应收datatable
+ 	 var order_id =$("#returnOrderid").val();
+	var receipttable =$('#table_fin').dataTable({
+		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "bFilter": false, //不需要默认的搜索框
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+        "sAjaxSource":"/yh/returnOrder/accountReceivable/"+order_id,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
+        "aoColumns": [
+			{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
+			{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"}, 
+			{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "remark"},
+			{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
+			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
+        ]      
+    });
 });

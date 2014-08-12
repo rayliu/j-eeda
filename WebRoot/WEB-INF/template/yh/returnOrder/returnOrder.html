@@ -40,7 +40,7 @@
                                <div class="col-lg-6">
                                 <input class="form-control" id="snature" type="hidden" >
                                     <form role="form" method="post" action="" id="returnOrderForm">
-                                     <input type="hidden" name="id" value="${returnOrder.id}">
+                                     <input type="hidden" name="id" id="returnOrderid" value="${returnOrder.id}">
                                     
                                    		  <h2>回单信息</h2>  
                                    		  <div class="form-group">
@@ -183,22 +183,24 @@
                                         </div>
                                     </div>
                               
+                            </div>
+                            
                                 <div class="tab-pane fade" id="arap">
-                                    <h2>应收</h2>
+                                     <h2>应收</h2>
                                     <div class="panel-body">
                                         <div class="table-responsive">
-                                            <table class="table table-striped table-bordered table-hover">
+                                            <table class="table table-striped table-bordered table-hover" id ="table_fin">
                                                 <thead>
                                                     <tr>
-                                                        <th>#</th>
                                                         <th>费用条目</th>
                                                         <th>金额</th>
+                                                        <th>运输单</th>
                                                         <th>备注</th>
                                                         <th>结算状态</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody id="pay">
-                                                                                                      
+                                                <tbody>
+                                                   
                                                 </tbody>
                                             </table>
                                         </div>
@@ -206,14 +208,10 @@
                                     </div>
                                     <!-- /.panel-body -->
                                     
-                                  
-                             
-                                    <!-- /.panel-body -->
                                 </div>
                                 
                                 
                              
-                            </div>
                         </div>
                         <!-- /.panel-body -->
                     </div>
