@@ -276,7 +276,7 @@ public class ServiceProviderController extends Controller {
     	
         String province = getPara("province");
         List<Location> cityLocations = Location.dao
-                .find("select * from location where name in (select name from location where pcode=(select code from location where name = '"
+                .find("select * from location where id in (select id from location where pcode=(select code from location where name = '"
                         + province + "'))");
         
         String city = getPara("city");

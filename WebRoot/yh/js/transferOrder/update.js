@@ -155,7 +155,7 @@ $(document).ready(function() {
     
 	// 选中客户
 	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
-		var date1=new Date();
+		
 		var message = $(this).text();
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#customer_id').val($(this).attr('partyId'));
@@ -199,8 +199,7 @@ $(document).ready(function() {
 			}
 		});
 		searchAllLocation();
-		var date2=new Date();
-		alert(date2.getTime()-date1.getTime());
+		
         $('#customerList').hide();
     }); 
 	
