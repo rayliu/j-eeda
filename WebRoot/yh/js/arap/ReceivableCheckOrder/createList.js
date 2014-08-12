@@ -2,8 +2,8 @@
 $(document).ready(function() {
     $('#menu_finance').addClass('active').find('ul').addClass('in');
     
-	//datatable, 动态处理
-    var chargeCheckTable = $('#chargeCheck-table').dataTable({
+    //datatable, 动态处理
+    var receivableCheckTable = $('#receivableCheck-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
@@ -12,7 +12,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeCheckOrder/createList",
+        "sAjaxSource": "/yh/receivableCheckOrder/createList",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
@@ -38,7 +38,7 @@ $(document).ready(function() {
             },
             { "mDataProp": "REMARK" }                            
         ]      
-    });	
+    });
     
     //获取客户的list，选中信息自动填写其他信息
     $('#companyName').on('keyup', function(){
@@ -57,7 +57,7 @@ $(document).ready(function() {
         },'json');
 
         if(inputStr==''){
-        	chargeCheckTable.fnFilter('', 2);
+        	receivableCheckTable.fnFilter('', 2);
         }
     });
 
@@ -67,7 +67,7 @@ $(document).ready(function() {
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
         //过滤回单列表
-        //chargeCheckTable.fnFilter(companyId, 2);
+        //receivableCheckTable.fnFilter(companyId, 2);
     });
     // 没选中客户，焦点离开，隐藏列表
     $('#companyName').on('blur', function(){

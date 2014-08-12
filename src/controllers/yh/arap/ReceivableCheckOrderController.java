@@ -47,7 +47,7 @@ public class ReceivableCheckOrderController extends Controller {
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
     }
 
-    // 创建应收对帐单时，先选取合适的回单，条件：客户，时间段
+    // 创建应收结帐单时，先选取合适的对账单，条件：客户，时间段
     public void createList() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");

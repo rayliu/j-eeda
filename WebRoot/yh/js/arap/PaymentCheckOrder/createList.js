@@ -1,44 +1,42 @@
 
 $(document).ready(function() {
-
     $('#menu_finance').addClass('active').find('ul').addClass('in');
     
-	//datatable, 动态处理
-    var datatable = $('#eeda-table').dataTable({
-        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",
-        "iDisplayLength": 25,
-        "bServerSide": true,
+    //datatable, 动态处理
+    var paymentCheckTable = $('#paymentCheck-table').dataTable({
+    	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    	//"sPaginationType": "bootstrap",
+    	"iDisplayLength": 25,
+    	"bServerSide": true,
     	"oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
-        },
-        "sAjaxSource": "/yh/chargeCheckOrder/createList",
-        "aoColumns": [
-            { "mDataProp": null,
-                 "fnRender": function(obj) {
-                    return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
-                 }
-            },
-            { "mDataProp": "ORDER_NO"},
-            { "mDataProp": "COMPANY_ID", "bVisible": false},
-            { "mDataProp": "COMPANY_NAME"},
-            { "mDataProp": "ORDER_TYPE", "bVisible": false},
-            { "mDataProp": "TRANSFER_ORDER_NO"},
-            { "mDataProp": "DELIVERY_ORDER_NO"},
-            { "mDataProp": "CREATOR" },
-            { "mDataProp": "CREATE_DATE" },
-            { "mDataProp": "TRANSACTION_STATUS",
-                "fnRender": function(obj) {
-                    if(obj.aData.TRANSACTION_STATUS=='new')
-                        return '新建';
-                    if(obj.aData.TRANSACTION_STATUS=='confirmed')
-                        return '已确认';
-                    return obj.aData.TRANSACTION_STATUS
-                 }
-            },
-            { "mDataProp": "REMARK" }                            
-        ]      
+    		"sUrl": "/eeda/dataTables.ch.txt"
+    	},
+    	"sAjaxSource": "/yh/paymentCheckOrder/createList",
+    	"aoColumns": [
+          { "mDataProp": null,
+        	  "fnRender": function(obj) {
+        		  return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+        	  }
+          },
+          { "mDataProp": "ORDER_NO"},
+          { "mDataProp": "CREATE_BY"},
+          { "mDataProp": "CREATE_BY"},
+          { "mDataProp": "ORDER_NO"},
+          { "mDataProp": "DORDERNO"},
+          { "mDataProp": "CREATE_BY" },
+          { "mDataProp": "CREATE_DATE" },
+          { "mDataProp": "TRANSACTION_STATUS",
+        	  "fnRender": function(obj) {
+        		  if(obj.aData.TRANSACTION_STATUS=='new')
+        			  return '新建';
+        		  if(obj.aData.TRANSACTION_STATUS=='confirmed')
+        			  return '已确认';
+        		  return obj.aData.TRANSACTION_STATUS;
+        	  }
+          },
+          { "mDataProp": "REMARK" }                            
+          ]      
     });	
     
     //获取客户的list，选中信息自动填写其他信息
@@ -58,7 +56,7 @@ $(document).ready(function() {
         },'json');
 
         if(inputStr==''){
-            datatable.fnFilter('', 2);
+        	paymentCheckTable.fnFilter('', 2);
         }
     });
 
@@ -68,7 +66,7 @@ $(document).ready(function() {
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
         //过滤回单列表
-        //datatable.fnFilter(companyId, 2);
+        //paymentCheckTable.fnFilter(companyId, 2);
     });
     // 没选中客户，焦点离开，隐藏列表
     $('#companyName').on('blur', function(){
@@ -108,7 +106,7 @@ $(document).ready(function() {
             return false;
         }
         if(chk_value.length==0 ){
-            $.scojs_message('你还没有勾选任何应付单据.', $.scojs_message.TYPE_ERROR);
+            $.scojs_message('你还没有勾选任何应收回单.', $.scojs_message.TYPE_ERROR);
             return false;
         }
 
@@ -183,5 +181,5 @@ $(document).ready(function() {
         messages : {                 
             companyName : {required:  "请选择一个客户"}
         }
-    });
+    }); 
 } );

@@ -79,18 +79,18 @@ public class PaymentCheckOrderController extends Controller {
         }
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total FROM RETURN_ORDER ro left join party p on ro.customer_id = p.id "
-                + "where ro.TRANSACTION_STATUS = 'confirmed' ";
+        String sql = "select count(1) total from transfer_order tor "
+        		+ " left join return_order ror on ror.transfer_order_id = tor.id "
+        		+ " left join delivery_order dor on dor.transfer_order_id = tor.id "
+        		+ " where tor.status = '已签收'";
         Record rec = Db.findFirst(sql + fieldsWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db
-                .find("SELECT ro.*, to.order_no as transfer_order_no, do.order_no as delivery_order_no, p.id as company_id, c.company_name FROM RETURN_ORDER ro "
-                        + "left join transfer_order to on ro.transfer_order_id = to.id "
-                        + "left join delivery_order do on ro.delivery_order_id = do.id "
-                        + "left join party p on ro.customer_id = p.id "
-                        + "left join contact c on p.contact_id = c.id where ro.TRANSACTION_STATUS = 'confirmed' " + fieldsWhere);
+        List<Record> orders = Db.find("select tor.*,ror.*,dor.order_no dorderno from transfer_order tor "
+        		+ " left join return_order ror on ror.transfer_order_id = tor.id "
+        		+ " left join delivery_order dor on dor.transfer_order_id = tor.id "
+        		+ " where tor.status = '已签收'");
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));

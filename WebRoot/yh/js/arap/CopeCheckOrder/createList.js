@@ -183,4 +183,80 @@ $(document).ready(function() {
             companyName : {required:  "请选择一个客户"}
         }
     });
+    
+    //datatable, 动态处理
+    var receivableCheckTable = $('#receivableCheck-table').dataTable({
+        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 25,
+        "bServerSide": true,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "sAjaxSource": "/yh/receivableCheckOrder/createList",
+        "aoColumns": [
+            { "mDataProp": null,
+                 "fnRender": function(obj) {
+                    return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+                 }
+            },
+            { "mDataProp": "ORDER_NO"},
+            { "mDataProp": "COMPANY_ID", "bVisible": false},
+            { "mDataProp": "COMPANY_NAME"},
+            { "mDataProp": "ORDER_TYPE", "bVisible": false},
+            { "mDataProp": "TRANSFER_ORDER_NO"},
+            { "mDataProp": "DELIVERY_ORDER_NO"},
+            { "mDataProp": "CREATOR" },
+            { "mDataProp": "CREATE_DATE" },
+            { "mDataProp": "TRANSACTION_STATUS",
+                "fnRender": function(obj) {
+                    if(obj.aData.TRANSACTION_STATUS=='new')
+                        return '新建';
+                    if(obj.aData.TRANSACTION_STATUS=='confirmed')
+                        return '已确认';
+                    return obj.aData.TRANSACTION_STATUS;
+                 }
+            },
+            { "mDataProp": "REMARK" }                            
+        ]      
+    });	
+    
+    //datatable, 动态处理
+    var paymentCheckTable = $('#paymentCheck-table').dataTable({
+    	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    	//"sPaginationType": "bootstrap",
+    	"iDisplayLength": 25,
+    	"bServerSide": true,
+    	"oLanguage": {
+    		"sUrl": "/eeda/dataTables.ch.txt"
+    	},
+    	"sAjaxSource": "/yh/paymentCheckOrder/createList",
+    	"aoColumns": [
+    	              { "mDataProp": null,
+    	            	  "fnRender": function(obj) {
+    	            		  return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+    	            	  }
+    	              },
+    	              { "mDataProp": "ORDER_NO"},
+    	              { "mDataProp": "COMPANY_ID", "bVisible": false},
+    	              { "mDataProp": "COMPANY_NAME"},
+    	              { "mDataProp": "ORDER_TYPE", "bVisible": false},
+    	              { "mDataProp": "TRANSFER_ORDER_NO"},
+    	              { "mDataProp": "DELIVERY_ORDER_NO"},
+    	              { "mDataProp": "CREATOR" },
+    	              { "mDataProp": "CREATE_DATE" },
+    	              { "mDataProp": "TRANSACTION_STATUS",
+    	            	  "fnRender": function(obj) {
+    	            		  if(obj.aData.TRANSACTION_STATUS=='new')
+    	            			  return '新建';
+    	            		  if(obj.aData.TRANSACTION_STATUS=='confirmed')
+    	            			  return '已确认';
+    	            		  return obj.aData.TRANSACTION_STATUS;
+    	            	  }
+    	              },
+    	              { "mDataProp": "REMARK" }                            
+    	              ]      
+    });	
 } );
