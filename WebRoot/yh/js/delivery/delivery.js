@@ -231,36 +231,91 @@ $(document).ready(function() {
 			            		}else{
 			            			return "源鸿自提";
 			            		}}},
-			            {"mDataProp":"WAREHOUSE_NAME"},
+			            {"mDataProp":"WAREHOUSE_NAME",
+			            	"sClass": "warehouse"},
 			            {"mDataProp":"COMPANY_NAME",
 			            	"sClass": "cname"},
 			            {"mDataProp":"NADDRESS"}
 			        ]      
 			    });	
+			
 			var cname = [];
+			var warehouseArr = [];
 		    $("#eeda-table4").on('click', '.checkedOrUnchecked', function(e){
-		    	if(cname.length == 0){
+		    	if(cname.length == 0 && warehouseArr.length == 0){
 		    		$("#saveDelivery").attr('disabled', true);
 		    	}
 				if($(this).prop("checked") == true){
 					$("#saveDelivery").attr('disabled', false);
 					if(cname.length != 0){
-						if(cname[0] != $(this).parent().siblings('.cname')[0].innerHTML && $(this).parent().siblings('.spname')[0].innerHTML != ''){
-							alert("请选择同一供应商!");
+						if(cname[0] != $(this).parent().siblings('.cname')[0].innerHTML && $(this).parent().siblings('.cname')[0].innerHTML != ''){
+							alert("请选择同一客户!");
 							return false;
+						}else{
+							if(warehouseArr.length != 0){
+								if(warehouseArr[0] != $(this).parent().siblings('.warehouse')[0].innerHTML && $(this).parent().siblings('.warehouse')[0].innerHTML != ''){
+									alert("请选择同一仓库!");
+									return false;
+								}
+							}else{
+								if($(this).parent().siblings('.warehouse')[0].innerHTML != ''){
+									warehouseArr.push($(this).parent().siblings('.warehouse')[0].innerHTML);
+								}
+							}
 						}
 					}else{
 						if($(this).parent().siblings('.cname')[0].innerHTML != ''){
 							cname.push($(this).parent().siblings('.cname')[0].innerHTML);
+							warehouseArr.push($(this).parent().siblings('.warehouse')[0].innerHTML);
 						}
 					}
 				}else{
 					if(cname.length != 0){
 						cname.splice($(this).parent().siblings('.cname')[0].innerHTML, 1);
 					}
+					if(warehouseArr.length != 0){
+						warehouseArr.splice($(this).parent().siblings('.warehouse')[0].innerHTML, 1);
+					}
 				}
 			});
 			
+		    $("#saveDelivery").click(function(e){
+				 e.preventDefault();
+			    	var trArr=[];
+			    	var ser =[];
+			    	var transferNo=[];
+			    	var customer_idArr=[];
+				$("#eeda-table4 tr:not(:first)").each(function(){
+					var the=this;
+		        	$("input:checked",this).each(function(){
+		        		var cus_id=$(this).attr("code3");
+		        		trArr.push($(this).val()); 
+		        		//ser.push($("td:eq(1)",the).html());
+		        		ser.push($(".serId",the).attr('code'));
+		        		transferNo.push($(".transferNo",the).attr('code2'));
+		        		if(cus_id!=""){
+		        			customer_idArr.push(cus_id);
+		        		}
+		        		  $('#cusId').val(cus_id);
+		        	});
+		        	}); 
+	        	/*if(customer_idArr.length>=2){
+	         	   for(var i=0;i<customer_idArr.length;i++){
+	         		   if(customer_idArr[i]!=customer_idArr[i+1]){
+	         			   alert("请选择同客户的运输单！");
+	         			   return;
+	         		   }
+	         		  if(i+2==customer_idArr.length){
+	   				   break;
+	         		  }
+	         	   }
+	            }*/
+		        	$('#localArr2').val(ser);
+		            $('#localArr').val(trArr);
+		            $('#localArr3').val(transferNo);
+		          
+		            $('#createForm').submit();
+			});
 			$("#eeda-table3").on('click', '.checkedOrUnchecked', function(e){
 				if($(this).prop("checked") == true){
 					$("#saveDelivery").attr('disabled', false);
@@ -271,43 +326,7 @@ $(document).ready(function() {
 			//添加运输单序列号
 			/* $("#eeda-table2").on('click', '.creat', function(e){
 				 var id = $(this).attr('code');*/
-				$("#saveDelivery").click(function(e){
-					 e.preventDefault();
-				    	var trArr=[];
-				    	var ser =[];
-				    	var transferNo=[];
-				    	var customer_idArr=[];
-					$("#eeda-table4 tr:not(:first)").each(function(){
-						var the=this;
-			        	$("input:checked",this).each(function(){
-			        		var cus_id=$(this).attr("code3");
-			        		trArr.push($(this).val()); 
-			        		//ser.push($("td:eq(1)",the).html());
-			        		ser.push($(".serId",the).attr('code'));
-			        		transferNo.push($(".transferNo",the).attr('code2'));
-			        		if(cus_id!=""){
-			        			customer_idArr.push(cus_id);
-			        		}
-			        		  $('#cusId').val(cus_id);
-			        	});
-			        	}); 
-		        	/*if(customer_idArr.length>=2){
-		         	   for(var i=0;i<customer_idArr.length;i++){
-		         		   if(customer_idArr[i]!=customer_idArr[i+1]){
-		         			   alert("请选择同客户的运输单！");
-		         			   return;
-		         		   }
-		         		  if(i+2==customer_idArr.length){
-		   				   break;
-		         		  }
-		         	   }
-		            }*/
-			        	$('#localArr2').val(ser);
-			            $('#localArr').val(trArr);
-			            $('#localArr3').val(transferNo);
-			          
-			            $('#createForm').submit();
-				});
+				
 			 
 			// 发车确认
 				$("#ConfirmationBtn").click(function(){
