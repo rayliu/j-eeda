@@ -258,7 +258,7 @@ public class ServiceProviderController extends Controller {
     public void searchAllCity() {
         String province = getPara("province");
         List<Location> locations = Location.dao
-                .find("select * from location where name in (select name from location where pcode=(select code from location where name = '"
+                .find("select * from location where id in (select id from location where pcode=(select code from location where name = '"
                         + province + "'))");
         renderJson(locations);
     }

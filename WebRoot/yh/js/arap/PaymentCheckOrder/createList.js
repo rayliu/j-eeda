@@ -19,23 +19,14 @@ $(document).ready(function() {
         		  return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
         	  }
           },
-          { "mDataProp": "ORDER_NO"},
-          { "mDataProp": "CREATE_BY"},
-          { "mDataProp": "CREATE_BY"},
-          { "mDataProp": "ORDER_NO"},
-          { "mDataProp": "DORDERNO"},
-          { "mDataProp": "CREATE_BY" },
+          /*{ "mDataProp": "ORDER_NO"},*/
+          { "mDataProp": "CUSTOMERID"},
+          { "mDataProp": "CNAME"},
+          /*{ "mDataProp": "ORDER_NO"},*/
+          { "mDataProp": "TORORDERNO"},
+          { "mDataProp": "DORORDERNO" },
           { "mDataProp": "CREATE_DATE" },
-          { "mDataProp": "TRANSACTION_STATUS",
-        	  "fnRender": function(obj) {
-        		  if(obj.aData.TRANSACTION_STATUS=='new')
-        			  return '新建';
-        		  if(obj.aData.TRANSACTION_STATUS=='confirmed')
-        			  return '已确认';
-        		  return obj.aData.TRANSACTION_STATUS;
-        	  }
-          },
-          { "mDataProp": "REMARK" }                            
+          { "mDataProp": "STATUS"}                           
           ]      
     });	
     
