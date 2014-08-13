@@ -73,11 +73,7 @@ $(document).ready(function() {
                 	}*/
                     return	"<a class='btn btn-success' href='"+urlSource2+""+obj.aData.ID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
-                                "编辑"+
-                            "</a>"+
-                            "<a class='btn btn-danger' href='"+urlSource3+""+obj.aData.ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "删除"+
+                                "收款"+
                             "</a>";
                 }
             }                         

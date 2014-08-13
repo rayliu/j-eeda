@@ -1,6 +1,6 @@
 
 $(document).ready(function() {
-    $('#menu_finance').addClass('active').find('ul').addClass('in');
+    $('#menu_charge').addClass('active').find('ul').addClass('in');
     
 	//datatable, 动态处理
     var chargeCheckTable = $('#chargeCheck-table').dataTable({
@@ -123,8 +123,8 @@ $(document).ready(function() {
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
         var officeName = $("#officeName_filter").val();
-        transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-        transferOrder.fnDraw();
+        // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+        // transferOrder.fnDraw();
     } );
     
     $('#beginTime_filter').on('keyup', function () {

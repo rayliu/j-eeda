@@ -21,14 +21,14 @@ public class ReceivableCheckOrderController extends Controller {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
     	if(LoginUserController.isAuthenticated(this))
-        render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
+        render("/yh/arap/ChargeAcceptOrder/ChargeAcceptOrderList.html");
     }
 
     public void add() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
     	if(LoginUserController.isAuthenticated(this))
-        render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderCreateSearchList.html");
+        render("/yh/arap/ChargeAcceptOrder/ChargeCheckOrderCreateSearchList.html");
     }
 
     public void create() {
@@ -44,7 +44,7 @@ public class ReceivableCheckOrderController extends Controller {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
     	if(LoginUserController.isAuthenticated(this))
-        render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
+        render("/yh/arap/ChargeAcceptOrder/ChargeCheckOrderEdit.html");
     }
 
     // 创建应收结帐单时，先选取合适的对账单，条件：客户，时间段
