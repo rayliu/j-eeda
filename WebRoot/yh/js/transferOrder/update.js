@@ -1739,8 +1739,30 @@ $(document).ready(function() {
 			{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "remark"},
 			{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
+			{  
+                "mDataProp": null, 
+                "sWidth": "60px",  
+            	"sClass": "remark",              
+                "fnRender": function(obj) {
+                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
+              		"<i class='fa fa-trash-o fa-fw'> </i> "+
+              		"删除"+
+              		"</a>";
+                }
+            }     
         ]      
     });
+	//异步删除应收
+	 $("#table_fin").on('click', '.finItemdel', function(e){
+		 var id = $(this).attr('code');
+		  e.preventDefault();
+		$.post('/yh/transferOrder/finItemdel/'+id,function(data){
+                //保存成功后，刷新列表
+                console.log(data);
+                	receipttable.fnDraw();
+            },'text');
+		  });
+	 
 	receipttable.makeEditable({
     	sUpdateURL: '/yh/transferOrder/paymentSave',    	
     	oEditableSettings: {event: 'click'},
@@ -1820,8 +1842,29 @@ $(document).ready(function() {
 			{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "remark"},
 			{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
+			{  
+                "mDataProp": null, 
+                "sWidth": "60px",  
+            	"sClass": "remark",              
+                "fnRender": function(obj) {
+                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
+              		"<i class='fa fa-trash-o fa-fw'> </i> "+
+              		"删除"+
+              		"</a>";
+                }
+            }     
         ]      
     });
+	//异步删除应付
+	 $("#table_fin2").on('click', '.finItemdel', function(e){
+		 var id = $(this).attr('code');
+		  e.preventDefault();
+		$.post('/yh/transferOrder/finItemdel/'+id,function(data){
+               //保存成功后，刷新列表
+               console.log(data);
+               paymenttable.fnDraw();
+           },'text');
+		  });
 	paymenttable.makeEditable({
     	sUpdateURL: '/yh/transferOrder/paymentSave',    	
     	oEditableSettings: {event: 'click'},

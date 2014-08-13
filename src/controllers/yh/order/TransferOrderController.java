@@ -995,4 +995,12 @@ public class TransferOrderController extends Controller {
         locationList = Db.find("select * from fin_item where type='应收'");
         renderJson(locationList);
     }
+
+    // 费用删除
+    public void finItemdel() {
+        String id = getPara();
+        TransferOrderFinItem.dao.deleteById(id);
+        renderJson("{\"success\":true}");
+    }
+
 }

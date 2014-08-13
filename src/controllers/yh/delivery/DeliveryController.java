@@ -257,9 +257,11 @@ public class DeliveryController extends Controller {
         List<Record> serIdList = Db.find("select * from delivery_order_item where delivery_id =" + id);
 
         // 运输单信息
-        if (serIdList.get(0).get("transfer_item_id") == null) {
-            TransferOrder transferOrder = TransferOrder.dao.findById(serIdList.get(0).get("transfer_order_id"));
-            setAttr("deliveryOrder", transferOrder);
+        if (serIdList.size() > 0) {
+            if (serIdList.get(0).get("transfer_item_id") == null) {
+                TransferOrder transferOrder = TransferOrder.dao.findById(serIdList.get(0).get("transfer_order_id"));
+                setAttr("deliveryOrder", transferOrder);
+            }
         }
 
         /*
