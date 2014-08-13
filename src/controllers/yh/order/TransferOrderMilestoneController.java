@@ -290,22 +290,49 @@ public class TransferOrderMilestoneController extends Controller {
             TransferOrderFinItem tFinItem = new TransferOrderFinItem();
 
             if (transferOrder.get("coustomer_id") != null) {
-                List<Record> contractList = Db
-                        .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
-                                + transferOrder.get("coustomer_id")
-                                + "') and from_id = '"
-                                + transferOrder.get("route_from")
-                                + "' and to_id ='"
-                                + transferOrder.get("route_to")
-                                + "' and priceType='" + transferOrder.get("charge_type") + "'");
-                if (contractList.size() > 0) {
-                    tFinItem.set("order_id", transferOrder.get("id"));
-                    tFinItem.set("fin_item_id", "4");
-                    tFinItem.set("amount", contractList.get(0).get("amount"));
-                    tFinItem.set("status", "未完成");
-                    tFinItem.set("creator", users.get(0).get("id"));
-                    tFinItem.set("create_date", sqlDate);
-                    tFinItem.save();
+                // ATM计件算
+                List<Record> list = Db.find("select * from transfer_order_item where order_id ='"
+                        + transferOrder.get("id") + "'");
+                int size = list.size();
+                if (transferOrder.get("cargo_nature").equals("ATM")) {
+                    List<Record> contractList = Db
+                            .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
+                                    + transferOrder.get("coustomer_id")
+                                    + "') and from_id = '"
+                                    + transferOrder.get("route_from")
+                                    + "' and to_id ='"
+                                    + transferOrder.get("routa e_to")
+                                    + "' and priceType='"
+                                    + transferOrder.get("charge_type") + "'");
+                    if (contractList.size() > 0) {
+                        tFinItem.set("order_id", transferOrder.get("id"));
+                        tFinItem.set("fin_item_id", "4");
+                        tFinItem.set("amount", Double.parseDouble(contractList.get(0).get("amount").toString()) * size);
+                        tFinItem.set("status", "未完成");
+                        tFinItem.set("creator", users.get(0).get("id"));
+                        tFinItem.set("create_date", sqlDate);
+                        tFinItem.save();
+                    }
+                } else {
+                    // 普通货品
+                    List<Record> contractList = Db
+                            .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
+                                    + transferOrder.get("coustomer_id")
+                                    + "') and from_id = '"
+                                    + transferOrder.get("route_from")
+                                    + "' and to_id ='"
+                                    + transferOrder.get("routa e_to")
+                                    + "' and priceType='"
+                                    + transferOrder.get("charge_type") + "'");
+                    if (contractList.size() > 0) {
+                        tFinItem.set("order_id", transferOrder.get("id"));
+                        tFinItem.set("fin_item_id", "4");
+                        tFinItem.set("amount", contractList.get(0).get("amount"));
+                        tFinItem.set("status", "未完成");
+                        tFinItem.set("creator", users.get(0).get("id"));
+                        tFinItem.set("create_date", sqlDate);
+                        tFinItem.save();
+                    }
                 }
             }
         }
