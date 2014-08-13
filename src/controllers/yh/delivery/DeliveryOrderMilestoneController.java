@@ -317,7 +317,10 @@ public class DeliveryOrderMilestoneController extends Controller {
                                     + tOrder.get("customer_id")
                                     + "') and from_id = '"
                                     + tOrder.get("route_from")
-                                    + "' and to_id ='" + tOrder.get("route_to") + "' and priceType='perUnit'");
+                                    + "' and to_id ='"
+                                    + tOrder.get("route_to")
+                                    + "' and priceType='"
+                                    + tOrder.get("charge_type") + "'");
                     if (contractList.size() > 0) {
                         tFinItem.set("order_id", tOrder.get("id"));
                         tFinItem.set("fin_item_id", "4");
