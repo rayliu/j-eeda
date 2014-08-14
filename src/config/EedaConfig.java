@@ -4,6 +4,8 @@ import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
 import models.Account;
+import models.ArapAuditItem;
+import models.ArapAuditOrder;
 import models.Category;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
@@ -231,6 +233,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("fin_item", Fin_item.class);
         arp.addMapping("delivery_order_fin_item", DeliveryOrderFinItem.class);
         arp.addMapping("transfer_order_fin_item", TransferOrderFinItem.class);
+        arp.addMapping("arap_audit_order", ArapAuditOrder.class);
+        arp.addMapping("arap_audit_item", ArapAuditItem.class);
         // yh mapping
 
     }

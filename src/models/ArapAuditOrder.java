@@ -1,0 +1,1 @@
+package models;import com.jfinal.plugin.activerecord.Model;@SuppressWarnings("serial")public class ArapAuditOrder extends Model<ArapAuditOrder> {	public static final ArapAuditOrder dao = new ArapAuditOrder();}

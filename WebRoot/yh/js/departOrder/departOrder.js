@@ -58,56 +58,6 @@ $(document).ready(function() {
         ]      
     });	
 
-   /* $("#saveBtn").click(function(e){
-        e.preventDefault();
-      var tableArr=[];
-      var sp_idArr=[];
-      var arrival_idArr=[];
-        $("table tr:not(:first)").each(function(){
-        	$("input:checked",this).each(function(){
-        		var sp_id=$(this).attr("code");
-        		var arrival=$(this).attr("arrival");
-        		tableArr.push($(this).val());	
-        			arrival_idArr.push(arrival);
-        		if(sp_id!='null'){
-        			sp_idArr.push(sp_id);
-        		}
-        		
-        	});          		
-        	}); 
-        if(arrival_idArr.length>=2){
-        	var j=$.inArray("直送",arrival_idArr);
-        	var h=$.inArray("入中转仓",arrival_idArr);
-        	if(j>=0&&h>=0){
-        		alert("请选择同一到达方式的运输单！");
-        		return;
-        	}
-        	if(j==0&&arrival_idArr.length>=2){
-        		alert("每次只能选择一张直送的运输单！");
-        		return;
-        	}
-        	
-       
-       if(sp_idArr.length>=2){
-    	   for(var i=0;i<sp_idArr.length;i++){
-    		   
-    		   if(sp_idArr[i]!=sp_idArr[i+1]){
-    			   alert("请选择同一供应商的运输单！");
-    			   return;
-    		   }
-    		   if(i+2==sp_idArr.length){
-				   break;
-			   }
-    			  
-    	   }
-       }
-        }
-        console.log(tableArr);
-            $("#departOrder_message").val(tableArr);
-            $("#createForm").submit();
-    });*/
-    
-
     $('#saveBtn').click(function(e){
         e.preventDefault();
     	var trArr=[];

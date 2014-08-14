@@ -139,20 +139,6 @@ $(document).ready(function() {
         $('#createForm').submit();
     });
     
-    /*$('input.orderNo_filter').on( 'keyup click', function () {
-    	var orderNo = $("#orderNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var address = $("#address_filter").val();
-    	var customer = $("#customer_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	var routeFrom = $("#routeFrom_filter").val();
-    	var routeTo = $("#routeTo_filter").val();
-    	var orderType = $("#orderType_filter").val();
-    	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo+"&orderType="+orderType;
-    	pickupOrder.fnDraw(); 
-    } );*/
-    
     $('input.orderNo_filter, input.status_filter, input.address_filter, input.customer_filter, input.routeFrom_filter, #beginTime_filter, #endTime_filter, input.routeTo_filter, input.orderType_filter').on( 'keyup click', function () {
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();

@@ -146,6 +146,12 @@ public class DataInitUtil {
 
             stmt.executeUpdate("create table if not exists inventory_item(id bigint auto_increment primary key,party_id bigint,warehouse_id bigint,product_id bigint,item_no varchar(50),item_name varchar(50),status varchar(50),expire_date datetime,"
                     + "lot_no varchar(50),uom varchar(20),caton_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
+            
+            // 应收应付对账单,结账单
+            stmt.executeUpdate("create table if not exists arap_audit_order(id bigint auto_increment primary key,order_no varchar(255),order_type varchar(255),status varchar(255),payee_id varchar(255),create_by bigint,create_stamp timestamp,"
+            		+" begin_time timestamp,end_time timestamp,last_modified_by bigint,last_modified_stamp timestamp);");
+            stmt.executeUpdate("create table if not exists arap_audit_item(id bigint auto_increment primary key,ref_order_type varchar(255),item_code varchar(255),item_status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
+            		+" last_modified_stamp timestamp,remark varchar(5120),audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id),ref_order_id bigint,foreign key(ref_order_id) references return_order(id));");
 
             stmt.close();
             // conn.commit();
