@@ -824,28 +824,28 @@ public class PickupOrderController extends Controller {
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
             TransferOrderMilestone milestone = new TransferOrderMilestone();
-            if("新建".equals(transferOrder.get("status"))){
-	        	if("salesOrder".equals(transferOrder.get("order_type"))){
-	            	if(transferOrder.get("pickup_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
-		                transferOrder.set("status", "部分已入货场");
-		                milestone.set("status", "部分已入货场");
-		                transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
-	            	}else{
-	            		transferOrder.set("status", "已入货场");
-	            		milestone.set("status", "已入货场");	            		
-	            		transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-	            	}
-	            }else if("replenishmentOrder".equals(transferOrder.get("order_type"))){
-	            	if(transferOrder.get("pickup_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL){
-		            	transferOrder.set("status", "部分已入库");
-		            	milestone.set("status", "部分已入库");
-		            	transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
-	            	}else{
-		            	transferOrder.set("status", "已入库");
-		            	milestone.set("status", "已入库");            		
-		            	transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-	            	}	            	
-	            }
+            if ("新建".equals(transferOrder.get("status"))) {
+                if ("salesOrder".equals(transferOrder.get("order_type"))) {
+                    if (transferOrder.get("pickup_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL) {
+                        transferOrder.set("status", "部分已入货场");
+                        milestone.set("status", "部分已入货场");
+                        transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+                    } else {
+                        transferOrder.set("status", "已入货场");
+                        milestone.set("status", "已入货场");
+                        transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+                    }
+                } else if ("replenishmentOrder".equals(transferOrder.get("order_type"))) {
+                    if (transferOrder.get("pickup_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL) {
+                        transferOrder.set("status", "部分已入库");
+                        milestone.set("status", "部分已入库");
+                        transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+                    } else {
+                        transferOrder.set("status", "已入库");
+                        milestone.set("status", "已入库");
+                        transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+                    }
+                }
             }
             transferOrder.update();
             milestone.set("location", "");
@@ -908,6 +908,21 @@ public class PickupOrderController extends Controller {
                 tFinItem.set("creator", users.get(0).get("id"));
                 tFinItem.set("create_date", sqlDate);
                 tFinItem.save();
+            }
+        }
+
+        // 生成客户支付中转费
+        if (pickupOrder.get("income") != null) {
+            TransferOrderFinItem tFinItem2 = new TransferOrderFinItem();
+            int size = dItem.size();
+            for (int i = 0; i < dItem.size(); i++) {
+                tFinItem2.set("fin_item_id", "4");
+                tFinItem2.set("amount", Double.parseDouble(pickupOrder.get("income").toString()) / size);
+                tFinItem2.set("order_id", dItem.get(i).get("order_id"));
+                tFinItem2.set("status", "未完成");
+                tFinItem2.set("creator", users.get(0).get("id"));
+                tFinItem2.set("create_date", sqlDate);
+                tFinItem2.save();
             }
         }
         renderJson("{\"success\":true}");
