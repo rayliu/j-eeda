@@ -1959,6 +1959,7 @@ $(document).ready(function() {
 	
 	//应付
 	$("#item_fin_save").click(function(){
+	    var order_id =$("#order_id").val();
 		$.post('/yh/transferOrder/receiptSave/'+order_id, $("#fin_form").serialize(), function(data){
 			console.log(data);
 			if(data.success){
@@ -1973,6 +1974,7 @@ $(document).ready(function() {
 	
 	//应收
 	$("#addrow").click(function(){	
+	    var order_id =$("#order_id").val();
 		$.post('/yh/transferOrder/addNewRow/'+order_id,function(data){
 			console.log(data);
 			if(data.success){
@@ -1987,6 +1989,7 @@ $(document).ready(function() {
 	
 	//应收
 	$("#addrow2").click(function(){	
+	    var order_id =$("#order_id").val();
 		$.post('/yh/transferOrder/addNewRow2/'+order_id,function(data){
 			console.log(data);
 			if(data.success){

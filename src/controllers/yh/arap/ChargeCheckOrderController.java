@@ -202,6 +202,7 @@ public class ChargeCheckOrderController extends Controller {
 	    	arapAuditOrder.set("create_stamp", new Date());
 	    	arapAuditOrder.set("begin_time", getPara("beginTime"));
 	    	arapAuditOrder.set("end_time", getPara("endTime"));
+	    	arapAuditOrder.set("remark", getPara("remark"));
 	    	arapAuditOrder.save();
 	    	
 	    	String returnOrderIds = getPara("returnOrderIds");
@@ -214,7 +215,6 @@ public class ChargeCheckOrderController extends Controller {
 		    	//arapAuditItem.set("item_status", "");
 		    	arapAuditItem.set("create_by", getPara("create_by"));
 		    	arapAuditItem.set("create_stamp", new Date());
-		    	arapAuditItem.set("remark", getPara("remark"));
 		    	arapAuditItem.save();
 	    	}
     	}else{
@@ -225,6 +225,7 @@ public class ChargeCheckOrderController extends Controller {
 	    	arapAuditOrder.set("payee_id", getPara("customer_id"));
 	    	arapAuditOrder.set("create_by", getPara("create_by"));
 	    	arapAuditOrder.set("create_stamp", new Date());
+	    	arapAuditOrder.set("remark", getPara("remark"));
 	    	arapAuditOrder.update();
 	    	
 	    	List<ArapAuditItem> arapAuditItems = ArapAuditItem.dao.find("select * from arap_audit_item where audit_order_id = ?", arapAuditOrder.get("id"));
@@ -233,7 +234,6 @@ public class ChargeCheckOrderController extends Controller {
 		    	//arapAuditItem.set("item_status", "");
 		    	arapAuditItem.set("create_by", getPara("create_by"));
 		    	arapAuditItem.set("create_stamp", new Date());
-		    	arapAuditItem.set("remark", getPara("remark"));
 		    	arapAuditItem.update();
 	    	}
     	}
