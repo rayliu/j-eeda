@@ -1,4 +1,4 @@
-package controllers.yh.arap;
+package controllers.yh.arap.ar;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,21 +14,21 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
-public class ReceivableCheckOrderController extends Controller {
-    private Logger logger = Logger.getLogger(ReceivableCheckOrderController.class);
+public class ChargeAdjustOrderController extends Controller {
+    private Logger logger = Logger.getLogger(ChargeAdjustOrderController.class);
 
     public void index() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
     	if(LoginUserController.isAuthenticated(this))
-        render("/yh/arap/ChargeAcceptOrder/ChargeAcceptOrderList.html");
+        render("/yh/arap/ChargeAdjustOrder/ChargeAdjustOrderList.html");
     }
 
     public void add() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
     	if(LoginUserController.isAuthenticated(this))
-        render("/yh/arap/ChargeAcceptOrder/ChargeCheckOrderCreateSearchList.html");
+        render("/yh/arap/ChargeAdjustOrder/ChargeCheckOrderCreateSearchList.html");
     }
 
     public void create() {
@@ -44,7 +44,7 @@ public class ReceivableCheckOrderController extends Controller {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
     	if(LoginUserController.isAuthenticated(this))
-        render("/yh/arap/ChargeAcceptOrder/ChargeCheckOrderEdit.html");
+        render("/yh/arap/ChargeAdjustOrder/ChargeCheckOrderEdit.html");
     }
 
     // 创建应收结帐单时，先选取合适的对账单，条件：客户，时间段

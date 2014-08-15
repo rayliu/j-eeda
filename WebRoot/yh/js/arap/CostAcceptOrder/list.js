@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
 
-    $('#menu_charge').addClass('active').find('ul').addClass('in');
+    $('#menu_cost').addClass('active').find('ul').addClass('in');
     var type = $("#type").val();//注意这里
     var urlSource1;
     var urlSource2;

@@ -156,9 +156,9 @@ public class EedaConfig extends JFinalConfig {
 
         me.add("/yh/deliveryOrderMilestone", controllers.yh.delivery.DeliveryOrderMilestoneController.class, "/yh");
         me.add("/yh/pickupOrder", controllers.yh.pickup.PickupOrderController.class, "/yh");
-        me.add("/yh/chargeCheckOrder", controllers.yh.arap.ChargeCheckOrderController.class, "/yh");
+
         me.add("/yh/paymentCheckOrder", controllers.yh.arap.PaymentCheckOrderController.class, "/yh");
-        me.add("/yh/receivableCheckOrder", controllers.yh.arap.ReceivableCheckOrderController.class, "/yh");
+
         me.add("/yh/copeCheckOrder", controllers.yh.arap.CopeCheckOrderController.class, "/yh");
         me.add("/yh/departOrder", controllers.yh.departOrder.DepartOrderController.class, "/yh");
         me.add("/yh/gateIn", controllers.yh.inventory.InventoryController.class, "/yh");
@@ -168,6 +168,16 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/carmanage", controllers.yh.profile.CarinfoController.class, "/yh");
         me.add("/yh/driverinfo", controllers.yh.profile.CarinfoController.class, "/yh");
         me.add("/yh/deliveryMilestone", controllers.yh.delivery.DeliveryController.class, "/yh");
+        //ar
+        me.add("/yh/chargeCheckOrder", controllers.yh.arap.ar.ChargeCheckOrderController.class, "/yh");
+        me.add("/yh/chargeAcceptOrder", controllers.yh.arap.ar.ChargeAcceptOrderController.class, "/yh");
+        me.add("/yh/chargeAdjustOrder", controllers.yh.arap.ar.ChargeAdjustOrderController.class, "/yh");
+        //ap
+        me.add("/yh/costCheckOrder", controllers.yh.arap.ap.CostCheckOrderController.class, "/yh");
+        me.add("/yh/costAcceptOrder", controllers.yh.arap.ap.CostAcceptOrderController.class, "/yh");
+        me.add("/yh/costAdjustOrder", controllers.yh.arap.ap.CostAdjustOrderController.class, "/yh");
+        //audit log
+        me.add("/yh/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {

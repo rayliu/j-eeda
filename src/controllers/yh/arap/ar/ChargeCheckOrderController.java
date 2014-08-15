@@ -1,4 +1,4 @@
-package controllers.yh.arap;
+package controllers.yh.arap.ar;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,10 +27,8 @@ public class ChargeCheckOrderController extends Controller {
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-    	setAttr("type", "CUSTOMER");
-    	setAttr("classify", "");
     	if(LoginUserController.isAuthenticated(this))
-        render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
+    	    render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
     }
 
     public void add() {
