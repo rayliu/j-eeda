@@ -739,6 +739,9 @@
     if($("#transferOrderType").val() == 'replenishmentOrder'){
     	$("#checkbox2").prop('checked', true);
     	$("#warehouseDiv").show();
+    }if($("#transferOrderType").val() == 'salesOrder'){
+    	$("#checkbox1").prop('checked', true);
+    	$("#addressDiv").show();
     }
     
     var pickupOrderId = $("#pickupOrderId").val();

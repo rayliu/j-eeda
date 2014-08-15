@@ -1715,7 +1715,39 @@ $(document).ready(function() {
 		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId;
 		detailDataTable.fnDraw();
     });
-    
+
+    // 单击应收应付
+    $("#transferOrderArap").click(function(e){
+    	if($("#transferOrderStatus").val() == '新建' || $("#transferOrderStatus").val() == ''){
+	    	e.preventDefault();
+	    	// 切换到货品明细时,应先保存运输单
+	    	//提交前，校验数据
+	        if(!$("#transferOrderUpdateForm").valid()){
+	        	alert("请先保存运输单!");
+		       	return false; 
+	        }
+	
+	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+				$("#transfer_order_id").val(transferOrder.ID);
+				$("#update_transfer_order_id").val(transferOrder.ID);
+				$("#order_id").val(transferOrder.ID);
+				$("#transfer_milestone_order_id").val(transferOrder.ID);
+				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
+				$("#id").val(transferOrder.ID);
+				if(transferOrder.ID>0){
+					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
+				  	$("#style").show();	
+
+	            	var order_id = $("#order_id").val();
+	            	receipttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
+	            	receipttable.fnDraw();             
+				}else{
+					alert('数据保存失败。');
+				}
+			},'json');
+        }
+    });	
+
     //应收应付
     var order_id =$("#order_id").val();
 	//应收应付datatable
@@ -1958,7 +1990,7 @@ $(document).ready(function() {
 		$.post('/yh/transferOrder/addNewRow2/'+order_id,function(data){
 			console.log(data);
 			if(data.success){
-				receipttable.fnDraw();
+            	receipttable.fnDraw();  
 				//$('#fin_item2').modal('hide');
 				//$('#resetbutton2').click();
 			}else{

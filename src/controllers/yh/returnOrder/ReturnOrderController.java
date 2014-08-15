@@ -82,13 +82,13 @@ public class ReturnOrderController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select distinct r_o.*, usl.user_name as creator_name, dp.depart_no as depart_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order r_o "
-                            + "left join depart_transfer  dpt on dpt.depart_id=r_o.depart_order_id "
-                            + "left join depart_order  dp on dp.id = dpt.depart_id "
-                            + "left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
-                            + "left join party p on r_o.customer_id = p.id "
-                            + "left join contact c on p.contact_id = c.id "
-                            + "left join user_login  usl on usl.id=r_o.creator " + sLimit);
+                    .find("select distinct r_o.*, usl.user_name as creator_name, tor.order_no transfer_order_no, d_o.order_no as delivery_order_no, c.contact_person cname from return_order r_o "
+						+ " left join transfer_order tor on tor.id = r_o.transfer_order_id"
+						+ " left join party p on p.id = tor.customer_id"
+						+ " left join contact c on c.id = p.contact_id"
+						+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id" 
+						+ " left join user_login  usl on usl.id=r_o.creator"
+						+ " order by r_o.create_date desc " + sLimit);
 
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -121,13 +121,12 @@ public class ReturnOrderController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select distinct r_o.*, usl.user_name as creator_name, dp.depart_no as depart_order_no, d_o.order_no as delivery_order_no, c.company_name from return_order r_o "
-                            + "left join depart_transfer  dpt on dpt.depart_id=r_o.depart_order_id "
-                            + "left join depart_order  dp on dp.id = dpt.depart_id "
-                            + "left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
-                            + "left join party p on r_o.customer_id = p.id "
-                            + "left join contact c on p.contact_id = c.id "
-                            + "left join user_login  usl on usl.id=r_o.creator "
+                    .find("select distinct r_o.*, usl.user_name as creator_name, tor.order_no transfer_order_no, d_o.order_no as delivery_order_no, c.contact_person cname from return_order r_o "
+							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id"
+							+ " left join party p on p.id = tor.customer_id"
+							+ " left join contact c on c.id = p.contact_id"
+							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id" 
+							+ " left join user_login  usl on usl.id=r_o.creator "
                             + "where ifnull(r_o.order_no,'')  like'%"
                             + order_no
                             + "%' and  "
@@ -144,7 +143,7 @@ public class ReturnOrderController extends Controller {
                             + stator
                             + "%'  and "
                             + "r_o.create_date between '"
-                            + time_one + "' and '" + time_two + "'");
+                            + time_one + "' and '" + time_two + "' order by r_o.create_date desc "+sLimit);
 
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));

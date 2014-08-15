@@ -15,9 +15,8 @@
             	"fnRender": function(obj) {
         			return "<a href='/yh/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
-            { "mDataProp": "COMPANY_NAME"},
-            { "mDataProp": "ORDER_TYPE"},
-            { "mDataProp": "DEPART_ORDER_NO"},
+            { "mDataProp": "CNAME"},
+            { "mDataProp": "TRANSFER_ORDER_NO"},
             { "mDataProp": "DELIVERY_ORDER_NO"},
             { "mDataProp": "CREATOR_NAME" },
             { "mDataProp": "CREATE_DATE" },
