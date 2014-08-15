@@ -134,6 +134,7 @@ $(document).ready(function() {
         var customer = $("#customer_filter").val();
         var sp = $("#sp_filter").val();
         var beginTime = $("#beginTime_filter").val();
+        $("#beginTime").val(beginTime);
         var endTime = $("#endTime_filter").val();
         var officeName = $("#officeName_filter").val();
         // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
@@ -148,6 +149,7 @@ $(document).ready(function() {
         var sp = $("#sp_filter").val();
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
+        $("#endTime").val(endTime);
         var officeName = $("#officeName_filter").val();
         // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
         // transferOrder.fnDraw();

@@ -38,6 +38,8 @@
                                         	<input type="hidden" name="order_no" value="${order_no!''}${arapAuditOrder.order_no!''}"/>
                                         	<input type="hidden" name="status" value="${status!''}${arapAuditOrder.status!''}"/>
                                         	<input type="hidden" name="create_by" value="${create_by!''}${arapAuditOrder.create_by!''}"/>
+                                        	<input type="hidden" name="beginTime" value="${beginTime!''}${arapAuditOrder.beginTime!''}"/>
+                                        	<input type="hidden" name="endTime" value="${endTime!''}${arapAuditOrder.endTime!''}"/>
                                             <h2>客户信息</h2>
                                             <div class="form-group">
                                                 <label>公司名称</label>
@@ -68,7 +70,7 @@
                                         <label>对账单号</label> <strong>${order_no!''}${arapAuditOrder.order_no!''}</strong>
                                     </div>
                                     <div class="form-group">
-                                        <label>单据状态</label>   ${status!''}${arapAuditOrder.status!''}
+                                        <label>单据状态</label>   <span  id="chargeCheckOrderStatus">${status!''}${arapAuditOrder.status!''}</span>
                                     </div>
                                     <div class="form-group">
                                         <label>创建人</label>   ${userLogin.user_name!''}
@@ -81,7 +83,7 @@
                                     <h2>时间段</h2>
                                     <form role="form">
                                         <div class="form-group">
-                                            <input type="text" class="form-control input-inline input-large" id="inputSuccess" value="2014-04-01"> - <input type="text" class="form-control input-large input-inline" id="inputSuccess" value="2014-05-01">
+                                            <input type="text" class="form-control input-inline input-large" id="inputSuccess" value="${beginTime!''}${arapAuditOrder.begin_time!''}"> - <input type="text" class="form-control input-large input-inline" id="inputSuccess" value="${endTime!''}${arapAuditOrder.end_time!''}">
                                         </div>
                                         
                                     </form>
@@ -332,6 +334,10 @@
 				}
 			},'json');
 		});
+		
+	    if($("#chargeCheckOrderStatus").text() == 'new'){
+	    	$("#chargeCheckOrderStatus").text('新建');
+		}
 
     //货品明细的table 编辑
     $("table.table tr td").bind("click", dataClick);

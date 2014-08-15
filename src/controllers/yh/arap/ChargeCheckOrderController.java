@@ -45,7 +45,15 @@ public class ChargeCheckOrderController extends Controller {
         String[] idArray = ids.split(",");
         logger.debug(String.valueOf(idArray.length));
 
-        setAttr("returnOrderIds", ids);	        
+        setAttr("returnOrderIds", ids);	 
+        String beginTime = getPara("beginTime");
+        if(beginTime != null && !"".equals(beginTime)){
+        	setAttr("beginTime", beginTime);
+        }
+        String endTime = getPara("endTime");
+        if(endTime != null && !"".equals(endTime)){
+        	setAttr("endTime", endTime);	
+        }
         String customerId = getPara("customerId");
         if(!"".equals(customerId) && customerId != null){
 	        Party party = Party.dao.findById(customerId);
@@ -87,7 +95,7 @@ public class ChargeCheckOrderController extends Controller {
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
 
-        setAttr("status", "新建");
+        setAttr("status", "new");
     	if(LoginUserController.isAuthenticated(this))
     		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
     }
@@ -192,6 +200,8 @@ public class ChargeCheckOrderController extends Controller {
 	    	arapAuditOrder.set("payee_id", getPara("customer_id"));
 	    	arapAuditOrder.set("create_by", getPara("create_by"));
 	    	arapAuditOrder.set("create_stamp", new Date());
+	    	arapAuditOrder.set("begin_time", getPara("beginTime"));
+	    	arapAuditOrder.set("end_time", getPara("endTime"));
 	    	arapAuditOrder.save();
 	    	
 	    	String returnOrderIds = getPara("returnOrderIds");
