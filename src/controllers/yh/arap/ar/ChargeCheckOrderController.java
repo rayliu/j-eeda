@@ -1,5 +1,6 @@
 package controllers.yh.arap.ar;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -162,9 +163,6 @@ public class ChargeCheckOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        // 左连接party, contact取到company_name
-        // 左连接transfer_order取到运输单号
-        // 左连接delivery_order取到配送单号
         String sql = "select aao.*,c.contact_person cname,ror.order_no return_order_no,tor.order_no transfer_order_no,dor.order_no delivery_order_no,ul.user_name creator_name,aai.remark remark from arap_audit_order aao "
 						+" left join party p on p.id = aao.payee_id "
 						+" left join contact c on c.id = p.contact_id "
@@ -238,7 +236,7 @@ public class ChargeCheckOrderController extends Controller {
         renderJson(arapAuditOrder);;
     }
     
-    public void edit(){
+    public void edit() throws ParseException{
     	ArapAuditOrder arapAuditOrder = ArapAuditOrder.dao.findById(getPara("id"));
     	String customerId = arapAuditOrder.get("payee_id");
     	if(!"".equals(customerId) && customerId != null){
@@ -250,6 +248,18 @@ public class ChargeCheckOrderController extends Controller {
     	UserLogin userLogin = UserLogin.dao.findById(arapAuditOrder.get("create_by"));
     	setAttr("userLogin", userLogin);
     	setAttr("arapAuditOrder", arapAuditOrder);
+    	
+    	/*Date beginTime = arapAuditOrder.getDate("begin_time");
+    	Date endTime = arapAuditOrder.getDate("end_time");
+    	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    	if(!"".equals(beginTime) && beginTime != null){
+    		simpleDateFormat.format(beginTime);
+    	}
+    	if(!"".equals(endTime) && endTime != null){
+    		simpleDateFormat.format(endTime);
+    	}
+    	setAttr("beginTime", beginTime);
+    	setAttr("endTime", endTime);*/
     	if(LoginUserController.isAuthenticated(this))
     		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
     }

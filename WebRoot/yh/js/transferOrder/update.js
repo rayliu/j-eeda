@@ -1740,7 +1740,10 @@ $(document).ready(function() {
 
 	            	var order_id = $("#order_id").val();
 	            	receipttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
-	            	receipttable.fnDraw();             
+	            	receipttable.fnDraw();       
+	            	
+	            	paymenttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
+					paymenttable.fnDraw(); 
 				}else{
 					alert('数据保存失败。');
 				}
@@ -1854,6 +1857,7 @@ $(document).ready(function() {
     }); 
 	
 	//应收应付datatable
+	var order_id =$("#order_id").val();
 	var paymenttable=$('#table_fin2').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "bFilter": false, //不需要默认的搜索框
@@ -1978,7 +1982,9 @@ $(document).ready(function() {
 		$.post('/yh/transferOrder/addNewRow/'+order_id,function(data){
 			console.log(data);
 			if(data.success){
-				paymenttable.fnDraw();
+				paymenttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
+				paymenttable.fnDraw(); 
+				//paymenttable.fnDraw();
 				//$('#fin_item2').modal('hide');
 				//$('#resetbutton2').click();
 			}else{

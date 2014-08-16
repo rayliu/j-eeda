@@ -2,7 +2,7 @@
 $(document).ready(function() {
 
     $('#menu_charge').addClass('active').find('ul').addClass('in');
-    var type = $("#type").val();//注意这里
+    /*var type = $("#type").val();//注意这里
     var urlSource1;
     var urlSource2;
     var urlSource3;
@@ -15,7 +15,7 @@ $(document).ready(function() {
 		urlSource1="/yh/paymentCheckOrder/list";
 		urlSource2="/yh/transferOrder/edit/";
 		urlSource3="/yh/transferOrder/delete/";
-	}
+	}*/
 	//datatable, 动态处理
     $('#eeda-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -25,7 +25,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": urlSource1,
+        "sAjaxSource": "/yh/chargeCheckOrder/list",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
@@ -59,7 +59,7 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger' href='"+urlSource3+""+obj.aData.ID+"'>"+
+                    return	"<a class='btn btn-danger' href='#'"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "取消"+
                             "</a>";

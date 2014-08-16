@@ -185,4 +185,11 @@ $(document).ready(function() {
             companyName : {required:  "请选择一个客户"}
         }
     });
+    
+    formatData();
+    
+    var formatData = function(){
+    	
+    	$("#beginTime").val();
+    };
 } );
