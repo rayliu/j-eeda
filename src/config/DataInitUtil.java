@@ -116,11 +116,11 @@ public class DataInitUtil {
                     + "fin_item_code varchar(20), amount double, status varchar(50), "
                     + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp);");
 
-            // billing_order 应收应付单主表
+            // billing_order 应收应付单主表  --total_amount 应收(付)总额, total_actual_amount 实收(付)总额
             stmt.executeUpdate("create table if not exists billing_order(id bigint auto_increment primary key, blling_order_no varchar(255), "
                     + "order_type varchar(50), customer_id bigint, customer_type varchar(50), charge_account_id bigint, payment_account_id bigint, status varchar(255),"
                     + "transfer_order_id bigint, delivery_order_id bigint, remark varchar(1024), creator bigint, create_stamp timestamp,last_modified_by bigint,"
-                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
+                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp, total_amount double, total_actual_amount double);");
             // billing_order_item 应收应付单从表
             stmt.executeUpdate("create table if not exists billing_order_item(id bigint auto_increment primary key,blling_order_id bigint, "
                     + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
@@ -147,7 +147,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists inventory_item(id bigint auto_increment primary key,party_id bigint,warehouse_id bigint,product_id bigint,item_no varchar(50),item_name varchar(50),status varchar(50),expire_date datetime,"
                     + "lot_no varchar(50),uom varchar(20),caton_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
             
-            // 应收应付对账单,结账单
+            // 出纳日记帐  
             stmt.executeUpdate("create table if not exists arap_audit_order(id bigint auto_increment primary key,order_no varchar(255),order_type varchar(255),status varchar(255),payee_id varchar(255),create_by bigint,create_stamp timestamp,"
             		+" begin_time timestamp,end_time timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
             stmt.executeUpdate("create table if not exists arap_audit_item(id bigint auto_increment primary key,ref_order_type varchar(255),item_code varchar(255),item_status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
@@ -194,10 +194,13 @@ public class DataInitUtil {
 
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 4,'2014-11-12','2014-11-14','无');");
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,'2014-10-12','2014-11-15','无');");
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('干线供应商合同','SERVICE_PROVIDER', 6,'2011-1-12','2014-10-14','无');");
+            
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('干线供应商合同','SERVICE_PROVIDER', 7,'2013-11-12','2014-11-14','无');");
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('配送供应商合同','DELIVERY_SERVICE_PROVIDER', 6,'2011-1-12','2014-10-14','无');");
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('配送供应商合同','DELIVERY_SERVICE_PROVIDER', 7,'2013-11-12','2014-11-14','无');");
+            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('提货供应商合同','DELIVERY_SERVICE_PROVIDER', 6,'2011-1-12','2014-10-14','无');");
+            
+            //定义配送供应商合同 济南骏运展达物流运输有限公司
+            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('配送供应商合同','DELIVERY_SERVICE_PROVIDER', 13,'2013-11-12','2015-11-14','无');");
+            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('示例干线供应商合同','SERVICE_PROVIDER', 4,'2013-1-12','2015-10-14','无');");
 
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','110103','宣武区','123123');");
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','120000','天津','123123');");
@@ -209,7 +212,14 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,remark) values('2','1','整车','130000','路线2');");
             stmt.executeUpdate("insert into contract_item(contract_id,pricetype,amount,remark) values('3','计件','120000','路线');");
             stmt.executeUpdate("insert into contract_item(contract_id,pricetype,amount,remark) values('4','零担','130000','路线2');");
-
+            
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 1,'计件','10000','440116','广州市萝岗区','110101','北京市东城区','干线路线');");
+            
+            //定义配送供应商 济南骏运展达物流运输有限公司 配送 没有目的地 任意提货路线都收取1000
+            stmt.executeUpdate("insert into contract_item(contract_id,pricetype,amount,remark) values('5','计件','1000','省内任意提货路线');");
+            //定义配送供应商 济南骏运展达物流运输有限公司 配送 只有目的地 北京市东城区，这条线收1001
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,to_id,location_to,remark) values(5, 1,'计件','1001','110101','北京市东城区','配送路线');");
+            
             String propertySql = "insert into leads(title, create_date, creator, status, type, "
                     + "region, intro, remark, lowest_price, agent_fee, introducer, sales, follower, "
                     + "follower_phone, owner, owner_phone, customer_source, building_name, building_no, room_no, building_unit) values("
@@ -500,9 +510,9 @@ public class DataInitUtil {
 
             // 类别 ----采用面向对象的方式来获取party的id， 不必担心id不对。 --ray 2014-06-29
             Party party = Party.dao
-                    .findFirst("SELECT p.id FROM party p left join CONTACT c on p.contact_id =c.id where c.company_name ='珠海创诚易达信息科技有限公司'");
+                    .findFirst("SELECT p.id FROM party p left join CONTACT c on p.contact_id =c.id where c.company_name ='示例客户---珠海创诚易达信息科技有限公司'");
             Category rootCat = new Category();
-            rootCat.set("name", "珠海创诚易达").set("customer_id", party.get("id")).save();
+            rootCat.set("name", "示例客户---珠海创诚易达").set("customer_id", party.get("id")).save();
 
             Category subCat1 = new Category();
             subCat1.set("name", "ATM").set("customer_id", party.get("id")).set("parent_id", rootCat.getLong("id"))
@@ -584,56 +594,39 @@ public class DataInitUtil {
             stmt.execute("insert into delivery_order(order_no,transfer_order_id,customer_id,sp_id,notify_party_id,status,create_stamp) values('2014042600003','4','6','8','10','配送在途','2014-04-25 16:35:35.1');");
 
             // billing_order 应收应付单主表
-            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+            String billOrderStr="insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
                     + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
-                    + "last_modified_stamp, approver, approve_date) values"
-                    + "('应收对账单001', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'new', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP());");
-            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
-                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
-                    + "last_modified_stamp, approver, approve_date) values"
-                    + "('应收对账单002', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'checking', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP());");
-            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
-                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
-                    + "last_modified_stamp, approver, approve_date) values"
-                    + "('应收对账单003', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'confirmed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP());");
-            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
-                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
-                    + "last_modified_stamp, approver, approve_date) values"
-                    + "('应收对账单004', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'completed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP());");
-            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
-                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
-                    + "last_modified_stamp, approver, approve_date) values"
-                    + "('应收对账单005', 'charge_audit_order',4, 'CUSTOMER', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP());");
-            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
-                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
-                    + "last_modified_stamp, approver, approve_date) values"
-                    + "('应付对账单001', 'pay_audit_order', 7, 'SERVICE_PROVIDER', 1, 2, 'new', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP());");
-            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
-                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
-                    + "last_modified_stamp, approver, approve_date) values"
-                    + "('应付对账单002', 'pay_audit_order', 7, 'SERVICE_PROVIDER', 1, 2, 'checking', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP());");
-            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
-                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
-                    + "last_modified_stamp, approver, approve_date) values"
-                    + "('应付对账单003', 'pay_audit_order', 7, 'SERVICE_PROVIDER',1, 2, 'confirmed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP());");
-            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
-                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
-                    + "last_modified_stamp, approver, approve_date) values"
-                    + "('应付对账单004', 'pay_audit_order', 7, 'SERVICE_PROVIDER	',1, 2, 'completed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP());");
-            stmt.execute("insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
-                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
-                    + "last_modified_stamp, approver, approve_date) values"
-                    + "('应付对账单005', 'pay_audit_order',7, 'SERVICE_PROVIDER	', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP());");
+                    + "last_modified_stamp, approver, approve_date, total_amount, total_actual_amount) values";
+            stmt.execute(billOrderStr
+                    + "('YSDZ001', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'new', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+            stmt.execute(billOrderStr
+                    + "('YSDZ002', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'checking', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+            stmt.execute(billOrderStr
+                    + "('YSDZ003', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'confirmed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+            stmt.execute(billOrderStr
+                    + "('YSDZ004', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'completed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+            stmt.execute(billOrderStr
+                    + "('YSDZ005', 'charge_audit_order',4, 'CUSTOMER', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+            stmt.execute(billOrderStr
+                    + "('YFDZ001', 'pay_audit_order', 7, 'SERVICE_PROVIDER', 1, 2, 'new', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+            stmt.execute(billOrderStr
+                    + "('YFDZ002', 'pay_audit_order', 7, 'SERVICE_PROVIDER', 1, 2, 'checking', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+            stmt.execute(billOrderStr
+                    + "('YFDZ003', 'pay_audit_order', 7, 'SERVICE_PROVIDER',1, 2, 'confirmed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+            stmt.execute(billOrderStr
+                    + "('YFDZ004', 'pay_audit_order', 7, 'SERVICE_PROVIDER	',1, 2, 'completed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+            stmt.execute(billOrderStr
+                    + "('YFDZ005', 'pay_audit_order',7, 'SERVICE_PROVIDER	', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
             // billing_order_item 应收应付单从表
             stmt.execute("create table if not exists billing_order_item(id bigint auto_increment primary key,blling_order_id bigint, "
                     + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
@@ -678,10 +671,10 @@ public class DataInitUtil {
 
     public static void newCustomer() {
         Contact contact = new Contact();
-        contact.set("company_name", "珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com")
-                .set("abbr", "珠海创诚易达");
+        contact.set("company_name", "示例客户---珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com")
+                .set("abbr", "示例客户---珠海创诚易达");
         contact.set("mobile", "12345671").set("phone", "113527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场1")
-                .set("postal_code", "5190001").set("location", "110101").save();
+                .set("postal_code", "5190001").set("location", "440116").save();
         Contact contact7 = new Contact();
         contact7.set("company_name", "珠海博兆计算机科技有限公司").set("contact_person", "温生").set("email", "test@test.com")
                 .set("abbr", "珠海博兆");
@@ -693,9 +686,9 @@ public class DataInitUtil {
         contact2.set("mobile", "12345672").set("phone", "213527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场2")
                 .set("postal_code", "5190002").set("location", "110102").save();
         Contact contact3 = new Contact();
-        contact3.set("company_name", "上海运输公司").set("contact_person", "李生").set("email", "test@test.com");
-        contact3.set("mobile", "12345673").set("phone", "313527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场3")
-                .set("postal_code", "5190003").set("location", "440116").save();
+        contact3.set("company_name", "广州某某运输公司").set("contact_person", "李生").set("email", "test@test.com");
+        contact3.set("mobile", "12345673").set("phone", "313527229313").set("address", "广州罗岗区为农街为农市场")
+                .set("postal_code", "5190003").set("location", "440116").save();//440116 广州罗岗区
         Contact contact4 = new Contact();
         contact4.set("company_name", "天津运输有限公司").set("contact_person", "何生").set("email", "test@test.com");
         contact4.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4")

@@ -2,20 +2,7 @@
 $(document).ready(function() {
 
     $('#menu_charge').addClass('active').find('ul').addClass('in');
-    var type = $("#type").val();//注意这里
-    var urlSource1;
-    var urlSource2;
-    var urlSource3;
-	if(type=='CUSTOMER'){
-		
-		urlSource1="/yh/chargeCheckOrder/list";
-		urlSource2="/yh/transferOrder/edit/";
-		urlSource3="/yh/transferOrder/delete/";
-	}else{	
-		urlSource1="/yh/paymentCheckOrder/list";
-		urlSource2="/yh/transferOrder/edit/";
-		urlSource3="/yh/transferOrder/delete/";
-	}
+   
 	//datatable, 动态处理
     $('#eeda-table').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -28,17 +15,9 @@ $(document).ready(function() {
         "sAjaxSource": "/yh/chargeAcceptOrder/list",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
-            {"mDataProp":"BLLING_ORDER_NO", "sWidth": "50px"},
-            {"mDataProp":"COMPANY_NAME"},
-            {"mDataProp":"CUSTOMER_TYPE",
-                "fnRender": function(obj) {
-                    if(obj.aData.CUSTOMER_TYPE=='CUSTOMER'){
-                        return'客户';
-                    }else {
-                        return '供应商';
-                    }
-                }
-            },
+            {"mDataProp":"BLLING_ORDER_NO", "sWidth": "150px"},
+            {"mDataProp":"COMPANY_NAME", "sWidth": "100px"},
+            {"mDataProp":"CUSTOMER_TYPE", "bVisible": false},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -63,7 +42,6 @@ $(document).ready(function() {
             {"mDataProp":"REMARK"},
             { 
                 "mDataProp": null, 
-            	//"mDataProp": "CARGO_NATURE", 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {
                 	/*if(obj.aData.CARGO_NATURE=='cargo'){
@@ -71,7 +49,7 @@ $(document).ready(function() {
                 	}else if(obj.aData.CARGO_NATURE=='damageCargo'){
                 		return '损坏货品';
                 	}*/
-                    return	"<a class='btn btn-success' href='"+urlSource2+""+obj.aData.ID+"'>"+
+                    return	"<a class='btn btn-success' href='"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "收款"+
                             "</a>";

@@ -34,7 +34,12 @@ $(document).ready(function() {
         "bServerSide": true,
         "sAjaxSource": urlSource,
         "aoColumns": [   
-            {"mDataProp":"NAME"},
+            {"mDataProp":"NAME",
+              "fnRender": function(obj) {                    
+                return "<a title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+obj.aData.NAME+
+                  "</a>";
+              }
+            },
             {"mDataProp":"COMPANY_NAME",
             	"sWidth": "15%"},
             {"mDataProp":"CONTACT_PERSON"},
