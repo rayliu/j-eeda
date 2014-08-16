@@ -25,10 +25,10 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": urlSource1,
+        "sAjaxSource": "/yh/chargeAcceptOrder/list",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
-            {"mDataProp":"BLLING_ORDER_NO"},
+            {"mDataProp":"BLLING_ORDER_NO", "sWidth": "50px"},
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":"CUSTOMER_TYPE",
                 "fnRender": function(obj) {
