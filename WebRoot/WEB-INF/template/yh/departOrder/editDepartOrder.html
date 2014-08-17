@@ -46,7 +46,7 @@
 	                            <input class="" id="partySpId" value="${partySp.id!''}" type="hidden" name="partySpId" > 
 	                            <input class="" id="check_sh" value="${check_sh!''}" type="hidden" name="" >
 	                            <input type="hidden" name="order_no" value="${order_no!''}${departOrder.depart_no!''}"/>
-                               	<input type="hidden" name="status" value="${status!''}${departOrder.status!''}"/>
+                               	<input type="hidden" name="status" value="${departOrder.status!''}"/>
                                	<input type="hidden" name="create_by" value="${create_by!''}${departOrder.create_by!''}"/>
 	                            <input id="carinfoId" type="hidden" name="carinfoId" value="${departOrder.carinfo_id!''}"/> 
 	                       		<input id="driver_id" type="hidden" name="driver_id" value="${departOrder.driver_id!''}"/>
@@ -293,56 +293,62 @@
                                 </div>  
                                   
                               <div id="milestone" class="tab-pane fade">
-                                <div class="modal fade" id="transferOrderMilestone" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								  <div class="modal-dialog">
-								    <div class="modal-content">
-								      <div class="modal-header">
-								        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-								        <h4 class="modal-title" id="myModalLabel">新里程碑</h4>
-								      </div>
-								      <div class="modal-body">
-								      	<form id="transferOrderMilestoneForm" action="">
-								      		<input id="milestoneDepartId" type="hidden" name="milestoneDepartId" />
-											<div class="form-group ">
-											<label class="control-label" for="inputSuccess">状态(不填默认为"在途")</label> <input
-												id="status" class="form-control" type="text"
-												name="status">
-											</div>
-											<div class="form-group ">
-											<label class="control-label" for="inputSuccess">地点</label> <input
-												id="location" class="form-control" type="text"
-												name="location">
-											</div>
-									      </div>
-									      <div class="modal-footer">
-									        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-									        <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-primary">保存</button>
-									      </div>
-										</form>
-								    </div><!-- /.modal-content -->
-								  </div><!-- /.modal-dialog -->
-								</div><!-- /.modal -->
+                                <div class="panel-body">
+                                        <div class="modal fade" id="transferOrderMilestone" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                      								  
+                      								    <div class="modal-content">
+                                            <form id="transferOrderMilestoneForm" action="">
+                          								      <div class="modal-header">
+                          								        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                          								        <h4 class="modal-title" id="myModalLabel">新里程碑</h4>
+                          								      </div>
+                          								      <div class="modal-body">
+                          								      	
+                          								      		<input id="milestoneDepartId" type="hidden" name="milestoneDepartId" />
+                                                </div>    
+                          											<div class="form-group ">
+                          											<label class="control-label" for="inputSuccess">状态(不填默认为"在途")</label> <input
+                          												id="status" class="form-control" type="text"
+                          												name="status">
+                          											</div>
+                          											<div class="form-group ">
+                            											<label class="control-label" for="inputSuccess">地点</label> <input
+                            												id="location" class="form-control" type="text"
+                            												name="location">
+                          											</div>
+                      									      
+                      									      <div class="modal-footer">
+                      									        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                      									        <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-primary">保存</button>
+                      									      </div>
+                      										</form>
+                      								    </div><!-- /.modal-content -->
+                      								  
+                      								  </div><!-- /.modal -->
                                         <div class="table-responsive">                                        
-			                            <button id="edit_status"  data-target="#transferOrderMilestone" data-toggle="modal" class="btn btn-primary" >
-										  新里程碑
-										</button>
-                                            <table class="table table-striped table-bordered table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>状态</th>
-                                                        <th>地点</th>
-                                                        <th>更新用户</th>
-                                                        <th>更新时间</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="transferOrderMilestoneTbody"></tbody>
-                                            </table>
+              			                            <button id="edit_status"  data-target="#transferOrderMilestone" data-toggle="modal" class="btn btn-primary" >
+                          										  新里程碑
+                          										</button>
+                                                    <table class="table table-striped table-bordered table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>状态</th>
+                                                                <th>地点</th>
+                                                                <th>更新用户</th>
+                                                                <th>更新时间</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="transferOrderMilestoneTbody"></tbody>
+                                                    </table>
                                         </div>
                                         <!-- /.table-responsive -->                                   
-                                </div>									
+                                    </div><!-- /.panel-body -->
+                                  </div>
+                                    
+
                                 <div class="tab-pane fade" id="arap">
                                     <h2>应付</h2>
-									 <button class="btn btn-primary" id="addrow"> 添加应付</button>
+									                  <button class="btn btn-primary" id="addrow"> 添加应付</button>
                                     <div class="panel-body">
                                         <div class="table-responsive">
                                             <table class="table table-striped table-bordered table-hover"  id ="table_fin2">

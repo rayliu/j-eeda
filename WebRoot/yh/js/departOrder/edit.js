@@ -1,30 +1,27 @@
  $(document).ready(function() {
-     $('#menu_assign').addClass('active').find('ul').addClass('in');
-    	var status=$("#status").val();
-        var message=$("#message").val();
-        var type=$("#type").val();
-        var depart_id=$("#depart_id").val();
-        $("#milestoneDepartId").val(depart_id);
-        var last_detail_size=$("#last_detail_size").val();
-        var hang="";
-        if(status!="新建"){
-        	$("#order_edit").attr("disabled",true);
-        	//$("#departureConfirmationBtn").attr("disabled",false);
-        }
-        if(status=='新建'){
-        	$("#departureConfirmationBtn").attr("disabled",false);
-        }
-        if(status=="已发车"||status=="在途"){
-        	$("#warehousingConfirmBtn").attr("disabled",false);
-        }
-        if(status=="已发车"&&$(departureConfirmationBtn).prop("disabled") == true){
-        	$("#receiptBtn").attr("disabled",false);
-        }
-        if(status=="已签收"){
-        	$("#receiptBtn").attr("disabled",true);
-        	$("#order_hd").attr("disabled",false);
+
+    $('#menu_assign').addClass('active').find('ul').addClass('in');
+	var departOrderStatus=$("#departOrderStatus").val();
+    var message=$("#message").val();
+    var type=$("#type").val();
+    var depart_id=$("#depart_id").val();
+    $("#milestoneDepartId").val(depart_id);
+    var last_detail_size=$("#last_detail_size").val();
+    var hang="";
+    
+    if(departOrderStatus=='新建'){
+        $("#order_edit").attr("disabled",true);
+    	$("#departureConfirmationBtn").attr("disabled",false);
+    }else if(departOrderStatus=="已发车"||departOrderStatus=="在途"){
+    	$("#warehousingConfirmBtn").attr("disabled",false);
+    }else if(departOrderStatus=="已发车" && $(departureConfirmationBtn).prop("disabled") == true){
+    	$("#receiptBtn").attr("disabled",false);
+    }else if(departOrderStatus=="已签收"){
+    	$("#receiptBtn").attr("disabled",true);
+    	$("#order_hd").attr("disabled",false);
         $("#edit_status").attr("disabled",true);
-     }
+    }
+
      if(type=="one"){
     	$("#ordertypeone").attr('checked', 'checked');
      }else{
@@ -579,14 +576,15 @@
     	    	$(this).attr("disabled",true);
     	    	$("#order_edit").attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
-    	    	});
+    	    	  $("#warehousingConfirmBtn").attr("disabled",false);
+                });
     	    });
     	    $("#warehousingConfirmBtn").click(function(e){
     	    	$(this).attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已入库", $("#orderForm").serialize(), function(data){
     	    		if(data.amount>0){
     	    			alert("有"+data.amount+"个货品没入库,可以到产品中维护信息！");
-    	    		}
+    	    		}                    
     	    	});
     	    });
     	    $("#receiptBtn").click(function(e){

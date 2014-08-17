@@ -1,6 +1,7 @@
 package config;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
@@ -102,7 +103,8 @@ public class DataInitUtil {
 
             // 发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
-                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,remark varchar(255),driver_id bigint,foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id));");
+                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,remark varchar(255),driver_id bigint," +
+                    "foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id));");
 
             // Transfer_Order_item_detail 单件货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment primary key,order_id bigint,item_id bigint,item_no varchar(255),"
@@ -167,6 +169,8 @@ public class DataInitUtil {
             Connection conn = cp.getDataSource().getConnection();
             Statement stmt = conn.createStatement();
 
+            //initEedaData(stmt);
+            
             // location init
             LocationDataInit.initLocation(stmt);
             ProfileDataInit.initProfile(stmt);
@@ -220,110 +224,7 @@ public class DataInitUtil {
             //定义配送供应商 济南骏运展达物流运输有限公司 配送 只有目的地 北京市东城区，这条线收1001
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,to_id,location_to,remark) values(5, 1,'计件','1001','110101','北京市东城区','配送路线');");
             
-            String propertySql = "insert into leads(title, create_date, creator, status, type, "
-                    + "region, intro, remark, lowest_price, agent_fee, introducer, sales, follower, "
-                    + "follower_phone, owner, owner_phone, customer_source, building_name, building_no, room_no, building_unit) values("
-                    + "'%d 初始测试数据-老香洲两盘', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'1房', '老香洲', "
-                    + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
-                    + "'张生', '0756-12345678-123', '58自来客', '五洲花城2期', '2', '1320', '3');";
-
-            // for (int i = 0; i < 50; i++) {
-            // String newPropertySql = String.format(propertySql, i);
-            // stmt.executeUpdate(newPropertySql);
-            // }
-            String sqlPrefix = "insert into leads(title, priority, create_date, creator, status, type, "
-                    + "region, intro, remark, lowest_price, agent_fee, introducer, sales, follower, follower_phone, "
-                    + "owner, owner_phone, area, total, customer_source, building_name, building_no, room_no, building_unit) values(";
-
-            stmt.executeUpdate(sqlPrefix + "'初始测试数据-老香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'1房', '老香洲', " + "'老香洲楼盘 2房2卫'," + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
-                    + "'张生', '0756-12345678-123', 36, 1200, '58自来客', '五洲花城2期', '2', '1320', '3');");
-
-            stmt.executeUpdate(sqlPrefix + "'初始测试数据-新香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出售', "
-                    + "'2房', '新香洲', " + "'新香洲楼盘 2房2卫'," + "'remark.....', 7000, 7500, "
-                    + "'介绍人金', 'kim', 'jason', '13509871234',"
-                    + "'张生', '0756-12345678-123', 78, 56, '58自来客', '五洲花城2期', '3', '1321', '5');");
-
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-老香洲楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已租', "
-                    + "'3房', '老香洲', "
-                    + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
-                    + "'张生', '0756-12345678-123', 92, 2300, '58自来客', '五洲花城2期', '4', '1320', '3');");
-
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-拱北楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已售', "
-                    + "'4房', '拱北', "
-                    + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
-                    + "'张生', '0756-12345678-123', 150, 120, '58自来客', '五洲花城2期', '6', '1320', '3');");
-
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'5房', '柠溪', "
-                    + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
-                    + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '', '1325', '8');");
-
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房', '柠溪', "
-                    + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
-                    + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '', '5');");
-
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房以上', '柠溪', "
-                    + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
-                    + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
-
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
-                    + "'地皮', '前山', "
-                    + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
-                    + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
-
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房以上', '柠溪', "
-                    + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
-                    + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
-
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
-                    + "'地皮', '前山', "
-                    + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
-                    + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
-
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
-                    + "'6房以上', '柠溪', "
-                    + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
-                    + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
-
-            stmt.executeUpdate(sqlPrefix
-                    + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
-                    + "'地皮', '前山', "
-                    + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
-                    + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
-                    + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
-
-            stmt.executeUpdate("insert into support_case(title, create_date, creator, status, type, case_desc, note) values("
-                    + "'这是一个建议示例', CURRENT_TIMESTAMP(), 'jason', '新提交','出错', '这是一个建议示例，您可以在这里提交你所遇到的问题，我们会尽快跟进。', '这是回答的地方');");
-
-            stmt.executeUpdate("insert into order_header(order_no, type, status, creator, create_date,  remark) values("
-                    + "'SalesOrder001', 'SALES_ORDER', 'New', 'jason', CURRENT_TIMESTAMP(), '这是一个销售订单示例');");
-            stmt.executeUpdate("insert into order_item(order_id, item_name, item_desc, quantity, unit_price) values("
-                    + "1, 'P001', 'iPad Air', 1, 3200);");
+            
             // 回单notity_party_id bigint,customer_id
             stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,transfer_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', 'new','应收',2,1,'这是一张回单');");
             stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,transfer_order_id,creator,remark) values('HD2013021400002', '2014-08-6 16:35:35.1', 'confirmed','应收',1,2,'这是一张回单');");
@@ -439,70 +340,9 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
                     + "'2013201448','客户费用','应收','这是一张运输单收费');");
 
-            // 贷款客户 attributes
-            for (int i = 1; i <= 1; i++) {
-                stmt.executeUpdate("insert into party(party_type, create_date, creator) values('贷款客户', CURRENT_TIMESTAMP(), 'demo');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
-                        + ", 'priority', '1重要紧急');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
-                        + ", 'name', '温生');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
-                        + ", 'loan_max', '15万');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
-                        + ", 'mobile', '1357038829');");
-                stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
-                        + ", 'email', 'test@test.com');");
-            }
-
-            // +
-            // " values (77, 'TSC;TSR;', 'TP;', 'SYS_PVD_PAS0000000278', 'Maersk Indonesia', 'PAS0000000278', 'OLINL/JKT', '', '', '', '', '', '', '', '', '', '', '', '', 'A', '', null, '', null, null, '', null, '', null, '', '', '', '', '', '', '', null, '', '', null, 'DCS');");
-            // 地产客户
-            Party p = new Party();
-            Date createDate = Calendar.getInstance().getTime();
-            p.set("party_type", "地产客户").set("create_date", createDate).set("creator", "jason").save();
-            long partyId = p.getLong("id");
-            PartyAttribute pa = new PartyAttribute();
-            pa.set("party_id", partyId).set("attr_name", "title").set("attr_value", "求2房近3小").save();
-            PartyAttribute pa1 = new PartyAttribute();
-            pa1.set("party_id", partyId).set("attr_name", "client_name").set("attr_value", "温生").save();
-            PartyAttribute paPriority = new PartyAttribute();
-            paPriority.set("party_id", partyId).set("attr_name", "priority").set("attr_value", "1重要紧急").save();
-            PartyAttribute pa2 = new PartyAttribute();
-            pa2.set("party_id", partyId).set("attr_name", "status").set("attr_value", "求租").save();
-            PartyAttribute pa3 = new PartyAttribute();
-            pa3.set("party_id", partyId).set("attr_name", "region").set("attr_value", "老香洲").save();
-            PartyAttribute pa4 = new PartyAttribute();
-            pa4.set("party_id", partyId).set("attr_name", "type").set("attr_value", "1房").save();
-
-            // 外部user 创建的客户
-            Party p1 = new Party();
-            createDate = Calendar.getInstance().getTime();
-            p1.set("party_type", "地产客户").set("create_date", createDate).set("creator", "demo").save();
-            partyId = p1.getLong("id");
-            PartyAttribute p1_pa = new PartyAttribute();
-            p1_pa.set("party_id", partyId).set("attr_name", "title").set("attr_value", "求前山小区").save();
-            PartyAttribute p1_pa1 = new PartyAttribute();
-            p1_pa1.set("party_id", partyId).set("attr_name", "client_name").set("attr_value", "温生").save();
-            PartyAttribute p1_paPriority = new PartyAttribute();
-            p1_paPriority.set("party_id", partyId).set("attr_name", "priority").set("attr_value", "1重要紧急").save();
-            PartyAttribute p1_pa2 = new PartyAttribute();
-            p1_pa2.set("party_id", partyId).set("attr_name", "status").set("attr_value", "求购").save();
-            PartyAttribute p1_pa3 = new PartyAttribute();
-            p1_pa3.set("party_id", partyId).set("attr_name", "region").set("attr_value", "拱北").save();
-            PartyAttribute p1_pa4 = new PartyAttribute();
-            p1_pa4.set("party_id", partyId).set("attr_name", "type").set("attr_value", "1房").save();
-            PartyAttribute p1_pa5 = new PartyAttribute();
-            p1_pa5.set("party_id", partyId).set("attr_name", "area").set("attr_value", "120").save();
-            PartyAttribute p1_pa6 = new PartyAttribute();
-            p1_pa6.set("party_id", partyId).set("attr_name", "total").set("attr_value", "200").save();
-
+            
             newCustomer();
 
-            // 其他客户 attributes
-            stmt.executeUpdate("insert into party(party_type, create_date, creator) values('其他客户', CURRENT_TIMESTAMP(), 'demo');");
-            stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'note', '工商注册');");
-            stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'mobile', '1357038829');");
-            stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
 
             // 仓库
             stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,office_id,warehouse_type) values('582','源鸿广州总仓', '这是广州总仓','萝岗','9','2','ownWarehouse');");
@@ -638,22 +478,22 @@ public class DataInitUtil {
             stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver) values('15812345678', '粤A2341', '高栏车', 12.5, '李四');");
 
             // 发车单
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('FC2014061000001', '2014-06-10 10:35:35.1','DEPART','粤A876596','平板车',1,'20');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000001', CURRENT_TIMESTAMP(),'DEPART','粤A876596','平板车',1,23,'新建');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '1','YS2014042600001');");
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size) values('FC2014061000002', '2014-06-10 10:39:35.1','DEPART','粤A879588','集装车',2,'25');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000002', CURRENT_TIMESTAMP(),'DEPART','粤A879588','集装车',2, 23,'新建');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('2', '2','YS2014042600002');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '5','YS2014042600005');");
-
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,driver_id,carinfo_id,status) values('FC2014061000003', CURRENT_TIMESTAMP(),'DEPART',24,1,'新建');");
+            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(3, '3','YS2014042600006');");
             // 拼车单
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by) values('PC2014061000001', '2014-06-10 10:35:35.1','PICKUP','粤A876596','平板货车',1,'20','已入货场',3);");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('3', '1','YS2014042600001');");
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by,pickup_mode) values('PC2014061000002', '2014-06-12 10:39:35.1','PICKUP','粤A879588','箱式货车',2,'25','已入货场',4,'own');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '4','YS2014042600004');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '5','YS2014042600005');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('4', '3','YS2014042600003');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by) values('PC2014061000001', CURRENT_TIMESTAMP(),'PICKUP','粤A876596','平板货车',1, 24,'已入货场',3);");
+            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(4, '1','YS2014042600001');");
+            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by,pickup_mode) " +
+            		                       "values('PC2014061000002', CURRENT_TIMESTAMP(),'PICKUP','粤A879588','箱式货车',2, 24,'已入货场',4,'own');");
+            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '4','YS2014042600004');");
+            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '5','YS2014042600005');");
+            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '3','YS2014042600003');");
 
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,driver_id,carinfo_id) values('FC2014061000003', '2014-06-10 16:35:35.1','DEPART',26,1);");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('5', '3','YS2014042600006');");
 
             // 运输里程碑
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(2, 3, '2014-06-28 10:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
@@ -667,6 +507,178 @@ public class DataInitUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void initEedaData(Statement stmt) throws SQLException {
+        String propertySql = "insert into leads(title, create_date, creator, status, type, "
+                + "region, intro, remark, lowest_price, agent_fee, introducer, sales, follower, "
+                + "follower_phone, owner, owner_phone, customer_source, building_name, building_no, room_no, building_unit) values("
+                + "'%d 初始测试数据-老香洲两盘', CURRENT_TIMESTAMP(), 'jason', '出租', "
+                + "'1房', '老香洲', "
+                + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
+                + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
+                + "'张生', '0756-12345678-123', '58自来客', '五洲花城2期', '2', '1320', '3');";
+
+        // for (int i = 0; i < 50; i++) {
+        // String newPropertySql = String.format(propertySql, i);
+        // stmt.executeUpdate(newPropertySql);
+        // }
+        String sqlPrefix = "insert into leads(title, priority, create_date, creator, status, type, "
+                + "region, intro, remark, lowest_price, agent_fee, introducer, sales, follower, follower_phone, "
+                + "owner, owner_phone, area, total, customer_source, building_name, building_no, room_no, building_unit) values(";
+
+        stmt.executeUpdate(sqlPrefix + "'初始测试数据-老香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
+                + "'1房', '老香洲', " + "'老香洲楼盘 2房2卫'," + "'remark.....', 7000, 7500, "
+                + "'介绍人金', 'kim', 'jason', '13509871234',"
+                + "'张生', '0756-12345678-123', 36, 1200, '58自来客', '五洲花城2期', '2', '1320', '3');");
+
+        stmt.executeUpdate(sqlPrefix + "'初始测试数据-新香洲楼盘', '1重要紧急', CURRENT_TIMESTAMP(), 'jason', '出售', "
+                + "'2房', '新香洲', " + "'新香洲楼盘 2房2卫'," + "'remark.....', 7000, 7500, "
+                + "'介绍人金', 'kim', 'jason', '13509871234',"
+                + "'张生', '0756-12345678-123', 78, 56, '58自来客', '五洲花城2期', '3', '1321', '5');");
+
+        stmt.executeUpdate(sqlPrefix
+                + "'初始测试数据-老香洲楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已租', "
+                + "'3房', '老香洲', "
+                + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
+                + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
+                + "'张生', '0756-12345678-123', 92, 2300, '58自来客', '五洲花城2期', '4', '1320', '3');");
+
+        stmt.executeUpdate(sqlPrefix
+                + "'初始测试数据-拱北楼盘', '2重要不紧急', CURRENT_TIMESTAMP(), 'jason', '已售', "
+                + "'4房', '拱北', "
+                + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
+                + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
+                + "'张生', '0756-12345678-123', 150, 120, '58自来客', '五洲花城2期', '6', '1320', '3');");
+
+        stmt.executeUpdate(sqlPrefix
+                + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
+                + "'5房', '柠溪', "
+                + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
+                + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
+                + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '', '1325', '8');");
+
+        stmt.executeUpdate(sqlPrefix
+                + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
+                + "'6房', '柠溪', "
+                + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
+                + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
+                + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '', '5');");
+
+        stmt.executeUpdate(sqlPrefix
+                + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
+                + "'6房以上', '柠溪', "
+                + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
+                + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
+                + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
+
+        stmt.executeUpdate(sqlPrefix
+                + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
+                + "'地皮', '前山', "
+                + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
+                + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
+                + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
+
+        stmt.executeUpdate(sqlPrefix
+                + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
+                + "'6房以上', '柠溪', "
+                + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
+                + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
+                + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
+
+        stmt.executeUpdate(sqlPrefix
+                + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
+                + "'地皮', '前山', "
+                + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
+                + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
+                + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
+
+        stmt.executeUpdate(sqlPrefix
+                + "'初始测试数据-柠溪楼盘', '3不重要紧急', CURRENT_TIMESTAMP(), 'jason', '出租', "
+                + "'6房以上', '柠溪', "
+                + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
+                + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'jason', '13509871234',"
+                + "'张生', '0756-12345678-123', 180, 5000, '58自来客', '五洲花城2期', '2', '1322', '');");
+
+        stmt.executeUpdate(sqlPrefix
+                + "'初始测试数据-前山地皮', '4不重要不紧急', CURRENT_TIMESTAMP(), 'd_user1', '已售', "
+                + "'地皮', '前山', "
+                + "'本月均价8260元/㎡，环比上月 ↑0.22 ，同比去年 ↑14.67 ，查看房价详情>>二 手 房50 套 所在区域香洲 老香洲小区地址香洲珠海市香洲区老香洲为农街为农市场地图>>建筑年代1995-01-01',"
+                + "'remark.....', 7000, 7500, " + "'介绍人金', 'kim', 'd_user1', '13509871234',"
+                + "'张生', '0756-12345678-123', 40000, 3000, '58自来客', '五洲花城2期', '8', '1320', '3');");
+
+        stmt.executeUpdate("insert into support_case(title, create_date, creator, status, type, case_desc, note) values("
+                + "'这是一个建议示例', CURRENT_TIMESTAMP(), 'jason', '新提交','出错', '这是一个建议示例，您可以在这里提交你所遇到的问题，我们会尽快跟进。', '这是回答的地方');");
+
+        stmt.executeUpdate("insert into order_header(order_no, type, status, creator, create_date,  remark) values("
+                + "'SalesOrder001', 'SALES_ORDER', 'New', 'jason', CURRENT_TIMESTAMP(), '这是一个销售订单示例');");
+        stmt.executeUpdate("insert into order_item(order_id, item_name, item_desc, quantity, unit_price) values("
+                + "1, 'P001', 'iPad Air', 1, 3200);");
+        
+     // +
+        // " values (77, 'TSC;TSR;', 'TP;', 'SYS_PVD_PAS0000000278', 'Maersk Indonesia', 'PAS0000000278', 'OLINL/JKT', '', '', '', '', '', '', '', '', '', '', '', '', 'A', '', null, '', null, null, '', null, '', null, '', '', '', '', '', '', '', null, '', '', null, 'DCS');");
+        // 地产客户
+        Party p = new Party();
+        Date createDate = Calendar.getInstance().getTime();
+        p.set("party_type", "地产客户").set("create_date", createDate).set("creator", "jason").save();
+        long partyId = p.getLong("id");
+        PartyAttribute pa = new PartyAttribute();
+        pa.set("party_id", partyId).set("attr_name", "title").set("attr_value", "求2房近3小").save();
+        PartyAttribute pa1 = new PartyAttribute();
+        pa1.set("party_id", partyId).set("attr_name", "client_name").set("attr_value", "温生").save();
+        PartyAttribute paPriority = new PartyAttribute();
+        paPriority.set("party_id", partyId).set("attr_name", "priority").set("attr_value", "1重要紧急").save();
+        PartyAttribute pa2 = new PartyAttribute();
+        pa2.set("party_id", partyId).set("attr_name", "status").set("attr_value", "求租").save();
+        PartyAttribute pa3 = new PartyAttribute();
+        pa3.set("party_id", partyId).set("attr_name", "region").set("attr_value", "老香洲").save();
+        PartyAttribute pa4 = new PartyAttribute();
+        pa4.set("party_id", partyId).set("attr_name", "type").set("attr_value", "1房").save();
+
+        // 外部user 创建的客户
+        Party p1 = new Party();
+        createDate = Calendar.getInstance().getTime();
+        p1.set("party_type", "地产客户").set("create_date", createDate).set("creator", "demo").save();
+        partyId = p1.getLong("id");
+        PartyAttribute p1_pa = new PartyAttribute();
+        p1_pa.set("party_id", partyId).set("attr_name", "title").set("attr_value", "求前山小区").save();
+        PartyAttribute p1_pa1 = new PartyAttribute();
+        p1_pa1.set("party_id", partyId).set("attr_name", "client_name").set("attr_value", "温生").save();
+        PartyAttribute p1_paPriority = new PartyAttribute();
+        p1_paPriority.set("party_id", partyId).set("attr_name", "priority").set("attr_value", "1重要紧急").save();
+        PartyAttribute p1_pa2 = new PartyAttribute();
+        p1_pa2.set("party_id", partyId).set("attr_name", "status").set("attr_value", "求购").save();
+        PartyAttribute p1_pa3 = new PartyAttribute();
+        p1_pa3.set("party_id", partyId).set("attr_name", "region").set("attr_value", "拱北").save();
+        PartyAttribute p1_pa4 = new PartyAttribute();
+        p1_pa4.set("party_id", partyId).set("attr_name", "type").set("attr_value", "1房").save();
+        PartyAttribute p1_pa5 = new PartyAttribute();
+        p1_pa5.set("party_id", partyId).set("attr_name", "area").set("attr_value", "120").save();
+        PartyAttribute p1_pa6 = new PartyAttribute();
+        p1_pa6.set("party_id", partyId).set("attr_name", "total").set("attr_value", "200").save();
+        
+     // 贷款客户 attributes
+        for (int i = 1; i <= 1; i++) {
+            stmt.executeUpdate("insert into party(party_type, create_date, creator) values('贷款客户', CURRENT_TIMESTAMP(), 'demo');");
+            stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
+                    + ", 'priority', '1重要紧急');");
+            stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
+                    + ", 'name', '温生');");
+            stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
+                    + ", 'loan_max', '15万');");
+            stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
+                    + ", 'mobile', '1357038829');");
+            stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(" + i
+                    + ", 'email', 'test@test.com');");
+        }
+
+
+        // 其他客户 attributes
+        stmt.executeUpdate("insert into party(party_type, create_date, creator) values('其他客户', CURRENT_TIMESTAMP(), 'demo');");
+        stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'note', '工商注册');");
+        stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'mobile', '1357038829');");
+        stmt.executeUpdate("insert into party_attribute(party_id, attr_name, attr_value) values(1, 'email', 'test@test.com');");
+
     }
 
     public static void newCustomer() {
