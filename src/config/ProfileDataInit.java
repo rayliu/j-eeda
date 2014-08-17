@@ -6,7 +6,7 @@ public class ProfileDataInit {
     public static void initProfile(Statement stmt) {
         try {
             // 客户信息
-            stmt.executeUpdate("insert into contact(COMPANY_NAME, ABBR, CONTACT_PERSON, LOCATION, INTRODUCTION, EMAIL, MOBILE, ADDRESS) values('广州广电运通金融电子股份有限公司','广电运通','蒙思哲','440100','（简单说明客户性质和产品情况）','mszhe@grgbanking.com','82188856','广州市萝岗区科林路11号');");
+            stmt.executeUpdate("insert into contact(COMPANY_NAME, ABBR, CONTACT_PERSON, LOCATION, INTRODUCTION, EMAIL, MOBILE, ADDRESS) values('示例客户---广州广电运通金融电子股份有限公司','示例客户---广电运通','蒙思哲','440100','（简单说明客户性质和产品情况）','mszhe@grgbanking.com','82188856','广州市萝岗区科林路11号');");
             stmt.executeUpdate("insert into contact(COMPANY_NAME, ABBR, CONTACT_PERSON, LOCATION, INTRODUCTION, EMAIL, MOBILE, ADDRESS) values('湖南长城信息金融设备有限责任公司','长城信息','任学安','430100','国企，我司主要负责运输客户大型ATM机器','renxuean@gwi.com.cn','0731-84932734/13787054674','长沙经济技术开发区东3路5号');");
             stmt.executeUpdate("insert into contact(COMPANY_NAME, ABBR, CONTACT_PERSON, LOCATION, INTRODUCTION, EMAIL, MOBILE, ADDRESS) values('中钞科宝现金处理技术（北京）有限公司','中钞科堡','杨济如','110100','','yangjiru@cbpm-keba.com','010-56627760','北京市海淀区上地创业路20号');");
             // 供应商信息
