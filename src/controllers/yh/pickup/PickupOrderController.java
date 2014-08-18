@@ -450,17 +450,19 @@ public class PickupOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         String sqlTotal = "select count(1) total from transfer_order_item tof"
-                + " left join transfer_order  t_o  on tof.order_id =t_o.id "
-                + " left join contact c on c.id in (select contact_id from party p where t_o.customer_id=p.id)"
                 + " where tof.order_id in(" + order_id + ")";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select tof.* , t_o.order_no as order_no, t_o.id as tr_order_id, c.company_name as customer  from transfer_order_item tof"
-                + " left join transfer_order  t_o  on tof.order_id = t_o.id "
-                + "left join contact c on c.id in (select contact_id from party p where t_o.customer_id=p.id)"
-                + " where tof.order_id in(" + order_id + ")  order by c.id" + sLimit;
+        String sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume)*toi.amount volume, "
+						+ " ifnull(case toi.weight when 0.0 then null else toi.weight end, pd.weight)*toi.amount weight"
+						+ " ,c.company_name customer,tor.order_no,toi.amount,toi.remark  from transfer_order_item toi "
+						+ " left join transfer_order tor on tor.id = toi.order_id"
+						+ " left join party p on p.id = tor.customer_id"
+						+ " left join contact c on c.id = p.contact_id"
+						+ " left join product pd on pd.id = toi.product_id"
+						+ " where toi.order_id in(" + order_id + ")  order by c.id" + sLimit;
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);

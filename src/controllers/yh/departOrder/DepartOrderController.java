@@ -700,7 +700,6 @@ public class DepartOrderController extends Controller {
                 departTransferOrder.set("order_id", params[i]);
                 TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
                 transferOrder.set("depart_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-                transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
                 transferOrder.update();
                 departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
                 departTransferOrder.save();
@@ -720,7 +719,6 @@ public class DepartOrderController extends Controller {
                 departTransferOrder.set("depart_id", pickupOrder.get("id"));
                 departTransferOrder.set("order_id", params[i]);
                 TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
-                transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
                 transferOrder.update();
                 departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
                 departTransferOrder.save();
