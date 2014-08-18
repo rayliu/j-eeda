@@ -1163,7 +1163,7 @@ public class PickupOrderController extends Controller {
 
         String category = getPara("category");
         String sqlTotal = "select count(1) total from transfer_order_item_detail tod where tod.item_id = " + itemId
-                + " and tod.depart_id = " + pickupId;
+                + " and tod.pickup_id = " + pickupId;
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 

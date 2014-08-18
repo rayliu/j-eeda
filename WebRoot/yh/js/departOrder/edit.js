@@ -160,7 +160,7 @@
     		$("#item_id").val(itemId);
     		$("#item_save").attr("disabled", false);
     		$("#style").hide();
-    		detailTable.fnSettings().sAjaxSource = "/yh/pickupOrder/findAllItemDetail?item_id="+itemId+"&pickupId="+$("#departOrderId").val();
+    		detailTable.fnSettings().sAjaxSource = "/yh/departOrder/findAllItemDetail?item_id="+itemId+"&departId="+$("#departOrderId").val();
     		detailTable.fnDraw();  			
     	});
     	
@@ -752,6 +752,10 @@
     	    if($("#departOrderStatus").val() != '' && $("#departOrderStatus").val() != '新建'){
 	    		$("#saveDepartOrderBtn").attr("disabled", true);
 	    	}
+    	    
+    	    if($("#departOrderId").val() != ''){
+    	    	$("#departureConfirmationBtn").attr("disabled", false);
+    	    }
     	    
     	    $("#cancelBtn").click(function(){
     	    	$("#detailDialog").modal('hide');

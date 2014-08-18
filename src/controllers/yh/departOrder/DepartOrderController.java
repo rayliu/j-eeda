@@ -1476,5 +1476,35 @@ public class DepartOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         locationList = Db.find("select * from fin_item where type='应付'");
         renderJson(locationList);
+    }    
+
+    // 点击货品table的查看 ，显示货品对应的单品
+    public void findAllItemDetail() {
+        String itemId = getPara("item_id");
+        String departId = getPara("departId");
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        String category = getPara("category");
+        String sqlTotal = "select count(1) total from transfer_order_item_detail tod where tod.item_id = " + itemId
+                + " and tod.depart_id = " + departId;
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select * from transfer_order_item_detail tod where tod.item_id = " + itemId
+                + " and tod.depart_id = " + departId;
+
+        List<Record> details = Db.find(sql);
+
+        Map productListMap = new HashMap();
+        productListMap.put("sEcho", pageIndex);
+        productListMap.put("iTotalRecords", rec.getLong("total"));
+        productListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        productListMap.put("aaData", details);
+        renderJson(productListMap);
     }
 }

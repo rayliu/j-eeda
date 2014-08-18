@@ -389,10 +389,10 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('2014042600001', 'ATM', 'ATM机', 2,'台', 35, 10, '2台ATM', 2);");
           //示范数据item_detail
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values(2, 'S001', 0, 'ATM', false, 2, 9);");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values(2, 'S002', 0, 'ATM', false, 2, 9);");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                    + "values(2, '123456', 'S001', 0, 'ATM', false, 2, 9);");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                    + "values(2, '123456', 'S002', 0, 'ATM', false, 2, 9);");
             //
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('123456', 'ATM', '这是很多台ATM',2,'台',1000,2000,'一台ATM','3');");
