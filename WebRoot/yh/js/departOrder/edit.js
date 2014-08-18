@@ -779,7 +779,6 @@
     	        "aoColumns": [
     				{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
     				{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},  
-    				{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "name"},
     				{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
     				{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
     				{  
@@ -799,7 +798,7 @@
     		 $("#table_fin2").on('click', '.finItemdel', function(e){
     			 var id = $(this).attr('code');
     			  e.preventDefault();
-    			$.post('/yh/transferOrder/finItemdel/'+id,function(data){
+    			$.post('/yh/pickupOrder/finItemdel/'+id,function(data){
     	               //保存成功后，刷新列表
     	               console.log(data);
     	               paymenttable.fnDraw();

@@ -886,12 +886,12 @@ public class PickupOrderController extends Controller {
         pickupMilestone.set("type", TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE);
         pickupMilestone.save();
 
-        //生成应付, （如果已经有了应付，就要清除掉旧数据重新算）
-        //按件生成提货单中供应商的应付，要算 item 的数量 * 合同中定义的价格
-        //Depart_Order_fin_item 提货单/发车单应付明细表
-        //第一步：看提货单调度选择的计费方式是哪种：计件，整车，零担
-        //第二步：循环所选运输单中的 item, 到合同中（循环）比对去算钱。
-        String chargeType=pickupOrder.get("charge_type");
+        // 生成应付, （如果已经有了应付，就要清除掉旧数据重新算）
+        // 按件生成提货单中供应商的应付，要算 item 的数量 * 合同中定义的价格
+        // Depart_Order_fin_item 提货单/发车单应付明细表
+        // 第一步：看提货单调度选择的计费方式是哪种：计件，整车，零担
+        // 第二步：循环所选运输单中的 item, 到合同中（循环）比对去算钱。
+        String chargeType = pickupOrder.get("charge_type");
 
         List<DepartTransferOrder> dItem = DepartTransferOrder.dao
                 .find("select order_id from depart_transfer where depart_id ='" + getPara("pickupOrderId") + "'");
@@ -901,8 +901,9 @@ public class PickupOrderController extends Controller {
         }
         transferId = transferId.substring(0, transferId.length() - 1);
 
-        List<Record> transferOrderItemList = Db.find("select toi.*, t_o.route_from, t_o.route_to from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
-                + transferId + ") order by pickup_seq desc");
+        List<Record> transferOrderItemList = Db
+                .find("select toi.*, t_o.route_from, t_o.route_to from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
+                        + transferId + ") order by pickup_seq desc");
         if (pickupOrder.get("sp_id") != null) {
             for (Record tOrderItemRecord : transferOrderItemList) {
                 DepartOrderFinItem pickupFinItem = new DepartOrderFinItem();
@@ -911,10 +912,14 @@ public class PickupOrderController extends Controller {
                                 + pickupOrder.get("sp_id")
                                 + "') and from_id = '"
                                 + tOrderItemRecord.get("route_from")
-                                + "' and priceType='计件'");//TODO：先只算去哪取货的价格，and to_id ='440100'  priceType 不分大小写在mysql会有问题
-                if (contractFinItem!=null) {
+                                + "' and priceType='计件'");// TODO：先只算去哪取货的价格，and
+                                                          // to_id ='440100'
+                                                          // priceType
+                                                          // 不分大小写在mysql会有问题
+                if (contractFinItem != null) {
                     pickupFinItem.set("fin_item_id", "1");
-                    pickupFinItem.set("amount", contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
+                    pickupFinItem.set("amount",
+                            contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
                     pickupFinItem.set("depart_order_id", pickupOrder.getLong("id"));
                     pickupFinItem.set("status", "未完成");
                     pickupFinItem.set("creator", users.get(0).get("id"));
@@ -923,7 +928,6 @@ public class PickupOrderController extends Controller {
                 }
             }
         }
-        
 
         // 生成客户支付中转费
         if (pickupOrder.get("income") != null) {
@@ -932,7 +936,7 @@ public class PickupOrderController extends Controller {
             for (int i = 0; i < dItem.size(); i++) {
                 tFinItem2.set("fin_item_id", "4");
                 tFinItem2.set("amount", Double.parseDouble(pickupOrder.get("income").toString()) / size);
-                //tFinItem2.set("order_id", dItem.get(i).get("order_id"));
+                // tFinItem2.set("order_id", dItem.get(i).get("order_id"));
                 tFinItem2.set("status", "未完成");
                 tFinItem2.set("creator", users.get(0).get("id"));
                 tFinItem2.set("create_date", sqlDate);
@@ -1210,8 +1214,8 @@ public class PickupOrderController extends Controller {
         // 获取当前页的数据
         List<Record> orders = Db
                 .find("select d.*,f.name,f.remark,'运输单001?' as transferOrderNo from depart_order_fin_item d "
-                        + "left join fin_item f on d.fin_item_id = f.id "
-                        + "where d.depart_order_id ='" + id + "' and f.type='应付'");
+                        + "left join fin_item f on d.fin_item_id = f.id " + "where d.depart_order_id ='" + id
+                        + "' and f.type='应付'");
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -1220,11 +1224,11 @@ public class PickupOrderController extends Controller {
 
         orderMap.put("aaData", orders);
 
-        //没有名字就删掉？不能删，要让人知道这里有错
+        // 没有名字就删掉？不能删，要让人知道这里有错(不是，只是删除条目而已，不删除添加的记录)
         List<Record> list = Db.find("select * from fin_item");
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
-                //Fin_item.dao.deleteById(list.get(i).get("id"));
+                Fin_item.dao.deleteById(list.get(i).get("id"));
             }
         }
         renderJson(orderMap);
@@ -1233,10 +1237,10 @@ public class PickupOrderController extends Controller {
     public void addNewRow() {
         String pickupOrderId = getPara();
         Fin_item fItem = new Fin_item();
-        TransferOrderFinItem dFinItem = new TransferOrderFinItem();
+        DepartOrderFinItem dFinItem = new DepartOrderFinItem();
         fItem.set("type", "应付");
         fItem.save();
-        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("depart_id", pickupOrderId);
+        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("depart_order_id", pickupOrderId);
         dFinItem.save();
         renderJson("{\"success\":true}");
     }
@@ -1246,7 +1250,7 @@ public class PickupOrderController extends Controller {
         String returnValue = "";
         String id = getPara("id");
         String finItemId = getPara("finItemId");
-        TransferOrderFinItem dFinItem = TransferOrderFinItem.dao.findById(id);
+        DepartOrderFinItem dFinItem = DepartOrderFinItem.dao.findById(id);
 
         Fin_item fItem = Fin_item.dao.findById(dFinItem.get("fin_item_id"));
 
@@ -1263,11 +1267,12 @@ public class PickupOrderController extends Controller {
             dFinItem.set("amount", amount).update();
             returnValue = amount;
         }
+
         List<Record> list = Db.find("select * from fin_item");
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
                 Fin_item.dao.deleteById(list.get(i).get("id"));
-                List<Record> list2 = Db.find("select * from transfer_order_fin_item where fin_item_id ='"
+                List<Record> list2 = Db.find("select * from depart_order_fin_item where fin_item_id ='"
                         + list.get(i).get("id") + "'");
                 List<Record> list3 = Db.find("select * from fin_item where id ='" + list2.get(0).get("fin_item_id")
                         + "'");
@@ -1284,5 +1289,12 @@ public class PickupOrderController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         locationList = Db.find("select * from fin_item where type='应付'");
         renderJson(locationList);
+    }
+
+    // 费用删除
+    public void finItemdel() {
+        String id = getPara();
+        DepartOrderFinItem.dao.deleteById(id);
+        renderJson("{\"success\":true}");
     }
 }

@@ -1742,7 +1742,7 @@ $(document).ready(function() {
 	            	receipttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
 	            	receipttable.fnDraw();       
 	            	
-	            	paymenttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
+	            	paymenttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountPayable/"+order_id;
 					paymenttable.fnDraw(); 
 				}else{
 					alert('数据保存失败。');
@@ -1976,13 +1976,13 @@ $(document).ready(function() {
 		});		
 	});	
 	
-	//应收
+	//应付
 	$("#addrow").click(function(){	
 	    var order_id =$("#order_id").val();
 		$.post('/yh/transferOrder/addNewRow/'+order_id,function(data){
 			console.log(data);
 			if(data.success){
-				paymenttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
+				paymenttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountPayable/"+order_id;
 				paymenttable.fnDraw(); 
 				//paymenttable.fnDraw();
 				//$('#fin_item2').modal('hide');

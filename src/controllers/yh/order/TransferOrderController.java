@@ -915,9 +915,9 @@ public class TransferOrderController extends Controller {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
                 Fin_item.dao.deleteById(list.get(i).get("id"));
-
             }
         }
+
         renderJson(orderMap);
     }
 
@@ -932,14 +932,12 @@ public class TransferOrderController extends Controller {
         renderJson("{\"success\":true}");
     }
 
-    //TODO: 考虑事务
     public void addNewRow2() {
         String orderId = getPara();
         Fin_item fItem = new Fin_item();
+        TransferOrderFinItem dFinItem = new TransferOrderFinItem();
         fItem.set("type", "应收");
         fItem.save();
-        
-        TransferOrderFinItem dFinItem = new TransferOrderFinItem();        
         dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("order_id", orderId);
         dFinItem.save();
         renderJson("{\"success\":true}");
@@ -979,6 +977,18 @@ public class TransferOrderController extends Controller {
                 if (list3.size() == 0) {
                     TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
                 }
+            }
+        }
+        // 删除没添加成功的记录
+        List<Record> list2 = Db.find("select * from transfer_order_fin_item where order_id ='"
+                + dFinItem.get("order_id") + "'");
+        if (list2.size() > 0) {
+            for (int i = 0; i < list2.size(); i++) {
+                Fin_item fin_item = Fin_item.dao.findById(list2.get(i).get("fin_item_id"));
+                if (fin_item == null) {
+                    TransferOrderFinItem.dao.deleteById(list2.get(i).get("id"));
+                }
+
             }
         }
         renderText(returnValue);

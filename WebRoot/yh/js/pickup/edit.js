@@ -568,7 +568,8 @@
             	$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType}, function(){
             		pickupOrderMilestone();	
                 	var pickupOrderId = $("#pickupOrderId").val();
-                	paymenttable.fnDraw();
+                	paymenttable.fnSettings().sAjaxSource = "/yh/pickupOrder/accountPayable/"+pickupOrderId;
+            		paymenttable.fnDraw(); 
             		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
             			var pickupAddressTbody = $("#pickupAddressTbody");
             			pickupAddressTbody.empty();
@@ -586,6 +587,14 @@
 		},'json');
 	});
 	
+	/*// 单击应收应付
+    $("#pickuparap").click(function(e){
+    	var pickupOrderId = $("#pickupOrderId").val();
+    	alert(pickupOrderId);
+		paymenttable.fnSettings().sAjaxSource = "/yh/pickupOrder/accountPayable/"+pickupOrderId;
+		paymenttable.fnDraw(); 
+    });	*/
+    
 	// 判断货场是否选中
 	$("#checkbox1").click(function(){
 		if($(this).prop('checked') == true){
@@ -783,7 +792,7 @@
 	 $("#table_fin2").on('click', '.finItemdel', function(e){
 		 var id = $(this).attr('code');
 		  e.preventDefault();
-		$.post('/yh/transferOrder/finItemdel/'+id,function(data){
+		$.post('/yh/pickupOrder/finItemdel/'+id,function(data){
               //保存成功后，刷新列表
               console.log(data);
               paymenttable.fnDraw();

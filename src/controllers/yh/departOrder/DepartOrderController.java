@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
+import models.DepartOrderFinItem;
 import models.DepartTransferOrder;
 import models.Fin_item;
 import models.InventoryItem;
@@ -1399,10 +1400,9 @@ public class DepartOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db
-                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d "
-                        + "left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id =d.order_id "
-                        + "where d.depart_id ='" + id + "' and f.type='应付'");
+        List<Record> orders = Db.find("select d.*,f.name,f.remark from depart_order_fin_item d "
+                + "left join fin_item f on d.fin_item_id = f.id " + "where d.depart_order_id ='" + id
+                + "' and f.type='应付'");
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -1423,10 +1423,10 @@ public class DepartOrderController extends Controller {
     public void addNewRow() {
         String pickupOrderId = getPara();
         Fin_item fItem = new Fin_item();
-        TransferOrderFinItem dFinItem = new TransferOrderFinItem();
+        DepartOrderFinItem dFinItem = new DepartOrderFinItem();
         fItem.set("type", "应付");
         fItem.save();
-        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("depart_id", pickupOrderId);
+        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("depart_order_id", pickupOrderId);
         dFinItem.save();
         renderJson("{\"success\":true}");
     }
@@ -1436,7 +1436,7 @@ public class DepartOrderController extends Controller {
         String returnValue = "";
         String id = getPara("id");
         String finItemId = getPara("finItemId");
-        TransferOrderFinItem dFinItem = TransferOrderFinItem.dao.findById(id);
+        DepartOrderFinItem dFinItem = DepartOrderFinItem.dao.findById(id);
 
         Fin_item fItem = Fin_item.dao.findById(dFinItem.get("fin_item_id"));
 
@@ -1457,7 +1457,7 @@ public class DepartOrderController extends Controller {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
                 Fin_item.dao.deleteById(list.get(i).get("id"));
-                List<Record> list2 = Db.find("select * from transfer_order_fin_item where fin_item_id ='"
+                List<Record> list2 = Db.find("select * from depart_order_fin_item where fin_item_id ='"
                         + list.get(i).get("id") + "'");
                 List<Record> list3 = Db.find("select * from fin_item where id ='" + list2.get(0).get("fin_item_id")
                         + "'");
@@ -1505,4 +1505,5 @@ public class DepartOrderController extends Controller {
         productListMap.put("aaData", details);
         renderJson(productListMap);
     }
+
 }

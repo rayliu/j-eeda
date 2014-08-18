@@ -461,13 +461,6 @@ public class DeliveryOrderMilestoneController extends Controller {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
                 Fin_item.dao.deleteById(list.get(i).get("id"));
-                List<Record> list2 = Db.find("select * from transfer_order_fin_item where fin_item_id ='"
-                        + list.get(i).get("id") + "'");
-                List<Record> list3 = Db.find("select * from fin_item where id ='" + list2.get(0).get("fin_item_id")
-                        + "'");
-                if (list3.size() == 0) {
-                    // TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
-                }
             }
         }
         renderJson(orderMap);
