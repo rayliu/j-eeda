@@ -170,7 +170,7 @@ public class ChargeCheckOrderController extends Controller {
 						+" left join return_order ror on ror.id = aai.ref_order_id "
 						+" left join transfer_order tor on tor.id = ror.transfer_order_id "
 						+" left join delivery_order dor on dor.id = ror.delivery_order_id "
-				        +" left join user_login ul on ul.id = aao.create_by";
+				        +" left join user_login ul on ul.id = aao.create_by order by aao.create_stamp desc";
 
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
