@@ -869,7 +869,7 @@ public class TransferOrderController extends Controller {
         List<Record> list = Db.find("select * from fin_item");
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
-                //Fin_item.dao.deleteById(list.get(i).get("id"));
+                Fin_item.dao.deleteById(list.get(i).get("id"));
             }
         }
         renderJson(orderMap);

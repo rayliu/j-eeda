@@ -131,18 +131,18 @@ public class ChargeCheckOrderController extends Controller {
         }
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total FROM RETURN_ORDER ro left join party p on ro.customer_id = p.id "
-                + "where ro.TRANSACTION_STATUS = 'confirmed' ";
+        String sql = "select count(1) total from return_order ro left join party p on ro.customer_id = p.id "
+                + "where ro.transaction_status = 'confirmed' ";
         Record rec = Db.findFirst(sql + fieldsWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("SELECT ro.*, to.order_no as transfer_order_no, do.order_no as delivery_order_no, p.id as company_id, c.company_name FROM RETURN_ORDER ro "
+                .find("select ro.*, to.order_no as transfer_order_no, do.order_no as delivery_order_no, p.id as company_id, c.company_name from return_order ro "
                         + "left join transfer_order to on ro.transfer_order_id = to.id "
                         + "left join delivery_order do on ro.delivery_order_id = do.id "
                         + "left join party p on ro.customer_id = p.id "
-                        + "left join contact c on p.contact_id = c.id where ro.TRANSACTION_STATUS = 'confirmed' " + fieldsWhere);
+                        + "left join contact c on p.contact_id = c.id where ro.transaction_status = 'confirmed' " + fieldsWhere);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -163,7 +163,7 @@ public class ChargeCheckOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aao.*,c.contact_person cname,ror.order_no return_order_no,tor.order_no transfer_order_no,dor.order_no delivery_order_no,ul.user_name creator_name,aai.remark remark from arap_audit_order aao "
+        String sql = "select aao.*,c.contact_person cname,ror.order_no return_order_no,tor.order_no transfer_order_no,dor.order_no delivery_order_no,ul.user_name creator_name from arap_audit_order aao "
 						+" left join party p on p.id = aao.payee_id "
 						+" left join contact c on c.id = p.contact_id "
 						+" left join arap_audit_item aai on aai.audit_order_id= aao.id "
@@ -222,6 +222,8 @@ public class ChargeCheckOrderController extends Controller {
 	    	arapAuditOrder.set("create_by", getPara("create_by"));
 	    	arapAuditOrder.set("create_stamp", new Date());
 	    	arapAuditOrder.set("remark", getPara("remark"));
+	    	arapAuditOrder.set("last_modified_by", getPara("create_by"));
+	    	arapAuditOrder.set("LAST_MODIFIED_STAMP", new Date());
 	    	arapAuditOrder.update();
 	    	
 	    	List<ArapAuditItem> arapAuditItems = ArapAuditItem.dao.find("select * from arap_audit_item where audit_order_id = ?", arapAuditOrder.get("id"));
@@ -249,17 +251,19 @@ public class ChargeCheckOrderController extends Controller {
     	setAttr("userLogin", userLogin);
     	setAttr("arapAuditOrder", arapAuditOrder);
     	
-    	/*Date beginTime = arapAuditOrder.getDate("begin_time");
-    	Date endTime = arapAuditOrder.getDate("end_time");
+    	Date beginTimeDate = arapAuditOrder.get("begin_time");
+    	Date endTimeDate = arapAuditOrder.get("end_time");
+    	String beginTime = "";
+    	String endTime = "";
     	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    	if(!"".equals(beginTime) && beginTime != null){
-    		simpleDateFormat.format(beginTime);
+    	if(!"".equals(beginTimeDate) && beginTimeDate != null){
+    		beginTime = simpleDateFormat.format(beginTimeDate);
     	}
-    	if(!"".equals(endTime) && endTime != null){
-    		simpleDateFormat.format(endTime);
+    	if(!"".equals(endTimeDate) && endTimeDate != null){
+    		endTime = simpleDateFormat.format(endTimeDate);
     	}
     	setAttr("beginTime", beginTime);
-    	setAttr("endTime", endTime);*/
+    	setAttr("endTime", endTime);
     	if(LoginUserController.isAuthenticated(this))
     		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
     }
