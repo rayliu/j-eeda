@@ -753,9 +753,9 @@
 	    		$("#saveDepartOrderBtn").attr("disabled", true);
 	    	}
     	    
-    	    if($("#departOrderId").val() != ''){
+    	    /*if($("#departOrderId").val() != ''){
     	    	$("#departureConfirmationBtn").attr("disabled", false);
-    	    }
+    	    }*/
     	    
     	    $("#cancelBtn").click(function(){
     	    	$("#detailDialog").modal('hide');
