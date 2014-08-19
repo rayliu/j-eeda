@@ -13,6 +13,7 @@ import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.UserLogin;
+import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
 import com.jfinal.core.Controller;
@@ -305,33 +306,45 @@ public class ReturnOrderController extends Controller {
                 Contact customerContact = Contact.dao.findById(customer.get("contact_id"));
                 setAttr("customerContact", customerContact);
             }
-            Long notify_party_id = transferOrder.get("notify_party_id");
-            if (notify_party_id != null) {
-                Party notify = Party.dao.findById(notify_party_id);
-                Contact contact = Contact.dao.findById(notify.get("contact_id"));
-                setAttr("contact", contact);
-                Contact locationCode = Contact.dao.findById(notify.get("contact_id"));
-                String code = locationCode.get("location");
-
-                List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
-                Location l = Location.dao
-                        .findFirst("SELECT * FROM location where code = (select pcode from location where CODE = '"
-                                + code + "')");
-                Location location = null;
-                if (provinces.contains(l)) {
-                    location = Location.dao
-                            .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-                                    + code + "'");
-                } else {
-                    location = Location.dao
-                            .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-                                    + code + "'");
-                }
-                setAttr("location", location);
-            } else {
-                setAttr("contact", null);
+            String code = "";
+            Long deliveryOrderId = returnOrder.get("delivery_order_id");
+            if(deliveryOrderId != null){
+            	DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryOrderId);
+            	Long notifyPartyIdDo = deliveryOrder.get("notify_party_id");
+                if (notifyPartyIdDo != null) {
+                    Party notify = Party.dao.findById(notifyPartyIdDo);
+                    Contact contact = Contact.dao.findById(notify.get("contact_id"));
+                    setAttr("contact", contact);
+                    Contact locationCode = Contact.dao.findById(notify.get("contact_id"));
+                    code = locationCode.get("location");
+            }else{            
+	            Long notify_party_id = transferOrder.get("notify_party_id");
+	            if (notify_party_id != null) {
+	                Party notify = Party.dao.findById(notify_party_id);
+	                Contact contact = Contact.dao.findById(notify.get("contact_id"));
+	                setAttr("contact", contact);
+	                Contact locationCode = Contact.dao.findById(notify.get("contact_id"));
+	                code = locationCode.get("location");
+	            } 
             }
-
+         }
+            	
+            List<Location> provinces2 = Location.dao.find("select * from location where pcode ='1'");
+            Location l2 = Location.dao
+                    .findFirst("SELECT * FROM location where code = (select pcode from location where CODE = '"
+                            + code + "')");
+            Location location = null;
+            if (provinces2.contains(l2)) {
+                location = Location.dao
+                        .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                                + code + "'");
+            } else {
+                location = Location.dao
+                        .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                                + code + "'");
+            }
+            setAttr("location", location);
+            
             String routeFrom = transferOrder.get("route_from");
             Location locationFrom = null;
             if (routeFrom != null || !"".equals(routeFrom)) {
@@ -371,9 +384,7 @@ public class ReturnOrderController extends Controller {
             }
             UserLogin userLogin = UserLogin.dao.findById(transferOrder.get("create_by"));
             setAttr("userLoginOrder", userLogin);
-        } else {
-
-        }
+        } 
 
         setAttr("returnOrder", returnOrder);
         UserLogin userLogin = UserLogin.dao.findById(returnOrder.get("creator"));
