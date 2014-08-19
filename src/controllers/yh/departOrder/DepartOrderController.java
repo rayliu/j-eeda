@@ -354,7 +354,7 @@ public class DepartOrderController extends Controller {
                     + " (select sum(toi.weight) from transfer_order_item toi where toi.order_id = tor.id) as total_weight,"
                     + " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
-                    + " dor.address doaddress,tor.pickup_mode,tor.status,c.company_name cname,"
+                    + " ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.company_name cname,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.company_name as spname,cont.id as spid from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id "
@@ -753,8 +753,8 @@ public class DepartOrderController extends Controller {
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 
-        DepartOrder dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
-        dp.set("status", order_state).update();
+        DepartOrder departOrder = DepartOrder.dao.findById(Integer.parseInt(depart_id));
+        departOrder.set("status", order_state).update();
         if ("已入库".equals(order_state)) {
             productInWarehouse(depart_id);// 产品入库
         }
@@ -777,29 +777,52 @@ public class DepartOrderController extends Controller {
                 transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
                 transferOrderMilestone.save();
             }
-            // 生成应付
-            TransferOrderFinItem tFinItem = new TransferOrderFinItem();
+            
+            // 生成应付, （如果已经有了应付，就要清除掉旧数据重新算）
+            // 计件/整车/零担 生成发车单中供应商的应付，要算 item 的数量 * 合同中定义的价格
+            // Depart_Order_fin_item 提货单/发车单应付明细表
+            // 第一步：看发车单调度选择的计费方式是哪种：计件，整车，零担
+            // 第二步：循环所选运输单中的 item, 到合同中（循环）比对去算钱。
+            String chargeType = departOrder.get("charge_type");
 
-            if (dp.get("sp_id") != null) {
-                List<Record> contractList = Db
-                        .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
-                                + dp.get("sp_id")
-                                + "') and from_id = '"
-                                + dp.get("route_from")
-                                + "' and to_id ='"
-                                + dp.get("route_to") + "' and priceType='" + getPara("priceType") + "'");
-                if (contractList.size() > 0) {
-                    tFinItem.set("fin_item_id", "1");
-                    tFinItem.set("amount", contractList.get(0).get("amount"));
-                    tFinItem.set("depart_id", getPara("pickupOrderId"));
-                    tFinItem.set("status", "未完成");
-                    tFinItem.set("creator", users.get(0).get("id"));
-                    tFinItem.set("create_date", sqlDate);
-                    tFinItem.save();
+            List<DepartTransferOrder> dItem = DepartTransferOrder.dao
+                    .find("select order_id from depart_transfer where depart_id ='" + getPara("pickupOrderId") + "'");
+            String transferId = "";
+            for (DepartTransferOrder dItem2 : dItem) {
+                transferId += dItem2.get("order_id") + ",";
+            }
+            transferId = transferId.substring(0, transferId.length() - 1);
+
+            List<Record> transferOrderItemList = Db
+                    .find("select toi.*, t_o.route_from, t_o.route_to from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
+                            + transferId + ") order by pickup_seq desc");
+            if (departOrder.get("sp_id") != null) {
+                for (Record tOrderItemRecord : transferOrderItemList) {
+                    DepartOrderFinItem pickupFinItem = new DepartOrderFinItem();
+                    Record contractFinItem = Db
+                            .findFirst("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
+                                    + departOrder.get("sp_id")
+                                    + "') and from_id = '"
+                                    + tOrderItemRecord.get("route_from")
+                                    + "' and priceType='计件'");// TODO：先只算去哪取货的价格，and
+                                                              // to_id ='440100'
+                                                              // priceType
+                                                              // 不分大小写在mysql会有问题
+                    if (contractFinItem != null) {
+                        pickupFinItem.set("fin_item_id", "1");
+                        pickupFinItem.set("amount",
+                                contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
+                        pickupFinItem.set("depart_order_id", departOrder.getLong("id"));
+                        pickupFinItem.set("status", "未完成");
+                        pickupFinItem.set("creator", users.get(0).get("id"));
+                        pickupFinItem.set("create_date", sqlDate);
+                        pickupFinItem.save();
+                    }
                 }
             }
 
         }
+        
         if ("已签收".equals(order_state)) {
             // 生成回单
             Date createDate = Calendar.getInstance().getTime();
@@ -818,10 +841,10 @@ public class DepartOrderController extends Controller {
 
         }
 
-        savePickupOrderMilestone(dp, order_state);
+        savePickupOrderMilestone(departOrder, order_state);
         Map Map = new HashMap();
         Map.put("amount", nummber);
-        Map.put("depart", dp);
+        Map.put("depart", departOrder);
         renderJson(Map);
     }
 

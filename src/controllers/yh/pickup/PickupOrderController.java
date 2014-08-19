@@ -1227,12 +1227,14 @@ public class PickupOrderController extends Controller {
         orderMap.put("aaData", orders);
 
         // 没有名字就删掉？不能删，要让人知道这里有错(不是，只是删除临时添加的条目而已，不删除添加的记录)
-        List<Record> list = Db.find("select * from fin_item");
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).get("name") == null) {
-                Fin_item.dao.deleteById(list.get(i).get("id"));
-            }
-        }
+        
+        //TODO: 8-19 这里为什么要删 “应收应付条目定义”中的数据，基础数据 不能在业务单据中的操作进行删除。
+//        List<Record> list = Db.find("select * from fin_item");
+//        for (int i = 0; i < list.size(); i++) {
+//            if (list.get(i).get("name") == null) {
+//                Fin_item.dao.deleteById(list.get(i).get("id"));
+//            }
+//        }
         renderJson(orderMap);
     }
 
