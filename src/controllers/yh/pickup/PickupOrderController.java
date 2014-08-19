@@ -449,20 +449,22 @@ public class PickupOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select count(1) total from transfer_order_item tof"
-                + " where tof.order_id in(" + order_id + ")";
+        String sqlTotal = "select count(1) total from transfer_order_item tof" + " where tof.order_id in(" + order_id
+                + ")";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
         String sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume)*toi.amount volume, "
-						+ " ifnull(case toi.weight when 0.0 then null else toi.weight end, pd.weight)*toi.amount weight"
-						+ " ,c.company_name customer,tor.order_no,toi.amount,toi.remark  from transfer_order_item toi "
-						+ " left join transfer_order tor on tor.id = toi.order_id"
-						+ " left join party p on p.id = tor.customer_id"
-						+ " left join contact c on c.id = p.contact_id"
-						+ " left join product pd on pd.id = toi.product_id"
-						+ " where toi.order_id in(" + order_id + ")  order by c.id" + sLimit;
+                + " ifnull(case toi.weight when 0.0 then null else toi.weight end, pd.weight)*toi.amount weight"
+                + " ,c.company_name customer,tor.order_no,toi.amount,toi.remark  from transfer_order_item toi "
+                + " left join transfer_order tor on tor.id = toi.order_id"
+                + " left join party p on p.id = tor.customer_id"
+                + " left join contact c on c.id = p.contact_id"
+                + " left join product pd on pd.id = toi.product_id"
+                + " where toi.order_id in("
+                + order_id
+                + ")  order by c.id" + sLimit;
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
@@ -1224,7 +1226,7 @@ public class PickupOrderController extends Controller {
 
         orderMap.put("aaData", orders);
 
-        // 没有名字就删掉？不能删，要让人知道这里有错(不是，只是删除条目而已，不删除添加的记录)
+        // 没有名字就删掉？不能删，要让人知道这里有错(不是，只是删除临时添加的条目而已，不删除添加的记录)
         List<Record> list = Db.find("select * from fin_item");
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {

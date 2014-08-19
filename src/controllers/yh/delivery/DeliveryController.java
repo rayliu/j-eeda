@@ -756,11 +756,17 @@ public class DeliveryController extends Controller {
         }
 
         if (deliveryid == null || "".equals(deliveryid)) {
-
-            deliveryOrder.set("Order_no", orderNo).set("Transfer_order_id", getPara("tranferid"))
-                    .set("Customer_id", getPara("customer_id")).set("Sp_id", getPara("cid"))
-                    .set("Notify_party_id", party.get("id")).set("CREATE_STAMP", createDate).set("Status", "新建");
-            deliveryOrder.save();
+            if (notifyId == null || notifyId.equals("")) {
+                deliveryOrder.set("Order_no", orderNo).set("Transfer_order_id", getPara("tranferid"))
+                        .set("Customer_id", getPara("customer_id")).set("Sp_id", getPara("cid"))
+                        .set("Notify_party_id", party.get("id")).set("CREATE_STAMP", createDate).set("Status", "新建");
+                deliveryOrder.save();
+            } else {
+                deliveryOrder.set("Order_no", orderNo).set("Transfer_order_id", getPara("tranferid"))
+                        .set("Customer_id", getPara("customer_id")).set("Sp_id", getPara("cid"))
+                        .set("Notify_party_id", notifyId).set("CREATE_STAMP", createDate).set("Status", "新建");
+                deliveryOrder.save();
+            }
 
             String string = getPara("tranferid");
             // 改变运输单状态
