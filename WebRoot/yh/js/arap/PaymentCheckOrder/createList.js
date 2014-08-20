@@ -3,7 +3,7 @@ $(document).ready(function() {
     $('#menu_finance').addClass('active').find('ul').addClass('in');
     
     //datatable, 动态处理
-    var paymentCheckTable = $('#paymentCheck-table').dataTable({
+    var paymentCheckTable = $('#paymentCheckOrder-table').dataTable({
     	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
     	//"sPaginationType": "bootstrap",
@@ -19,14 +19,11 @@ $(document).ready(function() {
         		  return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
         	  }
           },
-          /*{ "mDataProp": "ORDER_NO"},*/
-          { "mDataProp": "CUSTOMERID"},
-          { "mDataProp": "CNAME"},
-          /*{ "mDataProp": "ORDER_NO"},*/
-          { "mDataProp": "TORORDERNO"},
-          { "mDataProp": "DORORDERNO" },
-          { "mDataProp": "CREATE_DATE" },
-          { "mDataProp": "STATUS"}                           
+          { "mDataProp": "ORDER_NO"},
+          { "mDataProp": "COMPANY_NAME"},
+          { "mDataProp": "CREATE_STAMP" },
+          { "mDataProp": "STATUS"},                           
+          { "mDataProp": "REMARK"}                           
           ]      
     });	
     
@@ -34,7 +31,7 @@ $(document).ready(function() {
     $('#companyName').on('keyup', function(){
         var inputStr = $('#companyName').val();
         
-        $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+        $.get("/yh/customerContract/search2", {locationName:inputStr}, function(data){
             console.log(data);
             var companyList =$("#companyList");
             companyList.empty();
@@ -55,7 +52,7 @@ $(document).ready(function() {
         $('#companyName').val($(this).text());
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
-        $('#customerId').val(companyId);
+        $('#spId').val(companyId);
         //过滤回单列表
         //paymentCheckTable.fnFilter(companyId, 2);
     });
@@ -97,26 +94,13 @@ $(document).ready(function() {
             return false;
         }
         if(chk_value.length==0 ){
-            $.scojs_message('你还没有勾选任何应收回单.', $.scojs_message.TYPE_ERROR);
+            $.scojs_message('你还没有勾选任何单剧.', $.scojs_message.TYPE_ERROR);
             return false;
         }
 
         $('#createForm').submit();
     });
 
-    $('input.beginTime_filter').on( 'change input', function () {
-        var orderNo = $("#orderNo_filter").val();
-        var status = $("#status_filter").val();
-        var address = $("#address_filter").val();
-        var customer = $("#customer_filter").val();
-        var sp = $("#sp_filter").val();
-        var beginTime = $("#beginTime_filter").val();
-        var endTime = $("#endTime_filter").val();
-        var officeName = $("#officeName_filter").val();
-        transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-        transferOrder.fnDraw();
-    } );
-    
     $('#beginTime_filter').on('keyup', function () {
         var orderNo = $("#orderNo_filter").val();
         var status = $("#status_filter").val();
@@ -124,6 +108,7 @@ $(document).ready(function() {
         var customer = $("#customer_filter").val();
         var sp = $("#sp_filter").val();
         var beginTime = $("#beginTime_filter").val();
+        $("#beginTime").val(beginTime);
         var endTime = $("#endTime_filter").val();
         var officeName = $("#officeName_filter").val();
         // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
@@ -138,6 +123,7 @@ $(document).ready(function() {
         var sp = $("#sp_filter").val();
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
+        $("#endTime").val(endTime);
         var officeName = $("#officeName_filter").val();
         // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
         // transferOrder.fnDraw();
@@ -170,7 +156,7 @@ $(document).ready(function() {
           }
         },
         messages : {                 
-            companyName : {required:  "请选择一个客户"}
+            companyName : {required:  "请选择一个供应商"}
         }
     }); 
 } );

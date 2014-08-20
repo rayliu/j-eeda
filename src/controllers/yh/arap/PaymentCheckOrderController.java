@@ -1,11 +1,18 @@
 package controllers.yh.arap;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.ArapAuditOrder;
 import models.Party;
+import models.UserLogin;
 import models.yh.profile.Contact;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -16,7 +23,8 @@ import controllers.yh.LoginUserController;
 
 public class PaymentCheckOrderController extends Controller {
     private Logger logger = Logger.getLogger(PaymentCheckOrderController.class);
-
+    Subject currentUser = SecurityUtils.getSubject();
+    
     public void index() {
         setAttr("type", "SERVICE_PROVIDER");
         setAttr("classify", "");
@@ -35,14 +43,56 @@ public class PaymentCheckOrderController extends Controller {
         String ids = getPara("ids");
         String[] idArray = ids.split(",");
         logger.debug(String.valueOf(idArray.length));
+        
+        setAttr("orderIds", ids);	 
+        String beginTime = getPara("beginTime");
+        if(beginTime != null && !"".equals(beginTime)){
+        	setAttr("beginTime", beginTime);
+        }
+        String endTime = getPara("endTime");
+        if(endTime != null && !"".equals(endTime)){
+        	setAttr("endTime", endTime);	
+        }
+        String spId = getPara("spId");
+        if(!"".equals(spId) && spId != null){
+	        Party party = Party.dao.findById(spId);
+	
+	        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+	        setAttr("serviceProvider", contact);
+	        setAttr("type", "SERVICE_PROVIDER");
+	        setAttr("classify", "");
+        }
+        
+        String order_no = null;
+        setAttr("saveOK", false);
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        setAttr("create_by", users.get(0).get("id"));
 
-        String customerId = getPara("customerId");
-        Party party = Party.dao.findById(customerId);
+        ArapAuditOrder order = ArapAuditOrder.dao.findFirst("select * from arap_audit_order order by order_no desc limit 0,1");
+        if (order != null) {
+            String num = order.get("order_no");
+            String str = num.substring(2, num.length());
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) {
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            setAttr("order_no", "DZ" + order_no);
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            setAttr("order_no", "DZ" + order_no);
+        }
 
-        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-        setAttr("customer", contact);
-        setAttr("type", "SERVICE_PROVIDER");
-        setAttr("classify", "");
+        UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+        setAttr("userLogin", userLogin);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/arap/PaymentCheckOrder/PaymentCheckOrderEdit.html");
     }
@@ -79,21 +129,24 @@ public class PaymentCheckOrderController extends Controller {
         }
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from transfer_order_fin_item";
+        String sql = "select sum(tempcount) total from (select count(*) tempcount from transfer_order "
+						+" union "
+						+" select count(*) tempcount from depart_order)";
         Record rec = Db.findFirst(sql + fieldsWhere);
-        logger.debug("total records:" + rec.getLong("total"));
+        logger.debug("total records:" + rec.get("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select p.id customerid,c.contact_person cname,tor.order_no tororderno,dor.order_no dororderno,tofi.* from transfer_order_fin_item tofi"
-        		+ " left join transfer_order tor on tor.id = tofi.order_id "
-        		+ " left join party p on p.id = tor.customer_id "
-        		+ " left join contact c on c.id = p.contact_id "
-        		+ " left join depart_order dtr on dtr.id = tofi.depart_id "
-        		+ " left join delivery_order dor on dor.id = tofi.delivery_id");
+        List<Record> orders = Db.find("select tor.id,tor.order_no order_no,tor.create_stamp,tor.status,tor.remark,c.company_name from transfer_order tor "
+										+" left join party p on p.id = tor.sp_id "
+										+" left join contact c on c.id = p.contact_id "
+										+" union " 
+										+" select dor.id,depart_no order_no,dor.create_stamp,dor.status,dor.remark,c.company_name from depart_order dor "
+										+" left join party p on p.id = dor.sp_id "
+										+" left join contact c on c.id = p.contact_id order by create_stamp desc");
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", rec.getLong("total"));
-        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        orderMap.put("iTotalRecords", rec.get("total"));
+        orderMap.put("iTotalDisplayRecords", rec.get("total"));
         orderMap.put("aaData", orders);
         renderJson(orderMap);
     }

@@ -114,19 +114,6 @@ $(document).ready(function() {
         $('#createForm').submit();
     });
 
-    $('input.beginTime_filter').on( 'change input', function () {
-        var orderNo = $("#orderNo_filter").val();
-        var status = $("#status_filter").val();
-        var address = $("#address_filter").val();
-        var customer = $("#customer_filter").val();
-        var sp = $("#sp_filter").val();
-        var beginTime = $("#beginTime_filter").val();
-        var endTime = $("#endTime_filter").val();
-        var officeName = $("#officeName_filter").val();
-        // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-        // transferOrder.fnDraw();
-    } );
-    
     $('#beginTime_filter').on('keyup', function () {
         var orderNo = $("#orderNo_filter").val();
         var status = $("#status_filter").val();
