@@ -88,6 +88,7 @@
         ]      
     });
     
+    var deliveryOrderId = $("#deliveryOrderId").val();
 	//datatable, 动态处理
     var detailDataTable = $('#detailTable').dataTable({
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -95,7 +96,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+transferOrderId,
+        "sAjaxSource": "/yh/returnOrder/transferOrderDetailList?orderId="+transferOrderId+"&deliveryOrderId="+deliveryOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },

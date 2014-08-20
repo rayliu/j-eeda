@@ -790,6 +790,15 @@ public class DeliveryController extends Controller {
                         .set("transfer_order_id", getPara("tranferid")).set("transfer_no", idlist5);
                 deliveryOrderItem.save();
             }
+            
+            // 在单品中设置delivery_id
+            String detailIds = getPara("localArr2");
+            String[] detailIdArr = detailIds.split(",");
+            for(int i=0;i<detailIdArr.length;i++){
+            	TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(detailIdArr[i]);
+            	transferOrderItemDetail.set("delivery_id", deliveryOrder.get("id"));
+            	transferOrderItemDetail.update();
+            }
             saveDeliveryOrderMilestone(deliveryOrder);
         } else {
 

@@ -457,4 +457,51 @@ public class ReturnOrderController extends Controller {
         }
         renderJson(orderMap);
     }
+    
+    public void transferOrderDetailList() {
+        String deliveryOrderId = getPara("deliveryOrderId");
+        String orderId = getPara("orderId");
+        if (deliveryOrderId == null || "".equals(deliveryOrderId)) {
+        	deliveryOrderId = "-1";
+        }
+        if (orderId == null || "".equals(orderId)) {
+        	orderId = "-1";
+        }
+        logger.debug(deliveryOrderId);
+
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        String sql = "";
+        String sqlTotal = "";
+        if(deliveryOrderId != "-1"){
+	        sqlTotal = "select count(1) total from transfer_order_item_detail where delivery_id =" + deliveryOrderId;
+	
+	        sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
+					+ " left join party p on d.notify_party_id = p.id"
+					+ " left join contact c on p.contact_id = c.id"
+					+ " where d.delivery_id ="+deliveryOrderId + sLimit;	
+        }else{
+        	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id="+orderId;
+	
+	        sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
+					+ " left join party p on d.notify_party_id = p.id"
+					+ " left join contact c on p.contact_id = c.id"
+	                + " where order_id = "+orderId + sLimit;	
+        }
+
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+        List<Record> transferOrders = Db.find(sql);
+        Map transferOrderListMap = new HashMap();
+        transferOrderListMap.put("sEcho", pageIndex);
+        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        transferOrderListMap.put("aaData", transferOrders);
+
+        renderJson(transferOrderListMap);
+    }
 }
