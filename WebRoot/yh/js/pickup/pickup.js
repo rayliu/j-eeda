@@ -23,6 +23,15 @@ $(document).ready(function() {
             	"mDataProp": "ORDER_NO",
             	"sClass": "order_no"
             },
+            {"mDataProp":"OPERATION_TYPE",
+    			"fnRender": function(obj) {
+    				if(obj.aData.OPERATION_TYPE == "out_source"){
+    					return "外包";
+    				}else if(obj.aData.OPERATION_TYPE == "own"){
+    					return "自营";
+    				}else{
+    					return "";
+    				}}},  
 		    {"mDataProp":"ORDER_TYPE",
             	"sClass": "order_type",
             	"fnRender": function(obj) {
