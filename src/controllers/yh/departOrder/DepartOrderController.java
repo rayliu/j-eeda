@@ -541,6 +541,7 @@ public class DepartOrderController extends Controller {
     // 保存发车单
     public void saveDepartOrder() {
         String depart_id = getPara("depart_id");// 发车单id
+        String charge_type = getPara("chargeType");// 供应商计费类型
         String sp_id = getPara("sp_id");// 供应商id
         // 查找创建人id
         String name = (String) currentUser.getPrincipal();
@@ -556,7 +557,7 @@ public class DepartOrderController extends Controller {
         DepartOrder dp = null;
         if ("".equals(depart_id)) {
             dp = new DepartOrder();
-            dp.set("create_by", getPara("create_by")).set("create_stamp", createDate)
+            dp.set("charge_type", charge_type).set("create_by", getPara("create_by")).set("create_stamp", createDate)
                     .set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
@@ -589,7 +590,7 @@ public class DepartOrderController extends Controller {
             }
         } else {
             dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
-            dp.set("create_by", getPara("create_by")).set("create_stamp", createDate)
+            dp.set("charge_type", charge_type).set("create_by", getPara("create_by")).set("create_stamp", createDate)
                     .set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
@@ -800,7 +801,7 @@ public class DepartOrderController extends Controller {
                     .find("select toi.*, t_o.route_from, t_o.route_to from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
                             + transferIds + ") order by pickup_seq desc");
             // 生成应付
-            calcCost(sqlDate, users, departOrder, transferOrderItemList);
+            calcCost(users, departOrder, transferOrderItemList);
 
         }
         
@@ -836,39 +837,61 @@ public class DepartOrderController extends Controller {
     // 级别4：计费类别 + 目的地
     
     // priceType 不分大小写在mysql会有问题
-    private void calcCost(java.sql.Timestamp now, List<UserLogin> users, DepartOrder departOrder, List<Record> transferOrderItemList) {
-        String spId=departOrder.get("sp_id");
+    private void calcCost(List<UserLogin> users, DepartOrder departOrder, List<Record> transferOrderItemList) {
+        Long spId=departOrder.getLong("sp_id");
         if ( spId== null)
             return;
         
-        //TODO get contract
-        Contract spContract= null;
+        //先获取有效期内的sp合同, 如有多个，默认取第一个
+        Contract spContract= Contract.dao.findFirst("select * from contract where type='SERVICE_PROVIDER' " +
+        		"and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="+spId);
         if(spContract==null)
             return;
         
         String chargeType = departOrder.get("charge_type");
+        if("perUnit".equals(chargeType)){
+            chargeType="计件";
+        }else if("perCar".equals(chargeType)){
+            chargeType="整车";
+        }else if("perCargo".equals(chargeType)){
+            chargeType="零担";
+        }
         
         if ( spId!= null) {
             for (Record tOrderItemRecord : transferOrderItemList) {
-                DepartOrderFinItem pickupFinItem = new DepartOrderFinItem();
+                
                 Record contractFinItem = Db
-                        .findFirst("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
-                                + spId
-                                + "') and from_id = '"
+                        .findFirst("select amount from contract_item where contract_id ="+spContract.getLong("id")
+                                +" and from_id = '"
                                 + tOrderItemRecord.get("route_from")
                                 + "' and priceType='"+chargeType+"'");
-                if (contractFinItem != null) {
-                    pickupFinItem.set("fin_item_id", "1");
-                    pickupFinItem.set("amount",
-                            contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
-                    pickupFinItem.set("depart_order_id", departOrder.getLong("id"));
-                    pickupFinItem.set("status", "未完成");
-                    pickupFinItem.set("creator", users.get(0).get("id"));
-                    pickupFinItem.set("create_date", now);
-                    pickupFinItem.save();
+                if (contractFinItem != null) {//级别3
+                    genFinItem(users, departOrder, tOrderItemRecord, contractFinItem);
+                }else{//级别4
+                    contractFinItem = Db
+                            .findFirst("select amount from contract_item where contract_id ="+spContract.getLong("id")
+                                    +" and to_id = '"+ tOrderItemRecord.get("route_to")
+                                    + "' and priceType='"+chargeType+"'");
+                    if (contractFinItem != null) 
+                        genFinItem(users, departOrder, tOrderItemRecord, contractFinItem);
                 }
             }
         }
+    }
+
+    private void genFinItem( List<UserLogin> users, DepartOrder departOrder, Record tOrderItemRecord,
+            Record contractFinItem) {
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
+        DepartOrderFinItem pickupFinItem = new DepartOrderFinItem();
+        pickupFinItem.set("fin_item_id", "1");
+        pickupFinItem.set("amount",
+                contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
+        pickupFinItem.set("depart_order_id", departOrder.getLong("id"));
+        pickupFinItem.set("status", "未完成");
+        pickupFinItem.set("creator", users.get(0).get("id"));
+        pickupFinItem.set("create_date", now);
+        pickupFinItem.save();
     }
 
     // 构造单号

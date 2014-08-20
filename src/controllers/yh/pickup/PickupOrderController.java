@@ -21,6 +21,7 @@ import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.yh.contract.Contract;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 
@@ -889,12 +890,36 @@ public class PickupOrderController extends Controller {
         pickupMilestone.save();
 
         // 生成应付, （如果已经有了应付，就要清除掉旧数据重新算）
+        //先获取有效期内的合同，条目越具体优先级越高
+        // 级别1：计费类别 + 货  品 + 始发地 + 目的地
+        // 级别2：计费类别 + 货  品 + 目的地
+        // 级别3：计费类别 + 始发地 + 目的地
+        // 级别4：计费类别 + 始发地
+        
         // 按件生成提货单中供应商的应付，要算 item 的数量 * 合同中定义的价格
         // Depart_Order_fin_item 提货单/发车单应付明细表
         // 第一步：看提货单调度选择的计费方式是哪种：计件，整车，零担
         // 第二步：循环所选运输单中的 item, 到合同中（循环）比对去算钱。
+        
+        Long spId=pickupOrder.getLong("sp_id");
+        if ( spId== null)
+            return;
+        
+        //先获取有效期内的sp合同, 如有多个，默认取第一个
+        Contract spContract= Contract.dao.findFirst("select * from contract where type='DELIVERY_SERVICE_PROVIDER' " +
+                "and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="+spId);
+        if(spContract==null)
+            return;
+        
         String chargeType = pickupOrder.get("charge_type");
-
+        if("perUnit".equals(chargeType)){
+            chargeType="计件";
+        }else if("perCar".equals(chargeType)){
+            chargeType="整车";
+        }else if("perCargo".equals(chargeType)){
+            chargeType="零担";
+        }
+        
         List<DepartTransferOrder> dItem = DepartTransferOrder.dao
                 .find("select order_id from depart_transfer where depart_id ='" + getPara("pickupOrderId") + "'");
         String transferId = "";
@@ -906,27 +931,23 @@ public class PickupOrderController extends Controller {
         List<Record> transferOrderItemList = Db
                 .find("select toi.*, t_o.route_from, t_o.route_to from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
                         + transferId + ") order by pickup_seq desc");
-        if (pickupOrder.get("sp_id") != null) {
+        if (spId != null) {
             for (Record tOrderItemRecord : transferOrderItemList) {
-                DepartOrderFinItem pickupFinItem = new DepartOrderFinItem();
+                //TODO 1,2还没实现，因为contract_item没有product_id
                 Record contractFinItem = Db
-                        .findFirst("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
-                                + pickupOrder.get("sp_id")
-                                + "') and from_id = '"
-                                + tOrderItemRecord.get("route_from")
-                                + "' and priceType='计件'");// TODO：先只算去哪取货的价格，and
-                                                          // to_id ='440100'
-                                                          // priceType
-                                                          // 不分大小写在mysql会有问题
+                        .findFirst("select amount from contract_item where contract_id ="+spContract.getLong("id")
+                                +" and from_id = '"+ tOrderItemRecord.get("route_from")
+                                +"' and to_id = '"+ tOrderItemRecord.get("route_to")
+                                + "' and priceType='"+chargeType+"'");
                 if (contractFinItem != null) {
-                    pickupFinItem.set("fin_item_id", "1");
-                    pickupFinItem.set("amount",
-                            contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
-                    pickupFinItem.set("depart_order_id", pickupOrder.getLong("id"));
-                    pickupFinItem.set("status", "未完成");
-                    pickupFinItem.set("creator", users.get(0).get("id"));
-                    pickupFinItem.set("create_date", sqlDate);
-                    pickupFinItem.save();
+                    genFinItem(pickupOrder, users, sqlDate, tOrderItemRecord, contractFinItem);
+                }else{
+                    contractFinItem = Db
+                            .findFirst("select amount from contract_item where contract_id ="+spContract.getLong("id")
+                                    +" and from_id = '"+ tOrderItemRecord.get("route_from")
+                                    + "' and priceType='"+chargeType+"'");
+                    if (contractFinItem != null) 
+                        genFinItem(pickupOrder, users, sqlDate, tOrderItemRecord, contractFinItem);
                 }
             }
         }
@@ -946,6 +967,20 @@ public class PickupOrderController extends Controller {
             }
         }
         renderJson("{\"success\":true}");
+    }
+
+    
+    private void genFinItem(DepartOrder pickupOrder, List<UserLogin> users, java.sql.Timestamp sqlDate, Record tOrderItemRecord,
+            Record contractFinItem) {
+        DepartOrderFinItem pickupFinItem = new DepartOrderFinItem();
+        pickupFinItem.set("fin_item_id", "1");
+        pickupFinItem.set("amount",
+                contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
+        pickupFinItem.set("depart_order_id", pickupOrder.getLong("id"));
+        pickupFinItem.set("status", "未完成");
+        pickupFinItem.set("creator", users.get(0).get("id"));
+        pickupFinItem.set("create_date", sqlDate);
+        pickupFinItem.save();
     }
 
     // 产品入库
