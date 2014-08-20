@@ -429,6 +429,11 @@ public class DepartOrderController extends Controller {
                 setAttr("spContact", spContact);
                 break;
             }
+            //如果只有一张运输单，默认带出始发地、目的地
+            if(orderIds.length==1){
+                setAttr("route_from", transferOrder.get("route_from"));
+                setAttr("route_to", transferOrder.get("route_to"));
+            }
         }
 
         logger.debug("localArr" + list);
@@ -546,7 +551,7 @@ public class DepartOrderController extends Controller {
         // 查找创建人id
         String name = (String) currentUser.getPrincipal();
         UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
-        String creat_id = users.get("id").toString();// 创建人id
+        String create_id = LoginUserController.getLoginUserId(this).toString();// 创建人id
         String driver_id = getPara("driver_id");// 司机id
         String carinfoId = getPara("carinfoId");// 司机id
         String car_follow_name = getPara("car_follow_name");// 跟车人
@@ -557,7 +562,7 @@ public class DepartOrderController extends Controller {
         DepartOrder dp = null;
         if ("".equals(depart_id)) {
             dp = new DepartOrder();
-            dp.set("charge_type", charge_type).set("create_by", getPara("create_by")).set("create_stamp", createDate)
+            dp.set("charge_type", charge_type).set("create_by", create_id).set("create_stamp", createDate)
                     .set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
@@ -588,9 +593,9 @@ public class DepartOrderController extends Controller {
             if (!"".equals(partySpId)) {
                 updateTransferOrderSp(dp);
             }
-        } else {
+        } else {//TODO update不需要更改create_by, create_date
             dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
-            dp.set("charge_type", charge_type).set("create_by", getPara("create_by")).set("create_stamp", createDate)
+            dp.set("charge_type", charge_type).set("create_by", create_id).set("create_stamp", createDate)
                     .set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))

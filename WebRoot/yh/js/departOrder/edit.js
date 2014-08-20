@@ -324,7 +324,7 @@
     					{
     						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
     					}
-    					toLocationList.show();
+    					
     				},'json');
     			});
     	    //获取城市的区县
@@ -339,7 +339,7 @@
     					{
     						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
     					}
-    					toLocationList.show();
+    					
     				},'json');
     			});
     	    
@@ -380,7 +380,7 @@
     					{
     						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
     					}
-    					toLocationList.show();
+    					
     				},'json');
     			});
     	    
@@ -396,7 +396,7 @@
     					{
     						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
     					}
-    					toLocationList.show();
+    					
     				},'json');
     			});
     	    
