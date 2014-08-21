@@ -2,6 +2,7 @@
 $(document).ready(function() {
     $('#menu_assign').addClass('active').find('ul').addClass('in'); 
     var spName = [];
+    var routeArr = [];
     var spNameUnchecked = [];
 	//datatable, 动态处理
     var datatable = $('#eeda-table').dataTable({
@@ -54,7 +55,15 @@ $(document).ready(function() {
             { 
             	"mDataProp": "SPNAME",
             	"sClass": "spname"
-            }   
+            },
+            { 
+            	"mDataProp": "ROUTE_FROM",
+                "sClass": "route_from"
+            },
+            { 
+            	"mDataProp": "ROUTE_TO",
+                "sClass": "route_to"
+            }
         ]      
     });	
 
@@ -113,15 +122,36 @@ $(document).ready(function() {
 				if(spName[0] != $(this).parent().siblings('.spname')[0].innerHTML && $(this).parent().siblings('.spname')[0].innerHTML != ''){
 					alert("请选择同一供应商!");
 					return false;
+				}else{
+					if(routeArr.length != 0){
+						if(routeArr[0] != $(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML && $(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML != ''){
+							alert("请选择同一线路的运输单!");
+							return false;
+						}else{
+							spName.push($(this).parent().siblings('.spname')[0].innerHTML);
+							routeArr.push($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML);
+						}
+					}else{
+						if($(this).parent().siblings('.operation_type')[0].innerHTML != ''){
+							routeArr.push($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML);
+						}
+					}
 				}
 			}else{
 				if($(this).parent().siblings('.spname')[0].innerHTML != ''){
 					spName.push($(this).parent().siblings('.spname')[0].innerHTML);
+					routeArr.push($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML);
 				}
 			}
 		}else{
 			if(spName.length != 0){
 				spName.splice($(this).parent().siblings('.spname')[0].innerHTML, 1);
+			}
+			if(routeArr.length != 0){
+				routeArr.splice($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML, 1);
+			}
+			if(spName.length == 0){
+				$("#saveBtn").attr('disabled', true);
 			}
 		}
 	});

@@ -184,8 +184,11 @@ $(document).ready(function() {
     
 	$("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
-			//orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
 			$("#saveBtn").attr('disabled', false);
+		}else{
+			if(orderType.length == 0){
+				$("#saveBtn").attr('disabled', true);				
+			}
 		}
 	});
 	

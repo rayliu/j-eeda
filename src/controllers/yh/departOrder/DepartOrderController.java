@@ -422,17 +422,50 @@ public class DepartOrderController extends Controller {
         String[] orderIds = list.split(",");
         for (int i = 0; i < orderIds.length; i++) {
             TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
+            
+            String routeFrom = transferOrder.get("route_from");
+            Location locationFrom = null;
+            if (routeFrom != null || !"".equals(routeFrom)) {
+                List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
+                Location l = Location.dao
+                        .findFirst("select * from location where code = (select pcode from location where code = '"
+                                + routeFrom + "')");
+                if (provinces.contains(l)) {
+                    locationFrom = Location.dao
+                            .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                                    + routeFrom + "'");
+                } else {
+                    locationFrom = Location.dao
+                            .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                                    + routeFrom + "'");
+                }
+                setAttr("locationFrom", locationFrom);
+            }
+
+            String routeTo = transferOrder.get("route_to");
+            Location locationTo = null;
+            if (routeTo != null || !"".equals(routeTo)) {
+                List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
+                Location l = Location.dao
+                        .findFirst("select * from location where code = (select pcode from location where code = '"
+                                + routeTo + "')");
+                if (provinces.contains(l)) {
+                    locationTo = Location.dao
+                            .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                                    + routeTo + "'");
+                } else {
+                    locationTo = Location.dao
+                            .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                                    + routeTo + "'");
+                }
+                setAttr("locationTo", locationTo);
+            }
             if (transferOrder.get("sp_id") != null) {
                 Party sp = Party.dao.findById(transferOrder.get("sp_id"));
                 setAttr("partySp", sp);
                 Contact spContact = Contact.dao.findById(sp.get("contact_id"));
                 setAttr("spContact", spContact);
                 break;
-            }
-            //如果只有一张运输单，默认带出始发地、目的地
-            if(orderIds.length==1){
-                setAttr("route_from", transferOrder.get("route_from"));
-                setAttr("route_to", transferOrder.get("route_to"));
             }
         }
 
