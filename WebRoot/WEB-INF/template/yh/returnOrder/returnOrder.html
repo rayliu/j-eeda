@@ -106,7 +106,7 @@
 	                                    </div> 
 	                                                                            
 	                                    <div class="form-group">
-	                                     <label >业务员</label>  ${userLoginOrder.user_name!''}                                    
+	                                     <label >业务员</label>  ${userLoginTo.user_name!''}                                    
 	                                    </div>
 	                                    <div class="form-group">
 	                                        <label>货品属性</label>	<span id="cargoNatureSpan"><input id="cargoNature" type="hidden" value="${transferOrder.cargo_nature!''}"></span>
@@ -121,13 +121,27 @@
 	                                   			 <div class="form-group">
 	                                           		<label>始发点</label>	${locationFrom.province!''} ${locationFrom.city!''} ${locationFrom.district!''}                              
 	                                       			 </div>       
-	                                              <div class="form-group">                                        
+	                                              <!-- <div class="form-group">                                        
 	                                              	<label>终点</label>		${locationTo.province!''} ${locationTo.city!''} ${locatioTo.district!''}      
-	                                 			</div>  
-	                                 			
+	                                 			</div>  --> 
+	                                 			<div class="form-group" >
+	                                            <input id="locationTo" type="hidden" name="route_to" value="${departOrder.route_to!''}">
+	                                           	<label>终点</label>
+			                                     <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">
+			                                        <label>省</label>
+			                                        <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
+			                                        <select id="mbProvinceTo" class="valid" name="mbProvinceTo" value=""></select>
+			                                        <label>市</label>
+			                                        <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
+			                                        <select  id="cmbCityTo"  class="valid" name="cmbCityTo" value=""></select>
+			                                        <label>区(县)</label>
+			                                        <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}" />
+			                                        <select  id="cmbAreaTo" class="valid" name="cmbAreaTo" value=""></select>
+			                                    	</div>
+			                                    </div>
 	                                 			<div class="form-group">
 	                                            <label>备注</label>
-	                                            <textarea class="form-control" rows="8" name="remark">${returnOrder.remark!''}</textarea>
+	                                            <textarea class="form-control" rows="6" name="remark">${returnOrder.remark!''}</textarea>
 	                                        </div> 
 	                                      
 	                                </div>
