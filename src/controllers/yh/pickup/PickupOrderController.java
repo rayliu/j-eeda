@@ -224,7 +224,7 @@ public class PickupOrderController extends Controller {
                     + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'";
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
@@ -236,7 +236,7 @@ public class PickupOrderController extends Controller {
                     + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " order by tor.create_stamp desc" + sLimit;
         } else if ("".equals(routeFrom) && "".equals(routeTo)) {
             if (beginTime == null || "".equals(beginTime)) {
@@ -250,7 +250,7 @@ public class PickupOrderController extends Controller {
                     + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
                     + " "
@@ -280,7 +280,7 @@ public class PickupOrderController extends Controller {
                     + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
                     + " and ifnull(l1.name, '') like '%"
@@ -315,7 +315,7 @@ public class PickupOrderController extends Controller {
                     + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
                     + " "
@@ -346,7 +346,7 @@ public class PickupOrderController extends Controller {
                     + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
                     + " and ifnull(l1.name, '') like '%"

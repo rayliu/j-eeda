@@ -256,6 +256,9 @@ $(document).ready(function() {
 								if(warehouseArr[0] != $(this).parent().siblings('.warehouse')[0].innerHTML && $(this).parent().siblings('.warehouse')[0].innerHTML != ''){
 									alert("请选择同一仓库!");
 									return false;
+								}else{
+									cname.push($(this).parent().siblings('.cname')[0].innerHTML);
+									warehouseArr.push($(this).parent().siblings('.warehouse')[0].innerHTML);
 								}
 							}else{
 								if($(this).parent().siblings('.warehouse')[0].innerHTML != ''){

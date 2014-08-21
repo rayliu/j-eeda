@@ -2,6 +2,7 @@
 $(document).ready(function() {
     $('#menu_assign').addClass('active').find('ul').addClass('in');
     var orderType = [];
+    var operationType = [];
 	//datatable, 动态处理
     var pickupOrder = $('#eeda-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -24,6 +25,7 @@ $(document).ready(function() {
             	"sClass": "order_no"
             },
             {"mDataProp":"OPERATION_TYPE",
+            	"sClass": "operation_type",
     			"fnRender": function(obj) {
     				if(obj.aData.OPERATION_TYPE == "out_source"){
     					return "外包";
@@ -182,7 +184,7 @@ $(document).ready(function() {
     
 	$("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
-			orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
+			//orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
 			$("#saveBtn").attr('disabled', false);
 		}
 	});
@@ -204,6 +206,7 @@ $(document).ready(function() {
 	$("#transferOrderList").on('click', '.checkedOrUnchecked', function(){
 		var ckeckedTransferOrderList = $("#ckeckedTransferOrderList");
 		var order_no = $(this).parent().siblings('.order_no')[0].textContent;		
+		var operation_type = $(this).parent().siblings('.operation_type')[0].textContent;		
 		var order_type = $(this).parent().siblings('.order_type')[0].textContent;		
 		var cargo_nature = $(this).parent().siblings('.cargo_nature')[0].textContent;		
 		var total_weight = $(this).parent().siblings('.total_weight')[0].textContent;		
@@ -223,10 +226,29 @@ $(document).ready(function() {
 				if(orderType[0] != $(this).parent().siblings('.order_type')[0].innerHTML){
 					alert("请选择相同的订单类型!");
 					return false;
+				}else{
+					if(operationType.length != 0){
+						if(operationType[0] != $(this).parent().siblings('.operation_type')[0].innerHTML && $(this).parent().siblings('.operation_type')[0].innerHTML != ''){
+							alert("请选择同一运营方式的订单!");
+							return false;
+						}else{
+							orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
+							operationType.push($(this).parent().siblings('.operation_type')[0].innerHTML);
+						}
+					}else{
+						if($(this).parent().siblings('.operation_type')[0].innerHTML != ''){
+							operationType.push($(this).parent().siblings('.operation_type')[0].innerHTML);
+						}
+					}
+				}
+			}else{
+				if($(this).parent().siblings('.order_type')[0].innerHTML != ''){
+					orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
+					operationType.push($(this).parent().siblings('.operation_type')[0].innerHTML);
 				}
 			}
 			sumValue();
-			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
+			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+operation_type+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
 					+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");			
 		}else{
 			sumValue();
@@ -238,6 +260,9 @@ $(document).ready(function() {
 			}
 			if(orderType.length != 0){
 				orderType.splice($(this).parent().siblings('.order_type')[0].innerHTML, 1);
+			}
+			if(operationType.length != 0){
+				operationType.splice($(this).parent().siblings('.operation_type')[0].innerHTML, 1);
 			}
 		}
 	});	
