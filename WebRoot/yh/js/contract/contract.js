@@ -308,7 +308,7 @@ $(document).ready(function() {
         });
 
         //获取客户的list，选中信息自动填写其他信息
-        $('#companyName').on('keyup', function(){
+        $('#companyName').on('keyup click', function(){
 			var inputStr = $('#companyName').val();
 			var type = $("#type2").val();
 			var type2 = $("#type3").val();
@@ -386,7 +386,7 @@ $(document).ready(function() {
 		 
 		
 		//选择出发地点
-		$('#fromName').on('keyup', function(){
+		$('#fromName').on('keyup click', function(){
 			var inputStr = $('#fromName').val();
 			$.get('/yh/route/search', {locationName:inputStr}, function(data){
 				console.log(data);
@@ -434,7 +434,7 @@ $(document).ready(function() {
     	});
 		
 		//选择目的地点
-		$('#toName').on('keyup', function(){
+		$('#toName').on('keyup click', function(){
 			var inputStr = $('#toName').val();
 			$.get('/yh/route/search', {locationName:inputStr}, function(data){
 				
@@ -582,4 +582,49 @@ $(document).ready(function() {
 	    
 	    hidePriceElements();
 	   
+	  //获取货品的名称list，选中信息在下方展示其他信息
+		$('#itemNameMessage').on('keyup click', function(){
+			var inputStr = $('#itemNameMessage').val();
+			var customerId = $('#partyid').val();
+			$.get('/yh/customerContract/searchItemName', {input:inputStr,customerId:customerId}, function(data){
+				console.log(data);
+				var itemNameList =$("#itemNameList");
+				itemNameList.empty();
+				for(var i = 0; i < data.length; i++)
+				{
+					var item_name = data[i].ITEM_NAME;
+					if(item_name == null){
+						item_name = '';
+					}
+					itemNameList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' item_desc='"+data[i].ITEM_DESC+"' item_no='"+data[i].ITEM_NO+"' expire_date='"+data[i].EXPIRE_DATE+"' lot_no='"+data[i].LOT_NO+"' total_quantity='"+data[i].TOTAL_QUANTITY+"' unit_price='"+data[i].UNIT_PRICE+"' unit_cost='"+data[i].UNIT_COST+"' uom='"+data[i].UOM+"', caton_no='"+data[i].CATON_NO+"', >"+data[i].ITEM_NAME+"</a></li>");
+				}
+			},'json');		
+			$("#itemNameList").css({ 
+				left:$(this).position().left+"px", 
+				top:$(this).position().top+32+"px" 
+			}); 
+			$('#itemNameList').show();        
+		});
+		$('#itemNameMessage').on('blur', function(){
+		$("#itemNameList").hide();
+		});
+		$('#itemNameList').on('blur', function(){
+			$('#itemNameList').hide();
+		});
+
+	 	$('#itemNameList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	 	});
+	 // 选中产品名
+		$('#itemNameList').on('mousedown', '.fromLocationItem', function(e){
+			$("#itemNameMessage").val($(this).text());
+			if($(this).attr('item_no') == 'null'){
+				$("#item_no").val('');
+			}else{
+				$("#itemNoMessage").val($(this).attr('item_no'));
+			}
+			
+			$("#productId").val($(this).attr('id'));
+			$('#itemNameList').hide();
+		});  	
 });

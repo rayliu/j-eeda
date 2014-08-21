@@ -342,8 +342,12 @@ public class ContractController extends Controller {
             locationList = Db
                     .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and c.company_name like ?",
                             "%" + locationName + "%");
+            renderJson(locationList);
+        } else {
+            locationList = Db
+                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER'");
+            renderJson(locationList);
         }
-        renderJson(locationList);
     }
 
     // 列出供应商公司名称
@@ -354,6 +358,10 @@ public class ContractController extends Controller {
             List<Record> locationList = Db
                     .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' and c.company_name like ?",
                             "%" + locationName + "%");
+            renderJson(locationList);
+        } else {
+            List<Record> locationList = Db
+                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER'");
             renderJson(locationList);
         }
     }
@@ -505,13 +513,14 @@ public class ContractController extends Controller {
         item.set("contract_id", contractId).set("pricetype", getPara("priceType")).set("from_id", getPara("from_id"))
                 .set("location_from", getPara("fromName")).set("to_id", getPara("to_id"))
                 .set("location_to", getPara("toName")).set("amount", getPara("price")).set("dayfrom", getPara("day"))
-                .set("dayto", getPara("day2"));
+                .set("dayto", getPara("day2")).set("product_id", getPara("productId"));
 
         if (routeItemId != "") {
             if (priceType.equals("计件")) {
                 item.set("id", getPara("routeItemId")).set("cartype", null).set("carlength", null)
                         .set("ltlUnitType", null);
                 item.set("unit", getPara("unit2"));
+                item.set("product_id", getPara("productId"));
                 item.update();
                 renderJson("{\"success\":true}");
             }
@@ -519,13 +528,14 @@ public class ContractController extends Controller {
                 item.set("id", getPara("routeItemId"));
                 item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2"))
                         .set("ltlUnitType", null);
+                item.set("product_id", getPara("productId"));
                 item.update();
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("零担")) {
                 item.set("id", getPara("routeItemId")).set("amountFrom", getPara("amountFrom"))
                         .set("amountTo", getPara("amountTo"));
-
+                item.set("product_id", getPara("productId"));
                 item.set("ltlUnitType", getPara("ltlUnitType")).set("cartype", null).set("carlength", null);
                 item.update();
                 renderJson("{\"success\":true}");
@@ -577,5 +587,22 @@ public class ContractController extends Controller {
             Db.deleteById("contract_item", id);
         }
         renderJson("{\"success\":true}");
+    }
+
+    // 查找产品名
+    public void searchItemName() {
+        String input = getPara("input");
+        String customerId = getPara("customerId");
+        List<Record> locationList = Collections.EMPTY_LIST;
+        if (input.trim().length() > 0) {
+            locationList = Db
+                    .find("select * from product where category_id in (select id from category where customer_id = "
+                            + customerId + ") and item_name like '%" + input + "%' limit 0,10");
+        } else {
+            locationList = Db
+                    .find("select * from product where category_id in (select id from category where customer_id = "
+                            + customerId + ")");
+        }
+        renderJson(locationList);
     }
 }
