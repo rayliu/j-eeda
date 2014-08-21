@@ -912,13 +912,6 @@ public class PickupOrderController extends Controller {
             return;
         
         String chargeType = pickupOrder.get("charge_type");
-        if("perUnit".equals(chargeType)){
-            chargeType="计件";
-        }else if("perCar".equals(chargeType)){
-            chargeType="整车";
-        }else if("perCargo".equals(chargeType)){
-            chargeType="零担";
-        }
         
         List<DepartTransferOrder> dItem = DepartTransferOrder.dao
                 .find("select order_id from depart_transfer where depart_id ='" + getPara("pickupOrderId") + "'");
@@ -933,23 +926,49 @@ public class PickupOrderController extends Controller {
                         + transferId + ") order by pickup_seq desc");
         if (spId != null) {
             for (Record tOrderItemRecord : transferOrderItemList) {
-                //TODO 1,2还没实现，因为contract_item没有product_id
+                //TODO 这个是递归，可以整理成一个递归函数
                 Record contractFinItem = Db
-                        .findFirst("select amount from contract_item where contract_id ="+spContract.getLong("id")
+                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                + "and product_id ="+tOrderItemRecord.get("product_id")
                                 +" and from_id = '"+ tOrderItemRecord.get("route_from")
                                 +"' and to_id = '"+ tOrderItemRecord.get("route_to")
                                 + "' and priceType='"+chargeType+"'");
+                
                 if (contractFinItem != null) {
                     genFinItem(pickupOrder, users, sqlDate, tOrderItemRecord, contractFinItem);
                 }else{
                     contractFinItem = Db
-                            .findFirst("select amount from contract_item where contract_id ="+spContract.getLong("id")
+                            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                    + "and product_id ="+tOrderItemRecord.get("product_id")
                                     +" and from_id = '"+ tOrderItemRecord.get("route_from")
                                     + "' and priceType='"+chargeType+"'");
-                    if (contractFinItem != null) 
+                    
+                    if (contractFinItem != null) {
                         genFinItem(pickupOrder, users, sqlDate, tOrderItemRecord, contractFinItem);
+                    }else{
+                        contractFinItem = Db
+                                .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                        +" and from_id = '"+ tOrderItemRecord.get("route_from")
+                                        +"' and to_id = '"+ tOrderItemRecord.get("route_to")
+                                        + "' and priceType='"+chargeType+"'");
+                        
+                        if (contractFinItem != null) {
+                            genFinItem(pickupOrder, users, sqlDate, tOrderItemRecord, contractFinItem);
+                        }else{
+                            contractFinItem = Db
+                                    .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                            +" and from_id = '"+ tOrderItemRecord.get("route_from")
+                                            + "' and priceType='"+chargeType+"'");
+                            
+                            if (contractFinItem != null) {
+                                genFinItem(pickupOrder, users, sqlDate, tOrderItemRecord, contractFinItem);
+                            }
+                        }
+                    }
                 }
-            }
+                
+                
+            }//end of for      
         }
 
         // 生成客户支付中转费
@@ -957,7 +976,7 @@ public class PickupOrderController extends Controller {
             TransferOrderFinItem tFinItem2 = new TransferOrderFinItem();
             int size = dItem.size();
             for (int i = 0; i < dItem.size(); i++) {
-                tFinItem2.set("fin_item_id", "4");
+                tFinItem2.set("fin_item_id", "4");//TODO 死代码
                 tFinItem2.set("amount", Double.parseDouble(pickupOrder.get("income").toString()) / size);
                 // tFinItem2.set("order_id", dItem.get(i).get("order_id"));
                 tFinItem2.set("status", "未完成");
@@ -973,7 +992,7 @@ public class PickupOrderController extends Controller {
     private void genFinItem(DepartOrder pickupOrder, List<UserLogin> users, java.sql.Timestamp sqlDate, Record tOrderItemRecord,
             Record contractFinItem) {
         DepartOrderFinItem pickupFinItem = new DepartOrderFinItem();
-        pickupFinItem.set("fin_item_id", "1");
+        pickupFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
         pickupFinItem.set("amount",
                 contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
         pickupFinItem.set("depart_order_id", pickupOrder.getLong("id"));

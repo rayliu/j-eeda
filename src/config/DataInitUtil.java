@@ -44,7 +44,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists dp_prof_provider_info(OID bigint auto_increment PRIMARY KEY, ADDITIONAL_SERVICES VARCHAR(600),  BIZNATURE VARCHAR(60),  PROVIDER_SYS_CODE VARCHAR(90),  PROVIDER_NAME  VARCHAR(270),  PROVIDER_BIZ_CODE VARCHAR(60),  MAINTENANCE_OFFICE  VARCHAR(90),  COUNTRY_BAK VARCHAR(90),  PROVINCE_BAK VARCHAR(90),  CITY_BAK VARCHAR(90),  POST_CODE   VARCHAR(90),  CONTACT VARCHAR(120),  FAX_BAK VARCHAR(60),  EMAIL   VARCHAR(450),  TELEPHONE_BAK   VARCHAR(90),  ADDRESS1 VARCHAR(300),  ADDRESS2 VARCHAR(300),  ADDRESS3 VARCHAR(300),  ADDRESS4 VARCHAR(300),  STATUS  CHAR(1) default 'A',  CREATOR VARCHAR(20),  CREATE_DATE DATE,  LAST_UPDATER VARCHAR(20),  LAST_UPDATE_DATE DATE,  COUNTRY_OID bigint,  COUNTRY VARCHAR(300),  PROVINCE_OID bigint,  PROVINCE VARCHAR(300),  CITY_OID bigint,  CITY VARCHAR(300),  PHONE_COUNTRY_CODE  VARCHAR(10),  PHONE_AREA_CODE VARCHAR(10),  PHONE_NO VARCHAR(120),  FAX_COUNTRY_CODE VARCHAR(10),  FAX_AREA_CODE   VARCHAR(10),  FAX_NO  VARCHAR(120),  SPPM_OID bigint,  PROVIDER_FULL_NAME  VARCHAR(300),  CONTROL_OFFICE  VARCHAR(90),  DATA_REALM  VARCHAR(20),  COPY_FROM_SP_OID bigint,  ONE_OFF VARCHAR(1) default 'N',  EFFECTIVE_FROM  DATE,  EFFECTIVE_TO DATE, MAIL_SENT_TIME TIMESTAMP);");
 
             // 配送单
-            stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment primary key,order_no varchar(50),transfer_order_id varchar(50), customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status varchar(50),cargo_nature varchar(20),from_warehouse_code varchar(20),remark varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp);");
+            stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment primary key,order_no varchar(50),transfer_order_id varchar(50), customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status varchar(50),cargo_nature varchar(20),from_warehouse_code varchar(20),remark varchar(255),route_from varchar(255),route_to varchar(255), create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp);");
 
             // delivery_order_milestone 配送单里程碑
             stmt.executeUpdate("create table if not exists delivery_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
@@ -215,12 +215,12 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','120000','天津','123123');");
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('120000','天津','110000','北京','123123');");
 
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1','1','perUnit','13000','440100','广州市','110101','北京市东城区','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,product_id, fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1', 1, '1','perUnit','13000','440100','广州市','110101','北京市东城区','路线');");
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('2','2','perCar','13000','110000','北京','120000','天津','路线2');");
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1','3','perCargo','12000','120000','天津','110000','北京','路线');");
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,remark) values('2','1','perCar','130000','路线2');");
-            stmt.executeUpdate("insert into contract_item(contract_id,pricetype,amount,remark) values('3','perUnit','120000','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,pricetype,amount,from_id,location_from,remark) values('4','perUnit','200','440100','广州市','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,remark) values('3', 1, 'perUnit','120000','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,remark) values('4',1,'perUnit','200','440100','广州市','路线');");
 
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 1,'perUnit','10000','440100','广州市','110100','北京市','干线路线');");
 

@@ -9,8 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
+import models.DepartOrder;
+import models.DepartOrderFinItem;
 import models.Fin_item;
 import models.InventoryItem;
 import models.ReturnOrder;
@@ -18,6 +21,7 @@ import models.TransferOrder;
 import models.TransferOrderFinItem;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.yh.contract.Contract;
 import models.yh.delivery.DeliveryOrder;
 
 import org.apache.log4j.Logger;
@@ -27,6 +31,8 @@ import org.apache.shiro.subject.Subject;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+
+import controllers.yh.LoginUserController;
 
 public class DeliveryOrderMilestoneController extends Controller {
 
@@ -66,6 +72,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.set("status", "已发车");
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        
         transferOrderMilestone.set("create_by", users.get(0).get("id"));
         transferOrderMilestone.set("location", "");
         java.util.Date utilDate = new java.util.Date();
@@ -83,29 +90,91 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     }
 
-    private void setPay(DeliveryOrder transferOrder, List<UserLogin> users, java.sql.Timestamp sqlDate) {
+    // 配送单 发车应付计费  先获取有效期内的合同，条目越具体优先级越高
+    // 级别1：计费类别 + 货  品 + 始发地 + 目的地
+    // 级别2：计费类别 + 货  品 + 目的地
+    // 级别3：计费类别 + 始发地 + 目的地
+    // 级别4：计费类别 + 目的地
+    private void setPay(DeliveryOrder deliverOrder, List<UserLogin> users, java.sql.Timestamp sqlDate) {
         // 生成应付
-        TransferOrderFinItem tFinItem = new TransferOrderFinItem();
-        if (transferOrder.get("sp_id") != null) {
-            List<Record> contractList = Db
-                    .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
-                            + transferOrder.get("sp_id")
-                            + "') and from_id = '"
-                            + getPara("code")
-                            + "' and to_id ='"
-                            + getPara("locationTo") + "' and priceType='" + getPara("priceType") + "'");
-            if (contractList.size() > 0) {
-                tFinItem.set("fin_item_id", "1");
-                tFinItem.set("amount", contractList.get(0).get("amount"));
-                tFinItem.set("delivery_id", getPara("deliveryid"));
-                tFinItem.set("status", "未完成");
-                tFinItem.set("creator", users.get(0).get("id"));
-                tFinItem.set("create_date", sqlDate);
-                tFinItem.save();
+        Long spId=deliverOrder.getLong("sp_id");
+        if ( spId== null)
+            return;
+        
+        //先获取有效期内的配送sp合同, 如有多个，默认取第一个
+        Contract spContract= Contract.dao.findFirst("select * from contract where type='DELIVERY_SERVICE_PROVIDER' " +
+                "and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="+spId);
+        if(spContract==null)
+            return;
+        
+        String chargeType = deliverOrder.get("charge_type");
+        if(chargeType==null)//TODO 计费方式，页面上没有保存
+            chargeType="perUnit";
+        Long deliverOrderId = deliverOrder.getLong("id");
+        if (spId != null) {
+            
+            List<Record> deliveryOrderItemList = Db
+                    .find("select toi.product_id, d_o.route_from, d_o.route_to from delivery_order_item doi left join transfer_order_item toi on doi.transfer_item_id = toi.id left join delivery_order d_o on doi.delivery_id = d_o.id " 
+                    +"where doi.delivery_id =" + deliverOrderId);
+            for (Record dOrderItemRecord : deliveryOrderItemList) {
+                Record contractFinItem = Db
+                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                + "and product_id ="+dOrderItemRecord.get("product_id")
+                                +" and from_id = '"+ dOrderItemRecord.get("route_from")
+                                +"' and to_id = '"+ dOrderItemRecord.get("route_to")
+                                + "' and priceType='"+chargeType+"'");
+                
+                if (contractFinItem != null) {
+                    genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem);
+                }else{
+                    contractFinItem = Db
+                            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                    + "and product_id ="+dOrderItemRecord.get("product_id")
+                                    +" and to_id = '"+ dOrderItemRecord.get("route_to")
+                                    + "' and priceType='"+chargeType+"'");
+                    
+                    if (contractFinItem != null) {
+                        genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem);
+                    }else{
+                        contractFinItem = Db
+                                .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                        +" and from_id = '"+ dOrderItemRecord.get("route_from")
+                                        +"' and to_id = '"+ dOrderItemRecord.get("route_to")
+                                        + "' and priceType='"+chargeType+"'");
+                        
+                        if (contractFinItem != null) {
+                            genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem);
+                        }else{
+                            contractFinItem = Db
+                                    .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                            //+" and to_id = '"+ dOrderItemRecord.get("route_to")
+                                            +" and to_id = '110101' and priceType='"+chargeType+"'");
+                            
+                            if (contractFinItem != null) {
+                                genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem);
+                            }
+                        }
+                    }
+                }
             }
+            
         }
     }
 
+    private void genFinItem(Long departOrderId, Record tOrderItemRecord,
+            Record contractFinItem) {
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
+        DeliveryOrderFinItem deliveryFinItem = new DeliveryOrderFinItem();
+        deliveryFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
+        //ATM数量是1， 普通货品应该有数量 * tOrderItemRecord.getDouble("amount")
+        deliveryFinItem.set("amount",contractFinItem.getDouble("amount") );
+        deliveryFinItem.set("order_id", departOrderId);
+        deliveryFinItem.set("status", "未完成");
+        deliveryFinItem.set("creator", LoginUserController.getLoginUserId(this));
+        deliveryFinItem.set("create_date", now);
+        deliveryFinItem.save();
+    }
     // 扣库存
     private void gateOutProduct(Long delivery_id) {
         // 获取运输单的id

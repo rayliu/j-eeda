@@ -887,31 +887,44 @@ public class DepartOrderController extends Controller {
             return;
         
         String chargeType = departOrder.get("charge_type");
-        if("perUnit".equals(chargeType)){
-            chargeType="计件";
-        }else if("perCar".equals(chargeType)){
-            chargeType="整车";
-        }else if("perCargo".equals(chargeType)){
-            chargeType="零担";
-        }
         
         if ( spId!= null) {
             for (Record tOrderItemRecord : transferOrderItemList) {
                 
                 Record contractFinItem = Db
-                        .findFirst("select amount from contract_item where contract_id ="+spContract.getLong("id")
-                                +" and from_id = '"
-                                + tOrderItemRecord.get("route_from")
+                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                +" and product_id = " + tOrderItemRecord.get("product_id")
+                                +" and from_id = '" + tOrderItemRecord.get("route_from")
+                                +"' and to_id = '" + tOrderItemRecord.get("route_to")
                                 + "' and priceType='"+chargeType+"'");
-                if (contractFinItem != null) {//级别3
+                if (contractFinItem != null) {
                     genFinItem(users, departOrder, tOrderItemRecord, contractFinItem);
-                }else{//级别4
+                }else{
                     contractFinItem = Db
-                            .findFirst("select amount from contract_item where contract_id ="+spContract.getLong("id")
-                                    +" and to_id = '"+ tOrderItemRecord.get("route_to")
+                            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                    +" and product_id = " + tOrderItemRecord.get("product_id")
+                                    +" and to_id = '" + tOrderItemRecord.get("route_to")
                                     + "' and priceType='"+chargeType+"'");
-                    if (contractFinItem != null) 
+                    if (contractFinItem != null) {
                         genFinItem(users, departOrder, tOrderItemRecord, contractFinItem);
+                    }else{
+                        contractFinItem = Db
+                                .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                        +" and from_id = '" + tOrderItemRecord.get("route_from")
+                                        +"' and to_id = '" + tOrderItemRecord.get("route_to")
+                                        + "' and priceType='"+chargeType+"'");
+                        if (contractFinItem != null) {
+                            genFinItem(users, departOrder, tOrderItemRecord, contractFinItem);
+                        }else{
+                            contractFinItem = Db
+                                    .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                            +" and to_id = '" + tOrderItemRecord.get("route_to")
+                                            + "' and priceType='"+chargeType+"'");
+                            if (contractFinItem != null) {
+                                genFinItem(users, departOrder, tOrderItemRecord, contractFinItem);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -922,7 +935,7 @@ public class DepartOrderController extends Controller {
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
         DepartOrderFinItem pickupFinItem = new DepartOrderFinItem();
-        pickupFinItem.set("fin_item_id", "1");
+        pickupFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
         pickupFinItem.set("amount",
                 contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
         pickupFinItem.set("depart_order_id", departOrder.getLong("id"));
