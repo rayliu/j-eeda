@@ -313,7 +313,7 @@ public class ProductController extends Controller {
         String weight = getPara("weight");
         if (!"".equals(item_no) && item_no != null) {
         	Category category = Category.dao.findById(item.get("category_id"));
-        	Product product = Product.dao.findFirst("select * from product p left join category c on c.id = p.category_id where p.item_no = "+item_no+" and c.customer_id = "+category.get("customer_id"));
+        	Product product = Product.dao.findFirst("select * from product p left join category c on c.id = p.category_id where p.item_no = '"+item_no+"' and c.customer_id = "+category.get("customer_id"));
         	if(product == null){
         		item.set("item_no", item_no).update();
         	}
