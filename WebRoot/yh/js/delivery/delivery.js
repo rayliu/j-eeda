@@ -235,7 +235,7 @@ $(document).ready(function() {
 			            	"sClass": "warehouse"},
 			            {"mDataProp":"COMPANY_NAME",
 			            	"sClass": "cname"},
-			            {"mDataProp":"NADDRESS"}
+			            {"mDataProp":"ADDRESS"}
 			        ]      
 			    });	
 			
