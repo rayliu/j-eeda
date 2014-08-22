@@ -165,7 +165,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
         DeliveryOrderFinItem deliveryFinItem = new DeliveryOrderFinItem();
-        deliveryFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
+        deliveryFinItem.set("fin_item_id", 1); //contractFinItem.get("fin_item_id")
         //ATM数量是1， 普通货品应该有数量 * tOrderItemRecord.getDouble("amount")
         deliveryFinItem.set("amount",contractFinItem.getDouble("amount") );
         deliveryFinItem.set("order_id", departOrderId);

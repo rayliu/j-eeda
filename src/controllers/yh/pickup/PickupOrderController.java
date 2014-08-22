@@ -1003,7 +1003,7 @@ public class PickupOrderController extends Controller {
     private void genFinItem(DepartOrder pickupOrder, List<UserLogin> users, java.sql.Timestamp sqlDate, Record tOrderItemRecord,
             Record contractFinItem) {
         DepartOrderFinItem pickupFinItem = new DepartOrderFinItem();
-        pickupFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
+        pickupFinItem.set("fin_item_id", 1);//contractFinItem.get("fin_item_id")
         pickupFinItem.set("amount",
                 contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
         pickupFinItem.set("depart_order_id", pickupOrder.getLong("id"));
