@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import models.Fin_item;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
@@ -285,6 +286,9 @@ public class ContractController extends Controller {
             System.out.println(contact);
             setAttr("c", contact);
             setAttr("ul", contract);
+            
+            List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
+            setAttr("finItemList", finItemList);
         }
         if (LoginUserController.isAuthenticated(this))
             render("/yh/contract/ContractEdit.html");
@@ -392,7 +396,7 @@ public class ContractController extends Controller {
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
             sql = "select count(1) total from contract_item c where c.contract_id = " + contractId
-                    + " and PRICETYPE ='计件'";
+                    + " and PRICETYPE ='perUnit'";
         }
 
         System.out.println(sql);
@@ -403,8 +407,8 @@ public class ContractController extends Controller {
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
             orders = Db
-                    .find("select c.*,p.item_name from  contract_item c left join product p on c.product_id = p.id where c.contract_id = "
-                            + contractId + " and PRICETYPE ='计件' order by id desc" + sLimit);
+                    .find("select c.*, fi.name as fin_item_name , p.item_name from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
+                            + contractId + " and PRICETYPE ='perUnit' order by id desc" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -439,7 +443,7 @@ public class ContractController extends Controller {
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
             sql = "select count(1) total from contract_item c where c.contract_id = " + contractId
-                    + " and PRICETYPE ='整车'";
+                    + " and PRICETYPE ='perCar'";
         }
 
         System.out.println(sql);
@@ -450,8 +454,8 @@ public class ContractController extends Controller {
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
             orders = Db
-                    .find("select c.*,p.item_name from contract_item c left join product p on c.product_id = p.id  where c.contract_id = "
-                            + contractId + " and PRICETYPE ='整车'  order by id desc" + sLimit);
+                    .find("select c.*, fi.name as fin_item_name, p.item_name from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
+                            + contractId + " and PRICETYPE ='perCar'  order by id desc" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -486,7 +490,7 @@ public class ContractController extends Controller {
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
             sql = "select count(1) total from contract_item c where c.contract_id = " + contractId
-                    + " and pricetype ='零担'";
+                    + " and pricetype ='perCargo'";
         }
 
         System.out.println(sql);
@@ -497,8 +501,8 @@ public class ContractController extends Controller {
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
             orders = Db
-                    .find("select c.*,p.item_name from  contract_item c  left join product p on c.product_id = p.id where c.contract_id = "
-                            + contractId + " and pricetype ='零担'  order by id desc" + sLimit);
+                    .find("select c.*, fi.name as fin_item_name, p.item_name from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
+                            + contractId + " and pricetype ='perCargo'  order by id desc" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -524,7 +528,7 @@ public class ContractController extends Controller {
             item.set("product_id", getPara("productId"));
         }
         if (routeItemId != "") {
-            if (priceType.equals("计件")) {
+            if (priceType.equals("perUnit")) {
                 item.set("id", getPara("routeItemId")).set("cartype", null).set("carlength", null)
                         .set("ltlUnitType", null);
                 item.set("unit", getPara("unit2"));
@@ -532,7 +536,7 @@ public class ContractController extends Controller {
                 item.update();
                 renderJson("{\"success\":true}");
             }
-            if (priceType.equals("整车")) {
+            if (priceType.equals("perCar")) {
                 item.set("id", getPara("routeItemId"));
                 item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2"))
                         .set("ltlUnitType", null);
@@ -540,7 +544,7 @@ public class ContractController extends Controller {
                 item.update();
                 renderJson("{\"success\":true}");
             }
-            if (priceType.equals("零担")) {
+            if (priceType.equals("perCargo")) {
                 item.set("id", getPara("routeItemId")).set("amountFrom", getPara("amountFrom"))
                         .set("amountTo", getPara("amountTo"));
                 item.set("product_id", getPara("productId"));
@@ -549,17 +553,17 @@ public class ContractController extends Controller {
                 renderJson("{\"success\":true}");
             }
         } else {
-            if (priceType.equals("计件")) {
+            if (priceType.equals("perUnit")) {
                 item.set("unit", getPara("unit2"));
                 item.save();
                 renderJson("{\"success\":true}");
             }
-            if (priceType.equals("整车")) {
+            if (priceType.equals("perCar")) {
                 item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2"));
                 item.save();
                 renderJson("{\"success\":true}");
             }
-            if (priceType.equals("零担")) {
+            if (priceType.equals("perCargo")) {
                 item.set("ltlUnitType", getPara("ltlUnitType")).set("amountFrom", getPara("amountFrom"))
                         .set("amountTo", getPara("amountTo"));
                 item.save();

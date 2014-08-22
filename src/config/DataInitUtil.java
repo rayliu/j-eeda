@@ -336,13 +336,17 @@ public class DataInitUtil {
             // 收费条目定义表code VARCHAR(50),name VARCHAR(50),type VARCHAR(50),Remark
 
             stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
-                    + "'2013201448','干线运输费','应付','这是一张运输单收费');");
+                    + "'YSF','运输费','应付','这是一张运输单收费');");
             stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
-                    + "'2013201448','搬运费','应付','这是一张运输单收费');");
+                    + "'BYF','搬运费','应付','这是一张运输单收费');");
             stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
-                    + "'2013201448','上楼费','应付','这是一张运输单收费');");
+                    + "'SLF','上楼费','应付','这是一张运输单收费');");
             stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
-                    + "'2013201448','客户费用','应收','这是一张运输单收费');");
+                    + "'YSF','客户费用','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
+                    + "'BYF','搬运费','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values("
+                    + "'SLF','上楼费','应收','这是一张运输单收费');");
 
             newCustomer();
 
@@ -372,7 +376,7 @@ public class DataInitUtil {
             // 运输单
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type) values('ATM', '4', '12', 'YS2014042600001', '3', '1', '已入货场', '2014-04-20 16:33:35.1', 'delivery','珠海','2','110102','440402','2','salesOrder','provinceOut','own');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type, charge_type, pickup_mode) "
-                    + "values('ATM', 4, '13', 'YS2014042600002', '4', 1, '新建', CURRENT_TIMESTAMP(), 'gateIn','中山', 4,'440100','110100','3','salesOrder','provinceIn','own','计件','routeSP');");
+                    + "values('ATM', 4, '13', 'YS2014042600002', '4', 1, '新建', CURRENT_TIMESTAMP(), 'gateIn','中山', 4,'440100','110100','3','salesOrder','provinceIn','own','perUnit','routeSP');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type,warehouse_id) values('cargo', '6', '12', 'YS2014042600003', '4', '19', '已入货场', '2014-04-28 16:46:35.1', 'gateIn','广州','110106','440403','2','replenishmentOrder','provinceOut','2','own','1');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type,warehouse_id) values('cargo', '6', '13', 'YS2014042600004', '3', '1', '已入货场', '2014-04-25 16:35:35.1', 'gateIn','深圳','110106','440403','1','replenishmentOrder','provinceIn','3','out_source','2');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type) values('ATM', '7', '12', 'YS2014042600005', '3', '2', '已入货场', '2014-04-22 16:28:35.1', 'delivery','东莞','110108','440507','1','arrangementOrder','provinceOut','1','out_source');");

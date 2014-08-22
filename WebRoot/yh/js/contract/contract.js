@@ -14,10 +14,11 @@ $(document).ready(function() {
 	        "bServerSide": true,
 	        "sAjaxSource": "/yh/spContract/routeEdit?routId="+contractId,
 	        "aoColumns": [  
-				{"mDataProp":"PRICETYPE"},
+				{"mDataProp":"PRICETYPE", "bVisible":false},
 	            {"mDataProp":"UNIT"},
 	            {"mDataProp":"LOCATION_FROM"},
 	            {"mDataProp":"LOCATION_TO"},
+	            {"mDataProp":"FIN_ITEM_NAME"},
 	            {"mDataProp":"AMOUNT"},
 	            {"mDataProp":"KILOMETER"},
 	            {"mDataProp":null,
@@ -54,11 +55,12 @@ $(document).ready(function() {
 		        "bServerSide": true,
 		        "sAjaxSource": "/yh/spContract/routeEdit2?routId="+contractId,
 		        "aoColumns": [  
-					{"mDataProp":"PRICETYPE"},
+					{"mDataProp":"PRICETYPE", "bVisible":false},
 					{"mDataProp":"CARTYPE"},
 					{"mDataProp":"CARLENGTH"},
 		            {"mDataProp":"LOCATION_FROM"},
 		            {"mDataProp":"LOCATION_TO"},
+		            {"mDataProp":"FIN_ITEM_NAME"},
 		            {"mDataProp":"AMOUNT"},
 		            {"mDataProp":null,
 		            	"fnRender": function(obj) {                    
@@ -94,7 +96,7 @@ $(document).ready(function() {
 		        "bServerSide": true,
 		        "sAjaxSource": "/yh/spContract/routeEdit3?routId="+contractId,
 		        "aoColumns": [  
-					{"mDataProp":"PRICETYPE"},
+					{"mDataProp":"PRICETYPE", "bVisible":false},
 					{"mDataProp":"LTLUNITTYPE"},
 					{"mDataProp":null,
 						"fnRender": function(obj) {                    
@@ -103,6 +105,7 @@ $(document).ready(function() {
 		                }},
 		            {"mDataProp":"LOCATION_FROM"},
 		            {"mDataProp":"LOCATION_TO"},
+		            {"mDataProp":"FIN_ITEM_NAME"},
 		            {"mDataProp":"AMOUNT"},
 		            {"mDataProp":null,
 		            	"fnRender": function(obj) {                    

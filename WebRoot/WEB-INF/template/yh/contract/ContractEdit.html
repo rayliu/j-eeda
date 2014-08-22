@@ -178,7 +178,8 @@
 	                                        	<th>单位</th>
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
-	                                            <th>费用</th>
+	                                            <th>费用名称</th>
+                                                <th>金额</th>
 	                                            <th>路程(KM)</th>
 	                                            <th>天数</th>
 	                                            <th>产品</th>
@@ -206,7 +207,8 @@
 	                                        	<th>长度</th>
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
-	                                            <th>费用</th>
+	                                            <th>费用名称</th>
+                                                <th>金额</th>
 	                                            <th>天数</th>
 	                                            <th>产品</th>
 	                                            <th></th>
@@ -232,7 +234,8 @@
 	                                        	<th>计费区间</th>
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
-	                                            <th>费用</th>
+	                                            <th>费用名称</th>
+                                                <th>金额</th>
 	                                            <th>天数</th>
 	                                            <th>产品</th>
 	                                            <th></th>
@@ -387,9 +390,18 @@
                                                             <input class="form-control search-control" id="amountTo" name="amountTo" type="text" style="width:20%">
                                                         </div>
                                                         </div>
-                                                        
                                                         <div class="form-group">
-                                                            <lable>费用</lable>
+                                                            <lable>费用名称</lable>
+                                                            <input class="form-control" id="fin_item_id" name="fin_item_id" type="hidden">
+                                                             <select class="form-control" id="fin_item_list" name=
+                                                             "fin_item">
+                                                                <%for(finItem in finItemList){%>
+                                                                    <option value="${finItem.id}">${finItem.name}</option>
+                                                                <%}%>
+                                                             </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <lable>金额</lable>
                                                             <input class="form-control" id="price" name="price" type="text">
                                                         </div>
                                                          <div class="form-group">
