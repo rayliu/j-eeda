@@ -1,12 +1,12 @@
 package controllers.yh.returnOrder;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DeliveryOrderMilestone;
 import models.Fin_item;
 import models.Location;
 import models.Party;
@@ -150,144 +150,6 @@ public class ReturnOrderController extends Controller {
             orderMap.put("aaData", orders);
         }
 
-        renderJson(orderMap);
-    }
-
-    // 查看回单显示
-    public void checkorder() {
-
-        int id = Integer.parseInt(getPara("locationName"));
-
-        List<Record> message = new ArrayList<Record>();
-        String sql_tr = "select ro.*, co.address as address,co.company_name,co.contact_person as contact ,co.phone as phone , con.company_name as pay_company ,con.address as pay_address,con.contact_person as pay_contad ,con.phone as pay_phone  , dp.depart_no  as depart_order_no,tor.cargo_nature  as nature,tor.pickup_mode  as pickup,tor.arrival_mode  as arrival,tor.remark as remark , u.user_name as counterman,lo.name as location_from,loc.name as location_to, usl.user_name  as creator_name  from return_order  ro "
-                + "left join contact  co on co.id in (select p.contact_id from party p where p.id=ro.customer_id  ) "
-                + "left join contact  con on con.id in (select p.contact_id from party p where p.id=ro.notity_party_id ) "
-                + "left join depart_transfer  dpt on dpt.depart_id=ro.depart_order_id "
-                + "left join depart_order  dp on dp.id=dpt.depart_id "
-                + "left join transfer_order  tor on tor.id=dpt.order_id "
-                + "left join user_login  u on u.id =tor.create_by "
-                + "left join location lo on lo.code=tor.route_from "
-                + "left join location loc on loc.code=tor.route_to "
-                + "left join user_login  usl on usl.id=ro.creator  " + "where ro.id=" + id + "";
-        String sql_del = "select ro.*,co.company_name as company_name ,co.address as address,co.contact_person as contact ,co.phone as phone ,"
-                + " con.company_name as pay_company ,con.address as pay_address,con.contact_person as pay_contad ,con.phone as pay_phone ,"
-                + " tor.order_no as transfer_order_no, de.order_no  as delivery_order_id_no ,tor.cargo_nature  as nature,tor.pickup_mode  as pickup,tor.arrival_mode  as arrival,tor.remark as remark ,"
-                + " u.user_name as counterman,lo.name as location_from,loc.name as location_to ,usl.user_name  as creator_name"
-                + " from return_order  ro "
-                + " left join contact  co on co.id in (select p.contact_id from party p where p.id=ro.customer_id )"
-                + " left join contact  con on con.id in (select p.contact_id from party p where p.id=ro.notity_party_id )"
-                + " left join transfer_order  tor on tor.id in (select delo.transfer_order_id  from delivery_order delo where delo.id=ro.delivery_order_id )"
-                + " left join user_login  u on u.id =tor.create_by "
-                + " left join location lo on lo.code=tor.route_from "
-                + " left join location loc on loc.code=tor.route_to "
-                + " left join user_login  usl on usl.id=ro.creator  "
-                + " left join delivery_order  de on de.id=ro.delivery_order_id " + " where ro.id=" + id + "";
-        ReturnOrder re = ReturnOrder.dao.findById(id);
-        if (re.get("delivery_order_id") == null) {
-            message = Db.find(sql_tr);
-        } else {
-            message = Db.find(sql_del);
-        }
-
-        for (int i = 0; i < message.size(); i++) {
-            String nature = message.get(i).get("nature");
-            String pickup = message.get(i).get("pickup");
-            String arrival = message.get(i).get("arrival");
-            String transaction_status = message.get(i).get("transaction_status");
-            if ("cargo".equals(nature)) {
-                message.get(i).set("nature", "普通货品");
-            }
-            if ("routeSP".equals(pickup)) {
-                message.get(i).set("pickup", "干线供应商自提");
-            }
-            if ("pickupSP".equals(pickup)) {
-                message.get(i).set("pickup", "外包供应商自提");
-            }
-            if ("own".equals(pickup)) {
-                message.get(i).set("pickup", "公司自提");
-            }
-            if ("delivery".equals(arrival)) {
-                message.get(i).set("arrival", "货品直送");
-            }
-            if ("gateIn".equals(arrival)) {
-                message.get(i).set("arrival", "入中转仓");
-            }
-            if ("new".equals(transaction_status)) {
-                message.get(i).set("transaction_status", "新建");
-            }
-            if ("confirmed".equals(transaction_status)) {
-                message.get(i).set("transaction_status", "确认");
-            }
-            if ("cancel".equals(transaction_status)) {
-                message.get(i).set("transaction_status", "取消");
-            }
-        }
-
-        renderJson(message);
-
-    }
-
-    // 收费条目
-    public void paylist() {
-        int id = Integer.parseInt(getPara("locationName"));
-        List<Record> paylist = new ArrayList<Record>();
-        paylist = Db
-                .find("select f.name,f.remark,tf.amount,tf.status from fin_item f,transfer_order_fin_item tf  where tf.fin_item_id =f.id and tf.order_id ='"
-                        + 1 + "'");
-
-        renderJson(paylist);
-    }
-
-    // 货品详细
-    public void itemlist() {
-        int id = Integer.parseInt(getPara("locationName"));
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-        }
-
-        // 获取总条数
-        String totalWhere = "";
-        String sql = "select count(1) total from transfer_order_item ";
-        Record rec = Db.findFirst(sql + totalWhere);
-        logger.debug("total records:" + rec.getLong("total"));
-
-        // 获取当前页的数据
-        List<Record> itemlist = new ArrayList<Record>();
-        TransferOrder tr = null;
-        ReturnOrder re = ReturnOrder.dao.findById(id);
-        if (re.get("delivery_order_id") == null) {
-            tr = TransferOrder.dao.findFirst(" select tor.*  from transfer_order tor "
-                    + "left join return_order re on re.id=" + id + " "
-                    + "left join depart_transfer  dpt on dpt.depart_id=re.depart_order_id "
-                    + "where tor.id =dpt.order_id   ");
-        } else {
-            tr = TransferOrder.dao.findFirst(" select tor.*   from transfer_order tor "
-                    + "left join return_order re on re.id=" + id + " "
-                    + "left join delivery_order  deo on deo.id=re.delivery_order_id "
-                    + "where tor.id =deo.transfer_order_id  ");
-        }
-
-        String nature = tr.getStr("cargo_nature");
-        String sql_atm = "select toi.*,toid.serial_no  from transfer_order_item toi"
-                + " left join transfer_order_item_detail  toid on toid.item_id =toi.id and toid.order_id =toi.order_id"
-                + " where toi.order_id in (" + Integer.parseInt(tr.get("id").toString()) + ")";
-        String sql_item = "select toi.* from transfer_order_item toi" + " where toi.order_id in ("
-                + Integer.parseInt(tr.get("id").toString()) + ")";
-        if ("ATM".equals(nature)) {
-            itemlist = Db.find(sql_atm);
-        } else {
-            itemlist = Db.find(sql_item);
-        }
-
-        // 获取货损条数和货品id
-
-        Map orderMap = new HashMap();
-        orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", rec.getLong("total"));
-        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-        orderMap.put("aaData", itemlist);
         renderJson(orderMap);
     }
 
@@ -437,10 +299,27 @@ public class ReturnOrderController extends Controller {
     public void returnOrderReceipt() {
         String id = getPara();
         ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
-        returnOrder.set("transaction_status", "已签收").update();
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+        returnOrder.set("transaction_status", "已签收").set("receipt_date", sqlDate).update();
         Long deliveryId = returnOrder.get("delivery_order_id");
         if(deliveryId != null && !"".equals(deliveryId)){
+        	DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(returnOrder.get("delivery_order_id"));
+        	deliveryOrder.set("status", "已签收");
+        	deliveryOrder.update();
         	
+        	DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
+        	transferOrderMilestone.set("status", "已签收");
+            String name = (String) currentUser.getPrincipal();
+            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+            transferOrderMilestone.set("location", "");
+            utilDate = new java.util.Date();
+            sqlDate = new java.sql.Timestamp(utilDate.getTime());
+            transferOrderMilestone.set("create_stamp", sqlDate);
+            transferOrderMilestone.set("delivery_id", deliveryOrder.get("id"));
+            transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+            transferOrderMilestone.save();
         }else{
         	TransferOrder transferOrder = TransferOrder.dao.findById(returnOrder.get("transfer_order_id"));
         	transferOrder.set("status", "已签收");
@@ -452,8 +331,8 @@ public class ReturnOrderController extends Controller {
             List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
             transferOrderMilestone.set("create_by", users.get(0).get("id"));
             transferOrderMilestone.set("location", "");
-            java.util.Date utilDate = new java.util.Date();
-            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+            utilDate = new java.util.Date();
+            sqlDate = new java.sql.Timestamp(utilDate.getTime());
             transferOrderMilestone.set("create_stamp", sqlDate);
             transferOrderMilestone.set("order_id", transferOrder.get("id"));
             transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
