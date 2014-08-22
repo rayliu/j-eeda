@@ -777,16 +777,16 @@ public class DeliveryController extends Controller {
 
         if (deliveryid == null || "".equals(deliveryid)) {
             if (notifyId == null || notifyId.equals("")) {
-                deliveryOrder.set("Order_no", orderNo).set("Transfer_order_id", getPara("tranferid"))
-                        .set("Customer_id", getPara("customer_id")).set("Sp_id", getPara("cid"))
-                        .set("Notify_party_id", party.get("id")).set("CREATE_STAMP", createDate).set("Status", "新建")
-                        .set("route_to", getPara("route_to")).set("priceType", getPara("chargeType"));
+                deliveryOrder.set("order_no", orderNo)
+                        .set("customer_id", getPara("customer_id")).set("sp_id", getPara("cid"))
+                        .set("notify_party_id", party.get("id")).set("create_stamp", createDate).set("status", "新建")
+                        .set("route_to", getPara("route_to")).set("pricetype", getPara("chargeType"));
                 deliveryOrder.save();
             } else {
-                deliveryOrder.set("Order_no", orderNo).set("Transfer_order_id", getPara("tranferid"))
-                        .set("Customer_id", getPara("customer_id")).set("Sp_id", getPara("cid"))
-                        .set("Notify_party_id", notifyId).set("CREATE_STAMP", createDate).set("Status", "新建")
-                        .set("route_to", getPara("route_to")).set("priceType", getPara("chargeType"));
+                deliveryOrder.set("order_no", orderNo)
+                        .set("customer_id", getPara("customer_id")).set("sp_id", getPara("cid"))
+                        .set("notify_party_id", notifyId).set("create_stamp", createDate).set("status", "新建")
+                        .set("route_to", getPara("route_to")).set("pricetype", getPara("chargeType"));
                 deliveryOrder.save();
             }
 
@@ -801,14 +801,14 @@ public class DeliveryController extends Controller {
             if (!idlist3.equals("")) {
                 for (int i = 0; i < idlist.length; i++) {
                     DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-                    deliveryOrderItem.set("DELIVERY_ID", deliveryOrder.get("id")).set("transfer_order_id", idlist[i]);
-                    deliveryOrderItem.set("TRANSFER_ITEM_ID", idlist2[i]);
+                    deliveryOrderItem.set("delivery_id", deliveryOrder.get("id")).set("transfer_order_id", idlist[i]);
+                    deliveryOrderItem.set("transfer_item_id", idlist2[i]);
                     deliveryOrderItem.set("transfer_no", idlist4[i]);
                     deliveryOrderItem.save();
                 }
             } else {
                 DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-                deliveryOrderItem.set("DELIVERY_ID", deliveryOrder.get("id"))
+                deliveryOrderItem.set("delivery_id", deliveryOrder.get("id"))
                         .set("transfer_order_id", getPara("tranferid")).set("transfer_no", idlist5);
                 deliveryOrderItem.save();
             }
@@ -824,7 +824,7 @@ public class DeliveryController extends Controller {
             saveDeliveryOrderMilestone(deliveryOrder);
         } else {
 
-            deliveryOrder.set("Sp_id", getPara("cid")).set("Notify_party_id", getPara("notify_id"))
+            deliveryOrder.set("sp_id", getPara("cid")).set("notify_party_id", getPara("notify_id"))
                     .set("Customer_id", getPara("customer_id")).set("id", deliveryid)
                     .set("route_to", getPara("route_to")).set("priceType", getPara("chargeType"));
             deliveryOrder.update();

@@ -577,6 +577,7 @@
     	    	$("#order_edit").attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
     	    	  $("#warehousingConfirmBtn").attr("disabled",false);
+                  paymenttable.fnDraw(); 
                 });
     	    });
     	    $("#warehousingConfirmBtn").click(function(e){
