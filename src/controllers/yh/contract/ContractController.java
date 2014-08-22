@@ -404,7 +404,7 @@ public class ContractController extends Controller {
         if (contractId != null && contractId.length() > 0) {
             orders = Db
                     .find("select c.*,p.item_name from  contract_item c left join product p on c.product_id = p.id where c.contract_id = "
-                            + contractId + " and PRICETYPE ='计件'" + sLimit);
+                            + contractId + " and PRICETYPE ='计件' order by id desc" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -451,7 +451,7 @@ public class ContractController extends Controller {
         if (contractId != null && contractId.length() > 0) {
             orders = Db
                     .find("select c.*,p.item_name from contract_item c left join product p on c.product_id = p.id  where c.contract_id = "
-                            + contractId + " and PRICETYPE ='整车'" + sLimit);
+                            + contractId + " and PRICETYPE ='整车'  order by id desc" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -498,7 +498,7 @@ public class ContractController extends Controller {
         if (contractId != null && contractId.length() > 0) {
             orders = Db
                     .find("select c.*,p.item_name from  contract_item c  left join product p on c.product_id = p.id where c.contract_id = "
-                            + contractId + " and pricetype ='零担'" + sLimit);
+                            + contractId + " and pricetype ='零担'  order by id desc" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
