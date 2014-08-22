@@ -584,9 +584,16 @@ public class ContractController extends Controller {
         String contractId = getPara("contractId");
         System.out.println(id);
         // Route route = Route.dao.findById(id);
-        List<Record> list = Db
-                .find("select c.*p.id as pid,p.item_name from contract_item c left join product p on p.id =c.product_id where c.contract_id ='"
-                        + contractId + "'and c.id = '" + id + "'");
+        Contract contract = Contract.dao.findById(contractId);
+        List<Record> list = null;
+        if (contract.get("product_id") != null) {
+            list = Db
+                    .find("select c.*p.id as pid,p.item_name from contract_item c left join product p on p.id =c.product_id where c.contract_id ='"
+                            + contractId + "' and c.id = '" + id + "'");
+        } else {
+            list = Db.find("select c.*,'null' as item_name from contract_item c where c.contract_id ='" + contractId
+                    + "' and c.id = '" + id + "'");
+        }
         renderJson(list);
     }
 
