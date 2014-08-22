@@ -44,7 +44,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists dp_prof_provider_info(OID bigint auto_increment PRIMARY KEY, ADDITIONAL_SERVICES VARCHAR(600),  BIZNATURE VARCHAR(60),  PROVIDER_SYS_CODE VARCHAR(90),  PROVIDER_NAME  VARCHAR(270),  PROVIDER_BIZ_CODE VARCHAR(60),  MAINTENANCE_OFFICE  VARCHAR(90),  COUNTRY_BAK VARCHAR(90),  PROVINCE_BAK VARCHAR(90),  CITY_BAK VARCHAR(90),  POST_CODE   VARCHAR(90),  CONTACT VARCHAR(120),  FAX_BAK VARCHAR(60),  EMAIL   VARCHAR(450),  TELEPHONE_BAK   VARCHAR(90),  ADDRESS1 VARCHAR(300),  ADDRESS2 VARCHAR(300),  ADDRESS3 VARCHAR(300),  ADDRESS4 VARCHAR(300),  STATUS  CHAR(1) default 'A',  CREATOR VARCHAR(20),  CREATE_DATE DATE,  LAST_UPDATER VARCHAR(20),  LAST_UPDATE_DATE DATE,  COUNTRY_OID bigint,  COUNTRY VARCHAR(300),  PROVINCE_OID bigint,  PROVINCE VARCHAR(300),  CITY_OID bigint,  CITY VARCHAR(300),  PHONE_COUNTRY_CODE  VARCHAR(10),  PHONE_AREA_CODE VARCHAR(10),  PHONE_NO VARCHAR(120),  FAX_COUNTRY_CODE VARCHAR(10),  FAX_AREA_CODE   VARCHAR(10),  FAX_NO  VARCHAR(120),  SPPM_OID bigint,  PROVIDER_FULL_NAME  VARCHAR(300),  CONTROL_OFFICE  VARCHAR(90),  DATA_REALM  VARCHAR(20),  COPY_FROM_SP_OID bigint,  ONE_OFF VARCHAR(1) default 'N',  EFFECTIVE_FROM  DATE,  EFFECTIVE_TO DATE, MAIL_SENT_TIME TIMESTAMP);");
 
             // 配送单
-            stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment primary key,order_no varchar(50),transfer_order_id varchar(50), customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status varchar(50),cargo_nature varchar(20),from_warehouse_code varchar(20),remark varchar(255),route_from varchar(255),route_to varchar(255),priceType varchar(50),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp);");
+            stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment primary key,order_no varchar(50),customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status varchar(50),cargo_nature varchar(20),from_warehouse_code varchar(20),remark varchar(255),route_from varchar(255),route_to varchar(255),priceType varchar(50),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp);");
 
             // delivery_order_milestone 配送单里程碑
             stmt.executeUpdate("create table if not exists delivery_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
@@ -230,7 +230,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,to_id,location_to,remark) values(5, 1,'perUnit','1001','110101','北京市东城区','配送路线');");
 
             // 回单notity_party_id bigint,customer_id
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', 'new','应收',2,1,'这是一张回单');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', 'new','应收',1,1,'这是一张回单');");
             stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,transfer_order_id,creator,remark) values('HD2013021400002', '2014-08-6 16:35:35.1', 'confirmed','应收',1,2,'这是一张回单');");
             // 运输单应收应付明细id bigint auto_increment PRIMARY KEY, order_id bigint,
             // fin_item_id bigint,"
@@ -425,10 +425,14 @@ public class DataInitUtil {
                     + "values(3,'789', 'ATM003', 6, 24);");
 
             // 配送单
-            stmt.execute("insert into delivery_order(order_no,transfer_order_id,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600013','1','5','7','9','配送在途','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(order_no,transfer_order_id,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600004','2','6','7','10','已签收','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(order_no,transfer_order_id,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600014','3','5','8','9','取消','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(order_no,transfer_order_id,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600003','4','6','8','10','配送在途','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600013','5','7','9','配送在途','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600004','6','7','10','已签收','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600014','5','8','9','取消','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600003','6','8','10','配送在途','2014-04-25 16:35:35.1');");
+
+            // delivery_order_item
+            stmt.execute("insert into delivery_order_item(delivery_id,transfer_order_id) values(1,1);");
+            stmt.execute("insert into delivery_order_item(delivery_id,transfer_order_id) values(1,2);");
 
             // billing_order 应收应付单主表
             String billOrderStr = "insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"

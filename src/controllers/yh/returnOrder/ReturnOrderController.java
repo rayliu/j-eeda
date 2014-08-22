@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.Fin_item;
 import models.Location;
@@ -88,10 +89,10 @@ public class ReturnOrderController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,tor2.order_no) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname from return_order r_o " 
-							+" left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
-							+" left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join transfer_order tor2 on tor2.id = d_o.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
-							+" left join user_login  usl on usl.id=r_o.creator order by r_o.create_date desc " + sLimit);
+                    .find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no, tor2.order_no) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname from return_order r_o " 
+							+" left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
+							+" left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
+							+" left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator order by r_o.create_date desc " + sLimit);
 
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -167,7 +168,10 @@ public class ReturnOrderController extends Controller {
         }else{
         	DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryId);
         	// TODO 一张配送单对应多张运输单时回单怎样取出信息
-        	transferOrder = TransferOrder.dao.findById(deliveryOrder.get("transfer_order_id"));
+        	List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryId);
+        	for(DeliveryOrderItem deliveryOrderItem : deliveryOrderItems){
+            	transferOrder = TransferOrder.dao.findById(deliveryOrderItem.get("transfer_order_id"));
+        	}
             notify_party_id = deliveryOrder.get("notify_party_id");
         }
         setAttr("transferOrder", transferOrder);
