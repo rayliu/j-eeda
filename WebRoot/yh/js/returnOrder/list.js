@@ -37,7 +37,7 @@
            		"sWidth": "8%", 
                 "fnRender": function(obj) {                    
                 return "<a class='btn btn-success btn-xs returnOrderReceipt' code='"+obj.aData.ID+"' title='回单签收'>"+
-			                "<i class='fa fa-edit fa-fw'></i>"+
+			                "回单签收"+
 			            "</a> "+
 			            "<a class='btn btn-danger btn-xs cancelbutton' code='"+obj.aData.ID+"' title='取消'>"+
 			                "<i class='fa fa-trash-o fa-fw'></i>"+
