@@ -299,8 +299,8 @@ public class ContractController extends Controller {
         Record c = new Record();
         c.set("name", getPara("contract_name"));
         c.set("party_id", getParaToInt("partyid"));
-        c.set("period_from", createDate);
-        c.set("period_to", createDate);
+        c.set("period_from", getPara("period_from"));
+        c.set("period_to", getPara("period_to"));
         c.set("remark", getPara("remark"));
         if (id != "") {
             logger.debug("update....");
