@@ -523,12 +523,10 @@ public class PickupOrderController extends Controller {
                     for (int i = 0; i < values.length; i++) {
                         if ("yandCheckbox".equals(values[i])) {
                             pickupOrder.set("address", getPara("address"));
-                        } else {
                             pickupOrder.set("warehouse_id", null);
                         }
                         if ("warehouseCheckbox".equals(values[i])) {
                             pickupOrder.set("warehouse_id", getPara("gateInSelect"));
-                        } else {
                             pickupOrder.set("address", null);
                         }
                     }
@@ -588,9 +586,11 @@ public class PickupOrderController extends Controller {
                 if (values.length == 1) {
                     for (int i = 0; i < values.length; i++) {
                         if ("yandCheckbox".equals(values[i])) {
+                            pickupOrder.set("address", getPara("address"));
                             pickupOrder.set("warehouse_id", null);
                         }
                         if ("warehouseCheckbox".equals(values[i])) {
+                            pickupOrder.set("warehouse_id", getPara("gateInSelect"));
                             pickupOrder.set("address", null);
                         }
                     }
