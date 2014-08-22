@@ -532,11 +532,12 @@ $(document).ready(function() {
 						return nRow;
 					},
 			        "aoColumns": [
-						{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
+						{"mDataProp":"FIN_ITEM_NAME","sWidth": "80px","sClass": "name"},
 						{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},
-						{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "amount"},  
-						{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
 						{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
+						{"mDataProp":"TRANSFERORDERNO", "sWidth": "80px","sClass": "amount", "bVisable":false},  						
+						{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
+						
 						{  
 			                "mDataProp": null, 
 			                "sWidth": "60px",  

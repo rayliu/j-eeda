@@ -515,8 +515,8 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.delivery_id='"
-                        + id + "' and f.type='应付'");
+                .find("select d.*,f.name as fin_item_name, f.remark, '' as transferOrderNo from delivery_order_fin_item d "
+                        +"left join fin_item f on d.fin_item_id = f.id where d.order_id="+id);
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
