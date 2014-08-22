@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.DepartTransferOrder;
+import models.Location;
 import models.Party;
 import models.TransferOrder;
 import models.TransferOrderItemDetail;
@@ -325,6 +326,26 @@ public class DeliveryController extends Controller {
 
         setAttr("notifyParty", notifyPartyContact);
         setAttr("spContact", spContact);
+
+        String routeFrom = tOrder.get("route_to");
+        Location locationFrom = null;
+        if (routeFrom != null || !"".equals(routeFrom)) {
+            List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
+            Location l = Location.dao
+                    .findFirst("select * from location where code = (select pcode from location where code = '"
+                            + routeFrom + "')");
+            if (provinces.contains(l)) {
+                locationFrom = Location.dao
+                        .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+                                + routeFrom + "'");
+            } else {
+                locationFrom = Location.dao
+                        .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+                                + routeFrom + "'");
+            }
+            System.out.println(locationFrom);
+            setAttr("locationFrom", locationFrom);
+        }
         if (LoginUserController.isAuthenticated(this))
             render("/yh/delivery/deliveryOrderEdit.html");
 
@@ -805,7 +826,8 @@ public class DeliveryController extends Controller {
         } else {
 
             deliveryOrder.set("Sp_id", getPara("cid")).set("Notify_party_id", getPara("notify_id"))
-                    .set("Customer_id", getPara("customer_id")).set("id", deliveryid).set("route_to", getPara("route_to")).set("priceType", getPara("chargeType"));
+                    .set("Customer_id", getPara("customer_id")).set("id", deliveryid)
+                    .set("route_to", getPara("route_to")).set("priceType", getPara("chargeType"));
             deliveryOrder.update();
         }
         renderJson(deliveryOrder);

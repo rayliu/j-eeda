@@ -95,7 +95,7 @@
 	                                        	
 	                                        </div>
 							                       <div class="form-group" >
-	                                            	<input id="locationTo" type="hidden" name="route_to" value="${departOrder.route_to!''}">
+	                                            	<input id="locationTo" type="hidden" name="route_to" value="${deliveryId.route_to!''}">
 	                                           		<label>目的地城市</label>
 			                                   		 <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">
 			                                        <label>省</label>
@@ -111,6 +111,7 @@
 		                                   		 </div>
 		                                   		 <div class="form-group">
                                                  <label><h3>计费方式</h3></label>
+                                                   <input id="chargeTypeRadio" type="hidden" value="${deliveryId.priceType!''}"/>
                                                   <label class="radio-inline">
                                                     <input type="radio" name="chargeType" id="chargeType1" value="perUnit" checked="">计件
                                                 </label>

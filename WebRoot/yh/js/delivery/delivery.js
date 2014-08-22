@@ -673,8 +673,6 @@ $(document).ready(function() {
 					{
 						if(data[i].NAME == hideProvince){
 	     				province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-	     				
-	     				
 						}else{
 	     				province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
 						}
@@ -759,41 +757,10 @@ $(document).ready(function() {
 			},'json');
 	    
 
-	    // 回显城市
-	    var hideProvince = $("#hideProvinceTo").val();
-	    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
-				if(data.length > 0){
-					var cmbCity =$("#cmbCityTo");
-					cmbCity.empty();
-					cmbCity.append("<option>--请选择城市--</option>");
-					var hideCity = $("#hideCityTo").val();
-					for(var i = 0; i < data.length; i++)
-					{
-						if(data[i].NAME == hideCity){
-							cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-						}else{
-							cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-						}
-					}
-				}
-			},'json');
-
-	    // 回显区
-	    var hideCity = $("#hideCityTo").val();
-	    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
-				if(data.length > 0){
-					var cmbArea =$("#cmbAreaTo");
-					cmbArea.empty();
-					cmbArea.append("<option>--请选择区(县)--</option>");
-					var hideDistrict = $("#hideDistrictTo").val();
-					for(var i = 0; i < data.length; i++)
-					{
-						if(data[i].NAME == hideDistrict){
-							cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-						}else{
-							cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-						}
-					}
-				}
-			},'json');
+	 // 回显付款方式
+		$("input[name='chargeType']").each(function(){
+			if($("#chargeTypeRadio").val() == $(this).val()){
+				$(this).attr('checked', true);		
+			}
+		});
 });
