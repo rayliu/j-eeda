@@ -460,9 +460,27 @@
 	// 回显提货方式
 	$("input[name='pickupMode']").each(function(){
 		if($("#pickupModeRadio").val() == $(this).val()){
+			if($(this).val() == 'own'){
+				$("#carInfoDiv").show();
+			}else{
+				$("#spDiv").show();
+			}
 			$(this).attr('checked', true);
 		}
 	});	
+	
+    // 当pickupModes为货品直送时则显示收货人的信息
+    $("#pickupModes").on('click', 'input', function(){
+  	  console.log(this);
+  	  var inputId  = $(this).attr('id');
+	  if(inputId=='pickupMode1'){
+		  $("#carInfoDiv").show();
+		  $("#spDiv").hide();
+	  }else{
+		  $("#carInfoDiv").hide();
+		  $("#spDiv").show();
+	  } 
+  	});  
 	
 	// 显示已完成按钮
 	var showFinishBut = function(){

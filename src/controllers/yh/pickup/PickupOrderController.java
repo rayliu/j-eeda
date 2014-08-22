@@ -64,8 +64,17 @@ public class PickupOrderController extends Controller {
         setAttr("localArr", list);
         String[] transferOrderIds = list.split(",");
 
-        TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
-        setAttr("transferOrderAttr", transferOrderAttr);
+        if(transferOrderIds.length == 1){
+	        TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
+	        setAttr("transferOrderAttr", transferOrderAttr);
+	        Long spId = transferOrderAttr.get("sp_id");
+	        if(spId != null && !"".equals(spId)){
+	        	Party spParty = Party.dao.findById(spId);
+	        	setAttr("spParty", spParty);
+	        	Contact spContact = Contact.dao.findById(spParty.get("contact_id"));	        	
+	        	setAttr("spContact", spContact);
+	        }
+        }
 
         logger.debug("localArr" + list);
         String order_no = null;
@@ -86,7 +95,6 @@ public class PickupOrderController extends Controller {
         if (order != null) {
             String num = order.get("depart_no");
             String str = num.substring(2, num.length());
-            System.out.println(str);
             Long oldTime = Long.parseLong(str);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String format = sdf.format(new Date());
