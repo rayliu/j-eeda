@@ -910,15 +910,18 @@ public class PickupOrderController extends Controller {
         // 第二步：循环所选运输单中的 item, 到合同中（循环）比对去算钱。
         
         Long spId=pickupOrder.getLong("sp_id");
-        if ( spId== null)
-            return;
+        if ( spId== null){
+            logger.debug("供应商id=null");
+            renderJson("{\"success\": false,\"reason\": \"供应商id=null\"}");
+        }
         
         //先获取有效期内的sp合同, 如有多个，默认取第一个
         Contract spContract= Contract.dao.findFirst("select * from contract where type='DELIVERY_SERVICE_PROVIDER' " +
                 "and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="+spId);
-        if(spContract==null)
-            return;
-        
+        if(spContract==null){
+            logger.debug("没有效期内的sp合同~!");
+            renderJson("{\"success\": false,\"reason\": \"没有效期内的sp合同\"}");
+        }
         String chargeType = pickupOrder.get("charge_type");
         
         List<DepartTransferOrder> dItem = DepartTransferOrder.dao
@@ -937,7 +940,7 @@ public class PickupOrderController extends Controller {
                 //TODO 这个是递归，可以整理成一个递归函数
                 Record contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                + "and product_id ="+tOrderItemRecord.get("product_id")
+                                + " and product_id ="+tOrderItemRecord.get("product_id")
                                 +" and from_id = '"+ tOrderItemRecord.get("route_from")
                                 +"' and to_id = '"+ tOrderItemRecord.get("route_to")
                                 + "' and priceType='"+chargeType+"'");
@@ -947,7 +950,7 @@ public class PickupOrderController extends Controller {
                 }else{
                     contractFinItem = Db
                             .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                    + "and product_id ="+tOrderItemRecord.get("product_id")
+                                    + " and product_id ="+tOrderItemRecord.get("product_id")
                                     +" and from_id = '"+ tOrderItemRecord.get("route_from")
                                     + "' and priceType='"+chargeType+"'");
                     
