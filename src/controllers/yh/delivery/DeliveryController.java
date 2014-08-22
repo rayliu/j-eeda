@@ -327,24 +327,23 @@ public class DeliveryController extends Controller {
         setAttr("notifyParty", notifyPartyContact);
         setAttr("spContact", spContact);
 
-        String routeFrom = tOrder.get("route_to");
-        Location locationFrom = null;
-        if (routeFrom != null || !"".equals(routeFrom)) {
+        String routeTo = tOrder.get("route_to");
+        Location locationTo = null;
+        if (routeTo != null || !"".equals(routeTo)) {
             List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
             Location l = Location.dao
                     .findFirst("select * from location where code = (select pcode from location where code = '"
-                            + routeFrom + "')");
+                            + routeTo + "')");
             if (provinces.contains(l)) {
-                locationFrom = Location.dao
+                locationTo = Location.dao
                         .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-                                + routeFrom + "'");
+                                + routeTo + "'");
             } else {
-                locationFrom = Location.dao
+                locationTo = Location.dao
                         .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-                                + routeFrom + "'");
+                                + routeTo + "'");
             }
-            System.out.println(locationFrom);
-            setAttr("locationFrom", locationFrom);
+            setAttr("locationTo", locationTo);
         }
         if (LoginUserController.isAuthenticated(this))
             render("/yh/delivery/deliveryOrderEdit.html");
