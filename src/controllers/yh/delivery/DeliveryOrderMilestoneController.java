@@ -107,9 +107,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         if(spContract==null)
             return;
         
-        String chargeType = deliverOrder.get("charge_type");
-        if(chargeType==null)//TODO 计费方式，页面上没有保存
-            chargeType="perUnit";
+        String chargeType = deliverOrder.get("pricetype");
+        
         Long deliverOrderId = deliverOrder.getLong("id");
         if (spId != null) {
             
@@ -147,8 +146,8 @@ public class DeliveryOrderMilestoneController extends Controller {
                         }else{
                             contractFinItem = Db
                                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                            //+" and to_id = '"+ dOrderItemRecord.get("route_to")
-                                            +" and to_id = '110101' and priceType='"+chargeType+"'");
+                                            +" and to_id = '"+ dOrderItemRecord.get("route_to")
+                                            +"' and priceType='"+chargeType+"'");
                             
                             if (contractFinItem != null) {
                                 genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem);
