@@ -663,7 +663,7 @@ $(document).ready(function() {
 			});		
 		});	
 		
-		//获取全国省份
+	    //获取全国省份
 	    $(function(){
 	     	var province = $("#mbProvinceTo");
 	     	$.post('/yh/serviceProvider/province',function(data){
@@ -673,6 +673,8 @@ $(document).ready(function() {
 					{
 						if(data[i].NAME == hideProvince){
 	     				province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+	     				
+	     				
 						}else{
 	     				province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
 						}
@@ -716,16 +718,15 @@ $(document).ready(function() {
 				var inputStr = $(this).val();
 				var code = $("#locationTo").val(inputStr);
 			});  
-	    
 
 	    // 回显城市
-	    var hideProvince = $("#hideProvinceFrom").val();
+	    var hideProvince = $("#hideProvinceTo").val();
 	    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
 				if(data.length > 0){
-					var cmbCity =$("#cmbCityFrom");
+					var cmbCity =$("#cmbCityTo");
 					cmbCity.empty();
 					cmbCity.append("<option>--请选择城市--</option>");
-					var hideCity = $("#hideCityFrom").val();
+					var hideCity = $("#hideCityTo").val();
 					for(var i = 0; i < data.length; i++)
 					{
 						if(data[i].NAME == hideCity){
@@ -738,13 +739,13 @@ $(document).ready(function() {
 			},'json');
 
 	    // 回显区
-	    var hideCity = $("#hideCityFrom").val();
+	    var hideCity = $("#hideCityTo").val();
 	    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
 				if(data.length > 0){
-					var cmbArea =$("#cmbAreaFrom");
+					var cmbArea =$("#cmbAreaTo");
 					cmbArea.empty();
 					cmbArea.append("<option>--请选择区(县)--</option>");
-					var hideDistrict = $("#hideDistrictFrom").val();
+					var hideDistrict = $("#hideDistrictTo").val();
 					for(var i = 0; i < data.length; i++)
 					{
 						if(data[i].NAME == hideDistrict){
