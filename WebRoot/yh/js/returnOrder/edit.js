@@ -184,6 +184,14 @@
 		},'json');
 	});
  	
+ 	if($("#status").val() == 'new'){
+ 		$("#statusSpan").text('新建');
+ 	}else if($("#status").val() == 'confirmed'){
+ 		$("#statusSpan").text('确认'); 		
+ 	}else{
+ 		$("#statusSpan").text(''); 		
+ 	}
+ 	
  	if($("#cargoNature").val() == 'ATM'){
  		$("#cargoNatureSpan").text('ATM');
  	}else if($("#cargoNature").val() == 'cargo'){
@@ -193,9 +201,11 @@
  	}
  	
  	if($("#pickupMode").val() == 'own'){
- 		$("#pickupModeSpan").text('自提');
- 	}else if($("#pickupMode").val() == 'out_source'){
- 		$("#pickupModeSpan").text('外包'); 		
+ 		$("#pickupModeSpan").text('源鸿自提');
+ 	}else if($("#pickupMode").val() == 'routeSP'){
+ 		$("#pickupModeSpan").text('干线供应商自提'); 		
+ 	}else if($("#pickupMode").val() == 'pickupSP'){
+ 		$("#pickupModeSpan").text('外包供应商提货'); 		
  	}else{
  		$("#pickupModeSpan").text(''); 		 		
  	}
