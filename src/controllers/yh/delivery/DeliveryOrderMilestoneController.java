@@ -118,7 +118,7 @@ public class DeliveryOrderMilestoneController extends Controller {
             for (Record dOrderItemRecord : deliveryOrderItemList) {
                 Record contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                + "and product_id ="+dOrderItemRecord.get("product_id")
+                                + " and product_id ="+dOrderItemRecord.get("product_id")
                                 +" and from_id = '"+ dOrderItemRecord.get("route_from")
                                 +"' and to_id = '"+ dOrderItemRecord.get("route_to")
                                 + "' and priceType='"+chargeType+"'");
@@ -128,7 +128,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                 }else{
                     contractFinItem = Db
                             .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                    + "and product_id ="+dOrderItemRecord.get("product_id")
+                                    + " and product_id ="+dOrderItemRecord.get("product_id")
                                     +" and to_id = '"+ dOrderItemRecord.get("route_to")
                                     + "' and priceType='"+chargeType+"'");
                     
