@@ -239,7 +239,7 @@ public class TransferOrderMilestoneController extends Controller {
         renderJson(map);
     }
 
-    // 回单签收
+    // 收货确认
     public void receipt() {
         Long order_id = Long.parseLong(getPara("orderId"));
         TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
@@ -247,10 +247,10 @@ public class TransferOrderMilestoneController extends Controller {
                 .find("select toid.pickup_id from transfer_order_item_detail toid where order_id = ? group by toid.pickup_id",
                         transferOrder.get("id"));
         if (transferOrderItemDetails.size() > 1) {
-            transferOrder.set("status", "部分已签收");
+            transferOrder.set("status", "部分已收货");
             transferOrder.update();
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-            transferOrderMilestone.set("status", "部分已签收");
+            transferOrderMilestone.set("status", "部分已收货");
             String name = (String) currentUser.getPrincipal();
             List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
             transferOrderMilestone.set("create_by", users.get(0).get("id"));
@@ -262,10 +262,10 @@ public class TransferOrderMilestoneController extends Controller {
             transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
             transferOrderMilestone.save();
         } else {
-            transferOrder.set("status", "已签收");
+            transferOrder.set("status", "已收货");
             transferOrder.update();
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-            transferOrderMilestone.set("status", "已签收");
+            transferOrderMilestone.set("status", "已收货");
             String name = (String) currentUser.getPrincipal();
             List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
             transferOrderMilestone.set("create_by", users.get(0).get("id"));

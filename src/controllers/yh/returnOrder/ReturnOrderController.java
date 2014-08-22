@@ -12,9 +12,13 @@ import models.Location;
 import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
+import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -25,6 +29,7 @@ import controllers.yh.LoginUserController;
 
 public class ReturnOrderController extends Controller {
     private Logger logger = Logger.getLogger(ReturnOrderController.class);
+    Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
         if (LoginUserController.isAuthenticated(this))
@@ -428,12 +433,41 @@ public class ReturnOrderController extends Controller {
 		contact.update();
 	}
 
-	// 取消
-    public void cancel() {
+	// 回单签收
+    public void returnOrderReceipt() {
         String id = getPara();
-        ReturnOrder re = ReturnOrder.dao.findById(id);
-        re.set("TRANSACTION_STATUS", "cancel").update();
+        ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
+        returnOrder.set("transaction_status", "已签收").update();
+        Long deliveryId = returnOrder.get("delivery_order_id");
+        if(deliveryId != null && !"".equals(deliveryId)){
+        	
+        }else{
+        	TransferOrder transferOrder = TransferOrder.dao.findById(returnOrder.get("transfer_order_id"));
+        	transferOrder.set("status", "已签收");
+        	transferOrder.update();
+        	
+        	TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+        	transferOrderMilestone.set("status", "已签收");
+            String name = (String) currentUser.getPrincipal();
+            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+            transferOrderMilestone.set("location", "");
+            java.util.Date utilDate = new java.util.Date();
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+            transferOrderMilestone.set("create_stamp", sqlDate);
+            transferOrderMilestone.set("order_id", transferOrder.get("id"));
+            transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+            transferOrderMilestone.save();
+        }
         renderJson("{\"success\":true}");
+    }
+    
+    // 取消
+    public void cancel() {
+    	String id = getPara();
+    	ReturnOrder re = ReturnOrder.dao.findById(id);
+    	re.set("TRANSACTION_STATUS", "cancel").update();
+    	renderJson("{\"success\":true}");
     }
 
     // 应收list

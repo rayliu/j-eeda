@@ -467,6 +467,15 @@
 			}
 			$(this).attr('checked', true);
 		}
+		if($("#pickupModeRadio").val() == ''){
+			if($(this).prop('checked') == true){
+				if($(this).val() == 'own'){
+					$("#carInfoDiv").show();
+				}else{
+					$("#spDiv").show();
+				}
+			}
+		}
 	});	
 	
     // 当pickupModes为货品直送时则显示收货人的信息
