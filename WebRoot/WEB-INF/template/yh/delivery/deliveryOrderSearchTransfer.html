@@ -12,11 +12,11 @@
             </div>
             <div class="panel-body">
             	<label>货品属性：</label>
-            	<label><input id="atmRadio" type="radio" name="aabbcc" value="ATM" checked="">ATM</label>
-           		<label><input type="radio" name="aabbcc" value="普通货品" id="cargoRadio" >普通货品</label>
+            	<label><input id="atmRadio" type="radio" name="aabbcc" value="ATM"  checked="">ATM</label>
+            	<label><input type="radio" name="aabbcc" value="普通货品" id="cargoRadio">普通货品</label>
             </div>
             	
-	            	<div id="basic" style='display:none'>
+	            	<div id="basic"  style='display:none'>
 		            	<div class="panel-body">
 			            	<div class="row">
 				            	<div class="col-lg-6">
@@ -40,16 +40,6 @@
 									</div>
 								</div>
 							</div>
-							<div>
-		                        <form id='createFormNormal' action="/yh/delivery/creat3" method="post">
-		                        	<!-- <input id='cusId' name='cusId' type="hidden">
-		                        	<input id='createId' name='createId' type="hidden">
-			                        <input id='localArr' name='localArr' type="hidden">
-			                        <input id='localArr2' name='localArr2' type="hidden">
-			                        <input id='localArr3' name='localArr3' type="hidden"> -->
-			                        <a class="btn btn-primary" id="saveDeliveryNormal" disabled="true">创建</a>
-		                        </form>
-		                     </div>
 						</div>
 	                  
 	            		<div class="panel-body">
@@ -99,18 +89,17 @@
 									</div>
 								</div>
 							</div>
-							<div>
-		                        <form id='createForm' action="/yh/delivery/creat3" method="post">
-		                        	<input id='cusId' name='cusId' type="hidden">
-		                        	<input id='createId' name='createId' type="hidden">
-			                        <input id='localArr' name='localArr' type="hidden">
-			                        <input id='localArr2' name='localArr2' type="hidden">
-			                        <input id='localArr3' name='localArr3' type="hidden">
-			                        <a class="btn btn-primary" id="saveDelivery" disabled="true">创建</a>
-		                        </form>
-		                     </div>
                         </div>
-                        
+                        <div>
+	                        <form id='createForm' action="/yh/delivery/creat3" method="post">
+	                        	<input id='cusId' name='cusId' type="hidden">
+	                        	<input id='createId' name='createId' type="hidden">
+		                        <input id='localArr' name='localArr' type="hidden">
+		                        <input id='localArr2' name='localArr2' type="hidden">
+		                        <input id='localArr3' name='localArr3' type="hidden">
+		                        <a class="btn btn-primary" id="saveDelivery" disabled="true">创建</a>
+	                        </form>
+	                     </div>
 	            		<div class="panel-body">
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover" id="eeda-table4">

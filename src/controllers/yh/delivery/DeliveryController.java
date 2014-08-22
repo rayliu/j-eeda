@@ -759,12 +759,14 @@ public class DeliveryController extends Controller {
             if (notifyId == null || notifyId.equals("")) {
                 deliveryOrder.set("Order_no", orderNo).set("Transfer_order_id", getPara("tranferid"))
                         .set("Customer_id", getPara("customer_id")).set("Sp_id", getPara("cid"))
-                        .set("Notify_party_id", party.get("id")).set("CREATE_STAMP", createDate).set("Status", "新建");
+                        .set("Notify_party_id", party.get("id")).set("CREATE_STAMP", createDate).set("Status", "新建")
+                        .set("route_to", getPara("route_to")).set("priceType", getPara("chargeType"));
                 deliveryOrder.save();
             } else {
                 deliveryOrder.set("Order_no", orderNo).set("Transfer_order_id", getPara("tranferid"))
                         .set("Customer_id", getPara("customer_id")).set("Sp_id", getPara("cid"))
-                        .set("Notify_party_id", notifyId).set("CREATE_STAMP", createDate).set("Status", "新建");
+                        .set("Notify_party_id", notifyId).set("CREATE_STAMP", createDate).set("Status", "新建")
+                        .set("route_to", getPara("route_to")).set("priceType", getPara("chargeType"));
                 deliveryOrder.save();
             }
 
@@ -790,20 +792,20 @@ public class DeliveryController extends Controller {
                         .set("transfer_order_id", getPara("tranferid")).set("transfer_no", idlist5);
                 deliveryOrderItem.save();
             }
-            
+
             // 在单品中设置delivery_id
             String detailIds = getPara("localArr2");
             String[] detailIdArr = detailIds.split(",");
-            for(int i=0;i<detailIdArr.length;i++){
-            	TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(detailIdArr[i]);
-            	transferOrderItemDetail.set("delivery_id", deliveryOrder.get("id"));
-            	transferOrderItemDetail.update();
+            for (int i = 0; i < detailIdArr.length; i++) {
+                TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(detailIdArr[i]);
+                transferOrderItemDetail.set("delivery_id", deliveryOrder.get("id"));
+                transferOrderItemDetail.update();
             }
             saveDeliveryOrderMilestone(deliveryOrder);
         } else {
 
             deliveryOrder.set("Sp_id", getPara("cid")).set("Notify_party_id", getPara("notify_id"))
-                    .set("Customer_id", getPara("customer_id")).set("id", deliveryid);
+                    .set("Customer_id", getPara("customer_id")).set("id", deliveryid).set("route_to", getPara("route_to")).set("priceType", getPara("chargeType"));
             deliveryOrder.update();
         }
         renderJson(deliveryOrder);

@@ -25,6 +25,7 @@ $(document).ready(function() {
 	                    return +obj.aData.DAYFROM+"-"+obj.aData.DAYTO;
 	                            
 	                }},
+	            {"mDataProp":"ITEM_NAME"},   
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "8%",                
@@ -64,6 +65,7 @@ $(document).ready(function() {
 		                    return +obj.aData.DAYFROM+"-"+obj.aData.DAYTO;
 		                            
 		                }},
+		                {"mDataProp":"ITEM_NAME"},  
 		            { 
 		                "mDataProp": null, 
 		                "sWidth": "8%",                
@@ -107,6 +109,7 @@ $(document).ready(function() {
 		                    return +obj.aData.DAYFROM+"-"+obj.aData.DAYTO;
 		                            
 		                }},
+		                {"mDataProp":"ITEM_NAME"},  
 		            { 
 		                "mDataProp": null, 
 		                "sWidth": "8%",                
@@ -143,6 +146,8 @@ $(document).ready(function() {
                 	 $('#day').val(data[0].DAYFROM);
                 	 $('#day2').val(data[0].DAYTO);
                 	 $('#unit2').val(data[0].UNIT);
+                	 $('#productId').val(data[0].PID);
+                	 $('#itemNameMessage').val(data[0].ITEM_NAME);
                 	 $('#optionsRadiosInline1').prop('checked', true).trigger('change');
                 	 
                  }else{
@@ -388,7 +393,7 @@ $(document).ready(function() {
 		//选择出发地点
 		$('#fromName').on('keyup click', function(){
 			var inputStr = $('#fromName').val();
-			$.get('/yh/route/search', {locationName:inputStr}, function(data){
+			$.get('/yh/customerContract/searchlocation', {locationName:inputStr}, function(data){
 				console.log(data);
 				var fromLocationList =$("#fromLocationList");
 				fromLocationList.empty();
@@ -436,7 +441,7 @@ $(document).ready(function() {
 		//选择目的地点
 		$('#toName').on('keyup click', function(){
 			var inputStr = $('#toName').val();
-			$.get('/yh/route/search', {locationName:inputStr}, function(data){
+			$.get('/yh/customerContract/searchlocation', {locationName:inputStr}, function(data){
 				
 				var toLocationList =$("#toLocationList");
 				toLocationList.empty();

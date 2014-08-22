@@ -342,12 +342,13 @@ public class ContractController extends Controller {
             locationList = Db
                     .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and c.company_name like ?",
                             "%" + locationName + "%");
-            renderJson(locationList);
+
         } else {
             locationList = Db
                     .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER'");
-            renderJson(locationList);
+
         }
+        renderJson(locationList);
     }
 
     // 列出供应商公司名称
@@ -401,8 +402,9 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db.find("select * from  contract_item c where c.contract_id = " + contractId
-                    + " and PRICETYPE ='计件'" + sLimit);
+            orders = Db
+                    .find("select c.*,p.item_name from  contract_item c left join product p on c.product_id = p.id where c.contract_id = "
+                            + contractId + " and PRICETYPE ='计件'" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -447,8 +449,9 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db.find("select * from  contract_item c where c.contract_id = " + contractId
-                    + " and PRICETYPE ='整车'" + sLimit);
+            orders = Db
+                    .find("select c.*,p.item_name from contract_item c left join product p on c.product_id = p.id  where c.contract_id = "
+                            + contractId + " and PRICETYPE ='整车'" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -493,8 +496,9 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db.find("select * from  contract_item c where c.contract_id = " + contractId
-                    + " and pricetype ='零担'" + sLimit);
+            orders = Db
+                    .find("select c.*,p.item_name from  contract_item c  left join product p on c.product_id = p.id where c.contract_id = "
+                            + contractId + " and pricetype ='零担'" + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -513,8 +517,12 @@ public class ContractController extends Controller {
         item.set("contract_id", contractId).set("pricetype", getPara("priceType")).set("from_id", getPara("from_id"))
                 .set("location_from", getPara("fromName")).set("to_id", getPara("to_id"))
                 .set("location_to", getPara("toName")).set("amount", getPara("price")).set("dayfrom", getPara("day"))
-                .set("dayto", getPara("day2")).set("product_id", getPara("productId"));
-
+                .set("dayto", getPara("day2"));
+        if (getPara("productId").equals("")) {
+            item.set("product_id", null);
+        } else {
+            item.set("product_id", getPara("productId"));
+        }
         if (routeItemId != "") {
             if (priceType.equals("计件")) {
                 item.set("id", getPara("routeItemId")).set("cartype", null).set("carlength", null)
@@ -576,8 +584,9 @@ public class ContractController extends Controller {
         String contractId = getPara("contractId");
         System.out.println(id);
         // Route route = Route.dao.findById(id);
-        List<Record> list = Db.find("select * from contract_item where contract_id ='" + contractId + "'and id = '"
-                + id + "'");
+        List<Record> list = Db
+                .find("select c.*p.id as pid,p.item_name from contract_item c left join product p on p.id =c.product_id where c.contract_id ='"
+                        + contractId + "'and c.id = '" + id + "'");
         renderJson(list);
     }
 
@@ -604,5 +613,20 @@ public class ContractController extends Controller {
                             + customerId + ")");
         }
         renderJson(locationList);
+    }
+
+    // input控件列出城市列表
+    public void searchlocation() {
+        String locationName = getPara("locationName");
+
+        // 不能查所有
+        if (locationName.trim().length() > 0) {
+            List<Record> locationList = Db.find("select * from location where name like '%" + locationName
+                    + "%' or code like '%" + locationName + "%' or pcode like '%" + locationName
+                    + "%' order by id limit 10");
+            renderJson(locationList);
+        } else {
+
+        }
     }
 }
