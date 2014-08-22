@@ -542,40 +542,6 @@ public class DepartOrderController extends Controller {
         renderJson(Map);
     }
 
-    // 判断是否单据继续创建
-    public boolean CheckDepartOrder(String[] order_id) {
-        int detail_total = 0;// 运输单货品/单品数
-        int depart_detail = 0;// 发车单单品个数
-        int last = 0;// 未处理单品个数
-        boolean check = false;
-        for (int i = 0; i < order_id.length; i++) {
-            /* 运输单查询货品、单品个数 */
-
-            String total_tr_item = "select * from transfer_order_item  where order_id=" + Integer.parseInt(order_id[i]);// 货品id
-            List<Record> tr_itemlist = Db.find(total_tr_item);
-            for (int j = 0; j < tr_itemlist.size(); j++) {
-                String total_tr_detail = "select * from transfer_order_item_detail  where item_id="
-                        + Integer.parseInt(tr_itemlist.get(j).get("id").toString());// 单品id
-                List<Record> tr_detaillist = Db.find(total_tr_detail);
-                if (tr_detaillist.size() > 0) {
-                    detail_total = detail_total + tr_detaillist.size();
-                } else {
-                    detail_total++;
-                }
-            }
-            /* 发车单查询货品，单品个数 */
-            String total_depart_detail = "select * from depart_transfer_itemdetail  where order_id="
-                    + Integer.parseInt(order_id[i]);// 发车单单品个数
-            List<Record> depart_detaillist = Db.find(total_depart_detail);
-            depart_detail = depart_detail + depart_detaillist.size();
-        }
-        last = detail_total - depart_detail;
-        if (last > 0) {
-            check = true;
-        }
-        return check;
-    }
-
     // 保存发车单
     public void saveDepartOrder() {
         String depart_id = getPara("depart_id");// 发车单id
