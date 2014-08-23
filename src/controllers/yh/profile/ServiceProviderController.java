@@ -122,7 +122,7 @@ public class ServiceProviderController extends Controller {
 
     public void edit() {
         long id = getParaToLong();
-
+        
         Party party = Party.dao.findById(id);
         Contact locationCode = Contact.dao.findById(party.get("contact_id"), "location");
         String code = locationCode.get("location");
@@ -144,7 +144,7 @@ public class ServiceProviderController extends Controller {
         setAttr("location", location);
 
         setAttr("party", party);
-
+        
         Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
                 + id);
         setAttr("contact", contact);
