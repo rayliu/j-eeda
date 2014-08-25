@@ -54,7 +54,6 @@ public class TransferOrderController extends Controller {
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
 
-        // String strWhere = DataTablesUtils.buildSingleFilter(this);
         if (orderNo == null && status == null && address == null && customer == null && sp == null && beginTime == null
                 && endTime == null) {
             String sLimit = "";
@@ -169,11 +168,9 @@ public class TransferOrderController extends Controller {
         setAttr("status", "新建");
         if (LoginUserController.isAuthenticated(this))
             render("transferOrder/updateTransferOrder.html");
-        // render("transferOrder/transferOrderEdit.html");
     }
 
     public void edit() {
-        // long id = getParaToLong();
         long id = getParaToLong("id");
         TransferOrder transferOrder = TransferOrder.dao.findById(id);
         setAttr("transferOrder", transferOrder);
@@ -201,26 +198,6 @@ public class TransferOrderController extends Controller {
             Party notify = Party.dao.findById(notify_party_id);
             Contact contact = Contact.dao.findById(notify.get("contact_id"));
             setAttr("contact", contact);
-            Contact locationCode = Contact.dao.findById(notify.get("contact_id"));
-            String code = locationCode.get("location");
-
-            List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
-            Location l = Location.dao
-                    .findFirst("SELECT * FROM location where code = (select pcode from location where CODE = '" + code
-                            + "')");
-            Location location = null;
-            if (provinces.contains(l)) {
-                location = Location.dao
-                        .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-                                + code + "'");
-            } else {
-                location = Location.dao
-                        .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-                                + code + "'");
-            }
-            setAttr("location", location);
-        } else {
-            setAttr("contact", null);
         }
 
         String routeFrom = transferOrder.get("route_from");
@@ -303,7 +280,6 @@ public class TransferOrderController extends Controller {
             party = new Party();
             party.set("party_type", Party.PARTY_TYPE_CUSTOMER);
             Contact contact = new Contact();
-            // setContact(contact);
             contact.save();
             party.set("contact_id", contact.getLong("id"));
             party.set("create_date", new Date());
@@ -323,7 +299,6 @@ public class TransferOrderController extends Controller {
             party = new Party();
             party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
             Contact contact = new Contact();
-            // setContact(contact);
             contact.save();
             party.set("contact_id", contact.getLong("id"));
             party.set("create_date", new Date());
@@ -614,7 +589,6 @@ public class TransferOrderController extends Controller {
         contact.set("contact_person", getPara("notify_contact_person"));
         contact.set("phone", getPara("notify_phone"));
         contact.set("address", getPara("notify_address"));
-        contact.set("location", getPara("notify_location"));
         contact.save();
         return contact;
     }
@@ -626,7 +600,6 @@ public class TransferOrderController extends Controller {
         contact.set("contact_person", getPara("notify_contact_person"));
         contact.set("phone", getPara("notify_phone"));
         contact.set("address", getPara("notify_address"));
-        contact.set("location", getPara("notify_location"));
         contact.update();
         return contact;
     }

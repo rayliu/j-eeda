@@ -1192,103 +1192,6 @@ $(document).ready(function() {
 		$("#transferOrderItemDetailUpdateForm")[0].reset();
 	});
 
-
-    //获取全国省份
-    $(function(){
-     	var province = $("#mbProvince");
-     	$.post('/yh/serviceProvider/province',function(data){
-     		province.append("<option>--请选择省份--</option>");
-				var hideProvince = $("#hideProvince").val();
-     		for(var i = 0; i < data.length; i++)
-				{
-					if(data[i].NAME == hideProvince){
-     				province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-     				
-     				
-					}else{
-     				province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-					}
-				}
-     		
-     	},'json');
-    });
-    
-     //获取省份的城市
-     $('#mbProvince').on('change', function(){
-     	//var inputStr = $(this).parent("option").attr('id'); 
-			var inputStr = $(this).val();
-			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
-				var cmbCity =$("#cmbCity");
-				cmbCity.empty();
-				cmbCity.append("<option>--请选择城市--</option>");
-				for(var i = 0; i < data.length; i++)
-				{
-					cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-				}
-				toLocationList.show();
-			},'json');
-		});
-     //获取城市的区县
-     $('#cmbCity').on('change', function(){
-     	//var inputStr = $(this).parent("option").attr('id'); 
-			var inputStr = $(this).val();
-			var code = $("#notify_location").val(inputStr);
-			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
-				var cmbArea =$("#cmbArea");
-				cmbArea.empty();
-				cmbArea.append("<option>--请选择区(县)--</option>");
-				for(var i = 0; i < data.length; i++)
-				{
-					cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
-				}
-				toLocationList.show();
-			},'json');
-		});
-     
-     $('#cmbArea').on('change', function(){
-     	//var inputStr = $(this).parent("option").attr('id'); 
-			var inputStr = $(this).val();
-			var code = $("#notify_location").val(inputStr);
-		});         
-
-     // 回显城市
-     var hideProvince = $("#hideProvince").val();
-     $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
-			if(data.length > 0){
-				var cmbCity =$("#cmbCity");
-				cmbCity.empty();
-				cmbCity.append("<option>--请选择城市--</option>");
-				var hideCity = $("#hideCity").val();
-				for(var i = 0; i < data.length; i++)
-				{
-					if(data[i].NAME == hideCity){
-						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-					}else{
-						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-					}
-				}
-			}
-		},'json');
-
-     // 回显区
-     var hideCity = $("#hideCity").val();
-     $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
-			if(data.length > 0){
-				var cmbArea =$("#cmbArea");
-				cmbArea.empty();
-				cmbArea.append("<option>--请选择区(县)--</option>");
-				var hideDistrict = $("#hideDistrict").val();
-				for(var i = 0; i < data.length; i++)
-				{
-					if(data[i].NAME == hideDistrict){
-						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-					}else{
-						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-					}
-				}
-			}
-		},'json');
-    
     //获取全国省份
     $(function(){
      	var province = $("#mbProvinceFrom");
@@ -1486,10 +1389,14 @@ $(document).ready(function() {
 			 gateInSelect.empty();
 			 var hideWarehouseId = $("#hideWarehouseId").val();
 			 for(var i=0; i<data.length; i++){
-				 if(data[i].ID == hideWarehouseId){
-					 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");					 
+				 if(i == 0){
+					 gateInSelect.append("<option class='form-control'></option>");
 				 }else{
-					 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+					 if(data[i].ID == hideWarehouseId){
+						 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");					 
+					 }else{
+						 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+					 }
 				 }
 			 }
 		 }

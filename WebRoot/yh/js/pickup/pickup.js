@@ -2,7 +2,6 @@
 $(document).ready(function() {
     $('#menu_assign').addClass('active').find('ul').addClass('in');
     var orderType = [];
-    var operationType = [];
 	//datatable, 动态处理
     var pickupOrder = $('#eeda-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -230,24 +229,11 @@ $(document).ready(function() {
 					alert("请选择相同的订单类型!");
 					return false;
 				}else{
-					if(operationType.length != 0){
-						if(operationType[0] != $(this).parent().siblings('.operation_type')[0].innerHTML && $(this).parent().siblings('.operation_type')[0].innerHTML != ''){
-							alert("请选择同一运营方式的订单!");
-							return false;
-						}else{
-							orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
-							operationType.push($(this).parent().siblings('.operation_type')[0].innerHTML);
-						}
-					}else{
-						if($(this).parent().siblings('.operation_type')[0].innerHTML != ''){
-							operationType.push($(this).parent().siblings('.operation_type')[0].innerHTML);
-						}
-					}
+					orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
 				}
 			}else{
 				if($(this).parent().siblings('.order_type')[0].innerHTML != ''){
 					orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
-					operationType.push($(this).parent().siblings('.operation_type')[0].innerHTML);
 				}
 			}
 			sumValue();
@@ -263,9 +249,6 @@ $(document).ready(function() {
 			}
 			if(orderType.length != 0){
 				orderType.splice($(this).parent().siblings('.order_type')[0].innerHTML, 1);
-			}
-			if(operationType.length != 0){
-				operationType.splice($(this).parent().siblings('.operation_type')[0].innerHTML, 1);
 			}
 		}
 	});	

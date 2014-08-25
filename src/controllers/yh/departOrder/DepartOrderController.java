@@ -347,11 +347,11 @@ public class DepartOrderController extends Controller {
                     + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
-                    + " where (tor.status = '已入货场'or tor.status like '%部分%') and ifnull(tor.depart_assign_status, '') !='"
+                    + " where (tor.status = '已入货场'or tor.status like '%部分%') or (tor.operation_type = 'out_source' and tor.status = '新建') and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'";
             rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
-            sql = "select distinct tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
+            sql = "select distinct tor.id,tor.order_no,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
                     + " (select sum(toi.weight) from transfer_order_item toi where toi.order_id = tor.id) as total_weight,"
                     + " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
@@ -363,7 +363,7 @@ public class DepartOrderController extends Controller {
                     + " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
-                    + " where (tor.status = '已入货场' or tor.status like '%部分%')"
+                    + " where (tor.status = '已入货场' or tor.status like '%部分%')or (tor.operation_type = 'out_source' and tor.status = '新建') "
                     + "  and ifnull(tor.depart_assign_status, '') !='" + TransferOrder.ASSIGN_STATUS_ALL
                     + "' order by tor.create_stamp desc";
         } else {
@@ -378,13 +378,13 @@ public class DepartOrderController extends Controller {
                     + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where (tor.status = '已入货场' or tor.status like '%部分%') and ifnull(tor.depart_assign_status, '') !='"
+                    + " where (tor.status = '已入货场' or tor.status like '%部分%') or (tor.operation_type = 'out_source' and tor.status = '新建') and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
                     + "' and '" + endTime + "'";
 
-            sql = "select distinct tor.id,tor.order_no,tor.cargo_nature, tor.arrival_mode ,"
+            sql = "select distinct tor.id,tor.order_no,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
                     + " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
                     + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
@@ -396,7 +396,7 @@ public class DepartOrderController extends Controller {
                     + " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where (tor.status ='已入货场' or tor.status like '%部分%') and ifnull(tor.depart_assign_status, '') !='"
+                    + " where (tor.status ='已入货场' or tor.status like '%部分%') or (tor.operation_type = 'out_source' and tor.status = '新建') and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.company_name like '%" + customer + "%' and tor.create_stamp between '" + beginTime

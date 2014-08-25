@@ -22,7 +22,17 @@ $(document).ready(function() {
                  }
             },
             { "mDataProp": "ORDER_NO"},
-            {"mDataProp":"CARGO_NATURE",
+            { "mDataProp":"OPERATION_TYPE",
+            	"sClass": "operation_type",
+    			"fnRender": function(obj) {
+    				if(obj.aData.OPERATION_TYPE == "out_source"){
+    					return "外包";
+    				}else if(obj.aData.OPERATION_TYPE == "own"){
+    					return "自营";
+    				}else{
+    					return "";
+    				}}}, 
+            { "mDataProp":"CARGO_NATURE",
             	"fnRender": function(obj) {
             		if(obj.aData.CARGO_NATURE == "cargo"){
             			return "普通货品";
