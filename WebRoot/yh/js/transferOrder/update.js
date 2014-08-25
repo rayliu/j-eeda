@@ -1915,7 +1915,7 @@ $(document).ready(function() {
 		});		
 	});	
 
-	if($("#transferOrderStatus").val() == '已发车' && $("#transferOrderArrivalMode").val() == 'delivery'){
+	if(($("#transferOrderStatus").val() == '已发车' || $("#transferOrderStatus").val() == '在途') && $("#transferOrderArrivalMode").val() == 'delivery'){
 		$("#receiptBtn").attr("disabled", false);
 	}
 	

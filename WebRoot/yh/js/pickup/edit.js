@@ -460,14 +460,12 @@
 	// 回显提货方式
 	$("input[name='pickupMode']").each(function(){
 		if($("#pickupModeRadio").val() == $(this).val()){
-			if($(this).val() == 'own'){
-				$("#carInfoDiv").show();
-			}else{
+			if($(this).val() != 'own'){
 				$("#spDiv").show();
 			}
 			$(this).attr('checked', true);
 		}
-		if($("#pickupModeRadio").val() == ''){
+		/*if($("#pickupModeRadio").val() == ''){
 			if($(this).prop('checked') == true){
 				if($(this).val() == 'own'){
 					$("#carInfoDiv").show();
@@ -475,7 +473,7 @@
 					$("#spDiv").show();
 				}
 			}
-		}
+		}*/
 	});	
 	
     // 当pickupModes为货品直送时则显示收货人的信息
@@ -483,10 +481,8 @@
   	  console.log(this);
   	  var inputId  = $(this).attr('id');
 	  if(inputId=='pickupMode1'){
-		  $("#carInfoDiv").show();
 		  $("#spDiv").hide();
 	  }else{
-		  $("#carInfoDiv").hide();
 		  $("#spDiv").show();
 	  } 
   	});  

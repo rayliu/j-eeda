@@ -784,6 +784,17 @@ public class DepartOrderController extends Controller {
                 transferOrderMilestone.save();
             }
             
+            TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+            users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+            transferOrderMilestone.set("location", "");
+            java.util.Date utilDate2 = new java.util.Date();
+            java.sql.Timestamp sqlDate2 = new java.sql.Timestamp(utilDate2.getTime());
+            transferOrderMilestone.set("create_stamp", sqlDate2);
+            transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
+            transferOrderMilestone.set("depart_id", departOrder.get("id"));
+            transferOrderMilestone.save();
+            
             // 生成应付, （如果已经有了应付，就要清除掉旧数据重新算）
             // 计件/整车/零担 生成发车单中供应商的应付，要算 item 的数量 * 合同中定义的价格
             // Depart_Order_fin_item 提货单/发车单应付明细表
@@ -827,7 +838,6 @@ public class DepartOrderController extends Controller {
 
         }
 
-        savePickupOrderMilestone(departOrder, order_state);
         Map Map = new HashMap();
         Map.put("amount", nummber);
         Map.put("depart", departOrder);
@@ -999,28 +1009,6 @@ public class DepartOrderController extends Controller {
         re.set("driver_id", null).update();
         re.delete();
         render("departOrder/departOrderList.html");
-    }
-
-    // 保存发车里程碑
-    private TransferOrderMilestone savePickupOrderMilestone(DepartOrder departOrder, String status) {
-        TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-        if (status == null) {
-            transferOrderMilestone.set("status", "新建");
-        } else {
-            transferOrderMilestone.set("status", status);
-            transferOrderstatus(departOrder.get("id").toString(), status, null);
-        }
-        String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        transferOrderMilestone.set("create_by", users.get(0).get("id"));
-        transferOrderMilestone.set("location", "");
-        java.util.Date utilDate = new java.util.Date();
-        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-        transferOrderMilestone.set("create_stamp", sqlDate);
-        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
-        transferOrderMilestone.set("depart_id", departOrder.get("id"));
-        transferOrderMilestone.save();
-        return transferOrderMilestone;
     }
 
     // 单击tab里程碑

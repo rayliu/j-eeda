@@ -13,7 +13,7 @@
         $("#order_edit").attr("disabled",true);
     	$("#departureConfirmationBtn").attr("disabled",false);
     }else if(departOrderStatus=="已发车"||departOrderStatus=="在途"){
-    	$("#warehousingConfirmBtn").attr("disabled",false);
+    	//$("#warehousingConfirmBtn").attr("disabled",false);
     }else if(departOrderStatus=="已发车" && $(departureConfirmationBtn).prop("disabled") == true){
     	$("#receiptBtn").attr("disabled",false);
     }else if(departOrderStatus=="已签收"){

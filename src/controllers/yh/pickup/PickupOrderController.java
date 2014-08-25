@@ -513,17 +513,16 @@ public class PickupOrderController extends Controller {
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
             pickupOrder.set("create_stamp", sqlDate);
-            if ("own".equals(getPara("pickupMode"))) {
-                if (driverId != null && !"".equals(driverId)) {
-                    pickupOrder.set("driver_id", driverId);
-                }
-                if (carinfoId != null && !"".equals(carinfoId)) {
-                    pickupOrder.set("carinfo_id", carinfoId);
-                }
-            } else {
+            if (!"own".equals(getPara("pickupMode"))) {
                 if (!getPara("sp_id").equals("")) {
                     pickupOrder.set("sp_id", getPara("sp_id"));
                 }
+            } 
+            if (driverId != null && !"".equals(driverId)) {
+                pickupOrder.set("driver_id", driverId);
+            }
+            if (carinfoId != null && !"".equals(carinfoId)) {
+                pickupOrder.set("carinfo_id", carinfoId);
             }
             String[] values = getParaValues("checkbox");
             if (values != null) {
@@ -577,17 +576,18 @@ public class PickupOrderController extends Controller {
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
             pickupOrder.set("create_stamp", sqlDate);
-            if ("own".equals(getPara("pickupMode"))) {
-                if (driverId != null && !"".equals(driverId)) {
-                    pickupOrder.set("driver_id", driverId);
-                }
-                if (carinfoId != null && !"".equals(carinfoId)) {
-                    pickupOrder.set("carinfo_id", carinfoId);
-                }
-            } else {
+            if (!"own".equals(getPara("pickupMode"))) {
                 if (!getPara("sp_id").equals("")) {
                     pickupOrder.set("sp_id", getPara("sp_id"));
                 }
+            } else{
+            	pickupOrder.set("sp_id", null);
+            }
+            if (driverId != null && !"".equals(driverId)) {
+                pickupOrder.set("driver_id", driverId);
+            }
+            if (carinfoId != null && !"".equals(carinfoId)) {
+                pickupOrder.set("carinfo_id", carinfoId);
             }
             String[] values = getParaValues("checkbox");
             if (values != null) {
