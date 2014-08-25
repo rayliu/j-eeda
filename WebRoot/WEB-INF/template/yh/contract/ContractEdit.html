@@ -396,7 +396,7 @@
                                                              <select class="form-control" id="fin_item_list" name=
                                                              "fin_item">
                                                                 <%for(finItem in finItemList){%>
-                                                                    <option value="${finItem.id}">${finItem.name}</option>
+                                                                    <option value="${finItem.id!''}">${finItem.name!''}</option>
                                                                 <%}%>
                                                              </select>
                                                         </div>

@@ -257,18 +257,24 @@ public class ContractController extends Controller {
         if (url.equals("/yh/customerContract/add")) {
             setAttr("contractType", "CUSTOMER");
             setAttr("saveOK", false);
+            List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
+            setAttr("finItemList", finItemList);
             if (LoginUserController.isAuthenticated(this))
                 render("/yh/contract/ContractEdit.html");
         }
         if (url.equals("/yh/deliverySpContract/add")) {
             setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
             setAttr("saveOK", false);
+            List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
+            setAttr("finItemList", finItemList);
             if (LoginUserController.isAuthenticated(this))
                 render("/yh/contract/ContractEdit.html");
         }
         if (url.equals("/yh/spContract/add")) {
             setAttr("contractType", "SERVICE_PROVIDER");
             setAttr("saveOK", false);
+            List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
+            setAttr("finItemList", finItemList);
             if (LoginUserController.isAuthenticated(this))
                 render("/yh/contract/ContractEdit.html");
         }
@@ -286,7 +292,7 @@ public class ContractController extends Controller {
             System.out.println(contact);
             setAttr("c", contact);
             setAttr("ul", contract);
-            
+
             List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
             setAttr("finItemList", finItemList);
         }
