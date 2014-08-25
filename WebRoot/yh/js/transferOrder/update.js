@@ -547,7 +547,17 @@ $(document).ready(function() {
             	name:"item_no",
             	placeholder: "", 
             	callback: function () {
-            		refreshItemTable();
+            		var currentEle = this;
+            		$("input[name='cargoNature']").each(function(){
+            			if($(this).prop('checked') == true){
+            				if($(this).val() == $(currentEle).parent().children('.item_name')[0].innerHTML){            					
+            					refreshItemTable();
+            				}else{
+            					alert("请使用与货品属性一致的产品!");
+            					return false;
+            				}
+            			}
+            		});
             	}
         	},
             {
