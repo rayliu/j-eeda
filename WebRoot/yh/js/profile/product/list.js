@@ -139,6 +139,9 @@ $(document).ready(function() {
             	placeholder: "", 
             	callback: function () {
             		refreshProductTable();
+            		if(this.textContent == 'repetition'){
+            			alert("该产品型号已存在,请更换!");
+            		}
             	}
         	},
         	{            

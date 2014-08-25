@@ -316,8 +316,11 @@ public class ProductController extends Controller {
         	Product product = Product.dao.findFirst("select * from product p left join category c on c.id = p.category_id where p.item_no = '"+item_no+"' and c.customer_id = "+category.get("customer_id"));
         	if(product == null){
         		item.set("item_no", item_no).update();
+        		returnValue = item_no;
+        	}else{
+        		// 产品型号已存在
+        		returnValue = "repetition";
         	}
-            returnValue = item_no;
         } else if (!"".equals(item_name) && item_name != null) {
             item.set("item_name", item_name).update();
             returnValue = item_name;
