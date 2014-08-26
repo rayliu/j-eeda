@@ -267,9 +267,18 @@ public class TransferOrderItemController extends Controller {
                 saveTransferOrderDetail(item, productId);
             }
         }
-        renderJson(item);
+        Product product = Product.dao.findById(productId);
+        renderJson(product);
     }
 
+    // 删除item与产品的关系
+    public void deleteTransferOrderItemProduct(){
+    	TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(getPara("transferOrderItemId"));
+        transferOrderItem.set("product_id", null);
+        transferOrderItem.update();
+        renderJson("{\"success\":true}");
+    }
+    
     // 保存货品同时保存单品
     private void saveTransferOrderDetail(TransferOrderItem item, Long productId) {
         TransferOrderItemDetail transferOrderItemDetail = null;

@@ -260,7 +260,7 @@ public class ProductController extends Controller {
     public void findCategory() {
     	Category category = Category.dao.findById(getPara("categoryId"));
     	renderJson(category);    		
-    }
+    }    
     
     // 查找客户
     public void searchAllCustomer() {

@@ -547,7 +547,7 @@ $(document).ready(function() {
             	name:"item_no",
             	placeholder: "", 
             	callback: function () {
-            		var currentEle = this;
+            		/*var currentEle = this;
             		$("input[name='cargoNature']").each(function(){
             			if($(this).prop('checked') == true){
             				if($(this).val() == $(currentEle).parent().children('.item_name')[0].innerHTML){            					
@@ -557,7 +557,7 @@ $(document).ready(function() {
             					return false;
             				}
             			}
-            		});
+            		});*/
             	}
         	},
             {
@@ -703,10 +703,23 @@ $(document).ready(function() {
         		//将选择的产品id先保存到数据库
         		var itemId = $(this).parent().parent().parent()[0].id;
         		var productId = ui.item.id;
-        		$.post('/yh/transferOrderItem/saveTransferOrderItem', 
-        			{transferOrderItemId:itemId,productId:productId},
-        			function(){ itemDataTable.fnDraw();  });        		
-                
+        		$.post('/yh/transferOrderItem/saveTransferOrderItem', {transferOrderItemId:itemId,productId:productId},	function(data){ 
+					$("input[name='cargoNature']").each(function(){
+    					if($(this).prop('checked') == true){
+    						if($(this).val() == 'ATM'){
+                				if(data.ITEM_NAME == 'ATM'){            					
+                					refreshItemTable();
+                					return;
+                				}else{
+                					alert("请使用与货品属性一致的产品!");
+                					$.post('/yh/transferOrderItem/deleteTransferOrderItemProduct', {transferOrderItemId:itemId,productId:productId},function(data){                						
+                					}, 'json');
+                					return false;
+                				}
+    						}
+            			}
+					});
+    			}, 'json');    
             },
         	minLength: 2
         });
