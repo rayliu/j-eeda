@@ -76,79 +76,7 @@ $(document).ready(function() {
             }
         ]      
     });	
-    
-    datatable = $('#routeSpAndPerCarTable').dataTable({
-    	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-    	//"sPaginationType": "bootstrap",
-    	"iDisplayLength": 25,
-    	"bServerSide": true,
-    	"oLanguage": {
-    		"sUrl": "/eeda/dataTables.ch.txt"
-    	},
-    	"sAjaxSource": "/yh/departOrder/createTransferOrderListForRouteSp",
-    	"aoColumns": [
-    	              { "mDataProp": null,
-    	            	  "fnRender": function(obj) {
-    	            		  return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
-    	            	  }
-    	              },
-    	              { "mDataProp": "ORDER_NO"},
-    	              { "mDataProp":"OPERATION_TYPE",
-    	            	  "sClass": "operation_type",
-    	            	  "fnRender": function(obj) {
-    	            		  if(obj.aData.OPERATION_TYPE == "out_source"){
-    	            			  return "外包";
-    	            		  }else if(obj.aData.OPERATION_TYPE == "own"){
-    	            			  return "自营";
-    	            		  }else{
-    	            			  return "";
-    	            		  }}}, 
-    	            		  { "mDataProp":"CARGO_NATURE",
-    	            			  "fnRender": function(obj) {
-    	            				  if(obj.aData.CARGO_NATURE == "cargo"){
-    	            					  return "普通货品";
-    	            				  }else if(obj.aData.CARGO_NATURE == "ATM"){
-    	            					  return "ATM";
-    	            				  }else{
-    	            					  return "";
-    	            				  }}},
-    	            				  { "mDataProp": "DOADDRESS"},
-    	            				  { "mDataProp": "ARRIVAL_MODE",
-    	            					  "fnRender": function(obj) {
-    	            						  if(obj.aData.ARRIVAL_MODE=="delivery"){
-    	            							  return "直送";
-    	            						  }else{
-    	            							  return "入中转仓";
-    	            						  }
-    	            					  },
-    	            				  },
-    	            				  {"mDataProp":"PICKUP_MODE",
-    	            					  "fnRender": function(obj) {
-    	            						  if(obj.aData.PICKUP_MODE == "routeSP"){
-    	            							  return "干线供应商自提";
-    	            						  }else if(obj.aData.PICKUP_MODE == "pickupSP"){
-    	            							  return "外包供应商提货";
-    	            						  }else if(obj.aData.PICKUP_MODE == "own"){
-    	            							  return "源鸿自提";
-    	            						  }else{
-    	            							  return "";
-    	            						  }}},
-    	            						  { 
-    	            							  "mDataProp": "SPNAME",
-    	            							  "sClass": "spname"
-    	            						  },
-    	            						  { 
-    	            							  "mDataProp": "ROUTE_FROM",
-    	            							  "sClass": "route_from"
-    	            						  },
-    	            						  { 
-    	            							  "mDataProp": "ROUTE_TO",
-    	            							  "sClass": "route_to"
-    	            						  }
-    	            						  ]      
-    });	
-
+   
     $('#saveBtn').click(function(e){
         e.preventDefault();
     	var trArr=[];
@@ -193,20 +121,6 @@ $(document).ready(function() {
     	datatable.fnDraw();
     	
       });
-    
-    /*$("#routeTo_filter ,#endTime_filter ,#beginTime_filter ,#routeFrom_filter ,#customer_filter ,#address_filter ,#status_filter ,#orderNo_filter").on( 'keyup click', function () {    	 	
-    	var orderNo = $("#orderNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var address = $("#address_filter").val();
-    	var customer = $("#customer_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	var routeFrom = $("#routeFrom_filter").val();
-    	var routeTo = $("#routeTo_filter").val();
-    	datatable.fnSettings().sAjaxSource = "/yh/departOrder/createTransferOrderList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
-    	datatable.fnDraw();
-    	
-    });*/
     
     $("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
     	if(spName.length == 0){

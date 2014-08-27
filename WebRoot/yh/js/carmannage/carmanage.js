@@ -2,26 +2,43 @@ $(document).ready(function() {
 $('#menu_carmanage').addClass('active').find('ul').addClass('in');
 	//发车记录list
 	$('#example2').dataTable( {
-		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "bFilter": false, //不需要默认的搜索框
+		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	       //"sPaginationType": "bootstrap",
-		 	"iDisplayLength": 10,
-	       "bServerSide": true,
-	       "bRetrieve": true,
+		"iDisplayLength": 10,
+	    "bServerSide": true,
+	    "bRetrieve": true,
 	   	"oLanguage": {
 	           "sUrl": "/eeda/dataTables.ch.txt"
 	       },
-	       "sAjaxSource":"/yh/carinfo/carmanageList",
-			"aoColumns": [
-				{"mDataProp":"DRIVER"},
-		            {"mDataProp":"CAR_NO"}, 
-		            {"mDataProp":"CARTYPE"},
-		            {"mDataProp":"LENGTH"},
-		            {"mDataProp":"PHONE"},
-		            {"mDataProp":"CAR_FOLLOW_NAME"},
-		            {"mDataProp":"CAR_FOLLOW_PHONE"},
-		            {"mDataProp":"KILOMETRES"},
-		            {"mDataProp":"ROAD_BRIDGE"},  
-		            {"mDataProp":"DEPART_NO"},  
-	           ]
+       "sAjaxSource":"/yh/carinfo/carmanageList",
+		"aoColumns": [
+            {"mDataProp":"DEPART_NO",
+            	"fnRender": function(obj) {
+            			return "<a href='/yh/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+            		}}, 
+    		{"mDataProp":"STATUS"},
+		    {"mDataProp":"PICKUP_MODE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.PICKUP_MODE == "routeSP"){
+            			return "干线供应商自提";
+            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
+            			return "外包供应商提货";
+            		}else if(obj.aData.PICKUP_MODE == "own"){
+            			return "源鸿自提";
+            		}else{
+            			return "";
+            		}}},
+		    {"mDataProp":"CONTACT_PERSON"},
+		    {"mDataProp":"PHONE"},
+		    {"mDataProp":"CAR_NO"},
+		    {"mDataProp":"CARTYPE"},     
+            {"mDataProp":"CAR_FOLLOW_NAME"},
+            {"mDataProp":"CAR_FOLLOW_PHONE"},
+            {"mDataProp":"KILOMETRES"},
+            {"mDataProp":"ROAD_BRIDGE"},  
+            {"mDataProp":"CREATE_STAMP"},     
+            {"mDataProp":"TRANSFER_ORDER_NO"},
+       ]
 	} );
 });
