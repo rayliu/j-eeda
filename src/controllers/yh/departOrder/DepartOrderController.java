@@ -129,6 +129,11 @@ public class DepartOrderController extends Controller {
         if (LoginUserController.isAuthenticated(this))
             render("/yh/departOrder/allTransferOrderList.html");
     }
+    
+    public void addForRouteSp() {
+    	if (LoginUserController.isAuthenticated(this))
+    		render("/yh/departOrder/allTransferOrderListForRouteSp.html");
+    }
 
     // 修改发车单页面
     public void edit() {
@@ -221,108 +226,7 @@ public class DepartOrderController extends Controller {
             render("/yh/departOrder/editDepartOrder.html");
     }
 
-    // 弹窗
-    public void boxedit() {
-        if (!"".equals(getPara("edit_depart_id"))) {
-            getIintedit(Integer.parseInt(getPara("edit_depart_id").toString()));
-        }
-    }
-
-    public void getIintedit(int depart_id) {
-        int edit_depart_id = depart_id;
-        String sql = "select deo.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',') from depart_transfer  dt "
-                + "where dt.depart_id =deo.id)as order_id from depart_order  deo "
-                + "left join contact co on co.id in( select p.contact_id  from party p where p.id=deo.driver_id ) "
-                + "left join user_login  u on u.id=deo.create_by where deo.combine_type ='DEPART' and deo.id in("
-                + edit_depart_id + ")";
-        DepartOrder depar = DepartOrder.dao.findFirst(sql);
-        String routeFrom = depar.get("route_from");
-        Location locationFrom = null;
-        if (routeFrom != null || !"".equals(routeFrom)) {
-            List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
-            Location l = Location.dao
-                    .findFirst("select * from location where code = (select pcode from location where code = '"
-                            + routeFrom + "')");
-            if (provinces.contains(l)) {
-                locationFrom = Location.dao
-                        .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-                                + routeFrom + "'");
-            } else {
-                locationFrom = Location.dao
-                        .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-                                + routeFrom + "'");
-            }
-            setAttr("locationFrom", locationFrom);
-        }
-
-        String routeTo = depar.get("route_to");
-        Location locationTo = null;
-        if (routeTo != null || !"".equals(routeTo)) {
-            List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
-            Location l = Location.dao
-                    .findFirst("select * from location where code = (select pcode from location where code = '"
-                            + routeTo + "')");
-            if (provinces.contains(l)) {
-                locationTo = Location.dao
-                        .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-                                + routeTo + "'");
-            } else {
-                locationTo = Location.dao
-                        .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-                                + routeTo + "'");
-            }
-            setAttr("locationTo", locationTo);
-        }
-        String sql_order_id = "select * from depart_transfer  where depart_id=" + depart_id;
-        List<Record> order_id = Db.find(sql_order_id);
-        String tr_order_id = "";
-        for (int i = 0; i < order_id.size(); i++) {
-            String id = order_id.get(i).get("order_id").toString();
-            tr_order_id += id + ",";
-        }
-        tr_order_id = tr_order_id.substring(0, tr_order_id.length() - 1);
-        String order_check_sql = "select depart_id , order_id from depart_transfer  where depart_id=" + depart_id + "";
-        List<Record> order_check = Db.find(order_check_sql);
-        if (order_check.size() == 1) {
-            int id = Integer.parseInt(order_check.get(0).get("order_id").toString());
-            TransferOrder tr = TransferOrder.dao.findById(id);
-            if (!"delivery".equals(tr.get("arrival_mode"))) {
-                setAttr("check_sh", false);
-                setAttr("notifi_check", false);
-            } else {
-                setAttr("notifi_check", true);
-            }
-        } else {
-            for (int i = 0; i < order_check.size(); i++) {
-                int id = Integer.parseInt(order_check.get(0).get("order_id").toString());
-                TransferOrder tr = TransferOrder.dao.findById(id);
-                if (!"delivery".equals(tr.get("arrival_mode"))) {
-                    setAttr("check_sh", false);
-                    break;
-                }
-            }
-        }
-        Long driverId = depar.get("driver_id");
-        if (driverId != null) {
-            Party driver = Party.dao.findById(driverId);
-            Contact driverContact = Contact.dao.findById(driver.get("contact_id"));
-            setAttr("driverContact", driverContact);
-        }
-        Long carinfoId = depar.get("carinfo_id");
-        if (carinfoId != null) {
-            Carinfo carinfo = Carinfo.dao.findById(carinfoId);
-            setAttr("carinfo", carinfo);
-        }
-        setAttr("type", "many");
-        setAttr("depart_id", getPara());
-        setAttr("localArr", tr_order_id);
-        setAttr("depart", depar);
-        setAttr("depart_id", depart_id);
-        if (LoginUserController.isAuthenticated(this))
-            render("departOrder/editTransferOrder.html");
-
-    }
-
+    // 创建发车单的运输单列表
     public void createTransferOrderList() {
         String orderNo = getPara("orderNo");
         String status = getPara("status");
@@ -414,10 +318,104 @@ public class DepartOrderController extends Controller {
         transferOrderListMap.put("aaData", transferOrders);
         renderJson(transferOrderListMap);
     }
+    
+    // 创建发车单的运输单列表(干线供应商+整车)
+    public void createTransferOrderListForRouteSp() {
+    	String orderNo = getPara("orderNo");
+    	String status = getPara("status");
+    	String address = getPara("address");
+    	String customer = getPara("customer");
+    	String routeFrom = getPara("routeFrom");
+    	String routeTo = getPara("routeTo");
+    	String beginTime = getPara("beginTime");
+    	String endTime = getPara("endTime");
+    	Record rec = null;
+    	String sLimit = "";
+    	String sql = "";
+    	String sqlTotal = "";
+    	String pageIndex = getPara("sEcho");
+    	if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+    		sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+    	}
+    	if (orderNo == null && status == null && address == null && customer == null && routeFrom == null
+    			&& routeTo == null && beginTime == null && endTime == null) {
+    		sqlTotal = "select count(1) total  from transfer_order tor "
+    				+ " left join party p on tor.customer_id = p.id "
+    				+ " left join contact c on p.contact_id = c.id "
+    				+ " left join location l1 on tor.route_from = l1.code "
+    				+ " left join location l2 on tor.route_to = l2.code"
+    				+ " where tor.status = '新建' and ifnull(tor.depart_assign_status, '') !='"
+    				+ TransferOrder.ASSIGN_STATUS_ALL + "'";
+    		rec = Db.findFirst(sqlTotal);
+    		logger.debug("total records:" + rec.getLong("total"));
+    		sql = "select distinct tor.id,tor.order_no,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
+    				+ " (select sum(toi.weight) from transfer_order_item toi where toi.order_id = tor.id) as total_weight,"
+    				+ " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
+    				+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
+    				+ " ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.company_name cname,"
+    				+ " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.company_name as spname,cont.id as spid from transfer_order tor "
+    				+ " left join party p on tor.customer_id = p.id "
+    				+ " left join contact c on p.contact_id = c.id "
+    				+ " left join party p2 on tor.sp_id = p2.id left join contact cont on  cont.id=p2.contact_id "
+    				+ " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
+    				+ " left join location l1 on tor.route_from = l1.code "
+    				+ " left join location l2 on tor.route_to = l2.code"
+    				+ " where tor.status = '新建' "
+    				+ "  and ifnull(tor.depart_assign_status, '') !='" + TransferOrder.ASSIGN_STATUS_ALL
+    				+ "' order by tor.create_stamp desc";
+    	} else {
+    		if (beginTime == null || "".equals(beginTime)) {
+    			beginTime = "1-1-1";
+    		}
+    		if (endTime == null || "".equals(endTime)) {
+    			endTime = "9999-12-31";
+    		}
+    		sqlTotal = "select count(1) total from transfer_order tor "
+    				+ " left join party p on tor.customer_id = p.id "
+    				+ " left join contact c on p.contact_id = c.id "
+    				+ " left join location l1 on tor.route_from = l1.code "
+    				+ " left join location l2 on tor.route_to = l2.code  "
+    				+ " where tor.status = '新建' and ifnull(tor.depart_assign_status, '') !='"
+    				+ TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
+    				+ "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
+    				+ "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
+    				+ "' and '" + endTime + "'";
+    		
+    		sql = "select distinct tor.id,tor.order_no,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
+    				+ " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
+    				+ " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
+    				+ " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
+    				+ " dor.address doaddress,tor.pickup_mode,tor.status,c.company_name cname,"
+    				+ " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.company_name spname from transfer_order tor "
+    				+ " left join party p on tor.customer_id = p.id "
+    				+ " left join contact c on p.contact_id = c.id "
+    				+ " left join party p2 on tor.sp_id = p2.id  left join contact c2 on p2.contact_id = c2.id "
+    				+ " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
+    				+ " left join location l1 on tor.route_from = l1.code "
+    				+ " left join location l2 on tor.route_to = l2.code  "
+    				+ " where tor.status = '新建' and ifnull(tor.depart_assign_status, '') !='"
+    				+ TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
+    				+ "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
+    				+ "%' and c.company_name like '%" + customer + "%' and tor.create_stamp between '" + beginTime
+    				+ "' and '" + endTime + "'" + " order by tor.create_stamp desc";
+    	}
+    	rec = Db.findFirst(sqlTotal);
+    	logger.debug("total records:" + rec.getLong("total"));
+    	List<Record> transferOrders = Db.find(sql);
+    	
+    	Map transferOrderListMap = new HashMap();
+    	transferOrderListMap.put("sEcho", pageIndex);
+    	transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+    	transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+    	
+    	transferOrderListMap.put("aaData", transferOrders);
+    	renderJson(transferOrderListMap);
+    }
 
     public void createDepartOrder() {
         String list = this.getPara("localArr");
         setAttr("localArr", list);
+        setAttr("routeSp", getPara("routeSp"));
 
         String[] orderIds = list.split(",");
         for (int i = 0; i < orderIds.length; i++) {
@@ -592,6 +590,12 @@ public class DepartOrderController extends Controller {
             if (!"".equals(partySpId)) {
                 updateTransferOrderSp(dp);
             }
+            
+            // 如果是整车发车单需要更新运输单的信息  
+            String routeSp = getPara("routeSp");
+            if(routeSp != null && !"".equals(routeSp)){
+            	transferOrderForRouteSp(dp);
+            }
         } else {//TODO update不需要更改create_by, create_date
             dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
             dp.set("charge_type", charge_type).set("create_by", create_id).set("create_stamp", createDate)
@@ -623,12 +627,24 @@ public class DepartOrderController extends Controller {
         renderJson(dp);
     }
 
-    // 更新运输单的供应商
+    // 如果是整车发车单需要更新运输单的信息  
+    private void transferOrderForRouteSp(DepartOrder dp) {
+    	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
+                "select * from depart_transfer where depart_id = ?", dp.get("id"));
+        for (DepartTransferOrder departTransferOrder : departTransferOrders) {
+            TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));  
+        	transferOrder.set("pickup_mode", "routeSP");
+        	transferOrder.set("charge_type", "perCar");
+            transferOrder.update();
+        }
+	}
+
+	// 更新运输单的供应商
     private void updateTransferOrderSp(DepartOrder dp) {
         List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
                 "select * from depart_transfer where depart_id = ?", dp.get("id"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
-            TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+            TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));            
             transferOrder.set("sp_id", dp.get("sp_id"));
             transferOrder.update();
         }
