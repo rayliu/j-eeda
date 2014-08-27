@@ -1280,7 +1280,7 @@ public class PickupOrderController extends Controller {
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select d.*,f.name,f.remark,'运输单001?' as transferOrderNo from depart_order_fin_item d "
+                .find("select d.*,f.name,f.remark,'运输单001?' as transferOrderNo,'客户001' cname from depart_order_fin_item d "
                         + "left join fin_item f on d.fin_item_id = f.id " + "where d.depart_order_id ='" + id
                         + "' and f.type='应付'");
 

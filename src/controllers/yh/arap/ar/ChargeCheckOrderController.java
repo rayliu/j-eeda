@@ -132,7 +132,7 @@ public class ChargeCheckOrderController extends Controller {
         // 获取总条数
         String totalWhere = "";
         String sql = "select count(1) total from return_order ro left join party p on ro.customer_id = p.id "
-                + "where ro.transaction_status = 'confirmed' ";
+                + "where ro.transaction_status = '已签收' ";
         Record rec = Db.findFirst(sql + fieldsWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
@@ -142,7 +142,7 @@ public class ChargeCheckOrderController extends Controller {
                         + "left join transfer_order to on ro.transfer_order_id = to.id "
                         + "left join delivery_order do on ro.delivery_order_id = do.id "
                         + "left join party p on ro.customer_id = p.id "
-                        + "left join contact c on p.contact_id = c.id where ro.transaction_status = 'confirmed' " + fieldsWhere);
+                        + "left join contact c on p.contact_id = c.id where ro.transaction_status = '已签收' " + fieldsWhere);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));

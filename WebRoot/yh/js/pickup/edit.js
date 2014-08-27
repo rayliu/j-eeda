@@ -793,9 +793,10 @@
 			return nRow;
 		},
         "aoColumns": [
+            {"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "transferorder_no"},
+            {"mDataProp":"CNAME","sWidth": "80px","sClass": "cname"},
 			{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
 			{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},  
-			{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "name"},
 			{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
 			{  
