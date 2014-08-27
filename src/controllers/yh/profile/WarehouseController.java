@@ -49,7 +49,7 @@ public class WarehouseController extends Controller{
 			String sql = "select w.*,c.contact_person,c.phone,(select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.location) dname,lc.name from warehouse w"
 							+ " left join party p on w.notify_party_id = p.id"
 							+ " left join contact c on p.contact_id = c.id"
-							+ " left join location lc on c.location = lc.code"
+							+ " left join location lc on c.location = lc.code order by w.id desc "
 							+ sLimit;
 	
 			List<Record> warehouses = Db.find(sql);
@@ -76,7 +76,7 @@ public class WarehouseController extends Controller{
 							+ " left join party p on w.notify_party_id = p.id"
 							+ " left join contact c on p.contact_id = c.id"
 							+ " left join location lc on c.location = lc.code"
-							+ "  where warehouse_name like '%"+warehouseName+"%' and warehouse_address like '%"+warehouseAddress+"%'"
+							+ "  where warehouse_name like '%"+warehouseName+"%' and warehouse_address like '%"+warehouseAddress+"%' order by w.id desc "
 							+ sLimit;
 	
 			List<Record> warehouses = Db.find(sql);

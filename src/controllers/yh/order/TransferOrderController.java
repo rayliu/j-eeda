@@ -988,4 +988,30 @@ public class TransferOrderController extends Controller {
         renderJson("{\"success\":true}");
     }
 
+    // 选中仓库后需查出相应的信息
+    public void selectWarehouse(){
+    	String warehouseId = getPara("warehouseId");
+    	Warehouse warehouse = Warehouse.dao.findById(warehouseId);
+    	Contact contact = Contact.dao.findById(warehouse.get("notify_party_id"));
+    	Location location = new Location();
+    	if(contact != null){
+	    	String code = contact.get("location");
+	        if (code != null || !"".equals(code)) {
+	            List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
+	            Location l = Location.dao
+	                    .findFirst("select * from location where code = (select pcode from location where code = '"
+	                            + code + "')");
+	            if (provinces.contains(l)) {
+	            	location = Location.dao
+	                        .findFirst("select l1.id,l.name as city,l.code cityCode,l1.name as province,l1.code provinceCode from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+	                                + code + "'");
+	            } else {
+	            	location = Location.dao
+	                        .findFirst("select l2.id,l.name as district,l.code districtCode, l1.name as city,l1.code cityCode,l2.name as province,l2.code provinceCode from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+	                                + code + "'");
+	            }
+	        }
+    	}
+    	renderJson(location);
+    }
 }

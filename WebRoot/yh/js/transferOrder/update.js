@@ -1949,4 +1949,72 @@ $(document).ready(function() {
     	$.post('/yh/transferOrderMilestone/receipt', {orderId:orderId}, function(){    	
     	});
     });
+	
+	// 选中仓库触发事件
+	$("#gateInSelect").change(function(){
+    	$.post('/yh/transferOrder/selectWarehouse', {warehouseId:$(this).val()}, function(data){  
+    		if(data.ID > 0){
+    			var hideProvince = data.PROVINCE;
+    			var hideCity = data.CITY;
+    			var hideDistrict = data.DISTRICT;
+    			if(hideProvince != undefined){
+    				if(hideCity != undefined){
+    					if(hideDistrict != undefined){
+    	    				$("#locationTo").val(data.DISTRICTCODE);
+    	    			}else{    	    				
+    	    				$("#locationTo").val(data.CITYCODE);
+    	    			}
+        			}else{
+        				$("#locationTo").val(data.PROVINCECODE);        				
+        			}    				
+    			}
+    		    //获取全国省份
+    		    $(function(){
+    		     	var province = $("#mbProvinceTo");
+    		     	$.post('/yh/serviceProvider/province',function(data){
+    		     		province.append("<option>--请选择省份--</option>");
+    		     		for(var i = 0; i < data.length; i++){
+							if(data[i].NAME == hideProvince){
+								province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");		
+							}else{
+								province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+							}
+						}    		     		
+    		     	},'json');
+    		    });
+    		    
+    		    // 回显城市
+    		    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+					if(data.length > 0){
+						var cmbCity =$("#cmbCityTo");
+						cmbCity.empty();
+						cmbCity.append("<option>--请选择城市--</option>");
+						for(var i = 0; i < data.length; i++){
+							if(data[i].NAME == hideCity){
+								cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+							}else{
+								cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+							}
+						}
+					}
+				},'json');
+
+    		    // 回显区
+    		    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+					if(data.length > 0){
+						var cmbArea =$("#cmbAreaTo");
+						cmbArea.empty();
+						cmbArea.append("<option>--请选择区(县)--</option>");
+						for(var i = 0; i < data.length; i++){
+							if(data[i].NAME == hideDistrict){
+								cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+							}else{
+								cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+							}
+						}
+					}
+				},'json');
+    		}
+    	}, 'json');
+	});
 });
