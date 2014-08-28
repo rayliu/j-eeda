@@ -635,4 +635,30 @@ $(document).ready(function() {
 			$("#productId").val($(this).attr('id'));
 			$('#itemNameList').hide();
 		});  	
+		
+		//开始时间点击后隐藏
+		$('#datetimepicker').datetimepicker({  
+	        format: 'yyyy-MM-dd',  
+	        language: 'zh-CN'
+	    }).on('changeDate', function(ev){
+	        $(".bootstrap-datetimepicker-widget").hide();
+	        $('#beginTime_filter').trigger('keyup');
+	    });
+		//结束时间点击后隐藏
+		$('#datetimepicker2').datetimepicker({  
+	        format: 'yyyy-MM-dd',  
+	        language: 'zh-CN', 
+	        autoclose: true,
+	        pickerPosition: "bottom-left"
+	    }).on('changeDate', function(ev){
+	        $(".bootstrap-datetimepicker-widget").hide();
+	        $('#endTime_filter').trigger('keyup');
+	    });
+		
+		
+		
+		
+		
+		
+		
 });

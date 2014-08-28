@@ -463,21 +463,3 @@
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script src="/yh/js/contract/contract.js"></script>
-<script type="text/javascript">  
-$('#datetimepicker').datetimepicker({  
-    format: 'yyyy-MM-dd',  
-    language: 'zh-CN'
-}).on('changeDate', function(ev){
-    $('#beginTime_filter').trigger('keyup');
-});
-
-
-$('#datetimepicker2').datetimepicker({  
-    format: 'yyyy-MM-dd',  
-    language: 'zh-CN', 
-    autoclose: true,
-    pickerPosition: "bottom-left"
-}).on('changeDate', function(ev){
-    $('#endTime_filter').trigger('keyup');
-});
-</script>
