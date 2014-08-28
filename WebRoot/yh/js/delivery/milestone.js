@@ -34,17 +34,17 @@ $(document).ready(function() {
             {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"TRANSFER_ORDER_NO"},
             { 
-	                "mDataProp": null, 
-	                "fnRender": function(obj) {   
-	                	if(obj.aData.STATUS=='已签收'){
-	                		return "已签收";
-	                	}else{
-	                		return "<a class='btn btn-primary confirmDelivery' code='"+obj.aData.ID+"'>"+
-                    		"签收完成"+
-                    		"</a>";
-	                	}
-	                }
-	            }    
+                "mDataProp": null, 
+                "fnRender": function(obj) {   
+                	if(obj.aData.STATUS=='已签收'){
+                		return "已签收";
+                	}else{
+                		return "<a class='btn btn-primary confirmDelivery' code='"+obj.aData.ID+"'>"+
+                		"签收完成"+
+                		"</a>";
+                	}
+                }
+            }    
         ]  
     });	
     //签收完成

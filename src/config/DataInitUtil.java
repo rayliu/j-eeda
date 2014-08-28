@@ -112,7 +112,7 @@ public class DataInitUtil {
 
             // Transfer_Order_item_detail 单件货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment primary key,order_id bigint,item_id bigint,item_no varchar(255),"
-                    + "serial_no varchar(255),item_name varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,"
+                    + "serial_no varchar(255),item_name varchar(255),status varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,"
                     + "remark varchar(5120),is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,damage_remark varchar(255),pickup_id bigint,foreign key(pickup_id) references depart_order(id),depart_id bigint,foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id),"
                     + "foreign key(item_id) references transfer_order_item(id),foreign key(notify_party_id) references party(id),delivery_id bigint,foreign key(delivery_id) references delivery_order(id));");
 
