@@ -22,7 +22,7 @@ $(document).ready(function() {
 	            {"mDataProp":"AMOUNT"},
 	            {"mDataProp":"KILOMETER"},
 	            {"mDataProp":null,
-	            	"fnRender": function(obj) {                    
+	            	"fnRender": function(obj) {     
 	                    return +obj.aData.DAYFROM+"-"+obj.aData.DAYTO;
 	                            
 	                }},

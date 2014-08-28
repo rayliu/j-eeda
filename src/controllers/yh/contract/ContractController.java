@@ -524,7 +524,7 @@ public class ContractController extends Controller {
         String routeItemId = getPara("routeItemId");
         String priceType = getPara("priceType");
         // 判断合同干线是否存在
-        item.set("contract_id", contractId).set("pricetype", getPara("priceType")).set("from_id", getPara("from_id"))
+        item.set("contract_id", contractId).set("fin_item_id", getPara("fin_item")).set("pricetype", getPara("priceType")).set("from_id", getPara("from_id"))
                 .set("location_from", getPara("fromName")).set("to_id", getPara("to_id"))
                 .set("location_to", getPara("toName")).set("amount", getPara("price")).set("dayfrom", getPara("day"))
                 .set("dayto", getPara("day2"));
@@ -596,13 +596,14 @@ public class ContractController extends Controller {
         // Route route = Route.dao.findById(id);
         Contract contract = Contract.dao.findById(contractId);
         List<Record> list = null;
-        if (contract.get("product_id") != null) {
+        if (contract.get("party_id") != null) {
             list = Db
-                    .find("select c.*p.id as pid,p.item_name from contract_item c left join product p on p.id =c.product_id where c.contract_id ='"
+                    .find("select c.*,p.id as pid,p.item_name from contract_item c left join product p on p.id =c.product_id where c.contract_id ='"
                             + contractId + "' and c.id = '" + id + "'");
         } else {
             list = Db.find("select c.*,'null' as item_name from contract_item c where c.contract_id ='" + contractId
                     + "' and c.id = '" + id + "'");
+        	
         }
         renderJson(list);
     }
