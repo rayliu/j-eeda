@@ -41,7 +41,8 @@ $(document).ready(function() {
               }
             },
             {"mDataProp":"COMPANY_NAME",
-            	"sWidth": "15%"},
+            	"sWidth": "15%"
+            },
             {"mDataProp":"CONTACT_PERSON"},
             {"mDataProp":"MOBILE"},
             {"mDataProp":"PERIOD_FROM"},
@@ -60,6 +61,7 @@ $(document).ready(function() {
             }                         
         ],
      });
+   
    //开始时间点击后隐藏
    $('#datetimepicker').datetimepicker({  
        format: 'yyyy-MM-dd',  
@@ -94,6 +96,15 @@ $(document).ready(function() {
     		tab2.fnSettings().sAjaxSource = "/yh/deliverySpContract/deliveryspList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
     	}
       	tab2.fnDraw();
-      });
+    });
+    
+    //公司名称list
+    $.get('/yh/customerContract/companyNameList?type='+type, function(data){
+    	$.each(data,function(name,val){
+    		$('#companyName_filter').append("<option value='"+val.COMPANY+"'>"+val.COMPANY+"</option>");
+		});
+ 	});
+    
+    
     
 } );
