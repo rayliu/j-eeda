@@ -124,6 +124,80 @@ public class DepartOrderController extends Controller {
         map.put("aaData", departOrders);
         renderJson(map);
     }
+    
+    // 发车单在途列表
+    public void onTripList() {
+    	String orderNo = getPara("orderNo");
+    	String departNo = getPara("departNo");
+    	String status = getPara("status");
+    	String sp = getPara("sp");
+    	String beginTime = getPara("beginTime");
+    	String endTime = getPara("endTime");
+    	String sLimit = "";
+    	String pageIndex = getPara("sEcho");
+    	String sql = "";
+    	String sqlTotal = "";
+    	if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+    		sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+    	}
+    	if (orderNo == null && departNo == null && status == null && sp == null && beginTime == null && endTime == null) {
+    		sqlTotal = "select count(1) total from depart_order deo "
+    				+ "left join carinfo  car on deo.driver_id=car.id" + " where combine_type = '"
+    				+ DepartOrder.COMBINE_TYPE_DEPART + "' and deo.status in('已发车','在途')";
+    		
+    		sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length,(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode,(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
+    				+ " left join carinfo c on deo.carinfo_id = c.id "
+    				+ " left join party p on deo.driver_id = p.id "
+    				+ " left join contact ct on p.contact_id = ct.id  where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
+    				+ DepartOrder.COMBINE_TYPE_DEPART + "' and deo.status in('已发车','在途') order by deo.create_stamp desc" + sLimit;
+    	} else {
+    		if (beginTime == null || "".equals(beginTime)) {
+    			beginTime = "1-1-1";
+    		}
+    		if (endTime == null || "".equals(endTime)) {
+    			endTime = "9999-12-31";
+    		}
+    		sqlTotal = "select count(1) total from depart_order deo "
+    				+ " left join party p on deo.driver_id = p.id and p.party_type = 'DRIVER' "
+    				+ "left join carinfo  car on deo.driver_id=car.id"
+    				+ " left join contact c on p.contact_id = c.id "
+    				+ " left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )"
+    				+ "  where deo.combine_type = 'DEPART' and deo.status in('已发车','在途') and " + "ifnull(deo.status,'') like '%" + status + "%' and "
+    				+ "ifnull(deo.depart_no,'') like '%" + departNo + "%' and " + "ifnull(c.company_name,'')  like '%"
+    				+ sp + "%' and " + "ifnull(tr.order_no,'') like '%" + orderNo + "%'"
+    				+ " and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime
+    				+ "'group by deo.id order by deo.create_stamp desc ";
+    		
+    		sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length,(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode,group_concat(tr.order_no separator ' ') as transfer_order_no "
+    				+ " from depart_order deo"
+    				+ " left join carinfo c on deo.carinfo_id = c.id "
+    				+ " left join party p on deo.driver_id = p.id "
+    				+ " left join contact ct on p.contact_id = ct.id "
+    				+ " left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )"
+    				+ "  where deo.combine_type = 'DEPART' and deo.status in('已发车','在途') and ifnull(deo.status,'') like '%"
+    				+ status
+    				+ "%' and ifnull(deo.depart_no,'') like '%"
+    				+ departNo
+    				+ "%' and ifnull(tr.order_no,'') like '%"
+    				+ orderNo
+    				+ "%'"
+    				+ " and deo.create_stamp between '"
+    				+ beginTime
+    				+ "' and '"
+    				+ endTime
+    				+ "'group by deo.id order by deo.create_stamp desc " + sLimit;
+    	}
+    	Record rec = Db.findFirst(sqlTotal);
+    	logger.debug("total records:" + rec.getLong("total"));
+    	List<Record> departOrders = Db.find(sql);
+    	
+    	Map map = new HashMap();
+    	map.put("sEcho", pageIndex);
+    	map.put("iTotalRecords", rec.getLong("total"));
+    	map.put("iTotalDisplayRecords", rec.getLong("total"));
+    	map.put("aaData", departOrders);
+    	renderJson(map);
+    }
 
     public void add() {
         if (LoginUserController.isAuthenticated(this))
@@ -1141,40 +1215,83 @@ public class DepartOrderController extends Controller {
     }
 
     // 在途运输单管理
-    public void transferMilestoneindex() {
+    public void transferMilestoneIndex() {
         if (LoginUserController.isAuthenticated(this))
             render("departOrder/TransferOrderStatus.html");
     }
 
-    public void transferMilestone() {
+    public void ownTransferMilestone() {
+    	Map transferOrderListMap = null;
+        String orderNo = getPara("orderNo");
+        String status = getPara("status");
+        String address = getPara("address");
+        String customer = getPara("customer");
+        String sp = getPara("sp");
+        String officeName = getPara("officeName");
+        String beginTime = getPara("beginTime");
+        String endTime = getPara("endTime");
+
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
+        String sqlTotal = "";
+        String sql = "";
+        Record rec = null;
+        // String strWhere = DataTablesUtils.buildSingleFilter(this);
+        if (orderNo == null && status == null && address == null && customer == null && sp == null && beginTime == null
+                && endTime == null) {
+            sqlTotal = "select count(1) total from transfer_order t where t.status in('已发车','在途') and t.arrival_mode = 'delivery' and t.operation_type ='own'";
+            sql = "select t.*,c1.abbr cname,c2.abbr spname,t.create_stamp,o.office_name oname from transfer_order t "
+                    + " left join party p1 on t.customer_id = p1.id "
+                    + " left join party p2 on t.sp_id = p2.id "
+                    + " left join contact c1 on p1.contact_id = c1.id"
+                    + " left join contact c2 on p2.contact_id = c2.id "
+                    + " left join office o on t.office_id = o.id where t.status in('已发车','在途') and t.arrival_mode = 'delivery' and t.operation_type ='own'  order by create_stamp desc"
+                    + sLimit;
+        } else {
+            if (beginTime == null || "".equals(beginTime)) {
+                beginTime = "1-1-1";
+            }
+            if (endTime == null || "".equals(endTime)) {
+                endTime = "9999-12-31";
+            }
 
-        // 获取总条数
-        String totalWhere = "";
-        String sql = "select count(1) total from transfer_order_milestone trom "
-                + "left join transfer_order tor on tor.id=trom.order_id "
-                + "left join user_login  us on us.id=trom.create_by " + "where trom.status='在途' and trom. type='"
-                + TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE + "'";
-        Record rec = Db.findFirst(sql + totalWhere);
+            sqlTotal = "select count(1) total from transfer_order t "
+                    + " left join party p1 on t.customer_id = p1.id "
+                    + " left join party p2 on t.sp_id = p2.id "
+                    + " left join contact c1 on p1.contact_id = c1.id"
+                    + " left join contact c2 on p2.contact_id = c2.id"
+                    + " left join office o on t.office_id = o.id where t.status in('已发车','在途') and t.arrival_mode = 'delivery' and t.operation_type ='own' and t.order_no like '%"
+                    + orderNo + "%' and t.status like '%" + status + "%' and t.address like '%" + address
+                    + "%' and c1.abbr like '%" + customer + "%' and ifnull(c2.abbr,'') like '%" + sp
+                    + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime
+                    + "' and '" + endTime + "'";
+
+            sql = "select t.*,c1.abbr cname,c2.abbr spname,o.office_name oname from transfer_order t "
+                    + " left join party p1 on t.customer_id = p1.id "
+                    + " left join party p2 on t.sp_id = p2.id "
+                    + " left join contact c1 on p1.contact_id = c1.id"
+                    + " left join contact c2 on p2.contact_id = c2.id"
+                    + " left join office o on t.office_id = o.id where t.status in('已发车','在途') and t.arrival_mode = 'delivery' and t.operation_type ='own' and t.order_no like '%"
+                    + orderNo + "%' and t.status like '%" + status + "%' and t.address like '%" + address
+                    + "%' and c1.abbr like '%" + customer + "%' and ifnull(c2.abbr,'') like '%" + sp
+                    + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime
+                    + "' and '" + endTime + "' order by create_stamp desc" + sLimit;
+        }
+        rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-        List<TransferOrderMilestone> transferOrderMilestone = TransferOrderMilestone.dao
-                .find("select trom.*,tor.order_no as order_no,us.user_name as usernames from transfer_order_milestone trom "
-                        + "left join transfer_order tor on tor.id=trom.order_id "
-                        + "left join user_login  us on us.id=trom.create_by "
-                        + "where trom.status='在途' and trom. type='"
-                        + TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE + "'" + sLimit);
 
-        Map orderMap = new HashMap();
-        orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", rec.getLong("total"));
-        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-        orderMap.put("aaData", transferOrderMilestone);
+        List<Record> transferOrders = Db.find(sql);
 
-        renderJson(orderMap);
+        transferOrderListMap = new HashMap();
+        transferOrderListMap.put("sEcho", pageIndex);
+        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        transferOrderListMap.put("aaData", transferOrders);
+        renderJson(transferOrderListMap);
     }
 
     // 回显供应商
@@ -1191,7 +1308,7 @@ public class DepartOrderController extends Controller {
     }
 
     // 外包运输单更新
-    public void TransferonTrip() {
+    public void transferonTrip() {
         if (LoginUserController.isAuthenticated(this))
             render("departOrder/transferOrderOnTripList.html");
     }
@@ -1207,35 +1324,25 @@ public class DepartOrderController extends Controller {
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
 
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        String sqlTotal = "";
+        String sql = "";
+        Record rec = null;
         // String strWhere = DataTablesUtils.buildSingleFilter(this);
         if (orderNo == null && status == null && address == null && customer == null && sp == null && beginTime == null
                 && endTime == null) {
-            String sLimit = "";
-            String pageIndex = getPara("sEcho");
-            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-            }
-
-            String sqlTotal = "select count(1) total from transfer_order t where t.status!='取消' and operation_type ='out_source'";
-            Record rec = Db.findFirst(sqlTotal);
-            logger.debug("total records:" + rec.getLong("total"));
-
-            String sql = "select t.*,c1.abbr cname,c2.abbr spname,t.create_stamp,o.office_name oname from transfer_order t "
+            sqlTotal = "select count(1) total from transfer_order t where t.status in('已发车','在途') and t.arrival_mode = 'delivery' and t.operation_type ='out_source'";
+            sql = "select t.*,c1.abbr cname,c2.abbr spname,t.create_stamp,o.office_name oname from transfer_order t "
                     + " left join party p1 on t.customer_id = p1.id "
                     + " left join party p2 on t.sp_id = p2.id "
                     + " left join contact c1 on p1.contact_id = c1.id"
                     + " left join contact c2 on p2.contact_id = c2.id "
-                    + " left join office o on t.office_id = o.id where t.status!='取消' and operation_type ='out_source'  order by create_stamp desc"
+                    + " left join office o on t.office_id = o.id where t.status in('已发车','在途') and t.arrival_mode = 'delivery' and t.operation_type ='out_source'  order by create_stamp desc"
                     + sLimit;
-
-            List<Record> transferOrders = Db.find(sql);
-
-            transferOrderListMap = new HashMap();
-            transferOrderListMap.put("sEcho", pageIndex);
-            transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-            transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
-            transferOrderListMap.put("aaData", transferOrders);
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -1243,45 +1350,40 @@ public class DepartOrderController extends Controller {
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-            String sLimit = "";
-            String pageIndex = getPara("sEcho");
-            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-            }
 
-            String sqlTotal = "select count(1) total from transfer_order t "
+            sqlTotal = "select count(1) total from transfer_order t "
                     + " left join party p1 on t.customer_id = p1.id "
                     + " left join party p2 on t.sp_id = p2.id "
                     + " left join contact c1 on p1.contact_id = c1.id"
                     + " left join contact c2 on p2.contact_id = c2.id"
-                    + " left join office o on t.office_id = o.id where t.status!='取消' and operation_type ='out_source' and t.order_no like '%"
+                    + " left join office o on t.office_id = o.id where t.status in('已发车','在途') and t.arrival_mode = 'delivery' and t.operation_type ='out_source' and t.order_no like '%"
                     + orderNo + "%' and t.status like '%" + status + "%' and t.address like '%" + address
                     + "%' and c1.abbr like '%" + customer + "%' and ifnull(c2.abbr,'') like '%" + sp
                     + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime
                     + "' and '" + endTime + "'";
-            Record rec = Db.findFirst(sqlTotal);
-            logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "select t.*,c1.abbr cname,c2.abbr spname,o.office_name oname from transfer_order t "
+            sql = "select t.*,c1.abbr cname,c2.abbr spname,o.office_name oname from transfer_order t "
                     + " left join party p1 on t.customer_id = p1.id "
                     + " left join party p2 on t.sp_id = p2.id "
                     + " left join contact c1 on p1.contact_id = c1.id"
                     + " left join contact c2 on p2.contact_id = c2.id"
-                    + " left join office o on t.office_id = o.id where t.status!='取消' and operation_type ='out_source' and t.order_no like '%"
+                    + " left join office o on t.office_id = o.id where t.status in('已发车','在途') and t.arrival_mode = 'delivery' and t.operation_type ='out_source' and t.order_no like '%"
                     + orderNo + "%' and t.status like '%" + status + "%' and t.address like '%" + address
                     + "%' and c1.abbr like '%" + customer + "%' and ifnull(c2.abbr,'') like '%" + sp
                     + "%' and o.office_name  like '%" + officeName + "%' and create_stamp between '" + beginTime
                     + "' and '" + endTime + "' order by create_stamp desc" + sLimit;
-
-            List<Record> transferOrders = Db.find(sql);
-
-            transferOrderListMap = new HashMap();
-            transferOrderListMap.put("sEcho", pageIndex);
-            transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-            transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
-            transferOrderListMap.put("aaData", transferOrders);
         }
+        rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        List<Record> transferOrders = Db.find(sql);
+
+        transferOrderListMap = new HashMap();
+        transferOrderListMap.put("sEcho", pageIndex);
+        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        transferOrderListMap.put("aaData", transferOrders);
         renderJson(transferOrderListMap);
     }
 

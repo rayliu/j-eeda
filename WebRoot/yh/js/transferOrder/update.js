@@ -1942,7 +1942,7 @@ $(document).ready(function() {
 		$("#receiptBtn").attr("disabled", false);
 	}
 	
-	// 回单签收
+	// 收货确认
 	$("#receiptBtn").click(function(e){
     	$(this).attr("disabled",true);
     	var orderId = $("#order_id").val();
