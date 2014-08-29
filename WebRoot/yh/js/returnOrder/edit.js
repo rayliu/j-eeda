@@ -1,158 +1,87 @@
 ﻿$(document).ready(function() {
 	$('#menu_return').addClass('active').find('ul').addClass('in');
 		
-	var transferOrderId = $("#transferOrderId").val();
+	var returnOrderId = $("#returnId").val();
 	//datatable, 动态处理
-    var itemDataTable = $('#itemTable').dataTable({
+	var transferOrder = $('#transferOrderTable').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "bFilter": false, //不需要默认的搜索框
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/transferOrderItem/transferOrderItemList?order_id="+transferOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-			$(nRow).attr('id', aData.ID);
-			return nRow;
-		},
-        "aoColumns": [  			            
-            {
-            	"mDataProp":"ITEM_NO",            	
-            	"sWidth": "80px",
-            	"sClass": "item_no"
-        	},
-            {
-            	"mDataProp":"ITEM_NAME",
-            	"sWidth": "180px",
-            	"sClass": "item_name"
-            },
-            {
-            	"mDataProp":"SIZE",            	
-            	"sWidth": "50px",
-            	"sClass": "size"
-        	},
-            {
-            	"mDataProp":"WIDTH",
-            	"sWidth": "50px",
-            	"sClass": "width"
-            },
-            {
-            	"mDataProp":"HEIGHT",            	
-            	"sWidth": "50px",
-            	"sClass": "height"
-        	}, 
-            {
-            	"mDataProp":"WEIGHT",
-            	"sWidth": "50px",
-            	"sClass": "weight",
-            },
-        	{
-            	"mDataProp":"AMOUNT",
-            	"sWidth": "50px",
-            	"sClass": "amount"
-            }, 
-            {
-            	"mDataProp":"UNIT",
-            	"sWidth": "50px",
-            	"sClass": "unit"
-            },
-            {
-            	"mDataProp":null,
-            	"sWidth": "50px",
-            	"sClass": "sumWeight",
+        "sAjaxSource": "/yh/returnOrder/transferOrderList?returnOrderId="+returnOrderId,
+        "aoColumns": [   
+            {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return obj.aData.WEIGHT * obj.aData.AMOUNT;
-                }
-            },
-            {
-            	"mDataProp":"VOLUME",
-            	"sWidth": "50px",
-            	"sClass": "volume",
+            			return "<a href='/yh/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		}},
+            {"mDataProp":"STATUS"},
+            {"mDataProp":"CARGO_NATURE",
             	"fnRender": function(obj) {
-            		return obj.aData.VOLUME * obj.aData.AMOUNT;
-            	}
-            },            
-            {"mDataProp":"REMARK"},
-            {  
-                "mDataProp": null, 
-                "sWidth": "60px",  
-            	"sClass": "remark",              
-                "fnRender": function(obj) {
-                    return	"<a class='btn btn-success btn-xs dateilEdit' code='?id="+obj.aData.ID+"' title='查看单品'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                            "</a> ";
-                }
-            }                         
-        ]      
-    });
-    
-    var deliveryOrderId = $("#deliveryOrderId").val();
-	//datatable, 动态处理
-    var detailDataTable = $('#detailTable').dataTable({
-    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "bFilter": false, //不需要默认的搜索框
-        //"sPaginationType": "bootstrap",
-        "iDisplayLength": 10,
-        "bServerSide": true,
-        "sAjaxSource": "/yh/returnOrder/transferOrderDetailList?orderId="+transferOrderId+"&deliveryOrderId="+deliveryOrderId,
-    	"oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
-        },
-        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-			$(nRow).attr('id', aData.ID);
-			return nRow;
-		},
-        "aoColumns": [  			            
-            {
-            	"mDataProp":"SERIAL_NO",
-        		"sWidth": "80px",
-            	"sClass": "serial_no"	
-            },
-            {
-            	"mDataProp":"ITEM_NO",
-        		"sWidth": "80px",
-            	"sClass": "item_no"            		
-            },  
-		    {
-		    	"mDataProp":"ITEM_NAME",
-		    	"sWidth": "80px",
-		    	"sClass": "item_name"            		
-		    },       	
-            {
-            	"mDataProp":"VOLUME",
-        		"sWidth": "80px",
-            	"sClass": "volume"            		
-            },
-            {
-            	"mDataProp":"WEIGHT",
-        		"sWidth": "80px",
-            	"sClass": "weight"
-            },
-            {
-            	"mDataProp":"CONTACT_PERSON",
-        		"sWidth": "80px",
-            	"sClass": "contact_person"
-            },
-            {
-            	"mDataProp":"PHONE",
-        		"sWidth": "80px",
-            	"sClass": "phone"
-            },
-            {
-            	"mDataProp":"ADDRESS",
-        		"sWidth": "80px",
-            	"sClass": "address"
-            },
-            {
-            	"mDataProp":"REMARK",
-        		"sWidth": "80px",
-            	"sClass": "remark"
-            }                       
-        ]      
-    });
-    
+            		if(obj.aData.CARGO_NATURE == "cargo"){
+            			return "普通货品";
+            		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
+            			return "损坏货品";
+            		}else if(obj.aData.CARGO_NATURE == "ATM"){
+            			return "ATM";
+            		}else{
+            			return "";
+            		}}},        	
+    		{"mDataProp":"OPERATION_TYPE",
+    			"fnRender": function(obj) {
+    				if(obj.aData.OPERATION_TYPE == "out_source"){
+    					return "外包";
+    				}else if(obj.aData.OPERATION_TYPE == "own"){
+    					return "自营";
+    				}else{
+    					return "";
+    				}}},        	
+            {"mDataProp":"PICKUP_MODE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.PICKUP_MODE == "routeSP"){
+            			return "干线供应商自提";
+            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
+            			return "外包供应商提货";
+            		}else if(obj.aData.PICKUP_MODE == "own"){
+            			return "源鸿自提";
+            		}else{
+            			return "";
+            		}}},
+            {"mDataProp":"ARRIVAL_MODE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ARRIVAL_MODE == "delivery"){
+            			return "货品直送";
+            		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
+            			return "入中转仓";
+            		}else{
+            			return "";
+            		}}},
+            {"mDataProp":"CREATE_STAMP"},
+            {"mDataProp":"ORDER_TYPE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ORDER_TYPE == "salesOrder"){
+            			return "销售订单";
+            		}else if(obj.aData.ORDER_TYPE == "replenishmentOrder"){
+            			return "补货订单";
+            		}else if(obj.aData.ORDER_TYPE == "arrangementOrder"){
+            			return "调拨订单";
+            		}else if(obj.aData.ORDER_TYPE == "cargoReturnOrder"){
+            			return "退货订单";
+            		}else if(obj.aData.ORDER_TYPE == "damageReturnOrder"){
+            			return "质量退单";
+            		}else if(obj.aData.ORDER_TYPE == "gateOutTransferOrder"){
+            			return "出库运输单";
+            		}else{
+            			return "";
+            		}}},
+            {"mDataProp":"REMARK"}                      
+        ]  
+    });	
+	
 	// 编辑单品
 	$("#itemTable").on('click', '.dateilEdit', function(e){
 		e.preventDefault();

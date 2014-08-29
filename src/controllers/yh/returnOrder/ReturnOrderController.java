@@ -89,7 +89,7 @@ public class ReturnOrderController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no, tor2.order_no) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname from return_order r_o " 
+                    .find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname from return_order r_o " 
 							+" left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
 							+" left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
 							+" left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator order by r_o.create_date desc " + sLimit);
@@ -109,10 +109,11 @@ public class ReturnOrderController extends Controller {
 
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from return_order r_o " 
-							+" left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
-							+" left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join transfer_order tor2 on tor2.id = d_o.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
-							+" left join user_login  usl on usl.id=r_o.creator where ifnull(r_o.order_no,'')  like'%"
+            String sql = "select count(distinct r_o.id) total from return_order r_o " 
+							+" left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
+							+" left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
+							+" left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator "
+							+ " where ifnull(r_o.order_no,'')  like'%"
 		                    + order_no + "%' and  " + "ifnull(tor.order_no,tor2.order_no)  like'%" + tr_order_no + "%'  and  "
 		                    + "ifnull(d_o.order_no,'')  like'%" + de_order_no + "%'  and "
 		                    + "ifnull(r_o.transaction_status ,'')  like'%" + status + "%' and "
@@ -123,10 +124,10 @@ public class ReturnOrderController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,tor2.order_no) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname from return_order r_o " 
-							+" left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
-							+" left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join transfer_order tor2 on tor2.id = d_o.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
-							+" left join user_login  usl on usl.id=r_o.creator "
+                    .find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname from return_order r_o " 
+							+" left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
+							+" left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
+							+" left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator "
                             + "where ifnull(r_o.order_no,'')  like'%"
                             + order_no
                             + "%' and  "
@@ -171,6 +172,7 @@ public class ReturnOrderController extends Controller {
         	List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryId);
         	for(DeliveryOrderItem deliveryOrderItem : deliveryOrderItems){
             	transferOrder = TransferOrder.dao.findById(deliveryOrderItem.get("transfer_order_id"));
+            	break;
         	}
             notify_party_id = deliveryOrder.get("notify_party_id");
         }
@@ -446,5 +448,34 @@ public class ReturnOrderController extends Controller {
         transferOrderListMap.put("aaData", transferOrders);
 
         renderJson(transferOrderListMap);
+    }
+    
+    // 编辑发车单,查看运输单信息
+    public void transferOrderList(){
+    	String returnOrderId = getPara("returnOrderId");
+    	String sLimit = "";
+        String categoryId = getPara("categoryId");
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+        	sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        String category = getPara("category");
+        String sql = "";
+        String sqlTotal = "";
+        sqlTotal = "select count(1) total from return_order ror where id = " + returnOrderId;
+        sql = "select ifnull(tor1.id,tor2.id) id,ifnull(tor1.order_no,tor2.order_no) order_no,ifnull(tor1.status,tor2.status) status,ifnull(tor1.cargo_nature,tor2.cargo_nature) cargo_nature,ifnull(tor1.pickup_mode,tor2.pickup_mode) pickup_mode,ifnull(tor1.arrival_mode,tor2.arrival_mode) arrival_mode,ifnull(tor1.operation_type,tor2.operation_type) operation_type,ifnull(tor1.create_stamp,tor2.create_stamp) create_stamp,ifnull(tor1.remark,tor2.remark) remark,ifnull(tor1.order_type,tor2.order_type) order_type  from return_order ror left join transfer_order tor1 on tor1.id = ror.transfer_order_id  "
+        		+ " left join delivery_order dor on dor.id = ror.delivery_order_id"
+        		+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
+        		+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id"
+        		+ " where ror.id = " + returnOrderId;
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+        List<Record> products = Db.find(sql);
+        Map map = new HashMap();
+        map.put("sEcho", pageIndex);
+        map.put("iTotalRecords", rec.getLong("total"));
+        map.put("iTotalDisplayRecords", rec.getLong("total"));
+        map.put("aaData", products);
+        renderJson(map);
     }
 }
