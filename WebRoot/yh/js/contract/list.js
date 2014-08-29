@@ -80,7 +80,67 @@ $(document).ready(function() {
        $(".bootstrap-datetimepicker-widget").hide();
        $('#endTime_filter').trigger('keyup');
    });
-    //条件搜索
+    
+    
+  //获取供应商的list，选中信息在下方展示其他信息
+    $('#companyName_filter').on('keyup click', function(){
+		var inputStr = $('#companyName_filter').val();
+		$.get('/yh/customerContract/companyNameList', {input:inputStr,type:type}, function(data){
+			console.log(data);
+			var cpnameList =$("#cpnameList");
+			cpnameList.empty();
+			for(var i = 0; i < data.length; i++)
+			{
+				cpnameList.append("<li><a tabindex='-1' class='fromLocationItem' >"+data[i].COMPANY+"</a></li>");
+			}
+		},'json');
+
+		$("#cpnameList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        }); 
+        $('#cpnameList').show();
+	});
+
+	// 没选中供应商，焦点离开，隐藏列表
+	$('#companyName_filter').on('blur', function(){
+ 		$('#cpnameList').hide();
+ 	});
+
+	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
+	$('#cpnameList').on('blur', function(){
+ 		$('#cpnameList').hide();
+ 	});
+
+	$('#cpnameList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
+
+	// 选中供应商
+	$('#cpnameList').on('mousedown', '.fromLocationItem', function(e){
+		console.log($('#cpnameList').is(":focus"));
+		var message = $(this).text();
+		$('#companyName_filter').val(message);
+        $('#cpnameList').hide();
+        
+        var contractName_filter = $("#contractName_filter").val();
+      	var contactPerson_filter = $("#contactPerson_filter").val();
+    	var periodFrom_filter = $("#periodFrom_filter").val();
+      	var companyName_filter = $("#companyName_filter").val();
+      	var phone_filter = $("#phone_filter").val();   
+      	var periodTo_filter = $("#periodTo_filter").val();
+      	if(type=='CUSTOMER'){
+      		tab2.fnSettings().sAjaxSource = "/yh/customerContract/customerList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+    	}if(type=='SERVICE_PROVIDER'){
+    		tab2.fnSettings().sAjaxSource = "/yh/spContract/spList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+    	}if(type=='DELIVERY_SERVICE_PROVIDER'){
+    		tab2.fnSettings().sAjaxSource = "/yh/deliverySpContract/deliveryspList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+    	}
+      	tab2.fnDraw();
+        
+    });
+	
+	//条件搜索>>,
     $("#contractName_filter,#contactPerson_filter,#periodFrom_filter,#companyName_filter,#phone_filter,#periodTo_filter").on('keyup click', function () {    	 	
       	var contractName_filter = $("#contractName_filter").val();
       	var contactPerson_filter = $("#contactPerson_filter").val();
@@ -97,14 +157,5 @@ $(document).ready(function() {
     	}
       	tab2.fnDraw();
     });
-    
-    //公司名称list
-    $.get('/yh/customerContract/companyNameList?type='+type, function(data){
-    	$.each(data,function(name,val){
-    		$('#companyName_filter').append("<option value='"+val.COMPANY+"'>"+val.COMPANY+"</option>");
-		});
- 	});
-    
-    
-    
+	
 } );
