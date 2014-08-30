@@ -203,7 +203,7 @@ public class DepartOrderController extends Controller {
     				+ " left join carinfo c on deo.carinfo_id = c.id "
     				+ " left join party p on deo.driver_id = p.id "
     				+ " left join contact ct on p.contact_id = ct.id  where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
-    				+ DepartOrder.COMBINE_TYPE_DEPART + "' and deo.status in('已发车','在途') order by deo.create_stamp desc" + sLimit;
+    				+ DepartOrder.COMBINE_TYPE_DEPART + "' and deo.status in('已发车','在途') order by deo.create_stamp desc";
     	} else {
     		if (beginTime == null || "".equals(beginTime)) {
     			beginTime = "1-1-1";
@@ -211,7 +211,7 @@ public class DepartOrderController extends Controller {
     		if (endTime == null || "".equals(endTime)) {
     			endTime = "9999-12-31";
     		}
-    		sqlTotal = "select count(1) total from depart_order deo "
+    		sqlTotal = "select count(distinct deo.id) total from depart_order deo "
     				+ " left join party p on deo.driver_id = p.id and p.party_type = 'DRIVER' "
     				+ "left join carinfo  car on deo.driver_id=car.id"
     				+ " left join contact c on p.contact_id = c.id "
@@ -219,8 +219,7 @@ public class DepartOrderController extends Controller {
     				+ "  where deo.combine_type = 'DEPART' and deo.status in('已发车','在途') and " + "ifnull(deo.status,'') like '%" + status + "%' and "
     				+ "ifnull(deo.depart_no,'') like '%" + departNo + "%' and " + "ifnull(c.company_name,'')  like '%"
     				+ sp + "%' and " + "ifnull(tr.order_no,'') like '%" + orderNo + "%'"
-    				+ " and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime
-    				+ "'group by deo.id order by deo.create_stamp desc ";
+    				+ " and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime +"'";
     		
     		sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length,(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode,group_concat(tr.order_no separator ' ') as transfer_order_no "
     				+ " from depart_order deo"

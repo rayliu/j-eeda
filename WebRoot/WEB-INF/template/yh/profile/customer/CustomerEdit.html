@@ -58,7 +58,7 @@
                                         <fieldset>
                                             <div class="form-group">
 
-                                                <label>简称</label>
+                                                <label>简称(必填)</label>
                                                 <input  class="form-control" id="abbr" name="abbr" type="text" value="${contact.abbr!''}">
                                             </div>                                     
                                         </fieldset>
@@ -212,6 +212,9 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
               company_name: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
                 required: true
               },
+              abbr:{//form 中 abbr为必填
+                  required: true
+                },
               contact_person:{//form 中 name为必填
                 required: true
               },

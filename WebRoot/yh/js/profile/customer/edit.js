@@ -16,8 +16,11 @@
               company_name: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
                 required: true
               },
-              contact_person:{//form 中 name为必填
+              abbr:{//form 中 abbr为必填
                 required: true
+              },
+              contact_person:{//form 中 name为必填
+            	  required: true
               },
               location:{
                 required: true
