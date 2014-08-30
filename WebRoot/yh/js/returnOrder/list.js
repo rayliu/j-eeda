@@ -35,13 +35,19 @@
             { "mDataProp": "REMARK" },
             { "mDataProp": null,
            		"sWidth": "8%", 
-                "fnRender": function(obj) {                    
-                return "<a class='btn btn-success btn-xs returnOrderReceipt' code='"+obj.aData.ID+"' title='回单签收'>"+
-			                "回单签收"+
-			            "</a> "+
-			            "<a class='btn btn-danger btn-xs cancelbutton' code='"+obj.aData.ID+"' title='取消'>"+
-			                "<i class='fa fa-trash-o fa-fw'></i>"+
-			            "</a>";
+                "fnRender": function(obj) {  
+                	if(obj.aData.TRANSACTION_STATUS=='已签收'){
+                		return "<a class='btn btn-danger btn-xs cancelbutton' code='"+obj.aData.ID+"' title='取消'>"+
+					               "<i class='fa fa-trash-o fa-fw'></i>"+
+					           "</a>";
+                	}else{
+	                	return "<a class='btn btn-success btn-xs returnOrderReceipt' code='"+obj.aData.ID+"' title='回单签收'>"+
+				                "回单签收"+
+				            "</a> "+
+				            "<a class='btn btn-danger btn-xs cancelbutton' code='"+obj.aData.ID+"' title='取消'>"+
+				                "<i class='fa fa-trash-o fa-fw'></i>"+
+				            "</a>";
+                	}
            	    }
  			}
          ]
