@@ -576,18 +576,20 @@
     	    	$(this).attr("disabled",true);
     	    	$("#order_edit").attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
-    	    	  $("#warehousingConfirmBtn").attr("disabled",false);
+    	    	  //$("#warehousingConfirmBtn").attr("disabled",false);
                   paymenttable.fnDraw(); 
                 });
+    	    	
+    	    	$("#saveDepartOrderBtn").attr("disabled", true);
     	    });
-    	    $("#warehousingConfirmBtn").click(function(e){
+    	    /*$("#warehousingConfirmBtn").click(function(e){
     	    	$(this).attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已入库", $("#orderForm").serialize(), function(data){
     	    		if(data.amount>0){
     	    			alert("有"+data.amount+"个货品没入库,可以到产品中维护信息！");
     	    		}                    
     	    	});
-    	    });
+    	    });*/
     	    $("#receiptBtn").click(function(e){
     	    	$(this).attr("disabled",true);
     	    	$("#order_hd").attr("disabled",false);
@@ -719,7 +721,7 @@
     			$("#receiptBtn").show();
     			$("#order_hd").show();
     		}else{
-    			$("#warehousingConfirmBtn").show();
+    			//$("#warehousingConfirmBtn").show();
     		}
 
     	    // 回显车长
@@ -746,9 +748,9 @@
     	    	$("#receiptBtn").attr("disabled", false);
     	    }
     	    
-    	    if($("#departOrderArrivalMode").val() == 'gateIn' && $("#departOrderStatus").val() == '已发车'){
+    	    /*if($("#departOrderArrivalMode").val() == 'gateIn' && $("#departOrderStatus").val() == '已发车'){
     	    	$("#warehousingConfirmBtn").attr("disabled", false);
-    	    }
+    	    }*/
     	    
     	    if($("#departOrderStatus").val() != '' && $("#departOrderStatus").val() != '新建'){
 	    		$("#saveDepartOrderBtn").attr("disabled", true);

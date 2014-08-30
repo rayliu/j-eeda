@@ -1938,7 +1938,7 @@ $(document).ready(function() {
 		});		
 	});	
 
-	if(($("#transferOrderStatus").val() == '已发车' || $("#transferOrderStatus").val() == '在途') && $("#transferOrderArrivalMode").val() == 'delivery'){
+	/*if(($("#transferOrderStatus").val() == '已发车' || $("#transferOrderStatus").val() == '在途') && $("#transferOrderArrivalMode").val() == 'delivery'){
 		$("#receiptBtn").attr("disabled", false);
 	}
 	
@@ -1948,7 +1948,7 @@ $(document).ready(function() {
     	var orderId = $("#order_id").val();
     	$.post('/yh/transferOrderMilestone/receipt', {orderId:orderId}, function(){    	
     	});
-    });
+    });*/
 	
 	// 选中仓库触发事件
 	$("#gateInSelect").change(function(){
