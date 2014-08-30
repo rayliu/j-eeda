@@ -51,6 +51,60 @@ public class DepartOrderController extends Controller {
         if (LoginUserController.isAuthenticated(this))
             render("departOrder/departOrderOnTripList.html");
     }
+    //发车单在途供应商
+    public void companyNameList(){
+    	String inputStr = getPara("input");
+    	String sql = "SELECT DISTINCT  c.COMPANY_NAME AS company  FROM CONTACT c where c.COMPANY_NAME  is not null "
+    			+ "and c.COMPANY_NAME like '%"+ inputStr+ "%'";
+    	List<Record> companyNameList = Db.find(sql);
+    	renderJson(companyNameList);
+    }
+    //运输单外包供应商
+    public void cpnameList(){
+    	String sp_filter = getPara("sp_filter");
+    	
+    	String sql = "select distinct c2.abbr company from transfer_order t "
+                + " left join party p1 on t.customer_id = p1.id "
+                + " left join party p2 on t.sp_id = p2.id "
+                + " left join contact c1 on p1.contact_id = c1.id"
+                + " left join contact c2 on p2.contact_id = c2.id"
+                + " left join office o on t.office_id = o.id where t.status!='取消' "
+                + " and operation_type ='out_source'"
+                + " and ifnull(c2.abbr,'') like '%" + sp_filter+ "%'";
+    	
+    	List<Record> companyNameList = Db.find(sql);
+    	renderJson(companyNameList);
+    }
+    //运输单外包客户
+    public void customerList(){
+    	String customer_filter = getPara("customer_filter");
+    	String sql = "select distinct c1.abbr customer from transfer_order t "
+                + " left join party p1 on t.customer_id = p1.id "
+                + " left join party p2 on t.sp_id = p2.id "
+                + " left join contact c1 on p1.contact_id = c1.id"
+                + " left join contact c2 on p2.contact_id = c2.id"
+                + " left join office o on t.office_id = o.id where t.status!='取消' "
+                + " and operation_type ='out_source'"
+                + " and c1.abbr like '%" + customer_filter + "%'";
+    	List<Record> companyNameList = Db.find(sql);
+    	renderJson(companyNameList);
+    }
+    //运输单外包网点
+    public void officenameList(){
+    	String officeName_filter = getPara("officeName_filter");
+    	
+    	String sql = "select distinct o.office_name officeName from transfer_order t "
+                + " left join party p1 on t.customer_id = p1.id "
+                + " left join party p2 on t.sp_id = p2.id "
+                + " left join contact c1 on p1.contact_id = c1.id"
+                + " left join contact c2 on p2.contact_id = c2.id"
+                + " left join office o on t.office_id = o.id where t.status!='取消' "
+                + " and operation_type ='out_source'"
+                + " and o.office_name  like '%" + officeName_filter + "%'";
+    	
+    	List<Record> companyNameList = Db.find(sql);
+    	renderJson(companyNameList);
+    }
 
     public void list() {
         String orderNo = getPara("orderNo");
