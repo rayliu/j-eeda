@@ -541,7 +541,7 @@ public class ContractController extends Controller {
         if (routeItemId != "") {
             if (priceType.equals("perUnit")) {
                 item.set("id", getPara("routeItemId")).set("cartype", null).set("carlength", null)
-                        .set("ltlUnitType", null);
+                        .set("fin_item_id", getPara("fin_item")).set("ltlUnitType", null);
                 item.set("unit", getPara("unit2"));
                 item.set("product_id", getPara("productId"));
                 item.update();
@@ -550,14 +550,14 @@ public class ContractController extends Controller {
             if (priceType.equals("perCar")) {
                 item.set("id", getPara("routeItemId"));
                 item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2"))
-                        .set("ltlUnitType", null);
+                        .set("fin_item_id", getPara("fin_item")).set("ltlUnitType", null);
                 item.set("product_id", getPara("productId"));
                 item.update();
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("perCargo")) {
                 item.set("id", getPara("routeItemId")).set("amountFrom", getPara("amountFrom"))
-                        .set("amountTo", getPara("amountTo"));
+                        .set("fin_item_id", getPara("fin_item")).set("amountTo", getPara("amountTo"));
                 item.set("product_id", getPara("productId"));
                 item.set("ltlUnitType", getPara("ltlUnitType")).set("cartype", null).set("carlength", null);
                 item.update();
