@@ -48,12 +48,15 @@ public class ContractController extends Controller {
         }
 
     }
-    public void companyNameList(){
-    	String type=getPara("type");
-    	String sql = "select c1.company_name as company  from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type = '"+type+"'";
-    	List<Record> companyNameList = Db.find(sql);
-    	renderJson(companyNameList);
+
+    public void companyNameList() {
+        String type = getPara("type");
+        String sql = "select c1.company_name as company  from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type = '"
+                + type + "'";
+        List<Record> companyNameList = Db.find(sql);
+        renderJson(companyNameList);
     }
+
     // 客户合同列表
     public void customerList() {
         String contractName_filter = getPara("contractName_filter");
@@ -64,8 +67,8 @@ public class ContractController extends Controller {
         String periodTo_filter = getPara("periodTo_filter");
 
         Map orderMap = new HashMap();
-        if (contractName_filter == null && contactPerson_filter == null && periodFrom_filter == null
-                && companyName_filter == null && phone_filter == null && periodTo_filter == null) {
+        if (contractName_filter == null && contactPerson_filter == null && periodFrom_filter == null && companyName_filter == null
+                && phone_filter == null && periodTo_filter == null) {
             String sLimit = "";
             String pageIndex = getPara("sEcho");
             if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -118,7 +121,8 @@ public class ContractController extends Controller {
                             + "%' and ifnull(c1.mobile,'') like '%"
                             + phone_filter
                             + "%' and c.period_from like '%"
-                            + periodFrom_filter + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
+                            + periodFrom_filter
+                            + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
             orderMap.put("iTotalDisplayRecords", total);
@@ -142,8 +146,8 @@ public class ContractController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         Map orderMap = new HashMap();
-        if (contractName_filter == null && contactPerson_filter == null && periodFrom_filter == null
-                && companyName_filter == null && phone_filter == null && periodTo_filter == null) {
+        if (contractName_filter == null && contactPerson_filter == null && periodFrom_filter == null && companyName_filter == null
+                && phone_filter == null && periodTo_filter == null) {
             // 获取总条数
             String totalWhere = "";
             String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'";
@@ -182,7 +186,8 @@ public class ContractController extends Controller {
                             + "%' and ifnull(c1.mobile,'') like '%"
                             + phone_filter
                             + "%' and c.period_from like '%"
-                            + periodFrom_filter + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
+                            + periodFrom_filter
+                            + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
             orderMap.put("iTotalDisplayRecords", total);
@@ -207,8 +212,8 @@ public class ContractController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         Map orderMap = new HashMap();
-        if (contractName_filter == null && contactPerson_filter == null && periodFrom_filter == null
-                && companyName_filter == null && phone_filter == null && periodTo_filter == null) {
+        if (contractName_filter == null && contactPerson_filter == null && periodFrom_filter == null && companyName_filter == null
+                && phone_filter == null && periodTo_filter == null) {
             // 获取总条数
             String totalWhere = "";
             String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'";
@@ -245,7 +250,8 @@ public class ContractController extends Controller {
                             + "%' and ifnull(c1.mobile,'') like '%"
                             + phone_filter
                             + "%' and c.period_from like '%"
-                            + periodFrom_filter + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
+                            + periodFrom_filter
+                            + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));
             orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
@@ -291,9 +297,8 @@ public class ContractController extends Controller {
         String id = getPara();
         if (id != null) {
             Contract contract = Contract.dao.findById(id);
-            Contact contact = Contact.dao
-                    .findFirst("select * from party p left join contact c on p.contact_id =c.id where p.id ='"
-                            + contract.get("party_id") + "'");
+            Contact contact = Contact.dao.findFirst("select * from party p left join contact c on p.contact_id =c.id where p.id ='"
+                    + contract.get("party_id") + "'");
             System.out.println(contact);
             setAttr("c", contact);
             setAttr("ul", contract);
@@ -359,8 +364,7 @@ public class ContractController extends Controller {
                             "%" + locationName + "%");
 
         } else {
-            locationList = Db
-                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER'");
+            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER'");
 
         }
         renderJson(locationList);
@@ -406,8 +410,7 @@ public class ContractController extends Controller {
         // 获取总条数
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
-            sql = "select count(1) total from contract_item c where c.contract_id = " + contractId
-                    + " and PRICETYPE ='perUnit'";
+            sql = "select count(1) total from contract_item c where c.contract_id = " + contractId + " and PRICETYPE ='perUnit'";
         }
 
         System.out.println(sql);
@@ -453,8 +456,7 @@ public class ContractController extends Controller {
         // 获取总条数
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
-            sql = "select count(1) total from contract_item c where c.contract_id = " + contractId
-                    + " and PRICETYPE ='perCar'";
+            sql = "select count(1) total from contract_item c where c.contract_id = " + contractId + " and PRICETYPE ='perCar'";
         }
 
         System.out.println(sql);
@@ -500,8 +502,7 @@ public class ContractController extends Controller {
         // 获取总条数
         String totalWhere = "";
         if (contractId != null && contractId.length() > 0) {
-            sql = "select count(1) total from contract_item c where c.contract_id = " + contractId
-                    + " and pricetype ='perCargo'";
+            sql = "select count(1) total from contract_item c where c.contract_id = " + contractId + " and pricetype ='perCargo'";
         }
 
         System.out.println(sql);
@@ -529,8 +530,8 @@ public class ContractController extends Controller {
         String routeItemId = getPara("routeItemId");
         String priceType = getPara("priceType");
         // 判断合同干线是否存在
-        item.set("contract_id", contractId).set("fin_item_id", getPara("fin_item")).set("pricetype", getPara("priceType")).set("from_id", getPara("from_id"))
-                .set("location_from", getPara("fromName")).set("to_id", getPara("to_id"))
+        item.set("contract_id", contractId).set("fin_item_id", getPara("fin_item")).set("pricetype", getPara("priceType"))
+                .set("from_id", getPara("from_id")).set("location_from", getPara("fromName")).set("to_id", getPara("to_id"))
                 .set("location_to", getPara("toName")).set("amount", getPara("price")).set("dayfrom", getPara("day"))
                 .set("dayto", getPara("day2"));
         if (getPara("productId").equals("")) {
@@ -539,26 +540,27 @@ public class ContractController extends Controller {
             item.set("product_id", getPara("productId"));
         }
         if (routeItemId != "") {
+
             if (priceType.equals("perUnit")) {
-                item.set("id", getPara("routeItemId")).set("cartype", null).set("carlength", null)
-                        .set("fin_item_id", getPara("fin_item")).set("ltlUnitType", null);
+                item.set("id", getPara("routeItemId")).set("cartype", null).set("carlength", null).set("fin_item_id", getPara("fin_item"))
+                        .set("ltlUnitType", null);
                 item.set("unit", getPara("unit2"));
-                item.set("product_id", getPara("productId"));
+
                 item.update();
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("perCar")) {
                 item.set("id", getPara("routeItemId"));
-                item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2"))
-                        .set("fin_item_id", getPara("fin_item")).set("ltlUnitType", null);
-                item.set("product_id", getPara("productId"));
+                item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2")).set("fin_item_id", getPara("fin_item"))
+                        .set("ltlUnitType", null);
+
                 item.update();
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("perCargo")) {
-                item.set("id", getPara("routeItemId")).set("amountFrom", getPara("amountFrom"))
-                        .set("fin_item_id", getPara("fin_item")).set("amountTo", getPara("amountTo"));
-                item.set("product_id", getPara("productId"));
+                item.set("id", getPara("routeItemId")).set("amountFrom", getPara("amountFrom")).set("fin_item_id", getPara("fin_item"))
+                        .set("amountTo", getPara("amountTo"));
+
                 item.set("ltlUnitType", getPara("ltlUnitType")).set("cartype", null).set("carlength", null);
                 item.update();
                 renderJson("{\"success\":true}");
@@ -606,9 +608,9 @@ public class ContractController extends Controller {
                     .find("select c.*,p.id as pid,p.item_name from contract_item c left join product p on p.id =c.product_id where c.contract_id ='"
                             + contractId + "' and c.id = '" + id + "'");
         } else {
-            list = Db.find("select c.*,'null' as item_name from contract_item c where c.contract_id ='" + contractId
-                    + "' and c.id = '" + id + "'");
-        	
+            list = Db.find("select c.*,'null' as item_name from contract_item c where c.contract_id ='" + contractId + "' and c.id = '"
+                    + id + "'");
+
         }
         renderJson(list);
     }
@@ -627,13 +629,11 @@ public class ContractController extends Controller {
         String customerId = getPara("customerId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db
-                    .find("select * from product where category_id in (select id from category where customer_id = "
-                            + customerId + ") and item_name like '%" + input + "%' limit 0,10");
+            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
+                    + ") and item_name like '%" + input + "%' limit 0,10");
         } else {
-            locationList = Db
-                    .find("select * from product where category_id in (select id from category where customer_id = "
-                            + customerId + ")");
+            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
+                    + ")");
         }
         renderJson(locationList);
     }
@@ -644,12 +644,13 @@ public class ContractController extends Controller {
 
         // 不能查所有
         if (locationName.trim().length() > 0) {
-            List<Record> locationList = Db.find("select * from location where name like '%" + locationName
-                    + "%' or code like '%" + locationName + "%' or pcode like '%" + locationName
-                    + "%' order by id limit 10");
+
+            locationName = locationName.replaceAll("'", "''");// 转义，地点查询中经常出现单引号
+            List<Record> locationList = Db.find("select * from location where name like '%" + locationName + "%' or code like '%"
+                    + locationName + "%' or pcode like '%" + locationName + "%' order by id limit 10");
             renderJson(locationList);
         } else {
-
+            renderJson("");
         }
     }
 }

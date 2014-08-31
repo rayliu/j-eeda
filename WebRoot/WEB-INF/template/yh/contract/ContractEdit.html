@@ -159,12 +159,12 @@
                         		<input type="button" id="btn" value="新增合同干线" class="btn btn-primary">
                     			</h1>
                 			</div> -->
-                			<ul class="nav nav-tabs">
-				                <li class="active"><a href="#basic" data-toggle="tab">计件</a>
+                			<ul class="nav nav-tabs" id="routeTabs">
+				                <li class="active" price-type="perUnit"><a href="#basic" data-toggle="tab">计件</a>
 				                </li>
-				                <li class=""><a href="#cargos" data-toggle="tab">整车</a>
+				                <li class="" price-type="perCar"><a href="#cargos" data-toggle="tab">整车</a>
 				                </li>
-				                <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">零担</a>
+				                <li class="" price-type="perCargo"><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">零担</a>
 			                     </li>
 			            	</ul>
 			            	<div class="tab-content">
@@ -175,14 +175,14 @@
 	                                    <thead>
 	                                        <tr>
 	                                        	<th>计费方式</th>
+                                                <th>产品</th>
 	                                        	<th>单位</th>
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
 	                                            <th>费用名称</th>
                                                 <th>金额</th>
 	                                            <th>路程(KM)</th>
-	                                            <th>天数</th>
-	                                            <th>产品</th>
+	                                            <th>天数</th>	                                            
 	                                            <th></th>
 	                                        </tr>
 	                                    </thead>
@@ -253,7 +253,7 @@
 							</div>
                         	<div class="panel-heading">
                         			<!-- Button trigger modal -->
-								<button id="btn" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+								<button id="addPriceBtn" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
 								 	 新增合同运价
 								</button>
 									<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -270,16 +270,9 @@
 			                                        <!-- 根据 始发地 和 目的地 找到 干线id-->
 			                                        <div class="modal-body">
                                                         <div class="form-group">
-                                                            <label>计费方式</label>
-                                                            <label class="radio-inline">
-                                                                <input type="radio" name="priceType" id="optionsRadiosInline1" value="perUnit" >计件
-                                                            </label>
-                                                            <label class="radio-inline">
-                                                                <input type="radio" name="priceType" id="optionsRadiosInline2" value="perCar" >整车
-                                                            </label>
-                                                            <label class="radio-inline">
-                                                                <input type="radio" name="priceType" id="optionsRadiosInline3" value="perCargo" >零担
-                                                            </label>
+                                                            <label>计费方式:</label>
+                                                            <input type="hidden" name="priceType" id="priceTypeHidden" value="" >
+                                                            <span id='priceType'></span>
                                                         </div>
                                                        <!--  <div class="form-group" id="cargoNature">
                                                             <lable>货品类型</lable>

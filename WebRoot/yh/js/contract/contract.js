@@ -15,6 +15,7 @@ $(document).ready(function() {
 	        "sAjaxSource": "/yh/spContract/routeEdit?routId="+contractId,
 	        "aoColumns": [  
 				{"mDataProp":"PRICETYPE", "bVisible":false},
+				{"mDataProp":"ITEM_NAME"},   
 	            {"mDataProp":"UNIT"},
 	            {"mDataProp":"LOCATION_FROM"},
 	            {"mDataProp":"LOCATION_TO"},
@@ -22,11 +23,9 @@ $(document).ready(function() {
 	            {"mDataProp":"AMOUNT"},
 	            {"mDataProp":"KILOMETER"},
 	            {"mDataProp":null,
-	            	"fnRender": function(obj) {     
-	                    return +obj.aData.DAYFROM+"-"+obj.aData.DAYTO;
-	                            
-	                }},
-	            {"mDataProp":"ITEM_NAME"},   
+	            	"fnRender": function(obj) {
+	                    return buildRange(obj.aData.DAYFROM, obj.aData.DAYTO);
+	            }},
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "8%",                
@@ -64,10 +63,10 @@ $(document).ready(function() {
 		            {"mDataProp":"AMOUNT"},
 		            {"mDataProp":null,
 		            	"fnRender": function(obj) {                    
-		                    return +obj.aData.DAYFROM+"-"+obj.aData.DAYTO;
+		                    return buildRange(obj.aData.DAYFROM, obj.aData.DAYTO);
 		                            
-		                }},
-		                {"mDataProp":"ITEM_NAME"},  
+		            }},
+		            {"mDataProp":"ITEM_NAME"},  
 		            { 
 		                "mDataProp": null, 
 		                "sWidth": "8%",                
@@ -100,7 +99,7 @@ $(document).ready(function() {
 					{"mDataProp":"LTLUNITTYPE"},
 					{"mDataProp":null,
 						"fnRender": function(obj) {                    
-		                    return +obj.aData.AMOUNTFROM+"-"+obj.aData.AMOUNTTO;
+		                    return buildRange(obj.aData.AMOUNTFROM, obj.aData.AMOUNTTO);
 		                            
 		                }},
 		            {"mDataProp":"LOCATION_FROM"},
@@ -109,7 +108,7 @@ $(document).ready(function() {
 		            {"mDataProp":"AMOUNT"},
 		            {"mDataProp":null,
 		            	"fnRender": function(obj) {                    
-		                    return +obj.aData.DAYFROM+"-"+obj.aData.DAYTO;
+		                    return buildRange(obj.aData.DAYFROM, obj.aData.DAYTO);
 		                            
 		                }},
 		                {"mDataProp":"ITEM_NAME"},  
@@ -129,7 +128,20 @@ $(document).ready(function() {
 		            }                         
 		        ]
 		     });
-		//计件编辑
+	    
+		var buildRange=function(from, to){
+			if(from && to){
+				return +from+"-"+to;
+			}
+			if(from && !to){
+				return from;
+			}
+			if(!from && to){
+				return '0-'+to;
+			}
+			return '';
+		 }
+	     //计件编辑
 		 $("#dataTables-example").on('click', '.contractRouteEdit', function(){
 			  var contractId = $("#routeContractId").val();
 			 	var id = $(this).attr('code');
@@ -137,7 +149,8 @@ $(document).ready(function() {
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data[0] !=null){
-                	
+                	 var priceType = $("#routeTabs .active").attr("price-type");
+                	 showPriceElements(priceType);
                 	 $('#myModal').modal('show');
                 	 $('#routeId').val(data[0].ID);
                 	 $('#from_id').val(data[0].FROM_ID);
@@ -151,7 +164,7 @@ $(document).ready(function() {
                 	 $('#unit2').val(data[0].UNIT);
                 	 $('#productId').val(data[0].PID);
                 	 $('#itemNameMessage').val(data[0].ITEM_NAME);
-                	 $('#optionsRadiosInline1').prop('checked', true).trigger('change');
+                	 
                 	 
                  }else{
                      alert('取消失败');
@@ -167,6 +180,9 @@ $(document).ready(function() {
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data[0] !=null){
+                 	var priceType = $("#routeTabs .active").attr("price-type");
+                	 showPriceElements(priceType);
+
                 	 $('#myModal').modal('show');
                 	 $('#routeId').val(data[0].ID);
                 	 $('#from_id').val(data[0].FROM_ID);
@@ -193,7 +209,9 @@ $(document).ready(function() {
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data[0] !=null){
-                	
+                	var priceType = $("#routeTabs .active").attr("price-type");
+                	 showPriceElements(priceType);
+                	 
                 	 $('#myModal').modal('show');
                 	 $('#routeId').val(data[0].ID);
                 	 $('#from_id').val(data[0].FROM_ID);
@@ -283,7 +301,11 @@ $(document).ready(function() {
 	    });
 	
         //点击button显示添加合同干线div
-        $("#btn").click(function(){
+        $("#addPriceBtn").click(function(){
+        	var priceType = $("#routeTabs .active").attr("price-type");
+        	
+        	showPriceElements(priceType);
+
         	var contractId = $("#routeContractId").val();
         	if(contractId != ""){
         		//$("#routeItemFormDiv").show();
@@ -294,6 +316,31 @@ $(document).ready(function() {
         	}
         });
         
+
+	    var showPriceElements=function(priceType){
+	    	$("#priceTypeHidden").val(priceType);
+	    	if(priceType=="perUnit"){
+	    		$("#priceType").text('计件');
+	    		$("#unit").show();
+	    		$("#carType").hide();
+	    		$("#carLength").hide();
+	    		$("#ltlUnitType").hide();
+	    	}else if(priceType=="perCar"){
+	    		$("#priceType").text('整车');
+	    		$("#carType").show();
+	    		$("#carLength").show();
+	    		$("#ltlUnitType").hide();
+	    		$("#unit").hide();
+	    		//$("#cargoNature").hide();
+	    	}else if(priceType=="perCargo"){
+	    		$("#priceType").text('零担');
+				$("#carType").hide();
+	    		$("#carLength").hide();
+	    		$("#ltlUnitType").show();
+	    		$("#unit").hide();
+	    	}
+	    };
+
         //点击保存的事件，保存干线信息
         //routeItemForm 不需要提交
         $("#saveRouteBtn").click(function(e){
@@ -558,37 +605,7 @@ $(document).ready(function() {
 	    	 }
 	    }) ;
 	   
-	    $("input[type='radio'][name='priceType']").change(function(){
-	    	hidePriceElements();
-	    	var val=$('input[type="radio"][name="priceType"]:checked').val(); // 获取一组radio被选中项的值   
-	    	if(val=="计件"){
-	    		$("#unit").show();
-	    		$("#carType").hide();
-	    		$("#carLength").hide();
-	    		$("#ltlUnitType").hide();
-	    	}else if(val=="整车"){
-	    		$("#carType").show();
-	    		$("#carLength").show();
-	    		$("#ltlUnitType").hide();
-	    		$("#unit").hide();
-	    		//$("#cargoNature").hide();
-	    	}else if(val=="零担"){
-				$("#carType").hide();
-	    		$("#carLength").hide();
-	    		$("#ltlUnitType").show();
-	    		$("#unit").hide();
-	    	}
-
-	    });	
-
-	    var hidePriceElements=function(){
-	    	$("#carType").hide();
-	    	$("#carLength").hide();
-	    	$("#ltlUnitType").hide();
-	    };
-
-	    
-	    hidePriceElements();
+	   
 	   
 	  //获取货品的名称list，选中信息在下方展示其他信息
 		$('#itemNameMessage').on('keyup click', function(){
