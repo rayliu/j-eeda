@@ -577,11 +577,14 @@
     	    	$("#order_edit").attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
     	    	  //$("#warehousingConfirmBtn").attr("disabled",false);
+                  paymenttable.fnSettings().sAjaxSource = "/yh/departOrder/accountPayable/"+$("#departOrderId").val();
+                  
                   paymenttable.fnDraw(); 
                 });
     	    	
     	    	$("#saveDepartOrderBtn").attr("disabled", true);
     	    });
+
     	    /*$("#warehousingConfirmBtn").click(function(e){
     	    	$(this).attr("disabled",true);
     	    	$.post('/yh/departOrder/updatestate?order_state='+"已入库", $("#orderForm").serialize(), function(data){
