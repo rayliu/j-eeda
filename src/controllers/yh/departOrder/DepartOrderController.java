@@ -914,6 +914,7 @@ public class DepartOrderController extends Controller {
             }
             
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+            transferOrderMilestone.set("status", "已发车");
             users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
             transferOrderMilestone.set("create_by", users.get(0).get("id"));
             transferOrderMilestone.set("location", "");
