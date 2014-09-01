@@ -142,7 +142,7 @@ $(document).ready(function() {
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
 	
- 	$('#orderNo_filter,#status_filter,#address_filter,#beginTime_filter,#endTime_filter,#').on( 'keyup', function () {
+ 	$('#orderNo_filter,#status_filter,#address_filter,#beginTime_filter,#endTime_filter').on( 'keyup', function () {
  		resetResult();
     } );
     
