@@ -141,128 +141,152 @@ $(document).ready(function() {
 		},'json');
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
-	
- 
+	    
+	$('#orderNo_filter,#status_filter,#address_filter,#beginTime_filter,#endTime_filter').on( 'keyup', function () {
+		resetResult();
+	} );
     
-	 $('#orderNo_filter').on( 'keyup', function () {
-	    	var orderNo = $("#orderNo_filter").val();
-	        /*transferOrder.fnFilter(orderNo, 0, false, true);
-	        transferOrder.fnDraw();*/
-	    	var status = $("#status_filter").val();
-	    	var address = $("#address_filter").val();
-	    	var customer = $("#customer_filter").val();
-	    	var sp = $("#sp_filter").val();
-	    	var beginTime = $("#beginTime_filter").val();
-	    	var endTime = $("#endTime_filter").val();
-	    	var officeName = $("#officeName_filter").val();
-	    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/ownTransferMilestone?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-	    	detailTable.fnDraw(); 
-	    } );
-	 
-	    $('select.status_filter').on( 'change', function () {
-	    	var orderNo = $("#orderNo_filter").val();
-	    	var status = $("#status_filter").val();
-	    	var address = $("#address_filter").val();
-	    	var customer = $("#customer_filter").val();
-	    	var sp = $("#sp_filter").val();
-	    	var beginTime = $("#beginTime_filter").val();
-	    	var endTime = $("#endTime_filter").val();
-	    	var officeName = $("#officeName_filter").val();
-	    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/ownTransferMilestone?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-	    	detailTable.fnDraw();
-	    } );
-	    
-	    $('input.address_filter').on( 'keyup click', function () {
-	    	var orderNo = $("#orderNo_filter").val();
-	    	var status = $("#status_filter").val();
-	    	var address = $("#address_filter").val();
-	    	var customer = $("#customer_filter").val();
-	    	var sp = $("#sp_filter").val();
-	    	var beginTime = $("#beginTime_filter").val();
-	    	var endTime = $("#endTime_filter").val();
-	    	var officeName = $("#officeName_filter").val();
-	    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/ownTransferMilestone?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-	    	detailTable.fnDraw();
-	    } );
-	    
-	    $('input.customer_filter').on( 'keyup click', function () {
-	    	var orderNo = $("#orderNo_filter").val();
-	    	var status = $("#status_filter").val();
-	    	var address = $("#address_filter").val();
-	    	var customer = $("#customer_filter").val();
-	    	var sp = $("#sp_filter").val();
-	    	var beginTime = $("#beginTime_filter").val();
-	    	var endTime = $("#endTime_filter").val();
-	    	var officeName = $("#officeName_filter").val();
-	    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/ownTransferMilestone?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-	    	detailTable.fnDraw();
-	    } );
-	    
-	    $('input.sp_filter').on( 'keyup click', function () {
-	    	var orderNo = $("#orderNo_filter").val();
-	    	var status = $("#status_filter").val();
-	    	var address = $("#address_filter").val();
-	    	var customer = $("#customer_filter").val();
-	    	var sp = $("#sp_filter").val();
-	    	var beginTime = $("#beginTime_filter").val();
-	    	var endTime = $("#endTime_filter").val();
-	    	var officeName = $("#officeName_filter").val();
-	    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/ownTransferMilestone?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-	    	detailTable.fnDraw();
-	    } );
-	    
-	    $('input.beginTime_filter').on( 'change input', function () {
-	    	var orderNo = $("#orderNo_filter").val();
-	    	var status = $("#status_filter").val();
-	    	var address = $("#address_filter").val();
-	    	var customer = $("#customer_filter").val();
-	    	var sp = $("#sp_filter").val();
-	    	var beginTime = $("#beginTime_filter").val();
-	    	var endTime = $("#endTime_filter").val();
-	    	var officeName = $("#officeName_filter").val();
-	    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/ownTransferMilestone?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-	    	detailTable.fnDraw();
-	    } );
-	    
-	    $('#beginTime_filter').on('keyup', function () {
-	    	var orderNo = $("#orderNo_filter").val();
-	    	var status = $("#status_filter").val();
-	    	var address = $("#address_filter").val();
-	    	var customer = $("#customer_filter").val();
-	    	var sp = $("#sp_filter").val();
-	    	var beginTime = $("#beginTime_filter").val();
-	    	var endTime = $("#endTime_filter").val();
-	    	var officeName = $("#officeName_filter").val();
-	    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/ownTransferMilestone?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-	    	detailTable.fnDraw();
-	    } );    
-	    
-	    $('#endTime_filter').on( 'keyup click', function () {
-	    	var orderNo = $("#orderNo_filter").val();
-	    	var status = $("#status_filter").val();
-	    	var address = $("#address_filter").val();
-	    	var customer = $("#customer_filter").val();
-	    	var sp = $("#sp_filter").val();
-	    	var beginTime = $("#beginTime_filter").val();
-	    	var endTime = $("#endTime_filter").val();
-	    	var officeName = $("#officeName_filter").val();
-	    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/ownTransferMilestone?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-	    	detailTable.fnDraw();
-	    } );
-	    
-	    $('#datetimepicker').datetimepicker({  
-	        format: 'yyyy-MM-dd',  
-	        language: 'zh-CN'
-	    }).on('changeDate', function(ev){
-	        $('#beginTime_filter').trigger('keyup');
-	    });
+    $('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $('#beginTime_filter').trigger('keyup');
+    });
 
-	    $('#datetimepicker2').datetimepicker({  
-	        format: 'yyyy-MM-dd',  
-	        language: 'zh-CN', 
-	        autoclose: true,
-	        pickerPosition: "bottom-left"
-	    }).on('changeDate', function(ev){
-	        $('#endTime_filter').trigger('keyup');
-	    });
+    $('#datetimepicker2').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $('#endTime_filter').trigger('keyup');
+    });
+    
+  //获取【供应商】的list，选中信息在下方展示其他信息
+    $('#sp_filter').on('keyup click', function(){
+    	sp_filterKeyup();
+    	$("#cpnameList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        });
+        $('#cpnameList').show();
+	});
+  //获取【客户】的list，选中信息在下方展示其他信息
+    $('#customer_filter').on('keyup click', function(){
+    	customer_filterKeyup();
+    	$("#customerList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        });
+        $('#customerList').show();
+	});
+   //获取【网点】的list，选中信息在下方展示其他信息
+    $('#officeName_filter').on('keyup click', function(){
+    	//inputKeyUp();
+    	officeName_filterKeyup();
+    	$("#officenameList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        });
+        $('#officenameList').show();
+	});
+    
+
+	// 没选中【供应商】，焦点离开，隐藏列表
+	$('#sp_filter').on('blur', function(){
+ 		$('#cpnameList').hide();
+ 	});
+	// 没选中【客户】，焦点离开，隐藏列表
+	$('#customer_filter').on('blur', function(){
+ 		$('#customerList').hide();
+ 	});
+	// 没选中【网点】，焦点离开，隐藏列表
+	$('#officeName_filter').on('blur', function(){
+ 		$('#officenameList').hide();
+ 	});
+
+	//当用户只点击了滚动条，没选【供应商、客户、网点】，再点击页面别的地方时，隐藏列表
+	$('#sp_filter,#customer_filter,#officeName_filter').on('blur', function(){
+ 		$('#cpnameList').hide();
+ 	});
+
+	// 选中【供应商】
+	$('#cpnameList').on('mousedown', '.fromLocationItem', function(e){
+		console.log($('#cpnameList').is(":focus"));
+		var message = $(this).text();
+		$('#sp_filter').val(message);
+        $('#cpnameList').hide();
+        resetResult();
+    });
+	// 选中【客户】
+	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
+		console.log($('#customerList').is(":focus"));
+		var message = $(this).text();
+		$('#customer_filter').val(message);
+        $('#customerList').hide();
+        resetResult();
+    });
+	// 选中【网点】
+	$('#officenameList').on('mousedown', '.fromLocationItem', function(e){
+		console.log($('#officenameList').is(":focus"));
+		var message = $(this).text();
+		$('#officeName_filter').val(message);
+        $('#officenameList').hide();
+        resetResult();
+    });
+    
+	//供应商、客户、网点
+    $('#sp_filter,#customer_filter,#officeName_filter').on( 'keyup click', function () {
+    	resetResult();
+    } );
 } );
+function sp_filterKeyup(){
+	var sp_filter = $('#sp_filter').val();
+	$.get('/yh/departOrder/cpnameList',{sp_filter:sp_filter}, function(data){
+		console.log(data);
+		var cpnameList =$("#cpnameList");
+		cpnameList.empty();
+		for(var i = 0; i < data.length; i++)
+		{
+			cpnameList.append("<li><a tabindex='-1' class='fromLocationItem' >"+data[i].COMPANY+"</a></li>");
+		}
+	},'json');
+	
+}
+function customer_filterKeyup(){
+	var customer_filter = $('#customer_filter').val();
+	$.get('/yh/departOrder/customerList',{customer_filter:customer_filter}, function(data){
+		console.log(data);
+		var customerList =$("#customerList");
+		customerList.empty();
+		for(var i = 0; i < data.length; i++)
+		{
+			customerList.append("<li><a tabindex='-1' class='fromLocationItem' >"+data[i].CUSTOMER+"</a></li>");
+		}
+	},'json');
+}
+function officeName_filterKeyup(){
+	var officeName_filter = $('#officeName_filter').val();
+	$.get('/yh/departOrder/officenameList',{officeName_filter:officeName_filter}, function(data){
+		console.log(data);
+		var officenameList =$("#officenameList");
+		officenameList.empty();
+		for(var i = 0; i < data.length; i++)
+		{
+			officenameList.append("<li><a tabindex='-1' class='fromLocationItem' >"+data[i].OFFICENAME+"</a></li>");
+		}
+	},'json');
+}
+
+function resetResult(){
+	var orderNo = $("#orderNo_filter").val();
+	var status = $("#status_filter").val();
+	var address = $("#address_filter").val();
+	var customer = $("#customer_filter").val();
+	var sp = $("#sp_filter").val();
+	var beginTime = $("#beginTime_filter").val();
+	var endTime = $("#endTime_filter").val();
+	var officeName = $("#officeName_filter").val();
+	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/ownTransferMilestone?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+	detailTable.fnDraw();
+}

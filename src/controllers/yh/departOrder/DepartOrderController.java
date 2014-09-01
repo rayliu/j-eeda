@@ -62,20 +62,11 @@ public class DepartOrderController extends Controller {
     //运输单外包供应商
     public void cpnameList(){
     	String sp_filter = getPara("sp_filter");
-    	
-    	String sql = "select distinct c2.abbr company from transfer_order t "
-                + " left join party p1 on t.customer_id = p1.id "
-                + " left join party p2 on t.sp_id = p2.id "
-                + " left join contact c1 on p1.contact_id = c1.id"
-                + " left join contact c2 on p2.contact_id = c2.id"
-                + " left join office o on t.office_id = o.id where t.status!='取消' "
-                + " and operation_type ='out_source'"
-                + " and ifnull(c2.abbr,'') like '%" + sp_filter+ "%'";
-    	
+    	String sql = "select distinct c.abbr company from contact c where c.abbr is not null and ifnull(c.abbr,'') like '%"+sp_filter+"%'";
     	List<Record> companyNameList = Db.find(sql);
     	renderJson(companyNameList);
     }
-    //运输单外包客户
+    //运输单外包客户(有问题)
     public void customerList(){
     	String customer_filter = getPara("customer_filter");
     	String sql = "select distinct c1.abbr customer from transfer_order t "
@@ -83,25 +74,20 @@ public class DepartOrderController extends Controller {
                 + " left join party p2 on t.sp_id = p2.id "
                 + " left join contact c1 on p1.contact_id = c1.id"
                 + " left join contact c2 on p2.contact_id = c2.id"
-                + " left join office o on t.office_id = o.id where t.status!='取消' "
-                + " and operation_type ='out_source'"
-                + " and c1.abbr like '%" + customer_filter + "%'";
+                + " left join office o on t.office_id = o.id "
+                + " where c1.abbr is not null "
+                + " and operation_type ='out_source' "
+                + " and c1.abbr like '%"+customer_filter+"%'";
+               
     	List<Record> companyNameList = Db.find(sql);
     	renderJson(companyNameList);
     }
     //运输单外包网点
     public void officenameList(){
     	String officeName_filter = getPara("officeName_filter");
-    	
-    	String sql = "select distinct o.office_name officeName from transfer_order t "
-                + " left join party p1 on t.customer_id = p1.id "
-                + " left join party p2 on t.sp_id = p2.id "
-                + " left join contact c1 on p1.contact_id = c1.id"
-                + " left join contact c2 on p2.contact_id = c2.id"
-                + " left join office o on t.office_id = o.id where t.status!='取消' "
-                + " and operation_type ='out_source'"
-                + " and o.office_name  like '%" + officeName_filter + "%'";
-    	
+    	String sql = "select distinct o.office_name officeName  from office o "
+    			+ "where o.office_name is not null "
+    			+ "and o.office_name like '%"+officeName_filter+"%'";
     	List<Record> companyNameList = Db.find(sql);
     	renderJson(companyNameList);
     }
