@@ -492,6 +492,7 @@
 		if($("#pickupOrderId").val() != ""){
 			if($("#finishBtnVal").val() == "已入货场"){
 				$("#finishBtn").attr('disabled', true);					
+				$("#saveTransferOrderBtn").attr('disabled', true);					
 			}else{
 				$("#finishBtn").attr('disabled', false);
 			}
@@ -603,6 +604,7 @@
             	},'json');
             	
             	$("#finishBtn").attr('disabled', true);	
+            	$("#saveTransferOrderBtn").attr('disabled', true);	
             	$("#finishBtnVal").val("已入货场");
             }else{
                 alert('操作失败');
