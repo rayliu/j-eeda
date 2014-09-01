@@ -1012,6 +1012,9 @@ public class TransferOrderController extends Controller {
 	            }
 	        }
     	}
-    	renderJson(location);
+    	Map<String, Object> map = new HashMap<String, Object>();
+    	map.put("location", location);
+    	map.put("warehouse", warehouse);
+    	renderJson(map);
     }
 }

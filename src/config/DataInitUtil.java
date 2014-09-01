@@ -352,7 +352,7 @@ public class DataInitUtil {
 
             // 仓库
             stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,office_id,warehouse_type) values('582','源鸿广州总仓', '这是广州总仓','萝岗','9','2','ownWarehouse');");
-            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,sp_id,warehouse_type) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse');");
+            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,sp_id,warehouse_type,office_id) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse',5);");
 
             // 类别 ----采用面向对象的方式来获取party的id， 不必担心id不对。 --ray 2014-06-29
             Party party = Party.dao
