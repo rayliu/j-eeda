@@ -138,11 +138,11 @@ public class ChargeCheckOrderController extends Controller {
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select ro.*, to.order_no as transfer_order_no, do.order_no as delivery_order_no, p.id as company_id, c.company_name from return_order ro "
-                        + "left join transfer_order to on ro.transfer_order_id = to.id "
-                        + "left join delivery_order do on ro.delivery_order_id = do.id "
-                        + "left join party p on ro.customer_id = p.id "
-                        + "left join contact c on p.contact_id = c.id where ro.transaction_status = '已签收' " + fieldsWhere);
+                .find("select ror.*, tor.order_no as transfer_order_no, dor.order_no as delivery_order_no, p.id as company_id, c.company_name from return_order ror "
+                		+ "left join transfer_order tor on ror.transfer_order_id = tor.id "
+                		+ "left join delivery_order dor on ror.delivery_order_id = dor.id "
+                		+ "left join party p on ror.customer_id = p.id left join contact c on p.contact_id = c.id "
+                		+ "where ror.transaction_status = '已签收' " + fieldsWhere);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
