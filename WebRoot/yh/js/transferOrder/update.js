@@ -703,8 +703,9 @@ $(document).ready(function() {
         		//将选择的产品id先保存到数据库
         		var itemId = $(this).parent().parent().parent()[0].id;
         		var productId = ui.item.id;
-        		$.post('/yh/transferOrderItem/saveTransferOrderItem', {transferOrderItemId:itemId,productId:productId},	function(data){ 
-					$("input[name='cargoNature']").each(function(){
+        		$.post('/yh/transferOrderItem/saveTransferOrderItem', {transferOrderItemId:itemId,productId:productId},	function(data){   					
+					refreshItemTable();
+					/*$("input[name='cargoNature']").each(function(){
     					if($(this).prop('checked') == true){
     						if($(this).val() == 'ATM'){
                 				if(data.ITEM_NAME == 'ATM'){            					
@@ -718,7 +719,7 @@ $(document).ready(function() {
                 				}
     						}
             			}
-					});
+					});*/
     			}, 'json');    
             },
         	minLength: 2
