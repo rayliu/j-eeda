@@ -345,6 +345,9 @@ $(document).ready(function() {
 					$.post('/yh/deliveryOrderMilestone/departureConfirmation',{delivery_id:delivery_id,code:code,locationTo:locationTo,priceType:priceType},function(data){
 						var MilestoneTbody = $("#transferOrderMilestoneTbody");
 						MilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
+
+						paymenttable.fnSettings().sAjaxSource="/yh/deliveryOrderMilestone/accountPayable/"+delivery_id;
+						paymenttable.fnDraw();
 					},'json');
 					$("#ConfirmationBtn").attr("disabled", true);
 					$("#receiptBtn").attr("disabled", false);
@@ -677,7 +680,7 @@ $(document).ready(function() {
 	     				
 	     				
 						}else{
-	     				province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+	     					province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
 						}
 					}
 	     		

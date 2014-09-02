@@ -1094,7 +1094,7 @@ public class DepartOrderController extends Controller {
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
         DepartOrderFinItem pickupFinItem = new DepartOrderFinItem();
-        pickupFinItem.set("fin_item_id", 1);//contractFinItem.get("fin_item_id")
+        pickupFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
         if(tOrderItemRecord==null){
             pickupFinItem.set("amount", contractFinItem.getDouble("amount") );
         }else{
