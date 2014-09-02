@@ -18,7 +18,7 @@
                             <ul id="orderTabs" class="nav nav-tabs">
                                 <li class="active"><a href="#basic" data-toggle="tab" data-src="basic" >基本信息</a>
                                 </li>
-                                <li class=""><a href="#arap" data-toggle="tab">应收明细</a>
+                                <li class=""><a href="#arap" data-toggle="tab" id="chargeCheckOrderItem">应收明细</a>
                                 </li>
                                 <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">里程碑</a>
                                 </li>                                
@@ -80,13 +80,13 @@
                                         
                                     </form>                                        
                                        
-                                    <h2>时间段</h2>
+                                   <!--  <h2>时间段</h2>
                                     <form role="form">
                                         <div class="form-group">
                                             <input type="text" class="form-control input-inline input-large" id="beginTime" value="${beginTime!''}"> - <input type="text" class="form-control input-large input-inline" id="endTime" value="${endTime!''}">
                                         </div>
                                         
-                                    </form>
+                                    </form> -->
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
                             </div>
@@ -169,7 +169,8 @@
 			                                            <th>创建时间</th> 
 			                                            <th>状态</th>
 			                                            <th>备注</th>                                          
-			                                            <th>总金额</th>
+			                                            <th>应收金额</th>
+			                                            <th>实收金额</th>
 			                                        </tr>
 			                                    </thead>
 			                                    <tbody>
@@ -213,11 +214,10 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		
 		$('#menu_charge').addClass('active').find('ul').addClass('in');
-        
-		//点击保存的事件，保存运输单信息
-		//transferOrderForm 不需要提交	
-	 	$("#saveChargeCheckOrderBtn").click(function(e){
+		
+		var saveChargeCheckOrder = function(e){
 			//阻止a 的默认响应行为，不需要跳转
 			e.preventDefault();
 			//提交前，校验数据
@@ -234,13 +234,42 @@
 					alert('数据保存失败。');
 				}
 			},'json');
+		};
+        
+		//点击保存的事件，保存运输单信息
+		//transferOrderForm 不需要提交	
+	 	$("#saveChargeCheckOrderBtn").click(function(e){
+	 		saveChargeCheckOrder(e);
+		});
+		
+		$("#chargeCheckOrderItem").click(function(e){
+			//阻止a 的默认响应行为，不需要跳转
+			e.preventDefault();
+			//提交前，校验数据
+	        if(!$("#chargeCheckOrderForm").valid()){
+		       	return;
+	        }
+			//异步向后台提交数据
+			$.post('/yh/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
+				if(data.ID>0){
+					$("#chargeCheckOrderId").val(data.ID);
+				  	$("#style").show();
+				  	$("#departureConfirmationBtn").attr("disabled", false);
+		
+				    var chargeCheckOrderId = $("#chargeCheckOrderId").val();
+					returnOrderTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/returnOrderList?chargeCheckOrderId="+chargeCheckOrderId;
+					returnOrderTable.fnDraw(); 
+				}else{
+					alert('数据保存失败。');
+				}
+			},'json');
 		});
 		
 	    if($("#chargeCheckOrderStatus").text() == 'new'){
 	    	$("#chargeCheckOrderStatus").text('新建');
 		}
 
-		var dataTable =$('#example').dataTable( {
+		var returnOrderTable =$('#example').dataTable( {
 		    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	        //"sPaginationType": "bootstrap",insert into return_order(status_code,create_date,order_type,creator,remark,transfer_order,distribution_order_id,contract_id
 	        "iDisplayLength": 10,
@@ -248,7 +277,7 @@
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "/yh/returnOrder/list",
+	        "sAjaxSource": "/yh/chargeCheckOrder/returnOrderList",
 	   			"aoColumns": [
 	   			{ "mDataProp": "ORDER_NO",
 	            	"fnRender": function(obj) {
@@ -272,6 +301,7 @@
 	                 }
 	            },
 	            { "mDataProp": "REMARK" },
+	            { "mDataProp": "AMOUNT"	},
 	            { "mDataProp": null	}
 	         ]
 		});
