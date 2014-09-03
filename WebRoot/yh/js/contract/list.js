@@ -44,7 +44,7 @@ $(document).ready(function() {
             	"sWidth": "15%"
             },
             {"mDataProp":"CONTACT_PERSON"},
-            {"mDataProp":"MOBILE"},
+            {"mDataProp":"PHONE"},
             {"mDataProp":"PERIOD_FROM"},
             {"mDataProp":"PERIOD_TO"},
             { 

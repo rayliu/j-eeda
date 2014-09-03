@@ -314,6 +314,7 @@ $(document).ready(function() {
         		alert("请先添加合同！");
         		return false;
         	}
+        	$("#routeItemForm")[0].reset;        	
         });
         
 
@@ -672,7 +673,9 @@ $(document).ready(function() {
 	        $('#endTime_filter').trigger('keyup');
 	    });
 		
-		
+		$("#close,#cancel").click(function(){
+			$("#routeItemForm")[0].reset;
+		});
 		
 		
 		
