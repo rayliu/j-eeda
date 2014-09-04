@@ -96,20 +96,7 @@
                                            </div>
                                         </div>    
                                           
-                                 		<h3>车辆信息</h3> 
-                                        <div class="form-group">
-											<label>司机</label>
-										    <div class="form-group">											
-										        <input type="text" name="driver_name" class="form-control" id="driverMessage" value="${driverContact.contact_person!''}">
-										        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="driverList">
-												</ul>
-										    </div>
-									                                     
-                                        <div class="form-group">
-                                        <label>电话</label>
-                                        <input class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
-                                        </div>  
-                                        
+                                 		<h3>车辆信息</h3>                                         
                                         <div class="form-group">
                                             <label>车牌</label>
                                              <div class="form-group">											
@@ -119,6 +106,20 @@
 										    </div>
                                         </div>
                                         <div class="form-group">
+											<label>司机</label>
+										    <div class="form-group">													    								
+										        <input type="hidden" id="carInfoDriverMessage" value="${carinfo.driver!''}">
+										        <input type="text" name="driver_name" class="form-control" id="driverMessage" value="${driverContact.contact_person!''}">
+										        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="driverList">
+												</ul>
+										    </div>
+									                                     
+                                        <div class="form-group">
+                                        <label>电话</label>
+                                        <input id="carInfoDriverPhone" value="${carinfo.phone!''}" type="hidden">
+                                        <input type="text" class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
+                                        </div>
+                                        <!-- <div class="form-group">
 	                                        <div style=display:inline-block;width:49%>
 	                                            <label>车型</label>
 	                                         	<input type="hidden" value="${carinfo.cartype!''}" id="carTypeSelect">
@@ -185,7 +186,7 @@
                                                     <option value="4.3">4.3</option>                                                
 	                                            </select>
 	                                       </div>
-	                                       </div>  
+	                                       </div>   -->
 	                                		<div class="form-group">
                                             <label>跟车人</label>
                                             <input class="form-control" id="car_follow_name" name="car_follow_name" value="${pickupOrder.car_follow_name!''}">

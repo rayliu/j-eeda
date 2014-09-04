@@ -499,6 +499,8 @@ public class PickupOrderController extends Controller {
             }
             if (driverId != null && !"".equals(driverId)) {
                 pickupOrder.set("driver_id", driverId);
+            }else{            	
+            	pickupOrder.set("driver_id", null);
             }
             if (carinfoId != null && !"".equals(carinfoId)) {
                 pickupOrder.set("carinfo_id", carinfoId);
@@ -564,6 +566,8 @@ public class PickupOrderController extends Controller {
             }
             if (driverId != null && !"".equals(driverId)) {
                 pickupOrder.set("driver_id", driverId);
+            }else{            	
+            	pickupOrder.set("driver_id", null);
             }
             if (carinfoId != null && !"".equals(carinfoId)) {
                 pickupOrder.set("carinfo_id", carinfoId);

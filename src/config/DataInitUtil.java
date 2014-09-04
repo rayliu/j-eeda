@@ -476,8 +476,8 @@ public class DataInitUtil {
                     + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
 
             // 司机
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver) values('15512345678', '粤A5687', '平板车', 18.5, '张三');");
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver) values('15812345678', '粤A2341', '高栏车', 12.5, '李四');");
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver) values('13312345678', '粤A5687', '平板车', 18.5, '王五');");
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver) values('13412345678', '粤A2341', '高栏车', 12.5, '赵六');");
 
             // 发车单
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000001', CURRENT_TIMESTAMP(),'DEPART','粤A876596','平板车',1,23,'新建');");
