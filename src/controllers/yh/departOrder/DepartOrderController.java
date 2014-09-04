@@ -660,8 +660,7 @@ public class DepartOrderController extends Controller {
         String sp_id = getPara("sp_id");// 供应商id
         // 查找创建人id
         String name = (String) currentUser.getPrincipal();
-        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
-        String create_id = LoginUserController.getLoginUserId(this).toString();// 创建人id
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         String driver_id = getPara("driver_id");// 司机id
         String carinfoId = getPara("carinfoId");// 司机id
         String car_follow_name = getPara("car_follow_name");// 跟车人
@@ -672,7 +671,7 @@ public class DepartOrderController extends Controller {
         DepartOrder dp = null;
         if ("".equals(depart_id)) {
             dp = new DepartOrder();
-            dp.set("charge_type", charge_type).set("create_by", create_id).set("create_stamp", createDate)
+            dp.set("charge_type", charge_type).set("create_by", users.get(0).get("id")).set("create_stamp", createDate)
                     .set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
@@ -711,8 +710,7 @@ public class DepartOrderController extends Controller {
             }
         } else {//TODO update不需要更改create_by, create_date
             dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
-            dp.set("charge_type", charge_type).set("create_by", create_id).set("create_stamp", createDate)
-                    .set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
+            dp.set("charge_type", charge_type).set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
                     .set("route_to", getPara("route_to")).set("status", getPara("status"));
