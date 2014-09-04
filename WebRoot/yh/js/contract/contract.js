@@ -157,6 +157,7 @@ $(document).ready(function() {
                 	 $('#fromName').val(data[0].LOCATION_FROM);
                 	 $('#to_id').val(data[0].TO_ID);
                 	 $('#toName').val(data[0].LOCATION_TO);
+                	 $("#fin_item_list").val(data[0].FIN_ITEM_ID);
                 	 $('#price').val(data[0].AMOUNT);
                 	 $('#routeItemId').val(data[0].ID);
                 	 $('#day').val(data[0].DAYFROM);
@@ -189,6 +190,7 @@ $(document).ready(function() {
                 	 $('#fromName').val(data[0].LOCATION_FROM);
                 	 $('#to_id').val(data[0].TO_ID);
                 	 $('#toName').val(data[0].LOCATION_TO);
+                	 $("#fin_item_list").val(data[0].FIN_ITEM_ID);
                 	 $('#price').val(data[0].AMOUNT);
                 	 $('#routeItemId').val(data[0].ID);
                 	 $('#day').val(data[0].DAYFROM);
@@ -218,6 +220,7 @@ $(document).ready(function() {
                 	 $('#fromName').val(data[0].LOCATION_FROM);
                 	 $('#to_id').val(data[0].TO_ID);
                 	 $('#toName').val(data[0].LOCATION_TO);
+                	 $("#fin_item_list").val(data[0].FIN_ITEM_ID);
                 	 $('#price').val(data[0].AMOUNT);
                 	 $('#routeItemId').val(data[0].ID);
                 	 $('#day').val(data[0].DAYFROM);
