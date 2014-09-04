@@ -22,10 +22,7 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            	合同基本信息
-								<button id="addPriceBtn" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-								 	 新增合同运价
-								</button>
+                            	合同基本信息								
                         </div>
                         
                         <div class="panel-body">
@@ -162,14 +159,23 @@
                         		<input type="button" id="btn" value="新增合同干线" class="btn btn-primary">
                     			</h1>
                 			</div> -->
-                			<ul class="nav nav-tabs" id="routeTabs">
-				                <li class="active" price-type="perUnit"><a href="#basic" data-toggle="tab">计件</a>
-				                </li>
-				                <li class="" price-type="perCar"><a href="#cargos" data-toggle="tab">整车</a>
-				                </li>
-				                <li class="" price-type="perCargo"><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">零担</a>
-			                     </li>
-			            	</ul>
+                            <div class="row">
+                                <hr>
+                                
+                            </div>
+                            <!-- /.row (nested) -->
+                    			<ul class="nav nav-tabs" id="routeTabs">
+    				                <li class="active" price-type="perUnit"><a href="#basic" data-toggle="tab">计件</a>
+    				                </li>
+    				                <li class="" price-type="perCar"><a href="#cargos" data-toggle="tab">整车</a>
+    				                </li>
+    				                <li class="" price-type="perCargo"><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">零担</a>
+    			                     </li>
+                                     <button id="addPriceBtn" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="margin-left: 15px;">
+                                                 新增合同运价
+                                        </button>
+    			            	</ul>
+
 			            	<div class="tab-content">
 			            	 <div class="tab-pane fade active in" id="basic">
 									<div class="panel-body">
@@ -369,13 +375,13 @@
                                                         <div class="form-group" id="ltlUnitType">
                                                             <label>零担计费方式</label>
                                                             <label class="radio-inline">
-                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosIn1" value="按体积（每立方米）">按体积（每立方米）
+                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosIn1" value="perCBM">按体积（每立方米）
                                                             </label>
                                                             <label class="radio-inline">
-                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosIn2" value="按重量（每吨）">按重量（每吨）
+                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosIn2" value="perTon">按重量（每吨）
                                                             </label>
                                                             <label class="radio-inline">
-                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosIn3" value="按重量（每公斤）">按重量（每公斤）
+                                                                <input type="radio" name="ltlUnitType" id="optionsRadiosIn3" value="perKg">按重量（每公斤）
                                                             </label>
                                                             <div class="form-group">
                                                             <lable>计费区间</lable>

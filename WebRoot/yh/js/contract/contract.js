@@ -96,7 +96,21 @@ $(document).ready(function() {
 		        "sAjaxSource": "/yh/spContract/routeEdit3?routId="+contractId,
 		        "aoColumns": [  
 					{"mDataProp":"PRICETYPE", "bVisible":false},
-					{"mDataProp":"LTLUNITTYPE"},
+					{"mDataProp":"LTLUNITTYPE",
+						"fnRender": function(obj) {
+							var reStr='';
+							if('perTon'==obj.aData.LTLUNITTYPE){
+								reStr="每吨";
+							}
+							if('perCBM'==obj.aData.LTLUNITTYPE){
+								reStr="每立方米";
+							}
+							if('perKg'==obj.aData.LTLUNITTYPE){
+								reStr="每公斤";
+							}
+		                    return reStr;
+		                }
+					},
 					{"mDataProp":null,
 						"fnRender": function(obj) {                    
 		                    return buildRange(obj.aData.AMOUNTFROM, obj.aData.AMOUNTTO);
