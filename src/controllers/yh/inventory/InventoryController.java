@@ -142,13 +142,13 @@ public class InventoryController extends Controller {
         }
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from inventory_item";
+        String sql = "select count(1) total from inventory_item where warehouse_id =" + id;
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
         // 获取当前页的数据
         List<Record> orders = Db.find("select i_t.*,c.company_name,p.* from inventory_item i_t "
                 + "left join product p on  p.id =i_t.product_id " + "left join party p2 on i_t.party_id =p2.id "
-                + "left join contact c on p2.contact_id = c.id " + "where i_t.warehouse_id ='" + id + "'");
+                + "left join contact c on p2.contact_id = c.id " + "where i_t.warehouse_id =" + id);
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);

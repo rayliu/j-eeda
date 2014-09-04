@@ -1613,7 +1613,7 @@ public class DepartOrderController extends Controller {
     }
 
     // 产品入库
-    public void productInWarehouse(String departId) {
+    public static void productInWarehouse(String departId) {
         if (!"".equals(departId) && departId != null) {
             String orderIds = "";
             List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(

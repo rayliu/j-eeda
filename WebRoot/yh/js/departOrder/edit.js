@@ -575,13 +575,19 @@
     	    	var priceType = $("input[name='priceType']:checked").val();
     	    	$(this).attr("disabled",true);
     	    	$("#order_edit").attr("disabled",true);
-    	    	$.post('/yh/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
+    	    	/*$.post('/yh/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
 	    	    	  //$("#warehousingConfirmBtn").attr("disabled",false);
 	                  paymenttable.fnSettings().sAjaxSource = "/yh/departOrder/accountPayable/"+$("#departOrderId").val();
 	                  
 	                  paymenttable.fnDraw(); 
 	                  $("#departOrderStatus").val('已发车');
-                });
+                });*/
+    	    	var departOrderId = $("#departOrderId").val();
+    	    	$.post('/yh/transferOrderMilestone/departureConfirmation?departOrderId='+departOrderId, function(){
+    	    		paymenttable.fnSettings().sAjaxSource = "/yh/departOrder/accountPayable/"+$("#departOrderId").val();
+    	    		paymenttable.fnDraw(); 
+    	    		$("#departOrderStatus").val('已发车');
+    	    	});
     	    	
     	    	$("#saveDepartOrderBtn").attr("disabled", true);
     	    });
