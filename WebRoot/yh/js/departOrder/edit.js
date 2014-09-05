@@ -75,7 +75,7 @@
    		carNoList.empty();
    		for(var i = 0; i < data.length; i++)
    		{
-   			carNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH+"' driver='"+data[i].DRIVER+"' > "+data[i].CAR_NO+"</a></li>");
+   			carNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH+"' driver='"+data[i].DRIVER+"' phone='"+data[i].PHONE+"'> "+data[i].CAR_NO+"</a></li>");
    		}
    	},'json');
 
@@ -87,9 +87,12 @@
    	});
    	 	
    	// 选中车辆
-   	$('#carNoList').on('mousedown', '.fromLocationItem', function(e){	
+   	$('#carNoList').on('mousedown', '.fromLocationItem', function(e){			
+		 $("#driver_id").val('');
    	     $("#carinfoId").val($(this).attr('id'));
    	 	 $('#carNoMessage').val($(this).attr('carNo'));
+	  	 $('#driverMessage').val($(this).attr('driver'));
+	  	 $('#driver_phone').val($(this).attr('phone'));  
    	 	 $('#cartype').val($(this).attr('carType'));
    	 	 $('#carsize').val($(this).attr('length'));	  	 
    	     $('#carNoList').hide();   
@@ -99,6 +102,14 @@
    	$('#carNoMessage').on('blur', function(){
     		$('#carNoList').hide();
     });
+
+	if($("#driverMessage").val() == ''){
+		$("#driverMessage").val($("#carInfoDriverMessage").val());
+	}
+	
+	if($("#driver_phone").val() == ''){
+		$("#driver_phone").val($("#carInfoDriverPhone").val());
+	}
 
    	var message=$("#message").val();
     var type=$("#type").val();

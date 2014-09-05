@@ -111,7 +111,7 @@ public class DepartOrderController extends Controller {
                     + "left join carinfo  car on deo.driver_id=car.id" + " where combine_type = '"
                     + DepartOrder.COMBINE_TYPE_DEPART + "'";
 
-            sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
+            sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.length, (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
                     + " left join carinfo c on deo.carinfo_id = c.id "
                     + " left join party p on deo.driver_id = p.id "
                     + " left join contact ct on p.contact_id = ct.id  where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
@@ -134,7 +134,7 @@ public class DepartOrderController extends Controller {
                     + " and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime
                     + "'group by deo.id order by deo.create_stamp desc ";
 
-            sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length, group_concat(tr.order_no separator ' ') as transfer_order_no "
+            sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.length, group_concat(tr.order_no separator ' ') as transfer_order_no "
                     + " from depart_order deo"
                     + " left join carinfo c on deo.carinfo_id = c.id "
                     + " left join party p on deo.driver_id = p.id "
@@ -678,6 +678,8 @@ public class DepartOrderController extends Controller {
                     .set("route_to", getPara("route_to")).set("status", getPara("status"));
             if (!"".equals(driver_id) && driver_id != null) {
                 dp.set("driver_id", driver_id);
+            }else{
+            	dp.set("driver_id", null);            	
             }
             if (!"".equals(carinfoId) && carinfoId != null) {
                 dp.set("carinfo_id", carinfoId);
@@ -716,6 +718,8 @@ public class DepartOrderController extends Controller {
                     .set("route_to", getPara("route_to")).set("status", getPara("status"));
             if (!"".equals(driver_id) && driver_id != null) {
                 dp.set("driver_id", driver_id);
+            }else{
+            	dp.set("driver_id", null);            	
             }
             if (!"".equals(carinfoId) && carinfoId != null) {
                 dp.set("carinfo_id", carinfoId);

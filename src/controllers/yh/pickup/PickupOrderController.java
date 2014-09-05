@@ -139,7 +139,7 @@ public class PickupOrderController extends Controller {
             sqlTotal = "select count(1) total from depart_order do " + "" + " left join carinfo c on do.driver_id = c.id "
                     + " where do.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "'";
 
-            sql = "select do.*,ct.contact_person,ct.phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
+            sql = "select do.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
                     + " left join carinfo c on do.carinfo_id = c.id "
                     + " left join party p on do.driver_id = p.id "
                     + " left join contact ct on p.contact_id = ct.id "
@@ -157,7 +157,7 @@ public class PickupOrderController extends Controller {
                     + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%" + departNo + "%' and dt2.transfer_order_no like '%"
                     + orderNo + "%' and do.create_stamp between '" + beginTime + "' and '" + endTime + "'";
 
-            sql = "select distinct do.*,ct.contact_person,ct.phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
+            sql = "select distinct do.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
                     + " left join carinfo c on do.carinfo_id = c.id "
                     + " left join party p on do.driver_id = p.id "
                     + " left join contact ct on p.contact_id = ct.id "
