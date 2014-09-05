@@ -5,7 +5,7 @@
             <div class="row">
            
                 <div class="col-lg-12">
-                    <h1 class="page-header">拼车单</h1>                  
+                    <h1 class="page-header">发车记录单</h1>                  
                     <input type="hidden" id="pickupOrderId" value="${pickupOrder.id!''}">
                     <input type="hidden" id="transferOrderType" value="${transferOrderAttr.order_type!''}">
                     <input type="hidden" id="finishBtnVal" value="${transferOrderMilestone.status!''}">
@@ -30,7 +30,7 @@
                                 </li>
                                  <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">运输里程碑</a>
                                 </li>
-                                <li class=""><a href="#pickuparap" data-toggle="tab">应付</a>
+                                <li class=""><a href="#pickuparap" data-toggle="tab" id="pickupOrderPayment">应付</a>
                                 </li>
                             </ul>
 
@@ -57,50 +57,16 @@
 		                                <input id="uncheckedDetail" type="hidden" name="uncheckedDetail"/>                                    	
                                         
                                         	
-	                                       	<div id="pickupModes" class="form-group">
-	                                            <label><h3>提货方式</h3></label>
-	                                           	<input id="pickupModeRadio" type="hidden" value="${pickupOrder.pickup_mode!''}"/>
-	                                            <label class="radio-inline">
-	                                                <input type="radio" name="pickupMode" id="pickupMode1" value="own" checked="">源鸿自提
-	                                            </label>
-	                                            <label class="radio-inline">
-	                                                <input type="radio" name="pickupMode" id="pickupMode2" value="routeSP">干线供应商自提
-	                                            </label>
-	                                            <label class="radio-inline">
-	                                                <input type="radio" name="pickupMode" id="pickupMode3" value="pickupSP">外包供应商提货
-	                                            </label>
-	                                        </div> 
+                                       	<div id="pickupModes" class="form-group">
+                                            <label><h3>提货方式</h3></label>
+                                           	${pickupOrder.pickup_mode!''}
+                                        </div> 
 	                                        
-	                                         <!-- <div class="form-group">
-                                                 <label><h3>计费方式</h3></label>
-                                                  <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType1" value="perUnit" checked="">计件
-                                                </label>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType2" value="perCar">整车
-                                                </label>  
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType3" value="perCargo">零担
-                                                </label> 
-                                             </div> -->
-                                        <div id="spDiv" style="display: none;">    
-                                        <h3>供应商信息</h3>
-                                           <div class="form-group">
-                                               <!--label>供应商名称</label-->
-                                               <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage"  value="${spContact.company_name!''}"/>
-                                               <ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
-   											</ul>
-                                           </div>
-                                           <div class="form-group">     
-                                           	   <h5 id="pageSpName">${spContact.contact_person!''} ${spContact.phone!''}</h5><h5 id="pageSpAddress">${spContact.address!''}</h5>     
-                                           </div>
-                                        </div>    
-                                          
                                  		<h3>车辆信息</h3>                                         
                                         <div class="form-group">
                                             <label>车牌</label>
                                              <div class="form-group">											
-										        <input type="text" name="car_no" class="form-control" id="carNoMessage" value="${carinfo.car_no!''}">
+										        <input type="text" name="car_no" class="form-control" id="carNoMessage" value="${carinfo.car_no!''}" disabled>
 										        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="carNoList">
 												</ul>
 										    </div>
@@ -109,7 +75,7 @@
 											<label>司机</label>
 										    <div class="form-group">													    								
 										        <input type="hidden" id="carInfoDriverMessage" value="${carinfo.driver!''}">
-										        <input type="text" name="driver_name" class="form-control" id="driverMessage" value="${driverContact.contact_person!''}">
+										        <input type="text" name="driver_name" class="form-control" id="driverMessage" value="${driverContact.contact_person!''}" disabled>
 										        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="driverList">
 												</ul>
 										    </div>
@@ -117,7 +83,7 @@
                                         <div class="form-group">
                                         <label>电话</label>
                                         <input id="carInfoDriverPhone" value="${carinfo.phone!''}" type="hidden">
-                                        <input type="text" class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
+                                        <input type="text" class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone" disabled>
                                         </div>
                                         <!-- <div class="form-group">
 	                                        <div style=display:inline-block;width:49%>
@@ -187,7 +153,7 @@
 	                                            </select>
 	                                       </div>
 	                                       </div>   -->
-	                                		<!-- <div class="form-group">
+	                                		<div class="form-group">
                                             <label>跟车人</label>
                                             <input class="form-control" id="car_follow_name" name="car_follow_name" value="${pickupOrder.car_follow_name!''}">
                                             </div>
@@ -209,30 +175,25 @@
                                             <div class="form-group">
                                             <label>客户支付中转费</label>
                                             <input class="form-control" id="income" name="income" value="${pickupOrder.income!''}">
-                                            </div> -->
                                             </div>
-                                                                               
-                                            <div class="form-group">
-                                            <label>应付费用</label>
-                                            <input class="form-control" id="payment" name="payment" value="${pickupOrder.payment!''}">
                                             </div>
-                                            
+                                                   
                                             <div class="form-group">
 												<label>发往</label>
 												<div class="checkbox">
-													<label><input id="checkbox1" type="checkbox" name="checkbox" value="yandCheckbox">货场</label>
+													<label><input id="checkbox1" type="checkbox" name="checkbox" value="yandCheckbox" disabled>货场</label>
 												</div>
 	                                            <div id="addressDiv" class="form-group" style="display: none;">
 		                                            <label>目的地</label>
-		                                            <input class="form-control" id="address" name="address" value="${pickupOrder.address!''}">
+		                                            <input class="form-control" id="address" name="address" value="${pickupOrder.address!''}" disabled>
 	                                            </div>
 	                                            
 												<div class="checkbox">
-													<label><input id="checkbox2" type="checkbox" name="checkbox" value="warehouseCheckbox">仓库</label>
+													<label><input id="checkbox2" type="checkbox" name="checkbox" value="warehouseCheckbox" disabled>仓库</label>
 												</div>
 												<div id="warehouseDiv" class="form-group" style="display: none;">
-													<input id="hideWarehouseId" type="hidden" value="${pickupOrder.warehouse_id!''}" />     
-	                                                <select id="gateInSelect" class="form-control" name="gateInSelect"></select>
+													<input id="hideWarehouseId" type="hidden" value="${pickupOrder.warehouse_id!''}"/>     
+	                                                <select id="gateInSelect" class="form-control" name="gateInSelect" disabled></select>
                                                 </div>
 											</div>
                                         </div> 
@@ -251,7 +212,7 @@
 		                                                                                                                         
 											<div class="form-group">
 	                                            <label>备注</label>
-	                                            <textarea class="form-control" rows="8" id="remark" name="remark">${pickupOrder.remark!''}</textarea>
+	                                            <textarea class="form-control" rows="8" id="remark" name="remark" disabled>${pickupOrder.remark!''}</textarea>
 	                                        </div> 
 	                                   </div>
                                     </div>   
@@ -261,7 +222,7 @@
                             <div class="tab-pane fade" id="line">  
                             	<div class="panel-body">
                             	<div class="controls">
-                                	<button class="btn btn-primary" data-toggle="modal" data-target="#addExternalTransferOrder">
+                                	<button class="btn btn-primary" data-toggle="modal" data-target="#addExternalTransferOrder" disabled>
 									  添加额外运输单
 									</button>
                                 </div>
@@ -415,7 +376,7 @@
                                 <div class="tab-pane fade" id="milestone">
                                     <div class="panel-body">
                                         <div class="table-responsive">                                        
-			                            <button class="btn btn-primary" data-toggle="modal" data-target="#transferOrderMilestone">
+			                            <button class="btn btn-primary" data-toggle="modal" data-target="#transferOrderMilestone" disabled>
 										  新里程碑
 										</button>
                                             <table class="table table-striped table-bordered table-hover">
@@ -488,9 +449,8 @@
                         <div class=".tooltip-demo">
                             <hr/>
                         	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
-		               		<button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
-		               		<button id="finishBtn" disabled="disabled" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">已完成</button>
-		               		<a class="btn btn-default" href="/yh/pickupOrder">返回</a>
+		               		<button id="saveCarManageBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
+		               		<a class="btn btn-default" href="/yh/carmanage">返回</a>
                         </div>                       
                     </div>
                     <!-- /.panel -->
@@ -510,4 +470,4 @@
 <!-- 引入校验的js 文件及其 中文 文件-->
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
-<script src="/yh/js/pickup/edit.js"></script>
+<script src="/yh/js/pickup/carManageEdit.js"></script>

@@ -1,5 +1,5 @@
 ﻿$(document).ready(function() {
-	 $('#menu_assign').addClass('active').find('ul').addClass('in');
+	 $('#menu_carmanage').addClass('active').find('ul').addClass('in');
 	 
 	 // 列出所有的司机
 	 $('#driverMessage').on('keyup click', function(){
@@ -900,5 +900,32 @@
 				
 			}
 		});		
-	});	
+	});		
+
+	var saveCarManage = function(e){
+		//阻止a 的默认响应行为，不需要跳转
+		e.preventDefault();	
+		$.post('/yh/pickupOrder/saveCarManagePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+			$("#pickupOrderId").val(data.ID);
+			$("#addressPickupOrderId").val(data.ID);
+			$("#milestonePickupId").val(data.ID);
+			if(data.ID>0){
+				$("#pickupId").val(data.ID);
+			  	$("#style").show();				    
+			}else{
+				alert('数据保存失败。');
+			}
+		},'json');
+	};
+	
+ 	$("#saveCarManageBtn").click(function(e){
+    	saveCarManage(e);
+	});
+ 	
+ 	$("#pickupOrderPayment").click(function(e){
+ 		saveCarManage(e);
+		paymenttable.fnDraw();
+ 	});
+ 	
+ 	
 });

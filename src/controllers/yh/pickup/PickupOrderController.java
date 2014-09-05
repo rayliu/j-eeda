@@ -480,15 +480,16 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("car_no", getPara("car_no"));
             pickupOrder.set("car_type", getPara("car_type"));
             pickupOrder.set("car_size", getPara("car_size"));
-            pickupOrder.set("car_follow_name", getPara("car_follow_name"));
-            pickupOrder.set("car_follow_phone", getPara("car_follow_phone"));
+            /*pickupOrder.set("car_follow_name", getPara("car_follow_name"));
+            pickupOrder.set("car_follow_phone", getPara("car_follow_phone"));*/
             pickupOrder.set("remark", getPara("remark"));
             pickupOrder.set("combine_type", DepartOrder.COMBINE_TYPE_PICKUP);
             pickupOrder.set("pickup_mode", getPara("pickupMode"));
             pickupOrder.set("address", getPara("address"));
-            pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
+            /*pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
             pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0 : getPara("roadBridge"));
-            pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));
+            pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));*/
+            pickupOrder.set("payment", getPara("payment").equals("") ? 0 : getPara("payment"));
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
             pickupOrder.set("create_stamp", sqlDate);
@@ -544,15 +545,16 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("car_no", getPara("car_no"));
             pickupOrder.set("car_type", getPara("car_type"));
             pickupOrder.set("car_size", getPara("car_size"));
-            pickupOrder.set("car_follow_name", getPara("car_follow_name"));
-            pickupOrder.set("car_follow_phone", getPara("car_follow_phone"));
+            /*pickupOrder.set("car_follow_name", getPara("car_follow_name"));
+            pickupOrder.set("car_follow_phone", getPara("car_follow_phone"));*/
             pickupOrder.set("remark", getPara("remark"));
             pickupOrder.set("combine_type", DepartOrder.COMBINE_TYPE_PICKUP);
             pickupOrder.set("pickup_mode", getPara("pickupMode"));
             pickupOrder.set("address", getPara("address"));
-            pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
+            /*pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
             pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0 : getPara("roadBridge"));
-            pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));
+            pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));*/
+            pickupOrder.set("payment", getPara("payment").equals("") ? 0 : getPara("payment"));
             updateTransferOrderPickupMode(pickupOrder);
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -603,6 +605,22 @@ public class PickupOrderController extends Controller {
             updateDepartTransfer(pickupOrder, getPara("orderid"), checkedDetail, uncheckedDetailIds);
         }
         renderJson(pickupOrder);
+    }
+    
+    // 保存发车记录单
+    public void saveCarManagePickupOrder() {
+    	DepartOrder pickupOrder = null;
+    	String pickId = getPara("pickupId");
+    	if (pickId != null && !"".equals(pickId)) {    		
+    		pickupOrder = DepartOrder.dao.findById(pickId);
+    		pickupOrder.set("car_follow_name", getPara("car_follow_name"));
+            pickupOrder.set("car_follow_phone", getPara("car_follow_phone"));
+    		pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
+            pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0 : getPara("roadBridge"));
+            pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));    		
+    		pickupOrder.update();
+    	}
+    	renderJson(pickupOrder);
     }
 
     // 更新运输单的提货方式
@@ -713,9 +731,8 @@ public class PickupOrderController extends Controller {
         }
     }
 
-    // 修改拼车单页面
-    public void edit() {
-        String sql = "select do.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
+    private void pickupOrderEdit(){
+    	String sql = "select do.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
                 + "where dt.depart_id =do.id)as order_id from depart_order  do "
                 + "left join contact co on co.id in( select p.contact_id  from party p where p.id=do.driver_id ) "
                 + "left join user_login  u on u.id=do.create_by where do.combine_type ='"
@@ -756,8 +773,20 @@ public class PickupOrderController extends Controller {
         TransferOrderMilestone transferOrderMilestone = TransferOrderMilestone.dao.findFirst(
                 "select * from transfer_order_milestone where pickup_id = ? order by create_stamp desc", pickupOrder.get("id"));
         setAttr("transferOrderMilestone", transferOrderMilestone);
+    }
+    
+    // 修改拼车单页面
+    public void edit() {
+    	pickupOrderEdit();
         if (LoginUserController.isAuthenticated(this))
             render("/yh/pickup/editPickupOrder.html");
+    }
+    
+    // 修改拼车单页面
+    public void carManageEdit() {
+    	pickupOrderEdit();
+    	if (LoginUserController.isAuthenticated(this))
+    		render("/yh/pickup/carManageEditPickupOrder.html");
     }
 
     // 保存拼车里程碑
@@ -1246,13 +1275,13 @@ public class PickupOrderController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from depart_order_fin_item where depart_order_id = '" + id + "'";
+        String sql = "select count(1) total from depart_order_fin_item where pickup_order_id = '" + id + "'";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*,f.name,f.remark,'运输单001?' as transferOrderNo,'客户001' cname from depart_order_fin_item d "
-                + "left join fin_item f on d.fin_item_id = f.id " + "where d.depart_order_id ='" + id + "' and f.type='应付'");
+        List<Record> orders = Db.find("select d.*,f.name,f.remark from depart_order_fin_item d "
+                + "left join fin_item f on d.fin_item_id = f.id " + "where d.pickup_order_id ='" + id + "' and f.type='应付'");
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -1279,7 +1308,7 @@ public class PickupOrderController extends Controller {
         DepartOrderFinItem dFinItem = new DepartOrderFinItem();
         fItem.set("type", "应付");
         fItem.save();
-        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("depart_order_id", pickupOrderId);
+        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("pickup_order_id", pickupOrderId);
         dFinItem.save();
         renderJson("{\"success\":true}");
     }
@@ -1307,7 +1336,7 @@ public class PickupOrderController extends Controller {
             returnValue = amount;
         }
 
-        List<Record> list = Db.find("select * from fin_item");
+       /* List<Record> list = Db.find("select * from fin_item");
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
                 Fin_item.dao.deleteById(list.get(i).get("id"));
@@ -1317,7 +1346,7 @@ public class PickupOrderController extends Controller {
                     TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
                 }
             }
-        }
+        }*/
         renderText(returnValue);
     }
 
