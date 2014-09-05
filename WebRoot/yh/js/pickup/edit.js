@@ -489,8 +489,10 @@
   	  var inputId  = $(this).attr('id');
 	  if(inputId=='pickupMode1'){
 		  $("#spDiv").hide();
+		  $("#paymentDiv").hide();
 	  }else{
 		  $("#spDiv").show();
+		  $("#paymentDiv").show();
 	  } 
   	});  
 	
