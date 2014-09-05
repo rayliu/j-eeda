@@ -98,7 +98,7 @@ public class DataInitUtil {
                     + "amount double,size double,width double,height double,unit varchar(255),volume double,weight double,remark varchar(5120),order_id bigint,foreign key(order_id) references transfer_order(id),product_id bigint,foreign key(product_id) references product(id));");
 
             // carinfo 车辆信息表
-            stmt.executeUpdate("create table if not exists carinfo(id bigint auto_increment primary key,driver varchar(50),phone varchar(50),car_no varchar(50),cartype varchar(50),"
+            stmt.executeUpdate("create table if not exists carinfo(id bigint auto_increment primary key,type varchar(50),driver varchar(50),phone varchar(50),car_no varchar(50),cartype varchar(50),"
                     + "status varchar(50),length double);");
 
             // 提货单/发车单
@@ -476,8 +476,8 @@ public class DataInitUtil {
                     + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
 
             // 司机
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver) values('13312345678', '粤A5687', '平板车', 18.5, '王五');");
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver) values('13412345678', '粤A2341', '高栏车', 12.5, '赵六');");
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13312345678', '粤A5687', '平板车', 18.5, '王五', 'OWN');");
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13412345678', '粤A2341', '高栏车', 12.5, '赵六', 'OWN');");
 
             // 发车单
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000001', CURRENT_TIMESTAMP(),'DEPART','粤A876596','平板车',1,23,'新建');");

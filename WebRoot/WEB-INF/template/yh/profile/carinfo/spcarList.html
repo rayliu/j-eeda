@@ -1,0 +1,100 @@
+<%layout("/yh/layout.html"){%>
+
+
+<div id="page-wrapper">
+<div class="row">
+      <div class="col-lg-12">
+            <h1 class="page-header">
+				<a class="btn btn-primary" href="/yh/carinfo/addSpCarInfo"><i class="fa fa-plus-square-o"></i>
+				<span class="hidden-tablet">添加车辆</span></a>
+			</h1>
+			<div class="panel panel-default">
+					<div class="panel-heading">
+	                 	<i class="fa fa-list fa-fw"></i>供应商车辆列表
+	            	</div>
+	            <div class="panel-body">
+	            	<div class="row-fluid">
+			 			<table class="table table-striped table-bordered table-hover datatable" id="example">
+							<thead>
+								<tr>
+									<th>车型</th>
+									<th>车牌</th>
+									<th>长度</th>
+									<!-- <th>司机</th>
+									<th>司机电话</th> -->
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="odd gradeX">
+									<td colspan="5">Loading data from server</td>
+								</tr>
+							</tbody>
+							
+						</table>
+						
+					</div>
+	      		</div>
+			</div>
+	 	</div>
+	        <!-- /.col-lg-12 -->
+	</div>
+</div>
+
+
+<%}%>
+
+<!-- Page-Level Plugin Scripts - Tables -->
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+
+<script>
+$(document).ready(function() {
+	$('#menu_profile').addClass('active').find('ul').addClass('in');
+	var dataTable= $('#example').dataTable( {
+		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+	        //"sPaginationType": "bootstrap",
+	        "iDisplayLength": 10,
+	    	"oLanguage": {
+	            "sUrl": "/eeda/dataTables.ch.txt"
+	        },
+	        "bServerSide": true,
+	        "bRetrieve": true,
+	        "sAjaxSource": "/yh/carinfo/spCarInfoList",
+			"aoColumns": [
+				{ "mDataProp": "CARTYPE" },
+				{ "mDataProp": "CAR_NO" },
+				{ "mDataProp": "LENGTH" },
+				/* { "mDataProp": "DRIVER" },
+	            { "mDataProp": "PHONE" }, */
+	            { 
+	                "mDataProp": null, 
+	                "sWidth": "15%",
+	                "fnRender": function(obj) {                    
+	                    return "<a class='btn btn-info editbutton' href='/yh/carinfo/editSpCarInfo/"+obj.aData.ID+"'>"+
+	                                "<i class='fa fa-edit'> </i> "+
+	                                "编辑"+
+	                            "</a>"+
+	                            "<a class='btn btn-danger delete' code='"+obj.aData.ID+"'>"+
+	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
+	                                "删除"+
+	                            "</a>";
+	                }
+	            } 
+	            ]
+	} );
+	//gateInProduct删除
+	 $("#example").on('click', '.delete', function(){
+		 var id = $(this).attr('code');
+		 $.post('/yh/carinfo/delect/'+id,function(data){
+             //保存成功后，刷新列表
+             console.log(data);
+             if(data.success){
+            	 dataTable.fnDraw();
+             }else{
+                 alert('取消失败');
+             }
+         },'json');
+		});
+});
+</script>
