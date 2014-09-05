@@ -168,6 +168,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/carinfo", controllers.yh.profile.CarinfoController.class, "/yh");
         me.add("/yh/carmanage", controllers.yh.profile.CarinfoController.class, "/yh");
         me.add("/yh/driverinfo", controllers.yh.profile.CarinfoController.class, "/yh");
+        me.add("/yh/spdriverinfo", controllers.yh.profile.CarinfoController.class, "/yh");
         me.add("/yh/spcarinfo", controllers.yh.profile.CarinfoController.class, "/yh");
         me.add("/yh/deliveryMilestone", controllers.yh.delivery.DeliveryController.class, "/yh");
         //ar
