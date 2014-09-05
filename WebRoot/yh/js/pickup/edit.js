@@ -883,8 +883,11 @@
         		//将选择的条目id先保存到数据库
 	        	var finId = $(this).parent().parent().parent()[0].id;
         		var finItemId = ui.item.id;
-        		$.post('/yh/pickupOrder/paymentSave',{id:finId, finItemId:finItemId},
-        			function(){ paymenttable.fnDraw();  });        		
+        		$.post('/yh/pickupOrder/paymentSave',{id:finId, finItemId:finItemId},function(){ 
+        			//paymenttable.fnDraw();  
+        		});  
+        		
+        		return false;
             },
         	minLength: 2
         });
