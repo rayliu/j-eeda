@@ -117,9 +117,11 @@
 	var length ='${lu.length!''}'
 	$("#length").val(length);
 	
-	var ctype ='${lu.ctype!''}'
+	var ctype ='${lu.cartype!''}'
 		$("#ctype").val(ctype);
 	
+	var car_no ='${lu.car_no!''}'
+		$("#car_number").val(car_no);
 	$(document).ready(function() {
 		jQuery.validator.addMethod("stringCheck", function(value, element) {
 			return this.optional(element) || /^[u0391-uFFE5w]+$/.test(value);
