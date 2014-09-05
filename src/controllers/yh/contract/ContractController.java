@@ -529,10 +529,28 @@ public class ContractController extends Controller {
         String contractId = getPara("routeContractId");
         String routeItemId = getPara("routeItemId");
         String priceType = getPara("priceType");
+        String mbProvinceFrom = getPara("hideProvinceFrom");
+        String cmbCityFrom = getPara("hideCityFrom");
+        String cmbAreaFrom = getPara("hideDistrictFrom");
+        String mbProvinceTo = getPara("hideProvinceTo");
+        String cmbCityTo = getPara("hideCityTo");
+        String cmbAreaTo = getPara("hideDistrictTo");
+        
+        StringBuffer fromName = new StringBuffer(); 
+        fromName.append(mbProvinceFrom+" ");
+        fromName.append(cmbCityFrom+" ");
+        fromName.append(cmbAreaFrom);
+        
+        StringBuffer toName = new StringBuffer(); 
+        toName.append(mbProvinceTo+" ");
+        toName.append(cmbCityTo+" ");
+        toName.append(cmbAreaTo+" ");
+        
+        System.out.println(">>>>>>>>>>>>>>>>>fromName:"+fromName+",toName:"+toName+"<<<<<<<<<<<<<<<<<<");
         // 判断合同干线是否存在
         item.set("contract_id", contractId).set("fin_item_id", getPara("fin_item")).set("pricetype", getPara("priceType"))
-                .set("from_id", getPara("from_id")).set("location_from", getPara("fromName")).set("to_id", getPara("to_id"))
-                .set("location_to", getPara("toName")).set("amount", getPara("price")).set("dayfrom", getPara("day"))
+                .set("from_id", getPara("from_id")).set("location_from", fromName.toString()).set("to_id", getPara("to_id"))
+                .set("location_to", toName.toString()).set("amount", getPara("price")).set("dayfrom", getPara("day"))
                 .set("dayto", getPara("day2"));
         if (getPara("productId").equals("")) {
             item.set("product_id", null);

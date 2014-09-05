@@ -215,7 +215,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','120000','天津','123123');");
             stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('120000','天津','110000','北京','123123');");
 
-            stmt.executeUpdate("insert into contract_item(contract_id,product_id, fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1', 1, '1','perUnit','13000','440100','广州市','110101','北京市东城区','路线');");
+            stmt.executeUpdate("insert into contract_item(contract_id,product_id, fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1', 1, '1','perUnit','13000','440100','广东省 广州市','110101','北京 北京市 东城区','路线');");
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('2','2','perCar','13000','110000','北京','120000','天津','路线2');");
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1','3','perCargo','12000','120000','天津','110000','北京','路线');");
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,remark) values('2','1','perCar','130000','路线2');");
