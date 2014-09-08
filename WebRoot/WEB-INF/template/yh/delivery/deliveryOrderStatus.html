@@ -92,13 +92,11 @@
 											<div class="row">
 											<div class="form-group " style="border-left-width: 0px; padding-left: 12px;">
 								
-											<label class="control-label" for="inputSuccess">状态(不填默认为"在途")</label> <input
-												id="status" class="" type="text"
-												name="status">
-													<label class="control-label" for="inputSuccess">地点</label> <input
-												id="location" class="" type="text"
-												name="location">
-												<label>
+											<!--label class="control-label" for="inputSuccess">状态(不填默认为"在途")</label--> 
+                                            <input id="status" class="" type="hidden"	name="status">
+											<label class="control-label" for="inputSuccess">地点</label> 
+                                            <input id="location" class="" type="text" name="location">
+											<label>
 												 <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-primary">添加</button>
 											</label>
 											</div>
@@ -121,7 +119,7 @@
 										
 									      </div>
 									      <div class="modal-footer">
-									        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
 									       
 									      </div>
 										</form>
