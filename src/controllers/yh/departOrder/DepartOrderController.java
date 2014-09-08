@@ -892,40 +892,10 @@ public class DepartOrderController extends Controller {
 
         DepartOrder departOrder = DepartOrder.dao.findById(Integer.parseInt(depart_id));
         departOrder.set("status", order_state).update();
-        if ("已入库".equals(order_state)) {
-            productInWarehouse(depart_id);// 产品入库
-        }
-        if ("已发车".equals(order_state)) {
-            List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
-                    "select * from depart_transfer where depart_id = ?", depart_id);
-            for (DepartTransferOrder departTransferOrder : departTransferOrders) {
-                TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
-                transferOrder.set("status", "已发车");
-                transferOrder.update();
-
-                TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-                transferOrderMilestone.set("status", "已发车");
-                transferOrderMilestone.set("create_by", users.get(0).get("id"));
-                transferOrderMilestone.set("location", "");
-                java.util.Date utilDate2 = new java.util.Date();
-                java.sql.Timestamp sqlDate2 = new java.sql.Timestamp(utilDate2.getTime());
-                transferOrderMilestone.set("create_stamp", sqlDate2);
-                transferOrderMilestone.set("order_id", transferOrder.get("id"));
-                transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-                transferOrderMilestone.save();
-            }
-            
-            TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-            transferOrderMilestone.set("status", "已发车");
-            users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-            transferOrderMilestone.set("create_by", users.get(0).get("id"));
-            transferOrderMilestone.set("location", "");
-            java.util.Date utilDate2 = new java.util.Date();
-            java.sql.Timestamp sqlDate2 = new java.sql.Timestamp(utilDate2.getTime());
-            transferOrderMilestone.set("create_stamp", sqlDate2);
-            transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
-            transferOrderMilestone.set("depart_id", departOrder.get("id"));
-            transferOrderMilestone.save();
+//        if ("已入库".equals(order_state)) {
+//            productInWarehouse(depart_id);// 产品入库
+//        }
+        //if ("已发车".equals(order_state)) {
             
             // 生成应付, （如果已经有了应付，就要清除掉旧数据重新算）
             // 计件/整车/零担 生成发车单中供应商的应付，要算 item 的数量 * 合同中定义的价格
@@ -950,7 +920,7 @@ public class DepartOrderController extends Controller {
             // 生成应付
             calcCost(users, departOrder, transferOrderItemList);
 
-        }
+       
         
         if ("已签收".equals(order_state)) {
             // 生成回单
