@@ -61,12 +61,10 @@ public class DeliveryOrderMilestoneController extends Controller {
     // 发车确认
     public void departureConfirmation() {
         Long delivery_id = Long.parseLong(getPara("delivery_id"));
-        DeliveryOrder transferOrder = DeliveryOrder.dao.findById(delivery_id);
-        transferOrder.set("status", "已发车");
-        transferOrder.update();
-        // 扣库存
-        gateOutProduct(delivery_id);
-
+        DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
+        deliveryOrder.set("status", "已发车");
+        deliveryOrder.update();
+        
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
         transferOrderMilestone.set("status", "已发车");
@@ -84,9 +82,12 @@ public class DeliveryOrderMilestoneController extends Controller {
         UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
         String username = userLogin.get("user_name");
         map.put("username", username);
+        
         renderJson(map);
+        // 扣库存
+        gateOutProduct(deliveryOrder);
         // 生成应付
-        setPay(transferOrder, users, sqlDate);
+        setPay(deliveryOrder, users, sqlDate);
 
     }
 
@@ -239,72 +240,34 @@ public class DeliveryOrderMilestoneController extends Controller {
         deliveryFinItem.save();
     }
     // 扣库存
-    private void gateOutProduct(Long delivery_id) {
-        // 获取运输单的id
-        List<Record> list = Db.find("select transfer_order_id from delivery_order_item where delivery_id ='"
-                + delivery_id + "'");
-        // 获取运输单信息
-        TransferOrder tOrder = TransferOrder.dao.findById(list.get(0).get("transfer_order_id"));
-
-        // 单个id（普通货品的）
-        if (list.size() == 1 || list.get(0).get("transfer_item_id") == null) {
-            // 运输单 货品
-            List<Record> transferItem = Db.find("select * from transfer_order_item where order_id ='"
-                    + list.get(0).get("transfer_order_id") + "'");
-            // 出库扣库存
-            for (int i = 0; i < transferItem.size(); i++) {
-                if (transferItem.get(i).get("product_id") != null) {
-                    // 运输单之前加入的库存
-                    List<Record> inventList = Db.find("select * from inventory_item where party_id='"
-                            + tOrder.get("customer_id") + "' and warehouse_id ='" + tOrder.get("warehouse_id")
-                            + "' and product_id ='" + transferItem.get(i).get("product_id") + "'");
-                    if (inventList.size() > 0) {
-
-                        InventoryItem inventoryItem = InventoryItem.dao.findById(inventList.get(i).get("id"));
-                        inventoryItem.set(
-                                "total_quantity",
-                                Double.parseDouble(inventList.get(0).get("total_quantity").toString())
-                                        - Double.parseDouble(transferItem.get(i).get("amount").toString()));
-                        inventoryItem.update();
-                        // 删除库存为0的数据
-                        if (inventList.size() > 0) {
-                            if (Double.parseDouble(inventList.get(i).get("total_quantity").toString()) <= 0) {
-                                InventoryItem.dao.deleteById(inventList.get(i).get("id"));
-                            }
-                        }
-                    }
+    private void gateOutProduct(DeliveryOrder deliveryOrder) {
+        Long deliveryOrderId=deliveryOrder.getLong("id");
+        Long warehouseId=deliveryOrder.get("from_warehouse_id");
+        // 获取配送单的item list
+        List<Record> itemList = Db.find("select *, c.name as c_name from delivery_order_item di left join transfer_order_item ti on di.transfer_item_id = ti.id " +
+        		"left join product p on ti.product_id = p.id left join category c on p.category_id = c.id where delivery_id ="
+                + deliveryOrderId);
+        for (Record dOrderItemRecord : itemList) {
+            //如果没有product_id, 则不用计算库存
+            if(dOrderItemRecord.get("product_id")==null)
+                continue;
+            
+            Long productId=dOrderItemRecord.getLong("product_id");
+            if("ATM".equals(dOrderItemRecord.get("c_name"))){
+                InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item where product_id=? and warehouse_id=?", productId, warehouseId);
+                if(item!=null){
+                    //TODO 如果库存不够，应该报错提示，并且回滚，不能发车
+                    item.set("total_quantity", item.getDouble("total_quantity")-1).update();
                 }
-            }
-        } else {
-            // ATM单品配送扣库存
-            // 运输单 货品
-            List<Record> transferItem = Db.find("select * from transfer_order_item where order_id ='"
-                    + list.get(0).get("transfer_order_item") + "'");
-
-            // 出库扣库存
-            for (int i = 0; i < transferItem.size(); i++) {
-                List<Record> transferItemDetail = Db.find("select * from delivery_order_item where transfer_item_id ='"
-                        + transferItem.get(i).get("id") + "'");
-                int size = transferItemDetail.size();
-                if (transferItem.get(i).get("product_id") != null) {
-                    // 运输单之前加入的库存
-                    List<Record> inventList = Db.find("select * from inventory_item where party_id='"
-                            + tOrder.get("customer_id") + "' and warehouse_id ='" + tOrder.get("warehouse_id")
-                            + "' and product_id ='" + transferItem.get(i).get("product_id") + "'");
-
-                    InventoryItem inventoryItem = InventoryItem.dao.findById(inventList.get(i).get("id"));
-                    inventoryItem.set("total_quantity",
-                            Double.parseDouble(inventList.get(0).get("total_quantity").toString()) - size);
-                    inventoryItem.update();
-                    // 删除库存为0的数据
-                    if (inventList.size() > 0) {
-                        if (Double.parseDouble(inventList.get(i).get("total_quantity").toString()) <= 0) {
-                            InventoryItem.dao.deleteById(inventList.get(i).get("id"));
-                        }
-                    }
+            }else{
+                InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item where product_id=? and warehouse_id=?", productId, warehouseId);
+                if(item!=null){
+                    //TODO 如果是普通货品，还是-1？？
+                    item.set("total_quantity", item.getDouble("total_quantity")-dOrderItemRecord.getDouble("")).update();
                 }
             }
         }
+        
     }
 
     // 保存里程碑
@@ -563,8 +526,8 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     // 应付list
     public void accountPayable() {
-        String id = getPara();
-
+        String id = getPara()==null?"-1":getPara();
+        
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
