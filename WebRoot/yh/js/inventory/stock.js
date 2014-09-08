@@ -2,72 +2,69 @@ $(document).ready(function() {
 	$('#menu_warehouse').addClass('active').find('ul').addClass('in');
 	//库存list
 	var tab =$('#example2').dataTable( {
-		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		   "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	       //"sPaginationType": "bootstrap",
-		 	"iDisplayLength": 10,
+		   "iDisplayLength": 10,
 	       "bServerSide": true,
-	       "bRetrieve": true,
-	   	"oLanguage": {
+	       "bFilter": false, //不需要默认的搜索框
+	   	   "oLanguage": {
 	           "sUrl": "/eeda/dataTables.ch.txt"
 	       },
 	       "sAjaxSource":"/yh/stock/stocklist",
 			"aoColumns": [
 				{"mDataProp":"ITEM_NAME"},
-		            {"mDataProp":"ITEM_NO"}, 
-		            {"mDataProp":"COMPANY_NAME"},
-		            {"mDataProp":"TOTAL_QUANTITY"},
-		            {"mDataProp":"UNIT"},
-		            {"mDataProp":"EXPIRE_DATE"},
-		            {"mDataProp":"LOT_NO"},
-		            {"mDataProp":"CATON_NO"},
-		            {"mDataProp":"SIZE"},        	
-		            {"mDataProp":"WIDTH"},
-		            {"mDataProp":"HEIGHT"},
-		            {"mDataProp":"VOLUME"},
-		            {"mDataProp":"WEIGHT"},
-		            
-		           // {"mDataProp":"UNIT_PRICE"},
-		            //{"mDataProp":"UNIT_COST"},
+	            {"mDataProp":"ITEM_NO"}, 
+	            {"mDataProp":"COMPANY_NAME"},
+	            {"mDataProp":"TOTAL_QUANTITY"},
+	            {"mDataProp":"UNIT"},
+	            {"mDataProp":"EXPIRE_DATE", "bVisible":false},
+	            {"mDataProp":"LOT_NO", "bVisible":false},
+	            {"mDataProp":"CATON_NO", "bVisible":false},
+	            {"mDataProp":"SIZE"},        	
+	            {"mDataProp":"WIDTH"},
+	            {"mDataProp":"HEIGHT"},
+	            {"mDataProp":"VOLUME"},
+	            {"mDataProp":"WEIGHT"}
 	           ]
 	} );
 	
-//选择仓库 
- $('#warehouseSelect').on('keyup click', function(){
-	$.get('/yh/gateIn/searchAllwarehouse', function(data){
-		console.log(data);
-		var warehouseList =$("#warehouseList");
-		warehouseList.empty();
-		for(var i = 0; i < data.length; i++)
-		{
-			warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</a></li>");
-		}
-	},'json');
-	$("#warehouseList").css({ 
-    	left:$(this).position().left+"px", 
-    	top:$(this).position().top+32+"px" 
-    }); 
-    $('#warehouseList').show();
-});
-$('#warehouseSelect').on('blur', function(){
-	$("#warehouseList").hide();
-});
-$('#warehouseList').on('blur', function(){
-		$('#warehouseList').hide();
+	//选择仓库 
+	 $('#warehouseSelect').on('keyup click', function(){
+		$.get('/yh/gateIn/searchAllwarehouse', function(data){
+			console.log(data);
+			var warehouseList =$("#warehouseList");
+			warehouseList.empty();
+			for(var i = 0; i < data.length; i++)
+			{
+				warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</a></li>");
+			}
+		},'json');
+		$("#warehouseList").css({ 
+	    	left:$(this).position().left+"px", 
+	    	top:$(this).position().top+32+"px" 
+	    }); 
+	    $('#warehouseList').show();
+	});
+	$('#warehouseSelect').on('blur', function(){
+		$("#warehouseList").hide();
+	});
+	$('#warehouseList').on('blur', function(){
+			$('#warehouseList').hide();
+		});
+
+	$('#warehouseList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
 	});
 
-$('#warehouseList').on('mousedown', function(){
-	return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
-});
 
-
-// 选中仓库
-$('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
-	var id =$(this).attr('code');
-	$('#warehouseSelect').val($(this).text());
-	$("#warehouseId").val(id);
-	tab.fnSettings().sAjaxSource = "/yh/stock/stocklist/"+id;
-	tab.fnDraw();
-	$('#warehouseList').hide();
-});
+	// 选中仓库
+	$('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
+		var id =$(this).attr('code');
+		$('#warehouseSelect').val($(this).text());
+		$("#warehouseId").val(id);
+		tab.fnSettings().sAjaxSource = "/yh/stock/stocklist/"+id;
+		tab.fnDraw();
+		$('#warehouseList').hide();
+	});
 
 });
