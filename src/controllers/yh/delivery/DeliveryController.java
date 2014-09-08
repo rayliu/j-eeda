@@ -440,7 +440,7 @@ public class DeliveryController extends Controller {
                         + "left join party p on p.id=t.notify_party_id " + "left join contact c on p.contact_id=c.id "
                         + "where t.id in(" + list2 + ")");
 
-        // 运输单code
+        // 选取的配送货品的仓库必须一致
         TransferOrder tOrder = TransferOrder.dao.findFirst("select warehouse_id from transfer_order where id in("
                 + list + ")");
         Warehouse warehouse = Warehouse.dao.findById(tOrder.get("warehouse_id"));
@@ -740,7 +740,7 @@ public class DeliveryController extends Controller {
 
     // 配送单保存
     public void deliverySave() {
-        String orderNo = creat_order_no();// 构造发车单号
+        String orderNo = creat_order_no();// 构造配送单号
         String deliveryid = getPara("delivery_id");
         DeliveryOrder deliveryOrder = null;
         String notifyId = getPara("notify_id");
@@ -776,20 +776,20 @@ public class DeliveryController extends Controller {
         }
 
         if (deliveryid == null || "".equals(deliveryid)) {
-            if (notifyId == null || notifyId.equals("")) {
-                deliveryOrder.set("order_no", orderNo)
-                        .set("customer_id", getPara("customer_id")).set("sp_id", getPara("cid"))
-                        .set("notify_party_id", party.get("id")).set("create_stamp", createDate).set("status", "新建")
-                        .set("route_to", getPara("route_to")).set("pricetype", getPara("chargeType"));
-                deliveryOrder.save();
+            
+             deliveryOrder.set("order_no", orderNo)
+            .set("customer_id", getPara("customer_id")).set("sp_id", getPara("cid"))
+            .set("notify_party_id", party.get("id")).set("create_stamp", createDate).set("status", "新建")
+            .set("route_to", getPara("route_to")).set("pricetype", getPara("chargeType"))
+            .set("from_warehouse_id", getPara("warehouse_id"));
+            
+             if (notifyId == null || notifyId.equals("")) {
+                deliveryOrder.set("notify_party_id", party.get("id"));
             } else {
-                deliveryOrder.set("order_no", orderNo)
-                        .set("customer_id", getPara("customer_id")).set("sp_id", getPara("cid"))
-                        .set("notify_party_id", notifyId).set("create_stamp", createDate).set("status", "新建")
-                        .set("route_to", getPara("route_to")).set("pricetype", getPara("chargeType"));
-                deliveryOrder.save();
+                deliveryOrder.set("notify_party_id", notifyId);
             }
-
+            deliveryOrder.save();
+            
             String string = getPara("tranferid");
             // 改变运输单状态
             if (!string.equals("")) {
