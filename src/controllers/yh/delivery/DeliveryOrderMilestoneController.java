@@ -226,9 +226,10 @@ public class DeliveryOrderMilestoneController extends Controller {
         if(tOrderItemRecord==null){
             deliveryFinItem.set("amount", contractFinItem.getDouble("amount") );
         }else{
-          //ATM数量是1， 普通货品应该有数量 * tOrderItemRecord.getDouble("amount")
+          //ATM数量是1， 普通货品则取数量：tOrderItemRecord.getDouble("amount")
+            Double itemAmount=tOrderItemRecord.getDouble("amount")==null?1:tOrderItemRecord.getDouble("amount");
             deliveryFinItem.set("amount",
-                contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
+                contractFinItem.getDouble("amount") * itemAmount);
         }
         deliveryFinItem.set("amount",contractFinItem.getDouble("amount") );
         deliveryFinItem.set("order_id", departOrderId);
