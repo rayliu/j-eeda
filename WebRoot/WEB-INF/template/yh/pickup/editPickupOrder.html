@@ -282,6 +282,7 @@
 	                                                </tr>
 	                                            </thead>
 	                                            <tbody id="pickupAddressTbody" >
+	                                            	
 	                                            </tbody>
 	                                        </table>
                                         </form>
@@ -456,6 +457,14 @@
                                                     
                                                 </tbody>
                                             </table>
+                                            <div id="paymentItemList" style="display:block;">
+                                            	<%
+													for(paymentItem in paymentItemList){ %>
+														<option value='${paymentItem.ID}'>${paymentItem.NAME}</option>
+												<%		
+													}
+												%>
+                                            </div>
                                         </div>
                                         <!-- /.table-responsive -->
                                     </div>

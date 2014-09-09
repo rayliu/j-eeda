@@ -4,6 +4,7 @@ $(document).ready(function() {
     var orderType = [];
 	//datatable, 动态处理
     var pickupOrder = $('#eeda-table').dataTable({
+    	"bSort": false, // 不要排序
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",

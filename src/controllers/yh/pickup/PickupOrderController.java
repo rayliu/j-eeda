@@ -773,6 +773,10 @@ public class PickupOrderController extends Controller {
         TransferOrderMilestone transferOrderMilestone = TransferOrderMilestone.dao.findFirst(
                 "select * from transfer_order_milestone where pickup_id = ? order by create_stamp desc", pickupOrder.get("id"));
         setAttr("transferOrderMilestone", transferOrderMilestone);
+        
+        List<Record> paymentItemList = Collections.EMPTY_LIST;
+        paymentItemList = Db.find("select * from fin_item where type='应付'");
+        setAttr("paymentItemList", paymentItemList);
     }
     
     // 修改拼车单页面
@@ -1257,7 +1261,7 @@ public class PickupOrderController extends Controller {
 
     // 应付list
     public void accountPayable() {
-        String id = getPara();
+        String id = getPara("pickupOrderId");
         if (id == null || id.equals("")) {
             Map orderMap = new HashMap();
             orderMap.put("sEcho", 0);
@@ -1281,7 +1285,7 @@ public class PickupOrderController extends Controller {
 
         // 获取当前页的数据
         List<Record> orders = Db.find("select d.*,f.name,f.remark from depart_order_fin_item d "
-                + "left join fin_item f on d.fin_item_id = f.id " + "where d.pickup_order_id ='" + id + "' and f.type='应付'");
+                + "left join fin_item f on d.fin_item_id = f.id " + "where d.pickup_order_id =" + id);
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -1304,11 +1308,8 @@ public class PickupOrderController extends Controller {
 
     public void addNewRow() {
         String pickupOrderId = getPara();
-        Fin_item fItem = new Fin_item();
         DepartOrderFinItem dFinItem = new DepartOrderFinItem();
-        fItem.set("type", "应付");
-        fItem.save();
-        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("pickup_order_id", pickupOrderId);
+        dFinItem.set("status", "新建").set("pickup_order_id", pickupOrderId);
         dFinItem.save();
         renderJson("{\"success\":true}");
     }
@@ -1436,5 +1437,11 @@ public class PickupOrderController extends Controller {
         	departOrderFinItem.save();
         }
         renderJson("{\"success\":true}");
+    }
+    
+    // 付费条目
+    public void searchAllPayItem(){
+    	List<Fin_item> items = Fin_item.dao.find("select * from fin_item where type = '应付'");
+    	renderJson(items);
     }
 }

@@ -787,6 +787,14 @@
     	$("#addressDiv").show();
     }
     
+//    $.post('/yh/pickupOrder/searchAllPayItem', function(data){
+//		var paymentItemList=$("#paymentItemList");
+//		paymentItemList.append("<option></option>");
+//		for(var i = 0; i < data.length && data.length > 0 ; i++){
+//			paymentItemList.append("<option value='"+data[i].ID+"'>"+data[i].NAME+"</option>");
+//		}
+//	},'json');
+    
     var pickupOrderId = $("#pickupOrderId").val();
     //应收应付datatable
 	var paymenttable=$('#table_fin2').dataTable({
@@ -795,7 +803,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/pickupOrder/accountPayable/"+pickupOrderId,
+        "sAjaxSource": "/yh/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -804,10 +812,31 @@
 			return nRow;
 		},
         "aoColumns": [
-			{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
-			{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},  
-			{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
-			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
+			{"mDataProp":"NAME",
+                "fnRender": function(obj) {
+                    if(obj.aData.NAME!='' && obj.aData.NAME != null){
+                        return 'NAME';
+                    }else{
+                    	return "<select class='paymentName'>"+$("#paymentItemList").children()+"</select>";
+                    }
+             }},
+			{"mDataProp":"AMOUNT",
+                 "fnRender": function(obj) {
+                     if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+                         return 'AMOUNT';
+                     }else{
+                     	return "<input type='text'>";
+                     }
+             }},  
+			{"mDataProp":"REMARK",
+                 "fnRender": function(obj) {
+                     if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
+                         return 'REMARK';
+                     }else{
+                     	return "<input type='text'>";
+                     }
+             }},  
+			{"mDataProp":"STATUS"},
 			{  
                 "mDataProp": null, 
                 "sWidth": "60px",  
@@ -821,17 +850,20 @@
             }     
         ]      
     });
+	
 	//异步删除应付
-	 $("#table_fin2").on('click', '.finItemdel', function(e){
-		 var id = $(this).attr('code');
-		  e.preventDefault();
+	$("#table_fin2").on('click', '.finItemdel', function(e){
+		var id = $(this).attr('code');
+		e.preventDefault();
 		$.post('/yh/pickupOrder/finItemdel/'+id,function(data){
-              //保存成功后，刷新列表
-              console.log(data);
-              paymenttable.fnDraw();
-          },'text');
-		  });
-	paymenttable.makeEditable({
+             //保存成功后，刷新列表
+             console.log(data);
+             paymenttable.fnDraw();
+        },'text');
+	});
+
+	//var test ={'1':'1','2':'2'};
+	/*paymenttable.makeEditable({
     	sUpdateURL: '/yh/pickupOrder/paymentSave',    	
     	oEditableSettings: {event: 'click'},
     	"aoColumns": [  			            
@@ -841,6 +873,8 @@
             	onblur: 'submit',
             	tooltip: '点击可以编辑',
             	name:"name",
+            	//type: 'select',
+            	//data: test,
             	placeholder: "", 
             	callback: function () {
             		
@@ -891,18 +925,15 @@
             },
         	minLength: 2
         });
-    }); 
+    }); */
 	
 	$("#addrow").click(function(){	
 		var pickupOrderId =$("#pickupOrderId").val();
 		$.post('/yh/pickupOrder/addNewRow/'+pickupOrderId,function(data){
 			console.log(data);
 			if(data.success){
+				paymenttable.fnSettings().sAjaxSource = "/yh/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;   
 				paymenttable.fnDraw();
-				//$('#fin_item2').modal('hide');
-				//$('#resetbutton2').click();
-			}else{
-				
 			}
 		});		
 	});	
@@ -933,6 +964,7 @@
 	$("#pickupOrderPayment").click(function(e){
  		clickSavePickupOrder(e);
  		pickupOrderPaymentTab.fnDraw();
+ 		paymenttable.fnDraw();
 	});
 	
 	$("#wentDutchBtn").click(function(){
@@ -940,7 +972,7 @@
 		    var pickupOrderId = $("#pickupOrderId").val();
 			$.post('/yh/pickupOrder/wentDutch', {pickupOrderId:pickupOrderId}, function(data){
 				if(data.success){
-					
+					pickupOrderPaymentTab.fnDraw();
 				}else{
 					alert("分摊费用失败!");
 				}
@@ -949,4 +981,14 @@
             return;
         }
 	});
+	
+//	
+//	
+//	$("#table_fin2").on('click', '.paymentName', function(e){
+//		e.preventDefault();
+//		var paymentItemSelect = $(this);
+//		paymentItemSelect.empty();
+//		paymentItemSelect.append("<option></option>");
+//		
+//	});
 });

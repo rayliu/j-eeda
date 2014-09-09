@@ -214,6 +214,7 @@ $(document).ready(function() {
 			
 			  //deliveryOrderSearchTransfer ATM选择序列号
 			var dab= $('#eeda-table4').dataTable({
+		    	"bSort": false, // 不要排序
 				"bFilter": false, //不需要默认的搜索框
 			        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 			        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
