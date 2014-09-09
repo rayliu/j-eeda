@@ -817,7 +817,11 @@
                     if(obj.aData.NAME!='' && obj.aData.NAME != null){
                         return 'NAME';
                     }else{
-                    	return "<select class='paymentName'>"+$("#paymentItemList").children()+"</select>";
+                    	var str="";
+                    	$("#paymentItemList").children().each(function(){
+                    		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+                    	})
+                    	return "<select class='paymentName'>"+str+"</select>";
                     }
              }},
 			{"mDataProp":"AMOUNT",
