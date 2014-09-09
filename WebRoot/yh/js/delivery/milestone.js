@@ -58,12 +58,9 @@ $(document).ready(function() {
     		$.post('/yh/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
     			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
+    			detailTable.fnDraw(); 
     		},'json');
-        } else {
-            return;
         }
-    	detailTable.fnDraw(); 
-		
     });
     
     $("#eeda-table").on('click', '#edit_status', function(e){
