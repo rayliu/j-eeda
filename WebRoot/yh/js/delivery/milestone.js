@@ -26,7 +26,11 @@ $(document).ready(function() {
                 	if(obj.aData.STATUS==null){
                 		obj.aData.STATUS="";
                 	}
-                    return obj.aData.STATUS+"<a id='edit_status' del_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                	if(obj.aData.STATUS=='已签收'){
+                		return obj.aData.STATUS;
+                	}else{
+                		return obj.aData.STATUS+"<a id='edit_status' del_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                	}
                 }
             },
             {"mDataProp":"CUSTOMER"},
