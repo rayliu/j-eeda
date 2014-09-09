@@ -1363,4 +1363,78 @@ public class PickupOrderController extends Controller {
         DepartOrderFinItem.dao.deleteById(id);
         renderJson("{\"success\":true}");
     }
+    
+    public void pickupOrderPaymentList(){
+    	String pickupOrderId = getPara("pickupOrderId");
+    	if(pickupOrderId == null || "".equals(pickupOrderId)){
+    		pickupOrderId = "-1";
+    	}
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        String sqlTotal = "select count(distinct tor.id) total from depart_order_fin_item dofi"
+						+ " left join depart_order dor on dofi.pickup_order_id = dor.id"
+						+ " left join depart_transfer dt on dt.depart_id = dor.id"
+						+ " left join transfer_order tor on tor.id = dt.order_id"
+						+ " left join party p on p.id = tor.customer_id"
+						+ " left join contact c on c.id = p.contact_id"
+						+ " left join fin_item fi on fi.id = dofi.fin_item_id"
+						+ " where dor.combine_type='"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id ="+pickupOrderId+" and fi.type = '应收' and fi.name = '分摊费用'";
+        String sql = "select distinct tor.order_no transferno,c.company_name cname,dofi.amount amount,tor.create_stamp from depart_order_fin_item dofi"
+						+ " left join depart_order dor on dofi.pickup_order_id = dor.id"
+						+ " left join depart_transfer dt on dt.depart_id = dor.id"
+						+ " left join transfer_order tor on tor.id = dt.order_id"
+						+ " left join party p on p.id = tor.customer_id"
+						+ " left join contact c on c.id = p.contact_id"
+						+ " left join fin_item fi on fi.id = dofi.fin_item_id"
+						+ " where dor.combine_type='"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id ="+pickupOrderId+" and fi.type = '应收' and fi.name = '分摊费用' order by tor.create_stamp desc" + sLimit;
+        
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+        List<Record> transferOrders = Db.find(sql);
+
+        Map transferOrderListMap = new HashMap();
+        transferOrderListMap.put("sEcho", pageIndex);
+        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        transferOrderListMap.put("aaData", transferOrders);
+        renderJson(transferOrderListMap);
+    }
+    
+    public void wentDutch(){
+    	String pickupOrderId = getPara("pickupOrderId");
+    	String customerCount = "select count(c.company_name) customerCount from depart_order dor"
+								+ " left join depart_transfer dt on dt.depart_id = dor.id"
+								+ " left join transfer_order tor on tor.id = dt.order_id"
+								+ " left join party p on p.id = tor.customer_id"
+								+ " left join contact c on c.id = p.contact_id"
+								+ " where dor.combine_type='"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id = " + pickupOrderId;
+    	String amountSql = "select sum(amount) amount from ("
+								+ " select distinct dofi.id id,dofi.amount amount from depart_order_fin_item dofi"
+								+ " left join depart_order dor on dofi.pickup_order_id = dor.id"
+								+ " left join depart_transfer dt on dt.depart_id = dor.id"
+								+ " left join transfer_order tor on tor.id = dt.order_id"
+								+ " left join party p on p.id = tor.customer_id"
+								+ " left join contact c on c.id = p.contact_id"
+								+ " left join fin_item fi on fi.id = dofi.fin_item_id"
+								+ " where dor.combine_type='"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id = "+pickupOrderId+" and fi.type = '应付')";
+        Record rec = Db.findFirst(customerCount);
+        Long customer = rec.getLong("customerCount");
+        rec = Db.findFirst(amountSql);
+        Double amount = rec.getDouble("amount");
+        Double avg = amount / customer;
+        Fin_item finItem = Fin_item.dao.findFirst("select * from fin_item where name = '分摊费用' and type = '应收'");
+        for(int i=0;i<customer;i++){
+        	DepartOrderFinItem departOrderFinItem = new DepartOrderFinItem();
+        	departOrderFinItem.set("pickup_order_id", pickupOrderId);
+        	departOrderFinItem.set("fin_item_id", finItem.get("id"));
+        	departOrderFinItem.set("amount", avg);
+        	departOrderFinItem.set("create_date", new Date());
+        	departOrderFinItem.save();
+        }
+        renderJson("{\"success\":true}");
+    }
 }

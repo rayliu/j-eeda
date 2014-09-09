@@ -788,7 +788,7 @@
     }
     
     var pickupOrderId = $("#pickupOrderId").val();
-  //应收应付datatable
+    //应收应付datatable
 	var paymenttable=$('#table_fin2').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "bFilter": false, //不需要默认的搜索框
@@ -906,4 +906,47 @@
 			}
 		});		
 	});	
+	
+    var pickupOrderId = $("#pickupOrderId").val();
+    //应收datatable
+	var pickupOrderPaymentTab = $('#table_fin').dataTable({
+		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "bFilter": false, //不需要默认的搜索框
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+        "sAjaxSource": "/yh/pickupOrder/pickupOrderPaymentList?pickupOrderId="+pickupOrderId,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
+        "aoColumns": [
+			{"mDataProp":"CNAME","sClass": "name"},
+			{"mDataProp":"TRANSFERNO","sClass": "amount"},  
+			{"mDataProp":"AMOUNT","sClass": "remark"}
+        ]      
+    });
+	
+	$("#pickupOrderPayment").click(function(e){
+ 		clickSavePickupOrder(e);
+ 		pickupOrderPaymentTab.fnDraw();
+	});
+	
+	$("#wentDutchBtn").click(function(){
+		if(confirm("确定分摊费用吗？")){
+		    var pickupOrderId = $("#pickupOrderId").val();
+			$.post('/yh/pickupOrder/wentDutch', {pickupOrderId:pickupOrderId}, function(data){
+				if(data.success){
+					
+				}else{
+					alert("分摊费用失败!");
+				}
+	    	},'json');
+        } else {
+            return;
+        }
+	});
 });

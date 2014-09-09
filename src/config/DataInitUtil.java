@@ -346,6 +346,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'YSF','客户费用','应收','这是一张运输单收费');");
             stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'BYF','搬运费','应收','这是一张运输单收费');");
             stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'SLF','上楼费','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'FTF','分摊费用','应收','这是分摊费用');");
 
             newCustomer();
 
@@ -504,6 +505,11 @@ public class DataInitUtil {
 
             stmt.execute("insert into arap_audit_order(BEGIN_TIME, PAYEE_ID, ORDER_NO, REMARK, CREATE_BY, END_TIME, CREATE_STAMP, STATUS) values('2014-08-15 9:39:35.1', 1, 'DZ2014081800001', '应收对账单测试数据', '3', '2014-08-19 9:39:35.1', '2014-08-18 9:39:35.1', 'new');");
             stmt.execute("insert into arap_audit_item(AUDIT_ORDER_ID, REF_ORDER_ID, CREATE_BY, CREATE_STAMP) values(1, 1, 3, '2014-08-18 9:39:35.1');");
+            
+            // 拼车单收费条目
+            stmt.execute("insert into depart_order_fin_item(pickup_order_id, fin_item_id, amount) values(5, 1, 300);");
+            stmt.execute("insert into depart_order_fin_item(pickup_order_id, fin_item_id, amount) values(5, 2, 100);");
+            stmt.execute("insert into depart_order_fin_item(pickup_order_id, fin_item_id, amount) values(5, 3, 100);");
             stmt.close();
             // conn.commit();
             conn.close();
