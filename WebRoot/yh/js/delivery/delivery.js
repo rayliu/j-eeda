@@ -111,22 +111,42 @@ $(document).ready(function() {
 		    });	
 			//添加配送单
 			$("#saveBtn").click(function(e){
-		            //阻止a 的默认响应行为，不需要跳转	
-				 //var itemId = $("#item_id").val();
-		            e.preventDefault();
-		            //异步向后台提交数据
-		           $.post('/yh/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
-		                console.log(data);
-	                    if(data.ID>0){
-	                    	$("#delivery_id").val(data.ID);
-	                    	$("#style").show();
-	                    	$("#ConfirmationBtn").attr("disabled", false);
-	                    	
-	                    }else{
-	                        alert('数据保存失败。');
-	                    }
-		             },'json');
-		        });
+		        //阻止a 的默认响应行为，不需要跳转	
+				//var itemId = $("#item_id").val();
+				var spMessage = $("#spMessage").val();
+				var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
+				var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
+				var cmbAreaTo = $("#cmbAreaTo").find("option:selected").text();
+				if(spMessage == ""){
+					alert("请输入供应商名称");
+					return false;
+				}
+				if(mbProvinceTo == "--请选择省份--" || mbProvinceTo == ""){
+					alert("请输入目的地省份");
+					return false;
+				}
+				if(cmbCityTo == "--请选择城市--" || cmbCityTo == ""){
+					alert("请输入目的地城市");
+					return false;
+				}
+				if(cmbAreaTo == "--请选择区(县)--" || cmbAreaTo == ""){
+					alert("请输入目的地区（县）");
+					return false;
+				}
+	            e.preventDefault();
+	            //异步向后台提交数据
+	            $.post('/yh/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
+	                console.log(data);
+                    if(data.ID>0){
+                    	$("#delivery_id").val(data.ID);
+                    	$("#style").show();
+                    	$("#ConfirmationBtn").attr("disabled", false);
+                    	
+                    }else{
+                        alert('数据保存失败。');
+                    }
+	             },'json');
+	        });
 			var dab2= $('#eeda-table2').dataTable({
 				"bFilter": false, //不需要默认的搜索框
 		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
