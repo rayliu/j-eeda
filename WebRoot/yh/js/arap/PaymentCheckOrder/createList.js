@@ -1,14 +1,16 @@
 
 $(document).ready(function() {
-    $('#menu_finance').addClass('active').find('ul').addClass('in');
+    $('#menu_cost').addClass('active').find('ul').addClass('in');
     
     //datatable, 动态处理
     var paymentCheckTable = $('#paymentCheckOrder-table').dataTable({
+        "bScrollCollapse": true,
     	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	//"sPaginationType": "bootstrap",
     	"iDisplayLength": 25,
     	"bServerSide": true,
+        //"sScrollX": "850px",
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
@@ -23,9 +25,32 @@ $(document).ready(function() {
           { "mDataProp": "COMPANY_NAME"},
           { "mDataProp": "CREATE_STAMP" },
           { "mDataProp": "STATUS"},                           
-          { "mDataProp": "REMARK"}                           
-          ]      
+          { "mDataProp": "REMARK"},
+          { "mDataProp": "ORDER_NO"},
+          { "mDataProp": "COMPANY_NAME"},
+          { "mDataProp": "CREATE_STAMP" },
+          { "mDataProp": "STATUS"},                           
+          { "mDataProp": "REMARK"},
+          { "mDataProp": "ORDER_NO"},
+          { "mDataProp": "COMPANY_NAME"},
+          { "mDataProp": "CREATE_STAMP" },
+          { "mDataProp": "STATUS"},                           
+          { "mDataProp": "REMARK"},
+          { "mDataProp": "COMPANY_NAME"},
+          { "mDataProp": "CREATE_STAMP" },
+          { "mDataProp": "STATUS"},                           
+          { "mDataProp": "REMARK"},
+          { "mDataProp": "ORDER_NO"},
+          { "mDataProp": "COMPANY_NAME"},
+          { "mDataProp": "CREATE_STAMP" },
+          { "mDataProp": "STATUS"}                     
+        ],
+         "fnInitComplete": function(oSettings, json) {
+                          
+         }     
     });	
+
+    
     
     //获取客户的list，选中信息自动填写其他信息
     $('#companyName').on('keyup', function(){
