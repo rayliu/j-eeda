@@ -108,7 +108,7 @@ public class DataInitUtil {
 
             // Depart_Order_fin_item 提货单/发车单应付明细
             stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, pickup_order_id bigint, fin_item_id bigint,"
-                    + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp);");
+                    + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120));");
 
             // Transfer_Order_item_detail 单件货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment primary key,order_id bigint,item_id bigint,item_no varchar(255),"

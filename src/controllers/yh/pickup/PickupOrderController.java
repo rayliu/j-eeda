@@ -1284,7 +1284,7 @@ public class PickupOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*,f.name,f.remark from depart_order_fin_item d "
+        List<Record> orders = Db.find("select d.*,f.name from depart_order_fin_item d "
                 + "left join fin_item f on d.fin_item_id = f.id " + "where d.pickup_order_id =" + id);
 
         Map orderMap = new HashMap();
@@ -1443,5 +1443,20 @@ public class PickupOrderController extends Controller {
     public void searchAllPayItem(){
     	List<Fin_item> items = Fin_item.dao.find("select * from fin_item where type = '应付'");
     	renderJson(items);
+    }
+    
+    public void updatePickupOrderFinItem(){
+    	String paymentId = getPara("paymentId");
+    	String name = getPara("name");
+    	String value = getPara("value");
+    	if("amount".equals(name) && "".equals(value)){
+    		value = "0";
+    	}
+    	if(paymentId != null && !"".equals(paymentId)){
+    		DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao.findById(paymentId);
+    		departOrderFinItem.set(name, value);
+    		departOrderFinItem.update();
+    	}
+        renderJson("{\"success\":true}");
     }
 }

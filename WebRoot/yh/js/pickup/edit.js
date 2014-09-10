@@ -815,29 +815,37 @@
 			{"mDataProp":"NAME",
                 "fnRender": function(obj) {
                     if(obj.aData.NAME!='' && obj.aData.NAME != null){
-                        return 'NAME';
+                    	var str="";
+                    	$("#paymentItemList").children().each(function(){
+                    		if(obj.aData.NAME == $(this).text()){
+                    			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
+                    		}else{
+                    			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+                    		}
+                    	});
+                        return "<select name='fin_item_id'>"+str+"</select>";
                     }else{
                     	var str="";
                     	$("#paymentItemList").children().each(function(){
                     		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-                    	})
-                    	return "<select class='paymentName'>"+str+"</select>";
+                    	});
+                    	return "<select name='fin_item_id'>"+str+"</select>";
                     }
              }},
 			{"mDataProp":"AMOUNT",
                  "fnRender": function(obj) {
                      if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-                         return 'AMOUNT';
+                         return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
                      }else{
-                     	return "<input type='text'>";
+                     	 return "<input type='text' name='amount'>";
                      }
              }},  
 			{"mDataProp":"REMARK",
                  "fnRender": function(obj) {
                      if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-                         return 'REMARK';
+                         return "<input type='text' name='remark' value='"+obj.aData.REMARK+"'>";
                      }else{
-                     	return "<input type='text'>";
+                     	 return "<input type='text' name='remark'>";
                      }
              }},  
 			{"mDataProp":"STATUS"},
@@ -986,13 +994,16 @@
         }
 	});
 	
-//	
-//	
-//	$("#table_fin2").on('click', '.paymentName', function(e){
-//		e.preventDefault();
-//		var paymentItemSelect = $(this);
-//		paymentItemSelect.empty();
-//		paymentItemSelect.append("<option></option>");
-//		
-//	});
+	$("#table_fin2").on('blur', 'input,select', function(e){
+		e.preventDefault();
+		var paymentId = $(this).parent().parent().attr("id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		$.post('/yh/pickupOrder/updatePickupOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+			if(data.success){
+			}else{
+				alert("修改失败!");
+			}
+    	},'json');
+	});
 });
