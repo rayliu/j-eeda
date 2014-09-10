@@ -1430,7 +1430,7 @@ public class PickupOrderController extends Controller {
 								+ " left join party p on p.id = tor.customer_id"
 								+ " left join contact c on c.id = p.contact_id"
 								+ " left join fin_item fi on fi.id = dofi.fin_item_id"
-								+ " where dor.combine_type='"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id = "+pickupOrderId+" and fi.type = '应付')";
+								+ " where dor.combine_type='"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id = "+pickupOrderId+" and fi.type = '应付') dofi_item";
         Record rec = Db.findFirst(customerCount);
         Long customer = rec.getLong("customerCount");
         rec = Db.findFirst(amountSql);
