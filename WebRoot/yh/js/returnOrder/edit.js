@@ -19,6 +19,7 @@
             	"fnRender": function(obj) {
             			return "<a href='/yh/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
             		}},
+            
             {"mDataProp":"STATUS"},
             {"mDataProp":"CARGO_NATURE",
             	"fnRender": function(obj) {
@@ -30,7 +31,8 @@
             			return "ATM";
             		}else{
             			return "";
-            		}}},        	
+            		}}},   
+            {"mDataProp":"SERIAL_NO"},
     		{"mDataProp":"OPERATION_TYPE",
     			"fnRender": function(obj) {
     				if(obj.aData.OPERATION_TYPE == "out_source"){

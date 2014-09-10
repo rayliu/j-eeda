@@ -463,10 +463,24 @@ public class ReturnOrderController extends Controller {
         String sql = "";
         String sqlTotal = "";
         sqlTotal = "select count(1) total from return_order ror where id = " + returnOrderId;
-        sql = "select ifnull(tor1.id,tor2.id) id,ifnull(tor1.order_no,tor2.order_no) order_no,ifnull(tor1.status,tor2.status) status,ifnull(tor1.cargo_nature,tor2.cargo_nature) cargo_nature,ifnull(tor1.pickup_mode,tor2.pickup_mode) pickup_mode,ifnull(tor1.arrival_mode,tor2.arrival_mode) arrival_mode,ifnull(tor1.operation_type,tor2.operation_type) operation_type,ifnull(tor1.create_stamp,tor2.create_stamp) create_stamp,ifnull(tor1.remark,tor2.remark) remark,ifnull(tor1.order_type,tor2.order_type) order_type  from return_order ror left join transfer_order tor1 on tor1.id = ror.transfer_order_id  "
+        sql = "select ifnull(tor1.id,tor2.id) id,"
+        		+ "ifnull(tor1.order_no,tor2.order_no) order_no,"
+        		+ "ifnull(t1.serial_no,t2.serial_no) serial_no,"
+        		+ "ifnull(tor1.status,tor2.status) status,"
+        		+ "ifnull(tor1.cargo_nature,tor2.cargo_nature) cargo_nature,"
+        		+ "ifnull(tor1.pickup_mode,tor2.pickup_mode) pickup_mode,"
+        		+ "ifnull(tor1.arrival_mode,tor2.arrival_mode) arrival_mode,"
+        		+ "ifnull(tor1.operation_type,tor2.operation_type) operation_type,"
+        		+ "ifnull(tor1.create_stamp,tor2.create_stamp) create_stamp,"
+        		+ "ifnull(tor1.remark,tor2.remark) remark,"
+        		+ "ifnull(tor1.order_type,tor2.order_type) order_type  "
+        		+ "from return_order ror "
+        		+ " left join transfer_order tor1 on tor1.id = ror.transfer_order_id  "
         		+ " left join delivery_order dor on dor.id = ror.delivery_order_id"
         		+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
         		+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id"
+        		+ " left join transfer_order_item_detail t1 on t1.order_Id=  tor1.id"
+        		+ " left join transfer_order_item_detail t2 on t2.order_Id=  tor2.id"
         		+ " where ror.id = " + returnOrderId;
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
