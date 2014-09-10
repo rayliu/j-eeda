@@ -137,12 +137,15 @@ public class ChargeCheckOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db
-                .find("select ror.*, tor.order_no as transfer_order_no, dor.order_no as delivery_order_no, p.id as company_id, c.company_name from return_order ror "
+        List<Record> orders = Db.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,ifnull(p2.id,p.id) company_id from return_order r_o " 
+							+" left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
+							+" left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
+							+" left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator where r_o.transaction_status = '已签收' order by r_o.create_date desc " + fieldsWhere);
+                /*.find("select ror.*, tor.order_no as transfer_order_no, dor.order_no as delivery_order_no, p.id as company_id, c.abbr cname from return_order ror "
                 		+ "left join transfer_order tor on ror.transfer_order_id = tor.id "
                 		+ "left join delivery_order dor on ror.delivery_order_id = dor.id "
                 		+ "left join party p on ror.customer_id = p.id left join contact c on p.contact_id = c.id "
-                		+ "where ror.transaction_status = '已签收' " + fieldsWhere);
+                		+ "where ror.transaction_status = '已签收' " + fieldsWhere);*/
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));

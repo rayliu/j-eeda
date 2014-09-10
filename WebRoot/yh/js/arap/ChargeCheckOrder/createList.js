@@ -22,11 +22,11 @@ $(document).ready(function() {
             },
             { "mDataProp": "ORDER_NO"},
             { "mDataProp": "COMPANY_ID", "bVisible": false},
-            { "mDataProp": "COMPANY_NAME"},
+            { "mDataProp": "CNAME"},
             { "mDataProp": "ORDER_TYPE", "bVisible": false},
             { "mDataProp": "TRANSFER_ORDER_NO"},
             { "mDataProp": "DELIVERY_ORDER_NO"},
-            { "mDataProp": "CREATOR" },
+            { "mDataProp": "CREATOR_NAME" },
             { "mDataProp": "CREATE_DATE" },
             { "mDataProp": "TRANSACTION_STATUS",
                 "fnRender": function(obj) {
@@ -51,7 +51,7 @@ $(document).ready(function() {
             companyList.empty();
             for(var i = 0; i < data.length; i++)
             {
-                companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+"</a></li>");
+                companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
             }
             if(data.length>0)
                 companyList.show();
