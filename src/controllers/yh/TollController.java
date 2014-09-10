@@ -38,13 +38,13 @@ public class TollController extends Controller {
 
 		// 获取总条数
 		String totalWhere = "";
-		String sql = "select count(1) total from FIN_ITEM  where type ='应收' ";
+		String sql = "select count(1) total from fin_item  where type ='应收' ";
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
 		List<Record> orders = Db
-				.find("select * from FIN_ITEM  where type ='应收'");
+				.find("select * from fin_item  where type ='应收'");
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -95,7 +95,7 @@ public class TollController extends Controller {
 			Toll r = new Toll();
 
 			boolean s = r.set("name", name).set("code", code).set("type", type)
-					.set("Remark", remark).save();
+					.set("remark", remark).save();
 			if (s == true) {
 				if(LoginUserController.isAuthenticated(this))
 				render("profile/toll/TollList.html");
@@ -104,7 +104,7 @@ public class TollController extends Controller {
 		} else {
 			Toll toll = Toll.dao.findById(id);
 			boolean b = toll.set("name", name).set("type", type)
-					.set("code", code).set("Remark", remark).update();
+					.set("code", code).set("remark", remark).update();
 			if(LoginUserController.isAuthenticated(this))
 			render("profile/toll/TollList.html");
 		}
