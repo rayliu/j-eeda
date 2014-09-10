@@ -118,6 +118,9 @@ public class PickupOrderController extends Controller {
 
         setAttr("status", "新建");
         setAttr("saveOK", false);
+        List<Record> paymentItemList = Collections.EMPTY_LIST;
+        paymentItemList = Db.find("select * from fin_item where type='应付'");
+        setAttr("paymentItemList", paymentItemList);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/pickup/editPickupOrder.html");
     }
