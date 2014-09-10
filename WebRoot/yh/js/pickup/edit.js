@@ -943,9 +943,11 @@
 		var pickupOrderId =$("#pickupOrderId").val();
 		$.post('/yh/pickupOrder/addNewRow/'+pickupOrderId,function(data){
 			console.log(data);
-			if(data.success){
+			if(data[0] != null){
 				paymenttable.fnSettings().sAjaxSource = "/yh/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;   
 				paymenttable.fnDraw();
+			}else{
+				alert("请到基础模块维护应付条目！");
 			}
 		});		
 	});	

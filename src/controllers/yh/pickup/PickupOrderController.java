@@ -1282,13 +1282,14 @@ public class PickupOrderController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from depart_order_fin_item where pickup_order_id = '" + id + "'";
+        String sql = "select count(1) total from depart_order_fin_item d "
+                + "left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id =" + id + " and f.type = '应付'";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db.find("select d.*,f.name from depart_order_fin_item d "
-                + "left join fin_item f on d.fin_item_id = f.id " + "where d.pickup_order_id =" + id);
+                + "left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id =" + id + " and f.type = '应付'");
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -1310,11 +1311,16 @@ public class PickupOrderController extends Controller {
     }
 
     public void addNewRow() {
+    	List<Fin_item> items = new ArrayList<Fin_item>();
         String pickupOrderId = getPara();
-        DepartOrderFinItem dFinItem = new DepartOrderFinItem();
-        dFinItem.set("status", "新建").set("pickup_order_id", pickupOrderId);
-        dFinItem.save();
-        renderJson("{\"success\":true}");
+        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
+        if(item != null){
+	        DepartOrderFinItem dFinItem = new DepartOrderFinItem();
+	        dFinItem.set("status", "新建").set("pickup_order_id", pickupOrderId).set("fin_item_id", item.get("id"));
+	        dFinItem.save();
+        }
+        items.add(item);
+        renderJson(items);
     }
 
     // 添加应付
