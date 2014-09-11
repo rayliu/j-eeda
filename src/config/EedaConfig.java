@@ -4,6 +4,7 @@ import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
 import models.Account;
+import models.ArapAuditInvoice;
 import models.ArapAuditItem;
 import models.ArapAuditOrder;
 import models.Category;
@@ -173,6 +174,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/deliveryMilestone", controllers.yh.delivery.DeliveryController.class, "/yh");
         //ar
         me.add("/yh/chargeCheckOrder", controllers.yh.arap.ar.ChargeCheckOrderController.class, "/yh");
+        me.add("/yh/chargeInvoiceOrder", controllers.yh.arap.ar.ChargeInvoiceOrderController.class, "/yh");
         me.add("/yh/chargeAcceptOrder", controllers.yh.arap.ar.ChargeAcceptOrderController.class, "/yh");
         me.add("/yh/chargeAdjustOrder", controllers.yh.arap.ar.ChargeAdjustOrderController.class, "/yh");
         //ap
@@ -249,6 +251,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("depart_order_fin_item", DepartOrderFinItem.class);//提货拼车单、发车单的应付表
         arp.addMapping("arap_audit_order", ArapAuditOrder.class);
         arp.addMapping("arap_audit_item", ArapAuditItem.class);
+        arp.addMapping("arap_audit_invoice", ArapAuditInvoice.class);
         // yh mapping
 
     }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.ArapAuditInvoice;
 import models.ArapAuditItem;
 import models.ArapAuditOrder;
 import models.Party;
@@ -23,20 +24,20 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
-public class ChargeCheckOrderController extends Controller {
-    private Logger logger = Logger.getLogger(ChargeCheckOrderController.class);
+public class ChargeInvoiceOrderController extends Controller {
+    private Logger logger = Logger.getLogger(ChargeInvoiceOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
     	if(LoginUserController.isAuthenticated(this))
-    	    render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
+    	    render("/yh/arap/ChargeInvoiceOrder/ChargeInvoiceOrderList.html");
     }
 
     public void add() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "");
     	if(LoginUserController.isAuthenticated(this))
-        render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderCreateSearchList.html");
+        render("/yh/arap/ChargeInvoiceOrder/ChargeInvoiceOrderCreateSearchList.html");
     }
 
     public void create() {
@@ -44,16 +45,8 @@ public class ChargeCheckOrderController extends Controller {
         String[] idArray = ids.split(",");
         logger.debug(String.valueOf(idArray.length));
 
-        setAttr("returnOrderIds", ids);	 
-        String beginTime = getPara("beginTime");
-        if(beginTime != null && !"".equals(beginTime)){
-        	setAttr("beginTime", beginTime);
-        }
-        String endTime = getPara("endTime");
-        if(endTime != null && !"".equals(endTime)){
-        	setAttr("endTime", endTime);	
-        }
-        String customerId = getPara("customerId");
+        setAttr("chargeCheckOrderIds", ids);	 
+        /*String customerId = getPara("customerId");
         if(!"".equals(customerId) && customerId != null){
 	        Party party = Party.dao.findById(customerId);
 	        setAttr("party", party);	        
@@ -61,7 +54,7 @@ public class ChargeCheckOrderController extends Controller {
 	        setAttr("customer", contact);
 	        setAttr("type", "CUSTOMER");
 	    	setAttr("classify", "");
-        }
+        }*/
         
         String order_no = null;
         setAttr("saveOK", false);
@@ -69,7 +62,7 @@ public class ChargeCheckOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
 
-        ArapAuditOrder order = ArapAuditOrder.dao.findFirst("select * from arap_audit_order order by order_no desc limit 0,1");
+        ArapAuditInvoice order = ArapAuditInvoice.dao.findFirst("select * from arap_audit_invoice order by order_no desc limit 0,1");
         if (order != null) {
             String num = order.get("order_no");
             String str = num.substring(2, num.length());
@@ -83,12 +76,12 @@ public class ChargeCheckOrderController extends Controller {
             } else {
                 order_no = String.valueOf(newTime);
             }
-            setAttr("order_no", "YSDZ" + order_no);
+            setAttr("order_no", "YSFP" + order_no);
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String format = sdf.format(new Date());
             order_no = format + "00001";
-            setAttr("order_no", "YSDZ" + order_no);
+            setAttr("order_no", "YSFP" + order_no);
         }
 
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
@@ -96,57 +89,41 @@ public class ChargeCheckOrderController extends Controller {
 
         setAttr("status", "new");
     	if(LoginUserController.isAuthenticated(this))
-    		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
+    		render("/yh/arap/ChargeInvoiceOrder/ChargeInvoiceOrderEdit.html");
     }
 
     // 创建应收对帐单时，先选取合适的回单，条件：客户，时间段
     public void createList() {
-        String sLimit = "";
+    	String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        // 根据company_id 过滤
-        String colsLength = getPara("iColumns");
-        String fieldsWhere = "AND (";
-        for (int i = 0; i < Integer.parseInt(colsLength); i++) {
-            String mDataProp = getPara("mDataProp_" + i);
-            String searchValue = getPara("sSearch_" + i);
-            logger.debug(mDataProp + "[" + searchValue + "]");
-            if (searchValue != null && !"".equals(searchValue)) {
-                if (mDataProp.equals("COMPANY_ID")) {
-                    fieldsWhere += "p.id" + " = " + searchValue + " AND ";
-                } else {
-                    fieldsWhere += mDataProp + " like '%" + searchValue + "%' AND ";
-                }
-            }
-        }
-        logger.debug("2nd filter:" + fieldsWhere);
-        if (fieldsWhere.length() > 8) {
-            fieldsWhere = fieldsWhere.substring(0, fieldsWhere.length() - 4);
-            fieldsWhere += ')';
-        } else {
-            fieldsWhere = "";
-        }
-        // 获取总条数
-        String totalWhere = "";
-        String sql = "select count(1) total from return_order ro left join party p on ro.customer_id = p.id "
-                + "where ro.transaction_status = '已签收' ";
-        Record rec = Db.findFirst(sql + fieldsWhere);
+        String sqlTotal = "select count(1) total from arap_audit_order";
+        Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        // 获取当前页的数据
-        List<Record> orders = Db.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,ifnull(p2.id,p.id) company_id from return_order r_o " 
-							+" left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
-							+" left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
-							+" left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator where r_o.transaction_status = '已签收' order by r_o.create_date desc " + fieldsWhere);
-        Map orderMap = new HashMap();
-        orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", rec.getLong("total"));
-        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-        orderMap.put("aaData", orders);
-        renderJson(orderMap);
+        String sql = "select aao.*,c.contact_person cname,ror.order_no return_order_no,tor.order_no transfer_order_no,dor.order_no delivery_order_no,ul.user_name creator_name from arap_audit_order aao "
+						+" left join party p on p.id = aao.payee_id "
+						+" left join contact c on c.id = p.contact_id "
+						+" left join arap_audit_item aai on aai.audit_order_id= aao.id "
+						+" left join return_order ror on ror.id = aai.ref_order_id "
+						+" left join transfer_order tor on tor.id = ror.transfer_order_id "
+						+" left join delivery_order dor on dor.id = ror.delivery_order_id "
+				        +" left join user_login ul on ul.id = aao.create_by order by aao.create_stamp desc";
+
+        logger.debug("sql:" + sql);
+        List<Record> BillingOrders = Db.find(sql);
+
+        Map BillingOrderListMap = new HashMap();
+        BillingOrderListMap.put("sEcho", pageIndex);
+        BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        BillingOrderListMap.put("aaData", BillingOrders);
+
+        renderJson(BillingOrderListMap);
     }
 
     // billing order 列表
@@ -185,8 +162,8 @@ public class ChargeCheckOrderController extends Controller {
     
     public void save(){
     	ArapAuditOrder arapAuditOrder = null;
-    	String chargeCheckOrderId = getPara("chargeCheckOrderId");
-    	if("".equals(chargeCheckOrderId) || chargeCheckOrderId == null){
+    	String chargeInvoiceOrderId = getPara("chargeInvoiceOrderId");
+    	if("".equals(chargeInvoiceOrderId) || chargeInvoiceOrderId == null){
 	    	arapAuditOrder = new ArapAuditOrder();
 	    	arapAuditOrder.set("order_no", getPara("order_no"));
 	    	//arapAuditOrder.set("order_type", );
@@ -210,7 +187,7 @@ public class ChargeCheckOrderController extends Controller {
 		    	arapAuditItem.save();
 	    	}
     	}else{
-    		arapAuditOrder = ArapAuditOrder.dao.findById(chargeCheckOrderId);
+    		arapAuditOrder = ArapAuditOrder.dao.findById(chargeInvoiceOrderId);
 	    	arapAuditOrder.set("order_no", getPara("order_no"));
 	    	//arapAuditOrder.set("order_type", );
 	    	arapAuditOrder.set("status", "new");
@@ -261,13 +238,13 @@ public class ChargeCheckOrderController extends Controller {
     	setAttr("beginTime", beginTime);
     	setAttr("endTime", endTime);
     	if(LoginUserController.isAuthenticated(this))
-    		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
+    		render("/yh/arap/ChargeInvoiceOrder/ChargeInvoiceOrderEdit.html");
     }
     
     public void returnOrderList() {
-    	String chargeCheckOrderId = getPara("chargeCheckOrderId");
-    	if(chargeCheckOrderId == null || "".equals(chargeCheckOrderId)){
-    		chargeCheckOrderId = "-1";
+    	String chargeInvoiceOrderId = getPara("chargeInvoiceOrderId");
+    	if(chargeInvoiceOrderId == null || "".equals(chargeInvoiceOrderId)){
+    		chargeInvoiceOrderId = "-1";
     	}
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -292,7 +269,7 @@ public class ChargeCheckOrderController extends Controller {
 						+ "	left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=ror.creator "                     
 						+ "	left join transfer_order_fin_item tofi on tofi.order_id = ifnull(tor.id,tor2.id)"             
 						+ "	left join fin_item fi on fi.id = tofi.fin_item_id" 
-						+ "	where fi.type = '应收' and aai.ref_order_id = ror.id and aao.id = "+chargeCheckOrderId+" order by ror.create_date desc " + sLimit);
+						+ "	where fi.type = '应收' and aai.ref_order_id = ror.id and aao.id = "+chargeInvoiceOrderId+" order by ror.create_date desc " + sLimit);
 
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));

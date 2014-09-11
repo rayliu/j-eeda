@@ -159,6 +159,8 @@ public class DataInitUtil {
                     + " begin_time timestamp,end_time timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
             stmt.executeUpdate("create table if not exists arap_audit_item(id bigint auto_increment primary key,ref_order_type varchar(255),item_code varchar(255),item_status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
                     + " last_modified_stamp timestamp,remark varchar(5120),audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id),ref_order_id bigint,foreign key(ref_order_id) references return_order(id));");
+            stmt.executeUpdate("create table if not exists arap_audit_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
+            		+ " remark varchar(5120),audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id));");
 
             stmt.close();
             // conn.commit();
@@ -503,7 +505,7 @@ public class DataInitUtil {
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(4, 3, '2014-06-28 10:43:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(6, 3, '2014-06-28 11:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
 
-            stmt.execute("insert into arap_audit_order(BEGIN_TIME, PAYEE_ID, ORDER_NO, REMARK, CREATE_BY, END_TIME, CREATE_STAMP, STATUS) values('2014-08-15 9:39:35.1', 1, 'DZ2014081800001', '应收对账单测试数据', '3', '2014-08-19 9:39:35.1', '2014-08-18 9:39:35.1', 'new');");
+            stmt.execute("insert into arap_audit_order(BEGIN_TIME, PAYEE_ID, ORDER_NO, REMARK, CREATE_BY, END_TIME, CREATE_STAMP, STATUS) values('2014-08-15 9:39:35.1', 1, 'YSDZ2014081800001', '应收对账单测试数据', '3', '2014-08-19 9:39:35.1', '2014-08-18 9:39:35.1', 'new');");
             stmt.execute("insert into arap_audit_item(AUDIT_ORDER_ID, REF_ORDER_ID, CREATE_BY, CREATE_STAMP) values(1, 1, 3, '2014-08-18 9:39:35.1');");
             
             // 拼车单收费条目
