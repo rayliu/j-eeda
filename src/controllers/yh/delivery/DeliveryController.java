@@ -90,7 +90,7 @@ public class DeliveryController extends Controller {
                     + "left join party p on d.customer_id = p.id "
                     + "left join contact c on p.contact_id = c.id "
                     + "left join party p2 on d.sp_id = p2.id "
-                    + "left join contact c2 on p2.contact_id = c2.id order by d.create_stamp desc";
+                    + "left join contact c2 on p2.contact_id = c2.id order by d.create_stamp desc " + sLimit;
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
@@ -134,7 +134,7 @@ public class DeliveryController extends Controller {
                     + "%' and ifnull(c2.company_name,'') like'%"
                     + sp_filter
                     + "%' and d.create_stamp between '"
-                    + beginTime_filter + "' and '" + endTime_filter + "' ";
+                    + beginTime_filter + "' and '" + endTime_filter + "' " + sLimit;
 
             List<Record> transferOrders = Db.find(sql);
 
@@ -429,7 +429,6 @@ public class DeliveryController extends Controller {
         Party party = Party.dao
                 .findFirst("select *,p.id as customerId from party p left join contact c on p.contact_id=c.id where p.id ='"
                         + cusId + "'");
-        System.out.println(list);
         setAttr("localArr", list);
         setAttr("localArr2", list2);
         setAttr("localArr3", list3);
@@ -545,7 +544,7 @@ public class DeliveryController extends Controller {
                     + "left join party p2 on t1.notify_party_id = p2.id "
                     + "left join contact c2 on p2.contact_id = c2.id "
                     + "left join contact c on p.contact_id = c.id "
-                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in(" + detail_id + ")";
+                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in(" + detail_id + ") order by t1.id desc " + sLimit;
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
@@ -716,7 +715,7 @@ public class DeliveryController extends Controller {
                 + "left join transfer_order_item t1 on t.item_id =t1.id "
                 + "left join transfer_order t3 on t3.id =t.order_id "
                 + "left join contact c on c.id in (select contact_id from party p where t3.customer_id=p.id) "
-                + "where t.id in(" + idlist2 + ")" + sLimit;
+                + "where t.id in(" + idlist2 + ") order by t.id desc " + sLimit;
         /*
          * sql =
          * "select tof.* ,t_o.order_no as order_no,c.company_name as customer,toid.serial_no as serial_no from transfer_order_item tof "

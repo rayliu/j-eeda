@@ -46,7 +46,7 @@ public class ChargeInvoiceOrderController extends Controller {
         logger.debug(String.valueOf(idArray.length));
 
         setAttr("chargeCheckOrderIds", ids);	 
-        /*String customerId = getPara("customerId");
+        String customerId = getPara("customerId");
         if(!"".equals(customerId) && customerId != null){
 	        Party party = Party.dao.findById(customerId);
 	        setAttr("party", party);	        
@@ -54,7 +54,7 @@ public class ChargeInvoiceOrderController extends Controller {
 	        setAttr("customer", contact);
 	        setAttr("type", "CUSTOMER");
 	    	setAttr("classify", "");
-        }*/
+        }
         
         String order_no = null;
         setAttr("saveOK", false);
@@ -100,18 +100,18 @@ public class ChargeInvoiceOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from arap_audit_order";
+        String sqlTotal = "select count(1) total from arap_audit_order where status = 'confirmed'";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aao.*,c.contact_person cname,ror.order_no return_order_no,tor.order_no transfer_order_no,dor.order_no delivery_order_no,ul.user_name creator_name from arap_audit_order aao "
+        String sql = "select aao.*,c.abbr cname,ror.order_no return_order_no,tor.order_no transfer_order_no,dor.order_no delivery_order_no,ul.user_name creator_name from arap_audit_order aao "
 						+" left join party p on p.id = aao.payee_id "
 						+" left join contact c on c.id = p.contact_id "
 						+" left join arap_audit_item aai on aai.audit_order_id= aao.id "
 						+" left join return_order ror on ror.id = aai.ref_order_id "
 						+" left join transfer_order tor on tor.id = ror.transfer_order_id "
 						+" left join delivery_order dor on dor.id = ror.delivery_order_id "
-				        +" left join user_login ul on ul.id = aao.create_by order by aao.create_stamp desc";
+				        +" left join user_login ul on ul.id = aao.create_by where aao.status = 'confirmed' order by aao.create_stamp desc";
 
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
@@ -138,7 +138,7 @@ public class ChargeInvoiceOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aao.*,c.contact_person cname,ror.order_no return_order_no,tor.order_no transfer_order_no,dor.order_no delivery_order_no,ul.user_name creator_name from arap_audit_order aao "
+        String sql = "select aao.*,c.abbr cname,ror.order_no return_order_no,tor.order_no transfer_order_no,dor.order_no delivery_order_no,ul.user_name creator_name from arap_audit_order aao "
 						+" left join party p on p.id = aao.payee_id "
 						+" left join contact c on c.id = p.contact_id "
 						+" left join arap_audit_item aai on aai.audit_order_id= aao.id "
