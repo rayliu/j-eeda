@@ -56,27 +56,12 @@ $(document).ready(function() {
             }
             if(data.length>0)
                 companyList.show();
-            
         },'json');
 
         if(inputStr==''){
         	chargeCheckTable.fnFilter('', 2);
         }
     });
-    /*------------------------------me----------------------------------*/
-    $('#companyName,#beginTime_filter,#endTime_filter,#beginTime,#endTime').on( 'keyup click', function () {
-    	
-    	var companyName = $('#companyName').val();
-		var beginTime = $("#beginTime_filter").val();
-		var endTime = $("#endTime_filter").val();
-		var receiptBegin = $("#beginTime").val();
-		var receiptEnd = $("#endTime").val();
-		
-		console.log(beginTime+" "+endTime+" "+receiptBegin+" "+receiptEnd);
-		chargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
-	
-		chargeCheckTable.fnDraw();
-	} );
 
     $('#companyList').on('click', '.fromLocationItem', function(e){        
         $('#companyName').val($(this).text());
@@ -138,7 +123,7 @@ $(document).ready(function() {
         var customer = $("#customer_filter").val();
         var sp = $("#sp_filter").val();
         var beginTime = $("#beginTime_filter").val();
-        $("#beginTime_filter").val(beginTime);
+        $("#beginTime").val(beginTime);
         var endTime = $("#endTime_filter").val();
         var officeName = $("#officeName_filter").val();
         // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
@@ -153,33 +138,6 @@ $(document).ready(function() {
         var sp = $("#sp_filter").val();
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
-        $("#endTime_filter").val(endTime);
-        var officeName = $("#officeName_filter").val();
-        // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-        // transferOrder.fnDraw();
-    } );
-    $('#beginTime').on('keyup', function () {
-        var orderNo = $("#orderNo_filter").val();
-        var status = $("#status_filter").val();
-        var address = $("#address_filter").val();
-        var customer = $("#customer_filter").val();
-        var sp = $("#sp_filter").val();
-        var beginTime = $("#beginTime").val();
-        $("#beginTime").val(beginTime);
-        var endTime = $("#endTime").val();
-        var officeName = $("#officeName_filter").val();
-        // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-        // transferOrder.fnDraw();
-    } );    
-    
-    $('#endTime').on( 'keyup click', function () {
-        var orderNo = $("#orderNo_filter").val();
-        var status = $("#status_filter").val();
-        var address = $("#address_filter").val();
-        var customer = $("#customer_filter").val();
-        var sp = $("#sp_filter").val();
-        var beginTime = $("#beginTime").val();
-        var endTime = $("#endTime").val();
         $("#endTime").val(endTime);
         var officeName = $("#officeName_filter").val();
         // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
@@ -204,24 +162,6 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
     });
-    $('#datetimepicker3').datetimepicker({  
-        format: 'yyyy-MM-dd',  
-        language: 'zh-CN'
-    }).on('changeDate', function(ev){
-        $(".bootstrap-datetimepicker-widget").hide();
-        $('#beginTime').trigger('keyup');
-    });
-
-
-    $('#datetimepicker4').datetimepicker({  
-        format: 'yyyy-MM-dd',  
-        language: 'zh-CN', 
-        autoclose: true,
-        pickerPosition: "bottom-left"
-    }).on('changeDate', function(ev){
-        $(".bootstrap-datetimepicker-widget").hide();
-        $('#endTime').trigger('keyup');
-    });
 
     //from表单验证
     var validate = $('#returnOrderSearchForm').validate({
@@ -241,6 +181,4 @@ $(document).ready(function() {
     	
     	$("#beginTime").val();
     };
-  
-    
 } );
