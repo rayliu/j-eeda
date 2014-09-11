@@ -124,6 +124,15 @@
 		                                        	<label>配送仓库：</label><lable>${warehouse.WAREHOUSE_NAME!''}</lable>
 		                                        	<input type="hidden" id="warehouse_id" name="warehouse_id" value ="${warehouse.id!''}">
 		                                        </div>
+		                                        <div class="form-group">
+		                                            <%
+		                                            	var cargoNaturName="ATM";
+		                                            	if(cargoNature=="cargo")
+		                                            		cargoNaturName="普通货品";
+		                                            %>
+		                                        	<label>货品属性：</label><lable>${cargoNaturName}</lable>
+		                                        	<input type="hidden" id="cargoNature" name="cargoNature" value ="${cargoNature!''}">
+		                                        </div>
 	                                    </div>
 	                                    
 	                                 	<div class="col-lg-6">

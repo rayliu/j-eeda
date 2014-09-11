@@ -254,12 +254,12 @@ public class DeliveryController extends Controller {
         String id = getPara();
 
         DeliveryOrder tOrder = DeliveryOrder.dao.findById(id);
-
+        setAttr("cargoNature", tOrder.get("cargo_nature"));
         List<Record> serIdList = Db.find("select * from delivery_order_item where delivery_id =" + id);
 
         // 运输单信息
         if (serIdList.size() > 0) {
-            if (serIdList.get(0).get("transfer_item_id") == null) {
+            if (serIdList.get(0).get("transfer_item_detail_id") == null) {
                 TransferOrder transferOrder = TransferOrder.dao.findById(serIdList.get(0).get("transfer_order_id"));
                 setAttr("deliveryOrder", transferOrder);
             }
@@ -273,7 +273,7 @@ public class DeliveryController extends Controller {
             // 序列号id
             String idStr = "";
             for (Record record : serIdList) {
-                idStr += record.get("transfer_item_id") + ",";
+                idStr += record.get("transfer_item_detail_id") + ",";
             }// 4,5,6
             idStr = idStr.substring(0, idStr.length() - 1);
             setAttr("localArr2", idStr);
@@ -425,6 +425,7 @@ public class DeliveryController extends Controller {
         String list2 = this.getPara("localArr2");// 序列号id
         String list3 = this.getPara("localArr3");
         String cusId = getPara("cusId");
+        String cargoNature = getPara("cargoNature");
 
         Party party = Party.dao
                 .findFirst("select *,p.id as customerId from party p left join contact c on p.contact_id=c.id where p.id ='"
@@ -445,6 +446,7 @@ public class DeliveryController extends Controller {
         Warehouse warehouse = Warehouse.dao.findById(tOrder.get("warehouse_id"));
         setAttr("notifyParty", notify);
         setAttr("warehouse", warehouse);
+        setAttr("cargoNature", cargoNature);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/delivery/deliveryOrderEdit.html");
     }
@@ -510,15 +512,15 @@ public class DeliveryController extends Controller {
         String orderStatue = getPara("orderStatue");
         String warehouse = getPara("warehouse");
 
-        List<Record> list = Db.find("select transfer_item_id from delivery_order_item");
-        List<Record> list2 = Db.find("select t1.id as transfer_item_id from transfer_order_item_detail t1 "
+        List<Record> list = Db.find("select transfer_item_detail_id from delivery_order_item");
+        List<Record> list2 = Db.find("select t1.id as transfer_item_detail_id from transfer_order_item_detail t1 "
                 + "left join transfer_order t2 on t1.order_id=t2.id "
                 + "where t2.status='已入库' and t2.cargo_nature='ATM'");
         list2.removeAll(list);
         String detail_id = "0";
         if (list2.size() > 0) {
             for (int i = 0; i < list2.size(); i++) {
-                detail_id += list2.get(i).get("transfer_item_id") + ",";
+                detail_id += list2.get(i).get("transfer_item_detail_id") + ",";
             }
             detail_id = detail_id.substring(0, detail_id.length() - 1);
         }
@@ -743,10 +745,10 @@ public class DeliveryController extends Controller {
         String deliveryid = getPara("delivery_id");
         DeliveryOrder deliveryOrder = null;
         String notifyId = getPara("notify_id");
-        // String itemId = getPara("item_id");
+        String cargoNature = getPara("cargoNature");
         String idlist3 = getPara("localArr");
         String idlist5 = getPara("localArr3");
-        System.out.println(idlist3);
+        
         String[] idlist = getPara("localArr").split(",");
         String[] idlist2 = getPara("localArr2").split(",");
         String[] idlist4 = getPara("localArr3").split(",");
@@ -780,7 +782,7 @@ public class DeliveryController extends Controller {
             .set("customer_id", getPara("customer_id")).set("sp_id", getPara("cid"))
             .set("notify_party_id", party.get("id")).set("create_stamp", createDate).set("status", "新建")
             .set("route_to", getPara("route_to")).set("pricetype", getPara("chargeType"))
-            .set("from_warehouse_id", getPara("warehouse_id"));
+            .set("from_warehouse_id", getPara("warehouse_id")).set("cargo_nature", cargoNature);
             
              if (notifyId == null || notifyId.equals("")) {
                 deliveryOrder.set("notify_party_id", party.get("id"));
@@ -801,7 +803,7 @@ public class DeliveryController extends Controller {
                 for (int i = 0; i < idlist.length; i++) {
                     DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
                     deliveryOrderItem.set("delivery_id", deliveryOrder.get("id")).set("transfer_order_id", idlist[i]);
-                    deliveryOrderItem.set("transfer_item_id", idlist2[i]);
+                    deliveryOrderItem.set("transfer_item_detail_id", idlist2[i]);
                     deliveryOrderItem.set("transfer_no", idlist4[i]);
                     deliveryOrderItem.save();
                 }

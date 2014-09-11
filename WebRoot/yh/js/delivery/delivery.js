@@ -1,6 +1,7 @@
 ﻿
 $(document).ready(function() {
 	$('#menu_deliver').addClass('active').find('ul').addClass('in');
+
 	$('#resetbutton').hide();
 	$('#resetbutton2').hide();
 	var hang="";
@@ -480,16 +481,18 @@ $(document).ready(function() {
 					var cargo =$(this).val();
 					console.log(cargo);
 					if(cargo=="ATM"){
+						$("#cargoNature").val("ATM");
 						$("#cargos").show();
 						$("#basic").hide();
-					}else{
+					}else{//普通货品
+						$("#cargoNature").val("cargo");
 						$("#basic").show();
 						$("#cargos").hide();
 					}
 				});
 				
 				$(function(){
-				console.log(aa);
+					console.log(aa);
 					if(aa!=''){
 						$("#cargotable").show();
 						$("#cargotable2").hide();

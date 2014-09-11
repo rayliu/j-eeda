@@ -117,9 +117,9 @@ public class DataInitUtil {
                     + "foreign key(item_id) references transfer_order_item(id),foreign key(notify_party_id) references party(id),delivery_id bigint,foreign key(delivery_id) references delivery_order(id));");
 
             // Transfer_Order_fin_item 运输单应收应付明细
-            stmt.executeUpdate("create table if not exists transfer_order_fin_item (id b"
-                    + "igint auto_increment primary key, order_id bigint,depart_id bigint,delivery_id bigint, fin_item_id bigint,"
-                    + "fin_item_code varchar(20), amount double, status varchar(50), "
+            stmt.executeUpdate("create table if not exists transfer_order_fin_item (id bigint auto_increment primary key, " +
+            		"order_id bigint,depart_id bigint,delivery_id bigint, fin_item_id bigint,"
+                    + "fin_item_code varchar(20), amount double, status varchar(50), fin_type varchar(20), "
                     + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp,remark varchar(5120));");
 
             // billing_order 应收应付单主表 --total_amount 应收(付)总额, total_actual_amount
@@ -136,7 +136,7 @@ public class DataInitUtil {
             // stmt.executeUpdate(
             stmt.executeUpdate("create table if not exists pickup_order_item(id bigint auto_increment primary key,order_id bigint,customer_id bigint,serial_no varchar(50),item_no bigint,item_name varchar(50),item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
             // 配送单货品表
-            stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment primary key,transfer_no varchar(50),delivery_id bigint,transfer_order_id bigint,transfer_item_id bigint);");
+            stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment primary key,transfer_no varchar(50),delivery_id bigint,transfer_order_id bigint, transfer_item_id bigint, amount double, transfer_item_detail_id bigint);");
 
             // 发车单运输单中间表
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,depart_id bigint,order_id bigint,transfer_order_no varchar(255),foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id));");
@@ -203,11 +203,11 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into fin_account_item(account_id,currency,org_name,account_pin,org_person) values('2','人民币','建设银行','12123123123','李四');");
             stmt.executeUpdate("insert into fin_account_item(account_id,currency,org_name,account_pin,org_person) values('3','人民币','建设银行','12123123123','王五');");
 
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('广电运通-客户合同','CUSTOMER', 1,'2014-11-12','2014-11-14','无');");
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,'2014-10-12','2014-11-15','无');");
+            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('广电运通-客户合同','CUSTOMER', 1,'2013-11-12','2015-11-14','无');");
+            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,'2013-10-12','2015-11-15','无');");
 
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('干线供应商合同','SERVICE_PROVIDER', 7,'2013-11-12','2014-11-14','无');");
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('提货供应商合同','DELIVERY_SERVICE_PROVIDER', 6,'2011-1-12','2014-10-14','无');");
+            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('干线供应商合同','SERVICE_PROVIDER', 7,'2013-11-12','2015-11-14','无');");
+            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('提货供应商合同','DELIVERY_SERVICE_PROVIDER', 6,'2011-1-12','2015-10-14','无');");
 
             // 定义配送供应商合同 济南骏运展达物流运输有限公司
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('配送供应商合同','DELIVERY_SERVICE_PROVIDER', 13,'2013-11-12','2015-11-14','无');");
@@ -392,9 +392,9 @@ public class DataInitUtil {
                     + "values('2014042600001', 'ATM', 'ATM机', 2,'台', 35, 10, '2台ATM', 2, 1);");
             // 示范数据item_detail
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values(2, '2014042600001', 'S001', 0, 'ATM', false, 2, 9);");
+                    + "values(2, '2014042600001', 'S001', 0, 'ATM', false, 3, 9);");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values(2, '2014042600001', 'S002', 0, 'ATM', false, 2, 9);");
+                    + "values(2, '2014042600001', 'S002', 0, 'ATM', false, 3, 9);");
             //
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('123456', 'ATM', '这是很多台ATM',2,'台',1000,2000,'一台ATM','3');");
@@ -429,10 +429,10 @@ public class DataInitUtil {
                     + "values(3,'789', 'ATM003', 6, 24);");
 
             // 配送单
-            stmt.execute("insert into delivery_order(order_no,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600013','5','7','9','配送在途','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(order_no,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600004','6','7','10','已签收','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(order_no,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600014','5','8','9','取消','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(order_no,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600003','6','8','10','配送在途','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no, cargo_nature, customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600013', 'ATM','5','7','9','配送在途','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600004', 'ATM','6','7','10','已签收','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600014', 'ATM','5','8','9','取消','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600003', 'cargo','6','8','10','配送在途','2014-04-25 16:35:35.1');");
 
             // delivery_order_item
             stmt.execute("insert into delivery_order_item(delivery_id,transfer_order_id) values(1,1);");

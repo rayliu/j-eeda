@@ -243,10 +243,13 @@ public class DeliveryOrderMilestoneController extends Controller {
     private void gateOutProduct(DeliveryOrder deliveryOrder) {
         Long deliveryOrderId=deliveryOrder.getLong("id");
         Long warehouseId=deliveryOrder.get("from_warehouse_id");
-        // 获取配送单的item list
-        List<Record> itemList = Db.find("select *, c.name as c_name from delivery_order_item di left join transfer_order_item ti on di.transfer_item_id = ti.id " +
-        		"left join product p on ti.product_id = p.id left join category c on p.category_id = c.id where delivery_id ="
-                + deliveryOrderId);
+        // 获取配送单的item list TODO 只针对ATM， 普通货品需要再验证
+        List<Record> itemList = Db.find("select di.*, ti.product_id, c.name as c_name from delivery_order_item di "
+                                        +"left join transfer_order_item_detail toid on di.transfer_item_detail_id = toid.id  "
+                                        +"left join transfer_order_item ti on toid.item_id = ti.id "
+                                        +"left join product p on ti.product_id = p.id  "
+                                        +"left join category c on p.category_id = c.id  "
+                                        +"where di.delivery_id ="+ deliveryOrderId);
         for (Record dOrderItemRecord : itemList) {
             //如果没有product_id, 则不用计算库存
             if(dOrderItemRecord.get("product_id")==null)
@@ -263,7 +266,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                 InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item where product_id=? and warehouse_id=?", productId, warehouseId);
                 if(item!=null){
                     //TODO 如果是普通货品，还是-1？？
-                    item.set("total_quantity", item.getDouble("total_quantity")-dOrderItemRecord.getDouble("")).update();
+                    item.set("total_quantity", item.getDouble("total_quantity")-dOrderItemRecord.getDouble("amount")).update();
                 }
             }
         }
