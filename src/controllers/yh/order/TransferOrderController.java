@@ -1,6 +1,7 @@
 package controllers.yh.order;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
+import models.DepartOrderFinItem;
 import models.DepartTransferOrder;
 import models.Fin_item;
 import models.Location;
@@ -164,7 +166,12 @@ public class TransferOrderController extends Controller {
 
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
-
+        List<Record> paymentItemList = Collections.EMPTY_LIST;
+        paymentItemList = Db.find("select * from fin_item where type='应付'");
+        setAttr("paymentItemList", paymentItemList);
+        List<Record> receivableItemList = Collections.EMPTY_LIST;
+        receivableItemList = Db.find("select * from fin_item where type='应收'");
+        setAttr("receivableItemList", receivableItemList);
         setAttr("status", "新建");
         if (LoginUserController.isAuthenticated(this))
             render("transferOrder/updateTransferOrder.html");
@@ -240,6 +247,12 @@ public class TransferOrderController extends Controller {
 
         UserLogin userLogin = UserLogin.dao.findById(transferOrder.get("create_by"));
         setAttr("userLogin2", userLogin);
+        List<Record> paymentItemList = Collections.EMPTY_LIST;
+        paymentItemList = Db.find("select * from fin_item where type='应付'");
+        setAttr("paymentItemList", paymentItemList);
+        List<Record> receivableItemList = Collections.EMPTY_LIST;
+        receivableItemList = Db.find("select * from fin_item where type='应收'");
+        setAttr("receivableItemList", receivableItemList);
         if (LoginUserController.isAuthenticated(this))
             render("transferOrder/updateTransferOrder.html");
     }
@@ -823,13 +836,14 @@ public class TransferOrderController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from transfer_order_fin_item where order_id ='" + id + "' ";
+        String sql = "select count(0) total from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id ='"
+                        + id + "' and f.type='应收'";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id ='"
+                .find("select d.*,f.name,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id ='"
                         + id + "' and f.type='应收'");
 
         Map orderMap = new HashMap();
@@ -868,13 +882,14 @@ public class TransferOrderController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from transfer_order_fin_item where order_id ='" + id + "'  ";
+        String sql = "select count(0) total from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id='"
+                        + id + "' and f.type='应付' ";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id='"
+                .find("select d.*,f.name,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id='"
                         + id + "' and f.type='应付' ");
 
         Map orderMap = new HashMap();
@@ -893,27 +908,31 @@ public class TransferOrderController extends Controller {
 
         renderJson(orderMap);
     }
-
+    //应付
     public void addNewRow() {
+        List<Fin_item> items = new ArrayList<Fin_item>();
         String orderId = getPara();
-        Fin_item fItem = new Fin_item();
-        TransferOrderFinItem dFinItem = new TransferOrderFinItem();
-        fItem.set("type", "应付");
-        fItem.save();
-        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("order_id", orderId);
-        dFinItem.save();
-        renderJson("{\"success\":true}");
+        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
+        if(item != null){
+        	TransferOrderFinItem dFinItem = new TransferOrderFinItem();
+	        dFinItem.set("status", "新建").set("fin_item_id", item.get("id")).set("order_id", orderId);
+	        dFinItem.save();
+        }
+        items.add(item);
+        renderJson(items);
     }
-
+    //应收
     public void addNewRow2() {
+        List<Fin_item> items = new ArrayList<Fin_item>();
         String orderId = getPara();
-        Fin_item fItem = new Fin_item();
-        TransferOrderFinItem dFinItem = new TransferOrderFinItem();
-        fItem.set("type", "应收");
-        fItem.save();
-        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("order_id", orderId);
-        dFinItem.save();
-        renderJson("{\"success\":true}");
+        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应收' order by id asc");
+        if(item != null){
+        	TransferOrderFinItem dFinItem = new TransferOrderFinItem();
+	        dFinItem.set("status", "新建").set("fin_item_id", item.get("id")).set("order_id", orderId);
+	        dFinItem.save();
+        }
+        items.add(item);
+        renderJson(items);
     }
 
     // 保存应收应付
@@ -1017,4 +1036,23 @@ public class TransferOrderController extends Controller {
     	map.put("warehouse", warehouse);
     	renderJson(map);
     }
+    //修改应付
+    public void updateTransferOrderFinItem(){
+    	String paymentId = getPara("paymentId");
+    	String name = getPara("name");
+    	String value = getPara("value");
+    	if("amount".equals(name) && "".equals(value)){
+    		value = "0";
+    	}
+    	if(paymentId != null && !"".equals(paymentId)){
+    		TransferOrderFinItem transferOrderFinItem = TransferOrderFinItem.dao.findById(paymentId);
+    		transferOrderFinItem.set(name, value);
+    		transferOrderFinItem.update();
+    	}
+        renderJson("{\"success\":true}");
+    }
+    
+    
+    
+    
 }

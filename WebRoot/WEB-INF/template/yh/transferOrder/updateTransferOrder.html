@@ -524,6 +524,13 @@
                                                 <tbody>
                                                    
                                                 </tbody>
+                                                <div id="receivableItemList" style="display:none;">
+	                                            	<%for(receivableItem in receivableItemList){ %>
+   														<option value='${receivableItem.ID!''}'>${receivableItem.NAME!''}</option>
+	   												<%		
+	   													}
+	   												%>
+                                            	</div>
                                             </table>
                                         </div>
                                         <!-- /.table-responsive -->
@@ -548,6 +555,13 @@
                                                 <tbody>
                                                     
                                                 </tbody>
+                                                <div id="paymentItemList" style="display:none;">
+	                                            	<%for(paymentItem in paymentItemList){ %>
+	   														<option value='${paymentItem.ID!''}'>${paymentItem.NAME!''}</option>
+	   												<%		
+	   													}
+	   												%>
+                                            	</div>
                                             </table>
                                         </div>
                                         <!-- /.table-responsive -->

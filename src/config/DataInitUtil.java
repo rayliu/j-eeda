@@ -120,7 +120,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists transfer_order_fin_item (id b"
                     + "igint auto_increment primary key, order_id bigint,depart_id bigint,delivery_id bigint, fin_item_id bigint,"
                     + "fin_item_code varchar(20), amount double, status varchar(50), "
-                    + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp);");
+                    + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp,remark varchar(5120));");
 
             // billing_order 应收应付单主表 --total_amount 应收(付)总额, total_actual_amount
             // 实收(付)总额

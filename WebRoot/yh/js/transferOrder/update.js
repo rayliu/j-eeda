@@ -1688,7 +1688,7 @@ $(document).ready(function() {
 
     //应收应付
     var order_id =$("#order_id").val();
-	//应收应付datatable
+	//应收datatable
 	var receipttable =$('#table_fin').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "bFilter": false, //不需要默认的搜索框
@@ -1704,10 +1704,43 @@ $(document).ready(function() {
 			return nRow;
 		},
         "aoColumns": [
-			{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
-			{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"}, 
+			{"mDataProp":"NAME",
+			    "fnRender": function(obj) {
+			        if(obj.aData.NAME!='' && obj.aData.NAME != null){
+			        	var str="";
+			        	$("#receivableItemList").children().each(function(){
+			        		if(obj.aData.NAME == $(this).text()){
+			        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
+			        		}else{
+			        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+			        		}
+			        	});
+			            return "<select name='fin_item_id'>"+str+"</select>";
+			        }else{
+			        	var str="";
+			        	$("#receivableItemList").children().each(function(){
+			        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+			        	});
+			        	return "<select name='fin_item_id'>"+str+"</select>";
+			        }
+			 }},
+			{"mDataProp":"AMOUNT",
+			     "fnRender": function(obj) {
+			         if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+			             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+			         }else{
+			         	 return "<input type='text' name='amount'>";
+			         }
+			 }},  
 			{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "remark"},
-			{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
+			{"mDataProp":"REMARK",
+                "fnRender": function(obj) {
+                    if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
+                        return "<input type='text' name='remark' value='"+obj.aData.REMARK+"'>";
+                    }else{
+                    	 return "<input type='text' name='remark'>";
+                    }
+            }},  
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
 			{  
                 "mDataProp": null, 
@@ -1723,75 +1756,17 @@ $(document).ready(function() {
         ]      
     });
 	//异步删除应收
-	 $("#table_fin").on('click', '.finItemdel', function(e){
+	$("#table_fin").on('click', '.finItemdel', function(e){
 		 var id = $(this).attr('code');
 		  e.preventDefault();
 		$.post('/yh/transferOrder/finItemdel/'+id,function(data){
-                //保存成功后，刷新列表
-                console.log(data);
-                	receipttable.fnDraw();
-            },'text');
-		  });
+            //保存成功后，刷新列表
+            console.log(data);
+            	receipttable.fnDraw();
+        },'text');
+	});
 	 
-	receipttable.makeEditable({
-    	sUpdateURL: '/yh/transferOrder/paymentSave',    	
-    	oEditableSettings: {event: 'click'},
-    	"aoColumns": [  			            
-            {            
-            	style: "inherit",
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"name",
-            	placeholder: "", 
-            	callback: function () {
-            	}
-        	},
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"amount",
-            	placeholder: "",
-            	callback: function () {} 
-            }
-        ]      
-    }).click(function(){
-    	var inputBox = $(this).find('input');
-        inputBox.autocomplete({
-	        source: function( request, response ) {
-	        	if(inputBox.parent().parent()[0].cellIndex >0){//从第2列开始，不需要去后台查数据
-		    		return;
-		    	}
-	            $.ajax({
-	                url: "/yh/transferOrder/getChargeList",
-	                dataType: "json",
-	                data: {
-	                    input: request.term
-	                },
-	                success: function( data ) {
-	                    response($.map( data, function( data ) {
-	                        return {
-	                            label: data.NAME,
-	                            value: data.NAME,
-	                            id: data.ID,
-	                            name: data.NAME
-	                        };
-	                    }));
-	                }
-	            });
-	        },select: function( event, ui ) {
-        		//将选择的条目id先保存到数据库
-	        	var finId = $(this).parent().parent().parent()[0].id;
-        		var finItemId = ui.item.id;
-        		$.post('/yh/transferOrder/paymentSave',{id:finId, finItemId:finItemId},
-        			function(){ receipttable.fnDraw();  });        		
-            },
-        	minLength: 2
-        });
-    }); 
-	
-	//应收应付datatable
+	//应付datatable
 	var order_id =$("#order_id").val();
 	var paymenttable=$('#table_fin2').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -1808,10 +1783,43 @@ $(document).ready(function() {
 			return nRow;
 		},
         "aoColumns": [
-			{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
-			{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"}, 
+			{"mDataProp":"NAME",
+			    "fnRender": function(obj) {
+			        if(obj.aData.NAME!='' && obj.aData.NAME != null){
+			        	var str="";
+			        	$("#paymentItemList").children().each(function(){
+			        		if(obj.aData.NAME == $(this).text()){
+			        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
+			        		}else{
+			        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+			        		}
+			        	});
+			            return "<select name='fin_item_id'>"+str+"</select>";
+			        }else{
+			        	var str="";
+			        	$("#paymentItemList").children().each(function(){
+			        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+			        	});
+			        	return "<select name='fin_item_id'>"+str+"</select>";
+			        }
+			 }},
+			{"mDataProp":"AMOUNT",
+			     "fnRender": function(obj) {
+			         if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+			             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+			         }else{
+			         	 return "<input type='text' name='amount'>";
+			         }
+			 }},  
 			{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "remark"},
-			{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
+			{"mDataProp":"REMARK",
+                "fnRender": function(obj) {
+                    if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
+                        return "<input type='text' name='remark' value='"+obj.aData.REMARK+"'>";
+                    }else{
+                    	 return "<input type='text' name='remark'>";
+                    }
+            }},  
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
 			{  
                 "mDataProp": null, 
@@ -1835,66 +1843,7 @@ $(document).ready(function() {
                console.log(data);
                paymenttable.fnDraw();
            },'text');
-		  });
-	paymenttable.makeEditable({
-    	sUpdateURL: '/yh/transferOrder/paymentSave',    	
-    	oEditableSettings: {event: 'click'},
-    	"aoColumns": [  			            
-            {            
-            	style: "inherit",
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"name",
-            	placeholder: "", 
-            	callback: function () {
-            		
-            	}
-        	},
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"amount",
-            	placeholder: "",
-            	callback: function () {} 
-            }
-        ]      
-    }).click(function(){
-    	
-    	var inputBox = $(this).find('input');
-        inputBox.autocomplete({
-	        source: function( request, response ) {
-	        	if(inputBox.parent().parent()[0].cellIndex >0){//从第2列开始，不需要去后台查数据
-		    		return;
-		    	}
-	            $.ajax({
-	                url: "/yh/transferOrder/getPaymentList",
-	                dataType: "json",
-	                data: {
-	                    input: request.term
-	                },
-	                success: function( data ) {
-	                    response($.map( data, function( data ) {
-	                        return {
-	                            label: data.NAME,
-	                            value: data.NAME,
-	                            id: data.ID,
-	                            name: data.NAME
-	                        };
-	                    }));
-	                }
-	            });
-	        },select: function( event, ui ) {
-        		//将选择的条目id先保存到数据库
-	        	var finId = $(this).parent().parent().parent()[0].id;
-        		var finItemId = ui.item.id;
-        		$.post('/yh/transferOrder/paymentSave',{id:finId, finItemId:finItemId},
-        			function(){ paymenttable.fnDraw();  });        		
-            },
-        	minLength: 2
-        });
-    }); 
+	});
 	
 	//应付
 	$("#item_fin_save").click(function(){
@@ -1916,33 +1865,59 @@ $(document).ready(function() {
 	    var order_id =$("#order_id").val();
 		$.post('/yh/transferOrder/addNewRow/'+order_id,function(data){
 			console.log(data);
-			if(data.success){
+			if(data[0] != null){
 				paymenttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountPayable/"+order_id;
 				paymenttable.fnDraw(); 
 				//paymenttable.fnDraw();
 				//$('#fin_item2').modal('hide');
 				//$('#resetbutton2').click();
 			}else{
-				
+				alert("请到基础模块维护应付条目！");
 			}
 		});		
 	});	
+	//应付修改
+	$("#table_fin2").on('blur', 'input,select', function(e){
+		e.preventDefault();
+		var paymentId = $(this).parent().parent().attr("id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		$.post('/yh/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+			if(data.success){
+			}else{
+				alert("修改失败!");
+			}
+    	},'json');
+	});
 	
 	//应收
 	$("#addrow2").click(function(){	
 	    var order_id =$("#order_id").val();
 		$.post('/yh/transferOrder/addNewRow2/'+order_id,function(data){
 			console.log(data);
-			if(data.success){
+			if(data[0] != null){
+				receipttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
             	receipttable.fnDraw();  
 				//$('#fin_item2').modal('hide');
 				//$('#resetbutton2').click();
 			}else{
-				
+				alert("请到基础模块维护应收条目！");
 			}
 		});		
 	});	
-
+	//应收修改
+	$("#table_fin").on('blur', 'input,select', function(e){
+		e.preventDefault();
+		var paymentId = $(this).parent().parent().attr("id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		$.post('/yh/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+			if(data.success){
+			}else{
+				alert("修改失败!");
+			}
+    	},'json');
+	});
 	/*if(($("#transferOrderStatus").val() == '已发车' || $("#transferOrderStatus").val() == '在途') && $("#transferOrderArrivalMode").val() == 'delivery'){
 		$("#receiptBtn").attr("disabled", false);
 	}
