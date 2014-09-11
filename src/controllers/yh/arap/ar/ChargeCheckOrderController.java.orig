@@ -24,6 +24,7 @@ import com.jfinal.plugin.activerecord.Record;
 import controllers.yh.LoginUserController;
 
 public class ChargeCheckOrderController extends Controller {
+<<<<<<< Updated upstream
     private Logger logger = Logger.getLogger(ChargeCheckOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
 
@@ -285,6 +286,7 @@ public class ChargeCheckOrderController extends Controller {
         List<Record> orders = Db
                 .find("select sum(tofi.amount) amount,ror.*, usl.user_name as creator_name,dor.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname, "
                 		+ " ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no from arap_audit_order aao "
+=======
 	private Logger logger = Logger.getLogger(ChargeCheckOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 
@@ -646,6 +648,7 @@ public class ChargeCheckOrderController extends Controller {
 		List<Record> orders = Db
 				.find("select sum(tofi.amount) amount,ror.*, usl.user_name as creator_name,dor.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname, "
 						+ " ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no from arap_audit_order aao "
+>>>>>>> Stashed changes
 						+ "	left join arap_audit_item aai on aai.audit_order_id = aao.id"
 						+ "	left join return_order ror on ror.id = aai.ref_order_id"
 						+ "	left join transfer_order tor on tor.id = ror.transfer_order_id  left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id"
