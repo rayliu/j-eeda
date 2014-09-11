@@ -24,7 +24,7 @@ $(document).ready(function() {
                   	if(obj.aData.STATUS==null){
                   		obj.aData.STATUS="";
                   	}
-                      return obj.aData.STATUS+"<a id='edit_status' order_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                      return obj.aData.STATUS+"<a id='edit_status' order_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'></a>";
                   }},  
              
               {"mDataProp":"CARGO_NATURE",

@@ -20,6 +20,7 @@
             { "mDataProp": "DELIVERY_ORDER_NO"},
             { "mDataProp": "CREATOR_NAME" },
             { "mDataProp": "CREATE_DATE" },
+            { "mDataProp": "RECEIPT_DATE" },
             { "mDataProp": "TRANSACTION_STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new')
