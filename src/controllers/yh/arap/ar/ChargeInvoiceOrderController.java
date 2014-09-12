@@ -182,6 +182,11 @@ public class ChargeInvoiceOrderController extends Controller {
 		    	arapAuditOrderInvoice.set("audit_order_id", chargeCheckOrderIdsArr[i]);
 		    	arapAuditOrderInvoice.set("audit_invoice_id", arapAuditInvoice.get("id"));
 		    	arapAuditOrderInvoice.save();
+		    	
+		    	// TODO 由于未处理审核按钮,暂且使用该方式流转
+		    	ArapAuditOrder arapAuditOrder = ArapAuditOrder.dao.findById(chargeCheckOrderIdsArr[i]);
+		    	arapAuditOrder.set("status", "confirmed");
+		    	arapAuditOrder.update();
 	    	}
     	}else{
     		arapAuditInvoice = ArapAuditInvoice.dao.findById(chargeInvoiceOrderId);
