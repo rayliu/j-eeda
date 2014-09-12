@@ -19,6 +19,7 @@ import models.InventoryItem;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
+import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.contract.Contract;
@@ -261,6 +262,11 @@ public class DeliveryOrderMilestoneController extends Controller {
                 if(item!=null){
                     //TODO 如果库存不够，应该报错提示，并且回滚，不能发车
                     item.set("total_quantity", item.getDouble("total_quantity")-1).update();
+                }
+                //在运输单中把单品设置为已出库（配送）
+                TransferOrderItemDetail tDetail= TransferOrderItemDetail.dao.findById(dOrderItemRecord.getLong("transfer_item_detail_id"));
+                if(item!=null){
+                    tDetail.set("is_delivered", true).update();
                 }
             }else{
                 InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item where product_id=? and warehouse_id=?", productId, warehouseId);

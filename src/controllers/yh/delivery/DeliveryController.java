@@ -512,24 +512,11 @@ public class DeliveryController extends Controller {
     }
 
     // 获取运输单ATM序列号list
-    public void SearchTransfer2() {
+    public void searchTransferByATM() {
         String deliveryOrderNo = getPara("deliveryOrderNo");
         String customerName = getPara("customerName");
         String orderStatue = getPara("orderStatue");
         String warehouse = getPara("warehouse");
-
-        List<Record> list = Db.find("select transfer_item_detail_id from delivery_order_item");
-        List<Record> list2 = Db.find("select t1.id as transfer_item_detail_id from transfer_order_item_detail t1 "
-                + "left join transfer_order t2 on t1.order_id=t2.id "
-                + "where t2.status='已入库' and t2.cargo_nature='ATM'");
-        list2.removeAll(list);
-        String detail_id = "0";
-        if (list2.size() > 0) {
-            for (int i = 0; i < list2.size(); i++) {
-                detail_id += list2.get(i).get("transfer_item_detail_id") + ",";
-            }
-            detail_id = detail_id.substring(0, detail_id.length() - 1);
-        }
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -540,8 +527,7 @@ public class DeliveryController extends Controller {
         if (deliveryOrderNo == null && customerName == null && orderStatue == null && warehouse == null) {
             String sqlTotal = "select count(1) total from transfer_order_item_detail t1 "
                     + "left join transfer_order t2 on t1.order_id=t2.id "
-                    + "left join warehouse w on t2.warehouse_id = w.id "
-                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in(" + detail_id + ")";
+                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE)";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
@@ -552,7 +538,7 @@ public class DeliveryController extends Controller {
                     + "left join party p2 on t1.notify_party_id = p2.id "
                     + "left join contact c2 on p2.contact_id = c2.id "
                     + "left join contact c on p.contact_id = c.id "
-                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in(" + detail_id + ") order by t1.id desc " + sLimit;
+                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE) order by t1.id desc " + sLimit;
             List<Record> transferOrders = Db.find(sql);
 
             transferOrderListMap.put("sEcho", pageIndex);
@@ -562,21 +548,18 @@ public class DeliveryController extends Controller {
         } else {
             String sqlTotal = "select count(1) total from transfer_order_item_detail t1 "
                     + "left join transfer_order t2 on t1.order_id=t2.id "
-                    + "left join warehouse w on t2.warehouse_id = w.id "
-                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in(" + detail_id + ")";
+                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE)";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
-            String sql = "SELECT  t1.serial_no ,t2.*,w.warehouse_name,c.company_name from transfer_order_item_detail t1 "
+            String sql = "SELECT  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.company_name from transfer_order_item_detail t1 "
                     + "left join transfer_order t2 on t1.order_id=t2.id "
                     + "left join warehouse w on t2.warehouse_id = w.id "
                     + "left join party p on t2.customer_id = p.id "
                     + "left join contact c on p.contact_id = c.id "
                     + "left join party p2 on t1.notify_party_id = p2.id "
                     + "left join contact c2 on p2.contact_id = c2.id "
-                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.id in("
-                    + detail_id
-                    + ")"
+                    + "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE) "
                     + "and ifnull(t2.order_no,'') like '%"
                     + deliveryOrderNo
                     + "%'"

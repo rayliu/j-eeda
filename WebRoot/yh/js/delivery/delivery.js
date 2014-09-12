@@ -225,7 +225,7 @@ $(document).ready(function() {
 			    	"oLanguage": {
 			            "sUrl": "/eeda/dataTables.ch.txt"
 			        },
-			        "sAjaxSource": "/yh/delivery/SearchTransfer2",
+			        "sAjaxSource": "/yh/delivery/searchTransferByATM",
 			        "aoColumns": [
 						{ "mDataProp": null,
 						    "fnRender": function(obj) {
@@ -471,7 +471,7 @@ $(document).ready(function() {
 			      	var customerName = $("#customerName2").val();
 			    	var orderStatue = $("#orderStatue2").val();
 			      	var warehouse = $("#warehouse2").val();    	
-			      	dab.fnSettings().sAjaxSource = "/yh/delivery/SearchTransfer2?deliveryOrderNo="+deliveryOrderNo+"&customerName="+customerName+"&orderStatue="+orderStatue+"&warehouse="+warehouse;
+			      	dab.fnSettings().sAjaxSource = "/yh/delivery/searchTransferByATM?deliveryOrderNo="+deliveryOrderNo+"&customerName="+customerName+"&orderStatue="+orderStatue+"&warehouse="+warehouse;
 			      	dab.fnDraw();
 			      });
 				
