@@ -48,8 +48,7 @@ $(document).ready(function() {
         ]      
     });	
     
-    //获取客户的list，选中信息自动填写其他信息
-    $('#companyName').on('keyup', function(){
+    $('#companyName').on('keyup click', function(){
         var inputStr = $('#companyName').val();
         
         $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
@@ -62,22 +61,42 @@ $(document).ready(function() {
             }
             if(data.length>0)
                 companyList.show();
+            
         },'json');
 
         if(inputStr==''){
-        	chargeCheckTable.fnFilter('', 2);
+     	   datatable.fnFilter('', 2);
         }
+        
     });
 
-    $('#companyList').on('click', '.fromLocationItem', function(e){        
+
+
+//选中某个客户时候
+   $('#companyList').on('click', '.fromLocationItem', function(e){        
         $('#companyName').val($(this).text());
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
         //过滤回单列表
         //chargeCheckTable.fnFilter(companyId, 2);
+        
+        
+        
+        //获取所有的条件
+        var inputStr = $('#companyName').val();
+        
+        
+        if(inputStr!=null){
+        	 /*
+             * 
+             * 
+             * datatable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/edit";
+           	* datatable.fnDraw(); 
+             * */
+        }
     });
-    // 没选中客户，焦点离开，隐藏列表
+ // 没选中客户，焦点离开，隐藏列表
     $('#companyName').on('blur', function(){
         $('#companyList').hide();
     });
@@ -91,6 +110,9 @@ $(document).ready(function() {
         return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
     });
 
+    
+    
+    
     $('#createBtn').click(function(e){
         e.preventDefault();
         //获取选取回单的ID, 放到数组中
