@@ -344,6 +344,9 @@ public class DeliveryController extends Controller {
                                 + routeTo + "'");
             }
             setAttr("locationTo", locationTo);
+            List<Record> paymentItemList = Collections.EMPTY_LIST;
+            paymentItemList = Db.find("select * from fin_item where type='应付'");
+            setAttr("paymentItemList", paymentItemList);
         }
         if (LoginUserController.isAuthenticated(this))
             render("/yh/delivery/deliveryOrderEdit.html");
@@ -447,6 +450,9 @@ public class DeliveryController extends Controller {
         setAttr("notifyParty", notify);
         setAttr("warehouse", warehouse);
         setAttr("cargoNature", cargoNature);
+        List<Record> paymentItemList = Collections.EMPTY_LIST;
+        paymentItemList = Db.find("select * from fin_item where type='应付'");
+        setAttr("paymentItemList", paymentItemList);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/delivery/deliveryOrderEdit.html");
     }

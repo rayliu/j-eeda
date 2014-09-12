@@ -487,7 +487,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         renderJson(map);
     }
 
-    // 应收list
+    /*// 应收list
     public void accountReceivable() {
         String id = getPara();
         String transferId = "";
@@ -525,11 +525,21 @@ public class DeliveryOrderMilestoneController extends Controller {
         orderMap.put("aaData", orders);
 
         renderJson(orderMap);
-    }
+    }*/
 
     // 应付list
     public void accountPayable() {
-        String id = getPara()==null?"-1":getPara();
+        //String id = getPara()==null?"-1":getPara();
+    	String id = getPara();
+        if (id == null || id.equals("")) {
+            Map orderMap = new HashMap();
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+            renderJson(orderMap);
+            return;
+        }
         
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -539,14 +549,23 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from transfer_order_fin_item where delivery_id ='" + id + "' ";
+        String sql = "select count(0) total from delivery_order_fin_item d "
+                		+ " left join fin_item f on d.fin_item_id = f.id "
+                		+ " left join delivery_order t on t.id= d.order_id "
+                		+ " left join delivery_order_item doi on t.id= doi.DELIVERY_ID"
+                		+ " left join transfer_order tor on tor.id= doi.TRANSFER_ORDER_ID"
+                		+ " where d.order_id='"+id+"' and f.type='应付' ";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select d.*,f.name as fin_item_name, f.remark, '' as transferOrderNo from delivery_order_fin_item d "
-                        +"left join fin_item f on d.fin_item_id = f.id where d.order_id="+id);
+                .find("select d.*,f.name as fin_item_name, tor.order_no  as transferorderno from delivery_order_fin_item d "
+                		+ " left join fin_item f on d.fin_item_id = f.id "
+                		+ " left join delivery_order t on t.id= d.order_id "
+                		+ " left join delivery_order_item doi on t.id= doi.DELIVERY_ID"
+                		+ " left join transfer_order tor on tor.id= doi.TRANSFER_ORDER_ID"
+                		+ " where d.order_id='"+id+"' and f.type='应付' ");
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -565,14 +584,16 @@ public class DeliveryOrderMilestoneController extends Controller {
     }
 
     public void addNewRow() {
-        String deliveryId = getPara();
-        Fin_item fItem = new Fin_item();
-        TransferOrderFinItem dFinItem = new TransferOrderFinItem();
-        fItem.set("type", "应付");
-        fItem.save();
-        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("delivery_id", deliveryId);
-        dFinItem.save();
-        renderJson("{\"success\":true}");
+        List<Fin_item> items = new ArrayList<Fin_item>();
+        String orderId = getPara();
+        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
+        if(item != null){
+        	DeliveryOrderFinItem dFinItem = new DeliveryOrderFinItem();
+	        dFinItem.set("status", "新建").set("fin_item_id", item.get("id")).set("order_id", orderId);
+	        dFinItem.save();
+        }
+        items.add(item);
+        renderJson(items);
     }
 
     // 添加应付
@@ -616,5 +637,21 @@ public class DeliveryOrderMilestoneController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         locationList = Db.find("select * from fin_item where type='应收'");
         renderJson(locationList);
+    }
+    
+    //修改应付
+    public void updateDeliveryOrderFinItem(){
+    	String paymentId = getPara("paymentId");
+    	String name = getPara("name");
+    	String value = getPara("value");
+    	if("amount".equals(name) && "".equals(value)){
+    		value = "0";
+    	}
+    	if(paymentId != null && !"".equals(paymentId)){
+    		DeliveryOrderFinItem deliveryOrderFinItem = DeliveryOrderFinItem.dao.findById(paymentId);
+    		deliveryOrderFinItem.set(name, value);
+    		deliveryOrderFinItem.update();
+    	}
+        renderJson("{\"success\":true}");
     }
 }
