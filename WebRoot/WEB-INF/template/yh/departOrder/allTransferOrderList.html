@@ -2,6 +2,7 @@
 
 <%layout("/yh/layout.html"){%>
 <link rel="stylesheet" href="/yh/css/bootstrap-datetimepicker.min.css">
+<link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
         <div id="page-wrapper">
             
             <div class="row">
@@ -56,7 +57,8 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label class="search-label">客户</label>
-                                        <input type="text" id="customer_filter" class="form-control search-control customer_filter">
+                                        <input type="text" id="customer_filter" class="form-control search-control customer_filter" placeholder="请输入或者选择客户">
+                                    	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 2%;">
                                     </div>
                                     <div class="form-group">
                                         <label class="search-label">提货地点</label>
@@ -138,3 +140,5 @@
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/departOrder/departOrder.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+

@@ -1,5 +1,6 @@
 <%layout("/yh/layout.html"){%>
 <link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
@@ -41,6 +42,8 @@
                                     <div class="form-group">
                                         <label class="search-label">供应商</label>
                                         <input type="text" class="form-control search-control sp_filter" id="sp_filter">
+                                    	 <ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
+										 </ul>
                                     </div>
                                 </div>
                                 <!-- end of col-lg-6-->
@@ -117,7 +120,7 @@
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/yh/js/departOrder/list.js"></script>
-    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <!-- Page-Level Demo Scripts - Tables - Use for reference --> <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 
 </body>
 
