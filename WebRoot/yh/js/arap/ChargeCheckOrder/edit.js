@@ -39,10 +39,6 @@ $(document).ready(function() {
 				$("#chargeCheckOrderId").val(data.ID);
 			  	$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
-	
-			    var chargeCheckOrderId = $("#chargeCheckOrderId").val();
-				returnOrderTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/returnOrderList?chargeCheckOrderId="+chargeCheckOrderId;
-				returnOrderTable.fnDraw(); 
 			}else{
 				alert('数据保存失败。');
 			}
@@ -53,6 +49,7 @@ $(document).ready(function() {
     	$("#chargeCheckOrderStatus").text('新建');
 	}
 
+    var returnOrderIds = $("#returnOrderIds").val();
 	var returnOrderTable =$('#example').dataTable( {
 	    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",insert into return_order(status_code,create_date,order_type,creator,remark,transfer_order,distribution_order_id,contract_id
@@ -61,7 +58,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeCheckOrder/returnOrderList",
+        "sAjaxSource": "/yh/chargeCheckOrder/returnOrderList?returnOrderIds="+returnOrderIds,
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
             	"fnRender": function(obj) {

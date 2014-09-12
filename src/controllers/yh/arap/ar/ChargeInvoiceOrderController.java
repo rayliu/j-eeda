@@ -283,4 +283,47 @@ public class ChargeInvoiceOrderController extends Controller {
 
         renderJson(orderMap);
     }
+
+    public void chargeInvoiceOrderList() {
+    	String chargeCheckOrderId = getPara("chargeCheckOrderId");
+    	if(chargeCheckOrderId == null || "".equals(chargeCheckOrderId)){
+    		chargeCheckOrderId = "-1";
+    	}
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        Map orderMap = new HashMap();
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from return_order ro ";
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 获取当前页的数据
+        List<Record> orders = Db
+                .find("select sum(tofi.amount) amount,ror.*, usl.user_name as creator_name,dor.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname, "
+                		+ " ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no from arap_audit_order aao "
+						+ "	left join arap_audit_item aai on aai.audit_order_id = aao.id"
+						+ "	left join return_order ror on ror.id = aai.ref_order_id"
+						+ "	left join transfer_order tor on tor.id = ror.transfer_order_id  left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id"
+						+ "	left join delivery_order dor on ror.delivery_order_id = dor.id left join delivery_order_item doi on doi.delivery_id = dor.id"
+						+ "	left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=ror.creator "                     
+						+ "	left join transfer_order_fin_item tofi on tofi.order_id = ifnull(tor.id,tor2.id)"             
+						+ "	left join fin_item fi on fi.id = tofi.fin_item_id" 
+						+ "	where fi.type = '应收' and aai.ref_order_id = ror.id and aao.id = "+chargeCheckOrderId+" order by ror.create_date desc " + sLimit);
+
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        orderMap.put("aaData", orders);
+
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+            orderMap.put("aaData", orders);
+
+        renderJson(orderMap);
+    }
 }

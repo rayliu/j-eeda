@@ -1,4 +1,4 @@
-package controllers.yh.arap.ar;
+﻿package controllers.yh.arap.ar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -75,7 +75,8 @@ public class ChargeCheckOrderController extends Controller {
 				.findFirst("select * from arap_audit_order order by order_no desc limit 0,1");
 		if (order != null) {
 			String num = order.get("order_no");
-			String str = num.substring(2, num.length());
+            // TODO num.substring(2, num.length()); 该方法不通用
+            String str = num.substring(4, num.length());
 			Long oldTime = Long.parseLong(str);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			String format = sdf.format(new Date());
@@ -364,10 +365,7 @@ public class ChargeCheckOrderController extends Controller {
 	}
 
 	public void returnOrderList() {
-		String chargeCheckOrderId = getPara("chargeCheckOrderId");
-		if (chargeCheckOrderId == null || "".equals(chargeCheckOrderId)) {
-			chargeCheckOrderId = "-1";
-		}
+		String returnOrderIds = getPara("returnOrderIds");
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -378,24 +376,27 @@ public class ChargeCheckOrderController extends Controller {
 		Map orderMap = new HashMap();
 		// 获取总条数
 		String totalWhere = "";
-		String sql = "select count(1) total from return_order ro ";
+		String sql = "select count(1) total from return_order ror where ror.id in ("+returnOrderIds+")";
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
 		List<Record> orders = Db
-				.find("select sum(tofi.amount) amount,ror.*, usl.user_name as creator_name,dor.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname, "
-						+ " ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no from arap_audit_order aao "
-						+ "	left join arap_audit_item aai on aai.audit_order_id = aao.id"
-						+ "	left join return_order ror on ror.id = aai.ref_order_id"
-						+ "	left join transfer_order tor on tor.id = ror.transfer_order_id  left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id"
-						+ "	left join delivery_order dor on ror.delivery_order_id = dor.id left join delivery_order_item doi on doi.delivery_id = dor.id"
-						+ "	left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=ror.creator "
-						+ "	left join transfer_order_fin_item tofi on tofi.order_id = ifnull(tor.id,tor2.id)"
-						+ "	left join fin_item fi on fi.id = tofi.fin_item_id"
-						+ "	where fi.type = '应收' and aai.ref_order_id = ror.id and aao.id = "
-						+ chargeCheckOrderId
-						+ " order by ror.create_date desc " + sLimit);
+				.find("select sum(tofi.amount) amount,ror.id,ror.order_no,ror.transaction_status,ror.remark remark,ror.create_date,ror.receipt_date, usl.user_name as creator_name,dor.order_no as delivery_order_no,ifnull(c.abbr,c2.abbr) cname,"
+						+ " ifnull(tor.order_no,(select	group_concat(tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no"
+						+ " from return_order ror" 
+						+ " left join transfer_order tor on tor.id = ror.transfer_order_id"
+						+ " left join party p on p.id = tor.customer_id"
+						+ " left join contact c on c.id = p.contact_id"
+						+ " left join delivery_order dor on ror.delivery_order_id = dor.id"
+						+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
+						+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id"
+						+ " left join party p2 on p2.id = tor2.customer_id"
+						+ " left join contact c2 on c2.id = p2.contact_id"
+						+ " left join user_login usl on usl.id = ror.creator"
+						+ " left join transfer_order_fin_item tofi on tofi.order_id = ifnull(tor.id, tor2.id)"
+						+ " left join fin_item fi on fi.id = tofi.fin_item_id"
+						+ " where ror.id in ("+returnOrderIds+") group by ror.id order by ror.create_date desc " + sLimit);
 
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));

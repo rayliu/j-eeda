@@ -11,7 +11,7 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		$.post('/yh/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
-				$("#chargeCheckOrderId").val(data.ID);
+				$("#chargeInvoiceOrderId").val(data.ID);
 			  	$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 			}else{
@@ -36,13 +36,13 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		$.post('/yh/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
-				$("#chargeCheckOrderId").val(data.ID);
+				$("#chargeInvoiceOrderId").val(data.ID);
 			  	$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 	
-			    var chargeCheckOrderId = $("#chargeCheckOrderId").val();
-				returnOrderTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/returnOrderList?chargeCheckOrderId="+chargeCheckOrderId;
-				returnOrderTable.fnDraw(); 
+			    var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();
+				chargeCheckOrderTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/returnOrderList?chargeInvoiceOrderId="+chargeInvoiceOrderId;
+				chargeCheckOrderTable.fnDraw(); 
 			}else{
 				alert('数据保存失败。');
 			}
@@ -53,20 +53,20 @@ $(document).ready(function() {
     	$("#chargeCheckOrderStatus").text('新建');
 	}
 
-	var returnOrderTable =$('#example').dataTable( {
+	var chargeCheckOrderTable =$('#example').dataTable( {
 	    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",insert into return_order(status_code,create_date,order_type,creator,remark,transfer_order,distribution_order_id,contract_id
         "iDisplayLength": 10,
         "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeCheckOrder/returnOrderList",
+        "sAjaxSource": "/yh/chargeInvoiceOrder/chargeInvoiceOrderList",
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/yh/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
+       		{ "mDataProp": "ORDER_NO"},
             { "mDataProp": "CNAME"},
             { "mDataProp": "TRANSFER_ORDER_NO"},
             { "mDataProp": "DELIVERY_ORDER_NO"},

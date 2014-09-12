@@ -159,8 +159,8 @@ public class DataInitUtil {
                     + " begin_time timestamp,end_time timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
             stmt.executeUpdate("create table if not exists arap_audit_item(id bigint auto_increment primary key,ref_order_type varchar(255),item_code varchar(255),item_status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
                     + " last_modified_stamp timestamp,remark varchar(5120),audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id),ref_order_id bigint,foreign key(ref_order_id) references return_order(id));");
-            stmt.executeUpdate("create table if not exists arap_audit_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
-            		+ " remark varchar(5120),audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id));");
+            stmt.executeUpdate("create table if not exists arap_audit_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
+            stmt.executeUpdate("create table if not exists arap_audit_order_invoice(id bigint auto_increment primary key,audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id),audit_invoice_id bigint,foreign key(audit_invoice_id) references arap_audit_invoice(id));");
 
             stmt.close();
             // conn.commit();

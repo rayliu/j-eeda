@@ -77,6 +77,8 @@ $(document).ready(function() {
             			return "质量退单";
             		}else if(obj.aData.ORDER_TYPE == "gateOutTransferOrder"){
             			return "出库运输单";
+            		}else if(obj.aData.ORDER_TYPE == "movesOrder"){
+            			return "移机单";
             		}else{
             			return "";
             		}}},
