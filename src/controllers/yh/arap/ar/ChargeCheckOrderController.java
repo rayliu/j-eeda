@@ -1,4 +1,4 @@
-﻿package controllers.yh.arap.ar;
+package controllers.yh.arap.ar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -285,7 +285,8 @@ public class ChargeCheckOrderController extends Controller {
 			arapAuditOrder = new ArapAuditOrder();
 			arapAuditOrder.set("order_no", getPara("order_no"));
 			// arapAuditOrder.set("order_type", );
-			arapAuditOrder.set("status", "new");
+			// TODO 由于未处理审核按钮,暂且使用该方式流转
+			arapAuditOrder.set("status", "checking");
 			arapAuditOrder.set("payee_id", getPara("customer_id"));
 			arapAuditOrder.set("create_by", getPara("create_by"));
 			arapAuditOrder.set("create_stamp", new Date());
@@ -314,7 +315,7 @@ public class ChargeCheckOrderController extends Controller {
 			arapAuditOrder.set("create_stamp", new Date());
 			arapAuditOrder.set("remark", getPara("remark"));
 			arapAuditOrder.set("last_modified_by", getPara("create_by"));
-			arapAuditOrder.set("LAST_MODIFIED_STAMP", new Date());
+			arapAuditOrder.set("last_modified_stamp", new Date());
 			arapAuditOrder.update();
 
 			List<ArapAuditItem> arapAuditItems = ArapAuditItem.dao.find(
@@ -332,8 +333,8 @@ public class ChargeCheckOrderController extends Controller {
 	}
 
 	public void edit() throws ParseException {
-		ArapAuditOrder arapAuditOrder = ArapAuditOrder.dao
-				.findById(getPara("id"));
+		String id = getPara("id");
+		ArapAuditOrder arapAuditOrder = ArapAuditOrder.dao.findById(id);
 		String customerId = arapAuditOrder.get("payee_id");
 		if (!"".equals(customerId) && customerId != null) {
 			Party party = Party.dao.findById(customerId);
@@ -358,6 +359,13 @@ public class ChargeCheckOrderController extends Controller {
 		if (!"".equals(endTimeDate) && endTimeDate != null) {
 			endTime = simpleDateFormat.format(endTimeDate);
 		}
+		String returnOrderIds = "";
+		List<ArapAuditItem> arapAuditItems = ArapAuditItem.dao.find("select * from arap_audit_item where audit_order_id = ?", id);
+		for(ArapAuditItem arapAuditItem : arapAuditItems){
+			returnOrderIds += arapAuditItem.get("ref_order_id") + ",";
+		}
+		returnOrderIds = returnOrderIds.substring(0, returnOrderIds.length() - 1);
+		setAttr("returnOrderIds", returnOrderIds);
 		setAttr("beginTime", beginTime);
 		setAttr("endTime", endTime);
 		if (LoginUserController.isAuthenticated(this))

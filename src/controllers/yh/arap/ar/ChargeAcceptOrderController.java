@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.ArapAuditOrder;
 import models.Party;
 import models.yh.profile.Contact;
 
@@ -90,7 +91,7 @@ public class ChargeAcceptOrderController extends Controller {
                         + "left join transfer_order to on ro.transfer_order_id = to.id "
                         + "left join delivery_order do on ro.delivery_order_id = do.id "
                         + "left join party p on ro.customer_id = p.id "
-                        + "left join contact c on p.contact_id = c.id where ro.TRANSACTION_STATUS = 'confirmed' " + fieldsWhere);
+                        + "left join contact c on p.contact_id = c.id where ro.transaction_status = 'confirmed' " + fieldsWhere);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -107,19 +108,18 @@ public class ChargeAcceptOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from billing_order where order_type='charge_audit_order'";
+        String sqlTotal = "select count(1) total from arap_audit_order aao where aao.status = 'confirmed'";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        // 左连接party, contact取到company_name
-        // 左连接transfer_order取到运输单号
-        // 左连接delivery_order取到配送单号
-        String sql = "select bo.*,  p.id, p.party_type, t.company_name, to.order_no as transfer_order_no, "
-                + "do.order_no as delivery_order_no, u.user_name as creator_name from billing_order bo "
-                + " left join party p on bo.customer_id =p.id and bo.customer_type =p.party_type "
-                + " left join contact t on p.contact_id = t.id left join transfer_order to on bo.transfer_order_id = to.id "
-                + "left join user_login u on bo.creator = u.id"
-                + " left join delivery_order do on bo.delivery_order_id = do.id where bo.order_type='charge_audit_order'";
+        String sql = "select aao.*,c.abbr cname,ror.order_no return_order_no,tor.order_no transfer_order_no,dor.order_no delivery_order_no,ul.user_name creator_name from arap_audit_order aao "
+				+ " left join party p on p.id = aao.payee_id "
+				+ " left join contact c on c.id = p.contact_id "
+				+ " left join arap_audit_item aai on aai.audit_order_id= aao.id "
+				+ " left join return_order ror on ror.id = aai.ref_order_id "
+				+ " left join transfer_order tor on tor.id = ror.transfer_order_id "
+				+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
+				+ " left join user_login ul on ul.id = aao.create_by where aao.status = 'confirmed' order by aao.create_stamp desc " + sLimit;
 
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
@@ -132,5 +132,13 @@ public class ChargeAcceptOrderController extends Controller {
         BillingOrderListMap.put("aaData", BillingOrders);
 
         renderJson(BillingOrderListMap);
+    }
+    
+    // 收款
+    public void chargeAccept(){
+    	ArapAuditOrder arapAuditOrder = ArapAuditOrder.dao.findById(getPara("chargeCheckOrderId"));
+    	arapAuditOrder.set("status", "completed");
+    	arapAuditOrder.update();
+        renderJson("{\"success\":true}");
     }
 }

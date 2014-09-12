@@ -7,6 +7,7 @@ import models.Account;
 import models.ArapAuditInvoice;
 import models.ArapAuditItem;
 import models.ArapAuditOrder;
+import models.ArapAuditOrderInvoice;
 import models.Category;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
@@ -252,6 +253,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_audit_order", ArapAuditOrder.class);
         arp.addMapping("arap_audit_item", ArapAuditItem.class);
         arp.addMapping("arap_audit_invoice", ArapAuditInvoice.class);
+        arp.addMapping("arap_audit_order_invoice", ArapAuditOrderInvoice.class);
         // yh mapping
 
     }

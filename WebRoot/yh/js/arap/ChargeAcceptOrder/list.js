@@ -4,20 +4,22 @@ $(document).ready(function() {
     $('#menu_charge').addClass('active').find('ul').addClass('in');
    
 	//datatable, 动态处理
-    $('#eeda-table').dataTable({
-        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    var chargeAcceptOrderTab = $('#eeda-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
+        "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/yh/chargeAcceptOrder/list",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
-            {"mDataProp":"BLLING_ORDER_NO", "sWidth": "150px"},
-            {"mDataProp":"COMPANY_NAME", "sWidth": "100px"},
-            {"mDataProp":"CUSTOMER_TYPE", "bVisible": false},
+            {"mDataProp":"ORDER_NO",
+            	"fnRender": function(obj) {
+        			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        		}},
+            {"mDataProp":"CNAME"},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -34,7 +36,7 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"TRANSFER_ORDER_NO"},
+            {"mDataProp":"RETURN_ORDER_NO"},
             {"mDataProp":"TRANSFER_ORDER_NO"},
             {"mDataProp":"DELIVERY_ORDER_NO"},            
             {"mDataProp":"CREATOR_NAME"},        	
@@ -44,12 +46,7 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {
-                	/*if(obj.aData.CARGO_NATURE=='cargo'){
-                		obj.aData.CARGO_NATURE = '普通货品';
-                	}else if(obj.aData.CARGO_NATURE=='damageCargo'){
-                		return '损坏货品';
-                	}*/
-                    return	"<a class='btn btn-success' href='"+obj.aData.ID+"'>"+
+                    return	"<a class='btn btn-success chargeAccept' code='"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "收款"+
                             "</a>";
@@ -57,4 +54,18 @@ $(document).ready(function() {
             }                         
         ]      
     });	
+    
+    $('#eeda-table').on('click', '.chargeAccept', function(e){
+		e.preventDefault();
+		var code = $(this).attr('code');
+		var chargeCheckOrderId = code.substring(code.indexOf('=')+1);
+		$.post('/yh/chargeAcceptOrder/chargeAccept', {chargeCheckOrderId:chargeCheckOrderId}, function(data){
+			if(data.success){
+				chargeAcceptOrderTab.fnSettings().sAjaxSource = "/yh/chargeAcceptOrder/list";
+				chargeAcceptOrderTab.fnDraw();  
+			}else{
+				alert("收款失败!");
+			}
+		},'json');
+    });
 } );

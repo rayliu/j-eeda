@@ -83,7 +83,10 @@ $(document).ready(function() {
             },
             { "mDataProp": "REMARK" },
             { "mDataProp": "AMOUNT"	},
-            { "mDataProp": null	}
+            { "mDataProp": null	,
+            	"fnRender": function(obj) {
+        			return "<input type='text' value='"+obj.aData.AMOUNT+"'>";
+        		}}
          ]
 	});
 } );

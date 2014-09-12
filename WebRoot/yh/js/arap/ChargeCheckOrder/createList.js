@@ -30,14 +30,20 @@ $(document).ready(function() {
             { "mDataProp": "CREATE_DATE" },
             { "mDataProp": "RECEIPT_DATE" },
             { "mDataProp": "TRANSACTION_STATUS",
-                "fnRender": function(obj) {
-                    if(obj.aData.TRANSACTION_STATUS=='new')
-                        return '新建';
-                    if(obj.aData.TRANSACTION_STATUS=='confirmed')
-                        return '已确认';
-                    return obj.aData.TRANSACTION_STATUS;
-                 }
-            },
+	            "fnRender": function(obj) {
+	                if(obj.aData.TRANSACTION_STATUS=='new'){
+	                    return '新建';
+	                }else if(obj.aData.TRANSACTION_STATUS=='checking'){
+	                    return '已发送对帐';
+	                }else if(obj.aData.TRANSACTION_STATUS=='confirmed'){
+	                    return '已审核';
+	                }else if(obj.aData.TRANSACTION_STATUS=='completed'){
+	                    return '已结算';
+	                }else if(obj.aData.TRANSACTION_STATUS=='cancel'){
+	                    return '取消';
+	                }
+	                return obj.aData.TRANSACTION_STATUS;
+            }},
             { "mDataProp": "REMARK" }                            
         ]      
     });	
