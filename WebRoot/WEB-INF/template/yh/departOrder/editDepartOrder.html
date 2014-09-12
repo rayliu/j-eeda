@@ -366,6 +366,13 @@
                                                 <tbody>
                                                     
                                                 </tbody>
+                                                <div id="paymentItemList" style="display:none;">
+	                                            	<%for(paymentItem in paymentItemList){ %>
+	   														<option value='${paymentItem.ID!''}'>${paymentItem.NAME!''}</option>
+	   												<%		
+	   													}
+	   												%>
+                                            	</div>
                                             </table>
                                         </div>
                                         <!-- /.table-responsive -->

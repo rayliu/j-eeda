@@ -789,7 +789,7 @@
     	    	$("#detailDialog").modal('hide');
     	    });
     	    
-    	  //应收应付datatable
+    	  //应付datatable
     		var paymenttable=$('#table_fin2').dataTable({
     			"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
     	        "bFilter": false, //不需要默认的搜索框
@@ -805,9 +805,42 @@
     				return nRow;
     			},
     	        "aoColumns": [
-    				{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
-    				{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},  
-    				{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
+					{"mDataProp":"NAME",
+					    "fnRender": function(obj) {
+					        if(obj.aData.NAME!='' && obj.aData.NAME != null){
+					        	var str="";
+					        	$("#paymentItemList").children().each(function(){
+					        		if(obj.aData.NAME == $(this).text()){
+					        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
+					        		}else{
+					        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+					        		}
+					        	});
+					            return "<select name='fin_item_id'>"+str+"</select>";
+					        }else{
+					        	var str="";
+					        	$("#paymentItemList").children().each(function(){
+					        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+					        	});
+					        	return "<select name='fin_item_id'>"+str+"</select>";
+					        }
+					 }},
+					{"mDataProp":"AMOUNT",
+					     "fnRender": function(obj) {
+					         if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+					             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+					         }else{
+					         	 return "<input type='text' name='amount'>";
+					         }
+					 }},
+					 {"mDataProp":"REMARK",
+						 "fnRender": function(obj) {
+		                    if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
+		                        return "<input type='text' name='remark' value='"+obj.aData.REMARK+"'>";
+		                    }else{
+		                    	 return "<input type='text' name='remark'>";
+		                    }
+			         }}, 
     				{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
     				{  
 		                "mDataProp": null, 
@@ -831,77 +864,33 @@
     	               console.log(data);
     	               paymenttable.fnDraw();
     	           },'text');
-    			  });
+    		 });
     		 
-    		paymenttable.makeEditable({
-    	    	sUpdateURL: '/yh/departOrder/paymentSave',    	
-    	    	oEditableSettings: {event: 'click'},
-    	    	"aoColumns": [  			            
-    	            {            
-    	            	style: "inherit",
-    	            	indicator: '正在保存...',
-    	            	onblur: 'submit',
-    	            	tooltip: '点击可以编辑',
-    	            	name:"name",
-    	            	placeholder: "", 
-    	            	callback: function () {
-    	            		
-    	            	}
-    	        	},
-    	            {
-    	            	indicator: '正在保存...',
-    	            	onblur: 'submit',
-    	            	tooltip: '点击可以编辑',
-    	            	name:"amount",
-    	            	placeholder: "",
-    	            	callback: function () {} 
-    	            }
-    	        ]      
-    	    }).click(function(){
-    	    	var inputBox = $(this).find('input');
-    	        inputBox.autocomplete({
-    		        source: function( request, response ) {
-    		        	if(inputBox.parent().parent()[0].cellIndex >0){//从第2列开始，不需要去后台查数据
-    			    		return;
-    			    	}
-    		            $.ajax({
-    		                url: "/yh/departOrder/getPaymentList",
-    		                dataType: "json",
-    		                data: {
-    		                    input: request.term
-    		                },
-    		                success: function( data ) {
-    		                    response($.map( data, function( data ) {
-    		                        return {
-    		                            label: data.NAME,
-    		                            value: data.NAME,
-    		                            id: data.ID,
-    		                            name: data.NAME
-    		                        };
-    		                    }));
-    		                }
-    		            });
-    		        },select: function( event, ui ) {
-    	        		//将选择的条目id先保存到数据库
-    		        	var finId = $(this).parent().parent().parent()[0].id;
-    	        		var finItemId = ui.item.id;
-    	        		$.post('/yh/departOrder/paymentSave',{id:finId, finItemId:finItemId},
-    	        			function(){ paymenttable.fnDraw();  });        		
-    	            },
-    	        	minLength: 2
-    	        });
-    	    }); 
-    		
+    		//应付
     		$("#addrow").click(function(){	
-    			$.post('/yh/departOrder/addNewRow/'+depart_id,function(data){
+    			var departId=$("#depart_id").val();
+    			$.post('/yh/departOrder/addNewRow/'+departId,function(data){
     				console.log(data);
-    				if(data.success){
+    				if(data[0] != null){
+    					paymenttable.fnSettings().sAjaxSource = "/yh/departOrder/accountPayable/"+departId;
     					paymenttable.fnDraw();
-    					//$('#fin_item2').modal('hide');
-    					//$('#resetbutton2').click();
     				}else{
-    					
+    					alert("请到基础模块维护应付条目！");
     				}
     			});		
     		});	  
+    		
+    		//应付修改
+    		$("#table_fin2").on('blur', 'input,select', function(e){
+    			e.preventDefault();
+    			var paymentId = $(this).parent().parent().attr("id");
+    			var name = $(this).attr("name");
+    			var value = $(this).val();
+    			$.post('/yh/departOrder/updateDepartOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+    				if(data.success){
+    				}else{
+    					alert("修改失败!");
+    				}
+    	    	},'json');
+    		});
     });

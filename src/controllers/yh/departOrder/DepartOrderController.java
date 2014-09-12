@@ -335,6 +335,9 @@ public class DepartOrderController extends Controller {
                 "select * from transfer_order_milestone where pickup_id = ? order by create_stamp desc",
                 departOrder.get("id"));
         setAttr("transferOrderMilestone", transferOrderMilestone);
+        List<Record> paymentItemList = Collections.EMPTY_LIST;
+        paymentItemList = Db.find("select * from fin_item where type='应付'");
+        setAttr("paymentItemList", paymentItemList);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/departOrder/editDepartOrder.html");
     }
@@ -614,6 +617,9 @@ public class DepartOrderController extends Controller {
 
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
+        List<Record> paymentItemList = Collections.EMPTY_LIST;
+        paymentItemList = Db.find("select * from fin_item where type='应付'");
+        setAttr("paymentItemList", paymentItemList);
 
         setAttr("status", "新建");
         setAttr("saveOK", false);
@@ -1656,12 +1662,14 @@ public class DepartOrderController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from transfer_order_fin_item where depart_id = '" + id + "'";
+        String sql = "select count(0) total from depart_order_fin_item d "
+                + "left join fin_item f on d.fin_item_id = f.id " + "where d.depart_order_id ='" + id
+                + "' and f.type='应付'";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*,f.name,f.remark from depart_order_fin_item d "
+        List<Record> orders = Db.find("select d.*,f.name from depart_order_fin_item d "
                 + "left join fin_item f on d.fin_item_id = f.id " + "where d.depart_order_id ='" + id
                 + "' and f.type='应付'");
 
@@ -1682,14 +1690,17 @@ public class DepartOrderController extends Controller {
     }
 
     public void addNewRow() {
-        String pickupOrderId = getPara();
-        Fin_item fItem = new Fin_item();
-        DepartOrderFinItem dFinItem = new DepartOrderFinItem();
-        fItem.set("type", "应付");
-        fItem.save();
-        dFinItem.set("fin_item_id", fItem.get("id")).set("status", "新建").set("depart_order_id", pickupOrderId);
-        dFinItem.save();
-        renderJson("{\"success\":true}");
+        
+        List<Fin_item> items = new ArrayList<Fin_item>();
+        String orderId = getPara();
+        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
+        if(item != null){
+        	DepartOrderFinItem dFinItem = new DepartOrderFinItem();
+	        dFinItem.set("status", "新建").set("fin_item_id", item.get("id")).set("depart_order_id", orderId);
+	        dFinItem.save();
+        }
+        items.add(item);
+        renderJson(items);
     }
 
     // 添加应付
@@ -1766,5 +1777,21 @@ public class DepartOrderController extends Controller {
         productListMap.put("aaData", details);
         renderJson(productListMap);
     }
+    //修改应付
+    public void updateDepartOrderFinItem(){
+    	String paymentId = getPara("paymentId");
+    	String name = getPara("name");
+    	String value = getPara("value");
+    	if("amount".equals(name) && "".equals(value)){
+    		value = "0";
+    	}
+    	if(paymentId != null && !"".equals(paymentId)){
+    		DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao.findById(paymentId);
+    		departOrderFinItem.set(name, value);
+    		departOrderFinItem.update();
+    	}
+        renderJson("{\"success\":true}");
+    }
+    
 
 }

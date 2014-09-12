@@ -509,9 +509,9 @@ public class DataInitUtil {
             stmt.execute("insert into arap_audit_item(AUDIT_ORDER_ID, REF_ORDER_ID, CREATE_BY, CREATE_STAMP) values(1, 1, 3, '2014-08-18 9:39:35.1');");
             
             // 拼车单收费条目
-            stmt.execute("insert into depart_order_fin_item(pickup_order_id, fin_item_id, amount) values(5, 1, 300);");
-            stmt.execute("insert into depart_order_fin_item(pickup_order_id, fin_item_id, amount) values(5, 2, 100);");
-            stmt.execute("insert into depart_order_fin_item(pickup_order_id, fin_item_id, amount) values(5, 3, 100);");
+            stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(1, 5, 1, 300);");
+            stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(2, 5, 2, 100);");
+            stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(3, 5, 3, 100);");
             stmt.close();
             // conn.commit();
             conn.close();
