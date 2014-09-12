@@ -166,4 +166,69 @@ $(document).ready(function() {
 			}
 		}
 	});
+    
+    
+    //获取所有客户
+    $('#customer_filter').on('keyup click', function(){
+           var inputStr = $('#customer_filter').val();
+           
+           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+               console.log(data);
+               var companyList =$("#companyList");
+               companyList.empty();
+               for(var i = 0; i < data.length; i++)
+               {
+                   companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+               }
+               if(data.length>0)
+                   companyList.show();
+               
+           },'json');
+
+           if(inputStr==''){
+        	   datatable.fnFilter('', 2);
+           }
+           
+       });
+
+
+
+    	//选中某个客户时候
+      $('#companyList').on('click', '.fromLocationItem', function(e){        
+           $('#customer_filter').val($(this).text());
+           $("#companyList").hide();
+           var companyId = $(this).attr('partyId');
+           $('#customerId').val(companyId);
+           //过滤回单列表
+           //chargeCheckTable.fnFilter(companyId, 2);
+           var inputStr = $('#customer_filter').val();
+         
+           if(inputStr!=null){
+        	   var orderNo = $("#orderNo_filter").val();
+	   	       	var status = $("#status_filter").val();
+	   	       	var address = $("#address_filter").val();
+	   	       	var customer = $("#customer_filter").val();
+	   	       	var beginTime = $("#beginTime_filter").val();
+	   	       	var endTime = $("#endTime_filter").val();
+	   	       	var routeFrom = $("#routeFrom_filter").val();
+	   	       	var routeTo = $("#routeTo_filter").val();
+	   	       	datatable.fnSettings().sAjaxSource = "/yh/departOrder/createTransferOrderList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+	   	       	datatable.fnDraw(); 
+           }
+       });
+    // 没选中客户，焦点离开，隐藏列表
+       $('#customer_filter').on('blur', function(){
+           $('#companyList').hide();
+       });
+
+       //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+       $('#companyList').on('blur', function(){
+           $('#companyList').hide();
+       });
+
+       $('#companyList').on('mousedown', function(){
+           return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+       });
+    
+    
 });
