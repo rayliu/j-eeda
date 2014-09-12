@@ -44,7 +44,7 @@ $(document).ready(function() {
                 		return "已签收";
                 	}else{
                 		return "<a class='btn btn-primary confirmDelivery' code='"+obj.aData.ID+"'>"+
-                		"签收完成"+
+                		"到达确认"+
                 		"</a>";
                 	}
                 }
