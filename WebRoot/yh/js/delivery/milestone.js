@@ -41,7 +41,7 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "fnRender": function(obj) {   
                 	if(obj.aData.STATUS=='已签收'){
-                		return "已签收";
+                		return "已送达";
                 	}else{
                 		return "<a class='btn btn-primary confirmDelivery' code='"+obj.aData.ID+"'>"+
                 		"到达确认"+
