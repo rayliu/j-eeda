@@ -64,8 +64,9 @@
 							                      </div>
 					                    </div>
 					                     <div class="panel-body"> </div>
-						                   <h3> <label >供应商信息</label></h3>
-	                                       <div class="form-group">
+					                     
+						                  <h3> <label >供应商信息</label></h3>
+	                                        <div class="form-group">
 	                                            <label>供应商名称</label>
 	                                            <input id="cid" name="cid" type="hidden" value="${spContact.spId!''}">
 	                                            <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage" value="${spContact.company_name!''}"/>
@@ -76,37 +77,37 @@
 	                                        </div>
 	                                        
 	                                        <div id= "textDiv"  class="form-group">
-                                        	<div class="form-group">
-						                          <label>联系人：</label>  <lable id="a1">${spContact.contact_person!''}</lable>
-						                      </div>
-						                      <div class="form-group">
-						                          <label>公司：</label> 	<lable id="a2">${spContact.company_name!''}</lable>
-						                      </div>
-						                      <div class="form-group">
-						                          <label>地址:</label> 	<lable id="a3">${spContact.address!''}</lable>
-						                      </div>
-						                      <div class="form-group">
-						                          <label>联系方式：</label> 	<lable id="a4">${spContact.mobile!''}</lable>
-						                      </div> </div>
-						                      <div class="form-group">     
-                                        	
-                                        	</div>
-						                    <div class="form-group" >
-                                            	<input id="locationTo" type="hidden" name="route_to" value="${deliveryId.route_to!''}">
-                                           		<label>目的地城市</label>
-		                                   		 <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">
-		                                        <label>省</label>
-		                                        <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
-		                                        <select id="mbProvinceTo" class="valid" name="mbProvinceTo"></select>
-		                                        <label>市</label>
-		                                        <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
-		                                        <select  id="cmbCityTo"  class="valid" name="cmbCityTo"></select>
-		                                        <label>区(县)</label>
-		                                        <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}" />
-		                                        <select  id="cmbAreaTo" class="valid" name="cmbAreaTo"></select>
-		                                    	</div>
-	                                   		 </div>
-		                                   	 <div class="form-group">
+	                                        	<div class="form-group">
+							                          <label>联系人：</label>  <lable id="a1">${spContact.contact_person!''}</lable>
+							                      </div>
+							                      <div class="form-group">
+							                          <label>公司：</label> 	<lable id="a2">${spContact.company_name!''}</lable>
+							                      </div>
+							                      <div class="form-group">
+							                          <label>地址:</label> 	<lable id="a3">${spContact.address!''}</lable>
+							                      </div>
+							                      <div class="form-group">
+							                          <label>联系方式：</label> 	<lable id="a4">${spContact.mobile!''}</lable>
+							                      </div> </div>
+							                      <div class="form-group">     
+	                                        	
+	                                        </div>
+							                       <div class="form-group" >
+	                                            	<input id="locationTo" type="hidden" name="route_to" value="${deliveryId.route_to!''}">
+	                                           		<label>目的地城市</label>
+			                                   		 <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">
+			                                        <label>省</label>
+			                                        <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
+			                                        <select id="mbProvinceTo" class="valid" name="mbProvinceTo"></select>
+			                                        <label>市</label>
+			                                        <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
+			                                        <select  id="cmbCityTo"  class="valid" name="cmbCityTo"></select>
+			                                        <label>区(县)</label>
+			                                        <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}" />
+			                                        <select  id="cmbAreaTo" class="valid" name="cmbAreaTo"></select>
+			                                    	</div>
+		                                   		 </div>
+		                                   		 <div class="form-group">
                                                     <label><h3>计费方式</h3></label>
                                                     <input id="chargeTypeRadio" type="hidden" value="${deliveryId.priceType!''}"/>
                                                     <label class="radio-inline">
@@ -118,57 +119,46 @@
 	                                                <label class="radio-inline">
 	                                                    <input type="radio" name="chargeType" id="chargeType3" value="perCargo">零担
 	                                                </label> 
-                                             </div>
-                                             <div class="form-group">
-	                                        	<label>配送仓库：</label><lable>${warehouse.WAREHOUSE_NAME!''}</lable>
-	                                        	<input type="hidden" id="warehouse_id" name="warehouse_id" value ="${warehouse.id!''}">
-	                                         </div>
-	                                         <div class="form-group">
-	                                            <%
-	                                            	var cargoNaturName="ATM";
-	                                            	if(cargoNature=="cargo")
-	                                            		cargoNaturName="普通货品";
-	                                            %>
-	                                        	<label>货品属性：</label><lable>${cargoNaturName}</lable>
-	                                        	<input type="hidden" id="cargoNature" name="cargoNature" value ="${cargoNature!''}">
-	                                        </div>
+                                             	</div>
+                                             	<div class="form-group">
+		                                        	<label>配送仓库：</label><lable>${warehouse.WAREHOUSE_NAME!''}</lable>
+		                                        	<input type="hidden" id="warehouse_id" name="warehouse_id" value ="${warehouse.id!''}">
+		                                        </div>
+		                                        <div class="form-group">
+		                                            <%
+		                                            	var cargoNaturName="ATM";
+		                                            	if(cargoNature=="cargo")
+		                                            		cargoNaturName="普通货品";
+		                                            %>
+		                                        	<label>货品属性：</label><lable>${cargoNaturName}</lable>
+		                                        	<input type="hidden" id="cargoNature" name="cargoNature" value ="${cargoNature!''}">
+		                                        </div>
 	                                    </div>
 	                                    
 	                                 	<div class="col-lg-6">
                                  			<div>
                                  			<div id="tranferdiv">
 			                                    <h3> <label >运输单信息</label></h3>
-			                                    <input id="transferstatus" name="transferstatus" type="hidden" value="${transferOrder.status!''}">
-			                                   	<input id="transfer_id" name="transfer_id" type="hidden" value="${transferOrder.id!''}">
+			                                    <input id="transferstatus" name="transferstatus" type="hidden" value="${deliveryOrder.status!''}">
+			                                   	<input id="transfer_id" name="transfer_id" type="hidden" value="${deliveryOrder.id!''}">
 						                      <div class="form-group">
-						                          <label>运输单号：</label> ${transferOrder.order_no!''}
+						                          <label>运输单号：</label> ${deliveryOrder.order_no!''}
 						                      </div>
 						                      <div class="form-group">
-						                          <label>货品属性：</label> ${transferOrder.cargo_nature!''}
+						                          <label>货品属性：</label> ${deliveryOrder.cargo_nature!''}
 						                      </div>
 						                      <div class="form-group">
-						                          <label>提货方式:</label> ${transferOrder.pickup_mode!''}
+						                          <label>提货方式:</label> ${deliveryOrder.pickup_mode!''}
 						                      </div>
 						                      <div class="form-group">
-						                          <label>到达方式：</label> ${transferOrder. arrival_mode!''}
+						                          <label>到达方式：</label> ${deliveryOrder. arrival_mode!''}
 						                      </div> 
 						                      
 						                      <div class="panel-body"> </div>
 						                       
-						                  </div>
-						                  <div class="form-group">   
-	                                      		
-		                                        <h3><label >配送单信息</label></h3>
-		                                        <div class="form-group">
-		                                            <label>配送单号:</label>&nbsp;&nbsp;${deliveryOrder.order_no!''}
-		                                        </div>
-		                                        <div class="form-group">
-		                                            <label>配送状态:</label>&nbsp;&nbsp;${deliveryOrder.status!''}
-		                                        </div>
-		                                        <div class="panel-body"> </div>
-	                                      </div>
+						                      </div>
 						                      
-						                  <div>   
+						                      <div>   
 		                                        <h3><label >收货人信息</label></h3>
 		                                        <div class="form-group">
 		                                        	<input name="notify_id" type="hidden" value="${notifyParty.pid!''}">
@@ -189,7 +179,6 @@
 		                                            <input name="notify_phone" class="form-control" placeholder="请输入电话" value="${notifyParty.mobile!''}">
 		                                        </div>  
 	                                      </div> 
-	                                      
 					                      </div>
 	                                     </div> 
 					                </form>
