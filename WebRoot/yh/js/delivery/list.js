@@ -240,5 +240,5 @@ $(document).ready(function() {
 	          	var warehouse = $("#warehouse").val();
 	          	dataTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse;
 	          	dataTable.fnDraw();
-	        });
+	    	});
 });
