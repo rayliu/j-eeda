@@ -272,6 +272,7 @@ public class DeliveryController extends Controller {
 		System.out.println(id);
 		DeliveryOrder tOrder = DeliveryOrder.dao.findById(id);
 		setAttr("cargoNature", tOrder.get("cargo_nature"));
+		setAttr("deliveryOrder", tOrder);
 		List<Record> serIdList = Db
 				.find("select * from delivery_order_item where delivery_id ="
 						+ id);
@@ -281,7 +282,7 @@ public class DeliveryController extends Controller {
 			if (serIdList.get(0).get("transfer_item_detail_id") == null) {
 				TransferOrder transferOrder = TransferOrder.dao
 						.findById(serIdList.get(0).get("transfer_order_id"));
-				setAttr("deliveryOrder", transferOrder);
+				setAttr("transferOrder", transferOrder);
 			}
 		}
 
