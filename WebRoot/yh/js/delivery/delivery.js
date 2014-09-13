@@ -354,7 +354,7 @@ $(document).ready(function() {
 			/* $("#eeda-table2").on('click', '.creat', function(e){
 				 var id = $(this).attr('code');*/
 				
-			 
+		/*----------------------------------------------------------*/
 			// 发车确认
 				$("#ConfirmationBtn").click(function(){
 					// 浏览器启动时,停到当前位置
@@ -374,8 +374,10 @@ $(document).ready(function() {
 					$("#ConfirmationBtn").attr("disabled", true);
 					$("#receiptBtn").attr("disabled", false);
 					
+					paymenttable().fnDraw();
+					
 				});
-				
+		/*-----------------------------------------------------------------*/
 				// 运输里程碑
 				$("#transferOrderMilestoneList").click(function(e){
 					e.preventDefault();
