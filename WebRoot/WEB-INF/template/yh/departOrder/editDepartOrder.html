@@ -35,42 +35,55 @@
                                 <div class="tab-pane fade active in" id="basic">
                                 <div class="row">
                                    <form id="orderForm" method="post" action="">
-                               <div class="col-lg-6">
-                                <input class="" id="last_detail_size" value="${last_detail_size!''}" type="hidden">
-	                            <input class="" id="depart_id" value="${departOrder.id!''}" type="hidden" name="depart_id" >
-	                            <input class="" id="type" value="${type!''}" type="hidden" >
-	            				<input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
-	            				<input class="" id="tr_itemid_list" value="${tr_itemid!''}" type="hidden" name="tr_itemid_list">
-	            				<input class="" id="item_detail" value="${item_detail!''}" type="hidden" name="item_detail" >
-	                            <input class="" id="sp_id" value="${departOrder.sp_id!''}" type="hidden" name="sp_id" > 
-	                            <input class="" id="partySpId" value="${partySp.id!''}" type="hidden" name="partySpId" > 
-	                            <input class="" id="check_sh" value="${check_sh!''}" type="hidden" name="" >
-	                            <input type="hidden" name="order_no" value="${order_no!''}${departOrder.depart_no!''}"/>
-                               	<input type="hidden" name="status" value="${status!''}${departOrder.status!''}"/>
-                               	<input type="hidden" name="create_by" value="${create_by!''}${departOrder.create_by!''}"/>
-	                            <input id="carinfoId" type="hidden" name="carinfoId" value="${departOrder.carinfo_id!''}"/> 
-	                       		<input id="driver_id" type="hidden" name="driver_id" value="${departOrder.driver_id!''}"/>
-                                <input id="checkedDetail" type="hidden" name="checkedDetail"/>                                    	
-		                        <input id="uncheckedDetail" type="hidden" name="uncheckedDetail"/>
-		                        <input type="hidden" name="routeSp" value="${routeSp!''}"/>
+                                      <div class="col-lg-6">
+                                          <input class="" id="last_detail_size" value="${last_detail_size!''}" type="hidden">
+            	                            <input class="" id="depart_id" value="${departOrder.id!''}" type="hidden" name="depart_id" >
+            	                            <input class="" id="type" value="${type!''}" type="hidden" >
+                    	            				<input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
+                    	            				<input class="" id="tr_itemid_list" value="${tr_itemid!''}" type="hidden" name="tr_itemid_list">
+                    	            				<input class="" id="item_detail" value="${item_detail!''}" type="hidden" name="item_detail" >
+            	                            <input class="" id="sp_id" value="${departOrder.sp_id!''}" type="hidden" name="sp_id" > 
+            	                            <input class="" id="partySpId" value="${partySp.id!''}" type="hidden" name="partySpId" > 
+            	                            <input class="" id="check_sh" value="${check_sh!''}" type="hidden" name="" >
+            	                            <input type="hidden" name="order_no" value="${order_no!''}${departOrder.depart_no!''}"/>
+                                         	<input type="hidden" name="status" value="${status!''}${departOrder.status!''}"/>
+                                         	<input type="hidden" name="create_by" value="${create_by!''}${departOrder.create_by!''}"/>
+          	                              <input id="carinfoId" type="hidden" name="carinfoId" value="${departOrder.carinfo_id!''}"/> 
+          	                       		    <input id="driver_id" type="hidden" name="driver_id" value="${departOrder.driver_id!''}"/>
+                                          <input id="checkedDetail" type="hidden" name="checkedDetail"/>                                    	
+          		                            <input id="uncheckedDetail" type="hidden" name="uncheckedDetail"/>
+          		                            <input type="hidden" name="routeSp" value="${routeSp!''}"/>
                                    		   
-	                                         <div class="form-group">
+                                          <% var chargeType=departOrder.charge_type!'';%>
+	                                        <div class="form-group">
                                                  <label><h3>计费方式</h3></label>
                                                   <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType1" value="perUnit" checked="">计件
+                                                    <input type="radio" name="chargeType" id="chargeType1" value="perUnit" <% if(chargeType=='perUnit'){%>checked<%}%> >计件
                                                 </label>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType2" value="perCar">整车
+                                                    <input type="radio" name="chargeType" id="chargeType2" value="perCar" <% if(chargeType=='perCar'){%>checked<%}%> >整车
                                                 </label>  
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType3" value="perCargo">零担
+                                                    <input type="radio" name="chargeType" id="chargeType3" value="perCargo" <% if(chargeType=='perCargo'){%>checked<%}%> >零担
                                                 </label> 
-                                             </div>
-                                   		   <div class="form-group">
+                                          </div>
+                                          <% var ltlPriceType=departOrder.ltl_price_type!'';%>
+                                          <div class="form-group" id="ltl_price_type" <% if(chargeType!='perCargo'){%>style="display: none;"<%}%> >
+                                              <lable>零担计费方式:  </lable>
+                                              <label class="radio-inline">
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn1" value="perCBM" <% if(ltlPriceType=='perCBM'){%>checked<%}%>>按体积（每立方米）
+                                              </label>
+                                               <label class="radio-inline">
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn3" value="perKg" <% if(ltlPriceType=='perKg'){%>checked<%}%>>按重量（每公斤）
+                                              </label>
+                                              <label class="radio-inline">
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn2" value="perTon" <% if(ltlPriceType=='perTon'){%>checked<%}%>>按重量（每吨）
+                                              </label>
+                                          </div>
+                                   		    <div class="form-group">
                                                <h2>供应商信息</h2>
                                                <input type="text" value="${spContact.company_name!''}" name="spMessage" placeholder="选择供应商" class="form-control" id="spMessage">
-                                               <ul style="top: 35%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" id="spList">
-   											   </ul>   										
+                                               <ul style="top: 35%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" id="spList"></ul>   										
                                            </div>
                                            <div class="form-group">     
                                            	   <h5 id="pageSpName">${spContact.contact_person!''} ${spContact.phone!''}</h5><h5 id="pageSpAddress">${spContact.address!''}</h5>     

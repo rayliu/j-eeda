@@ -32,7 +32,15 @@
      }else if(last_detail_size=='true'){
      	$("#box_two").modal('show');
      }
-      
+     
+     $("input[name='chargeType']").click(function(){
+        if($('input[name="chargeType"]:checked').val()==='perCargo'){
+            $('#ltl_price_type').show();
+        }else{
+            $('#ltl_price_type').hide();
+        }
+     });
+
      // 列出所有的司机
    	 $('#driverMessage').on('keyup click', function(){
         var inputStr = $('#driverMessage').val();

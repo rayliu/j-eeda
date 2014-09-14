@@ -104,7 +104,7 @@ public class DataInitUtil {
             // 提货单/发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
                     + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,payment double,remark varchar(255), charge_type varchar(50), driver_id bigint,"
-                    + "foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id));");
+                    + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id));");
 
             // Depart_Order_fin_item 提货单/发车单应付明细
             stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, pickup_order_id bigint, fin_item_id bigint,"
@@ -227,9 +227,10 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,remark) values(4,1,'perUnit','200','440100','广州市','路线');");
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,remark) values(4,1,'perCar','300','440100','广州市','路线');");
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,cartype,amount,from_id,location_from,remark) values(4,1,'perCar','厢式车','350','440100','广州市','路线');");
-            // 干线供应商 计件收费，整车收费定义
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 1,'perUnit','10000','440100','广州市','110100','北京市','干线路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 2,'perCar','8888','440100','广州市','110100','北京市','干线路线');");
+            // 干线供应商 计件收费，整车收费，零担收费  定义
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 1,'perUnit','10000','440100','广州市','110100','北京市','计件');");
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 2,'perCar','8888','440100','广州市','110100','北京市','整车');");
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id, pricetype, ltlunittype, amount,from_id,location_from,to_id,location_to,remark) values(6, 1, 'perCargo', 'perCBM', '11000','440100','广州市','110100','北京市','零担');");
 
             // 定义配送供应商 济南骏运展达物流运输有限公司 配送 没有目的地 任意提货路线都收取1000
             stmt.executeUpdate("insert into contract_item(contract_id,pricetype,amount,remark) values('5','perUnit','1000','省内任意提货路线');");
