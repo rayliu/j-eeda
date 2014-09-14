@@ -230,8 +230,10 @@ public class DataInitUtil {
             // 干线供应商 计件收费，整车收费，零担收费  定义
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 1,'perUnit','10000','440100','广州市','110100','北京市','计件');");
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 2,'perCar','8888','440100','广州市','110100','北京市','整车');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id, pricetype, ltlunittype, amount,from_id,location_from,to_id,location_to,remark) values(6, 1, 'perCargo', 'perCBM', '11000','440100','广州市','110100','北京市','零担');");
-
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id, pricetype, ltlunittype, amount,from_id,location_from,to_id,location_to, amountfrom, amountto, remark) values(6, 1, 'perCargo', 'perCBM', '100','440100','广州市','110100','北京市', 0, 100, '零担-按立方');");
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id, pricetype, ltlunittype, amount,from_id,location_from,to_id,location_to, amountfrom, amountto, remark) values(6, 1, 'perCargo', 'perKg', '101','440100','广州市','110100','北京市', 0, 50, '零担-按公斤');");
+            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id, pricetype, ltlunittype, amount,from_id,location_from,to_id,location_to, amountfrom, amountto, remark) values(6, 1, 'perCargo', 'perTon', '5002','440100','广州市','110100','北京市', 0, 1, '零担-按吨');");
+            
             // 定义配送供应商 济南骏运展达物流运输有限公司 配送 没有目的地 任意提货路线都收取1000
             stmt.executeUpdate("insert into contract_item(contract_id,pricetype,amount,remark) values('5','perUnit','1000','省内任意提货路线');");
             // 定义配送供应商 济南骏运展达物流运输有限公司 配送 只有目的地 北京市东城区，这条线收1001
