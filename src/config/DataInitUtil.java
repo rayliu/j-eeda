@@ -386,6 +386,11 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type) values('ATM', '7', '12', 'YS2014042600005', '3', '2', '新建', '2014-04-22 16:28:35.1', 'delivery','东莞','110108','440507','1','arrangementOrder','provinceOut','1','out_source');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,warehouse_id,office_id,order_type,customer_province,operation_type) values('ATM', '9', '13', 'YS2014042600006', '3', '3', '已签收', '2014-04-24 16:58:35.1', 'gateIn','东莞','110109','440511','2','2','arrangementOrder','provinceIn','out_source');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,warehouse_id,office_id,order_type,customer_province,operation_type) values('ATM', '10', '12', 'YS2014042600007', '3', '3', '已入库', '2014-04-24 16:58:35.1', 'gateIn','广州','','','1','3','arrangementOrder','provinceOut','out_source');");
+            
+            //这张是做给普通货品的（无单品）
+            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type, charge_type, pickup_mode) "
+                    + "values('cargo', 4, '13', 'YS2014042600008', '4', 1, '新建', CURRENT_TIMESTAMP(), 'gateIn','中山', 4,'440100','110100','3','salesOrder','provinceIn','own','perCBM','routeSP');");
+            
             stmt.executeUpdate("insert into transfer_order_item(amount,order_id,product_id) " + "values(2, 1, 1);");
             // 货品明细
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc, amount,unit,volume,weight,remark,order_id, size,width,height) "
@@ -412,6 +417,10 @@ public class DataInitUtil {
                     + "values('12222', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','5');");
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('12aa', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','7');");
+            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                    + "values('SONY30329', 'SONY-电视1', 'SONY电视','2','台','2','50','普通货品', 8);");
+            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                    + "values('SONY30330', 'SONY-电视2', 'SONY电视','2','台','2','60','普通货品', 8);");
 
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
                     + "values('1','fdgh1265985','10000', 'ATM', true,'1','9');");
