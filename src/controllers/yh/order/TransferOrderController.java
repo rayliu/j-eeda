@@ -1051,8 +1051,4 @@ public class TransferOrderController extends Controller {
     	}
         renderJson("{\"success\":true}");
     }
-    
-    
-    
-    
 }

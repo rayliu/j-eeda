@@ -1,6 +1,8 @@
 package controllers.yh.returnOrder;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -283,6 +285,9 @@ public class ReturnOrderController extends Controller {
 		UserLogin userLoginTo = UserLogin.dao.findById(transferOrder
 				.get("create_by"));
 		setAttr("userLoginTo", userLoginTo);
+		List<Record> receivableItemList = Collections.EMPTY_LIST;
+        receivableItemList = Db.find("select * from fin_item where type='应收'");
+        setAttr("receivableItemList", receivableItemList);
 		if (LoginUserController.isAuthenticated(this))
 			render("returnOrder/returnOrder.html");
 	}
@@ -511,57 +516,6 @@ public class ReturnOrderController extends Controller {
 		ReturnOrder re = ReturnOrder.dao.findById(id);
 		re.set("TRANSACTION_STATUS", "cancel").update();
 		renderJson("{\"success\":true}");
-	}
-
-	// 应收list
-	public void accountReceivable() {
-		String id = getPara();
-		ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
-
-		String sLimit = "";
-		if (id == null || id.equals("")) {
-			Map orderMap = new HashMap();
-			orderMap.put("sEcho", 0);
-			orderMap.put("iTotalRecords", 0);
-			orderMap.put("iTotalDisplayRecords", 0);
-			orderMap.put("aaData", null);
-			renderJson(orderMap);
-			return;
-		}
-		String pageIndex = getPara("sEcho");
-		if (getPara("iDisplayStart") != null
-				&& getPara("iDisplayLength") != null) {
-			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-					+ getPara("iDisplayLength");
-		}
-
-		// 获取总条数
-		String totalWhere = "";
-		String sql = "select count(1) total from transfer_order_fin_item where order_id ='"
-				+ returnOrder.get("transfer_order_id") + "' ";
-		Record rec = Db.findFirst(sql + totalWhere);
-		logger.debug("total records:" + rec.getLong("total"));
-
-		// 获取当前页的数据
-		List<Record> orders = Db
-				.find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id ='"
-						+ returnOrder.get("transfer_order_id")
-						+ "' and f.type='应收'");
-
-		Map orderMap = new HashMap();
-		orderMap.put("sEcho", pageIndex);
-		orderMap.put("iTotalRecords", rec.getLong("total"));
-		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
-		orderMap.put("aaData", orders);
-
-		List<Record> list = Db.find("select * from fin_item");
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).get("name") == null) {
-				Fin_item.dao.deleteById(list.get(i).get("id"));
-			}
-		}
-		renderJson(orderMap);
 	}
 
 	public void transferOrderDetailList() {
