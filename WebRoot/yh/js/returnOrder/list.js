@@ -21,8 +21,6 @@
             { "mDataProp": "CREATOR_NAME" },
             { "mDataProp": "CREATE_DATE" },
             { "mDataProp": "RECEIPT_DATE" },
-            { "mDataProp": "FROMNAME" },
-            { "mDataProp": "TONAME" },
             { "mDataProp": "TRANSACTION_STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new')
