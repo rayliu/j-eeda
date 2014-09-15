@@ -646,9 +646,9 @@
 		 var hideWarehouseId = $("#hideWarehouseId").val();
 			for(var i=0; i<data.length; i++){
 				 if(data[i].ID == hideWarehouseId){
-					 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");					 
+					 gateInSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");					 
 				 }else{
-					 gateInSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+					 gateInSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
 				 }
 			}
 		}

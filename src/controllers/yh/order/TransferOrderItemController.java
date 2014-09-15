@@ -7,6 +7,7 @@ import java.util.Map;
 
 import models.Party;
 import models.Product;
+import models.TransferOrder;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.yh.profile.Contact;
@@ -95,6 +96,7 @@ public class TransferOrderItemController extends Controller {
         String returnValue = "";
         String id = getPara("id");
         TransferOrderItem item = TransferOrderItem.dao.findById(id);
+        TransferOrder transferOrder = TransferOrder.dao.findById(item.get("order_id"));
         Product product = null;
         String item_no = getPara("item_no");
         String item_name = getPara("item_name");
@@ -131,7 +133,13 @@ public class TransferOrderItemController extends Controller {
             } else if (!"".equals(amount) && amount != null) {
                 item.set("amount", amount).update();
                 if (amount != null && !"".equals(amount)) {
-                    saveTransferOrderDetail(item, productId);
+                	if("cargo".equals(transferOrder.get("cargo_nature"))){
+                		if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
+                			saveTransferOrderDetail(item, productId, Double.parseDouble(amount));                    		
+                    	}
+                	}else{                		
+                		saveTransferOrderDetail(item, productId, Double.parseDouble(amount));
+                	}
                 }
                 returnValue = amount;
             } else if (!"".equals(unit) && unit != null) {
@@ -150,10 +158,32 @@ public class TransferOrderItemController extends Controller {
                 item.set("remark", remark).update();
                 returnValue = remark;
             } else if (!"".equals(amount) && amount != null) {
+            	if(item.get("amount") != null && !"".equals(item.get("amount"))){
+            		if("cargo".equals(transferOrder.get("cargo_nature"))){
+                		if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
+                			saveTransferOrderDetail(item, productId, Double.parseDouble(amount));                    		
+                    	}
+                	}else{ 
+	            		Double doubleAmount = Double.parseDouble(amount);
+	            		double result = new Double(item.getDouble("amount") -doubleAmount).doubleValue();
+	                    if(Math.abs(result)>0){
+	                    	Double oldAmount = item.getDouble("amount");
+	                    	Double subtractAmount = doubleAmount - oldAmount;
+	                    	saveTransferOrderDetail(item, productId, subtractAmount);    
+	                    }
+                	}
+            	}else{
+	                if (amount != null && !"".equals(amount)) {
+	                	if("cargo".equals(transferOrder.get("cargo_nature"))){
+	                		if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
+	                			saveTransferOrderDetail(item, productId, Double.parseDouble(amount));                    		
+	                    	}
+	                	}else{                		
+	                		saveTransferOrderDetail(item, productId, Double.parseDouble(amount));
+	                	}
+	                }
+            	}
                 item.set("amount", amount).update();
-                if (amount != null && !"".equals(amount)) {
-                    saveTransferOrderDetail(item, productId);
-                }
                 returnValue = amount;
             }
         }
@@ -264,7 +294,7 @@ public class TransferOrderItemController extends Controller {
             item.set("order_id", getPara("transfer_order_id"));
             item.save();
             if (amount != null && !"".equals(amount)) {
-                saveTransferOrderDetail(item, productId);
+                saveTransferOrderDetail(item, productId, Double.parseDouble(amount));
             }
         }
         Product product = Product.dao.findById(productId);
@@ -280,34 +310,41 @@ public class TransferOrderItemController extends Controller {
     }
     
     // 保存货品同时保存单品
-    private void saveTransferOrderDetail(TransferOrderItem item, Long productId) {
+    private void saveTransferOrderDetail(TransferOrderItem item, Long productId, Double amount) {
         TransferOrderItemDetail transferOrderItemDetail = null;
-        Integer amount = Integer.parseInt(item.getStr("amount"));
-        if (productId == null || "".equals(productId)) {
-            for (int i = 0; i < amount; i++) {
-                transferOrderItemDetail = new TransferOrderItemDetail();
-                transferOrderItemDetail.set("item_name", item.get("item_name"));
-                transferOrderItemDetail.set("item_no", item.get("item_no"));
-                transferOrderItemDetail.set("volume", item.get("volume"));
-                transferOrderItemDetail.set("weight", item.get("weight"));
-                transferOrderItemDetail.set("item_id", item.get("id"));
-                transferOrderItemDetail.set("order_id", item.get("order_id"));
-                saveNotifyParty(transferOrderItemDetail);
-                transferOrderItemDetail.save();
-            }
-        } else {
-            Product product = Product.dao.findById(productId);
-            for (int i = 0; i < amount; i++) {
-                transferOrderItemDetail = new TransferOrderItemDetail();
-                transferOrderItemDetail.set("item_name", product.get("item_name"));
-                transferOrderItemDetail.set("item_no", product.get("item_no"));
-                transferOrderItemDetail.set("volume", product.get("volume"));
-                transferOrderItemDetail.set("weight", product.get("weight"));
-                transferOrderItemDetail.set("item_id", item.get("id"));
-                transferOrderItemDetail.set("order_id", item.get("order_id"));
-                saveNotifyParty(transferOrderItemDetail);
-                transferOrderItemDetail.save();
-            }
+        if(amount > 0){
+	        if (productId == null || "".equals(productId)) {
+	            for (int i = 0; i < amount; i++) {
+	                transferOrderItemDetail = new TransferOrderItemDetail();
+	                transferOrderItemDetail.set("item_name", item.get("item_name"));
+	                transferOrderItemDetail.set("item_no", item.get("item_no"));
+	                transferOrderItemDetail.set("volume", item.get("volume"));
+	                transferOrderItemDetail.set("weight", item.get("weight"));
+	                transferOrderItemDetail.set("item_id", item.get("id"));
+	                transferOrderItemDetail.set("order_id", item.get("order_id"));
+	                saveNotifyParty(transferOrderItemDetail);
+	                transferOrderItemDetail.save();
+	            }
+	        } else {
+	            Product product = Product.dao.findById(productId);
+	            for (int i = 0; i < amount; i++) {
+	                transferOrderItemDetail = new TransferOrderItemDetail();
+	                transferOrderItemDetail.set("item_name", product.get("item_name"));
+	                transferOrderItemDetail.set("item_no", product.get("item_no"));
+	                transferOrderItemDetail.set("volume", product.get("volume"));
+	                transferOrderItemDetail.set("weight", product.get("weight"));
+	                transferOrderItemDetail.set("item_id", item.get("id"));
+	                transferOrderItemDetail.set("order_id", item.get("order_id"));
+	                saveNotifyParty(transferOrderItemDetail);
+	                transferOrderItemDetail.save();
+	            }
+	        } 
+        }else{
+        	amount = Math.abs(amount);
+        	List<TransferOrderItemDetail> details = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = ? and item_id = ? order by id desc limit 0,?", item.get("order_id"), item.get("id"), amount);
+        	for(TransferOrderItemDetail detail : details){
+        		detail.delete();
+        	}
         }
     }
 

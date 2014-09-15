@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
-import models.DepartOrderFinItem;
 import models.DepartTransferOrder;
 import models.Fin_item;
 import models.Location;
@@ -356,6 +355,7 @@ public class TransferOrderController extends Controller {
         String customerId = getPara("customer_id");
         String spId = getPara("sp_id");
         TransferOrder transferOrder = null;
+        String cargoNature = getPara("cargoNature");
         if (order_id == null || "".equals(order_id)) {
             transferOrder = new TransferOrder();
             if (!"".equals(spId) && spId != null) {
@@ -365,7 +365,10 @@ public class TransferOrderController extends Controller {
             transferOrder.set("status", getPara("status"));
             transferOrder.set("order_no", getPara("order_no"));
             transferOrder.set("create_by", getPara("create_by"));
-            transferOrder.set("cargo_nature", getPara("cargoNature"));
+            if("cargo".equals(cargoNature)){
+            	transferOrder.set("cargo_nature_detail", getPara("cargoNatureDetail"));            	
+            }
+            transferOrder.set("cargo_nature", cargoNature);
             transferOrder.set("operation_type", getPara("operationType"));
             transferOrder.set("arrival_mode", getPara("arrivalMode"));
             transferOrder.set("address", getPara("address"));
@@ -418,6 +421,9 @@ public class TransferOrderController extends Controller {
             transferOrder.set("customer_id", customerId);
             transferOrder.set("order_no", getPara("order_no"));
             transferOrder.set("create_by", getPara("create_by"));
+            if("cargo".equals(cargoNature)){
+            	transferOrder.set("cargo_nature_detail", getPara("cargoNatureDetail"));            	
+            }
             transferOrder.set("cargo_nature", getPara("cargoNature"));
             transferOrder.set("operation_type", getPara("operationType"));
             transferOrder.set("arrival_mode", getPara("arrivalMode"));

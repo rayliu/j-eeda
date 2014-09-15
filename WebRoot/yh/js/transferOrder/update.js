@@ -746,20 +746,29 @@ $(document).ready(function() {
 		},'json');
     });
     
-    // 当arrivalMode1为货品直送时则显示收货人的信息
-    $("#arrivalModes").on('click', 'input', function(){
+    // 当cargoNature2为为普通货品是需要知道是否需要单品
+    $("#cargoNatures").on('click', 'input', function(){
   	  console.log(this);
   	  var inputId  = $(this).attr('id');
-	  if(inputId=='arrivalMode1'){
-		 $("#contactInformation").show();
-		 $("#warehousingConfirmBtn").attr("disabled", true);
-		 $("#gateInSelect").hide();
-		 $("#warehousingConfirmBtn").attr("disabled", true);
-	  }else{
-		 $("#contactInformation").hide();
-		 $("#gateInSelect").show();
-	  } 
+	  if(inputId=='cargoNature2'){
+		 $("#cargoNatureDetailSpan").show();
+	  }
   	});    
+    
+    // 当arrivalMode1为货品直送时则显示收货人的信息
+    $("#arrivalModes").on('click', 'input', function(){
+    	console.log(this);
+    	var inputId  = $(this).attr('id');
+    	if(inputId=='arrivalMode1'){
+    		$("#contactInformation").show();
+    		$("#warehousingConfirmBtn").attr("disabled", true);
+    		$("#gateInSelect").hide();
+    		$("#warehousingConfirmBtn").attr("disabled", true);
+    	}else{
+    		$("#contactInformation").hide();
+    		$("#gateInSelect").show();
+    	} 
+    });    
 						
 	/*// 发车确认
 	$("#departureConfirmationBtn").click(function(){
