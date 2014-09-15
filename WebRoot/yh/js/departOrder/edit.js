@@ -574,12 +574,29 @@
     			//异步向后台提交数据
     	        saveDepartOrderFunction();
     	    };    	       	    
-    	    
+    	    /*------------------------------------------------------*/
     	    //编辑保存
     	    $("#saveDepartOrderBtn").click(function(e){
+    	    	e.preventDefault();
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
-    	    		clickSaveDepartOrder(e);
-    	    	}
+    	    		
+    	    		var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
+			                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+			                    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+			                    '</div>';
+				   	 $('body').append(alerMsg);
+				   	 
+				   	 $('#message_trigger_err').on('click', function(e) {
+				   		 e.preventDefault();
+				   	 });
+				   	 clickSaveDepartOrder(e);
+				   	 
+				   	 $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+				   	
+				   
+				   
+				   	 
+    	    	} 
     	    });
     	    
     	    // 点击货品信息
