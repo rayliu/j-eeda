@@ -490,7 +490,7 @@ public class DeliveryController extends Controller {
 	}
 
 	// 获取运输单普通货品list
-	public void SearchTransfer() {
+	public void searchTransfer() {
 		String deliveryOrderNo = getPara("deliveryOrderNo1");
 		String customerName = getPara("customerName1");
 		String orderStatue = getPara("orderStatue1");
@@ -504,19 +504,24 @@ public class DeliveryController extends Controller {
 					+ getPara("iDisplayLength");
 		}
 		Map transferOrderListMap = new HashMap();
+		String sqlTotal = "select count(1) total from inventory_item ii "
+                +" left join product pro on ii.product_id = pro.id "
+                +" left join warehouse w on ii.warehouse_id = w.id "
+                +" left join party p on ii.party_id = p.id "
+                +" left join contact c  on p.contact_id = c.id ";
+		
+		String sql = "select ii.total_quantity, ii.product_id, ii.party_id , pro.*, w.warehouse_name, c.company_name from inventory_item ii "
+                +" left join product pro on ii.product_id = pro.id "
+                +" left join warehouse w on ii.warehouse_id = w.id "
+                +" left join party p on ii.party_id = p.id "
+                +" left join contact c  on p.contact_id = c.id ";
+		
 		if (deliveryOrderNo == null && customerName == null
 				&& orderStatue == null && warehouse == null) {
-			String sqlTotal = "select count(1) total from transfer_order t "
-					+ "left join warehouse w on t.warehouse_id = w.id "
-					+ "where t.status='已入库' and t.cargo_nature='cargo'";
+			
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
-
-			String sql = "select t.*,w.warehouse_name,c.company_name from transfer_order t "
-					+ "left join warehouse w on t.warehouse_id = w.id "
-					+ "left join party p on t.customer_id = p.id "
-					+ "left join contact c  on p.contact_id = c.id "
-					+ "where t.status='已入库' and t.cargo_nature='cargo'";
+			
 			List<Record> transferOrders = Db.find(sql);
 
 			transferOrderListMap.put("sEcho", pageIndex);
@@ -525,30 +530,12 @@ public class DeliveryController extends Controller {
 					rec.getLong("total"));
 			transferOrderListMap.put("aaData", transferOrders);
 		} else {
-			String sqlTotal = "select count(1) total from transfer_order t "
-					+ "left join warehouse w on t.warehouse_id = w.id "
-					+ "where t.status='已入库' and t.cargo_nature='cargo'";
-			Record rec = Db.findFirst(sqlTotal);
+			String sqlFilter = "where ifnull(w.warehouse_name,'') like '%" + warehouse + "%'"
+                    + "and ifnull(c.company_name,'') like '%" + customerName + "%'";
+			Record rec = Db.findFirst(sqlTotal+sqlFilter);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select t.*,w.warehouse_name,c.company_name from transfer_order t "
-					+ "left join warehouse w on t.warehouse_id = w.id "
-					+ "left join party p on t.customer_id = p.id "
-					+ "left join contact c  on p.contact_id = c.id "
-					+ "where t.status='已入库' and t.cargo_nature='cargo' "
-					+ "and ifnull(t.order_no,'') like '%"
-					+ deliveryOrderNo
-					+ "%'"
-					+ "and ifnull(w.warehouse_name,'') like '%"
-					+ warehouse
-					+ "%'"
-					+ "and ifnull(c.company_name,'') like '%"
-					+ customerName
-					+ "%'"
-					+ "and ifnull(t.status,'') like '%"
-					+ orderStatue
-					+ "%'";
-			List<Record> transferOrders = Db.find(sql);
+			List<Record> transferOrders = Db.find(sql+sqlFilter);
 
 			transferOrderListMap.put("sEcho", pageIndex);
 			transferOrderListMap.put("iTotalRecords", rec.getLong("total"));

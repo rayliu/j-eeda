@@ -597,8 +597,8 @@
     	    	} 
     	    });
     	    
-    	    //点击应付的时候发生的事情
-    	    $("#arap").click(function(e){
+    	    //点击应付的时候发生的事情   这里有保存的事件???
+    	    $("#arap1").click(function(e){
     	    	e.preventDefault();
 	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
     	    });

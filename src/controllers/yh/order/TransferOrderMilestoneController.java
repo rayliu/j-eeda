@@ -382,6 +382,7 @@ public class TransferOrderMilestoneController extends Controller {
     	String departOrderId = getPara("departOrderId");
     	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departOrderId);
     	for(DepartTransferOrder departTransferOrder : departTransferOrders){
+    	    //这里只能算单品的总数
     		String sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id");
     		Record rec = Db.findFirst(sqlTotal);
     		Long total = rec.getLong("total");

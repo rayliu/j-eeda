@@ -172,38 +172,23 @@ $(document).ready(function() {
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
-		        "sAjaxSource": "/yh/delivery/SearchTransfer",
-		        "aoColumns": [   
-		  		            {"mDataProp":"ORDER_NO"},
-		  		            {"mDataProp":"STATUS"},
-		  		            {"mDataProp":"CARGO_NATURE",
-		  		            	"fnRender": function(obj) {
-		  		            		if(obj.aData.CARGO_NATURE == "ATM"){
-		  		            			return "ATM";
-		  		            		}else{
-		  		            			return "普通货品";
-		  		            		}}
-		  		            },        	
-		  		            {"mDataProp":"PICKUP_MODE",
-		  		            	"fnRender": function(obj) {
-		  		            		if(obj.aData.PICKUP_MODE == "routeSP"){
-		  		            			return "干线供应商自提";
-		  		            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
-		  		            			return "外包供应商提货";
-		  		            		}else{
-		  		            			return "源鸿自提";
-		  		            		}}},
-		  		            { "mDataProp": "WAREHOUSE_NAME",},
+		        "sAjaxSource": "/yh/delivery/searchTransfer",
+		        "aoColumns": [ 
+		        			{ "mDataProp": null,
+							    "fnRender": function(obj) {
+							       return '<input type="checkbox" class="checkedOrUnchecked" code3='+obj.aData.CUSTOMER_ID+' name="order_check_box" value="'+obj.aData.ID+'">';
+							    }
+							},   
+		  		            {"mDataProp":"ITEM_NO"},
+		  		            {"mDataProp":"ITEM_NAME"},
+		  		            {"mDataProp":"WAREHOUSE_NAME"},
 		  		            {"mDataProp":"COMPANY_NAME"},
-		  		          {"mDataProp":null},
+		  		            {"mDataProp":"TOTAL_QUANTITY"},
 		  		            { 
 		  		                "mDataProp": null, 
 		  		                "sWidth": "8%",                
 		  		                "fnRender": function(obj) {                    
-		  		                    return "<a class='btn btn-info creat' code='"+obj.aData.ID+"' pcode='"+obj.aData.ORDER_NO+"'>"+
-		  		                    		"<i class='fa fa-list fa-fw'> </i> "+
-		  		                    		"创建"+
-		  		                    		"</a>";
+		  		                    return "<input type='text'>";
 		  		                }
 		  		            }                         
 		  		        ]     
@@ -495,12 +480,10 @@ $(document).ready(function() {
 			 	     }
 			    }) ;*/
 				
-				$("#deliveryOrderNo1,#customerName1,#orderStatue1,#warehouse1").on('keyup click', function () {    	 	
-			      	var deliveryOrderNo1 = $("#deliveryOrderNo1").val();
+				$("#deliveryOrderNo1,#customerName1,#orderStatue1,#warehouse1").on('keyup click', function () {
 			      	var customerName1 = $("#customerName1").val();
-			    	var orderStatue1 = $("#orderStatue1").val();
 			      	var warehouse1 = $("#warehouse1").val();    	
-			      	dab2.fnSettings().sAjaxSource = "/yh/delivery/SearchTransfer?deliveryOrderNo1="+deliveryOrderNo1+"&customerName1="+customerName1+"&orderStatue1="+orderStatue1+"&warehouse1="+warehouse1;
+			      	dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
 			      	dab2.fnDraw();
 			      });
 				$("#deliveryOrderNo2,#customerName2,#orderStatue2,#warehouse2").on('keyup click', function () {    	 	
