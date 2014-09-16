@@ -506,6 +506,7 @@
     	    $("#transferOrderMilestoneList").click(function(e){
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
     	    		clickSaveDepartOrder(e);
+    	    		
     	    	}
     			$.post('/yh/departOrder/transferOrderMilestoneList',{departOrderId:$("#departOrderId").val()},function(data){
     				var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
@@ -515,6 +516,7 @@
     					transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
     				}
     			},'json');
+    			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
     		});
     	    
     	    // 保存新里程碑
@@ -574,35 +576,38 @@
     			//异步向后台提交数据
     	        saveDepartOrderFunction();
     	    };    	       	    
-    	    /*------------------------------------------------------*/
+    	    /*--------------------------------------------------------------------*/
+    	    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
+    	        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+    	        'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+    	        '</div>';
+    	    $('body').append(alerMsg);
+
+    	    $('#message_trigger_err').on('click', function(e) {
+    	    	e.preventDefault();
+    	    });
+    	    /*--------------------------------------------------------------------*/
     	    //编辑保存
     	    $("#saveDepartOrderBtn").click(function(e){
     	    	e.preventDefault();
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
-    	    		
-    	    		var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
-			                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
-			                    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
-			                    '</div>';
-				   	 $('body').append(alerMsg);
-				   	 
-				   	 $('#message_trigger_err').on('click', function(e) {
-				   		 e.preventDefault();
-				   	 });
-				   	 clickSaveDepartOrder(e);
-				   	 
-				   	 $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-				   	
-				   
-				   
-				   	 
+				   	clickSaveDepartOrder(e);
+				   	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	 
     	    	} 
     	    });
     	    
+    	    //点击应付的时候发生的事情
+    	    $("#arap").click(function(e){
+    	    	e.preventDefault();
+	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+    	    });
     	    // 点击货品信息
     	    $("#departOrderItemList").click(function(e){
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
+    	    		
     	    		clickSaveDepartOrder(e);
+    	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
     	    	} 
     	    });
     	    

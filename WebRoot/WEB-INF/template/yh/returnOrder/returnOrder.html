@@ -1,5 +1,5 @@
 <%layout("/yh/layout.html"){%>
-
+<link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
         <div id="page-wrapper">
             <div class="row">
            
@@ -29,9 +29,9 @@
                             <ul class="nav nav-tabs">
                                 <li class="active"><a href="#basic" data-toggle="tab">基本信息</a>
                                 </li>
-                                <li class=""><a href="#cargos" data-toggle="tab">货品明细</a>
+                                <li class=""><a href="#cargos" data-toggle="tab" id = "returnOrderItemList">货品明细</a>
                                 </li>
-                                <li class=""><a href="#arap" data-toggle="tab">应收</a>
+                                <li class=""><a href="#arap" data-toggle="tab" id = "returnOrderPayment">应收</a>
                                 </li>
                             </ul>
 
@@ -232,3 +232,4 @@
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script src="/yh/js/returnOrder/edit.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>

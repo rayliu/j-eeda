@@ -1,5 +1,6 @@
 ﻿<%layout("/yh/layout.html"){%>
  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+ <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
  <div id="page-wrapper">
   
     <div class="row">
@@ -24,11 +25,11 @@
 	            <ul class="nav nav-tabs">
 	                <li class="active"><a href="#basic" data-toggle="tab">基本信息</a>
 	                </li>
-	                <li class=""><a href="#cargos" data-toggle="tab">货品明细</a>
+	                <li class=""><a href="#cargos" data-toggle="tab" id ="departOrderItemList">货品明细</a>
 	                </li>
 	                <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">运输里程碑</a>
                      </li>
-                     <li class=""><a href="#arap" data-toggle="tab">应付</a>
+                     <li class=""><a href="#arap" data-toggle="tab" id = "arap">应付</a>
                      </li>
 	            </ul>
 	            <div class="tab-content">
@@ -380,4 +381,6 @@
 <!-- 引入校验的js 文件及其 中文 文件-->
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
+
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 <script src="/yh/js/delivery/delivery.js"></script>

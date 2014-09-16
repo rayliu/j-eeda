@@ -100,6 +100,27 @@
 		detailDataTable.fnDraw();  
 	});
 
+	/*--------------------------------------------------------------------*/
+	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
+	    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+	    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+	    '</div>';
+	$('body').append(alerMsg);
+
+	$('#message_trigger_err').on('click', function(e) {
+		e.preventDefault();
+	});
+	
+	$("#returnOrderItemList").click(function(e){
+		e.preventDefault();
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	});
+	$("#returnOrderPayment").click(function(e){
+		e.preventDefault();
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	});
+	/*--------------------------------------------------------------------*/
+	
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
  	$("#saveReturnOrderBtn").click(function(e){
@@ -108,7 +129,8 @@
 		//异步向后台提交数据
     	$.post('/yh/returnOrder/save', $("#returnOrderForm").serialize(), function(returnOrder){
 			if(returnOrder.ID>0){
-			  	$("#style").show();	             
+			  	$("#style").show();
+			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			}else{
 				alert('数据保存失败。');
 			}

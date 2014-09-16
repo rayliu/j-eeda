@@ -115,8 +115,27 @@ $('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
 	//productDataTable.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist?categoryId="+partyId;
 	//productDataTable.fnDraw();
 	$('#warehouseList').hide();
-}); 
-
+});
+/*--------------------------------------------------------------------*/
+	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
+				'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+				'</div>';
+	$('body').append(alerMsg);
+	
+	$('#message_trigger_err').on('click', function(e) {
+		e.preventDefault();
+	});
+	
+	$("#transferOrderMilestoneList").click(function(e){
+		e.preventDefault();
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	});
+	$("#transferOrderarap").click(function(e){
+		e.preventDefault();
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	});
+/*--------------------------------------------------------------------*/
 //保存出库单
  $("#saveInventoryBtn").click(function(e){
         //阻止a 的默认响应行为，不需要跳转	
@@ -130,6 +149,8 @@ $('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
          	$("#warehouseorderId").val(data);
          	$("#style").show();
          	$("#gateOutConfirmBtn").attr("disabled", false);
+         	
+         	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
          }else{
              alert('数据保存失败。');
          }
@@ -360,6 +381,6 @@ $("#gateOutConfirmBtn").click(function(){
 	 
 	 $("#transferOrderItemList").click(function(e){
 		 	$("#saveInventoryBtn").click();
-	    	
+		 	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	   });
 });

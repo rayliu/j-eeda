@@ -337,6 +337,28 @@ $(document).ready(function() {
 				$('#customerList').hide();
 		    }); */
 			
+		
+		/*--------------------------------------------------------------------*/
+		var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
+		    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+		    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+		    '</div>';
+		$('body').append(alerMsg);
+
+		$('#message_trigger_err').on('click', function(e) {
+			e.preventDefault();
+		});
+		/*--------------------------------------------------------------------*/
+		//运输里程碑
+		$("#transferOrderMilestoneList").click(function(e){
+			e.preventDefault();
+			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		});
+		$("#transferOrderarap").click(function(e){
+			e.preventDefault();
+			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			
+		});
 		 //保存入库单
 		 $("#saveInventoryBtn").click(function(e){
 	            //阻止a 的默认响应行为，不需要跳转	
@@ -350,6 +372,9 @@ $(document).ready(function() {
                  	$("#warehouseorderId").val(data);
                  	$("#style").show();
                  	$("#ConfirmBtn").attr("disabled", false);
+                 	
+                 	//有问题
+                 	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
                  }else{
                      alert('数据保存失败。');
                  }
@@ -372,6 +397,8 @@ $(document).ready(function() {
 		                	productDataTable2.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist/"+warehouseorderid;
 		                	productDataTable2.fnDraw();
 		                	$('#reset').click();
+		                	e.preventDefault();
+		        			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 		                }else{
 		                    alert('客户无产品,保存失败！。');
 		                }
@@ -399,6 +426,7 @@ $(document).ready(function() {
 		   
 		   $("#transferOrderItemList").click(function(e){
 			   $("#saveInventoryBtn").click();
+			   
 /*		    	if($("#warehouseorderId").val() == ''){
 			    	e.preventDefault();
 			    	
@@ -408,5 +436,8 @@ $(document).ready(function() {
 				       	return false; 
 			        
 		    	}
-*/		   });
+		    	
+*/		  
+			   $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		});
 });

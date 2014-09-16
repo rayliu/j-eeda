@@ -256,10 +256,22 @@
 		//异步向后台提交数据
         savePickupOrderFunction();
     };
-    
+    /*--------------------------------------------------------------------*/
+    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
+	    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+	    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+	    '</div>';
+	$('body').append(alerMsg);
+	
+	$('#message_trigger_err').on('click', function(e) {
+		e.preventDefault();
+	});
+	/*--------------------------------------------------------------------*/
 	//transferOrderForm 不需要提交	
  	$("#saveTransferOrderBtn").click(function(e){
+ 		e.preventDefault();
  		clickSavePickupOrder(e);
+ 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
         $("#finishBtn").attr('disabled', false);
 	});
    
@@ -284,6 +296,7 @@
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
@@ -322,6 +335,7 @@
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 		},'json');
 		$('#transferOrderMilestone').modal('hide');
+		
 	});
 	
 	var findAllAddress = function(){
@@ -390,6 +404,7 @@
 				}
 			},'json');
         }
+        $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	
 	var swapPosition = function(currentId,targetId,currentVal,targetVal){
@@ -513,6 +528,7 @@
 	
 	// 货品信息
 	$("#pickupOrderItemList").click(function(e){
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 		clickSavePickupOrder(e);
 	});
 
@@ -976,7 +992,9 @@
     });
 	
 	$("#pickupOrderPayment").click(function(e){
+		
  		clickSavePickupOrder(e);
+ 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  		pickupOrderPaymentTab.fnDraw();
  		paymenttable.fnDraw();
 	});

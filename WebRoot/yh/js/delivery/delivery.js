@@ -110,6 +110,19 @@ $(document).ready(function() {
 								 },
 		        ]      
 		    });	
+			
+			/*--------------------------------------------------------------------*/
+			var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
+			    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+			    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+			    '</div>';
+			$('body').append(alerMsg);
+
+			$('#message_trigger_err').on('click', function(e) {
+				e.preventDefault();
+			});
+			/*--------------------------------------------------------------------*/
+			
 			//添加配送单
 			$("#saveBtn").click(function(e){
 		        //阻止a 的默认响应行为，不需要跳转	
@@ -147,6 +160,7 @@ $(document).ready(function() {
                         alert('数据保存失败。');
                     }
 	             },'json');
+	            $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	        });
 			var dab2= $('#eeda-table2').dataTable({
 				"bFilter": false, //不需要默认的搜索框
@@ -378,6 +392,24 @@ $(document).ready(function() {
 					
 				});
 		/*-----------------------------------------------------------------*/
+				$("#arap").click(function(e){
+					e.preventDefault();
+					/*if(!$("#transferOrderForm").valid()){
+		        	alert("请先保存运输单!");
+			       	return false; 
+		        }*/
+					$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+				});
+				$("#departOrderItemList").click(function(e){
+					e.preventDefault();
+					/*if(!$("#transferOrderForm").valid()){
+		        	alert("请先保存运输单!");
+			       	return false; 
+		        	}*/
+					$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+					
+				});
+				/*-------------------------------------------------------------*/
 				// 运输里程碑
 				$("#transferOrderMilestoneList").click(function(e){
 					e.preventDefault();
@@ -412,7 +444,8 @@ $(document).ready(function() {
 									{
 										transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 									}
-								},'json');              
+								},'json');  
+								$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 							}else{
 								alert('数据保存失败。');
 							}
@@ -427,8 +460,10 @@ $(document).ready(function() {
 							{
 								transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 							}
-						},'json');     
+						},'json'); 
+						$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			        }
+			        
 				});
 			
 				// 保存新里程碑
