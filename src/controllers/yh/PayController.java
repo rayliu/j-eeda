@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import models.Toll;
 
 import com.jfinal.core.Controller;
@@ -22,9 +24,16 @@ public class PayController extends Controller {
          * setAttr("page", "收款条目定义"); } if(page.equals("付款")){
          * //System.out.print("没获取参数page"); setAttr("page", "付款条目定义"); }
          **/
-        if (LoginUserController.isAuthenticated(this))
-            render("profile/toll/PayList.html");
-
+        HttpServletRequest re = getRequest();
+        String url = re.getRequestURI();logger.debug("URI:" + url);
+        if (url.equals("/yh/pay")) {
+	        if (LoginUserController.isAuthenticated(this))
+	            render("profile/toll/PayList.html");
+        }
+        if (url.equals("/yh/pay")) {
+        	if (LoginUserController.isAuthenticated(this))
+        		render("profile/toll/PayList.html");
+        }
     }
 
     public void list() {

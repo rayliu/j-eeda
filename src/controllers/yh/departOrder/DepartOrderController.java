@@ -1621,6 +1621,9 @@ public class DepartOrderController extends Controller {
                                     + departId + " and order_id = " + transferOrder.get("id");
                             Record rec = Db.findFirst(sqlTotal);
                             Long amount = rec.getLong("total");
+                            if(amount == 0){
+                            	amount = Math.round(transferOrderItem.getDouble("amount"));
+                            }
                             if (inventoryItem == null) {
                                 inventoryItem = new InventoryItem();
                                 inventoryItem.set("party_id", transferOrder.get("customer_id"));
