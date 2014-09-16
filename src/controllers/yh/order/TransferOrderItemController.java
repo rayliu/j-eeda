@@ -131,16 +131,40 @@ public class TransferOrderItemController extends Controller {
                 item.set("weight", weight).update();
                 returnValue = weight;
             } else if (!"".equals(amount) && amount != null) {
-                item.set("amount", amount).update();
                 if (amount != null && !"".equals(amount)) {
-                	if("cargo".equals(transferOrder.get("cargo_nature"))){
+            		if("cargo".equals(transferOrder.get("cargo_nature"))){
                 		if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
-                			saveTransferOrderDetail(item, productId, Double.parseDouble(amount));                    		
+                			Double doubleAmount = Double.parseDouble(amount);
+    	            		Double doubleAmount2 = item.getDouble("amount")==null?0:item.getDouble("amount");
+    	            		double result = new Double(doubleAmount2 - doubleAmount).doubleValue();
+    	                    if(Math.abs(result)>0){
+    	                    	Double oldAmount = item.getDouble("amount")==null?0:item.getDouble("amount");
+    	                    	Double subtractAmount = doubleAmount - oldAmount;
+    	                    	saveTransferOrderDetail(item, productId, subtractAmount);    
+    	                    }               		
                     	}
-                	}else{                		
-                		saveTransferOrderDetail(item, productId, Double.parseDouble(amount));
+                	}else{ 
+	            		Double doubleAmount = Double.parseDouble(amount);
+	            		Double doubleAmount2 = item.getDouble("amount")==null?0:item.getDouble("amount");
+	            		double result = new Double(doubleAmount2 - doubleAmount).doubleValue();
+	                    if(Math.abs(result)>0){
+	                    	Double oldAmount = item.getDouble("amount")==null?0:item.getDouble("amount");
+	                    	Double subtractAmount = doubleAmount - oldAmount;
+	                    	saveTransferOrderDetail(item, productId, subtractAmount);    
+	                    }
                 	}
-                }
+            	}else{
+	                if (amount != null && !"".equals(amount)) {
+	                	if("cargo".equals(transferOrder.get("cargo_nature"))){
+	                		if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
+	                			saveTransferOrderDetail(item, productId, Double.parseDouble(amount));                    		
+	                    	}
+	                	}else{                		
+	                		saveTransferOrderDetail(item, productId, Double.parseDouble(amount));
+	                	}
+	                }
+            	}
+                item.set("amount", amount).update();
                 returnValue = amount;
             } else if (!"".equals(unit) && unit != null) {
                 item.set("unit", unit).update();
@@ -161,11 +185,17 @@ public class TransferOrderItemController extends Controller {
             	if(item.get("amount") != null && !"".equals(item.get("amount"))){
             		if("cargo".equals(transferOrder.get("cargo_nature"))){
                 		if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
-                			saveTransferOrderDetail(item, productId, Double.parseDouble(amount));                    		
+                			Double doubleAmount = Double.parseDouble(amount);
+    	            		double result = new Double(item.getDouble("amount") - doubleAmount).doubleValue();
+    	                    if(Math.abs(result)>0){
+    	                    	Double oldAmount = item.getDouble("amount");
+    	                    	Double subtractAmount = doubleAmount - oldAmount;
+    	                    	saveTransferOrderDetail(item, productId, subtractAmount);    
+    	                    }                 		
                     	}
                 	}else{ 
 	            		Double doubleAmount = Double.parseDouble(amount);
-	            		double result = new Double(item.getDouble("amount") -doubleAmount).doubleValue();
+	            		double result = new Double(item.getDouble("amount") - doubleAmount).doubleValue();
 	                    if(Math.abs(result)>0){
 	                    	Double oldAmount = item.getDouble("amount");
 	                    	Double subtractAmount = doubleAmount - oldAmount;
@@ -343,7 +373,11 @@ public class TransferOrderItemController extends Controller {
         	amount = Math.abs(amount);
         	List<TransferOrderItemDetail> details = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = ? and item_id = ? order by id desc limit 0,?", item.get("order_id"), item.get("id"), amount);
         	for(TransferOrderItemDetail detail : details){
+        		Party party = Party.dao.findById(detail.get("notify_party_id"));
+        		Contact contact = Contact.dao.findById(party.get("contact_id"));
+        		contact.delete();
         		detail.delete();
+        		party.delete();
         	}
         }
     }
