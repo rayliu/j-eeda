@@ -232,7 +232,8 @@
 													<label><input id="checkbox2" type="checkbox" name="checkbox" value="warehouseCheckbox">仓库</label>
 												</div>
 												<div id="warehouseDiv" class="form-group" style="display: none;">
-													<input id="hideWarehouseId" type="hidden" value="${pickupOrder.warehouse_id!''}" />     
+													<input id="hideWarehouseId" type="hidden" value="${pickupOrder.warehouse_id!''}" />  
+													<input id="replenishmentOrderId" type="hidden" value="${transferOrderAttr.warehouse_id!''}" />  
 	                                                <select id="gateInSelect" class="form-control" name="gateInSelect"></select>
                                                 </div>
 											</div>

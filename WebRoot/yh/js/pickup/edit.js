@@ -660,8 +660,9 @@
 		 var gateInSelect = $("#gateInSelect");
 		 gateInSelect.empty();
 		 var hideWarehouseId = $("#hideWarehouseId").val();
-			for(var i=0; i<data.length; i++){
-				 if(data[i].ID == hideWarehouseId){
+		 var WarehouseId = $("#replenishmentOrderId").val();
+		 for(var i=0; i<data.length; i++){
+				 if(data[i].ID == hideWarehouseId || data[i].ID == WarehouseId){
 					 gateInSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");					 
 				 }else{
 					 gateInSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
@@ -798,6 +799,13 @@
     if($("#transferOrderType").val() == 'replenishmentOrder'){
     	$("#checkbox2").prop('checked', true);
     	$("#warehouseDiv").show();
+    	//仓库不可变
+    	$("#gateInSelect").css({"cursor":"not-allowed",
+    		  "background-color":"#eee",
+    		  "opacity":1
+    		});
+    	$("#gateInSelect").attr("disabled","disabled");
+    	
     }if($("#transferOrderType").val() == 'salesOrder'){
     	$("#checkbox1").prop('checked', true);
     	$("#addressDiv").show();
