@@ -367,6 +367,8 @@ public class TransferOrderController extends Controller {
             transferOrder.set("create_by", getPara("create_by"));
             if("cargo".equals(cargoNature)){
             	transferOrder.set("cargo_nature_detail", getPara("cargoNatureDetail"));            	
+            }else{
+            	transferOrder.set("cargo_nature_detail", null);                 	
             }
             transferOrder.set("cargo_nature", cargoNature);
             transferOrder.set("operation_type", getPara("operationType"));
@@ -423,6 +425,8 @@ public class TransferOrderController extends Controller {
             transferOrder.set("create_by", getPara("create_by"));
             if("cargo".equals(cargoNature)){
             	transferOrder.set("cargo_nature_detail", getPara("cargoNatureDetail"));            	
+            }else{
+            	transferOrder.set("cargo_nature_detail", null);                 	
             }
             transferOrder.set("cargo_nature", getPara("cargoNature"));
             transferOrder.set("operation_type", getPara("operationType"));

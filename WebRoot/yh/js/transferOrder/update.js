@@ -954,6 +954,14 @@ $(document).ready(function() {
 	$("input[name='cargoNature']").each(function(){
 		if($("#cargoNatureRadio").val() == $(this).val()){
 			$(this).attr('checked', true);
+			if($("#cargoNatureRadio").val() == 'cargo'){
+				$("#cargoNatureDetailSpan").show();
+				$("input[name='cargoNatureDetail']").each(function(){
+					if($(this).val() == $("#cargoNatureDetailRadio").val()){
+						$(this).attr('checked', true);
+					}
+				});
+			}
 		}
 	});
 	
