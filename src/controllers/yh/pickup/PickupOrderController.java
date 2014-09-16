@@ -34,7 +34,6 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
-import controllers.yh.departOrder.DepartOrderController;
 
 public class PickupOrderController extends Controller {
     private Logger logger = Logger.getLogger(PickupOrderController.class);
@@ -875,7 +874,6 @@ public class PickupOrderController extends Controller {
                         milestone.set("status", "已入库");
                         transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
                     }
-                    DepartOrderController.productInWarehouse(pickupOrderId);
                 }
             }
             transferOrder.update();
@@ -1054,6 +1052,9 @@ public class PickupOrderController extends Controller {
                                     + " and order_id = " + transferOrder.get("id");
                             Record rec = Db.findFirst(sqlTotal);
                             Long amount = rec.getLong("total");
+                            if(amount == 0){
+                            	amount = Math.round(transferOrderItem.getDouble("amount"));
+                            }
                             if (inventoryItem == null) {
                                 inventoryItem = new InventoryItem();
                                 inventoryItem.set("party_id", transferOrder.get("customer_id"));
