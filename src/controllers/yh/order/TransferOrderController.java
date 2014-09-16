@@ -791,7 +791,6 @@ public class TransferOrderController extends Controller {
         renderJson(offices);
     }
 
-    // 查出所有的driver
     public void searchAllDriver() {
         String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;

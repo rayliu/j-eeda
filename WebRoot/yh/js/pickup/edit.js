@@ -2,9 +2,23 @@
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
 	 
 	 // 列出所有的司机
+	 /*red*/
 	 $('#driverMessage').on('keyup click', function(){
  		var inputStr = $('#driverMessage').val();
- 		$.get('/yh/transferOrder/searchAllDriver', {input:inputStr}, function(data){
+ 		var inputStr = $('#carNoMessage').val();
+		//获取到inputiD，判断是否为空
+		if(inputId==null){
+			inputId="pickupMode1";
+		}
+		//定义一个TYPE变量，用来作为车辆的条件
+		var party_type ;
+		if(inputId=="pickupMode1"){
+			party_type = "DRIVER";
+		}else{
+			party_type = "SP_DRIVER";
+		}
+ 		
+ 		$.get('/yh/transferOrder/searchAllDriver', {input:inputStr, partyType:party_type}, function(data){
  			console.log(data);
  			var driverList = $("#driverList");
  			driverList.empty();
@@ -33,18 +47,31 @@
  	$('#driverMessage').on('blur', function(){
   		$('#driverList').hide();
   	});
- 	
+ 	/*===========================================================*/
  	// 列出所有的车辆
 	$('#carNoMessage').on('keyup click', function(){
-	var inputStr = $('#carNoMessage').val();
-	$.get('/yh/transferOrder/searchAllCarInfo', {input:inputStr}, function(data){
-		console.log(data);
-		var carNoList = $("#carNoList");
-		carNoList.empty();
-		for(var i = 0; i < data.length; i++)
-		{
-			carNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH+"' driver='"+data[i].DRIVER+"' phone='"+data[i].PHONE+"'> "+data[i].CAR_NO+"</a></li>");
+	
+		var inputStr = $('#carNoMessage').val();
+		//获取到inputiD，判断是否为空
+		if(inputId==null){
+			inputId="pickupMode1";
 		}
+		//定义一个TYPE变量，用来作为车辆的条件
+		var typeStr ;
+		if(inputId=="pickupMode1"){
+			typeStr = "OWN";
+		}else{
+			typeStr = "SP";
+		}
+			
+		$.get('/yh/transferOrder/searchAllCarInfo', {input:inputStr,type:typeStr}, function(data){
+			console.log(data);
+			var carNoList = $("#carNoList");
+			carNoList.empty();
+			for(var i = 0; i < data.length; i++)
+			{
+				carNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH+"' driver='"+data[i].DRIVER+"' phone='"+data[i].PHONE+"'> "+data[i].CAR_NO+"</a></li>");
+			}
 	},'json');
 
 	$("#carNoList").css({ 
@@ -499,9 +526,18 @@
 	});	
 	
     // 当pickupModes为货品直送时则显示收货人的信息
+	/*定义了一个全局的变量inputId 
+	 * 用力啊存放每次选择不同Radio是的选中的radio Id
+	 * */
+	var inputId;
     $("#pickupModes").on('click', 'input', function(){
+    	//没换一次，清空数据
+    	$("#carNoMessage").val("");
+    	$("#driverMessage").val("");
+    	$("#driver_phone").val("");
+    	
   	  console.log(this);
-  	  var inputId  = $(this).attr('id');
+  	  inputId  = $(this).attr('id');
 	  if(inputId=='pickupMode1'){
 		  $("#spDiv").hide();
 		  $("#paymentDiv").hide();
