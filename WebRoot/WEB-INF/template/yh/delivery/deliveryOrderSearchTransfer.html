@@ -33,7 +33,16 @@
 								</div>
 							</div>
 						</div>
-	                    <a class="btn btn-primary" id="saveDeliveryCargo" disabled="true">创建</a>
+                         <form id='createForm' action="/yh/delivery/creatDeliveryOrder" method="post">
+                            <input id='customerId' name='customerId' type="hidden">
+                            <input id='createId' name='createId' type="hidden">
+                            <input id='warehouseId' name='warehouseId' type="hidden">
+                            <input id='itemIdArr' name='itemIdArr' type="hidden">
+                            <input id='itemAmoutArr' name='itemAmoutArr' type="hidden">
+                            <input id="cargoNature" type="hidden" name="cargoNature" value="cargo">
+                            <a class="btn btn-primary" id="saveDeliveryCargo" disabled="true">创建</a>
+                        </form>
+	                    
 	            		<div class="panel-body">
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover" id="eeda-table2">
@@ -43,7 +52,9 @@
                                             <th>货品型号</th>
                                             <th>货品名称</th>
                                             <th>仓库</th>
+                                            <th>仓库ID</th>
                                             <th>客户</th>
+                                            <th>客户ID</th>
                                             <th>库存数量</th>
                                             <th>配送数量</th>                                            
                                         </tr>
@@ -60,24 +71,24 @@
 	            		<div class="panel-body">
 	            	 		<div class="row">
 				            	<div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="search-label">客户：</label>
+                                        <input id="customerName2" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择客户">
+                                    </div>
 									<div class="form-group">
 										<label class="search-label">运输单：</label>
 										<input id="deliveryOrderNo2" class="form-control search-control orderNo_filter" type="text" value="">
-									</div>
-									<div class="form-group">
-										<label class="search-label">客户：</label>
-										<input id="customerName2" class="form-control search-control status_filter" type="text">
-									</div>
+									</div>									
 								</div>
 								<div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="search-label">仓库：</label>
+                                        <input id="warehouse2" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择仓库">
+                                    </div>
 									<div class="form-group">
 										<label class="search-label">序列号：</label>
 										<input id="orderStatue2" class="form-control search-control orderNo_filter" type="text" value="">
-									</div>
-									<div class="form-group">
-										<label class="search-label">仓库：</label>
-										<input id="warehouse2" class="form-control search-control status_filter" type="text">
-									</div>
+									</div>									
 								</div>
 							</div>
                         </div>

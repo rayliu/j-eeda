@@ -182,15 +182,17 @@ $(document).ready(function() {
 		  		            {"mDataProp":"ITEM_NO"},
 		  		            {"mDataProp":"ITEM_NAME"},
 		  		            {"mDataProp":"WAREHOUSE_NAME"},
+		  		            {"mDataProp":"WAREHOUSE_ID", "bVisible": false},
 		  		            {"mDataProp":"COMPANY_NAME"},
+		  		            {"mDataProp":"CUSTOMER_ID", "bVisible": false},
 		  		            {"mDataProp":"TOTAL_QUANTITY"},
 		  		            { 
 		  		                "mDataProp": null, 
 		  		                "sWidth": "8%",                
 		  		                "fnRender": function(obj) {                    
-		  		                    return "<input type='text'>";
+		  		                    return "<input type='text' name='amount' disabled value='0'>";
 		  		                }
-		  		            }                         
+		  		            }
 		  		        ]     
 		    });	
 			
@@ -262,10 +264,32 @@ $(document).ready(function() {
 			        ]      
 			    });	
 			
+
+
 			var cname = [];
-			var warehouseArr = [];
-		    $("#eeda-table4").on('click', '.checkedOrUnchecked', function(e){
-		    	if(cname.length == 0 && warehouseArr.length == 0){
+			var warehouseArr = [];		    
+			//构造已选的行数据
+			var buildItems=function(objCheckBox, cargoNature){
+				//判断当前是选中还是去除
+				var row=$(objCheckBox).parent().parent();
+				var $inputAmount=row.find('input[name=amount]');
+				if($(objCheckBox).prop("checked") == true){					
+					if(cargoNature==="ATM")
+						$("#saveDelivery").attr('disabled', false);
+					if(cargoNature==="cargo")
+						$("#saveDeliveryCargo").attr('disabled', false);
+
+					
+					$inputAmount.attr('disabled', false);//允许输入配送数量
+
+					
+				}else{
+					$inputAmount.attr('disabled', true);//不允许输入配送数量
+					$inputAmount.val('0');//清零
+				}
+
+				//TODO: 需要优化，没时间搞。
+				if(cname.length == 0 && warehouseArr.length == 0){
 		    		$("#saveDelivery").attr('disabled', true);
 		    	}
 				if($(this).prop("checked") == true){
@@ -303,8 +327,16 @@ $(document).ready(function() {
 						warehouseArr.splice($(this).parent().siblings('.warehouse')[0].innerHTML, 1);
 					}
 				}
+			};
+
+			$("#eeda-table4").on('click', '.checkedOrUnchecked', function(){
+				buildItems(this, "ATM");
 			});
 			
+			$("#eeda-table2").on('click', '.checkedOrUnchecked', function(){
+				buildItems(this, "cargo");
+			});
+
 		    $("#saveDelivery").click(function(e){
 				 e.preventDefault();
 			    	var trArr=[];

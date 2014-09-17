@@ -510,7 +510,7 @@ public class DeliveryController extends Controller {
                 +" left join party p on ii.party_id = p.id "
                 +" left join contact c  on p.contact_id = c.id ";
 		
-		String sql = "select ii.total_quantity, ii.product_id, ii.party_id , pro.*, w.warehouse_name, c.company_name from inventory_item ii "
+		String sql = "select ii.total_quantity, ii.product_id, ii.party_id , pro.*, w.warehouse_name, w.id as warehouse_id, c.company_name, ii.party_id as customer_id from inventory_item ii "
                 +" left join product pro on ii.product_id = pro.id "
                 +" left join warehouse w on ii.warehouse_id = w.id "
                 +" left join party p on ii.party_id = p.id "
