@@ -9,6 +9,7 @@ import java.util.Date;
 import models.Category;
 import models.Party;
 import models.PartyAttribute;
+import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 
 import com.jfinal.plugin.c3p0.C3p0Plugin;
@@ -30,7 +31,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists fin_account_item(id bigint auto_increment primary key,account_id bigint,currency varchar(50),org_name varchar(50),account_pin varchar(50),org_person varchar(50));");
             stmt.executeUpdate("create table if not exists contract(id bigint auto_increment primary key, name varchar(50) not null, type varchar(50), party_id bigint,period_from timestamp,period_to timestamp, remark varchar(255));");
             stmt.executeUpdate("create table if not exists role(id bigint auto_increment primary key,role_name varchar(50),role_time timestamp,role_people varchar(50),role_lasttime timestamp,role_lastpeople varchar(50));");
-            stmt.executeUpdate("create table if not exists fin_item(id bigint auto_increment primary key,code varchar(20),name varchar(20),type varchar(20),remark varchar(255));");
+            stmt.executeUpdate("create table if not exists fin_item(id bigint auto_increment primary key,code varchar(20),name varchar(20),type varchar(20),driver_type varchar(20),remark varchar(255));");
             stmt.executeUpdate("create table if not exists privileges(id bigint auto_increment primary key,privilege varchar(50));");
             stmt.executeUpdate("create table if not exists modules(id bigint auto_increment primary key,module_name varchar(50));");
             stmt.executeUpdate("create table if not exists modules_privilege(id bigint auto_increment primary key,module_id bigint,privilege_id bigint);");
@@ -493,9 +494,13 @@ public class DataInitUtil {
                     + "creator bigint, create_stamp timestamp,last_modified_by bigint,"
                     + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
 
-            // 司机
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13312345678', '粤A5687', '平板车', 18.5, '王五', 'OWN');");
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13412345678', '粤A2341', '高栏车', 12.5, '赵六', 'OWN');");
+            // 自营车辆司机
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13312345678', '粤A5687', '平板车', 18.5, '王五', '"+Carinfo.CARINFO_TYPE_OWN+"');");
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13412345678', '粤A2341', '高栏车', 12.5, '赵六', '"+Carinfo.CARINFO_TYPE_OWN+"');");
+            
+            // 供应商司机
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13898765432', '粤A9874', '集装车', 17.5, '王五五', '"+Carinfo.CARINFO_TYPE_SP+"');");
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13998765432', '粤A1234', '挂车', 14.5, '赵六六', '"+Carinfo.CARINFO_TYPE_SP+"');");
 
             // 发车单
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000001', CURRENT_TIMESTAMP(),'DEPART','粤A876596','平板车',1,23,'新建');");
@@ -712,6 +717,10 @@ public class DataInitUtil {
         contact8.set("contact_person", "张三").set("phone", "15512345678").save();
         Contact contact9 = new Contact();
         contact9.set("contact_person", "李四").set("phone", "15812345678").save();
+        Contact contact10 = new Contact();
+        contact10.set("contact_person", "张三三").set("phone", "13112345678").save();
+        Contact contact11 = new Contact();
+        contact11.set("contact_person", "李四四").set("phone", "13312345678").save();
 
         Party p1 = new Party();
         Party p2 = new Party();
@@ -722,6 +731,8 @@ public class DataInitUtil {
         Party p7 = new Party();
         Party p8 = new Party();
         Party p9 = new Party();
+        Party p10 = new Party();
+        Party p11 = new Party();
         Date createDate = Calendar.getInstance().getTime();
         p1.set("contact_id", contact.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
                 .set("payment", "monthlyStatement").save();
@@ -741,6 +752,10 @@ public class DataInitUtil {
                 .set("creator", "demo").save();
         p9.set("contact_id", contact9.getLong("id")).set("party_type", Party.PARTY_TYPE_DRIVER).set("create_date", createDate)
                 .set("creator", "demo").save();
+        p10.set("contact_id", contact10.getLong("id")).set("party_type", Party.PARTY_TYPE_SP_DRIVER).set("create_date", createDate)
+        		.set("creator", "demo").save();
+        p11.set("contact_id", contact11.getLong("id")).set("party_type", Party.PARTY_TYPE_SP_DRIVER).set("create_date", createDate)
+        		.set("creator", "demo").save();
     }
 
 }

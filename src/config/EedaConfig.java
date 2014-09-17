@@ -137,6 +137,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/toll", controllers.yh.TollController.class, "/yh");
         me.add("/yh/privilege", controllers.yh.PrivilegeController.class, "/yh");
         me.add("/yh/pay", controllers.yh.PayController.class, "/yh");
+        me.add("/yh/ownCarPay", controllers.yh.PayController.class, "/yh");
         me.add("/yh/customer", controllers.yh.profile.CustomerController.class, "/yh");
         me.add("/yh/serviceProvider", controllers.yh.profile.ServiceProviderController.class, "/yh");
         me.add("/yh/location", controllers.yh.LocationController.class, "/yh");
