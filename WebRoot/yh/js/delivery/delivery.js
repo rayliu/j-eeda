@@ -153,7 +153,7 @@ $(document).ready(function() {
 	                console.log(data);
                     if(data.ID>0){
                     	$("#delivery_id").val(data.ID);
-                    	$("#style").show();
+                    	//$("#style").show();
                     	$("#ConfirmationBtn").attr("disabled", false);
                     	
                     }else{
@@ -419,7 +419,7 @@ $(document).ready(function() {
 									$("#departureConfirmationBtn").attr("disabled", false);
 								}
 								$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-							  	$("#style").show();	
+							  	//$("#style").show();	
 							  	
 							  	var order_id = $("#order_id").val();
 								$.post('/yh/deliveryOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){

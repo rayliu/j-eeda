@@ -12,7 +12,7 @@ $(document).ready(function() {
 		$.post('/yh/chargeInvoiceOrder/save', $("#chargeInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargeInvoiceOrderId").val(data.ID);
-			  	$("#style").show();
+			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 			}else{
 				alert('数据保存失败。');

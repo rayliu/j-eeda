@@ -70,7 +70,7 @@ $(document).ready(function() {
 		 $.post('/yh/account/save', $("#accountFrom").serialize(), function(data){
 	         if(data>0){
 	             //alert("添加合同成功！");
-	         	$("#style").show();
+	         	//$("#style").show();
 	         	//已经有一个重复的contractId 在前面了
 	         	$('#accountId2').val(data);
 	         	dataTable.fnSettings().sAjaxSource="/yh/account/accountItem?accountId="+data; 

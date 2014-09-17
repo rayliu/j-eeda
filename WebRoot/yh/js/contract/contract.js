@@ -720,7 +720,7 @@ $(document).ready(function() {
 	                    
 	                    if(contractId>0){
 	                        //alert("添加合同成功！");
-	                    	$("#style").show();
+	                    	//$("#style").show();
 	                    	//已经有一个重复的contractId 在前面了
 	                    	$('#routeContractId').val(contractId);
 	                    	dataTable.fnSettings().sAjaxSource="/yh/spContract/routeEdit?routId="+contractId;

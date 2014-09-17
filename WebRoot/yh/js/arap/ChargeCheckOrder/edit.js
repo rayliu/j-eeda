@@ -12,7 +12,7 @@ $(document).ready(function() {
 		$.post('/yh/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargeCheckOrderId").val(data.ID);
-			  	$("#style").show();
+			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 			}else{
 				alert('数据保存失败。');
@@ -56,7 +56,7 @@ $(document).ready(function() {
 		$.post('/yh/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargeCheckOrderId").val(data.ID);
-			  	$("#style").show();
+			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			}else{

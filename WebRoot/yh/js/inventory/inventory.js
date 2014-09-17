@@ -370,7 +370,7 @@ $(document).ready(function() {
                  if(data>0){
                 	 console.log(data);
                  	$("#warehouseorderId").val(data);
-                 	$("#style").show();
+                 	//$("#style").show();
                  	$("#ConfirmBtn").attr("disabled", false);
                  	
                  	//有问题

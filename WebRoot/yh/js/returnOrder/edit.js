@@ -129,7 +129,7 @@
 		//异步向后台提交数据
     	$.post('/yh/returnOrder/save', $("#returnOrderForm").serialize(), function(returnOrder){
 			if(returnOrder.ID>0){
-			  	$("#style").show();
+			  	//$("#style").show();
 			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			}else{
 				alert('数据保存失败。');

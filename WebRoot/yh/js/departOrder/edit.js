@@ -535,7 +535,7 @@
     				if(data.ID>0){
     					$("#departOrderId").val(data.ID);
     					$("#depart_id").val(data.ID);
-    				  	$("#style").show();	
+    				  	//$("#style").show();	
 
     		    	    $("#departureConfirmationBtn").attr("disabled", false);
     				}else{

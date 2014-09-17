@@ -147,7 +147,7 @@ $('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
          if(data>0){
         	 console.log(data);
          	$("#warehouseorderId").val(data);
-         	$("#style").show();
+         	//$("#style").show();
          	$("#gateOutConfirmBtn").attr("disabled", false);
          	
          	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);

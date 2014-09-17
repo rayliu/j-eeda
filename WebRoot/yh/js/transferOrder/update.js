@@ -337,7 +337,7 @@ $(document).ready(function() {
 				if(transferOrder.ID>0){
 					$("#departureConfirmationBtn").attr("disabled", false);
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	$("#style").show();	
+				  	//$("#style").show();	
 				  	
 				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				  	
@@ -366,7 +366,7 @@ $(document).ready(function() {
 						$("#departureConfirmationBtn").attr("disabled", false);
 					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	$("#style").show();	
+				  	//$("#style").show();	
 				  	
 				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				  	
@@ -417,7 +417,7 @@ $(document).ready(function() {
 					$("#id").val(transferOrder.ID);
 					if(transferOrder.ID>0){
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-					  	$("#style").show();	
+					  	//$("#style").show();	
 	
 					  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 					  	
@@ -444,7 +444,7 @@ $(document).ready(function() {
 							$("#departureConfirmationBtn").attr("disabled", false);
 						}
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-					  	$("#style").show();	
+					  	//$("#style").show();	
 					  	
 					  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 					  	
@@ -897,7 +897,7 @@ $(document).ready(function() {
 					$("#id").val(transferOrder.ID);
 					if(transferOrder.ID>0){
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-					  	$("#style").show();	
+					  	//$("#style").show();	
 					  	transferOrderMilestone();
 					  	
 					  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
@@ -923,7 +923,7 @@ $(document).ready(function() {
 						}
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 					  	//alert("运输单保存成功!");
-					  	$("#style").show();	
+					  	//$("#style").show();	
 					  	transferOrderMilestone();  
 					  	
 					  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
@@ -1729,7 +1729,7 @@ $(document).ready(function() {
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	$("#style").show();	
+				  	//$("#style").show();	
 				  	
 				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				  	

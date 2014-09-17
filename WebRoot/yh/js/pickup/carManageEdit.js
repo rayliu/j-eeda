@@ -184,7 +184,7 @@
          }); 
     	$("#item_detail").val(item_detail_id);
     	$("#tr_itemid_list").val(tr_itemid_list);
-    	$("#style").show();
+    	//$("#style").show();
     	$("#item_save").attr("disabled", true);
     });
 
@@ -217,7 +217,7 @@
 			if(data.ID>0){
 				$("#pickupId").val(data.ID);
 		        showFinishBut();
-			  	$("#style").show();				    
+			  	//$("#style").show();				    
 			}else{
 				alert('数据保存失败。');
 			}
@@ -293,7 +293,7 @@
 					$("#pickupId").val(data.ID);
 			        showFinishBut();
 					pickupOrderMilestone();
-				  	$("#style").show();
+				  	//$("#style").show();
 				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				}else{
 					alert('数据保存失败。');
@@ -308,7 +308,7 @@
 					$("#pickupId").val(data.ID);	
 			        showFinishBut();
 					pickupOrderMilestone();
-				  	$("#style").show();	            
+				  	//$("#style").show();	            
 				}else{
 					alert('数据保存失败。');
 				}
@@ -363,7 +363,7 @@
 					$("#pickupId").val(data.ID);
 			        showFinishBut();
 					findAllAddress();
-				  	$("#style").show();
+				  	//$("#style").show();
 				  	choiceExternalTransferOrder();
 			        if($("#transferOrderType").val() == 'replenishmentOrder'){
 			        	
@@ -382,7 +382,7 @@
 					$("#pickupId").val(data.ID);	
 			        showFinishBut();
 					findAllAddress();
-				  	$("#style").show();	 
+				  	//$("#style").show();	 
 				  	choiceExternalTransferOrder();
 			        if($("#transferOrderType").val() == 'replenishmentOrder'){
 			        	
@@ -915,7 +915,7 @@
 			$("#milestonePickupId").val(data.ID);
 			if(data.ID>0){
 				$("#pickupId").val(data.ID);
-			  	$("#style").show();				    
+			  	//$("#style").show();				    
 			}else{
 				alert('数据保存失败。');
 			}
