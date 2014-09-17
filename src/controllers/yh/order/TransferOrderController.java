@@ -869,11 +869,7 @@ public class TransferOrderController extends Controller {
 			if(party_type!=null){
 				sql = "select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where p.party_type = '"
 						+ party_type
-						+ "' and c.contact_person like '%"
-						+ input
-						+ "%' or c.phone like '%"
-						+ input
-						+ "%'";
+						+ "'";
 						
 			}else{
 				sql = "select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where c.contact_person like '%"
