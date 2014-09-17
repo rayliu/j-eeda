@@ -5,7 +5,7 @@
 	 /*red*/
 	 $('#driverMessage').on('keyup click', function(){
  		var inputStr = $('#driverMessage').val();
- 		var inputStr = $('#carNoMessage').val();
+ 		//var inputStr = $('#carNoMessage').val();
 		//获取到inputiD，判断是否为空
 		if(inputId==null){
 			inputId="pickupMode1";
@@ -47,11 +47,12 @@
  	$('#driverMessage').on('blur', function(){
   		$('#driverList').hide();
   	});
- 	/*===========================================================*/
+ 	
  	// 列出所有的车辆
 	$('#carNoMessage').on('keyup click', function(){
 	
 		var inputStr = $('#carNoMessage').val();
+		
 		//获取到inputiD，判断是否为空
 		if(inputId==null){
 			inputId="pickupMode1";

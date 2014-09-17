@@ -867,10 +867,14 @@ public class TransferOrderController extends Controller {
 		String sql= "";
 		if (input.trim().length() > 0) {
 			if(party_type!=null){
-				sql = "select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where p.party_type = '"
+				sql = "select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where c.contact_person like '%"
+						+ input
+						+ "%' or c.phone like '%"
+						+ input
+						+ "%' and p.party_type = '"
 						+ party_type
 						+ "'";
-						
+				
 			}else{
 				sql = "select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where c.contact_person like '%"
 						+ input
@@ -902,14 +906,17 @@ public class TransferOrderController extends Controller {
 		List<Record> locationList = Collections.EMPTY_LIST;
 		String sql="";
 		
-		
 		if (input.trim().length() > 0) {
 			if(type!=null){
-				sql="select * from carinfo where type = '"
-						+ type + "' and driver like '%" + input + "%' or phone like '%"
-						+ input + "%'";
+				/*sql="select * from carinfo where "
+						+ "car_no like '%" + input + "%' or phone like '%"
+						+ input + "%'and type = '"+ type+"'";*/
+				sql = "select * from ("
+						+ "select * from carinfo where type ='"+type+"') "
+						+ "where car_no like '%"+input+"%' or phone like '%"+input+"%'";
+						
 			}else{
-				sql="select * from carinfo where driver like '%" + input + "%' or phone like '%"
+				sql="select * from carinfo where car_no like '%" + input + "%' or phone like '%"
 							+ input + "%' and type = 'SP'";
 			}
 				
