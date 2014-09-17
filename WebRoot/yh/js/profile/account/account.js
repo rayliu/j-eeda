@@ -64,7 +64,15 @@ $(document).ready(function() {
 	     }
 	 },'json');
 	});
-
+	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
+			    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+			    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+			    '</div>';
+	$('body').append(alerMsg);
+	
+	$('#message_trigger_err').on('click', function(e) {
+	e.preventDefault();
+	});
 	//添加账户
 	$('#save').click(function(){
 		 $.post('/yh/account/save', $("#accountFrom").serialize(), function(data){
@@ -74,6 +82,8 @@ $(document).ready(function() {
 	         	//已经有一个重复的contractId 在前面了
 	         	$('#accountId2').val(data);
 	         	dataTable.fnSettings().sAjaxSource="/yh/account/accountItem?accountId="+data; 
+
+	         	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	         }else{
 	             alert('数据保存失败。');
 	         }
