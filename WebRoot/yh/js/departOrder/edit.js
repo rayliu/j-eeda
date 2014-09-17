@@ -577,7 +577,7 @@
     	        saveDepartOrderFunction();
     	    };    	       	    
     	    /*--------------------------------------------------------------------*/
-    	    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
+    	    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
     	        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
     	        'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
     	        '</div>';

@@ -293,7 +293,8 @@
 					$("#pickupId").val(data.ID);
 			        showFinishBut();
 					pickupOrderMilestone();
-				  	$("#style").show();	             
+				  	$("#style").show();
+				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				}else{
 					alert('数据保存失败。');
 				}
@@ -366,7 +367,8 @@
 				  	choiceExternalTransferOrder();
 			        if($("#transferOrderType").val() == 'replenishmentOrder'){
 			        	
-			        }	             
+			        }
+			        $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				}else{
 					alert('数据保存失败。');
 				}
@@ -384,7 +386,8 @@
 				  	choiceExternalTransferOrder();
 			        if($("#transferOrderType").val() == 'replenishmentOrder'){
 			        	
-			        }           
+			        }
+			        $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				}else{
 					alert('数据保存失败。');
 				}
@@ -512,6 +515,7 @@
 	// 货品信息
 	$("#pickupOrderItemList").click(function(e){
 		clickSavePickupOrder(e);
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 
 	//获取供应商的list，选中信息在下方展示其他信息
@@ -918,12 +922,28 @@
 		},'json');
 	};
 	
+	
+	
+	/*添加提示框*/
+	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
+	    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+	    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+	    '</div>';
+	$('body').append(alerMsg);
+
+	$('#message_trigger_err').on('click', function(e) {
+		e.preventDefault();
+	});
+
  	$("#saveCarManageBtn").click(function(e){
     	saveCarManage(e);
+    	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+
 	});
  	
  	$("#pickupOrderPayment").click(function(e){
  		saveCarManage(e);
+ 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 		paymenttable.fnDraw();
  	});
  	

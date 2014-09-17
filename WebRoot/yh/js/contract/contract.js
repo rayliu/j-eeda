@@ -591,7 +591,17 @@ $(document).ready(function() {
 	    		$("#unit").hide();
 	    	}
 	    };
-
+	    //定义一个全局的信息提示框
+	    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
+				    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+				    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+				    '</div>';
+		$('body').append(alerMsg);
+		
+		$('#message_trigger_err').on('click', function(e) {
+			e.preventDefault();
+		});
+		
         //点击保存的事件，保存干线信息
         //routeItemForm 不需要提交
         $("#saveRouteBtn").click(function(e){
@@ -643,6 +653,8 @@ $(document).ready(function() {
                         alert('数据保存失败。');
                     }
                 },'json');
+          
+	    	
         });
 
         //获取客户的list，选中信息自动填写其他信息
@@ -714,12 +726,13 @@ $(document).ready(function() {
 	                    	dataTable.fnSettings().sAjaxSource="/yh/spContract/routeEdit?routId="+contractId;
 	                    	dataTable2.fnSettings().sAjaxSource="/yh/spContract/routeEdit2?routId="+contractId;
 	                    	dataTable3.fnSettings().sAjaxSource="/yh/spContract/routeEdit3?routId="+contractId;
-	                    	
+	                    	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	                    }else{
 	                        alert('数据保存失败。');
 	                    }
 	                    
 	                },'json');
+	            
 	        });
 		 
 		
