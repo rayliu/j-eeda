@@ -213,6 +213,7 @@ public class TransferOrderController extends Controller {
 			Contact customerContact = Contact.dao.findById(customer
 					.get("contact_id"));
 			setAttr("customerContact", customerContact);
+			setAttr("party", customer);
 		}
 		if (sp_id != null) {
 			Party sp = Party.dao.findById(sp_id);

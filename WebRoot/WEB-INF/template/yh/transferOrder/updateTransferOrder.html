@@ -120,7 +120,7 @@
                                                     </label>
                                             </div>                          
                                             <div class="form-group">
-                                                <label class="label-margin">计费方式</label>
+                                                <label class="label-margin">客户计费方式</label>
                                                 <input id="chargeTypeRadio" type="hidden" value="${transferOrder.charge_type!''}"/>
                                                 <label class="radio-inline">
                                                     <input type="radio" name="chargeType" id="chargeType1" value="perUnit" checked="">计件
@@ -131,20 +131,20 @@
                                                 <label class="radio-inline">
                                                     <input type="radio" name="chargeType" id="chargeType3" value="perCargo">零担
                                                 </label>  
-                                            </div>                         
-                                            <!-- <div class="form-group">
-                                                <label class="label-margin">付款方式</label>
-                                                <input id="paymentRadio" type="hidden" value="${transferOrder.payment!''}"/>
+                                            </div>         
+                                            <div class="form-group">
+                                                <label class="label-margin">供应商付款方式</label>
+                                                <input id="hidParmentRadio" type="hidden" value="${party.payment!''}"/>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="payment" id="payment1" value="monthlyStatement" checked="">月结
+                                                   <input type="radio" name="partyType" id="partyType3" value="cashPayment" checked="">现付
                                                 </label>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="payment" id="payment2" value="freightCollect">到付
+                                                    <input type="radio" name="partyType" id="partyType2" value="freightCollect">到付
                                                 </label>  
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="payment" id="payment3" value="cashPayment">现付
+                                                    <input type="radio" name="partyType" id="partyType1" value="monthlyStatement" >月结
                                                 </label>  
-                                            </div> -->                                         
+                                            </div>                  
                                                
                                             <div id="arrivalModes" class="form-group">
                                             	<input id="arrivalModeVal" type="hidden" />
