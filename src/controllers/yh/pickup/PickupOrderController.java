@@ -474,6 +474,9 @@ public class PickupOrderController extends Controller {
         Carinfo carinfo = null;
         String checkedDetail = getPara("checkedDetail");
         String uncheckedDetailIds = getPara("uncheckedDetail");
+        String replenishmentOrderId = getPara("replenishmentOrderId");
+        String gateInSelect = getPara("gateInSelect");
+        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<rgetPara('gateInSelect'):"+getPara("gateInSelect")+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         if (pickId == null || "".equals(pickId)) {
             pickupOrder = new DepartOrder();
             pickupOrder.set("depart_no", getPara("order_no"));
@@ -518,7 +521,12 @@ public class PickupOrderController extends Controller {
                             pickupOrder.set("warehouse_id", null);
                         }
                         if ("warehouseCheckbox".equals(values[i])) {
-                            pickupOrder.set("warehouse_id", getPara("gateInSelect"));
+                        	
+                        	if(gateInSelect == "" || gateInSelect == null){
+                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
+                        	}else{
+                        		pickupOrder.set("warehouse_id", gateInSelect);
+                        	}
                             pickupOrder.set("address", null);
                         }
                     }
@@ -528,7 +536,11 @@ public class PickupOrderController extends Controller {
                             pickupOrder.set("address", getPara("address"));
                         }
                         if ("warehouseCheckbox".equals(values[i])) {
-                            pickupOrder.set("warehouse_id", getPara("gateInSelect"));
+                        	if(gateInSelect == "" || gateInSelect == null){
+                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
+                        	}else{
+                        		pickupOrder.set("warehouse_id", gateInSelect);
+                        	}
                         }
                     }
                 }
@@ -586,7 +598,11 @@ public class PickupOrderController extends Controller {
                             pickupOrder.set("warehouse_id", null);
                         }
                         if ("warehouseCheckbox".equals(values[i])) {
-                            pickupOrder.set("warehouse_id", getPara("gateInSelect"));
+                        	if(gateInSelect == "" || gateInSelect == null){
+                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
+                        	}else{
+                        		pickupOrder.set("warehouse_id", gateInSelect);
+                        	}
                             pickupOrder.set("address", null);
                         }
                     }
@@ -596,7 +612,11 @@ public class PickupOrderController extends Controller {
                             pickupOrder.set("address", getPara("address"));
                         }
                         if ("warehouseCheckbox".equals(values[i])) {
-                            pickupOrder.set("warehouse_id", getPara("gateInSelect"));
+                        	if(gateInSelect == "" || gateInSelect == null){
+                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
+                        	}else{
+                        		pickupOrder.set("warehouse_id", gateInSelect);
+                        	}
                         }
                     }
                 }
@@ -743,6 +763,11 @@ public class PickupOrderController extends Controller {
                 + "' and do.id in(" + getPara("id") + ")";
         DepartOrder pickupOrder = DepartOrder.dao.findFirst(sql);
         setAttr("pickupOrder", pickupOrder);
+        
+        String list = pickupOrder.get("order_id");
+        String[] transferOrderIds = list.split(",");
+        TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
+        setAttr("transferOrderAttr", transferOrderAttr);
 
         Long sp_id = pickupOrder.get("sp_id");
         if (sp_id != null) {
