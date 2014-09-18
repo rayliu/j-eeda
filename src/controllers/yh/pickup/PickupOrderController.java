@@ -759,12 +759,12 @@ public class PickupOrderController extends Controller {
     }
 
     private void pickupOrderEdit(){
-    	String sql = "select do.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
-                + "where dt.depart_id =do.id)as order_id from depart_order  do "
-                + "left join contact co on co.id in( select p.contact_id  from party p where p.id=do.driver_id ) "
-                + "left join user_login  u on u.id=do.create_by where do.combine_type ='"
+    	String sql = "select dor.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
+                + "where dt.depart_id =dor.id)as order_id from depart_order  dor "
+                + "left join contact co on co.id in( select p.contact_id  from party p where p.id=dor.driver_id ) "
+                + "left join user_login  u on u.id=dor.create_by where dor.combine_type ='"
                 + DepartOrder.COMBINE_TYPE_PICKUP
-                + "' and do.id in(" + getPara("id") + ")";
+                + "' and dor.id in(" + getPara("id") + ")";
         DepartOrder pickupOrder = DepartOrder.dao.findFirst(sql);
         setAttr("pickupOrder", pickupOrder);
         
@@ -811,7 +811,7 @@ public class PickupOrderController extends Controller {
         setAttr("paymentItemList", paymentItemList);
         
         String finItemIds = "";
-        List<DepartOrderFinItem> departOrderFinItems = DepartOrderFinItem.dao.find("select * from depart_order_fin_item where pickup_order_id = ?", pickupOrder.get("id"));
+        List<DepartOrderFinItem> departOrderFinItems = DepartOrderFinItem.dao.find("select * from depart_order_fin_item where pickup_order_id = ?", getPara("id"));
         for(DepartOrderFinItem departOrderFinItem : departOrderFinItems){
         	finItemIds += departOrderFinItem.get("fin_item_id") + ",";
         }
