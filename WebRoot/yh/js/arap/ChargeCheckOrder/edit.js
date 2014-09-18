@@ -32,14 +32,19 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 	
+	//设置一个变量值，用来保存当前的ID
+	var parentId = "chargeCheckOrderbasic";
 	$("#transferOrderMilestoneList").click(function(e){
-		e.preventDefault();
-		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		parentId = e.target.getAttribute("id");
+	});
+	$("#chargeCheckOrderbasic").click(function(e){
+		parentId = e.target.getAttribute("id");
 	});
 	/*--------------------------------------------------------------------*/
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
  	$("#saveChargeCheckOrderBtn").click(function(e){
+ 		
  		saveChargeCheckOrder(e);
 
  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
@@ -58,11 +63,14 @@ $(document).ready(function() {
 				$("#chargeCheckOrderId").val(data.ID);
 			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
-			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			  	if("chargeCheckOrderbasic" == parentId){
+			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			  	}
 			}else{
 				alert('数据保存失败。');
 			}
 		},'json');
+		parentId = e.target.getAttribute("id");
 	});
 	
     if($("#chargeCheckOrderStatus").text() == 'new'){

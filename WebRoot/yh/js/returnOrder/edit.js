@@ -236,14 +236,34 @@
 	$('#message_trigger_err').on('click', function(e) {
 		e.preventDefault();
 	});
+	var parentId = "chargeCheckOrderbasic";
 	
 	$("#returnOrderItemList").click(function(e){
 		e.preventDefault();
-		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		//$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		parentId = e.target.getAttribute("id");
 	});
 	$("#returnOrderPayment").click(function(e){
 		e.preventDefault();
-		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		var bool = false;
+		if("chargeCheckOrderbasic" == parentId){
+			bool = true;
+		}
+		/*if(bool){
+			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		}*/
+		parentId = e.target.getAttribute("id");
+	});
+	$("#chargeCheckOrderbasic").click(function(e){
+		e.preventDefault();
+		var bool = false;
+		if("returnOrderPayment" == parentId){
+			bool = true;
+		}
+		/*if(bool){
+			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		}*/
+		parentId = e.target.getAttribute("id");
 	});
 	/*--------------------------------------------------------------------*/
 	

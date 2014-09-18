@@ -409,22 +409,28 @@ $(document).ready(function() {
 					
 				});
 		/*-----------------------------------------------------------------*/
+				//应收
 				$("#arap").click(function(e){
 					e.preventDefault();
 					/*if(!$("#transferOrderForm").valid()){
-		        	alert("请先保存运输单!");
-			       	return false; 
-		        }*/
-					$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			        	alert("请先保存运输单!");
+				       	return false; 
+		        	}*/
+					
+					parentId = e.target.getAttribute("id");
 				});
+				//货品明细
 				$("#departOrderItemList").click(function(e){
 					e.preventDefault();
 					/*if(!$("#transferOrderForm").valid()){
 		        	alert("请先保存运输单!");
 			       	return false; 
 		        	}*/
-					$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-					
+					parentId = e.target.getAttribute("id");
+				});
+				//基本信息
+				$("#chargeCheckOrderbasic").click(function(e){
+					parentId = e.target.getAttribute("id");
 				});
 				/*-------------------------------------------------------------*/
 				// 运输里程碑
@@ -436,7 +442,10 @@ $(document).ready(function() {
 			        	alert("请先保存运输单!");
 				       	return false; 
 			        }*/
-			        
+			        var bool = false;
+			        if("chargeCheckOrderbasic" == parentId||"arap" == parentId){
+			        	bool = true;
+			        }
 			        if($("#delivery_id").val() == ""){
 				    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
 							$("#transfer_order_id").val(transferOrder.ID);
@@ -462,7 +471,10 @@ $(document).ready(function() {
 										transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 									}
 								},'json');  
-								$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+								if(bool){
+									$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+								}
+								
 							}else{
 								alert('数据保存失败。');
 							}
@@ -478,9 +490,11 @@ $(document).ready(function() {
 								transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 							}
 						},'json'); 
-						$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+						if(bool){
+							$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+						}
 			        }
-			        
+			        parentId = e.target.getAttribute("id");
 				});
 			
 				// 保存新里程碑

@@ -1,6 +1,7 @@
 ﻿$(document).ready(function() {
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
 	 
+	
 	 // 列出所有的司机
 	 /*red*/
 	 $('#driverMessage').on('keyup click', function(){
@@ -324,7 +325,11 @@
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
-		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		var bool = false;
+		if("chargeCheckOrderbasic" == parentId ||"addressList" == parentId||"pickupOrderPayment" == parentId){
+			bool = true;
+		}
+		
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
@@ -334,7 +339,10 @@
 					$("#pickupId").val(data.ID);
 			        showFinishBut();
 					pickupOrderMilestone();
-				  	//$("#style").show();	             
+				  	//$("#style").show();
+					if(bool){
+						$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+					}
 				}else{
 					alert('数据保存失败。');
 				}
@@ -348,12 +356,16 @@
 					$("#pickupId").val(data.ID);	
 			        showFinishBut();
 					pickupOrderMilestone();
-				  	//$("#style").show();	            
+				  	//$("#style").show();
+					if(bool){
+						$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+					}
 				}else{
 					alert('数据保存失败。');
 				}
 			},'json');
         }
+        parentId = e.target.getAttribute("id");
 	});
 
 	// 保存新里程碑
@@ -389,12 +401,18 @@
         externalTable.fnSettings().sAjaxSource = "/yh/pickupOrder/externTransferOrderList?pickupOrderId="+pickupOrderId;
         externalTable.fnDraw();
 	};
-	
+	 var parentId = "chargeCheckOrderbasic";
 	// 列出所有的提货地点
 	$("#addressList").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
+		var bool = false;
+		if("chargeCheckOrderbasic" == parentId || "transferOrderMilestoneList" == parentId ||
+				"pickupOrderPayment" == parentId){
+			bool= true;
+		}
+		
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
@@ -408,7 +426,10 @@
 				  	choiceExternalTransferOrder();
 			        if($("#transferOrderType").val() == 'replenishmentOrder'){
 			        	
-			        }	             
+			        }
+			        if(bool){
+			        	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			        }
 				}else{
 					alert('数据保存失败。');
 				}
@@ -426,13 +447,16 @@
 				  	choiceExternalTransferOrder();
 			        if($("#transferOrderType").val() == 'replenishmentOrder'){
 			        	
-			        }           
+			        }
+			        if(bool){
+			        	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			        }
 				}else{
 					alert('数据保存失败。');
 				}
 			},'json');
         }
-        $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+        parentId = e.target.getAttribute("id");
 	});
 	
 	var swapPosition = function(currentId,targetId,currentVal,targetVal){
@@ -562,11 +586,11 @@
 		}
 	};
 	showFinishBut();
-	
 	// 货品信息
 	$("#pickupOrderItemList").click(function(e){
-		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 		clickSavePickupOrder(e);
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		parentId = e.target.getAttribute("id");
 	});
 
 	//获取供应商的list，选中信息在下方展示其他信息
@@ -1037,13 +1061,22 @@
     });
 	
 	$("#pickupOrderPayment").click(function(e){
-		
  		clickSavePickupOrder(e);
- 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 		if("chargeCheckOrderbasic" == parentId || "transferOrderMilestoneList" == parentId||"addressList" == parentId){
+ 			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 		}
+ 		
  		pickupOrderPaymentTab.fnDraw();
  		paymenttable.fnDraw();
+ 		parentId = e.target.getAttribute("id");
 	});
-	
+	$("#chargeCheckOrderbasic").click(function(e){
+		/*clickSavePickupOrder(e);
+		if("pickupOrderPayment" == parentId || "transferOrderMilestoneList" == parentId||"addressList" == parentId){
+ 			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 		}*/
+		parentId = e.target.getAttribute("id");
+	});
 	$("#wentDutchBtn").click(function(){
 		if(confirm("确定分摊费用吗？")){
 		    var pickupOrderId = $("#pickupOrderId").val();

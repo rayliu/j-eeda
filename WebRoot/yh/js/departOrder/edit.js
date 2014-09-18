@@ -506,8 +506,11 @@
     	    $("#transferOrderMilestoneList").click(function(e){
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
     	    		clickSaveDepartOrder(e);
-    	    		
+    	    		if("chargeCheckOrderbasic" == parentId || "arap1" == parentId){
+        				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+        	    	}
     	    	}
+	
     			$.post('/yh/departOrder/transferOrderMilestoneList',{departOrderId:$("#departOrderId").val()},function(data){
     				var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     				transferOrderMilestoneTbody.empty();
@@ -516,7 +519,8 @@
     					transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
     				}
     			},'json');
-    			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+    			
+    			parentId = e.target.getAttribute("id");
     		});
     	    
     	    // 保存新里程碑
@@ -600,15 +604,26 @@
     	    //点击应付的时候发生的事情   这里有保存的事件???
     	    $("#arap1").click(function(e){
     	    	e.preventDefault();
-	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+    	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
+				   	clickSaveDepartOrder(e);
+				   	if("chargeCheckOrderbasic" == parentId ||"transferOrderMilestoneList" == parentId){
+	    	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	    	    	}
+    	    	} 
+    	    	parentId = e.target.getAttribute("id");
+    	    });
+    	    //动态提示
+    	    var parentId = "chargeCheckOrderbasic";
+    	    $("#chargeCheckOrderbasic").click(function(e){
+    	    	parentId = e.target.getAttribute("id");
     	    });
     	    // 点击货品信息
     	    $("#departOrderItemList").click(function(e){
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
-    	    		
     	    		clickSaveDepartOrder(e);
     	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
     	    	} 
+    	    	parentId = e.target.getAttribute("id");
     	    });
     	    
     	    $("#departureConfirmationBtn").click(function(e){

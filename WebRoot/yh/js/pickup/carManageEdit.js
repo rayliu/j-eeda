@@ -283,6 +283,10 @@
 	$("#transferOrderMilestoneList").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
+		var bool = false;
+		if("chargeCheckOrderbasic" == parentId || "addressList" == parentId ||"pickupOrderPayment" == parentId){
+			bool = true;
+		}
 		//异步向后台提交数据
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
@@ -294,7 +298,10 @@
 			        showFinishBut();
 					pickupOrderMilestone();
 				  	//$("#style").show();
-				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+					if(bool){
+						$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+					}
+				  	
 				}else{
 					alert('数据保存失败。');
 				}
@@ -308,12 +315,16 @@
 					$("#pickupId").val(data.ID);	
 			        showFinishBut();
 					pickupOrderMilestone();
-				  	//$("#style").show();	            
+				  	//$("#style").show();
+					if(bool){
+						$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+					}
 				}else{
 					alert('数据保存失败。');
 				}
 			},'json');
         }
+        parentId = e.target.getAttribute("id");
 	});
 
 	// 保存新里程碑
@@ -349,11 +360,19 @@
         externalTable.fnDraw();
 	};
 	
+	var parentId = "chargeCheckOrderbasic";
+	$("#chargeCheckOrderbasic").click(function(e){
+		parentId = e.target.getAttribute("id");
+	});
 	// 列出所有的提货地点
 	$("#addressList").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
+		var bool = false;
+		if("chargeCheckOrderbasic" == parentId || "transferOrderMilestoneList" == parentId || "pickupOrderPayment" == parentId){
+			bool = true;
+		}
         if($("#pickupOrderId").val() == ""){
 	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
@@ -368,7 +387,10 @@
 			        if($("#transferOrderType").val() == 'replenishmentOrder'){
 			        	
 			        }
-			        $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			        if(bool){
+			        	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			        }
+			        
 				}else{
 					alert('数据保存失败。');
 				}
@@ -387,12 +409,15 @@
 			        if($("#transferOrderType").val() == 'replenishmentOrder'){
 			        	
 			        }
-			        $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			        if(bool){
+			        	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			        }
 				}else{
 					alert('数据保存失败。');
 				}
 			},'json');
         }
+        parentId = e.target.getAttribute("id");
 	});
 	
 	var swapPosition = function(currentId,targetId,currentVal,targetVal){
@@ -967,6 +992,7 @@
 
  	$("#pickupOrderPayment").click(function(e){
  		saveCarManage(e);
+<<<<<<< Updated upstream
  		var finItemIds = $("#finItemIds").val(); 		
  		var pickupOrderId = $("#pickupOrderId").val();	
  		var finItems = $("#table_fin2").children('tbody').children();
@@ -986,4 +1012,15 @@
  			}
  		}
  	}); 	
+=======
+ 		if("chargeCheckOrderbasic" == parentId || "addressList" == parentId ||"transferOrderMilestoneList" == parentId){
+ 			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 		}
+ 		
+		paymenttable.fnDraw();
+		parentId = e.target.getAttribute("id");
+ 	});
+ 	
+ 	
+>>>>>>> Stashed changes
 });

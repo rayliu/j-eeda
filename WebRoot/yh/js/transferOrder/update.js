@@ -1,7 +1,8 @@
 ﻿
 $(document).ready(function() {
 	$('#menu_transfer').addClass('active').find('ul').addClass('in');
-
+	//设置一个变量值，用来保存当前的ID
+	
 	$.editable.addInputType('autocompleteType', {
 	    element : $.editable.types.text.element,
 	    plugin: function (settings, original) {
@@ -327,6 +328,7 @@ $(document).ready(function() {
         }
 		//异步向后台提交数据
         if($("#order_id").val() == ""){
+        	console.log($("#transferOrderUpdateForm").serialize());
 	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
@@ -394,16 +396,21 @@ $(document).ready(function() {
             $(e.currentTarget).append("<input type='text' value="+e.currentTarget.innerHTML+">");
         }    
     }
-
+    
     // 单击货品明细时,应列表显示所有的货品
     $("#transferOrderItemList").click(function(e){
     	if($("#transferOrderStatus").val() == '新建' || $("#transferOrderStatus").val() == ''){
 	    	e.preventDefault();
 	    	// 切换到货品明细时,应先保存运输单
 	    	//提交前，校验数据
+	    	console.log($("#transferOrderUpdateForm").valid());
 	        if(!$("#transferOrderUpdateForm").valid()){
 	        	alert("请先保存运输单!");
 		       	return false; 
+	        }
+	        var bool =false;
+	        if("chargeCheckOrderbasic" == parentId || "transferOrderArap" == parentId){
+	        	bool = true;
 	        }
 	        
 	        if($("#order_id").val() == ""){
@@ -417,10 +424,11 @@ $(document).ready(function() {
 					$("#id").val(transferOrder.ID);
 					if(transferOrder.ID>0){
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-					  	//$("#style").show();	
+					  	//$("#style").show();
 	
-					  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-					  	
+						if(bool){
+							$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+						}
 		            	var order_id = $("#order_id").val();
 					  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
 					  	itemDataTable.fnDraw();             
@@ -444,10 +452,12 @@ $(document).ready(function() {
 							$("#departureConfirmationBtn").attr("disabled", false);
 						}
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-					  	//$("#style").show();	
-					  	
-					  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-					  	
+					  	//$("#style").show();
+					
+						if(bool){
+							$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+						}
+						
 		            	var order_id = $("#order_id").val();
 					  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
 					  	itemDataTable.fnDraw();             
@@ -457,8 +467,18 @@ $(document).ready(function() {
 				},'json');
 	        }
     	}
+    	parentId = e.target.getAttribute("id");
     });	
-
+    
+    var parentId = "chargeCheckOrderbasic";
+    $("#chargeCheckOrderbasic").click(function(e){
+    	/*if("transferOrderArap" == parentId ||"transferOrderItemList" == parentId){
+    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+    	}*/
+    
+    	parentId = e.target.getAttribute("id");
+   
+    });
 	var order_id = $("#order_id").val();
 	//datatable, 动态处理
     var itemDataTable = $('#itemTable').dataTable({
@@ -885,7 +905,11 @@ $(document).ready(function() {
 	        	alert("请先保存运输单!");
 		       	return false; 
 	        }
-	        
+	        var bool = false;
+	        if("chargeCheckOrderbasic" == parentId || "transferOrderItemList" == parentId||"transferOrderArap" == parentId){
+	        	bool= true;
+	        }
+
 	        if($("#order_id").val() == ""){
 		    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 					$("#transfer_order_id").val(transferOrder.ID);
@@ -896,12 +920,14 @@ $(document).ready(function() {
 					//$("#driver_id").val(transferOrder.DRIVER_ID);
 					$("#id").val(transferOrder.ID);
 					if(transferOrder.ID>0){
+						console.Log("\\\\\\\\\\\\\\"+parentId);
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 					  	//$("#style").show();	
 					  	transferOrderMilestone();
-					  	
-					  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-					  	
+					  	console.Log(parentId);
+					  	if(bool){
+					  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+					  	}
 					}else{
 						alert('数据保存失败。');
 					}
@@ -923,16 +949,18 @@ $(document).ready(function() {
 						}
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 					  	//alert("运输单保存成功!");
-					  	//$("#style").show();	
+					  	//$("#style").show();
+						console.log(parentId);
 					  	transferOrderMilestone();  
-					  	
-					  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-					  	
+					  	if(bool){
+					  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+					  	}
 					}else{
 						alert('数据保存失败。');
 					}
 				},'json');
 	        }
+	        
 		}
     	
 		var order_id = $("#order_id").val();
@@ -944,6 +972,7 @@ $(document).ready(function() {
 				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 			}
 		},'json');
+		parentId = e.target.getAttribute("id");
 	});
 	
 	// 保存新里程碑
@@ -1719,7 +1748,11 @@ $(document).ready(function() {
 	        	alert("请先保存运输单!");
 		       	return false; 
 	        }
-	
+	        var bool = false;
+	        if("chargeCheckOrderbasic" == parentId || "transferOrderItemList" == parentId){
+	        	bool=true;
+	        }
+	        
 	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
@@ -1727,12 +1760,17 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
 				$("#id").val(transferOrder.ID);
+			
+				
 				if(transferOrder.ID>0){
+					
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	//$("#style").show();	
-				  	
-				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-				  	
+				  	//$("#style").show();
+					
+					if(bool){
+						$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+					}
+					
 	            	var order_id = $("#order_id").val();
 	            	receipttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
 	            	receipttable.fnDraw();       
@@ -1745,6 +1783,8 @@ $(document).ready(function() {
 			},'json');
 	    	
         }
+    	parentId = e.target.getAttribute("id");
+ 
     });	
 
     //应收应付

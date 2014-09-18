@@ -593,6 +593,7 @@ public class DepartOrderController extends Controller {
 
         DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order where combine_type='"
                 + DepartOrder.COMBINE_TYPE_DEPART + "' order by depart_no desc limit 0,1");
+        
         if (order != null) {
             String num = order.get("depart_no");
             String str = num.substring(2, num.length());

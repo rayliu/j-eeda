@@ -84,6 +84,7 @@ $(document).ready(function() {
         var tableArr=[];
         $("input[name='order_check_box']").each(function(){
         	if($(this).prop('checked') == true){
+        		console.log($(this).val());
         		trArr.push($(this).val());
         	}
         });
