@@ -495,7 +495,9 @@ public class PickupOrderController extends Controller {
             /*pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
             pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0 : getPara("roadBridge"));
             pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));*/
-            pickupOrder.set("payment", getPara("payment").equals("") ? 0 : getPara("payment"));
+            if(getPara("payment") != null && !"".equals(getPara("payment"))){
+            	pickupOrder.set("payment", getPara("payment"));
+            }
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
             pickupOrder.set("create_stamp", sqlDate);
@@ -569,7 +571,9 @@ public class PickupOrderController extends Controller {
             /*pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
             pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0 : getPara("roadBridge"));
             pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));*/
-            pickupOrder.set("payment", getPara("payment").equals("") ? 0 : getPara("payment"));
+            if(getPara("payment") != null && !"".equals(getPara("payment"))){
+            	pickupOrder.set("payment", getPara("payment"));
+            }
             updateTransferOrderPickupMode(pickupOrder);
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -805,6 +809,16 @@ public class PickupOrderController extends Controller {
         List<Record> paymentItemList = Collections.EMPTY_LIST;
         paymentItemList = Db.find("select * from fin_item where type='应付'");
         setAttr("paymentItemList", paymentItemList);
+        
+        String finItemIds = "";
+        List<DepartOrderFinItem> departOrderFinItems = DepartOrderFinItem.dao.find("select * from depart_order_fin_item where pickup_order_id = ?", pickupOrder.get("id"));
+        for(DepartOrderFinItem departOrderFinItem : departOrderFinItems){
+        	finItemIds += departOrderFinItem.get("fin_item_id") + ",";
+        }
+        if(finItemIds != null && !"".equals(finItemIds)){
+        	finItemIds = finItemIds.substring(0, finItemIds.length() - 1);
+        }
+        setAttr("finItemIds", finItemIds);        
     }
     
     // 修改拼车单页面
@@ -1337,6 +1351,31 @@ public class PickupOrderController extends Controller {
         // }
         renderJson(orderMap);
     }
+    
+    // 自营车辆应付list
+    public void ownCarCccountPayable() {
+    	String id = getPara("pickupOrderId");
+    	String sLimit = "";
+    	String pageIndex = getPara("sEcho");
+    	if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+    		sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+    	}    	
+    	// 获取总条数
+    	String totalWhere = "";
+    	String sql = "select count(1) total from fin_item f where f.type = '应付' and f.driver_type = '"+Carinfo.CARINFO_TYPE_OWN+"'";
+    	Record rec = Db.findFirst(sql + totalWhere);
+    	logger.debug("total records:" + rec.getLong("total"));
+    	
+    	// 获取当前页的数据
+    	List<Record> orders = Db.find("select f.* from fin_item f where f.type = '应付' and f.driver_type = '"+Carinfo.CARINFO_TYPE_OWN+"'");
+    	
+    	Map orderMap = new HashMap();
+    	orderMap.put("sEcho", pageIndex);
+    	orderMap.put("iTotalRecords", rec.getLong("total"));
+    	orderMap.put("iTotalDisplayRecords", rec.getLong("total"));    	
+    	orderMap.put("aaData", orders);
+    	renderJson(orderMap);
+    }
 
     public void addNewRow() {
     	List<Fin_item> items = new ArrayList<Fin_item>();
@@ -1494,6 +1533,41 @@ public class PickupOrderController extends Controller {
     		departOrderFinItem.set(name, value);
     		departOrderFinItem.update();
     	}
+        renderJson("{\"success\":true}");
+    }
+    
+    // 保存拼车单自营车辆应付
+    public void saveOwnCarFinItem(){
+    	DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao.findFirst("select * from depart_order_fin_item where pickup_order_id = ? and fin_item_id = ?", getPara("pickupOrderId"), getPara("finItemId"));
+    	if(departOrderFinItem != null){
+    		departOrderFinItem.set("amount", getPara("amount"));
+	    	departOrderFinItem.set("last_update_date", new Date());
+	    	departOrderFinItem.update();
+    	}else{
+	    	departOrderFinItem = new DepartOrderFinItem();    	
+	    	departOrderFinItem.set("pickup_order_id", getPara("pickupOrderId"));
+	    	departOrderFinItem.set("fin_item_id", getPara("finItemId"));
+	    	departOrderFinItem.set("amount", getPara("amount"));
+	    	departOrderFinItem.set("create_date", new Date());
+	        String name = (String) currentUser.getPrincipal();
+	    	List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+	    	departOrderFinItem.set("creator", users.get(0).get("id"));
+	    	departOrderFinItem.set("status", "new");
+	    	departOrderFinItem.save();
+    	}
+    	renderJson(departOrderFinItem);
+    }
+    
+    // 查找拼车单自营车辆应付
+    public void searchOwnCarFinItem(){
+    	DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao.findFirst("select * from depart_order_fin_item where pickup_order_id = ? and fin_item_id = ?", getPara("pickupOrderId"), getPara("finItemId"));    	
+    	renderJson(departOrderFinItem);
+    }
+    
+    // 删除拼车单自营车辆应付
+    public void deletePickupOrderFinItem(){
+    	DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao.findFirst("select * from depart_order_fin_item where pickup_order_id = ? and fin_item_id = ?", getPara("pickupOrderId"), getPara("finItemId"));    	
+    	departOrderFinItem.delete();
         renderJson("{\"success\":true}");
     }
 }

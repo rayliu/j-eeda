@@ -797,7 +797,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/pickupOrder/accountPayable/"+pickupOrderId,
+        "sAjaxSource": "/yh/pickupOrder/ownCarCccountPayable/"+pickupOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -806,24 +806,20 @@
 			return nRow;
 		},
         "aoColumns": [
+	        { "mDataProp": null,"sWidth": "2px",
+	             "fnRender": function(obj) {
+	                return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	             }
+	        },
 			{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
-			{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},  
-			{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
-			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
-			{  
-                "mDataProp": null, 
-                "sWidth": "60px",  
-            	"sClass": "remark",              
+			{"mDataProp":null,"sWidth": "80px","sClass": "amount",              
                 "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
-              		"<i class='fa fa-trash-o fa-fw'> </i> "+
-              		"删除"+
-              		"</a>";
-                }
-            }     
+                    return	"<input type='text' disabled='' class='form-control amountEdit'>";
+                }},  
+			{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"}  
         ]      
     });
-	//异步删除应付
+	/*//异步删除应付
 	 $("#table_fin2").on('click', '.finItemdel', function(e){
 		 var id = $(this).attr('code');
 		  e.preventDefault();
@@ -890,9 +886,9 @@
             },
         	minLength: 2
         });
-    }); 
+    }); */
 	
-	$("#addrow").click(function(){	
+	/*$("#addrow").click(function(){	
 		var pickupOrderId =$("#pickupOrderId").val();
 		$.post('/yh/pickupOrder/addNewRow/'+pickupOrderId,function(data){
 			console.log(data);
@@ -904,7 +900,7 @@
 				
 			}
 		});		
-	});		
+	});		*/
 
 	var saveCarManage = function(e){
 		//阻止a 的默认响应行为，不需要跳转
@@ -941,11 +937,52 @@
 
 	});
  	
+ 	// 选中或取消事件
+	$("#table_fin2").on('click', '.checkedOrUnchecked', function(){
+		if($(this).prop('checked') == true){
+			$(this).parent().siblings('.amount')[0].innerHTML = "<input type='text' class='form-control amountEdit'>";			
+		}else{
+			$(this).parent().siblings('.amount')[0].innerHTML = "<input type='text' disabled='' class='form-control amountEdit'>";		
+			var pickupOrderId = $("#pickupOrderId").val();
+			var id = $(this).parent().parent()[0].id;
+			$.post('/yh/pickupOrder/deletePickupOrderFinItem', {pickupOrderId:pickupOrderId, finItemId:id}, function(data){
+	    	},'json');	
+		}
+	});	
+	
+	// 离开金额文本框事件
+	$("#table_fin2").on('blur', '.amountEdit', function(){
+		var pickupOrderId = $("#pickupOrderId").val();
+		var id = $(this).parent().parent()[0].id;
+		var amount = $(this).val();		
+		$.post('/yh/pickupOrder/saveOwnCarFinItem', {pickupOrderId:pickupOrderId, finItemId:id, amount:amount}, function(data){
+        	if(data.ID > 0){
+        		
+        	}else{
+        		alert("费用保存失败!");
+        	}
+    	},'json');
+	});
+
  	$("#pickupOrderPayment").click(function(e){
  		saveCarManage(e);
- 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-		paymenttable.fnDraw();
- 	});
- 	
- 	
+ 		var finItemIds = $("#finItemIds").val(); 		
+ 		var pickupOrderId = $("#pickupOrderId").val();	
+ 		var finItems = $("#table_fin2").children('tbody').children();
+ 		for(var i=0;i<finItems.length;i++){
+ 			if(finItemIds.contains(finItems[i].id)){
+ 				$.post('/yh/pickupOrder/searchOwnCarFinItem', {pickupOrderId:pickupOrderId, finItemId:finItems[i].id}, function(data){
+ 		        	if(data.ID > 0){
+ 		        		var finItems2 = $("#table_fin2").children('tbody').children();
+ 		        		for(var i=0;i<finItems2.length;i++){
+ 		        			if(finItems2[i].id == data.FIN_ITEM_ID + ''){
+ 		        				$(finItems2[i].firstChild.firstChild).attr('checked',''); 
+ 		        				$(finItems2[i]).children(".amount")[0].innerHTML = "<input type='text' value='"+data.AMOUNT+"' class='form-control amountEdit'>";
+ 		        			}
+ 		        		}
+ 		        	}
+ 		    	},'json');
+ 			}
+ 		}
+ 	}); 	
 });

@@ -345,15 +345,27 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','3');");
             stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','4');");
             stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','5');");
-            // 收费条目定义表code VARCHAR(50),name VARCHAR(50),type VARCHAR(50),Remark
-
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'YSF','运输费','应付','这是一张运输单收费');");
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'BYF','搬运费','应付','这是一张运输单收费');");
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'SLF','上楼费','应付','这是一张运输单收费');");
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'YSF','客户费用','应收','这是一张运输单收费');");
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'BYF','搬运费','应收','这是一张运输单收费');");
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'SLF','上楼费','应收','这是一张运输单收费');");
-            stmt.executeUpdate("insert into Fin_item(code,name,type,Remark) values(" + "'FTF','分摊费用','应收','这是分摊费用');");
+            
+            // 收费条目定义
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('YSF','运输费','应付','这是一张运输单收费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('BYF','搬运费','应付','这是一张运输单收费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('SLF','上楼费','应付','这是一张运输单收费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('YSF','客户费用','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('BYF','搬运费','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('SLF','上楼费','应收','这是一张运输单收费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('FTF','分摊费用','应收','这是分摊费用');");
+            
+            // 自营车辆付费条目定义
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('"+Carinfo.CARINFO_TYPE_OWN+"','CYF','柴油费','应付','这是柴油费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('"+Carinfo.CARINFO_TYPE_OWN+"','CCF','出车补贴','应付','这是出车补贴费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('"+Carinfo.CARINFO_TYPE_OWN+"','SJGZ','司机工资','应付','这是司机工资');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('"+Carinfo.CARINFO_TYPE_OWN+"','LQF','路桥费','应付','这是路桥费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('"+Carinfo.CARINFO_TYPE_OWN+"','ZXF','装卸费','应付','这是装卸费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('"+Carinfo.CARINFO_TYPE_OWN+"','FKF','罚款','应付','这是罚款费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('"+Carinfo.CARINFO_TYPE_OWN+"','SHGZ','送货员工资','应付','这是送货员工资');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('"+Carinfo.CARINFO_TYPE_OWN+"','TCF','停车费','应付','这是停车费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('"+Carinfo.CARINFO_TYPE_OWN+"','ZSF','住宿费','应付','这是住宿费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('"+Carinfo.CARINFO_TYPE_OWN+"','QTF','其它费用','应付','这是其它费用');");
 
             newCustomer();
 
