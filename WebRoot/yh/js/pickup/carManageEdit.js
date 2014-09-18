@@ -911,6 +911,7 @@
 			$("#milestonePickupId").val(data.ID);
 			if(data.ID>0){
 				$("#pickupId").val(data.ID);
+			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			  	//$("#style").show();				    
 			}else{
 				alert('数据保存失败。');
