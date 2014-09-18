@@ -758,8 +758,10 @@ public class PickupOrderController extends Controller {
         }
     }
 
+    //问题解决:    select group_concat(  cast(id as char)   ) funIds from fun
+    //使用时取：   pickupOrder.getStr("funIds")
     private void pickupOrderEdit(){
-    	String sql = "select dor.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
+    	String sql = "select dor.*,co.contact_person,co.phone,u.user_name,(select group_concat(cast(dt.order_id as char)  separator',')  from depart_transfer  dt "
                 + "where dt.depart_id =dor.id)as order_id from depart_order  dor "
                 + "left join contact co on co.id in( select p.contact_id  from party p where p.id=dor.driver_id ) "
                 + "left join user_login  u on u.id=dor.create_by where dor.combine_type ='"
@@ -768,7 +770,7 @@ public class PickupOrderController extends Controller {
         DepartOrder pickupOrder = DepartOrder.dao.findFirst(sql);
         setAttr("pickupOrder", pickupOrder);
         
-        String list = pickupOrder.get("order_id");
+        String list = pickupOrder.getStr("order_id");
         String[] transferOrderIds = list.split(",");
         TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
         setAttr("transferOrderAttr", transferOrderAttr);
