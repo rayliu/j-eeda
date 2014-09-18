@@ -13,92 +13,218 @@
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/returnOrder/transferOrderList?returnOrderId="+returnOrderId,
+        "sAjaxSource": "/yh/returnOrder/transferOrderItemList?order_id="+returnOrderId,
         "aoColumns": [   
-            {"mDataProp":"ORDER_NO",
+            {
+            	"mDataProp":"ITEM_NO",            	
+            	"sWidth": "80px",
+            	"sClass": "item_no"
+        	},
+            {
+            	"mDataProp":"ITEM_NAME",
+            	"sWidth": "180px",
+            	"sClass": "item_name"
+            },
+            {
+            	"mDataProp":"SIZE",            	
+            	"sWidth": "50px",
+            	"sClass": "size"
+        	},
+            {
+            	"mDataProp":"WIDTH",
+            	"sWidth": "50px",
+            	"sClass": "width"
+            },
+            {
+            	"mDataProp":"HEIGHT",            	
+            	"sWidth": "50px",
+            	"sClass": "height"
+        	}, 
+            {
+            	"mDataProp":"WEIGHT",
+            	"sWidth": "50px",
+            	"sClass": "weight",
+            },
+        	{
+            	"mDataProp":"AMOUNT",
+            	"sWidth": "50px",
+            	"sClass": "amount"
+            }, 
+            {
+            	"mDataProp":"UNIT",
+            	"sWidth": "50px",
+            	"sClass": "unit"
+            },
+            {
+            	"mDataProp":null,
+            	"sWidth": "50px",
+            	"sClass": "sumWeight",
             	"fnRender": function(obj) {
-            			return "<a href='/yh/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
-            		}},
-            
-            {"mDataProp":"STATUS"},
-            {"mDataProp":"CARGO_NATURE",
+        			return obj.aData.WEIGHT * obj.aData.AMOUNT;
+                }
+            },
+            {
+            	"mDataProp":"VOLUME",
+            	"sWidth": "50px",
+            	"sClass": "volume",
             	"fnRender": function(obj) {
-            		if(obj.aData.CARGO_NATURE == "cargo"){
-            			return "普通货品";
-            		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
-            			return "损坏货品";
-            		}else if(obj.aData.CARGO_NATURE == "ATM"){
-            			return "ATM";
-            		}else{
-            			return "";
-            		}}},   
-            {"mDataProp":"SERIAL_NO"},
-    		{"mDataProp":"OPERATION_TYPE",
-    			"fnRender": function(obj) {
-    				if(obj.aData.OPERATION_TYPE == "out_source"){
-    					return "外包";
-    				}else if(obj.aData.OPERATION_TYPE == "own"){
-    					return "自营";
-    				}else{
-    					return "";
-    				}}},        	
-            {"mDataProp":"PICKUP_MODE",
-            	"fnRender": function(obj) {
-            		if(obj.aData.PICKUP_MODE == "routeSP"){
-            			return "干线供应商自提";
-            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
-            			return "外包供应商提货";
-            		}else if(obj.aData.PICKUP_MODE == "own"){
-            			return "源鸿自提";
-            		}else{
-            			return "";
-            		}}},
-            {"mDataProp":"ARRIVAL_MODE",
-            	"fnRender": function(obj) {
-            		if(obj.aData.ARRIVAL_MODE == "delivery"){
-            			return "货品直送";
-            		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
-            			return "入中转仓";
-            		}else{
-            			return "";
-            		}}},
-            {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"ORDER_TYPE",
-            	"fnRender": function(obj) {
-            		if(obj.aData.ORDER_TYPE == "salesOrder"){
-            			return "销售订单";
-            		}else if(obj.aData.ORDER_TYPE == "replenishmentOrder"){
-            			return "补货订单";
-            		}else if(obj.aData.ORDER_TYPE == "arrangementOrder"){
-            			return "调拨订单";
-            		}else if(obj.aData.ORDER_TYPE == "cargoReturnOrder"){
-            			return "退货订单";
-            		}else if(obj.aData.ORDER_TYPE == "damageReturnOrder"){
-            			return "质量退单";
-            		}else if(obj.aData.ORDER_TYPE == "gateOutTransferOrder"){
-            			return "出库运输单";
-            		}else{
-            			return "";
-            		}}},
-            {"mDataProp":"REMARK"}                      
+            		return obj.aData.VOLUME * obj.aData.AMOUNT;
+            	}
+            },            
+            {"mDataProp":"REMARK"},
+            {  
+                "mDataProp": null, 
+                "sWidth": "60px",  
+            	"sClass": "remark",              
+                "fnRender": function(obj) {
+                    return	"<a class='btn btn-success btn-xs dateilEdit' code='?id="+obj.aData.ID+"' title='单品编辑'>"+
+                                "<i class='fa fa-edit fa-fw'></i>"+
+                            "</a> "+
+                            "<a class='btn btn-danger btn-xs deleteItem' code='?item_id="+obj.aData.ID+"' title='删除'>"+
+                                "<i class='fa fa-trash-o fa-fw'></i>"+
+                            "</a>";
+                }
+            }                     
         ]  
     });	
+	var orderId = $("#order_id").val();
+	//datatable, 动态处理
+    var detailDataTable = $('#detailTable').dataTable({
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "bFilter": false, //不需要默认的搜索框
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+        "sAjaxSource": "/yh/returnOrder/transferOrderDetailList2?item_id="+returnOrderId,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
+        "aoColumns": [  			            
+            {
+            	"mDataProp":"SERIAL_NO",
+        		"sWidth": "80px",
+            	"sClass": "serial_no"	
+            },
+            {
+            	"mDataProp":"ITEM_NO",
+        		"sWidth": "80px",
+            	"sClass": "item_no"            		
+            },  
+		    {
+		    	"mDataProp":"ITEM_NAME",
+		    	"sWidth": "80px",
+		    	"sClass": "item_name"            		
+		    },       	
+            {
+            	"mDataProp":"VOLUME",
+        		"sWidth": "80px",
+            	"sClass": "volume"            		
+            },
+            {
+            	"mDataProp":"WEIGHT",
+        		"sWidth": "80px",
+            	"sClass": "weight"
+            },
+            {
+            	"mDataProp":"CONTACT_PERSON",
+        		"sWidth": "80px",
+            	"sClass": "contact_person"
+            },
+            {
+            	"mDataProp":"PHONE",
+        		"sWidth": "80px",
+            	"sClass": "phone"
+            },
+            {
+            	"mDataProp":"ADDRESS",
+        		"sWidth": "80px",
+            	"sClass": "address"
+            },
+            {
+            	"mDataProp":"REMARK",
+        		"sWidth": "80px",
+            	"sClass": "remark"
+            },
+            {  
+                "mDataProp": null, 
+                "sWidth": "8%",                
+                "fnRender": function(obj) {
+                    return	"<a class='btn btn-danger btn-xs deleteDetail' code='?item_id="+obj.aData.ID+"&notify_party_id="+obj.aData.NOTIFY_PARTY_ID+"'' title='删除'>"+
+		                        "<i class='fa fa-trash-o fa-fw'></i>"+
+		                    "</a>";
+                }
+            }                         
+        ]      
+    });
 	
-	// 编辑单品
-	$("#itemTable").on('click', '.dateilEdit', function(e){
+	//已签收/取消  按钮不可用
+	var result = $("#returnStatus").val();
+	if(result=='new')
+		$("#status span").append("新建"); 
+	else if(result=='confirmed')
+    	$("#status span").append("已确认"); 
+    else if(result=='cancel'){
+    	$("#status span").append("取消"); 
+    	$("#returnOrderAccomplish").attr("disabled", true);
+    }else if(result=='已签收'){
+		$("#status span").append("已签收"); 
+		$("#returnOrderAccomplish").attr("disabled", true);
+	}else{
+		$("#status span").append(result); 
+	}
+	
+	// 回单签收
+	$("#returnOrderAccomplish").on('click', function(e){
+		var receivableTotal = $("#receivableTotal").val();
+ 		if(receivableTotal != null && receivableTotal != ""){
+			e.preventDefault();
+	        //异步向后台提交数据
+			var id = $("#returnId").val();
+			$.post('/yh/returnOrder/returnOrderReceipt/'+id,function(data){
+	           //保存成功后，刷新列表
+	           console.log(data);
+	           if(data.success){
+	        	   //alert('签收成功！');
+	        	   $("#status span").html("已签收");
+	        	   $("#returnOrderAccomplish").attr("disabled", true);
+	           }else{
+	               alert('签收失败！');
+	           }
+	        },'json');
+ 		}else{
+ 			alert("请收款(新增应收)后再签收！");
+ 		}
+	});
+	
+ 	// 查看货品
+	$("#transferOrderTable").on('click', '.dateilEdit', function(e){
 		e.preventDefault();
+		
+		$("#transferOrderItemDateil").show();
 		var code = $(this).attr('code');
 		var itemId = code.substring(code.indexOf('=')+1);
 		$("#item_id").val(itemId);
-		$("#transferOrderItemDateil").show();
-
-		// 设置单品信息
-		$("#detail_transfer_order_id").val($("#order_id").val());
-		$("#detail_transfer_order_item_id").val(itemId);
 		
-		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
-		detailDataTable.fnDraw();  
+		detailDataTable.fnSettings().sAjaxSource = "/yh/returnOrder/transferOrderDetailList2?item_id="+itemId;
+		detailDataTable.fnDraw();  			
 	});
+	// 删除货品
+	$("#transferOrderTable").on('click', '.deleteItem', function(e){
+		var code = $(this).attr('code');
+		var itemId = code.substring(code.indexOf('=')+1);
+		$("#item_id").val(itemId);
+		$.post('/yh/returnOrder/deleteTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
+		},'json');
+		$("#transferOrderItemDateil").hide();
+		// 更新货品列表
+		var returnOrderId = $("#returnId").val();
+		transferOrder.fnSettings().sAjaxSource = "/yh/returnOrder/transferOrderItemList?order_id="+returnOrderId;
+		transferOrder.fnDraw(); 	  	
+	});	
 
 	/*--------------------------------------------------------------------*/
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
@@ -172,7 +298,7 @@
  	}
  	
  	//应收datatable
- 	 var order_id =$("#returnOrderid").val();
+ 	var order_id =$("#returnOrderid").val();
 	var receipttable =$('#table_fin').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "bFilter": false, //不需要默认的搜索框
@@ -194,7 +320,8 @@
 			        	var str="";
 			        	$("#receivableItemList").children().each(function(){
 			        		if(obj.aData.NAME == $(this).text()){
-			        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
+			        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";   
+			        			$("#receivableTotal").val(obj.aData.NAME);
 			        		}else{
 			        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
 			        		}

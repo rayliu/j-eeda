@@ -242,7 +242,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,to_id,location_to,remark) values(5, 2,'perCar', 333,'110101','北京市东城区','配送路线');");
             
             // 回单notity_party_id bigint,customer_id
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', 'new','应收',1,1,'这是一张回单');");
+            //stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', 'new','应收',1,1,'这是一张回单');");
             stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,transfer_order_id,creator,remark) values('HD2013021400002', '2014-08-6 16:35:35.1', 'confirmed','应收',1,2,'这是一张回单');");
             // 运输单应收应付明细id bigint auto_increment PRIMARY KEY, order_id bigint,
             // fin_item_id bigint,"

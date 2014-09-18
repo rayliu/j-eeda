@@ -16,6 +16,8 @@ import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
+import models.TransferOrderItem;
+import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.contract.Contract;
@@ -536,7 +538,7 @@ public class ReturnOrderController extends Controller {
 		re.set("TRANSACTION_STATUS", "cancel").update();
 		renderJson("{\"success\":true}");
 	}
-
+	
 	public void transferOrderDetailList() {
 		String deliveryOrderId = getPara("deliveryOrderId");
 		String orderId = getPara("orderId");
@@ -633,4 +635,97 @@ public class ReturnOrderController extends Controller {
 		map.put("aaData", products);
 		renderJson(map);
 	}
+	//货品明细
+	public void transferOrderItemList() {
+        Map transferOrderListMap = null;
+        String trandferOrderId = getPara("order_id");
+        String productId = getPara("product_id");
+        if (trandferOrderId == null || "".equals(trandferOrderId)) {
+            trandferOrderId = "-1";
+        }
+        logger.debug(trandferOrderId);
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        String sqlTotal = "select distinct count(1) total from transfer_order_item toi " + " left join product p on p.id = toi.product_id "
+                + " where toi.order_id =" + trandferOrderId
+                + " or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId + ")";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+        String sql = "";
+        sql = "select distinct toi.id,ifnull(p.item_no,toi.item_no) item_no, ifnull(p.item_name,toi.item_name) item_name,"
+                + " ifnull(p.size,toi.size) size, ifnull(p.width, toi.width) width, ifnull(p.height, toi.height) height,"
+                + " ifnull(p.weight,toi.weight) weight, ifnull(p.volume, toi.volume) volume,toi.amount amount,"
+                + " ifnull(p.unit,toi.unit) unit, toi.remark from transfer_order_item toi "
+                + " left join product p on p.id = toi.product_id " + " where toi.order_id =" + trandferOrderId
+                + " or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId
+                + ") order by toi.id" + sLimit;
+        List<Record> transferOrders = Db.find(sql);
+        transferOrderListMap = new HashMap();
+        transferOrderListMap.put("sEcho", pageIndex);
+        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        transferOrderListMap.put("aaData", transferOrders);
+        renderJson(transferOrderListMap);
+    }
+	//单品
+	public void transferOrderDetailList2() {
+        String itemId = getPara("item_id");
+        String orderId = getPara("orderId");
+        if (itemId == null || "".equals(itemId)) {
+            itemId = "-1";
+        }
+        if (orderId == null || "".equals(orderId)) {
+        	orderId = "-1";
+        }
+        logger.debug(itemId);
+
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        String sql = "";
+        String sqlTotal = "";
+        if(itemId != "-1"){
+	        sqlTotal = "select count(1) total from transfer_order_item_detail where item_id =" + itemId;
+	
+	        sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
+					+ " left join party p on d.notify_party_id = p.id"
+					+ " left join contact c on p.contact_id = c.id"
+					+ " where d.item_id ="+itemId + sLimit;	
+        }else{
+        	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id="+orderId;
+	
+	        sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
+					+ " left join party p on d.notify_party_id = p.id"
+					+ " left join contact c on p.contact_id = c.id"
+	                + " where order_id = "+orderId + sLimit;	
+        }
+
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+        List<Record> transferOrders = Db.find(sql);
+        Map transferOrderListMap = new HashMap();
+        transferOrderListMap.put("sEcho", pageIndex);
+        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        transferOrderListMap.put("aaData", transferOrders);
+
+        renderJson(transferOrderListMap);
+    }
+	// 删除TransferOrderItem
+    public void deleteTransferOrderItem() {
+        String id = getPara("transfer_order_item_id");
+        List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
+                .find("select * from transfer_order_item_detail where item_id=" + id);
+        for (TransferOrderItemDetail itemDetail : transferOrderItemDetails) {
+            itemDetail.delete();
+        }
+        TransferOrderItem.dao.deleteById(id);
+        renderJson("{\"success\":true}");
+    }
 }
