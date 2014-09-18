@@ -292,39 +292,41 @@ $(document).ready(function() {
 				if(cname.length == 0 && warehouseArr.length == 0){
 		    		$("#saveDelivery").attr('disabled', true);
 		    	}
-				if($(this).prop("checked") == true){
+
+		    	var $checkBox=$(objCheckBox);
+				if($checkBox.prop("checked") == true){
 					$("#saveDelivery").attr('disabled', false);
 					if(cname.length != 0){
-						if(cname[0] != $(this).parent().siblings('.cname')[0].innerHTML && $(this).parent().siblings('.cname')[0].innerHTML != ''){
+						if(cname[0] != $checkBox.parent().siblings('.cname')[0].innerHTML && $checkBox.parent().siblings('.cname')[0].innerHTML != ''){
 							alert("请选择同一客户!");
 							return false;
 						}else{
 							if(warehouseArr.length != 0){
-								if(warehouseArr[0] != $(this).parent().siblings('.warehouse')[0].innerHTML && $(this).parent().siblings('.warehouse')[0].innerHTML != ''){
+								if(warehouseArr[0] != $checkBox.parent().siblings('.warehouse')[0].innerHTML && $checkBox.parent().siblings('.warehouse')[0].innerHTML != ''){
 									alert("请选择同一仓库!");
 									return false;
 								}else{
-									cname.push($(this).parent().siblings('.cname')[0].innerHTML);
-									warehouseArr.push($(this).parent().siblings('.warehouse')[0].innerHTML);
+									cname.push($checkBox.parent().siblings('.cname')[0].innerHTML);
+									warehouseArr.push($checkBox.parent().siblings('.warehouse')[0].innerHTML);
 								}
 							}else{
-								if($(this).parent().siblings('.warehouse')[0].innerHTML != ''){
-									warehouseArr.push($(this).parent().siblings('.warehouse')[0].innerHTML);
+								if($checkBox.parent().siblings('.warehouse')[0].innerHTML != ''){
+									warehouseArr.push($checkBox.parent().siblings('.warehouse')[0].innerHTML);
 								}
 							}
 						}
 					}else{
-						if($(this).parent().siblings('.cname')[0].innerHTML != ''){
-							cname.push($(this).parent().siblings('.cname')[0].innerHTML);
-							warehouseArr.push($(this).parent().siblings('.warehouse')[0].innerHTML);
+						if($checkBox.parent().siblings('.cname')[0].innerHTML != ''){
+							cname.push($checkBox.parent().siblings('.cname')[0].innerHTML);
+							warehouseArr.push($checkBox.parent().siblings('.warehouse')[0].innerHTML);
 						}
 					}
 				}else{
 					if(cname.length != 0){
-						cname.splice($(this).parent().siblings('.cname')[0].innerHTML, 1);
+						cname.splice($checkBox.parent().siblings('.cname')[0].innerHTML, 1);
 					}
 					if(warehouseArr.length != 0){
-						warehouseArr.splice($(this).parent().siblings('.warehouse')[0].innerHTML, 1);
+						warehouseArr.splice($checkBox.parent().siblings('.warehouse')[0].innerHTML, 1);
 					}
 				}
 			};
@@ -410,7 +412,7 @@ $(document).ready(function() {
 				});
 		/*-----------------------------------------------------------------*/
 				//应收
-				$("#arap").click(function(e){
+				$("#arapTab").click(function(e){
 					e.preventDefault();
 					/*if(!$("#transferOrderForm").valid()){
 			        	alert("请先保存运输单!");
