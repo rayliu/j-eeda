@@ -163,6 +163,9 @@ public class DataInitUtil {
                     + " last_modified_stamp timestamp,remark varchar(5120),audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id),ref_order_id bigint,foreign key(ref_order_id) references return_order(id));");
             stmt.executeUpdate("create table if not exists arap_audit_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
             stmt.executeUpdate("create table if not exists arap_audit_order_invoice(id bigint auto_increment primary key,audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id),audit_invoice_id bigint,foreign key(audit_invoice_id) references arap_audit_invoice(id));");
+            
+            // 保险单
+            stmt.executeUpdate("create table if not exists insurance_order(id bigint auto_increment primary key,order_no varchar(255),ref_no varchar(255),status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,transfer_order_id bigint,foreign key(transfer_order_id) references transfer_order(id));");
 
             stmt.close();
             // conn.commit();

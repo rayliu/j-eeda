@@ -16,6 +16,7 @@ import models.DepartOrder;
 import models.DepartOrderFinItem;
 import models.DepartTransferOrder;
 import models.Fin_item;
+import models.InsuranceOrder;
 import models.InventoryItem;
 import models.Location;
 import models.Office;
@@ -185,6 +186,8 @@ public class EedaConfig extends JFinalConfig {
         me.add("/yh/costAdjustOrder", controllers.yh.arap.ap.CostAdjustOrderController.class, "/yh");
         //audit log
         me.add("/yh/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, "/yh");
+        //insuranceOrder
+        me.add("/yh/insuranceOrder", controllers.yh.insurance.InsuranceOrderController.class, "/yh");
     }
 
     public void configPlugin(Plugins me) {
@@ -255,6 +258,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_audit_item", ArapAuditItem.class);
         arp.addMapping("arap_audit_invoice", ArapAuditInvoice.class);
         arp.addMapping("arap_audit_order_invoice", ArapAuditOrderInvoice.class);
+        arp.addMapping("insurance_order", InsuranceOrder.class);
         // yh mapping
 
     }
