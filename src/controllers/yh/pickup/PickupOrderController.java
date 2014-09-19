@@ -813,7 +813,7 @@ public class PickupOrderController extends Controller {
         setAttr("paymentItemList", paymentItemList);
         
         String finItemIds = "";
-        List<DepartOrderFinItem> departOrderFinItems = DepartOrderFinItem.dao.find("select * from depart_order_fin_item where pickup_order_id = ?", getPara("id"));
+        List<DepartOrderFinItem> departOrderFinItems = DepartOrderFinItem.dao.find("select * from depart_order_fin_item where pickup_order_id = ?", pickupOrder.get("id"));
         for(DepartOrderFinItem departOrderFinItem : departOrderFinItems){
         	finItemIds += departOrderFinItem.get("fin_item_id") + ",";
         }
