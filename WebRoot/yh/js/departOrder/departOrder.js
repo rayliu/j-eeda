@@ -4,6 +4,7 @@ $(document).ready(function() {
     var spName = [];
     var routeArr = [];
     var spNameUnchecked = [];
+    var chargeType2 = [];
 	//datatable, 动态处理
     var datatable = $('#eeda-table').dataTable({
     	"bSort": false, // 不要排序
@@ -74,6 +75,20 @@ $(document).ready(function() {
             { 
             	"mDataProp": "ROUTE_TO",
                 "sClass": "route_to"
+            },
+            {"mDataProp":"CHARGE_TYPE2",
+            	"sClass": "chargeType2",
+            	"fnRender":function(obj){
+            		if(obj.aData.CHARGE_TYPE2 == "perUnit"){
+    					return "计件";
+    				}else if(obj.aData.CHARGE_TYPE2 == "perCar"){
+    					return "整车";
+    				}else if(obj.aData.CHARGE_TYPE2 == "perCargo"){
+    					return "零担";
+    				}else{
+    					return "";
+    				}
+            	}
             }
         ]      
     });	
@@ -134,6 +149,9 @@ $(document).ready(function() {
 				if(spName[0] != $(this).parent().siblings('.spname')[0].innerHTML && $(this).parent().siblings('.spname')[0].innerHTML != ''){
 					alert("请选择同一供应商!");
 					return false;
+				}else if(chargeType2[0] != $(this).parent().siblings('.chargeType2')[0].innerHTML){
+					alert("请选择同一计费方式!");
+					return false;
 				}else{
 					if(routeArr.length != 0){
 						if(routeArr[0] != $(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML && $(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML != ''){
@@ -153,6 +171,7 @@ $(document).ready(function() {
 				if($(this).parent().siblings('.spname')[0].innerHTML != ''){
 					spName.push($(this).parent().siblings('.spname')[0].innerHTML);
 					routeArr.push($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML);
+					chargeType2.push($(this).parent().siblings('.chargeType2')[0].innerHTML);
 				}
 			}
 		}else{
@@ -164,6 +183,9 @@ $(document).ready(function() {
 			}
 			if(spName.length == 0){
 				$("#saveBtn").attr('disabled', true);
+			}
+			if(chargeType2.length == 0){
+				chargeType2.splice($(this).parent().siblings('.chargeType2')[0].innerHTML, 1);
 			}
 		}
 	});

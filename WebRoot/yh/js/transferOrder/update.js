@@ -288,7 +288,7 @@ $(document).ready(function() {
         
     });
 	
-	 //回显供应商付款方式
+	 //回显供应商计费方式
     var chargeTypeRadio2 = $("#chargeTypeRadio2").val();
 	$("input[name='chargeType2']").each(function(){
 		if(chargeTypeRadio2 == $(this).val()){

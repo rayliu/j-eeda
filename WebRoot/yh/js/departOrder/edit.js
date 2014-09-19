@@ -9,6 +9,42 @@
     var last_detail_size=$("#last_detail_size").val();
     var hang="";
     
+    //计费方式回显
+	var departOrderId = $("#departOrderId").val();
+	if(departOrderId != '' && departOrderId != null){
+		var departOrderChargeType = $("#departOrderChargeType").val();
+		alert("修改计费方式："+departOrderChargeType);
+		$("input[name='chargeType']").each(function(){
+			if(departOrderChargeType == $(this).val()){
+				//零担
+				if(departOrderChargeType == "perCargo"){
+					$(this).prop('checked', true);
+					$("#ltl_price_type").show();
+					var hibLtlUnitType = $("#hibLtlUnitType").val();
+					$("input[value='"+hibLtlUnitType+"']").prop('checked', true);
+    			}else{
+    				$(this).prop('checked', true);
+    			}
+			}
+		});
+	}else{
+		var transferOrderChargeType = $("#transferOrderChargeType").val();
+		$("input[name='chargeType']").each(function(){
+			if(transferOrderChargeType == $(this).val()){
+				//零担
+				if(transferOrderChargeType == "perCargo"){
+					$(this).prop('checked', true);
+					$("#ltl_price_type").show();
+					$("#optionsRadiosIn1").prop('checked', true);
+    			}else{
+    				$(this).prop('checked', true);
+    			}
+			}
+		});
+	}
+    
+    
+    
     if(departOrderStatus=='新建'){
         $("#order_edit").attr("disabled",true);
     	$("#departureConfirmationBtn").attr("disabled",false);
@@ -938,4 +974,7 @@
     				}
     	    	},'json');
     		});
+    		
+    		
+    		
     });

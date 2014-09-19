@@ -375,7 +375,7 @@ public class DepartOrderController extends Controller {
                     + " (select sum(toi.weight) from transfer_order_item toi where toi.order_id = tor.id) as total_weight,"
                     + " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
-                    + " ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.company_name cname,"
+                    + " tor.charge_type2,ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.company_name cname,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.company_name as spname,cont.id as spid from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id "
@@ -408,7 +408,7 @@ public class DepartOrderController extends Controller {
                     + " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
                     + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-                    + " dor.address doaddress,tor.pickup_mode,tor.status,c.company_name cname,"
+                    + " tor.charge_type2,dor.address doaddress,tor.pickup_mode,tor.status,c.company_name cname,"
                     + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.company_name spname from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id "
@@ -534,9 +534,13 @@ public class DepartOrderController extends Controller {
         setAttr("routeSp", getPara("routeSp"));
 
         String[] orderIds = list.split(",");
+        int numone=0;
         for (int i = 0; i < orderIds.length; i++) {
             TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
-            
+            if(numone == 0){
+            	setAttr("transferOrder", transferOrder);
+            	numone = 1;
+            }
             String routeFrom = transferOrder.get("route_from");
             Location locationFrom = null;
             if (routeFrom != null || !"".equals(routeFrom)) {
@@ -594,6 +598,9 @@ public class DepartOrderController extends Controller {
         DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order where combine_type='"
                 + DepartOrder.COMBINE_TYPE_DEPART + "' order by depart_no desc limit 0,1");
         
+        setAttr("chargeType", order.get("charge_type"));
+        
+        
         if (order != null) {
             String num = order.get("depart_no");
             String str = num.substring(2, num.length());
@@ -603,7 +610,7 @@ public class DepartOrderController extends Controller {
             String format = sdf.format(new Date());
             String time = format + "00001";
             Long newTime = Long.parseLong(time);
-            if (oldTime >= newTime) {
+            if (oldTime >= newTime) { 
                 order_no = String.valueOf((oldTime + 1));
             } else {
                 order_no = String.valueOf(newTime);

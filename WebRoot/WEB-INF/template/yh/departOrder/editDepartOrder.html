@@ -52,30 +52,31 @@
           		                            <input id="uncheckedDetail" type="hidden" name="uncheckedDetail"/>
           		                            <input type="hidden" name="routeSp" value="${routeSp!''}"/>
                                    		   
-                                          <% var chargeType=departOrder.charge_type!'';%>
 	                                        <div class="form-group">
-                                                 <label><h3>计费方式</h3></label>
-                                                  <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType1" value="perUnit" <% if(chargeType=='perUnit'||chargeType==''){%>checked<%}%> >计件
+                                                <label><h3>计费方式</h3></label>
+                                                <input type="hidden" id="transferOrderChargeType" value="${transferOrder.charge_type2!''}">
+                                                <input type="hidden" id="departOrderChargeType" value="${departOrder.charge_type!''}">
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType" id="chargeType1" value="perUnit" checked>计件
                                                 </label>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType2" value="perCar" <% if(chargeType=='perCar'){%>checked<%}%> >整车
+                                                    <input type="radio" name="chargeType" id="chargeType2" value="perCar">整车
                                                 </label>  
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType3" value="perCargo" <% if(chargeType=='perCargo'){%>checked<%}%> >零担
+                                                    <input type="radio" name="chargeType" id="chargeType3" value="perCargo">零担
                                                 </label> 
                                           </div>
-                                          <% var ltlPriceType=departOrder.ltl_price_type!'';%>
-                                          <div class="form-group" id="ltl_price_type" <% if(chargeType!='perCargo'){%>style="display: none;"<%}%> >
+                                          <div style="display: none;" class="form-group" id="ltl_price_type" >
                                               <lable>零担计费方式:  </lable>
+                                              <input type="hidden" id="hibLtlUnitType" value="${departOrder.ltl_price_type!''}">
                                               <label class="radio-inline">
-                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn1" value="perCBM" <% if(ltlPriceType=='perCBM'||ltlPriceType==''){%>checked<%}%>>按体积（每立方米）
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn1" value="perCBM">按体积（每立方米）
                                               </label>
                                                <label class="radio-inline">
-                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn3" value="perKg" <% if(ltlPriceType=='perKg'){%>checked<%}%>>按重量（每公斤）
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn3" value="perKg">按重量（每公斤）
                                               </label>
                                               <label class="radio-inline">
-                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn2" value="perTon" <% if(ltlPriceType=='perTon'){%>checked<%}%>>按重量（每吨）
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn2" value="perTon">按重量（每吨）
                                               </label>
                                           </div>
                                    		    <div class="form-group">
