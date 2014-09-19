@@ -992,7 +992,6 @@
 
  	$("#pickupOrderPayment").click(function(e){
  		saveCarManage(e);
-<<<<<<< Updated upstream
  		var finItemIds = $("#finItemIds").val(); 		
  		var pickupOrderId = $("#pickupOrderId").val();	
  		var finItems = $("#table_fin2").children('tbody').children();
@@ -1012,15 +1011,11 @@
  			}
  		}
  	}); 	
-=======
- 		if("chargeCheckOrderbasic" == parentId || "addressList" == parentId ||"transferOrderMilestoneList" == parentId){
- 			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
- 		}
- 		
-		paymenttable.fnDraw();
-		parentId = e.target.getAttribute("id");
- 	});
  	
- 	
->>>>>>> Stashed changes
+	if("chargeCheckOrderbasic" == parentId || "addressList" == parentId ||"transferOrderMilestoneList" == parentId){
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	}
+	
+	paymenttable.fnDraw();
+	parentId = e.target.getAttribute("id");
 });
