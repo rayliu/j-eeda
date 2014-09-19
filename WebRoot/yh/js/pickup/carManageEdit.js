@@ -822,10 +822,11 @@
 	var paymenttable=$('#table_fin2').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "bFilter": false, //不需要默认的搜索框
-        //"sPaginationType": "bootstrap",
+        "sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/pickupOrder/ownCarCccountPayable/"+pickupOrderId,
+        "bPaginate": false,
+        "sAjaxSource": "/yh/pickupOrder/ownCarAccountPayable/"+pickupOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },

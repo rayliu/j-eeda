@@ -1355,7 +1355,7 @@ public class PickupOrderController extends Controller {
     }
     
     // 自营车辆应付list
-    public void ownCarCccountPayable() {
+    public void ownCarAccountPayable() {
     	String id = getPara("pickupOrderId");
     	String sLimit = "";
     	String pageIndex = getPara("sEcho");
