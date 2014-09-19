@@ -280,7 +280,7 @@ $(document).ready(function() {
         
         //回显供应商付款方式
         var chargeType = $(this).attr('chargeType');
-		$("input[name='chargeType1']").each(function(){
+		$("input[name='chargeType2']").each(function(){
 			if(chargeType == $(this).val()){
 				$(this).prop('checked', true);
 			}
@@ -289,9 +289,9 @@ $(document).ready(function() {
     });
 	
 	 //回显供应商付款方式
-    var chargeTypeRadio1 = $("#chargeTypeRadio1").val();
-	$("input[name='chargeType1']").each(function(){
-		if(chargeTypeRadio1 == $(this).val()){
+    var chargeTypeRadio2 = $("#chargeTypeRadio2").val();
+	$("input[name='chargeType2']").each(function(){
+		if(chargeTypeRadio2 == $(this).val()){
 			$(this).prop('checked', true);
 		}
 	});

@@ -218,7 +218,6 @@ public class TransferOrderController extends Controller {
 			Party sp = Party.dao.findById(sp_id);
 			Contact spContact = Contact.dao.findById(sp.get("contact_id"));
 			setAttr("spContact", spContact);
-			setAttr("party", sp);
 		}
 		if (driver_id != null) {
 			Party driver = Party.dao.findById(driver_id);
@@ -416,7 +415,7 @@ public class TransferOrderController extends Controller {
 					TransferOrder.ASSIGN_STATUS_NEW);
 			transferOrder.set("payment", getPara("payment"));
 			transferOrder.set("charge_type", getPara("chargeType"));
-
+			transferOrder.set("charge_type2", getPara("chargeType2"));
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
 			if (getPara("arrivalMode") != null
@@ -476,7 +475,8 @@ public class TransferOrderController extends Controller {
 					TransferOrder.ASSIGN_STATUS_NEW);
 			transferOrder.set("payment", getPara("payment"));
 			transferOrder.set("charge_type", getPara("chargeType"));
-
+			transferOrder.set("charge_type2", getPara("chargeType2"));
+			
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
 			if (getPara("arrivalMode") != null
