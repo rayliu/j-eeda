@@ -5,7 +5,7 @@ $(document).ready(function() {
 	$('#resetbutton').hide();
 	$('#resetbutton2').hide();
 	var hang="";
-		  //获取供应商的list，选中信息在下方展示其他信息
+		  // 获取供应商的list，选中信息在下方展示其他信息
 			$('#spMessage').on('keyup click', function(){
 				var inputStr = $('#spMessage').val();
 				$.get('/yh/delivery/searchSp', {input:inputStr}, function(data){
@@ -32,7 +32,7 @@ $(document).ready(function() {
 		 	});
 
 			$('#spList').on('mousedown', function(){
-				return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+				return false;// 阻止事件回流，不触发 $('#spMessage').on('blur'
 			});
 
 			// 选中供应商
@@ -47,7 +47,7 @@ $(document).ready(function() {
 				
 		        $('#spList').hide();
 		    }); 
-			//datatable, 动态处理
+			// datatable, 动态处理
 			var sAjaxSource ="";
 			var trandferOrderId = $("#tranferid").val();
 			var localArr =$("#localArr").val();
@@ -60,13 +60,15 @@ $(document).ready(function() {
 			}else{
 				sAjaxSource ="/yh/delivery/orderList?localArr="+trandferOrderId+"&aa="+aa;
 			}
-			//var ser =  $("#ser_no").val();
+			// var ser = $("#ser_no").val();
 			
-			//,"bVisable":true
+			// ,"bVisable":true
 			$('#eeda-table').dataTable({
-		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		        // "sDom":
+				// "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12
+				// center'p>>",
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-		        //"sPaginationType": "bootstrap",
+		        // "sPaginationType": "bootstrap",
 		        "iDisplayLength": 10,
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
@@ -111,7 +113,6 @@ $(document).ready(function() {
 		        ]      
 		    });	
 			
-			/*--------------------------------------------------------------------*/
 			var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
 			    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
 			    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
@@ -121,12 +122,11 @@ $(document).ready(function() {
 			$('#message_trigger_err').on('click', function(e) {
 				e.preventDefault();
 			});
-			/*--------------------------------------------------------------------*/
 			
-			//添加配送单
+			// 添加配送单
 			$("#saveBtn").click(function(e){
-		        //阻止a 的默认响应行为，不需要跳转	
-				//var itemId = $("#item_id").val();
+		        // 阻止a 的默认响应行为，不需要跳转
+				// var itemId = $("#item_id").val();
 				var spMessage = $("#spMessage").val();
 				var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
 				var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
@@ -148,12 +148,12 @@ $(document).ready(function() {
 					return false;
 				}
 	            e.preventDefault();
-	            //异步向后台提交数据
+	            // 异步向后台提交数据
 	            $.post('/yh/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
 	                console.log(data);
                     if(data.ID>0){
                     	$("#delivery_id").val(data.ID);
-                    	//$("#style").show();
+                    	// $("#style").show();
                     	$("#ConfirmationBtn").attr("disabled", false);
                     	
                     }else{
@@ -163,10 +163,12 @@ $(document).ready(function() {
 	            $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	        });
 			var dab2= $('#eeda-table2').dataTable({
-				"bFilter": false, //不需要默认的搜索框
-		        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+				"bFilter": false, // 不需要默认的搜索框
+		        // "sDom":
+				// "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12
+				// center'p>>",
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-		        //"sPaginationType": "bootstrap",
+		        // "sPaginationType": "bootstrap",
 		        "iDisplayLength": 10,
 		        "bServerSide": true,
 		    	"oLanguage": {
@@ -196,31 +198,33 @@ $(document).ready(function() {
 		  		        ]     
 		    });	
 			
-			//异步创建配送单
+			// 异步创建配送单
 			 $("#eeda-table2").on('click', '.creat', function(e){
 				 var id = $(this).attr('code');
 				  e.preventDefault();
-		         //异步向后台提交数据
+		         // 异步向后台提交数据
 				var transferNo= ($(this).attr('pcode'));
 				$.post('/yh/delivery/creat/'+id,function(id){
-		                 //保存成功后，刷新列表
+		                 // 保存成功后，刷新列表
 		                 console.log(id);
 		                 if(id>0){
-		                	 //dataTable2.fnSettings().sAjaxSource="/yh/delivery/orderList?trandferOrderId="+id;
+		                	 // dataTable2.fnSettings().sAjaxSource="/yh/delivery/orderList?trandferOrderId="+id;
 		                	 window.location.href="/yh/delivery/creat2?id="+id+"&localArr="+transferNo;
 		                 }else{
 		                     alert('取消失败');
 		                 }
 		             },'text');
-				  });
+			 });
 			
-			  //deliveryOrderSearchTransfer ATM选择序列号
+			  // deliveryOrderSearchTransfer ATM选择序列号
 			var dab= $('#eeda-table4').dataTable({
 		    	"bSort": false, // 不要排序
-				"bFilter": false, //不需要默认的搜索框
-			        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+				"bFilter": false, // 不需要默认的搜索框
+			        // "sDom":
+					// "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12
+					// center'p>>",
 			        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-			        //"sPaginationType": "bootstrap",
+			        // "sPaginationType": "bootstrap",
 			        "iDisplayLength": 10,
 			        "bServerSide": true,
 			    	"oLanguage": {
@@ -268,9 +272,9 @@ $(document).ready(function() {
 
 			var cname = [];
 			var warehouseArr = [];		    
-			//构造已选的行数据
+			// 构造已选的行数据
 			var buildItems=function(objCheckBox, cargoNature){
-				//判断当前是选中还是去除
+				// 判断当前是选中还是去除
 				var row=$(objCheckBox).parent().parent();
 				var $inputAmount=row.find('input[name=amount]');
 				if($(objCheckBox).prop("checked") == true){					
@@ -280,15 +284,15 @@ $(document).ready(function() {
 						$("#saveDeliveryCargo").attr('disabled', false);
 
 					
-					$inputAmount.attr('disabled', false);//允许输入配送数量
+					$inputAmount.attr('disabled', false);// 允许输入配送数量
 
 					
 				}else{
-					$inputAmount.attr('disabled', true);//不允许输入配送数量
-					$inputAmount.val('0');//清零
+					$inputAmount.attr('disabled', true);// 不允许输入配送数量
+					$inputAmount.val('0');// 清零
 				}
 
-				//TODO: 需要优化，没时间搞。
+				// TODO: 需要优化，没时间搞。
 				if(cname.length == 0 && warehouseArr.length == 0){
 		    		$("#saveDelivery").attr('disabled', true);
 		    	}
@@ -350,7 +354,7 @@ $(document).ready(function() {
 		        	$("input:checked",this).each(function(){
 		        		var cus_id=$(this).attr("code3");
 		        		trArr.push($(this).val()); 
-		        		//ser.push($("td:eq(1)",the).html());
+		        		// ser.push($("td:eq(1)",the).html());
 		        		ser.push($(".serId",the).attr('code'));
 		        		transferNo.push($(".transferNo",the).attr('code2'));
 		        		if(cus_id!=""){
@@ -359,17 +363,12 @@ $(document).ready(function() {
 		        		  $('#cusId').val(cus_id);
 		        	});
 		        	}); 
-	        	/*if(customer_idArr.length>=2){
-	         	   for(var i=0;i<customer_idArr.length;i++){
-	         		   if(customer_idArr[i]!=customer_idArr[i+1]){
-	         			   alert("请选择同客户的运输单！");
-	         			   return;
-	         		   }
-	         		  if(i+2==customer_idArr.length){
-	   				   break;
-	         		  }
-	         	   }
-	            }*/
+	        	/*
+				 * if(customer_idArr.length>=2){ for(var i=0;i<customer_idArr.length;i++){
+				 * if(customer_idArr[i]!=customer_idArr[i+1]){
+				 * alert("请选择同客户的运输单！"); return; }
+				 * if(i+2==customer_idArr.length){ break; } } }
+				 */
 		        	$('#localArr2').val(ser);
 		            $('#localArr').val(trArr);
 		            $('#localArr3').val(transferNo);
@@ -383,15 +382,17 @@ $(document).ready(function() {
 					$("#saveDelivery").attr('disabled', true);
 				}
 			});
-			//添加运输单序列号
-			/* $("#eeda-table2").on('click', '.creat', function(e){
-				 var id = $(this).attr('code');*/
+			// 添加运输单序列号
+			/*
+			 * $("#eeda-table2").on('click', '.creat', function(e){ var id =
+			 * $(this).attr('code');
+			 */
 				
-		/*----------------------------------------------------------*/
+
 			// 发车确认
 				$("#ConfirmationBtn").click(function(){
 					// 浏览器启动时,停到当前位置
-					//debugger;
+					// debugger;
 					$("#receiptBtn").attr("disabled", false); 
 					var code = $("#warehouseCode").val();
 					var locationTo = $("#locationTo").val();
@@ -410,8 +411,7 @@ $(document).ready(function() {
 					paymenttable().fnDraw();
 					
 				});
-		/*-----------------------------------------------------------------*/
-				//应收
+				//应付
 				$("#arapTab").click(function(e){
 					e.preventDefault();
 					/*if(!$("#transferOrderForm").valid()){
@@ -421,29 +421,125 @@ $(document).ready(function() {
 					
 					parentId = e.target.getAttribute("id");
 				});
-				//货品明细
-				$("#departOrderItemList").click(function(e){
+				
+				
+				// 增加仓库查询代码和客户查询代码
+				$('#customerName2').on('keyup', function(){
+			           var inputStr = $('#customerName2').val();
+  
+			           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+			               console.log(data);
+			               var companyList =$("#companyList");
+			               companyList.empty();
+			               for(var i = 0; i < data.length; i++)
+			               {
+			                   companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+			               }
+			               if(data.length>0)
+			                   companyList.show();
+			               
+			           },'json');
+			          
+			    });
+			   // 选中某个客户时候
+			      $('#companyList').on('click', '.fromLocationItem', function(e){        
+			           $('#customerName2').val($(this).text());
+			           $("#companyList").hide();
+			           var companyId = $(this).attr('partyId');
+			           $('#customerId').val(companyId);
+			           
+			       });
+			      // 没选中客户，焦点离开，隐藏列表
+			      $('#customerName2').on('blur', function(){
+			           $('#companyList').hide();
+			       });
+
+			       // 当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+			       $('#companyList').on('blur', function(){
+			           $('#companyList').hide();
+			       });
+
+			       $('#companyList').on('mousedown', function(){
+			           return false;// 阻止事件回流，不触发 $('#spMessage').on('blur'
+			       });
+				
+			     //选择仓库 
+			  	 $('#warehouse2').on('keyup', function(){
+			  		var warehouse_Name =$("#warehouse2").val();
+			  		$.get('/yh/gateIn/searchAllwarehouse',{warehouseName:warehouse_Name}, function(data){
+			  			console.log(data);
+			  			var warehouseList =$("#warehouseList");
+			  			warehouseList.empty();
+			  			for(var i = 0; i < data.length; i++)
+			  			{
+			  				warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</a></li>");
+			  			}
+			  		},'json');
+			  		$("#warehouseList").css({ 
+			  	    	left:$(this).position().left+"px", 
+			  	    	top:$(this).position().top+32+"px" 
+			  	    }); 
+			  	    $('#warehouseList').show();
+			  	    
+			  	});
+			  	$('#warehouse2').on('blur', function(){
+			  		$("#warehouseList").hide();
+			  	});
+			  	$('#warehouseList').on('blur', function(){
+			  			$('#warehouseList').hide();
+			  		});
+
+			  	$('#warehouseList').on('mousedown', function(){
+			  		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+			  	});
+			  	$('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
+			  		//var id =$(this).attr('code');
+			  		$('#warehouse2').val($(this).text());
+			  		$('#warehouseList').hide();
+			  	});
+			  	$('#customerName2,#warehouse2').on('keyup blur', function(){
+			           var inputStr = $('#customerName2').val();
+			           var warehouseName =$("#warehouse2").val();
+			           //如果客户和仓库都有值，触发查询
+			           if(inputStr!=null && inputStr !="" && warehouseName != null && warehouseName !=""){
+			        		dab.fnSettings().sAjaxSource ="/yh/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName;
+					      	dab.fnDraw();
+			           }
+			    });
+			  	
+			  	
+				// 应收
+				$("#arap").click(function(e){
 					e.preventDefault();
-					/*if(!$("#transferOrderForm").valid()){
-		        	alert("请先保存运输单!");
-			       	return false; 
-		        	}*/
+					/*
+					 * if(!$("#transferOrderForm").valid()){ alert("请先保存运输单!");
+					 * return false; }
+					 */
+					
 					parentId = e.target.getAttribute("id");
 				});
-				//基本信息
+				// 货品明细
+				$("#departOrderItemList").click(function(e){
+					e.preventDefault();
+					/*
+					 * if(!$("#transferOrderForm").valid()){ alert("请先保存运输单!");
+					 * return false; }
+					 */
+					parentId = e.target.getAttribute("id");
+				});
+				// 基本信息
 				$("#chargeCheckOrderbasic").click(function(e){
 					parentId = e.target.getAttribute("id");
 				});
-				/*-------------------------------------------------------------*/
 				// 运输里程碑
 				$("#transferOrderMilestoneList").click(function(e){
 					e.preventDefault();
 			    	// 切换到货品明细时,应先保存运输单
-			    	//提交前，校验数据
-			        /*if(!$("#transferOrderForm").valid()){
-			        	alert("请先保存运输单!");
-				       	return false; 
-			        }*/
+			    	// 提交前，校验数据
+			        /*
+					 * if(!$("#transferOrderForm").valid()){ alert("请先保存运输单!");
+					 * return false; }
+					 */
 			        var bool = false;
 			        if("chargeCheckOrderbasic" == parentId||"arap" == parentId){
 			        	bool = true;
@@ -462,7 +558,7 @@ $(document).ready(function() {
 									$("#departureConfirmationBtn").attr("disabled", false);
 								}
 								$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-							  	//$("#style").show();	
+							  	// $("#style").show();
 							  	
 							  	var order_id = $("#order_id").val();
 								$.post('/yh/deliveryOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
@@ -519,14 +615,11 @@ $(document).ready(function() {
 					$("#receiptBtn").attr("disabled", true);
 				});
 				
-				 /*$(function(){
-				 	var deliveryID = $('#delivery_id').val();
-			 	    if(deliveryID==''){
-			 	    	$("#receiptBtn").attr("disabled", true);
-			 	     }else{
-			 	    	$("#receiptBtn").attr("disabled", false);
-			 	     }
-			    }) ;*/
+				 /*
+					 * $(function(){ var deliveryID = $('#delivery_id').val();
+					 * if(deliveryID==''){ $("#receiptBtn").attr("disabled",
+					 * true); }else{ $("#receiptBtn").attr("disabled", false); } }) ;
+					 */
 				
 				$("#deliveryOrderNo1,#customerName1,#orderStatue1,#warehouse1").on('keyup click', function () {
 			      	var customerName1 = $("#customerName1").val();
@@ -534,17 +627,8 @@ $(document).ready(function() {
 			      	dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
 			      	dab2.fnDraw();
 			      });
-				$("#deliveryOrderNo2,#customerName2,#orderStatue2,#warehouse2").on('keyup click', function () {    	 	
-			      	var deliveryOrderNo = $("#deliveryOrderNo2").val();
-			      	var customerName = $("#customerName2").val();
-			    	var orderStatue = $("#orderStatue2").val();
-			      	var warehouse = $("#warehouse2").val();    	
-			      	dab.fnSettings().sAjaxSource = "/yh/delivery/searchTransferByATM?deliveryOrderNo="+deliveryOrderNo+"&customerName="+customerName+"&orderStatue="+orderStatue+"&warehouse="+warehouse;
-			      	dab.fnDraw();
-			      });
 				
-				
-			 	//radio选择普通货品和ATM
+			 	// radio选择普通货品和ATM
 				$("input[name=aabbcc]").change(function(){
 					var cargo =$(this).val();
 					console.log(cargo);
@@ -552,7 +636,7 @@ $(document).ready(function() {
 						$("#cargoNature").val("ATM");
 						$("#cargos").show();
 						$("#basic").hide();
-					}else{//普通货品
+					}else{// 普通货品
 						$("#cargoNature").val("cargo");
 						$("#basic").show();
 						$("#cargos").hide();
@@ -585,38 +669,32 @@ $(document).ready(function() {
 					}
 				}) ;
 			
-				/*var deliveryid =$("#delivery_id").val();
-				//应收datatable
-				var receipttable =$('#table_fin').dataTable({
-					"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-			        "bFilter": false, //不需要默认的搜索框
-			        //"sPaginationType": "bootstrap",
-			        "iDisplayLength": 10,
-			        "bServerSide": true,
-			        "sAjaxSource":"/yh/deliveryOrderMilestone/accountReceivable/"+deliveryid,
-			    	"oLanguage": {
-			            "sUrl": "/eeda/dataTables.ch.txt"
-			        },
-			        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-						$(nRow).attr('id', aData.ID);
-						return nRow;
-					},
-			        "aoColumns": [
-						{"mDataProp":"NAME","sWidth": "80px","sClass": "name"},
-						{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},
-						{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "amount"},  
-						{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},
-						{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
-			        ]      
-			    });*/
+				/*
+				 * var deliveryid =$("#delivery_id").val(); //应收datatable var
+				 * receipttable =$('#table_fin').dataTable({ "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12
+				 * center'p>>", "bFilter": false, //不需要默认的搜索框
+				 * //"sPaginationType": "bootstrap", "iDisplayLength": 10,
+				 * "bServerSide": true,
+				 * "sAjaxSource":"/yh/deliveryOrderMilestone/accountReceivable/"+deliveryid,
+				 * "oLanguage": { "sUrl": "/eeda/dataTables.ch.txt" },
+				 * "fnRowCallback": function( nRow, aData, iDisplayIndex,
+				 * iDisplayIndexFull ) { $(nRow).attr('id', aData.ID); return
+				 * nRow; }, "aoColumns": [ {"mDataProp":"NAME","sWidth":
+				 * "80px","sClass": "name"}, {"mDataProp":"AMOUNT","sWidth":
+				 * "80px","sClass": "amount"},
+				 * {"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass":
+				 * "amount"}, {"mDataProp":"REMARK","sWidth": "80px","sClass":
+				 * "remark"}, {"mDataProp":"STATUS","sWidth": "80px","sClass":
+				 * "status"}, ] });
+				 */
 				
 				
-				//应付datatable
+				// 应付datatable
 				var deliveryid =$("#delivery_id").val();
 				var paymenttable=$('#table_fin2').dataTable({
 					"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-			        "bFilter": false, //不需要默认的搜索框
-			        //"sPaginationType": "bootstrap",
+			        "bFilter": false, // 不需要默认的搜索框
+			        // "sPaginationType": "bootstrap",
 			        "iDisplayLength": 10,
 			        "bServerSide": true,
 			        "sAjaxSource": "/yh/deliveryOrderMilestone/accountPayable/"+deliveryid,
@@ -656,8 +734,12 @@ $(document).ready(function() {
 						         	 return "<input type='text' name='amount'>";
 						         }
 						 }},  
-						/*{"mDataProp":"FIN_ITEM_NAME","sWidth": "80px","sClass": "name"},
-						{"mDataProp":"AMOUNT","sWidth": "80px","sClass": "amount"},*/
+						/*
+						 * {"mDataProp":"FIN_ITEM_NAME","sWidth":
+						 * "80px","sClass": "name"},
+						 * {"mDataProp":"AMOUNT","sWidth": "80px","sClass":
+						 * "amount"},
+						 */
 						{"mDataProp":"STATUS","sClass": "status"},
 						{"mDataProp":"TRANSFERORDERNO","sClass": "amount", "bVisable":false},  
 						{"mDataProp":"REMARK",
@@ -668,7 +750,10 @@ $(document).ready(function() {
 			                    	 return "<input type='text' name='remark'>";
 			                    }
 			            }},  
-						/*{"mDataProp":"REMARK","sWidth": "80px","sClass": "remark"},*/
+						/*
+						 * {"mDataProp":"REMARK","sWidth": "80px","sClass":
+						 * "remark"},
+						 */
 						{  
 			                "mDataProp": null, 
 			                "sWidth": "60px",  
@@ -683,22 +768,17 @@ $(document).ready(function() {
 			        ]      
 			    });
 		
-		/*//应收
-		$("#item_fin_save").click(function(){
-			var deliveryid =$("#delivery_id").val();
-			$.post('/yh/deliveryOrderMilestone/receiptSave/'+deliveryid, $("#fin_form").serialize(), function(data){
-				console.log(data);
-				if(data.success){
-					//receipttable.fnDraw();
-					$('#fin_item').modal('hide');
-					$('#resetbutton').click();
-				}else{
-					
-				}
-				
-			});		
-		});	*/
-		//应付
+		/*
+		 * //应收 $("#item_fin_save").click(function(){ var deliveryid
+		 * =$("#delivery_id").val();
+		 * $.post('/yh/deliveryOrderMilestone/receiptSave/'+deliveryid,
+		 * $("#fin_form").serialize(), function(data){ console.log(data);
+		 * if(data.success){ //receipttable.fnDraw();
+		 * $('#fin_item').modal('hide'); $('#resetbutton').click(); }else{ }
+		 * 
+		 * }); });
+		 */
+		// 应付
 		$("#addrow").click(function(){	
 			var deliveryid =$("#delivery_id").val();
 			$.post('/yh/deliveryOrderMilestone/addNewRow/'+deliveryid,function(data){
@@ -711,7 +791,7 @@ $(document).ready(function() {
 				}
 			});		
 		});	
-		//应付修改
+		// 应付修改
 		$("#table_fin2").on('blur', 'input,select', function(e){
 			e.preventDefault();
 			var paymentId = $(this).parent().parent().attr("id");
@@ -724,22 +804,16 @@ $(document).ready(function() {
 				}
 	    	},'json');
 		});
-		/*//应收
-		$("#addrow2").click(function(){	
-			var deliveryid =$("#delivery_id").val();
-			$.post('/yh/deliveryOrderMilestone/addNewRow2/'+deliveryid,function(data){
-				console.log(data);
-				if(data.success){
-					paymenttable.fnDraw();
-					//$('#fin_item2').modal('hide');
-					//$('#resetbutton2').click();
-				}else{
-					
-				}
-			});		
-		});	*/
+		/*
+		 * //应收 $("#addrow2").click(function(){ var deliveryid
+		 * =$("#delivery_id").val();
+		 * $.post('/yh/deliveryOrderMilestone/addNewRow2/'+deliveryid,function(data){
+		 * console.log(data); if(data.success){ paymenttable.fnDraw();
+		 * //$('#fin_item2').modal('hide'); //$('#resetbutton2').click(); }else{ }
+		 * }); });
+		 */
 		
-	    //获取全国省份
+	    // 获取全国省份
 	    $(function(){
 	     	var province = $("#mbProvinceTo");
 	     	$.post('/yh/serviceProvider/province',function(data){
@@ -759,7 +833,7 @@ $(document).ready(function() {
 	     	},'json');
 	    });
 	    
-	    //获取省份的城市
+	    // 获取省份的城市
 	    $('#mbProvinceTo').on('change', function(){
 				var inputStr = $(this).val();
 				$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
@@ -774,7 +848,7 @@ $(document).ready(function() {
 				},'json');
 			});
 	    
-	    //获取城市的区县
+	    // 获取城市的区县
 	    $('#cmbCityTo').on('change', function(){
 				var inputStr = $(this).val();
 				var code = $("#locationTo").val(inputStr);
@@ -841,3 +915,4 @@ $(document).ready(function() {
 			}
 		});
 });
+

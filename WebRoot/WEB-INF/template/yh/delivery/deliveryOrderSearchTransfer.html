@@ -1,5 +1,5 @@
 <%layout("/yh/layout.html"){%>
-
+<link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
 <div id="page-wrapper">
             
             <div class="row">
@@ -29,6 +29,7 @@
 									<div class="form-group">
 										<label class="search-label">仓库：</label>
 										<input id="warehouse1" class="form-control search-control status_filter" type="text">
+										
 									</div>
 								</div>
 							</div>
@@ -74,6 +75,7 @@
                                     <div class="form-group">
                                         <label class="search-label">客户：</label>
                                         <input id="customerName2" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择客户">
+                                    	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 35%; left: 2%;"></ul>
                                     </div>
 									<div class="form-group">
 										<label class="search-label">运输单：</label>
@@ -84,6 +86,8 @@
                                     <div class="form-group">
                                         <label class="search-label">仓库：</label>
                                         <input id="warehouse2" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择仓库">
+                                    	<ul id='warehouseList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+										</ul>
                                     </div>
 									<div class="form-group">
 										<label class="search-label">序列号：</label>
@@ -138,4 +142,5 @@
 <!-- Page-Level Plugin Scripts - Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 <script src="/yh/js/delivery/delivery.js"></script>

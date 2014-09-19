@@ -537,7 +537,14 @@ public class InventoryController extends Controller {
 
     // 查找仓库
     public void searchAllwarehouse() {
-        List<Warehouse> warehouses = Warehouse.dao.find("select * from warehouse");
+    	String inputStr = getPara("warehouseName");
+    	String sql ="";
+    	if(inputStr!=null){
+    		sql = "select * from warehouse where warehouse_name like '%"+inputStr+"%'";
+    	}else{
+    		sql= "select * from warehouse";
+    	}
+        List<Warehouse> warehouses = Warehouse.dao.find(sql);
         renderJson(warehouses);
     }
 

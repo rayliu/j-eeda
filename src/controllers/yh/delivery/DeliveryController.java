@@ -552,7 +552,7 @@ public class DeliveryController extends Controller {
 		String customerName = getPara("customerName");
 		String orderStatue = getPara("orderStatue");
 		String warehouse = getPara("warehouse");
-
+		
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -591,8 +591,35 @@ public class DeliveryController extends Controller {
 					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE)";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
-
-			String sql = "SELECT  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.company_name from transfer_order_item_detail t1 "
+			String sql ="SELECT  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.company_name from transfer_order_item_detail t1 "
+					+ "left join transfer_order t2 on t1.order_id=t2.id "
+					+ "left join warehouse w on t2.warehouse_id = w.id "
+					+ "left join party p on t2.customer_id = p.id "
+					+ "left join contact c on p.contact_id = c.id "
+					+ "left join party p2 on t1.notify_party_id = p2.id "
+					+ "left join contact c2 on p2.contact_id = c2.id "
+					+ "where t2.status='已入库' and t2.cargo_nature='ATM'";
+			if(warehouse !=null){
+				sql= sql+" and w.warehouse_name like '%"
+					+ warehouse
+					+ "%'";
+			}
+			if(customerName!=null){
+				sql= sql+" and c.company_name like '%"
+					+ customerName
+					+ "%'";
+			}
+			if(deliveryOrderNo!=null){
+				sql= sql+" and ifnull(t2.order_no,' ') like '%"
+					+ deliveryOrderNo
+					+ "%'";
+			}
+			if(orderStatue!=null){
+				sql= sql+" and ifnull(t2.status,' ') like '%"
+					+ orderStatue
+					+ "%'";
+			}
+			/*String sql = "SELECT  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.company_name from transfer_order_item_detail t1 "
 					+ "left join transfer_order t2 on t1.order_id=t2.id "
 					+ "left join warehouse w on t2.warehouse_id = w.id "
 					+ "left join party p on t2.customer_id = p.id "
@@ -612,7 +639,7 @@ public class DeliveryController extends Controller {
 					+ "and ifnull(t2.status,'') like '%"
 					+ orderStatue
 					+ "%'";
-
+			 */
 			List<Record> transferOrders = Db.find(sql);
 
 			transferOrderListMap.put("sEcho", pageIndex);
