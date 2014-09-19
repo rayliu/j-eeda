@@ -284,7 +284,7 @@
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		var bool = false;
-		if("chargeCheckOrderbasic" == parentId || "addressList" == parentId ||"pickupOrderPayment" == parentId){
+		if("chargeCheckOrderbasic" == parentId || "addressList" == parentId ||  "pickupOrderPayment" == parentId){
 			bool = true;
 		}
 		//异步向后台提交数据
@@ -362,6 +362,7 @@
 	
 	var parentId = "chargeCheckOrderbasic";
 	$("#chargeCheckOrderbasic").click(function(e){
+		event.preventDefault();
 		parentId = e.target.getAttribute("id");
 	});
 	// 列出所有的提货地点
@@ -370,7 +371,7 @@
 		e.preventDefault();
 		//异步向后台提交数据
 		var bool = false;
-		if("chargeCheckOrderbasic" == parentId || "transferOrderMilestoneList" == parentId || "pickupOrderPayment" == parentId){
+		if("chargeCheckOrderbasic" == parentId || "transferOrderMilestoneList" == parentId){
 			bool = true;
 		}
         if($("#pickupOrderId").val() == ""){
@@ -541,6 +542,8 @@
 	$("#pickupOrderItemList").click(function(e){
 		clickSavePickupOrder(e);
 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		
+		parentId = e.target.getAttribute("id");
 	});
 
 	//获取供应商的list，选中信息在下方展示其他信息
@@ -995,6 +998,10 @@
  		var finItemIds = $("#finItemIds").val(); 		
  		var pickupOrderId = $("#pickupOrderId").val();	
  		var finItems = $("#table_fin2").children('tbody').children();
+ 		var bool = false;
+ 		if(!"pickupOrderItemList" == parentId ||!"pickupOrderPayment" == parentId){
+ 			bool = true;
+ 		}
  		for(var i=0;i<finItems.length;i++){
  			if(finItemIds.contains(finItems[i].id)){
  				$.post('/yh/pickupOrder/searchOwnCarFinItem', {pickupOrderId:pickupOrderId, finItemId:finItems[i].id}, function(data){
@@ -1008,14 +1015,16 @@
  		        		}
  		        	}
  		    	},'json');
+ 				if(bool){
+ 					$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 				}
  			}
  		}
+ 		parentId = e.target.getAttribute("id");
  	}); 	
  	
-	if("chargeCheckOrderbasic" == parentId || "addressList" == parentId ||"transferOrderMilestoneList" == parentId){
-		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-	}
+	
 	
 	paymenttable.fnDraw();
-	parentId = e.target.getAttribute("id");
+	
 });
