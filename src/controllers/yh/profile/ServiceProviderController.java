@@ -212,6 +212,7 @@ public class ServiceProviderController extends Controller {
             party.set("receipt", getPara("receipt"));
             party.set("remark", getPara("remark"));
             party.set("payment", getPara("payment"));
+            party.set("charge_type", getPara("chargeType"));
             party.save();
 
         }

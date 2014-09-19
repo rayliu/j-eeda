@@ -184,14 +184,6 @@ $(document).ready(function() {
 		}
 		pageCustomerAddress.append(address);
 		
-		var payment = $(this).attr('payment');
-		// 回显付款方式
-		$("input[name='payment']").each(function(){
-			if(payment == $(this).val()){
-				$(this).prop('checked', true);
-			}
-		});
-		
 		var chargeType = $(this).attr('chargeType');
 		// 回显计费方式
 		$("input[name='chargeType']").each(function(){
@@ -232,7 +224,7 @@ $(document).ready(function() {
 				if(phone == null){
 					phone = '';
 				}
-				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyType='"+data[i].PAYMENT+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
 			}
 		},'json');
 
@@ -287,9 +279,9 @@ $(document).ready(function() {
         $('#spList').hide();
         
         //回显供应商付款方式
-        var partyType = $(this).attr('partyType');
-		$("input[name='partyType']").each(function(){
-			if(partyType == $(this).val()){
+        var chargeType = $(this).attr('chargeType');
+		$("input[name='chargeType1']").each(function(){
+			if(chargeType == $(this).val()){
 				$(this).prop('checked', true);
 			}
 		});
@@ -297,9 +289,9 @@ $(document).ready(function() {
     });
 	
 	 //回显供应商付款方式
-    var hidPartyType = $("#hidParmentRadio").val();
-	$("input[name='partyType']").each(function(){
-		if(hidPartyType == $(this).val()){
+    var chargeTypeRadio1 = $("#chargeTypeRadio1").val();
+	$("input[name='chargeType1']").each(function(){
+		if(chargeTypeRadio1 == $(this).val()){
 			$(this).prop('checked', true);
 		}
 	});

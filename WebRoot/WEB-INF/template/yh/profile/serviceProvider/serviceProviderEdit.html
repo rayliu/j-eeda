@@ -74,6 +74,7 @@
                                             </div>
                                         </fieldset>
                                     </div>
+                                    
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
@@ -86,6 +87,20 @@
                                             </div>
                                         </fieldset>
                                     </div>
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>计费方式</label>
+	                                         	<input type="hidden" value="${party.charge_type!''}" id="chargeTypeSelect">
+	                                           	<select class="form-control" id="chargeType" name="chargeType">
+	                                           		<option value="perUnit">计件</option>
+	                                           		<option value="perCar">整车</option>
+	                                           		<option value="perCargo">零担</option>
+	                                           	</select>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    
                                     <!-- /.col-lg-6 (even) 偶数列-->                                    
                                     <div class="col-lg-6">
                                         <fieldset>
@@ -339,5 +354,17 @@
  				}
  			}
  		},'json');
+        
+         
+      // 回显计费方式
+      var chargeTypeOption=$("#chargeType>option");
+      var chargeTypeVal=$("#chargeTypeSelect").val();
+      for(var i=0;i<chargeTypeOption.length;i++){
+         var svalue=chargeTypeOption[i].value;
+         if(chargeTypeVal==svalue){
+      	   $("#chargeType option[value='"+svalue+"']").attr("selected","selected");
+         }
+      }
+         
     }); 
 </script>

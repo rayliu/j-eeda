@@ -27,18 +27,18 @@ public class ProfileDataInit {
             stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, payment) values('CUSTOMER','2','demo','湖南长城信息金融设备有限责任公司','freightCollect');");
             stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, payment) values('CUSTOMER','3','demo','中钞科宝现金处理技术（北京）有限公司','cashPayment');");
 
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','4','demo','邓孚任');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','5','demo','广州市其辉物流有限公司');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','6','demo','广州市其辉物流有限公司');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','7','demo','冯芝超');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','8','demo','广东盛丰物流有限公司');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','9','demo','广州市贵腾物流有限公司');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','10','demo','邓孚任');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','11','demo','浙江天翔航空货运代理有限公司');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','12','demo','浙江天翔航空货运代理有限公司');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','13','demo','济南骏运展达物流运输有限公司');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','14','demo','吕华');");
-            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT) values('SERVICE_PROVIDER','15','demo','邓碧云');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','4','demo','邓孚任','perUnit');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','5','demo','广州市其辉物流有限公司','perUnit');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','6','demo','广州市其辉物流有限公司','perUnit');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','7','demo','冯芝超','perUnit');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','8','demo','广东盛丰物流有限公司','perUnit');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','9','demo','广州市贵腾物流有限公司','perCar');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','10','demo','邓孚任','perCar');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','11','demo','浙江天翔航空货运代理有限公司','perCar');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','12','demo','浙江天翔航空货运代理有限公司','perCargo');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','13','demo','济南骏运展达物流运输有限公司','perCargo');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','14','demo','吕华','perCargo');");
+            stmt.executeUpdate("insert into party(PARTY_TYPE, CONTACT_ID, CREATOR, RECEIPT, charge_type) values('SERVICE_PROVIDER','15','demo','邓碧云','perCargo');");
 
             stmt.executeUpdate("insert into warehouse(WAREHOUSE_NAME, WAREHOUSE_ADDRESS, WAREHOUSE_AREA,WAREHOUSE_TYPE,sp_name) values('源鸿广州仓','广州市萝岗区宏明路严天商业街11号','2000','自营仓库','广州源鸿物流有限公司');");
             stmt.executeUpdate("insert into warehouse(WAREHOUSE_NAME, WAREHOUSE_ADDRESS, WAREHOUSE_AREA,WAREHOUSE_TYPE,sp_name) values('济南中转仓','济南市天桥区蓝翔中路2-1号 ','1000','配送供应商仓库','济南骏运展达物流有限公司');");

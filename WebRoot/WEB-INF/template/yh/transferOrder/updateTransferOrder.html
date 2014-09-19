@@ -119,7 +119,7 @@
                                                         <input type="radio" name="operationType" id="operationType2" value="out_source">外包
                                                     </label>
                                             </div>                          
-                                            <div class="form-group">
+                                            <!-- <div class="form-group">
                                                 <label class="label-margin">客户计费方式</label>
                                                 <input id="chargeTypeRadio" type="hidden" value="${transferOrder.charge_type!''}"/>
                                                 <label class="radio-inline">
@@ -131,20 +131,20 @@
                                                 <label class="radio-inline">
                                                     <input type="radio" name="chargeType" id="chargeType3" value="perCargo">零担
                                                 </label>  
-                                            </div>         
-                                            <div class="form-group">
-                                                <label class="label-margin">供应商付款方式</label>
-                                                <input id="hidParmentRadio" type="hidden" value="${party.payment!''}"/>
+                                            </div> -->         
+                                            <!-- <div class="form-group">
+                                                <label class="label-margin">供应商计费方式</label>
+                                                <input id="chargeTypeRadio1" type="hidden" value="${party.charge_type!''}"/>
                                                 <label class="radio-inline">
-                                                   <input type="radio" name="partyType" id="partyType3" value="cashPayment" checked="">现付
+                                                    <input type="radio" name="chargeType1" id="chargeType4" value="perUnit" checked="">计件
                                                 </label>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="partyType" id="partyType2" value="freightCollect">到付
+                                                    <input type="radio" name="chargeType1" id="chargeType5" value="perCar">整车
                                                 </label>  
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="partyType" id="partyType1" value="monthlyStatement" >月结
-                                                </label>  
-                                            </div>                  
+                                                    <input type="radio" name="chargeType1" id="chargeType6" value="perCargo">零担
+                                                </label> 
+                                            </div> -->                  
                                                
                                             <div id="arrivalModes" class="form-group">
                                             	<input id="arrivalModeVal" type="hidden" />
@@ -186,15 +186,29 @@
                                         <!-- /.col-lg-6 (nested) -->
                                         <div class="col-lg-6">
                                         	<h2>客户信息</h2>
-                                                <div class="form-group">
-                                                    <!--label>客户名称</label-->
-                                                    <input id="customerMessage" class="form-control" placeholder="选择客户" type="text" name="customerMessage" value="${customerContact.company_name!''}"/>
-                                                    <ul id='customerList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;">
-        											</ul>
-                                                </div>
-                                                <div class="form-group">     
-                                                	<h5 id="pageCustomerName">${customerContact.contact_person!''} ${customerContact.phone!''}</h5><h5 id="pageCustomerAddress">${customerContact.address!''}</h5>     
-                                                </div>
+                                            <div class="form-group">
+                                                <!--label>客户名称</label-->
+                                                <input id="customerMessage" class="form-control" placeholder="选择客户" type="text" name="customerMessage" value="${customerContact.company_name!''}"/>
+                                                <ul id='customerList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;">
+    											</ul>
+                                            </div>
+                                            
+                                            <div class="form-group">     
+                                            	<h5 id="pageCustomerName">${customerContact.contact_person!''} ${customerContact.phone!''}</h5><h5 id="pageCustomerAddress">${customerContact.address!''}</h5>     
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="label-margin">客户计费方式</label>
+                                                <input id="chargeTypeRadio" type="hidden" value="${transferOrder.charge_type!''}"/>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType" id="chargeType1" value="perUnit" checked="">计件
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType" id="chargeType2" value="perCar">整车
+                                                </label>  
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType" id="chargeType3" value="perCargo">零担
+                                                </label>  
+                                            </div>
                                             
                                             <div class="form-group ">
         										<label class="control-label" for="inputSuccess">取货地址</label> <input
@@ -232,7 +246,19 @@
                                            <div class="form-group">     
                                            	   <h5 id="pageSpName">${spContact.contact_person!''} ${spContact.phone!''}</h5><h5 id="pageSpAddress">${spContact.address!''}</h5>     
                                            </div>                                                
-                                               
+                                           <div class="form-group">
+                                                <label class="label-margin">供应商计费方式</label>
+                                                <input id="chargeTypeRadio1" type="hidden" value="${party.charge_type!''}"/>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType1" id="chargeType4" value="perUnit" checked="">计件
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType1" id="chargeType5" value="perCar">整车
+                                                </label>  
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType1" id="chargeType6" value="perCargo">零担
+                                                </label> 
+                                           </div>
                                            <div class="form-group">
                                                <input id="locationTo" type="hidden" name="route_to" value="${transferOrder.route_to!''}">
                                               	<label><h4>目的地城市</h4></label>
