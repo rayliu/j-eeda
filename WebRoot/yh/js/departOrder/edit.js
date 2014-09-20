@@ -13,7 +13,7 @@
 	var departOrderId = $("#departOrderId").val();
 	if(departOrderId != '' && departOrderId != null){
 		var departOrderChargeType = $("#departOrderChargeType").val();
-		alert("修改计费方式："+departOrderChargeType);
+		
 		$("input[name='chargeType']").each(function(){
 			if(departOrderChargeType == $(this).val()){
 				//零担
