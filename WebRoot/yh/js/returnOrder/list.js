@@ -9,11 +9,11 @@
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/returnOrder/list",
+        "sAjaxSource": "/returnOrder/list",
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/yh/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             { "mDataProp": "CNAME","sWidth":"120px"},
             { "mDataProp": "TRANSFER_ORDER_NO"},
@@ -61,7 +61,7 @@
 		e.preventDefault();
         //异步向后台提交数据
 		var id = $(this).attr('code');
-		$.post('/yh/returnOrder/returnOrderReceipt/'+id,function(data){
+		$.post('/returnOrder/returnOrderReceipt/'+id,function(data){
            //保存成功后，刷新列表
            console.log(data);
            if(data.success){
@@ -77,7 +77,7 @@
 		e.preventDefault();
         //异步向后台提交数据
 		var id = $(this).attr('code');
-		$.post('/yh/returnOrder/cancel/'+id,function(data){
+		$.post('/returnOrder/cancel/'+id,function(data){
            //保存成功后，刷新列表
            console.log(data);
            if(data.success){
@@ -130,7 +130,7 @@
 		if (status=="取消") {
 			status ="cancel";
 		}
-    	dataTable.fnSettings().sAjaxSource = "/yh/returnOrder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&stator="+stator+"&status="+status+"&time_one="+time_one+"&time_two="+time_two;
+    	dataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&stator="+stator+"&status="+status+"&time_one="+time_one+"&time_two="+time_two;
     	dataTable.fnDraw();
     });
 

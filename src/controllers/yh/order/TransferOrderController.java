@@ -41,7 +41,7 @@ public class TransferOrderController extends Controller {
 
 	public void index() {
 		if (LoginUserController.isAuthenticated(this))
-			render("transferOrder/transferOrderList.html");
+			render("/yh/transferOrder/transferOrderList.html");
 	}
 
 	public void list() {
@@ -197,7 +197,7 @@ public class TransferOrderController extends Controller {
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "新建");
 		if (LoginUserController.isAuthenticated(this))
-			render("transferOrder/updateTransferOrder.html");
+			render("/yh/transferOrder/updateTransferOrder.html");
 	}
 
 	public void edit() {
@@ -282,7 +282,7 @@ public class TransferOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		if (LoginUserController.isAuthenticated(this))
-			render("transferOrder/updateTransferOrder.html");
+			render("/yh/transferOrder/updateTransferOrder.html");
 	}
 
 	public void save() {
@@ -309,7 +309,7 @@ public class TransferOrderController extends Controller {
 		}
 		setAttr("saveOK", true);
 		if (LoginUserController.isAuthenticated(this))
-			render("transferOrder/transferOrderList.html");
+			render("/yh/transferOrder/transferOrderList.html");
 	}
 
 	// 保存客户
@@ -358,7 +358,7 @@ public class TransferOrderController extends Controller {
 
 	public void saveItem() {
 		if (LoginUserController.isAuthenticated(this))
-			render("transferOrder/transferOrderList.html");
+			render("/yh/transferOrder/transferOrderList.html");
 	}
 
 	// 保存订单项
@@ -807,7 +807,7 @@ public class TransferOrderController extends Controller {
 
 		transferOrder.delete();
 		if (LoginUserController.isAuthenticated(this))
-			redirect("/yh/transferOrder");
+			redirect("/transferOrder");
 	}
 
 	// 取消

@@ -14,7 +14,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/departOrder/createTransferOrderListForRouteSp",
+        "sAjaxSource": "/departOrder/createTransferOrderListForRouteSp",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
@@ -58,7 +58,7 @@ $(document).ready(function() {
             		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
             			return "外包供应商提货";
             		}else if(obj.aData.PICKUP_MODE == "own"){
-            			return "源鸿自提";
+            			return "自提";
             		}else{
             			return "";
             		}}},
@@ -117,7 +117,7 @@ $(document).ready(function() {
     	var endTime = $("#endTime_filter").val();
     	var routeFrom = $("#routeFrom_filter").val();
     	var routeTo = $("#routeTo_filter").val();
-    	datatable.fnSettings().sAjaxSource = "/yh/departOrder/createTransferOrderListForRouteSp?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+    	datatable.fnSettings().sAjaxSource = "/departOrder/createTransferOrderListForRouteSp?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
     	datatable.fnDraw();    	
     });
     

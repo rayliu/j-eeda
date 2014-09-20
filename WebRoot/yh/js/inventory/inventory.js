@@ -7,12 +7,12 @@ $(document).ready(function() {
 	var source2 = "";
 	if(inventory=='gateIn'){
 		$("#btn1").show();
-		source = "/yh/gateIn/gateInlist";
-		source2 = "/yh/gateIn/gateInEdit/";
+		source = "/gateIn/gateInlist";
+		source2 = "/gateIn/gateInEdit/";
 	}if(inventory=='gateOut'){
 		$("#btn2").show();
-		source = "/yh/gateOut/gateOutlist";
-		source2 = "/yh/gateOut/gateOutEdit/";
+		source = "/gateOut/gateOutlist";
+		source2 = "/gateOut/gateOutEdit/";
 	}
 	//入库单list
 	 $('#example').dataTable( {
@@ -38,7 +38,7 @@ $(document).ready(function() {
 	            { 
 	                "mDataProp": null,
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-danger' href='/yh/gateIn/gateInDelect/"+obj.aData.ID+"'>"+
+	                    return "<a class='btn btn-danger' href='/gateIn/gateInDelect/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
 	                            "</a>";
 	                }
@@ -57,7 +57,7 @@ $(document).ready(function() {
 	        },
 	        "bServerSide": true,
 	        "bRetrieve": true,
-	        "sAjaxSource":"/yh/gateIn/gateInProductlist/"+wid,
+	        "sAjaxSource":"/gateIn/gateInProductlist/"+wid,
 	        "aoColumns": [
 	            {"mDataProp":"ITEM_NAME"},
 	            {"mDataProp":"ITEM_NO"},        	
@@ -85,7 +85,7 @@ $(document).ready(function() {
 	//gateInProduct编辑
 	 $("#itemTable").on('click', '.editProduct', function(){
 		 var id = $(this).attr('code');
-		 $.post('/yh/gateIn/gateInProductEdit/'+id,function(data){
+		 $.post('/gateIn/gateInProductEdit/'+id,function(data){
              //保存成功后，刷新列表
              console.log(data);
              if(data!=null){
@@ -110,7 +110,7 @@ $(document).ready(function() {
 	//gateInProduct删除
 	 $("#itemTable").on('click', '.deleteProduct', function(){
 		 var id = $(this).attr('code');
-		 $.post('/yh/gateIn/gateInProductDelect/'+id,function(data){
+		 $.post('/gateIn/gateInProductDelect/'+id,function(data){
              //保存成功后，刷新列表
              console.log(data);
              if(data.success){
@@ -125,7 +125,7 @@ $(document).ready(function() {
 	 //选择客户 
 	 $('#customerMessage').on('keyup click', function(){
 			var inputStr = $('#customerMessage').val();
-			$.get('/yh/gateIn/searchCustomer', {input:inputStr}, function(data){
+			$.get('/gateIn/searchCustomer', {input:inputStr}, function(data){
 				console.log(data);
 				var customerList =$("#customerList");
 				customerList.empty();
@@ -155,11 +155,11 @@ $(document).ready(function() {
 			var partyId =$(this).attr('code');
 			$('#customerMessage').val($(this).text());
 			$('#party_id').val(partyId);
-			//productDataTable.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist?categoryId="+partyId;
+			//productDataTable.fnSettings().sAjaxSource = "/gateIn/gateInProductlist?categoryId="+partyId;
 			//productDataTable.fnDraw();
 			$('#customerList').hide();
 			
-			$.post('/yh/gateIn/confirmproduct/'+partyId,function(data){
+			$.post('/gateIn/confirmproduct/'+partyId,function(data){
                 console.log(data);
              if(data.success){
             	 
@@ -178,7 +178,7 @@ $(document).ready(function() {
 	        	});
 	        	}); 
 			console.log(trArr);
-			$.post('/yh/gateIn/gateInProductlist2?localArr='+trArr,function(data){
+			$.post('/gateIn/gateInProductlist2?localArr='+trArr,function(data){
 	               //保存成功后，刷新列表
 	               console.log(data);
 	               if(data.success){
@@ -195,7 +195,7 @@ $(document).ready(function() {
 		$('#itemNameMessage').on('keyup click', function(){
 			var inputStr = $('#itemNameMessage').val();
 			var customerId = $('#party_id').val();
-			$.get('/yh/gateOut/searchItemName', {input:inputStr,customerId:customerId}, function(data){
+			$.get('/gateOut/searchItemName', {input:inputStr,customerId:customerId}, function(data){
 				console.log(data);
 				var itemNameList =$("#itemNameList");
 				itemNameList.empty();
@@ -241,7 +241,7 @@ $(document).ready(function() {
 		$('#itemNoMessage').on('keyup click', function(){
 			var inputStr = $('#itemNoMessage').val();
 			var customerId = $('#party_id').val();
-			$.get('/yh/gateOut/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
+			$.get('/gateOut/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
 				console.log(data);
 				var itemNoList =$("#itemNoList");
 				itemNoList.empty();
@@ -285,7 +285,7 @@ $(document).ready(function() {
 	 	
 	 	
 	 	//选择仓库 
-		$.get('/yh/gateIn/searchAllwarehouse', function(data){
+		$.get('/gateIn/searchAllwarehouse', function(data){
 			console.log(data);
 			if(data.length > 0){
 			var warehouseSelect = $("#warehouseSelect");
@@ -308,7 +308,7 @@ $(document).ready(function() {
 	    });
 		 /*$('#warehouseSelect').on('keyup click', function(){
 				var inputStr = $('#warehouseSelect').val();
-				$.get('/yh/gateIn/searchAllwarehouse', {input:inputStr}, function(data){
+				$.get('/gateIn/searchAllwarehouse', {input:inputStr}, function(data){
 					console.log(data);
 					var warehouseList =$("#warehouseList");
 					warehouseList.empty();
@@ -332,7 +332,7 @@ $(document).ready(function() {
 				var id =$(this).attr('code');
 				$('#warehouseSelect').val($(this).text());
 				 $("#warehouseId").val(id);
-				//productDataTable.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist?categoryId="+partyId;
+				//productDataTable.fnSettings().sAjaxSource = "/gateIn/gateInProductlist?categoryId="+partyId;
 				//productDataTable.fnDraw();
 				$('#customerList').hide();
 		    }); */
@@ -365,7 +365,7 @@ $(document).ready(function() {
 			 //var itemId = $("#item_id").val();
 	            e.preventDefault();
 	            //异步向后台提交数据
-	           $.post('/yh/gateIn/gateInSave',$("#inventoryForm").serialize(), function(data){
+	           $.post('/gateIn/gateInSave',$("#inventoryForm").serialize(), function(data){
 	                console.log(data);
                  if(data>0){
                 	 console.log(data);
@@ -388,13 +388,13 @@ $(document).ready(function() {
 		    $("#warehouseOrderItemFormBtn").click(function(){
 		    	console.log(warehouseorderid);
 		    	var warehouseorderid = $("#warehouseorderId").val();
-		    	$.post('/yh/gateIn/savewareOrderItem/'+warehouseorderid,$("#warehouseOrderItemForm").serialize(), function(id){
+		    	$.post('/gateIn/savewareOrderItem/'+warehouseorderid,$("#warehouseOrderItemForm").serialize(), function(id){
 						//保存成功后，刷新列表
 		                console.log(id);
 		                if(id>0){
 		                	$('#myModal').modal('hide');
 		                	var warehouseorderid = $("#warehouseorderId").val();
-		                	productDataTable2.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist/"+warehouseorderid;
+		                	productDataTable2.fnSettings().sAjaxSource = "/gateIn/gateInProductlist/"+warehouseorderid;
 		                	productDataTable2.fnDraw();
 		                	$('#reset').click();
 		                	e.preventDefault();
@@ -407,7 +407,7 @@ $(document).ready(function() {
 		    //入仓确认
 		    $("#ConfirmBtn").click(function(){
 		    	var warehouseorderid = $("#warehouseorderId").val();
-		    	$.post('/yh/gateIn/gateInConfirm/'+warehouseorderid,function(data){
+		    	$.post('/gateIn/gateInConfirm/'+warehouseorderid,function(data){
 		    		 if(data.success){
 		    			 $("#ConfirmBtn").attr("disabled", true);
 		    			 alert("入库成功！");

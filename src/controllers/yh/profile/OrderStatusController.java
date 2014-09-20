@@ -20,7 +20,7 @@ public class OrderStatusController extends Controller{
     
 	public void index() {
 		if(LoginUserController.isAuthenticated(this))
-		render("profile/orderStatus/orderStatusList.html");
+		render("/yh/profile/orderStatus/orderStatusList.html");
 	}
 
 	public void list() {
@@ -56,7 +56,7 @@ public class OrderStatusController extends Controller{
 	public void add() {
 		setAttr("saveOK", false);
 		if(LoginUserController.isAuthenticated(this))
-		render("profile/orderStatus/orderStatusEdit.html");
+		render("/yh/profile/orderStatus/orderStatusEdit.html");
 	}
 
 	public void edit() {
@@ -65,7 +65,7 @@ public class OrderStatusController extends Controller{
 		OrderStatus orderStatus = OrderStatus.dao.findById(id);
 		setAttr("orderStatus", orderStatus);
 		if(LoginUserController.isAuthenticated(this))
-		render("profile/orderStatus/orderStatusEdit.html");
+		render("/yh/profile/orderStatus/orderStatusEdit.html");
 	}
 
 	public void delete() {
@@ -74,7 +74,7 @@ public class OrderStatusController extends Controller{
 		OrderStatus orderStatus = OrderStatus.dao.findById(id);
 		orderStatus.delete();
 		if(LoginUserController.isAuthenticated(this))
-		redirect("/yh/orderStatus");
+		redirect("/orderStatus");
 	}
 
 	public void save() {
@@ -96,6 +96,6 @@ public class OrderStatusController extends Controller{
 			        .set("order_type", order_type).set("remark", remark).save();
 		}
 		if(LoginUserController.isAuthenticated(this))
-		render("profile/orderStatus/orderStatusList.html");
+		render("/yh/profile/orderStatus/orderStatusList.html");
 	}
 }

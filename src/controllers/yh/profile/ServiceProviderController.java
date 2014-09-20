@@ -29,7 +29,7 @@ public class ServiceProviderController extends Controller {
 
     public void index() {
         if (LoginUserController.isAuthenticated(this))
-            render("profile/serviceProvider/serviceProviderList.html");
+            render("/yh/profile/serviceProvider/serviceProviderList.html");
     }
 
     public void list() {
@@ -117,7 +117,7 @@ public class ServiceProviderController extends Controller {
     public void add() {
         setAttr("saveOK", false);
         if (LoginUserController.isAuthenticated(this))
-            render("profile/serviceProvider/serviceProviderEdit.html");
+            render("/yh/profile/serviceProvider/serviceProviderEdit.html");
     }
 
     public void edit() {
@@ -149,7 +149,7 @@ public class ServiceProviderController extends Controller {
                 + id);
         setAttr("contact", contact);
         if (LoginUserController.isAuthenticated(this))
-            render("profile/serviceProvider/serviceProviderEdit.html");
+            render("/yh/profile/serviceProvider/serviceProviderEdit.html");
     }
 
     public void delete() {
@@ -179,7 +179,7 @@ public class ServiceProviderController extends Controller {
         contact.delete();
         party.delete();
         if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/serviceProvider");
+            redirect("/serviceProvider");
     }
 
     public void save() {
@@ -219,7 +219,7 @@ public class ServiceProviderController extends Controller {
 
         setAttr("saveOK", true);
         if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/serviceProvider");
+            redirect("/serviceProvider");
     }
 
     private void setContact(Contact contact) {

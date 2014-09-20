@@ -10,7 +10,7 @@ $(document).ready(function() {
 	   	   "oLanguage": {
 	           "sUrl": "/eeda/dataTables.ch.txt"
 	       },
-	       "sAjaxSource":"/yh/stock/stocklist",
+	       "sAjaxSource":"/stock/stocklist",
 			"aoColumns": [
 				{"mDataProp":"ITEM_NAME"},
 	            {"mDataProp":"ITEM_NO"}, 
@@ -30,7 +30,7 @@ $(document).ready(function() {
 	
 	//选择仓库 
 	 $('#warehouseSelect').on('keyup click', function(){
-		$.get('/yh/gateIn/searchAllwarehouse', function(data){
+		$.get('/gateIn/searchAllwarehouse', function(data){
 			console.log(data);
 			var warehouseList =$("#warehouseList");
 			warehouseList.empty();
@@ -62,7 +62,7 @@ $(document).ready(function() {
 		var id =$(this).attr('code');
 		$('#warehouseSelect').val($(this).text());
 		$("#warehouseId").val(id);
-		tab.fnSettings().sAjaxSource = "/yh/stock/stocklist/"+id;
+		tab.fnSettings().sAjaxSource = "/stock/stocklist/"+id;
 		tab.fnDraw();
 		$('#warehouseList').hide();
 	});

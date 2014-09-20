@@ -313,10 +313,10 @@
 		                       			<div class="panel-body">
 		                            		<p>单据创建完毕,是否继续创建？</p>
 		                        		</div>
-		                        		<form id="detailCheckBoxForm" method="post" action="/yh/pickupOrder/createPickupOrder">
+		                        		<form id="detailCheckBoxForm" method="post" action="/pickupOrder/createPickupOrder">
 		                        			<input type="hidden" name="localArr" value="${localArr!''}">
 			                       			<div class="panel-footer">
-			                          			<a class="btn btn-default" href="/yh/pickupOrder">否</a>
+			                          			<a class="btn btn-default" href="/pickupOrder">否</a>
 			                          			<button id="continueCreateBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">是</button>
 			                        		</div>                        		
 		                        		</form>
@@ -330,7 +330,7 @@
                             <hr/>
                         	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
 		               		<button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
-		               		<a class="btn btn-default" href="/yh/insuranceOrder">返回</a>
+		               		<a class="btn btn-default" href="/insuranceOrder">返回</a>
                         </div>                       
                     </div>
                     <!-- /.panel -->

@@ -54,19 +54,19 @@ public class DataInitUtil {
             // 干线表
             stmt.executeUpdate("create table if not exists route(id bigint auto_increment primary key,from_id varchar(50), location_from varchar(50) not null,to_id varchar(50), location_to varchar(50) not null, remark varchar(255));");
 
-            stmt.executeUpdate("create table if not exists leads(id bigint auto_increment primary key, "
-                    + "title varchar(255), priority varchar(50), create_date timestamp, creator varchar(50), status varchar(50),"
-                    + "type varchar(50), region varchar(50), addr varchar(256), "
-                    + "intro varchar(5120), remark varchar(5120), lowest_price decimal(20, 2), agent_fee decimal(20, 2), "
-                    + "introducer varchar(256), sales varchar(256), follower varchar(50), follower_phone varchar(50),"
-                    + "owner varchar(50), owner_phone varchar(50), area decimal(10,2), total decimal(10,2), customer_source varchar(50), "
-                    + "building_name varchar(255), building_unit varchar(50), building_no varchar(50), room_no varchar(50), is_have_car char(1) default 'N',"
-                    + "is_public char(1) default 'N');");
+//            stmt.executeUpdate("create table if not exists leads(id bigint auto_increment primary key, "
+//                    + "title varchar(255), priority varchar(50), create_date timestamp, creator varchar(50), status varchar(50),"
+//                    + "type varchar(50), region varchar(50), addr varchar(256), "
+//                    + "intro varchar(5120), remark varchar(5120), lowest_price decimal(20, 2), agent_fee decimal(20, 2), "
+//                    + "introducer varchar(256), sales varchar(256), follower varchar(50), follower_phone varchar(50),"
+//                    + "owner varchar(50), owner_phone varchar(50), area decimal(10,2), total decimal(10,2), customer_source varchar(50), "
+//                    + "building_name varchar(255), building_unit varchar(50), building_no varchar(50), room_no varchar(50), is_have_car char(1) default 'N',"
+//                    + "is_public char(1) default 'N');");
 
             stmt.executeUpdate("create table if not exists support_case(id bigint auto_increment primary key, title varchar(255), type varchar(50), create_date timestamp, creator varchar(50), status varchar(50), case_desc varchar(5120), note varchar(5120));");
 
-            stmt.executeUpdate("create table if not exists order_header(id bigint auto_increment primary key, order_no varchar(50) not null, type varchar(50), status varchar(50), creator varchar(50), create_date timestamp, remark varchar(256));");
-            stmt.executeUpdate("create table if not exists order_item(id bigint auto_increment primary key, order_id bigint, item_name varchar(50), item_desc varchar(50), quantity decimal(10,2), unit_price decimal(10,2), status varchar(50), foreign key(order_id) references order_header(id) );");
+//            stmt.executeUpdate("create table if not exists order_header(id bigint auto_increment primary key, order_no varchar(50) not null, type varchar(50), status varchar(50), creator varchar(50), create_date timestamp, remark varchar(256));");
+//            stmt.executeUpdate("create table if not exists order_item(id bigint auto_increment primary key, order_id bigint, item_name varchar(50), item_desc varchar(50), quantity decimal(10,2), unit_price decimal(10,2), status varchar(50), foreign key(order_id) references order_header(id) );");
             // party 当事人，可以有各种type
             stmt.executeUpdate("create table if not exists party(id bigint auto_increment primary key, party_type varchar(32), contact_id bigint, create_date timestamp, creator varchar(50), last_update_date timestamp, last_updator varchar(50), status varchar(50),remark varchar(255),receipt varchar(50),payment varchar(50), charge_type varchar(50));");
             stmt.executeUpdate("create table if not exists party_attribute(id bigint auto_increment primary key, party_id bigint, attr_name varchar(60), attr_value varchar(255), create_date timestamp, creator varchar(50), foreign key(party_id) references party(id));");
@@ -185,374 +185,378 @@ public class DataInitUtil {
 
             // location init
             LocationDataInit.initLocation(stmt);
-            ProfileDataInit.initProfile(stmt);
-            stmt.executeUpdate("insert into inventory_item(party_id, warehouse_id, product_id,total_quantity) values(1, 1, 4, 100);");
-            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
-            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
-            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('demo', '123456', '1-6');");
-            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('jason', '123456', '1-6');");
-
-            stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('1201', '广州分公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','自营','这是一家公司');");
-            stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','控股','这是一家公司');");
-            stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('101', '深圳分公司','张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','合作','这是一家公司');");
-            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('广州源鸿物流有限公司','侯晓辉','66343695','侯晓辉','66343695','广州市萝岗区宏明路严田商业街11号','总公司');");
-            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('源鸿物流珠海分公司','陈秋明','13925642153','陈秋明','13925642153','广东省珠海市','合资分公司');");
-            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('上海源鸿物流有限公司','刘涛','18688696863','刘涛','18688696863','上海市','合作公司');");
-            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('贵阳源鸿物流有限公司','林伟军','13358215635','林伟军','13358215635','贵阳市','合作公司');");
-
-            stmt.executeUpdate("insert into fin_account(name,type,remark) values('李志坚','收费','');");
-            stmt.executeUpdate("insert into fin_account(name,type,remark) values('李四','收费','');");
-            stmt.executeUpdate("insert into fin_account(name,type,remark) values('张三','付费','');");
-
-            stmt.executeUpdate("insert into fin_account_item(account_id,currency,org_name,account_pin,org_person) values('1','人民币','建设银行','12123123123','张三');");
-            stmt.executeUpdate("insert into fin_account_item(account_id,currency,org_name,account_pin,org_person) values('2','人民币','建设银行','12123123123','李四');");
-            stmt.executeUpdate("insert into fin_account_item(account_id,currency,org_name,account_pin,org_person) values('3','人民币','建设银行','12123123123','王五');");
-
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('广电运通-客户合同','CUSTOMER', 1,'2013-11-12','2015-11-14','无');");
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,'2013-10-12','2015-11-15','无');");
-
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('干线供应商合同','SERVICE_PROVIDER', 7,'2013-11-12','2015-11-14','无');");
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('提货供应商合同','DELIVERY_SERVICE_PROVIDER', 6,'2011-1-12','2015-10-14','无');");
-
-            // 定义配送供应商合同 济南骏运展达物流运输有限公司
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('配送供应商合同','DELIVERY_SERVICE_PROVIDER', 13,'2013-11-12','2015-11-14','无');");
-            stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('示例干线供应商合同','SERVICE_PROVIDER', 4,'2013-1-12','2015-10-14','无');");
-
-            stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','110103','宣武区','123123');");
-            stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','120000','天津','123123');");
-            stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('120000','天津','110000','北京','123123');");
-
-            stmt.executeUpdate("insert into contract_item(contract_id,product_id, fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1', 1, '1','perUnit','13000','440100','广东省 广州市','110101','北京 北京市 东城区','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('2','2','perCar','13000','110000','北京','120000','天津','路线2');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1','3','perCargo','12000','120000','天津','110000','北京','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,remark) values('2','1','perCar','130000','路线2');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,remark) values('3', 1, 'perUnit','120000','路线');");
-            // 提货供应商 提货
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,remark) values(4,1,'perUnit','200','440100','广州市','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,remark) values(4,1,'perCar','300','440100','广州市','路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,cartype,amount,from_id,location_from,remark) values(4,1,'perCar','厢式车','350','440100','广州市','路线');");
-            // 干线供应商 计件收费，整车收费，零担收费  定义
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 1,'perUnit','10000','440100','广州市','110100','北京市','计件');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 2,'perCar','8888','440100','广州市','110100','北京市','整车');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id, pricetype, ltlunittype, amount,from_id,location_from,to_id,location_to, amountfrom, amountto, remark) values(6, 1, 'perCargo', 'perCBM', '100','440100','广州市','110100','北京市', 0, 100, '零担-按立方');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id, pricetype, ltlunittype, amount,from_id,location_from,to_id,location_to, amountfrom, amountto, remark) values(6, 1, 'perCargo', 'perKg', '101','440100','广州市','110100','北京市', 0, 50, '零担-按公斤');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id, pricetype, ltlunittype, amount,from_id,location_from,to_id,location_to, amountfrom, amountto, remark) values(6, 1, 'perCargo', 'perTon', '5002','440100','广州市','110100','北京市', 0, 1, '零担-按吨');");
-            
-            // 定义配送供应商 济南骏运展达物流运输有限公司 配送 没有目的地 任意提货路线都收取1000
-            stmt.executeUpdate("insert into contract_item(contract_id,pricetype,amount,remark) values('5','perUnit','1000','省内任意提货路线');");
-            // 定义配送供应商 济南骏运展达物流运输有限公司 配送 只有目的地 北京市东城区，这条线收1001
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,to_id,location_to,remark) values(5, 1,'perUnit','1001','110101','北京市东城区','配送路线');");
-            stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,to_id,location_to,remark) values(5, 2,'perCar', 333,'110101','北京市东城区','配送路线');");
-            
-            // 回单notity_party_id bigint,customer_id
-            //stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', 'new','应收',1,1,'这是一张回单');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,transfer_order_id,creator,remark) values('HD2013021400002', '2014-08-6 16:35:35.1', 'confirmed','应收',1,2,'这是一张回单');");
-            // 运输单应收应付明细id bigint auto_increment PRIMARY KEY, order_id bigint,
-            // fin_item_id bigint,"
-            // +
-            // "fin_item_code varchar(20), amount double, status varchar(50), "
-            stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('1','1','20132014','5200','完成');");
-            stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('1','2','20132015','5200','完成');");
-            stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('1','3','20132016','5200','完成');");
-            stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('2','1','20132014','3200','未完成');");
-            stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('2','2','20132015','3200','未完成');");
-
-            // 角色定义
-            stmt.executeUpdate("insert into role(role_name) values('文员');");
-            stmt.executeUpdate("insert into role(role_name) values('经理');");
-            stmt.executeUpdate("insert into role(role_name) values('老板');");
-            stmt.executeUpdate("insert into role(role_name) values('调度员');");
-            stmt.executeUpdate("insert into role(role_name) values('司机');");
-
-            // 权限定义
-            stmt.executeUpdate("insert into privileges(privilege) values('*');");
-            stmt.executeUpdate("insert into privileges(privilege) values('view');");
-            stmt.executeUpdate("insert into privileges(privilege) values('create');");
-            stmt.executeUpdate("insert into privileges(privilege) values('update');");
-            stmt.executeUpdate("insert into privileges(privilege) values('delete');");
-
-            // 系统权限
-            stmt.executeUpdate("insert into role_permissions(role_name, role_permission, remark) values('root', '123456', '1-6');");
-
-            // 模块定义
-            stmt.executeUpdate("insert into modules(module_name) values('调度管理');");
-            stmt.executeUpdate("insert into modules(module_name) values('运输在途管理');");
-            stmt.executeUpdate("insert into modules(module_name) values('配送管理');");
-            stmt.executeUpdate("insert into modules(module_name) values('回单管理');");
-            stmt.executeUpdate("insert into modules(module_name) values('财务管理');");
-            stmt.executeUpdate("insert into modules(module_name) values('合同管理');");
-            stmt.executeUpdate("insert into modules(module_name) values('报表管理');");
-            stmt.executeUpdate("insert into modules(module_name) values('基础数据设计');");
-            stmt.executeUpdate("insert into modules(module_name) values('质量管理');");
-            stmt.executeUpdate("insert into modules(module_name) values('XXXX管理');");
-            stmt.executeUpdate("insert into modules(module_name) values('YYYY管理');");
-            stmt.executeUpdate("insert into modules(module_name) values('ZZZZ管理');");
-            // 模块权限定义
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('1','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('1','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('1','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('1','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('1','5');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('2','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('2','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('2','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('2','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('2','5');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('3','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('3','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('3','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('3','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('3','5');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('4','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('4','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('4','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('4','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('4','5');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('5','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('5','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('5','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('5','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('5','5');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('6','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('6','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('6','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('6','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('6','5');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('7','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('7','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('7','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('7','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('7','5');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('8','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('8','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('8','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('8','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('8','5');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('9','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('9','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('9','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('9','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('9','5');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('10','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('10','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('10','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('10','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('10','5');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('11','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('11','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('11','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('11','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('11','5');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','1');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','2');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','3');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','4');");
-            stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','5');");
-            
-            // 收费条目定义
-            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('YSF','运输费','应付','这是一张运输单收费');");
-            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('BYF','搬运费','应付','这是一张运输单收费');");
-            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('SLF','上楼费','应付','这是一张运输单收费');");
-            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('YSF','客户费用','应收','这是一张运输单收费');");
-            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('BYF','搬运费','应收','这是一张运输单收费');");
-            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('SLF','上楼费','应收','这是一张运输单收费');");
-            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('FTF','分摊费用','应收','这是分摊费用');");
-            
-            // 自营车辆付费条目定义
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','CYF','柴油费','应付','这是柴油费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','CCF','出车补贴','应付','这是出车补贴费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','SJGZ','司机工资','应付','这是司机工资');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','LQF','路桥费','应付','这是路桥费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','ZXF','装卸费','应付','这是装卸费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','FKF','罚款','应付','这是罚款费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','SHGZ','送货员工资','应付','这是送货员工资');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','TCF','停车费','应付','这是停车费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','ZSF','住宿费','应付','这是住宿费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','QTF','其它费用','应付','这是其它费用');");
-
-            newCustomer();
-
-            // 仓库
-            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,office_id,warehouse_type) values('582','源鸿广州总仓', '这是广州总仓','萝岗','9','2','ownWarehouse');");
-            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,sp_id,warehouse_type,office_id) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse',5);");
-
-            // 类别 ----采用面向对象的方式来获取party的id， 不必担心id不对。 --ray 2014-06-29
-            Party party = Party.dao
-                    .findFirst("SELECT p.id FROM party p left join CONTACT c on p.contact_id =c.id where c.company_name ='示例客户---广州广电运通金融电子股份有限公司'");
-            Category rootCat = new Category();
-            rootCat.set("name", "广电运通").set("customer_id", party.get("id")).save();
-
-            Category subCat1 = new Category();
-            subCat1.set("name", "ATM").set("customer_id", party.get("id")).set("parent_id", rootCat.getLong("id")).save();
-
-            Category subCat2 = new Category();
-            subCat2.set("name", "普通货品").set("customer_id", party.get("id")).set("parent_id", rootCat.getLong("id")).save();
-
-            // 产品
-            stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('ATM', '2014042600001','1000','5000','7000', 35,'台', 10, 2, '这是一台ATM');");
-            stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('普通货品', '2014042600002','2000','4000','5000', 40, '件', 20, 3, '这是普通货品');");
-            stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('特殊货品', '2014042600003','1000','5000','6000', 30, '套', 30, 2, '这是特殊货品');");
-            stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('SONY-电视1', 'SONY30329','1000','5000','6000', 30, '台', 30, 3, '普通货品');");
-            stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('SONY-电视2', 'SONY30330','1000','5000','6000', 30, '台', 30, 3, '普通货品');");
-
-            // 运输单
-            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type,charge_type2) values('ATM', '4', '12', 'YS2014042600001', '3', '1', '已入货场', '2014-04-20 16:33:35.1', 'delivery','珠海','2','110102','440402','2','salesOrder','provinceOut','own','perUnit');");
-            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type, charge_type, pickup_mode,charge_type2) "
-                    + "values('ATM', 4, '13', 'YS2014042600002', '4', 1, '新建', CURRENT_TIMESTAMP(), 'gateIn','中山', 4,'440100','110100','3','salesOrder','provinceIn','own','perUnit','routeSP','perCargo');");
-            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type,warehouse_id,charge_type2) values('cargo', '6', '12', 'YS2014042600003', '4', '19', '已入货场', '2014-04-28 16:46:35.1', 'gateIn','广州','110106','440403','2','replenishmentOrder','provinceOut','2','own','1','perUnit');");
-            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type,warehouse_id,charge_type2) values('cargo', '6', '13', 'YS2014042600004', '3', '1', '新建', '2014-04-25 16:35:35.1', 'gateIn','深圳','110106','440403','1','replenishmentOrder','provinceIn','3','out_source','2','perUnit');");
-            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type,charge_type2) values('ATM', '7', '12', 'YS2014042600005', '3', '2', '新建', '2014-04-22 16:28:35.1', 'delivery','东莞','110108','440507','1','arrangementOrder','provinceOut','1','out_source','perCar');");
-            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,warehouse_id,office_id,order_type,customer_province,operation_type,charge_type2) values('ATM', '9', '13', 'YS2014042600006', '3', '3', '已签收', '2014-04-24 16:58:35.1', 'gateIn','东莞','110109','440511','2','2','arrangementOrder','provinceIn','out_source','perCar');");
-            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,warehouse_id,office_id,order_type,customer_province,operation_type,charge_type2) values('ATM', '10', '12', 'YS2014042600007', '3', '3', '已入库', '2014-04-24 16:58:35.1', 'gateIn','广州','','','1','3','arrangementOrder','provinceOut','out_source','perCargo');");
-            
-            //这张是做给普通货品的（无单品）
-            stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type, charge_type, pickup_mode) "
-                    + "values('cargo', 4, '13', 'YS2014042600008', '4', 1, '新建', CURRENT_TIMESTAMP(), 'gateIn','中山', 4,'440100','110100','3','salesOrder','provinceIn','own','perCBM','routeSP');");
-            
-            stmt.executeUpdate("insert into transfer_order_item(amount,order_id,product_id) " + "values(2, 1, 1);");
-            // 货品明细
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc, amount,unit,volume,weight,remark,order_id, size,width,height) "
-                    + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM', 1, 1000,5000,7000);");
-
-            // 示范数据item
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id, product_id) "
-                    + "values('2014042600001', 'ATM', 'ATM机', 2,'台', 35, 10, '2台ATM', 2, 1);");
-            // 示范数据item_detail
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values(2, '2014042600001', 'S001', 0, 'ATM', false, 3, 9);");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values(2, '2014042600001', 'S002', 0, 'ATM', false, 3, 9);");
-            //
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('123456', 'ATM', '这是很多台ATM',2,'台',1000,2000,'一台ATM','3');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('123456', '电视', '这是一台电视','2','台','452','100','一台ATM','4');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('123456', 'ATM', '这是一台ATM','1','台','454','100','一台ATM','5');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','6');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('12222', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','5');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
-                    + "values('12aa', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','7');");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id, product_id) "
-                    + "values('SONY30329', 'SONY-电视1', 'SONY电视','20','台','2','50','普通货品', 8, 4);");
-            stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id, product_id) "
-                    + "values('SONY30330', 'SONY-电视2', 'SONY电视','100','台','2','60','普通货品', 8, 5);");
-
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('1','fdgh1265985','10000', 'ATM', true,'1','9');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('5','asdf1265985','10000', 'ATM', false,'7','9');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('5','11adasasdf5','10000', 'ATM', false,'9','9');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('6','iouu1265985','10000', 'ATM', false,'8','10');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('6','2221265985','10000', 'ATM', false,'8','10');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
-                    + "values('7','aaasswqq63','10000', 'ATM', false, 8,'10');");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
-                    + "values(3,'123', 'ATM001', 6, 24);");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
-                    + "values(3,'456', 'ATM002', 6, 24);");
-            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
-                    + "values(3,'789', 'ATM003', 6, 24);");
-
-            // 配送单
-            stmt.execute("insert into delivery_order(order_no, cargo_nature, customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600013', 'ATM','5','7','9','配送在途','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600004', 'ATM','6','7','10','已签收','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600014', 'ATM','5','8','9','取消','2014-04-25 16:35:35.1');");
-            stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600003', 'cargo','6','8','10','配送在途','2014-04-25 16:35:35.1');");
-
-            // delivery_order_item
-            stmt.execute("insert into delivery_order_item(delivery_id,transfer_order_id) values(1,1);");
-            stmt.execute("insert into delivery_order_item(delivery_id,transfer_order_id) values(1,2);");
-
-            // billing_order 应收应付单主表
-            String billOrderStr = "insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
-                    + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
-                    + "last_modified_stamp, approver, approve_date, total_amount, total_actual_amount) values";
-            stmt.execute(billOrderStr
-                    + "('YSDZ001', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'new', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
-            stmt.execute(billOrderStr
-                    + "('YSDZ002', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'checking', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
-            stmt.execute(billOrderStr
-                    + "('YSDZ003', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'confirmed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
-            stmt.execute(billOrderStr
-                    + "('YSDZ004', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'completed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
-            stmt.execute(billOrderStr
-                    + "('YSDZ005', 'charge_audit_order',4, 'CUSTOMER', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
-            stmt.execute(billOrderStr
-                    + "('YFDZ001', 'pay_audit_order', 7, 'SERVICE_PROVIDER', 1, 2, 'new', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
-            stmt.execute(billOrderStr
-                    + "('YFDZ002', 'pay_audit_order', 7, 'SERVICE_PROVIDER', 1, 2, 'checking', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
-            stmt.execute(billOrderStr
-                    + "('YFDZ003', 'pay_audit_order', 7, 'SERVICE_PROVIDER',1, 2, 'confirmed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
-            stmt.execute(billOrderStr
-                    + "('YFDZ004', 'pay_audit_order', 7, 'SERVICE_PROVIDER	',1, 2, 'completed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
-            stmt.execute(billOrderStr
-                    + "('YFDZ005', 'pay_audit_order',7, 'SERVICE_PROVIDER	', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
-                    + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
-            // billing_order_item 应收应付单从表
-            stmt.execute("create table if not exists billing_order_item(id bigint auto_increment primary key,blling_order_id bigint, "
-                    + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
-                    + "creator bigint, create_stamp timestamp,last_modified_by bigint,"
-                    + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
-
-            // 自营车辆司机
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13312345678', '粤A5687', '平板车', 18.5, '王五', '"+Carinfo.CARINFO_TYPE_OWN+"');");
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13412345678', '粤A2341', '高栏车', 12.5, '赵六', '"+Carinfo.CARINFO_TYPE_OWN+"');");
-            
-            // 供应商司机
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13898765432', '粤A9874', '集装车', 17.5, '王五五', '"+Carinfo.CARINFO_TYPE_SP+"');");
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13998765432', '粤A1234', '挂车', 14.5, '赵六六', '"+Carinfo.CARINFO_TYPE_SP+"');");
-
-            // 发车单
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000001', CURRENT_TIMESTAMP(),'DEPART','粤A876596','平板车',1,23,'新建');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '1','YS2014042600001');");
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000002', CURRENT_TIMESTAMP(),'DEPART','粤A879588','集装车',2, 23,'新建');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('2', '2','YS2014042600002');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '5','YS2014042600005');");
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,driver_id,carinfo_id,status) values('FC2014061000003', CURRENT_TIMESTAMP(),'DEPART',24,1,'新建');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(3, '3','YS2014042600006');");
-            // 拼车单
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by) values('PC2014061000001', CURRENT_TIMESTAMP(),'PICKUP','粤A876596','平板货车',1, 24,'已入货场',3);");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(4, '1','YS2014042600001');");
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by,pickup_mode) "
-                    + "values('PC2014061000002', CURRENT_TIMESTAMP(),'PICKUP','粤A879588','箱式货车',2, 24,'已入货场',4,'own');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '4','YS2014042600004');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '5','YS2014042600005');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '3','YS2014042600003');");
-
-            // 运输里程碑
-            stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(2, 3, '2014-06-28 10:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
-            stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(3, 3, '2014-06-28 10:40:35.1', '新建', 'TRANSFERORDERMILESTONE');");
-            stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(4, 3, '2014-06-28 10:43:35.1', '新建', 'TRANSFERORDERMILESTONE');");
-            stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(6, 3, '2014-06-28 11:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
-
-            stmt.execute("insert into arap_audit_order(BEGIN_TIME, PAYEE_ID, ORDER_NO, REMARK, CREATE_BY, END_TIME, CREATE_STAMP, STATUS) values('2014-08-15 9:39:35.1', 1, 'YSDZ2014081800001', '应收对账单测试数据', '3', '2014-08-19 9:39:35.1', '2014-08-18 9:39:35.1', 'confirmed');");
-            stmt.execute("insert into arap_audit_item(AUDIT_ORDER_ID, REF_ORDER_ID, CREATE_BY, CREATE_STAMP) values(1, 1, 3, '2014-08-18 9:39:35.1');");
-            
-            // 拼车单收费条目
-            stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(1, 5, 1, 300);");
-            stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(2, 5, 2, 100);");
-            stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(3, 5, 3, 100);");
+            //ProfileDataInit.initProfile(stmt);
+            //initCommonData(stmt);
             stmt.close();
             // conn.commit();
             conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void initCommonData(Statement stmt) throws SQLException {
+        stmt.executeUpdate("insert into inventory_item(party_id, warehouse_id, product_id,total_quantity) values(1, 1, 4, 100);");
+        stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
+        stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
+        stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('demo', '123456', '1-6');");
+        stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('jason', '123456', '1-6');");
+
+        stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('1201', '广州分公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','自营','这是一家公司');");
+        stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','控股','这是一家公司');");
+        stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('101', '深圳分公司','张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','合作','这是一家公司');");
+        stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('广州源鸿物流有限公司','侯晓辉','66343695','侯晓辉','66343695','广州市萝岗区宏明路严田商业街11号','总公司');");
+        stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('源鸿物流珠海分公司','陈秋明','13925642153','陈秋明','13925642153','广东省珠海市','合资分公司');");
+        stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('上海源鸿物流有限公司','刘涛','18688696863','刘涛','18688696863','上海市','合作公司');");
+        stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('贵阳源鸿物流有限公司','林伟军','13358215635','林伟军','13358215635','贵阳市','合作公司');");
+
+        stmt.executeUpdate("insert into fin_account(name,type,remark) values('李志坚','收费','');");
+        stmt.executeUpdate("insert into fin_account(name,type,remark) values('李四','收费','');");
+        stmt.executeUpdate("insert into fin_account(name,type,remark) values('张三','付费','');");
+
+        stmt.executeUpdate("insert into fin_account_item(account_id,currency,org_name,account_pin,org_person) values('1','人民币','建设银行','12123123123','张三');");
+        stmt.executeUpdate("insert into fin_account_item(account_id,currency,org_name,account_pin,org_person) values('2','人民币','建设银行','12123123123','李四');");
+        stmt.executeUpdate("insert into fin_account_item(account_id,currency,org_name,account_pin,org_person) values('3','人民币','建设银行','12123123123','王五');");
+
+        stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('广电运通-客户合同','CUSTOMER', 1,'2013-11-12','2015-11-14','无');");
+        stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,'2013-10-12','2015-11-15','无');");
+
+        stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('干线供应商合同','SERVICE_PROVIDER', 7,'2013-11-12','2015-11-14','无');");
+        stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('提货供应商合同','DELIVERY_SERVICE_PROVIDER', 6,'2011-1-12','2015-10-14','无');");
+
+        // 定义配送供应商合同 济南骏运展达物流运输有限公司
+        stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('配送供应商合同','DELIVERY_SERVICE_PROVIDER', 13,'2013-11-12','2015-11-14','无');");
+        stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('示例干线供应商合同','SERVICE_PROVIDER', 4,'2013-1-12','2015-10-14','无');");
+
+        stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','110103','宣武区','123123');");
+        stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('110000','北京','120000','天津','123123');");
+        stmt.executeUpdate("insert into route(from_id,location_from,to_id,location_to,remark) values('120000','天津','110000','北京','123123');");
+
+        stmt.executeUpdate("insert into contract_item(contract_id,product_id, fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1', 1, '1','perUnit','13000','440100','广东省 广州市','110101','北京 北京市 东城区','路线');");
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('2','2','perCar','13000','110000','北京','120000','天津','路线2');");
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values('1','3','perCargo','12000','120000','天津','110000','北京','路线');");
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,remark) values('2','1','perCar','130000','路线2');");
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,remark) values('3', 1, 'perUnit','120000','路线');");
+        // 提货供应商 提货
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,remark) values(4,1,'perUnit','200','440100','广州市','路线');");
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,remark) values(4,1,'perCar','300','440100','广州市','路线');");
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,cartype,amount,from_id,location_from,remark) values(4,1,'perCar','厢式车','350','440100','广州市','路线');");
+        // 干线供应商 计件收费，整车收费，零担收费  定义
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 1,'perUnit','10000','440100','广州市','110100','北京市','计件');");
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,from_id,location_from,to_id,location_to,remark) values(6, 2,'perCar','8888','440100','广州市','110100','北京市','整车');");
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id, pricetype, ltlunittype, amount,from_id,location_from,to_id,location_to, amountfrom, amountto, remark) values(6, 1, 'perCargo', 'perCBM', '100','440100','广州市','110100','北京市', 0, 100, '零担-按立方');");
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id, pricetype, ltlunittype, amount,from_id,location_from,to_id,location_to, amountfrom, amountto, remark) values(6, 1, 'perCargo', 'perKg', '101','440100','广州市','110100','北京市', 0, 50, '零担-按公斤');");
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id, pricetype, ltlunittype, amount,from_id,location_from,to_id,location_to, amountfrom, amountto, remark) values(6, 1, 'perCargo', 'perTon', '5002','440100','广州市','110100','北京市', 0, 1, '零担-按吨');");
+        
+        // 定义配送供应商 济南骏运展达物流运输有限公司 配送 没有目的地 任意提货路线都收取1000
+        stmt.executeUpdate("insert into contract_item(contract_id,pricetype,amount,remark) values('5','perUnit','1000','省内任意提货路线');");
+        // 定义配送供应商 济南骏运展达物流运输有限公司 配送 只有目的地 北京市东城区，这条线收1001
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,to_id,location_to,remark) values(5, 1,'perUnit','1001','110101','北京市东城区','配送路线');");
+        stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,to_id,location_to,remark) values(5, 2,'perCar', 333,'110101','北京市东城区','配送路线');");
+        
+        // 回单notity_party_id bigint,customer_id
+        //stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', 'new','应收',1,1,'这是一张回单');");
+        stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,transfer_order_id,creator,remark) values('HD2013021400002', '2014-08-6 16:35:35.1', 'confirmed','应收',1,2,'这是一张回单');");
+        // 运输单应收应付明细id bigint auto_increment PRIMARY KEY, order_id bigint,
+        // fin_item_id bigint,"
+        // +
+        // "fin_item_code varchar(20), amount double, status varchar(50), "
+        stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('1','1','20132014','5200','完成');");
+        stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('1','2','20132015','5200','完成');");
+        stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('1','3','20132016','5200','完成');");
+        stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('2','1','20132014','3200','未完成');");
+        stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('2','2','20132015','3200','未完成');");
+
+        // 角色定义
+        stmt.executeUpdate("insert into role(role_name) values('文员');");
+        stmt.executeUpdate("insert into role(role_name) values('经理');");
+        stmt.executeUpdate("insert into role(role_name) values('老板');");
+        stmt.executeUpdate("insert into role(role_name) values('调度员');");
+        stmt.executeUpdate("insert into role(role_name) values('司机');");
+
+        // 权限定义
+        stmt.executeUpdate("insert into privileges(privilege) values('*');");
+        stmt.executeUpdate("insert into privileges(privilege) values('view');");
+        stmt.executeUpdate("insert into privileges(privilege) values('create');");
+        stmt.executeUpdate("insert into privileges(privilege) values('update');");
+        stmt.executeUpdate("insert into privileges(privilege) values('delete');");
+
+        // 系统权限
+        stmt.executeUpdate("insert into role_permissions(role_name, role_permission, remark) values('root', '123456', '1-6');");
+
+        // 模块定义
+        stmt.executeUpdate("insert into modules(module_name) values('调度管理');");
+        stmt.executeUpdate("insert into modules(module_name) values('运输在途管理');");
+        stmt.executeUpdate("insert into modules(module_name) values('配送管理');");
+        stmt.executeUpdate("insert into modules(module_name) values('回单管理');");
+        stmt.executeUpdate("insert into modules(module_name) values('财务管理');");
+        stmt.executeUpdate("insert into modules(module_name) values('合同管理');");
+        stmt.executeUpdate("insert into modules(module_name) values('报表管理');");
+        stmt.executeUpdate("insert into modules(module_name) values('基础数据设计');");
+        stmt.executeUpdate("insert into modules(module_name) values('质量管理');");
+        stmt.executeUpdate("insert into modules(module_name) values('XXXX管理');");
+        stmt.executeUpdate("insert into modules(module_name) values('YYYY管理');");
+        stmt.executeUpdate("insert into modules(module_name) values('ZZZZ管理');");
+        // 模块权限定义
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('1','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('1','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('1','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('1','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('1','5');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('2','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('2','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('2','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('2','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('2','5');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('3','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('3','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('3','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('3','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('3','5');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('4','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('4','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('4','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('4','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('4','5');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('5','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('5','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('5','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('5','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('5','5');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('6','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('6','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('6','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('6','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('6','5');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('7','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('7','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('7','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('7','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('7','5');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('8','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('8','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('8','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('8','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('8','5');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('9','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('9','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('9','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('9','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('9','5');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('10','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('10','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('10','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('10','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('10','5');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('11','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('11','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('11','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('11','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('11','5');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','1');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','2');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','3');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','4');");
+        stmt.executeUpdate("insert into modules_privilege(module_id,privilege_id) values('12','5');");
+        
+        // 收费条目定义
+        stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('YSF','运输费','应付','这是一张运输单收费');");
+        stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('BYF','搬运费','应付','这是一张运输单收费');");
+        stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('SLF','上楼费','应付','这是一张运输单收费');");
+        stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('YSF','客户费用','应收','这是一张运输单收费');");
+        stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('BYF','搬运费','应收','这是一张运输单收费');");
+        stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('SLF','上楼费','应收','这是一张运输单收费');");
+        stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('FTF','分摊费用','应收','这是分摊费用');");
+        
+        // 自营车辆付费条目定义
+        stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','CYF','柴油费','应付','这是柴油费');");
+        stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','CCF','出车补贴','应付','这是出车补贴费');");
+        stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','SJGZ','司机工资','应付','这是司机工资');");
+        stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','LQF','路桥费','应付','这是路桥费');");
+        stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','ZXF','装卸费','应付','这是装卸费');");
+        stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','FKF','罚款','应付','这是罚款费');");
+        stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','SHGZ','送货员工资','应付','这是送货员工资');");
+        stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','TCF','停车费','应付','这是停车费');");
+        stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','ZSF','住宿费','应付','这是住宿费');");
+        stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','QTF','其它费用','应付','这是其它费用');");
+
+        newCustomer();
+
+        // 仓库
+        stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,office_id,warehouse_type) values('582','源鸿广州总仓', '这是广州总仓','萝岗','9','2','ownWarehouse');");
+        stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,sp_id,warehouse_type,office_id) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse',5);");
+
+        // 类别 ----采用面向对象的方式来获取party的id， 不必担心id不对。 --ray 2014-06-29
+        Party party = Party.dao
+                .findFirst("SELECT p.id FROM party p left join CONTACT c on p.contact_id =c.id where c.company_name ='示例客户---广州广电运通金融电子股份有限公司'");
+        Category rootCat = new Category();
+        rootCat.set("name", "广电运通").set("customer_id", party.get("id")).save();
+
+        Category subCat1 = new Category();
+        subCat1.set("name", "ATM").set("customer_id", party.get("id")).set("parent_id", rootCat.getLong("id")).save();
+
+        Category subCat2 = new Category();
+        subCat2.set("name", "普通货品").set("customer_id", party.get("id")).set("parent_id", rootCat.getLong("id")).save();
+
+        // 产品
+        stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('ATM', '2014042600001','1000','5000','7000', 35,'台', 10, 2, '这是一台ATM');");
+        stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('普通货品', '2014042600002','2000','4000','5000', 40, '件', 20, 3, '这是普通货品');");
+        stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('特殊货品', '2014042600003','1000','5000','6000', 30, '套', 30, 2, '这是特殊货品');");
+        stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('SONY-电视1', 'SONY30329','1000','5000','6000', 30, '台', 30, 3, '普通货品');");
+        stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('SONY-电视2', 'SONY30330','1000','5000','6000', 30, '台', 30, 3, '普通货品');");
+
+        // 运输单
+        stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type,charge_type2) values('ATM', '4', '12', 'YS2014042600001', '3', '1', '已入货场', '2014-04-20 16:33:35.1', 'delivery','珠海','2','110102','440402','2','salesOrder','provinceOut','own','perUnit');");
+        stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type, charge_type, pickup_mode,charge_type2) "
+                + "values('ATM', 4, '13', 'YS2014042600002', '4', 1, '新建', CURRENT_TIMESTAMP(), 'gateIn','中山', 4,'440100','110100','3','salesOrder','provinceIn','own','perUnit','routeSP','perCargo');");
+        stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type,warehouse_id,charge_type2) values('cargo', '6', '12', 'YS2014042600003', '4', '19', '已入货场', '2014-04-28 16:46:35.1', 'gateIn','广州','110106','440403','2','replenishmentOrder','provinceOut','2','own','1','perUnit');");
+        stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type,warehouse_id,charge_type2) values('cargo', '6', '13', 'YS2014042600004', '3', '1', '新建', '2014-04-25 16:35:35.1', 'gateIn','深圳','110106','440403','1','replenishmentOrder','provinceIn','3','out_source','2','perUnit');");
+        stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type,charge_type2) values('ATM', '7', '12', 'YS2014042600005', '3', '2', '新建', '2014-04-22 16:28:35.1', 'delivery','东莞','110108','440507','1','arrangementOrder','provinceOut','1','out_source','perCar');");
+        stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,warehouse_id,office_id,order_type,customer_province,operation_type,charge_type2) values('ATM', '9', '13', 'YS2014042600006', '3', '3', '已签收', '2014-04-24 16:58:35.1', 'gateIn','东莞','110109','440511','2','2','arrangementOrder','provinceIn','out_source','perCar');");
+        stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,warehouse_id,office_id,order_type,customer_province,operation_type,charge_type2) values('ATM', '10', '12', 'YS2014042600007', '3', '3', '已入库', '2014-04-24 16:58:35.1', 'gateIn','广州','','','1','3','arrangementOrder','provinceOut','out_source','perCargo');");
+        
+        //这张是做给普通货品的（无单品）
+        stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type, charge_type, pickup_mode) "
+                + "values('cargo', 4, '13', 'YS2014042600008', '4', 1, '新建', CURRENT_TIMESTAMP(), 'gateIn','中山', 4,'440100','110100','3','salesOrder','provinceIn','own','perCBM','routeSP');");
+        
+        stmt.executeUpdate("insert into transfer_order_item(amount,order_id,product_id) " + "values(2, 1, 1);");
+        // 货品明细
+        stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc, amount,unit,volume,weight,remark,order_id, size,width,height) "
+                + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM', 1, 1000,5000,7000);");
+
+        // 示范数据item
+        stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id, product_id) "
+                + "values('2014042600001', 'ATM', 'ATM机', 2,'台', 35, 10, '2台ATM', 2, 1);");
+        // 示范数据item_detail
+        stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                + "values(2, '2014042600001', 'S001', 0, 'ATM', false, 3, 9);");
+        stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                + "values(2, '2014042600001', 'S002', 0, 'ATM', false, 3, 9);");
+        //
+        stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                + "values('123456', 'ATM', '这是很多台ATM',2,'台',1000,2000,'一台ATM','3');");
+        stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                + "values('123456', '电视', '这是一台电视','2','台','452','100','一台ATM','4');");
+        stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                + "values('123456', 'ATM', '这是一台ATM','1','台','454','100','一台ATM','5');");
+        stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                + "values('123456', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','6');");
+        stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                + "values('12222', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','5');");
+        stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
+                + "values('12aa', 'ATM', '这是一台ATM','1','台','452','100','一台ATM','7');");
+        stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id, product_id) "
+                + "values('SONY30329', 'SONY-电视1', 'SONY电视','20','台','2','50','普通货品', 8, 4);");
+        stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id, product_id) "
+                + "values('SONY30330', 'SONY-电视2', 'SONY电视','100','台','2','60','普通货品', 8, 5);");
+
+        stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                + "values('1','fdgh1265985','10000', 'ATM', true,'1','9');");
+        stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                + "values('5','asdf1265985','10000', 'ATM', false,'7','9');");
+        stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                + "values('5','11adasasdf5','10000', 'ATM', false,'9','9');");
+        stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                + "values('6','iouu1265985','10000', 'ATM', false,'8','10');");
+        stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                + "values('6','2221265985','10000', 'ATM', false,'8','10');");
+        stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                + "values('7','aaasswqq63','10000', 'ATM', false, 8,'10');");
+        stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
+                + "values(3,'123', 'ATM001', 6, 24);");
+        stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
+                + "values(3,'456', 'ATM002', 6, 24);");
+        stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
+                + "values(3,'789', 'ATM003', 6, 24);");
+
+        // 配送单
+        stmt.execute("insert into delivery_order(order_no, cargo_nature, customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600013', 'ATM','5','7','9','配送在途','2014-04-25 16:35:35.1');");
+        stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600004', 'ATM','6','7','10','已签收','2014-04-25 16:35:35.1');");
+        stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600014', 'ATM','5','8','9','取消','2014-04-25 16:35:35.1');");
+        stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600003', 'cargo','6','8','10','配送在途','2014-04-25 16:35:35.1');");
+
+        // delivery_order_item
+        stmt.execute("insert into delivery_order_item(delivery_id,transfer_order_id) values(1,1);");
+        stmt.execute("insert into delivery_order_item(delivery_id,transfer_order_id) values(1,2);");
+
+        // billing_order 应收应付单主表
+        String billOrderStr = "insert into billing_order(blling_order_no, order_type, customer_id, customer_type, charge_account_id, payment_account_id, status,"
+                + "transfer_order_id, delivery_order_id, remark, creator, create_stamp, last_modified_by,"
+                + "last_modified_stamp, approver, approve_date, total_amount, total_actual_amount) values";
+        stmt.execute(billOrderStr
+                + "('YSDZ001', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'new', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+        stmt.execute(billOrderStr
+                + "('YSDZ002', 'charge_audit_order', 4, 'CUSTOMER', 1, 2, 'checking', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+        stmt.execute(billOrderStr
+                + "('YSDZ003', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'confirmed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+        stmt.execute(billOrderStr
+                + "('YSDZ004', 'charge_audit_order', 4, 'CUSTOMER',1, 2, 'completed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+        stmt.execute(billOrderStr
+                + "('YSDZ005', 'charge_audit_order',4, 'CUSTOMER', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+        stmt.execute(billOrderStr
+                + "('YFDZ001', 'pay_audit_order', 7, 'SERVICE_PROVIDER', 1, 2, 'new', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+        stmt.execute(billOrderStr
+                + "('YFDZ002', 'pay_audit_order', 7, 'SERVICE_PROVIDER', 1, 2, 'checking', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+        stmt.execute(billOrderStr
+                + "('YFDZ003', 'pay_audit_order', 7, 'SERVICE_PROVIDER',1, 2, 'confirmed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+        stmt.execute(billOrderStr
+                + "('YFDZ004', 'pay_audit_order', 7, 'SERVICE_PROVIDER	',1, 2, 'completed', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+        stmt.execute(billOrderStr
+                + "('YFDZ005', 'pay_audit_order',7, 'SERVICE_PROVIDER	', 1, 2, 'cancel', 1, 1, '演示数据', 1, CURRENT_TIMESTAMP(),1, CURRENT_TIMESTAMP(),"
+                + "1, CURRENT_TIMESTAMP(), 1000, 1000);");
+        // billing_order_item 应收应付单从表
+        stmt.execute("create table if not exists billing_order_item(id bigint auto_increment primary key,blling_order_id bigint, "
+                + "charge_account_id bigint, payment_account_id bigint, status varchar(255), amount double, remark varchar(1024),"
+                + "creator bigint, create_stamp timestamp,last_modified_by bigint,"
+                + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
+
+        // 自营车辆司机
+        stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13312345678', '粤A5687', '平板车', 18.5, '王五', '"+Carinfo.CARINFO_TYPE_OWN+"');");
+        stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13412345678', '粤A2341', '高栏车', 12.5, '赵六', '"+Carinfo.CARINFO_TYPE_OWN+"');");
+        
+        // 供应商司机
+        stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13898765432', '粤A9874', '集装车', 17.5, '王五五', '"+Carinfo.CARINFO_TYPE_SP+"');");
+        stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13998765432', '粤A1234', '挂车', 14.5, '赵六六', '"+Carinfo.CARINFO_TYPE_SP+"');");
+
+        // 发车单
+        stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000001', CURRENT_TIMESTAMP(),'DEPART','粤A876596','平板车',1,23,'新建');");
+        stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '1','YS2014042600001');");
+        stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000002', CURRENT_TIMESTAMP(),'DEPART','粤A879588','集装车',2, 23,'新建');");
+        stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('2', '2','YS2014042600002');");
+        stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '5','YS2014042600005');");
+        stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,driver_id,carinfo_id,status) values('FC2014061000003', CURRENT_TIMESTAMP(),'DEPART',24,1,'新建');");
+        stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(3, '3','YS2014042600006');");
+        // 拼车单
+        stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by) values('PC2014061000001', CURRENT_TIMESTAMP(),'PICKUP','粤A876596','平板货车',1, 24,'已入货场',3);");
+        stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(4, '1','YS2014042600001');");
+        stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by,pickup_mode) "
+                + "values('PC2014061000002', CURRENT_TIMESTAMP(),'PICKUP','粤A879588','箱式货车',2, 24,'已入货场',4,'own');");
+        stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '4','YS2014042600004');");
+        stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '5','YS2014042600005');");
+        stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '3','YS2014042600003');");
+
+        // 运输里程碑
+        stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(2, 3, '2014-06-28 10:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
+        stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(3, 3, '2014-06-28 10:40:35.1', '新建', 'TRANSFERORDERMILESTONE');");
+        stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(4, 3, '2014-06-28 10:43:35.1', '新建', 'TRANSFERORDERMILESTONE');");
+        stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(6, 3, '2014-06-28 11:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
+
+        stmt.execute("insert into arap_audit_order(BEGIN_TIME, PAYEE_ID, ORDER_NO, REMARK, CREATE_BY, END_TIME, CREATE_STAMP, STATUS) values('2014-08-15 9:39:35.1', 1, 'YSDZ2014081800001', '应收对账单测试数据', '3', '2014-08-19 9:39:35.1', '2014-08-18 9:39:35.1', 'confirmed');");
+        stmt.execute("insert into arap_audit_item(AUDIT_ORDER_ID, REF_ORDER_ID, CREATE_BY, CREATE_STAMP) values(1, 1, 3, '2014-08-18 9:39:35.1');");
+        
+        // 拼车单收费条目
+        stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(1, 5, 1, 300);");
+        stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(2, 5, 2, 100);");
+        stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(3, 5, 3, 100);");
     }
 
     private static void initEedaData(Statement stmt) throws SQLException {

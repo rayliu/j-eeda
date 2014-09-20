@@ -5,7 +5,7 @@
 <div class="row">
       <div class="col-lg-12">
             <h1 class="page-header">
-				<a class="btn btn-primary" href="/yh/driverinfo/driveradd"><i class="fa fa-plus-square-o"></i>
+				<a class="btn btn-primary" href="/driverinfo/driveradd"><i class="fa fa-plus-square-o"></i>
 				<span class="hidden-tablet">添加司机</span></a>
 			</h1>
 		<div class="panel panel-default">
@@ -62,7 +62,7 @@ $(document).ready(function() {
 	        },
 	        "bServerSide": true,
 	        "bRetrieve": true, 
-	        "sAjaxSource": "/yh/driverinfo/driverlist",
+	        "sAjaxSource": "/driverinfo/driverlist",
 			"aoColumns": [
 				{ "mDataProp": "CONTACT_PERSON" },
 				{ "mDataProp": "PHONE" },
@@ -72,7 +72,7 @@ $(document).ready(function() {
 	                "mDataProp": null, 
 	                "sWidth": "15%",
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-info editbutton' href='/yh/driverinfo/driveredit/"+obj.aData.PID+"'>"+
+	                    return "<a class='btn btn-info editbutton' href='/driverinfo/driveredit/"+obj.aData.PID+"'>"+
 	                                "<i class='fa fa-edit'> </i> "+
 	                                "编辑"+
 	                            "</a>"+
@@ -87,7 +87,7 @@ $(document).ready(function() {
 	//gateInProduct删除
 	 $("#example").on('click', '.delete', function(){
 		 var id = $(this).attr('code');
-		 $.post('/yh/driverinfo/driverdelect/'+id,function(data){
+		 $.post('/driverinfo/driverdelect/'+id,function(data){
              //保存成功后，刷新列表
              console.log(data);
              if(data.success){

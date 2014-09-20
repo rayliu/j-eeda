@@ -14,7 +14,7 @@ $(document).ready(function() {
         },
         "bProcessing": true,
         "bServerSide": true,
-        "sAjaxSource": "/yh/customer/list",
+        "sAjaxSource": "/customer/list",
         "aoColumns": [   
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":"ABBR"},
@@ -43,11 +43,11 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' href='/yh/customer/edit/"+obj.aData.PID+"'>"+
+                    return "<a class='btn btn-success' href='/customer/edit/"+obj.aData.PID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+
                             "</a>"+
-                            "<a class='btn btn-danger' href='/yh/customer/delete/"+obj.aData.ID+"'>"+
+                            "<a class='btn btn-danger' href='/customer/delete/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "删除"+
                             "</a>";
@@ -64,7 +64,7 @@ $(document).ready(function() {
       	var ABBR = $("#ABBR").val();    	
       	var ADDRESS = $("#ADDRESS").val();
       	var LOCATION = $("#LOCATION").val();
-      	dataTable.fnSettings().sAjaxSource = "/yh/customer/list?COMPANY_NAME="+COMPANY_NAME+"&CONTACT_PERSON="+CONTACT_PERSON+"&RECEIPT="+RECEIPT+"&ABBR="+ABBR+"&ADDRESS="+ADDRESS+"&LOCATION="+LOCATION;
+      	dataTable.fnSettings().sAjaxSource = "/customer/list?COMPANY_NAME="+COMPANY_NAME+"&CONTACT_PERSON="+CONTACT_PERSON+"&RECEIPT="+RECEIPT+"&ABBR="+ABBR+"&ADDRESS="+ADDRESS+"&LOCATION="+LOCATION;
       	dataTable.fnDraw();
       });
 } );

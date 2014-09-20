@@ -7,7 +7,7 @@ $(document).ready(function() {
 	    element : $.editable.types.text.element,
 	    plugin: function (settings, original) {
 	      $('input', this).autocomplete({
-	        //source: "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id
+	        //source: "/transferOrderItem/transferOrderItemList?order_id="+order_id
 	        source: [ "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby" ]
 	      });
 	    }
@@ -41,7 +41,7 @@ $(document).ready(function() {
 			pageCustomerAddress.empty();
 			$('#customer_id').val($(this).attr(''));
 		}
-		$.get('/yh/transferOrder/searchCustomer', {input:inputStr}, function(data){
+		$.get('/transferOrder/searchCustomer', {input:inputStr}, function(data){
 			console.log(data);
 			var customerList =$("#customerList");
 			customerList.empty();
@@ -95,12 +95,12 @@ $(document).ready(function() {
     
     var searchAllLocation = function(){
     	var locationFrom = $('#hideLocationFrom').val();
-    	$.get('/yh/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
+    	$.get('/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
     		console.log(data);			
     		var provinceVal = data.PROVINCE;
     		var cityVal = data.CITY;
     		var districtVal = data.DISTRICT;
-	        $.get('/yh/serviceProvider/searchAllLocation', {province:provinceVal, city:cityVal}, function(data){	
+	        $.get('/serviceProvider/searchAllLocation', {province:provinceVal, city:cityVal}, function(data){	
 		        //获取全国省份
 	         	var province = $("#mbProvinceFrom");
 	     		province.empty();
@@ -206,7 +206,7 @@ $(document).ready(function() {
 			pageSpAddress.empty();
 			$('#sp_id').val($(this).attr(''));
 		}
-		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
 			console.log(data);
 			var spList =$("#spList");
 			spList.empty();
@@ -321,7 +321,7 @@ $(document).ready(function() {
 		//异步向后台提交数据
         if($("#order_id").val() == ""){
         	console.log($("#transferOrderUpdateForm").serialize());
-	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+	    	$.post('/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -337,16 +337,16 @@ $(document).ready(function() {
 				  	
 				  	
 	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+				  	itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;
 				  	itemDataTable.fnDraw(); 
 			        
-			        //location.href = "/yh/transferOrder";               
+			        //location.href = "/transferOrder";               
 				}else{
 					alert('数据保存失败。');
 				}
 			},'json');
         }else{
-        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+        	$.post('/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -365,10 +365,10 @@ $(document).ready(function() {
 				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				  	
 	            	var order_id = $("#order_id").val();
-				  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+				  	itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;
 				  	itemDataTable.fnDraw();
 			        
-			        //location.href = "/yh/transferOrder";                
+			        //location.href = "/transferOrder";                
 				}else{
 					alert('数据保存失败。');
 				}
@@ -406,7 +406,7 @@ $(document).ready(function() {
 	        }
 	        
 	        if($("#order_id").val() == ""){
-		    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+		    	$.post('/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 					$("#transfer_order_id").val(transferOrder.ID);
 					$("#update_transfer_order_id").val(transferOrder.ID);
 					$("#order_id").val(transferOrder.ID);
@@ -422,14 +422,14 @@ $(document).ready(function() {
 							$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 						}
 		            	var order_id = $("#order_id").val();
-					  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+					  	itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;
 					  	itemDataTable.fnDraw();             
 					}else{
 						alert('数据保存失败。');
 					}
 				},'json');
 	        }else{
-	        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+	        	$.post('/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 					$("#transfer_order_id").val(transferOrder.ID);
 					$("#update_transfer_order_id").val(transferOrder.ID);
 					$("#order_id").val(transferOrder.ID);
@@ -451,7 +451,7 @@ $(document).ready(function() {
 						}
 						
 		            	var order_id = $("#order_id").val();
-					  	itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+					  	itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;
 					  	itemDataTable.fnDraw();             
 					}else{
 						alert('数据保存失败。');
@@ -479,7 +479,7 @@ $(document).ready(function() {
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id,
+        "sAjaxSource": "/transferOrderItem/transferOrderItemList?order_id="+order_id,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -575,19 +575,19 @@ $(document).ready(function() {
 	var refreshDetailTable = function(){
 		var orderId = $("#order_id").val();
 		// 刷新单品列表
-		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId;
+		detailDataTable.fnSettings().sAjaxSource = "/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId;
 		detailDataTable.fnDraw();
 	};
 	
 	// 刷新货品列表
 	var refreshItemTable = function(){
 		var order_id = $("#order_id").val();
-        itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;                		
+        itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;                		
     	itemDataTable.fnDraw();
 	};
 	
     itemDataTable.makeEditable({
-    	sUpdateURL: '/yh/transferOrderItem/saveTransferOrderItemByField',    	
+    	sUpdateURL: '/transferOrderItem/saveTransferOrderItemByField',    	
     	oEditableSettings: {event: 'click'},
     	"aoColumns": [  			            
             {            
@@ -727,7 +727,7 @@ $(document).ready(function() {
 		    		return;
 		    	}
 	            $.ajax({
-	                url: "/yh/transferOrder/searchItemNo",
+	                url: "/transferOrder/searchItemNo",
 	                dataType: "json",
 	                data: {
 	                    customerId: $('#customerId').val(),
@@ -754,7 +754,7 @@ $(document).ready(function() {
         		//将选择的产品id先保存到数据库
         		var itemId = $(this).parent().parent().parent()[0].id;
         		var productId = ui.item.id;
-        		$.post('/yh/transferOrderItem/saveTransferOrderItem', {transferOrderItemId:itemId,productId:productId},	function(data){   					
+        		$.post('/transferOrderItem/saveTransferOrderItem', {transferOrderItemId:itemId,productId:productId},	function(data){   					
 					refreshItemTable();
 					/*$("input[name='cargoNature']").each(function(){
     					if($(this).prop('checked') == true){
@@ -764,7 +764,7 @@ $(document).ready(function() {
                 					return;
                 				}else{
                 					alert("请使用与货品属性一致的产品!");
-                					$.post('/yh/transferOrderItem/deleteTransferOrderItemProduct', {transferOrderItemId:itemId,productId:productId},function(data){                						
+                					$.post('/transferOrderItem/deleteTransferOrderItemProduct', {transferOrderItemId:itemId,productId:productId},function(data){                						
                 					}, 'json');
                 					return false;
                 				}
@@ -779,14 +779,14 @@ $(document).ready(function() {
         
     // 保存货品
     $("#transferOrderItemFormBtn").click(function(){
-    	$.post('/yh/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemForm").serialize(), function(data){
+    	$.post('/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemForm").serialize(), function(data){
 			if(data.ID > 0){
 				//保存成功后，刷新列表
                 console.log(data);
                 if(data.ORDER_ID>0){
                 	$("#transferOrderItemForm")[0].reset();
                 	var order_id = $("#order_id").val();
-	                itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;                		
+	                itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;                		
                 	itemDataTable.fnDraw();
                 }else{
                     alert('数据保存失败。');
@@ -835,7 +835,7 @@ $(document).ready(function() {
 		} 
 
 		var order_id = $("#order_id").val();
-		$.post('/yh/transferOrderMilestone/departureConfirmation',{order_id:order_id},function(data){
+		$.post('/transferOrderMilestone/departureConfirmation',{order_id:order_id},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 		},'json');
@@ -854,18 +854,18 @@ $(document).ready(function() {
 	
 	// 保存单品信息
 	$("#transferOrderItemDetailFormBtn").click(function(){
-		$.post('/yh/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailForm").serialize(), function(transferOrderItemDetail){
+		$.post('/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailForm").serialize(), function(transferOrderItemDetail){
 			if(transferOrderItemDetail.ID > 0){
 				$("#detailModal").modal('hide');
 				$("#transferOrderItemDetailForm")[0].reset();
 				var itemId = $("#item_id").val();
 				var orderId = $("#order_id").val();
 				// 刷新单品列表
-				detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
+				detailDataTable.fnSettings().sAjaxSource = "/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
 				detailDataTable.fnDraw();
 				
 				// 刷新货品列表
-                itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+orderId;                		
+                itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+orderId;                		
             	itemDataTable.fnDraw();
 			}			
 		});
@@ -873,7 +873,7 @@ $(document).ready(function() {
 	
 	var transferOrderMilestone = function(){
 	  	var order_id = $("#order_id").val();
-		$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+		$.post('/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
@@ -903,7 +903,7 @@ $(document).ready(function() {
 	        }
 
 	        if($("#order_id").val() == ""){
-		    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+		    	$.post('/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 					$("#transfer_order_id").val(transferOrder.ID);
 					$("#update_transfer_order_id").val(transferOrder.ID);
 					$("#order_id").val(transferOrder.ID);
@@ -925,7 +925,7 @@ $(document).ready(function() {
 					}
 				},'json');
 	        }else{
-	        	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+	        	$.post('/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 					$("#transfer_order_id").val(transferOrder.ID);
 					$("#update_transfer_order_id").val(transferOrder.ID);
 					$("#order_id").val(transferOrder.ID);
@@ -956,7 +956,7 @@ $(document).ready(function() {
 		}
     	
 		var order_id = $("#order_id").val();
-		$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+		$.post('/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
@@ -970,7 +970,7 @@ $(document).ready(function() {
 	// 保存新里程碑
 	$("#transferOrderMilestoneFormBtn").click(function(){
 		$('#transfer_milestone_order_id').val($('#order_id').val());
-		$.post('/yh/transferOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
+		$.post('/transferOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 		},'json');
@@ -982,7 +982,7 @@ $(document).ready(function() {
 	$("#warehousingConfirmBtn").click(function(){
 		$("#warehousingConfirmBtn").attr("disabled", true);
 		var order_id = $("#order_id").val();
-		$.post('/yh/transferOrderMilestone/warehousingConfirm',{order_id:order_id},function(data){
+		$.post('/transferOrderMilestone/warehousingConfirm',{order_id:order_id},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 		},'json');
@@ -1043,7 +1043,7 @@ $(document).ready(function() {
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId,
+        "sAjaxSource": "/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -1110,7 +1110,7 @@ $(document).ready(function() {
     });
 
     detailDataTable.makeEditable({
-    	sUpdateURL: '/yh/transferOrderItemDetail/saveTransferOrderItemDetailByField',    	
+    	sUpdateURL: '/transferOrderItemDetail/saveTransferOrderItemDetailByField',    	
     	oEditableSettings: {event: 'click'},
     	"aoColumns": [  			            
             {            
@@ -1180,7 +1180,7 @@ $(document).ready(function() {
 		$("#detail_transfer_order_id").val($("#order_id").val());
 		$("#detail_transfer_order_item_id").val(itemId);
 		
-		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
+		detailDataTable.fnSettings().sAjaxSource = "/transferOrderItemDetail/transferOrderDetailList?item_id="+itemId;
 		detailDataTable.fnDraw();  
 
 		//detailDataTable.fnAddData({'SERIAL_NO':'test', 'ITEM_NAME':'test', 'VOLUME':'test','WEIGHT':'test', 'CONTACT_PERSON':'test', 'REMARK':'test'} );
@@ -1194,7 +1194,7 @@ $(document).ready(function() {
 		$("#item_id").val(itemId);
 		
   	    $("#transfer_order_item_id").val(itemId);
-  	    $.post('/yh/transferOrderItem/getTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
+  	    $.post('/transferOrderItem/getTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
   	    	// 编辑时回显数据
   	    	$("#transfer_order_id").val(data.transferOrderItem.ORDER_ID);
   	    	$("#transferOrderItemId").val(data.transferOrderItem.ID);
@@ -1233,12 +1233,12 @@ $(document).ready(function() {
 		var code = $(this).attr('code');
 		var itemId = code.substring(code.indexOf('=')+1);
 		$("#item_id").val(itemId);
-		$.post('/yh/transferOrderItem/deleteTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
+		$.post('/transferOrderItem/deleteTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
 		},'json');
 		$("#transferOrderItemDateil").hide();
 		// 更新货品列表
 		var order_id = $("#order_id").val();
-		itemDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id;
+		itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;
 	  	itemDataTable.fnDraw(); 	  	
 	});	
 	
@@ -1258,11 +1258,11 @@ $(document).ready(function() {
 		var detailId = detail.substring(detail.indexOf('=')+1);
 		var notifyParty = code.substring(code.indexOf('&')+1);
 		var notifyPartyId = notifyParty.substring(notifyParty.indexOf('=')+1);
-		$.post('/yh/transferOrderItemDetail/deleteTransferOrderItemDetail', {detail_id:detailId,notify_party_id:notifyPartyId}, function(data){
+		$.post('/transferOrderItemDetail/deleteTransferOrderItemDetail', {detail_id:detailId,notify_party_id:notifyPartyId}, function(data){
 		},'json');
 		// 更新单品列表
 		var orderId = $("#order_id").val();
-		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId;
+		detailDataTable.fnSettings().sAjaxSource = "/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId;
 		detailDataTable.fnDraw();
 	});	
 	
@@ -1274,7 +1274,7 @@ $(document).ready(function() {
 		var notifyParty = code.substring(code.indexOf('&')+1);
 		var notifyPartyId = notifyParty.substring(notifyParty.indexOf('=')+1);
 		var itemId = $("item_id").val();
-  	    $.post('/yh/transferOrderItemDetail/getTransferOrderItemDetail', {detail_id:detailId,notify_party_id:notifyPartyId}, function(data){
+  	    $.post('/transferOrderItemDetail/getTransferOrderItemDetail', {detail_id:detailId,notify_party_id:notifyPartyId}, function(data){
 	  	    	// 编辑时回显数据
 	  	    	$("#detail_transfer_order_id").val(data.transferOrderItemDetail.ORDER_ID);
 	  	    	$("#detail_transfer_order_item_id").val(data.transferOrderItemDetail.ITEM_ID);
@@ -1302,7 +1302,7 @@ $(document).ready(function() {
     //获取全国省份
     $(function(){
      	var province = $("#mbProvinceFrom");
-     	$.post('/yh/serviceProvider/province',function(data){
+     	$.post('/serviceProvider/province',function(data){
      		province.append("<option>--请选择省份--</option>");
 				var hideProvince = $("#hideProvinceFrom").val();
      		for(var i = 0; i < data.length; i++)
@@ -1322,7 +1322,7 @@ $(document).ready(function() {
     //获取省份的城市
     $('#mbProvinceFrom').on('change', function(){
 			var inputStr = $(this).val();
-			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+			$.get('/serviceProvider/city', {id:inputStr}, function(data){
 				var cmbCity =$("#cmbCityFrom");
 				cmbCity.empty();
 				cmbCity.append("<option>--请选择城市--</option>");
@@ -1338,7 +1338,7 @@ $(document).ready(function() {
     $('#cmbCityFrom').on('change', function(){
 			var inputStr = $(this).val();
 			var code = $("#locationForm").val(inputStr);
-			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+			$.get('/serviceProvider/area', {id:inputStr}, function(data){
 				var cmbArea =$("#cmbAreaFrom");
 				cmbArea.empty();
 				cmbArea.append("<option>--请选择区(县)--</option>");
@@ -1359,7 +1359,7 @@ $(document).ready(function() {
     //获取全国省份
     $(function(){
      	var province = $("#mbProvinceTo");
-     	$.post('/yh/serviceProvider/province',function(data){
+     	$.post('/serviceProvider/province',function(data){
      		province.append("<option>--请选择省份--</option>");
 			var hideProvince = $("#hideProvinceTo").val();
      		for(var i = 0; i < data.length; i++)
@@ -1379,7 +1379,7 @@ $(document).ready(function() {
     //获取省份的城市
     $('#mbProvinceTo').on('change', function(){
 			var inputStr = $(this).val();
-			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+			$.get('/serviceProvider/city', {id:inputStr}, function(data){
 				var cmbCity =$("#cmbCityTo");
 				cmbCity.empty();
 				cmbCity.append("<option>--请选择城市--</option>");
@@ -1395,7 +1395,7 @@ $(document).ready(function() {
     $('#cmbCityTo').on('change', function(){
 			var inputStr = $(this).val();
 			var code = $("#locationTo").val(inputStr);
-			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+			$.get('/serviceProvider/area', {id:inputStr}, function(data){
 				var cmbArea =$("#cmbAreaTo");
 				cmbArea.empty();
 				cmbArea.append("<option>--请选择区(县)--</option>");
@@ -1415,7 +1415,7 @@ $(document).ready(function() {
 
     // 回显城市
     var hideProvince = $("#hideProvinceFrom").val();
-    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+    $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
 			if(data.length > 0){
 				var cmbCity =$("#cmbCityFrom");
 				cmbCity.empty();
@@ -1434,7 +1434,7 @@ $(document).ready(function() {
 
     // 回显区
     var hideCity = $("#hideCityFrom").val();
-    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+    $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
 			if(data.length > 0){
 				var cmbArea =$("#cmbAreaFrom");
 				cmbArea.empty();
@@ -1454,7 +1454,7 @@ $(document).ready(function() {
 
     // 回显城市
     var hideProvince = $("#hideProvinceTo").val();
-    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+    $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
 			if(data.length > 0){
 				var cmbCity =$("#cmbCityTo");
 				cmbCity.empty();
@@ -1473,7 +1473,7 @@ $(document).ready(function() {
 
     // 回显区
     var hideCity = $("#hideCityTo").val();
-    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+    $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
 			if(data.length > 0){
 				var cmbArea =$("#cmbAreaTo");
 				cmbArea.empty();
@@ -1491,7 +1491,7 @@ $(document).ready(function() {
 		},'json');
     
      // 获取所有仓库
-	 $.post('/yh/transferOrder/searchAllWarehouse',function(data){
+	 $.post('/transferOrder/searchAllWarehouse',function(data){
 		 if(data.length > 0){
 			 var gateInSelect = $("#gateInSelect");
 			 gateInSelect.empty();
@@ -1507,7 +1507,7 @@ $(document).ready(function() {
 	 },'json');	 
 
 	 // 获取所有城市
-	 $.post('/yh/transferOrder/searchAllOffice',function(data){
+	 $.post('/transferOrder/searchAllOffice',function(data){
 		 if(data.length > 0){
 			 var officeSelect = $("#officeSelect");
 			 officeSelect.empty();
@@ -1544,7 +1544,7 @@ $(document).ready(function() {
  	$('#itemNoMessage').on('keyup click', function(){
  		var inputStr = $('#itemNoMessage').val();
  		var customerId = $('#customerId').val();
- 		$.get('/yh/transferOrder/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
+ 		$.get('/transferOrder/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
  			console.log(data);
  			var itemNoList =$("#itemNoList");
  			itemNoList.empty();
@@ -1620,7 +1620,7 @@ $(document).ready(function() {
  	$('#itemNameMessage').on('keyup click', function(){
  		var inputStr = $('#itemNameMessage').val();
  		var customerId = $('#customerId').val();
- 		$.get('/yh/transferOrder/searchItemName', {input:inputStr,customerId:customerId}, function(data){
+ 		$.get('/transferOrder/searchItemName', {input:inputStr,customerId:customerId}, function(data){
  			console.log(data);
  			var itemNameList =$("#itemNameList");
  			itemNameList.empty();
@@ -1695,7 +1695,7 @@ $(document).ready(function() {
  	// 清除上一次留下的ID
  	$("#editTransferOrderItem").click(function(){
  		var orderId = $("#order_id").val();
- 		$.post('/yh/transferOrderItem/addNewRow', {orderId:orderId}, function(data){
+ 		$.post('/transferOrderItem/addNewRow', {orderId:orderId}, function(data){
  			itemDataTable.fnDraw(); 
  		});
 
@@ -1727,7 +1727,7 @@ $(document).ready(function() {
     $("#findAllDetailBtn").click(function(){
     	var orderId = $("#order_id").val();
 		// 刷新单品列表
-		detailDataTable.fnSettings().sAjaxSource = "/yh/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId;
+		detailDataTable.fnSettings().sAjaxSource = "/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId;
 		detailDataTable.fnDraw();
     });
 
@@ -1746,7 +1746,7 @@ $(document).ready(function() {
 	        	bool=true;
 	        }
 	        
-	    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
+	    	$.post('/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
@@ -1765,10 +1765,10 @@ $(document).ready(function() {
 					}
 					
 	            	var order_id = $("#order_id").val();
-	            	receipttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
+	            	receipttable.fnSettings().sAjaxSource = "/transferOrder/accountReceivable/"+order_id;
 	            	receipttable.fnDraw();       
 
-	            	paymenttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountPayable/"+order_id;
+	            	paymenttable.fnSettings().sAjaxSource = "/transferOrder/accountPayable/"+order_id;
 					paymenttable.fnDraw(); 
 				}else{
 					alert('数据保存失败。');
@@ -1789,7 +1789,7 @@ $(document).ready(function() {
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource":"/yh/transferOrder/accountReceivable/"+order_id,
+        "sAjaxSource":"/transferOrder/accountReceivable/"+order_id,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -1853,7 +1853,7 @@ $(document).ready(function() {
 	$("#table_fin").on('click', '.finItemdel', function(e){
 		 var id = $(this).attr('code');
 		  e.preventDefault();
-		$.post('/yh/transferOrder/finItemdel/'+id,function(data){
+		$.post('/transferOrder/finItemdel/'+id,function(data){
             //保存成功后，刷新列表
             console.log(data);
             	receipttable.fnDraw();
@@ -1868,7 +1868,7 @@ $(document).ready(function() {
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/transferOrder/accountPayable/"+order_id,
+        "sAjaxSource": "/transferOrder/accountPayable/"+order_id,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -1932,7 +1932,7 @@ $(document).ready(function() {
 	 $("#table_fin2").on('click', '.finItemdel', function(e){
 		 var id = $(this).attr('code');
 		  e.preventDefault();
-		$.post('/yh/transferOrder/finItemdel/'+id,function(data){
+		$.post('/transferOrder/finItemdel/'+id,function(data){
                //保存成功后，刷新列表
                console.log(data);
                paymenttable.fnDraw();
@@ -1942,7 +1942,7 @@ $(document).ready(function() {
 	//应付
 	$("#item_fin_save").click(function(){
 	    var order_id =$("#order_id").val();
-		$.post('/yh/transferOrder/receiptSave/'+order_id, $("#fin_form").serialize(), function(data){
+		$.post('/transferOrder/receiptSave/'+order_id, $("#fin_form").serialize(), function(data){
 			console.log(data);
 			if(data.success){
 				receipttable.fnDraw();
@@ -1957,10 +1957,10 @@ $(document).ready(function() {
 	//应付
 	$("#addrow").click(function(){	
 	    var order_id =$("#order_id").val();
-		$.post('/yh/transferOrder/addNewRow/'+order_id,function(data){
+		$.post('/transferOrder/addNewRow/'+order_id,function(data){
 			console.log(data);
 			if(data[0] != null){
-				paymenttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountPayable/"+order_id;
+				paymenttable.fnSettings().sAjaxSource = "/transferOrder/accountPayable/"+order_id;
 				paymenttable.fnDraw(); 
 				//paymenttable.fnDraw();
 				//$('#fin_item2').modal('hide');
@@ -1976,7 +1976,7 @@ $(document).ready(function() {
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$.post('/yh/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+		$.post('/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
 			if(data.success){
 			}else{
 				alert("修改失败!");
@@ -1987,10 +1987,10 @@ $(document).ready(function() {
 	//应收
 	$("#addrow2").click(function(){	
 	    var order_id =$("#order_id").val();
-		$.post('/yh/transferOrder/addNewRow2/'+order_id,function(data){
+		$.post('/transferOrder/addNewRow2/'+order_id,function(data){
 			console.log(data);
 			if(data[0] != null){
-				receipttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
+				receipttable.fnSettings().sAjaxSource = "/transferOrder/accountReceivable/"+order_id;
             	receipttable.fnDraw();  
 				//$('#fin_item2').modal('hide');
 				//$('#resetbutton2').click();
@@ -2005,7 +2005,7 @@ $(document).ready(function() {
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$.post('/yh/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+		$.post('/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
 			if(data.success){
 			}else{
 				alert("修改失败!");
@@ -2020,13 +2020,13 @@ $(document).ready(function() {
 	$("#receiptBtn").click(function(e){
     	$(this).attr("disabled",true);
     	var orderId = $("#order_id").val();
-    	$.post('/yh/transferOrderMilestone/receipt', {orderId:orderId}, function(){    	
+    	$.post('/transferOrderMilestone/receipt', {orderId:orderId}, function(){    	
     	});
     });*/
 	
 	// 选中仓库触发事件
 	$("#gateInSelect").change(function(){
-    	$.post('/yh/transferOrder/selectWarehouse', {warehouseId:$(this).val()}, function(data){  
+    	$.post('/transferOrder/selectWarehouse', {warehouseId:$(this).val()}, function(data){  
 		    var officeOption=$("#officeSelect>option");
 		    var officeVal=data.warehouse.OFFICE_ID;
 		    for(var i=0;i<officeOption.length;i++){
@@ -2053,7 +2053,7 @@ $(document).ready(function() {
 		    //获取全国省份
 		    $(function(){
 		     	var province = $("#mbProvinceTo");
-		     	$.post('/yh/serviceProvider/province',function(data){
+		     	$.post('/serviceProvider/province',function(data){
 		     		province.append("<option>--请选择省份--</option>");
 		     		for(var i = 0; i < data.length; i++){
 						if(data[i].NAME == hideProvince){
@@ -2066,7 +2066,7 @@ $(document).ready(function() {
 		    });
 		    
 		    // 回显城市
-		    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+		    $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
 				if(data.length > 0){
 					var cmbCity =$("#cmbCityTo");
 					cmbCity.empty();
@@ -2082,7 +2082,7 @@ $(document).ready(function() {
 			},'json');
 
 		    // 回显区
-		    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+		    $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
 				if(data.length > 0){
 					var cmbArea =$("#cmbAreaTo");
 					cmbArea.empty();

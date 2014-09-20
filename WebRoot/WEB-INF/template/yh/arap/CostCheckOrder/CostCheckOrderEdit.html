@@ -324,7 +324,7 @@
 		       	return;
 	        }
 			//异步向后台提交数据
-			$.post('/yh/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
+			$.post('/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
 				if(data.ID>0){
 					$("#chargeCheckOrderId").val(data.ID);
 				  	$("#style").show();
@@ -362,7 +362,7 @@
 	       	return false; 
         }
 
-    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+    	$.post('/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
 			$("#transfer_order_id").val(transferOrder.ID);
 			$("#update_transfer_order_id").val(transferOrder.ID);
 			$("#order_id").val(transferOrder.ID);
@@ -376,7 +376,7 @@
 			}
 		},'json');
     	
-    	$.post('/yh/transferOrderItem/transferOrderItemList',{},function(data){
+    	$.post('/transferOrderItem/transferOrderItemList',{},function(data){
 			var transferOrderItemTbody = $("#transferOrderItemTbody");
 			transferOrderItemTbody.empty();
 			for(var i = 0; i < data.length; i++)
@@ -395,7 +395,7 @@
    	// 保存货品
     $("#transferOrderItemFormBtn").click(function(){
     	
-    	$.post('/yh/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemForm").serialize(), function(data){
+    	$.post('/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemForm").serialize(), function(data){
 			if(data.ID > 0){
 				var transferOrderItemTbody =$("#transferOrderItemTbody");
 				var item_no = "";  
@@ -412,11 +412,11 @@
    	// 更新货品
     $("#transferOrderItemUpdateFormBtn").click(function(){
     	
-    	$.post('/yh/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemUpdateForm").serialize(), function(data){
+    	$.post('/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemUpdateForm").serialize(), function(data){
 			if(data.ID > 0){ 
 				// 关闭模态框
 				$('#updateMyModal').modal('hide');
-				$.post('/yh/transferOrderItem/transferOrderItemList',{},function(data){
+				$.post('/transferOrderItem/transferOrderItemList',{},function(data){
 					var transferOrderItemTbody = $("#transferOrderItemTbody");
 					transferOrderItemTbody.empty();
 					for(var i = 0; i < data.length; i++)
@@ -458,7 +458,7 @@
 	  	    $("#detail_transfer_order_id").val(order_id);
 	  	    $("#transferOrderItemDateil").show();
 	  	    // 动态展示单品
-	  	    $.post('/yh/transferOrderItemDetail/getAllTransferOrderItemDetail', 'transfer_order_item_id='+item_id, function(data){
+	  	    $.post('/transferOrderItemDetail/getAllTransferOrderItemDetail', 'transfer_order_item_id='+item_id, function(data){
 				var transferOrderItemDetailTbody = $("#transferOrderItemDetailTbody");
 				transferOrderItemDetailTbody.empty();
 				if(data.transferOrderItemDetails.length > 0 && data.contacts.length > 0){
@@ -478,7 +478,7 @@
     	}else if(type == 'itemEdit'){
 	  	    var id = inputId.substring(inputId.indexOf('(')+1);
 	  	    $("#transfer_order_item_id").val(id);
-	  	    $.post('/yh/transferOrderItem/getTransferOrderItem', 'transfer_order_item_id='+id, function(data){
+	  	    $.post('/transferOrderItem/getTransferOrderItem', 'transfer_order_item_id='+id, function(data){
 	  	    	// 编辑时回显数据
  	  	    	$("#update_item_name").val(data.ITEM_NAME);
  	  	    	$("#update_amount").val(data.AMOUNT);
@@ -488,7 +488,7 @@
  	  	    	$("#update_remark").val(data.REMARK);
 			},'json');
 	  	    
-	  	  	$.post('/yh/transferOrderItem/transferOrderItemList',{},function(data){
+	  	  	$.post('/transferOrderItem/transferOrderItemList',{},function(data){
 				var transferOrderItemTbody = $("#transferOrderItemTbody");
 				transferOrderItemTbody.empty();
 				for(var i = 0; i < data.length; i++)
@@ -507,10 +507,10 @@
 			$('#updateMyModal').modal('show');	
 		}else{
 			var id = inputId.substring(inputId.indexOf('(')+1);
-			$.post('/yh/transferOrderItem/deleteTransferOrderItem', 'transfer_order_item_id='+id, function(data){
+			$.post('/transferOrderItem/deleteTransferOrderItem', 'transfer_order_item_id='+id, function(data){
 			},'json');
 			
-			$.post('/yh/transferOrderItem/transferOrderItemList',{},function(data){
+			$.post('/transferOrderItem/transferOrderItemList',{},function(data){
 				var transferOrderItemTbody = $("#transferOrderItemTbody");
 				transferOrderItemTbody.empty();
 				for(var i = 0; i < data.length; i++)
@@ -562,7 +562,7 @@
 	
 	// 保存单品信息
 	$("#transferOrderItemDetailFormBtn").click(function(){
-		$.post('/yh/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailForm").serialize(), function(transferOrderItemDetail){
+		$.post('/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailForm").serialize(), function(transferOrderItemDetail){
 			if(transferOrderItemDetail.ID > 0){
 				// 动态显示单品信息
 				var transferOrderItemDetailTbody = $("#transferOrderItemDetailTbody");
@@ -605,7 +605,7 @@
 	  	    $("#update_detail_transfer_order_item_id").val(item_id);
 	  	    $("#detail_transfer_order_item_detail_id").val(detail_id);
 	  	    $("#detail_notify_party_id").val(notify_party_id);
-	  	    $.post('/yh/transferOrderItemDetail/getTransferOrderItemDetail', {detail_id:detail_id,notify_party_id:notify_party_id}, function(data){
+	  	    $.post('/transferOrderItemDetail/getTransferOrderItemDetail', {detail_id:detail_id,notify_party_id:notify_party_id}, function(data){
 	  	    	// 编辑时回显数据
 	  	    	$("#update_serial_no").val(data.transferOrderItemDetail.SERIAL_NO);
 	  	    	$("#update_detail_item_name").val(data.transferOrderItemDetail.ITEM_NAME);
@@ -626,10 +626,10 @@
 			$('#updateDetailModal').modal('show');	
     	}else{
 			//alert(inputId+", order_id=" + order_id +", item_id="+item_id+", detail_id="+detail_id+", contact_id="+notify_party_id);
-    		$.post('/yh/transferOrderItemDetail/deleteTransferOrderItemDetail', {detail_id:detail_id,notify_party_id:notify_party_id}, function(data){},'json');
+    		$.post('/transferOrderItemDetail/deleteTransferOrderItemDetail', {detail_id:detail_id,notify_party_id:notify_party_id}, function(data){},'json');
     		
     		// 动态展示单品
-	  	    $.post('/yh/transferOrderItemDetail/getAllTransferOrderItemDetail', 'transfer_order_item_id='+item_id, function(data){
+	  	    $.post('/transferOrderItemDetail/getAllTransferOrderItemDetail', 'transfer_order_item_id='+item_id, function(data){
 				var transferOrderItemDetailTbody = $("#transferOrderItemDetailTbody");
 				transferOrderItemDetailTbody.empty();
 				if(data.transferOrderItemDetails.length > 0 && data.contacts.length > 0){
@@ -651,12 +651,12 @@
 	  	    
 	// 更新单品		  	    	
 	$("#transferOrderItemDetailUpdateFormBtn").click(function(){
-		$.post('/yh/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailUpdateForm").serialize(), function(data){
+		$.post('/transferOrderItemDetail/saveTransferOrderItemDetail', $("#transferOrderItemDetailUpdateForm").serialize(), function(data){
 			if(data.ID > 0){
 				// 模态框:修改单品明细
 				$('#updateDetailModal').modal('hide');
 				var item_id = $("#update_detail_transfer_order_item_id").val();
-		  	    $.post('/yh/transferOrderItemDetail/getAllTransferOrderItemDetail', 'transfer_order_item_id='+item_id, function(data){
+		  	    $.post('/transferOrderItemDetail/getAllTransferOrderItemDetail', 'transfer_order_item_id='+item_id, function(data){
 					var transferOrderItemDetailTbody = $("#transferOrderItemDetailTbody");
 					transferOrderItemDetailTbody.empty();
 					if(data.transferOrderItemDetails.length > 0 && data.contacts.length > 0){
@@ -688,7 +688,7 @@
 	       	return false; 
         }
     	// 保存运输单
-        $.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+        $.post('/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
 			$("#transfer_order_id").val(transferOrder.ID);
 			$("#update_transfer_order_id").val(transferOrder.ID);
 			$("#order_id").val(transferOrder.ID);
@@ -704,7 +704,7 @@
 		},'json');
     	
 		var order_id = $("#order_id").val();
-		$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+		$.post('/transferOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0; i < data.length; i++)

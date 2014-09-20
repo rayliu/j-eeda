@@ -96,7 +96,7 @@ $(document).ready(function() {
     $('#menu_finance').addClass('active').find('ul').addClass('in');
 	var role =$("#role");
    	role.empty();
-   	$.get('/yh/privilege/SelectUser?select=2',{},function(data){
+   	$.get('/privilege/SelectUser?select=2',{},function(data){
 
 		for(var i = 0; i < data.length; i++)
 		{
@@ -115,7 +115,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/privilege/privilegelist",
+        "sAjaxSource": "/privilege/privilegelist",
         "aoColumns": [
             { "mDataProp": null, "sWidth": "7%"	,
             	 "fnRender": function(obj) {
@@ -198,7 +198,7 @@ $(document).ready(function() {
       
         console.log(tableArr);
         $.ajax({//点击确定，保存设置
-    		url: "/yh/privilege/editModule_pri",
+    		url: "/privilege/editModule_pri",
     		type:'post',
     		//dataType : "object",
     		data : "localArr="+tableArr,
@@ -210,7 +210,7 @@ $(document).ready(function() {
 
         //sendArr[0].toString();
         /*
-        $.post("/yh/privilege/editModule_pri",{localArr:tableArr},function(data){     
+        $.post("/privilege/editModule_pri",{localArr:tableArr},function(data){     
 
         	   //回调函数 
 

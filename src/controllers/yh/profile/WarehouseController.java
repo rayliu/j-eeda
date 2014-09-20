@@ -27,7 +27,7 @@ public class WarehouseController extends Controller{
     
 	public void index() {
 		if(LoginUserController.isAuthenticated(this))
-		render("profile/warehouse/warehouseList.html");
+		render("/yh/profile/warehouse/warehouseList.html");
 	}
 
 	public void list() {
@@ -99,7 +99,7 @@ public class WarehouseController extends Controller{
 	public void add() {
 		setAttr("saveOK", false);
 		if(LoginUserController.isAuthenticated(this))
-		render("profile/warehouse/warehouseEdit.html");
+		render("/yh/profile/warehouse/warehouseEdit.html");
 	}
 
 	public void edit() {
@@ -131,7 +131,7 @@ public class WarehouseController extends Controller{
 		Contact sp = Contact.dao.findFirst("select * from contact where id = (select contact_id from party where id="+warehouse.get("sp_id")+")");
 		setAttr("sp", sp);
 		if(LoginUserController.isAuthenticated(this))
-		render("profile/warehouse/warehouseEdit.html");
+		render("/yh/profile/warehouse/warehouseEdit.html");
 	}
 
 	public void delete() {
@@ -147,7 +147,7 @@ public class WarehouseController extends Controller{
 		warehouse.update();
 		warehouse.delete();
 		if(LoginUserController.isAuthenticated(this))
-		redirect("/yh/warehouse");
+		redirect("/warehouse");
 	}
 
 	@SuppressWarnings("unused")
@@ -223,7 +223,7 @@ public class WarehouseController extends Controller{
 		}
 		setAttr("saveOK", true);
 		if(LoginUserController.isAuthenticated(this))
-		redirect("/yh/warehouse");
+		redirect("/warehouse");
 	}
 
 	private void setContact(Contact contact) {

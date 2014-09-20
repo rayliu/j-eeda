@@ -62,7 +62,7 @@
 	                                            <label><h3>提货方式</h3></label>
 	                                           	<input id="pickupModeRadio" type="hidden" value="${pickupOrder.pickup_mode!''}"/>
 	                                            <label class="radio-inline">
-	                                                <input type="radio" name="pickupMode" id="pickupMode1" value="own" checked="">源鸿自提
+	                                                <input type="radio" name="pickupMode" id="pickupMode1" value="own" checked="">自提
 	                                            </label>
 	                                            <label class="radio-inline">
 	                                                <input type="radio" name="pickupMode" id="pickupMode2" value="routeSP">干线供应商自提
@@ -501,10 +501,10 @@
 		                       			<div class="panel-body">
 		                            		<p>单据创建完毕,是否继续创建？</p>
 		                        		</div>
-		                        		<form id="detailCheckBoxForm" method="post" action="/yh/pickupOrder/createPickupOrder">
+		                        		<form id="detailCheckBoxForm" method="post" action="/pickupOrder/createPickupOrder">
 		                        			<input type="hidden" name="localArr" value="${localArr!''}">
 			                       			<div class="panel-footer">
-			                          			<a class="btn btn-default" href="/yh/pickupOrder">否</a>
+			                          			<a class="btn btn-default" href="/pickupOrder">否</a>
 			                          			<button id="continueCreateBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">是</button>
 			                        		</div>                        		
 		                        		</form>
@@ -519,7 +519,7 @@
                         	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
 		               		<button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
 		               		<button id="finishBtn" disabled="disabled" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">已完成</button>
-		               		<a class="btn btn-default" href="/yh/pickupOrder">返回</a>
+		               		<a class="btn btn-default" href="/pickupOrder">返回</a>
                         </div>                       
                     </div>
                     <!-- /.panel -->

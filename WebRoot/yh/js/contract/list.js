@@ -6,19 +6,19 @@ $(document).ready(function() {
     var urlSource3;
 	if(type=='CUSTOMER'){
 		$("#btn1").show();
-		urlSource="/yh/customerContract/customerList";
-		urlSource2="/yh/customerContract/edit/";
-		urlSource3="/yh/customerContract/delete/";
+		urlSource="/customerContract/customerList";
+		urlSource2="/customerContract/edit/";
+		urlSource3="/customerContract/delete/";
 	}if(type=='SERVICE_PROVIDER'){
 		$("#btn2").show();
-		urlSource="/yh/spContract/spList";
-		urlSource2="/yh/spContract/edit/";
-		urlSource3="/yh/spContract/delete2/";
+		urlSource="/spContract/spList";
+		urlSource2="/spContract/edit/";
+		urlSource3="/spContract/delete2/";
 	}if(type=='DELIVERY_SERVICE_PROVIDER'){
 		$("#btn3").show();
-		urlSource="/yh/deliverySpContract/deliveryspList";
-		urlSource2="/yh/deliverySpContract/edit/";
-		urlSource3="/yh/deliverySpContract/delete3/";
+		urlSource="/deliverySpContract/deliveryspList";
+		urlSource2="/deliverySpContract/edit/";
+		urlSource3="/deliverySpContract/delete3/";
 	}
     
 	//datatable, 动态处理
@@ -85,7 +85,7 @@ $(document).ready(function() {
   //获取供应商的list，选中信息在下方展示其他信息
     $('#companyName_filter').on('keyup click', function(){
 		var inputStr = $('#companyName_filter').val();
-		$.get('/yh/customerContract/companyNameList', {input:inputStr,type:type}, function(data){
+		$.get('/customerContract/companyNameList', {input:inputStr,type:type}, function(data){
 			console.log(data);
 			var cpnameList =$("#cpnameList");
 			cpnameList.empty();
@@ -130,11 +130,11 @@ $(document).ready(function() {
       	var phone_filter = $("#phone_filter").val();   
       	var periodTo_filter = $("#periodTo_filter").val();
       	if(type=='CUSTOMER'){
-      		tab2.fnSettings().sAjaxSource = "/yh/customerContract/customerList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+      		tab2.fnSettings().sAjaxSource = "/customerContract/customerList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
     	}if(type=='SERVICE_PROVIDER'){
-    		tab2.fnSettings().sAjaxSource = "/yh/spContract/spList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+    		tab2.fnSettings().sAjaxSource = "/spContract/spList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
     	}if(type=='DELIVERY_SERVICE_PROVIDER'){
-    		tab2.fnSettings().sAjaxSource = "/yh/deliverySpContract/deliveryspList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+    		tab2.fnSettings().sAjaxSource = "/deliverySpContract/deliveryspList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
     	}
       	tab2.fnDraw();
         
@@ -149,11 +149,11 @@ $(document).ready(function() {
       	var phone_filter = $("#phone_filter").val();   
       	var periodTo_filter = $("#periodTo_filter").val();
       	if(type=='CUSTOMER'){
-      		tab2.fnSettings().sAjaxSource = "/yh/customerContract/customerList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+      		tab2.fnSettings().sAjaxSource = "/customerContract/customerList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
     	}if(type=='SERVICE_PROVIDER'){
-    		tab2.fnSettings().sAjaxSource = "/yh/spContract/spList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+    		tab2.fnSettings().sAjaxSource = "/spContract/spList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
     	}if(type=='DELIVERY_SERVICE_PROVIDER'){
-    		tab2.fnSettings().sAjaxSource = "/yh/deliverySpContract/deliveryspList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
+    		tab2.fnSettings().sAjaxSource = "/deliverySpContract/deliveryspList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
     	}
       	tab2.fnDraw();
     });

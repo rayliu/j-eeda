@@ -23,7 +23,7 @@ public class TollController extends Controller {
 		 * //System.out.print("没获取参数page"); setAttr("page", "付款条目定义"); }
 		 **/
 		if(LoginUserController.isAuthenticated(this))
-		render("profile/toll/TollList.html");
+		render("/yh/profile/toll/TollList.html");
 
 	}
 
@@ -63,10 +63,10 @@ public class TollController extends Controller {
 			Toll h = Toll.dao.findById(id);
 			setAttr("to", h);
 			if(LoginUserController.isAuthenticated(this))
-			render("profile/toll/TollEdit.html");
+			render("/yh/profile/toll/TollEdit.html");
 		} else {
 			if(LoginUserController.isAuthenticated(this))
-			render("profile/toll/TollEdit.html");
+			render("/yh/profile/toll/TollEdit.html");
 		}
 	}
 
@@ -78,7 +78,7 @@ public class TollController extends Controller {
 			l.delete();
 		}
 		if(LoginUserController.isAuthenticated(this))
-		redirect("/yh/toll");
+		redirect("/toll");
 	}
 
 	// 添加编辑保存
@@ -98,15 +98,15 @@ public class TollController extends Controller {
 					.set("remark", remark).save();
 			if (s == true) {
 				if(LoginUserController.isAuthenticated(this))
-				render("profile/toll/TollList.html");
-				// render("profile/toll/TollList.html");
+				render("/yh/profile/toll/TollList.html");
+				// render("/yh/profile/toll/TollList.html");
 			}
 		} else {
 			Toll toll = Toll.dao.findById(id);
 			boolean b = toll.set("name", name).set("type", type)
 					.set("code", code).set("remark", remark).update();
 			if(LoginUserController.isAuthenticated(this))
-			render("profile/toll/TollList.html");
+			render("/yh/profile/toll/TollList.html");
 		}
 
 	}

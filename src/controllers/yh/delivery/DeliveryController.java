@@ -43,7 +43,7 @@ public class DeliveryController extends Controller {
 	private boolean isAuthenticated() {
 		if (!currentUser.isAuthenticated()) {
 			if (LoginUserController.isAuthenticated(this))
-				redirect("/yh/login");
+				redirect("/login");
 			return false;
 		}
 		setAttr("userId", currentUser.getPrincipal());
@@ -54,13 +54,13 @@ public class DeliveryController extends Controller {
 		HttpServletRequest re = getRequest();
 		String url = re.getRequestURI();
 		logger.debug("URI:" + url);
-		if (url.equals("/yh/delivery")) {
+		if (url.equals("/delivery")) {
 			if (LoginUserController.isAuthenticated(this))
-				render("delivery/deliveryOrderList.html");
+				render("/yh/delivery/deliveryOrderList.html");
 		}
-		if (url.equals("/yh/deliveryMilestone")) {
+		if (url.equals("/deliveryMilestone")) {
 			if (LoginUserController.isAuthenticated(this))
-				render("delivery/deliveryOrderStatus.html");
+				render("/yh/delivery/deliveryOrderStatus.html");
 		}
 	}
 

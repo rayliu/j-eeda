@@ -18,7 +18,7 @@
                        
                         <div class="panel-body">
                            
-        <form id="UserRoleForm" name="form1" method="post" action="/yh/role/SaveRole"> 
+        <form id="UserRoleForm" name="form1" method="post" action="/role/SaveRole"> 
 
  	
  	<div class="col-lg-8">
@@ -49,7 +49,7 @@
 	</div>
 	<div class="col-lg-8">
    <button  class="btn btn-default" type="submit">保存</button>
- 	<a  class="btn btn-default" href="/yh/role"> 返回    </a> 
+ 	<a  class="btn btn-default" href="/role"> 返回    </a> 
 	</div>
            </form>
  
@@ -80,7 +80,7 @@
     	       	//alert("waerwerwee");
     	       	var user =$("#user");
     	       	user.empty();
-    	       	$.get('/yh/privilege/SelectUser?select=1',{},function(data){
+    	       	$.get('/privilege/SelectUser?select=1',{},function(data){
  
     				for(var i = 0; i < data.length; i++)
     				{
@@ -95,7 +95,7 @@
 	       	//alert("waerwerwee");
 	       	var role =$("#role");
 	       	role.empty();
-	       	$.get('/yh/privilege/SelectUser?select=2',{},function(data){
+	       	$.get('/privilege/SelectUser?select=2',{},function(data){
 
 				for(var i = 0; i < data.length; i++)
 				{

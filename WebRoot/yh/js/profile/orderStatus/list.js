@@ -11,7 +11,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/orderStatus/list",
+        "sAjaxSource": "/orderStatus/list",
         "aoColumns": [   
             
             {"mDataProp":"STATUS_CODE"},
@@ -22,11 +22,11 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' href='/yh/orderStatus/edit/"+obj.aData.ID+"'>"+
+                    return "<a class='btn btn-success' href='/orderStatus/edit/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+
                             "</a>"+
-                            "<a class='btn btn-danger' href='/yh/orderStatus/delete/"+obj.aData.ID+"'>"+
+                            "<a class='btn btn-danger' href='/orderStatus/delete/"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "删除"+
                             "</a>";

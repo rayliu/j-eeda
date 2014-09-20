@@ -14,11 +14,11 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/departOrder/onTripList",
+        "sAjaxSource": "/departOrder/onTripList",
         "aoColumns": [   
             {"mDataProp":null,
             	"fnRender": function(obj) {
-            		 return "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+            		 return "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
             	}
             },
             {"mDataProp":null,
@@ -61,7 +61,7 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.confirmInWarehouse', function(e){
     	var departOrderId =$(this).attr("code");
     	if(confirm("确定入库吗？")){
-    		$.post('/yh/transferOrderMilestone/warehousingConfirm',{departOrderId:departOrderId},function(data){
+    		$.post('/transferOrderMilestone/warehousingConfirm',{departOrderId:departOrderId},function(data){
     			if(data.success){
     				detailTable.fnDraw(); 		
                 }else{
@@ -77,7 +77,7 @@ $(document).ready(function() {
     	e.preventDefault();	
     	var depart_id=$(this).attr("depart_id");
     	$("#milestoneDepartId").val(depart_id);
-    	$.post('/yh/departOrder/transferOrderMilestoneList',{departOrderId:depart_id},function(data){
+    	$.post('/departOrder/transferOrderMilestoneList',{departOrderId:depart_id},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
@@ -90,7 +90,7 @@ $(document).ready(function() {
     
     // 保存新里程碑
 	$("#transferOrderMilestoneFormBtn").click(function(){
-		$.post('/yh/departOrder/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
+		$.post('/departOrder/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 			detailTable.fnDraw();  
@@ -107,7 +107,7 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/onTripList?orderNo="+orderNo+"&departNo="+departNo_filter+"&status="+status+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo+"&departNo="+departNo_filter+"&status="+status+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
     	detailTable.fnDraw();
     });
 	
@@ -132,7 +132,7 @@ $(document).ready(function() {
   //获取供应商的list，选中信息在下方展示其他信息
     $('#sp_filter').on('keyup click', function(){
 		var inputStr = $('#sp_filter').val();
-		$.get('/yh/departOrder/companyNameList',{input:inputStr}, function(data){
+		$.get('/departOrder/companyNameList',{input:inputStr}, function(data){
 			console.log(data);
 			var cpnameList =$("#cpnameList");
 			cpnameList.empty();

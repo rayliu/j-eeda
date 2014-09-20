@@ -7,7 +7,7 @@ $(document).ready(function() {
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "/yh/account/listAccount",
+	        "sAjaxSource": "/account/listAccount",
 			"aoColumns": [
 				{ "mDataProp": "NAME","sWidth": "12%", },
 	            { "mDataProp": "TYPE","sWidth": "9%", },
@@ -16,11 +16,11 @@ $(document).ready(function() {
 	                "mDataProp": null, 
 	                "sWidth": "15%",
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-info' href='/yh/account/edit/"+obj.aData.ID+"'>"+
+	                    return "<a class='btn btn-info' href='/account/edit/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-edit'> </i> "+
 	                                "编辑"+
 	                            "</a>"+
-	                            "<a class='btn btn-danger' href='/yh/account/del/"+obj.aData.ID+"'>"+
+	                            "<a class='btn btn-danger' href='/account/del/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
 	                                "删除"+
 	                            "</a>";

@@ -44,12 +44,12 @@ public class DepartOrderController extends Controller {
 
     public void index() {
         if (LoginUserController.isAuthenticated(this))
-            render("departOrder/departOrderList.html");
+            render("/yh/departOrder/departOrderList.html");
     }
 
     public void onTrip() {
         if (LoginUserController.isAuthenticated(this))
-            render("departOrder/departOrderOnTripList.html");
+            render("/yh/departOrder/departOrderOnTripList.html");
     }
     //发车单在途供应商
     public void companyNameList(){
@@ -601,9 +601,6 @@ public class DepartOrderController extends Controller {
         DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order where combine_type='"
                 + DepartOrder.COMBINE_TYPE_DEPART + "' order by depart_no desc limit 0,1");
         
-        setAttr("chargeType", order.get("charge_type"));
-        
-        
         if (order != null) {
             String num = order.get("depart_no");
             String str = num.substring(2, num.length());
@@ -619,6 +616,7 @@ public class DepartOrderController extends Controller {
                 order_no = String.valueOf(newTime);
             }
             setAttr("order_no", "FC" + order_no);
+            setAttr("chargeType", order.get("charge_type"));
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String format = sdf.format(new Date());
@@ -1188,7 +1186,7 @@ public class DepartOrderController extends Controller {
         DepartOrder re = DepartOrder.dao.findById(id);
         re.set("driver_id", null).update();
         re.delete();
-        render("departOrder/departOrderList.html");
+        render("/yh/departOrder/departOrderList.html");
     }
 
     // 单击tab里程碑
@@ -1307,7 +1305,7 @@ public class DepartOrderController extends Controller {
     // 在途运输单管理
     public void transferMilestoneIndex() {
         if (LoginUserController.isAuthenticated(this))
-            render("departOrder/TransferOrderStatus.html");
+            render("/yh/departOrder/TransferOrderStatus.html");
     }
 
     public void ownTransferMilestone() {
@@ -1400,7 +1398,7 @@ public class DepartOrderController extends Controller {
     // 外包运输单更新
     public void transferonTrip() {
         if (LoginUserController.isAuthenticated(this))
-            render("departOrder/transferOrderOnTripList.html");
+            render("/yh/departOrder/transferOrderOnTripList.html");
     }
 
     public void transferonTriplist() {

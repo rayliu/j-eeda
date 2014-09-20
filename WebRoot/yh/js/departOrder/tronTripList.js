@@ -12,11 +12,11 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/departOrder/transferonTriplist",
+        "sAjaxSource": "/departOrder/transferonTriplist",
         "aoColumns": [   
               {"mDataProp":"ORDER_NO",
               	"fnRender": function(obj) {
-              			return "<a href='/yh/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+              			return "<a href='/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
               		}},
              
               {"mDataProp":null,
@@ -54,7 +54,7 @@ $(document).ready(function() {
               		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
               			return "外包供应商提货";
               		}else if(obj.aData.PICKUP_MODE == "own"){
-              			return "源鸿自提";
+              			return "自提";
               		}else{
               			return "";
               		}}},
@@ -105,7 +105,7 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.confirmReceipt', function(e){
     	var orderId =$(this).attr("code");
     	if(confirm("确定收货吗？")){
-    		$.post('/yh/transferOrderMilestone/receipt', {orderId:orderId}, function(data){    
+    		$.post('/transferOrderMilestone/receipt', {orderId:orderId}, function(data){    
     			if(data.success){
     				detailTable.fnDraw(); 		
                 }else{
@@ -121,7 +121,7 @@ $(document).ready(function() {
     	e.preventDefault();	
     	var order=$(this).attr("order_id");
     	$("#milestoneDepartId").val(order);
-    	$.post('/yh/departOrder/transferMilestoneList',{order_id:order},function(data){
+    	$.post('/departOrder/transferMilestoneList',{order_id:order},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
@@ -134,7 +134,7 @@ $(document).ready(function() {
     
     // 保存新里程碑
 	$("#transferOrderMilestoneFormBtn").click(function(){
-		$.post('/yh/departOrder/saveTransferMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
+		$.post('/departOrder/saveTransferMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 			detailTable.fnDraw();  
@@ -242,7 +242,7 @@ $(document).ready(function() {
 } );
 function sp_filterKeyup(){
 	var sp_filter = $('#sp_filter').val();
-	$.get('/yh/departOrder/cpnameList',{sp_filter:sp_filter}, function(data){
+	$.get('/departOrder/cpnameList',{sp_filter:sp_filter}, function(data){
 		console.log(data);
 		var cpnameList =$("#cpnameList");
 		cpnameList.empty();
@@ -255,7 +255,7 @@ function sp_filterKeyup(){
 }
 function customer_filterKeyup(){
 	var customer_filter = $('#customer_filter').val();
-	$.get('/yh/departOrder/customerList',{customer_filter:customer_filter}, function(data){
+	$.get('/departOrder/customerList',{customer_filter:customer_filter}, function(data){
 		console.log(data);
 		var customerList =$("#customerList");
 		customerList.empty();
@@ -267,7 +267,7 @@ function customer_filterKeyup(){
 }
 function officeName_filterKeyup(){
 	var officeName_filter = $('#officeName_filter').val();
-	$.get('/yh/departOrder/officenameList',{officeName_filter:officeName_filter}, function(data){
+	$.get('/departOrder/officenameList',{officeName_filter:officeName_filter}, function(data){
 		console.log(data);
 		var officenameList =$("#officenameList");
 		officenameList.empty();
@@ -286,6 +286,6 @@ function resetResult(){
 	var beginTime = $("#beginTime_filter").val();
 	var endTime = $("#endTime_filter").val();
 	var officeName = $("#officeName_filter").val();
-	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/transferonTriplist?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+	detailTable.fnSettings().sAjaxSource = "/departOrder/transferonTriplist?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
 	detailTable.fnDraw();
 }
