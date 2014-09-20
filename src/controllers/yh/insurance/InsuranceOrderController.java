@@ -100,9 +100,11 @@ public class InsuranceOrderController extends Controller {
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
+                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ul.user_name create_by,tor.customer_order_no,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
+                    + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
+                    + "  left join user_login ul on ul.id = tor.create_by "
                     + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code"
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " order by tor.create_stamp desc" + sLimit;
@@ -131,7 +133,7 @@ public class InsuranceOrderController extends Controller {
                     + status
                     + "%' and tor.address like '%"
                     + address
-                    + "%' and c.company_name like '%"
+                    + "%' and ifnull(c.abbr,'') like '%"
                     + customer
                     + "%' and create_stamp between '"
                     + beginTime
@@ -143,9 +145,11 @@ public class InsuranceOrderController extends Controller {
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
+                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ul.user_name create_by,tor.customer_order_no,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
+                    + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
+                    + " left join user_login ul on ul.id = tor.create_by "
                     + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code  "
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
@@ -160,7 +164,7 @@ public class InsuranceOrderController extends Controller {
                     + status
                     + "%' and tor.address like '%"
                     + address
-                    + "%' and c.company_name like '%"
+                    + "%' and ifnull(c.abbr,'') like '%"
                     + customer
                     + "%' and create_stamp between '"
                     + beginTime
@@ -194,7 +198,7 @@ public class InsuranceOrderController extends Controller {
                     + status
                     + "%' and tor.address like '%"
                     + address
-                    + "%' and c.company_name like '%"
+                    + "%' and ifnull(c.abbr,'') like '%"
                     + customer
                     + "%' and create_stamp between '"
                     + beginTime
@@ -207,9 +211,11 @@ public class InsuranceOrderController extends Controller {
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
+                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ul.user_name create_by,tor.customer_order_no,"
                     + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
+                    + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
+                    + " left join user_login ul on ul.id = tor.create_by "
                     + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code  "
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
@@ -224,7 +230,7 @@ public class InsuranceOrderController extends Controller {
                     + status
                     + "%' and tor.address like '%"
                     + address
-                    + "%' and c.company_name like '%"
+                    + "%' and ifnull(c.abbr,'') like '%"
                     + customer
                     + "%' and create_stamp between '"
                     + beginTime

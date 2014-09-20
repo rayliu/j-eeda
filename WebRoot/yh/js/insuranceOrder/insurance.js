@@ -23,83 +23,11 @@ $(document).ready(function() {
             { 
             	"mDataProp": "ORDER_NO",
             	"sClass": "order_no"
-            },
-            {"mDataProp":"OPERATION_TYPE",
-            	"sClass": "operation_type",
-    			"fnRender": function(obj) {
-    				if(obj.aData.OPERATION_TYPE == "out_source"){
-    					return "外包";
-    				}else if(obj.aData.OPERATION_TYPE == "own"){
-    					return "自营";
-    				}else{
-    					return "";
-    				}}},  
-		    {"mDataProp":"ORDER_TYPE",
-            	"sClass": "order_type",
-            	"fnRender": function(obj) {
-            		if(obj.aData.ORDER_TYPE == "salesOrder"){
-            			return "销售订单";
-            		}else if(obj.aData.ORDER_TYPE == "replenishmentOrder"){
-            			return "补货订单";
-            		}else if(obj.aData.ORDER_TYPE == "arrangementOrder"){
-            			return "调拨订单";
-            		}else if(obj.aData.ORDER_TYPE == "cargoReturnOrder"){
-            			return "退货订单";
-            		}else if(obj.aData.ORDER_TYPE == "damageReturnOrder"){
-            			return "质量退单";
-            		}else if(obj.aData.ORDER_TYPE == "gateOutTransferOrder"){
-            			return "出库运输单";
-            		}else{
-            			return "";
-            }}},
-            {"mDataProp":"CARGO_NATURE",
-            	"sClass": "cargo_nature",
-            	"fnRender": function(obj) {
-            		if(obj.aData.CARGO_NATURE == "cargo"){
-            			return "普通货品";
-            		}else if(obj.aData.CARGO_NATURE == "ATM"){
-            			return "ATM";
-            		}else{
-            			return "";
-            }}},
-            { 
-            	"mDataProp": "TOTAL_WEIGHT",
-            	"sClass": "total_weight"
-            },
-            { 
-            	"mDataProp": "TOTAL_VOLUME",
-            	"sClass": "total_volume"
-            },
+            },  		    
             { 
             	"mDataProp": "TOTAL_AMOUNT",
             	"sClass": "total_amount"
             },
-            { 
-            	"mDataProp": "ADDRESS",
-            	"sClass": "address"
-            },
-            {"mDataProp":"PICKUP_MODE",
-            	"sClass": "pickup_mode",
-            	"fnRender": function(obj) {
-            		if(obj.aData.PICKUP_MODE == "routeSP"){
-            			return "干线供应商自提";
-            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
-            			return "外包供应商提货";
-            		}else if(obj.aData.PICKUP_MODE == "own"){
-            			return "源鸿自提";
-            		}else{
-            			return "";
-            		}}},
-    		{"mDataProp":"ARRIVAL_MODE",
-                "sClass": "arrival_mode",
-            	"fnRender": function(obj) {
-            		if(obj.aData.ARRIVAL_MODE == "delivery"){
-            			return "货品直送";
-            		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
-            			return "入中转仓";
-            		}else{
-            			return "";
-            		}}},
             { 
             	"mDataProp": "STATUS",
             	"sClass": "status"
@@ -119,19 +47,35 @@ $(document).ready(function() {
     		{ 
             	"mDataProp": "CREATE_STAMP",
             	"sClass": "create_stamp"
-            },                                      
-    		{ "mDataProp": "PICKUP_ASSIGN_STATUS",
-            	"sClass": "assign_status",
+            }, 
+            {"mDataProp":"CARGO_NATURE",
+            	"sClass": "cargo_nature",
             	"fnRender": function(obj) {
-            		if(obj.aData.PICKUP_ASSIGN_STATUS == "NEW"){
-            			return "未发车";
-            		}else if(obj.aData.PICKUP_ASSIGN_STATUS == "PARTIAL"){
-            			return "部分发车";
-            		}else if(obj.aData.PICKUP_ASSIGN_STATUS == "ALL"){
-            			return "全部发车";
+            		if(obj.aData.CARGO_NATURE == "cargo"){
+            			return "普通货品";
+            		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
+            			return "损坏货品";
+            		}else if(obj.aData.CARGO_NATURE == "ATM"){
+            			return "ATM";
             		}else{
             			return "";
-            }}},                                     
+            		}}},                                      
+    		{ 
+            	"mDataProp": "SPNAME",
+            	"sClass": "spname"
+            },                                       
+    		{ 
+            	"mDataProp": "CREATE_BY",
+            	"sClass": "create_by"
+            },                                      
+    		{ 
+            	"mDataProp": "CREATE_STAMP",
+            	"sClass": "create_stamp"
+            },                                      
+    		{ 
+            	"mDataProp": "CUSTOMER_ORDER_NO",
+            	"sClass": "customer_order_no"
+            }
         ]      
     });	
     
