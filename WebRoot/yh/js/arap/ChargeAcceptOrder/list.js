@@ -12,12 +12,12 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeAcceptOrder/list",
+        "sAjaxSource": "/chargeAcceptOrder/list",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"CNAME"},
             {"mDataProp":"STATUS",
@@ -60,9 +60,9 @@ $(document).ready(function() {
 		e.preventDefault();
 		var code = $(this).attr('code');
 		var chargeCheckOrderId = code.substring(code.indexOf('=')+1);
-		$.post('/yh/chargeAcceptOrder/chargeAccept', {chargeCheckOrderId:chargeCheckOrderId}, function(data){
+		$.post('/chargeAcceptOrder/chargeAccept', {chargeCheckOrderId:chargeCheckOrderId}, function(data){
 			if(data.success){
-				chargeAcceptOrderTab.fnSettings().sAjaxSource = "/yh/chargeAcceptOrder/list";
+				chargeAcceptOrderTab.fnSettings().sAjaxSource = "/chargeAcceptOrder/list";
 				chargeAcceptOrderTab.fnDraw();  
 			}else{
 				alert("收款失败!");
@@ -75,7 +75,7 @@ $(document).ready(function() {
     $('#customer_filter').on('keyup click', function(){
            var inputStr = $('#customer_filter').val();
            
-           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+           $.get("/customerContract/search", {locationName:inputStr}, function(data){
                console.log(data);
                var companyList =$("#companyList");
                companyList.empty();
@@ -144,7 +144,7 @@ $(document).ready(function() {
        			pageSpAddress.empty();
        			$('#sp_id').val($(this).attr(''));
        		}
-       		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+       		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
        			console.log(data);
        			var spList =$("#spList");
        			spList.empty();

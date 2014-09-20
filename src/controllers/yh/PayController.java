@@ -27,13 +27,13 @@ public class PayController extends Controller {
          **/
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();logger.debug("URI:" + url);
-        if (url.equals("/yh/pay")) {
+        if (url.equals("/pay")) {
 	        if (LoginUserController.isAuthenticated(this))
-	            render("profile/toll/PayList.html");
+	            render("/yh/profile/toll/PayList.html");
         }
-        if (url.equals("/yh/ownCarPay")) {
+        if (url.equals("/ownCarPay")) {
         	if (LoginUserController.isAuthenticated(this))
-        		render("profile/toll/ownCarPayList.html");
+        		render("/yh/profile/toll/ownCarPayList.html");
         }
     }
 
@@ -76,10 +76,10 @@ public class PayController extends Controller {
             Toll h = Toll.dao.findById(id);
             setAttr("to", h);
             if (LoginUserController.isAuthenticated(this))
-                render("profile/toll/PayEdit.html");
+                render("/yh/profile/toll/PayEdit.html");
         } else {
             if (LoginUserController.isAuthenticated(this))
-                render("profile/toll/PayEdit.html");
+                render("/yh/profile/toll/PayEdit.html");
         }
     }
 
@@ -91,7 +91,7 @@ public class PayController extends Controller {
             l.delete();
         }
         if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/pay");
+            redirect("/pay");
     }
 
     // 添加编辑保存
@@ -110,15 +110,15 @@ public class PayController extends Controller {
             boolean s = r.set("name", name).set("code", code).set("type", type)
                     .set("Remark", remark).save();
             if (s == true) {
-                render("profile/toll/PayList.html");
-                // render("profile/toll/TollList.html");
+                render("/yh/profile/toll/PayList.html");
+                // render("/yh/profile/toll/TollList.html");
             }
         } else {
             Toll toll = Toll.dao.findById(id);
             boolean b = toll.set("name", name).set("type", type)
                     .set("code", code).set("Remark", remark).update();
             if (LoginUserController.isAuthenticated(this))
-                render("profile/toll/PayList.html");
+                render("/yh/profile/toll/PayList.html");
         }
 
     }
@@ -163,7 +163,7 @@ public class PayController extends Controller {
     		setAttr("to", h);
     	}
 		if (LoginUserController.isAuthenticated(this))
-			render("profile/toll/ownCarPayEdit.html");
+			render("/yh/profile/toll/ownCarPayEdit.html");
     }
     
     // 删除条目
@@ -174,7 +174,7 @@ public class PayController extends Controller {
     		l.delete();
     	}
     	if (LoginUserController.isAuthenticated(this))
-    		redirect("/yh/ownCarPay");
+    		redirect("/ownCarPay");
     }
     
     // 添加编辑保存
@@ -193,6 +193,6 @@ public class PayController extends Controller {
     		toll.set("name", name).set("code", code).set("type", type).set("driver_type", Carinfo.CARINFO_TYPE_OWN).set("remark", remark).save();
     	}    	
     	if (LoginUserController.isAuthenticated(this))
-    		render("profile/toll/ownCarPayList.html");
+    		render("/yh/profile/toll/ownCarPayList.html");
     }
 }

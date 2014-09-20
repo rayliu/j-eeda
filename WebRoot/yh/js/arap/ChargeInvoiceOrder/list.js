@@ -10,12 +10,12 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeInvoiceOrder/list",
+        "sAjaxSource": "/chargeInvoiceOrder/list",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/yh/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"CHECK_ORDER_NO"},
             {"mDataProp":"CNAME"},
@@ -58,7 +58,7 @@ $(document).ready(function() {
     $('#customer_filter').on('keyup click', function(){
            var inputStr = $('#customer_filter').val();
            
-           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+           $.get("/customerContract/search", {locationName:inputStr}, function(data){
                console.log(data);
                var companyList =$("#companyList");
                companyList.empty();
@@ -127,7 +127,7 @@ $(document).ready(function() {
        			pageSpAddress.empty();
        			$('#sp_id').val($(this).attr(''));
        		}
-       		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+       		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
        			console.log(data);
        			var spList =$("#spList");
        			spList.empty();

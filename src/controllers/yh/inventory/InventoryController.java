@@ -49,21 +49,21 @@ public class InventoryController extends Controller {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();
         logger.debug("URI:" + url);
-        if (url.equals("/yh/gateIn")) {
+        if (url.equals("/gateIn")) {
 
             setAttr("inventory", "gateIn");
             if (LoginUserController.isAuthenticated(this))
-                render("inventory/inventoryList.html");
+                render("/yh/inventory/inventoryList.html");
         }
-        if (url.equals("/yh/gateOut")) {
+        if (url.equals("/gateOut")) {
 
             setAttr("inventory", "gateOut");
             if (LoginUserController.isAuthenticated(this))
-                render("inventory/inventoryList.html");
+                render("/yh/inventory/inventoryList.html");
         }
-        if (url.equals("/yh/stock")) {
+        if (url.equals("/stock")) {
             if (LoginUserController.isAuthenticated(this))
-                render("inventory/stock.html");
+                render("/yh/inventory/stock.html");
         }
     }
 

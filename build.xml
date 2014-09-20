@@ -61,6 +61,18 @@
         </java>	
     </target>
 	
+	<target name="tbuat">
+	        <copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-tbuat" overwrite="true"/>
+	        <copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-tbuat" overwrite="true"/>
+	        <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
+	            <arg value="WebRoot"/>
+	            <arg value="8001"/>
+	            <arg value="/"/>
+	            <arg value="0"/>
+	            <classpath path="WebRoot/WEB-INF/classes"></classpath>
+	        </java> 
+	    </target>
+	
    <target name="clean"> 
        <delete includeEmptyDirs="true" failonerror="false"> 
            <fileset dir="WebRoot/WEB-INF/classes" /> 

@@ -3,7 +3,7 @@ $(document).ready(function() {
     $('#menu_status').addClass('active').find('ul').addClass('in');
     
     // 在途运输单列表
-    $.post('/yh/pickupOrder/pickupOrderMilestoneList', function(data){
+    $.post('/pickupOrder/pickupOrderMilestoneList', function(data){
 		var pickupOrderMilestoneTbody = $("#pickupOrderMilestoneTbody");
 		pickupOrderMilestoneTbody.empty();
 		for(var i = 0,j = 0; i < data.milestones.length,j < data.usernames.length; i++,j++)

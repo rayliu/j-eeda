@@ -11,11 +11,11 @@
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "/yh/pickupOrder/pickuplist",
+	        "sAjaxSource": "/pickupOrder/pickuplist",
 	        "aoColumns": [   
 			    {"mDataProp":"DEPART_NO",
 	            	"fnRender": function(obj) {
-	            			return "<a href='/yh/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+	            			return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
 	            		}},
 			    {"mDataProp":"STATUS"},
 			    {"mDataProp":"PICKUP_MODE",
@@ -25,7 +25,7 @@
 	            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
 	            			return "外包供应商提货";
 	            		}else if(obj.aData.PICKUP_MODE == "own"){
-	            			return "源鸿自提";
+	            			return "自提";
 	            		}else{
 	            			return "";
 	            		}}},
@@ -52,7 +52,7 @@
     		e.preventDefault();
            //异步向后台提交数据
     	   var id = $(this).attr('code');
-    	   $.post('/yh/pickupOrder/cancel/'+id,function(data){
+    	   $.post('/pickupOrder/cancel/'+id,function(data){
                //保存成功后，刷新列表
                console.log(data);
                if(data.success){
@@ -68,7 +68,7 @@
 			var departNo_filter = $("#departNo_filter").val();
 			var beginTime = $("#beginTime_filter").val();
 			var endTime = $("#endTime_filter").val();
-			pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/pickuplist?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime;
+			pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/pickuplist?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime;
 			pickupOrder.fnDraw();
 		} );
 		

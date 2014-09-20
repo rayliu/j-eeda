@@ -12,7 +12,7 @@
 				</div>
 					<div class="panel-body">
 						<div class="row-fluid">
-							<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/yh/route/saveRoute" method="post">
+							<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/route/saveRoute" method="post">
 								<input id="routeId" name="routeId" type="hidden" value="${ul.id!''}">
 								<div class="form-group ">
 									<label class="control-label">出发地点</label>
@@ -33,7 +33,7 @@
 									<input type="text" class="form-control" id="remark" name="remark" value="${ul.remark!''}">
 								</div>
 							<button type="submit" class="btn btn-default">保存</button>
-							<a class="btn btn-default" href="/yh/route">返回</a>
+							<a class="btn btn-default" href="/route">返回</a>
 						</form>
 					</div>
 				</div>
@@ -67,7 +67,7 @@
 		//选择出发地点
 		$('#fromName').on('keyup', function(){
 			var inputStr = $('#fromName').val();
-			$.get('/yh/route/search', {locationName:inputStr}, function(data){
+			$.get('/route/search', {locationName:inputStr}, function(data){
 				console.log(data);
 				var fromLocationList =$("#fromLocationList");
 				fromLocationList.empty();
@@ -94,7 +94,7 @@
 		//选择目的地点
 		$('#toName').on('keyup', function(){
 			var inputStr = $('#toName').val();
-			$.get('/yh/route/search', {locationName:inputStr}, function(data){
+			$.get('/route/search', {locationName:inputStr}, function(data){
 				
 				var toLocationList =$("#toLocationList");
 				toLocationList.empty();

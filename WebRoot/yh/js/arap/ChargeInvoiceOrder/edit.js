@@ -9,7 +9,7 @@ $(document).ready(function() {
 	       	return;
         }
 		//异步向后台提交数据
-		$.post('/yh/chargeInvoiceOrder/save', $("#chargeInvoiceOrderForm").serialize(), function(data){
+		$.post('/chargeInvoiceOrder/save', $("#chargeInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargeInvoiceOrderId").val(data.ID);
 			  	//$("#style").show();
@@ -38,12 +38,12 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeInvoiceOrder/chargeInvoiceOrderList?chargeCheckOrderIds="+chargeCheckOrderIds,
+        "sAjaxSource": "/chargeInvoiceOrder/chargeInvoiceOrderList?chargeCheckOrderIds="+chargeCheckOrderIds,
    			"aoColumns": [
    			{"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"CNAME"},
             {"mDataProp":"STATUS",

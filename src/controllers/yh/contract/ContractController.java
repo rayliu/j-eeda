@@ -31,20 +31,20 @@ public class ContractController extends Controller {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();
         logger.debug("URI:" + url);
-        if (url.equals("/yh/customerContract")) {
+        if (url.equals("/customerContract")) {
             setAttr("contractType", "CUSTOMER");
             if (LoginUserController.isAuthenticated(this))
-                render("contract/ContractList.html");
+                render("/yh/contract/ContractList.html");
         }
-        if (url.equals("/yh/deliverySpContract")) {
+        if (url.equals("/deliverySpContract")) {
             setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
             if (LoginUserController.isAuthenticated(this))
-                render("contract/ContractList.html");
+                render("/yh/contract/ContractList.html");
         }
-        if (url.equals("/yh/spContract")) {
+        if (url.equals("/spContract")) {
             setAttr("contractType", "SERVICE_PROVIDER");
             if (LoginUserController.isAuthenticated(this))
-                render("contract/ContractList.html");
+                render("/yh/contract/ContractList.html");
         }
 
     }
@@ -265,7 +265,7 @@ public class ContractController extends Controller {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();
         logger.debug("URI:" + url);
-        if (url.equals("/yh/customerContract/add")) {
+        if (url.equals("/customerContract/add")) {
             setAttr("contractType", "CUSTOMER");
             setAttr("saveOK", false);
             List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
@@ -273,7 +273,7 @@ public class ContractController extends Controller {
             if (LoginUserController.isAuthenticated(this))
                 render("/yh/contract/ContractEdit.html");
         }
-        if (url.equals("/yh/deliverySpContract/add")) {
+        if (url.equals("/deliverySpContract/add")) {
             setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
             setAttr("saveOK", false);
             List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
@@ -281,7 +281,7 @@ public class ContractController extends Controller {
             if (LoginUserController.isAuthenticated(this))
                 render("/yh/contract/ContractEdit.html");
         }
-        if (url.equals("/yh/spContract/add")) {
+        if (url.equals("/spContract/add")) {
             setAttr("contractType", "SERVICE_PROVIDER");
             setAttr("saveOK", false);
             List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
@@ -341,7 +341,7 @@ public class ContractController extends Controller {
             Db.deleteById("contract", id);
         }
         if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/customerContract");
+            redirect("/customerContract");
     }
 
     public void delete2() {
@@ -350,7 +350,7 @@ public class ContractController extends Controller {
             Db.deleteById("contract", id);
         }
         if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/spContract");
+            redirect("/spContract");
     }
 
     // 列出客户公司名称

@@ -40,7 +40,7 @@ public class ReturnOrderController extends Controller {
 
 	public void index() {
 		if (LoginUserController.isAuthenticated(this))
-			render("returnOrder/returnOrderList.html");
+			render("/yh/returnOrder/returnOrderList.html");
 	}
 
 	public static String createReturnOrderNo() {
@@ -310,7 +310,7 @@ public class ReturnOrderController extends Controller {
         receivableItemList = Db.find("select * from fin_item where type='应收'");
         setAttr("receivableItemList", receivableItemList);
 		if (LoginUserController.isAuthenticated(this))
-			render("returnOrder/returnOrder.html");
+			render("/yh/returnOrder/returnOrder.html");
 	}
 
 	public void save() {

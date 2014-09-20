@@ -18,7 +18,7 @@ public class PrivilegeController extends Controller {
 
 	public void index() {
 		if (LoginUserController.isAuthenticated(this))
-			render("profile/privilege/PrivilegeList.html");
+			render("/yh/profile/privilege/PrivilegeList.html");
 	}
 
 	public void privilegelist() {
@@ -72,12 +72,12 @@ public class PrivilegeController extends Controller {
 
 	public void userrole() {
 		if (LoginUserController.isAuthenticated(this))
-			render("profile/privilege/UserRole.html");
+			render("/yh/profile/privilege/UserRole.html");
 	}
 
 	public void roleprivilege() {
 		if (LoginUserController.isAuthenticated(this))
-			render("profile/privilege/RolePrivilege.html");
+			render("/yh/profile/privilege/RolePrivilege.html");
 	}
 
 	public void SelectUser() {

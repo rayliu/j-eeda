@@ -60,7 +60,7 @@
                                         	
                                        	<div id="pickupModes" class="form-group">
                                             <label><h3>提货方式</h3></label>
-                                           	源鸿自提
+                                           	自提
                                         </div> 
 	                                        
                                  		<h3>车辆信息</h3>                                         
@@ -432,10 +432,10 @@
 		                       			<div class="panel-body">
 		                            		<p>单据创建完毕,是否继续创建？</p>
 		                        		</div>
-		                        		<form id="detailCheckBoxForm" method="post" action="/yh/pickupOrder/createPickupOrder">
+		                        		<form id="detailCheckBoxForm" method="post" action="/pickupOrder/createPickupOrder">
 		                        			<input type="hidden" name="localArr" value="${localArr!''}">
 			                       			<div class="panel-footer">
-			                          			<a class="btn btn-default" href="/yh/pickupOrder">否</a>
+			                          			<a class="btn btn-default" href="/pickupOrder">否</a>
 			                          			<button id="continueCreateBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">是</button>
 			                        		</div>                        		
 		                        		</form>
@@ -449,7 +449,7 @@
                             <hr/>
                         	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
 		               		<button id="saveCarManageBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
-		               		<a class="btn btn-default" href="/yh/carmanage">返回</a>
+		               		<a class="btn btn-default" href="/carmanage">返回</a>
                         </div>                       
                     </div>
                     <!-- /.panel -->

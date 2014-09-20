@@ -41,7 +41,7 @@ public class PickupOrderController extends Controller {
 
     private boolean isAuthenticated() {
         if (!currentUser.isAuthenticated()) {
-            redirect("/yh/login");
+            redirect("/login");
             return false;
         }
         setAttr("userId", currentUser.getPrincipal());

@@ -71,12 +71,12 @@ public class TransferOrderItemController extends Controller {
         Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
         setAttr("contact", contact);
         if (LoginUserController.isAuthenticated(this))
-            render("transferOrder/transferOrderEdit.html");
+            render("/yh/transferOrder/transferOrderEdit.html");
     }
 
     public void edit() {
         if (LoginUserController.isAuthenticated(this))
-            render("transferOrder/editTransferOrder.html");
+            render("/yh/transferOrder/editTransferOrder.html");
     }
 
     public void delete() {
@@ -88,7 +88,7 @@ public class TransferOrderItemController extends Controller {
         Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
         contact.delete();
         if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/transferOrder");
+            redirect("/transferOrder");
     }
 
     // 保存货品

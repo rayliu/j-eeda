@@ -15,7 +15,7 @@
             		
             	 <div class="panel-body">
             			<div class="row-fluid">
-            				<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/yh/loginUser/saveUser" method="post">
+            				<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/loginUser/saveUser" method="post">
 						<input id="userId" name="userId" type="hidden" value="${ul.id!''}">
 						<input id="oldPwd" name="oldPwd" type="hidden" value="${ul.password!''}">
 						<input  name="username" type="hidden" value="${ul.user_name!''}">
@@ -36,7 +36,7 @@
 			                 <input type="text" class="form-control" id="pw_hint" name="pw_hint" value="${ul.password_hint!''}">
 			             </div>
 			             	<button type="submit" class="btn btn-default">保存</button>
-				            <a class="btn btn-default" href="/yh/loginUser">取消</a>
+				            <a class="btn btn-default" href="/loginUser">取消</a>
 			         </form>
             			</div>
             		</div>

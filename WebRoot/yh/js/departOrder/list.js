@@ -10,14 +10,14 @@ var dataTable =$('#dataTables-example').dataTable({
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/departOrder/list",
+        "sAjaxSource": "/departOrder/list",
         "aoColumns": [   
            
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                	return "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+                	return "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
                 }
             } ,
             {"mDataProp":"CONTACT_PERSON"},
@@ -31,7 +31,7 @@ var dataTable =$('#dataTables-example').dataTable({
                 "mDataProp": null, 
                 "sWidth": "8%",               
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-danger cancelbutton' href=' /yh/departOrder/cancel/"+obj.aData.DEPART_ID+"'>"+
+                    return "<a class='btn btn-danger cancelbutton' href=' /departOrder/cancel/"+obj.aData.DEPART_ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "取消"+
                             "</a>";
@@ -46,7 +46,7 @@ var dataTable =$('#dataTables-example').dataTable({
 				var sp = $("#sp_filter").val();
 				var beginTime = $("#beginTime_filter").val();
 				var endTime = $("#endTime_filter").val();
-				dataTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&status="+status+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+				dataTable.fnSettings().sAjaxSource = "/departOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&status="+status+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
 				dataTable.fnDraw();
 			} );
 			
@@ -77,7 +77,7 @@ var dataTable =$('#dataTables-example').dataTable({
 						pageSpAddress.empty();
 						$('#sp_id').val($(this).attr(''));
 					}
-					$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+					$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
 						console.log(data);
 						var spList =$("#spList");
 						spList.empty();
@@ -155,7 +155,7 @@ var dataTable =$('#dataTables-example').dataTable({
 					var sp = $("#sp_filter").val();
 					var beginTime = $("#beginTime_filter").val();
 					var endTime = $("#endTime_filter").val();
-					dataTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&status="+status+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+					dataTable.fnSettings().sAjaxSource = "/departOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&status="+status+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
 					dataTable.fnDraw();
 			    });
 });

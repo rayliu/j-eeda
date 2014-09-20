@@ -8,13 +8,13 @@ $(document).ready(function() {
     var urlSource3;
 	if(type=='CUSTOMER'){
 		
-		urlSource1="/yh/chargeCheckOrder/list";
-		urlSource2="/yh/transferOrder/edit/";
-		urlSource3="/yh/transferOrder/delete/";
+		urlSource1="/chargeCheckOrder/list";
+		urlSource2="/transferOrder/edit/";
+		urlSource3="/transferOrder/delete/";
 	}else{	
-		urlSource1="/yh/paymentCheckOrder/list";
-		urlSource2="/yh/transferOrder/edit/";
-		urlSource3="/yh/transferOrder/delete/";
+		urlSource1="/paymentCheckOrder/list";
+		urlSource2="/transferOrder/edit/";
+		urlSource3="/transferOrder/delete/";
 	}
 	//datatable, 动态处理
     $('#eeda-table').dataTable({

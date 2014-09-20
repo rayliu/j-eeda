@@ -13,7 +13,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeCheckOrder/createList",
+        "sAjaxSource": "/chargeCheckOrder/createList",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
@@ -52,7 +52,7 @@ $(document).ready(function() {
     $('#companyName').on('keyup click', function(){
         var inputStr = $('#companyName').val();
         
-        $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+        $.get("/customerContract/search", {locationName:inputStr}, function(data){
             console.log(data);
             var companyList =$("#companyList");
             companyList.empty();
@@ -79,7 +79,7 @@ $(document).ready(function() {
 		var receiptBegin = $("#beginTime").val();
 		var receiptEnd = $("#endTime").val();
 		console.log("1===="+companyName);
-		chargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
+		chargeCheckTable.fnSettings().sAjaxSource = "/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
 	
 		chargeCheckTable.fnDraw();
 	} );
@@ -94,7 +94,7 @@ $(document).ready(function() {
         var inputStr = $('#companyName').val();
         if(inputStr!=null){
         	console.log(inputStr);
-        	chargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+inputStr;
+        	chargeCheckTable.fnSettings().sAjaxSource = "/chargeCheckOrder/createList?companyName="+inputStr;
         	
     		chargeCheckTable.fnDraw();
         }

@@ -120,74 +120,75 @@ public class EedaConfig extends JFinalConfig {
         this.routes = me;
 
         // eeda project controller
-        me.add("/", AppController.class);
+//        me.add("/", AppController.class);
         me.add("/case", CaseController.class);
         me.add("/user", UserProfileController.class);
-        me.add("/salesOrder", SalesOrderController.class);
-        me.add("/loan", LoanController.class);
-        me.add("/propertyClient", PropertyClientController.class);
-        me.add("/sp", controllers.eeda.ServiceProviderController.class);
+//        me.add("/salesOrder", SalesOrderController.class);
+//        me.add("/loan", LoanController.class);
+//        me.add("/propertyClient", PropertyClientController.class);
+//        me.add("/sp", controllers.eeda.ServiceProviderController.class);
         // me.add("/au", AdminUserController.class);
 
+        String path="/";
         // me.add("/fileUpload", HelloController.class);
-        me.add("/yh/debug", controllers.yh.LogController.class, "/yh");
+        me.add("/debug", controllers.yh.LogController.class, "/");
         // yh project controller
-        me.add("/yh", controllers.yh.AppController.class, "/yh");
-        me.add("/yh/loginUser", controllers.yh.LoginUserController.class, "/yh");
-        me.add("/yh/role", controllers.yh.RoleController.class, "/yh");
-        me.add("/yh/toll", controllers.yh.TollController.class, "/yh");
-        me.add("/yh/privilege", controllers.yh.PrivilegeController.class, "/yh");
-        me.add("/yh/pay", controllers.yh.PayController.class, "/yh");
-        me.add("/yh/ownCarPay", controllers.yh.PayController.class, "/yh");
-        me.add("/yh/customer", controllers.yh.profile.CustomerController.class, "/yh");
-        me.add("/yh/serviceProvider", controllers.yh.profile.ServiceProviderController.class, "/yh");
-        me.add("/yh/location", controllers.yh.LocationController.class, "/yh");
-        me.add("/yh/customerContract", controllers.yh.contract.ContractController.class, "/yh");
-        me.add("/yh/spContract", controllers.yh.contract.ContractController.class, "/yh");
-        me.add("/yh/route", controllers.yh.RouteController.class, "/yh");
-        me.add("/yh/office", controllers.yh.OfficeController.class, "/yh");
-        me.add("/yh/product", controllers.yh.profile.ProductController.class, "/yh");
-        me.add("/yh/warehouse", controllers.yh.profile.WarehouseController.class, "/yh");
-        me.add("/yh/orderStatus", controllers.yh.profile.OrderStatusController.class, "/yh");
-        me.add("/yh/account", controllers.yh.AccountController.class, "/yh");
-        me.add("/yh/transferOrder", controllers.yh.order.TransferOrderController.class, "/yh");
-        me.add("/yh/transferOrderItem", controllers.yh.order.TransferOrderItemController.class, "/yh");
-        me.add("/yh/transferOrderItemDetail", controllers.yh.order.TransferOrderItemDetailController.class, "/yh");
-        me.add("/yh/transferOrderMilestone", controllers.yh.order.TransferOrderMilestoneController.class, "/yh");
-        me.add("/yh/returnOrder", controllers.yh.returnOrder.ReturnOrderController.class, "/yh");
-        me.add("/yh/delivery", controllers.yh.delivery.DeliveryController.class, "/yh");
+        me.add("/", controllers.yh.AppController.class, "/");
+        me.add("/loginUser", controllers.yh.LoginUserController.class, "/");
+        me.add("/role", controllers.yh.RoleController.class, "/");
+        me.add("/toll", controllers.yh.TollController.class, "/");
+        me.add("/privilege", controllers.yh.PrivilegeController.class, "/");
+        me.add("/pay", controllers.yh.PayController.class, "/");
+        me.add("/ownCarPay", controllers.yh.PayController.class, "/");
+        me.add("/customer", controllers.yh.profile.CustomerController.class, "/");
+        me.add("/serviceProvider", controllers.yh.profile.ServiceProviderController.class, "/");
+        me.add("/location", controllers.yh.LocationController.class, "/");
+        me.add("/customerContract", controllers.yh.contract.ContractController.class, "/");
+        me.add("/spContract", controllers.yh.contract.ContractController.class, "/");
+        me.add("/route", controllers.yh.RouteController.class, "/");
+        me.add("/office", controllers.yh.OfficeController.class, "/");
+        me.add("/product", controllers.yh.profile.ProductController.class, "/");
+        me.add("/warehouse", controllers.yh.profile.WarehouseController.class, "/");
+        me.add("/orderStatus", controllers.yh.profile.OrderStatusController.class, "/");
+        me.add("/account", controllers.yh.AccountController.class, "/");
+        me.add("/transferOrder", controllers.yh.order.TransferOrderController.class, "/");
+        me.add("/transferOrderItem", controllers.yh.order.TransferOrderItemController.class, "/");
+        me.add("/transferOrderItemDetail", controllers.yh.order.TransferOrderItemDetailController.class, "/");
+        me.add("/transferOrderMilestone", controllers.yh.order.TransferOrderMilestoneController.class, "/");
+        me.add("/returnOrder", controllers.yh.returnOrder.ReturnOrderController.class, "/");
+        me.add("/delivery", controllers.yh.delivery.DeliveryController.class, "/");
 
-        me.add("/yh/deliverySpContract", controllers.yh.contract.ContractController.class, "/yh");
+        me.add("/deliverySpContract", controllers.yh.contract.ContractController.class, "/");
 
-        me.add("/yh/deliveryOrderMilestone", controllers.yh.delivery.DeliveryOrderMilestoneController.class, "/yh");
-        me.add("/yh/pickupOrder", controllers.yh.pickup.PickupOrderController.class, "/yh");
+        me.add("/deliveryOrderMilestone", controllers.yh.delivery.DeliveryOrderMilestoneController.class, "/");
+        me.add("/pickupOrder", controllers.yh.pickup.PickupOrderController.class, "/");
 
-        me.add("/yh/paymentCheckOrder", controllers.yh.arap.PaymentCheckOrderController.class, "/yh");
+        me.add("/paymentCheckOrder", controllers.yh.arap.PaymentCheckOrderController.class, "/");
 
-        me.add("/yh/copeCheckOrder", controllers.yh.arap.CopeCheckOrderController.class, "/yh");
-        me.add("/yh/departOrder", controllers.yh.departOrder.DepartOrderController.class, "/yh");
-        me.add("/yh/gateIn", controllers.yh.inventory.InventoryController.class, "/yh");
-        me.add("/yh/gateOut", controllers.yh.inventory.InventoryController.class, "/yh");
-        me.add("/yh/stock", controllers.yh.inventory.InventoryController.class, "/yh");
-        me.add("/yh/carinfo", controllers.yh.profile.CarinfoController.class, "/yh");
-        me.add("/yh/carmanage", controllers.yh.profile.CarinfoController.class, "/yh");
-        me.add("/yh/driverinfo", controllers.yh.profile.CarinfoController.class, "/yh");
-        me.add("/yh/spdriverinfo", controllers.yh.profile.CarinfoController.class, "/yh");
-        me.add("/yh/spcarinfo", controllers.yh.profile.CarinfoController.class, "/yh");
-        me.add("/yh/deliveryMilestone", controllers.yh.delivery.DeliveryController.class, "/yh");
+        me.add("/copeCheckOrder", controllers.yh.arap.CopeCheckOrderController.class, "/");
+        me.add("/departOrder", controllers.yh.departOrder.DepartOrderController.class, "/");
+        me.add("/gateIn", controllers.yh.inventory.InventoryController.class, "/");
+        me.add("/gateOut", controllers.yh.inventory.InventoryController.class, "/");
+        me.add("/stock", controllers.yh.inventory.InventoryController.class, "/");
+        me.add("/carinfo", controllers.yh.profile.CarinfoController.class, "/");
+        me.add("/carmanage", controllers.yh.profile.CarinfoController.class, "/");
+        me.add("/driverinfo", controllers.yh.profile.CarinfoController.class, "/");
+        me.add("/spdriverinfo", controllers.yh.profile.CarinfoController.class, "/");
+        me.add("/spcarinfo", controllers.yh.profile.CarinfoController.class, "/");
+        me.add("/deliveryMilestone", controllers.yh.delivery.DeliveryController.class, "/");
         //ar
-        me.add("/yh/chargeCheckOrder", controllers.yh.arap.ar.ChargeCheckOrderController.class, "/yh");
-        me.add("/yh/chargeInvoiceOrder", controllers.yh.arap.ar.ChargeInvoiceOrderController.class, "/yh");
-        me.add("/yh/chargeAcceptOrder", controllers.yh.arap.ar.ChargeAcceptOrderController.class, "/yh");
-        me.add("/yh/chargeAdjustOrder", controllers.yh.arap.ar.ChargeAdjustOrderController.class, "/yh");
+        me.add("/chargeCheckOrder", controllers.yh.arap.ar.ChargeCheckOrderController.class, "/");
+        me.add("/chargeInvoiceOrder", controllers.yh.arap.ar.ChargeInvoiceOrderController.class, "/");
+        me.add("/chargeAcceptOrder", controllers.yh.arap.ar.ChargeAcceptOrderController.class, "/");
+        me.add("/chargeAdjustOrder", controllers.yh.arap.ar.ChargeAdjustOrderController.class, "/");
         //ap
-        me.add("/yh/costCheckOrder", controllers.yh.arap.ap.CostCheckOrderController.class, "/yh");
-        me.add("/yh/costAcceptOrder", controllers.yh.arap.ap.CostAcceptOrderController.class, "/yh");
-        me.add("/yh/costAdjustOrder", controllers.yh.arap.ap.CostAdjustOrderController.class, "/yh");
+        me.add("/costCheckOrder", controllers.yh.arap.ap.CostCheckOrderController.class, "/");
+        me.add("/costAcceptOrder", controllers.yh.arap.ap.CostAcceptOrderController.class, "/");
+        me.add("/costAdjustOrder", controllers.yh.arap.ap.CostAdjustOrderController.class, "/");
         //audit log
-        me.add("/yh/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, "/yh");
+        me.add("/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, "/");
         //insuranceOrder
-        me.add("/yh/insuranceOrder", controllers.yh.insurance.InsuranceOrderController.class, "/yh");
+        me.add("/insuranceOrder", controllers.yh.insurance.InsuranceOrderController.class, "/");
     }
 
     public void configPlugin(Plugins me) {
@@ -210,11 +211,10 @@ public class EedaConfig extends JFinalConfig {
         // 配置属性名(字段名)大小写不敏感容器工厂
         arp.setContainerFactory(new CaseInsensitiveContainerFactory());
 
-        arp.addMapping("leads", Leads.class);
+
         arp.addMapping("support_case", Case.class);
         arp.addMapping("user_login", UserLogin.class);
-        arp.addMapping("order_header", Order.class);
-        arp.addMapping("order_item", OrderItem.class);
+
         arp.addMapping("party", Party.class);
         arp.addMapping("party_attribute", PartyAttribute.class);
         arp.addMapping("dp_prof_provider_info", ServiceProvider.class);
@@ -273,7 +273,7 @@ public class EedaConfig extends JFinalConfig {
             connectH2();
         } else {
             cp = new C3p0Plugin(url, username, pwd);
-            // DataInitUtil.initH2Tables(cp);
+            //DataInitUtil.initH2Tables(cp);
 
         }
 
@@ -302,6 +302,6 @@ public class EedaConfig extends JFinalConfig {
         if (H2.equals(getProperty("dbType"))) {
             DataInitUtil.initData(cp);
         }
-        // DataInitUtil.initData(cp);
+        //DataInitUtil.initData(cp);
     }
 }

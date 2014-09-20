@@ -9,7 +9,7 @@ $(document).ready(function() {
 	       	return;
         }
 		//异步向后台提交数据
-		$.post('/yh/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
+		$.post('/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargeCheckOrderId").val(data.ID);
 			  	//$("#style").show();
@@ -58,7 +58,7 @@ $(document).ready(function() {
 	       	return;
         }
 		//异步向后台提交数据
-		$.post('/yh/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
+		$.post('/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargeCheckOrderId").val(data.ID);
 			  	//$("#style").show();
@@ -86,11 +86,11 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeCheckOrder/returnOrderList?returnOrderIds="+returnOrderIds,
+        "sAjaxSource": "/chargeCheckOrder/returnOrderList?returnOrderIds="+returnOrderIds,
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/yh/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             { "mDataProp": "CNAME"},
             { "mDataProp": "TRANSFER_ORDER_NO"},

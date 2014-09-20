@@ -31,7 +31,7 @@ public class CustomerController extends Controller {
     // me.add("/yh", controllers.yh.AppController.class, "/yh");
     public void index() {
         if (LoginUserController.isAuthenticated(this))
-            render("profile/customer/CustomerList.html");
+            render("/yh/profile/customer/CustomerList.html");
     }
 
     public void list() {
@@ -144,7 +144,7 @@ public class CustomerController extends Controller {
                 + id);
         setAttr("contact", contact);
 
-        render("profile/customer/CustomerEdit.html");
+        render("/yh/profile/customer/CustomerEdit.html");
     }
 
     public void delete() {
@@ -171,7 +171,7 @@ public class CustomerController extends Controller {
 
         party.delete();
         if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/customer");
+            redirect("/customer");
     }
 
     public void save() {
@@ -212,7 +212,7 @@ public class CustomerController extends Controller {
 
         setAttr("saveOK", true);
         if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/customer");
+            redirect("/customer");
     }
 
     private void setContact(Contact contact) {

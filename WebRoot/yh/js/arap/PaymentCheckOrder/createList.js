@@ -14,7 +14,7 @@ $(document).ready(function() {
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
-    	"sAjaxSource": "/yh/paymentCheckOrder/createList",
+    	"sAjaxSource": "/paymentCheckOrder/createList",
     	"aoColumns": [
           { "mDataProp": null,
         	  "fnRender": function(obj) {
@@ -56,7 +56,7 @@ $(document).ready(function() {
     $('#companyName').on('keyup', function(){
         var inputStr = $('#companyName').val();
         
-        $.get("/yh/customerContract/search2", {locationName:inputStr}, function(data){
+        $.get("/customerContract/search2", {locationName:inputStr}, function(data){
             console.log(data);
             var companyList =$("#companyList");
             companyList.empty();
