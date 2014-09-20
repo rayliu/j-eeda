@@ -211,6 +211,8 @@
                                             </div>
                                             
                                             <div class="form-group ">
+        										<label class="control-label" for="inputSuccess">客户订单号</label> 
+        										<input class="form-control" type="text" name="customerOrderNo" value="${transferOrder.customer_order_no!''}">
         										<label class="control-label" for="inputSuccess">取货地址</label> <input
         											id="address" class="form-control" type="text"
         											name="address" value="${transferOrder.address!''}">
@@ -556,6 +558,7 @@
                                                         <th>费用条目</th>
                                                         <th>金额</th>
                                                         <th>运输单</th>
+                                                        <th>配送单</th>
                                                         <th>备注</th>
                                                         <th>结算状态</th>
                                                         <th></th>
@@ -576,7 +579,7 @@
                                         <!-- /.table-responsive -->
                                     </div>
                                     <!-- /.panel-body -->
-                                    
+                                    <!-- 
                                     <hr>
                                     <h2>应付</h2>
 									 <button class="btn btn-primary" id="addrow"> 添加应付</button>
@@ -604,9 +607,9 @@
                                             	</div>
                                             </table>
                                         </div>
-                                        <!-- /.table-responsive -->
+                                        /.table-responsive
                                     </div>
-                                    <!-- /.panel-body -->
+                                    /.panel-body -->
                                 </div>
                                 
                                 <div class=".tooltip-demo">

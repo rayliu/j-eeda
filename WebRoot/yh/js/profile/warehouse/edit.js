@@ -19,7 +19,8 @@ $(document).ready(function() {
           	email: true
           },
           	warehouse_area:{
-          	required: true
+          	required: true,
+          	number:true
           }
         },
         highlight: function(element) {

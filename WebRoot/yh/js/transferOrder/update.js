@@ -1826,7 +1826,8 @@ $(document).ready(function() {
 			         	 return "<input type='text' name='amount'>";
 			         }
 			 }},  
-			{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "remark"},
+			{"mDataProp":"TRANSFERORDERNO","sClass": "remark"},
+			{"mDataProp":"TRANSFERORDERNO","sClass": "remark"},
 			{"mDataProp":"REMARK",
                 "fnRender": function(obj) {
                     if(obj.aData.REMARK!='' && obj.aData.REMARK != null){

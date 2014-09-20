@@ -416,6 +416,7 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("payment", getPara("payment"));
 			transferOrder.set("charge_type", getPara("chargeType"));
 			transferOrder.set("charge_type2", getPara("chargeType2"));
+			transferOrder.set("customer_order_no", getPara("customerOrderNo"));
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
 			if (getPara("arrivalMode") != null
@@ -476,6 +477,7 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("payment", getPara("payment"));
 			transferOrder.set("charge_type", getPara("chargeType"));
 			transferOrder.set("charge_type2", getPara("chargeType2"));
+			transferOrder.set("customer_order_no", getPara("customerOrderNo"));
 			
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
