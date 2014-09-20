@@ -541,7 +541,7 @@ $(document).ready(function() {
 					 * return false; }
 					 */
 			        var bool = false;
-			        if("chargeCheckOrderbasic" == parentId||"arap" == parentId){
+			        if("chargeCheckOrderbasic" == parentId){
 			        	bool = true;
 			        }
 			        if($("#delivery_id").val() == ""){
