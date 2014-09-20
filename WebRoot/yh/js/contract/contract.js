@@ -219,78 +219,11 @@ $(document).ready(function() {
                 	 $('#day2').val(data[0].DAYTO);
                 	 $('#carLength2').val(data[0].CARLENGTH);
                 	 $('#carType2').val(data[0].CARTYPE);
-                	 $('#optionsRadiosInline2').prop('checked', true).trigger('change');
+                	 $('#itemNameMessage').val(data[0].ITEM_NAME);
+                	 searchAllLocationFrom(data[0].FROM_ID);
+                	 searchAllLocationTo(data[0].TO_ID);
                 	 
-                	//初始地回显
-                	 var fromName= new Array();
-                	 fromName=data[0].LOCATION_FROM.split(" ");
-                	 $("#mbProvinceFrom option").each(function(){ 
-                		 if($(this).text()==fromName[0]){
-                			 $(this).attr("selected",true);
-                			 var inputStr = $(this).val();
-            				 $.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
-            					var cmbCityFrom =$("#cmbCityFrom");
-            					cmbCityFrom.empty();
-            					cmbCityFrom.append("<option>--请选择城市--</option>");
-            					for(var i = 0; i < data.length; i++)
-            					{
-            						if(data[i].NAME == fromName[1]){
-            							cmbCityFrom.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-            							$.get('/yh/serviceProvider/area', {id:data[i].CODE}, function(data){
-            								var cmbAreaTo =$("#cmbAreaFrom");
-            								cmbAreaTo.empty();
-            								cmbAreaTo.append("<option>--请选择区(县)--</option>");
-            								for(var i = 0; i < data.length; i++)
-            								{
-            									if(data[i].NAME == fromName[2]){
-            										cmbAreaTo.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-            									}else{
-            										cmbAreaTo.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");
-            									}
-            								}
-            							},'json');
-            						}else{
-            							cmbCityFrom.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-            						}
-            					}
-            				},'json');
-                		 }
-                	 });
-                	 //目的地回显
-                	 var toName= new Array();
-                	 toName=data[0].LOCATION_TO.split(" ");
-                	 $("#mbProvinceTo option").each(function(){ 
-                		 if($(this).text()==toName[0]){
-                			 $(this).attr("selected",true);
-                			 var inputStr = $(this).val();
-            				 $.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
-            					var cmbCityTo =$("#cmbCityTo");
-            					cmbCityTo.empty();
-            					cmbCityTo.append("<option>--请选择城市--</option>");
-            					for(var i = 0; i < data.length; i++)
-            					{
-            						if(data[i].NAME == toName[1]){
-            							cmbCityTo.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-            							$.get('/yh/serviceProvider/area', {id:data[i].CODE}, function(data){
-            								var cmbAreaTo =$("#cmbAreaTo");
-            								cmbAreaTo.empty();
-            								cmbAreaTo.append("<option>--请选择区(县)--</option>");
-            								for(var i = 0; i < data.length; i++)
-            								{
-            									if(data[i].NAME == toName[2]){
-            										cmbAreaTo.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-            									}else{
-            										cmbAreaTo.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");
-            									}
-            								}
-            							},'json');
-            						}else{
-            							cmbCityTo.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-            						}
-            					}
-            				},'json');
-                		 }
-                	 });
+                	 //$('#optionsRadiosInline2').prop('checked', true).trigger('change');
                  }else{
                      alert('取消失败');
                  }
@@ -324,9 +257,12 @@ $(document).ready(function() {
                 	 $('#day2').val(data[0].DAYTO);
                 	 $('#amountFrom').val(data[0].AMOUNTFROM);
                 	 $('#amountTo').val(data[0].AMOUNTTO);
+                	 $('#itemNameMessage').val(data[0].ITEM_NAME);
+                	 searchAllLocationFrom(data[0].FROM_ID);
+                	 searchAllLocationTo(data[0].TO_ID);
                 	
-                	 console.log($('#typeRadio').val(data[0].LTLUNITTYPE));
-                	 $('#optionsRadiosInline3').prop('checked', true).trigger('change');
+                	 //console.log($('#typeRadio').val(data[0].LTLUNITTYPE));
+                	 //$('#optionsRadiosInline3').prop('checked', true).trigger('change');
                 	
                 	
                 	 if(data[0].LTLUNITTYPE==$('#optionsRadiosIn1').val()){
@@ -338,77 +274,6 @@ $(document).ready(function() {
                 	 if(data[0].LTLUNITTYPE==$('#optionsRadiosIn3').val()){
                 		 $('#optionsRadiosIn3').prop('checked', true).trigger('change'); 
                 	 }
-                	 
-                	//初始地回显
-                	 var fromName= new Array();
-                	 fromName=data[0].LOCATION_FROM.split(" ");
-                	 $("#mbProvinceFrom option").each(function(){ 
-                		 if($(this).text()==fromName[0]){
-                			 $(this).attr("selected",true);
-                			 var inputStr = $(this).val();
-            				 $.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
-            					var cmbCityFrom =$("#cmbCityFrom");
-            					cmbCityFrom.empty();
-            					cmbCityFrom.append("<option>--请选择城市--</option>");
-            					for(var i = 0; i < data.length; i++)
-            					{
-            						if(data[i].NAME == fromName[1]){
-            							cmbCityFrom.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-            							$.get('/yh/serviceProvider/area', {id:data[i].CODE}, function(data){
-            								var cmbAreaTo =$("#cmbAreaFrom");
-            								cmbAreaTo.empty();
-            								cmbAreaTo.append("<option>--请选择区(县)--</option>");
-            								for(var i = 0; i < data.length; i++)
-            								{
-            									if(data[i].NAME == fromName[2]){
-            										cmbAreaTo.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-            									}else{
-            										cmbAreaTo.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");
-            									}
-            								}
-            							},'json');
-            						}else{
-            							cmbCityFrom.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-            						}
-            					}
-            				},'json');
-                		 }
-                	 });
-                	 //目的地回显
-                	 var toName= new Array();
-                	 toName=data[0].LOCATION_TO.split(" ");
-                	 $("#mbProvinceTo option").each(function(){ 
-                		 if($(this).text()==toName[0]){
-                			 $(this).attr("selected",true);
-                			 var inputStr = $(this).val();
-            				 $.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
-            					var cmbCityTo =$("#cmbCityTo");
-            					cmbCityTo.empty();
-            					cmbCityTo.append("<option>--请选择城市--</option>");
-            					for(var i = 0; i < data.length; i++)
-            					{
-            						if(data[i].NAME == toName[1]){
-            							cmbCityTo.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-            							$.get('/yh/serviceProvider/area', {id:data[i].CODE}, function(data){
-            								var cmbAreaTo =$("#cmbAreaTo");
-            								cmbAreaTo.empty();
-            								cmbAreaTo.append("<option>--请选择区(县)--</option>");
-            								for(var i = 0; i < data.length; i++)
-            								{
-            									if(data[i].NAME == toName[2]){
-            										cmbAreaTo.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-            									}else{
-            										cmbAreaTo.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");
-            									}
-            								}
-            							},'json');
-            						}else{
-            							cmbCityTo.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-            						}
-            					}
-            				},'json');
-                		 }
-                	 });
                 	 
                 	 
                  }else{
@@ -481,6 +346,11 @@ $(document).ready(function() {
 	     	$("#cmbCityTo").empty();
 	     	$("#cmbAreaFrom").empty();
 	     	$("#cmbAreaTo").empty();
+	     	$("#price").val("");
+	     	$("#day").val("");
+	     	$("#day2").val("");
+	     	$("#itemNameMessage").val("");
+	     	
         	
         	var priceType = $("#routeTabs .active").attr("price-type");
         	
@@ -535,7 +405,19 @@ $(document).ready(function() {
         //点击保存的事件，保存干线信息
         //routeItemForm 不需要提交
         $("#saveRouteBtn").click(function(e){
-            //阻止a 的默认响应行为，不需要跳转
+        	
+        	 var price = $("#price").val();
+	    	 var reNum =/^\d*$/;
+	    	 $("#tishi").text("");
+	    	 if(price == "" || price == null){
+	    		 $("#tishi").text("金额不能为空！");
+	    		 return false;
+	    	 }
+	    	 if(isNaN(price)){
+	    		 $("#tishi").text("请输入数字");
+	    		 return false;
+	    	 }
+	    	//阻止a 的默认响应行为，不需要跳转
             e.preventDefault();
             //重设初始地、目的地值
             $("#hideProvinceFrom").val("");
@@ -571,20 +453,18 @@ $(document).ready(function() {
             
             //异步向后台提交数据
             $.post('/yh/customerContract/routeAdd', $("#routeItemForm").serialize(), function(data){
-                    //保存成功后，刷新列表
-                    console.log(data);
-                    if(data.success){
-                    	$('#myModal').modal('hide');
-                    	$('#reset').click();
-                    	dataTable.fnDraw();
-                    	dataTable2.fnDraw();
-                    	dataTable3.fnDraw();
-                    }else{
-                        alert('数据保存失败。');
-                    }
-                },'json');
-          
-	    	
+                //保存成功后，刷新列表
+                console.log(data);
+                if(data.success){
+                	$('#myModal').modal('hide');
+                	$('#reset').click();
+                	dataTable.fnDraw();
+                	dataTable2.fnDraw();
+                	dataTable3.fnDraw();
+                }else{
+                    alert('数据保存失败。');
+                }
+            },'json');
         });
 
         //获取客户的list，选中信息自动填写其他信息
