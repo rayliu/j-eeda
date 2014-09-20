@@ -348,16 +348,29 @@ $(document).ready(function() {
 		$('#message_trigger_err').on('click', function(e) {
 			e.preventDefault();
 		});
+		var parentId = "chargeCheckOrderbasic";
+		$("#chargeCheckOrderbasic").click(function(e){
+			e.preventDefault();
+			parentId = e.target.getAttribute("id");
+		});
+		
 		/*--------------------------------------------------------------------*/
+		
 		//运输里程碑
 		$("#transferOrderMilestoneList").click(function(e){
 			e.preventDefault();
-			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			if("chargeCheckOrderbasic" == parentId){
+				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+				
+			}
+			parentId = e.target.getAttribute("id");
 		});
 		$("#transferOrderarap").click(function(e){
 			e.preventDefault();
-			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-			
+			if("chargeCheckOrderbasic" == parentId){
+				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);	
+			}
+			parentId = e.target.getAttribute("id");
 		});
 		 //保存入库单
 		 $("#saveInventoryBtn").click(function(e){
@@ -437,7 +450,9 @@ $(document).ready(function() {
 			        
 		    	}
 		    	
-*/		  
-			   $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+*/		  	if("chargeCheckOrderbasic" == parentId){
+				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			}
+			parentId = e.target.getAttribute("id");  
 		});
 });
