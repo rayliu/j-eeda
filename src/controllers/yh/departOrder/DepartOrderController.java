@@ -185,7 +185,9 @@ public class DepartOrderController extends Controller {
     				+ "left join carinfo  car on deo.driver_id=car.id" + " where combine_type = '"
     				+ DepartOrder.COMBINE_TYPE_DEPART + "' and deo.status in('已发车','在途')";
     		
-    		sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length,(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode,(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  from depart_order deo "
+    		sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length,(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode,(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no"
+    				+ " ,(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location "
+    				+ " from depart_order deo "
     				+ " left join carinfo c on deo.carinfo_id = c.id "
     				+ " left join party p on deo.driver_id = p.id "
     				+ " left join contact ct on p.contact_id = ct.id  where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
@@ -207,8 +209,9 @@ public class DepartOrderController extends Controller {
     				+ sp + "%' and " + "ifnull(tr.order_no,'') like '%" + orderNo + "%'"
     				+ " and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime +"'";
     		
-    		sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length,(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode,group_concat(tr.order_no separator ' ') as transfer_order_no "
-    				+ " from depart_order deo"
+    		sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length,(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode,group_concat(tr.order_no separator ' ') as transfer_order_no"
+    				+ " ,(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location "
+    				+ " from depart_order deo "
     				+ " left join carinfo c on deo.carinfo_id = c.id "
     				+ " left join party p on deo.driver_id = p.id "
     				+ " left join contact ct on p.contact_id = ct.id "

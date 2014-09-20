@@ -23,10 +23,14 @@ $(document).ready(function() {
             },
             {"mDataProp":null,
                 "fnRender": function(obj) {
-                	if(obj.aData.DEPART_STATUS==null){
-                		obj.aData.DEPART_STATUS="";
-                	}
-                    return obj.aData.DEPART_STATUS+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                	if(obj.aData.LOCATION!=null && obj.aData.LOCATION!=''){
+                		return obj.aData.LOCATION+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                	}else{
+                    	if(obj.aData.DEPART_STATUS==null){
+                    		obj.aData.DEPART_STATUS="";
+                    	}
+                    	return obj.aData.DEPART_STATUS+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                	}                	
                 }
             },
             {"mDataProp":"CONTACT_PERSON"},

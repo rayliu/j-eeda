@@ -1333,6 +1333,7 @@ $(document).ready(function() {
 				toLocationList.show();
 			},'json');
 		});
+    
     //获取城市的区县
     $('#cmbCityFrom').on('change', function(){
 			var inputStr = $(this).val();
@@ -1360,7 +1361,7 @@ $(document).ready(function() {
      	var province = $("#mbProvinceTo");
      	$.post('/yh/serviceProvider/province',function(data){
      		province.append("<option>--请选择省份--</option>");
-				var hideProvince = $("#hideProvinceTo").val();
+			var hideProvince = $("#hideProvinceTo").val();
      		for(var i = 0; i < data.length; i++)
 				{
 					if(data[i].NAME == hideProvince){
