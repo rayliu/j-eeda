@@ -143,10 +143,10 @@ $(document).ready(function() {
 					alert("请输入目的地城市");
 					return false;
 				}
-				if(cmbAreaTo == "--请选择区(县)--" || cmbAreaTo == ""){
+				/*if(cmbAreaTo == "--请选择区(县)--" || cmbAreaTo == ""){
 					alert("请输入目的地区（县）");
 					return false;
-				}
+				}*/
 	            e.preventDefault();
 	            // 异步向后台提交数据
 	            $.post('/yh/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){

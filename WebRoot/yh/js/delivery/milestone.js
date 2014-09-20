@@ -27,7 +27,8 @@ $(document).ready(function() {
                 		obj.aData.STATUS="";
                 	}
                 	if(obj.aData.STATUS=='已签收'){
-                		return obj.aData.STATUS;
+                		//return obj.aData.STATUS;
+                		return "已送达";
                 	}else{
                 		return obj.aData.STATUS+"<a id='edit_status' del_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
                 	}
@@ -40,7 +41,7 @@ $(document).ready(function() {
             { 
                 "mDataProp": null, 
                 "fnRender": function(obj) {   
-                	if(obj.aData.STATUS=='已签收'){
+                	if(obj.aData.STATUS=="已签收"){
                 		return "已送达";
                 	}else{
                 		return "<a class='btn btn-primary confirmDelivery' code='"+obj.aData.ID+"'>"+
@@ -54,7 +55,7 @@ $(document).ready(function() {
     //签收完成
     $("#eeda-table").on('click', '.confirmDelivery', function(e){
     	var delivery_id =$(this).attr("code");
-    	if(confirm("确定签收 吗？")){
+    	if(confirm("到达确认 吗？")){
     		$.post('/yh/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
     			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
