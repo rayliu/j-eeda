@@ -155,6 +155,28 @@ $(document).ready(function() {
     	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
     	transferOrder.fnDraw();
     } );
+    //获取所有的网点
+
+	$.post('/yh/transferOrder/searchAllOffice',function(data){
+	 if(data.length > 0){
+		 var officeSelect = $("#officeSelect");
+		 officeSelect.empty();
+		 var hideOfficeId = $("#hideOfficeId").val();
+		 for(var i=0; i<data.length; i++){
+			 if(i == 0){
+				 officeSelect.append("<option ></option>");
+			 }else{
+				 if(data[i].ID == hideOfficeId){
+					 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+				 }else{
+					 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+				 }
+			 }
+		 }
+		
+	 }
+ },'json');
+
     //获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(){
         var inputStr = $('#customer_filter').val();
