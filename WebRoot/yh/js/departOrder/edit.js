@@ -13,6 +13,7 @@
 	var departOrderId = $("#departOrderId").val();
 	if(departOrderId != '' && departOrderId != null){
 		var departOrderChargeType = $("#departOrderChargeType").val();
+		alert("修改计费方式："+departOrderChargeType);
 		$("input[name='chargeType']").each(function(){
 			if(departOrderChargeType == $(this).val()){
 				//零担
@@ -541,7 +542,7 @@
     	    $("#transferOrderMilestoneList").click(function(e){
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
     	    		clickSaveDepartOrder(e);
-    	    		if("chargeCheckOrderbasic" == parentId){
+    	    		if("chargeCheckOrderbasic" == parentId || "arap1" == parentId){
         				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
         	    	}
     	    	}
@@ -641,7 +642,7 @@
     	    	e.preventDefault();
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
 				   	clickSaveDepartOrder(e);
-				   	if("chargeCheckOrderbasic" == parentId){
+				   	if("chargeCheckOrderbasic" == parentId ||"transferOrderMilestoneList" == parentId){
 	    	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	    	    	}
     	    	} 

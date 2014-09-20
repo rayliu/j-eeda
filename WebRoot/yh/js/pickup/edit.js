@@ -326,7 +326,7 @@
 		e.preventDefault();
 		//异步向后台提交数据
 		var bool = false;
-		if("chargeCheckOrderbasic" == parentId){
+		if("chargeCheckOrderbasic" == parentId ||"addressList" == parentId||"pickupOrderPayment" == parentId){
 			bool = true;
 		}
 		
@@ -408,7 +408,8 @@
 		e.preventDefault();
 		//异步向后台提交数据
 		var bool = false;
-		if("chargeCheckOrderbasic" == parentId){
+		if("chargeCheckOrderbasic" == parentId || "transferOrderMilestoneList" == parentId ||
+				"pickupOrderPayment" == parentId){
 			bool= true;
 		}
 		
@@ -1061,7 +1062,7 @@
 	
 	$("#pickupOrderPayment").click(function(e){
  		clickSavePickupOrder(e);
- 		if("chargeCheckOrderbasic" == parentId){
+ 		if("chargeCheckOrderbasic" == parentId || "transferOrderMilestoneList" == parentId||"addressList" == parentId){
  			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  		}
  		

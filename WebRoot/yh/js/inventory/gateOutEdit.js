@@ -1,4 +1,4 @@
-arapTab$(document).ready(function() {
+$(document).ready(function() {
 	$('#reset').hide();
 $('#menu_warehouse').addClass('active').find('ul').addClass('in');
 
@@ -129,14 +129,13 @@ $('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
 	
 	$("#transferOrderMilestoneList").click(function(e){
 		e.preventDefault();
-		
-		parentId = e.target.getAttribute("id");
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	$("#transferOrderarap").click(function(e){
 		e.preventDefault();
-		parentId = e.target.getAttribute("id");
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
-
+/*--------------------------------------------------------------------*/
 //保存出库单
  $("#saveInventoryBtn").click(function(e){
         //阻止a 的默认响应行为，不需要跳转	
@@ -379,17 +378,9 @@ $("#gateOutConfirmBtn").click(function(){
 	 $("#addproduct").click(function(){
 		 $('#reset').click();
 	 });
-	 var parentId = "basic";
+	 
 	 $("#transferOrderItemList").click(function(e){
 		 	$("#saveInventoryBtn").click();
-		 	if("basic" == parentId){
-		 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-		 	}
-		 	parentId = e.target.getAttribute("id");
+		 	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	   });
-	
-	 $("#basic").click(function(e){
-			e.preventDefault();
-			parentId = e.target.getAttribute("id");
-	});
 });

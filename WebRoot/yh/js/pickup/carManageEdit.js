@@ -283,9 +283,8 @@
 	$("#transferOrderMilestoneList").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
-		console.log("================="+parentId);
 		var bool = false;
-		if("chargeCheckOrderbasic" == parentId){
+		if("chargeCheckOrderbasic" == parentId || "addressList" == parentId ||  "pickupOrderPayment" == parentId){
 			bool = true;
 		}
 		//异步向后台提交数据
@@ -326,7 +325,6 @@
 			},'json');
         }
         parentId = e.target.getAttribute("id");
-        console.log(parentId);
 	});
 
 	// 保存新里程碑
@@ -372,9 +370,8 @@
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
-		console.log("======"+parentId);
 		var bool = false;
-		if("chargeCheckOrderbasic" == parentId ){
+		if("chargeCheckOrderbasic" == parentId || "transferOrderMilestoneList" == parentId){
 			bool = true;
 		}
         if($("#pickupOrderId").val() == ""){
@@ -422,7 +419,6 @@
 			},'json');
         }
         parentId = e.target.getAttribute("id");
-        cosole.log(parentId);
 	});
 	
 	var swapPosition = function(currentId,targetId,currentVal,targetVal){
@@ -545,12 +541,9 @@
 	// 货品信息
 	$("#pickupOrderItemList").click(function(e){
 		clickSavePickupOrder(e);
-		console.log("++++++++++"+parentId);
-		if("chargeCheckOrderbasic" == parentId){
-			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-		}
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		
 		parentId = e.target.getAttribute("id");
-		console.log(parentId);
 	});
 
 	//获取供应商的list，选中信息在下方展示其他信息
@@ -947,7 +940,7 @@
 			$("#milestonePickupId").val(data.ID);
 			if(data.ID>0){
 				$("#pickupId").val(data.ID);
-			  	//$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			  	//$("#style").show();				    
 			}else{
 				alert('数据保存失败。');
@@ -1002,22 +995,14 @@
 	});
 
  	$("#pickupOrderPayment").click(function(e){
- 		console.log("----"+parentId);
- 		console.log("chargeCheckOrderbasic" == parentId);
- 		var bool = false;
- 		if("chargeCheckOrderbasic" == parentId){
- 			bool = true;
- 		}
- 		parentId = e.target.getAttribute("id");
- 		console.log(parentId);
  		saveCarManage(e);
- 		if(bool){
-			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
- 		}
  		var finItemIds = $("#finItemIds").val(); 		
  		var pickupOrderId = $("#pickupOrderId").val();	
  		var finItems = $("#table_fin2").children('tbody').children();
- 		
+ 		var bool = false;
+ 		if(!"pickupOrderItemList" == parentId ||!"pickupOrderPayment" == parentId){
+ 			bool = true;
+ 		}
  		for(var i=0;i<finItems.length;i++){
  			if(finItemIds.contains(finItems[i].id)){
  				$.post('/yh/pickupOrder/searchOwnCarFinItem', {pickupOrderId:pickupOrderId, finItemId:finItems[i].id}, function(data){
@@ -1031,11 +1016,12 @@
  		        		}
  		        	}
  		    	},'json');
- 				
+ 				if(bool){
+ 					$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 				}
  			}
  		}
- 		
- 		
+ 		parentId = e.target.getAttribute("id");
  	}); 	
  	
 	

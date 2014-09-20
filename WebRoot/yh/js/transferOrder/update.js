@@ -401,7 +401,7 @@ $(document).ready(function() {
 		       	return false; 
 	        }
 	        var bool =false;
-	        if("chargeCheckOrderbasic" == parentId){
+	        if("chargeCheckOrderbasic" == parentId || "transferOrderArap" == parentId){
 	        	bool = true;
 	        }
 	        
@@ -898,7 +898,7 @@ $(document).ready(function() {
 		       	return false; 
 	        }
 	        var bool = false;
-	        if("chargeCheckOrderbasic" == parentId){
+	        if("chargeCheckOrderbasic" == parentId || "transferOrderItemList" == parentId||"transferOrderArap" == parentId){
 	        	bool= true;
 	        }
 
@@ -1742,7 +1742,7 @@ $(document).ready(function() {
 		       	return false; 
 	        }
 	        var bool = false;
-	        if("chargeCheckOrderbasic" == parentId){
+	        if("chargeCheckOrderbasic" == parentId || "transferOrderItemList" == parentId){
 	        	bool=true;
 	        }
 	        
