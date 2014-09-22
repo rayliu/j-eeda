@@ -24,6 +24,10 @@ $(document).ready(function() {
             	"mDataProp": "ORDER_NO",
             	"sClass": "order_no"
             },
+            { 
+            	"mDataProp": "CNAME",
+            	"sClass": "cname"
+            },
             {"mDataProp":"OPERATION_TYPE",
             	"sClass": "operation_type",
     			"fnRender": function(obj) {
@@ -104,10 +108,7 @@ $(document).ready(function() {
             	"mDataProp": "STATUS",
             	"sClass": "status"
             },
-            { 
-            	"mDataProp": "CNAME",
-            	"sClass": "cname"
-            },
+
     		{ 
             	"mDataProp": "ROUTE_FROM",
             	"sClass": "route_from"

@@ -24,6 +24,7 @@ $(document).ready(function() {
                  }
             },
             { "mDataProp": "ORDER_NO"},
+            { "mDataProp": "CNAME"},
             { "mDataProp":"OPERATION_TYPE",
             	"sClass": "operation_type",
     			"fnRender": function(obj) {
