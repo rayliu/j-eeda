@@ -179,10 +179,11 @@ public class EedaConfig extends JFinalConfig {
         me.add(contentPath+"/spdriverinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add(contentPath+"/spcarinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add(contentPath+"/deliveryMilestone", controllers.yh.delivery.DeliveryController.class, contentPath);
+        
         //ar= account revenue  应收条目处理
-        //me.add(contentPath+"/chargeConfiremList", controllers.yh.arap.ar.ChargeItemConfirmController.class, contentPath);
+        me.add(contentPath+"/chargeConfiremList", controllers.yh.arap.ar.ChargeItemConfirmController.class, contentPath);
         me.add(contentPath+"/chargeCheckOrder", controllers.yh.arap.ar.ChargeCheckOrderController.class, contentPath);
-        //me.add(contentPath+"/chargePreInvoiceOrder", controllers.yh.arap.ar.ChargePreInvoiceOrderController.class, contentPath);
+        me.add(contentPath+"/chargePreInvoiceOrder", controllers.yh.arap.ar.ChargePreInvoiceOrderController.class, contentPath);
         me.add(contentPath+"/chargeInvoiceOrder", controllers.yh.arap.ar.ChargeInvoiceOrderController.class, contentPath);
         me.add(contentPath+"/chargeAcceptOrder", controllers.yh.arap.ar.ChargeAcceptOrderController.class, contentPath);
         me.add(contentPath+"/chargeAdjustOrder", controllers.yh.arap.ar.ChargeAdjustOrderController.class, contentPath);

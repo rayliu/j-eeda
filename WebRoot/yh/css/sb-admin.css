@@ -377,4 +377,11 @@ label.error {
     max-height: 200px;
     overflow-y: auto;
 }
+
+.datatable-scroll {
+    clear: both;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+}
 /* ray added */

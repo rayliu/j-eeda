@@ -4,10 +4,9 @@ $(document).ready(function() {
     
 	//datatable, 动态处理
     var chargeCheckTable = $('#chargeCheck-table').dataTable({
-        "bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 25,
         "bServerSide": true,

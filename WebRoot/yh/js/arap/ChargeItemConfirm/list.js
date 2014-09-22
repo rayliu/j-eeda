@@ -2,25 +2,31 @@
 $(document).ready(function() {
 
     $('#menu_charge').addClass('active').find('ul').addClass('in');
-
+   
 	  //datatable, 动态处理
     var datatable=$('#eeda-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
+        "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeCheckOrder/list",
-        "aoColumns": [   
+        "sAjaxSource": "/yh/chargeItemConfirm/list",
+        "aoColumns": [ 
+            { "mDataProp": null, "sWidth":"100px",
+              "fnRender": function(obj) {
+                return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+              }
+            },  
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
         			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
-            {"mDataProp":"CNAME"},
-            {"mDataProp":"STATUS",
+            {"mDataProp":"CNAME", "sWidth":"100px"},
+            {"mDataProp":"STATUS", "sWidth": "60px", 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -36,15 +42,15 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"RETURN_ORDER_NO"},
-            {"mDataProp":"TRANSFER_ORDER_NO"},
-            {"mDataProp":"DELIVERY_ORDER_NO"},            
-            {"mDataProp":"CREATOR_NAME"},        	
-            {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"REMARK"},
+            {"mDataProp":"RETURN_ORDER_NO", "sWidth":"100px"},
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"100px"},
+            {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"100px"},            
+            {"mDataProp":"CREATOR_NAME", "sWidth":"100px"},        	
+            {"mDataProp":"CREATE_STAMP", "sWidth":"100px"},
+            {"mDataProp":"REMARK", "sWidth":"100px"},
             { 
                 "mDataProp": null, 
-                "sWidth": "8%",                
+                "sWidth": "8px",                
                 "fnRender": function(obj) {
                     return	"<a class='btn btn-danger' href='#'"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
