@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.InsuranceFinItem;
 import models.InsuranceOrder;
 import models.Party;
 import models.TransferOrder;
@@ -101,7 +102,9 @@ public class InsuranceOrderController extends Controller {
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ul.user_name create_by,tor.customer_order_no,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
+                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,"
+                    + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp "
+                    + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + "  left join user_login ul on ul.id = tor.create_by "
@@ -146,7 +149,9 @@ public class InsuranceOrderController extends Controller {
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ul.user_name create_by,tor.customer_order_no,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
+                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,"
+                    + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp "
+                    + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + " left join user_login ul on ul.id = tor.create_by "
@@ -212,7 +217,9 @@ public class InsuranceOrderController extends Controller {
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ul.user_name create_by,tor.customer_order_no,"
-                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
+                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.pickup_assign_status,"
+                    + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp "
+                    + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + " left join user_login ul on ul.id = tor.create_by "
@@ -265,7 +272,7 @@ public class InsuranceOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select * from insurance_order create_stamp desc " + sLimit;
+        String sql = "select ior.*,'YS2014092200001' transfer_order_no from insurance_order ior order by ior.create_stamp desc " + sLimit;
 
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
@@ -343,5 +350,89 @@ public class InsuranceOrderController extends Controller {
         setAttr("paymentItemList", paymentItemList);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/insuranceOrder/insuranceOrderEdit.html");
+    }
+
+    // 初始化货品数据
+    public void getInitPickupOrderItems() {
+        String order_id = getPara("localArr");// 运输单id
+        String tr_item = getPara("tr_item");// 货品id
+        String item_detail = getPara("item_detail");// 单品id
+
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        String sqlTotal = "select count(1) total from transfer_order_item tof" + " where tof.order_id in(" + order_id + ")";
+        logger.debug("sql :" + sqlTotal);
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select toi.id item_id,ifi.id fin_id,ifi.amount fin_amount,ifi.*,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume)*toi.amount volume, "
+                + " ifnull(case toi.weight when 0.0 then null else toi.weight end, pd.weight)*toi.amount weight"
+                + " ,c.company_name customer,tor.order_no,toi.amount,toi.remark,"
+                + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp "
+				+ "  from transfer_order_item toi "
+                + " left join insurance_fin_item ifi on toi.id = ifi.transfer_order_item_id "
+                + " left join transfer_order tor on tor.id = toi.order_id"
+                + " left join party p on p.id = tor.customer_id"
+                + " left join contact c on c.id = p.contact_id"
+                + " left join product pd on pd.id = toi.product_id"
+                + " where toi.order_id in(" + order_id + ")  order by c.id" + sLimit;
+        List<Record> departOrderitem = Db.find(sql);
+        Map Map = new HashMap();
+        Map.put("sEcho", pageIndex);
+        Map.put("iTotalRecords", rec.getLong("total"));
+        Map.put("iTotalDisplayRecords", rec.getLong("total"));
+        Map.put("aaData", departOrderitem);
+        renderJson(Map);
+    }  
+    
+    public void updateInsuranceOrderFinItem(){
+    	String itemId = getPara("itemId");
+    	String finId = getPara("finId");
+    	String name = getPara("name");
+    	String value = getPara("value");
+    	InsuranceFinItem insuranceFinItem = InsuranceFinItem.dao.findFirst("select * from insurance_fin_item where transfer_order_item_id = ?", itemId);
+    	if("amount".equals(name) && "".equals(value)){
+    		value = "0";
+    	}
+    	if(insuranceFinItem != null){
+    		insuranceFinItem.set(name, value);
+    		insuranceFinItem.update();
+    	}else{
+    		insuranceFinItem = new InsuranceFinItem();
+    		insuranceFinItem.set(name, value);
+    		insuranceFinItem.set("transfer_order_item_id", itemId);
+    		insuranceFinItem.save();
+    	}
+    	renderJson("{\"success\":true}");
+    }
+    
+    public void save(){
+    	InsuranceOrder insuranceOrder = null;
+    	String insuranceOrderId = getPara("insuranceOrderId");
+    	if(insuranceOrderId != null && !"".equals(insuranceOrderId)){
+    		insuranceOrder = InsuranceOrder.dao.findById(insuranceOrderId);
+    		insuranceOrder.set("remark", getPara("remark"));
+    		insuranceOrder.update();
+    	}else{
+    		insuranceOrder = new InsuranceOrder();
+    		insuranceOrder.set("order_no", getPara("order_no"));
+    		insuranceOrder.set("create_stamp", new Date());
+    		insuranceOrder.set("status", getPara("status"));
+    		insuranceOrder.set("create_by", getPara("create_by"));
+    		insuranceOrder.set("remark", getPara("remark"));
+    		insuranceOrder.save();
+    		
+    		String orderId = getPara("orderid");
+    		String[] orderIds = orderId.split(",");
+    		for(int i = 0; i < orderIds.length; i++){
+    			TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
+    			transferOrder.set("insurance_id", insuranceOrder.get("id"));
+    			transferOrder.update();
+    		}
+    	}
+    	renderJson(insuranceOrder);
     }
 }

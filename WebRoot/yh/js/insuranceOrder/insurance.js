@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
     $('#menu_damage').addClass('active').find('ul').addClass('in');
-    var orderType = [];
+    var names = [];
 	//datatable, 动态处理
     var insuranceOrder = $('#eeda-table').dataTable({
     	"bSort": false, // 不要排序
@@ -45,8 +45,8 @@ $(document).ready(function() {
             	"sClass": "route_to"
             },                                      
     		{ 
-            	"mDataProp": "CREATE_STAMP",
-            	"sClass": "create_stamp"
+            	"mDataProp": "START_CREATE_STAMP",
+            	"sClass": "start_create_stamp"
             }, 
             {"mDataProp":"CARGO_NATURE",
             	"sClass": "cargo_nature",
@@ -130,7 +130,7 @@ $(document).ready(function() {
 		if($(this).prop("checked") == true){
 			$("#saveBtn").attr('disabled', false);
 		}else{
-			if(orderType.length == 0){
+			if(names.length == 0){
 				$("#saveBtn").attr('disabled', true);				
 			}
 		}
@@ -153,47 +153,41 @@ $(document).ready(function() {
 	$("#transferOrderList").on('click', '.checkedOrUnchecked', function(){
 		var ckeckedTransferOrderList = $("#ckeckedTransferOrderList");
 		var order_no = $(this).parent().siblings('.order_no')[0].textContent;		
-		var operation_type = $(this).parent().siblings('.operation_type')[0].textContent;		
-		var order_type = $(this).parent().siblings('.order_type')[0].textContent;		
-		var cargo_nature = $(this).parent().siblings('.cargo_nature')[0].textContent;		
-		var total_weight = $(this).parent().siblings('.total_weight')[0].textContent;		
-		var total_volume = $(this).parent().siblings('.total_volume')[0].textContent;		
 		var total_amount = $(this).parent().siblings('.total_amount')[0].textContent;		
-		var address = $(this).parent().siblings('.address')[0].textContent;		
-		var pickup_mode = $(this).parent().siblings('.pickup_mode')[0].textContent;		
-		var arrival_mode = $(this).parent().siblings('.arrival_mode')[0].textContent;		
 		var status = $(this).parent().siblings('.status')[0].textContent;		
 		var cname = $(this).parent().siblings('.cname')[0].textContent;		
 		var route_from = $(this).parent().siblings('.route_from')[0].textContent;		
 		var route_to = $(this).parent().siblings('.route_to')[0].textContent;		
+		var start_create_stamp = $(this).parent().siblings('.start_create_stamp')[0].textContent;		
+		var cargo_nature = $(this).parent().siblings('.cargo_nature')[0].textContent;		
+		var spname = $(this).parent().siblings('.spname')[0].textContent;		
+		var create_by = $(this).parent().siblings('.create_by')[0].textContent;		
 		var create_stamp = $(this).parent().siblings('.create_stamp')[0].textContent;		
-		var assign_status = $(this).parent().siblings('.assign_status')[0].textContent;		
+		var customer_order_no = $(this).parent().siblings('.customer_order_no')[0].textContent;		
 		if($(this).prop('checked') == true){
-			if(orderType.length != 0){
-				if(orderType[0] != $(this).parent().siblings('.order_type')[0].innerHTML){
-					alert("请选择相同的订单类型!");
+			if(names.length != 0){
+				if(names[0] != $(this).parent().siblings('.cname')[0].innerHTML){
+					alert("请选择同一客户的订单!");
 					return false;
 				}else{
-					orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
+					names.push($(this).parent().siblings('.cname')[0].innerHTML);
 				}
 			}else{
-				if($(this).parent().siblings('.order_type')[0].innerHTML != ''){
-					orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
+				if($(this).parent().siblings('.cname')[0].innerHTML != ''){
+					names.push($(this).parent().siblings('.cname')[0].innerHTML);
 				}
 			}
-			sumValue();
-			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+operation_type+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
-					+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");			
+			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+total_amount+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"
+					+start_create_stamp+"</td><td>"+cargo_nature+"</td><td>"+spname+"</td><td>"+create_by+"</td><td>"+create_stamp+"</td><td>"+customer_order_no+"</td></tr>");			
 		}else{
-			sumValue();
 			var allTrs = ckeckedTransferOrderList.children();
 			for(var i=0;i<allTrs.length;i++){
 				if(allTrs[i].attributes[0].value == $(this).val()){
 					allTrs[i].remove();
 				}
 			}
-			if(orderType.length != 0){
-				orderType.splice($(this).parent().siblings('.order_type')[0].innerHTML, 1);
+			if(names.length != 0){
+				names.splice($(this).parent().siblings('.cname')[0].innerHTML, 1);
 			}
 		}
 	});

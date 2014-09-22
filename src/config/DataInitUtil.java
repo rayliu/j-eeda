@@ -88,12 +88,15 @@ public class DataInitUtil {
             // return_order 回单
             stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,receipt_date timestamp,transaction_status varchar(20),order_type varchar(20),creator bigint,remark varchar(255), depart_order_id bigint, delivery_order_id bigint,transfer_order_id bigint, notity_party_id bigint,customer_id bigint);");
 
+            // 保险单
+            stmt.executeUpdate("create table if not exists insurance_order(id bigint auto_increment primary key,order_no varchar(255),ref_no varchar(255),status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
+            
             // transfer_order 运输单
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment primary key,order_no varchar(255),customer_order_no varchar(255),status varchar(255),pickup_assign_status varchar(255),depart_assign_status varchar(255),"
                     + "cargo_nature varchar(255),cargo_nature_detail varchar(255),inventory_id bigint,pickup_mode varchar(255),arrival_mode varchar(255),charge_type varchar(50),charge_type2 varchar(50),remark varchar(255),operation_type varchar(255),pickup_seq varchar(255),payment varchar(50),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
                     + "create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,eta timestamp,address varchar(255),customer_province varchar(255),route_from varchar(255),route_to varchar(255),order_type varchar(255),"
-                    + "customer_id bigint,sp_id bigint,notify_party_id bigint,driver_id bigint,warehouse_id bigint,office_id bigint,foreign key(customer_id) references party(id),foreign key(sp_id) references party(id),"
-                    + "foreign key(notify_party_id) references party(id),foreign key(driver_id) references party(id),foreign key(warehouse_id) references warehouse(id),foreign key(office_id) references office(id));");
+                    + "customer_id bigint,sp_id bigint,notify_party_id bigint,driver_id bigint,warehouse_id bigint,office_id bigint,insurance_id bigint,foreign key(customer_id) references party(id),foreign key(sp_id) references party(id),"
+                    + "foreign key(notify_party_id) references party(id),foreign key(driver_id) references party(id),foreign key(warehouse_id) references warehouse(id),foreign key(office_id) references office(id),foreign key(insurance_id) references insurance_order(id));");
             // transfer_order_item 货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment primary key,item_no varchar(255),item_name varchar(255),item_desc varchar(255),"
                     + "amount double,size double,width double,height double,unit varchar(255),volume double,weight double,remark varchar(5120),order_id bigint,foreign key(order_id) references transfer_order(id),product_id bigint,foreign key(product_id) references product(id));");
@@ -164,8 +167,9 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists arap_audit_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
             stmt.executeUpdate("create table if not exists arap_audit_order_invoice(id bigint auto_increment primary key,audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id),audit_invoice_id bigint,foreign key(audit_invoice_id) references arap_audit_invoice(id));");
             
-            // 保险单
-            stmt.executeUpdate("create table if not exists insurance_order(id bigint auto_increment primary key,order_no varchar(255),ref_no varchar(255),status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,transfer_order_id bigint,foreign key(transfer_order_id) references transfer_order(id));");
+            // 保险单费用表
+            stmt.executeUpdate("create table if not exists insurance_fin_item(id bigint auto_increment primary key,status varchar(255),location varchar(255),insurance_category varchar(255),amount double,rate double,insurance_amount double,insurance_no varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
+            		+ " insurance_order_id bigint,foreign key(insurance_order_id) references insurance_order(id),transfer_order_item_id bigint,foreign key(transfer_order_item_id) references transfer_order_item(id));");
 
             stmt.close();
             // conn.commit();

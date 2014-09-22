@@ -1,7 +1,7 @@
  $(document).ready(function() {
 		$('#menu_damage').addClass('active').find('ul').addClass('in');
     	
-		var insuranceOrder = $('#dataTables-example2').dataTable({
+		var insuranceOrder = $('#dataTables-example').dataTable({
             "bFilter": false, //不需要默认的搜索框
 	        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -13,9 +13,9 @@
 	        },
 	        "sAjaxSource": "/yh/insuranceOrder/list",
 	        "aoColumns": [   
-			    {"mDataProp":"DEPART_NO",
+			    {"mDataProp":"ORDER_NO",
 	            	"fnRender": function(obj) {
-	            			return "<a href='/yh/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+	            			return "<a href='/yh/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
 	            		}},
 			    {"mDataProp":"STATUS"},    
 			    {"mDataProp":"CREATE_STAMP"},     

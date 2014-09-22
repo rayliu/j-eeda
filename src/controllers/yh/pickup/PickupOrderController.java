@@ -476,7 +476,6 @@ public class PickupOrderController extends Controller {
         String uncheckedDetailIds = getPara("uncheckedDetail");
         String replenishmentOrderId = getPara("replenishmentOrderId");
         String gateInSelect = getPara("gateInSelect");
-        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<rgetPara('gateInSelect'):"+getPara("gateInSelect")+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         if (pickId == null || "".equals(pickId)) {
             pickupOrder = new DepartOrder();
             pickupOrder.set("depart_no", getPara("order_no"));

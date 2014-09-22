@@ -7,7 +7,7 @@
            
                 <div class="col-lg-12">
                     <h1 class="page-header">保险单</h1>                  
-                    <input type="hidden" id="pickupOrderId" value="${pickupOrder.id!''}">
+                    <input type="hidden" id="insuranceOrderId" value="${insuranceOrder.id!''}">
                     <input type="hidden" id="transferOrderType" value="${transferOrderAttr.order_type!''}">
                     <input type="hidden" id="finishBtnVal" value="${transferOrderMilestone.status!''}">
                 </div>
@@ -25,9 +25,11 @@
                             <ul class="nav nav-tabs">
                                 <li class="active"><a href="#basic" data-toggle="tab" id = "chargeCheckOrderbasic">基本信息</a>
                                 </li>
-                                 <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">里程碑</a>
+                                <li class=""><a href="#cargos" data-toggle="tab" id="insuranceOrderItemList">货品信息</a>
                                 </li>
-                                <li class=""><a href="#pickuparap" data-toggle="tab" id="pickupOrderPayment">应付</a>
+                                <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">里程碑</a>
+                                </li>
+                                <li class=""><a href="#pickuparap" data-toggle="tab" id="insuranceOrderPayment">应付</a>
                                 </li>
                             </ul>
 
@@ -36,29 +38,26 @@
                                 <div class="tab-pane fade active in" id="basic">
                                  
                                 <div class="row">
-                                   <form id="pickupOrderForm" method="post" action="">
-                                        <input id="sp_id" type="hidden" name="sp_id" value="${spParty.id!''}${pickupOrder.sp_id!''}"/>
-                    			   		<input type="hidden" id="pickupId" name="pickupId" value="${pickupOrder.id!''}">
-                                        <input id="driver_id" type="hidden" name="driver_id" value="${pickupOrder.driver_id!''}"/>                                   	  
-                                       	<input type="hidden" name="order_no" value="${order_no!''}${pickupOrder.depart_no!''}"/>
-                                       	<input type="hidden" name="status" value="${status!''}${pickupOrder.status!''}"/>
-                                       	<input type="hidden" name="create_by" value="${create_by!''}${pickupOrder.create_by!''}"/>
-		                                <input class="" id="depart_id" value="${pickupOrder.depart_id!''}" type="hidden" name="depart_id" >
+                                   <form id="insuranceOrderForm" method="post" action="">
+                                        <input id="sp_id" type="hidden" name="sp_id" value="${spParty.id!''}${insuranceOrder.sp_id!''}"/>
+                    			   		<input type="hidden" id="pickupId" name="pickupId" value="${insuranceOrder.id!''}">
+                                        <input id="driver_id" type="hidden" name="driver_id" value="${insuranceOrder.driver_id!''}"/>                                   	  
+                                       	<input type="hidden" name="order_no" value="${order_no!''}${insuranceOrder.depart_no!''}"/>
+                                       	<input type="hidden" name="status" value="${status!''}${insuranceOrder.status!''}"/>
+                                       	<input type="hidden" name="create_by" value="${create_by!''}${insuranceOrder.create_by!''}"/>
+		                                <input class="" id="depart_id" value="${insuranceOrder.depart_id!''}" type="hidden" name="depart_id" >
 		                                <input class="" id="type" value="${type!''}" type="hidden" >
 		            				    <input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
 		            				    <input class="" id="tr_itemid_list" value="" type="hidden" name="tr_itemid_list">
-		            				    <input class="" id="item_detail" value="" type="hidden" name="item_detail" >                                  	
-		                                <input id="carinfoId" type="hidden" name="carinfoId" value="${pickupOrder.carinfo_id!''}"/>                                    	
-		                                <input id="checkedDetail" type="hidden" name="checkedDetail"/>                                    	
-		                                <input id="uncheckedDetail" type="hidden" name="uncheckedDetail"/>                                    	
+		            				    <input class="" id="item_detail" value="" type="hidden" name="item_detail" >                        	
                                         
 	                                   <div class="col-lg-6">
 	                                  		<h3>保险信息</h3>                                           
 	                                            <div class="form-group">
-	                                                <label>保险单号</label> <strong>${order_no!''} ${pickupOrder.depart_no!''}</strong>
+	                                                <label>保险单号</label> <strong>${order_no!''} ${insuranceOrder.depart_no!''}</strong>
 	                                            </div>
 	                                            <div class="form-group">
-	                                                <label>单据状态</label>   ${status!''} ${pickupOrder.status!''}
+	                                                <label>单据状态</label>   ${status!''} ${insuranceOrder.status!''}
 	                                            </div>
 	                                            <div class="form-group">
 	                                            <label>创建人</label>   ${userLogin.user_name!''}   ${userLogin2.user_name!''}                                         
@@ -66,89 +65,13 @@
 		                                                                                                                         
 											<div class="form-group">
 	                                            <label>备注</label>
-	                                            <textarea class="form-control" rows="8" id="remark" name="remark">${pickupOrder.remark!''}</textarea>
+	                                            <textarea class="form-control" rows="8" id="remark" name="remark">${insuranceOrder.remark!''}</textarea>
 	                                        </div> 
 	                                   </div>
                                     </div>   
                                 </form>
                             </div>
                             
-                            <div class="tab-pane fade" id="line">  
-                            	<div class="panel-body">
-                            	<div class="controls">
-                                	<button class="btn btn-primary" data-toggle="modal" data-target="#addExternalTransferOrder">
-									  添加额外运输单
-									</button>
-                                </div>
-                                    <div class="table-responsive"> 
-                                    	<form id="pickupAddressForm" action="">
-                                    		<input type="hidden" id="addressPickupOrderId" value="${pickupOrder.id!''}" name="pickupOrderId">
-	                                        <table class="table table-striped table-bordered table-hover">
-	                                            <thead>
-	                                                <tr>
-	                                                    <th>运输单号</th>
-	                                                    <th>客户</th>
-	                                                    <th>提货地点</th>
-	                                                    <th>创建时间</th>
-	                                                    <th>货场</th>
-	                                                    <th>仓库</th>
-	                                                    <th>状态</th>
-	                                                    <th>操作</th>
-	                                                </tr>
-	                                            </thead>
-	                                            <tbody id="pickupAddressTbody" >
-	                                            	
-	                                            </tbody>
-	                                        </table>
-                                        </form>
-                                    </div>
-                                    <!-- /.table-responsive -->
-                                </div>
-                            </div>
-                            
-							<!-- 模态框 -->
-							<div class="modal fade" id="addExternalTransferOrder" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-							  <div class="modal-dialog">
-							    <div class="modal-content">
-							      <div class="modal-header">
-							        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-							        <h4 class="modal-title" id="myModalLabel">添加额外运输单</h4>
-							      </div>
-							      <div class="modal-body">
-							      	<form id="addExternalTransferOrderForm" action="">
-							      		<input type="hidden" name="transferOrderIds" id="transferOrderIds"/>
-							      		<input type="hidden" name="pickupOrderId" id="addExternalPickupOrderId"/>
-							      		<div class="table-responsive">
-			                                <table class="table table-striped table-bordered table-hover" id="external-table">
-			                                    <thead>
-			                                        <tr>
-			                                            <th></th>
-			                                            <th>运输单号</th>
-			                                            <th>订单类型</th>
-			                                            <th>货品</th>
-			                                            <th>提货地点</th>
-			                                            <th>提货方式</th>
-			                                            <th>状态</th>                                         
-			                                            <th>客户</th>                                         
-			                                            <th>始发城市</th>                                         
-			                                            <th>目的地城市</th>                                         
-			                                            <th>创建时间</th>                                         
-			                                         </tr>
-			                                    </thead>
-			                                    <tbody>                                        
-			                                    </tbody>
-			                                </table>
-			                            </div>
-								      <div class="modal-footer">
-								        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-								        <button id="addExternalTransferOrderFormBtn" type="button" class="btn btn-primary">保存</button>
-								      </div>
-									</form>
-								  </div>
-							    </div><!-- /.modal-content -->
-							  </div><!-- /.modal-dialog -->
-							</div><!-- /.modal -->
-									
                                 <div class="tab-pane fade" id="cargos">  
                                      <div class="panel-body" style="" id="ATMitem">
                                      <div class="table-responsive">                                        
@@ -163,7 +86,14 @@
 		                                            <th>体积</th> 
 		                                            <th>重量</th> 
 		                                            <th>备注</th>                                          
-		                                           <th>操作</th>
+		                                            <th>险别</th>                                          
+		                                            <th>保额</th>                                          
+		                                            <th>费率(0.06% - 0.07%)</th>                                          
+		                                            <th>起运时间</th>                                          
+		                                            <th>运输路线</th>                                          
+		                                            <th>保费</th>                                          
+		                                            <th>凭条号</th>                                          
+		                                            <th>查看</th>                                          
 		                                        </tr>
 		                                    </thead>                               
 		                                    <tbody>                                                                                                   
@@ -303,33 +233,12 @@
 			                        </div>
                             </div>
                         </div>
-                        <div class="modal fade" id="detailDialog" tabindex="-1">
-							<div class="modal-dialog">
-                                <div class="col-lg-4" class="col-lg-4" style="border-top-width: 0px; margin-top: 100px; width: 350px; height: 200px; margin-left: 150px;">
-	                    			<div class="panel panel-default">
-		                       			<div class="panel-heading">
-		                            		温馨提示
-		                        		</div>
-		                       			<div class="panel-body">
-		                            		<p>单据创建完毕,是否继续创建？</p>
-		                        		</div>
-		                        		<form id="detailCheckBoxForm" method="post" action="/yh/pickupOrder/createPickupOrder">
-		                        			<input type="hidden" name="localArr" value="${localArr!''}">
-			                       			<div class="panel-footer">
-			                          			<a class="btn btn-default" href="/yh/pickupOrder">否</a>
-			                          			<button id="continueCreateBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">是</button>
-			                        		</div>                        		
-		                        		</form>
-	                   				</div> 
-				                </div>
-			                </div>      
-			            </div> 
                         
                         <!-- /.panel-body --> 
                         <div class=".tooltip-demo">
                             <hr/>
                         	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
-		               		<button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
+		               		<button id="saveInsuranceOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
 		               		<a class="btn btn-default" href="/yh/insuranceOrder">返回</a>
                         </div>                       
                     </div>
