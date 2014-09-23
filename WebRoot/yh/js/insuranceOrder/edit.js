@@ -196,24 +196,26 @@
 	});
 	/*--------------------------------------------------------------------*/
 	
-	//transferOrderForm 不需要提交	
+	//transferOrderForm 不需要提交
+	var parentId = "chargeCheckOrderbasic";
  	$("#saveInsuranceOrderBtn").click(function(e){
  		e.preventDefault();
-		/*var bool = false;
-		if("chargeCheckOrderbasic" == parentId ||"addressList" == parentId||"pickupOrderPayment" == parentId){
+ 		var bool = false;
+		if("chargeCheckOrderbasic" == parentId){
 			bool = true;
-		}*/
+		}
  		$.post('/yh/insuranceOrder/save', $("#insuranceOrderForm").serialize(), function(data){
 			$("#insuranceOrderId").val(data.ID);
 			if(data.ID>0){
 				$("#insuranceId").val(data.ID);
-				/*if(bool){
+				if(bool){
 					$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-				}*/
+				}
 			}else{
 				alert('数据保存失败。');
 			}
 		},'json');
+        parentId = e.target.getAttribute("id");
 	});
    
  	/*var pickupOrderMilestone = function(){
