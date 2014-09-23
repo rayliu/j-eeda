@@ -41,9 +41,9 @@
                  "fnRender": function(obj) {
                 	 var str = "";
                      if(obj.aData.FIN_AMOUNT!='' && obj.aData.FIN_AMOUNT != null){
-                         str = "<input type='text' name='fin_amount' value='"+obj.aData.AMOUNT+"'>";
+                         str = "<input type='text' name='amount' value='"+obj.aData.FIN_AMOUNT+"'>";
                      }else{
-                     	 str = "<input type='text' name='fin_amount'>";
+                     	 str = "<input type='text' name='amount'>";
                      }
                 	 return str;
              }},
@@ -59,7 +59,18 @@
                 	 return str;
              }},
              { "mDataProp": "START_CREATE_STAMP"},
-             { "mDataProp": null},
+             { "mDataProp": "ROUTE_FROM",
+            	 "fnRender": function(obj) {
+            		 var route_from = obj.aData.ROUTE_FROM;
+            		 if(obj.aData.ROUTE_FROM == null){
+            			 reute_from = "";
+            		 }
+            		 var route_to = obj.aData.ROUTE_TO;
+            		 if(obj.aData.ROUTE_TO == null){
+            			 reute_to = "";
+            		 }
+                	 return route_from +" - "+ route_to;
+             }},
              { "mDataProp": "INSURANCE_AMOUNT",
             	 "sClass": "insurance_amount", 
                  "fnRender": function(obj) {
@@ -76,13 +87,13 @@
                  "fnRender": function(obj) {
                 	 var str = "";
                      if(obj.aData.INSURANCE_NO!='' && obj.aData.INSURANCE_NO != null){
-                         str = "<input type='text' name='insurance_no' disabled value='"+obj.aData.INSURANCE_NO+"'>";
+                         str = "<input type='text' name='insurance_no' value='"+obj.aData.INSURANCE_NO+"'>";
                      }else{
-                     	 str = "<input type='text' name='insurance_no' disabled>";
+                     	 str = "<input type='text' name='insurance_no'>";
                      }
                 	 return str;
              }},
-             { 
+             /*{ 
                  "mDataProp": null, 
                  "sWidth": "8%",                
                  "fnRender": function(obj) {                    
@@ -91,7 +102,7 @@
                                  "查看"+
                              "</a>";
                  },
-             }                                       
+             }    */                                   
          ],
          "fnInitComplete": function(oSettings, json) {
          	$("#eeda-table td").on('click', '', function(){
@@ -104,13 +115,9 @@
  	$("#pickupItem-table").on('blur', 'input,select', function(e){
  		e.preventDefault();
  		var itemId = $(this).parent().parent().attr("item_id");
- 		var finId = $(this).parent().parent().attr("fin_id");
- 		if(finId == undefined){
- 			finId = "";
- 		}
  		var name = $(this).attr("name");
  		var value = $(this).val();
- 		if(name == 'fin_amount'){
+ 		if(name == 'amount'){
  			var rate = $(this).parent().siblings(".rate")[0].children[0].value;
  			if(rate != null && rate != '' && value != null && value != ''){
  				$(this).parent().siblings(".insurance_amount")[0].children[0].value = value * rate;
@@ -121,7 +128,8 @@
  				$(this).parent().siblings(".insurance_amount")[0].children[0].value = value * amount;
  			}
  		}
- 		$.post('/yh/insuranceOrder/updateInsuranceOrderFinItem', {itemId:itemId, finId:finId, name:name, value:value}, function(data){
+ 		var insuranceAmount = $(this).parent().siblings(".insurance_amount")[0].children[0].value;
+ 		$.post('/yh/insuranceOrder/updateInsuranceOrderFinItem', {itemId:itemId, name:name, value:value, insuranceAmount:insuranceAmount}, function(data){
  			if(data.success){
  			}else{
  				alert("修改失败!");
