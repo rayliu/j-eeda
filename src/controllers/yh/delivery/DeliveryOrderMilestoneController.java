@@ -34,6 +34,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.returnOrder.ReturnOrderController;
 
 public class DeliveryOrderMilestoneController extends Controller {
 
@@ -318,7 +319,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         renderJson(map);
     }
 
-    // 回单签收
+    // 配送单  到达确认
     public void receipt() {
         Long delivery_id = Long.parseLong(getPara("delivery_id"));
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
@@ -385,58 +386,11 @@ public class DeliveryOrderMilestoneController extends Controller {
         // 生成回单
 
         // 生成应收
-        TransferOrderFinItem tFinItem = new TransferOrderFinItem();
-        List<Record> trasferList = Db
-                .find("select * from delivery_order_item where delivery_id ='" + delivery_id + "'");
-        // 普通货品
-        for (int i = 0; i < trasferList.size(); i++) {
-            if (trasferList.get(0).get("trasfer_item_id") == null) {
-                TransferOrder tOrder = TransferOrder.dao.findById(trasferList.get(i).get("transfer_order_id"));
-                if (deliveryOrder.get("customer_id") != null) {
-                    List<Record> contractList = Db
-                            .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
-                                    + tOrder.get("customer_id")
-                                    + "') and from_id = '"
-                                    + tOrder.get("route_from")
-                                    + "' and to_id ='"
-                                    + tOrder.get("route_to")
-                                    + "' and priceType='"
-                                    + tOrder.get("charge_type") + "'");
-                    if (contractList.size() > 0) {
-                        tFinItem.set("order_id", tOrder.get("id"));
-                        tFinItem.set("fin_item_id", "4");
-                        tFinItem.set("amount", contractList.get(0).get("amount"));
-                        tFinItem.set("status", "未完成");
-                        tFinItem.set("creator", users.get(0).get("id"));
-                        tFinItem.set("create_date", sqlDate);
-                        tFinItem.save();
-                    }
-                }
-            } else {
-                TransferOrder tOrder = TransferOrder.dao.findById(trasferList.get(i).get("transfer_order_id"));
-                int size = trasferList.size();
-                if (deliveryOrder.get("customer_id") != null) {
-                    List<Record> contractList = Db
-                            .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
-                                    + tOrder.get("customer_id")
-                                    + "') and from_id = '"
-                                    + tOrder.get("route_from")
-                                    + "' and to_id ='"
-                                    + tOrder.get("route_to")
-                                    + "' and priceType='"
-                                    + tOrder.get("charge_type") + "'");
-                    if (contractList.size() > 0) {
-                        tFinItem.set("order_id", tOrder.get("id"));
-                        tFinItem.set("fin_item_id", "4");
-                        tFinItem.set("amount", Double.parseDouble(contractList.get(0).get("amount").toString()) * size);
-                        tFinItem.set("status", "未完成");
-                        tFinItem.set("creator", users.get(0).get("id"));
-                        tFinItem.set("create_date", sqlDate);
-                        tFinItem.save();
-                    }
-                }
-            }
-        }
+        //ATM
+        ReturnOrderController roController= new ReturnOrderController();
+        roController.calculateCharge(deliveryOrder);
+        
+        //TODO:  普通货品的先不算
     }
 
     // 构造单号

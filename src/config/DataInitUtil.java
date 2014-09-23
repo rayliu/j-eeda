@@ -111,7 +111,7 @@ public class DataInitUtil {
                     + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id));");
 
             // Depart_Order_fin_item 提货单/发车单应付明细
-            stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, pickup_order_id bigint, fin_item_id bigint,"
+            stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, pickup_order_id bigint, fin_item_id bigint, contract_id bigint, "
                     + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120));");
 
             // Transfer_Order_item_detail 单件货品明细
@@ -420,12 +420,18 @@ public class DataInitUtil {
 
             // 示范数据item
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id, product_id) "
-                    + "values('2014042600001', 'ATM', 'ATM机', 2,'台', 35, 10, '2台ATM', 2, 1);");
+                    + "values('2014042600001', 'ATM', 'ATM机', 5, '台', 35, 10, '2台ATM', 2, 1);");
             // 示范数据item_detail
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
                     + "values(2, '2014042600001', 'S001', 0, 'ATM', false, 3, 9);");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
                     + "values(2, '2014042600001', 'S002', 0, 'ATM', false, 3, 9);");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                    + "values(2, '2014042600001', 'S003', 0, 'ATM', false, 3, 9);");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                    + "values(2, '2014042600001', 'S004', 0, 'ATM', false, 3, 9);");
+            stmt.executeUpdate("insert into transfer_order_item_detail(order_id,item_no,serial_no,estimate_damage_amount,item_name,is_damage,item_id,notify_party_id) "
+                    + "values(2, '2014042600001', 'S005', 0, 'ATM', false, 3, 9);");
             //
             stmt.executeUpdate("insert into transfer_order_item(item_no, item_name, item_desc,amount,unit,volume,weight,remark,order_id) "
                     + "values('123456', 'ATM', '这是很多台ATM',2,'台',1000,2000,'一台ATM','3');");

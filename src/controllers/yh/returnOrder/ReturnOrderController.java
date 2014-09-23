@@ -342,6 +342,8 @@ public class ReturnOrderController extends Controller {
 			if (notifyPartyId != null) {
 				updateContact(notifyPartyId);
 			}
+			// 计算配送单的触发的应收
+			calculateCharge(deliveryOrder);
 		}
 		returnOrder.set("remark", getPara("remark"));
 		returnOrder.update();
@@ -392,8 +394,7 @@ public class ReturnOrderController extends Controller {
 			// TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
 			transferOrderMilestone.save();
 
-			// 计算配送单的触发的应收
-			calculateCharge(deliveryOrder);
+			
 		} else {
 			TransferOrder transferOrder = TransferOrder.dao
 					.findById(returnOrder.get("transfer_order_id"));
@@ -419,7 +420,7 @@ public class ReturnOrderController extends Controller {
 		renderJson("{\"success\":true}");
 	}
 
-	private void calculateCharge(DeliveryOrder deliveryOrder) {
+	public void calculateCharge(DeliveryOrder deliveryOrder) {
 		// TODO 运输单的计费类型
 		String chargeType = "perUnit";
 
@@ -503,7 +504,7 @@ public class ReturnOrderController extends Controller {
 		}
 	}
 
-	private void genFinItem(Long departOrderId, Record tOrderItemRecord,
+	private void genFinItem(Long deliveryOrderId, Record tOrderItemRecord,
 			Record contractFinItem) {
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
@@ -523,6 +524,7 @@ public class ReturnOrderController extends Controller {
 		transferFinItem.set("amount", contractFinItem.getDouble("amount"));
 		transferFinItem.set("order_id",
 				tOrderItemRecord.get("transfer_order_id"));
+		transferFinItem.set("delivery_id", deliveryOrderId);
 		transferFinItem.set("status", "未完成");
 		transferFinItem.set("fin_type", "charge");// 类型是应收
 		transferFinItem
