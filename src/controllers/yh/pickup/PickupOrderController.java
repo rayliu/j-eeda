@@ -1363,12 +1363,12 @@ public class PickupOrderController extends Controller {
     	}    	
     	// 获取总条数
     	String totalWhere = "";
-    	String sql = "select count(1) total from fin_item f where f.type = '应付' and f.driver_type = '"+Carinfo.CARINFO_TYPE_OWN+"'";
+    	String sql = "select count(1) total from fin_item f where f.type = '自营应付' and f.driver_type = '"+Carinfo.CARINFO_TYPE_OWN+"'";
     	Record rec = Db.findFirst(sql + totalWhere);
     	logger.debug("total records:" + rec.getLong("total"));
     	
     	// 获取当前页的数据
-    	List<Record> orders = Db.find("select f.* from fin_item f where f.type = '应付' and f.driver_type = '"+Carinfo.CARINFO_TYPE_OWN+"'");
+    	List<Record> orders = Db.find("select f.* from fin_item f where f.type = '自营应付' and f.driver_type = '"+Carinfo.CARINFO_TYPE_OWN+"'");
     	
     	Map orderMap = new HashMap();
     	orderMap.put("sEcho", pageIndex);

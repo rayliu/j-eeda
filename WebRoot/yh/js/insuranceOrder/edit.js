@@ -129,7 +129,8 @@
  			}
  		}
  		var insuranceAmount = $(this).parent().siblings(".insurance_amount")[0].children[0].value;
- 		$.post('/yh/insuranceOrder/updateInsuranceOrderFinItem', {itemId:itemId, name:name, value:value, insuranceAmount:insuranceAmount}, function(data){
+ 		var insuranceOrderId = $("#insuranceOrderId").val();
+ 		$.post('/yh/insuranceOrder/updateInsuranceOrderFinItem', {itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value, insuranceAmount:insuranceAmount}, function(data){
  			if(data.success){
  			}else{
  				alert("修改失败!");
@@ -299,77 +300,10 @@
 				pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td>"+data[i].CREATE_STAMP+"</td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' checked='' value='yard"+data[i].ID+"'></td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' value='warehouse"+data[i].ID+"'></td><td>"+data[i].STATUS+"</td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
 			}
 		},'json');
-	};
+	};*/
 	
-    var pickupOrderId = $("#pickupOrderId").val();
-    //应收应付datatable
-	var paymenttable=$('#table_fin2').dataTable({
-		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "bFilter": false, //不需要默认的搜索框
-        //"sPaginationType": "bootstrap",
-        "iDisplayLength": 10,
-        "bServerSide": true,
-        "sAjaxSource": "/yh/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId,
-    	"oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
-        },
-        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-			$(nRow).attr('id', aData.ID);
-			return nRow;
-		},
-        "aoColumns": [
-			{"mDataProp":"NAME",
-                "fnRender": function(obj) {
-                    if(obj.aData.NAME!='' && obj.aData.NAME != null){
-                    	var str="";
-                    	$("#paymentItemList").children().each(function(){
-                    		if(obj.aData.NAME == $(this).text()){
-                    			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
-                    		}else{
-                    			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-                    		}
-                    	});
-                        return "<select name='fin_item_id'>"+str+"</select>";
-                    }else{
-                    	var str="";
-                    	$("#paymentItemList").children().each(function(){
-                    		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-                    	});
-                    	return "<select name='fin_item_id'>"+str+"</select>";
-                    }
-             }},
-			{"mDataProp":"AMOUNT",
-                 "fnRender": function(obj) {
-                     if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-                         return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
-                     }else{
-                     	 return "<input type='text' name='amount'>";
-                     }
-             }},  
-			{"mDataProp":"REMARK",
-                 "fnRender": function(obj) {
-                     if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-                         return "<input type='text' name='remark' value='"+obj.aData.REMARK+"'>";
-                     }else{
-                     	 return "<input type='text' name='remark'>";
-                     }
-             }},  
-			{"mDataProp":"STATUS"},
-			{  
-                "mDataProp": null, 
-                "sWidth": "60px",  
-            	"sClass": "remark",              
-                "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
-              		"<i class='fa fa-trash-o fa-fw'> </i> "+
-              		"删除"+
-              		"</a>";
-                }
-            }     
-        ]      
-    });
 	
-	//异步删除应付
+	/*//异步删除应付
 	$("#table_fin2").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		e.preventDefault();
@@ -446,4 +380,71 @@
 			}
     	},'json');
 	});*/
+ 	
+ 	// 应付datatable
+    var insuranceOrderId = $("#insuranceOrderId").val();
+	var accountTab = $('#accountTab').dataTable({
+		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "bFilter": false, //不需要默认的搜索框
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+        "sAjaxSource": "/yh/insuranceOrder/accountPayable?insuranceOrderId="+insuranceOrderId,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
+        "aoColumns": [
+			{"mDataProp":null,
+                "fnRender": function(obj) {
+                	return "保险费";
+                }
+             },
+			{"mDataProp":"SUM_AMOUNT"}   
+        ]      
+    });	
+	
+	// 应收datatable
+	var insuranceOrderId = $("#insuranceOrderId").val();
+	var incomeTab = $('#incomeTab').dataTable({
+		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		"bFilter": false, //不需要默认的搜索框
+		//"sPaginationType": "bootstrap",
+		"iDisplayLength": 10,
+		"bServerSide": true,
+		"sAjaxSource": "/yh/insuranceOrder/incomePayable?insuranceOrderId="+insuranceOrderId,
+		"oLanguage": {
+			"sUrl": "/eeda/dataTables.ch.txt"
+		},
+		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
+		"aoColumns": [
+		  	{"mDataProp":"CNAME"},   
+		  	{"mDataProp":"TRANSFER_ORDER_NO","sWidth": "100%"},   
+	        {"mDataProp":null,
+		      	"fnRender": function(obj) {
+		      		return "保险费";
+		      	}
+	        },   
+		  	{"mDataProp":"SUM_AMOUNT"},   
+		  	{"mDataProp":"INCOME_RATE",
+		      	"fnRender": function(obj) {
+		      		return "<input type='text' name='income_rate'>";
+		    }},
+	        {"mDataProp":"INCOME_INSURANCE_AMOUNT"}   
+        ]      
+	});
+	
+	$("#insuranceOrderPayment").click(function(){
+		var insuranceOrderId = $("#insuranceOrderId").val();
+		accountTab.fnSettings().sAjaxSource = "/yh/insuranceOrder/accountPayable?insuranceOrderId="+insuranceOrderId;
+		accountTab.fnDraw();
+		incomeTab.fnSettings().sAjaxSource = "/yh/insuranceOrder/incomePayable?insuranceOrderId="+insuranceOrderId;
+		incomeTab.fnDraw();
+	});
 });

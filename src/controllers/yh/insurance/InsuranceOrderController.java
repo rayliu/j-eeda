@@ -390,22 +390,27 @@ public class InsuranceOrderController extends Controller {
     
     public void updateInsuranceOrderFinItem(){
     	String itemId = getPara("itemId");
-    	String finId = getPara("finId");
+    	String insuranceOrderId = getPara("insuranceOrderId");
     	String name = getPara("name");
     	String value = getPara("value");
+    	String insuranceAmount = getPara("insuranceAmount");
     	InsuranceFinItem insuranceFinItem = InsuranceFinItem.dao.findFirst("select * from insurance_fin_item where transfer_order_item_id = ?", itemId);
     	if("amount".equals(name) && "".equals(value)){
     		value = "0";
     	}
+    	if("".equals(insuranceAmount) || insuranceAmount == null){
+    		insuranceAmount = "0";
+    	}
     	if(insuranceFinItem != null){
     		insuranceFinItem.set(name, value);
-    		insuranceFinItem.set("insurance_amount", getPara("insuranceAmount"));
+    		insuranceFinItem.set("insurance_amount", insuranceAmount);
     		insuranceFinItem.update();
     	}else{
     		insuranceFinItem = new InsuranceFinItem();
     		insuranceFinItem.set(name, value);
-    		insuranceFinItem.set("insurance_amount", getPara("insuranceAmount"));
+    		insuranceFinItem.set("insurance_amount", insuranceAmount);
     		insuranceFinItem.set("transfer_order_item_id", itemId);
+    		insuranceFinItem.set("insurance_order_id", insuranceOrderId);
     		insuranceFinItem.save();
     	}
     	renderJson("{\"success\":true}");
@@ -457,5 +462,61 @@ public class InsuranceOrderController extends Controller {
         setAttr("localArr", orderId);
     	if(LoginUserController.isAuthenticated(this))
     		render("/yh/insuranceOrder/insuranceOrderEdit.html");
+    }
+    
+    // 应付
+    public void accountPayable(){
+    	Map orderMap = new HashMap();
+    	String insuranceOrderId = getPara("insuranceOrderId");
+    	if(insuranceOrderId != null && !"".equals(insuranceOrderId)){	    		
+	        String sLimit = "";
+	        String pageIndex = getPara("sEcho");
+	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+	        }
+	        // 获取总条数
+	        /*String totalWhere = "";
+	        String sql = "select 1 total from insurance_fin_item";
+	        Record rec = Db.findFirst(sql + totalWhere);
+	        logger.debug("total records:" + rec.getLong("total"));*/
+
+	        // 获取当前页的数据
+	        List<Record> orders = Db.find("select sum(insurance_amount) sum_amount from insurance_fin_item where insurance_order_id = "+insuranceOrderId);
+	
+	        orderMap.put("sEcho", pageIndex);
+	        orderMap.put("iTotalRecords", 1);
+	        orderMap.put("iTotalDisplayRecords", 1);
+	        orderMap.put("aaData", orders);
+    	}
+        renderJson(orderMap);
+    }
+    
+    // 应收
+    public void incomePayable(){
+    	Map orderMap = new HashMap();
+    	String insuranceOrderId = getPara("insuranceOrderId");
+    	if(insuranceOrderId != null && !"".equals(insuranceOrderId)){	    		
+    		String sLimit = "";
+    		String pageIndex = getPara("sEcho");
+    		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+    			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+    		}
+    		
+    		// 获取当前页的数据
+    		String sql = "select sum(ifi.amount) sum_amount,(group_concat(tor.order_no separator '\r\n')) as transfer_order_no"
+					+ " ,c.abbr cname,ifi.income_rate income_rate,(income_rate*sum(ifi.insurance_amount)) income_insurance_amount from insurance_fin_item ifi"
+					+ " left join transfer_order_item toi on toi.id = ifi.transfer_order_item_id"
+					+ " left join transfer_order tor on tor.id = toi.order_id"
+					+ " left join party p on p.id = tor.customer_id"
+					+ " left join contact c on c.id = p.contact_id"
+					+ " where insurance_order_id = " + insuranceOrderId;
+    		List<Record> orders = Db.find(sql);
+    		
+    		orderMap.put("sEcho", pageIndex);
+    		orderMap.put("iTotalRecords", 1);
+    		orderMap.put("iTotalDisplayRecords", 1);
+    		orderMap.put("aaData", orders);
+    	}
+    	renderJson(orderMap);
     }
 }

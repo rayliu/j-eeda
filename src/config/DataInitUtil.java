@@ -168,7 +168,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists arap_audit_order_invoice(id bigint auto_increment primary key,audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id),audit_invoice_id bigint,foreign key(audit_invoice_id) references arap_audit_invoice(id));");
             
             // 保险单费用表
-            stmt.executeUpdate("create table if not exists insurance_fin_item(id bigint auto_increment primary key,status varchar(255),location varchar(255),insurance_category varchar(255),amount double,rate double,insurance_amount double,insurance_no varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
+            stmt.executeUpdate("create table if not exists insurance_fin_item(id bigint auto_increment primary key,status varchar(255),location varchar(255),insurance_category varchar(255),amount double,rate double,income_rate double,insurance_amount double,insurance_no varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
             		+ " insurance_order_id bigint,foreign key(insurance_order_id) references insurance_order(id),transfer_order_item_id bigint,foreign key(transfer_order_item_id) references transfer_order_item(id));");
 
             stmt.close();
@@ -363,16 +363,16 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('FTF','分摊费用','应收','这是分摊费用');");
             
             // 自营车辆付费条目定义
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','CYF','柴油费','应付','这是柴油费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','CCF','出车补贴','应付','这是出车补贴费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','SJGZ','司机工资','应付','这是司机工资');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','LQF','路桥费','应付','这是路桥费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','ZXF','装卸费','应付','这是装卸费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','FKF','罚款','应付','这是罚款费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','SHGZ','送货员工资','应付','这是送货员工资');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','TCF','停车费','应付','这是停车费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','ZSF','住宿费','应付','这是住宿费');");
-            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','QTF','其它费用','应付','这是其它费用');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','CYF','柴油费','自营应付','这是柴油费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','CCF','出车补贴','自营应付','这是出车补贴费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','SJGZ','司机工资','自营应付','这是司机工资');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','LQF','路桥费','自营应付','这是路桥费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','ZXF','装卸费','自营应付','这是装卸费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','FKF','罚款','自营应付','这是罚款费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','SHGZ','送货员工资','自营应付','这是送货员工资');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','TCF','停车费','自营应付','这是停车费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','ZSF','住宿费','自营应付','这是住宿费');");
+            stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','QTF','其它费用','自营应付','这是其它费用');");
 
             newCustomer();
 
