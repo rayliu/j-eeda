@@ -588,7 +588,11 @@
 	// 货品信息
 	$("#pickupOrderItemList").click(function(e){
 		clickSavePickupOrder(e);
-		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		console.log(parentId);
+		if("chargeCheckOrderbasic"==parentId){
+			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		}
+		
 		parentId = e.target.getAttribute("id");
 	});
 

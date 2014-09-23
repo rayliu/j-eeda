@@ -656,7 +656,10 @@
     	    $("#departOrderItemList").click(function(e){
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
     	    		clickSaveDepartOrder(e);
-    	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+    	    		if("chargeCheckOrderbasic" == parentId){
+    	    			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+    	    		}
+    	    		
     	    	} 
     	    	parentId = e.target.getAttribute("id");
     	    });

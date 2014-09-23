@@ -150,8 +150,10 @@ $('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
          	$("#warehouseorderId").val(data);
          	//$("#style").show();
          	$("#gateOutConfirmBtn").attr("disabled", false);
+         	if("transferOrderbasic" ==parentId || "saveInventoryBtn"==e.target.getAttribute("id")){
+         		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+         	}
          	
-         	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
          }else{
              alert('数据保存失败。');
          }
@@ -379,16 +381,16 @@ $("#gateOutConfirmBtn").click(function(){
 	 $("#addproduct").click(function(){
 		 $('#reset').click();
 	 });
-	 var parentId = "basic";
+	 var parentId = "transferOrderbasic";
 	 $("#transferOrderItemList").click(function(e){
 		 	$("#saveInventoryBtn").click();
-		 	if("basic" == parentId){
+		 	/*if("basic" == parentId){
 		 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-		 	}
+		 	}*/
 		 	parentId = e.target.getAttribute("id");
 	   });
 	
-	 $("#basic").click(function(e){
+	 $("#transferOrderbasic").click(function(e){
 			e.preventDefault();
 			parentId = e.target.getAttribute("id");
 	});
