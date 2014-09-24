@@ -162,10 +162,10 @@ public class ReturnOrderController extends Controller {
 							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
 							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
 							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator "
-							+ " left join location l on  tor2.route_from = l.code "
+							+ " left join location l on  tor1.route_from = l.code "
 							+ " left join location  l1 on l.pcode =l1.code "
 							+ " left join location l2 on l1.pcode = l2.code "
-							+ " left join location lt on tor2.route_to = lt.code "
+							+ " left join location lt on tor1.route_to = lt.code "
 							+ " left join location  l3 on lt.pcode =l3.code "
 							+ " left join location l4 on l3.pcode = l4.code "
 
