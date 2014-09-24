@@ -467,10 +467,12 @@ public class DeliveryController extends Controller {
 		setAttr("localArr3", list3);
 		setAttr("customer", party);
 
-		String sql = "select c2.*,c1.company_name as company  from contact c1"
-				+ " left join contact c2 on c1.id +1 =c2.id"
-				+ " where c2.id  in (select p.id from party  p left join"
-				+ " transfer_order_item_detail  t on t.notify_party_id =p.id where t.id in (" + list2 + "))";
+		String sql="select c.company_name as company,c1.*  "
+				+ "from transfer_order_item_detail td "
+				+ "left join transfer_order t on t.id =td.order_id "
+				+ "left join contact c on t.notify_party_id= c.id "
+				+ "left join party p on p.id = td.notify_party_id "
+				+ "left join contact c1 on p.contact_id =c1.id  where td.id in(" + list2 + ")";
 		TransferOrderItemDetail notify = TransferOrderItemDetail.dao
 				.findFirst(sql);
 		// 选取的配送货品的仓库必须一致
