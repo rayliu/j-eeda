@@ -1019,7 +1019,7 @@
  		var finItems = $("#table_fin2").children('tbody').children();
  		
  		for(var i=0;i<finItems.length;i++){
- 			if(finItemIds.contains(finItems[i].id)){
+ 			if(finItemIds.indexOf(finItems[i].id) > -1){
  				$.post('/yh/pickupOrder/searchOwnCarFinItem', {pickupOrderId:pickupOrderId, finItemId:finItems[i].id}, function(data){
  		        	if(data.ID > 0){
  		        		var finItems2 = $("#table_fin2").children('tbody').children();
@@ -1030,16 +1030,10 @@
  		        			}
  		        		}
  		        	}
- 		    	},'json');
- 				
+ 		    	},'json'); 				
  			}
  		}
- 		
- 		
- 	}); 	
+ 	}); 
  	
-	
-	
-	paymenttable.fnDraw();
-	
+	paymenttable.fnDraw();	
 });
