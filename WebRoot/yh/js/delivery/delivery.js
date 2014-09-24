@@ -155,12 +155,12 @@ $(document).ready(function() {
                     	$("#delivery_id").val(data.ID);
                     	// $("#style").show();
                     	$("#ConfirmationBtn").attr("disabled", false);
-                    	
+                    	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
                     }else{
                         alert('数据保存失败。');
                     }
 	             },'json');
-	            $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	           
 	        });
 			var dab2= $('#eeda-table2').dataTable({
 				"bFilter": false, // 不需要默认的搜索框
@@ -406,8 +406,8 @@ $(document).ready(function() {
 						paymenttable.fnDraw();
 					},'json');
 					$("#ConfirmationBtn").attr("disabled", true);
-					$("#receiptBtn").attr("disabled", false);
-					
+					//$("#receiptBtn").attr("disabled", false);
+					$("#saveBtn").attr("disabled", true);
 					paymenttable().fnDraw();
 					
 				});
