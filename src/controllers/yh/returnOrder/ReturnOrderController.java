@@ -317,6 +317,7 @@ public class ReturnOrderController extends Controller {
 		ReturnOrder returnOrder = ReturnOrder.dao.findById(getPara("id"));
 		Long deliveryId = returnOrder.get("delivery_order_id");
 		String routeTo = getPara("route_to");
+		boolean isLocationChanged = getParaToBoolean("locationChanged");
 		Long notifyPartyId;
 		if (deliveryId == null) {
 			// 直送
@@ -342,6 +343,10 @@ public class ReturnOrderController extends Controller {
 			if (notifyPartyId != null) {
 				updateContact(notifyPartyId);
 			}
+			//如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
+			if(isLocationChanged){
+				deleteContractFinItem(deliveryOrder);
+			}
 			// 计算配送单的触发的应收
 			calculateCharge(deliveryOrder);
 		}
@@ -352,6 +357,19 @@ public class ReturnOrderController extends Controller {
 
 	}
 
+	private void deleteContractFinItem(DeliveryOrder deliveryOrder){
+		Long customerId = deliveryOrder.getLong("customer_id");
+		// 先获取有效期内的客户合同, 如有多个，默认取第一个
+		Contract customerContract = Contract.dao
+				.findFirst("select * from contract where type='CUSTOMER' "
+						+ "and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="
+						+ customerId);
+		if (customerContract == null)
+			return;
+		
+		Db.update("delete from transfer_order_fin_item where contract_id="+customerContract.getLong("id"));
+	}
+	
 	// 更新收货人信息
 	private void updateContact(Long notifyPartyId) {
 		Party party = Party.dao.findById(notifyPartyId);
@@ -446,7 +464,7 @@ public class ReturnOrderController extends Controller {
 						+ "where doi.delivery_id =" + deliveryOrderId);
 		for (Record dOrderItemRecord : deliveryOrderItemList) {
 			Record contractFinItem = Db
-					.findFirst("select amount, fin_item_id from contract_item where contract_id ="
+					.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
 							+ customerContract.getLong("id")
 							+ " and product_id ="
 							+ dOrderItemRecord.get("product_id")
@@ -460,7 +478,7 @@ public class ReturnOrderController extends Controller {
 				genFinItem(deliveryOrderId, dOrderItemRecord, contractFinItem);
 			} else {
 				contractFinItem = Db
-						.findFirst("select amount, fin_item_id from contract_item where contract_id ="
+						.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
 								+ customerContract.getLong("id")
 								+ " and product_id ="
 								+ dOrderItemRecord.get("product_id")
@@ -473,7 +491,7 @@ public class ReturnOrderController extends Controller {
 							contractFinItem);
 				} else {
 					contractFinItem = Db
-							.findFirst("select amount, fin_item_id from contract_item where contract_id ="
+							.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
 									+ customerContract.getLong("id")
 									+ " and from_id = '"
 									+ dOrderItemRecord.get("route_from")
@@ -486,7 +504,7 @@ public class ReturnOrderController extends Controller {
 								contractFinItem);
 					} else {
 						contractFinItem = Db
-								.findFirst("select amount, fin_item_id from contract_item where contract_id ="
+								.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
 										+ customerContract.getLong("id")
 										+ " and to_id = '"
 										+ dOrderItemRecord.get("route_to")
@@ -527,6 +545,7 @@ public class ReturnOrderController extends Controller {
 		transferFinItem.set("delivery_id", deliveryOrderId);
 		transferFinItem.set("status", "未完成");
 		transferFinItem.set("fin_type", "charge");// 类型是应收
+		transferFinItem.set("contract_id", contractFinItem.get("contract_id"));// 类型是应收
 		transferFinItem
 				.set("creator", LoginUserController.getLoginUserId(this));
 		transferFinItem.set("create_date", now);

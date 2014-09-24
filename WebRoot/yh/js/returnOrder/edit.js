@@ -415,6 +415,7 @@
     //获取省份的城市
     $('#mbProvinceTo').on('change', function(){
 			var inputStr = $(this).val();
+			$('#locationChanged').val('true');
 			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
 				var cmbCity =$("#cmbCityTo");
 				cmbCity.empty();
@@ -429,6 +430,7 @@
     
     //获取城市的区县
     $('#cmbCityTo').on('change', function(){
+    		$('#locationChanged').val('true');
 			var inputStr = $(this).val();
 			var code = $("#locationTo").val(inputStr);
 			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
@@ -444,6 +446,7 @@
 		});
     
     $('#cmbAreaTo').on('change', function(){
+    		$('#locationChanged').val('true');
 			var inputStr = $(this).val();
 			var code = $("#locationTo").val(inputStr);
 		});  

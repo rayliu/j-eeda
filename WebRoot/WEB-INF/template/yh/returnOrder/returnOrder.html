@@ -78,7 +78,7 @@
                                         <div class="form-group">
                                             <label>电话</label>	${customerContact.phone!''}
                                         </div>  
-                                       
+                                        <input id="locationChanged" name='locationChanged' type="hidden" value="false"/>
                                         <div id="contactInformation">
     	                                        <h2>收货人信息</h2>
     	                                        <div class="form-group">
@@ -137,7 +137,7 @@
 	                                 			<div class="form-group" >
 	                                            <input id="locationTo" type="hidden" name="route_to" value="${departOrder.route_to!''}">
 	                                           	<label>终点</label>
-			                                     <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">
+			                                     <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">       
 			                                        <label>省</label>
 			                                        <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
 			                                        <select id="mbProvinceTo" class="valid" name="mbProvinceTo" value=""></select>

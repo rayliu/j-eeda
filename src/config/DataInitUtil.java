@@ -111,7 +111,7 @@ public class DataInitUtil {
                     + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id));");
 
             // Depart_Order_fin_item 提货单/发车单应付明细
-            stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, pickup_order_id bigint, fin_item_id bigint, contract_id bigint, "
+            stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, pickup_order_id bigint, fin_item_id bigint, "
                     + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120));");
 
             // Transfer_Order_item_detail 单件货品明细
@@ -123,7 +123,7 @@ public class DataInitUtil {
 
             // Transfer_Order_fin_item 运输单应收应付明细
             stmt.executeUpdate("create table if not exists transfer_order_fin_item (id bigint auto_increment primary key, " +
-            		"order_id bigint,depart_id bigint,delivery_id bigint, fin_item_id bigint,"
+            		"order_id bigint,depart_id bigint,delivery_id bigint, fin_item_id bigint, contract_id bigint,"
                     + "fin_item_code varchar(20), amount double, status varchar(50), fin_type varchar(20), "
                     + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp,remark varchar(5120));");
 
@@ -402,7 +402,7 @@ public class DataInitUtil {
             // 运输单
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type,charge_type2) values('ATM', '4', '12', 'YS2014042600001', '3', '1', '已入货场', '2014-04-20 16:33:35.1', 'delivery','珠海','2','110102','440402','2','salesOrder','provinceOut','own','perUnit');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type, charge_type, pickup_mode,charge_type2) "
-                    + "values('ATM', 4, '13', 'YS2014042600002', '4', 1, '新建', CURRENT_TIMESTAMP(), 'gateIn','中山', 4,'440100','110100','3','salesOrder','provinceIn','own','perUnit','routeSP','perCargo');");
+                    + "values('ATM', 4, '13', 'YS2014042600002', '4', 1, '新建', CURRENT_TIMESTAMP(), 'gateIn','中山', 4,'440100','110100','3','salesOrder','provinceIn','own','perUnit','routeSP','perUnit');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type,warehouse_id,charge_type2) values('cargo', '6', '12', 'YS2014042600003', '4', '19', '已入货场', '2014-04-28 16:46:35.1', 'gateIn','广州','110106','440403','2','replenishmentOrder','provinceOut','2','own','1','perUnit');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type,warehouse_id,charge_type2) values('cargo', '6', '13', 'YS2014042600004', '3', '1', '新建', '2014-04-25 16:35:35.1', 'gateIn','深圳','110106','440403','1','replenishmentOrder','provinceIn','3','out_source','2','perUnit');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,route_from,route_to,office_id,order_type,customer_province,pickup_seq,operation_type,charge_type2) values('ATM', '7', '12', 'YS2014042600005', '3', '2', '新建', '2014-04-22 16:28:35.1', 'delivery','东莞','110108','440507','1','arrangementOrder','provinceOut','1','out_source','perCar');");
