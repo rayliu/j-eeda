@@ -265,7 +265,7 @@ public class PickupOrderController extends Controller {
                     + status
                     + "%' and tor.address like '%"
                     + address
-                    + "%' and c.company_name like '%"
+                    + "%' and c.abbr like '%"
                     + customer
                     + "%' and create_stamp between '"
                     + beginTime
@@ -294,7 +294,7 @@ public class PickupOrderController extends Controller {
                     + status
                     + "%' and tor.address like '%"
                     + address
-                    + "%' and c.company_name like '%"
+                    + "%' and c.abbr like '%"
                     + customer
                     + "%' and create_stamp between '"
                     + beginTime
@@ -328,7 +328,7 @@ public class PickupOrderController extends Controller {
                     + status
                     + "%' and tor.address like '%"
                     + address
-                    + "%' and c.company_name like '%"
+                    + "%' and c.abbr like '%"
                     + customer
                     + "%' and create_stamp between '"
                     + beginTime
@@ -358,7 +358,7 @@ public class PickupOrderController extends Controller {
                     + status
                     + "%' and tor.address like '%"
                     + address
-                    + "%' and c.company_name like '%"
+                    + "%' and c.abbr like '%"
                     + customer
                     + "%' and create_stamp between '"
                     + beginTime
@@ -450,7 +450,7 @@ public class PickupOrderController extends Controller {
 
         String sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume)*toi.amount volume, "
                 + " ifnull(case toi.weight when 0.0 then null else toi.weight end, pd.weight)*toi.amount weight"
-                + " ,c.company_name customer,tor.order_no,toi.amount,toi.remark  from transfer_order_item toi "
+                + " ,c.abbr customer,tor.order_no,toi.amount,toi.remark  from transfer_order_item toi "
                 + " left join transfer_order tor on tor.id = toi.order_id"
                 + " left join party p on p.id = tor.customer_id"
                 + " left join contact c on c.id = p.contact_id"
@@ -1460,7 +1460,7 @@ public class PickupOrderController extends Controller {
 						+ " left join contact c on c.id = p.contact_id"
 						+ " left join fin_item fi on fi.id = dofi.fin_item_id"
 						+ " where dor.combine_type='"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id ="+pickupOrderId+" and fi.type = '应收' and fi.name = '分摊费用'";
-        String sql = "select distinct tor.order_no transferno,c.company_name cname,dofi.amount amount,tor.create_stamp from depart_order_fin_item dofi"
+        String sql = "select distinct tor.order_no transferno,c.abbr cname,dofi.amount amount,tor.create_stamp from depart_order_fin_item dofi"
 						+ " left join depart_order dor on dofi.pickup_order_id = dor.id"
 						+ " left join depart_transfer dt on dt.depart_id = dor.id"
 						+ " left join transfer_order tor on tor.id = dt.order_id"
@@ -1484,7 +1484,7 @@ public class PickupOrderController extends Controller {
     
     public void wentDutch(){
     	String pickupOrderId = getPara("pickupOrderId");
-    	String customerCount = "select count(c.company_name) customerCount from depart_order dor"
+    	String customerCount = "select count(c.abbr) customerCount from depart_order dor"
 								+ " left join depart_transfer dt on dt.depart_id = dor.id"
 								+ " left join transfer_order tor on tor.id = dt.order_id"
 								+ " left join party p on p.id = tor.customer_id"

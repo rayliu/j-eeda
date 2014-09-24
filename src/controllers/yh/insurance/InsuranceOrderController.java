@@ -95,19 +95,21 @@ public class InsuranceOrderController extends Controller {
                 && beginTime == null && endTime == null) {
             sqlTotal = "select count(1) total  from transfer_order tor " + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code";
+                    + " left join location l2 on tor.route_to = l2.code where tor.status = '已发车'";
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
+            		+ "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to, "
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ul.user_name create_by,tor.customer_order_no,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,"
+                    + " tor.create_stamp,tor.pickup_assign_status,"
                     + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车' limit 0,1) start_create_stamp "
                     + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
-                    + "  left join user_login ul on ul.id = tor.create_by "
-                    + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code" + " order by tor.create_stamp desc" + sLimit;
+                    + " left join user_login ul on ul.id = tor.create_by "  
+                    + " left join depart_transfer dt on dt.order_id = tor.id "              
+                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' order by tor.create_stamp desc" + sLimit;
         } else if ("".equals(routeFrom) && "".equals(routeTo)) {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -118,11 +120,7 @@ public class InsuranceOrderController extends Controller {
             sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL
-                    + "'"
-                    + " "
-                    + " and ifnull(l1.name, '') like '%"
+                    + "  where tor.status = '已发车' and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
@@ -142,21 +140,19 @@ public class InsuranceOrderController extends Controller {
                     + "' and tor.order_type like '%"
                     + orderType + "%'";
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
+                	+ "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to, "
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ul.user_name create_by,tor.customer_order_no,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,"
+                    + " tor.create_stamp,tor.pickup_assign_status,"
                     + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车' limit 0,1) start_create_stamp "
                     + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
-                    + " left join user_login ul on ul.id = tor.create_by "
-                    + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL
-                    + "'"
-                    + " and ifnull(l1.name, '') like '%"
+                    + " left join user_login ul on ul.id = tor.create_by "  
+                    + " left join depart_transfer dt on dt.order_id = tor.id "              
+                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
@@ -185,11 +181,7 @@ public class InsuranceOrderController extends Controller {
             sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL
-                    + "'"
-                    + " "
-                    + " and ifnull(l1.name, '') like '%"
+                    + " where tor.status = '已发车' and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
@@ -210,21 +202,19 @@ public class InsuranceOrderController extends Controller {
                     + orderType + "%'";
 
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
+                	+ "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to, "
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ul.user_name create_by,tor.customer_order_no,"
-                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.pickup_assign_status,"
+                    + " tor.create_stamp,tor.pickup_assign_status,"
                     + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车' limit 0,1) start_create_stamp "
                     + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
-                    + " left join user_login ul on ul.id = tor.create_by "
-                    + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL
-                    + "'"
-                    + " and ifnull(l1.name, '') like '%"
+                    + " left join user_login ul on ul.id = tor.create_by "  
+                    + " left join depart_transfer dt on dt.order_id = tor.id "              
+                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
@@ -289,16 +279,13 @@ public class InsuranceOrderController extends Controller {
         setAttr("localArr", list);
         String[] transferOrderIds = list.split(",");
 
-        if (transferOrderIds.length == 1) {
-            TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
-            setAttr("transferOrderAttr", transferOrderAttr);
-            Long spId = transferOrderAttr.get("sp_id");
-            if (spId != null && !"".equals(spId)) {
-                Party spParty = Party.dao.findById(spId);
-                setAttr("spParty", spParty);
-                Contact spContact = Contact.dao.findById(spParty.get("contact_id"));
-                setAttr("spContact", spContact);
-            }
+        TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
+        setAttr("transferOrderAttr", transferOrderAttr);
+        Long customerId = transferOrderAttr.get("customer_id");
+        if (customerId != null && !"".equals(customerId)) {
+            Party costomerParty = Party.dao.findById(customerId);
+            Contact customerContact = Contact.dao.findById(costomerParty.get("contact_id"));
+            setAttr("customerContact", customerContact);
         }
 
         logger.debug("localArr" + list);
@@ -367,7 +354,7 @@ public class InsuranceOrderController extends Controller {
 
         String sql = "select toi.id item_id,ifi.id fin_id,ifi.amount fin_amount,ifi.*,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume)*toi.amount volume, "
                 + " ifnull(case toi.weight when 0.0 then null else toi.weight end, pd.weight)*toi.amount weight"
-                + " ,c.company_name customer,tor.order_no,toi.amount,toi.remark,"
+                + " ,c.abbr customer,tor.order_no,toi.amount,toi.remark,"
                 + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
                 + "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to "
 				+ "  from transfer_order_item toi "
@@ -460,6 +447,16 @@ public class InsuranceOrderController extends Controller {
         }
         orderId = orderId.substring(0, orderId.length() - 1);
         setAttr("localArr", orderId);
+        String[] transferOrderIds = orderId.split(",");
+
+        TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
+        setAttr("transferOrderAttr", transferOrderAttr);
+        Long customerId = transferOrderAttr.get("customer_id");
+        if (customerId != null && !"".equals(customerId)) {
+            Party costomerParty = Party.dao.findById(customerId);
+            Contact customerContact = Contact.dao.findById(costomerParty.get("contact_id"));
+            setAttr("customerContact", customerContact);
+        }
     	if(LoginUserController.isAuthenticated(this))
     		render("/yh/insuranceOrder/insuranceOrderEdit.html");
     }
@@ -503,13 +500,14 @@ public class InsuranceOrderController extends Controller {
     		}
     		
     		// 获取当前页的数据
-    		String sql = "select sum(ifi.amount) sum_amount,(group_concat(tor.order_no separator '\r\n')) as transfer_order_no"
-					+ " ,c.abbr cname,ifi.income_rate income_rate,(income_rate*sum(ifi.insurance_amount)) income_insurance_amount from insurance_fin_item ifi"
+    		String sql = "select ior.id,sum(ifi.amount) sum_amount,(group_concat(distinct tor.order_no separator '\r\n')) as transfer_order_no"
+					+ " ,c.abbr cname,ifi.income_rate income_rate,(income_rate*sum(ifi.amount)) income_insurance_amount from insurance_order ior"
+					+ " left join insurance_fin_item ifi on ior.id = ifi.insurance_order_id"
 					+ " left join transfer_order_item toi on toi.id = ifi.transfer_order_item_id"
 					+ " left join transfer_order tor on tor.id = toi.order_id"
 					+ " left join party p on p.id = tor.customer_id"
 					+ " left join contact c on c.id = p.contact_id"
-					+ " where insurance_order_id = " + insuranceOrderId;
+					+ " where ior.id = " + insuranceOrderId;
     		List<Record> orders = Db.find(sql);
     		
     		orderMap.put("sEcho", pageIndex);
@@ -518,5 +516,24 @@ public class InsuranceOrderController extends Controller {
     		orderMap.put("aaData", orders);
     	}
     	renderJson(orderMap);
+    }
+    
+    // 应收条目
+    public void incomeFinItem(){
+    	String id = getPara("id");
+    	String name = getPara("name");
+    	String value = getPara("value");
+    	if(id != null && !"".equals(id)){
+    		InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(id);
+	    	List<InsuranceFinItem> insuranceFinItems = InsuranceFinItem.dao.find("select * from insurance_fin_item where insurance_order_id = ?", insuranceOrder.get("id"));
+	    	if("income_rate".equals(name) && "".equals(value)){
+	    		value = "0";
+	    	}
+	    	for(InsuranceFinItem insuranceFinItem : insuranceFinItems){
+	    		insuranceFinItem.set(name, value);
+	    		insuranceFinItem.update();
+	    	}
+    	}
+    	renderJson("{\"success\":true}");
     }
 }

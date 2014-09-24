@@ -54,8 +54,8 @@ public class DepartOrderController extends Controller {
     //发车单在途供应商
     public void companyNameList(){
     	String inputStr = getPara("input");
-    	String sql = "SELECT DISTINCT  c.COMPANY_NAME AS company  FROM CONTACT c where c.COMPANY_NAME  is not null "
-    			+ "and c.COMPANY_NAME like '%"+ inputStr+ "%'";
+    	String sql = "select distinct  c.abbr as company  from contact c where c.abbr  is not null "
+    			+ "and c.abbr like '%"+ inputStr+ "%'";
     	List<Record> companyNameList = Db.find(sql);
     	renderJson(companyNameList);
     }
@@ -129,7 +129,7 @@ public class DepartOrderController extends Controller {
                     + " left join contact c on p.contact_id = c.id "
                     + " left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )"
                     + "  where deo.combine_type = 'DEPART' and " + "ifnull(deo.status,'') like '%" + status + "%' and "
-                    + "ifnull(deo.depart_no,'') like '%" + departNo + "%' and " + "ifnull(c.company_name,'')  like '%"
+                    + "ifnull(deo.depart_no,'') like '%" + departNo + "%' and " + "ifnull(c.abbr,'')  like '%"
                     + sp + "%' and " + "ifnull(tr.order_no,'') like '%" + orderNo + "%'"
                     + " and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime
                     + "'group by deo.id order by deo.create_stamp desc ";
@@ -205,7 +205,7 @@ public class DepartOrderController extends Controller {
     				+ " left join contact c on p.contact_id = c.id "
     				+ " left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )"
     				+ "  where deo.combine_type = 'DEPART' and deo.status in('已发车','在途') and " + "ifnull(deo.status,'') like '%" + status + "%' and "
-    				+ "ifnull(deo.depart_no,'') like '%" + departNo + "%' and " + "ifnull(c.company_name,'')  like '%"
+    				+ "ifnull(deo.depart_no,'') like '%" + departNo + "%' and " + "ifnull(c.abbr,'')  like '%"
     				+ sp + "%' and " + "ifnull(tr.order_no,'') like '%" + orderNo + "%'"
     				+ " and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime +"'";
     		
@@ -378,8 +378,8 @@ public class DepartOrderController extends Controller {
                     + " (select sum(toi.weight) from transfer_order_item toi where toi.order_id = tor.id) as total_weight,"
                     + " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
-                    + " tor.charge_type2,ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.company_name cname,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.company_name as spname,cont.id as spid from transfer_order tor "
+                    + " tor.charge_type2,ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.abbr cname,"
+                    + " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.abbr as spname,cont.id as spid from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id left join contact cont on  cont.id=p2.contact_id "
@@ -404,15 +404,15 @@ public class DepartOrderController extends Controller {
                     + " where ((tor.status = '已入货场' or tor.status like '%部分%') or (tor.operation_type = 'out_source' and tor.status = '新建')) and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
-                    + "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
+                    + "%' and c.abbr like '%" + customer + "%' and create_stamp between '" + beginTime
                     + "' and '" + endTime + "'";
 
             sql = "select distinct tor.id,tor.order_no,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
                     + " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
                     + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-                    + " tor.charge_type2,dor.address doaddress,tor.pickup_mode,tor.status,c.company_name cname,"
-                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.company_name spname from transfer_order tor "
+                    + " tor.charge_type2,dor.address doaddress,tor.pickup_mode,tor.status,c.abbr cname,"
+                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.abbr spname from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id  left join contact c2 on p2.contact_id = c2.id "
@@ -422,7 +422,7 @@ public class DepartOrderController extends Controller {
                     + " where ((tor.status ='已入货场' or tor.status like '%部分%') or (tor.operation_type = 'out_source' and tor.status = '新建')) and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
-                    + "%' and c.company_name like '%" + customer + "%' and tor.create_stamp between '" + beginTime
+                    + "%' and c.abbr like '%" + customer + "%' and tor.create_stamp between '" + beginTime
                     + "' and '" + endTime + "'" + " order by tor.create_stamp desc " + sLimit;
         }
         rec = Db.findFirst(sqlTotal);
@@ -471,8 +471,8 @@ public class DepartOrderController extends Controller {
     				+ " (select sum(toi.weight) from transfer_order_item toi where toi.order_id = tor.id) as total_weight,"
     				+ " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
     				+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
-    				+ " ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.company_name cname,"
-    				+ " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.company_name as spname,cont.id as spid from transfer_order tor "
+    				+ " ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.abbr cname,"
+    				+ " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.abbr as spname,cont.id as spid from transfer_order tor "
     				+ " left join party p on tor.customer_id = p.id "
     				+ " left join contact c on p.contact_id = c.id "
     				+ " left join party p2 on tor.sp_id = p2.id left join contact cont on  cont.id=p2.contact_id "
@@ -497,15 +497,15 @@ public class DepartOrderController extends Controller {
     				+ " where tor.status = '新建' and ifnull(tor.depart_assign_status, '') !='"
     				+ TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
     				+ "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
-    				+ "%' and c.company_name like '%" + customer + "%' and create_stamp between '" + beginTime
+    				+ "%' and c.abbr like '%" + customer + "%' and create_stamp between '" + beginTime
     				+ "' and '" + endTime + "'";
     		
     		sql = "select distinct tor.id,tor.order_no,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
     				+ " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
     				+ " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
     				+ " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-    				+ " dor.address doaddress,tor.pickup_mode,tor.status,c.company_name cname,"
-    				+ " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.company_name spname from transfer_order tor "
+    				+ " dor.address doaddress,tor.pickup_mode,tor.status,c.abbr cname,"
+    				+ " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.abbr spname from transfer_order tor "
     				+ " left join party p on tor.customer_id = p.id "
     				+ " left join contact c on p.contact_id = c.id "
     				+ " left join party p2 on tor.sp_id = p2.id  left join contact c2 on p2.contact_id = c2.id "
@@ -515,7 +515,7 @@ public class DepartOrderController extends Controller {
     				+ " where tor.status = '新建' and ifnull(tor.depart_assign_status, '') !='"
     				+ TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
     				+ "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
-    				+ "%' and c.company_name like '%" + customer + "%' and tor.create_stamp between '" + beginTime
+    				+ "%' and c.abbr like '%" + customer + "%' and tor.create_stamp between '" + beginTime
     				+ "' and '" + endTime + "'" + " order by tor.create_stamp desc " + sLimit;
     	}
     	rec = Db.findFirst(sqlTotal);
@@ -657,7 +657,7 @@ public class DepartOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select tof.* , t_o.order_no as order_no, t_o.id as tr_order_id, c.company_name as customer  from transfer_order_item tof"
+        String sql = "select tof.* , t_o.order_no as order_no, t_o.id as tr_order_id, c.abbr as customer  from transfer_order_item tof"
                 + " left join transfer_order  t_o  on tof.order_id = t_o.id "
                 + "left join contact c on c.id in (select contact_id from party p where t_o.customer_id=p.id)"
                 + " where tof.order_id in(" + order_id + ")  order by c.id" + sLimit;

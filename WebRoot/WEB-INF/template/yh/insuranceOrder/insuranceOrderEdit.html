@@ -27,8 +27,8 @@
                                 </li>
                                 <li class=""><a href="#cargos" data-toggle="tab" id="insuranceOrderItemList">货品信息</a>
                                 </li>
-                                <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">里程碑</a>
-                                </li>
+                                <!-- <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">里程碑</a>
+                                </li> -->
                                 <li class=""><a href="#pickuparap" data-toggle="tab" id="insuranceOrderPayment">应收应付</a>
                                 </li>
                             </ul>
@@ -51,23 +51,38 @@
 		            				    <input class="" id="tr_itemid_list" value="" type="hidden" name="tr_itemid_list">
 		            				    <input class="" id="item_detail" value="" type="hidden" name="item_detail" >                        	
                                         
-	                                   <div class="col-lg-6">
-	                                  		<h3>保险信息</h3>                                           
-	                                            <div class="form-group">
-	                                                <label>保险单号</label> <strong>${order_no!''} ${insuranceOrder.order_no!''}</strong>
-	                                            </div>
-	                                            <div class="form-group">
-	                                                <label>单据状态</label>   ${status!''} ${insuranceOrder.status!''}
-	                                            </div>
-	                                            <div class="form-group">
-	                                            <label>创建人</label>   ${userLogin.user_name!''}   ${userLogin2.user_name!''}                                         
+	                                    <div class="col-lg-6">
+	                                    	<h3>客户信息</h3>  
+	                                        <div class="form-group">
+	                                            <label>公司名称</label>	${customerContact.company_name!''}
 	                                        </div>
-		                                                                                                                         
-											<div class="form-group">
-	                                            <label>备注</label>
-	                                            <textarea class="form-control" rows="8" id="remark" name="remark">${insuranceOrder.remark!''}</textarea>
-	                                        </div> 
-	                                   </div>
+	                                        <div class="form-group">
+	                                            <label>地址</label>	${customerContact.address!''}
+	                                        </div>                                                                               
+	                                        <div class="form-group">
+	                                            <label>联系人</label>	${customerContact.contact_person!''}
+	                                        </div>                                        
+	                                        <div class="form-group">
+	                                            <label>电话</label>	${customerContact.phone!''}
+	                                        </div>  
+	                                    </div>
+	                                    <div class="col-lg-6">
+	                                   		<h3>保险信息</h3>                                           
+	                                             <div class="form-group">
+	                                                 <label>保险单号</label> <strong>${order_no!''} ${insuranceOrder.order_no!''}</strong>
+	                                             </div>
+	                                             <div class="form-group">
+	                                                 <label>单据状态</label>   ${status!''} ${insuranceOrder.status!''}
+	                                             </div>
+	                                             <div class="form-group">
+	                                             <label>创建人</label>   ${userLogin.user_name!''}   ${userLogin2.user_name!''}                                         
+	                                         </div>
+		                                                                                                                          
+									 		<div class="form-group">
+	                                             <label>备注</label>
+	                                             <textarea class="form-control" rows="8" id="remark" name="remark">${insuranceOrder.remark!''}</textarea>
+	                                         </div> 
+	                                    </div>
                                     </div>   
                                 </form>
                             </div>
@@ -82,9 +97,7 @@
 		                                        	<th>运输单号</th> 
 		                                         	<th>型号</th> 
 		                                            <th>名称</th>
-		                                            <th>数量</th>                                   
-		                                            <th>体积</th> 
-		                                            <th>重量</th> 
+		                                            <th>数量</th>
 		                                            <th>备注</th>                                          
 		                                            <th>险别</th>                                          
 		                                            <th>保额</th>                                          

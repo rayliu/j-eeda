@@ -27,8 +27,6 @@
              { "mDataProp": "ITEM_NO"},
              { "mDataProp": "ITEM_NAME"},
              { "mDataProp": "AMOUNT"},
-             { "mDataProp": "VOLUME"},
-             { "mDataProp": "WEIGHT"},
              { "mDataProp": "REMARK"},
              {"mDataProp":null,
             	 "sClass": "insurance_category", 
@@ -74,13 +72,18 @@
              { "mDataProp": "INSURANCE_AMOUNT",
             	 "sClass": "insurance_amount", 
                  "fnRender": function(obj) {
-                	 var str = "";
+                	 /*var str = "";
                      if(obj.aData.INSURANCE_AMOUNT!='' && obj.aData.INSURANCE_AMOUNT != null){
                          str = "<input type='text' name='insurance_amount' disabled value='"+obj.aData.INSURANCE_AMOUNT+"'>";
                      }else{
                      	 str = "<input type='text' name='insurance_amount' disabled>";
                      }
-                	 return str;
+                	 return str;*/
+                	var str = obj.aData.INSURANCE_AMOUNT;
+                 	if(obj.aData.INSURANCE_AMOUNT == null){
+                 		str = "";
+                 	}
+                 	return "<span>"+str+"</span>";
              }},
              {"mDataProp": "INSURANCE_NO",
             	 "sClass": "insurance_no", 
@@ -112,6 +115,7 @@
          }       
      });
 
+ 	// 投保
  	$("#pickupItem-table").on('blur', 'input,select', function(e){
  		e.preventDefault();
  		var itemId = $(this).parent().parent().attr("item_id");
@@ -120,15 +124,15 @@
  		if(name == 'amount'){
  			var rate = $(this).parent().siblings(".rate")[0].children[0].value;
  			if(rate != null && rate != '' && value != null && value != ''){
- 				$(this).parent().siblings(".insurance_amount")[0].children[0].value = value * rate;
+ 				$(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML = value * rate;
  			}
  		}else if(name == 'rate'){
  			var amount = $(this).parent().siblings(".fin_amount")[0].children[0].value;
  			if(amount != null && amount != '' && value != null && value != ''){
- 				$(this).parent().siblings(".insurance_amount")[0].children[0].value = value * amount;
+ 				$(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML = value * amount;
  			}
  		}
- 		var insuranceAmount = $(this).parent().siblings(".insurance_amount")[0].children[0].value;
+ 		var insuranceAmount = $(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML;
  		var insuranceOrderId = $("#insuranceOrderId").val();
  		$.post('/yh/insuranceOrder/updateInsuranceOrderFinItem', {itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value, insuranceAmount:insuranceAmount}, function(data){
  			if(data.success){
@@ -431,12 +435,26 @@
 		      		return "保险费";
 		      	}
 	        },   
-		  	{"mDataProp":"SUM_AMOUNT"},   
+		  	{"mDataProp":"SUM_AMOUNT","sClass": "income_rate"},   
 		  	{"mDataProp":"INCOME_RATE",
 		      	"fnRender": function(obj) {
-		      		return "<input type='text' name='income_rate'>";
+		      		var str = "";
+		      		if(obj.aData.INCOME_RATE != null){
+                		str = "<input type='text' name='income_rate' value='"+obj.aData.INCOME_RATE+"'>";
+                	}else{
+                		str = "<input type='text' name='income_rate'>";
+                	}
+		      		return str;
 		    }},
-	        {"mDataProp":"INCOME_INSURANCE_AMOUNT"}   
+	        {"mDataProp":null,
+		    	"sClass": "income_insurance_amount",
+                "fnRender": function(obj) {
+                	var str = obj.aData.INCOME_INSURANCE_AMOUNT;
+                	if(obj.aData.INCOME_INSURANCE_AMOUNT == null){
+                		str = "";
+                	}
+                	return "<span>"+str+"</span>";
+            }}   
         ]      
 	});
 	
@@ -447,4 +465,23 @@
 		incomeTab.fnSettings().sAjaxSource = "/yh/insuranceOrder/incomePayable?insuranceOrderId="+insuranceOrderId;
 		incomeTab.fnDraw();
 	});
+
+ 	// 应收
+ 	$("#incomeTab").on('blur', 'input', function(e){
+ 		e.preventDefault();
+ 		var id = $(this).parent().parent().attr("id");
+ 		var name = $(this).attr("name");
+ 		var value = $(this).val();
+		if(value != null && value != ''){
+			var income_rate = $(this).parent().siblings(".income_rate")[0].innerHTML;
+			$(this).parent().siblings(".income_insurance_amount")[0].children[0].innerHTML = value * income_rate;
+		}
+ 		var insuranceOrderId = $("#insuranceOrderId").val();
+ 		$.post('/yh/insuranceOrder/incomeFinItem', {id:id, insuranceOrderId:insuranceOrderId, name:name, value:value}, function(data){
+ 			if(data.success){
+ 			}else{
+ 				alert("修改失败!");
+ 			}
+     	},'json');
+ 	});
 });
