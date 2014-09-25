@@ -1,0 +1,1 @@
+package models.yh.returnOrder;import com.jfinal.plugin.activerecord.Model;@SuppressWarnings("serial")public class ReturnOrderFinItem extends Model<ReturnOrderFinItem> {	public static final ReturnOrderFinItem dao = new ReturnOrderFinItem();}
