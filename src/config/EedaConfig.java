@@ -52,6 +52,7 @@ import models.yh.profile.AccountItem;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 import models.yh.profile.Route;
+import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.log4j.Logger;
 import org.bee.tl.ext.jfinal.BeetlRenderFactory;
@@ -246,6 +247,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("transfer_order_item", TransferOrderItem.class);
         arp.addMapping("transfer_order_item_detail", TransferOrderItemDetail.class);
         arp.addMapping("return_order", ReturnOrder.class);
+        arp.addMapping("return_order_fin_item", ReturnOrderFinItem.class);
         arp.addMapping("delivery_order", DeliveryOrder.class);
         arp.addMapping("transfer_order_milestone", TransferOrderMilestone.class);
         arp.addMapping("billing_order", BillingOrder.class);

@@ -26,6 +26,7 @@ $(document).ready(function() {
             },
             { 
             	"mDataProp": "CNAME",
+                "sWidth": "100px",
             	"sClass": "cname"
             },
             {"mDataProp":"OPERATION_TYPE",

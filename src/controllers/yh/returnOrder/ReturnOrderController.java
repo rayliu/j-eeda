@@ -99,7 +99,7 @@ public class ReturnOrderController extends Controller {
 
 			// 获取当前页的数据
 			List<Record> orders = Db
-					.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
+					.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 							+ " from return_order r_o "
 							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
 							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
@@ -147,7 +147,7 @@ public class ReturnOrderController extends Controller {
 
 			// 获取当前页的数据
 			List<Record> orders = Db
-					.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname"
+					.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname"
 							+ " from return_order r_o "
 							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
 							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
@@ -440,12 +440,13 @@ public class ReturnOrderController extends Controller {
 		// 运输单的始发地, 配送单的目的地
 		// 算最长的路程的应收
 		List<Record> deliveryOrderItemList = Db
-				.find("select toi.product_id, doi.transfer_order_id, t_o.route_from, d_o.route_to from delivery_order_item doi "
+				.find("select count(1) amount, toi.product_id, doi.transfer_order_id, t_o.route_from, d_o.route_to from delivery_order_item doi "
 						+ "left join transfer_order_item_detail toid on doi.transfer_item_detail_id =toid.id "
 						+ "left join transfer_order_item toi on toid.item_id = toi.id "
 						+ "left join delivery_order d_o on doi.delivery_id = d_o.id "
 						+ "left join transfer_order t_o on t_o.id = doi.transfer_order_id "
-						+ "where doi.delivery_id =" + deliveryOrderId);
+						+ "where doi.delivery_id =" + deliveryOrderId
+						+ "group by  toi.product_id, doi.transfer_order_id, t_o.route_from, d_o.route_to ");
 		for (Record dOrderItemRecord : deliveryOrderItemList) {
 			Record contractFinItem = Db
 					.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
@@ -516,14 +517,11 @@ public class ReturnOrderController extends Controller {
 		if (tOrderItemRecord == null) {
 			transferFinItem.set("amount", contractFinItem.getDouble("amount"));
 		} else {
-			// ATM数量是1， 普通货品则取数量：tOrderItemRecord.getDouble("amount")
-			Double itemAmount = tOrderItemRecord.getDouble("amount") == null
-					? 1
-					: tOrderItemRecord.getDouble("amount");
+			Long itemAmount = tOrderItemRecord.getLong("amount");
 			transferFinItem.set("amount", contractFinItem.getDouble("amount")
 					* itemAmount);
 		}
-		transferFinItem.set("amount", contractFinItem.getDouble("amount"));
+		
 		transferFinItem.set("order_id",
 				tOrderItemRecord.get("transfer_order_id"));
 		transferFinItem.set("delivery_id", deliveryOrderId);

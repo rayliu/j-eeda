@@ -961,7 +961,7 @@ public class TransferOrderController extends Controller {
 		// 获取总条数
 		String totalWhere = "";
 		String sql = "select count(0) total from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id ='"
-				+ id + "' and f.type='应收'";
+				+ id + "' "; //and f.type='应收' TODO： 有问题
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
@@ -972,9 +972,9 @@ public class TransferOrderController extends Controller {
 		List<Record> orders =Db.find("SELECT d.*, f. NAME, t.order_no AS transferOrderNo FROM "
 				+ "transfer_order_fin_item d "
 				+ "LEFT JOIN fin_item f ON d.fin_item_id = f.id "
-				+ "LEFT JOIN return_order r ON d.order_id = r.id "
-				+ "LEFT JOIN transfer_order t ON t.id = r.transfer_order_id "
-				+ "WHERE d.order_id = '"+id+"' AND f.type = '应收'"); 
+				//+ "LEFT JOIN return_order r ON d.order_id = r.id "
+				+ "LEFT JOIN transfer_order t ON t.id = d.order_id "
+				+ "WHERE d.order_id = "+id); //+" AND f.type = '应收'"
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));

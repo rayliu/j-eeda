@@ -25,7 +25,7 @@ $(document).ready(function() {
                  }
             },
             { "mDataProp": "ORDER_NO"},
-            { "mDataProp": "CNAME"},
+            { "mDataProp": "CNAME", "sWidth": "100px"},
             { "mDataProp":"OPERATION_TYPE",
             	"sClass": "operation_type",
     			"fnRender": function(obj) {
@@ -68,6 +68,7 @@ $(document).ready(function() {
             		}}},
             { 
             	"mDataProp": "SPNAME",
+              "sWidth": "100px",
             	"sClass": "spname"
             },
             { 
