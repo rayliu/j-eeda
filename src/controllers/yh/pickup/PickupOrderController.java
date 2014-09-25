@@ -142,7 +142,7 @@ public class PickupOrderController extends Controller {
             sqlTotal = "select count(1) total from depart_order dor " + "" + " left join carinfo c on dor.driver_id = c.id "
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "'";
 
-            sql = "select dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  from depart_order dor "
+            sql = "select dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = dor.id)  as transfer_order_no  from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
                     + " left join party p on dor.driver_id = p.id "
                     + " left join contact ct on p.contact_id = ct.id "
@@ -156,15 +156,15 @@ public class PickupOrderController extends Controller {
                 endTime = "9999-12-31";
             }
             sqlTotal = "select count(distinct dor.id) total from depart_order dor " + " left join carinfo c on dor.driver_id = c.id "
-                    + " left join depart_transfer dt2 on dt2.pickup_id = dor.id" + " where dor.status!='取消' and combine_type = '"
+                    + " left join depart_transfer dt2 on dt2.depart_id = dor.id" + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%" + departNo + "%' and dt2.transfer_order_no like '%"
                     + orderNo + "%' and dor.create_stamp between '" + beginTime + "' and '" + endTime + "'";
 
-            sql = "select distinct dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  from depart_order dor "
+            sql = "select distinct dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = dor.id)  as transfer_order_no  from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
                     + " left join party p on dor.driver_id = p.id "
                     + " left join contact ct on p.contact_id = ct.id "
-                    + " left join depart_transfer dt2 on dt2.pickup_id = dor.id"
+                    + " left join depart_transfer dt2 on dt2.depart_id = dor.id"
                     + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP
                     + "' and depart_no like '%"
