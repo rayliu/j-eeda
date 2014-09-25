@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import models.Fin_item;
+import models.Location;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
@@ -419,10 +420,9 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db
-                    .find("select c.*, fi.name as fin_item_name , p.item_name,"
-                    		+ " (select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.from_id) location_from,"
-                    		+ " (select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.to_id) location_to "
+            orders = Db.find("select c.*, fi.name as fin_item_name , p.item_name,"
+                    		+ " location_from,"
+                    		+ " location_to "
                     		+ " from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
                             + contractId + " and PRICETYPE ='perUnit' order by id desc" + sLimit);
         }
@@ -433,11 +433,29 @@ public class ContractController extends Controller {
         orderMap.put("aaData", orders);
         renderJson(orderMap);
     }
+    
+    // 获取始发地,目的地路线
+    private String getRouteAddress(String code){
+    	List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
+		Location l = Location.dao.findFirst("select * from location where code = '" + code + "'");
+		Location l2 = Location.dao.findFirst("select * from location where code = (select pcode from location where CODE = '" + code + "')");
+		String str = "";
+		if (provinces.contains(l)) {
+			str = "select l.name as location from location l left join location where l.code = '" + code + "'";
+		} else if (provinces.contains(l2)) {
+			str = "select trim(concat(l1.name, ' ', l.name)) location from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+							+ code + "'";
+		}else {
+			str = "select trim(concat(l2.name, ' ', l1.name, ' ', l.name)) location from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+							+ code + "'";
+		}
+		Record rec = Db.findFirst(str);
+		return rec.getStr("location");
+    }
 
     // 合同运价（整车）
     public void routeEdit2() {
         String contractId = getPara("routId");
-        System.out.println(contractId);
         if (contractId.equals("")) {
             Map orderMap = new HashMap();
             orderMap.put("sEcho", 0);
@@ -461,7 +479,6 @@ public class ContractController extends Controller {
             sql = "select count(1) total from contract_item c where c.contract_id = " + contractId + " and PRICETYPE ='perCar'";
         }
 
-        System.out.println(sql);
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
@@ -470,8 +487,8 @@ public class ContractController extends Controller {
         if (contractId != null && contractId.length() > 0) {
             orders = Db
                     .find("select c.*, fi.name as fin_item_name, p.item_name,"
-                    		+ " (select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.from_id) location_from,"
-                    		+ " (select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.to_id) location_to "
+                    		+ " location_from,"
+                    		+ " location_to "
                     		+ " from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
                             + contractId + " and PRICETYPE ='perCar'  order by id desc" + sLimit);
         }
@@ -486,7 +503,6 @@ public class ContractController extends Controller {
     // 合同运价（零担）
     public void routeEdit3() {
         String contractId = getPara("routId");
-        System.out.println(contractId);
         if (contractId.equals("")) {
             Map orderMap = new HashMap();
             orderMap.put("sEcho", 0);
@@ -510,7 +526,6 @@ public class ContractController extends Controller {
             sql = "select count(1) total from contract_item c where c.contract_id = " + contractId + " and pricetype ='perCargo'";
         }
 
-        System.out.println(sql);
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
@@ -519,8 +534,8 @@ public class ContractController extends Controller {
         if (contractId != null && contractId.length() > 0) {
             orders = Db
                     .find("select c.*, fi.name as fin_item_name, p.item_name,"
-                    		+ " (select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.from_id) location_from,"
-                    		+ " (select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.to_id) location_to "
+                    		+ " location_from,"
+                    		+ " location_to "
                     		+ " from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
                             + contractId + " and pricetype ='perCargo'  order by id desc" + sLimit);
         }
@@ -544,9 +559,12 @@ public class ContractController extends Controller {
         String cmbCityTo = getPara("hideCityTo");
         String cmbAreaTo = getPara("hideDistrictTo");
         
+        String locationFrom = getRouteAddress(getPara("route_from"));
+        String locationTo = getRouteAddress(getPara("route_to"));
+        
         // 判断合同干线是否存在
         item.set("contract_id", contractId).set("fin_item_id", getPara("fin_item")).set("pricetype", getPara("priceType"))
-                .set("from_id", getPara("route_from")).set("to_id", getPara("route_to"))
+                .set("from_id", getPara("route_from")).set("to_id", getPara("route_to")).set("location_from", locationFrom).set("location_to", locationTo)
                 .set("amount", getPara("price")).set("dayfrom", getPara("day"))
                 .set("dayto", getPara("day2"));
         if (getPara("productId").equals("")) {
