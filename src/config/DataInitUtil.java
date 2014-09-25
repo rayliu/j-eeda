@@ -361,6 +361,16 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('BYF','搬运费','应收','这是一张运输单收费');");
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('SLF','上楼费','应收','这是一张运输单收费');");
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('FTF','分摊费用','应收','这是分摊费用');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('THF','提货费','应收','这是提货费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('SHF','送货费','应收','这是送货费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('BXF','保险费','应收','这是保险费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('CLCF','超里程费','应收','这是超里程费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('TJF','台阶费','应收','这是台阶费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('AZF','安装费','应收','这是安装费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('ZXF','装卸费','应收','这是装卸费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('CZF','仓租费','应收','这是仓租费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('DDF','等待费','应收','这是等待费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('QTF','其它费用','应收','这是其它费用');");
             
             // 自营车辆付费条目定义
             stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','CYF','柴油费','自营应付','这是柴油费');");

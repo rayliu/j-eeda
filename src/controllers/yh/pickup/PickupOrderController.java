@@ -125,7 +125,7 @@ public class PickupOrderController extends Controller {
             render("/yh/pickup/editPickupOrder.html");
     }
 
-    // 拼车单列表显示
+ // 拼车单列表显示
     public void pickuplist() {
         String orderNo = getPara("orderNo");
         String departNo = getPara("departNo");
@@ -139,15 +139,15 @@ public class PickupOrderController extends Controller {
         String sql = "";
         String sqlTotal = "";
         if (orderNo == null && departNo == null && beginTime == null && endTime == null) {
-            sqlTotal = "select count(1) total from depart_order do " + "" + " left join carinfo c on do.driver_id = c.id "
-                    + " where do.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "'";
+            sqlTotal = "select count(1) total from depart_order dor " + "" + " left join carinfo c on dor.driver_id = c.id "
+                    + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "'";
 
-            sql = "select do.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
-                    + " left join carinfo c on do.carinfo_id = c.id "
-                    + " left join party p on do.driver_id = p.id "
+            sql = "select dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  from depart_order dor "
+                    + " left join carinfo c on dor.carinfo_id = c.id "
+                    + " left join party p on dor.driver_id = p.id "
                     + " left join contact ct on p.contact_id = ct.id "
-                    + " where do.status!='取消' and combine_type = '"
-                    + DepartOrder.COMBINE_TYPE_PICKUP + "' order by do.create_stamp desc" + sLimit;
+                    + " where dor.status!='取消' and combine_type = '"
+                    + DepartOrder.COMBINE_TYPE_PICKUP + "' order by dor.create_stamp desc" + sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -155,25 +155,25 @@ public class PickupOrderController extends Controller {
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-            sqlTotal = "select count(distinct do.id) total from depart_order do " + " left join carinfo c on do.driver_id = c.id "
-                    + " left join depart_transfer dt2 on dt2.depart_id = do.id" + " where do.status!='取消' and combine_type = '"
+            sqlTotal = "select count(distinct dor.id) total from depart_order dor " + " left join carinfo c on dor.driver_id = c.id "
+                    + " left join depart_transfer dt2 on dt2.pickup_id = dor.id" + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%" + departNo + "%' and dt2.transfer_order_no like '%"
-                    + orderNo + "%' and do.create_stamp between '" + beginTime + "' and '" + endTime + "'";
+                    + orderNo + "%' and dor.create_stamp between '" + beginTime + "' and '" + endTime + "'";
 
-            sql = "select distinct do.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = do.id)  as transfer_order_no  from depart_order do "
-                    + " left join carinfo c on do.carinfo_id = c.id "
-                    + " left join party p on do.driver_id = p.id "
+            sql = "select distinct dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  from depart_order dor "
+                    + " left join carinfo c on dor.carinfo_id = c.id "
+                    + " left join party p on dor.driver_id = p.id "
                     + " left join contact ct on p.contact_id = ct.id "
-                    + " left join depart_transfer dt2 on dt2.depart_id = do.id"
-                    + " where do.status!='取消' and combine_type = '"
+                    + " left join depart_transfer dt2 on dt2.pickup_id = dor.id"
+                    + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP
                     + "' and depart_no like '%"
                     + departNo
                     + "%' and dt2.transfer_order_no like '%"
                     + orderNo
-                    + "%' and do.create_stamp between '"
+                    + "%' and dor.create_stamp between '"
                     + beginTime
-                    + "' and '" + endTime + "' order by do.create_stamp desc" + sLimit;
+                    + "' and '" + endTime + "' order by dor.create_stamp desc" + sLimit;
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));

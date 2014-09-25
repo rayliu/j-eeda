@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DepartOrder;
 import models.InsuranceFinItem;
 import models.InsuranceOrder;
 import models.Party;
@@ -109,7 +110,7 @@ public class InsuranceOrderController extends Controller {
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + " left join user_login ul on ul.id = tor.create_by "  
                     + " left join depart_transfer dt on dt.order_id = tor.id "              
-                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' order by tor.create_stamp desc" + sLimit;
+                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by tor.create_stamp desc" + sLimit;
         } else if ("".equals(routeFrom) && "".equals(routeTo)) {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -152,7 +153,7 @@ public class InsuranceOrderController extends Controller {
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + " left join user_login ul on ul.id = tor.create_by "  
                     + " left join depart_transfer dt on dt.order_id = tor.id "              
-                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and ifnull(l1.name, '') like '%"
+                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
@@ -214,7 +215,7 @@ public class InsuranceOrderController extends Controller {
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + " left join user_login ul on ul.id = tor.create_by "  
                     + " left join depart_transfer dt on dt.order_id = tor.id "              
-                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and ifnull(l1.name, '') like '%"
+                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
@@ -365,7 +366,7 @@ public class InsuranceOrderController extends Controller {
                 + " left join product pd on pd.id = toi.product_id"
                 + " left join depart_transfer dt on dt.order_id = tor.id"
                 + " left join depart_order dor on dor.id = dt.depart_id"
-                + " where toi.order_id in(" + order_id + ")  order by c.id" + sLimit;
+                + " where toi.order_id in(" + order_id + ") and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by c.id" + sLimit;
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
