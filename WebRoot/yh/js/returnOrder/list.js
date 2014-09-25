@@ -22,8 +22,6 @@
             { "mDataProp": "CREATOR_NAME","sWidth":"120px" },
             { "mDataProp": "CREATE_DATE","sWidth":"100px" },
             { "mDataProp": "RECEIPT_DATE","sWidth":"120px" },
-            { "mDataProp": "FROMNAME" },
-            { "mDataProp": "TONAME" },
             { "mDataProp": "TRANSACTION_STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new')

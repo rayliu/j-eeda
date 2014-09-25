@@ -99,19 +99,11 @@ public class ReturnOrderController extends Controller {
 
 			// 获取当前页的数据
 			List<Record> orders = Db
-					.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname, "
-							+ " concat(l2. NAME, l1. NAME, l. NAME) AS fromName, "
-							+ " concat(l4. NAME, l3. NAME, lt. NAME) AS toName"
+					.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 							+ " from return_order r_o "
 							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
 							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
 							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator "
-							+ " left join location l on  tor.route_from = l.code "
-							+ " left join location  l1 on l.pcode =l1.code "
-							+ " left join location l2 on l1.pcode = l2.code "
-							+ " left join location lt on tor.route_to = lt.code "
-							+ " left join location  l3 on lt.pcode =l3.code "
-							+ " left join location l4 on l3.pcode = l4.code "
 							+ " order by r_o.create_date desc " + sLimit);
 
 			orderMap.put("sEcho", pageIndex);
@@ -155,21 +147,12 @@ public class ReturnOrderController extends Controller {
 
 			// 获取当前页的数据
 			List<Record> orders = Db
-					.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname,"
-							+ " concat(l2. NAME, l1. NAME, l. NAME) AS fromName, "
-							+ " concat(l4. NAME, l3. NAME, lt. NAME) AS toName"
+					.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname"
 							+ " from return_order r_o "
 							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
 							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
 							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator "
-							+ " left join location l on  tor.route_from = l.code "
-							+ " left join location  l1 on l.pcode =l1.code "
-							+ " left join location l2 on l1.pcode = l2.code "
-							+ " left join location lt on tor.route_to = lt.code "
-							+ " left join location  l3 on lt.pcode =l3.code "
-							+ " left join location l4 on l3.pcode = l4.code "
-
-							+ "where ifnull(r_o.order_no,'')  like'%"
+							+ " where ifnull(r_o.order_no,'')  like'%"
 							+ order_no
 							+ "%' and  "
 							+ "ifnull(tor.order_no,tor2.order_no)  like'%"
@@ -207,6 +190,7 @@ public class ReturnOrderController extends Controller {
 		Long transferOrderId = returnOrder.get("transfer_order_id");
 		Long notify_party_id;
 		String code = "";
+		
 		if (deliveryId == null) {
 			transferOrder = TransferOrder.dao.findById(transferOrderId);
 			notify_party_id = transferOrder.get("notify_party_id");
