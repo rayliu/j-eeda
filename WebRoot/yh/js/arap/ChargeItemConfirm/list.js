@@ -13,7 +13,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeItemConfirm/list",
+        "sAjaxSource": "/yh/chargeConfiremList/list",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"100px",
               "fnRender": function(obj) {
@@ -25,39 +25,54 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
         			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
+    		{"mDataProp":null, 
+                    "fnRender": function(obj) {
+                        return "未收款";
+            }},
             {"mDataProp":"CNAME", "sWidth":"100px"},
-            {"mDataProp":"STATUS", "sWidth": "60px", 
+            {"mDataProp":"CREATE_DATE", "sWidth":"100px"},
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"100px"},
+            {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"100px"},
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},        	
+            {"mDataProp":null, "sWidth": "60px", 
                 "fnRender": function(obj) {
-                    if(obj.aData.STATUS=='new'){
+                    if(obj.aData.TRANSACTION_STATUS=='new'){
                         return '新建';
-                    }else if(obj.aData.STATUS=='checking'){
+                    }else if(obj.aData.TRANSACTION_STATUS=='checking'){
                         return '已发送对帐';
-                    }else if(obj.aData.STATUS=='confirmed'){
+                    }else if(obj.aData.TRANSACTION_STATUS=='confirmed'){
                         return '已审核';
-                    }else if(obj.aData.STATUS=='completed'){
+                    }else if(obj.aData.TRANSACTION_STATUS=='completed'){
                         return '已结算';
-                    }else if(obj.aData.STATUS=='cancel'){
+                    }else if(obj.aData.TRANSACTION_STATUS=='cancel'){
                         return '取消';
                     }
-                    return obj.aData.STATUS;
+                    return obj.aData.TRANSACTION_STATUS;
                 }
-            },
-            {"mDataProp":"RETURN_ORDER_NO", "sWidth":"100px"},
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"100px"},
-            {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"100px"},            
-            {"mDataProp":"CREATOR_NAME", "sWidth":"100px"},        	
-            {"mDataProp":"CREATE_STAMP", "sWidth":"100px"},
-            {"mDataProp":"REMARK", "sWidth":"100px"},
-            { 
-                "mDataProp": null, 
-                "sWidth": "8px",                
-                "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger' href='#'"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "取消"+
-                            "</a>";
-                }
-            }                         
+            },           
+            {"mDataProp":"RECEIPT_DATE", "sWidth":"100px"},        	
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":"CONTRACT_AMOUNT", "sWidth":"100px"},                        
+            {"mDataProp":"PICKUP_AMOUNT", "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"}                       
         ]      
     });	
     

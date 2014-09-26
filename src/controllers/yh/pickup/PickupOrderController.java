@@ -145,7 +145,7 @@ public class PickupOrderController extends Controller {
             sqlTotal = "select count(1) total from depart_order dor " + "" + " left join carinfo c on dor.driver_id = c.id "
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "'";
 
-            sql = "select dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = dor.id)  as transfer_order_no  from depart_order dor "
+            sql = "select dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
                     + " left join party p on dor.driver_id = p.id "
                     + " left join contact ct on p.contact_id = ct.id "
@@ -159,15 +159,15 @@ public class PickupOrderController extends Controller {
                 endTime = "9999-12-31";
             }
             sqlTotal = "select count(distinct dor.id) total from depart_order dor " + " left join carinfo c on dor.driver_id = c.id "
-                    + " left join depart_transfer dt2 on dt2.depart_id = dor.id" + " where dor.status!='取消' and combine_type = '"
+                    + " left join depart_transfer dt2 on dt2.pickup_id = dor.id" + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%" + departNo + "%' and dt2.transfer_order_no like '%"
                     + orderNo + "%' and dor.create_stamp between '" + beginTime + "' and '" + endTime + "'";
 
-            sql = "select distinct dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where depart_id = dor.id)  as transfer_order_no  from depart_order dor "
+            sql = "select distinct dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
                     + " left join party p on dor.driver_id = p.id "
                     + " left join contact ct on p.contact_id = ct.id "
-                    + " left join depart_transfer dt2 on dt2.depart_id = dor.id"
+                    + " left join depart_transfer dt2 on dt2.pickup_id = dor.id"
                     + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP
                     + "' and depart_no like '%"
@@ -391,7 +391,7 @@ public class PickupOrderController extends Controller {
         if (pickupOrderId == null || "".equals(pickupOrderId)) {
             pickupOrderId = "-1";
         }
-        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?",
+        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where pickup_id = ?",
                 pickupOrderId);
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             orderIds += departTransferOrder.get("order_id") + ",";
@@ -654,7 +654,7 @@ public class PickupOrderController extends Controller {
 
     // 更新运输单的提货方式
     private void updateTransferOrderPickupMode(DepartOrder pickupOrder) {
-        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?",
+        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where pickup_id = ?",
                 pickupOrder.get("id"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
@@ -715,7 +715,7 @@ public class PickupOrderController extends Controller {
         if (checkedDetail == null || "".equals(checkedDetail)) {
             for (int i = 0; i < params.length; i++) {
                 departTransferOrder = new DepartTransferOrder();
-                departTransferOrder.set("depart_id", pickupOrder.get("id"));
+                departTransferOrder.set("pickup_id", pickupOrder.get("id"));
                 departTransferOrder.set("order_id", params[i]);
                 TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
                 transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
@@ -736,7 +736,7 @@ public class PickupOrderController extends Controller {
         } else {
             for (int i = 0; i < params.length; i++) {
                 departTransferOrder = new DepartTransferOrder();
-                departTransferOrder.set("depart_id", pickupOrder.get("id"));
+                departTransferOrder.set("pickup_id", pickupOrder.get("id"));
                 departTransferOrder.set("order_id", params[i]);
                 TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
                 transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
@@ -764,7 +764,7 @@ public class PickupOrderController extends Controller {
     //使用时取：   pickupOrder.getStr("funIds")
     private void pickupOrderEdit(){
     	String sql = "select dor.*,co.contact_person,co.phone,u.user_name,(select group_concat(cast(dt.order_id as char)  separator',')  from depart_transfer  dt "
-                + "where dt.depart_id =dor.id)as order_id from depart_order  dor "
+                + "where dt.pickup_id =dor.id)as order_id from depart_order  dor "
                 + "left join contact co on co.id in( select p.contact_id  from party p where p.id=dor.driver_id ) "
                 + "left join user_login  u on u.id=dor.create_by where dor.combine_type ='"
                 + DepartOrder.COMBINE_TYPE_PICKUP
@@ -796,9 +796,9 @@ public class PickupOrderController extends Controller {
         }
         UserLogin userLogin = UserLogin.dao.findById(pickupOrder.get("create_by"));
         setAttr("userLogin2", userLogin);
-        setAttr("depart_id", getPara());
+        setAttr("pickup_id", getPara());
         String orderId = "";
-        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?",
+        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where pickup_id = ?",
                 pickupOrder.get("id"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             orderId += departTransferOrder.get("order_id") + ",";
@@ -893,7 +893,7 @@ public class PickupOrderController extends Controller {
     public void finishPickupOrder() {
         String pickupOrderId = getPara("pickupOrderId");
         DepartOrder pickupOrder = DepartOrder.dao.findById(pickupOrderId);
-        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?",
+        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where pickup_id = ?",
                 pickupOrder.get("id"));
         TransferOrder transferOrderType = TransferOrder.dao.findById(departTransferOrders.get(0).get("order_id"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
@@ -983,7 +983,7 @@ public class PickupOrderController extends Controller {
         }
         String chargeType = pickupOrder.get("charge_type");
 
-        List<DepartTransferOrder> dItem = DepartTransferOrder.dao.find("select order_id from depart_transfer where depart_id ='"
+        List<DepartTransferOrder> dItem = DepartTransferOrder.dao.find("select order_id from depart_transfer where pickup_id ='"
                 + getPara("pickupOrderId") + "'");
         String transferId = "";
         for (DepartTransferOrder dItem2 : dItem) {
@@ -1078,7 +1078,7 @@ public class PickupOrderController extends Controller {
         if (!"".equals(departId) && departId != null) {
             String orderIds = "";
             List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
-                    "select * from depart_transfer where depart_id = ?", departId);
+                    "select * from depart_transfer where pickup_id = ?", departId);
             for (DepartTransferOrder departTransferOrder : departTransferOrders) {
                 orderIds += departTransferOrder.get("order_id") + ",";
             }
@@ -1124,7 +1124,7 @@ public class PickupOrderController extends Controller {
     public void findAllAddress() {
         List<TransferOrder> transferOrders = new ArrayList<TransferOrder>();
         List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao
-                .find("select dt.*,tor.pickup_seq  from depart_transfer dt left join transfer_order tor on tor.id = dt.order_id where depart_id = ? order by tor.pickup_seq desc",
+                .find("select dt.*,tor.pickup_seq  from depart_transfer dt left join transfer_order tor on tor.id = dt.order_id where pickup_id = ? order by tor.pickup_seq desc",
                         getPara("pickupOrderId"));
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             TransferOrder transferOrder = TransferOrder.dao
@@ -1169,7 +1169,7 @@ public class PickupOrderController extends Controller {
             if (value.indexOf("warehouse") >= 0) {
                 String transOrderId = value.substring(9);
                 List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
-                        "select * from depart_transfer where depart_id = ?", pickupOrderId);
+                        "select * from depart_transfer where pickup_id = ?", pickupOrderId);
                 for (DepartTransferOrder departTransferOrder : departTransferOrders) {
                     if (transOrderId.equals(departTransferOrder.get("order_id") + "")) {
                         // 去掉入库的单据
@@ -1273,7 +1273,7 @@ public class PickupOrderController extends Controller {
         DepartTransferOrder departTransferOrder = null;
         for (int i = 0; i < transferOrderIds.length; i++) {
             departTransferOrder = new DepartTransferOrder();
-            departTransferOrder.set("depart_id", pickupOrderId);
+            departTransferOrder.set("pickup_id", pickupOrderId);
             departTransferOrder.set("order_id", transferOrderIds[i]);
             TransferOrder transferOrder = TransferOrder.dao.findById(transferOrderIds[i]);
             departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
@@ -1475,7 +1475,7 @@ public class PickupOrderController extends Controller {
         }
         String sqlTotal = "select count(distinct tor.id) total from depart_order_fin_item dofi"
 						+ " left join depart_order dor on dofi.pickup_order_id = dor.id"
-						+ " left join depart_transfer dt on dt.depart_id = dor.id"
+						+ " left join depart_transfer dt on dt.pickup_id = dor.id"
 						+ " left join transfer_order tor on tor.id = dt.order_id"
 						+ " left join party p on p.id = tor.customer_id"
 						+ " left join contact c on c.id = p.contact_id"
@@ -1483,7 +1483,7 @@ public class PickupOrderController extends Controller {
 						+ " where dor.combine_type='"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id ="+pickupOrderId+" and fi.type = '应收' and fi.name = '分摊费用'";
         String sql = "select distinct tor.order_no transferno,c.abbr cname,dofi.amount amount,tor.create_stamp from depart_order_fin_item dofi"
 						+ " left join depart_order dor on dofi.pickup_order_id = dor.id"
-						+ " left join depart_transfer dt on dt.depart_id = dor.id"
+						+ " left join depart_transfer dt on dt.pickup_id = dor.id"
 						+ " left join transfer_order tor on tor.id = dt.order_id"
 						+ " left join party p on p.id = tor.customer_id"
 						+ " left join contact c on c.id = p.contact_id"
@@ -1506,7 +1506,7 @@ public class PickupOrderController extends Controller {
     public void wentDutch(){
     	String pickupOrderId = getPara("pickupOrderId");
     	String customerCount = "select count(c.abbr) customerCount from depart_order dor"
-								+ " left join depart_transfer dt on dt.depart_id = dor.id"
+								+ " left join depart_transfer dt on dt.pickup_id = dor.id"
 								+ " left join transfer_order tor on tor.id = dt.order_id"
 								+ " left join party p on p.id = tor.customer_id"
 								+ " left join contact c on c.id = p.contact_id"
@@ -1514,7 +1514,7 @@ public class PickupOrderController extends Controller {
     	String amountSql = "select sum(amount) amount from ("
 								+ " select distinct dofi.id id,dofi.amount amount from depart_order_fin_item dofi"
 								+ " left join depart_order dor on dofi.pickup_order_id = dor.id"
-								+ " left join depart_transfer dt on dt.depart_id = dor.id"
+								+ " left join depart_transfer dt on dt.pickup_id = dor.id"
 								+ " left join transfer_order tor on tor.id = dt.order_id"
 								+ " left join party p on p.id = tor.customer_id"
 								+ " left join contact c on c.id = p.contact_id"
