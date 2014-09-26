@@ -447,6 +447,16 @@ $(document).ready(function() {
 			           $("#companyList").hide();
 			           var companyId = $(this).attr('partyId');
 			           $('#customerId').val(companyId);
+			           var inputStr = $('#customerName2').val();
+			           var warehouseName =$("#warehouse2").val();
+			           var code= $("#orderStatue2").val();
+			           var deliveryOrderNo = $("#deliveryOrderNo2").val();
+			           //如果客户和仓库都有值，触发查询
+			           if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""){
+				            dab.fnSettings().sAjaxSource ="/yh/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
+				        	+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+				        	dab.fnDraw();
+			           }
 			           
 			       });
 			      // 没选中客户，焦点离开，隐藏列表
@@ -462,7 +472,98 @@ $(document).ready(function() {
 			       $('#companyList').on('mousedown', function(){
 			           return false;// 阻止事件回流，不触发 $('#spMessage').on('blur'
 			       });
-				
+			       
+			       //获取客户
+			       $('#customerName1').on('keyup', function(){
+			           var inputStr = $('#customerName1').val();
+  
+			           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+			               console.log(data);
+			               var companyList =$("#companyList1");
+			               companyList.empty();
+			               for(var i = 0; i < data.length; i++)
+			               {
+			                   companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+			               }
+			               if(data.length>0)
+			                   companyList.show();
+			               
+			           },'json');
+			          
+			    });
+			   // 选中某个客户时候
+			      $('#companyList1').on('click', '.fromLocationItem', function(e){        
+			           $('#customerName1').val($(this).text());
+			           $("#companyList1").hide();
+			           var companyId = $(this).attr('partyId');
+			           $('#customerId').val(companyId);
+			           	var customerName1 = $("#customerName1").val();
+				      	var warehouse1 = $("#warehouse1").val();
+				      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
+				      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
+					      	dab2.fnDraw();
+				      	}else{
+				      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer";
+					      	dab2.fnDraw();
+				      	}
+			       });
+			      // 没选中客户，焦点离开，隐藏列表
+			      $('#customerName1').on('blur', function(){
+			           $('#companyList1').hide();
+			       });
+
+			       // 当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+			       $('#companyList1').on('blur', function(){
+			           $('#companyList1').hide();
+			       });
+
+			       $('#companyList1').on('mousedown', function(){
+			           return false;// 阻止事件回流，不触发 $('#spMessage').on('blur'
+			       });
+			     //选择仓库 
+				  	 $('#warehouse1').on('keyup', function(){
+				  		var warehouse_Name =$("#warehouse1").val();
+				  		$.get('/yh/gateIn/searchAllwarehouse',{warehouseName:warehouse_Name}, function(data){
+				  			console.log(data);
+				  			var warehouseList =$("#warehouseList1");
+				  			warehouseList.empty();
+				  			for(var i = 0; i < data.length; i++)
+				  			{
+				  				warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</a></li>");
+				  			}
+				  		},'json');
+				  		$("#warehouseList1").css({ 
+				  	    	left:$(this).position().left+"px", 
+				  	    	top:$(this).position().top+32+"px" 
+				  	    }); 
+				  	    $('#warehouseList1').show();
+				  	    
+				  	});
+				  	$('#warehouse1').on('blur', function(){
+				  		$("#warehouseList1").hide();
+				  	});
+				  	$('#warehouseList1').on('blur', function(){
+				  			$('#warehouseList1').hide();
+				  		});
+
+				  	$('#warehouseList1').on('mousedown', function(){
+				  		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+				  	});
+				  	$('#warehouseList1').on('mousedown', '.fromLocationItem', function(e){
+				  		
+				  		$('#warehouse1').val($(this).text());
+				  		
+				  		var customerName1 = $("#customerName1").val();
+				      	var warehouse1 = $("#warehouse1").val();
+				      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
+				      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
+					      	dab2.fnDraw();
+				      	}else{
+				      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer";
+					      	dab2.fnDraw();
+				      	}
+				      	$('#warehouseList1').hide();
+				  	});
 			     //选择仓库 
 			  	 $('#warehouse2').on('keyup', function(){
 			  		var warehouse_Name =$("#warehouse2").val();
@@ -495,16 +596,36 @@ $(document).ready(function() {
 			  	$('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
 			  		//var id =$(this).attr('code');
 			  		$('#warehouse2').val($(this).text());
+			  		var inputStr = $('#customerName2').val();
+		            var warehouseName =$("#warehouse2").val();
+		            var code= $("#orderStatue2").val();
+		            var deliveryOrderNo = $("#deliveryOrderNo2").val();
+		           //如果客户和仓库都有值，触发查询
+		            if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""){
+		            	dab.fnSettings().sAjaxSource ="/yh/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
+		        		+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+		        		dab.fnDraw();
+		            }
+	        		  
 			  		$('#warehouseList').hide();
 			  	});
-			  	$('#customerName2,#warehouse2').on('keyup blur', function(){
-			           var inputStr = $('#customerName2').val();
-			           var warehouseName =$("#warehouse2").val();
-			           //如果客户和仓库都有值，触发查询
-			           if(inputStr!=null && inputStr !="" && warehouseName != null && warehouseName !=""){
-			        		dab.fnSettings().sAjaxSource ="/yh/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName;
-					      	dab.fnDraw();
-			           }
+			  	/***red,? 客户和仓库一有值得时候触发事件****/
+			  	$('#customerName2,#warehouse2,#orderStatue2,#deliveryOrderNo2').on('keyup blur', function(){
+			  		var inputStr = $('#customerName2').val();
+		            var warehouseName =$("#warehouse2").val();
+		            var code= $("#orderStatue2").val();
+		            var deliveryOrderNo = $("#deliveryOrderNo2").val();
+		           //如果客户和仓库都有值，触发查询
+		            if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""){
+		            	dab.fnSettings().sAjaxSource ="/yh/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
+		        		+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+		        		dab.fnDraw();
+		            }else{
+		            	dab.fnSettings().sAjaxSource ="/yh/delivery/searchTransferByATM?"
+		        		+"code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+		        		dab.fnDraw();
+		            }
+	        		           
 			    });
 			  	
 			  	
@@ -623,9 +744,14 @@ $(document).ready(function() {
 				
 				$("#deliveryOrderNo1,#customerName1,#orderStatue1,#warehouse1").on('keyup click', function () {
 			      	var customerName1 = $("#customerName1").val();
-			      	var warehouse1 = $("#warehouse1").val();    	
-			      	dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
-			      	dab2.fnDraw();
+			      	var warehouse1 = $("#warehouse1").val();
+			      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
+			      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
+				      	dab2.fnDraw();
+			      	}else{
+			      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer";
+				      	dab2.fnDraw();
+			      	}
 			      });
 				
 			 	// radio选择普通货品和ATM

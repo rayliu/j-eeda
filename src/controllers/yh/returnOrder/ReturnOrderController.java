@@ -190,14 +190,17 @@ public class ReturnOrderController extends Controller {
 		Long transferOrderId = returnOrder.get("transfer_order_id");
 		Long notify_party_id;
 		String code = "";
+		String routeTo ="";
 		
 		if (deliveryId == null) {
 			transferOrder = TransferOrder.dao.findById(transferOrderId);
 			notify_party_id = transferOrder.get("notify_party_id");
+			routeTo=transferOrder.get("route_to");
 		} else {
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao
 					.findById(deliveryId);
 			// TODO 一张配送单对应多张运输单时回单怎样取出信息
+			routeTo=deliveryOrder.get("route_to");
 			List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao
 					.find("select * from delivery_order_item where delivery_id = ?",
 							deliveryId);
@@ -263,7 +266,7 @@ public class ReturnOrderController extends Controller {
 			setAttr("locationFrom", locationFrom);
 		}
 
-		String routeTo = transferOrder.get("route_to");
+		
 		Location locationTo = null;
 		if (routeTo != null || !"".equals(routeTo)) {
 			List<Location> provinces = Location.dao

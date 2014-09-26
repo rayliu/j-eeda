@@ -532,8 +532,11 @@ public class DeliveryController extends Controller {
 					rec.getLong("total"));
 			transferOrderListMap.put("aaData", transferOrders);
 		} else {
-			String sqlFilter = "where ifnull(w.warehouse_name,'') like '%" + warehouse + "%'"
+			String sqlFilter="";
+			if(warehouse!=null&&warehouse!=""&&customerName!=null&&customerName!=""){
+				sqlFilter= "where ifnull(w.warehouse_name,'') like '%" + warehouse + "%'"
                     + "and ifnull(c.company_name,'') like '%" + customerName + "%'";
+			}
 			Record rec = Db.findFirst(sqlTotal+sqlFilter);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -554,6 +557,7 @@ public class DeliveryController extends Controller {
 		String customerName = getPara("customerName");
 		String orderStatue = getPara("orderStatue");
 		String warehouse = getPara("warehouse");
+		String code =getPara("code");
 		
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -564,7 +568,7 @@ public class DeliveryController extends Controller {
 		}
 		Map transferOrderListMap = new HashMap();
 		if (deliveryOrderNo == null && customerName == null
-				&& orderStatue == null && warehouse == null) {
+				&& orderStatue == null && warehouse == null&&code==null) {
 			String sqlTotal = "select count(1) total from transfer_order_item_detail t1 "
 					+ "left join transfer_order t2 on t1.order_id=t2.id "
 					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE)";
@@ -601,26 +605,26 @@ public class DeliveryController extends Controller {
 					+ "left join party p2 on t1.notify_party_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "where t2.status='已入库' and t2.cargo_nature='ATM'";
-			if(warehouse !=null){
+			if(code!=""&&code!=null){
+				sql =sql +" and serial_no like '%"+code+"%'";
+			}
+			if(deliveryOrderNo!=""&&deliveryOrderNo!=null){
+				sql =sql+" and ifnull(t2.order_no,'') like '%"+ deliveryOrderNo+ "%'";
+			}
+			
+			if(warehouse!=""&&customerName!=""&&warehouse!=null&&customerName!=null){
 				sql= sql+" and w.warehouse_name like '%"
 					+ warehouse
-					+ "%'";
-			}
-			if(customerName!=null){
-				sql= sql+" and c.company_name like '%"
+					+ "%' and c.company_name like '%"
 					+ customerName
 					+ "%'";
 			}
-			if(deliveryOrderNo!=null){
-				sql= sql+" and ifnull(t2.order_no,' ') like '%"
-					+ deliveryOrderNo
-					+ "%'";
+			if(orderStatue!=""&&orderStatue!=null){
+				sql = sql+"and ifnull(t2.status,'') like '%"
+						+ orderStatue
+						+ "%'";
 			}
-			if(orderStatue!=null){
-				sql= sql+" and ifnull(t2.status,' ') like '%"
-					+ orderStatue
-					+ "%'";
-			}
+			
 			/*String sql = "SELECT  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.company_name from transfer_order_item_detail t1 "
 					+ "left join transfer_order t2 on t1.order_id=t2.id "
 					+ "left join warehouse w on t2.warehouse_id = w.id "
