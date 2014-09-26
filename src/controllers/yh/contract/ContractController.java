@@ -420,9 +420,9 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db.find("select c.*, fi.name as fin_item_name , p.item_name,"
-            		+ " (select  DECODE(CASt(SUBSTR(c.code, 5, 2) as int)>0,  true, (select name from location p where p.code=c.pcode ), false, '')||name from location c where c.code =from_id) as location_from_name ,"
-            		+ " (select  DECODE(CASt(SUBSTR(c.code, 5, 2) as int)>0,  true, (select name from location p where p.code=c.pcode ), false, '')||name from location c where c.code =to_id) as location_to_name "
+            orders = Db.find("select c.*, fi.name as fin_item_name , p.item_name,"                            
+            		+ " location_from,"
+                    + " location_to "
             		+ " from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
                             + contractId + " and PRICETYPE ='perUnit' order by id desc" + sLimit);
         }
@@ -486,9 +486,9 @@ public class ContractController extends Controller {
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
             orders = Db
-                    .find("select c.*, fi.name as fin_item_name, p.item_name,"
-                    		+ " (select  DECODE(CASt(SUBSTR(c.code, 5, 2) as int)>0,  true, (select name from location p where p.code=c.pcode ), false, '')||name from location c where c.code =from_id) as location_from_name ,"
-                    		+ " (select  DECODE(CASt(SUBSTR(c.code, 5, 2) as int)>0,  true, (select name from location p where p.code=c.pcode ), false, '')||name from location c where c.code =to_id) as location_to_name "
+                    .find("select c.*, fi.name as fin_item_name, p.item_name,"                            
+                    		+ " location_from,"
+                            + " location_to "
                     		+ " from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
                             + contractId + " and PRICETYPE ='perCar'  order by id desc" + sLimit);
         }
@@ -533,9 +533,9 @@ public class ContractController extends Controller {
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
             orders = Db
-                    .find("select c.*, fi.name as fin_item_name, p.item_name,"
-                    		+ " (select  DECODE(CASt(SUBSTR(c.code, 5, 2) as int)>0,  true, (select name from location p where p.code=c.pcode ), false, '')||name from location c where c.code =from_id) as location_from_name ,"
-                    		+ " (select  DECODE(CASt(SUBSTR(c.code, 5, 2) as int)>0,  true, (select name from location p where p.code=c.pcode ), false, '')||name from location c where c.code =to_id) as location_to_name "
+                    .find("select c.*, fi.name as fin_item_name, p.item_name,"                            
+                    		+ " location_from,"
+                            + " location_to "
                     		+ " from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
                             + contractId + " and pricetype ='perCargo'  order by id desc" + sLimit);
         }
