@@ -121,6 +121,9 @@ public class PickupOrderController extends Controller {
         List<Record> paymentItemList = Collections.EMPTY_LIST;
         paymentItemList = Db.find("select * from fin_item where type='应付'");
         setAttr("paymentItemList", paymentItemList);
+        List<Record> incomeItemList = Collections.EMPTY_LIST;
+        incomeItemList = Db.find("select * from fin_item where type='应收'");
+        setAttr("incomeItemList", incomeItemList);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/pickup/editPickupOrder.html");
     }
@@ -810,6 +813,9 @@ public class PickupOrderController extends Controller {
         List<Record> paymentItemList = Collections.EMPTY_LIST;
         paymentItemList = Db.find("select * from fin_item where type='应付'");
         setAttr("paymentItemList", paymentItemList);
+        List<Record> incomeItemList = Collections.EMPTY_LIST;
+        incomeItemList = Db.find("select * from fin_item where type='应收'");
+        setAttr("incomeItemList", incomeItemList);
         
         String finItemIds = "";
         List<DepartOrderFinItem> departOrderFinItems = DepartOrderFinItem.dao.find("select * from depart_order_fin_item where pickup_order_id = ?", pickupOrder.get("id"));
@@ -1378,6 +1384,7 @@ public class PickupOrderController extends Controller {
     	renderJson(orderMap);
     }
 
+    // 添加应付
     public void addNewRow() {
     	List<Fin_item> items = new ArrayList<Fin_item>();
         String pickupOrderId = getPara();
@@ -1389,6 +1396,20 @@ public class PickupOrderController extends Controller {
         }
         items.add(item);
         renderJson(items);
+    }
+    
+    // 添加应收
+    public void addIncomeRow() {
+    	List<Fin_item> items = new ArrayList<Fin_item>();
+    	String pickupOrderId = getPara();
+    	Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应收' order by id asc");
+    	if(item != null){
+    		DepartOrderFinItem dFinItem = new DepartOrderFinItem();
+    		dFinItem.set("status", "新建").set("pickup_order_id", pickupOrderId).set("fin_item_id", item.get("id"));
+    		dFinItem.save();
+    	}
+    	items.add(item);
+    	renderJson(items);
     }
 
     // 添加应付
@@ -1570,5 +1591,33 @@ public class PickupOrderController extends Controller {
     	DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao.findFirst("select * from depart_order_fin_item where pickup_order_id = ? and fin_item_id = ?", getPara("pickupOrderId"), getPara("finItemId"));    	
     	departOrderFinItem.delete();
         renderJson("{\"success\":true}");
+    }   
+
+    // 应收
+    public void incomePayable(){
+    	Map orderMap = new HashMap();
+    	String pickupOrderId = getPara("pickupOrderId");
+    	if(pickupOrderId != null && !"".equals(pickupOrderId)){	    		
+    		String sLimit = "";
+    		String pageIndex = getPara("sEcho");
+    		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+    			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+    		}
+    		String totalWhere = "";
+            String sql = "select count(1) total from depart_order_fin_item d "
+                    + "left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id =" + pickupOrderId + " and f.type = '应收'";
+            Record rec = Db.findFirst(sql + totalWhere);
+            logger.debug("total records:" + rec.getLong("total"));
+
+            // 获取当前页的数据
+            List<Record> orders = Db.find("select d.*,f.name from depart_order_fin_item d "
+                    + "left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id =" + pickupOrderId + " and f.type = '应收'");
+    		
+            orderMap.put("sEcho", pageIndex);
+            orderMap.put("iTotalRecords", rec.getLong("total"));
+            orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+    		orderMap.put("aaData", orders);
+    	}
+    	renderJson(orderMap);
     }
 }

@@ -884,7 +884,7 @@
 //	},'json');
     
     var pickupOrderId = $("#pickupOrderId").val();
-    //应收应付datatable
+    //应付datatable
 	var paymenttable=$('#table_fin2').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "bFilter": false, //不需要默认的搜索框
@@ -1040,6 +1040,19 @@
 		});		
 	});	
 	
+	$("#addIncomeBtn").click(function(){	
+		var pickupOrderId =$("#pickupOrderId").val();
+		$.post('/yh/pickupOrder/addIncomeRow/'+pickupOrderId,function(data){
+			console.log(data);
+			if(data[0] != null){
+				incomeTab.fnSettings().sAjaxSource = "/yh/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId;   
+				incomeTab.fnDraw();
+			}else{
+				alert("请到基础模块维护应收条目！");
+			}
+		});		
+	});	
+	
     var pickupOrderId = $("#pickupOrderId").val();
     //应收datatable
 	var pickupOrderPaymentTab = $('#table_fin').dataTable({
@@ -1085,6 +1098,7 @@
 		    var pickupOrderId = $("#pickupOrderId").val();
 			$.post('/yh/pickupOrder/wentDutch', {pickupOrderId:pickupOrderId}, function(data){
 				if(data.success){
+					pickupOrderPaymentTab.fnSettings().sAjaxSource = "/yh/pickupOrder/pickupOrderPaymentList?pickupOrderId="+pickupOrderId;   
 					pickupOrderPaymentTab.fnDraw();
 				}else{
 					alert("分摊费用失败!");
@@ -1095,7 +1109,7 @@
         }
 	});
 	
-	$("#table_fin2").on('blur', 'input,select', function(e){
+	$("#table_fin2,#table_fin3").on('blur', 'input,select', function(e){
 		e.preventDefault();
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
@@ -1106,5 +1120,73 @@
 				alert("修改失败!");
 			}
     	},'json');
-	});
+	});	
+
+    var pickupOrderId = $("#pickupOrderId").val();
+    //应收datatable
+	var incomeTab = $('#table_fin3').dataTable({
+		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "bFilter": false, //不需要默认的搜索框
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+        "sAjaxSource": "/yh/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
+        "aoColumns": [
+			{"mDataProp":"NAME",
+                "fnRender": function(obj) {
+                    if(obj.aData.NAME!='' && obj.aData.NAME != null){
+                    	var str="";
+                    	$("#incomeItemList").children().each(function(){
+                    		if(obj.aData.NAME == $(this).text()){
+                    			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
+                    		}else{
+                    			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+                    		}
+                    	});
+                        return "<select name='fin_item_id'>"+str+"</select>";
+                    }else{
+                    	var str="";
+                    	$("#incomeItemList").children().each(function(){
+                    		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+                    	});
+                    	return "<select name='fin_item_id'>"+str+"</select>";
+                    }
+             }},
+			{"mDataProp":"AMOUNT",
+                 "fnRender": function(obj) {
+                     if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+                         return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+                     }else{
+                     	 return "<input type='text' name='amount'>";
+                     }
+             }},  
+			{"mDataProp":"REMARK",
+                 "fnRender": function(obj) {
+                     if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
+                         return "<input type='text' name='remark' value='"+obj.aData.REMARK+"'>";
+                     }else{
+                     	 return "<input type='text' name='remark'>";
+                     }
+             }},  
+			{"mDataProp":"STATUS"},
+			{  
+                "mDataProp": null, 
+                "sWidth": "60px",  
+            	"sClass": "remark",              
+                "fnRender": function(obj) {
+                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
+              		"<i class='fa fa-trash-o fa-fw'> </i> "+
+              		"删除"+
+              		"</a>";
+                }
+            }     
+        ]      
+    });
 });

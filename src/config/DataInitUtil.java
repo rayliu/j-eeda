@@ -252,7 +252,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,to_id,location_to,remark) values(5, 2,'perCar', 333,'110101','北京市东城区','配送路线');");
             
             // 回单notity_party_id bigint,customer_id
-            //stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', 'new','应收',1,1,'这是一张回单');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', 'new','应收',1,1,'这是一张回单');");
             stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,transfer_order_id,creator,remark) values('HD2013021400002', '2014-08-6 16:35:35.1', 'confirmed','应收',1,2,'这是一张回单');");
             // 运输单应收应付明细id bigint auto_increment PRIMARY KEY, order_id bigint,
             // fin_item_id bigint,"
@@ -483,7 +483,7 @@ public class DataInitUtil {
                     + "values(3,'789', 'ATM003', 6, 24);");
 
             // 配送单
-            stmt.execute("insert into delivery_order(order_no, cargo_nature, customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600013', 'ATM','5','7','9','配送在途','2014-04-25 16:35:35.1');");
+            stmt.execute("insert into delivery_order(order_no, cargo_nature, customer_id,sp_id,notify_party_id,status,create_stamp,route_from,route_to) values('PS2014042600013', 'ATM','5','7','9','配送在途','2014-04-25 16:35:35.1','440100','110100');");
             stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600004', 'ATM','6','7','10','已签收','2014-04-25 16:35:35.1');");
             stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600014', 'ATM','5','8','9','取消','2014-04-25 16:35:35.1');");
             stmt.execute("insert into delivery_order(order_no, cargo_nature,customer_id,sp_id,notify_party_id,status,create_stamp) values('PS2014042600003', 'cargo','6','8','10','配送在途','2014-04-25 16:35:35.1');");

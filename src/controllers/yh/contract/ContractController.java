@@ -438,7 +438,7 @@ public class ContractController extends Controller {
     private String getRouteAddress(String code){
     	List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
 		Location l = Location.dao.findFirst("select * from location where code = '" + code + "'");
-		Location l2 = Location.dao.findFirst("select * from location where code = (select pcode from location where CODE = '" + code + "')");
+		Location l2 = Location.dao.findFirst("select * from location where code = (select pcode from location where code = '" + code + "')");
 		String str = "";
 		if (provinces.contains(l)) {
 			str = "select l.name as location from location l left join location where l.code = '" + code + "'";
