@@ -15,6 +15,7 @@ import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
 
+import com.jfinal.config.JFinalConfig;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
@@ -415,8 +416,7 @@ public class ContractController extends Controller {
 
         System.out.println(sql);
         Record rec = Db.findFirst(sql + totalWhere);
-        logger.debug("total records:" + rec.getLong("total"));
-
+        logger.debug("total records:" + rec.getLong("total"));        
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
@@ -426,6 +426,10 @@ public class ContractController extends Controller {
             		+ " from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
                             + contractId + " and PRICETYPE ='perUnit' order by id desc" + sLimit);
         }
+        
+        for (Record record : orders) {
+        	replaceLocationName(record);
+		}
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -433,6 +437,33 @@ public class ContractController extends Controller {
         orderMap.put("aaData", orders);
         renderJson(orderMap);
     }
+    
+    private void replaceLocationName(Record record){
+    	concatLocationName("from", record);
+    	concatLocationName("to", record);
+    }
+
+	private void concatLocationName(String type, Record record) {
+		String colName="from_id";
+		String replaceColName="location_from";
+		if("to".equals(type)){
+			colName="to_id";
+			replaceColName="location_to";
+		}
+		
+		String locCode=record.getStr(colName);
+		if(locCode!=null){
+			String last2=locCode.substring(4);
+			Integer in=Integer.parseInt(last2);
+			if(in>0){
+				Location loc = Location.dao.findFirst("select p_loc.name p_name, loc.name from location loc left join location p_loc on p_loc.code=loc.pcode where loc.code='"+locCode+"'");
+				record.set(replaceColName, loc.getStr("p_name")+loc.getStr("name"));
+			}else{
+				Location loc = Location.dao.findFirst("select loc.name from location loc where loc.code='"+locCode+"'");
+				record.set(replaceColName, loc.getStr("name"));
+			}
+		}
+	}
     
     // 获取始发地,目的地路线
     private String getRouteAddress(String code){
@@ -492,6 +523,9 @@ public class ContractController extends Controller {
                     		+ " from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
                             + contractId + " and PRICETYPE ='perCar'  order by id desc" + sLimit);
         }
+        for (Record record : orders) {
+        	replaceLocationName(record);
+		}
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -539,6 +573,10 @@ public class ContractController extends Controller {
                     		+ " from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
                             + contractId + " and pricetype ='perCargo'  order by id desc" + sLimit);
         }
+        
+        for (Record record : orders) {
+        	replaceLocationName(record);
+		}
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
