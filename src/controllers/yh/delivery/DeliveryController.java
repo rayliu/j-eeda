@@ -26,6 +26,7 @@ import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.bee.tl.core.BeeParser.returnStatment_return;
 
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -94,7 +95,7 @@ public class DeliveryController extends Controller {
 					+ "left join party p on d.customer_id = p.id "
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join party p2 on d.sp_id = p2.id "
-					+ "left join contact c2 on p2.contact_id = c2.id order by d.create_stamp desc "
+					+ "left join contact c2 on p2.contact_id = c2.id and order by d.create_stamp desc "
 					+ sLimit;
 			List<Record> transferOrders = Db.find(sql);
 
@@ -269,7 +270,7 @@ public class DeliveryController extends Controller {
 
 	public void edit() {
 		String id = getPara();
-		System.out.println(id);
+		//System.out.println(id);
 		DeliveryOrder tOrder = DeliveryOrder.dao.findById(id);
 		setAttr("cargoNature", tOrder.get("cargo_nature"));
 		setAttr("deliveryOrder", tOrder);
@@ -458,7 +459,6 @@ public class DeliveryController extends Controller {
 		String list3 = this.getPara("localArr3");
 		String cusId = getPara("cusId");
 		String cargoNature = getPara("cargoNature");
-
 		Party party = Party.dao
 				.findFirst("select *,p.id as customerId from party p left join contact c on p.contact_id=c.id where p.id ='"
 						+ cusId + "'");
@@ -497,6 +497,18 @@ public class DeliveryController extends Controller {
 		String customerName = getPara("customerName1");
 		String orderStatue = getPara("orderStatue1");
 		String warehouse = getPara("warehouse1");
+		
+		Map transferOrderListMap = new HashMap();
+		if(warehouse==null&&customerName==null){
+
+			transferOrderListMap.put("sEcho", 0);
+			transferOrderListMap.put("iTotalRecords", 0);
+			transferOrderListMap.put("iTotalDisplayRecords",null);
+			transferOrderListMap.put("aaData", 0);
+			
+			renderJson(transferOrderListMap);
+			return;
+		}
 
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -504,8 +516,8 @@ public class DeliveryController extends Controller {
 				&& getPara("iDisplayLength") != null) {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
-		}
-		Map transferOrderListMap = new HashMap();
+		};
+		
 		String sqlTotal = "select count(1) total from inventory_item ii "
                 +" left join product pro on ii.product_id = pro.id "
                 +" left join warehouse w on ii.warehouse_id = w.id "
@@ -558,7 +570,15 @@ public class DeliveryController extends Controller {
 		String orderStatue = getPara("orderStatue");
 		String warehouse = getPara("warehouse");
 		String code =getPara("code");
-		
+		Map transferOrderListMap = new HashMap();
+		if(customerName==null&&warehouse==null){
+			transferOrderListMap.put("sEcho", 0);
+			transferOrderListMap.put("iTotalRecords", 0);
+			transferOrderListMap.put("iTotalDisplayRecords",null);
+			transferOrderListMap.put("aaData", 0);
+			renderJson(transferOrderListMap);
+			return;
+		}
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -566,16 +586,15 @@ public class DeliveryController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-		Map transferOrderListMap = new HashMap();
+		String sqlTotal = "select count(1) total from transfer_order_item_detail t1 "
+				+ "left join transfer_order t2 on t1.order_id=t2.id "
+				+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE)";
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+		String sql="";
 		if (deliveryOrderNo == null && customerName == null
 				&& orderStatue == null && warehouse == null&&code==null) {
-			String sqlTotal = "select count(1) total from transfer_order_item_detail t1 "
-					+ "left join transfer_order t2 on t1.order_id=t2.id "
-					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE)";
-			Record rec = Db.findFirst(sqlTotal);
-			logger.debug("total records:" + rec.getLong("total"));
-
-			String sql = "select  t1.serial_no,t1.id as tid,t2.*,w.warehouse_name,c.company_name,c2.address as Naddress from transfer_order_item_detail t1 "
+			sql= "select  t1.serial_no,t1.id as tid,t2.*,w.warehouse_name,c.company_name,c2.address as Naddress from transfer_order_item_detail t1 "
 					+ "left join transfer_order t2 on t1.order_id=t2.id "
 					+ "left join warehouse w on t2.warehouse_id = w.id "
 					+ "left join party p on t2.customer_id = p.id "
@@ -584,27 +603,16 @@ public class DeliveryController extends Controller {
 					+ "left join contact c on p.contact_id = c.id "
 					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE) order by t1.id desc "
 					+ sLimit;
-			List<Record> transferOrders = Db.find(sql);
-
-			transferOrderListMap.put("sEcho", pageIndex);
-			transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-			transferOrderListMap.put("iTotalDisplayRecords",
-					rec.getLong("total"));
-			transferOrderListMap.put("aaData", transferOrders);
+			
 		} else {
-			String sqlTotal = "select count(1) total from transfer_order_item_detail t1 "
-					+ "left join transfer_order t2 on t1.order_id=t2.id "
-					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE)";
-			Record rec = Db.findFirst(sqlTotal);
-			logger.debug("total records:" + rec.getLong("total"));
-			String sql ="SELECT  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.company_name from transfer_order_item_detail t1 "
+			 sql ="SELECT  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.company_name from transfer_order_item_detail t1 "
 					+ "left join transfer_order t2 on t1.order_id=t2.id "
 					+ "left join warehouse w on t2.warehouse_id = w.id "
 					+ "left join party p on t2.customer_id = p.id "
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join party p2 on t1.notify_party_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
-					+ "where t2.status='已入库' and t2.cargo_nature='ATM'";
+					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.is_DELIVERED =false";
 			if(code!=""&&code!=null){
 				sql =sql +" and serial_no like '%"+code+"%'";
 			}
@@ -625,36 +633,16 @@ public class DeliveryController extends Controller {
 						+ "%'";
 			}
 			
-			/*String sql = "SELECT  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.company_name from transfer_order_item_detail t1 "
-					+ "left join transfer_order t2 on t1.order_id=t2.id "
-					+ "left join warehouse w on t2.warehouse_id = w.id "
-					+ "left join party p on t2.customer_id = p.id "
-					+ "left join contact c on p.contact_id = c.id "
-					+ "left join party p2 on t1.notify_party_id = p2.id "
-					+ "left join contact c2 on p2.contact_id = c2.id "
-					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE) "
-					+ "and ifnull(t2.order_no,'') like '%"
-					+ deliveryOrderNo
-					+ "%'"
-					+ "and ifnull(w.warehouse_name,'') like '%"
-					+ warehouse
-					+ "%'"
-					+ "and ifnull(c.company_name,'') like '%"
-					+ customerName
-					+ "%'"
-					+ "and ifnull(t2.status,'') like '%"
-					+ orderStatue
-					+ "%'";
-			 */
-			List<Record> transferOrders = Db.find(sql);
-
-			transferOrderListMap.put("sEcho", pageIndex);
-			transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-			transferOrderListMap.put("iTotalDisplayRecords",
-					rec.getLong("total"));
-			transferOrderListMap.put("aaData", transferOrders);
+		
 		}
+		
+		List<Record> transferOrders = Db.find(sql);
 
+		transferOrderListMap.put("sEcho", pageIndex);
+		transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+		transferOrderListMap.put("iTotalDisplayRecords",
+				rec.getLong("total"));
+		transferOrderListMap.put("aaData", transferOrders);
 		renderJson(transferOrderListMap);
 	}
 

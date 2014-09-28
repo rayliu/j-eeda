@@ -155,6 +155,7 @@ $(document).ready(function() {
                     	$("#delivery_id").val(data.ID);
                     	// $("#style").show();
                     	$("#ConfirmationBtn").attr("disabled", false);
+                    	$("#order_no").text(data.ORDER_NO);
                     	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
                     }else{
                         alert('数据保存失败。');
@@ -303,11 +304,21 @@ $(document).ready(function() {
 					if(cname.length != 0){
 						if(cname[0] != $checkBox.parent().siblings('.cname')[0].innerHTML && $checkBox.parent().siblings('.cname')[0].innerHTML != ''){
 							alert("请选择同一客户!");
+							
+							$checkBox.attr("checked",false);
+							
+							
+		
 							return false;
 						}else{
 							if(warehouseArr.length != 0){
 								if(warehouseArr[0] != $checkBox.parent().siblings('.warehouse')[0].innerHTML && $checkBox.parent().siblings('.warehouse')[0].innerHTML != ''){
 									alert("请选择同一仓库!");
+									
+									$checkBox.attr("checked",false);
+									
+									
+
 									return false;
 								}else{
 									cname.push($checkBox.parent().siblings('.cname')[0].innerHTML);
@@ -334,7 +345,11 @@ $(document).ready(function() {
 					}
 				}
 			};
-
+			
+			$("#eeda-table4").on('click', function(){
+				console.log("click table");
+			});
+			
 			$("#eeda-table4").on('click', '.checkedOrUnchecked', function(){
 				buildItems(this, "ATM");
 			});
@@ -424,7 +439,7 @@ $(document).ready(function() {
 				
 				
 				// 增加仓库查询代码和客户查询代码
-				$('#customerName2').on('keyup', function(){
+				$('#customerName2').on('keyup click', function(){
 			           var inputStr = $('#customerName2').val();
   
 			           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
@@ -474,7 +489,7 @@ $(document).ready(function() {
 			       });
 			       
 			       //获取客户
-			       $('#customerName1').on('keyup', function(){
+			       $('#customerName1').on('keyup click', function(){
 			           var inputStr = $('#customerName1').val();
   
 			           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
@@ -521,7 +536,7 @@ $(document).ready(function() {
 			           return false;// 阻止事件回流，不触发 $('#spMessage').on('blur'
 			       });
 			     //选择仓库 
-				  	 $('#warehouse1').on('keyup', function(){
+				  	 $('#warehouse1').on('keyup click', function(){
 				  		var warehouse_Name =$("#warehouse1").val();
 				  		$.get('/yh/gateIn/searchAllwarehouse',{warehouseName:warehouse_Name}, function(data){
 				  			console.log(data);
@@ -565,7 +580,7 @@ $(document).ready(function() {
 				      	$('#warehouseList1').hide();
 				  	});
 			     //选择仓库 
-			  	 $('#warehouse2').on('keyup', function(){
+			  	 $('#warehouse2').on('keyup click', function(){
 			  		var warehouse_Name =$("#warehouse2").val();
 			  		$.get('/yh/gateIn/searchAllwarehouse',{warehouseName:warehouse_Name}, function(data){
 			  			console.log(data);
@@ -610,7 +625,7 @@ $(document).ready(function() {
 			  		$('#warehouseList').hide();
 			  	});
 			  	/***red,? 客户和仓库一有值得时候触发事件****/
-			  	$('#customerName2,#warehouse2,#orderStatue2,#deliveryOrderNo2').on('keyup blur', function(){
+			  	$('#customerName2,#warehouse2,#orderStatue2,#deliveryOrderNo2').on('keyup click', function(){
 			  		var inputStr = $('#customerName2').val();
 		            var warehouseName =$("#warehouse2").val();
 		            var code= $("#orderStatue2").val();
