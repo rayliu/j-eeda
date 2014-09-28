@@ -95,7 +95,7 @@ public class DeliveryController extends Controller {
 					+ "left join party p on d.customer_id = p.id "
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join party p2 on d.sp_id = p2.id "
-					+ "left join contact c2 on p2.contact_id = c2.id and order by d.create_stamp desc "
+					+ "left join contact c2 on p2.contact_id = c2.id order by d.create_stamp desc "
 					+ sLimit;
 			List<Record> transferOrders = Db.find(sql);
 
@@ -612,7 +612,7 @@ public class DeliveryController extends Controller {
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join party p2 on t1.notify_party_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
-					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and t1.is_DELIVERED =false";
+					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false)";
 			if(code!=""&&code!=null){
 				sql =sql +" and serial_no like '%"+code+"%'";
 			}
