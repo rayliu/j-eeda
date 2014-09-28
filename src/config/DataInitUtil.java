@@ -172,7 +172,7 @@ public class DataInitUtil {
             
             // 保险单费用表
             stmt.executeUpdate("create table if not exists insurance_fin_item(id bigint auto_increment primary key,status varchar(255),location varchar(255),insurance_category varchar(255),amount double,rate double,income_rate double,insurance_amount double,insurance_no varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
-            		+ " insurance_order_id bigint,foreign key(insurance_order_id) references insurance_order(id),transfer_order_item_id bigint,foreign key(transfer_order_item_id) references transfer_order_item(id));");
+            		+ " insurance_order_id bigint,fin_item_id bigint, foreign key(fin_item_id) references fin_item(id),foreign key(insurance_order_id) references insurance_order(id),transfer_order_item_id bigint,foreign key(transfer_order_item_id) references transfer_order_item(id));");
 
             stmt.close();
             // conn.commit();
@@ -374,6 +374,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('CZF','仓租费','应收','这是仓租费');");
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('DDF','等待费','应收','这是等待费');");
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('QTF','其它费用','应收','这是其它费用');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('BXF','保险费','应付','这是保险费');");
             
             // 自营车辆付费条目定义
             stmt.executeUpdate("insert into fin_item(driver_type,code,name,type,remark) values('OWN','CYF','柴油费','自营应付','这是柴油费');");

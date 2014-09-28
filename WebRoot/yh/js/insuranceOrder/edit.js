@@ -6,6 +6,7 @@
      var depart_id=$("#depart_id").val();
      var tr_item=$("#tr_itemid_list").val();
      var item_detail=$("#item_detail").val();
+     var insuranceOrderId=$("#insuranceOrderId").val();
  	 //显示货品table
  	 var datatable = $('#pickupItem-table').dataTable({
          "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -20,7 +21,7 @@
  			$(nRow).attr({item_id: aData.ITEM_ID, fin_id: aData.FIN_ID});
  			return nRow;
  		 },
-         "sAjaxSource": "/yh/insuranceOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
+         "sAjaxSource": "/yh/insuranceOrder/getInitPickupOrderItems?insuranceOrderId="+insuranceOrderId+"&localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
          "aoColumns": [
              { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
              { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
@@ -470,6 +471,10 @@
  	$("#incomeTab").on('blur', 'input', function(e){
  		e.preventDefault();
  		var id = $(this).parent().parent().attr("id");
+ 		var itemId = $(this).parent().parent().attr("item_id");
+ 		if(itemId == 0){
+ 			itemId = '';
+ 		}
  		var name = $(this).attr("name");
  		var value = $(this).val();
 		if(value != null && value != ''){
@@ -477,7 +482,7 @@
 			$(this).parent().siblings(".income_insurance_amount")[0].children[0].innerHTML = value * income_rate;
 		}
  		var insuranceOrderId = $("#insuranceOrderId").val();
- 		$.post('/yh/insuranceOrder/incomeFinItem', {id:id, insuranceOrderId:insuranceOrderId, name:name, value:value}, function(data){
+ 		$.post('/yh/insuranceOrder/incomeFinItem', {id:id, itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value}, function(data){
  			if(data.success){
  			}else{
  				alert("修改失败!");

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
+import models.Fin_item;
 import models.InsuranceFinItem;
 import models.InsuranceOrder;
 import models.Party;
@@ -342,6 +343,7 @@ public class InsuranceOrderController extends Controller {
         String order_id = getPara("localArr");// 运输单id
         String tr_item = getPara("tr_item");// 货品id
         String item_detail = getPara("item_detail");// 单品id
+        String insuranceOrderId = getPara("insuranceOrderId");// 单品id
 
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -353,20 +355,39 @@ public class InsuranceOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select toi.id item_id,ifi.id fin_id,ifi.amount fin_amount,ifi.*,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume)*toi.amount volume, "
-                + " ifnull(case toi.weight when 0.0 then null else toi.weight end, pd.weight)*toi.amount weight"
-                + " ,c.abbr customer,tor.order_no,toi.amount,toi.remark,"
-                + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
-                + "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to "
-				+ "  from transfer_order_item toi "
-                + " left join insurance_fin_item ifi on toi.id = ifi.transfer_order_item_id "
-                + " left join transfer_order tor on tor.id = toi.order_id"
-                + " left join party p on p.id = tor.customer_id"
-                + " left join contact c on c.id = p.contact_id"
-                + " left join product pd on pd.id = toi.product_id"
-                + " left join depart_transfer dt on dt.order_id = tor.id"
-                + " left join depart_order dor on dor.id = dt.depart_id"
-                + " where toi.order_id in(" + order_id + ") and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by c.id" + sLimit;
+        String sql = "";
+        if(insuranceOrderId != null && !"".equals(insuranceOrderId)){
+	        sql = "select toi.id item_id,ifi.id fin_id,ifi.amount fin_amount,ifi.*,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume)*toi.amount volume, "
+	                + " ifnull(case toi.weight when 0.0 then null else toi.weight end, pd.weight)*toi.amount weight"
+	                + " ,c.abbr customer,tor.order_no,toi.amount,toi.remark,"
+	                + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
+	                + "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to "
+					+ "  from transfer_order_item toi "
+	                + " left join insurance_fin_item ifi on toi.id = ifi.transfer_order_item_id "
+	                + " left join fin_item fi on fi.id = ifi.fin_item_id"
+	                + " left join transfer_order tor on tor.id = toi.order_id"
+	                + " left join party p on p.id = tor.customer_id"
+	                + " left join contact c on c.id = p.contact_id"
+	                + " left join product pd on pd.id = toi.product_id"
+	                + " left join depart_transfer dt on dt.order_id = tor.id"
+	                + " left join depart_order dor on dor.id = dt.depart_id"
+	                + " where toi.order_id in(" + order_id + ") and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and fi.name = '保险费' and fi.type = '应付' order by c.id" + sLimit;
+        }else{
+        	sql = "select toi.id item_id,ifi.id fin_id,ifi.amount fin_amount,ifi.*,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume)*toi.amount volume, "
+	                + " ifnull(case toi.weight when 0.0 then null else toi.weight end, pd.weight)*toi.amount weight"
+	                + " ,c.abbr customer,tor.order_no,toi.amount,toi.remark,"
+	                + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
+	                + "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to "
+					+ "  from transfer_order_item toi "
+	                + " left join insurance_fin_item ifi on toi.id = ifi.transfer_order_item_id "
+	                + " left join transfer_order tor on tor.id = toi.order_id"
+	                + " left join party p on p.id = tor.customer_id"
+	                + " left join contact c on c.id = p.contact_id"
+	                + " left join product pd on pd.id = toi.product_id"
+	                + " left join depart_transfer dt on dt.order_id = tor.id"
+	                + " left join depart_order dor on dor.id = dt.depart_id"
+	                + " where toi.order_id in(" + order_id + ") and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by c.id" + sLimit;
+        }
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
@@ -383,6 +404,8 @@ public class InsuranceOrderController extends Controller {
     	String value = getPara("value");
     	String insuranceAmount = getPara("insuranceAmount");
     	InsuranceFinItem insuranceFinItem = InsuranceFinItem.dao.findFirst("select * from insurance_fin_item where transfer_order_item_id = ?", itemId);
+    	Fin_item finItem = Fin_item.dao.findFirst("select * from fin_item where type = ? and name = ?", "应付", "保险费");
+    	Fin_item finItem2 = Fin_item.dao.findFirst("select * from fin_item where type = ? and name = ?", "应收", "保险费");
     	if("amount".equals(name) && "".equals(value)){
     		value = "0";
     	}
@@ -399,6 +422,14 @@ public class InsuranceOrderController extends Controller {
     		insuranceFinItem.set("insurance_amount", insuranceAmount);
     		insuranceFinItem.set("transfer_order_item_id", itemId);
     		insuranceFinItem.set("insurance_order_id", insuranceOrderId);
+    		insuranceFinItem.set("fin_item_id", finItem.get("id"));
+    		insuranceFinItem.save();
+    		
+    		insuranceFinItem = new InsuranceFinItem();
+    		insuranceFinItem.set(name, value);
+    		insuranceFinItem.set("transfer_order_item_id", itemId);
+    		insuranceFinItem.set("insurance_order_id", insuranceOrderId);
+    		insuranceFinItem.set("fin_item_id", finItem2.get("id"));
     		insuranceFinItem.save();
     	}
     	renderJson("{\"success\":true}");
@@ -406,7 +437,7 @@ public class InsuranceOrderController extends Controller {
     
     public void save(){
     	InsuranceOrder insuranceOrder = null;
-    	String insuranceOrderId = getPara("insuranceOrderId");
+    	String insuranceOrderId = getPara("insuranceId");
     	if(insuranceOrderId != null && !"".equals(insuranceOrderId)){
     		insuranceOrder = InsuranceOrder.dao.findById(insuranceOrderId);
     		insuranceOrder.set("remark", getPara("remark"));
@@ -501,14 +532,12 @@ public class InsuranceOrderController extends Controller {
     		}
     		
     		// 获取当前页的数据
-    		String sql = "select ior.id,sum(ifi.amount) sum_amount,(group_concat(distinct tor.order_no separator '\r\n')) as transfer_order_no"
-					+ " ,c.abbr cname,ifi.income_rate income_rate,(income_rate*sum(ifi.amount)) income_insurance_amount from insurance_order ior"
-					+ " left join insurance_fin_item ifi on ior.id = ifi.insurance_order_id"
-					+ " left join transfer_order_item toi on toi.id = ifi.transfer_order_item_id"
-					+ " left join transfer_order tor on tor.id = toi.order_id"
-					+ " left join party p on p.id = tor.customer_id"
-					+ " left join contact c on c.id = p.contact_id"
-					+ " where ior.id = " + insuranceOrderId;
+    		String sql = "select ior.id,(select sum(ifi.amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where fi.type = '应付' and fi.name = '保险费' ) sum_amount,(group_concat(distinct tor.order_no separator '\r\n')) as transfer_order_no ,c.abbr cname,(select income_rate from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where fi.type = '应收' and fi.name = '保险费' order by fi.id limit 0,1) income_rate,"
+    				+ "((select income_rate from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where fi.type = '应收' and fi.name = '保险费' order by fi.id limit 0,1)*(select sum(ifi.amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where fi.type = '应付' and fi.name = '保险费' )) income_insurance_amount from insurance_fin_item ifi "
+					+ " left join insurance_order ior  on ior.id = ifi.insurance_order_id"
+					+ " left join fin_item fi on fi.id = ifi.fin_item_id"
+					+ " left join transfer_order_item toi on toi.id = ifi.transfer_order_item_id left join transfer_order tor on tor.id = toi.order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
+					+ " where fi.type = '应收' and fi.name = '保险费' and ior.id = " + insuranceOrderId;
     		List<Record> orders = Db.find(sql);
     		
     		orderMap.put("sEcho", pageIndex);
@@ -521,20 +550,18 @@ public class InsuranceOrderController extends Controller {
     
     // 应收条目
     public void incomeFinItem(){
-    	String id = getPara("id");
     	String name = getPara("name");
     	String value = getPara("value");
-    	if(id != null && !"".equals(id)){
-    		InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(id);
-	    	List<InsuranceFinItem> insuranceFinItems = InsuranceFinItem.dao.find("select * from insurance_fin_item where insurance_order_id = ?", insuranceOrder.get("id"));
-	    	if("income_rate".equals(name) && "".equals(value)){
-	    		value = "0";
-	    	}
-	    	for(InsuranceFinItem insuranceFinItem : insuranceFinItems){
-	    		insuranceFinItem.set(name, value);
-	    		insuranceFinItem.update();
-	    	}
+    	Fin_item finItem = Fin_item.dao.findFirst("select * from fin_item where type = ? and name = ?", "应收", "保险费");
+    	if("income_rate".equals(name) && "".equals(value)){
+    		value = "0";
     	}
+		List<InsuranceFinItem> insuranceFinItems = InsuranceFinItem.dao.find("select ifi.* from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where fi.name = '保险费' and fi.type = '应收'");
+		for(InsuranceFinItem insuranceFinItem : insuranceFinItems){
+			insuranceFinItem.set("fin_item_id", finItem.get("id"));
+			insuranceFinItem.set(name, value);
+			insuranceFinItem.update();
+		}    
     	renderJson("{\"success\":true}");
     }
 }
