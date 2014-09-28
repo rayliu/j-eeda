@@ -4,6 +4,7 @@ $(document).ready(function() {
 
 	$('#resetbutton').hide();
 	$('#resetbutton2').hide();
+
 	var hang="";
 		  // 获取供应商的list，选中信息在下方展示其他信息
 			$('#spMessage').on('keyup click', function(){
@@ -123,45 +124,49 @@ $(document).ready(function() {
 				e.preventDefault();
 			});
 			
+			 var saveDelivery = function(){
+				 var spMessage = $("#spMessage").val();
+					var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
+					var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
+					var cmbAreaTo = $("#cmbAreaTo").find("option:selected").text();
+					if(spMessage == ""){
+						alert("请输入供应商名称");
+						return false;
+					}
+					if(mbProvinceTo == "--请选择省份--" || mbProvinceTo == ""){
+						alert("请输入目的地省份");
+						return false;
+					}
+					if(cmbCityTo == "--请选择城市--" || cmbCityTo == ""){
+						alert("请输入目的地城市");
+						return false;
+					}
+					/*if(cmbAreaTo == "--请选择区(县)--" || cmbAreaTo == ""){
+						alert("请输入目的地区（县）");
+						return false;
+					}*/
+		            
+		            // 异步向后台提交数据
+		            $.post('/yh/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
+		                console.log(data);
+	                    if(data.ID>0){
+	                    	$("#delivery_id").val(data.ID);
+	                    	// $("#style").show();
+	                    	$("#ConfirmationBtn").attr("disabled", false);
+	                    	$("#order_no").text(data.ORDER_NO);
+	                    	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	                    }else{
+	                        alert('数据保存失败。');
+	                    }
+		             },'json');
+		           
+			 };
 			// 添加配送单
 			$("#saveBtn").click(function(e){
 		        // 阻止a 的默认响应行为，不需要跳转
 				// var itemId = $("#item_id").val();
-				var spMessage = $("#spMessage").val();
-				var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
-				var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
-				var cmbAreaTo = $("#cmbAreaTo").find("option:selected").text();
-				if(spMessage == ""){
-					alert("请输入供应商名称");
-					return false;
-				}
-				if(mbProvinceTo == "--请选择省份--" || mbProvinceTo == ""){
-					alert("请输入目的地省份");
-					return false;
-				}
-				if(cmbCityTo == "--请选择城市--" || cmbCityTo == ""){
-					alert("请输入目的地城市");
-					return false;
-				}
-				/*if(cmbAreaTo == "--请选择区(县)--" || cmbAreaTo == ""){
-					alert("请输入目的地区（县）");
-					return false;
-				}*/
-	            e.preventDefault();
-	            // 异步向后台提交数据
-	            $.post('/yh/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
-	                console.log(data);
-                    if(data.ID>0){
-                    	$("#delivery_id").val(data.ID);
-                    	// $("#style").show();
-                    	$("#ConfirmationBtn").attr("disabled", false);
-                    	$("#order_no").text(data.ORDER_NO);
-                    	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-                    }else{
-                        alert('数据保存失败。');
-                    }
-	             },'json');
-	           
+				e.preventDefault();
+				saveDelivery();
 	        });
 			var dab2= $('#eeda-table2').dataTable({
 				"bFilter": false, // 不需要默认的搜索框
@@ -1055,5 +1060,7 @@ $(document).ready(function() {
 				$(this).attr('checked', true);		
 			}
 		});
+		
+		
 });
 

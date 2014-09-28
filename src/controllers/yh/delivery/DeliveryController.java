@@ -344,7 +344,9 @@ public class DeliveryController extends Controller {
 		if (tOrder.get("notify_party_id") != null) {
 			notifyPartyContact = (Contact) Contact.dao
 					.findFirst(
-							"select *,p.id as pid,c.id as contactId from party p, contact c where p.contact_id=c.id and p.id =?",
+							"select c.company_name as company,c.phone,c.contact_person,"
+							+ "c.address,c.mobile,"
+							+ "p.id as pid,c.id as contactId from party p, contact c where p.contact_id=c.id and p.id =?",
 							tOrder.get("notify_party_id"));
 		}
 
@@ -829,7 +831,8 @@ public class DeliveryController extends Controller {
 			contact.set("company_name", getPara("notify_company_name"))
 					.set("contact_person", getPara("notify_contact_person"))
 					.set("address", getPara("notify_address"))
-					.set("mobile", getPara("notify_phone"));
+					.set("phone", getPara("notify_phone"))
+					.set("mobile", getPara("notify_mobile"));
 			contact.save();
 			party.set("contact_id", contact.get("id"))
 					.set("party_type", "NOTIFY_PARTY")
