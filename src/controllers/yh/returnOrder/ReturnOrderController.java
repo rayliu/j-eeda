@@ -80,7 +80,7 @@ public class ReturnOrderController extends Controller {
 		String status = getPara("status");
 		String time_one = getPara("time_one");
 		String time_two = getPara("time_two");
-
+		String customer =getPara("customer");
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -91,7 +91,7 @@ public class ReturnOrderController extends Controller {
 		Map orderMap = new HashMap();
 		if (order_no == null && tr_order_no == null && de_order_no == null
 				&& stator == null && status == null && time_one == null
-				&& time_two == null) {
+				&& time_two == null&& customer ==null) {
 			// 获取总条数
 			String totalWhere = "";
 			String sql = "select count(1) total from return_order ro ";
@@ -140,7 +140,10 @@ public class ReturnOrderController extends Controller {
 					+ "%' and "
 					+ "ifnull(usl.user_name ,'')  like'%"
 					+ stator
-					+ "%'  and "
+					+ "%'"
+					+ " and ifnull(c.abbr,c2.abbr) like '%"
+					+ customer
+					+ "%' and "
 					+ "r_o.create_date between '"
 					+ time_one + "' and '" + time_two + "'";
 			Record rec = Db.findFirst(sql + totalWhere);
@@ -148,7 +151,7 @@ public class ReturnOrderController extends Controller {
 
 			// 获取当前页的数据
 			List<Record> orders = Db
-					.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.contact_person,c2.contact_person) cname"
+					.find("select distinct r_o.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 							+ " from return_order r_o "
 							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
 							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
@@ -167,7 +170,9 @@ public class ReturnOrderController extends Controller {
 							+ "%' and "
 							+ "ifnull(usl.user_name ,'')  like'%"
 							+ stator
-							+ "%'  and "
+							+ "%' and ifnull(c.abbr,c2.abbr) like '%"
+							+ customer
+							+ "%' and "
 							+ "r_o.create_date between '"
 							+ time_one
 							+ "' and '"
