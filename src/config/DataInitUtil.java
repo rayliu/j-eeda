@@ -736,7 +736,7 @@ public class DataInitUtil {
         contact2.set("mobile", "12345672").set("phone", "213527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场2").set("postal_code", "5190002")
                 .set("location", "110102").save();
         Contact contact3 = new Contact();
-        contact3.set("company_name", "广州某某运输公司").set("contact_person", "李生").set("email", "test@test.com");
+        contact3.set("company_name", "广州某某运输公司").set("contact_person", "李生").set("email", "test@test.com").set("abbr", "广某运输");;
         contact3.set("mobile", "12345673").set("phone", "313527229313").set("address", "广州罗岗区为农街为农市场").set("postal_code", "5190003")
                 .set("location", "440116").save();// 440116
                                                   // 广州罗岗区

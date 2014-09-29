@@ -1,6 +1,7 @@
 package controllers.yh.returnOrder;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
+import models.Fin_item;
 import models.Location;
 import models.Party;
 import models.ReturnOrder;
@@ -21,6 +23,7 @@ import models.UserLogin;
 import models.yh.contract.Contract;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
+import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -639,6 +642,7 @@ public class ReturnOrderController extends Controller {
 		map.put("aaData", products);
 		renderJson(map);
 	}
+	
 	//货品明细
 	public void transferOrderItemList() {
         Map transferOrderListMap = null;
@@ -674,6 +678,7 @@ public class ReturnOrderController extends Controller {
         transferOrderListMap.put("aaData", transferOrders);
         renderJson(transferOrderListMap);
     }
+	
 	//单品
 	public void transferOrderDetailList2() {
         String itemId = getPara("item_id");
@@ -721,6 +726,7 @@ public class ReturnOrderController extends Controller {
 
         renderJson(transferOrderListMap);
     }
+	
 	// 删除TransferOrderItem
     public void deleteTransferOrderItem() {
         String id = getPara("transfer_order_item_id");
@@ -732,4 +738,88 @@ public class ReturnOrderController extends Controller {
         TransferOrderItem.dao.deleteById(id);
         renderJson("{\"success\":true}");
     }
+    
+    // 应收
+ 	public void addNewRow() {
+ 		List<Fin_item> items = new ArrayList<Fin_item>();
+ 		String returnOrderId = getPara();
+ 		Fin_item item = Fin_item.dao
+ 				.findFirst("select * from fin_item where type = '应收' order by id asc");
+ 		if (item != null) {
+ 			ReturnOrderFinItem dFinItem = new ReturnOrderFinItem();
+ 			dFinItem.set("status", "新建").set("fin_item_id", item.get("id")).set("return_order_id", returnOrderId).set("create_date", new Date());
+ 			dFinItem.save();
+ 		}
+ 		items.add(item);
+ 		renderJson(items);
+ 	}
+
+	// 修改应付
+	public void updateTransferOrderFinItem() {
+		String paymentId = getPara("paymentId");
+		String name = getPara("name");
+		String value = getPara("value");
+		if ("amount".equals(name) && "".equals(value)) {
+			value = "0";
+		}
+		if (paymentId != null && !"".equals(paymentId)) {
+			ReturnOrderFinItem returnOrderFinItem = ReturnOrderFinItem.dao
+					.findById(paymentId);
+			returnOrderFinItem.set(name, value);
+			returnOrderFinItem.update();
+		}
+		renderJson("{\"success\":true}");
+	}
+	
+	// 应收list
+	public void accountReceivable() {
+		String id = getPara();
+
+		String sLimit = "";
+		if (id == null || id.equals("")) {
+			Map orderMap = new HashMap();
+			orderMap.put("sEcho", 0);
+			orderMap.put("iTotalRecords", 0);
+			orderMap.put("iTotalDisplayRecords", 0);
+			orderMap.put("aaData", null);
+			renderJson(orderMap);
+			return;
+		}
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+
+		// 获取总条数
+		String totalWhere = "";
+		String sql = "select count(1) total from return_order_fin_item rofi left join return_order ror on ror.id = rofi.return_order_id where ror.id = '"+ id + "' "; //and f.type='应收' TODO： 有问题
+		Record rec = Db.findFirst(sql + totalWhere);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		// 获取当前页的数据
+		sql = "select distinct f.name name, rofi.*,ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
+							+ " from return_order_fin_item rofi "
+							+ " left join return_order r_o on r_o.id = rofi.return_order_id"
+							+ " left join fin_item f on rofi.fin_item_id = f.id "
+							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
+							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
+							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id where r_o.id = " + id + " order by create_date";
+		List<Record> orders =Db.find(sql);
+		Map orderMap = new HashMap();
+		orderMap.put("sEcho", pageIndex);
+		orderMap.put("iTotalRecords", rec.getLong("total"));
+		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+		orderMap.put("aaData", orders);
+
+		List<Record> list = Db.find("select * from fin_item");
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).get("name") == null) {
+				Fin_item.dao.deleteById(list.get(i).get("id"));
+			}
+		}
+		renderJson(orderMap);
+	}
 }

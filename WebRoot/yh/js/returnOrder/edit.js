@@ -314,7 +314,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource":"/yh/transferOrder/accountReceivable/"+order_id,
+        "sAjaxSource":"/yh/returnOrder/accountReceivable/"+order_id,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -323,6 +323,9 @@
 			return nRow;
 		},
         "aoColumns": [
+  			{"mDataProp":"CNAME","sWidth": "80px"},
+  			{"mDataProp":"TRANSFER_ORDER_NO","sWidth": "80px"},
+			{"mDataProp":"DELIVERY_ORDER_NO","sWidth": "80px"},
 			{"mDataProp":"NAME",
 			    "fnRender": function(obj) {
 			        if(obj.aData.NAME!='' && obj.aData.NAME != null){
@@ -352,7 +355,6 @@
 			         	 return "<input type='text' name='amount'>";
 			         }
 			 }},  
-			{"mDataProp":"TRANSFERORDERNO","sWidth": "80px","sClass": "remark"},
 			{"mDataProp":"REMARK",
                 "fnRender": function(obj) {
                     if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
@@ -364,26 +366,28 @@
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
         ]      
     });
+	
 	//应收
 	$("#addrow2").click(function(){	
 		 var order_id =$("#returnOrderid").val();
-		 $.post('/yh/transferOrder/addNewRow2/'+order_id,function(data){
+		 $.post('/yh/returnOrder/addNewRow/'+order_id,function(data){
 			console.log(data);
 			if(data[0] != null){
-				receipttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
+				receipttable.fnSettings().sAjaxSource = "/yh/returnOrder/accountReceivable/"+order_id;
 				receipttable.fnDraw();  
 			}else{
 				alert("请到基础模块维护应收条目！");
 			}
 		});		
 	});	
+	
 	//应收修改
 	$("#table_fin").on('blur', 'input,select', function(e){
 		e.preventDefault();
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$.post('/yh/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+		$.post('/yh/returnOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
 			if(data.success){
 			}else{
 				alert("修改失败!");
