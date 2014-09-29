@@ -4,6 +4,13 @@ $(document).ready(function() {
 
 	$('#resetbutton').hide();
 	$('#resetbutton2').hide();
+	
+	var deliveryStatus=$("#deliveryOrder_status").text();
+	if(deliveryStatus=="已签收"||deliveryStatus=="已发车"){
+		$("#saveBtn").attr("disabled",true);
+	}else{
+		$("#saveBtn").attr("disabled",false);
+	}
 
 	var hang="";
 		  // 获取供应商的list，选中信息在下方展示其他信息
@@ -668,6 +675,7 @@ $(document).ready(function() {
 					 */
 					parentId = e.target.getAttribute("id");
 				});
+				var parentId="chargeCheckOrderbasic";
 				// 基本信息
 				$("#chargeCheckOrderbasic").click(function(e){
 					parentId = e.target.getAttribute("id");
@@ -681,10 +689,7 @@ $(document).ready(function() {
 					 * if(!$("#transferOrderForm").valid()){ alert("请先保存运输单!");
 					 * return false; }
 					 */
-			        var bool = false;
-			        if("chargeCheckOrderbasic" == parentId){
-			        	bool = true;
-			        }
+			        
 			        if($("#delivery_id").val() == ""){
 				    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
 							$("#transfer_order_id").val(transferOrder.ID);
@@ -710,9 +715,7 @@ $(document).ready(function() {
 										transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 									}
 								},'json');  
-								if(bool){
-									$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-								}
+								
 								
 							}else{
 								alert('数据保存失败。');
@@ -729,9 +732,7 @@ $(document).ready(function() {
 								transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 							}
 						},'json'); 
-						if(bool){
-							$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-						}
+						
 			        }
 			        parentId = e.target.getAttribute("id");
 				});
