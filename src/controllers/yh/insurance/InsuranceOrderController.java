@@ -416,6 +416,14 @@ public class InsuranceOrderController extends Controller {
     		insuranceFinItem.set(name, value);
     		insuranceFinItem.set("insurance_amount", insuranceAmount);
     		insuranceFinItem.update();
+    		
+    		if("amount".equals(name) && !"".equals(value)){
+	    		Long transferItemId = insuranceFinItem.get("transfer_order_item_id");
+	    		insuranceFinItem = InsuranceFinItem.dao.findFirst("select ifi.* from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where ifi.transfer_order_item_id = ? and type = ? and name = ?", transferItemId, "应收", "保险费");
+	
+	    		insuranceFinItem.set(name, value);
+	    		insuranceFinItem.update();
+    		}
     	}else{
     		insuranceFinItem = new InsuranceFinItem();
     		insuranceFinItem.set(name, value);

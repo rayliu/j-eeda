@@ -60,12 +60,12 @@ $(document).ready(function() {
             {"mDataProp":"PICKUP_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":"INSURANCE_AMOUNT", "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":"STEP_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":"WAREHOUSE_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        
@@ -75,6 +75,11 @@ $(document).ready(function() {
             {"mDataProp":null, "sWidth":"100px"}                       
         ]      
     });	
+    
+    $("#chargeConfiremBtn").click(function(e){
+        e.preventDefault();
+        
+    });
     
     /*--------------------------------------------------------------------*/
     //获取所有客户
