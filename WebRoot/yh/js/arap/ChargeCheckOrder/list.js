@@ -3,7 +3,7 @@ $(document).ready(function() {
 
     $('#menu_charge').addClass('active').find('ul').addClass('in');
 
-	  //datatable, 动态处理
+	//datatable, 动态处理
     var datatable=$('#eeda-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",

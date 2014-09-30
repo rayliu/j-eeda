@@ -26,7 +26,6 @@ import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.bee.tl.core.BeeParser.returnStatment_return;
 
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -91,7 +90,7 @@ public class DeliveryController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select d.*,c.company_name as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
+			String sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
 					+ "left join party p on d.customer_id = p.id "
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join party p2 on d.sp_id = p2.id "
@@ -120,7 +119,7 @@ public class DeliveryController extends Controller {
 					+ "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
 					+ "where ifnull(d.order_no,'') like '%" + orderNo_filter
 					+ "%' and ifnull(d.status,'') like '%" + status_filter
-					+ "%' and ifnull(c.company_name,'') like '%"
+					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer_filter
 					+ "%' and ifnull(c2.company_name,'') like'%"
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
@@ -130,7 +129,7 @@ public class DeliveryController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select d.*,c.company_name as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
+			String sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
 					+ "left join party p on d.customer_id = p.id "
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join party p2 on d.sp_id = p2.id "
@@ -140,7 +139,7 @@ public class DeliveryController extends Controller {
 					+ orderNo_filter
 					+ "%' and ifnull(d.status,'') like '%"
 					+ status_filter
-					+ "%' and ifnull(c.company_name,'') like '%"
+					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer_filter
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
 					+ transfer_filter
@@ -185,7 +184,7 @@ public class DeliveryController extends Controller {
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select d.*,c.company_name as customer,c2.company_name as c2,(select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
+		String sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
 				+ "left join party p on d.customer_id = p.id "
 				+ "left join contact c on p.contact_id = c.id "
 				+ "left join party p2 on d.sp_id = p2.id "
@@ -203,7 +202,7 @@ public class DeliveryController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
-			String sql_seach = "select distinct d.*,c.company_name as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
+			String sql_seach = "select distinct d.*,c.abbr as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
 					+ "left join party p on d.customer_id = p.id "
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join party p2 on d.sp_id = p2.id "
@@ -211,7 +210,7 @@ public class DeliveryController extends Controller {
 					+ "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
 					+ "where ifnull(d.order_no,'') like '%"
 					+ deliveryNo
-					+ "%' and ifnull(c.company_name,'') like '%"
+					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
 					+ transferorderNo
@@ -344,7 +343,7 @@ public class DeliveryController extends Controller {
 		if (tOrder.get("notify_party_id") != null) {
 			notifyPartyContact = (Contact) Contact.dao
 					.findFirst(
-							"select c.company_name as company,c.phone,c.contact_person,"
+							"select c.abbr as company,c.phone,c.contact_person,"
 							+ "c.address,c.mobile,"
 							+ "p.id as pid,c.id as contactId from party p, contact c where p.contact_id=c.id and p.id =?",
 							tOrder.get("notify_party_id"));
@@ -469,7 +468,7 @@ public class DeliveryController extends Controller {
 		setAttr("localArr3", list3);
 		setAttr("customer", party);
 
-		String sql="select c.company_name as company,c1.*  "
+		String sql="select c.abbr as company,c1.*  "
 				+ "from transfer_order_item_detail td "
 				+ "left join transfer_order t on t.id =td.order_id "
 				+ "left join contact c on t.notify_party_id= c.id "
@@ -526,7 +525,7 @@ public class DeliveryController extends Controller {
                 +" left join party p on ii.party_id = p.id "
                 +" left join contact c  on p.contact_id = c.id ";
 		
-		String sql = "select ii.total_quantity, ii.product_id, ii.party_id , pro.*, w.warehouse_name, w.id as warehouse_id, c.company_name, ii.party_id as customer_id from inventory_item ii "
+		String sql = "select ii.total_quantity, ii.product_id, ii.party_id , pro.*, w.warehouse_name, w.id as warehouse_id, c.abbr, ii.party_id as customer_id from inventory_item ii "
                 +" left join product pro on ii.product_id = pro.id "
                 +" left join warehouse w on ii.warehouse_id = w.id "
                 +" left join party p on ii.party_id = p.id "
@@ -549,7 +548,7 @@ public class DeliveryController extends Controller {
 			String sqlFilter="";
 			if(warehouse!=null&&warehouse!=""&&customerName!=null&&customerName!=""){
 				sqlFilter= "where ifnull(w.warehouse_name,'') like '%" + warehouse + "%'"
-                    + "and ifnull(c.company_name,'') like '%" + customerName + "%'";
+                    + "and ifnull(c.abbr,'') like '%" + customerName + "%'";
 			}
 			Record rec = Db.findFirst(sqlTotal+sqlFilter);
 			logger.debug("total records:" + rec.getLong("total"));
@@ -596,7 +595,7 @@ public class DeliveryController extends Controller {
 		String sql="";
 		if (deliveryOrderNo == null && customerName == null
 				&& orderStatue == null && warehouse == null&&code==null) {
-			sql= "select  t1.serial_no,t1.id as tid,t2.*,w.warehouse_name,c.company_name,c2.address as Naddress from transfer_order_item_detail t1 "
+			sql= "select  t1.serial_no,t1.id as tid,t2.*,w.warehouse_name,c.abbr,c2.address as Naddress from transfer_order_item_detail t1 "
 					+ "left join transfer_order t2 on t1.order_id=t2.id "
 					+ "left join warehouse w on t2.warehouse_id = w.id "
 					+ "left join party p on t2.customer_id = p.id "
@@ -607,7 +606,7 @@ public class DeliveryController extends Controller {
 					+ sLimit;
 			
 		} else {
-			 sql ="SELECT  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.company_name from transfer_order_item_detail t1 "
+			 sql ="SELECT  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.abbr from transfer_order_item_detail t1 "
 					+ "left join transfer_order t2 on t1.order_id=t2.id "
 					+ "left join warehouse w on t2.warehouse_id = w.id "
 					+ "left join party p on t2.customer_id = p.id "
@@ -625,7 +624,7 @@ public class DeliveryController extends Controller {
 			if(warehouse!=""&&customerName!=""&&warehouse!=null&&customerName!=null){
 				sql= sql+" and w.warehouse_name like '%"
 					+ warehouse
-					+ "%' and c.company_name like '%"
+					+ "%' and c.abbr like '%"
 					+ customerName
 					+ "%'";
 			}
@@ -661,7 +660,7 @@ public class DeliveryController extends Controller {
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
-					.find("select *,p.id as pid from contact c,party p where p.contact_id= c.id and p.party_type ='SERVICE_PROVIDER' and c.sp_type='配送' and (c.company_name like '%"
+					.find("select *,p.id as pid from contact c,party p where p.contact_id= c.id and p.party_type ='SERVICE_PROVIDER' and c.sp_type='配送' and (c.abbr like '%"
 							+ input
 							+ "%' or c.contact_person like '%"
 							+ input
@@ -716,7 +715,7 @@ public class DeliveryController extends Controller {
 		String sql = "";
 		List<Record> departOrderitem = null;
 
-		sql = "select tof.* ,t_o.order_no as order_no,c.company_name as customer from transfer_order_item tof "
+		sql = "select tof.* ,t_o.order_no as order_no,c.abbr as customer from transfer_order_item tof "
 				+ " left join transfer_order t_o on tof.order_id =t_o.id "
 				+ "left join contact c on c.id in (select contact_id from party p where t_o.customer_id=p.id) "
 				+ " where tof.order_id in("
@@ -777,14 +776,14 @@ public class DeliveryController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 		String sql = "";
 		List<Record> departOrderitem = null;
-		sql = "select t.*,t3.order_no,c.company_name as customer from transfer_order_item_detail t "
+		sql = "select t.*,t3.order_no,c.abbr as customer from transfer_order_item_detail t "
 				+ "left join transfer_order_item t1 on t.item_id =t1.id "
 				+ "left join transfer_order t3 on t3.id =t.order_id "
 				+ "left join contact c on c.id in (select contact_id from party p where t3.customer_id=p.id) "
 				+ "where t.id in(" + idlist2 + ") order by t.id desc " + sLimit;
 		/*
 		 * sql =
-		 * "select tof.* ,t_o.order_no as order_no,c.company_name as customer,toid.serial_no as serial_no from transfer_order_item tof "
+		 * "select tof.* ,t_o.order_no as order_no,c.abbr as customer,toid.serial_no as serial_no from transfer_order_item tof "
 		 * + " left join transfer_order  t_o  on tof.order_id =t_o.id " +
 		 * "left join contact c on c.id in (select contact_id from party p where t_o.customer_id=p.id) "
 		 * +

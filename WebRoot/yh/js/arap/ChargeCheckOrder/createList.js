@@ -3,7 +3,7 @@ $(document).ready(function() {
     $('#menu_charge').addClass('active').find('ul').addClass('in');
     
 	//datatable, 动态处理
-    var chargeCheckTable = $('#chargeCheck-table').dataTable({
+    var uncheckedChargeCheckTable = $('#uncheckedChargeCheck-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -15,39 +15,151 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/yh/chargeCheckOrder/createList",
-        "aoColumns": [
-            { "mDataProp": null,
-                 "fnRender": function(obj) {
-                    return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
-                 }
-            },
-            { "mDataProp": "ORDER_NO"},
-            { "mDataProp": "COMPANY_ID", "bVisible": false},
-            { "mDataProp": "CNAME"},
-            { "mDataProp": "ORDER_TYPE", "bVisible": false},
-            { "mDataProp": "TRANSFER_ORDER_NO"},
-            { "mDataProp": "DELIVERY_ORDER_NO"},
-            { "mDataProp": "CREATOR_NAME" },
-            { "mDataProp": "CREATE_DATE" },
-            { "mDataProp": "RECEIPT_DATE" },
-            { "mDataProp": "TRANSACTION_STATUS",
+        "aoColumns": [ 
+	          { "mDataProp": null, "sWidth":"100px",
 	            "fnRender": function(obj) {
-	                if(obj.aData.TRANSACTION_STATUS=='new'){
-	                    return '新建';
-	                }else if(obj.aData.TRANSACTION_STATUS=='checking'){
-	                    return '已发送对帐';
-	                }else if(obj.aData.TRANSACTION_STATUS=='confirmed'){
-	                    return '已审核';
-	                }else if(obj.aData.TRANSACTION_STATUS=='completed'){
-	                    return '已结算';
-	                }else if(obj.aData.TRANSACTION_STATUS=='cancel'){
-	                    return '取消';
-	                }
-	                return obj.aData.TRANSACTION_STATUS;
-            }},
-            { "mDataProp": "REMARK" }                            
-        ]      
-    });	
+	              return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	            }
+	          },  
+	          {"mDataProp":"ID", "bVisible": false},
+	          {"mDataProp":"ORDER_NO",
+	          	"fnRender": function(obj) {
+	      			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+	      		}},
+	  		{"mDataProp":null, 
+	                  "fnRender": function(obj) {
+	                      return "未收款";
+	          }},
+	          {"mDataProp":"CNAME", "sWidth":"100px"},
+	          {"mDataProp":"CREATE_DATE", "sWidth":"100px"},
+	          {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"100px"},
+	          {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"100px"},
+	          {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},        	
+	          {"mDataProp":null, "sWidth": "60px", 
+	              "fnRender": function(obj) {
+	                  if(obj.aData.TRANSACTION_STATUS=='new'){
+	                      return '新建';
+	                  }else if(obj.aData.TRANSACTION_STATUS=='checking'){
+	                      return '已发送对帐';
+	                  }else if(obj.aData.TRANSACTION_STATUS=='confirmed'){
+	                      return '已审核';
+	                  }else if(obj.aData.TRANSACTION_STATUS=='completed'){
+	                      return '已结算';
+	                  }else if(obj.aData.TRANSACTION_STATUS=='cancel'){
+	                      return '取消';
+	                  }
+	                  return obj.aData.TRANSACTION_STATUS;
+	              }
+	          },           
+	          {"mDataProp":"RECEIPT_DATE", "sWidth":"100px"},        	
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":"CONTRACT_AMOUNT", "sWidth":"100px"},                        
+	          {"mDataProp":"PICKUP_AMOUNT", "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":"INSURANCE_AMOUNT", "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":"STEP_AMOUNT", "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":"WAREHOUSE_AMOUNT", "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":null, "sWidth":"100px"}                       
+	      ]          
+    });
+    
+    /*var checkedChargeCheckTable = $('#checkedChargeCheck-table').dataTable({
+    	"bFilter": false, //不需要默认的搜索框
+    	"bSort": false, // 不要排序
+    	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+    	//"sPaginationType": "bootstrap",
+    	"iDisplayLength": 25,
+    	"bServerSide": true,
+    	"oLanguage": {
+    		"sUrl": "/eeda/dataTables.ch.txt"
+    	},
+    	"sAjaxSource": "/yh/chargeCheckOrder/createList",
+    	"aoColumns": [ 
+              { "mDataProp": null, "sWidth":"100px",
+            	  "fnRender": function(obj) {
+            		  return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+            	  }
+              },  
+              {"mDataProp":"ID", "bVisible": false},
+              {"mDataProp":"ORDER_NO",
+            	  "fnRender": function(obj) {
+            		  return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            	  }},
+            	  {"mDataProp":null, 
+            		  "fnRender": function(obj) {
+            			  return "未收款";
+            		  }},
+            		  {"mDataProp":"CNAME", "sWidth":"100px"},
+            		  {"mDataProp":"CREATE_DATE", "sWidth":"100px"},
+            		  {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"100px"},
+            		  {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"100px"},
+            		  {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},        	
+            		  {"mDataProp":null, "sWidth": "60px", 
+            			  "fnRender": function(obj) {
+            				  if(obj.aData.TRANSACTION_STATUS=='new'){
+            					  return '新建';
+            				  }else if(obj.aData.TRANSACTION_STATUS=='checking'){
+            					  return '已发送对帐';
+            				  }else if(obj.aData.TRANSACTION_STATUS=='confirmed'){
+            					  return '已审核';
+            				  }else if(obj.aData.TRANSACTION_STATUS=='completed'){
+            					  return '已结算';
+            				  }else if(obj.aData.TRANSACTION_STATUS=='cancel'){
+            					  return '取消';
+            				  }
+            				  return obj.aData.TRANSACTION_STATUS;
+            			  }
+            		  },           
+            		  {"mDataProp":"RECEIPT_DATE", "sWidth":"100px"},        	
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":"CONTRACT_AMOUNT", "sWidth":"100px"},                        
+            		  {"mDataProp":"PICKUP_AMOUNT", "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":"INSURANCE_AMOUNT", "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":"STEP_AMOUNT", "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":"WAREHOUSE_AMOUNT", "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"},                        
+            		  {"mDataProp":null, "sWidth":"100px"}                       
+            		  ]          
+    });	*/
+    
+	$("#uncheckedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == true){
+			var checkedTr = $(this).parent().parent();
+			$("#checkedChargeCheckList").append(checkedTr);
+			checked.remove();
+		}else{
+			
+		}
+	});
     
     //获取客户的list，选中信息自动填写其他信息
     $('#companyName').on('keyup click', function(){
@@ -70,8 +182,8 @@ $(document).ready(function() {
         	chargeCheckTable.fnFilter('', 2);
         }
         
-    });
-    /*------------------------------me----------------------------------*/
+    });    
+    
     $('#companyName,#beginTime_filter,#endTime_filter,#beginTime,#endTime').on( 'keyup', function () {
     	
     	var companyName = $('#companyName').val();
@@ -79,9 +191,7 @@ $(document).ready(function() {
 		var endTime = $("#endTime_filter").val();
 		var receiptBegin = $("#beginTime").val();
 		var receiptEnd = $("#endTime").val();
-		console.log("1===="+companyName);
 		chargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
-	
 		chargeCheckTable.fnDraw();
 	} );
 

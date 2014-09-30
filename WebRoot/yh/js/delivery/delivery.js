@@ -199,7 +199,7 @@ $(document).ready(function() {
 		  		            {"mDataProp":"ITEM_NAME"},
 		  		            {"mDataProp":"WAREHOUSE_NAME"},
 		  		            {"mDataProp":"WAREHOUSE_ID", "bVisible": false},
-		  		            {"mDataProp":"COMPANY_NAME"},
+		  		            {"mDataProp":"ABBR"},
 		  		            {"mDataProp":"CUSTOMER_ID", "bVisible": false},
 		  		            {"mDataProp":"TOTAL_QUANTITY"},
 		  		            { 
@@ -276,7 +276,7 @@ $(document).ready(function() {
 			            		}}},
 			            {"mDataProp":"WAREHOUSE_NAME",
 			            	"sClass": "warehouse"},
-			            {"mDataProp":"COMPANY_NAME",
+			            {"mDataProp":"ABBR",
 			            	"sClass": "cname"},
 			            {"mDataProp":"ADDRESS"}
 			        ]      
