@@ -2,6 +2,8 @@
 	$('#menu_return').addClass('active').find('ul').addClass('in');
 		
 	var returnOrderId = $("#returnId").val();
+	/*var transferOrderId=$("#transferOrderId").val();
+	console.log("transferOrderId============"+transferOrderId);*/
 	//datatable, 动态处理
 	var transferOrder = $('#transferOrderTable').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -27,37 +29,37 @@
             },
             {
             	"mDataProp":"SIZE",            	
-            	"sWidth": "50px",
+            	"sWidth": "80px",
             	"sClass": "size"
         	},
             {
             	"mDataProp":"WIDTH",
-            	"sWidth": "50px",
+            	"sWidth": "80px",
             	"sClass": "width"
             },
             {
             	"mDataProp":"HEIGHT",            	
-            	"sWidth": "50px",
+            	"sWidth": "80px",
             	"sClass": "height"
         	}, 
             {
             	"mDataProp":"WEIGHT",
-            	"sWidth": "50px",
+            	"sWidth": "80px",
             	"sClass": "weight",
             },
         	{
             	"mDataProp":"AMOUNT",
-            	"sWidth": "50px",
+            	"sWidth": "80px",
             	"sClass": "amount"
             }, 
             {
             	"mDataProp":"UNIT",
-            	"sWidth": "50px",
+            	"sWidth": "80px",
             	"sClass": "unit"
             },
             {
             	"mDataProp":null,
-            	"sWidth": "50px",
+            	"sWidth": "95px",
             	"sClass": "sumWeight",
             	"fnRender": function(obj) {
         			return obj.aData.WEIGHT * obj.aData.AMOUNT;
@@ -65,7 +67,7 @@
             },
             {
             	"mDataProp":"VOLUME",
-            	"sWidth": "50px",
+            	"sWidth": "95px",
             	"sClass": "volume",
             	"fnRender": function(obj) {
             		return obj.aData.VOLUME * obj.aData.AMOUNT;

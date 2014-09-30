@@ -651,30 +651,60 @@ public class ReturnOrderController extends Controller {
 	//货品明细
 	public void transferOrderItemList() {
         Map transferOrderListMap = null;
-        String trandferOrderId = getPara("order_id");
+        String returnOrderId = getPara("order_id");
         String productId = getPara("product_id");
-        if (trandferOrderId == null || "".equals(trandferOrderId)) {
-            trandferOrderId = "-1";
+        if (returnOrderId == null || "".equals(returnOrderId)) {
+        	returnOrderId = "-1";
         }
-        logger.debug(trandferOrderId);
+        logger.debug(returnOrderId);
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select distinct count(1) total from transfer_order_item toi " + " left join product p on p.id = toi.product_id "
-                + " where toi.order_id =" + trandferOrderId
-                + " or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId + ")";
+       /* String sqlTotal = "select distinct count(1) total from transfer_order_item toi  left join product p on p.id = toi.product_id "
+                + " where toi.order_id =" + returnOrderId
+                + " or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + returnOrderId + ")";*/
+        String sqlTotal ="select distinct count(1) total from ( "
+        		+ "SELECT toi.id, "
+        		+ "ifnull(p.item_no, toi.item_no) item_no, "
+        		+ "ifnull(p.item_name, toi.item_name) item_name,"
+        		+ "ifnull(p.size, toi.size) size, "
+        		+ "ifnull(p.width, toi.width) width, "
+        		+ "ifnull(p.height, toi.height) height, "
+        		+ "ifnull(p.weight, toi.weight) weight, "
+        		+ "ifnull(p.volume, toi.volume) volume,"
+        		+ "ifnull(p.unit, toi.unit) unit, "
+        		+ "toi.remark "
+        		+ "FROM transfer_order_item_detail toid "
+        		+ "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "
+        		+ "left join return_order r on toid.delivery_id =r.delivery_order_id "
+        		+ "left join product p on toi.product_id = p.id where r.id ="+returnOrderId+") group by item_name"+ sLimit;
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         String sql = "";
-        sql = "select distinct toi.id,ifnull(p.item_no,toi.item_no) item_no, ifnull(p.item_name,toi.item_name) item_name,"
+        /*sql = "select distinct toi.id,ifnull(p.item_no,toi.item_no) item_no, ifnull(p.item_name,toi.item_name) item_name,"
                 + " ifnull(p.size,toi.size) size, ifnull(p.width, toi.width) width, ifnull(p.height, toi.height) height,"
                 + " ifnull(p.weight,toi.weight) weight, ifnull(p.volume, toi.volume) volume,toi.amount amount,"
                 + " ifnull(p.unit,toi.unit) unit, toi.remark from transfer_order_item toi "
-                + " left join product p on p.id = toi.product_id " + " where toi.order_id =" + trandferOrderId
-                + " or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId
-                + ") order by toi.id" + sLimit;
+                + " left join product p on p.id = toi.product_id " + " where toi.order_id =" + returnOrderId
+                + " or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + returnOrderId
+                + ") order by toi.id" + sLimit;*/
+        sql="select count(*) as amount ,item_no,item_name,width,size,weight,height,volume,unit,remark from ( "
+        		+ "SELECT toi.id, "
+        		+ "ifnull(p.item_no, toi.item_no) item_no, "
+        		+ "ifnull(p.item_name, toi.item_name) item_name,"
+        		+ "ifnull(p.size, toi.size) size, "
+        		+ "ifnull(p.width, toi.width) width, "
+        		+ "ifnull(p.height, toi.height) height, "
+        		+ "ifnull(p.weight, toi.weight) weight, "
+        		+ "ifnull(p.volume, toi.volume) volume,"
+        		+ "ifnull(p.unit, toi.unit) unit, "
+        		+ "toi.remark "
+        		+ "FROM transfer_order_item_detail toid "
+        		+ "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "
+        		+ "left join return_order r on toid.delivery_id =r.delivery_order_id "
+        		+ "left join product p on toi.product_id = p.id where r.id ="+returnOrderId+") group by item_name"+ sLimit;
         List<Record> transferOrders = Db.find(sql);
         transferOrderListMap = new HashMap();
         transferOrderListMap.put("sEcho", pageIndex);
