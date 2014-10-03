@@ -4,7 +4,7 @@ $(document).ready(function() {
     $('#menu_charge').addClass('active').find('ul').addClass('in');
 
 	//datatable, 动态处理
-    var datatable=$('#eeda-table').dataTable({
+    var datatable=$('#chargeCheckList-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
@@ -19,7 +19,6 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
         			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
-            {"mDataProp":"CNAME"},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -36,12 +35,21 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"RETURN_ORDER_NO"},
-            {"mDataProp":"TRANSFER_ORDER_NO"},
-            {"mDataProp":"DELIVERY_ORDER_NO"},            
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":"CNAME"},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":"REMARK"},
             {"mDataProp":"CREATOR_NAME"},        	
             {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"REMARK"},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
@@ -211,21 +219,4 @@ $(document).ready(function() {
                
            });
        
-       
-       
-       /*=========================================================*/
-       //过滤客户
-       /*   $('#companyName,#beginTime_filter,#endTime_filter,#beginTime,#endTime').on( 'keyup', function () {
-         	
-         	var companyName = $('#companyName').val();
-     		var beginTime = $("#beginTime_filter").val();
-     		var endTime = $("#endTime_filter").val();
-     		var receiptBegin = $("#beginTime").val();
-     		var receiptEnd = $("#endTime").val();
-     		console.log("rr"+companyName);
-     		chargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
-     	
-     		chargeCheckTable.fnDraw();
-     	} );
-  */
 } );

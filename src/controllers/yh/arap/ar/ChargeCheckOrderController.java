@@ -10,6 +10,7 @@ import java.util.Map;
 import models.ArapAuditItem;
 import models.ArapAuditOrder;
 import models.Party;
+import models.ReturnOrder;
 import models.UserLogin;
 import models.yh.profile.Contact;
 
@@ -277,14 +278,16 @@ public class ChargeCheckOrderController extends Controller {
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select aao.*,c.abbr cname,ror.order_no return_order_no,tor.order_no transfer_order_no,dor.order_no delivery_order_no,ul.user_name creator_name from arap_audit_order aao "
-				+ " left join party p on p.id = aao.payee_id "
-				+ " left join contact c on c.id = p.contact_id "
-				+ " left join arap_audit_item aai on aai.audit_order_id= aao.id "
-				+ " left join return_order ror on ror.id = aai.ref_order_id "
-				+ " left join transfer_order tor on tor.id = ror.transfer_order_id "
-				+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
-				+ " left join user_login ul on ul.id = aao.create_by order by aao.create_stamp desc";
+		String sql = "select distinct aao.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
+				+ " from arap_audit_order aao "
+				+ " left join arap_audit_item aai on aai.audit_order_id = aao.id"
+				+ " left join return_order ror on ror.id = aai.ref_order_id"
+				+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
+				+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
+				+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
+				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
+				+ " left join user_login usl on usl.id=aao.create_by"
+				+ " order by aao.create_stamp desc";
 
 		logger.debug("sql:" + sql);
 		List<Record> BillingOrders = Db.find(sql);
@@ -306,8 +309,7 @@ public class ChargeCheckOrderController extends Controller {
 			arapAuditOrder = new ArapAuditOrder();
 			arapAuditOrder.set("order_no", getPara("order_no"));
 			// arapAuditOrder.set("order_type", );
-			// TODO 由于未处理审核按钮,暂且使用该方式流转
-			arapAuditOrder.set("status", "checking");
+			arapAuditOrder.set("status", "新建");
 			arapAuditOrder.set("payee_id", getPara("customer_id"));
 			arapAuditOrder.set("create_by", getPara("create_by"));
 			arapAuditOrder.set("create_stamp", new Date());
@@ -325,7 +327,11 @@ public class ChargeCheckOrderController extends Controller {
 				arapAuditItem.set("create_by", getPara("create_by"));
 				arapAuditItem.set("create_stamp", new Date());
 				arapAuditItem.save();
-			}
+				
+				ReturnOrder returnOrder = ReturnOrder.dao.findById(returnOrderIdsArr[i]);
+				returnOrder.set("transaction_status", "对账中");
+				returnOrder.update();
+			}			
 		} else {
 			arapAuditOrder = ArapAuditOrder.dao.findById(chargeCheckOrderId);
 			arapAuditOrder.set("order_no", getPara("order_no"));
@@ -438,5 +444,28 @@ public class ChargeCheckOrderController extends Controller {
 		orderMap.put("aaData", orders);
 
 		renderJson(orderMap);
+	}
+	
+	// 审核
+	public void auditChargeCheckOrder(){
+		String chargeCheckOrderId = getPara("chargeCheckOrderId");
+		if(chargeCheckOrderId != null && !"".equals(chargeCheckOrderId)){
+			ArapAuditOrder arapAuditOrder = ArapAuditOrder.dao.findById(chargeCheckOrderId);
+			arapAuditOrder.set("status", "已确认");
+			arapAuditOrder.update();
+			
+			updateReturnOrderStatus(arapAuditOrder, "对账已确认");
+		}
+        renderJson("{\"success\":true}");
+	}
+	
+	// 更新回单状态
+	private void updateReturnOrderStatus(ArapAuditOrder arapAuditOrder, String status){
+		List<ArapAuditItem> arapAuditItems = ArapAuditItem.dao.find("select * from arap_audit_item where audit_order_id = ?", arapAuditOrder.get("id"));
+		for(ArapAuditItem arapAuditItem : arapAuditItems){
+			ReturnOrder returnOrder = ReturnOrder.dao.findById(arapAuditItem.get("ref_order_id"));
+			returnOrder.set("transaction_status", status);
+			returnOrder.update();
+		}
 	}
 }

@@ -151,14 +151,34 @@ $(document).ready(function() {
             		  ]          
     });	*/
     
+    var ids = [];
+    // 未选中列表
 	$("#uncheckedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
-			var checkedTr = $(this).parent().parent();
-			$("#checkedChargeCheckList").append(checkedTr);
-			checked.remove();
-		}else{
-			
-		}
+			$(this).parent().parent().appendTo($("#checkedChargeCheckList"));
+			ids.push($(this).val());
+			$("#checkedReturnOrder").val(ids);
+		}			
+	});
+	
+	// 已选中列表
+	$("#checkedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == false){
+			$(this).parent().parent().appendTo($("#uncheckedChargeCheckList"));
+			if(ids.length != 0){
+				ids.splice($.inArray($(this).val(),ids),1);
+				$("#checkedReturnOrder").val(ids);
+			}
+		}			
+	});
+	
+	$('#saveBtn').click(function(e){
+        e.preventDefault();
+        $('#createForm').submit();
+    });
+	
+	$("#checkedChargeCheckOrder").click(function(){
+		$("#checked").show();
 	});
     
     //获取客户的list，选中信息自动填写其他信息

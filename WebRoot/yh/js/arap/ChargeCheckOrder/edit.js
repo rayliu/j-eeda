@@ -12,14 +12,21 @@ $(document).ready(function() {
 		$.post('/yh/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargeCheckOrderId").val(data.ID);
-			  	//$("#style").show();
-			  	$("#departureConfirmationBtn").attr("disabled", false);
 			}else{
 				alert('数据保存失败。');
 			}
 		},'json');
 	};
     
+	// 审核
+	$("#auditBtn").click(function(e){
+		//阻止a 的默认响应行为，不需要跳转
+		e.preventDefault();
+		//异步向后台提交数据
+		var chargeCheckOrderId = $("#chargeCheckOrderId").val();
+		$.post('/yh/chargeCheckOrder/auditChargeCheckOrder', {chargeCheckOrderId:chargeCheckOrderId}, function(data){
+		},'json');
+	});
 	
 	/*--------------------------------------------------------------------*/
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
