@@ -87,7 +87,7 @@ public class ChargeInvoiceOrderController extends Controller {
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
 
-        setAttr("status", "new");
+        setAttr("status", "新建");
     	if(LoginUserController.isAuthenticated(this))
     		render("/yh/arap/ChargeInvoiceOrder/ChargeInvoiceOrderEdit.html");
     }

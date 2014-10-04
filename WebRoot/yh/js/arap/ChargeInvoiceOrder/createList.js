@@ -3,26 +3,25 @@ $(document).ready(function() {
     $('#menu_charge').addClass('active').find('ul').addClass('in');
     
 	//datatable, 动态处理
-    var chargeInvoiceTable = $('#chargeInvoice-table').dataTable({
-        "bFilter": false, //不需要默认的搜索框
-    	"bSort": false, // 不要排序
-        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",
-        "iDisplayLength": 25,
+	var uncheckedChargePreInvoiceOrderTable=$('#uncheckedChargePreInvoiceOrder-table').dataTable({
+		"bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "iDisplayLength": 10,
         "bServerSide": true,
-    	"oLanguage": {
+    	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeInvoiceOrder/createList",
-        "aoColumns": [
+        "sAjaxSource": "/yh/chargePreInvoiceOrder/list",
+        "aoColumns": [    
             { "mDataProp": null,
-                 "fnRender": function(obj) {
-                    return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
-                 }
-            },
-            {"mDataProp":"ORDER_NO"},
-            {"mDataProp":"CNAME"},
+  	            "fnRender": function(obj) {
+  	              return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+  	            }
+  	        },    
+            {"mDataProp":"ORDER_NO",
+            	"fnRender": function(obj) {
+        			return "<a href='/yh/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        		}},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -39,15 +38,50 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"RETURN_ORDER_NO"},
-            {"mDataProp":"TRANSFER_ORDER_NO"},
-            {"mDataProp":"DELIVERY_ORDER_NO"},            
-            {"mDataProp":"CREATOR_NAME"},        	
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":"REMARK"},
+            {"mDataProp":"CREATE_BY"},
             {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"REMARK"},                          
+            {"mDataProp":"AUDIT_BY"},
+            {"mDataProp":"AUDIT_STAMP"},
+            {"mDataProp":"APPROVAL_BY"},
+            {"mDataProp":"APPROVAL_STAMP"}                        
         ]      
     });	
+	
+    var ids = [];
+    // 未选中列表
+	$("#uncheckedChargePreInvoiceOrder-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == true){
+			$(this).parent().parent().appendTo($("#checkedChargePreInvoiceOrderList"));
+			ids.push($(this).val());
+			$("#checkedPreInvoiceOrder").val(ids);
+		}			
+	});
+	
+	// 已选中列表
+	$("#checkedChargePreInvoiceOrder-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == false){
+			$(this).parent().parent().appendTo($("#uncheckedChargePreInvoiceOrderList"));
+			if(ids.length != 0){
+				ids.splice($.inArray($(this).val(),ids),1);
+				$("#checkedPreInvoiceOrder").val(ids);
+			}
+		}			
+	});
+	
+	$('#saveBtn').click(function(e){
+        e.preventDefault();
+        $('#createForm').submit();
+    });
+	
+	$("#checkedChargeCheckOrder").click(function(){
+		$("#checked").show();
+	});
     
+    //获取客户的list，选中信息自动填写其他信息
     $('#companyName').on('keyup click', function(){
         var inputStr = $('#companyName').val();
         
@@ -65,38 +99,38 @@ $(document).ready(function() {
         },'json');
 
         if(inputStr==''){
-     	   datatable.fnFilter('', 2);
+        	chargeCheckTable.fnFilter('', 2);
         }
         
-    });
+    });    
+    
+    $('#companyName,#beginTime_filter,#endTime_filter,#beginTime,#endTime').on( 'keyup', function () {
+    	
+    	var companyName = $('#companyName').val();
+		var beginTime = $("#beginTime_filter").val();
+		var endTime = $("#endTime_filter").val();
+		var receiptBegin = $("#beginTime").val();
+		var receiptEnd = $("#endTime").val();
+		chargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
+		chargeCheckTable.fnDraw();
+	} );
 
-
-
-//选中某个客户时候
-   $('#companyList').on('click', '.fromLocationItem', function(e){        
+    $('#companyList').on('click', '.fromLocationItem', function(e){        
         $('#companyName').val($(this).text());
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
         //过滤回单列表
         //chargeCheckTable.fnFilter(companyId, 2);
-        
-        
-        
-        //获取所有的条件
         var inputStr = $('#companyName').val();
-        
-        
         if(inputStr!=null){
-        	 /*
-             * 
-             * 
-             * datatable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/edit";
-           	* datatable.fnDraw(); 
-             * */
+        	console.log(inputStr);
+        	chargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+inputStr;
+        	
+    		chargeCheckTable.fnDraw();
         }
     });
- // 没选中客户，焦点离开，隐藏列表
+    // 没选中客户，焦点离开，隐藏列表
     $('#companyName').on('blur', function(){
         $('#companyList').hide();
     });
@@ -110,9 +144,6 @@ $(document).ready(function() {
         return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
     });
 
-    
-    
-    
     $('#createBtn').click(function(e){
         e.preventDefault();
         //获取选取回单的ID, 放到数组中
@@ -151,7 +182,7 @@ $(document).ready(function() {
         var customer = $("#customer_filter").val();
         var sp = $("#sp_filter").val();
         var beginTime = $("#beginTime_filter").val();
-        $("#beginTime").val(beginTime);
+        $("#beginTime_filter").val(beginTime);
         var endTime = $("#endTime_filter").val();
         var officeName = $("#officeName_filter").val();
         // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
@@ -166,6 +197,33 @@ $(document).ready(function() {
         var sp = $("#sp_filter").val();
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
+        $("#endTime_filter").val(endTime);
+        var officeName = $("#officeName_filter").val();
+        // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+        // transferOrder.fnDraw();
+    } );
+    $('#beginTime').on('keyup', function () {
+        var orderNo = $("#orderNo_filter").val();
+        var status = $("#status_filter").val();
+        var address = $("#address_filter").val();
+        var customer = $("#customer_filter").val();
+        var sp = $("#sp_filter").val();
+        var beginTime = $("#beginTime").val();
+        $("#beginTime").val(beginTime);
+        var endTime = $("#endTime").val();
+        var officeName = $("#officeName_filter").val();
+        // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+        // transferOrder.fnDraw();
+    } );    
+    
+    $('#endTime').on( 'keyup click', function () {
+        var orderNo = $("#orderNo_filter").val();
+        var status = $("#status_filter").val();
+        var address = $("#address_filter").val();
+        var customer = $("#customer_filter").val();
+        var sp = $("#sp_filter").val();
+        var beginTime = $("#beginTime").val();
+        var endTime = $("#endTime").val();
         $("#endTime").val(endTime);
         var officeName = $("#officeName_filter").val();
         // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
@@ -190,6 +248,24 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
     });
+    $('#datetimepicker3').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#beginTime').trigger('keyup');
+    });
+
+
+    $('#datetimepicker4').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#endTime').trigger('keyup');
+    });
 
     //from表单验证
     var validate = $('#returnOrderSearchForm').validate({
@@ -209,4 +285,6 @@ $(document).ready(function() {
     	
     	$("#beginTime").val();
     };
+  
+    
 } );

@@ -40,17 +40,7 @@ $(document).ready(function() {
             {"mDataProp":"DELIVERY_ORDER_NO"},            
             {"mDataProp":"CREATOR_NAME"},        	
             {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"REMARK"},
-            { 
-                "mDataProp": null, 
-                "sWidth": "8%",                
-                "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger' href='#'"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "取消"+
-                            "</a>";
-                }
-            }                         
+            {"mDataProp":"REMARK"}                        
         ]      
     });	
     /*--------------------------------------------------------------------*/
