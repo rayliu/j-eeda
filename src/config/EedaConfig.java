@@ -5,6 +5,8 @@ import java.sql.SQLException;
 
 import models.Account;
 import models.ArapAuditInvoice;
+import models.ArapAuditInvoiceApplication;
+import models.ArapAuditInvoiceApplicationItem;
 import models.ArapAuditItem;
 import models.ArapAuditOrder;
 import models.ArapAuditOrderInvoice;
@@ -272,6 +274,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_audit_order_invoice", ArapAuditOrderInvoice.class);
         arp.addMapping("insurance_order", InsuranceOrder.class);
         arp.addMapping("insurance_fin_item", InsuranceFinItem.class);
+        arp.addMapping("arap_audit_invoice_application", ArapAuditInvoiceApplication.class);
+        arp.addMapping("arap_audit_invoice_application_item", ArapAuditInvoiceApplicationItem.class);
         // yh mapping
 
     }
