@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.ArapAuditOrder;
+import models.ArapChargeOrder;
 import models.Party;
 import models.UserLogin;
 import models.yh.profile.Contact;
@@ -69,7 +69,7 @@ public class PaymentCheckOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
 
-        ArapAuditOrder order = ArapAuditOrder.dao.findFirst("select * from arap_audit_order order by order_no desc limit 0,1");
+        ArapChargeOrder order = ArapChargeOrder.dao.findFirst("select * from arap_audit_order order by order_no desc limit 0,1");
         if (order != null) {
             String num = order.get("order_no");
             String str = num.substring(2, num.length());

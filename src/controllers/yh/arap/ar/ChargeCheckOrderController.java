@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.ArapAuditItem;
-import models.ArapAuditOrder;
+import models.ArapChargeItem;
+import models.ArapChargeOrder;
 import models.Party;
 import models.ReturnOrder;
 import models.UserLogin;
@@ -72,8 +72,8 @@ public class ChargeCheckOrderController extends Controller {
 				.find("select * from user_login where user_name='" + name + "'");
 		setAttr("create_by", users.get(0).get("id"));
 
-		ArapAuditOrder order = ArapAuditOrder.dao
-				.findFirst("select * from arap_audit_order order by order_no desc limit 0,1");
+		ArapChargeOrder order = ArapChargeOrder.dao
+				.findFirst("select * from arap_charge_order order by order_no desc limit 0,1");
 		if (order != null) {
 			String num = order.get("order_no");
             // TODO num.substring(2, num.length()); 该方法不通用
@@ -274,13 +274,13 @@ public class ChargeCheckOrderController extends Controller {
 					+ getPara("iDisplayLength");
 		}
 
-		String sqlTotal = "select count(1) total from arap_audit_order";
+		String sqlTotal = "select count(1) total from arap_charge_order";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		String sql = "select distinct aao.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
-				+ " from arap_audit_order aao "
-				+ " left join arap_audit_item aai on aai.audit_order_id = aao.id"
+				+ " from arap_charge_order aao "
+				+ " left join arap_charge_item aai on aai.charge_order_id = aao.id"
 				+ " left join return_order ror on ror.id = aai.ref_order_id"
 				+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
 				+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
@@ -303,10 +303,10 @@ public class ChargeCheckOrderController extends Controller {
 	}
 
 	public void save() {
-		ArapAuditOrder arapAuditOrder = null;
+		ArapChargeOrder arapAuditOrder = null;
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
 		if ("".equals(chargeCheckOrderId) || chargeCheckOrderId == null) {
-			arapAuditOrder = new ArapAuditOrder();
+			arapAuditOrder = new ArapChargeOrder();
 			arapAuditOrder.set("order_no", getPara("order_no"));
 			// arapAuditOrder.set("order_type", );
 			arapAuditOrder.set("status", "新建");
@@ -319,10 +319,10 @@ public class ChargeCheckOrderController extends Controller {
 			String returnOrderIds = getPara("returnOrderIds");
 			String[] returnOrderIdsArr = returnOrderIds.split(",");
 			for (int i = 0; i < returnOrderIdsArr.length; i++) {
-				ArapAuditItem arapAuditItem = new ArapAuditItem();
+				ArapChargeItem arapAuditItem = new ArapChargeItem();
 				// arapAuditItem.set("ref_order_type", );
 				arapAuditItem.set("ref_order_id", returnOrderIdsArr[i]);
-				arapAuditItem.set("audit_order_id", arapAuditOrder.get("id"));
+				arapAuditItem.set("charge_order_id", arapAuditOrder.get("id"));
 				// arapAuditItem.set("item_status", "");
 				arapAuditItem.set("create_by", getPara("create_by"));
 				arapAuditItem.set("create_stamp", new Date());
@@ -333,7 +333,7 @@ public class ChargeCheckOrderController extends Controller {
 				returnOrder.update();
 			}			
 		} else {
-			arapAuditOrder = ArapAuditOrder.dao.findById(chargeCheckOrderId);
+			arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
 			arapAuditOrder.set("order_no", getPara("order_no"));
 			// arapAuditOrder.set("order_type", );
 			arapAuditOrder.set("status", "new");
@@ -345,10 +345,10 @@ public class ChargeCheckOrderController extends Controller {
 			arapAuditOrder.set("last_modified_stamp", new Date());
 			arapAuditOrder.update();
 
-			List<ArapAuditItem> arapAuditItems = ArapAuditItem.dao.find(
-					"select * from arap_audit_item where audit_order_id = ?",
+			List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find(
+					"select * from arap_charge_item where charge_order_id = ?",
 					arapAuditOrder.get("id"));
-			for (ArapAuditItem arapAuditItem : arapAuditItems) {
+			for (ArapChargeItem arapAuditItem : arapAuditItems) {
 				// arapAuditItem.set("ref_order_type", );
 				// arapAuditItem.set("item_status", "");
 				arapAuditItem.set("create_by", getPara("create_by"));
@@ -361,7 +361,7 @@ public class ChargeCheckOrderController extends Controller {
 
 	public void edit() throws ParseException {
 		String id = getPara("id");
-		ArapAuditOrder arapAuditOrder = ArapAuditOrder.dao.findById(id);
+		ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(id);
 		String customerId = arapAuditOrder.get("payee_id");
 		if (!"".equals(customerId) && customerId != null) {
 			Party party = Party.dao.findById(customerId);
@@ -387,8 +387,8 @@ public class ChargeCheckOrderController extends Controller {
 			endTime = simpleDateFormat.format(endTimeDate);
 		}
 		String returnOrderIds = "";
-		List<ArapAuditItem> arapAuditItems = ArapAuditItem.dao.find("select * from arap_audit_item where audit_order_id = ?", id);
-		for(ArapAuditItem arapAuditItem : arapAuditItems){
+		List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find("select * from arap_charge_item where charge_order_id = ?", id);
+		for(ArapChargeItem arapAuditItem : arapAuditItems){
 			returnOrderIds += arapAuditItem.get("ref_order_id") + ",";
 		}
 		returnOrderIds = returnOrderIds.substring(0, returnOrderIds.length() - 1);
@@ -450,7 +450,7 @@ public class ChargeCheckOrderController extends Controller {
 	public void auditChargeCheckOrder(){
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
 		if(chargeCheckOrderId != null && !"".equals(chargeCheckOrderId)){
-			ArapAuditOrder arapAuditOrder = ArapAuditOrder.dao.findById(chargeCheckOrderId);
+			ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
 			arapAuditOrder.set("status", "已确认");
 			arapAuditOrder.update();
 			
@@ -460,9 +460,9 @@ public class ChargeCheckOrderController extends Controller {
 	}
 	
 	// 更新回单状态
-	private void updateReturnOrderStatus(ArapAuditOrder arapAuditOrder, String status){
-		List<ArapAuditItem> arapAuditItems = ArapAuditItem.dao.find("select * from arap_audit_item where audit_order_id = ?", arapAuditOrder.get("id"));
-		for(ArapAuditItem arapAuditItem : arapAuditItems){
+	private void updateReturnOrderStatus(ArapChargeOrder arapAuditOrder, String status){
+		List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find("select * from arap_charge_item where charge_order_id = ?", arapAuditOrder.get("id"));
+		for(ArapChargeItem arapAuditItem : arapAuditItems){
 			ReturnOrder returnOrder = ReturnOrder.dao.findById(arapAuditItem.get("ref_order_id"));
 			returnOrder.set("transaction_status", status);
 			returnOrder.update();

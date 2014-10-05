@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.ArapAuditItem;
-import models.ArapAuditOrder;
+import models.ArapChargeItem;
+import models.ArapChargeOrder;
 import models.Party;
 import models.UserLogin;
 import models.yh.profile.Contact;
@@ -70,7 +70,7 @@ public class CostCheckOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
 
-        ArapAuditOrder order = ArapAuditOrder.dao.findFirst("select * from arap_audit_order order by order_no desc limit 0,1");
+        ArapChargeOrder order = ArapChargeOrder.dao.findFirst("select * from arap_audit_order order by order_no desc limit 0,1");
         if (order != null) {
             String num = order.get("order_no");
             String str = num.substring(2, num.length());
@@ -190,10 +190,10 @@ public class CostCheckOrderController extends Controller {
     }
     
     public void save(){
-    	ArapAuditOrder arapAuditOrder = null;
+    	ArapChargeOrder arapAuditOrder = null;
     	String CostCheckOrderId = getPara("CostCheckOrderId");
     	if("".equals(CostCheckOrderId) || CostCheckOrderId == null){
-	    	arapAuditOrder = new ArapAuditOrder();
+	    	arapAuditOrder = new ArapChargeOrder();
 	    	arapAuditOrder.set("order_no", getPara("order_no"));
 	    	//arapAuditOrder.set("order_type", );
 	    	arapAuditOrder.set("status", "new");
@@ -208,7 +208,7 @@ public class CostCheckOrderController extends Controller {
 	    	String returnOrderIds = getPara("returnOrderIds");
 	    	String[] returnOrderIdsArr = returnOrderIds.split(",");
 	    	for(int i=0;i<returnOrderIdsArr.length;i++){
-		    	ArapAuditItem arapAuditItem = new ArapAuditItem();
+		    	ArapChargeItem arapAuditItem = new ArapChargeItem();
 		    	//arapAuditItem.set("ref_order_type", );
 		    	arapAuditItem.set("ref_order_id", returnOrderIdsArr[i]);
 		    	arapAuditItem.set("audit_order_id", arapAuditOrder.get("id"));
@@ -218,7 +218,7 @@ public class CostCheckOrderController extends Controller {
 		    	arapAuditItem.save();
 	    	}
     	}else{
-    		arapAuditOrder = ArapAuditOrder.dao.findById(CostCheckOrderId);
+    		arapAuditOrder = ArapChargeOrder.dao.findById(CostCheckOrderId);
 	    	arapAuditOrder.set("order_no", getPara("order_no"));
 	    	//arapAuditOrder.set("order_type", );
 	    	arapAuditOrder.set("status", "new");
@@ -228,8 +228,8 @@ public class CostCheckOrderController extends Controller {
 	    	arapAuditOrder.set("remark", getPara("remark"));
 	    	arapAuditOrder.update();
 	    	
-	    	List<ArapAuditItem> arapAuditItems = ArapAuditItem.dao.find("select * from arap_audit_item where audit_order_id = ?", arapAuditOrder.get("id"));
-	    	for(ArapAuditItem arapAuditItem : arapAuditItems){
+	    	List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find("select * from arap_audit_item where audit_order_id = ?", arapAuditOrder.get("id"));
+	    	for(ArapChargeItem arapAuditItem : arapAuditItems){
 		    	//arapAuditItem.set("ref_order_type", );
 		    	//arapAuditItem.set("item_status", "");
 		    	arapAuditItem.set("create_by", getPara("create_by"));
@@ -241,7 +241,7 @@ public class CostCheckOrderController extends Controller {
     }
     
     public void edit(){
-    	ArapAuditOrder arapAuditOrder = ArapAuditOrder.dao.findById(getPara("id"));
+    	ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(getPara("id"));
     	String customerId = arapAuditOrder.get("payee_id");
     	if(!"".equals(customerId) && customerId != null){
 	    	Party party = Party.dao.findById(customerId);

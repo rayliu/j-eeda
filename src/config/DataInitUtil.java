@@ -162,25 +162,30 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists inventory_item(id bigint auto_increment primary key,party_id bigint,warehouse_id bigint,product_id bigint,item_no varchar(50),item_name varchar(50),status varchar(50),expire_date datetime,"
                     + "lot_no varchar(50),uom varchar(20),caton_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
 
-            // 出纳日记帐
-            stmt.executeUpdate("create table if not exists arap_audit_order(id bigint auto_increment primary key,order_no varchar(255),order_type varchar(255),status varchar(255),payee_id varchar(255),create_by bigint,create_stamp timestamp,"
+            // 应收对账单
+            stmt.executeUpdate("create table if not exists arap_charge_order(id bigint auto_increment primary key,order_no varchar(255),order_type varchar(255),status varchar(255),payee_id varchar(255),create_by bigint,create_stamp timestamp,"
                     + " begin_time timestamp,end_time timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
-            stmt.executeUpdate("create table if not exists arap_audit_item(id bigint auto_increment primary key,ref_order_type varchar(255),item_code varchar(255),item_status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
-                    + " last_modified_stamp timestamp,remark varchar(5120),audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id),ref_order_id bigint,foreign key(ref_order_id) references return_order(id));");
+            stmt.executeUpdate("create table if not exists arap_charge_item(id bigint auto_increment primary key,ref_order_type varchar(255),item_code varchar(255),item_status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
+            		+ " remark varchar(5120),charge_order_id bigint,foreign key(charge_order_id) references arap_charge_order(id),ref_order_id bigint,foreign key(ref_order_id) references return_order(id));");
             stmt.executeUpdate("create table if not exists arap_audit_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
-            stmt.executeUpdate("create table if not exists arap_audit_order_invoice(id bigint auto_increment primary key,audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id),audit_invoice_id bigint,foreign key(audit_invoice_id) references arap_audit_invoice(id));");
             
-            // 保险单费用表
-            stmt.executeUpdate("create table if not exists insurance_fin_item(id bigint auto_increment primary key,status varchar(255),location varchar(255),insurance_category varchar(255),amount double,rate double,income_rate double,insurance_amount double,insurance_no varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
-            		+ " insurance_order_id bigint,fin_item_id bigint, foreign key(fin_item_id) references fin_item(id),foreign key(insurance_order_id) references insurance_order(id),transfer_order_item_id bigint,foreign key(transfer_order_item_id) references transfer_order_item(id));");
+            // 保险单费用表开票申请表
+            stmt.executeUpdate("create table if not exists arap_charge_invoice_application_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,charge_by bigint,charge_stamp timestamp,"
+            		+ " approver_by bigint,approval_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),payee_id bigint,invoice_no varchar(255));");
            
-            // 开票申请表
-            stmt.executeUpdate("create table if not exists arap_audit_invoice_application(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,audit_by bigint,audit_stamp timestamp,approver_by bigint,approval_stamp timestamp,"
-            		+ " last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),payee_id bigint);");
-            // 开票从表
-            stmt.executeUpdate("create table if not exists arap_audit_invoice_application_item(id bigint auto_increment primary key,invoice_application_id bigint,foreign key(invoice_application_id) references arap_audit_invoice_application(id),"
-            		+ " audit_order_id bigint,foreign key(audit_order_id) references arap_audit_order(id));");
+            // 开票申请从表
+            stmt.executeUpdate("create table if not exists arap_charge_invoice_application_item(id bigint auto_increment primary key,invoice_application_id bigint,foreign key(invoice_application_id) references arap_charge_invoice_application_order(id),charge_order_id bigint,foreign key(charge_order_id) references arap_charge_order(id));");
 
+            // 开票单费用表
+            stmt.executeUpdate("create table if not exists arap_charge_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
+            
+            // 开票单费用从表
+            stmt.executeUpdate("create table if not exists arap_charge_invoice_item_invoice_no(id bigint auto_increment primary key,invoice_no varchar(255),amount double,invoice_id bigint,foreign key(invoice_id) references arap_charge_invoice(id));");
+            
+            // 保险单费用从表
+            stmt.executeUpdate("create table if not exists insurance_fin_item(id bigint auto_increment primary key,status varchar(255),location varchar(255),insurance_category varchar(255),amount double,rate double,income_rate double,insurance_amount double,insurance_no varchar(255),create_by bigint,"
+            		+ " create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,fin_item_id bigint,foreign key(fin_item_id) references fin_item(id),insurance_order_id bigint,foreign key(insurance_order_id) references insurance_order(id),transfer_order_item_id bigint,foreign key(transfer_order_item_id) references transfer_order_item(id));");
+            
             stmt.close();
             // conn.commit();
             conn.close();
@@ -571,8 +576,8 @@ public class DataInitUtil {
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(4, 3, '2014-06-28 10:43:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(6, 3, '2014-06-28 11:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
 
-            stmt.execute("insert into arap_audit_order(BEGIN_TIME, PAYEE_ID, ORDER_NO, REMARK, CREATE_BY, END_TIME, CREATE_STAMP, STATUS) values('2014-08-15 9:39:35.1', 1, 'YSDZ2014081800001', '应收对账单测试数据', '3', '2014-08-19 9:39:35.1', '2014-08-18 9:39:35.1', 'confirmed');");
-            stmt.execute("insert into arap_audit_item(AUDIT_ORDER_ID, REF_ORDER_ID, CREATE_BY, CREATE_STAMP) values(1, 1, 3, '2014-08-18 9:39:35.1');");
+            stmt.execute("insert into arap_charge_order(begin_time, payee_id, order_no, remark, create_by, end_time, create_stamp, status) values('2014-08-15 9:39:35.1', 1, 'YSDZ2014081800001', '应收对账单测试数据', '3', '2014-08-19 9:39:35.1', '2014-08-18 9:39:35.1', 'confirmed');");
+            stmt.execute("insert into arap_charge_item(charge_order_id, ref_order_id, create_by, create_stamp) values(1, 1, 3, '2014-08-18 9:39:35.1');");
             
             // 拼车单收费条目
             stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(1, 5, 1, 300);");

@@ -4,12 +4,11 @@ import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
 import models.Account;
-import models.ArapAuditInvoice;
-import models.ArapAuditInvoiceApplication;
-import models.ArapAuditInvoiceApplicationItem;
-import models.ArapAuditItem;
-import models.ArapAuditOrder;
-import models.ArapAuditOrderInvoice;
+import models.ArapChargeInvoice;
+import models.ArapChargeInvoiceApplication;
+import models.ArapChargeInvoiceApplicationItem;
+import models.ArapChargeItem;
+import models.ArapChargeOrder;
 import models.Category;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
@@ -268,14 +267,13 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("delivery_order_fin_item", DeliveryOrderFinItem.class);
         arp.addMapping("transfer_order_fin_item", TransferOrderFinItem.class);
         arp.addMapping("depart_order_fin_item", DepartOrderFinItem.class);//提货拼车单、发车单的应付表
-        arp.addMapping("arap_audit_order", ArapAuditOrder.class);
-        arp.addMapping("arap_audit_item", ArapAuditItem.class);
-        arp.addMapping("arap_audit_invoice", ArapAuditInvoice.class);
-        arp.addMapping("arap_audit_order_invoice", ArapAuditOrderInvoice.class);
+        arp.addMapping("arap_charge_order", ArapChargeOrder.class);
+        arp.addMapping("arap_charge_item", ArapChargeItem.class);
+        arp.addMapping("arap_charge_invoice", ArapChargeInvoice.class);
         arp.addMapping("insurance_order", InsuranceOrder.class);
         arp.addMapping("insurance_fin_item", InsuranceFinItem.class);
-        arp.addMapping("arap_audit_invoice_application", ArapAuditInvoiceApplication.class);
-        arp.addMapping("arap_audit_invoice_application_item", ArapAuditInvoiceApplicationItem.class);
+        arp.addMapping("arap_charge_invoice_application_order", ArapChargeInvoiceApplication.class);
+        arp.addMapping("arap_charge_invoice_application_item", ArapChargeInvoiceApplicationItem.class);
         // yh mapping
 
     }

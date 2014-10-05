@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.ArapAuditOrder;
+import models.ArapChargeOrder;
 import models.Party;
 import models.yh.profile.Contact;
 
@@ -136,7 +136,7 @@ public class ChargeAcceptOrderController extends Controller {
     
     // 收款
     public void chargeAccept(){
-    	ArapAuditOrder arapAuditOrder = ArapAuditOrder.dao.findById(getPara("chargeCheckOrderId"));
+    	ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(getPara("chargeCheckOrderId"));
     	arapAuditOrder.set("status", "completed");
     	arapAuditOrder.update();
         renderJson("{\"success\":true}");

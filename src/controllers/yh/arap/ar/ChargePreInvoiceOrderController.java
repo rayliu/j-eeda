@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.ArapAuditInvoiceApplication;
-import models.ArapAuditInvoiceApplicationItem;
-import models.ArapAuditOrder;
+import models.ArapChargeInvoiceApplication;
+import models.ArapChargeInvoiceApplicationItem;
+import models.ArapChargeOrder;
 import models.Party;
 import models.UserLogin;
 import models.yh.profile.Contact;
@@ -58,13 +58,13 @@ public class ChargePreInvoiceOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from arap_audit_invoice_application";
+        String sqlTotal = "select count(1) total from arap_charge_invoice_application_order";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aaia.*,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_audit_invoice_application aaia "
+        String sql = "select aaia.*,ul.user_name create_by,ul2.user_name charge_by,ul3.user_name approval_by from arap_charge_invoice_application_order aaia "
 				+ " left join user_login ul on ul.id = aaia.create_by"
-				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
+				+ " left join user_login ul2 on ul2.id = aaia.charge_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by order by aaia.create_stamp desc " + sLimit;
 
         logger.debug("sql:" + sql);
@@ -112,8 +112,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 				.find("select * from user_login where user_name='" + name + "'");
 		setAttr("create_by", users.get(0).get("id"));
 
-		ArapAuditInvoiceApplication order = ArapAuditInvoiceApplication.dao
-				.findFirst("select * from arap_audit_invoice_application order by order_no desc limit 0,1");
+		ArapChargeInvoiceApplication order = ArapChargeInvoiceApplication.dao
+				.findFirst("select * from arap_charge_invoice_application_order order by order_no desc limit 0,1");
 		if (order != null) {
 			String num = order.get("order_no");
             // TODO num.substring(2, num.length()); 该方法不通用
@@ -145,10 +145,10 @@ public class ChargePreInvoiceOrderController extends Controller {
 	}
 
 	public void save() {
-		ArapAuditInvoiceApplication arapAuditInvoiceApplication = null;
+		ArapChargeInvoiceApplication arapAuditInvoiceApplication = null;
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
 		if (!"".equals(chargePreInvoiceOrderId) && chargePreInvoiceOrderId != null) {
-			arapAuditInvoiceApplication = ArapAuditInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
+			arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
 			arapAuditInvoiceApplication.set("order_no", getPara("order_no"));
 			// arapAuditOrder.set("order_type", );
 			arapAuditInvoiceApplication.set("status", "new");
@@ -159,19 +159,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("last_modified_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
 			arapAuditInvoiceApplication.update();
-
-			/*List<ArapAuditItem> arapAuditItems = ArapAuditItem.dao.find(
-					"select * from arap_audit_item where audit_order_id = ?",
-					arapAuditInvoiceApplication.get("id"));
-			for (ArapAuditItem arapAuditItem : arapAuditItems) {
-				// arapAuditItem.set("ref_order_type", );
-				// arapAuditItem.set("item_status", "");
-				arapAuditItem.set("create_by", getPara("create_by"));
-				arapAuditItem.set("create_stamp", new Date());
-				arapAuditItem.update();
-			}*/
 		} else {
-			arapAuditInvoiceApplication = new ArapAuditInvoiceApplication();
+			arapAuditInvoiceApplication = new ArapChargeInvoiceApplication();
 			arapAuditInvoiceApplication.set("order_no", getPara("order_no"));
 			arapAuditInvoiceApplication.set("status", "新建");
 			//arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
@@ -183,12 +172,12 @@ public class ChargePreInvoiceOrderController extends Controller {
 			String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
 			String[] chargeCheckOrderIdsArr = chargeCheckOrderIds.split(",");
 			for (int i = 0; i < chargeCheckOrderIdsArr.length; i++) {
-				ArapAuditInvoiceApplicationItem arapAuditInvoiceApplicationItem = new ArapAuditInvoiceApplicationItem();
+				ArapChargeInvoiceApplicationItem arapAuditInvoiceApplicationItem = new ArapChargeInvoiceApplicationItem();
 				arapAuditInvoiceApplicationItem.set("invoice_application_id", arapAuditInvoiceApplication.get("id"));
-				arapAuditInvoiceApplicationItem.set("audit_order_id", chargeCheckOrderIdsArr[i]);
+				arapAuditInvoiceApplicationItem.set("charge_order_id", chargeCheckOrderIdsArr[i]);
 				arapAuditInvoiceApplicationItem.save();
 				
-				ArapAuditOrder arapAuditOrder = ArapAuditOrder.dao.findById(chargeCheckOrderIdsArr[i]);
+				ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderIdsArr[i]);
 				arapAuditOrder.set("status", "开票申请中");
 				arapAuditOrder.update();
 			}
@@ -200,12 +189,12 @@ public class ChargePreInvoiceOrderController extends Controller {
 	public void auditChargePreInvoiceOrder(){
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
 		if(chargePreInvoiceOrderId != null && !"".equals(chargePreInvoiceOrderId)){
-			ArapAuditInvoiceApplication arapAuditOrder = ArapAuditInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
+			ArapChargeInvoiceApplication arapAuditOrder = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
 			arapAuditOrder.set("status", "已审核");
             String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-			arapAuditOrder.set("audit_by", users.get(0).get("id"));
-			arapAuditOrder.set("audit_stamp", new Date());
+			arapAuditOrder.set("charge_by", users.get(0).get("id"));
+			arapAuditOrder.set("charge_stamp", new Date());
 			arapAuditOrder.update();
 		}
         renderJson("{\"success\":true}");
@@ -215,7 +204,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 	public void approvalChargePreInvoiceOrder(){
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
 		if(chargePreInvoiceOrderId != null && !"".equals(chargePreInvoiceOrderId)){
-			ArapAuditInvoiceApplication arapAuditOrder = ArapAuditInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
+			ArapChargeInvoiceApplication arapAuditOrder = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
 			arapAuditOrder.set("status", "已审批");
             String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
@@ -228,7 +217,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 
 	public void edit() throws ParseException {
 		String id = getPara("id");
-		ArapAuditInvoiceApplication arapAuditInvoiceApplication = ArapAuditInvoiceApplication.dao.findById(id);
+		ArapChargeInvoiceApplication arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(id);
 		String customerId = arapAuditInvoiceApplication.get("payee_id");
 		if (!"".equals(customerId) && customerId != null) {
 			Party party = Party.dao.findById(customerId);
@@ -253,9 +242,9 @@ public class ChargePreInvoiceOrderController extends Controller {
 			endTime = simpleDateFormat.format(endTimeDate);
 		}
 		String chargeCheckOrderIds = "";
-		List<ArapAuditInvoiceApplicationItem> arapAuditInvoiceApplicationItems = ArapAuditInvoiceApplicationItem.dao.find("select * from arap_audit_invoice_application_item where audit_order_id = ?", id);
-		for(ArapAuditInvoiceApplicationItem arapAuditInvoiceApplicationItem : arapAuditInvoiceApplicationItems){
-			chargeCheckOrderIds += arapAuditInvoiceApplicationItem.get("audit_order_id") + ",";
+		List<ArapChargeInvoiceApplicationItem> arapAuditInvoiceApplicationItems = ArapChargeInvoiceApplicationItem.dao.find("select * from arap_charge_invoice_application_item where charge_order_id = ?", id);
+		for(ArapChargeInvoiceApplicationItem arapAuditInvoiceApplicationItem : arapAuditInvoiceApplicationItems){
+			chargeCheckOrderIds += arapAuditInvoiceApplicationItem.get("charge_order_id") + ",";
 		}
 		chargeCheckOrderIds = chargeCheckOrderIds.substring(0, chargeCheckOrderIds.length() - 1);
 		setAttr("chargeCheckOrderIds", chargeCheckOrderIds);
@@ -263,5 +252,52 @@ public class ChargePreInvoiceOrderController extends Controller {
 		setAttr("endTime", endTime);
 		if (LoginUserController.isAuthenticated(this))
 			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
+	}
+	
+	public void returnOrderList() {
+		String returnOrderIds = getPara("returnOrderIds");
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+		Map orderMap = new HashMap();
+		// 获取总条数
+		String totalWhere = "";
+		String sql = "select count(1) total from return_order ror where ror.id in ("+returnOrderIds+")";
+		Record rec = Db.findFirst(sql + totalWhere);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		// 获取当前页的数据
+		List<Record> orders = Db
+				.find("select sum(tofi.amount) amount,ror.id,ror.order_no,ror.transaction_status,ror.remark remark,ror.create_date,ror.receipt_date, usl.user_name as creator_name,dor.order_no as delivery_order_no,ifnull(c.abbr,c2.abbr) cname,"
+						+ " ifnull(tor.order_no,(select	group_concat(tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no"
+						+ " from return_order ror" 
+						+ " left join transfer_order tor on tor.id = ror.transfer_order_id"
+						+ " left join party p on p.id = tor.customer_id"
+						+ " left join contact c on c.id = p.contact_id"
+						+ " left join delivery_order dor on ror.delivery_order_id = dor.id"
+						+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
+						+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id"
+						+ " left join party p2 on p2.id = tor2.customer_id"
+						+ " left join contact c2 on c2.id = p2.contact_id"
+						+ " left join user_login usl on usl.id = ror.creator"
+						+ " left join transfer_order_fin_item tofi on tofi.order_id = ifnull(tor.id, tor2.id)"
+						+ " left join fin_item fi on fi.id = tofi.fin_item_id"
+						+ " where ror.id in ("+returnOrderIds+") group by ror.id order by ror.create_date desc " + sLimit);
+
+		orderMap.put("sEcho", pageIndex);
+		orderMap.put("iTotalRecords", rec.getLong("total"));
+		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		orderMap.put("aaData", orders);
+
+		orderMap.put("sEcho", pageIndex);
+		orderMap.put("iTotalRecords", rec.getLong("total"));
+		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		orderMap.put("aaData", orders);
+
+		renderJson(orderMap);
 	}
 }
