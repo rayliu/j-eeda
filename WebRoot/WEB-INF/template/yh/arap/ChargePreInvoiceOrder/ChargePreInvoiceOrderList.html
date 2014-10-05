@@ -2,7 +2,7 @@
 
 <%layout("/yh/layout.html"){%>
 <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
-
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
         <div id="page-wrapper">
             
             <div class="row">
@@ -108,69 +108,75 @@
 						                                <li class=""><a href="#checked" data-toggle="tab" id="checkedChargeCheckOrder">已选中应收对账单</a>
 						                                </li>                               
 						                            </ul>
+                                                    <div class="tab-content">
                                                         
-                                                    <div class="table-responsive">
-                                                        <table class="table table-striped table-bordered table-hover" id="uncheckedChargeCheck-table">
-                                                            <thead>
-                                                                <tr>
-	                                                                <th></th>
-	                                                                <th>应收对账单ID</th>
-						                                            <th>应收对账单号</th>
-						                                            <th>状态</th>
-						                                            <th>所属月份</th>
-						                                            <th>网点</th>
-						                                            <th>客户名称</th>
-						                                            <th>合计运费</th>
-						                                            <th>对账金额</th>
-						                                            <th>差异金额</th>
-						                                            <th>扣款金额</th>
-						                                            <th>代收货款</th>
-						                                            <th>返款金额</th>
-						                                            <th>罚款金额</th>
-						                                            <th>奖励金额</th>
-						                                            <th>应收金额</th>
-						                                            <th>备注</th>
-						                                            <th>对账人</th>
-						                                            <th>对账时间</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody id="uncheckedChargeCheckList">
+                                                            <div class="tab-pane fade active in" id="unchecked">  
                                                                 
-                                                            </tbody>
-                                                        </table>
-                                                    </div>  
-                                                    <div class="tab-pane fade active in" id="checked" style="display: none">
-	                                                 	<div class="table-responsive">
-	                                                        <table class="table table-striped table-bordered table-hover" id="checkedChargeCheck-table">
-	                                                            <thead>
-	                                                                <tr>
-							                                            <th></th>
-		                                                                <th>应收对账单ID</th>
-							                                            <th>应收对账单号</th>
-							                                            <th>状态</th>
-							                                            <th>所属月份</th>
-							                                            <th>网点</th>
-							                                            <th>客户名称</th>
-							                                            <th>合计运费</th>
-							                                            <th>对账金额</th>
-							                                            <th>差异金额</th>
-							                                            <th>扣款金额</th>
-							                                            <th>代收货款</th>
-							                                            <th>返款金额</th>
-							                                            <th>罚款金额</th>
-							                                            <th>奖励金额</th>
-							                                            <th>应收金额</th>
-							                                            <th>备注</th>
-							                                            <th>对账人</th>
-							                                            <th>对账时间</th>
-							                                        </tr>
-	                                                            </thead>
-	                                                            <tbody id="checkedChargeCheckList">
-	                                                                
-	                                                            </tbody>
-	                                                        </table>
-	                                                    </div>
-	                                                 </div>                                                  
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-striped table-bordered table-hover" id="uncheckedChargeCheck-table">
+                                                                            <thead>
+                                                                                <tr>
+                	                                                                <th></th>
+                	                                                                <th>应收对账单ID</th>
+                						                                            <th>应收对账单号</th>
+                						                                            <th>状态</th>
+                						                                            <th>所属月份</th>
+                						                                            <th>网点</th>
+                						                                            <th>客户名称</th>
+                						                                            <th>合计运费</th>
+                						                                            <th>对账金额</th>
+                						                                            <th>差异金额</th>
+                						                                            <th>扣款金额</th>
+                						                                            <th>代收货款</th>
+                						                                            <th>返款金额</th>
+                						                                            <th>罚款金额</th>
+                						                                            <th>奖励金额</th>
+                						                                            <th>应收金额</th>
+                						                                            <th>备注</th>
+                						                                            <th>对账人</th>
+                						                                            <th>对账时间</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody id="uncheckedChargeCheckList">
+                                                                                
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div> 
+                                                                 
+                                                            </div>
+                                                        <div class="tab-pane fade " id="checked" style="display: none">
+    	                                                 	<div class="table-responsive">
+    	                                                        <table class="table table-striped table-bordered table-hover" id="checkedChargeCheck-table">
+    	                                                            <thead>
+    	                                                                <tr>
+    							                                            <th></th>
+    		                                                                <th>应收对账单ID</th>
+    							                                            <th>应收对账单号</th>
+    							                                            <th>状态</th>
+    							                                            <th>所属月份</th>
+    							                                            <th>网点</th>
+    							                                            <th>客户名称</th>
+    							                                            <th>合计运费</th>
+    							                                            <th>对账金额</th>
+    							                                            <th>差异金额</th>
+    							                                            <th>扣款金额</th>
+    							                                            <th>代收货款</th>
+    							                                            <th>返款金额</th>
+    							                                            <th>罚款金额</th>
+    							                                            <th>奖励金额</th>
+    							                                            <th>应收金额</th>
+    							                                            <th>备注</th>
+    							                                            <th>对账人</th>
+    							                                            <th>对账时间</th>
+    							                                        </tr>
+    	                                                            </thead>
+    	                                                            <tbody id="checkedChargeCheckList">
+    	                                                                
+    	                                                            </tbody>
+    	                                                        </table>
+    	                                                    </div>
+    	                                                </div>
+                                                    </div>                                                   
                                             </div>
                                             <!-- /.panel-body -->   
                                         </div>
@@ -214,7 +220,7 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">                                        
-                                            <div id="datetimepicker" class="input-append date "> 
+                                            <div id="datetimepicker3" class="input-append date "> 
                                                 <label class="search-label">开始时间</label> 
                                                 <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
                                                 <span class="add-on">  
@@ -226,7 +232,7 @@
                                     <!-- end of col-lg-6-->
                                     <div class="col-lg-6">
                                         <div class="form-group">                                                    
-                                            <span id="datetimepicker2" class="input-append date search-control "> 
+                                            <span id="datetimepicker4" class="input-append date search-control "> 
                                                 <label class="search-label">结束时间</label> 
                                                 <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
                                                 <span class="add-on">  
@@ -277,6 +283,9 @@
 
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+
 
 <script src="/yh/js/arap/ChargePreInvoiceOrder/list.js"></script>
 <script src="/yh/js/arap/ChargePreInvoiceOrder/createList.js"></script>

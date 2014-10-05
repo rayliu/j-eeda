@@ -118,8 +118,8 @@ $(document).ready(function() {
 		var endTime = $("#endTime_filter").val();
 		var receiptBegin = $("#beginTime").val();
 		var receiptEnd = $("#endTime").val();
-		chargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
-		chargeCheckTable.fnDraw();
+		uncheckedChargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
+		uncheckedChargeCheckTable.fnDraw();
 	} );
 
     $('#companyList').on('click', '.fromLocationItem', function(e){        
@@ -132,9 +132,9 @@ $(document).ready(function() {
         var inputStr = $('#companyName').val();
         if(inputStr!=null){
         	console.log(inputStr);
-        	chargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+inputStr;
+        	uncheckedChargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+inputStr;
         	
-    		chargeCheckTable.fnDraw();
+    		uncheckedChargeCheckTable.fnDraw();
         }
     });
     // 没选中客户，焦点离开，隐藏列表
