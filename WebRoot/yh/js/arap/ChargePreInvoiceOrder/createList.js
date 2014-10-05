@@ -7,6 +7,7 @@ $(document).ready(function() {
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
+        "bSort": false,
         "bServerSide": true,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
@@ -19,11 +20,11 @@ $(document).ready(function() {
 	            }
 	        },  
 	        {"mDataProp":"ID", "bVisible": false},
-	        {"mDataProp":"ORDER_NO",
+	        {"mDataProp":"ORDER_NO", "sWidth":"100px",
 	        	"fnRender": function(obj) {
 	      		return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
 	      	}},
-	        {"mDataProp":"STATUS",
+	        {"mDataProp":"STATUS","sWidth":"50px",
 	            "fnRender": function(obj) {
 	                if(obj.aData.STATUS=='new'){
 	                    return '新建';
@@ -39,21 +40,21 @@ $(document).ready(function() {
 	                return obj.aData.STATUS;
 	            }
 	        },
-	        {"mDataProp":null},
-	        {"mDataProp":null},
-	        {"mDataProp":"CNAME"},
-	        {"mDataProp":null},
-	        {"mDataProp":null},
-	        {"mDataProp":null},
-	        {"mDataProp":null},
-	        {"mDataProp":null},
-	        {"mDataProp":null},
-	        {"mDataProp":null},
-	        {"mDataProp":null},
-	        {"mDataProp":null},
-	        {"mDataProp":"REMARK"},
-	        {"mDataProp":"CREATOR_NAME"},        	
-	        {"mDataProp":"CREATE_STAMP"}                         
+	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":"CNAME","sWidth":"200px"},
+	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":"REMARK","sWidth":"200px"},
+	        {"mDataProp":"CREATOR_NAME","sWidth":"80px"},        	
+	        {"mDataProp":"CREATE_STAMP","sWidth":"80px"}                         
         ]      
     });	
 	
