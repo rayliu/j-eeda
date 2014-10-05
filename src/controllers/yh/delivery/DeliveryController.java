@@ -660,7 +660,7 @@ public class DeliveryController extends Controller {
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
-					.find("select *,p.id as pid from contact c,party p where p.contact_id= c.id and p.party_type ='SERVICE_PROVIDER' and c.sp_type='配送' and (c.abbr like '%"
+					.find("select *,p.id as pid from contact c,party p where p.contact_id= c.id and p.party_type ='SERVICE_PROVIDER' and c.sp_type='delivery' and (c.abbr like '%"
 							+ input
 							+ "%' or c.contact_person like '%"
 							+ input
@@ -679,7 +679,7 @@ public class DeliveryController extends Controller {
 			locationList = Db
 					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER
-							+ "' and c.sp_type='配送'");
+							+ "' and c.sp_type='delivery'");
 		}
 		renderJson(locationList);
 	}
