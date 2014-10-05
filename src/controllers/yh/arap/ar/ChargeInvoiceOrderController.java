@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.ArapChargeInvoice;
+import models.ArapChargeInvoiceItemInvoiceNo;
 import models.Party;
 import models.UserLogin;
 import models.yh.profile.Contact;
@@ -163,36 +164,20 @@ public class ChargeInvoiceOrderController extends Controller {
     public void save(){
     	ArapChargeInvoice arapAuditInvoice = null;
     	String chargeInvoiceOrderId = getPara("chargeInvoiceOrderId");
-    	if("".equals(chargeInvoiceOrderId) || chargeInvoiceOrderId == null){
-    		arapAuditInvoice = new ArapChargeInvoice();
-    		arapAuditInvoice.set("order_no", getPara("order_no"));
-			// TODO 由于未处理审核按钮,暂且使用该方式流转
-    		arapAuditInvoice.set("status", "confirmed");
-    		arapAuditInvoice.set("create_by", getPara("create_by"));
-	    	arapAuditInvoice.set("create_stamp", new Date());
-	    	arapAuditInvoice.set("remark", getPara("remark"));
-	    	arapAuditInvoice.save();
-	    	
-	    	String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
-	    	String[] chargeCheckOrderIdsArr = chargeCheckOrderIds.split(",");
-	    	/*for(int i=0;i<chargeCheckOrderIdsArr.length;i++){
-		    	ArapAuditOrderInvoice arapAuditOrderInvoice = new ArapAuditOrderInvoice();
-		    	arapAuditOrderInvoice.set("charge_order_id", chargeCheckOrderIdsArr[i]);
-		    	arapAuditOrderInvoice.set("charge_invoice_id", arapAuditInvoice.get("id"));
-		    	arapAuditOrderInvoice.save();
-		    	
-		    	// TODO 由于未处理审核按钮,暂且使用该方式流转
-		    	ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderIdsArr[i]);
-		    	arapAuditOrder.set("status", "confirmed");
-		    	arapAuditOrder.update();
-	    	}*/
-    	}else{
+    	if(!"".equals(chargeInvoiceOrderId) && chargeInvoiceOrderId != null){
     		arapAuditInvoice = ArapChargeInvoice.dao.findById(chargeInvoiceOrderId);
 	    	arapAuditInvoice.set("create_stamp", new Date());
 	    	arapAuditInvoice.set("remark", getPara("remark"));
 	    	arapAuditInvoice.set("last_modified_by", getPara("create_by"));
 	    	arapAuditInvoice.set("last_modified_stamp", new Date());
 	    	arapAuditInvoice.update();
+    	}else{
+    		arapAuditInvoice = new ArapChargeInvoice();
+    		arapAuditInvoice.set("order_no", getPara("order_no"));
+    		arapAuditInvoice.set("create_by", getPara("create_by"));
+	    	arapAuditInvoice.set("create_stamp", new Date());
+	    	arapAuditInvoice.set("remark", getPara("remark"));
+	    	arapAuditInvoice.save();
     	}
         renderJson(arapAuditInvoice);;
     }
@@ -305,5 +290,61 @@ public class ChargeInvoiceOrderController extends Controller {
             orderMap.put("aaData", orders);
 
         renderJson(orderMap);
+    }
+    
+    // 添加发票
+    public void addInvoiceItem(){
+    	String chargeInvoiceOrderId = getPara("chargeInvoiceOrderId");
+    	if(chargeInvoiceOrderId != null && !"".equals(chargeInvoiceOrderId)){
+    		ArapChargeInvoiceItemInvoiceNo arapChargeInvoiceItemInvoiceNo = new ArapChargeInvoiceItemInvoiceNo();
+    		arapChargeInvoiceItemInvoiceNo.set("invoice_id", chargeInvoiceOrderId);
+    		arapChargeInvoiceItemInvoiceNo.save();
+    	}
+        renderJson("{\"success\":true}");
+    }
+    
+    // 发票号列表
+    public void chargeInvoiceItemList(){
+    	String chargeInvoiceOrderId = getPara("chargeInvoiceOrderId");
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        Map orderMap = new HashMap();
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from arap_charge_invoice_item_invoice_no where invoice_id=" + chargeInvoiceOrderId;
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 获取当前页的数据
+        List<Record> orders = Db
+                .find("select * from arap_charge_invoice_item_invoice_no where invoice_id=" + chargeInvoiceOrderId + " " + sLimit);
+
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        orderMap.put("aaData", orders);
+
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+            orderMap.put("aaData", orders);
+
+        renderJson(orderMap);
+    }
+    
+    // 更新InvoiceItem信息
+    public void updateInvoiceItem(){
+    	ArapChargeInvoiceItemInvoiceNo itemInvoiceNo = ArapChargeInvoiceItemInvoiceNo.dao.findById(getPara("invoiceItemId"));
+    	String name = getPara("name");
+    	String value = getPara("value");
+    	if("amount".equals(name) && "".equals(value)){
+    		value = "0";
+    	}
+    	itemInvoiceNo.set(name, value);
+    	itemInvoiceNo.update();
+        renderJson("{\"success\":true}");
     }
 }

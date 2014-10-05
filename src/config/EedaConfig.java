@@ -7,6 +7,7 @@ import models.Account;
 import models.ArapChargeInvoice;
 import models.ArapChargeInvoiceApplication;
 import models.ArapChargeInvoiceApplicationItem;
+import models.ArapChargeInvoiceItemInvoiceNo;
 import models.ArapChargeItem;
 import models.ArapChargeOrder;
 import models.Category;
@@ -274,6 +275,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("insurance_fin_item", InsuranceFinItem.class);
         arp.addMapping("arap_charge_invoice_application_order", ArapChargeInvoiceApplication.class);
         arp.addMapping("arap_charge_invoice_application_item", ArapChargeInvoiceApplicationItem.class);
+        arp.addMapping("arap_charge_invoice_item_invoice_no", ArapChargeInvoiceItemInvoiceNo.class);
         // yh mapping
 
     }
