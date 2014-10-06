@@ -23,9 +23,9 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
         			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
-    		    {"mDataProp":null, "sWidth":"120px",
-                    "fnRender": function(obj) {
-                        return "未收款";
+		    {"mDataProp":null, "sWidth":"120px",
+                "fnRender": function(obj) {
+                    return "未收款";
             }},
             {"mDataProp":"CNAME", "sWidth":"200px"},
             {"mDataProp":"CREATE_DATE", "sWidth":"150px"},

@@ -76,10 +76,19 @@ $(document).ready(function() {
 		var invoiceItemId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$.post('/yh/chargeInvoiceOrder/updateInvoiceItem', {invoiceItemId:invoiceItemId, name:name, value:value}, function(data){
-			if(data.success){
-			}else{
-				alert("修改失败!");
+		var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();
+		$.post('/yh/chargeInvoiceOrder/updateInvoiceItem', {chargeInvoiceOrderId:chargeInvoiceOrderId, invoiceItemId:invoiceItemId, name:name, value:value}, function(data){
+			if(data.length > 0){
+				var itemInvoiceNoList = $("#itemInvoiceNoList");
+				itemInvoiceNoList.empty();
+				var option = "<option></option>";
+				for(var i=0;i<data.length;i++){
+					option += "<option value='"+data[i].INVOICE_NO+"'>"+data[i].INVOICE_NO+"</option>";
+				}
+				itemInvoiceNoList.append(option);	
+			    var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
+				chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/chargePreInvoiceOrder/list";   
+				chargePreInvoiceOrderTable.fnDraw();
 			}
     	},'json');
 	});	
@@ -92,12 +101,34 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargePreInvoiceOrder/list",
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
+        "sAjaxSource": "/yh/chargeInvoiceOrder/chargePreInvoiceOrderList",
         "aoColumns": [    
-            { "mDataProp": null,
-  	            "fnRender": function(obj) {
-  	              return '<select><option></option></select>';
-  	            }
+            { "mDataProp": "INVOICE_NO",
+            	"fnRender": function(obj) {
+                    var str="";
+                    if(obj.aData.INVOICE_NO!='' && obj.aData.INVOICE_NO != null){
+                    	$("#itemInvoiceNoList").children().each(function(){
+                    		if(obj.aData.INVOICE_NO == $(this).text()){
+                    			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
+                    		}else{
+                    			if($(this).text != null){
+                    				str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+                    			}
+                    		}
+                    	});
+                    }else{
+                    	$("#itemInvoiceNoList").children().each(function(){
+                    		if($(this).text != null){
+                				str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+                			}
+                    	});
+                    }
+                    return "<select name='invoice_no' multiple=''>"+str+"</select>";
+            	}
   	        },    
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
@@ -146,7 +177,17 @@ $(document).ready(function() {
 	    var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
 	    invoiceItemTable.fnSettings().sAjaxSource = "/yh/chargeInvoiceOrder/chargeInvoiceItemList?chargeInvoiceOrderId="+chargeInvoiceOrderId;   
 	    invoiceItemTable.fnDraw();
-	});
-	
-	
+	});	
+
+	$("#chargePreInvoiceOrder-table").on('blur', 'select', function(e){
+		e.preventDefault();
+		var preInvoiceId = $(this).parent().parent().attr("id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();
+		$.post('/yh/chargeInvoiceOrder/updatePreInvoice', {chargeInvoiceOrderId:chargeInvoiceOrderId, preInvoiceId:preInvoiceId, name:name, value:value}, function(data){
+			if(data.length > 0){
+			}
+    	},'json');
+	});	
 } );

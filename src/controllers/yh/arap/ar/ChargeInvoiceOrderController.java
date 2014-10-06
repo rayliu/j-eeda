@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.ArapChargeApplicationInvoiceNo;
 import models.ArapChargeInvoice;
 import models.ArapChargeInvoiceItemInvoiceNo;
 import models.Party;
@@ -337,6 +338,7 @@ public class ChargeInvoiceOrderController extends Controller {
     
     // 更新InvoiceItem信息
     public void updateInvoiceItem(){
+    	List<ArapChargeInvoiceItemInvoiceNo> arapChargeInvoiceItemInvoiceNos = null;
     	ArapChargeInvoiceItemInvoiceNo itemInvoiceNo = ArapChargeInvoiceItemInvoiceNo.dao.findById(getPara("invoiceItemId"));
     	String name = getPara("name");
     	String value = getPara("value");
@@ -345,6 +347,71 @@ public class ChargeInvoiceOrderController extends Controller {
     	}
     	itemInvoiceNo.set(name, value);
     	itemInvoiceNo.update();
+    	if("invoice_no".equals(name) && !"".equals(value)){
+    		arapChargeInvoiceItemInvoiceNos = ArapChargeInvoiceItemInvoiceNo.dao.find("select * from arap_charge_invoice_item_invoice_no where invoice_id = ?", getPara("chargeInvoiceOrderId"));
+    		
+    	}
+        renderJson(arapChargeInvoiceItemInvoiceNos);
+    }
+    
+    // 更新开票申请单
+    public void updatePreInvoice(){
+    	String name = getPara("name");
+    	String value = getPara("value");
+    	
+    	String[] values = null;
+    	Map<String,String[]> map = getParaMap();
+    	for(Map.Entry<String,String[]> entry : map.entrySet()){
+    		if("value[]".equals(entry.getKey())){
+    			values = entry.getValue();
+    		}
+    	}
+    	String preInvoiceId = getPara("preInvoiceId");
+    	List<ArapChargeApplicationInvoiceNo> arapChargeApplicationInvoiceNos = ArapChargeApplicationInvoiceNo.dao.find("select * from arap_charge_application_invoice_no where application_order_id = ?", preInvoiceId);
+    	for(ArapChargeApplicationInvoiceNo chargeApplicationInvoiceNo : arapChargeApplicationInvoiceNos){
+    		chargeApplicationInvoiceNo.delete();
+    	}
+    	for(int i=0;i<values.length;i++){
+	    	ArapChargeApplicationInvoiceNo arapChargeApplicationInvoiceNo = ArapChargeApplicationInvoiceNo.dao.findFirst("select * from arap_charge_application_invoice_no where application_order_id = ? and invoice_no = ?", preInvoiceId, values[i]);
+	    	if(arapChargeApplicationInvoiceNo == null){
+	    		arapChargeApplicationInvoiceNo = new ArapChargeApplicationInvoiceNo();
+	    		arapChargeApplicationInvoiceNo.set(name, values[i]);
+		    	arapChargeApplicationInvoiceNo.set("application_order_id", preInvoiceId);
+		    	arapChargeApplicationInvoiceNo.save();
+	    	}
+    	}
         renderJson("{\"success\":true}");
+    }
+    
+    public void chargePreInvoiceOrderList(){
+    	String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        String sqlTotal = "select count(1) total from arap_charge_invoice_application_order";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select aaia.*,ul.user_name create_by,ul2.user_name charge_by,ul3.user_name approval_by,"
+				+ " (select group_concat(acai.invoice_no) from arap_charge_invoice_application_order aaia"
+				+ " left join arap_charge_application_invoice_no acai on acai.application_order_id = aaia.id) invoice_no"
+        		+ " from arap_charge_invoice_application_order aaia "
+				+ " left join user_login ul on ul.id = aaia.create_by"
+				+ " left join user_login ul2 on ul2.id = aaia.charge_by"
+				+ " left join user_login ul3 on ul3.id = aaia.approver_by order by aaia.create_stamp desc " + sLimit;
+
+        logger.debug("sql:" + sql);
+        List<Record> BillingOrders = Db.find(sql);
+
+        Map BillingOrderListMap = new HashMap();
+        BillingOrderListMap.put("sEcho", pageIndex);
+        BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        BillingOrderListMap.put("aaData", BillingOrders);
+
+        renderJson(BillingOrderListMap);
     }
 }

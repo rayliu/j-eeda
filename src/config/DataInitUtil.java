@@ -171,7 +171,7 @@ public class DataInitUtil {
             
             // 保险单费用表开票申请表
             stmt.executeUpdate("create table if not exists arap_charge_invoice_application_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,charge_by bigint,charge_stamp timestamp,"
-            		+ " approver_by bigint,approval_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),payee_id bigint,invoice_no varchar(255));");
+            		+ " approver_by bigint,approval_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),payee_id bigint);");
            
             // 开票申请从表
             stmt.executeUpdate("create table if not exists arap_charge_invoice_application_item(id bigint auto_increment primary key,invoice_application_id bigint,foreign key(invoice_application_id) references arap_charge_invoice_application_order(id),charge_order_id bigint,foreign key(charge_order_id) references arap_charge_order(id));");
@@ -181,6 +181,9 @@ public class DataInitUtil {
             
             // 开票单费用从表
             stmt.executeUpdate("create table if not exists arap_charge_invoice_item_invoice_no(id bigint auto_increment primary key,invoice_no varchar(255),amount double,invoice_id bigint,foreign key(invoice_id) references arap_charge_invoice(id));");
+            
+            // 开票单中间表
+            stmt.executeUpdate("create table if not exists arap_charge_application_invoice_no(id bigint auto_increment primary key,invoice_no varchar(255),application_order_id bigint,foreign key(application_order_id) references arap_charge_invoice_application_order(id));");
             
             // 保险单费用从表
             stmt.executeUpdate("create table if not exists insurance_fin_item(id bigint auto_increment primary key,status varchar(255),location varchar(255),insurance_category varchar(255),amount double,rate double,income_rate double,insurance_amount double,insurance_no varchar(255),create_by bigint,"
