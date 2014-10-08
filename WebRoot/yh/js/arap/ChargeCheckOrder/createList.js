@@ -75,6 +75,53 @@ $(document).ready(function() {
 	      ]          
     });
     
+    var checkedChargeCheckTable = $('#checkedChargeCheck-table').dataTable({
+    	"bFilter": false, //不需要默认的搜索框
+    	"bSort": false, // 不要排序
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+    	"iDisplayLength": 25,
+    	"bServerSide": true,
+    	"oLanguage": {
+    		"sUrl": "/eeda/dataTables.ch.txt"
+    	},
+    	"sAjaxSource": "/yh/chargeCheckOrder/createList2",
+    	"aoColumns": [ 
+	          {"mDataProp": null},  
+	          {"mDataProp":null, "bVisible": false},
+	          {"mDataProp":null},
+	          {"mDataProp":null, "sWidth":"120px"},
+			  {"mDataProp":null, "sWidth":"200px"},
+			  {"mDataProp":null, "sWidth":"150px"},
+			  {"mDataProp":null, "sWidth":"200px"},
+			  {"mDataProp":null, "sWidth":"200px"},
+			  {"mDataProp":null, "sWidth":"200px"},        	
+			  {"mDataProp":null, "sWidth": "120px"},           
+			  {"mDataProp":null, "sWidth":"150px"},        	
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"150px"},                        
+			  {"mDataProp":null, "sWidth":"150px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"150px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"150px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"150px"},                        
+			  {"mDataProp":null, "sWidth":"150px"},                        
+			  {"mDataProp":null, "sWidth":"150px"},                        
+			  {"mDataProp":null, "sWidth":"150px"},                        
+			  {"mDataProp":null, "sWidth":"150px"},                        
+			  {"mDataProp":null, "sWidth":"200px"}                      
+		]          
+    });
+    
     var ids = [];
     // 未选中列表
 	$("#uncheckedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){

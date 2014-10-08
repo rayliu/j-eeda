@@ -263,9 +263,8 @@ public class ChargeCheckOrderController extends Controller {
 		renderJson(orderMap);
 
 	}
-
-	// billing order 列表
-	public void list() {
+	
+	public void createList2() {
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -274,28 +273,10 @@ public class ChargeCheckOrderController extends Controller {
 					+ getPara("iDisplayLength");
 		}
 
-		String sqlTotal = "select count(1) total from arap_charge_order";
-		Record rec = Db.findFirst(sqlTotal);
-		logger.debug("total records:" + rec.getLong("total"));
-
-		String sql = "select distinct aao.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
-				+ " from arap_charge_order aao "
-				+ " left join arap_charge_item aai on aai.charge_order_id = aao.id"
-				+ " left join return_order ror on ror.id = aai.ref_order_id"
-				+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
-				+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
-				+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
-				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
-				+ " left join user_login usl on usl.id=aao.create_by"
-				+ " order by aao.create_stamp desc " + sLimit;
-
-		logger.debug("sql:" + sql);
-		List<Record> BillingOrders = Db.find(sql);
+		List<Record> BillingOrders = null;
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);
-		BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
-		BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
 
 		BillingOrderListMap.put("aaData", BillingOrders);
 
@@ -467,5 +448,43 @@ public class ChargeCheckOrderController extends Controller {
 			returnOrder.set("transaction_status", status);
 			returnOrder.update();
 		}
+	}
+	
+	// billing order 列表
+	public void list() {
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+
+		String sqlTotal = "select count(1) total from arap_charge_order";
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		String sql = "select distinct aao.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
+				+ " from arap_charge_order aao "
+				+ " left join arap_charge_item aai on aai.charge_order_id = aao.id"
+				+ " left join return_order ror on ror.id = aai.ref_order_id"
+				+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
+				+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
+				+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
+				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
+				+ " left join user_login usl on usl.id=aao.create_by"
+				+ " order by aao.create_stamp desc " + sLimit;
+
+		logger.debug("sql:" + sql);
+		List<Record> BillingOrders = Db.find(sql);
+
+		Map BillingOrderListMap = new HashMap();
+		BillingOrderListMap.put("sEcho", pageIndex);
+		BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+		BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+		BillingOrderListMap.put("aaData", BillingOrders);
+
+		renderJson(BillingOrderListMap);
 	}
 }
