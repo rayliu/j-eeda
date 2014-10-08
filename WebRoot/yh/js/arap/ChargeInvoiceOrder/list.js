@@ -2,7 +2,7 @@
 $(document).ready(function() {
 
     $('#menu_charge').addClass('active').find('ul').addClass('in');
-    var datatable = $('#eeda-table').dataTable({
+    var chargeInvoiceOrderListTable = $('#chargeInvoiceOrderList-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
@@ -12,13 +12,11 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/yh/chargeInvoiceOrder/list",
         "aoColumns": [   
-            {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
         			return "<a href='/yh/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
-        		}},
-            {"mDataProp":"CHECK_ORDER_NO"},
-            {"mDataProp":"CNAME"},
+        	}},
+            {"mDataProp":null},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -35,9 +33,7 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"RETURN_ORDER_NO"},
-            {"mDataProp":"TRANSFER_ORDER_NO"},
-            {"mDataProp":"DELIVERY_ORDER_NO"},            
+            {"mDataProp":"INVOICE_ITEM_NO"},           
             {"mDataProp":"CREATOR_NAME"},        	
             {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"REMARK"}                        

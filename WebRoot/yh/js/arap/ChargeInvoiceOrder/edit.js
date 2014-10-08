@@ -66,7 +66,7 @@ $(document).ready(function() {
   	            	return str;
   	            }
   	        },
-            {"mDataProp":null},            
+            {"mDataProp":"PRE_ORDER_NO"},            
             {"mDataProp":null}
          ]
 	});	
@@ -87,7 +87,7 @@ $(document).ready(function() {
 				}
 				itemInvoiceNoList.append(option);	
 			    var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
-				chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/chargePreInvoiceOrder/list";   
+				chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/chargeInvoiceOrder/chargePreInvoiceOrderList";   
 				chargePreInvoiceOrderTable.fnDraw();
 			}
     	},'json');
@@ -112,7 +112,7 @@ $(document).ready(function() {
                     var str="";
                     if(obj.aData.INVOICE_NO!='' && obj.aData.INVOICE_NO != null){
                     	$("#itemInvoiceNoList").children().each(function(){
-                    		if(obj.aData.INVOICE_NO == $(this).text()){
+                    		if(obj.aData.INVOICE_NO.indexOf($(this).text()) > -1 && $(this).text() != ''){
                     			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
                     		}else{
                     			if($(this).text != null){
@@ -174,9 +174,26 @@ $(document).ready(function() {
 	});
 	
 	$("#invoiceItemNo").click(function(){	
-	    var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
+		var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();
+		$.post('/yh/chargeInvoiceOrder/findAllInvoiceItemNo', {chargeInvoiceOrderId:chargeInvoiceOrderId}, function(data){
+			if(data.length > 0){
+				var itemInvoiceNoList = $("#itemInvoiceNoList");
+				itemInvoiceNoList.empty();
+				var option = "<option></option>";
+				for(var i=0;i<data.length;i++){
+					option += "<option value='"+data[i].INVOICE_NO+"'>"+data[i].INVOICE_NO+"</option>";
+				}
+				itemInvoiceNoList.append(option);	
+			    chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
+				chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/chargeInvoiceOrder/chargePreInvoiceOrderList";   
+				chargePreInvoiceOrderTable.fnDraw();
+			}
+    	},'json');
+			
 	    invoiceItemTable.fnSettings().sAjaxSource = "/yh/chargeInvoiceOrder/chargeInvoiceItemList?chargeInvoiceOrderId="+chargeInvoiceOrderId;   
-	    invoiceItemTable.fnDraw();
+	    invoiceItemTable.fnDraw();		
+		chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/chargeInvoiceOrder/chargePreInvoiceOrderList";   
+		chargePreInvoiceOrderTable.fnDraw();
 	});	
 
 	$("#chargePreInvoiceOrder-table").on('blur', 'select', function(e){
@@ -186,7 +203,10 @@ $(document).ready(function() {
 		var value = $(this).val();
 		var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();
 		$.post('/yh/chargeInvoiceOrder/updatePreInvoice', {chargeInvoiceOrderId:chargeInvoiceOrderId, preInvoiceId:preInvoiceId, name:name, value:value}, function(data){
-			if(data.length > 0){
+			if(data.success){
+			    var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
+				invoiceItemTable.fnSettings().sAjaxSource = "/yh/chargeInvoiceOrder/chargeInvoiceItemList?chargeInvoiceOrderId="+chargeInvoiceOrderId;   
+			    invoiceItemTable.fnDraw();
 			}
     	},'json');
 	});	
