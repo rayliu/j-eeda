@@ -484,15 +484,9 @@ public class DeliveryOrderMilestoneController extends Controller {
         }
 
         // 获取总条数
-        String totalWhere = "";
-        /*String sql = "SELECT count(1) "+
-                	  "FROM  delivery_order_fin_item d LEFT JOIN  fin_item f ON d.fin_item_id = f.id "+
-                	  "WHERE d.order_id = "+id+"  and f.type='应付' ";*/
-        String sql ="SELECT count(1) "
-        		+ "FROM  delivery_order_fin_item d "
-        		+ "LEFT JOIN  fin_item f ON d.fin_item_id = f.id "
-        		+ "WHERE d.order_id = "+id+"  and f.type='应付'";
-        Record rec = Db.findFirst(sql + totalWhere);
+
+        String sql = "SELECT count(1) total FROM  delivery_order_fin_item d LEFT JOIN  fin_item f ON d.fin_item_id = f.id WHERE d.order_id = 5  and f.type='应付'";
+        Record rec = Db.findFirst(sql);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
@@ -509,12 +503,6 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         orderMap.put("aaData", orders);
 
-        List<Record> list = Db.find("select * from fin_item");
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).get("name") == null) {
-                Fin_item.dao.deleteById(list.get(i).get("id"));
-            }
-        }
         renderJson(orderMap);
     }
 

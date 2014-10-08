@@ -468,7 +468,7 @@ public class DeliveryController extends Controller {
 		setAttr("localArr3", list3);
 		setAttr("customer", party);
 
-		String sql="select c.abbr as company,c1.*  "
+		String sql="select c.company_name as company,c1.*  "
 				+ "from transfer_order_item_detail td "
 				+ "left join transfer_order t on t.id =td.order_id "
 				+ "left join contact c on t.notify_party_id= c.id "
