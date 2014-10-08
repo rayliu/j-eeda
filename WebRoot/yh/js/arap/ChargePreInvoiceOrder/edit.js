@@ -94,44 +94,49 @@ $(document).ready(function() {
     	$("#chargePreInvoiceOrderStatus").text('新建');
 	}
 
-    var returnOrderIds = $("#returnOrderIds").val();
-	var returnOrderTable =$('#example').dataTable( {
-	    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",insert into return_order(status_code,create_date,order_type,creator,remark,transfer_order,distribution_order_id,contract_id
+    var datatable=$('#chargeCheckList-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
-    	"oLanguage": {
+    	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargePreInvoiceOrder/returnOrderList?returnOrderIds="+returnOrderIds,
-   			"aoColumns": [
-   			{ "mDataProp": "ORDER_NO",
-            	"fnRender": function(obj) {
-        			return "<a href='/yh/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
-        		}},
-            { "mDataProp": "CNAME"},
-            { "mDataProp": "TRANSFER_ORDER_NO"},
-            { "mDataProp": "DELIVERY_ORDER_NO"},
-            { "mDataProp": "CREATOR_NAME" },
-            { "mDataProp": "CREATE_DATE" },
-            { "mDataProp": "TRANSACTION_STATUS",
+        "sAjaxSource": "/yh/chargeCheckOrder/list",
+        "aoColumns": [   
+            {"mDataProp":"ID", "bVisible": false},
+            {"mDataProp":"ORDER_NO"},
+            {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
-                    if(obj.aData.TRANSACTION_STATUS=='new')
+                    if(obj.aData.STATUS=='new'){
                         return '新建';
-                    if(obj.aData.TRANSACTION_STATUS=='confirmed')
-                        return '已确认';
-                    if(obj.aData.TRANSACTION_STATUS=='cancel')
+                    }else if(obj.aData.STATUS=='checking'){
+                        return '已发送对帐';
+                    }else if(obj.aData.STATUS=='confirmed'){
+                        return '已审核';
+                    }else if(obj.aData.STATUS=='completed'){
+                        return '已结算';
+                    }else if(obj.aData.STATUS=='cancel'){
                         return '取消';
-                    
-                    return obj.aData.TRANSACTION_STATUS;
-                 }
+                    }
+                    return obj.aData.STATUS;
+                }
             },
-            { "mDataProp": "REMARK" },
-            { "mDataProp": "AMOUNT"	},
-            { "mDataProp": null	,
-            	"fnRender": function(obj) {
-        			return "<input type='text' value='"+obj.aData.AMOUNT+"'>";
-        		}}
-         ]
-	});
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":"CNAME"},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":"REMARK"},
+            {"mDataProp":"CREATOR_NAME"},        	
+            {"mDataProp":"CREATE_STAMP"}                       
+        ]      
+    });
 } );

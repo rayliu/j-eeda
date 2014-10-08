@@ -267,8 +267,8 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,to_id,location_to,remark) values(5, 2,'perCar', 333,'110101','北京市东城区','配送路线');");
             
             // 回单notity_party_id bigint,customer_id
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', 'new','应收',1,1,'这是一张回单');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,transfer_order_id,creator,remark) values('HD2013021400002', '2014-08-6 16:35:35.1', 'confirmed','应收',1,2,'这是一张回单');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', '新建','应收',1,1,'这是一张回单');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,transfer_order_id,creator,remark) values('HD2013021400002', '2014-08-6 16:35:35.1', '新建','应收',1,2,'这是一张回单');");
             // 运输单应收应付明细id bigint auto_increment PRIMARY KEY, order_id bigint,
             // fin_item_id bigint,"
             // +
@@ -579,7 +579,7 @@ public class DataInitUtil {
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(4, 3, '2014-06-28 10:43:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(6, 3, '2014-06-28 11:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
 
-            stmt.execute("insert into arap_charge_order(begin_time, payee_id, order_no, remark, create_by, end_time, create_stamp, status) values('2014-08-15 9:39:35.1', 1, 'YSDZ2014081800001', '应收对账单测试数据', '3', '2014-08-19 9:39:35.1', '2014-08-18 9:39:35.1', 'confirmed');");
+            stmt.execute("insert into arap_charge_order(begin_time, payee_id, order_no, remark, create_by, end_time, create_stamp, status) values('2014-08-15 9:39:35.1', 1, 'YSDZ2014081800001', '应收对账单测试数据', '3', '2014-08-19 9:39:35.1', '2014-08-18 9:39:35.1', '已确认');");
             stmt.execute("insert into arap_charge_item(charge_order_id, ref_order_id, create_by, create_stamp) values(1, 1, 3, '2014-08-18 9:39:35.1');");
             
             // 拼车单收费条目

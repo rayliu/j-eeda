@@ -254,7 +254,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
 	}
 	
-	public void returnOrderList() {
+	public void chargeCheckOrderList() {
 		String returnOrderIds = getPara("returnOrderIds");
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -266,27 +266,22 @@ public class ChargePreInvoiceOrderController extends Controller {
 		Map orderMap = new HashMap();
 		// 获取总条数
 		String totalWhere = "";
-		String sql = "select count(1) total from return_order ror where ror.id in ("+returnOrderIds+")";
+		String sql = "select count(1) total from arap_charge_order where status = '已确认'";
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
 		List<Record> orders = Db
-				.find("select sum(tofi.amount) amount,ror.id,ror.order_no,ror.transaction_status,ror.remark remark,ror.create_date,ror.receipt_date, usl.user_name as creator_name,dor.order_no as delivery_order_no,ifnull(c.abbr,c2.abbr) cname,"
-						+ " ifnull(tor.order_no,(select	group_concat(tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id left join transfer_order tor3 on tor3.id = doi2.transfer_order_id)) transfer_order_no"
-						+ " from return_order ror" 
-						+ " left join transfer_order tor on tor.id = ror.transfer_order_id"
-						+ " left join party p on p.id = tor.customer_id"
-						+ " left join contact c on c.id = p.contact_id"
-						+ " left join delivery_order dor on ror.delivery_order_id = dor.id"
-						+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
-						+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id"
-						+ " left join party p2 on p2.id = tor2.customer_id"
-						+ " left join contact c2 on c2.id = p2.contact_id"
-						+ " left join user_login usl on usl.id = ror.creator"
-						+ " left join transfer_order_fin_item tofi on tofi.order_id = ifnull(tor.id, tor2.id)"
-						+ " left join fin_item fi on fi.id = tofi.fin_item_id"
-						+ " where ror.id in ("+returnOrderIds+") group by ror.id order by ror.create_date desc " + sLimit);
+				.find("select distinct aao.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
+				+ " from arap_charge_order aao "
+				+ " left join arap_charge_item aai on aai.charge_order_id = aao.id"
+				+ " left join return_order ror on ror.id = aai.ref_order_id"
+				+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
+				+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
+				+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
+				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
+				+ " left join user_login usl on usl.id=aao.create_by"
+				+ " where aao.status = '已确认' order by aao.create_stamp desc " + sLimit);
 
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));

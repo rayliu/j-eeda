@@ -11,7 +11,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargePreInvoiceOrder/list",
+        "sAjaxSource": "/yh/chargeInvoiceOrder/chargePreInvoiceOrderList",
         "aoColumns": [    
             { "mDataProp": null,
   	            "fnRender": function(obj) {
