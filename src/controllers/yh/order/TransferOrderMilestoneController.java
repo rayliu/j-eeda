@@ -318,6 +318,7 @@ public class TransferOrderMilestoneController extends Controller {
     // 发车确认
     public void departureConfirmation() {
         String departOrderId = getPara("departOrderId");
+        int num = 1;
         List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departOrderId);
         for(DepartTransferOrder departTransferOrder : departTransferOrders){
         	String sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id");
@@ -361,12 +362,16 @@ public class TransferOrderMilestoneController extends Controller {
 	        DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
 	        departOrder.set("status", "已发车");
 	        departOrder.update();
-	        TransferOrderMilestone departOrderMilestone = new TransferOrderMilestone();
-	        departOrderMilestone = milestoneMessages(departOrderMilestone);
-	        departOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
-	        departOrderMilestone.set("status", "已发车");
-	        departOrderMilestone.set("depart_id", departOrder.get("id"));
-	        departOrderMilestone.save();
+	        if(num == 1){
+	        	TransferOrderMilestone departOrderMilestone = new TransferOrderMilestone();
+		        departOrderMilestone = milestoneMessages(departOrderMilestone);
+		        departOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
+		        departOrderMilestone.set("status", "已发车");
+		        departOrderMilestone.set("depart_id", departOrder.get("id"));
+		        departOrderMilestone.save();
+		        num = 2;
+	        }
+	        
 	        
 	        List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and depart_id = " + departOrderId);
 	        for(TransferOrderItemDetail detail : transferOrderItemDetails){
