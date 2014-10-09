@@ -1,5 +1,12 @@
 $(document).ready(function() {
 	
+	//已有的目的地(计件)
+	var locationToId1 = [];
+	var locationToId2 = [];
+	var locationToId3 = [];
+	//编辑前的目的地
+	var startTo = [];
+	
 	$('#menu_contract').addClass('active').find('ul').addClass('in');
 		var contractId=$('#contractId').val();
 		var dataTable = $('#dataTables-example').dataTable({
@@ -24,6 +31,19 @@ $(document).ready(function() {
 	            {"mDataProp":"KILOMETER"},
 	            {"mDataProp":null,
 	            	"fnRender": function(obj) {
+	            		if(obj.aData.TO_ID != "" && obj.aData.TO_ID != null){
+	            			var toid = [];
+	            			toid = obj.aData.TO_ID.split(" ");
+	            			if(toid[toid.length-1] == " "){
+	            				if(toid[toid.length-2] == " "){
+	            					locationToId1.push(toid[toid.length-3]);
+	            				}else{
+	            					locationToId1.push(toid[toid.length-2]);
+	            				}
+	            			}else{
+	            				locationToId1.push(toid[toid.length-1]);
+	            			}
+	            		}
 	                    return buildRange(obj.aData.DAYFROM, obj.aData.DAYTO);
 	            }},
 	            { 
@@ -62,7 +82,20 @@ $(document).ready(function() {
 		            {"mDataProp":"FIN_ITEM_NAME"},
 		            {"mDataProp":"AMOUNT"},
 		            {"mDataProp":null,
-		            	"fnRender": function(obj) {                    
+		            	"fnRender": function(obj) {  
+		            		if(obj.aData.TO_ID != "" && obj.aData.TO_ID != null){
+		            			var toid = [];
+		            			toid = obj.aData.TO_ID.split(" ");
+		            			if(toid[toid.length-1] == " "){
+		            				if(toid[toid.length-2] == " "){
+		            					locationToId2.push(toid[toid.length-3]);
+		            				}else{
+		            					locationToId2.push(toid[toid.length-2]);
+		            				}
+		            			}else{
+		            				locationToId2.push(toid[toid.length-1]);
+		            			}
+		            		}
 		                    return buildRange(obj.aData.DAYFROM, obj.aData.DAYTO);
 		                            
 		            }},
@@ -112,7 +145,20 @@ $(document).ready(function() {
 		                }
 					},
 					{"mDataProp":null,
-						"fnRender": function(obj) {                    
+						"fnRender": function(obj) {    
+							if(obj.aData.TO_ID != "" && obj.aData.TO_ID != null){
+		            			var toid = [];
+		            			toid = obj.aData.TO_ID.split(" ");
+		            			if(toid[toid.length-1] == " "){
+		            				if(toid[toid.length-2] == " "){
+		            					locationToId3.push(toid[toid.length-3]);
+		            				}else{
+		            					locationToId3.push(toid[toid.length-2]);
+		            				}
+		            			}else{
+		            				locationToId3.push(toid[toid.length-1]);
+		            			}
+		            		}
 		                    return buildRange(obj.aData.AMOUNTFROM, obj.aData.AMOUNTTO);
 		                            
 		                }},
@@ -185,6 +231,8 @@ $(document).ready(function() {
                 	 $('#itemNameMessage').val(data[0].ITEM_NAME);
                 	 searchAllLocationFrom(data[0].FROM_ID);
                 	 searchAllLocationTo(data[0].TO_ID);
+                	 startTo = [];
+                	 startTo = data[0].TO_ID.split(" ");
                  }else{
                      alert('取消失败');
                  }
@@ -222,7 +270,8 @@ $(document).ready(function() {
                 	 $('#itemNameMessage').val(data[0].ITEM_NAME);
                 	 searchAllLocationFrom(data[0].FROM_ID);
                 	 searchAllLocationTo(data[0].TO_ID);
-                	 
+                	 startTo = [];
+                	 startTo = data[0].TO_ID.split(" ");
                 	 //$('#optionsRadiosInline2').prop('checked', true).trigger('change');
                  }else{
                      alert('取消失败');
@@ -260,7 +309,8 @@ $(document).ready(function() {
                 	 $('#itemNameMessage').val(data[0].ITEM_NAME);
                 	 searchAllLocationFrom(data[0].FROM_ID);
                 	 searchAllLocationTo(data[0].TO_ID);
-                	
+                	 startTo = [];
+                	 startTo = data[0].TO_ID.split(" ");
                 	 //console.log($('#typeRadio').val(data[0].LTLUNITTYPE));
                 	 //$('#optionsRadiosInline3').prop('checked', true).trigger('change');
                 	
@@ -288,6 +338,7 @@ $(document).ready(function() {
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data.success){
+                	 locationToId1 = [];
                 	 dataTable.fnDraw();
                  }else{
                      alert('取消失败');
@@ -301,6 +352,7 @@ $(document).ready(function() {
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data.success){
+                	 locationToId2 = [];
                 	 dataTable2.fnDraw();
                  }else{
                      alert('取消失败');
@@ -314,6 +366,7 @@ $(document).ready(function() {
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data.success){
+                	 locationToId3 = [];
                 	 dataTable3.fnDraw();
                  }else{
                      alert('取消失败');
@@ -402,22 +455,36 @@ $(document).ready(function() {
 		$('#message_trigger_err').on('click', function(e) {
 			e.preventDefault();
 		});
-		
+		var tijiao = function(locationtoid,datatable){
+			$.post('/yh/customerContract/routeAdd', $("#routeItemForm").serialize(), function(data){
+                //保存成功后，刷新列表
+                console.log(data);
+                if(data.success){
+                	$('#myModal').modal('hide');
+                	$('#reset').click();
+                	locationtoid = [];
+                	datatable.fnDraw();
+                }else{
+                    alert('数据保存失败。');
+                }
+            },'json');
+		}
         //点击保存的事件，保存干线信息
         //routeItemForm 不需要提交
         $("#saveRouteBtn").click(function(e){
-        	
-        	 var price = $("#price").val();
-	    	 var reNum =/^\d*$/;
-	    	 $("#tishi").text("");
-	    	 if(price == "" || price == null){
-	    		 $("#tishi").text("金额不能为空！");
-	    		 return false;
-	    	 }
-	    	 if(isNaN(price)){
-	    		 $("#tishi").text("请输入数字");
-	    		 return false;
-	    	 }
+        	 
+        	//新增时目的地id
+        	var saveid = [];
+		    var price = $("#price").val();
+			$("#tishi").text("");
+			if(price == "" || price == null){
+				$("#tishi").text("金额不能为空！");
+				return false;
+			}
+			if(isNaN(price)){
+				$("#tishi").text("请输入数字");
+				return false;
+			}
 	    	//阻止a 的默认响应行为，不需要跳转
             e.preventDefault();
             //重设初始地、目的地值
@@ -443,29 +510,138 @@ $(document).ready(function() {
             	$("#hideDistrictFrom").val(cmbAreaFrom);
             }
             if(mbProvinceTo!="--请选择省份--"){
+            	saveid.push($("#mbProvinceTo").val());
             	$("#hideProvinceTo").val(mbProvinceTo);
             }
-            if(cmbCityTo!="--请选择城市--"){
+            if(cmbCityTo == "--请选择城市--"){
+            	alert("请选择目的地城市！");
+            	return false;
+            }else{
+            	saveid.push($("#cmbCityTo").val());
             	$("#hideCityTo").val(cmbCityTo);
             }
             if(cmbAreaTo!="--请选择区(县)--"){
+            	saveid.push($("#cmbAreaTo").val());
             	$("#hideDistrictTo").val(cmbAreaTo);
             }
             
-            //异步向后台提交数据
-            $.post('/yh/customerContract/routeAdd', $("#routeItemForm").serialize(), function(data){
-                //保存成功后，刷新列表
-                console.log(data);
-                if(data.success){
-                	$('#myModal').modal('hide');
-                	$('#reset').click();
-                	dataTable.fnDraw();
-                	dataTable2.fnDraw();
-                	dataTable3.fnDraw();
-                }else{
-                    alert('数据保存失败。');
-                }
-            },'json');
+            //当前选中的目的地id
+        	var toid = saveid[saveid.length-1];
+            var id =  $('#routeItemId').val();
+            var priceType = $("#routeTabs .active").attr("price-type");
+            $("#priceTypeHidden").val(priceType);
+	    	if(priceType=="perUnit"){//计费
+	    		if(id == null || id ==""){//新增合同运价时
+	    			var result = true;
+	                for(var i=0;i<locationToId1.length;i++){
+	                    if(locationToId1[i] == toid){
+	                    	alert("目的地已存在！");
+	                    	result = false;
+	                    	break;
+	                    }
+	            	}
+	                if(result){
+	                	tijiao(locationToId1,dataTable);
+	                }
+	            }else{//修改合同运价
+	            	var result = false;
+	            	var startid = startTo[startTo.length-1];
+	            	if(startid == "" || startid == null){
+	            		startid = startTo[startTo.length-2];
+	            	}
+	        		for(var k=0;k<locationToId1.length;k++){
+	        			if(toid == locationToId1[k]){
+	        				result = true;
+	        				break;
+	        			}else{
+	        				result = false;
+	        			}
+	            	}
+	        		if(result){
+	        			if(toid == startid){
+	        				tijiao(locationToId1,dataTable);
+	        			}else{
+	        				alert("目的地已存在！");
+	        			}
+	        		}else{
+	        			tijiao(locationToId1,dataTable);
+	        		}
+	            }
+	    	}else if(priceType=="perCar"){//整车
+	    		if(id == null || id ==""){//新增合同运价时
+	    			var result = true;
+	                for(var i=0;i<locationToId2.length;i++){
+	                    if(locationToId2[i] == toid){
+	                    	alert("目的地已存在！");
+	                    	result = false;
+	                    	break;
+	                    }
+	            	}
+	                if(result){
+	                	tijiao(locationToId2,dataTable2);
+	                }
+	            }else{//修改合同运价
+	            	var result = false;
+	            	var startid = startTo[startTo.length-1];
+	            	if(startid == "" || startid == null){
+	            		startid = startTo[startTo.length-2];
+	            	}
+	        		for(var k=0;k<locationToId2.length;k++){
+	        			if(toid == locationToId2[k]){
+	        				result = true;
+	        				break;
+	        			}else{
+	        				result = false;
+	        			}
+	            	}
+	        		if(result){
+	        			if(toid == startid){
+	        				tijiao(locationToId2,dataTable2);
+	        			}else{
+	        				alert("目的地已存在！");
+	        			}
+	        		}else{
+	        			tijiao(locationToId2,dataTable2);
+	        		}
+	            }
+	    	}else if(priceType=="perCargo"){//零担
+	    		if(id == null || id ==""){//新增合同运价时
+	    			var result = true;
+	                for(var i=0;i<locationToId3.length;i++){
+	                    if(locationToId3[i] == toid){
+	                    	alert("目的地已存在！");
+	                    	result = false;
+	                    	break;
+	                    }
+	            	}
+	                if(result){
+	                	tijiao(locationToId3,dataTable3);
+	                }
+	            }else{//修改合同运价
+	            	var result = false;
+	            	var startid = startTo[startTo.length-1];
+	            	if(startid == "" || startid == null){
+	            		startid = startTo[startTo.length-2];
+	            	}
+	        		for(var k=0;k<locationToId3.length;k++){
+	        			if(toid == locationToId3[k]){
+	        				result = true;
+	        				break;
+	        			}else{
+	        				result = false;
+	        			}
+	            	}
+	        		if(result){
+	        			if(toid == startid){
+	        				tijiao(locationToId3,dataTable3);
+	        			}else{
+	        				alert("目的地已存在！");
+	        			}
+	        		}else{
+	        			tijiao(locationToId3,dataTable3);
+	        		}
+	            }
+	    	}
         });
 
         //获取客户的list，选中信息自动填写其他信息

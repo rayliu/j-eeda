@@ -590,12 +590,27 @@ public class ContractController extends Controller {
         String contractId = getPara("routeContractId");
         String routeItemId = getPara("routeItemId");
         String priceType = getPara("priceType");
-        String mbProvinceFrom = getPara("hideProvinceFrom");
-        String cmbCityFrom = getPara("hideCityFrom");
-        String cmbAreaFrom = getPara("hideDistrictFrom");
-        String mbProvinceTo = getPara("hideProvinceTo");
-        String cmbCityTo = getPara("hideCityTo");
-        String cmbAreaTo = getPara("hideDistrictTo");
+        
+        //初始地城市文本
+        StringBuffer fromName = new StringBuffer(); 
+        fromName.append(getPara("hideProvinceFrom")+" ");
+        fromName.append(getPara("hideCityFrom")+" ");
+        fromName.append(getPara("hideDistrictFrom"));
+        //目的地城市文本
+        StringBuffer toName = new StringBuffer(); 
+        toName.append(getPara("hideProvinceTo")+" ");
+        toName.append(getPara("hideCityTo")+" ");
+        toName.append(getPara("hideDistrictTo"));
+        //初始地城市id
+        StringBuffer fromNameId = new StringBuffer(); 
+        fromNameId.append(getPara("mbProvinceFrom") +" ");
+        fromNameId.append(getPara("cmbCityFrom")+" ");
+        fromNameId.append(getPara("cmbAreaFrom"));
+        //目的地城市id
+        StringBuffer toNameId = new StringBuffer(); 
+        toNameId.append(getPara("mbProvinceTo")+" ");
+        toNameId.append(getPara("cmbCityTo")+" ");
+        toNameId.append(getPara("cmbAreaTo"));
         
         String locationFrom = getRouteAddress(getPara("route_from"));
         String locationTo = getRouteAddress(getPara("route_to"));
@@ -605,6 +620,7 @@ public class ContractController extends Controller {
                 .set("from_id", getPara("route_from")).set("to_id", getPara("route_to")).set("location_from", locationFrom).set("location_to", locationTo)
                 .set("amount", getPara("price")).set("dayfrom", getPara("day"))
                 .set("dayto", getPara("day2"));
+        
         if (getPara("productId").equals("")) {
             item.set("product_id", null);
         } else {
