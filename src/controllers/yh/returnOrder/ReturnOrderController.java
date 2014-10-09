@@ -662,36 +662,18 @@ public class ReturnOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-       /* String sqlTotal = "select distinct count(1) total from transfer_order_item toi  left join product p on p.id = toi.product_id "
-                + " where toi.order_id =" + returnOrderId
-                + " or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + returnOrderId + ")";*/
-        String sqlTotal ="select distinct count(1) total from ( "
-        		+ "SELECT toi.id, "
-        		+ "ifnull(p.item_no, toi.item_no) item_no, "
-        		+ "ifnull(p.item_name, toi.item_name) item_name,"
-        		+ "ifnull(p.size, toi.size) size, "
-        		+ "ifnull(p.width, toi.width) width, "
-        		+ "ifnull(p.height, toi.height) height, "
-        		+ "ifnull(p.weight, toi.weight) weight, "
-        		+ "ifnull(p.volume, toi.volume) volume,"
-        		+ "ifnull(p.unit, toi.unit) unit, "
-        		+ "toi.remark "
+        
+        String sqlTotal ="select distinct count(1) total "
         		+ "FROM transfer_order_item_detail toid "
         		+ "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "
         		+ "left join return_order r on toid.delivery_id =r.delivery_order_id "
-        		+ "left join product p on toi.product_id = p.id where r.id ="+returnOrderId+") group by item_name"+ sLimit;
+        		+ "left join product p on toi.product_id = p.id where r.id ="+returnOrderId+ sLimit;
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         String sql = "";
-        /*sql = "select distinct toi.id,ifnull(p.item_no,toi.item_no) item_no, ifnull(p.item_name,toi.item_name) item_name,"
-                + " ifnull(p.size,toi.size) size, ifnull(p.width, toi.width) width, ifnull(p.height, toi.height) height,"
-                + " ifnull(p.weight,toi.weight) weight, ifnull(p.volume, toi.volume) volume,toi.amount amount,"
-                + " ifnull(p.unit,toi.unit) unit, toi.remark from transfer_order_item toi "
-                + " left join product p on p.id = toi.product_id " + " where toi.order_id =" + returnOrderId
-                + " or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + returnOrderId
-                + ") order by toi.id" + sLimit;*/
-        sql="select count(*) as amount ,item_no,item_name,width,size,weight,height,volume,unit,remark from ( "
-        		+ "SELECT toi.id, "
+        sql="select distinct count(*) as amount ,item_no,item_name,width,size,weight,height,volume,unit,remark,tid from ( "
+        		+ "SELECT toi.id as id,"
+        		+ "toid.id as tid,"
         		+ "ifnull(p.item_no, toi.item_no) item_no, "
         		+ "ifnull(p.item_name, toi.item_name) item_name,"
         		+ "ifnull(p.size, toi.size) size, "
@@ -703,8 +685,8 @@ public class ReturnOrderController extends Controller {
         		+ "toi.remark "
         		+ "FROM transfer_order_item_detail toid "
         		+ "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "
-        		+ "left join return_order r on toid.delivery_id =r.delivery_order_id "
-        		+ "left join product p on toi.product_id = p.id where r.id ="+returnOrderId+") group by item_name"+ sLimit;
+        		+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toid.order_id = r.transfer_order_id) "
+        		+ "left join product p on toi.product_id = p.id where r.id ="+returnOrderId+") group by tid"+ sLimit;
         List<Record> transferOrders = Db.find(sql);
         transferOrderListMap = new HashMap();
         transferOrderListMap.put("sEcho", pageIndex);
@@ -849,12 +831,12 @@ public class ReturnOrderController extends Controller {
 
 		orderMap.put("aaData", orders);
 
-		List<Record> list = Db.find("select * from fin_item");
+		/*List<Record> list = Db.find("select * from fin_item");
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).get("name") == null) {
 				Fin_item.dao.deleteById(list.get(i).get("id"));
 			}
-		}
+		}*/
 		renderJson(orderMap);
 	}
 }

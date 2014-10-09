@@ -468,7 +468,7 @@ public class DeliveryController extends Controller {
 		setAttr("localArr3", list3);
 		setAttr("customer", party);
 
-		String sql="select c.company_name as company,c1.*  "
+		String sql="select t.receiving_unit as company,c1.*  "
 				+ "from transfer_order_item_detail td "
 				+ "left join transfer_order t on t.id =td.order_id "
 				+ "left join contact c on t.notify_party_id= c.id "
@@ -587,11 +587,18 @@ public class DeliveryController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-		String sqlTotal = "select count(1) total from transfer_order_item_detail t1 "
+		/*String sqlTotal = "select count(1) total from transfer_order_item_detail t1 "
 				+ "left join transfer_order t2 on t1.order_id=t2.id "
-				+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE)";
-		Record rec = Db.findFirst(sqlTotal);
-		logger.debug("total records:" + rec.getLong("total"));
+				+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE)";*/
+		String sqlTotal="select  count(1) total from transfer_order_item_detail t1 "
+					+ "left join transfer_order t2 on t1.order_id=t2.id "
+					+ "left join warehouse w on t2.warehouse_id = w.id "
+					+ "left join party p on t2.customer_id = p.id "
+					+ "left join party p2 on t1.notify_party_id = p2.id "
+					+ "left join contact c2 on p2.contact_id = c2.id "
+					+ "left join contact c on p.contact_id = c.id "
+					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE)";
+		
 		String sql="";
 		if (deliveryOrderNo == null && customerName == null
 				&& orderStatue == null && warehouse == null&&code==null) {
@@ -615,13 +622,20 @@ public class DeliveryController extends Controller {
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false)";
 			if(code!=""&&code!=null){
+				sqlTotal =sqlTotal+" and serial_no like '%"+code+"%'";
 				sql =sql +" and serial_no like '%"+code+"%'";
 			}
 			if(deliveryOrderNo!=""&&deliveryOrderNo!=null){
+				sqlTotal =sqlTotal+" and ifnull(t2.order_no,'') like '%"+ deliveryOrderNo+ "%'";
 				sql =sql+" and ifnull(t2.order_no,'') like '%"+ deliveryOrderNo+ "%'";
 			}
 			
 			if(warehouse!=""&&customerName!=""&&warehouse!=null&&customerName!=null){
+				sqlTotal = sqlTotal +" and w.warehouse_name like '%"
+						+ warehouse
+						+ "%' and c.abbr like '%"
+						+ customerName
+						+ "%'";
 				sql= sql+" and w.warehouse_name like '%"
 					+ warehouse
 					+ "%' and c.abbr like '%"
@@ -629,6 +643,9 @@ public class DeliveryController extends Controller {
 					+ "%'";
 			}
 			if(orderStatue!=""&&orderStatue!=null){
+				sqlTotal =sqlTotal+"and ifnull(t2.status,'') like '%"
+						+ orderStatue
+						+ "%'";
 				sql = sql+"and ifnull(t2.status,'') like '%"
 						+ orderStatue
 						+ "%'";
@@ -636,7 +653,8 @@ public class DeliveryController extends Controller {
 			
 		
 		}
-		
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
 		List<Record> transferOrders = Db.find(sql);
 
 		transferOrderListMap.put("sEcho", pageIndex);
