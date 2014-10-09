@@ -96,7 +96,7 @@ public class DataInitUtil {
             
             // transfer_order 运输单
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment primary key,order_no varchar(255),customer_order_no varchar(255),status varchar(255),pickup_assign_status varchar(255),depart_assign_status varchar(255),"
-                    + "cargo_nature varchar(255),cargo_nature_detail varchar(255),inventory_id bigint,pickup_mode varchar(255),arrival_mode varchar(255),charge_type varchar(50),charge_type2 varchar(50),remark varchar(255),operation_type varchar(255),pickup_seq varchar(255),payment varchar(50),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
+                    + "cargo_nature varchar(255),cargo_nature_detail varchar(255),inventory_id bigint,pickup_mode varchar(255),arrival_mode varchar(255),charge_type varchar(50),charge_type2 varchar(50),receiving_unit varchar(255),remark varchar(255),operation_type varchar(255),pickup_seq varchar(255),payment varchar(50),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
                     + "create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,eta timestamp,address varchar(255),customer_province varchar(255),route_from varchar(255),route_to varchar(255),order_type varchar(255),"
                     + "customer_id bigint,sp_id bigint,notify_party_id bigint,driver_id bigint,warehouse_id bigint,office_id bigint,insurance_id bigint,foreign key(customer_id) references party(id),foreign key(sp_id) references party(id),"
                     + "foreign key(notify_party_id) references party(id),foreign key(driver_id) references party(id),foreign key(warehouse_id) references warehouse(id),foreign key(office_id) references office(id),foreign key(insurance_id) references insurance_order(id));");
@@ -128,7 +128,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists transfer_order_fin_item (id bigint auto_increment primary key, " +
             		"order_id bigint,depart_id bigint,delivery_id bigint, fin_item_id bigint, contract_id bigint,"
                     + "fin_item_code varchar(20), amount double, status varchar(50), fin_type varchar(20), "
-                    + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp,remark varchar(5120));");
+                    + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp,rate double,remark varchar(5120));");
 
             // billing_order 应收应付单主表 --total_amount 应收(付)总额, total_actual_amount
             // 实收(付)总额

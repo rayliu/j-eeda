@@ -416,7 +416,8 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("payment", getPara("payment"));
 			transferOrder.set("charge_type", getPara("chargeType"));
 			transferOrder.set("charge_type2", getPara("chargeType2"));
-			transferOrder.set("customer_order_no", getPara("customerOrderNo"));
+			transferOrder.set("customer_order_no", getPara("customerOrderNo")); 
+			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
 			if (getPara("arrivalMode") != null
@@ -478,6 +479,7 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("charge_type", getPara("chargeType"));
 			transferOrder.set("charge_type2", getPara("chargeType2"));
 			transferOrder.set("customer_order_no", getPara("customerOrderNo"));
+			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
 			
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
@@ -664,7 +666,6 @@ public class TransferOrderController extends Controller {
 	// 保存联系人
 	private Contact setContact() {
 		Contact contact = new Contact();
-		contact.set("company_name", getPara("notify_company_name"));
 		contact.set("contact_person", getPara("notify_contact_person"));
 		contact.set("phone", getPara("notify_phone"));
 		contact.set("address", getPara("notify_address"));
@@ -675,7 +676,6 @@ public class TransferOrderController extends Controller {
 	// 更新联系人
 	private Contact editContact(Party party) {
 		Contact contact = Contact.dao.findById(party.get("contact_id"));
-		contact.set("company_name", getPara("notify_company_name"));
 		contact.set("contact_person", getPara("notify_contact_person"));
 		contact.set("phone", getPara("notify_phone"));
 		contact.set("address", getPara("notify_address"));
