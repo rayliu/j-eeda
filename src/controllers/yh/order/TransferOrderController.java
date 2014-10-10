@@ -281,6 +281,20 @@ public class TransferOrderController extends Controller {
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
+		
+		Date planningTimeDate = transferOrder.get("planning_time");
+		Date arrivalTimeDate = transferOrder.get("arrival_time");
+		String planningTime = "";
+		String arrivalTime = "";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		if (!"".equals(planningTimeDate) && planningTimeDate != null) {
+			planningTime = simpleDateFormat.format(planningTimeDate);
+		}
+		if (!"".equals(arrivalTimeDate) && arrivalTimeDate != null) {
+			arrivalTime = simpleDateFormat.format(arrivalTimeDate);
+		}
+		setAttr("planningTime", planningTime);
+		setAttr("arrivalTime", arrivalTime);
 		if (LoginUserController.isAuthenticated(this))
 			render("transferOrder/updateTransferOrder.html");
 	}
@@ -418,6 +432,12 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("charge_type2", getPara("chargeType2"));
 			transferOrder.set("customer_order_no", getPara("customerOrderNo")); 
 			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
+			if(getParaToDate("planning_time") != null){
+				transferOrder.set("planning_time", getPara("planning_time")); 
+			}
+			if(getParaToDate("arrival_time") != null){
+				transferOrder.set("arrival_time", getPara("arrival_time")); 
+			}
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
 			if (getPara("arrivalMode") != null
@@ -480,7 +500,12 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("charge_type2", getPara("chargeType2"));
 			transferOrder.set("customer_order_no", getPara("customerOrderNo"));
 			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
-			
+			if(getParaToDate("planning_time") != null){
+				transferOrder.set("planning_time", getPara("planning_time")); 
+			}
+			if(getParaToDate("arrival_time") != null){
+				transferOrder.set("arrival_time", getPara("arrival_time")); 
+			}
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
 			if (getPara("arrivalMode") != null

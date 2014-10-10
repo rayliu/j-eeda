@@ -39,8 +39,7 @@ $(document).ready(function() {
                     }
                     return obj.aData.TRANSACTION_STATUS;
                 }
-            },           
-            {"mDataProp":null, "sWidth":"150px"},        	
+            },                   	
             {"mDataProp":null, "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        
             {"mDataProp":"AMOUNT", "sWidth":"150px"},                        
