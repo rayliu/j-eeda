@@ -1055,8 +1055,14 @@ $(document).ready(function() {
             {
             	"mDataProp":"SERIAL_NO",
         		"sWidth": "80px",
-            	"sClass": "serial_no"	
-            },
+            	"sClass": "serial_no",
+            	"fnRender": function(obj) {
+                    if(obj.aData.SERIAL_NO!='' && obj.aData.SERIAL_NO != null){
+                        return "<input type='text' name='serial_no' value='"+obj.aData.SERIAL_NO+"'>";
+                    }else{
+                    	 return "<input type='text' name='serial_no'>";
+                    }
+            }},
             {
             	"mDataProp":"ITEM_NO",
         		"sWidth": "80px",
@@ -1078,25 +1084,61 @@ $(document).ready(function() {
             	"sClass": "weight"
             },
             {
+            	"mDataProp":"PIECES",
+            	"sWidth": "80px",
+            	"sClass": "pieces",
+            	"fnRender": function(obj) {
+                    if(obj.aData.PIECES!='' && obj.aData.PIECES != null){
+                        return "<input type='text' name='pieces' value='"+obj.aData.PIECES+"'>";
+                    }else{
+                    	 return "<input type='text' name='pieces'>";
+                    }
+            }},
+            {
             	"mDataProp":"CONTACT_PERSON",
         		"sWidth": "80px",
-            	"sClass": "contact_person"
-            },
+            	"sClass": "contact_person",
+            	"fnRender": function(obj) {
+                    if(obj.aData.CONTACT_PERSON!='' && obj.aData.CONTACT_PERSON != null){
+                        return "<input type='text' name='contact_person' value='"+obj.aData.CONTACT_PERSON+"'>";
+                    }else{
+                    	 return "<input type='text' name='contact_person'>";
+                    }
+            }},
             {
             	"mDataProp":"PHONE",
         		"sWidth": "80px",
-            	"sClass": "phone"
-            },
+            	"sClass": "phone",
+            	"fnRender": function(obj) {
+                    if(obj.aData.PHONE!='' && obj.aData.PHONE != null){
+                        return "<input type='text' name='phone' value='"+obj.aData.PHONE+"'>";
+                    }else{
+                    	 return "<input type='text' name='phone'>";
+                    }
+            }},
             {
             	"mDataProp":"ADDRESS",
         		"sWidth": "80px",
-            	"sClass": "address"
-            },
+            	"sClass": "address",
+            	"fnRender": function(obj) {
+                    if(obj.aData.ADDRESS!='' && obj.aData.ADDRESS != null){
+                        return "<input type='text' name='address' value='"+obj.aData.ADDRESS+"'>";
+                    }else{
+                    	 return "<input type='text' name='address'>";
+                    }
+            }},
             {
             	"mDataProp":"REMARK",
         		"sWidth": "80px",
-            	"sClass": "remark"
-            },
+            	"sClass": "remark",
+            	"fnRender": function(obj) {
+                    if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
+                        return "<input type='text' name='remark' value='"+obj.aData.REMARK+"'>";
+                    }else{
+                    	 return "<input type='text' name='remark'>";
+                    }
+            }},
+            /*,
             {  
                 "mDataProp": null, 
                 "sWidth": "8%",                
@@ -1105,11 +1147,11 @@ $(document).ready(function() {
 		                        "<i class='fa fa-trash-o fa-fw'></i>"+
 		                    "</a>";
                 }
-            }                         
+            } */                        
         ]      
     });
 
-    detailDataTable.makeEditable({
+    /*detailDataTable.makeEditable({
     	sUpdateURL: '/yh/transferOrderItemDetail/saveTransferOrderItemDetailByField',    	
     	oEditableSettings: {event: 'click'},
     	"aoColumns": [  			            
@@ -1166,7 +1208,7 @@ $(document).ready(function() {
 	        source: function( request, response ) {
 	        },
         });
-    });                                                                      
+    }); */                                                                     
         
 	// 编辑单品
 	$("#itemTable").on('click', '.dateilEdit', function(e){

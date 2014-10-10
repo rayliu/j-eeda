@@ -26,8 +26,7 @@ $(document).ready(function() {
             {"mDataProp":"STATUS", "sWidth":"200px"},
             {"mDataProp":"TRANSACTION_STATUS", "sWidth":"150px"},
             {"mDataProp":null, "sWidth":"200px"},
-            {"mDataProp":null, "sWidth":"200px"},
-            /*{"mDataProp":null, "sWidth":"200px"},*/     	
+            {"mDataProp":null, "sWidth":"200px"},   	
             {"mDataProp":null, "sWidth": "120px", 
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new'){
@@ -49,16 +48,7 @@ $(document).ready(function() {
             {"mDataProp":"AMOUNT", "sWidth":"150px"},                        
             {"mDataProp":"VOLUME", "sWidth":"150px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
+            {"mDataProp":null, "sWidth":"150px"},                         
             {"mDataProp":"CREATOR", "sWidth":"150px"},                   
             {"mDataProp":"CREATE_STAMP", "sWidth":"150px"}                     
         ]      
