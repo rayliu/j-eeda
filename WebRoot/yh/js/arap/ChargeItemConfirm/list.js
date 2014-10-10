@@ -49,8 +49,8 @@ $(document).ready(function() {
                 }
             },           
             {"mDataProp":"RECEIPT_DATE", "sWidth":"150px"},        	
-            {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":"ROUTE_FROM", "sWidth":"100px"},                        
+            {"mDataProp":"ROUTE_TO", "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"150px"},                        
             {"mDataProp":null, "sWidth":"150px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        

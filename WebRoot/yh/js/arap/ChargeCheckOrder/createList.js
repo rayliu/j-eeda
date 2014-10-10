@@ -49,9 +49,9 @@ $(document).ready(function() {
 	                  return obj.aData.TRANSACTION_STATUS;
 	              }
 	          },           
-	          {"mDataProp":"RECEIPT_DATE", "sWidth":"150px"},        	
-	          {"mDataProp":null, "sWidth":"100px"},                        
-	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":"RECEIPT_DATE", "sWidth":"150px"},          	
+	          {"mDataProp":"ROUTE_FROM", "sWidth":"100px"},                        
+	          {"mDataProp":"ROUTE_TO", "sWidth":"100px"},                     
 	          {"mDataProp":null, "sWidth":"150px"},                        
 	          {"mDataProp":null, "sWidth":"150px"},                        
 	          {"mDataProp":null, "sWidth":"100px"},                        
