@@ -975,8 +975,15 @@
     					alert("修改失败!");
     				}
     	    	},'json');
-    		});
-    		
-    		
-    		
+    		});    		
+
+	    $('#datetimepicker2').datetimepicker({  
+	        format: 'yyyy-MM-dd',  
+	        language: 'zh-CN', 
+	        autoclose: true,
+	        pickerPosition: "bottom-left"
+	    }).on('changeDate', function(ev){
+	        $(".bootstrap-datetimepicker-widget").hide();
+	        $('#endTime_filter').trigger('keyup');
+	    });	    		
     });

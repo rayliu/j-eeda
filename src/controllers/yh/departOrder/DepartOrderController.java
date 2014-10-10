@@ -341,6 +341,14 @@ public class DepartOrderController extends Controller {
         List<Record> paymentItemList = Collections.EMPTY_LIST;
         paymentItemList = Db.find("select * from fin_item where type='应付'");
         setAttr("paymentItemList", paymentItemList);
+        
+		Date arrivalTimeDate = departOrder.get("arrival_time");
+		String arrivalTime = "";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		if (!"".equals(arrivalTimeDate) && arrivalTimeDate != null) {
+			arrivalTime = simpleDateFormat.format(arrivalTimeDate);
+		}
+		setAttr("arrivalTime", arrivalTime);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/departOrder/editDepartOrder.html");
     }
@@ -717,6 +725,9 @@ public class DepartOrderController extends Controller {
             if (!"".equals(car_follow_phone)) {
                 dp.set("car_follow_phone", car_follow_phone);
             }
+            if(getParaToDate("arrival_time") != null){
+				dp.set("arrival_time", getPara("arrival_time")); 
+			}
             dp.save();
             saveDepartTransfer(dp, getPara("orderid"), checkedDetail, uncheckedDetailIds);
             saveDepartOrderMilestone(dp);
@@ -752,6 +763,9 @@ public class DepartOrderController extends Controller {
             if (!"".equals(car_follow_phone)) {
                 dp.set("car_follow_phone", car_follow_phone);
             }
+            if(getParaToDate("arrival_time") != null){
+				dp.set("arrival_time", getPara("arrival_time")); 
+			}
             dp.update();
             updateDepartTransfer(dp, getPara("orderid"), checkedDetail, uncheckedDetailIds);
             if (!"".equals(sp_id)) {

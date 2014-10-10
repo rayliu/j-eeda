@@ -1,4 +1,5 @@
 <%layout("/yh/layout.html"){%>
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
 <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
 <link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
@@ -239,6 +240,20 @@
 		                                        <select  id="cmbAreaTo" class="valid" name="cmbAreaTo" value=""></select>
 		                                    	</div>
 		                                    </div>
+		                                    <div class="row">
+			                                    <div class="col-lg-8">
+			                                        <div class="form-group">                                                    
+			                                            <span id="datetimepicker2" class="input-append date search-control "> 
+			                                                <label class="search-label">预计到达时间</label> 
+			                                                <input id="endTime_filter" class="form-control search-control endTime_filter" type="text" name="arrival_time" value="${arrivalTime!''}">
+			                                                <span class="add-on">  
+			                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+			                                                </span>  
+			                                            </span>
+			                                        </div>
+			                                    </div>
+			                                    <!-- end of col-lg-6-->
+			                                </div>
 		                                     <%if(notifi_check!''==true){%>
 		                                    <div style="" id="contactInformation">
 		                                     <h2>收货人信息</h2>
@@ -445,3 +460,6 @@
 
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 
+
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
