@@ -11,10 +11,14 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/costConfiremList/list",
+        "sAjaxSource": "/yh/costConfirmList/list",
         "aoColumns": [ 
-            {"mDataProp":"ORDER_NO"},  
-            {"mDataProp":null},
+            { "mDataProp": null, "sWidth":"20px",
+                "fnRender": function(obj) {
+                  return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+                }
+            },
+            {"mDataProp":"ORDER_NO"}, 
 		    {"mDataProp":null, "sWidth":"120px",
                 "fnRender": function(obj) {
                     return "未收款";

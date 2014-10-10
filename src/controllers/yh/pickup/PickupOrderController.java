@@ -899,7 +899,7 @@ public class PickupOrderController extends Controller {
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
             TransferOrderMilestone milestone = new TransferOrderMilestone();
-            if ("新建".equals(transferOrder.get("status"))) {
+            if ("新建".equals(transferOrder.get("status")) || "部分已入货场".equals(transferOrder.get("status")) || "部分已入库".equals(transferOrder.get("status"))) {
                 if ("salesOrder".equals(transferOrder.get("order_type"))) {
                     if (transferOrder.get("pickup_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL) {
                         transferOrder.set("status", "部分已入货场");
