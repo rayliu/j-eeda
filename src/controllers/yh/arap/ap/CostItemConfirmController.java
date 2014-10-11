@@ -53,7 +53,7 @@ public class CostItemConfirmController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select distinct dor.id,dor.order_no,dor.status,ror.transaction_status,c.abbr,dor.route_from,dor.route_to,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator from return_order ror"  
+        String sql = "select distinct dor.id,dor.order_no,dor.status,ror.transaction_status,c.abbr spname,dor.route_from,dor.route_to,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator from return_order ror"  
 				+ " left join delivery_order dor on dor.id = ror.delivery_order_id"
 				+ " left join party p on p.id = dor.sp_id"
 				+ " left join contact c on c.id = p.contact_id"
@@ -64,7 +64,7 @@ public class CostItemConfirmController extends Controller {
 				+ " left join user_login ul on ul.id = dor.create_by"
 				+ " where dor.id = ror.delivery_order_id"
 				+ " union"
-				+ " select distinct tor.id,tor.order_no,tor.status,ror.transaction_status,c.abbr,tor.route_from,tor.route_to,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,tor.create_stamp create_stamp,ul.user_name creator from return_order ror "
+				+ " select distinct tor.id,tor.order_no,tor.status,ror.transaction_status,c.abbr spname,tor.route_from,tor.route_to,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,tor.create_stamp create_stamp,ul.user_name creator from return_order ror "
 				+ " left join delivery_order dor on dor.id = ror.delivery_order_id"
 				+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
 				+ " left join transfer_order tor on tor.id = doi.transfer_order_id"

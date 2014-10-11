@@ -22,11 +22,11 @@ public class DataInitUtil {
             Statement stmt = conn.createStatement();
 
             // 登陆及授权的3个表
-            stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255));");
+            stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),contact_phone_name varchar(50),contact_phone varchar(50),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255));");
+            stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255),office_id bigint,foreign key(office_id) references office(id));");
             stmt.executeUpdate("create table if not exists user_roles(id bigint auto_increment primary key, user_name varchar(50) not null, role_name varchar(255) not null, remark varchar(255));");
             stmt.executeUpdate("create table if not exists role_permissions(id bigint auto_increment primary key, role_name varchar(50) not null, role_permission varchar(50), remark varchar(255));");
             stmt.executeUpdate("create table if not exists location(id bigint auto_increment primary key, code varchar(50) not null, name varchar(50), pcode varchar(255));");
-            stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),contact_phone_name varchar(50),contact_phone varchar(50),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255));");
             stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment primary key, name varchar(20) not null, type varchar(50),remark varchar(255));");
             stmt.executeUpdate("create table if not exists fin_account_item(id bigint auto_increment primary key,account_id bigint,currency varchar(50),org_name varchar(50),account_pin varchar(50),org_person varchar(50));");
             stmt.executeUpdate("create table if not exists contract(id bigint auto_increment primary key, name varchar(50) not null, type varchar(50), party_id bigint,period_from timestamp,period_to timestamp, remark varchar(255));");
@@ -208,12 +208,6 @@ public class DataInitUtil {
             // location init
             LocationDataInit.initLocation(stmt);
             ProfileDataInit.initProfile(stmt);
-            stmt.executeUpdate("insert into inventory_item(party_id, warehouse_id, product_id,total_quantity) values(1, 1, 4, 100);");
-            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
-            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
-            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('demo', '123456', '1-6');");
-            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('jason', '123456', '1-6');");
-
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('1201', '广州分公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','自营','这是一家公司');");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','控股','这是一家公司');");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('101', '深圳分公司','张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','合作','这是一家公司');");
@@ -221,6 +215,12 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('源鸿物流珠海分公司','陈秋明','13925642153','陈秋明','13925642153','广东省珠海市','合资分公司');");
             stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('上海源鸿物流有限公司','刘涛','18688696863','刘涛','18688696863','上海市','合作公司');");
             stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('贵阳源鸿物流有限公司','林伟军','13358215635','林伟军','13358215635','贵阳市','合作公司');");
+
+            stmt.executeUpdate("insert into inventory_item(party_id, warehouse_id, product_id,total_quantity) values(1, 1, 4, 100);");
+            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
+            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
+            stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('demo', '123456', '1-6', 3);");
+            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('jason', '123456', '1-6');");
 
             stmt.executeUpdate("insert into fin_account(name,type,remark) values('李志坚','收费','');");
             stmt.executeUpdate("insert into fin_account(name,type,remark) values('李四','收费','');");

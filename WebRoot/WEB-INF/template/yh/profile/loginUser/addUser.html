@@ -32,6 +32,12 @@
 			                 <label class="control-label">密码提示</label>
 			                 <input type="text" class="form-control" id="pw_hint" name="pw_hint" value="${lu.password_hint!''}">
 			             </div>
+			             <div class="form-group ">
+                             <input id="hideOfficeId" type="hidden" value="${lu.office_id!''}" />    
+							 <label class="control-label" for="inputSuccess">请选择网点</label>
+                             <select id="officeSelect" class="form-control" name="officeSelect"></select>  
+						 </div>
+                                            
 			             	<button type="submit" class="btn btn-default">保存</button>
 				            <a class="btn btn-default" href="/yh/loginUser">返回</a>
 			         </form>
@@ -79,5 +85,26 @@
                 element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
             }
         });
+        
+
+	   	 // 获取所有城市
+	   	 $.post('/yh/transferOrder/searchAllOffice',function(data){
+	   		 if(data.length > 0){
+	   			 var officeSelect = $("#officeSelect");
+	   			 officeSelect.empty();
+	   			 var hideOfficeId = $("#hideOfficeId").val();
+	   			 for(var i=0; i<data.length; i++){
+	   				 if(i == 0){
+	   					 officeSelect.append("<option ></option>");
+	   				 }else{
+	   					 if(data[i].ID == hideOfficeId){
+	   						 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+	   					 }else{
+	   						 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+	   					 }
+	   				 }
+	   			 }
+	   		 }
+	   	 },'json');
     });
 </script>
