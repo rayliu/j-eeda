@@ -80,7 +80,7 @@ public class ReturnOrderController extends Controller {
 		String status = getPara("status");
 		String time_one = getPara("time_one");
 		String time_two = getPara("time_two");
-		String customer =getPara("customer");
+		String customer = getPara("customer");
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -91,7 +91,7 @@ public class ReturnOrderController extends Controller {
 		Map orderMap = new HashMap();
 		if (order_no == null && tr_order_no == null && de_order_no == null
 				&& stator == null && status == null && time_one == null
-				&& time_two == null&& customer ==null) {
+				&& time_two == null && customer == null) {
 			// 获取总条数
 			String totalWhere = "";
 			String sql = "select count(1) total from return_order ro ";
@@ -196,17 +196,17 @@ public class ReturnOrderController extends Controller {
 		Long transferOrderId = returnOrder.get("transfer_order_id");
 		Long notify_party_id;
 		String code = "";
-		String routeTo ="";
-		
+		String routeTo = "";
+
 		if (deliveryId == null) {
 			transferOrder = TransferOrder.dao.findById(transferOrderId);
 			notify_party_id = transferOrder.get("notify_party_id");
-			routeTo=transferOrder.get("route_to");
+			routeTo = transferOrder.get("route_to");
 		} else {
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao
 					.findById(deliveryId);
 			// TODO 一张配送单对应多张运输单时回单怎样取出信息
-			routeTo=deliveryOrder.get("route_to");
+			routeTo = deliveryOrder.get("route_to");
 			List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao
 					.find("select * from delivery_order_item where delivery_id = ?",
 							deliveryId);
@@ -272,7 +272,6 @@ public class ReturnOrderController extends Controller {
 			setAttr("locationFrom", locationFrom);
 		}
 
-		
 		Location locationTo = null;
 		if (routeTo != null || !"".equals(routeTo)) {
 			List<Location> provinces = Location.dao
@@ -300,8 +299,8 @@ public class ReturnOrderController extends Controller {
 				.get("create_by"));
 		setAttr("userLoginTo", userLoginTo);
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
-        receivableItemList = Db.find("select * from fin_item where type='应收'");
-        setAttr("receivableItemList", receivableItemList);
+		receivableItemList = Db.find("select * from fin_item where type='应收'");
+		setAttr("receivableItemList", receivableItemList);
 		if (LoginUserController.isAuthenticated(this))
 			render("returnOrder/returnOrder.html");
 	}
@@ -336,8 +335,8 @@ public class ReturnOrderController extends Controller {
 			if (notifyPartyId != null) {
 				updateContact(notifyPartyId);
 			}
-			//如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
-			if(isLocationChanged){
+			// 如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
+			if (isLocationChanged) {
 				deleteContractFinItem(deliveryOrder);
 			}
 			// 计算配送单的触发的应收
@@ -350,7 +349,7 @@ public class ReturnOrderController extends Controller {
 
 	}
 
-	private void deleteContractFinItem(DeliveryOrder deliveryOrder){
+	private void deleteContractFinItem(DeliveryOrder deliveryOrder) {
 		Long customerId = deliveryOrder.getLong("customer_id");
 		// 先获取有效期内的客户合同, 如有多个，默认取第一个
 		Contract customerContract = Contract.dao
@@ -359,10 +358,11 @@ public class ReturnOrderController extends Controller {
 						+ customerId);
 		if (customerContract == null)
 			return;
-		
-		Db.update("delete from transfer_order_fin_item where contract_id="+customerContract.getLong("id"));
+
+		Db.update("delete from transfer_order_fin_item where contract_id="
+				+ customerContract.getLong("id"));
 	}
-	
+
 	// 更新收货人信息
 	private void updateContact(Long notifyPartyId) {
 		Party party = Party.dao.findById(notifyPartyId);
@@ -405,7 +405,6 @@ public class ReturnOrderController extends Controller {
 			// TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
 			transferOrderMilestone.save();
 
-			
 		} else {
 			TransferOrder transferOrder = TransferOrder.dao
 					.findById(returnOrder.get("transfer_order_id"));
@@ -454,7 +453,8 @@ public class ReturnOrderController extends Controller {
 						+ "left join transfer_order_item toi on toid.item_id = toi.id "
 						+ "left join delivery_order d_o on doi.delivery_id = d_o.id "
 						+ "left join transfer_order t_o on t_o.id = doi.transfer_order_id "
-						+ "where doi.delivery_id =" + deliveryOrderId
+						+ "where doi.delivery_id ="
+						+ deliveryOrderId
 						+ "group by  toi.product_id, doi.transfer_order_id, t_o.route_from, d_o.route_to ");
 		for (Record dOrderItemRecord : deliveryOrderItemList) {
 			Record contractFinItem = Db
@@ -530,7 +530,7 @@ public class ReturnOrderController extends Controller {
 			transferFinItem.set("amount", contractFinItem.getDouble("amount")
 					* itemAmount);
 		}
-		
+
 		transferFinItem.set("order_id",
 				tOrderItemRecord.get("transfer_order_id"));
 		transferFinItem.set("delivery_id", deliveryOrderId);
@@ -550,7 +550,7 @@ public class ReturnOrderController extends Controller {
 		re.set("TRANSACTION_STATUS", "cancel").update();
 		renderJson("{\"success\":true}");
 	}
-	
+
 	public void transferOrderDetailList() {
 		String deliveryOrderId = getPara("deliveryOrderId");
 		String orderId = getPara("orderId");
@@ -647,162 +647,199 @@ public class ReturnOrderController extends Controller {
 		map.put("aaData", products);
 		renderJson(map);
 	}
-	
-	//货品明细
+
+	// 货品明细
 	public void transferOrderItemList() {
-        Map transferOrderListMap = null;
-        String returnOrderId = getPara("order_id");
-        String productId = getPara("product_id");
-        String transferOrderId =getPara("id");
-        if (returnOrderId == null || "".equals(returnOrderId)) {
-        	returnOrderId = "-1";
-        }
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-        }
-        String sqlTotal="";
-        String sql = "";
-        
-        Record transferOrder = Db.findFirst("select cargo_nature from transfer_order where id ="+transferOrderId);
-        if(transferOrder.get("cargo_nature").equals("ATM")){
-        	sqlTotal="select distinct count(1) total "
-            		+ "FROM transfer_order_item_detail toid "
-            		+ "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "
-            		+ "left join return_order r on toid.delivery_id =r.delivery_order_id "
-            		+ "left join product p on toi.product_id = p.id where r.id ="+returnOrderId+ sLimit;
-            
-           
-            sql="select distinct count(*) as amount ,item_no,item_name,width,size,weight,height,volume,unit,remark,tid from ( "
-            		+ "SELECT toi.id as id,"
-            		+ "toid.id as tid,"
-            		+ "ifnull(p.item_no, toi.item_no) item_no, "
-            		+ "ifnull(p.item_name, toi.item_name) item_name,"
-            		+ "ifnull(p.size, toi.size) size, "
-            		+ "ifnull(p.width, toi.width) width, "
-            		+ "ifnull(p.height, toi.height) height, "
-            		+ "ifnull(p.weight, toi.weight) weight, "
-            		+ "ifnull(p.volume, toi.volume) volume,"
-            		+ "ifnull(p.unit, toi.unit) unit, "
-            		+ "toi.remark "
-            		+ "FROM transfer_order_item_detail toid "
-            		+ "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "
-            		+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
-            		+ "left join product p on toi.product_id = p.id where r.id ="+returnOrderId+") group by tid"+ sLimit;
-        }else{
-        	sqlTotal="SELECT distinct count(1) total " 
-					+ " FROM transfer_order_item toi "
-					+ " LEFT JOIN return_order r ON r.transfer_order_id = toi.order_id "
-					+ " LEFT JOIN product p ON toi.product_id = p.id "
-					+ " WHERE r.id = "+ returnOrderId
-					+ " group by toi.id "+ sLimit;
-        	
-        	sql="SELECT toi.id,"
-        			+ " ifnull(p.item_no, toi.item_no) item_no, "
-            		+ " ifnull(p.item_name, toi.item_name) item_name,"
-            		+ " ifnull(p.size, toi.size) size, "
-            		+ " ifnull(p.width, toi.width) width, "
-            		+ " ifnull(p.height, toi.height) height, "
-            		+ " ifnull(p.weight, toi.weight) weight, "
-            		+ " ifnull(p.volume, toi.volume) volume,"
-            		+ " ifnull(p.unit, toi.unit) unit, "
-            		+ " toi.amount amount, "
-            		+ " toi.remark "
-					+ " FROM transfer_order_item toi "
-					+ " LEFT JOIN return_order r ON r.transfer_order_id = toi.order_id "
-					+ " LEFT JOIN product p ON toi.product_id = p.id "
-					+ " WHERE r.id = "+ returnOrderId
-					+ " group by toi.id "+ sLimit;
-        }
-        
-        
-        
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
-        List<Record> transferOrders = Db.find(sql);
-        transferOrderListMap = new HashMap();
-        transferOrderListMap.put("sEcho", pageIndex);
-        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-        transferOrderListMap.put("aaData", transferOrders);
-        renderJson(transferOrderListMap);
-    }
-	
-	//单品
+		Map transferOrderListMap = null;
+		String returnOrderId = getPara("order_id");
+		String productId = getPara("product_id");
+		String transferOrderId = getPara("id");
+		if (returnOrderId == null || "".equals(returnOrderId)) {
+			returnOrderId = "-1";
+		}
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+		String sqlTotal = "";
+		String sql = "";
+
+		Record transferOrder = Db
+				.findFirst("select cargo_nature,cargo_nature_detail from transfer_order where id ="
+						+ transferOrderId);
+
+		if (transferOrder.get("cargo_nature").equals("ATM")) {
+			sqlTotal = "select distinct count(1) total "
+					+ "from transfer_order_item_detail toid "
+					+ "left join transfer_order_item toi on toid.item_id = toi.id "
+					+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
+					+ "left join product p on toi.product_id = p.id where r.id ="
+					+ returnOrderId;
+
+			sql = "select distinct count(*) as amount ,item_no,item_name,width,size,weight,height,volume,unit,remark,tid from ( "
+					+ "select toi.id as id,"
+					+ "toid.id as tid,"
+					+ "ifnull(p.item_no, toi.item_no) item_no, "
+					+ "ifnull(p.item_name, toi.item_name) item_name,"
+					+ "ifnull(p.size, toi.size) size, "
+					+ "ifnull(p.width, toi.width) width, "
+					+ "ifnull(p.height, toi.height) height, "
+					+ "ifnull(p.weight, toi.weight) weight, "
+					+ "ifnull(p.volume, toi.volume) volume,"
+					+ "ifnull(p.unit, toi.unit) unit, "
+					+ "toi.remark "
+					+ "from transfer_order_item_detail toid "
+					+ "left join transfer_order_item toi ON toid.item_id = toi.id "
+					+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
+					+ "left join product p on toi.product_id = p.id where r.id ="
+					+ returnOrderId + ") group by tid" + sLimit;
+		} else {
+			sqlTotal = "select distinct count(1) total "
+					+ " from transfer_order_item toi "
+					+ " left join return_order r on r.transfer_order_id = toi.order_id "
+					+ " left join product p on toi.product_id = p.id "
+					+ " where r.id = " + returnOrderId + " group by toi.id ";
+			if (transferOrder.get("cargo_nature_detail").equals("cargoNatureDetailYes")) {
+				sqlTotal = "select distinct count(1) total "
+						+ "from transfer_order_item_detail toid "
+						+ "left join transfer_order_item toi on toid.item_id = toi.id "
+						+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
+						+ "left join product p on toi.product_id = p.id where r.id ="
+						+ returnOrderId;
+				
+				sql = "select distinct count(*) as amount ,item_no,item_name,width,size,weight,height,volume,unit,remark,tid from ( "
+						+ "select toi.id as id,"
+						+ "toid.id as tid,"
+						+ "ifnull(p.item_no, toi.item_no) item_no, "
+						+ "ifnull(p.item_name, toi.item_name) item_name,"
+						+ "ifnull(p.size, toi.size) size, "
+						+ "ifnull(p.width, toi.width) width, "
+						+ "ifnull(p.height, toi.height) height, "
+						+ "ifnull(p.weight, toi.weight) weight, "
+						+ "ifnull(p.volume, toi.volume) volume,"
+						+ "ifnull(p.unit, toi.unit) unit, "
+						+ "toi.remark "
+						+ "from transfer_order_item_detail toid "
+						+ "left join transfer_order_item toi on toid.item_id = toi.id "
+						+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
+						+ "left join product p on toi.product_id = p.id where r.id ="
+						+ returnOrderId + ") group by tid" + sLimit;
+						
+			} else {
+				sql = "select toi.id,"
+						+ " ifnull(p.item_no, toi.item_no) item_no, "
+						+ " ifnull(p.item_name, toi.item_name) item_name,"
+						+ " ifnull(p.size, toi.size) size, "
+						+ " ifnull(p.width, toi.width) width, "
+						+ " ifnull(p.height, toi.height) height, "
+						+ " ifnull(p.weight, toi.weight) weight, "
+						+ " ifnull(p.volume, toi.volume) volume,"
+						+ " ifnull(p.unit, toi.unit) unit, "
+						+ " toi.amount amount, "
+						+ " toi.remark "
+						+ " from transfer_order_item toi "
+						+ " left join return_order r on r.transfer_order_id = toi.order_id "
+						+ " left join product p on toi.product_id = p.id "
+						+ " where r.id = " + returnOrderId
+						+ " group by toi.id " + sLimit;
+			}
+		}
+
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+		List<Record> transferOrders = Db.find(sql);
+		transferOrderListMap = new HashMap();
+		transferOrderListMap.put("sEcho", pageIndex);
+		transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+		transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		transferOrderListMap.put("aaData", transferOrders);
+		renderJson(transferOrderListMap);
+	}
+
+	// 单品
 	public void transferOrderDetailList2() {
-        String itemId = getPara("item_id");
-        String orderId = getPara("orderId");
-        if (itemId == null || "".equals(itemId)) {
-            itemId = "-1";
-        }
-        if (orderId == null || "".equals(orderId)) {
-        	orderId = "-1";
-        }
-        logger.debug(itemId);
+		String itemId = getPara("item_id");
+		String orderId = getPara("orderId");
+		if (itemId == null || "".equals(itemId)) {
+			itemId = "-1";
+		}
+		if (orderId == null || "".equals(orderId)) {
+			orderId = "-1";
+		}
+		logger.debug(itemId);
 
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-        }
-        String sql = "";
-        String sqlTotal = "";
-        if(itemId != "-1"){
-	        sqlTotal = "select count(1) total from transfer_order_item_detail where item_id =" + itemId;
-	
-	        sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+		String sql = "";
+		String sqlTotal = "";
+		if (itemId != "-1") {
+			sqlTotal = "select count(1) total from transfer_order_item_detail where item_id ="
+					+ itemId;
+
+			sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
 					+ " left join party p on d.notify_party_id = p.id"
 					+ " left join contact c on p.contact_id = c.id"
-					+ " where d.item_id ="+itemId + sLimit;	
-        }else{
-        	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id="+orderId;
-	
-	        sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
+					+ " where d.item_id =" + itemId + sLimit;
+		} else {
+			sqlTotal = "select count(1) total from transfer_order_item_detail where order_id="
+					+ orderId;
+
+			sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
 					+ " left join party p on d.notify_party_id = p.id"
 					+ " left join contact c on p.contact_id = c.id"
-	                + " where order_id = "+orderId + sLimit;	
-        }
+					+ " where order_id = " + orderId + sLimit;
+		}
 
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
-        List<Record> transferOrders = Db.find(sql);
-        Map transferOrderListMap = new HashMap();
-        transferOrderListMap.put("sEcho", pageIndex);
-        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+		List<Record> transferOrders = Db.find(sql);
+		Map transferOrderListMap = new HashMap();
+		transferOrderListMap.put("sEcho", pageIndex);
+		transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+		transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
 
-        transferOrderListMap.put("aaData", transferOrders);
+		transferOrderListMap.put("aaData", transferOrders);
 
-        renderJson(transferOrderListMap);
-    }
-	
+		renderJson(transferOrderListMap);
+	}
+
 	// 删除TransferOrderItem
-    public void deleteTransferOrderItem() {
-        String id = getPara("transfer_order_item_id");
-        List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
-                .find("select * from transfer_order_item_detail where item_id=" + id);
-        for (TransferOrderItemDetail itemDetail : transferOrderItemDetails) {
-            itemDetail.delete();
-        }
-        TransferOrderItem.dao.deleteById(id);
-        renderJson("{\"success\":true}");
-    }
-    
-    // 应收
- 	public void addNewRow() {
- 		List<Fin_item> items = new ArrayList<Fin_item>();
- 		String returnOrderId = getPara();
- 		Fin_item item = Fin_item.dao
- 				.findFirst("select * from fin_item where type = '应收' order by id asc");
- 		if (item != null) {
- 			ReturnOrderFinItem dFinItem = new ReturnOrderFinItem();
- 			dFinItem.set("status", "新建").set("fin_item_id", item.get("id")).set("return_order_id", returnOrderId).set("create_date", new Date());
- 			dFinItem.save();
- 		}
- 		items.add(item);
- 		renderJson(items);
- 	}
+	public void deleteTransferOrderItem() {
+		String id = getPara("transfer_order_item_id");
+		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
+				.find("select * from transfer_order_item_detail where item_id="
+						+ id);
+		for (TransferOrderItemDetail itemDetail : transferOrderItemDetails) {
+			itemDetail.delete();
+		}
+		TransferOrderItem.dao.deleteById(id);
+		renderJson("{\"success\":true}");
+	}
+
+	// 应收
+	public void addNewRow() {
+		List<Fin_item> items = new ArrayList<Fin_item>();
+		String returnOrderId = getPara();
+		Fin_item item = Fin_item.dao
+				.findFirst("select * from fin_item where type = '应收' order by id asc");
+		if (item != null) {
+			ReturnOrderFinItem dFinItem = new ReturnOrderFinItem();
+			dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
+					.set("return_order_id", returnOrderId)
+					.set("create_date", new Date());
+			dFinItem.save();
+		}
+		items.add(item);
+		renderJson(items);
+	}
 
 	// 修改应付
 	public void updateTransferOrderFinItem() {
@@ -820,7 +857,7 @@ public class ReturnOrderController extends Controller {
 		}
 		renderJson("{\"success\":true}");
 	}
-	
+
 	// 应收list
 	public void accountReceivable() {
 		String id = getPara();
@@ -844,19 +881,21 @@ public class ReturnOrderController extends Controller {
 
 		// 获取总条数
 		String totalWhere = "";
-		String sql = "select count(1) total from return_order_fin_item rofi left join return_order ror on ror.id = rofi.return_order_id where ror.id = '"+ id + "' "; //and f.type='应收' TODO： 有问题
+		String sql = "select count(1) total from return_order_fin_item rofi left join return_order ror on ror.id = rofi.return_order_id where ror.id = '"
+				+ id + "' "; // and f.type='应收' TODO： 有问题
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
 		sql = "select distinct f.name name, rofi.*,ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
-							+ " from return_order_fin_item rofi "
-							+ " left join return_order r_o on r_o.id = rofi.return_order_id"
-							+ " left join fin_item f on rofi.fin_item_id = f.id "
-							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
-							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
-							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id where r_o.id = " + id + " order by create_date";
-		List<Record> orders =Db.find(sql);
+				+ " from return_order_fin_item rofi "
+				+ " left join return_order r_o on r_o.id = rofi.return_order_id"
+				+ " left join fin_item f on rofi.fin_item_id = f.id "
+				+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
+				+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
+				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id where r_o.id = "
+				+ id + " order by create_date";
+		List<Record> orders = Db.find(sql);
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -864,12 +903,6 @@ public class ReturnOrderController extends Controller {
 
 		orderMap.put("aaData", orders);
 
-		/*List<Record> list = Db.find("select * from fin_item");
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).get("name") == null) {
-				Fin_item.dao.deleteById(list.get(i).get("id"));
-			}
-		}*/
 		renderJson(orderMap);
 	}
 }

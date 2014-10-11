@@ -189,7 +189,7 @@ public class DeliveryController extends Controller {
 				+ "left join contact c on p.contact_id = c.id "
 				+ "left join party p2 on d.sp_id = p2.id "
 				+ "left join contact c2 on p2.contact_id = c2.id "
-				+ "order by d.create_stamp desc";
+				+ "order by d.create_stamp desc" + sLimit;
 
 		List<Record> depart = null;
 		if (transferorderNo == null && deliveryNo == null && customer == null
@@ -219,7 +219,7 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"
-					+ endTime + "' ";
+					+ endTime + "' " + sLimit;
 			depart = Db.find(sql_seach);
 		}
 		Map map = new HashMap();
@@ -650,7 +650,7 @@ public class DeliveryController extends Controller {
 						+ orderStatue
 						+ "%'";
 			}
-			
+			sql = sql + sLimit;
 		
 		}
 		Record rec = Db.findFirst(sqlTotal);

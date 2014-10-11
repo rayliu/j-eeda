@@ -803,8 +803,15 @@ $(document).ready(function() {
   	  var inputId  = $(this).attr('id');
 	  if(inputId=='cargoNature2'){
 		 $("#cargoNatureDetailSpan").show();
+	  }else{
+		  if(inputId=='cargoNature1'){
+			  $("#cargoNatureDetailSpan").hide(); 
+		  }
+		  
 	  }
-  	});    
+	  
+  	}); 
+
     
     // 当arrivalMode1为货品直送时则显示收货人的信息
     $("#arrivalModes").on('click', 'input', function(){

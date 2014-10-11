@@ -74,24 +74,7 @@
             	}
             },            
             {"mDataProp":"REMARK"},
-            {  
-                "mDataProp": null, 
-                "sWidth": "60px",  
-            	"sClass": "remark",              
-                "fnRender": function(obj) {
-                	if(obj.aData.ITEM_NAME=="ATM"){
-                		return "<a class='btn btn-danger btn-xs deleteItem' code='?item_id="+obj.aData.ID+"' title='删除'>"+
-                        "<i class='fa fa-trash-o fa-fw'></i>"+
-                        "</a>";
-                	}
-                    return	"<a class='btn btn-success btn-xs dateilEdit' code='?id="+obj.aData.ID+"' title='单品编辑'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                            "</a> "+
-                            "<a class='btn btn-danger btn-xs deleteItem' code='?item_id="+obj.aData.ID+"' title='删除'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+
-                            "</a>";
-                }
-            }                     
+                              
         ]  
     });	
 	var orderId = $("#order_id").val();
@@ -233,7 +216,6 @@
 		transferOrder.fnDraw(); 	  	
 	});	
 
-	/*--------------------------------------------------------------------*/
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
 	    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
 	    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
@@ -261,7 +243,7 @@
 		}*/
 		parentId = e.target.getAttribute("id");
 	});
-	/*--------------------------------------------------------------------*/
+
 	
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
