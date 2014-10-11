@@ -1048,7 +1048,7 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-			$(nRow).attr('id', aData.ID);
+			$(nRow).attr({'id': aData.ID, 'notify_party_id': aData.PID});
 			return nRow;
 		},
         "aoColumns": [  			            
@@ -1151,6 +1151,20 @@ $(document).ready(function() {
         ]      
     });
 
+	$("#detailTable").on('blur', 'input', function(e){
+		e.preventDefault();
+		var detailId = $(this).parent().parent().attr("id");
+		var pId = $(this).parent().parent().attr("notify_party_id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		$.post('/yh/transferOrderItemDetail/saveTransferOrderItemDetailByField', {detailId: detailId, pId: pId, name: name, value: value}, function(data){
+			if(data.success){
+			}else{
+				alert("修改失败!");
+			}
+    	},'json');
+	});	
+	
     /*detailDataTable.makeEditable({
     	sUpdateURL: '/yh/transferOrderItemDetail/saveTransferOrderItemDetailByField',    	
     	oEditableSettings: {event: 'click'},

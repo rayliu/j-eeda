@@ -46,14 +46,14 @@ public class TransferOrderItemDetailController extends Controller {
         if(itemId != "-1"){
 	        sqlTotal = "select count(1) total from transfer_order_item_detail where item_id =" + itemId;
 	
-	        sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
+	        sql = "select d.*,p.id pid,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
 					+ " left join party p on d.notify_party_id = p.id"
 					+ " left join contact c on p.contact_id = c.id"
 					+ " where d.item_id ="+itemId + sLimit;	
         }else{
         	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id="+orderId;
 	
-	        sql = "select d.*,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
+	        sql = "select d.*,p.id pid,c.contact_person,c.phone,c.address from transfer_order_item_detail d"
 					+ " left join party p on d.notify_party_id = p.id"
 					+ " left join contact c on p.contact_id = c.id"
 	                + " where order_id = "+orderId + sLimit;	
@@ -235,7 +235,7 @@ public class TransferOrderItemDetailController extends Controller {
         renderJson(map);
     }
     
-    // 保存单品
+    /*// 保存单品
     public void saveTransferOrderItemDetailByField() {
         String returnValue = "";
         String id = getPara("id");
@@ -264,5 +264,31 @@ public class TransferOrderItemDetailController extends Controller {
             returnValue = address;
         }
         renderText(returnValue);// 必须返回传进来的值，否则js会报错
+    }*/
+    
+    // 保存单品
+    public void saveTransferOrderItemDetailByField() {
+    	String returnValue = "";
+    	String detailId = getPara("detailId");
+    	String name = getPara("name");
+    	String value = getPara("value");
+
+    	if(detailId != null && !"".equals(detailId)){
+    		TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailId);
+    		if(!"serial_no".equals(name) && !"pieces".equals(name) && !"remark".equals(name)){
+    			String pId = getPara("pId");
+    			if(pId != null && !"".equals(pId)){
+	    			Party party = Party.dao.findById(pId);
+	    			Contact contact = Contact.dao.findById(party.get("contact_id"));
+	    			contact.set(name, value);
+	    			contact.update();
+    			}    			
+    		}else{
+    			detail.set(name, value);
+    			detail.update();
+    		}
+	    	
+    	}
+        renderJson("{\"success\":true}");
     }
 }

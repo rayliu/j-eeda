@@ -350,6 +350,7 @@ public class TransferOrderItemController extends Controller {
 	                transferOrderItemDetail.set("item_no", item.get("item_no"));
 	                transferOrderItemDetail.set("volume", item.get("volume"));
 	                transferOrderItemDetail.set("weight", item.get("weight"));
+	                transferOrderItemDetail.set("pieces", "1");
 	                transferOrderItemDetail.set("item_id", item.get("id"));
 	                transferOrderItemDetail.set("order_id", item.get("order_id"));
 	                saveNotifyParty(transferOrderItemDetail);
@@ -363,6 +364,7 @@ public class TransferOrderItemController extends Controller {
 	                transferOrderItemDetail.set("item_no", product.get("item_no"));
 	                transferOrderItemDetail.set("volume", product.get("volume"));
 	                transferOrderItemDetail.set("weight", product.get("weight"));
+	                transferOrderItemDetail.set("pieces", "1");
 	                transferOrderItemDetail.set("item_id", item.get("id"));
 	                transferOrderItemDetail.set("order_id", item.get("order_id"));
 	                saveNotifyParty(transferOrderItemDetail);
