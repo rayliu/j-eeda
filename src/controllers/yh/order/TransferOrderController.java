@@ -1058,21 +1058,22 @@ public class TransferOrderController extends Controller {
 
 		renderJson(orderMap);
 	}
-	// 应付
-	public void addNewRow() {
-		List<Fin_item> items = new ArrayList<Fin_item>();
-		String orderId = getPara();
-		Fin_item item = Fin_item.dao
-				.findFirst("select * from fin_item where type = '应付' order by id asc");
-		if (item != null) {
-			TransferOrderFinItem dFinItem = new TransferOrderFinItem();
-			dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
-					.set("order_id", orderId);
-			dFinItem.save();
-		}
-		items.add(item);
-		renderJson(items);
-	}
+	
+    // 应收
+    public void addNewRow2() {
+        List<Fin_item> items = new ArrayList<Fin_item>();
+        String orderId = getPara();
+        Fin_item item = Fin_item.dao
+                .findFirst("select * from fin_item where type = '应收' order by id asc");
+        if (item != null) {
+            TransferOrderFinItem dFinItem = new TransferOrderFinItem();
+            dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
+                    .set("order_id", orderId);
+            dFinItem.save();
+        }
+        items.add(item);
+        renderJson(items);
+    }
 	
 	// 保存应收应付
 	public void paymentSave() {

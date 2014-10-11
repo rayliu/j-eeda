@@ -1810,8 +1810,6 @@ $(document).ready(function() {
 	            	receipttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountReceivable/"+order_id;
 	            	receipttable.fnDraw();       
 
-	            	paymenttable.fnSettings().sAjaxSource = "/yh/transferOrder/accountPayable/"+order_id;
-					paymenttable.fnDraw(); 
 				}else{
 					alert('数据保存失败。');
 				}

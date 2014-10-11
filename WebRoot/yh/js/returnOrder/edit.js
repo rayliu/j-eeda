@@ -2,8 +2,8 @@
 	$('#menu_return').addClass('active').find('ul').addClass('in');
 		
 	var returnOrderId = $("#returnId").val();
-	/*var transferOrderId=$("#transferOrderId").val();
-	console.log("transferOrderId============"+transferOrderId);*/
+	var transferOrderId =$("#transferOrderId").val();
+	console.log(transferOrderId);
 	//datatable, 动态处理
 	var transferOrder = $('#transferOrderTable').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -15,7 +15,7 @@
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/returnOrder/transferOrderItemList?order_id="+returnOrderId,
+        "sAjaxSource": "/yh/returnOrder/transferOrderItemList?order_id="+returnOrderId+"&id="+transferOrderId,
         "aoColumns": [   
             {
             	"mDataProp":"ITEM_NO",            	
@@ -79,6 +79,11 @@
                 "sWidth": "60px",  
             	"sClass": "remark",              
                 "fnRender": function(obj) {
+                	if(obj.aData.ITEM_NAME=="ATM"){
+                		return "<a class='btn btn-danger btn-xs deleteItem' code='?item_id="+obj.aData.ID+"' title='删除'>"+
+                        "<i class='fa fa-trash-o fa-fw'></i>"+
+                        "</a>";
+                	}
                     return	"<a class='btn btn-success btn-xs dateilEdit' code='?id="+obj.aData.ID+"' title='单品编辑'>"+
                                 "<i class='fa fa-edit fa-fw'></i>"+
                             "</a> "+
