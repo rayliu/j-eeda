@@ -1129,7 +1129,7 @@ public class PickupOrderController extends Controller {
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             TransferOrder transferOrder = TransferOrder.dao
                     .findFirst(
-                            "select tor.*,c.abbr cname from transfer_order tor left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id where tor.id = ?",
+                            "select tor.*,c.abbr cname,sum(f.amount) amount,f.rate from transfer_order tor left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id left join transfer_order_fin_item f on f.order_id = tor.id where tor.id = ?",
                             departTransferOrder.get("order_id"));
             transferOrders.add(transferOrder);
         }
@@ -1407,6 +1407,24 @@ public class PickupOrderController extends Controller {
     		DepartOrderFinItem dFinItem = new DepartOrderFinItem();
     		dFinItem.set("status", "新建").set("pickup_order_id", pickupOrderId).set("fin_item_id", item.get("id"));
     		dFinItem.save();
+    		//找出新建应收的ID
+    		List<Record> departOrderFinItemids = Db.find("select top 1 * from depart_order_fin_item order by id desc");
+    		//此处按拼车单中运输单数量添加tranfer_order_fin_item表中数据
+    		List<Record> list = Db.find("select order_id from depart_transfer where pickup_id = ?",pickupOrderId);
+    		int num = list.size();
+    		if(num == 0){
+    			num=1;
+    		}
+    		for (int i = 0; i < num; i++) {
+    			TransferOrderFinItem transferOrderFinTtem = new TransferOrderFinItem();
+        		transferOrderFinTtem.set("order_id", list.get(i).get("order_id"));
+        		transferOrderFinTtem.set("fin_item_id", item.get("id"));
+        		transferOrderFinTtem.set("depart_order_fin_item_id", departOrderFinItemids.get(0).get("id"));
+        		transferOrderFinTtem.set("status", "未完成");
+        		transferOrderFinTtem.set("amount", 0);
+        		transferOrderFinTtem.set("rate", 1.00/num);
+        		transferOrderFinTtem.save();
+			}
     	}
     	items.add(item);
     	renderJson(items);
@@ -1460,6 +1478,19 @@ public class PickupOrderController extends Controller {
     public void finItemdel() {
         String id = getPara();
         DepartOrderFinItem.dao.deleteById(id);
+        renderJson("{\"success\":true}");
+    }
+    
+    //删除应收
+    public void delReceivable() {
+        String id = getPara();
+        DepartOrderFinItem.dao.deleteById(id);
+        //同时删除transfer_order_fin_item表中对应的费用信息
+        List<TransferOrderFinItem> transferOrderFinItems = TransferOrderFinItem.dao.
+        		find("select * from transfer_order_fin_item where depart_order_fin_item_id = ?",id);
+        for (TransferOrderFinItem transferOrderFinItem : transferOrderFinItems) {
+			transferOrderFinItem.delete();
+		}
         renderJson("{\"success\":true}");
     }
     
@@ -1554,7 +1585,30 @@ public class PickupOrderController extends Controller {
     		DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao.findById(paymentId);
     		departOrderFinItem.set(name, value);
     		departOrderFinItem.update();
+    		//TransferOrderFinItem transferOrderFinItem = 
+    		if("fin_item_id".equals(name)){
+    			List<TransferOrderFinItem> transferOrderFinTtems = TransferOrderFinItem.dao
+    	                .find("select * from transfer_order_fin_item where depart_order_fin_item_id = ?",paymentId);
+    			for (TransferOrderFinItem transferOrderFinItem : transferOrderFinTtems) {
+    				transferOrderFinItem.set(name, value);
+    				transferOrderFinItem.update();
+    			}
+    		}
+    		if("amount".equals(name)){
+    			List<TransferOrderFinItem> transferOrderFinTtems = TransferOrderFinItem.dao
+    	                .find("select * from transfer_order_fin_item where depart_order_fin_item_id = ?",paymentId);
+    			double num = transferOrderFinTtems.size();
+        		if(num == 0){
+        			num=1;
+        		}
+        		double result = Double.parseDouble(value)*(1/num);
+    			for (TransferOrderFinItem transferOrderFinItem : transferOrderFinTtems) {
+    				transferOrderFinItem.set(name, result);
+    				transferOrderFinItem.update();
+    			}
+    		}
     	}
+    	
         renderJson("{\"success\":true}");
     }
     
@@ -1620,4 +1674,39 @@ public class PickupOrderController extends Controller {
     	}
     	renderJson(orderMap);
     }
+    //修改分摊比例
+    public void updateTransferOrderFinItem(){
+    	String id = getPara("id");
+    	double rate = Double.parseDouble(getPara("value"));
+    	List<TransferOrderFinItem> transferOrderFinItems = TransferOrderFinItem.dao.
+         	find("select * from transfer_order_fin_item where order_id = ?",id);
+        for (TransferOrderFinItem transferOrderFinItem : transferOrderFinItems) {
+         	DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao.findById(transferOrderFinItem.get("depart_order_fin_item_id"));
+         	transferOrderFinItem.set("rate", rate / 100);
+         	transferOrderFinItem.set("amount", rate / 100 * departOrderFinItem.getDouble("amount"));
+ 			transferOrderFinItem.update();
+ 		} 
+        renderJson("{\"success\":true}");
+    }
+    /*public void updateTransferOrderFinItem(){
+    	String ids = getPara("id");
+    	String values = getPara("value");
+	    String id[] = ids.split(",");
+	    String value[] = values.split(",");
+	    for (int i = 0; i < id.length; i++) {
+	    	double rate = Double.parseDouble(value[i]);
+	    	 List<TransferOrderFinItem> transferOrderFinItems = TransferOrderFinItem.dao.
+	         		find("select * from transfer_order_fin_item where order_id = ?",id[i]);
+	         for (TransferOrderFinItem transferOrderFinItem : transferOrderFinItems) {
+	         	DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao.findById(transferOrderFinItem.get("depart_order_fin_item_id"));
+	         	transferOrderFinItem.set("rate", rate / 100);
+	         	transferOrderFinItem.set("amount", rate / 100 * departOrderFinItem.getDouble("amount"));
+	 			transferOrderFinItem.update();
+	 		} 
+		}
+        renderJson("{\"success\":true}");
+    }*/
+
+    
+    
 }

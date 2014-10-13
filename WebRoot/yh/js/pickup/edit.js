@@ -1,6 +1,6 @@
 ﻿$(document).ready(function() {
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
-	 
+	 var pickupOrderId = $("#pickupOrderId").val();
 	
 	 // 列出所有的司机
 	 /*red*/
@@ -383,9 +383,18 @@
 		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
 			var pickupAddressTbody = $("#pickupAddressTbody");
 			pickupAddressTbody.empty();
+			var num = 0;
 			for(var i=0;i<data.length;i++){
-				pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td>"+data[i].CREATE_STAMP+"</td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' checked='' value='yard"+data[i].ID+"'></td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' value='warehouse"+data[i].ID+"'></td><td>"+data[i].STATUS+"</td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
-				/*if(i == 0){
+				num+=data[i].RATE;
+				if(data[i].AMOUNT == null || data[i].AMOUNT == "")
+					data[i].AMOUNT = 0;
+				if(data.length == 1){
+					pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td>"+data[i].CREATE_STAMP+"</td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' checked='' value='yard"+data[i].ID+"'></td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' value='warehouse"+data[i].ID+"'></td><td>"+data[i].STATUS+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].RATE*100+"%</td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");
+				}else{
+					pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td>"+data[i].CREATE_STAMP+"</td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' checked='' value='yard"+data[i].ID+"'></td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' value='warehouse"+data[i].ID+"'></td><td>"+data[i].STATUS+"</td><td>"+data[i].AMOUNT+"</td><td><input type='text' size='1' name='rate' id='rate' value='"+data[i].RATE*100+"'>%</td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");
+				}
+				/*
+				if(i == 0){  
 					pickupAddressTbody.append("<tr><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)'>上移</a> <a href='javascript:void(0)'>下移</a> <a href='javascript:void(0)'>移至顶部</a> <a href='javascript:void(0)'>移至底部</a></td></tr>");					
 				}else if(i == data.length-1){
 					pickupAddressTbody.append("<tr><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)'>上移</a> <a href='javascript:void(0)'>下移</a> <a href='javascript:void(0)'>移至顶部</a> <a href='javascript:void(0)'>移至底部</a></td></tr>");										
@@ -393,8 +402,28 @@
 					pickupAddressTbody.append("<tr><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td><a href='javascript:void(0)'>上移</a> <a href='javascript:void(0)'>下移</a> <a href='javascript:void(0)'>移至顶部</a> <a href='javascript:void(0)'>移至底部</a></td></tr>");					
 				}*/
 			}
+			if(num > 1){
+				alert("分摊比例已大于100%，请注意调整！");
+			}
 		},'json');
 	};
+	//分摊比例修改
+	$("#pickupAddressTbody").on('blur', 'input', function(){
+		var id = $(this).parent().parent().attr("id");
+		var value = $(this).val();
+		if(value > 100){
+			alert("单张运输单分摊比例不能大于100%，请重新输入！");
+			$(this).focus();
+			return false;
+		}
+		$.post('/yh/pickupOrder/updateTransferOrderFinItem', {id:id, value:value}, function(data){
+			if(data.success){
+				findAllAddress();
+			}else{
+				alert("修改失败!");
+			}
+    	},'json');
+	});
 	
 	var choiceExternalTransferOrder = function(){
     	var pickupOrderId = $("#pickupOrderId").val();
@@ -883,7 +912,7 @@
 //		}
 //	},'json');
     
-    var pickupOrderId = $("#pickupOrderId").val();
+    
     //应付datatable
 	var paymenttable=$('#table_fin2').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -1081,10 +1110,13 @@
  		if("chargeCheckOrderbasic" == parentId){
  			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  		}
- 		
+ 		var pickupOrderId = $("#pickupOrderId").val();
+ 		incomeTab.fnSettings().sAjaxSource = "/yh/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId;
+ 		incomeTab.fnDraw();
  		pickupOrderPaymentTab.fnDraw();
  		paymenttable.fnDraw();
  		parentId = e.target.getAttribute("id");
+ 		
 	});
 	$("#chargeCheckOrderbasic").click(function(e){
 		/*clickSavePickupOrder(e);
@@ -1121,8 +1153,20 @@
 			}
     	},'json');
 	});	
-
-    var pickupOrderId = $("#pickupOrderId").val();
+	
+	
+	//异步删除应收
+	$("#table_fin3").on('click', '.finItemdel', function(e){
+		var id = $(this).attr('code');
+		e.preventDefault();
+		$.post('/yh/pickupOrder/delReceivable/'+id,function(data){
+             //保存成功后，刷新列表
+             console.log(data);
+             incomeTab.fnDraw();
+        },'text');
+	});
+	
+	
     //应收datatable
 	var incomeTab = $('#table_fin3').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
