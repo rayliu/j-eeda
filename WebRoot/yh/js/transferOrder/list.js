@@ -6,8 +6,8 @@ $(document).ready(function() {
 	//datatable, 动态处理
     var transferOrder = $('#eeda-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
-        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
@@ -21,6 +21,7 @@ $(document).ready(function() {
             			return "<a href='/yh/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
             		}},
             {"mDataProp":"STATUS"},
+            {"mDataProp":"CNAME"},
             {"mDataProp":"CARGO_NATURE",
             	"fnRender": function(obj) {
             		if(obj.aData.CARGO_NATURE == "cargo"){
@@ -40,29 +41,49 @@ $(document).ready(function() {
     					return "自营";
     				}else{
     					return "";
-    				}}},        	
-            {"mDataProp":"PICKUP_MODE",
-            	"fnRender": function(obj) {
-            		if(obj.aData.PICKUP_MODE == "routeSP"){
-            			return "干线供应商自提";
-            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
-            			return "外包供应商提货";
-            		}else if(obj.aData.PICKUP_MODE == "own"){
-            			return "源鸿自提";
-            		}else{
-            			return "";
+    				}}},
+    		{"mDataProp":"ARRIVAL_MODE",
+    	            	"fnRender": function(obj) {
+    	            		if(obj.aData.ARRIVAL_MODE == "delivery"){
+    	            			return "货品直送";
+    	            		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
+    	            			return "入中转仓";
+    	            		}else{
+    	            			return "";
+    	            		}}},
+            {"mDataProp":"AMOUNT",
+    			"fnRender": function(obj) {
+    				if(obj.aData.CARGO_NATURE == "ATM"){
+    					return obj.aData.AMOUNT;
+    				}else{
+    					return "";
             		}}},
-            {"mDataProp":"ARRIVAL_MODE",
+            {"mDataProp":"PIECES",
             	"fnRender": function(obj) {
-            		if(obj.aData.ARRIVAL_MODE == "delivery"){
-            			return "货品直送";
-            		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
-            			return "入中转仓";
-            		}else{
-            			return "";
+    				if(obj.aData.CARGO_NATURE == "ATM"){
+    					return obj.aData.PIECES;
+    				}else{
+    					return "";
             		}}},
+            {"mDataProp":"VOLUME",
+            	"fnRender": function(obj) {
+    				if(obj.aData.CARGO_NATURE == "ATM"){
+    					return obj.aData.VOLUME;
+    				}else{
+    					return "";
+            		}}},
+            {"mDataProp":"WEIGHT",
+            	"fnRender": function(obj) {
+    				if(obj.aData.CARGO_NATURE == "ATM"){
+    					return obj.aData.WEIGHT;
+    				}else{
+    					return "";
+            		}}},
+            {"mDataProp":"PLANNING_TIME"},
+            {"mDataProp":"ARRIVAL_TIME"},
+            {"mDataProp":"ROUTE_FROM"},
+            {"mDataProp":"ROUTE_TO"},
             {"mDataProp":"ADDRESS"},
-            {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"ORDER_TYPE",
             	"fnRender": function(obj) {
             		if(obj.aData.ORDER_TYPE == "salesOrder"){
@@ -82,20 +103,23 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
-            {"mDataProp":"CNAME"},
             {"mDataProp":"SPNAME"},
+            {"mDataProp":"CUSTOMER_ORDER_NO"},
             {"mDataProp":"ONAME"},
-            {"mDataProp":"REMARK"},
-            { 
-                "mDataProp": null,  
-                "sWidth": "8%",                
-                "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger cancelbutton' code='"+obj.aData.ID+"'>"+
-	                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
-	                            "取消"+
-	                        "</a>";
-                }
-            }                         
+            {"mDataProp":"PICKUP_MODE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.PICKUP_MODE == "routeSP"){
+            			return "干线供应商自提";
+            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
+            			return "外包供应商提货";
+            		}else if(obj.aData.PICKUP_MODE == "own"){
+            			return "源鸿自提";
+            		}else{
+            			return "";
+            		}}},
+            {"mDataProp":"CREATE_STAMP"},
+            {"mDataProp":"REMARK"}
+                                  
         ]  
     });	
     
@@ -114,11 +138,13 @@ $(document).ready(function() {
                
            },'json');
 		});
-    
-    $('#orderNo_filter').on( 'keyup', function () {
+    $("#oname_filter,#orderNo_filter,#customer_order_no_filter").on( 'keyup click', function () {
+    	var order_type=$("#order_type_filter").val();
+    	var oname =$("#oname_filter").val();
+    	var plantime=$("#plantime").val();
+    	var arrivarltime=$("#arrivaltime").val();
+    	var customer_order_no=$("#customer_order_no_filter").val();
     	var orderNo = $("#orderNo_filter").val();
-        /*transferOrder.fnFilter(orderNo, 0, false, true);
-        transferOrder.fnDraw();*/
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
     	var customer = $("#customer_filter").val();
@@ -126,11 +152,49 @@ $(document).ready(function() {
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+    	
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status+"&address=" +address
+    											+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+    											+"&endTime="+endTime+"&officeName="+officeName
+    											+"&order_type="+order_type+"&oname="+oname
+    											+"&plantime="+plantime+"&arrivarltime="+arrivarltime
+    											+"&customer_order_no="+customer_order_no;
     	transferOrder.fnDraw(); 
     } );
- 
-    $('select.status_filter').on( 'change', function () {
+	$("#plantime,#arrivaltime").on('keyup click', function () {
+	    	var order_type=$("#order_type_filter").val();
+	    	var oname =$("#oname_filter").val();
+	    	var plantime=$("#plantime").val();
+	    	var arrivarltime=$("#arrivaltime").val();
+	    	var customer_order_no=$("#customer_order_no_filter").val();
+	    	console.log("OK");
+	    	var orderNo = $("#orderNo_filter").val();
+	    	var status = $("#status_filter").val();
+	    	var address = $("#address_filter").val();
+	    	var customer = $("#customer_filter").val();
+	    	var sp = $("#sp_filter").val();
+	    	var beginTime = $("#beginTime_filter").val();
+	    	var endTime = $("#endTime_filter").val();
+	    	var officeName = $("#officeSelect").val();
+	    	
+	    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status+"&address=" +address
+	    											+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+	    											+"&endTime="+endTime+"&officeName="+officeName
+	    											+"&order_type="+order_type+"&oname="+oname
+	    											+"&plantime="+plantime+"&arrivarltime="+arrivarltime
+	    											+"&customer_order_no="+customer_order_no;
+	    	transferOrder.fnDraw(); 
+	    } );
+    
+  
+    $('#status_filter,#order_type_filter').on( 'change', function () {
+    
+    	var order_type=$("#order_type_filter").val();
+    	var oname =$("#oname_filter").val();
+    	var plantime=$("#plantime").val();
+    	var arrivarltime=$("#arrivaltime").val();
+    	var customer_order_no=$("#customer_order_no_filter").val();
+    	
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -140,10 +204,23 @@ $(document).ready(function() {
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
     	console.log(officeName);
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status
+    											+"&address=" +address
+												+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+												+"&endTime="+endTime+"&officeName="+officeName
+												+"&order_type="+order_type+"&oname="+oname
+												+"&plantime="+plantime+"&arrivarltime="+arrivarltime
+												+"&customer_order_no="+customer_order_no;
     	transferOrder.fnDraw();
     } );
     $("#officeSelect").on('change',function(){
+
+    	var order_type=$("#order_type_filter").val();
+    	var oname =$("#oname_filter").val();
+    	var plantime=$("#plantime").val();
+    	var arrivarltime=$("#arrivaltime").val();
+    	var customer_order_no=$("#customer_order_no_filter").val();
+    	
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -153,10 +230,23 @@ $(document).ready(function() {
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
     	console.log(officeName);
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status
+												+"&address=" +address
+												+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+												+"&endTime="+endTime+"&officeName="+officeName
+												+"&order_type="+order_type+"&oname="+oname
+												+"&plantime="+plantime+"&arrivarltime="+arrivarltime
+												+"&customer_order_no="+customer_order_no;
     	transferOrder.fnDraw();
     });
     $('input.address_filter').on( 'keyup click', function () {
+
+    	var order_type=$("#order_type_filter").val();
+    	var oname =$("#oname_filter").val();
+    	var plantime=$("#plantime").val();
+    	var arrivarltime=$("#arrivaltime").val();
+    	var customer_order_no=$("#customer_order_no_filter").val();
+    	
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -165,7 +255,13 @@ $(document).ready(function() {
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status
+												+"&address=" +address
+												+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+												+"&endTime="+endTime+"&officeName="+officeName
+												+"&order_type="+order_type+"&oname="+oname
+												+"&plantime="+plantime+"&arrivarltime="+arrivarltime
+												+"&customer_order_no="+customer_order_no;
     	transferOrder.fnDraw();
     } );
     //获取所有的网点
@@ -217,8 +313,12 @@ $(document).ready(function() {
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
-        //过滤回单列表
-        //chargeCheckTable.fnFilter(companyId, 2);
+    	var order_type=$("#order_type_filter").val();
+    	var oname =$("#oname_filter").val();
+    	var plantime=$("#plantime").val();
+    	var arrivarltime=$("#arrivaltime").val();
+    	var customer_order_no=$("#customer_order_no_filter").val();
+        
         var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -228,7 +328,13 @@ $(document).ready(function() {
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
         if(customer!=null){
-        	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+        	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status
+													+"&address=" +address
+													+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+													+"&endTime="+endTime+"&officeName="+officeName
+													+"&order_type="+order_type+"&oname="+oname
+													+"&plantime="+plantime+"&arrivarltime="+arrivarltime
+													+"&customer_order_no="+customer_order_no;
         	transferOrder.fnDraw();
         }
     });
@@ -321,6 +427,12 @@ $(document).ready(function() {
 		}
 		pageSpAddress.append(address);
         $('#spList').hide();
+        
+    	var order_type=$("#order_type_filter").val();
+    	var oname =$("#oname_filter").val();
+    	var plantime=$("#plantime").val();
+    	var arrivarltime=$("#arrivaltime").val();
+    	var customer_order_no=$("#customer_order_no_filter").val();
         //根据选中的名称过滤
         var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
@@ -330,13 +442,26 @@ $(document).ready(function() {
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status
+												+"&address=" +address
+												+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+												+"&endTime="+endTime+"&officeName="+officeName
+												+"&order_type="+order_type+"&oname="+oname
+												+"&plantime="+plantime+"&arrivarltime="+arrivarltime
+												+"&customer_order_no="+customer_order_no;
     	transferOrder.fnDraw();
     });
     
     
     //根据输入的名称过滤
     $('input.customer_filter').on( 'keyup click', function () {
+    	
+    	var order_type=$("#order_type_filter").val();
+    	var oname =$("#oname_filter").val();
+    	var plantime=$("#plantime").val();
+    	var arrivarltime=$("#arrivaltime").val();
+    	var customer_order_no=$("#customer_order_no_filter").val();
+    	
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -345,11 +470,24 @@ $(document).ready(function() {
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status
+												+"&address=" +address
+												+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+												+"&endTime="+endTime+"&officeName="+officeName
+												+"&order_type="+order_type+"&oname="+oname
+												+"&plantime="+plantime+"&arrivarltime="+arrivarltime
+												+"&customer_order_no="+customer_order_no;
     	transferOrder.fnDraw();
     } );
     
     $('input.sp_filter').on( 'keyup click', function () {
+    	
+    	var order_type=$("#order_type_filter").val();
+    	var oname =$("#oname_filter").val();
+    	var plantime=$("#plantime").val();
+    	var arrivarltime=$("#arrivaltime").val();
+    	var customer_order_no=$("#customer_order_no_filter").val();
+    	
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -358,24 +496,25 @@ $(document).ready(function() {
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status
+												+"&address=" +address
+												+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+												+"&endTime="+endTime+"&officeName="+officeName
+												+"&order_type="+order_type+"&oname="+oname
+												+"&plantime="+plantime+"&arrivarltime="+arrivarltime
+												+"&customer_order_no="+customer_order_no;
     	transferOrder.fnDraw();
     } );
     
-    $('input.beginTime_filter').on( 'change input', function () {
-    	var orderNo = $("#orderNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var address = $("#address_filter").val();
-    	var customer = $("#customer_filter").val();
-    	var sp = $("#sp_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	var officeName = $("#officeSelect").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-    	transferOrder.fnDraw();
-    } );
     
-    $('#beginTime_filter').on('keyup', function () {
+    $('#beginTime_filter').on('keyup click', function () {
+    
+    	var order_type=$("#order_type_filter").val();
+    	var oname =$("#oname_filter").val();
+    	var plantime=$("#plantime").val();
+    	var arrivarltime=$("#arrivaltime").val();
+    	var customer_order_no=$("#customer_order_no_filter").val();
+    	
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -384,11 +523,24 @@ $(document).ready(function() {
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status
+												+"&address=" +address
+												+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+												+"&endTime="+endTime+"&officeName="+officeName
+												+"&order_type="+order_type+"&oname="+oname
+												+"&plantime="+plantime+"&arrivarltime="+arrivarltime
+												+"&customer_order_no="+customer_order_no;
     	transferOrder.fnDraw();
     } );    
     
     $('#endTime_filter').on( 'keyup click', function () {
+    	
+    	var order_type=$("#order_type_filter").val();
+    	var oname =$("#oname_filter").val();
+    	var plantime=$("#plantime").val();
+    	var arrivarltime=$("#arrivaltime").val();
+    	var customer_order_no=$("#customer_order_no_filter").val();
+    	
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -397,7 +549,13 @@ $(document).ready(function() {
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status
+												+"&address=" +address
+												+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+												+"&endTime="+endTime+"&officeName="+officeName
+												+"&order_type="+order_type+"&oname="+oname
+												+"&plantime="+plantime+"&arrivarltime="+arrivarltime
+												+"&customer_order_no="+customer_order_no;
     	transferOrder.fnDraw();
     } );
     
@@ -434,6 +592,25 @@ $(document).ready(function() {
     }).on('changeDate', function(ev){
         $(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
+    });
+    
+    $('#arrivaldatetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#arrivaldatetimepicker').trigger('keyup');
+    });
+
+
+    $('#plandatetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#plandatetimepicker').trigger('keyup');
     });
 
 } );

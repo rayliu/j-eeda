@@ -54,10 +54,17 @@ public class TransferOrderController extends Controller {
 		String officeName = getPara("officeName");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
+		
+		String order_type=getPara("order_type");
+		String oname =getPara("oname");
+		String plantime=getPara("plantime");
+		String arrivarltime=getPara("arrivarltime");
+		String customer_order_no=getPara("customer_order_no");
 
 		if (orderNo == null && status == null && address == null
 				&& customer == null && sp == null && beginTime == null
-				&& endTime == null) {
+				&& endTime == null&& order_type == null&& oname == null
+				&& plantime == null&& arrivarltime == null&& customer_order_no == null) {
 			String sLimit = "";
 			String pageIndex = getPara("sEcho");
 			if (getPara("iDisplayStart") != null
@@ -70,12 +77,25 @@ public class TransferOrderController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select t.*,c1.abbr cname,c2.abbr spname,t.create_stamp,o.office_name oname from transfer_order t "
+			String sql ="select t.*,"
+					+ " c1.abbr cname,"
+					+ " c2.abbr spname,"
+					+ " o.office_name oname, "
+					+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id=t.id) amount,"
+					+ " (select sum(ifnull(toi.volume,p.volume)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id=t.id) volume,"
+					+ " (select sum(ifnull(p.weight,toi.weight)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id=t.id) weight, "
+					+ " (select sum(toid.pieces) from transfer_order_item_detail toid where toid.order_id=t.id) pieces, "
+					+ " ifnull((select name from location where code = t.route_from),'') route_from,"
+					+ " ifnull((select name from location where code = t.route_to),'') route_to,"
+					+ " ul.user_name user_name "
+					+ " from transfer_order t "
 					+ " left join party p1 on t.customer_id = p1.id "
 					+ " left join party p2 on t.sp_id = p2.id "
 					+ " left join contact c1 on p1.contact_id = c1.id"
 					+ " left join contact c2 on p2.contact_id = c2.id "
-					+ " left join office o on t.office_id = o.id where t.status!='取消' order by create_stamp desc"
+					+ " left join office o on t.office_id = o.id "
+					+ " left join user_login ul on ul.id=t.create_by "
+					+ " where t.status !='取消' group by t.id order by create_stamp desc"
 					+ sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
@@ -102,43 +122,62 @@ public class TransferOrderController extends Controller {
 						+ getPara("iDisplayLength");
 			}
 
-			String sqlTotal = "select count(1) total from transfer_order t "
+			String sqlTotal = "select count(*) total "
+					+ " from transfer_order t "
 					+ " left join party p1 on t.customer_id = p1.id "
 					+ " left join party p2 on t.sp_id = p2.id "
 					+ " left join contact c1 on p1.contact_id = c1.id"
-					+ " left join contact c2 on p2.contact_id = c2.id"
-					+ " left join office o on t.office_id = o.id where t.status!='取消' and t.order_no like '%"
-					+ orderNo + "%' and t.status like '%" + status
+					+ " left join contact c2 on p2.contact_id = c2.id "
+					+ " left join office o on t.office_id = o.id "
+					+ " left join user_login ul on ul.id=t.create_by "
+					+ " where t.status !='取消' "
+					+ " and t.order_no like '%"+ orderNo 
+					+ "%' and t.status like '%" + status
 					+ "%' and t.address like '%" + address
 					+ "%' and c1.abbr like '%" + customer
 					+ "%' and ifnull(c2.abbr,'') like '%" + sp
 					+ "%' and o.office_name  like '%" + officeName
-					+ "%' and create_stamp between '" + beginTime + "' and '"
-					+ endTime + "'";
+					+ "%' and t.order_type like '%" + order_type
+					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
+					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
+					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
+					+ "%' and ul.user_name like '%" + oname
+					+ "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select t.*,c1.abbr cname,c2.abbr spname,o.office_name oname from transfer_order t "
+			String sql = "select t.*,"
+					+ " c1.abbr cname,"
+					+ " c2.abbr spname,"
+					+ " o.office_name oname, "
+					+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id=t.id) amount,"
+					+ " (select sum(ifnull(toi.volume,p.volume)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id=t.id) volume,"
+					+ " (select sum(ifnull(p.weight,toi.weight)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id=t.id) weight, "
+					+ " (select sum(toid.pieces) from transfer_order_item_detail toid where toid.order_id=t.id) pieces, "
+					+ " ifnull((select name from location where code = t.route_from),'') route_from,"
+					+ " ifnull((select name from location where code = t.route_to),'') route_to, "
+					+ " ul.user_name user_name"
+					+ " from transfer_order t "
 					+ " left join party p1 on t.customer_id = p1.id "
 					+ " left join party p2 on t.sp_id = p2.id "
 					+ " left join contact c1 on p1.contact_id = c1.id"
-					+ " left join contact c2 on p2.contact_id = c2.id"
-					+ " left join office o on t.office_id = o.id where t.status!='取消' and t.order_no like '%"
-					+ orderNo
-					+ "%' and t.status like '%"
-					+ status
-					+ "%' and t.address like '%"
-					+ address
-					+ "%' and c1.abbr like '%"
-					+ customer
-					+ "%' and ifnull(c2.abbr,'') like '%"
-					+ sp
-					+ "%' and o.office_name  like '%"
-					+ officeName
-					+ "%' and create_stamp between '"
-					+ beginTime
-					+ "' and '"
-					+ endTime + "' order by create_stamp desc" + sLimit;
+					+ " left join contact c2 on p2.contact_id = c2.id "
+					+ " left join office o on t.office_id = o.id "
+					+ " left join user_login ul on ul.id=t.create_by "
+					+ " where t.status !='取消'"
+					+ " and t.order_no like '%" + orderNo
+					+ "%' and t.status like '%" + status
+					+ "%' and t.address like '%" + address
+					+ "%' and c1.abbr like '%" + customer
+					+ "%' and ifnull(c2.abbr,'') like '%" + sp
+					+ "%' and o.office_name  like '%" + officeName
+					+ "%' and t.order_type like '%" + order_type
+					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
+					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
+					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
+					+ "%' and ul.user_name like '%" + oname
+					+ "%' and create_stamp between '" + beginTime
+					+ "' and '" + endTime + "' order by create_stamp desc" + sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
 
@@ -208,6 +247,7 @@ public class TransferOrderController extends Controller {
 		Long customer_id = transferOrder.get("customer_id");
 		Long sp_id = transferOrder.get("sp_id");
 		Long driver_id = transferOrder.get("driver_id");
+		
 		if (customer_id != null) {
 			Party customer = Party.dao.findById(customer_id);
 			Contact customerContact = Contact.dao.findById(customer
