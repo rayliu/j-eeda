@@ -26,25 +26,34 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label class="search-label">供应商</label>
+                                            <label class="search-label">运输单号</label>
                                             <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
                                             <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 21.5%;"></ul>
                                         </div>
                                         <div class="form-group">
-                                            <label class="search-label">始发地</label>
+                                            <label class="search-label">操作类型</label>
                                             <input type="text" class="form-control search-control address_filter" id="address_filter">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="search-label">操作单号</label>
+                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
+                                            <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 21.5%;"></ul>
                                         </div>
                                     </div>
                                     <!-- end of col-lg-6-->
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label class="search-label">客户</label>
+                                            <label class="search-label">供应商</label>
                                             <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
                                             <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 21.5%;"></ul>
                                         </div>
                                          <div class="form-group">
-                                            <label class="search-label">目的地</label>
+                                            <label class="search-label">确认状态</label>
                                             <input type="text" class="form-control search-control address_filter" id="address_filter">
+                                         <div class="form-group">
+                                            <label class="search-label">业务状态</label>
+                                            <input type="text" class="form-control search-control address_filter" id="address_filter">
+                                        </div>
                                         </div>
                                     </div>
                                     <!-- end of col-lg-6-->
@@ -53,7 +62,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">                                        
                                             <div id="datetimepicker" class="input-append date "> 
-                                                <label class="search-label">发车开始时间</label> 
+                                                <label class="search-label">开始时间</label> 
                                                 <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
                                                 <span class="add-on">  
                                                     <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
@@ -65,7 +74,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">                                                    
                                             <span id="datetimepicker2" class="input-append date search-control "> 
-                                                <label class="search-label">发车结束时间</label> 
+                                                <label class="search-label">结束时间</label> 
                                                 <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
                                                 <span class="add-on">  
                                                     <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
@@ -90,20 +99,19 @@
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            <th>业务类型(未做)</th>
-                                            <th>状态</th>
-                                            <th>成本确认(未做)</th>
-                                            <th>单号</th>
-                                            <th>运输单号(是否多余?)</th>
+                                            <th>操作类型</th>
                                             <th>供应商</th>
+                                            <th>业务状态</th>
+                                            <th>回单收集</th>
+                                            <th>成本确认</th>
+                                            <th>业务单号</th>
+                                            <th>运输单号</th>
                                             <th>操作时间</th>
                                             <th>数量</th>
                                             <th>体积</th>
                                             <th>重量</th>
                                             <th>总费用</th>
-                                            <th>操作网点(未做)</th>
-                                            <th>确认人</th>
-                                            <th>确认时间</th>
+                                            <th>操作网点(对应多张运输单网点不一致时怎么办?)</th>
                                             <th>备注</th>
                                         </tr>
                                     </thead>

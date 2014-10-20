@@ -18,7 +18,8 @@ $(document).ready(function() {
                   return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
                 }
             },
-            {"mDataProp":null},            	
+            {"mDataProp":null, "sWidth":"100px"},            	
+            {"mDataProp":"SPNAME", "sWidth":"200px"},
             {"mDataProp":null, "sWidth": "120px", 
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new'){
@@ -34,22 +35,20 @@ $(document).ready(function() {
                     }
                     return obj.aData.TRANSACTION_STATUS;
                 }
-            },  
+            },                         
+            {"mDataProp":null, "sWidth":"100px"},  
 		    {"mDataProp":null, "sWidth":"120px",
                 "fnRender": function(obj) {
                     return "未收款";
             }},
             {"mDataProp":"ORDER_NO", "sWidth":"200px"},
             {"mDataProp":null, "sWidth":"200px"},
-            {"mDataProp":"SPNAME", "sWidth":"200px"},
             {"mDataProp":"CREATE_STAMP", "sWidth":"200px"},                 	
             {"mDataProp":"AMOUNT", "sWidth":"150px"},                        
             {"mDataProp":"VOLUME", "sWidth":"150px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                   
-            {"mDataProp":null, "sWidth":"150px"},                     
+            {"mDataProp":null, "sWidth":"100px"},                       
             {"mDataProp":null, "sWidth":"150px"}                         
         ]      
     });	

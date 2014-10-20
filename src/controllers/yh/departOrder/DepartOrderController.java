@@ -550,6 +550,8 @@ public class DepartOrderController extends Controller {
             TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
             if(numone == 0){
             	setAttr("transferOrder", transferOrder);
+                setAttr("chargeType", transferOrder.get("charge_type"));
+                
             	numone = 1;
             }
             String routeFrom = transferOrder.get("route_from");
@@ -608,8 +610,6 @@ public class DepartOrderController extends Controller {
 
         DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order where combine_type='"
                 + DepartOrder.COMBINE_TYPE_DEPART + "' order by depart_no desc limit 0,1");
-        
-        setAttr("chargeType", order.get("charge_type"));
         
         
         if (order != null) {

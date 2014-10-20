@@ -557,7 +557,7 @@ public class DataInitUtil {
             stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13998765432', '粤A1234', '挂车', 14.5, '赵六六', '"+Carinfo.CARINFO_TYPE_SP+"');");
 
             // 发车单
-            stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000001', CURRENT_TIMESTAMP(),'DEPART','粤A876596','平板车',1,23,'新建');");
+            /*stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000001', CURRENT_TIMESTAMP(),'DEPART','粤A876596','平板车',1,23,'新建');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('1', '1','YS2014042600001');");
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status) values('FC2014061000002', CURRENT_TIMESTAMP(),'DEPART','粤A879588','集装车',2, 23,'新建');");
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values('2', '2','YS2014042600002');");
@@ -566,12 +566,12 @@ public class DataInitUtil {
             stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(3, '3','YS2014042600006');");
             // 拼车单
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by) values('PC2014061000001', CURRENT_TIMESTAMP(),'PICKUP','粤A876596','平板货车',1, 24,'已入货场',3);");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(4, '1','YS2014042600001');");
+            stmt.execute("insert into depart_transfer(pickup_id,order_id,transfer_order_no) values(4, '1','YS2014042600001');");
             stmt.execute("insert into depart_order(depart_no,create_stamp,combine_type,car_no,car_type,driver_id,car_size,status,create_by,pickup_mode) "
                     + "values('PC2014061000002', CURRENT_TIMESTAMP(),'PICKUP','粤A879588','箱式货车',2, 24,'已入货场',4,'own');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '4','YS2014042600004');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '5','YS2014042600005');");
-            stmt.execute("insert into depart_transfer(depart_id,order_id,transfer_order_no) values(5, '3','YS2014042600003');");
+            stmt.execute("insert into depart_transfer(pickup_id,order_id,transfer_order_no) values(5, '4','YS2014042600004');");
+            stmt.execute("insert into depart_transfer(pickup_id,order_id,transfer_order_no) values(5, '5','YS2014042600005');");
+            stmt.execute("insert into depart_transfer(pickup_id,order_id,transfer_order_no) values(5, '3','YS2014042600003');");*/
 
             // 运输里程碑
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(2, 3, '2014-06-28 10:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
@@ -583,9 +583,9 @@ public class DataInitUtil {
             stmt.execute("insert into arap_charge_item(charge_order_id, ref_order_id, create_by, create_stamp) values(1, 1, 3, '2014-08-18 9:39:35.1');");
             
             // 拼车单收费条目
-            stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(1, 5, 1, 300);");
+            /*stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(1, 5, 1, 300);");
             stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(2, 5, 2, 100);");
-            stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(3, 5, 3, 100);");
+            stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(3, 5, 3, 100);");*/
             stmt.close();
             // conn.commit();
             conn.close();
