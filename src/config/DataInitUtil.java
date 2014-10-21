@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
 
+import models.CarSummaryDatailOtherFee;
 import models.Category;
 import models.Party;
 import models.PartyAttribute;
@@ -111,7 +112,7 @@ public class DataInitUtil {
             // 提货单/发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),audit_status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
                     + "car_size varchar(255),car_no varchar(255),car_type varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,payment double,arrival_time timestamp,remark varchar(255), charge_type varchar(50), driver_id bigint,"
-                    + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id));");
+                    + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id),car_summary_type varchar(50));");
 
             // Depart_Order_fin_item 提货单/发车单应付明细
             stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, pickup_order_id bigint, fin_item_id bigint, "
@@ -189,6 +190,29 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists insurance_fin_item(id bigint auto_increment primary key,status varchar(255),location varchar(255),insurance_category varchar(255),amount double,rate double,income_rate double,insurance_amount double,insurance_no varchar(255),create_by bigint,"
             		+ " create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,fin_item_id bigint,foreign key(fin_item_id) references fin_item(id),insurance_order_id bigint,foreign key(insurance_order_id) references insurance_order(id),transfer_order_item_id bigint,foreign key(transfer_order_item_id) references transfer_order_item(id));");
             
+            //行车单
+            stmt.execute("create table if not exists car_summary_order(id bigint auto_increment primary key,order_no varchar(50),car_no varchar(50),main_driver_name varchar(50),main_driver_amount double,minor_driver_name varchar(50),"
+            		+ "minor_driver_amount double,start_car_mileage double,finish_car_mileage double,month_start_car_next int,month_car_run_mileage double,month_refuel_amount double,next_start_car_mileage double,"
+            		+ "next_start_car_amount double,deduct_apportion_amount double,actual_payment_amount double,create_data timestamp);");
+            
+            //（行车单-拼车单）关联表
+            stmt.execute("create table if not exists car_summary_detail(id bigint auto_increment primary key,car_summary_id bigint,pickup_order_id  bigint);");
+            
+            //行车单路桥费明细
+            stmt.execute("create table if not exists car_summary_detail_route_fee(id bigint auto_increment primary key,"
+            		+ "car_summary_id bigint,item bigint,charge_data timestamp,charge_site varchar(100),travel_amount double,remark varchar(500));");
+            
+            //行车单加油记录
+            stmt.execute("create table if not exists car_summary_detail_oil_fee(id bigint auto_increment primary key,car_summary_id bigint,"
+            		+ "item bigint,Refuel_data timestamp,odometer_mileage double,Refuel_site varchar(200),Refuel_type varchar(200),"
+            		+ "Refuel_unit_cost double,Refuel_number double,Refuel_amount double,payment_type varchar(50),load varchar(50),avg_econ double,remark varchar(500));");
+            
+            //行车单送货员工资明细
+            stmt.execute("create table if not exists car_summary_detail_salary(id bigint auto_increment primary key,car_summary_id bigint,item bigint,name varchar(50),salary_sheet varchar(30),work_type varchar(100),deserved_amount double,create_data timestamp,remark varchar(500));");
+            
+            //行车单费用合计
+            stmt.execute("create table if not exists car_summary_detail_other_fee(id bigint auto_increment primary key,car_summary_id bigint,item varchar(100),amount double,is_delete varchar(4),remark varchar(500));");
+
             stmt.close();
             // conn.commit();
             conn.close();
@@ -811,5 +835,34 @@ public class DataInitUtil {
         p11.set("contact_id", contact11.getLong("id")).set("party_type", Party.PARTY_TYPE_SP_DRIVER).set("create_date", createDate)
         		.set("creator", "demo").save();
     }
-
+    //每次新增调车单时要添加的数据
+    public static void createInitCarManageCostSummation(String  carManageId){
+    	
+    	String name[] = {"car_summary_id","item","is_delete"};
+    	String items[] = {"本次加油","本次油耗","出车补贴","司机工资","路桥费","装卸费","罚款","送货员工资","停车费","住宿费","过磅费","其他费用"};
+    	String isdeletes = "是";
+    	for (int i = 0; i < items.length; i++) {
+    		CarSummaryDatailOtherFee c = new CarSummaryDatailOtherFee();
+    		if(i == 1 || i == 3 || i == 7)
+    			c.set(name[0], carManageId).set(name[1], items[i]).set(name[2], isdeletes).save();
+    		else
+    			c.set(name[0], carManageId).set(name[1], items[i]).save();
+		}
+    	
+    	/*
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'本次加油','');
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'本次油耗','是');
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'出车补贴','');
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'司机工资','是');
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'路桥费','');
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'装卸费','');
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'罚款','');
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'送货员工资','是');
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'停车费','');
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'住宿费','');
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'过磅费','');
+    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'其他费用','');
+    	*/
+    }
+    
 }

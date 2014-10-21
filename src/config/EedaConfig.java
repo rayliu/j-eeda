@@ -11,6 +11,12 @@ import models.ArapChargeInvoiceApplicationItem;
 import models.ArapChargeInvoiceItemInvoiceNo;
 import models.ArapChargeItem;
 import models.ArapChargeOrder;
+import models.CarSummaryOrder;
+import models.CarSummaryDatailOtherFee;
+import models.CarSummaryDatailSalary;
+import models.CarSummaryDetail;
+import models.CarSummaryDetailOilFee;
+import models.CarSummaryDetailRouteFee;
 import models.Category;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
@@ -179,6 +185,7 @@ public class EedaConfig extends JFinalConfig {
         me.add(contentPath+"/stock", controllers.yh.inventory.InventoryController.class, contentPath);
         me.add(contentPath+"/carinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add(contentPath+"/carmanage", controllers.yh.profile.CarinfoController.class, contentPath);
+        me.add(contentPath+"/carsummary", controllers.yh.profile.CarinfoControllerTest.class, contentPath);
         me.add(contentPath+"/driverinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add(contentPath+"/spdriverinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add(contentPath+"/spcarinfo", controllers.yh.profile.CarinfoController.class, contentPath);
@@ -280,6 +287,13 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_charge_invoice_item_invoice_no", ArapChargeInvoiceItemInvoiceNo.class);
         arp.addMapping("arap_charge_application_invoice_no", ArapChargeApplicationInvoiceNo.class);
         // yh mapping
+        //行车单
+        arp.addMapping("car_summary_order", CarSummaryOrder.class);
+        arp.addMapping("car_summary_detail", CarSummaryDetail.class);
+        arp.addMapping("car_summary_detail_route_fee", CarSummaryDetailRouteFee.class);
+        arp.addMapping("car_summary_detail_oil_fee", CarSummaryDetailOilFee.class);
+        arp.addMapping("car_summary_detail_salary", CarSummaryDatailSalary.class);
+        arp.addMapping("car_summary_detail_other_fee", CarSummaryDatailOtherFee.class);
 
     }
 
