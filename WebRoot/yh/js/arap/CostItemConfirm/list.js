@@ -2,7 +2,7 @@ $(document).ready(function() {
     $('#menu_cost').addClass('active').find('ul').addClass('in');
    
 	  //datatable, 动态处理
-    var chargeConfiremTable = $('#costConfirem-table').dataTable({
+    var costConfiremTable = $('#costConfirem-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -15,10 +15,10 @@ $(document).ready(function() {
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px",
                 "fnRender": function(obj) {
-                  return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+                  return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" order_no="'+obj.aData.ORDER_NO+'">';
                 }
             },
-            {"mDataProp":null, "sWidth":"100px"},            	
+            {"mDataProp":"BUSINESS_TYPE", "sWidth":"100px"},            	
             {"mDataProp":"SPNAME", "sWidth":"200px"},
             {"mDataProp":null, "sWidth": "120px", 
                 "fnRender": function(obj) {
@@ -36,37 +36,40 @@ $(document).ready(function() {
                     return obj.aData.TRANSACTION_STATUS;
                 }
             },                         
-            {"mDataProp":null, "sWidth":"100px"},  
+            {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"100px"},  
 		    {"mDataProp":null, "sWidth":"120px",
                 "fnRender": function(obj) {
                     return "未收款";
             }},
             {"mDataProp":"ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":null, "sWidth":"200px"},
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"CREATE_STAMP", "sWidth":"200px"},                 	
             {"mDataProp":"AMOUNT", "sWidth":"150px"},                        
             {"mDataProp":"VOLUME", "sWidth":"150px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":"CASH", "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                       
-            {"mDataProp":null, "sWidth":"150px"}                         
+            {"mDataProp":"REMARK", "sWidth":"150px"}                         
         ]      
     });	
     
-    $("#chargeConfiremBtn").click(function(e){
+    $("#costConfiremBtn").click(function(e){
         e.preventDefault();
-    	var trArr=[];
+    	var idArr=[];
+    	var orderNoArr=[];    	
         $("input[name='order_check_box']").each(function(){
         	if($(this).prop('checked') == true){
-        		trArr.push($(this).val());
+        		idArr.push($(this).attr('id'));
+        		orderNoArr.push($(this).attr('order_no'));
         	}
         });     
-        console.log(trArr);
-        var returnOrderIds = trArr.join(",");
-        $.post("/yh/chargeConfiremList/chargeConfiremReturnOrder", {returnOrderIds:returnOrderIds}, function(data){
+        console.log(idArr);
+        var ids = idArr.join(",");
+        var orderNos = orderNoArr.join(",");
+        $.post("/yh/costConfirmList/costConfiremReturnOrder", {ids:ids, orderNos:orderNos}, function(data){
         	if(data.success){
-        		chargeConfiremTable.fnSettings().sAjaxSource = "/yh/chargeConfiremList/list";
-        		chargeConfiremTable.fnDraw(); 
+        		costConfiremTable.fnSettings().sAjaxSource = "/yh/costConfirmList/list";
+        		costConfiremTable.fnDraw(); 
         	}
         },'json');
     });
@@ -104,7 +107,7 @@ $(document).ready(function() {
            var companyId = $(this).attr('partyId');
            $('#customerId').val(companyId);
            //过滤回单列表
-           //chargeCheckTable.fnFilter(companyId, 2);
+           //costCheckTable.fnFilter(companyId, 2);
            
            
            
@@ -116,7 +119,7 @@ $(document).ready(function() {
         	   /*
                 * 
                 * 
-                * datatable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/edit";
+                * datatable.fnSettings().sAjaxSource = "/yh/costCheckOrder/edit";
               	* datatable.fnDraw(); 
                 * */
            }
@@ -220,7 +223,7 @@ $(document).ready(function() {
                /*
                 * 
                 * 
-                * datatable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/edit";
+                * datatable.fnSettings().sAjaxSource = "/yh/costCheckOrder/edit";
               	* datatable.fnDraw(); 
                 * */
                
@@ -239,9 +242,9 @@ $(document).ready(function() {
      		var receiptBegin = $("#beginTime").val();
      		var receiptEnd = $("#endTime").val();
      		console.log("rr"+companyName);
-     		chargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
+     		costCheckTable.fnSettings().sAjaxSource = "/yh/costCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
      	
-     		chargeCheckTable.fnDraw();
+     		costCheckTable.fnDraw();
      	} );
   */
 } );
