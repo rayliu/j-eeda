@@ -2,37 +2,21 @@
 $(document).ready(function() {
 
     $('#menu_cost').addClass('active').find('ul').addClass('in');
-    var type = $("#type").val();//注意这里
-    var urlSource1;
-    var urlSource2;
-    var urlSource3;
-	if(type=='CUSTOMER'){
-		
-		urlSource1="/yh/chargeCheckOrder/list";
-		urlSource2="/yh/transferOrder/edit/";
-		urlSource3="/yh/transferOrder/delete/";
-	}else{	
-		urlSource1="/yh/paymentCheckOrder/list";
-		urlSource2="/yh/transferOrder/edit/";
-		urlSource3="/yh/transferOrder/delete/";
-	}
-	//datatable, 动态处理
-    $('#eeda-table').dataTable({
-        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",
+    var datatable=$('#costCheckList-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
-    	"oLanguage": {
+        "bServerSide": true,
+    	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": urlSource1,
+        "sAjaxSource": "/yh/chargeCheckOrder/list",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
         			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
-            {"mDataProp":"CNAME"},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -49,17 +33,26 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"RETURN_ORDER_NO"},
-            {"mDataProp":"TRANSFER_ORDER_NO"},
-            {"mDataProp":"DELIVERY_ORDER_NO"},            
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":"CNAME"},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":"REMARK"},
             {"mDataProp":"CREATOR_NAME"},        	
             {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"REMARK"},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger' href='"+urlSource3+""+obj.aData.ID+"'>"+
+                    return	"<a class='btn btn-danger' href='#'"+obj.aData.ID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "取消"+
                             "</a>";
@@ -67,7 +60,6 @@ $(document).ready(function() {
             }                         
         ]      
     });	
-    
     
     /*--------------------------------------------------------------------*/
     //获取所有客户
