@@ -3,7 +3,7 @@
 var dataTable =$('#dataTables-example').dataTable({
 		"bFilter": false, //不需要默认的搜索框
 		//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "bFilter": false, //不需要默认的搜索框
         "iDisplayLength": 10,
@@ -21,35 +21,86 @@ var dataTable =$('#dataTables-example').dataTable({
                 	return "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
                 }
             } ,
-            {"mDataProp":"CONTACT_PERSON"},
-            {"mDataProp":"PHONE"},
-            {"mDataProp":"CAR_NO"},
-            {"mDataProp":"CARTYPE"},     
-            {"mDataProp":"CREATE_STAMP"},
+            {"mDataProp":"OFFICE_NAME"},
+            {"mDataProp":null},
             {"mDataProp":"DEPART_STATUS"},
+            {"mDataProp":"ABBR"},
+            {"mDataProp":"PHONE"},
+            {"mDataProp":"CONTACT_PERSON"},
+            {"mDataProp":"SHUNT_TIME"},
+            {"mDataProp":"ROUTE_FROM"},
+            {"mDataProp":"ROUTE_TO"},
+            {"mDataProp":"ARRIVAL_TIME"},
+            {"mDataProp":"REQUEST_TIME"},
             {"mDataProp":"TRANSFER_ORDER_NO"},
-            { 
-                "mDataProp": null, 
-                "sWidth": "8%",               
-                "fnRender": function(obj) {                    
-                    return "<a class='btn btn-danger cancelbutton' href=' /yh/departOrder/cancel/"+obj.aData.DEPART_ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "取消"+
-                            "</a>";
-                }
-            } 
+            {"mDataProp":"USER_NAME"},
+            {"mDataProp":"CREATE_STAMP"},
+            {"mDataProp":"REMARK"} 
         ]      
     });
-			$('#endTime_filter ,#beginTime_filter ,#sp_filter ,#status_filter ,#orderNo_filter ,#departNo_filter').on( 'keyup click', function () {
+			$('#departNo_filter,#endTime_filter ,#beginTime_filter ,#sp_filter ,#orderNo_filter,#start_filter,#destination_filter').on( 'keyup click', function () {
+				var office =$("#officeSelect").val();
+				var start =$("#start_filter").val();
+				var destination=$("#destination_filter").val();
 				var orderNo = $("#orderNo_filter").val();
 				var departNo_filter = $("#departNo_filter").val();
 				var status = $("#status_filter").val();
 				var sp = $("#sp_filter").val();
 				var beginTime = $("#beginTime_filter").val();
 				var endTime = $("#endTime_filter").val();
-				dataTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&status="+status+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+				dataTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo
+													+"&departNo="+departNo_filter
+													+"&status="+status
+													+"&sp="+sp
+													+"&beginTime="+beginTime
+													+"&endTime="+endTime
+													+"&office="+office
+													+"&start="+start
+													+"&destination="+destination;
 				dataTable.fnDraw();
 			} );
+			//供应商，状态，选择框
+			$('#status_filter ,#officeSelect').on( 'change', function () {
+				var office =$("#officeSelect").val();
+				var start =$("#start_filter").val();
+				var destination=$("#destination_filter").val();
+				
+				var orderNo = $("#orderNo_filter").val();
+				var departNo_filter = $("#departNo_filter").val();
+				var status = $("#status_filter").val();
+				var sp = $("#sp_filter").val();
+				var beginTime = $("#beginTime_filter").val();
+				var endTime = $("#endTime_filter").val();
+				dataTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo
+													+"&departNo="+departNo_filter
+													+"&status="+status
+													+"&sp="+sp
+													+"&beginTime="+beginTime
+													+"&endTime="+endTime
+													+"&office="+office
+													+"&start="+start
+													+"&destination="+destination;
+				dataTable.fnDraw();
+			} );
+			
+			$.post('/yh/transferOrder/searchAllOffice',function(data){
+				 if(data.length > 0){
+					 var officeSelect = $("#officeSelect");
+					 officeSelect.empty();
+					 var hideOfficeId = $("#hideOfficeId").val();
+					 for(var i=0; i<data.length; i++){
+						 if(i == 0){
+							 officeSelect.append("<option ></option>");
+						 }else{
+							 if(data[i].ID == hideOfficeId){
+								 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+							 }else{
+								 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");					 
+							 }
+						 }
+					 }
+				 }
+			 },'json');
 			
 			$('#datetimepicker').datetimepicker({  
 			    format: 'yyyy-MM-dd',  
@@ -123,7 +174,7 @@ var dataTable =$('#dataTables-example').dataTable({
 
 				// 选中供应商
 				$('#spList').on('mousedown', '.fromLocationItem', function(e){
-					console.log($('#spList').is(":focus"))
+					console.log($('#spList').is(":focus"));
 					var message = $(this).text();
 					$('#sp_filter').val(message.substring(0, message.indexOf(" ")));
 					$('#sp_id').val($(this).attr('partyId'));
@@ -150,13 +201,25 @@ var dataTable =$('#dataTables-example').dataTable({
 					pageSpAddress.append(address);
 			        $('#spList').hide();
 			        
+			        var office =$("#officeSelect").val();
+					var start =$("#start_filter").val();
+					var destination=$("#destination_filter").val();
+			        
 			        var orderNo = $("#orderNo_filter").val();
 					var departNo_filter = $("#departNo_filter").val();
 					var status = $("#status_filter").val();
 					var sp = $("#sp_filter").val();
 					var beginTime = $("#beginTime_filter").val();
 					var endTime = $("#endTime_filter").val();
-					dataTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&status="+status+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+					dataTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo
+														+"&departNo="+departNo_filter
+														+"&status="+status
+														+"&sp="+sp
+														+"&beginTime="+beginTime
+														+"&endTime="+endTime
+														+"&office="+office
+														+"&start="+start
+														+"&destination="+destination;
 					dataTable.fnDraw();
 			    });
 });

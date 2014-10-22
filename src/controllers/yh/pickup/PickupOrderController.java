@@ -134,6 +134,11 @@ public class PickupOrderController extends Controller {
         String departNo = getPara("departNo");
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
+        String carNo = getPara("carNo");
+        String take = getPara("take");
+        String status = getPara("status");
+        String office = getPara("office");
+        
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -141,16 +146,42 @@ public class PickupOrderController extends Controller {
         }
         String sql = "";
         String sqlTotal = "";
-        if (orderNo == null && departNo == null && beginTime == null && endTime == null) {
-            sqlTotal = "select count(1) total from depart_order dor " + "" + " left join carinfo c on dor.driver_id = c.id "
-                    + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "'";
-
-            sql = "select dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  from depart_order dor "
+        if (orderNo == null && departNo == null && beginTime == null && endTime == null
+        		&&carNo == null && take == null && status == null && office == null) {
+            sqlTotal = "select count(*) total "
+            		+ " from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
                     + " left join party p on dor.driver_id = p.id "
                     + " left join contact ct on p.contact_id = ct.id "
+                    + " left join user_login u on u.id = dor.create_by "
+                    + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
+                    + " left join transfer_order to on to.id = dtf.order_id "
+                    + " left join office o on o.id = to.office_id "
+                    + " left join transfer_order_item toi on toi.order_id = to.id "
+                    + " left join product pd on pd.id = toi.product_id "
                     + " where dor.status!='取消' and combine_type = '"
-                    + DepartOrder.COMBINE_TYPE_PICKUP + "' order by dor.create_stamp desc" + sLimit;
+            			+ DepartOrder.COMBINE_TYPE_PICKUP + "'";
+
+            sql = "select dor.*,"
+            		+ " ifnull(ct.contact_person,c.driver) contact_person,"
+            		+ " ifnull(ct.phone,c.phone) phone,"
+            		+ " ifnull(dor.car_type,c.cartype) cartype,"
+            		+ " c.status cstatus,"
+            		+ " u.user_name user_name,"
+            		+ " o.office_name office_name,"
+            		+ " (select sum(ifnull(toi.volume,p.volume)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) volume,"
+            		+ " (select sum(ifnull(p.weight,toi.weight)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) weight, "
+            		+ " (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  "
+            		+ " from depart_order dor "
+                    + " left join carinfo c on dor.carinfo_id = c.id "
+                    + " left join party p on dor.driver_id = p.id "
+                    + " left join contact ct on p.contact_id = ct.id "
+                    + " left join user_login u on u.id = dor.create_by "
+                    + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
+                    + " left join transfer_order to on to.id = dtf.order_id "
+                    + " left join office o on o.id = to.office_id "
+                    + " where dor.status!='取消' and combine_type = '"
+                    + DepartOrder.COMBINE_TYPE_PICKUP + "' group by dor.id order by dor.create_stamp desc" + sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -158,25 +189,55 @@ public class PickupOrderController extends Controller {
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-            sqlTotal = "select count(distinct dor.id) total from depart_order dor " + " left join carinfo c on dor.driver_id = c.id "
-                    + " left join depart_transfer dt2 on dt2.pickup_id = dor.id" + " where dor.status!='取消' and combine_type = '"
-                    + DepartOrder.COMBINE_TYPE_PICKUP + "' and depart_no like '%" + departNo + "%' and dt2.transfer_order_no like '%"
-                    + orderNo + "%' and dor.create_stamp between '" + beginTime + "' and '" + endTime + "'";
-
-            sql = "select distinct dor.*,ifnull(ct.contact_person,c.driver) contact_person,ifnull(ct.phone,c.phone) phone,c.car_no,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  from depart_order dor "
+            sqlTotal = "select count(*) total "
+            		+ " from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
                     + " left join party p on dor.driver_id = p.id "
                     + " left join contact ct on p.contact_id = ct.id "
-                    + " left join depart_transfer dt2 on dt2.pickup_id = dor.id"
+                    + " left join user_login u on u.id = dor.create_by "
+                    + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
+                    + " left join transfer_order to on to.id = dtf.order_id "
+                    + " left join office o on o.id = to.office_id "
+                    + " where dor.status!='取消' and combine_type = '"
+                    + DepartOrder.COMBINE_TYPE_PICKUP 
+                    + "' and ifnull(depart_no,'') like '%"+ departNo
+                    + "%' and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo
+                    + "%' and dor.create_stamp between '" + beginTime + "' and '" + endTime
+                    + "' and ifnull(dor.car_no,'') like '%"+carNo
+                    + "%' and ifnull(dor.status,'') like '%"+status
+                    + "%' and ifnull(o.office_name,'') like '%"+office
+                    + "%' and ifnull(dor.pickup_mode,'') like '%"+take
+                    + "%' ";
+
+            sql = "select dor.*,"
+            		+ " ifnull(ct.contact_person,c.driver) contact_person,"
+            		+ " ifnull(ct.phone,c.phone) phone,"
+            		+ " ifnull(dor.car_type,c.cartype) cartype,"
+            		+ " c.status status,"
+            		+ " u.user_name user_name,"
+            		+ " o.office_name office_name,"
+            		+ " (select sum(ifnull(toi.volume,p.volume)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in (select order_id from depart_transfer where pickup_id=dor.id)) volume,"
+            		+ " (select sum(ifnull(p.weight,toi.weight)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) weight, "
+            		+ " (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  "
+            		+ " from depart_order dor "
+                    + " left join carinfo c on dor.carinfo_id = c.id "
+                    + " left join party p on dor.driver_id = p.id "
+                    + " left join contact ct on p.contact_id = ct.id "
+                    + " left join user_login u on u.id = dor.create_by "
+                    + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
+                    + " left join transfer_order to on to.id = dtf.order_id "
+                    + " left join office o on o.id = to.office_id "
                     + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP
-                    + "' and depart_no like '%"
-                    + departNo
-                    + "%' and dt2.transfer_order_no like '%"
-                    + orderNo
-                    + "%' and dor.create_stamp between '"
-                    + beginTime
-                    + "' and '" + endTime + "' order by dor.create_stamp desc" + sLimit;
+                    + "' and ifnull(depart_no,'') like '%"+ departNo
+                    + "%' and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo
+                    + "%' and dor.create_stamp between '" + beginTime + "' and '" + endTime
+                    + "' and ifnull(dor.car_no,'') like '%"+carNo
+                    + "%' and ifnull(dor.status,'') like '%"+status
+                    + "%' and ifnull(o.office_name,'') like '%"+office
+                    + "%' and ifnull(dor.pickup_mode,'') like '%"+take
+                    + "%' group by dor.id order by dor.create_stamp desc" + sLimit;
+            
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));

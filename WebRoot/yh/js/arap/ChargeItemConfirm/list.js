@@ -92,7 +92,6 @@ $(document).ready(function() {
         },'json');
     });
     
-    /*--------------------------------------------------------------------*/
     //获取所有客户
     $('#customer_filter').on('keyup click', function(){
            var inputStr = $('#customer_filter').val();
@@ -109,40 +108,32 @@ $(document).ready(function() {
                    companyList.show();
                
            },'json');
-
-           if(inputStr==''){
-        	   datatable.fnFilter('', 2);
-           }
            
        });
-
-
-
    //选中某个客户时候
       $('#companyList').on('click', '.fromLocationItem', function(e){        
            $('#customer_filter').val($(this).text());
            $("#companyList").hide();
            var companyId = $(this).attr('partyId');
            $('#customerId').val(companyId);
-           //过滤回单列表
-           //chargeCheckTable.fnFilter(companyId, 2);
-           
-           
-           
+
            //获取所有的条件
-           var inputStr = $('#customer_filter').val();
+            var customer = $('#customer_filter').val();
+    		var beginTime = $("#beginTime_filter").val();
+    		var endTime = $("#endTime_filter").val();
+    		var orderNo = $("#orderNo_filter").val();
+    		var customerNO = $("#customerNO_filter").val();
+    		var start =$("#start_filter").val();
+    	   chargeConfiremTable.fnSettings().sAjaxSource = "/yh/chargeConfiremList/list?customer="+customer
+    	   												+"&beginTime="+beginTime
+    	   												+"&endTime="+endTime
+    	   												+"&orderNo="+orderNo
+    	   												+"&customerNO="+customerNO
+    	   												+"&start="+start;
+   		   chargeConfiremTable.fnDraw(); 
            
-           
-           if(inputStr!=null){
-        	   /*
-                * 
-                * 
-                * datatable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/edit";
-              	* datatable.fnDraw(); 
-                * */
-           }
        });
-    // 没选中客户，焦点离开，隐藏列表
+      // 没选中客户，焦点离开，隐藏列表
        $('#customer_filter').on('blur', function(){
            $('#companyList').hide();
        });
@@ -156,113 +147,40 @@ $(document).ready(function() {
            return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
        });
        
-     //获取供应商的list，选中信息在下方展示其他信息
-       $('#sp_filter').on('keyup click', function(){
-       		var inputStr = $('#sp_filter').val();
-       		if(inputStr == ""){
-       			var pageSpName = $("#pageSpName");
-       			pageSpName.empty();
-       			var pageSpAddress = $("#pageSpAddress");
-       			pageSpAddress.empty();
-       			$('#sp_id').val($(this).attr(''));
-       		}
-       		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
-       			console.log(data);
-       			var spList =$("#spList");
-       			spList.empty();
-       			for(var i = 0; i < data.length; i++)
-       			{
-       				var company_name = data[i].COMPANY_NAME;
-       				if(company_name == null){
-       					company_name = '';
-       				}
-       				var contact_person = data[i].CONTACT_PERSON;
-       				if(contact_person == null){
-       					contact_person = '';
-       				}
-       				var phone = data[i].PHONE;
-       				if(phone == null){
-       					phone = '';
-       				}
-       				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
-       			}
-       		},'json');
-
-       		$("#spList").css({ 
-               	left:$(this).position().left+"px", 
-               	top:$(this).position().top+32+"px" 
-               }); 
-               $('#spList').show();
-       	});
-
-       	// 没选中供应商，焦点离开，隐藏列表
-       	$('#sp_filter').on('blur', function(){
-        		$('#spList').hide();
-        	});
-
-       	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
-       	$('#spList').on('blur', function(){
-        		$('#spList').hide();
-        	});
-
-       	$('#spList').on('mousedown', function(){
-       		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
-       	});
-
-       	// 选中供应商
-       	$('#spList').on('mousedown', '.fromLocationItem', function(e){
-       		console.log($('#spList').is(":focus"))
-       		var message = $(this).text();
-       		$('#sp_filter').val(message.substring(0, message.indexOf(" ")));
-       		$('#sp_id').val($(this).attr('partyId'));
-       		var pageSpName = $("#pageSpName");
-       		pageSpName.empty();
-       		var pageSpAddress = $("#pageSpAddress");
-       		pageSpAddress.empty();
-       		pageSpAddress.append($(this).attr('address'));
-       		var contact_person = $(this).attr('contact_person');
-       		if(contact_person == 'null'){
-       			contact_person = '';
-       		}
-       		pageSpName.append(contact_person+'&nbsp;');
-       		var phone = $(this).attr('phone');
-       		if(phone == 'null'){
-       			phone = '';
-       		}
-       		pageSpName.append(phone); 
-       		pageSpAddress.empty();
-       		var address = $(this).attr('address');
-       		if(address == 'null'){
-       			address = '';
-       		}
-       		pageSpAddress.append(address);
-               $('#spList').hide();
-               //获取到所有的条件，
-               /*
-                * 
-                * 
-                * datatable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/edit";
-              	* datatable.fnDraw(); 
-                * */
-               
-               
-           });
-       
-       
-       
-       /*=========================================================*/
        //过滤客户
-       /*   $('#companyName,#beginTime_filter,#endTime_filter,#beginTime,#endTime').on( 'keyup', function () {
-         	
-         	var companyName = $('#companyName').val();
-     		var beginTime = $("#beginTime_filter").val();
-     		var endTime = $("#endTime_filter").val();
-     		var receiptBegin = $("#beginTime").val();
-     		var receiptEnd = $("#endTime").val();
-     		console.log("rr"+companyName);
-     		chargeCheckTable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
-     	
-     		chargeCheckTable.fnDraw();
+       $('#customer_filter,#beginTime_filter,#endTime_filter,#orderNo_filter,#customerNo_filter,#start_filter').on( 'keyup click', function () {
+    	   var customer = $('#customer_filter').val();
+	   		var beginTime = $("#beginTime_filter").val();
+	   		var endTime = $("#endTime_filter").val();
+	   		var orderNo = $("#orderNo_filter").val();
+	   		var customerNO = $("#customerNo_filter").val();
+	   		var start =$("#start_filter").val();
+	   	   chargeConfiremTable.fnSettings().sAjaxSource = "/yh/chargeConfiremList/list?customer="+customer
+	   	   												+"&beginTime="+beginTime
+	   	   												+"&endTime="+endTime
+	   	   												+"&orderNo="+orderNo
+	   	   												+"&customerNO="+customerNO
+	   	   												+"&start="+start;
+  		   chargeConfiremTable.fnDraw(); 
      	} );
-  */
+       
+       $('#datetimepicker').datetimepicker({  
+           format: 'yyyy-MM-dd',  
+           language: 'zh-CN'
+       }).on('changeDate', function(ev){
+           $(".bootstrap-datetimepicker-widget").hide();
+           $('#beginTime_filter').trigger('keyup');
+       });
+
+
+       $('#datetimepicker2').datetimepicker({  
+           format: 'yyyy-MM-dd',  
+           language: 'zh-CN', 
+           autoclose: true,
+           pickerPosition: "bottom-left"
+       }).on('changeDate', function(ev){
+           $(".bootstrap-datetimepicker-widget").hide();
+           $('#endTime_filter').trigger('keyup');
+       });
+  
 } );
