@@ -11,12 +11,14 @@ import models.ArapChargeInvoiceApplicationItem;
 import models.ArapChargeInvoiceItemInvoiceNo;
 import models.ArapChargeItem;
 import models.ArapChargeOrder;
-import models.CarSummaryOrder;
+import models.ArapCostItem;
+import models.ArapCostOrder;
 import models.CarSummaryDatailOtherFee;
 import models.CarSummaryDatailSalary;
 import models.CarSummaryDetail;
 import models.CarSummaryDetailOilFee;
 import models.CarSummaryDetailRouteFee;
+import models.CarSummaryOrder;
 import models.Category;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
@@ -286,6 +288,9 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_charge_invoice_application_item", ArapChargeInvoiceApplicationItem.class);
         arp.addMapping("arap_charge_invoice_item_invoice_no", ArapChargeInvoiceItemInvoiceNo.class);
         arp.addMapping("arap_charge_application_invoice_no", ArapChargeApplicationInvoiceNo.class);
+        // 应付对账单
+        arp.addMapping("arap_cost_order", ArapCostOrder.class);
+        arp.addMapping("arap_cost_item", ArapCostItem.class);
         // yh mapping
         //行车单
         arp.addMapping("car_summary_order", CarSummaryOrder.class);

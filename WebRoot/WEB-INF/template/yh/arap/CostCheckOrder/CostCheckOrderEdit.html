@@ -3,7 +3,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">应收对账单</h1><input id="order_id" type="hidden" name="order_id"/>
+                    <h1 class="page-header">应付对账单</h1><input id="order_id" type="hidden" name="order_id"/>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -18,9 +18,9 @@
                             <ul id="orderTabs" class="nav nav-tabs">
                                 <li class="active"><a href="#basic" data-toggle="tab" data-src="basic" >基本信息</a>
                                 </li>
-                                <li class=""><a href="#arap" data-toggle="tab">应收明细</a>
+                                <li class=""><a href="#arap" data-toggle="tab">应付明细</a>
                                 </li>
-                                <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">里程碑</a>
+                                <li class="" style="display: none;"><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">里程碑</a>
                                 </li>                                
                                 <li class="" style="display:none;"><a href="#cargos" data-toggle="tab" id="transferOrderItemList">货品明细</a>
                                 </li>
@@ -31,61 +31,55 @@
                                 <div class="tab-pane fade active in" id="basic">
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <form role="form" id="chargeCheckOrderForm">
-                                        	<input id="chargeCheckOrderId" type="hidden" name="chargeCheckOrderId" value="${arapAuditOrder.id!''}"/>
+                                        <form role="form" id="costCheckOrderForm">
+                                        	<input id="costCheckOrderId" type="hidden" name="costCheckOrderId" value="${arapAuditOrder.id!''}"/>
                                         	<input id="customer_id" type="hidden" name="customer_id" value="${party.id!''}"/>
-                                        	<input type="hidden" name="returnOrderIds" value="${returnOrderIds!''}"/>
+                                        	<input type="hidden" name="orderIds" value="${orderIds!''}"/>
+                                        	<input type="hidden" name="orderNos" value="${orderNos!''}"/>
                                         	<input type="hidden" name="order_no" value="${order_no!''}${arapAuditOrder.order_no!''}"/>
                                         	<input type="hidden" name="status" value="${status!''}${arapAuditOrder.status!''}"/>
                                         	<input type="hidden" name="create_by" value="${create_by!''}${arapAuditOrder.create_by!''}"/>
                                         	<input type="hidden" name="beginTime" value="${beginTime!''}${arapAuditOrder.beginTime!''}"/>
                                         	<input type="hidden" name="endTime" value="${endTime!''}${arapAuditOrder.endTime!''}"/>
-                                            <h2>客户信息</h2>
-                                            <div class="form-group">
-                                                <label>公司名称</label>
-                                                <label class="radio-inline" id="company">${customer.company_name!''}</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>地址</label>
-                                                <label class="radio-inline" id="company">${customer.address!''}</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>联系人</label>
-                                                <label class="radio-inline" id="company">${customer.contact_person!''}</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>电话</label>
-                                                <label class="radio-inline" id="company">${customer.phone!''}</label>
-                                            </div>
-                                            
-                                            <div class="form-group">
-                                                <label>备注</label>
-                                                <textarea class="form-control" rows="7" name="remark">${arapAuditOrder.remark!''}</textarea>
-                                            </div>                               
-                                    </div>
-                                    <!-- /.col-lg-6 (nested) -->
-                                    <div class="col-lg-6">
-                                    <h2>对账单信息</h2>
+                                    <h3>对账单信息</h3>
                                     <div class="form-group">
                                         <label>对账单号</label> <strong>${order_no!''}${arapAuditOrder.order_no!''}</strong>
                                     </div>
                                     <div class="form-group">
-                                        <label>单据状态</label>   <span  id="chargeCheckOrderStatus">${status!''}${arapAuditOrder.status!''}</span>
+                                        <label>单据状态</label>   <span  id="costCheckOrderStatus">${status!''}${arapAuditOrder.status!''}</span>
                                     </div>
                                     <div class="form-group">
-                                        <label>创建人</label>   ${userLogin.user_name!''}
-                                        
+                                        <label>创建人</label>   ${userLogin.user_name!''}                                        
+                                    </div>                             
+                                    <div class="form-group">
+                                        <label>创建时间</label>   ${arapAuditOrder.create_stamp!''}                                        
+                                    </div>                             
+                                    <div class="form-group">
+                                        <label>确认人</label>                                       
+                                    </div>                             
+                                    <div class="form-group">
+                                        <label>确认时间</label>                                      
+                                    </div> 
+                                    <div class="form-group">
+                                        <label>备注</label>
+                                        <textarea class="form-control" rows="7" name="remark">${arapAuditOrder.remark!''}</textarea>
+                                    </div>                             
                                     </div>
-                                    
-                                        
-                                    </form>                                        
-                                       
-                                    <h2>时间段</h2>
-                                    <form role="form">
-                                        <div class="form-group">
-                                            <input type="text" class="form-control input-inline input-large" id="inputSuccess" value="${beginTime!''}${arapAuditOrder.begin_time!''}"> - <input type="text" class="form-control input-large input-inline" id="inputSuccess" value="${endTime!''}${arapAuditOrder.end_time!''}">
-                                        </div>
-                                        
+                                    <!-- /.col-lg-6 (nested) -->
+                                    <div class="col-lg-6">
+                                    	<h3>应付信息</h3>
+	                                    <div class="form-group">
+	                                        <label>供应商</label>
+	                                        <label class="radio-inline" id="company">${customer.company_name!''}</label>
+	                                    </div>
+	                                    <div class="form-group">
+	                                        <label>应付总金额</label>
+	                                        <label class="radio-inline" id="company">${customer.address!''}</label>
+	                                    </div>
+	                                    <div class="form-group">
+	                                        <label>月份</label>
+	                                        <label class="radio-inline" id="company">${customer.contact_person!''}</label>
+	                                    </div>
                                     </form>
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
@@ -143,7 +137,7 @@
 	                                                        <td>是</td>
 	                                                        <td>定损金额  1000<br/>
 	                                                        	理赔金额: 1200<br/>
-	                                                        	赔付给客户金额 800<br/>
+	                                                        	赔付给供应商金额 800<br/>
 	                                                        	差异说明: 是发送范德萨</td>
 	                                                       
 	                                                        <td>
@@ -221,7 +215,7 @@
                                     <!-- /.panel-body -->
                                 </div>
                                 <div class="tab-pane fade" id="arap">
-                                    <h2>应收</h2>
+                                    <h2>应付</h2>
                                     <div class="panel-body">
                                         <div class="table-responsive">
                                             <table class="table table-striped table-bordered table-hover">
@@ -285,8 +279,8 @@
                                 <div class=".tooltip-demo">
                                     <hr/>
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
-                                    <button id="saveChargeCheckOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                  
-                                    <button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">审核</button>
+                                    <button id="saveCostCheckOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                  
+                                    <button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">确认</button>
                                     
                                 </div>
                                 <p>保存：新建时只能保存（其他按钮都灰掉不能点）, 保存后单据状态变为“新建”</p>
@@ -312,21 +306,21 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('#menu_charge').addClass('active').find('ul').addClass('in');
+		$('#menu_cost').addClass('active').find('ul').addClass('in');
         
 		//点击保存的事件，保存运输单信息
 		//transferOrderForm 不需要提交	
-	 	$("#saveChargeCheckOrderBtn").click(function(e){
+	 	$("#saveCostCheckOrderBtn").click(function(e){
 			//阻止a 的默认响应行为，不需要跳转
 			e.preventDefault();
 			//提交前，校验数据
-	        if(!$("#chargeCheckOrderForm").valid()){
+	        if(!$("#costCheckOrderForm").valid()){
 		       	return;
 	        }
 			//异步向后台提交数据
-			$.post('/yh/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
+			$.post('/yh/costCheckOrder/save', $("#costCheckOrderForm").serialize(), function(data){
 				if(data.ID>0){
-					$("#chargeCheckOrderId").val(data.ID);
+					$("#costCheckOrderId").val(data.ID);
 				  	$("#style").show();
 				  	$("#departureConfirmationBtn").attr("disabled", false);
 				}else{
@@ -335,8 +329,8 @@
 			},'json');
 		});
 		
-	    if($("#chargeCheckOrderStatus").text() == 'new'){
-	    	$("#chargeCheckOrderStatus").text('新建');
+	    if($("#costCheckOrderStatus").text() == 'new'){
+	    	$("#costCheckOrderStatus").text('新建');
 		}
 
     //货品明细的table 编辑

@@ -10,12 +10,12 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeCheckOrder/list",
+        "sAjaxSource": "/yh/costCheckOrder/list",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/yh/costCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
@@ -35,7 +35,7 @@ $(document).ready(function() {
             },
             {"mDataProp":null},
             {"mDataProp":null},
-            {"mDataProp":"CNAME"},
+            {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
@@ -46,7 +46,7 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":"REMARK"},
-            {"mDataProp":"CREATOR_NAME"},        	
+            {"mDataProp":null},        	
             {"mDataProp":"CREATE_STAMP"},
             { 
                 "mDataProp": null, 
@@ -94,7 +94,7 @@ $(document).ready(function() {
            var companyId = $(this).attr('partyId');
            $('#customerId').val(companyId);
            //过滤回单列表
-           //chargeCheckTable.fnFilter(companyId, 2);
+           //costCheckTable.fnFilter(companyId, 2);
            
            
            
@@ -106,7 +106,7 @@ $(document).ready(function() {
            	 /*
                 * 
                 * 
-                * datatable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/edit";
+                * datatable.fnSettings().sAjaxSource = "/yh/costCheckOrder/edit";
               	* datatable.fnDraw(); 
                 * */
            }
@@ -211,7 +211,7 @@ $(document).ready(function() {
                /*
                 * 
                 * 
-                * datatable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/edit";
+                * datatable.fnSettings().sAjaxSource = "/yh/costCheckOrder/edit";
               	* datatable.fnDraw(); 
                 * */ 
            });

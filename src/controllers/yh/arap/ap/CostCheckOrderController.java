@@ -6,11 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.ArapChargeItem;
-import models.ArapChargeOrder;
-import models.Party;
+import models.ArapCostItem;
+import models.ArapCostOrder;
 import models.UserLogin;
-import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -42,10 +40,12 @@ public class CostCheckOrderController extends Controller {
 
     public void create() {
         String ids = getPara("ids");
+        String orderNos = getPara("orderNos");
         String[] idArray = ids.split(",");
         logger.debug(String.valueOf(idArray.length));
 
-        setAttr("returnOrderIds", ids);	 
+        setAttr("orderIds", ids);	 
+        setAttr("orderNos", orderNos);	 
         String beginTime = getPara("beginTime");
         if(beginTime != null && !"".equals(beginTime)){
         	setAttr("beginTime", beginTime);
@@ -54,7 +54,7 @@ public class CostCheckOrderController extends Controller {
         if(endTime != null && !"".equals(endTime)){
         	setAttr("endTime", endTime);	
         }
-        String customerId = getPara("customerId");
+        /*String customerId = getPara("customerId");
         if(!"".equals(customerId) && customerId != null){
 	        Party party = Party.dao.findById(customerId);
 	        setAttr("party", party);	        
@@ -62,7 +62,7 @@ public class CostCheckOrderController extends Controller {
 	        setAttr("customer", contact);
 	        setAttr("type", "CUSTOMER");
 	    	setAttr("classify", "");
-        }
+        }*/
         
         String order_no = null;
         setAttr("saveOK", false);
@@ -70,10 +70,10 @@ public class CostCheckOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
 
-        ArapChargeOrder order = ArapChargeOrder.dao.findFirst("select * from arap_audit_order order by order_no desc limit 0,1");
+        ArapCostOrder order = ArapCostOrder.dao.findFirst("select * from arap_cost_order order by order_no desc limit 0,1");
         if (order != null) {
             String num = order.get("order_no");
-            String str = num.substring(2, num.length());
+            String str = num.substring(4, num.length());
             Long oldTime = Long.parseLong(str);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String format = sdf.format(new Date());
@@ -84,12 +84,12 @@ public class CostCheckOrderController extends Controller {
             } else {
                 order_no = String.valueOf(newTime);
             }
-            setAttr("order_no", "DZ" + order_no);
+            setAttr("order_no", "YFDZ" + order_no);
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String format = sdf.format(new Date());
             order_no = format + "00001";
-            setAttr("order_no", "DZ" + order_no);
+            setAttr("order_no", "YFDZ" + order_no);
         }
 
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
@@ -160,21 +160,11 @@ public class CostCheckOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from arap_audit_order";
+        String sqlTotal = "select count(1) total from arap_cost_order";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        // 左连接party, contact取到company_name
-        // 左连接transfer_order取到运输单号
-        // 左连接delivery_order取到配送单号
-        String sql = "select aao.*,c.contact_person cname,ror.order_no return_order_no,tor.order_no transfer_order_no,dor.order_no delivery_order_no,ul.user_name creator_name,aai.remark remark from arap_audit_order aao "
-						+" left join party p on p.id = aao.payee_id "
-						+" left join contact c on c.id = p.contact_id "
-						+" left join arap_audit_item aai on aai.audit_order_id= aao.id "
-						+" left join return_order ror on ror.id = aai.ref_order_id "
-						+" left join transfer_order tor on tor.id = ror.transfer_order_id "
-						+" left join delivery_order dor on dor.id = ror.delivery_order_id "
-				        +" left join user_login ul on ul.id = aao.create_by";
+        String sql = "select * from arap_cost_order";
 
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
@@ -190,35 +180,10 @@ public class CostCheckOrderController extends Controller {
     }
     
     public void save(){
-    	ArapChargeOrder arapAuditOrder = null;
-    	String CostCheckOrderId = getPara("CostCheckOrderId");
-    	if("".equals(CostCheckOrderId) || CostCheckOrderId == null){
-	    	arapAuditOrder = new ArapChargeOrder();
-	    	arapAuditOrder.set("order_no", getPara("order_no"));
-	    	//arapAuditOrder.set("order_type", );
-	    	arapAuditOrder.set("status", "new");
-	    	arapAuditOrder.set("payee_id", getPara("customer_id"));
-	    	arapAuditOrder.set("create_by", getPara("create_by"));
-	    	arapAuditOrder.set("create_stamp", new Date());
-	    	arapAuditOrder.set("begin_time", getPara("beginTime"));
-	    	arapAuditOrder.set("end_time", getPara("endTime"));
-	    	arapAuditOrder.set("remark", getPara("remark"));
-	    	arapAuditOrder.save();
-	    	
-	    	String returnOrderIds = getPara("returnOrderIds");
-	    	String[] returnOrderIdsArr = returnOrderIds.split(",");
-	    	for(int i=0;i<returnOrderIdsArr.length;i++){
-		    	ArapChargeItem arapAuditItem = new ArapChargeItem();
-		    	//arapAuditItem.set("ref_order_type", );
-		    	arapAuditItem.set("ref_order_id", returnOrderIdsArr[i]);
-		    	arapAuditItem.set("audit_order_id", arapAuditOrder.get("id"));
-		    	//arapAuditItem.set("item_status", "");
-		    	arapAuditItem.set("create_by", getPara("create_by"));
-		    	arapAuditItem.set("create_stamp", new Date());
-		    	arapAuditItem.save();
-	    	}
-    	}else{
-    		arapAuditOrder = ArapChargeOrder.dao.findById(CostCheckOrderId);
+    	ArapCostOrder arapAuditOrder = null;
+    	String costCheckOrderId = getPara("costCheckOrderId");
+    	if(!"".equals(costCheckOrderId) && costCheckOrderId != null){
+    		arapAuditOrder = ArapCostOrder.dao.findById(costCheckOrderId);
 	    	arapAuditOrder.set("order_no", getPara("order_no"));
 	    	//arapAuditOrder.set("order_type", );
 	    	arapAuditOrder.set("status", "new");
@@ -228,27 +193,55 @@ public class CostCheckOrderController extends Controller {
 	    	arapAuditOrder.set("remark", getPara("remark"));
 	    	arapAuditOrder.update();
 	    	
-	    	List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find("select * from arap_audit_item where audit_order_id = ?", arapAuditOrder.get("id"));
+	    	/*List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find("select * from arap_audit_item where audit_order_id = ?", arapAuditOrder.get("id"));
 	    	for(ArapChargeItem arapAuditItem : arapAuditItems){
 		    	//arapAuditItem.set("ref_order_type", );
 		    	//arapAuditItem.set("item_status", "");
 		    	arapAuditItem.set("create_by", getPara("create_by"));
 		    	arapAuditItem.set("create_stamp", new Date());
 		    	arapAuditItem.update();
+	    	}*/
+    	}else{
+	    	arapAuditOrder = new ArapCostOrder();
+	    	arapAuditOrder.set("order_no", getPara("order_no"));
+	    	//arapAuditOrder.set("order_type", );
+	    	arapAuditOrder.set("status", "new");
+	    	//arapAuditOrder.set("payee_id", getPara("customer_id"));
+	    	arapAuditOrder.set("create_by", getPara("create_by"));
+	    	arapAuditOrder.set("create_stamp", new Date());
+	    	//arapAuditOrder.set("begin_time", getPara("beginTime"));
+	    	//arapAuditOrder.set("end_time", getPara("endTime"));
+	    	arapAuditOrder.set("remark", getPara("remark"));
+	    	arapAuditOrder.save();
+	    	
+	    	String orderIds = getPara("orderIds");
+	    	String orderNos = getPara("orderNos");
+	    	String[] orderIdsArr = orderIds.split(",");
+	    	String[] orderNosArr = orderNos.split(",");
+	    	for(int i=0;i<orderIdsArr.length;i++){
+		    	ArapCostItem arapAuditItem = new ArapCostItem();
+		    	//arapAuditItem.set("ref_order_type", );
+		    	arapAuditItem.set("ref_order_id", orderIdsArr[i]);
+		    	arapAuditItem.set("ref_order_no", orderNosArr[i]);
+		    	arapAuditItem.set("cost_order_id", arapAuditOrder.get("id"));
+		    	//arapAuditItem.set("item_status", "");
+		    	arapAuditItem.set("create_by", getPara("create_by"));
+		    	arapAuditItem.set("create_stamp", new Date());
+		    	arapAuditItem.save();
 	    	}
     	}
         renderJson(arapAuditOrder);;
     }
     
     public void edit(){
-    	ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(getPara("id"));
-    	String customerId = arapAuditOrder.get("payee_id");
+    	ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findById(getPara("id"));
+    	/*String customerId = arapAuditOrder.get("payee_id");
     	if(!"".equals(customerId) && customerId != null){
 	    	Party party = Party.dao.findById(customerId);
 	        setAttr("party", party);	        
 	        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
 	        setAttr("customer", contact);
-    	}    	
+    	} */   	
     	UserLogin userLogin = UserLogin.dao.findById(arapAuditOrder.get("create_by"));
     	setAttr("userLogin", userLogin);
     	setAttr("arapAuditOrder", arapAuditOrder);
