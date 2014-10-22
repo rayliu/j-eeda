@@ -7,7 +7,7 @@ $(document).ready(function() {
     var detailTable = $('#eeda-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
@@ -16,11 +16,15 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/yh/departOrder/onTripList",
         "aoColumns": [   
+            {"mDataProp":"OFFICE_NAME"},        
             {"mDataProp":null,
             	"fnRender": function(obj) {
             		 return "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
             	}
             },
+            {"mDataProp":"TRANSFER_ORDER_NO"},
+            {"mDataProp":"CNAME"}, 
+            {"mDataProp":null},
             {"mDataProp":null,
                 "fnRender": function(obj) {
                 	if(obj.aData.LOCATION!=null && obj.aData.LOCATION!=''){
@@ -33,12 +37,25 @@ $(document).ready(function() {
                 	}                	
                 }
             },
-            {"mDataProp":"CONTACT_PERSON"},
+            {"mDataProp":null},
+            {"mDataProp":"SPNAME"},
+            {"mDataProp":"DRIVER"},
             {"mDataProp":"PHONE"},
-            {"mDataProp":"CAR_NO"},
-            {"mDataProp":"CARTYPE"},     
-            {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"TRANSFER_ORDER_NO"},
+            {"mDataProp":"START_TIME"},
+            {"mDataProp":"ROUTE_FROM"},
+            {"mDataProp":"ROUTE_TO"},
+            {"mDataProp":"ARRIVAL_MODE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ARRIVAL_MODE == "delivery"){
+            			return "货品直送";
+            		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
+            			return "入中转仓";
+            		}else{
+            			return "";
+            		}}},
+            {"mDataProp":"ARRIVAL_TIME"},
+            {"mDataProp":"PLAN_TIME"},
+            {"mDataProp":"REMARK"},
             { 
                 "mDataProp": null, 
                 "fnRender": function(obj) {  
@@ -100,14 +117,54 @@ $(document).ready(function() {
 	
  
 	//供应商暂时去除:#sp_filter ,
-    $('#endTime_filter ,#beginTime_filter ,#status_filter ,#orderNo_filter ,#departNo_filter').on( 'keyup click', function () {
+    $('#endTime_filter ,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup click', function () {
+    	
+    	var office =$("#officeSelect").val();
+    	var start =$("#start_filter").val();
+    	var end =$("#end_filter").val();
+    	var customer =$("#customer_filter").val();
+    	
     	var orderNo = $("#orderNo_filter").val();
     	var departNo_filter = $("#departNo_filter").val();
     	var status = $("#status_filter").val();
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/onTripList?orderNo="+orderNo+"&departNo="+departNo_filter+"&status="+status+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/onTripList?orderNo="+orderNo
+											+"&departNo="+departNo_filter
+											+"&status="+status
+											+"&sp="+sp
+											+"&beginTime="+beginTime
+											+"&endTime="+endTime
+											+"&office="+office
+											+"&start="+start
+											+"&end="+end
+											+"&customer="+customer;
+    	detailTable.fnDraw();
+    });
+    $('#status_filter,#officeSelect').on( 'change', function () {
+    	
+    	var office =$("#officeSelect").val();
+    	var start =$("#start_filter").val();
+    	var end =$("#end_filter").val();
+    	var customer =$("#customer_filter").val();
+    	
+    	var orderNo = $("#orderNo_filter").val();
+    	var departNo_filter = $("#departNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var sp = $("#sp_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/onTripList?orderNo="+orderNo
+											+"&departNo="+departNo_filter
+											+"&status="+status
+											+"&sp="+sp
+											+"&beginTime="+beginTime
+											+"&endTime="+endTime
+											+"&office="+office
+											+"&start="+start
+											+"&end="+end
+											+"&customer="+customer;
     	detailTable.fnDraw();
     });
 	
@@ -170,6 +227,111 @@ $(document).ready(function() {
 		$('#sp_filter').val(message);
         $('#cpnameList').hide();
         
+        var office =$("#officeSelect").val();
+    	var start =$("#start_filter").val();
+    	var end =$("#end_filter").val();
+    	var customer =$("#customer_filter").val();
+        
+        var orderNo = $("#orderNo_filter").val();
+    	var departNo_filter = $("#departNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var sp = $("#sp_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/onTripList?orderNo="+orderNo
+    										+"&departNo="+departNo_filter
+    										+"&status="+status
+    										+"&sp="+sp
+    										+"&beginTime="+beginTime
+    										+"&endTime="+endTime
+    										+"&office="+office
+    										+"&start="+start
+    										+"&end="+end
+    										+"&customer="+customer;
+    	detailTable.fnDraw();
+        
     });
-    
+	 //获取客户列表，自动填充
+    $('#customer_filter').on('keyup click', function(){
+    	
+        var inputStr = $('#customer_filter').val();
+        
+        $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+            console.log(data);
+            var companyList =$("#companyList");
+            companyList.empty();
+            for(var i = 0; i < data.length; i++)
+            {
+                companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+            }
+            if(data.length>0)
+                companyList.show();
+            
+        },'json');
+
+    });
+    $('#companyList').on('click', '.fromLocationItem', function(e){        
+        $('#customer_filter').val($(this).text());
+        $("#companyList").hide();
+        var companyId = $(this).attr('partyId');
+        $('#customerId').val(companyId);
+        
+        var office =$("#officeSelect").val();
+    	var start =$("#start_filter").val();
+    	var end =$("#end_filter").val();
+    	var customer =$("#customer_filter").val();
+    	
+        
+        var orderNo = $("#orderNo_filter").val();
+    	var departNo_filter = $("#departNo_filter").val();
+    	var status = $("#status_filter").val();
+    	var sp = $("#sp_filter").val();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/onTripList?orderNo="+orderNo
+											+"&departNo="+departNo_filter
+											+"&status="+status
+											+"&sp="+sp
+											+"&beginTime="+beginTime
+											+"&endTime="+endTime
+											+"&office="+office
+											+"&start="+start
+											+"&end="+end
+											+"&customer="+customer;
+    	detailTable.fnDraw();
+    });
+    // 没选中客户，焦点离开，隐藏列表
+    $('#customer_filter').on('blur', function(){
+        $('#companyList').hide();
+    });
+
+    //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+    $('#customer_filter').on('blur', function(){
+        $('#companyList').hide();
+    });
+
+    $('#companyList').on('mousedown', function(){
+        return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+    });
+  //获取所有的网点
+
+	$.post('/yh/transferOrder/searchAllOffice',function(data){
+	 if(data.length > 0){
+		 var officeSelect = $("#officeSelect");
+		 officeSelect.empty();
+		 var hideOfficeId = $("#hideOfficeId").val();
+		 for(var i=0; i<data.length; i++){
+			 if(i == 0){
+				 officeSelect.append("<option ></option>");
+			 }else{
+				 if(data[i].ID == hideOfficeId){
+					 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+				 }else{
+					 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");					 
+				 }
+			 }
+		 }
+		
+	 }
+ },'json');
 } );

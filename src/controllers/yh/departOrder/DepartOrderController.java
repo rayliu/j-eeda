@@ -241,21 +241,65 @@ public class DepartOrderController extends Controller {
     	String pageIndex = getPara("sEcho");
     	String sql = "";
     	String sqlTotal = "";
+    	
+    	String office =getPara("office");
+    	String start =getPara("start");
+    	String end =getPara("end");
+    	String customer =getPara("customer");
+    	
     	if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
     		sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
     	}
-    	if (orderNo == null && departNo == null && status == null && sp == null && beginTime == null && endTime == null) {
+    	if (orderNo == null && departNo == null && status == null 
+    			&& sp == null && beginTime == null && endTime == null
+    			&& office == null && start == null && end == null
+    			&& customer == null) {
     		sqlTotal = "select count(1) total from depart_order deo "
-    				+ "left join carinfo  car on deo.driver_id=car.id" + " where combine_type = '"
+    				+ " left join carinfo c on deo.carinfo_id = c.id "
+    				+ " left join depart_transfer dt on dt.depart_id = deo.id "
+    				+ " left join transfer_order t on t.id = dt.order_id "
+    				+ " left join office o on o.id = t.office_id "
+    				+ " left join party p1 on t.customer_id = p1.id "
+					+ " left join party p2 on deo.sp_id = p2.id "
+					+ " left join contact c1 on p1.contact_id = c1.id "
+					+ " left join contact c2 on p2.contact_id = c2.id "
+					+ " left join location l1 on deo.route_from = l1.code "
+					+ " left join location l2 on deo.route_to =l2.code "
+    				+ " where combine_type = '"
     				+ DepartOrder.COMBINE_TYPE_DEPART + "' and deo.status in('已发车','在途')";
     		
-    		sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length,(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode,(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no"
-    				+ " ,(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location "
+    		sql = "select deo.id,"
+    				+ "deo.depart_no ,"
+    				+ "deo.create_stamp ,"
+    				+ "deo.status as depart_status,"
+    				+ "c.driver,"
+    				+ "c.phone,"
+    				+ "c1.abbr cname,"
+    				+ "c2.abbr spname,"
+    				+ "o.office_name office_name, "
+    				+ "l1.name route_from, "
+    				+ "l2.name route_to, "
+    				+ "t.arrival_mode arrival_mode, "
+    				+ "deo.arrival_time plan_time, "
+    				+ "t.arrival_time arrival_time, "
+    				+ "deo.remark, "
+    				+ "(select tom.create_stamp from transfer_order_milestone tom where tom.status='已发车' and tom.depart_id = deo.id) start_time, "
+    				+ "(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode, "
+    				+ "(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no, "		
+    				+ "(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location "
     				+ " from depart_order deo "
     				+ " left join carinfo c on deo.carinfo_id = c.id "
-    				+ " left join party p on deo.driver_id = p.id "
-    				+ " left join contact ct on p.contact_id = ct.id  where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
-    				+ DepartOrder.COMBINE_TYPE_DEPART + "' and deo.status in('已发车','在途') order by deo.create_stamp desc";
+    				+ " left join depart_transfer dt on dt.depart_id = deo.id "
+    				+ " left join transfer_order t on t.id = dt.order_id "
+    				+ " left join office o on o.id = t.office_id "
+    				+ " left join party p1 on t.customer_id = p1.id "
+					+ " left join party p2 on deo.sp_id = p2.id "
+					+ " left join contact c1 on p1.contact_id = c1.id "
+					+ " left join contact c2 on p2.contact_id = c2.id "
+					+ " left join location l1 on deo.route_from = l1.code "
+					+ " left join location l2 on deo.route_to =l2.code "
+    				+ " where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
+    				+ DepartOrder.COMBINE_TYPE_DEPART + "' and deo.status in('已发车','在途') group by deo.id order by deo.create_stamp desc";
     	} else {
     		if (beginTime == null || "".equals(beginTime)) {
     			beginTime = "1-1-1";
@@ -263,34 +307,70 @@ public class DepartOrderController extends Controller {
     		if (endTime == null || "".equals(endTime)) {
     			endTime = "9999-12-31";
     		}
-    		sqlTotal = "select count(distinct deo.id) total from depart_order deo "
-    				+ " left join party p on deo.driver_id = p.id and p.party_type = 'DRIVER' "
-    				+ "left join carinfo  car on deo.driver_id=car.id"
-    				+ " left join contact c on p.contact_id = c.id "
-    				+ " left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )"
-    				+ "  where deo.combine_type = 'DEPART' and deo.status in('已发车','在途') and " + "ifnull(deo.status,'') like '%" + status + "%' and "
-    				+ "ifnull(deo.depart_no,'') like '%" + departNo + "%' and " + "ifnull(c.abbr,'')  like '%"
-    				+ sp + "%' and " + "ifnull(tr.order_no,'') like '%" + orderNo + "%'"
-    				+ " and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime +"'";
-    		
-    		sql = "select deo.id,deo.depart_no ,deo.create_stamp ,deo.status as depart_status,ct.contact_person,ct.phone,c.car_no,c.cartype,c.length,(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode,group_concat(tr.order_no separator ' ') as transfer_order_no"
-    				+ " ,(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location "
+    		sqlTotal = "select count(distinct deo.id) total"
     				+ " from depart_order deo "
     				+ " left join carinfo c on deo.carinfo_id = c.id "
-    				+ " left join party p on deo.driver_id = p.id "
-    				+ " left join contact ct on p.contact_id = ct.id "
+    				+ " left join depart_transfer dt on dt.depart_id = deo.id "
+    				+ " left join transfer_order t on t.id = dt.order_id "
+    				+ " left join office o on o.id = t.office_id "
+    				+ " left join party p1 on t.customer_id = p1.id "
+					+ " left join party p2 on deo.sp_id = p2.id "
+					+ " left join contact c1 on p1.contact_id = c1.id "
+					+ " left join contact c2 on p2.contact_id = c2.id "
+					+ " left join location l1 on deo.route_from = l1.code "
+					+ " left join location l2 on deo.route_to =l2.code "
     				+ " left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )"
-    				+ "  where deo.combine_type = 'DEPART' and deo.status in('已发车','在途') and ifnull(deo.status,'') like '%"
-    				+ status
-    				+ "%' and ifnull(deo.depart_no,'') like '%"
-    				+ departNo
-    				+ "%' and ifnull(tr.order_no,'') like '%"
-    				+ orderNo
-    				+ "%'"
-    				+ " and deo.create_stamp between '"
-    				+ beginTime
-    				+ "' and '"
-    				+ endTime
+    				+ "  where deo.combine_type = 'DEPART' and deo.status in('已发车','在途') and "
+    				+ "ifnull(deo.status,'') like '%" + status + "%' and "
+    				+ "ifnull(deo.depart_no,'') like '%" + departNo 
+    				+ "%' and ifnull(c2.abbr,'')  like '%"+ sp 
+    				+ "%' and ifnull(tr.order_no,'') like '%" + orderNo 
+    				+ "%' and ifnull(o.office_name,'') like '%" + office 
+    				+ "%' and ifnull(l1.name,'') like '%" + start 
+    				+ "%' and ifnull(l2.name,'') like '%" + end 
+    				+ "%' and ifnull(c1.abbr,'') like '%" + customer  
+    				+ "%' and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime +"'";
+    		
+    		sql = "select deo.id,"
+    				+ "deo.depart_no ,"
+    				+ "deo.create_stamp ,"
+    				+ "deo.status as depart_status,"
+    				+ "c.driver,"
+    				+ "c.phone,"
+    				+ "c1.abbr cname,"
+    				+ "c2.abbr spname,"
+    				+ "o.office_name office_name, "
+    				+ "l1.name route_from, "
+    				+ "l2.name route_to, "
+    				+ "t.arrival_mode arrival_mode, "
+    				+ "deo.arrival_time plan_time, "
+    				+ "t.arrival_time arrival_time, "
+    				+ "deo.remark, "
+    				+ "(select tom.create_stamp from transfer_order_milestone tom where tom.status='已发车' and tom.depart_id = deo.id) start_time, "
+    				+ "(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode, "
+    				+ "(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no, "		
+    				+ "(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location "
+    				+ " from depart_order deo "
+    				+ " left join carinfo c on deo.carinfo_id = c.id "
+    				+ " left join depart_transfer dt on dt.depart_id = deo.id "
+    				+ " left join transfer_order t on t.id = dt.order_id "
+    				+ " left join office o on o.id = t.office_id "
+    				+ " left join party p1 on t.customer_id = p1.id "
+					+ " left join party p2 on deo.sp_id = p2.id "
+					+ " left join contact c1 on p1.contact_id = c1.id "
+					+ " left join contact c2 on p2.contact_id = c2.id "
+					+ " left join location l1 on deo.route_from = l1.code "
+					+ " left join location l2 on deo.route_to =l2.code "
+    				+ " left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )"
+    				+ "  where deo.combine_type = 'DEPART' and deo.status in('已发车','在途') "
+    				+ " and ifnull(deo.status,'') like '%"+ status
+    				+ "%' and ifnull(deo.depart_no,'') like '%"+ departNo
+    				+ "%' and ifnull(tr.order_no,'') like '%"+ orderNo
+    				+ "%' and ifnull(o.office_name,'') like '%" + office 
+    				+ "%' and ifnull(l1.name,'') like '%" + start 
+    				+ "%' and ifnull(l2.name,'') like '%" + end 
+    				+ "%' and ifnull(c1.abbr,'') like '%" + customer 
+    				+ "%' and deo.create_stamp between '"+ beginTime+ "' and '"+ endTime
     				+ "'group by deo.id order by deo.create_stamp desc " + sLimit;
     	}
     	Record rec = Db.findFirst(sqlTotal);
