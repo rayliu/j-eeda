@@ -248,4 +248,21 @@ public class CostCheckOrderController extends Controller {
     	if(LoginUserController.isAuthenticated(this))
     		render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
     }
+
+	// 审核
+	public void auditCostCheckOrder(){
+		String costCheckOrderId = getPara("costCheckOrderId");
+		if(costCheckOrderId != null && !"".equals(costCheckOrderId)){
+			ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findById(costCheckOrderId);
+			arapAuditOrder.set("status", "已确认");
+	        String name = (String) currentUser.getPrincipal();
+			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+	        arapAuditOrder.set("confirm_by", users.get(0).get("id"));
+	        arapAuditOrder.set("confirm_stamp", new Date());
+			arapAuditOrder.update();
+			
+			//updateReturnOrderStatus(arapAuditOrder, "对账已确认");
+		}
+        renderJson("{\"success\":true}");
+	}
 }
