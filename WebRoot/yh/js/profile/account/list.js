@@ -9,8 +9,22 @@ $(document).ready(function() {
 	        },
 	        "sAjaxSource": "/yh/account/listAccount",
 			"aoColumns": [
-				{ "mDataProp": "NAME","sWidth": "12%", },
-	            { "mDataProp": "TYPE","sWidth": "9%", },
+				{ "mDataProp": "BANK_NAME","sWidth": "12%" },
+	            { "mDataProp": "TYPE","sWidth": "15%",
+	            	"fnRender": function(obj) {
+	            		var displayName='';
+	            	    if(obj.aData.TYPE ==='REC')
+	            	    	displayName='收款';
+	            	    if(obj.aData.TYPE ==='PAY')
+	            	    	displayName='付款';
+	            	    if(obj.aData.TYPE ==='ALL')
+	            	    	displayName='收款付款';
+	                    return displayName;
+	                }
+	        	},
+	            { "mDataProp": "ACCOUNT_NO","sWidth": "9%" },
+	            { "mDataProp": "BANK_PERSON","sWidth": "9%" },
+	            { "mDataProp": "CURRENCY","sWidth": "9%" },
 	           	{ "mDataProp": "REMARK" },
 	            { 
 	                "mDataProp": null, 

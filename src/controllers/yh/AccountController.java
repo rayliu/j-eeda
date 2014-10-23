@@ -48,8 +48,12 @@ public class AccountController extends Controller {
             List<Record> list = Db.find("select * from fin_account");
         }
         Record account = new Record();
-        account.set("name", getPara("name"));
+        account.set("bank_name", getPara("bank_name"));
         account.set("type", getPara("type"));
+        account.set("account_no", getPara("account_no"));
+        account.set("bank_person", getPara("bank_person"));
+        account.set("currency", getPara("currency"));
+        
         account.set("remark", getPara("remark"));
         if (id != "") {
             logger.debug("update....");
@@ -88,7 +92,7 @@ public class AccountController extends Controller {
         // 获取总条数
         String totalWhere = "";
         String sql = "select count(1) total from fin_account";
-        System.out.println(sql);
+        
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 

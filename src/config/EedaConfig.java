@@ -268,7 +268,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("billing_order_item", BillingOrderItem.class);
         arp.addMapping("delivery_order_milestone", DeliveryOrderMilestone.class);
         arp.addMapping("location", Location.class);
-        arp.addMapping("fin_account_item", AccountItem.class);
+        //arp.addMapping("fin_account_item", AccountItem.class);
         arp.addMapping("delivery_order_item", DeliveryOrderItem.class);
         arp.addMapping("depart_order", DepartOrder.class);
         arp.addMapping("depart_transfer", DepartTransferOrder.class);

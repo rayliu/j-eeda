@@ -71,7 +71,7 @@ $(document).ready(function() {
 	$('body').append(alerMsg);
 	
 	$('#message_trigger_err').on('click', function(e) {
-	e.preventDefault();
+		e.preventDefault();
 	});
 	//添加账户
 	$('#save').click(function(){
