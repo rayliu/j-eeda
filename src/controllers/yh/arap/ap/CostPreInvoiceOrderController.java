@@ -85,8 +85,8 @@ public class CostPreInvoiceOrderController extends Controller {
 		String[] idArray = ids.split(",");
 		logger.debug(String.valueOf(idArray.length));
 
-		setAttr("chargeCheckOrderIds", ids);
-		String beginTime = getPara("beginTime");
+		setAttr("costCheckOrderIds", ids);
+		/*String beginTime = getPara("beginTime");
 		if (beginTime != null && !"".equals(beginTime)) {
 			setAttr("beginTime", beginTime);
 		}
@@ -103,7 +103,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			setAttr("customer", contact);
 			setAttr("type", "CUSTOMER");
 			setAttr("classify", "");
-		}
+		}*/
 
 		String order_no = null;
 		setAttr("saveOK", false);
@@ -128,12 +128,12 @@ public class CostPreInvoiceOrderController extends Controller {
 			} else {
 				order_no = String.valueOf(newTime);
 			}
-			setAttr("order_no", "YSSQ" + order_no);
+			setAttr("order_no", "YFSQ" + order_no);
 		} else {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			String format = sdf.format(new Date());
 			order_no = format + "00001";
-			setAttr("order_no", "YSSQ" + order_no);
+			setAttr("order_no", "YFSQ" + order_no);
 		}
 
 		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
@@ -141,7 +141,7 @@ public class CostPreInvoiceOrderController extends Controller {
 
 		setAttr("status", "new");
 		if (LoginUserController.isAuthenticated(this))
-			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
+			render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
 	}
 
 	public void save() {

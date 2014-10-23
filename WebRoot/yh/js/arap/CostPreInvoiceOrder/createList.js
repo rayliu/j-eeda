@@ -83,15 +83,12 @@ $(document).ready(function() {
     });
     
     var ids = [];
-    var orderNos = [];
     // 未选中列表
 	$("#uncheckedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
 			$(this).parent().parent().appendTo($("#checkedCostCheckList"));
 			ids.push($(this).attr('id'));
-			orderNos.push($(this).attr('order_no'));
-			$("#checkedOrderId").val(ids);
-			$("#checkedOrderNo").val(orderNos);
+			$("#costCheckedOrderIds").val(ids);
 		}			
 	});
 	
@@ -101,11 +98,7 @@ $(document).ready(function() {
 			$(this).parent().parent().appendTo($("#uncheckedCostCheckList"));
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).attr('id'),ids),1);
-				$("#checkedOrderId").val(ids);
-			}
-			if(orderNos.length != 0){
-				orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
-				$("#checkedOrderNo").val(orderNos);
+				$("#costCheckedOrderIds").val(ids);
 			}
 		}			
 	});
