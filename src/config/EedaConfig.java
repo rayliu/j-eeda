@@ -294,12 +294,12 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_cost_item", ArapCostItem.class);
         // yh mapping
         //行车单
-        arp.addMapping("car_summary_order", CarSummaryOrder.class);
-        arp.addMapping("car_summary_detail", CarSummaryDetail.class);
-        arp.addMapping("car_summary_detail_route_fee", CarSummaryDetailRouteFee.class);
-        arp.addMapping("car_summary_detail_oil_fee", CarSummaryDetailOilFee.class);
-        arp.addMapping("car_summary_detail_salary", CarSummaryDatailSalary.class);
-        arp.addMapping("car_summary_detail_other_fee", CarSummaryDatailOtherFee.class);
+//        arp.addMapping("car_summary_order", CarSummaryOrder.class);
+//        arp.addMapping("car_summary_detail", CarSummaryDetail.class);
+//        arp.addMapping("car_summary_detail_route_fee", CarSummaryDetailRouteFee.class);
+//        arp.addMapping("car_summary_detail_oil_fee", CarSummaryDetailOilFee.class);
+//        arp.addMapping("car_summary_detail_salary", CarSummaryDatailSalary.class);
+//        arp.addMapping("car_summary_detail_other_fee", CarSummaryDatailOtherFee.class);
 
     }
 
