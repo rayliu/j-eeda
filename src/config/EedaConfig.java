@@ -17,6 +17,12 @@ import models.ArapCostInvoiceApplication;
 import models.ArapCostInvoiceItemInvoiceNo;
 import models.ArapCostItem;
 import models.ArapCostOrder;
+import models.CarSummaryDetail;
+import models.CarSummaryDetailOilFee;
+import models.CarSummaryDetailOtherFee;
+import models.CarSummaryDetailRouteFee;
+import models.CarSummaryDetailSalary;
+import models.CarSummaryOrder;
 import models.Category;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
@@ -296,12 +302,12 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_cost_application_invoice_no", ArapCostApplicationInvoiceNo.class);
         // yh mapping
         //行车单
-//        arp.addMapping("car_summary_order", CarSummaryOrder.class);
-//        arp.addMapping("car_summary_detail", CarSummaryDetail.class);
-//        arp.addMapping("car_summary_detail_route_fee", CarSummaryDetailRouteFee.class);
-//        arp.addMapping("car_summary_detail_oil_fee", CarSummaryDetailOilFee.class);
-//        arp.addMapping("car_summary_detail_salary", CarSummaryDatailSalary.class);
-//        arp.addMapping("car_summary_detail_other_fee", CarSummaryDatailOtherFee.class);
+        arp.addMapping("car_summary_order", CarSummaryOrder.class);
+        arp.addMapping("car_summary_detail", CarSummaryDetail.class);
+        arp.addMapping("car_summary_detail_route_fee", CarSummaryDetailRouteFee.class);
+        arp.addMapping("car_summary_detail_oil_fee", CarSummaryDetailOilFee.class);
+        arp.addMapping("car_summary_detail_salary", CarSummaryDetailSalary.class);
+        arp.addMapping("car_summary_detail_other_fee", CarSummaryDetailOtherFee.class);
 
     }
 
