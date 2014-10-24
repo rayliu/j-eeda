@@ -155,9 +155,9 @@ public class PickupOrderController extends Controller {
                     + " left join contact ct on p.contact_id = ct.id "
                     + " left join user_login u on u.id = dor.create_by "
                     + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
-                    + " left join transfer_order to on to.id = dtf.order_id "
-                    + " left join office o on o.id = to.office_id "
-                    + " left join transfer_order_item toi on toi.order_id = to.id "
+                    + " left join transfer_order t_o on t_o.id = dtf.order_id "
+                    + " left join office o on o.id = t_o.office_id "
+                    + " left join transfer_order_item toi on toi.order_id = t_o.id "
                     + " left join product pd on pd.id = toi.product_id "
                     + " where dor.status!='取消' and combine_type = '"
             			+ DepartOrder.COMBINE_TYPE_PICKUP + "'";
@@ -178,8 +178,8 @@ public class PickupOrderController extends Controller {
                     + " left join contact ct on p.contact_id = ct.id "
                     + " left join user_login u on u.id = dor.create_by "
                     + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
-                    + " left join transfer_order to on to.id = dtf.order_id "
-                    + " left join office o on o.id = to.office_id "
+                    + " left join transfer_order t_o on t_o.id = dtf.order_id "
+                    + " left join office o on o.id = t_o.office_id "
                     + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP + "' group by dor.id order by dor.create_stamp desc" + sLimit;
         } else {
@@ -196,8 +196,8 @@ public class PickupOrderController extends Controller {
                     + " left join contact ct on p.contact_id = ct.id "
                     + " left join user_login u on u.id = dor.create_by "
                     + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
-                    + " left join transfer_order to on to.id = dtf.order_id "
-                    + " left join office o on o.id = to.office_id "
+                    + " left join transfer_order t_o on t_o.id = dtf.order_id "
+                    + " left join office o on o.id = t_o.office_id "
                     + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP 
                     + "' and ifnull(depart_no,'') like '%"+ departNo
@@ -225,8 +225,8 @@ public class PickupOrderController extends Controller {
                     + " left join contact ct on p.contact_id = ct.id "
                     + " left join user_login u on u.id = dor.create_by "
                     + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
-                    + " left join transfer_order to on to.id = dtf.order_id "
-                    + " left join office o on o.id = to.office_id "
+                    + " left join transfer_order t_o on t_o.id = dtf.order_id "
+                    + " left join office o on o.id = t_o.office_id "
                     + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP
                     + "' and ifnull(depart_no,'') like '%"+ departNo
