@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Account;
 import models.ArapChargeInvoiceApplication;
 import models.ArapChargeInvoiceApplicationItem;
 import models.ArapChargeOrder;
@@ -158,6 +159,10 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
 			arapAuditInvoiceApplication.set("last_modified_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
+			arapAuditInvoiceApplication.set("payment_method", getPara("paymentMethod"));
+			if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
+				arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
+			}
 			arapAuditInvoiceApplication.update();
 		} else {
 			arapAuditInvoiceApplication = new ArapChargeInvoiceApplication();
@@ -167,6 +172,10 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
+			arapAuditInvoiceApplication.set("payment_method", getPara("paymentMethod"));
+			if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
+				arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
+			}
 			arapAuditInvoiceApplication.save();
 
 			String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
@@ -294,5 +303,10 @@ public class ChargePreInvoiceOrderController extends Controller {
 		orderMap.put("aaData", orders);
 
 		renderJson(orderMap);
+	}
+	
+	public void searchAllAccount(){
+		List<Account> accounts = Account.dao.find("select * from fin_account");
+		renderJson(accounts);
 	}
 }

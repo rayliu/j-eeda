@@ -139,4 +139,41 @@ $(document).ready(function() {
             {"mDataProp":"CREATE_STAMP"}                       
         ]      
     });
+    
+    $.post('/yh/chargePreInvoiceOrder/searchAllAccount',function(data){
+		 if(data.length > 0){
+			 var accountTypeSelect = $("#accountTypeSelect");
+			 accountTypeSelect.empty();
+			 var hideOfficeId = $("#hideOfficeId").val();
+			 for(var i=0; i<data.length+1; i++){
+				 /*if(i == 0){
+					 accountTypeSelect.append("<option ></option>");
+				 }else{*/
+					 if(data[i].ID == hideOfficeId){
+						 accountTypeSelect.append("<option value='"+data[i].ID+"' selected='selected'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");
+					 }else{
+						 accountTypeSelect.append("<option value='"+data[i].ID+"'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");					 
+					 }
+				 //}
+			}
+		}
+	},'json');
+
+    $("input[name='paymentMethod']").each(function(){
+		if($("#paymentMethodRadio").val() == $(this).val()){
+			$(this).attr('checked', true);
+			if($(this).val() == 'transfers'){	    		
+	    		$("#accountTypeDiv").show();    		
+	    	}
+		}
+	 }); 
+    
+    $("#paymentMethods").on('click', 'input', function(){
+    	if($(this).val() == 'cash'){
+    		$("#accountTypeDiv").hide();
+    	}else{
+    		$("#accountTypeDiv").show();    		
+    	}
+    }); 
+    
 } );

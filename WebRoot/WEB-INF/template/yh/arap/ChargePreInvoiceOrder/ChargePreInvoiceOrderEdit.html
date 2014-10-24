@@ -81,19 +81,19 @@
                                             <label>应收总金额</label>
                                             <label class="radio-inline" id=""></label>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" id="paymentMethods">
                                             <label class="label-margin">收款方式</label>
-                                            	<input id="operationTypeRadio" type="hidden" value="${transferOrder.operation_type!''}"/>
+                                            	<input id="paymentMethodRadio" type="hidden" value="${arapAuditInvoiceApplication.payment_method!''}"/>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="operationType" id="operationType1" value="own" checked="">现金
+                                                    <input type="radio" name="paymentMethod" id="paymentMethod1" value="cash" checked="">现金
                                                 </label>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="operationType" id="operationType2" value="out_source">转账
+                                                    <input type="radio" name="paymentMethod" id="paymentMethod2" value="transfers">转账
                                                 </label>
                                         </div> 
-                                        <div class="form-group">
+                                        <div class="form-group" style="display: none;" id="accountTypeDiv">
                                             <label>银行账户</label>
-                                            <label class="radio-inline" id=""></label>
+                                            <select id="accountTypeSelect" class="form-control" name="accountTypeSelect"></select> 
                                         </div>                                            
                                     </form>                                        
                                        
