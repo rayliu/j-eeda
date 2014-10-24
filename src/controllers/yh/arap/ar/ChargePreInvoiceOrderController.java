@@ -62,9 +62,9 @@ public class ChargePreInvoiceOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aaia.*,ul.user_name create_by,ul2.user_name charge_by,ul3.user_name approval_by from arap_charge_invoice_application_order aaia "
+        String sql = "select aaia.*,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_charge_invoice_application_order aaia "
 				+ " left join user_login ul on ul.id = aaia.create_by"
-				+ " left join user_login ul2 on ul2.id = aaia.charge_by"
+				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by order by aaia.create_stamp desc " + sLimit;
 
         logger.debug("sql:" + sql);
@@ -193,8 +193,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditOrder.set("status", "已审核");
             String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-			arapAuditOrder.set("charge_by", users.get(0).get("id"));
-			arapAuditOrder.set("charge_stamp", new Date());
+			arapAuditOrder.set("audit_by", users.get(0).get("id"));
+			arapAuditOrder.set("audit_stamp", new Date());
 			arapAuditOrder.update();
 		}
         renderJson("{\"success\":true}");

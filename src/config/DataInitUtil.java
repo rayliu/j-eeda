@@ -171,13 +171,15 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists arap_audit_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
             
             // 应付对账单
+            stmt.executeUpdate("create table if not exists arap_cost_invoice_application_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,audit_by bigint,audit_stamp timestamp,approver_by bigint,"
+            		+ " approval_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),payee_id bigint);");
             stmt.executeUpdate("create table if not exists arap_cost_order(id bigint auto_increment primary key,order_no varchar(255),order_type varchar(255),status varchar(255),amount double,payee_id varchar(255),create_by bigint,confirm_by bigint,begin_time timestamp,end_time timestamp,"
-            		+ " create_stamp timestamp,confirm_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
+            		+ " create_stamp timestamp,confirm_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),application_order_id bigint,foreign key(application_order_id) references arap_cost_invoice_application_order(id));");
             stmt.executeUpdate("create table if not exists arap_cost_item(id bigint auto_increment primary key,ref_order_no varchar(255),item_code varchar(255),item_status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
             		+ " remark varchar(5120),ref_order_id bigint,cost_order_id bigint,foreign key(cost_order_id) references arap_cost_order(id));");
             
             // 保险单费用表开票申请表
-            stmt.executeUpdate("create table if not exists arap_charge_invoice_application_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,charge_by bigint,charge_stamp timestamp,"
+            stmt.executeUpdate("create table if not exists arap_charge_invoice_application_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,audit_by bigint,audit_stamp timestamp,"
             		+ " approver_by bigint,approval_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),payee_id bigint);");
            
             // 开票申请从表

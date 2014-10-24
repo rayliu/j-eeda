@@ -1,17 +1,17 @@
 $(document).ready(function() {
-	$('#menu_charge').addClass('active').find('ul').addClass('in');
+	$('#menu_cost').addClass('active').find('ul').addClass('in');
 	
-	var savechargePreInvoiceOrder = function(e){
+	var saveCostPreInvoiceOrder = function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
-        if(!$("#chargePreInvoiceOrderForm").valid()){
+        if(!$("#costPreInvoiceOrderForm").valid()){
 	       	return;
         }
 		//异步向后台提交数据
-		$.post('/yh/chargePreInvoiceOrder/save', $("#chargePreInvoiceOrderForm").serialize(), function(data){
+		$.post('/yh/costPreInvoiceOrder/save', $("#costPreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
-				$("#chargePreInvoiceOrderId").val(data.ID);
+				$("#costPreInvoiceOrderId").val(data.ID);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -23,8 +23,8 @@ $(document).ready(function() {
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
-		var chargePreInvoiceOrderId = $("#chargePreInvoiceOrderId").val();
-		$.post('/yh/chargePreInvoiceOrder/auditChargePreInvoiceOrder', {chargePreInvoiceOrderId:chargePreInvoiceOrderId}, function(data){
+		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
+		$.post('/yh/costPreInvoiceOrder/auditCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
 		},'json');
 	});
 	
@@ -33,8 +33,8 @@ $(document).ready(function() {
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
-		var chargePreInvoiceOrderId = $("#chargePreInvoiceOrderId").val();
-		$.post('/yh/chargePreInvoiceOrder/approvalChargePreInvoiceOrder', {chargePreInvoiceOrderId:chargePreInvoiceOrderId}, function(data){
+		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
+		$.post('/yh/costPreInvoiceOrder/approvalCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
 		},'json');
 	});
 	
@@ -50,37 +50,37 @@ $(document).ready(function() {
 	});
 	
 	//设置一个变量值，用来保存当前的ID
-	var parentId = "chargePreInvoiceOrderbasic";
+	var parentId = "costPreInvoiceOrderbasic";
 	$("#transferOrderMilestoneList").click(function(e){
 		parentId = e.target.getAttribute("id");
 	});
-	$("#chargePreInvoiceOrderbasic").click(function(e){
+	$("#costPreInvoiceOrderbasic").click(function(e){
 		parentId = e.target.getAttribute("id");
 	});
 	/*--------------------------------------------------------------------*/
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
- 	$("#savechargePreInvoiceOrderBtn").click(function(e){
+ 	$("#saveCostPreInvoiceOrderBtn").click(function(e){
  		
- 		savechargePreInvoiceOrder(e);
+ 		saveCostPreInvoiceOrder(e);
 
  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	
-	$("#chargePreInvoiceOrderItem").click(function(e){
+	$("#costPreInvoiceOrderItem").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
-        if(!$("#chargePreInvoiceOrderForm").valid()){
+        if(!$("#costPreInvoiceOrderForm").valid()){
 	       	return;
         }
 		//异步向后台提交数据
-		$.post('/yh/chargePreInvoiceOrder/save', $("#chargePreInvoiceOrderForm").serialize(), function(data){
+		$.post('/yh/costPreInvoiceOrder/save', $("#costPreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
-				$("#chargePreInvoiceOrderId").val(data.ID);
+				$("#costPreInvoiceOrderId").val(data.ID);
 			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
-			  	if("chargePreInvoiceOrderbasic" == parentId){
+			  	if("costPreInvoiceOrderbasic" == parentId){
 			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			  	}
 			}else{
@@ -90,11 +90,11 @@ $(document).ready(function() {
 		parentId = e.target.getAttribute("id");
 	});
 	
-    if($("#chargePreInvoiceOrderStatus").text() == 'new'){
-    	$("#chargePreInvoiceOrderStatus").text('新建');
+    if($("#costPreInvoiceOrderStatus").text() == 'new'){
+    	$("#costPreInvoiceOrderStatus").text('新建');
 	}
 
-    var datatable=$('#chargeCheckList-table').dataTable({
+    /*var datatable=$('#costCheckList-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
@@ -102,7 +102,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeCheckOrder/list",
+        "sAjaxSource": "/yh/costCheckOrder/list",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO"},
@@ -138,5 +138,5 @@ $(document).ready(function() {
             {"mDataProp":"CREATOR_NAME"},        	
             {"mDataProp":"CREATE_STAMP"}                       
         ]      
-    });
+    });*/
 } );

@@ -44,8 +44,8 @@ $(document).ready(function() {
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATE_BY"},
             {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"CHARGE_BY"},
-            {"mDataProp":"CHARGE_STAMP"},
+            {"mDataProp":"AUDIT_BY"},
+            {"mDataProp":"AUDIT_STAMP"},
             {"mDataProp":"APPROVAL_BY"},
             {"mDataProp":"APPROVAL_STAMP"}                        
         ]      

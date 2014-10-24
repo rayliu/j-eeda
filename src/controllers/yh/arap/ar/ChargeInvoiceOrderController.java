@@ -339,12 +339,12 @@ public class ChargeInvoiceOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aaia.*,ul.user_name create_by,ul2.user_name charge_by,ul3.user_name approval_by,"
+        String sql = "select aaia.*,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by,"
 				+ " (select group_concat(acai.invoice_no) from arap_charge_invoice_application_order aaia"
 				+ " left join arap_charge_application_invoice_no acai on acai.application_order_id = aaia.id) invoice_no"
         		+ " from arap_charge_invoice_application_order aaia "
 				+ " left join user_login ul on ul.id = aaia.create_by"
-				+ " left join user_login ul2 on ul2.id = aaia.charge_by"
+				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by where aaia.status = '已审批' order by aaia.create_stamp desc " + sLimit;
 
         logger.debug("sql:" + sql);
