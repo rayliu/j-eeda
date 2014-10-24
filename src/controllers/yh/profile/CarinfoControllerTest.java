@@ -182,7 +182,7 @@ public class CarinfoControllerTest extends Controller {
 			}
 		}
 		
-		render("/yh/carManage/carSummaryEdit.html");
+		render("/yh/carmanage/carSummaryEdit.html");
 	}
 	
 	//保存行车单
