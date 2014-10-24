@@ -24,6 +24,8 @@
                                 </li>
                                 <li class=""><a href="#line" data-toggle="tab" id="carmanageLine">线路</a>
                                 </li>
+                                <li class=""><a href="#transferOrder" data-toggle="tab" id="transferOrderList">运输单</a>
+                                </li>
                                 <li class=""><a href="#item" data-toggle="tab" id="carmanageItemList">货品信息</a>
                                 </li>
                                 <li class=""><a href="#milestone" data-toggle="tab" id="carmanageMilestoneList">里程碑</a>
@@ -47,13 +49,13 @@
 			                                <!-- 基本信息 -->
 			                                <div class="row">
 			                                   <form id="carSummaryForm" method="post" action="">
-			                                   		<input type="hidden" id="carSummaryId" name="carSummaryId" value="">
+			                                   		<input type="hidden" id="car_summary_id" name="car_summary_id" value="${carSummary.id!''}">
 			                                   		<input type="hidden" id="pickupIds" name="pickupIds" value="${pickupIds!''}">
 					                                <div class="col-lg-6">
 					                                	
 				                                        <div class="form-group">
 			                                                <label class="search-label">行车单号</label>
-			                                                <input type="text" class="form-control search-control orderNo_filter" id="car_summary_id" name="car_summary_id" value="" readonly="true">
+			                                                <input type="text" class="form-control search-control orderNo_filter" id="car_summary_no" name="car_summary_no" value="" readonly="true">
 			                                            </div>
 			                                            <div class="form-group">
 			                                                <label class="search-label">主司机姓名</label>
@@ -76,11 +78,11 @@
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="minor_driver_amount" name="minor_driver_amount"  value="">
 			                                            </div>
 			                                            <div class="form-group">
-			                                                <label class="search-label">出车里程表读数</label>
+			                                                <label class="search-label">出车里程读数</label>
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="start_car_mileage" name="start_car_mileage"  value="">
 			                                            </div>
 			                                            <div class="form-group">
-			                                                <label class="search-label">收车里程表读数</label>
+			                                                <label class="search-label">收车里程读数</label>
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="finish_car_mileage" name="finish_car_mileage"  value="">
 			                                            </div>
 			                                            <div class="form-group">
@@ -151,7 +153,6 @@
                             	<div class="panel-body">
                                     <div class="table-responsive"> 
                                     	<form id="pickupAddressForm" action="">
-                                    		<input type="hidden" id="addressPickupOrderId" value="" name="pickupOrderId">
 	                                        <table id="pickupAddressTbody" class="table table-striped table-bordered table-hover">
 	                                            <thead>
 	                                                <tr>
@@ -173,13 +174,54 @@
                                 </div>
                             </div>
                             
+                            <!-- 运输单 -->
+                            <div class="tab-pane fade" id="transferOrder">  
+                            	<div class="panel-body">
+	                            	<div class="controls">
+	                                	<button class="btn btn-primary" data-toggle="modal" id="editProportionBtn">
+										  增编辑比例
+										</button>
+										<button class="btn btn-primary" data-toggle="modal" id="affirmBtn">
+										  确认
+										</button>
+	                                </div>
+	                                <div class="row">
+	                                    <div class="col-lg-12">
+	                                        <div class="panel-body">
+			                                    <div class="table-responsive"> 
+				                                    <div class="table-responsive"> 
+				                                        <table id="transferOrderTbody" class="table table-striped table-bordered table-hover">
+				                                            <thead>
+				                                                <tr>
+				                                                    <th>项次</th>
+				                                                    <th>运输单号</th>
+				                                                    <th>客户名称</th>
+				                                                    <th>数量</th>
+				                                                    <th>体积</th>
+				                                                    <th>重量</th>
+				                                                    <th>分摊比例</th>
+				                                                    <th>备注</th>
+				                                                </tr>
+				                                            </thead>
+				                                            <tbody>
+				                                            	
+				                                            </tbody>
+				                                        </table>
+				                                    </div>
+				                                    <!-- /.table-responsive -->
+			                                   </div>
+		                                   </div>
+	                                   </div>
+                                  	</div>
+                                </div>
+                            </div>
+                            
 							<!-- 货品明细 -->
 							<div class="tab-pane fade" id="item">  
                             	<div class="panel-body">
                                     <div class="table-responsive"> 
                                     	<form id="pickupAddressForm" action="">
-                                    		<input type="hidden" id="addressPickupOrderId" value="" name="pickupOrderId">
-	                                        <table id="pickupItemTbody" class="table table-striped table-bordered table-hover">
+	                                        <table id="pickupItemTbody" class="table table-striped table-bordered table-hover" style="width: 1050px;">
 	                                            <thead>
 	                                                <tr>
 	                                                    <th>调车单</th>
@@ -207,7 +249,7 @@
 							<div class="tab-pane fade" id="milestone">
                                  <div class="panel-body">
                                     <div class="table-responsive">                                        
-	                                    <table  id="pickupMilestoneTbody" class="table table-striped table-bordered table-hover">
+	                                    <table  id="pickupMilestoneTbody" class="table table-striped table-bordered table-hover" style="width: 1050px;">
 	                                        <thead>
 	                                            <tr>
 	                                                <th>状态</th>
@@ -228,7 +270,7 @@
 							<div class="tab-pane fade" id="roadBridge">  
                             	<div class="panel-body">
                             	<div class="controls">
-                                	<button class="btn btn-primary" data-toggle="modal" data-target="#addExternalTransferOrder">
+                                	<button class="btn btn-primary" data-toggle="modal" id="addCarSummaryRouteFee">
 									  增加明细
 									</button>
                                 </div>
@@ -237,8 +279,7 @@
                                         <div class="panel-body">
 		                                    <div class="table-responsive"> 
 		                                    	<form id="pickupAddressForm" action="">
-		                                    		<input type="hidden" id="addressPickupOrderId" value="" name="pickupOrderId">
-			                                        <table id="pickupRouteFeeTbody" class="table table-striped table-bordered table-hover">
+			                                        <table id="carSummaryDetailRouteFeeTbody" class="table table-striped table-bordered table-hover" style="width: 1050px;">
 			                                            <thead>
 			                                                <tr>
 			                                                    <th>项次</th>
@@ -264,44 +305,45 @@
 							<!-- 加油记录 -->
 							<div class="tab-pane fade" id="Refuel">  
                             	<div class="panel-body">
-                            	<div class="controls">
-                                	<button class="btn btn-primary" data-toggle="modal" data-target="#addExternalTransferOrder">
-									  增加明细
-									</button>
-                                </div>
-                                <div class="row">
+	                            	<div class="controls">
+	                                	<button class="btn btn-primary" data-toggle="modal" id="addCarSummaryDetailOilFee">
+										  增加明细
+										</button>
+	                                </div>
+	                            </div> 
+	                            <div class="row">
                                     <div class="col-lg-12">
                                         <div class="panel-body">
-			                                    <div class="table-responsive"> 
-			                                    	<form id="pickupAddressForm" action="">
-			                                    		<input type="hidden" id="addressPickupOrderId" value="" name="pickupOrderId">
-				                                        <table id="pickupOilFeeTbody" class="table table-striped table-bordered table-hover">
-				                                            <thead>
-				                                                <tr>
-				                                                    <th>项次</th>
-				                                                    <th>加油时间</th>
-				                                                    <th>里程表读数</th>
-				                                                    <th>油站</th>
-				                                                    <th>油品</th>
-				                                                    <th>油价</th>
-				                                                    <th>加油量</th>
-				                                                    <th>邮费</th>
-				                                                    <th>付款方式</th>
-				                                                    <th>载重</th>
-				                                                    <th>平均油耗</th>
-				                                                    <th>备注</th>
-				                                                    <th></th>
-				                                                </tr>
-				                                            </thead>
-				                                            <tbody>
-				                                            	
-				                                            </tbody>
-				                                        </table>
-			                                        </form>
-			                                    </div>
-                                    			<!-- /.table-responsive -->
+		                                    <div class="table-responsive">  
+		                                        <table id="carSummaryDetailOilFeeTbody" class="table table-striped table-bordered table-hover" style="width: 2000px;">
+		                                            <thead>
+		                                                <tr>
+		                                                    <th>项次</th>
+		                                                    <th>加油时间</th>
+		                                                    <th>里程表读数</th>
+		                                                    <th>油站</th>
+		                                                    <th>油品</th>
+		                                                    <th>油价</th>
+		                                                    <th>加油量</th>
+		                                                    <th>邮费</th>
+		                                                    <th>付款方式</th>
+		                                                    <th>载重</th>
+		                                                    <th>平均油耗</th>
+		                                                    <th>备注</th>
+		                                                    <th></th>
+		                                                </tr>
+		                                            </thead>
+		                                            <tbody>
+		                                            	
+		                                            </tbody>
+		                                        </table>
+		                                        <div id="paymentTypeList" style="display:none;">
+                      								<option value="油卡">油卡</option>
+                      								<option value="现金">现金</option>
+                                            	</div>
                                     		</div>
-                                    	</div>
+                           					<!-- /.table-responsive -->
+                           				</div>
                                     </div>
                                 </div>
                             </div>
@@ -309,7 +351,7 @@
 							<div class="tab-pane fade" id="salary">  
                             	<div class="panel-body">
 	                            	<div class="controls">
-	                                	<button class="btn btn-primary" data-toggle="modal" data-target="#addExternalTransferOrder">
+	                                	<button class="btn btn-primary" data-toggle="modal" id="addCarSummaryDetailSalary">
 										  增加明细
 										</button>
 	                                </div>
@@ -319,7 +361,7 @@
 				                                <div class="table-responsive"> 
 				                                	<form id="pickupAddressForm" action="">
 				                                		<input type="hidden" id="addressPickupOrderId" value="" name="pickupOrderId">
-				                                     <table  id="pickupsSlaryTbody" class="table table-striped table-bordered table-hover">
+				                                     <table  id="carSummaryDetailSalaryTbody" class="table table-striped table-bordered table-hover">
 				                                         <thead>
 				                                             <tr>
 				                                                 <th>项次</th>
@@ -362,9 +404,9 @@
                                     <div class="col-lg-12">
                                         <div class="panel-body">
 			                                    <div class="table-responsive"> 
-			                                    	<form id="pickupAddressForm" action="">
+			                                    	<form id="carSummaryDetailOtherFeeForm" action="">
 			                                    		<input type="hidden" id="addressPickupOrderId" value="" name="pickupOrderId">
-				                                        <table  id="pickupOtherFeeTbody" class="table table-striped table-bordered table-hover">
+				                                        <table  id="carSummaryDetailOtherFeeTbody" class="table table-striped table-bordered table-hover">
 				                                            <thead>
 				                                                <tr>
 				                                                    <th>序号</th>
@@ -378,6 +420,11 @@
 				                                            
 				                                            </tbody>
 				                                        </table>
+				                                        <div id="selectList" style="display:none;">
+				                                        	<option value=""></option>
+		                      								<option value="是">是</option>
+		                      								<option value="否">否</option>
+		                                            	</div>
 			                                        </form>
 			                                    </div>
 			                                    <!-- /.table-responsive -->

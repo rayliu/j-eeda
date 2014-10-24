@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
 
-import models.CarSummaryDatailOtherFee;
+import models.CarSummaryDetailOtherFee;
 import models.Category;
 import models.Party;
 import models.PartyAttribute;
@@ -215,14 +215,14 @@ public class DataInitUtil {
             
             //行车单加油记录
             stmt.execute("create table if not exists car_summary_detail_oil_fee(id bigint auto_increment primary key,car_summary_id bigint,"
-            		+ "item bigint,Refuel_data timestamp,odometer_mileage double,Refuel_site varchar(200),Refuel_type varchar(200),"
-            		+ "Refuel_unit_cost double,Refuel_number double,Refuel_amount double,payment_type varchar(50),load varchar(50),avg_econ double,remark varchar(500));");
+            		+ "item bigint,refuel_data timestamp,odometer_mileage double,refuel_site varchar(200),refuel_type varchar(200),"
+            		+ "refuel_unit_cost double,refuel_number double,refuel_amount double,payment_type varchar(50), load_amount double,avg_econ double,remark varchar(500));");
             
             //行车单送货员工资明细
-            stmt.execute("create table if not exists car_summary_detail_salary(id bigint auto_increment primary key,car_summary_id bigint,item bigint,name varchar(50),salary_sheet varchar(30),work_type varchar(100),deserved_amount double,create_data timestamp,remark varchar(500));");
+            stmt.execute("create table if not exists car_summary_detail_salary(id bigint auto_increment primary key,car_summary_id bigint,item bigint,username varchar(50),salary_sheet varchar(30),work_type varchar(100),deserved_amount double,create_data timestamp,remark varchar(500));");
             
             //行车单费用合计
-            stmt.execute("create table if not exists car_summary_detail_other_fee(id bigint auto_increment primary key,car_summary_id bigint,item varchar(100),amount double,is_delete varchar(4),remark varchar(500));");
+            stmt.execute("create table if not exists car_summary_detail_other_fee(id bigint auto_increment primary key,car_summary_id bigint,item bigint,amount_item varchar(100),amount double,is_delete varchar(4),remark varchar(500));");
 
             stmt.close();
             // conn.commit();
@@ -842,35 +842,6 @@ public class DataInitUtil {
         		.set("creator", "demo").save();
         p11.set("contact_id", contact11.getLong("id")).set("party_type", Party.PARTY_TYPE_SP_DRIVER).set("create_date", createDate)
         		.set("creator", "demo").save();
-    }
-    //每次新增调车单时要添加的数据
-    public static void createInitCarManageCostSummation(String  carManageId){
-    	
-    	String name[] = {"car_summary_id","item","is_delete"};
-    	String items[] = {"本次加油","本次油耗","出车补贴","司机工资","路桥费","装卸费","罚款","送货员工资","停车费","住宿费","过磅费","其他费用"};
-    	String isdeletes = "是";
-    	for (int i = 0; i < items.length; i++) {
-    		CarSummaryDatailOtherFee c = new CarSummaryDatailOtherFee();
-    		if(i == 1 || i == 3 || i == 7)
-    			c.set(name[0], carManageId).set(name[1], items[i]).set(name[2], isdeletes).save();
-    		else
-    			c.set(name[0], carManageId).set(name[1], items[i]).save();
-		}
-    	
-    	/*
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'本次加油','');
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'本次油耗','是');
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'出车补贴','');
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'司机工资','是');
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'路桥费','');
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'装卸费','');
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'罚款','');
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'送货员工资','是');
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'停车费','');
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'住宿费','');
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'过磅费','');
-    	insert into car_summary_detail_other_fee(car_summary_id,item,is_delete) values(carManageId,'其他费用','');
-    	*/
     }
     
 }
