@@ -1,0 +1,1 @@
+package models;import com.jfinal.plugin.activerecord.Model;@SuppressWarnings("serial")public class ArapCostApplicationInvoiceNo extends Model<ArapCostApplicationInvoiceNo> {	public static final ArapCostApplicationInvoiceNo dao = new ArapCostApplicationInvoiceNo();}

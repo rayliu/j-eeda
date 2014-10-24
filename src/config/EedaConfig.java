@@ -11,7 +11,10 @@ import models.ArapChargeInvoiceApplicationItem;
 import models.ArapChargeInvoiceItemInvoiceNo;
 import models.ArapChargeItem;
 import models.ArapChargeOrder;
+import models.ArapCostApplicationInvoiceNo;
+import models.ArapCostInvoice;
 import models.ArapCostInvoiceApplication;
+import models.ArapCostInvoiceItemInvoiceNo;
 import models.ArapCostItem;
 import models.ArapCostOrder;
 import models.Category;
@@ -198,6 +201,7 @@ public class EedaConfig extends JFinalConfig {
         me.add(contentPath+"/costConfirmList", controllers.yh.arap.ap.CostItemConfirmController.class, contentPath);
         me.add(contentPath+"/costCheckOrder", controllers.yh.arap.ap.CostCheckOrderController.class, contentPath);
         me.add(contentPath+"/costPreInvoiceOrder", controllers.yh.arap.ap.CostPreInvoiceOrderController.class, contentPath);
+        me.add(contentPath+"/costInvoiceOrder", controllers.yh.arap.ap.CostInvoiceOrderController.class, contentPath);
         me.add(contentPath+"/costAcceptOrder", controllers.yh.arap.ap.CostAcceptOrderController.class, contentPath);
         me.add(contentPath+"/costAdjustOrder", controllers.yh.arap.ap.CostAdjustOrderController.class, contentPath);
         //audit log
@@ -287,6 +291,9 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_cost_order", ArapCostOrder.class);
         arp.addMapping("arap_cost_item", ArapCostItem.class);
         arp.addMapping("arap_cost_invoice_application_order", ArapCostInvoiceApplication.class);
+        arp.addMapping("arap_cost_invoice", ArapCostInvoice.class);
+        arp.addMapping("arap_cost_invoice_item_invoice_no", ArapCostInvoiceItemInvoiceNo.class);
+        arp.addMapping("arap_cost_application_invoice_no", ArapCostApplicationInvoiceNo.class);
         // yh mapping
         //行车单
 //        arp.addMapping("car_summary_order", CarSummaryOrder.class);
