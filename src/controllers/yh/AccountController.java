@@ -63,7 +63,7 @@ public class AccountController extends Controller {
             logger.debug("insert....");
             Db.save("fin_account", account);
         }
-        renderJson(account.get("id"));
+        renderJson(account);
     }
 
     // 删除金融账户
@@ -133,8 +133,7 @@ public class AccountController extends Controller {
         // 获取总条数
         String totalWhere = "";
         if (id != null && id.length() > 0) {
-            sql = "select count(1) total from fin_account f,fin_account_item f1 where f.id = f1.account_id and f.id = '"
-                    + id + "'";
+            sql = "select count(1) total from fin_account where id = " + id;
         }
         System.out.println(sql);
         Record rec = Db.findFirst(sql + totalWhere);
@@ -143,9 +142,7 @@ public class AccountController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (id != null && id.length() > 0) {
-            orders = Db
-                    .find("select *,f1.id as fid from fin_account f,fin_account_item f1 where f.id = f1.account_id and f.id = '"
-                            + id + "'" + sLimit);
+            orders = Db.find("select * from fin_account where id = " + id + " " + sLimit);
         }
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -157,7 +154,7 @@ public class AccountController extends Controller {
     }
 
     // accountItem编辑
-    public void eidtAcountItem() {
+    /*public void eidtAcountItem() {
         String id = getPara();
 
         String accountId = getPara("accountId");
@@ -167,7 +164,7 @@ public class AccountController extends Controller {
                 .find("select * from fin_account_item where id = '" + id
                         + "' and account_id = '" + accountId + "'");
         renderJson(list);
-    }
+    }*/
 
     // 删除accountItem
     public void delectAcountItem() {

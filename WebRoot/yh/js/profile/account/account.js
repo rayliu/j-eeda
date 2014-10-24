@@ -13,10 +13,10 @@ $(document).ready(function() {
 	    "bServerSide": true,
 	    "sAjaxSource": "/yh/account/accountItem?accountId="+accountId,
 	    "aoColumns": [   
-	        {"mDataProp":"ORG_NAME"},
-	        {"mDataProp":"ACCOUNT_PIN"},
-	        {"mDataProp":"CURRENCY"},
-	        {"mDataProp":"ORG_PERSON"},
+	        {"mDataProp":null},
+	        {"mDataProp":null},
+	        {"mDataProp":null},
+	        {"mDataProp":null},
 	        { 
 	            "mDataProp": null, 
 	            "sWidth": "8%",                
@@ -76,12 +76,12 @@ $(document).ready(function() {
 	//添加账户
 	$('#save').click(function(){
 		 $.post('/yh/account/save', $("#accountFrom").serialize(), function(data){
-	         if(data>0){
+	         if(data.ID > 0){
 	             //alert("添加合同成功！");
 	         	//$("#style").show();
 	         	//已经有一个重复的contractId 在前面了
 	         	$('#accountId2').val(data);
-	         	dataTable.fnSettings().sAjaxSource="/yh/account/accountItem?accountId="+data; 
+	         	dataTable.fnSettings().sAjaxSource="/yh/account/accountItem?accountId="+data.ID; 
 
 	         	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	         }else{
