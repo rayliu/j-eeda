@@ -125,8 +125,8 @@ public class DepartOrderController extends Controller {
             		+ " deo.status as depart_status, "
             		+ " deo.arrival_time arrival_time, "
             		+ " deo.remark remark, "
-            		+ " ifnull(ct.contact_person,c.driver) contact_person,"
-            		+ " ifnull(ct.phone,c.phone) phone,"
+            		+ " ifnull(deo.driver,c.driver) contact_person,"
+            		+ " ifnull(deo.phone,c.phone) phone,"
             		+ " c.car_no,"
             		+ " c.cartype,"
             		+ " c.length, "
@@ -170,10 +170,10 @@ public class DepartOrderController extends Controller {
                     + " ifnull(deo.status,'') like '%" + status 
                     + "%' and ifnull(deo.depart_no,'') like '%" + departNo 
                     + "%' and ifnull(ct.abbr,'') like '%"+ sp 
-                    + "%' and to.order_no like '%" + orderNo
-                    + "%' and o.office_name  like '%"+ office
-                    + "%' and l1.name like '%"+ start
-                    + "%' and l2.name like '%"+ destination
+                    + "%' and ifnull(to.order_no,'') like '%" + orderNo
+                    + "%' and ifnull(o.office_name,'')  like '%"+ office
+                    + "%' and ifnull(l1.name,'') like '%"+ start
+                    + "%' and ifnull(l2.name,'') like '%"+ destination
                     + "%' and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime
                     + "' ";
 
@@ -183,8 +183,8 @@ public class DepartOrderController extends Controller {
             		+ " deo.status as depart_status, "
             		+ " deo.arrival_time arrival_time, "
             		+ " deo.remark remark, "
-            		+ " ifnull(ct.contact_person,c.driver) contact_person,"
-            		+ " ifnull(ct.phone,c.phone) phone,"
+            		+ " ifnull(deo.driver,c.driver) contact_person,"
+            		+ " ifnull(deo.phone,c.phone) phone,"
             		+ " c.car_no,"
             		+ " c.cartype,"
             		+ " c.length, "
@@ -195,7 +195,7 @@ public class DepartOrderController extends Controller {
             		+ " (select create_stamp from transfer_order_milestone where status='已发车' and depart_id = deo.id) shunt_time,"
             		+ " l1.name route_from, "
             		+ " l2.name route_to, "
-            		+ " (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = deo.id) as transfer_order_no  "
+            		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no  "
             		+ " from depart_order deo "
                     + " left join carinfo c on deo.carinfo_id = c.id "
                     + " left join party p on deo.sp_id = p.id "
@@ -211,9 +211,9 @@ public class DepartOrderController extends Controller {
                     + "%' and ifnull(deo.depart_no,'') like '%" + departNo
                     + "%' and ifnull(to.order_no,'') like '%" + orderNo
                     + "%' and ifnull(ct.abbr,'')  like '%"+ sp
-                    + "%' and o.office_name  like '%"+ office
-                    + "%' and l1.name like '%"+ start
-                    + "%' and l2.name like '%"+ destination
+                    + "%' and ifnull(o.office_name,'') like '%"+ office
+                    + "%' and ifnull(l1.name,'') like '%"+ start
+                    + "%' and ifnull(l2.name,'') like '%"+ destination
                     + "%' and deo.create_stamp between '" + beginTime + "' and '" + endTime
                     + "' group by deo.id,o.office_name order by deo.create_stamp desc " + sLimit;
         }
@@ -254,7 +254,7 @@ public class DepartOrderController extends Controller {
     			&& sp == null && beginTime == null && endTime == null
     			&& office == null && start == null && end == null
     			&& customer == null) {
-    		sqlTotal = "select count(1) total from depart_order deo "
+    		sqlTotal = "select count(distinct deo.id) total from depart_order deo "
     				+ " left join carinfo c on deo.carinfo_id = c.id "
     				+ " left join depart_transfer dt on dt.depart_id = deo.id "
     				+ " left join transfer_order t on t.id = dt.order_id "
@@ -265,8 +265,8 @@ public class DepartOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
-    				+ " where combine_type = '"
-    				+ DepartOrder.COMBINE_TYPE_DEPART + "' and deo.status in('已发车','在途')";
+    				+ " where combine_type = '"+ DepartOrder.COMBINE_TYPE_DEPART 
+    				+ "' and deo.status in('已发车','在途')";
     		
     		sql = "select deo.id,"
     				+ "deo.depart_no ,"
@@ -531,13 +531,16 @@ public class DepartOrderController extends Controller {
                     + " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
                     + " tor.charge_type2,ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.abbr cname,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.abbr as spname,cont.id as spid from transfer_order tor "
+                    + " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.abbr as spname,cont.id as spid,"
+                    + " o.office_name office_name "
+                    + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id left join contact cont on  cont.id=p2.contact_id "
                     + " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
                     + " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code"
+                    + " left join location l2 on tor.route_to = l2.code "
+                    + " left join office o on o.id=tor.office_id "
                     + " where ((tor.status = '已入货场' or tor.status like '%部分%') or (tor.operation_type = 'out_source' and tor.status = '新建') )"
                     + "  and ifnull(tor.depart_assign_status, '') !='" + TransferOrder.ASSIGN_STATUS_ALL
                     + "' order by tor.create_stamp desc " + sLimit;
@@ -564,13 +567,16 @@ public class DepartOrderController extends Controller {
                     + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.charge_type2,dor.address doaddress,tor.pickup_mode,tor.status,c.abbr cname,"
-                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.abbr spname from transfer_order tor "
+                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.abbr spname, "
+                    + " o.office_name office_name "
+                    + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id  left join contact c2 on p2.contact_id = c2.id "
                     + " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
+                    + " left join office o on o.id = tor.office_id "
                     + " where ((tor.status ='已入货场' or tor.status like '%部分%') or (tor.operation_type = 'out_source' and tor.status = '新建')) and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
@@ -624,13 +630,15 @@ public class DepartOrderController extends Controller {
     				+ " (select sum(toi.volume) from transfer_order_item toi where toi.order_id = tor.id) as total_volumn,"
     				+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
     				+ " ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.abbr cname,"
-    				+ " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.abbr as spname,cont.id as spid from transfer_order tor "
+    				+ " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.abbr as spname,cont.id as spid, "
+    				+ " o.office_name office_name from transfer_order tor "
     				+ " left join party p on tor.customer_id = p.id "
     				+ " left join contact c on p.contact_id = c.id "
     				+ " left join party p2 on tor.sp_id = p2.id left join contact cont on  cont.id=p2.contact_id "
     				+ " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
     				+ " left join location l1 on tor.route_from = l1.code "
-    				+ " left join location l2 on tor.route_to = l2.code"
+    				+ " left join location l2 on tor.route_to = l2.code "
+    				+ " left join office o on o.id = tor.office_id "
     				+ " where tor.status = '新建' "
     				+ "  and ifnull(tor.depart_assign_status, '') !='" + TransferOrder.ASSIGN_STATUS_ALL
     				+ "' order by tor.create_stamp desc " + sLimit;
@@ -657,13 +665,15 @@ public class DepartOrderController extends Controller {
     				+ " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
     				+ " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
     				+ " dor.address doaddress,tor.pickup_mode,tor.status,c.abbr cname,"
-    				+ " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.abbr spname from transfer_order tor "
+    				+ " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.abbr spname, "
+    				+ " o.office_name office_name from transfer_order tor "
     				+ " left join party p on tor.customer_id = p.id "
     				+ " left join contact c on p.contact_id = c.id "
     				+ " left join party p2 on tor.sp_id = p2.id  left join contact c2 on p2.contact_id = c2.id "
     				+ " left join depart_transfer dt on tor.id = dt.order_id left join depart_order dor on dor.id = dt.depart_id "
     				+ " left join location l1 on tor.route_from = l1.code "
-    				+ " left join location l2 on tor.route_to = l2.code  "
+    				+ " left join location l2 on tor.route_to = l2.code "
+    				+ " left join office o on o.id = tor.office_id "
     				+ " where tor.status = '新建' and ifnull(tor.depart_assign_status, '') !='"
     				+ TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
     				+ "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
@@ -831,7 +841,7 @@ public class DepartOrderController extends Controller {
         // 查找创建人id
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        String driver_id = getPara("driver_id");// 司机id
+        String driver_id = getPara("driver_id");//
         String carinfoId = getPara("carinfoId");// 司机id
         String car_follow_name = getPara("car_follow_name");// 跟车人
         String car_follow_phone = getPara("car_follow_phone");// 跟车人电话
@@ -846,7 +856,8 @@ public class DepartOrderController extends Controller {
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
                     .set("route_to", getPara("route_to")).set("status", getPara("status"))
-                    .set("ltl_price_type", ltlPriceType);
+                    .set("ltl_price_type", ltlPriceType)
+                    .set("driver", getPara("driver_name")).set("phone", getPara("driver_phone")).set("car_no", getPara("car_no"));
             if (!"".equals(driver_id) && driver_id != null) {
                 dp.set("driver_id", driver_id);
             }else{
@@ -889,7 +900,8 @@ public class DepartOrderController extends Controller {
             dp.set("charge_type", charge_type).set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
-                    .set("route_to", getPara("route_to")).set("status", getPara("status")).set("ltl_price_type", ltlPriceType);
+                    .set("route_to", getPara("route_to")).set("status", getPara("status")).set("ltl_price_type", ltlPriceType)
+                    .set("driver", getPara("driver_name")).set("phone", getPara("driver_phone")).set("car_no", getPara("car_no"));
             if (!"".equals(driver_id) && driver_id != null) {
                 dp.set("driver_id", driver_id);
             }else{

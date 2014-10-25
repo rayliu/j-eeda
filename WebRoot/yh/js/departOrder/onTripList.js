@@ -16,7 +16,7 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/yh/departOrder/onTripList",
         "aoColumns": [   
-            {"mDataProp":"OFFICE_NAME"},        
+            {"mDataProp":"OFFICE_NAME","sWidth": "100px"},        
             {"mDataProp":null,
             	"fnRender": function(obj) {
             		 return "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";

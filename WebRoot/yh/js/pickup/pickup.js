@@ -2,6 +2,7 @@
 $(document).ready(function() {
     $('#menu_assign').addClass('active').find('ul').addClass('in');
     var orderType = [];
+    var officeType=[];
 	//datatable, 动态处理
     var pickupOrder = $('#eeda-table').dataTable({
     	"bSort": false, // 不要排序
@@ -117,7 +118,11 @@ $(document).ready(function() {
     		{ 
             	"mDataProp": "ROUTE_TO",
             	"sClass": "route_to"
-            },                                      
+            },
+            { 
+            	"mDataProp": "OFFICE_NAME",
+            	"sClass": "office_name"
+            },  
     		{ 
             	"mDataProp": "CREATE_STAMP",
             	"sClass": "create_stamp"
@@ -225,23 +230,32 @@ $(document).ready(function() {
 		var route_from = $(this).parent().siblings('.route_from')[0].textContent;		
 		var route_to = $(this).parent().siblings('.route_to')[0].textContent;		
 		var create_stamp = $(this).parent().siblings('.create_stamp')[0].textContent;		
-		var assign_status = $(this).parent().siblings('.assign_status')[0].textContent;		
+		var assign_status = $(this).parent().siblings('.assign_status')[0].textContent;
+		var office_name = $(this).parent().siblings('.office_name')[0].textContent;
 		if($(this).prop('checked') == true){
 			if(orderType.length != 0){
 				if(orderType[0] != $(this).parent().siblings('.order_type')[0].innerHTML){
 					alert("请选择相同的订单类型!");
 					return false;
 				}else{
+					if(officeType[0]!=$(this).parent().siblings('.office_name')[0].innerHTML){
+						//alert($(this).parent().siblings('.office_name')[0].innerHTML+"==="+officeType[0]);
+						alert("请选择同一网点的运输单");
+						return false;
+					}
 					orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
+					officeType.push($(this).parent().siblings('.office_name')[0].innerHTML);
 				}
+				
 			}else{
 				if($(this).parent().siblings('.order_type')[0].innerHTML != ''){
 					orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
+					officeType.push($(this).parent().siblings('.office_name')[0].innerHTML);
 				}
 			}
 			sumValue();
 			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+operation_type+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
-					+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");			
+					+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");			
 		}else{
 			sumValue();
 			var allTrs = ckeckedTransferOrderList.children();
@@ -252,6 +266,7 @@ $(document).ready(function() {
 			}
 			if(orderType.length != 0){
 				orderType.splice($(this).parent().siblings('.order_type')[0].innerHTML, 1);
+				officeType.splice($(this).parent().siblings('.office_name')[0].innerHTML,1);
 			}
 		}
 	});

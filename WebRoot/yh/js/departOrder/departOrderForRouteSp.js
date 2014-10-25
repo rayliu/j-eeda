@@ -4,6 +4,8 @@ $(document).ready(function() {
     var spName = [];
     var routeArr = [];
     var spNameUnchecked = [];
+    var officeName=[];
+    var model=[];
 	//datatable, 动态处理
     var datatable = $('#routeSpAndPerCarTable').dataTable({
     	"bFilter": false, //不需要默认的搜索框
@@ -45,6 +47,7 @@ $(document).ready(function() {
             		}}},
             { "mDataProp": "DOADDRESS"},
             { "mDataProp": "ARRIVAL_MODE",
+            	"sClass": "arrival_model",
             	"fnRender": function(obj) {
             		if(obj.aData.ARRIVAL_MODE=="delivery"){
             			return "直送";
@@ -75,6 +78,10 @@ $(document).ready(function() {
             { 
             	"mDataProp": "ROUTE_TO",
                 "sClass": "route_to"
+            },
+            { 
+            	"mDataProp": "OFFICE_NAME",
+                "sClass": "office_name"
             }
         ]      
     });	
@@ -189,8 +196,35 @@ $(document).ready(function() {
 							alert("请选择同一线路的运输单!");
 							return false;
 						}else{
-							spName.push($(this).parent().siblings('.spname')[0].innerHTML);
-							routeArr.push($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML);
+							if(officeName.length != 0){
+								if(officeName[0] != $(this).parent().siblings('.office_name')[0].innerHTML){
+									alert("请选择同一个网点的运输单");
+									return false;
+								}else{
+									if(model.length !=0){
+										if(model[0] != $(this).parent().siblings('.arrival_model')[0].innerHTML){
+											alert("请选择同一到达方式的运输单");
+											return false;
+										}else{
+											spName.push($(this).parent().siblings('.spname')[0].innerHTML);
+											routeArr.push($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML);
+											officeName.push($(this).parent().siblings('.office_name')[0].innerHTML);
+											model.push($(this).parent().siblings('.arrival_model')[0].innerHTML);
+											
+										}
+									}else{
+										if($(this).parent().siblings('.arrival_model')[0].innerHTML != ''){
+											model.push($(this).parent().siblings('.arrival_model')[0].innerHTML);
+										}
+									}
+									
+								}
+								
+							}else{
+								if($(this).parent().siblings('.office_name')[0].innerHTML != ''){
+									officeName.push($(this).parent().siblings('.office_name')[0].innerHTML);
+								}
+							}
 						}
 					}else{
 						if($(this).parent().siblings('.operation_type')[0].innerHTML != ''){
@@ -202,6 +236,8 @@ $(document).ready(function() {
 				if($(this).parent().siblings('.spname')[0].innerHTML != ''){
 					spName.push($(this).parent().siblings('.spname')[0].innerHTML);
 					routeArr.push($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML);
+					officeName.push($(this).parent().siblings('.office_name')[0].innerHTML);
+					model.push($(this).parent().siblings('.arrival_model')[0].innerHTML);
 				}
 			}
 		}else{
@@ -211,7 +247,15 @@ $(document).ready(function() {
 			if(routeArr.length != 0){
 				routeArr.splice($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML, 1);
 			}
+			if(officeName.length != 0){
+				officeName.splice($(this).parent().siblings('.office_name')[0].innerHTML,1);
+			}
+			if(model.length != 0){
+				model.splice($(this).parent().siblings('.arrival_model')[0].innerHTML,1);
+			}
+			
 			if(spName.length == 0){
+			
 				$("#saveBtn").attr('disabled', true);
 			}
 		}

@@ -148,7 +148,7 @@ public class PickupOrderController extends Controller {
         String sqlTotal = "";
         if (orderNo == null && departNo == null && beginTime == null && endTime == null
         		&&carNo == null && take == null && status == null && office == null) {
-            sqlTotal = "select count(*) total "
+            sqlTotal = "select count(distinct dor.id) total "
             		+ " from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
                     + " left join party p on dor.driver_id = p.id "
@@ -163,14 +163,14 @@ public class PickupOrderController extends Controller {
             			+ DepartOrder.COMBINE_TYPE_PICKUP + "'";
 
             sql = "select dor.*,"
-            		+ " ifnull(ct.contact_person,c.driver) contact_person,"
-            		+ " ifnull(ct.phone,c.phone) phone,"
+            		+ " ifnull(dor.driver,c.driver) contact_person,"
+            		+ " ifnull(dor.phone,c.phone) phone,"
             		+ " ifnull(dor.car_type,c.cartype) cartype,"
             		+ " c.status cstatus,"
             		+ " u.user_name user_name,"
             		+ " o.office_name office_name,"
             		+ " (select sum(ifnull(toi.volume,p.volume)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) volume,"
-            		+ " (select sum(ifnull(p.weight,toi.weight)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) weight, "
+            		+ " (select sum(ifnull(nullif(toi.weight,0),p.weight)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) weight, "
             		+ " (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  "
             		+ " from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
@@ -189,7 +189,7 @@ public class PickupOrderController extends Controller {
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-            sqlTotal = "select count(*) total "
+            sqlTotal = "select count(distinct dor.id) total "
             		+ " from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
                     + " left join party p on dor.driver_id = p.id "
@@ -210,14 +210,14 @@ public class PickupOrderController extends Controller {
                     + "%' ";
 
             sql = "select dor.*,"
-            		+ " ifnull(ct.contact_person,c.driver) contact_person,"
-            		+ " ifnull(ct.phone,c.phone) phone,"
+            		+ " ifnull(dor.driver,c.driver) contact_person,"
+            		+ " ifnull(dor.phone,c.phone) phone,"
             		+ " ifnull(dor.car_type,c.cartype) cartype,"
-            		+ " c.status status,"
+            		+ " c.status cstatus,"
             		+ " u.user_name user_name,"
             		+ " o.office_name office_name,"
             		+ " (select sum(ifnull(toi.volume,p.volume)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in (select order_id from depart_transfer where pickup_id=dor.id)) volume,"
-            		+ " (select sum(ifnull(p.weight,toi.weight)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) weight, "
+            		+ " (select sum(ifnull(nullif(toi.weight,0),p.weight)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) weight, "
             		+ " (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  "
             		+ " from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
@@ -294,14 +294,30 @@ public class PickupOrderController extends Controller {
                     + " left join location l2 on tor.route_to = l2.code"
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'";
-            sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
+            sql = "select tor.id,"
+            		+ "tor.order_no,"
+            		+ "tor.operation_type,"
+            		+ "tor.cargo_nature,"
+            		+ "tor.order_type,"
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
-                    + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
-                    + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code"
+                    + " tor.address,"
+                    + "tor.pickup_mode,"
+                    + "tor.arrival_mode,"
+                    + "tor.status,"
+                    + "c.abbr cname,"
+                    + " l1.name route_from,"
+                    + "l2.name route_to,"
+                    + "tor.create_stamp,"
+                    + "tor.pickup_assign_status, "
+                    + "o.office_name office_name"
+                    + " from transfer_order tor "
+                    + " left join party p on tor.customer_id = p.id " 
+                    + " left join contact c on p.contact_id = c.id "
+                    + " left join location l1 on tor.route_from = l1.code " 
+                    + " left join location l2 on tor.route_to = l2.code "
+                    + " left join office o on o.id = tor.office_id "
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " order by tor.create_stamp desc" + sLimit;
         } else if ("".equals(routeFrom) && "".equals(routeTo)) {
@@ -314,6 +330,7 @@ public class PickupOrderController extends Controller {
             sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
                     + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
+                    + " left join office o on tor.office_id = o.id "
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
@@ -342,9 +359,13 @@ public class PickupOrderController extends Controller {
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
+                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status, "
+                    + " o.office_name office_name "
+                    + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
-                    + " left join location l1 on tor.route_from = l1.code " + " left join location l2 on tor.route_to = l2.code  "
+                    + " left join location l1 on tor.route_from = l1.code " 
+                    + " left join location l2 on tor.route_to = l2.code  "
+                    + " left join office o on o.id= tor.office_id"
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
@@ -549,6 +570,8 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("car_no", getPara("car_no"));
             pickupOrder.set("car_type", getPara("car_type"));
             pickupOrder.set("car_size", getPara("car_size"));
+            pickupOrder.set("driver", getPara("driver_name"));
+            pickupOrder.set("phone", getPara("driver_phone"));
             /*pickupOrder.set("car_follow_name", getPara("car_follow_name"));
             pickupOrder.set("car_follow_phone", getPara("car_follow_phone"));*/
             pickupOrder.set("remark", getPara("remark"));
@@ -626,6 +649,8 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("car_no", getPara("car_no"));
             pickupOrder.set("car_type", getPara("car_type"));
             pickupOrder.set("car_size", getPara("car_size"));
+            pickupOrder.set("driver", getPara("driver_name"));
+            pickupOrder.set("phone", getPara("driver_phone"));
             /*pickupOrder.set("car_follow_name", getPara("car_follow_name"));
             pickupOrder.set("car_follow_phone", getPara("car_follow_phone"));*/
             pickupOrder.set("remark", getPara("remark"));
