@@ -27,7 +27,7 @@ var dataTable =$('#dataTables-example').dataTable({
             {"mDataProp":"ABBR"},
             {"mDataProp":"CONTACT_PERSON"},
             {"mDataProp":"PHONE"},
-            {"mDataProp":"SHUNT_TIME"},
+            {"mDataProp":null},
             {"mDataProp":"ROUTE_FROM"},
             {"mDataProp":"ROUTE_TO"},
             {"mDataProp":"ARRIVAL_TIME"},
