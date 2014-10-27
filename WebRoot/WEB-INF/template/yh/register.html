@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
+<title>易达物流信息平台</title>
+
+<!-- Core CSS - Include with every page -->
+<link href="/yh/css/bootstrap.min.css" rel="stylesheet">
+<link href="/yh/font-awesome/css/font-awesome.css" rel="stylesheet">
+<!-- SB Admin CSS - Include with every page -->
+<link href="/yh/css/sb-admin.css" rel="stylesheet">
+</head>
+
+<body>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4">
+				<div class="login-panel panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">新用户登陆</h3>
+					</div>
+					<div class="panel-body">
+						<form role="form" action="/yh/register/saveRegistrant" id="register" method="post">
+							<fieldset>
+								<div class="form-group form-group-sm">
+									 <label class="radio-inline">
+                                         <input type="radio" name="office_register" id="exit" value="register" checked>公司名已注册
+                                     </label>
+                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                     <label class="radio-inline">
+                                         <input type="radio" name="office_register" id="unexit" value="unregister">公司名未注册
+                                     </label>
+								</div>
+								<div class="form-group form-group-sm" id="userDiv">
+									<label class="control-label"><h4>登陆名</h4></label>
+									<div class="col-sm-8" style="float: right">
+										<input class="form-control" id="username" name="username" type="text" autofocus  placeholder="请输入邮箱地址">
+									</div>
+									
+								</div>
+								<div class="form-group form-group-sm">
+									<label class="control-label"><h4>登陆密码</h4></label>
+									<div class="col-sm-8" style="float: right">
+										<input class="form-control" id="password" name="password" type="password" placeholder="请输入密码">
+									</div>
+								</div>
+								<div class="form-group form-group-sm">
+									<label class="control-label"><h4>确认密码</h4></label>
+									<div class="col-sm-8" style="float: right">
+										<input class="form-control" id="affirmPassword" name="affirmPassword" type="password"  placeholder="再次确认密码">
+									</div>
+								</div>
+								<div class="form-group" id="officeInformation" style="display:none">
+									<div class="form-group form-group-sm" style="dispaly:none">
+										<label class="control-label"><h4>公司名</h4></label>
+										<div class="col-sm-8" style="float: right">
+											<input class="form-control" id="officeName" name="officeName" type="text" autofocus>
+										</div>
+									
+									</div>
+									<div class="form-group form-group-sm">
+										<label class="control-label"><h4>联系人</h4></label>
+										<div class="col-sm-8" style="float: right">
+											<input class="form-control" id="contact_phone_name" name="contact_phone_name" type="text" autofocus>
+										</div>
+									</div>
+									<div class="form-group form-group-sm">
+										<label class="control-label"><h4>电话</h4></label>
+										<div class="col-sm-8" style="float: right">
+											<input class="form-control" id="contact_phone" name="contact_phone" type="text" autofocus>
+										</div>
+									</div>
+									<div class="form-group form-group-sm">
+										<label class="control-label"><h4>邮件</h4></label>
+										<div class="col-sm-8" style="float: right">
+											<input class="form-control" id="email" name="email" type="text" autofocus>
+										</div>
+									</div>
+									<div class="form-group form-group-sm">
+										<label class="control-label"><h4>系统管理员</h4></label>
+										<div class="col-sm-8" style="float: right">
+											<labelm id="ifSystem" class="control-label"><h4>是</h4></label>
+											<!-- <input class="form-control" id="username" name="username" type="text" autofocus value=""> -->
+										</div>
+									</div>
+								
+								</div>
+								
+								<button type="submit" class="btn btn-default btn-success col-sm-4" >OK</button>
+
+							</fieldset>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Core Scripts - Include with every page -->
+	<script src="/yh/js/jquery-1.10.2.js"></script>
+	<script src="/yh/js/bootstrap.min.js"></script>
+	<script src="/yh/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+	<script src="/yh/js/jquery.validate.min.js"></script>
+	<script src="/yh/js/jvalidate.messages_cn.js"></script>
+	<!-- SB Admin Scripts - Include with every page -->
+	<script src="/yh/js/sb-admin.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#exit").on("click",function(){
+		$("#officeInformation").hide();
+	});
+	$("#unexit").on("click",function(){
+		$("#officeInformation").show();
+	});
+	//判断用户名是否符合格式
+	$('#username').blur(function () {
+		var username=$('#username');
+		var userDiv=$("#userDiv");
+        if (username.val() == '') {
+        	userDiv.removeClass('has-success').addClass('has-error');
+        	username.attr('placeholder','登陆名不能为空');
+        	username.focus();
+        }
+        else {
+            if (/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test($("#username").val()) == false) {
+            	userDiv.removeClass('has-success').addClass('has-error');
+            	username.val("");
+            	username.attr("placeholder","登陆名不符合格式");
+            	username.focus();
+            }
+            else {
+            	userDiv.removeClass('has-error').addClass('has-success');
+            	$("#officeName").val($("#username").val());
+            }
+        }
+    });
+	
+	$("#password").blur(function(){
+		if($("#password").val() == ''){
+			$("#password").parent().parent().removeClass('has-success').addClass('has-error');
+			$("#password").attr("placeholder","密码不为空");
+			$("#password").focus();
+		}else{
+			$("#password").parent().parent().removeClass('has-error').addClass('has-success');
+			
+		}
+		
+	});
+	//验证登陆密码和确认密码时候相同
+	$("#affirmPassword").blur(function(){
+		var password=$("#password");
+		var affirmPassword=$("#affirmPassword");
+		if(password.val() == affirmPassword.val()){
+			password.parent().parent().removeClass('has-error').addClass('has-success');
+			affirmPassword.parent().parent().removeClass('has-error').addClass('has-success');
+		}else{
+			password.parent().parent().removeClass('has-success').addClass('has-error');
+			affirmPassword.parent().parent().removeClass('has-success').addClass('has-error');
+			password.val("");
+			affirmPassword.val("");
+			affirmPassword.attr("placeholder","确认密码跟登陆密码不一致");
+			password.focus();
+		}
+		
+	});
+	
+	/* $("#saveBtn").click(function(){
+		$.post('/yh/register/saveRegistrant',$("#register").serialize(),function(data){
+			if(data.success){
+				alert("注册成功，请尽快与管理员取得联系");
+				//$.scojs_message('注册成功，请尽快联系管理员', $.scojs_message.TYPE_OK);
+			}
+			
+		},'json');
+		
+	}); */
+
+});
+
+</script>
+
+</body>
+</html>
