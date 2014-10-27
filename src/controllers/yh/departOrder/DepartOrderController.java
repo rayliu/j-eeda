@@ -122,7 +122,7 @@ public class DepartOrderController extends Controller {
             sql = "select deo.id,deo.depart_no,deo.create_stamp,deo.status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,"
             		+ " u.user_name user_name,o.office_name office_name,tor .arrival_time request_time,ct.abbr abbr,"
             		+ " (select	name from location where code = tor .route_from) route_from,(select name from location where code = tor .route_to) route_to,"
-            		+ " (select group_concat(tr.order_no separator '\r\n') from	transfer_order tr where	tr.id in (select order_id from depart_transfer dt where	dt.depart_id = deo.id)) as transfer_order_no"
+            		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (select order_id from depart_transfer dt where dt.depart_id = deo.id)) as transfer_order_no"
             		+ " from depart_order deo"
 					+ " left join carinfo c on deo.carinfo_id = c.id"
 					+ " left join party p on deo.sp_id = p.id"
@@ -132,7 +132,7 @@ public class DepartOrderController extends Controller {
 					+ " left join user_login u on u.id = tor .create_by"
 					+ " left join office o on o.id = tor .office_id"
 					+ " where ifnull(deo.status, '') != ''"
-					+ " and combine_type = 'depart'"
+					+ " and combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
 					+ " group by deo.id,o.office_name"
 					+ " order by deo.create_stamp desc " + sLimit;
         } else {
@@ -142,7 +142,7 @@ public class DepartOrderController extends Controller {
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-            String whereSql = "  where deo.combine_type = 'DEPART' "
+            String whereSql = "  where deo.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' "
                     + " and ifnull(deo.status,'') like '%" + status
                     + "%' and ifnull(deo.depart_no,'') like '%" + departNo
                     + "%' and ifnull(tor.order_no,'') like '%" + orderNo
