@@ -16,9 +16,9 @@ $(document).ready(function() {
     //from表单验证
 	var validate = $('#transferOrderUpdateForm').validate({
         rules: {
-        	customerMessage: {
-            required: true
-          }
+        	customerMessage: {required: true},
+        	planning_time: {required: true},
+        	arrival_time: {required: true}
         },
         messages : {	             
         	customerMessage : {required:  "请选择一个客户"}
@@ -315,7 +315,6 @@ $(document).ready(function() {
 		e.preventDefault();
 		//提交前，校验数据
         if(!$("#transferOrderUpdateForm").valid()){
-        	alert("请先保存运输单!");
 	       	return false;
         }
 		//异步向后台提交数据
@@ -2166,7 +2165,7 @@ $(document).ready(function() {
         language: 'zh-CN'
     }).on('changeDate', function(ev){
         $(".bootstrap-datetimepicker-widget").hide();
-        $('#beginTime_filter').trigger('keyup');
+        $('#planning_time').trigger('keyup');
     });
 
 
@@ -2177,6 +2176,6 @@ $(document).ready(function() {
         pickerPosition: "bottom-left"
     }).on('changeDate', function(ev){
         $(".bootstrap-datetimepicker-widget").hide();
-        $('#endTime_filter').trigger('keyup');
+        $('#arrival_time').trigger('keyup');
     });
 });

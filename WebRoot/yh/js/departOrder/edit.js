@@ -1,5 +1,14 @@
  $(document).ready(function() {
-
+    //from表单验证
+	var validate = $('#orderForm').validate({
+        rules: {
+        	departure_time: {required: true},
+        	arrival_time: {required: true}
+        },
+        messages : {	             
+        }
+    });
+		
     $('#menu_assign').addClass('active').find('ul').addClass('in');
 	var departOrderStatus=$("#departOrderStatus").val();
     var message=$("#message").val();
@@ -535,6 +544,11 @@
     	    
     	    //发车单里程碑
     	    $("#transferOrderMilestoneList").click(function(e){
+    			e.preventDefault();
+    			//提交前，校验数据
+    	        if(!$("#orderForm").valid()){
+    		       	return false;
+    	        }
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
     	    		clickSaveDepartOrder(e);
     	    		if("chargeCheckOrderbasic" == parentId){
@@ -607,7 +621,7 @@
     	    //点击保存的事件，保存发车单信息
     	    var clickSaveDepartOrder = function(e){
     	    	//阻止a 的默认响应行为，不需要跳转
-    			e.preventDefault();		
+    			e.preventDefault();	
     			//异步向后台提交数据
     	        saveDepartOrderFunction();
     	    };    	       	    
@@ -625,6 +639,10 @@
     	    //编辑保存
     	    $("#saveDepartOrderBtn").click(function(e){
     	    	e.preventDefault();
+    			//提交前，校验数据
+    	        if(!$("#orderForm").valid()){
+    		       	return false;
+    	        }
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
 				   	clickSaveDepartOrder(e);
 				   	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
@@ -634,6 +652,11 @@
     	    
     	    //点击应付的时候发生的事情   这里有保存的事件???
     	    $("#arap1").click(function(e){
+    			e.preventDefault();
+    			//提交前，校验数据
+    	        if(!$("#orderForm").valid()){
+    		       	return false;
+    	        }
     	    	e.preventDefault();
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
 				   	clickSaveDepartOrder(e);
@@ -650,6 +673,11 @@
     	    });
     	    // 点击货品信息
     	    $("#departOrderItemList").click(function(e){
+    			e.preventDefault();
+    			//提交前，校验数据
+    	        if(!$("#orderForm").valid()){
+    		       	return false;
+    	        }
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
     	    		clickSaveDepartOrder(e);
     	    		if("chargeCheckOrderbasic" == parentId){
@@ -973,13 +1001,23 @@
     	    	},'json');
     		});    		
 
-	    $('#datetimepicker2').datetimepicker({  
+	    $('#datetimepicker').datetimepicker({  
 	        format: 'yyyy-MM-dd',  
 	        language: 'zh-CN', 
 	        autoclose: true,
 	        pickerPosition: "bottom-left"
 	    }).on('changeDate', function(ev){
 	        $(".bootstrap-datetimepicker-widget").hide();
-	        $('#endTime_filter').trigger('keyup');
+	        $('#departure_time').trigger('keyup');
+	    });	 
+	    
+	    $('#datetimepicker2').datetimepicker({  
+	    	format: 'yyyy-MM-dd',  
+	    	language: 'zh-CN', 
+	    	autoclose: true,
+	    	pickerPosition: "bottom-left"
+	    }).on('changeDate', function(ev){
+	    	$(".bootstrap-datetimepicker-widget").hide();
+	    	$('#arrival_time').trigger('keyup');
 	    });	    		
     });
