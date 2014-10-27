@@ -101,7 +101,7 @@ public class CostItemConfirmController extends Controller {
 			+ " left join party p on p.id = dpr.sp_id "
 			+ " left join contact c on c.id = p.contact_id"
 			+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0)"
-			+ " group by dpr.id)";
+			+ " group by dpr.id) a";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
