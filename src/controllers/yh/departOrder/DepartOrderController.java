@@ -454,6 +454,13 @@ public class DepartOrderController extends Controller {
 			arrivalTime = simpleDateFormat.format(arrivalTimeDate);
 		}
 		setAttr("arrivalTime", arrivalTime);
+		
+		Date departureTimeDate = departOrder.get("departure_time");
+		String departureTime = "";
+		if (!"".equals(departureTimeDate) && departureTimeDate != null) {
+			departureTime = simpleDateFormat.format(departureTimeDate);
+		}
+		setAttr("departureTime", departureTime);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/departOrder/editDepartOrder.html");
     }
@@ -844,6 +851,9 @@ public class DepartOrderController extends Controller {
             if(getParaToDate("arrival_time") != null){
 				dp.set("arrival_time", getPara("arrival_time")); 
 			}
+            if(getParaToDate("departure_time") != null){
+            	dp.set("departure_time", getPara("departure_time")); 
+            }
             dp.save();
             saveDepartTransfer(dp, getPara("orderid"), checkedDetail, uncheckedDetailIds);
             saveDepartOrderMilestone(dp);
@@ -883,6 +893,9 @@ public class DepartOrderController extends Controller {
             if(getParaToDate("arrival_time") != null){
 				dp.set("arrival_time", getPara("arrival_time")); 
 			}
+            if(getParaToDate("departure_time") != null){
+            	dp.set("departure_time", getPara("departure_time")); 
+            }
             dp.update();
             updateDepartTransfer(dp, getPara("orderid"), checkedDetail, uncheckedDetailIds);
             if (!"".equals(sp_id)) {
