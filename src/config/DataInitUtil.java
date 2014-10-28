@@ -111,7 +111,7 @@ public class DataInitUtil {
             // 提货单/发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),audit_status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
                     + "car_size varchar(255),car_no varchar(255),car_type varchar(255),driver varchar(255),phone varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,payment double,arrival_time date,departure_time date,remark varchar(255), charge_type varchar(50), driver_id bigint,"
-                    + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id),car_summary_type varchar(50));");
+                    + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id),car_summary_type varchar(50),turnout_time date,return_time date,);");
 
             // Depart_Order_fin_item 提货单/发车单应付明细
             stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, pickup_order_id bigint, fin_item_id bigint, "

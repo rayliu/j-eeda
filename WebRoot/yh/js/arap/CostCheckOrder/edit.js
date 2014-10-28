@@ -52,46 +52,59 @@ $(document).ready(function() {
 	$("#costCheckOrderbasic").click(function(e){
 		parentId = e.target.getAttribute("id");
 	});
-	/*--------------------------------------------------------------------*/
 	
-    /*var returnOrderIds = $("#returnOrderIds").val();
-	var returnOrderTable =$('#example').dataTable( {
-	    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",insert into return_order(status_code,create_date,order_type,creator,remark,transfer_order,distribution_order_id,contract_id
+	//datatable, 动态处理
+	var costCheckOrderId = $("#costCheckOrderId").val();
+	var orderNos = $("#orderNos").val();
+	var orderIds = $("#orderIds").val();
+    var costConfiremTable = $('#costConfirem-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "bSort": false, 
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
-    	"oLanguage": {
+    	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/costCheckOrder/returnOrderList?returnOrderIds="+returnOrderIds,
-   			"aoColumns": [
-   			{ "mDataProp": "ORDER_NO",
-            	"fnRender": function(obj) {
-        			return "<a href='/yh/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
-        		}},
-            { "mDataProp": "CNAME"},
-            { "mDataProp": "TRANSFER_ORDER_NO"},
-            { "mDataProp": "DELIVERY_ORDER_NO"},
-            { "mDataProp": "CREATOR_NAME" },
-            { "mDataProp": "CREATE_DATE" },
-            { "mDataProp": "TRANSACTION_STATUS",
+        "sAjaxSource": "/yh/costCheckOrder/costConfirmList?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds,
+        "aoColumns": [ 
+            { "mDataProp": null, "sWidth":"20px",
                 "fnRender": function(obj) {
-                    if(obj.aData.TRANSACTION_STATUS=='new')
-                        return '新建';
-                    if(obj.aData.TRANSACTION_STATUS=='confirmed')
-                        return '已确认';
-                    if(obj.aData.TRANSACTION_STATUS=='cancel')
-                        return '取消';
-                    
-                    return obj.aData.TRANSACTION_STATUS;
-                 }
+                  return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" order_no="'+obj.aData.ORDER_NO+'">';
+                }
             },
-            { "mDataProp": "REMARK" },
-            { "mDataProp": "AMOUNT"	},
-            { "mDataProp": null	,
-            	"fnRender": function(obj) {
-        			return "<input type='text' value='"+obj.aData.AMOUNT+"'>";
-        		}}
-         ]
-	});*/
+            {"mDataProp":"BUSINESS_TYPE", "sWidth":"100px"},            	
+            {"mDataProp":"SPNAME", "sWidth":"200px"},
+            {"mDataProp":null, "sWidth": "120px", 
+                "fnRender": function(obj) {
+                    if(obj.aData.TRANSACTION_STATUS=='new'){
+                        return '新建';
+                    }else if(obj.aData.TRANSACTION_STATUS=='checking'){
+                        return '已发送对帐';
+                    }else if(obj.aData.TRANSACTION_STATUS=='confirmed'){
+                        return '已审核';
+                    }else if(obj.aData.TRANSACTION_STATUS=='completed'){
+                        return '已结算';
+                    }else if(obj.aData.TRANSACTION_STATUS=='cancel'){
+                        return '取消';
+                    }
+                    return obj.aData.TRANSACTION_STATUS;
+                }
+            },                         
+            {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"100px"},  
+		    {"mDataProp":null, "sWidth":"120px",
+                "fnRender": function(obj) {
+                    return "未收款";
+            }},
+            {"mDataProp":"ORDER_NO", "sWidth":"200px"},
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
+            {"mDataProp":"CREATE_STAMP", "sWidth":"200px"},                 	
+            {"mDataProp":"AMOUNT", "sWidth":"150px"},                        
+            {"mDataProp":"VOLUME", "sWidth":"150px"},                        
+            {"mDataProp":"WEIGHT", "sWidth":"100px"},                        
+            {"mDataProp":"PAY_AMOUNT", "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                       
+            {"mDataProp":"REMARK", "sWidth":"150px"}                         
+        ]      
+    });	
 } );

@@ -1,7 +1,7 @@
 $(document).ready(function() {
     $('#menu_cost').addClass('active').find('ul').addClass('in');
    
-	  //datatable, 动态处理
+	//datatable, 动态处理
     var costConfiremTable = $('#costConfirem-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "bSort": false, 

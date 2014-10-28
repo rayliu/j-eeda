@@ -1,7 +1,17 @@
 ﻿$(document).ready(function() {
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
 	 var pickupOrderId = $("#pickupOrderId").val();
-	
+
+    //from表单验证
+	var validate = $('#pickupOrderForm').validate({
+        rules: {
+        	turnout_time: {required: true},
+        	return_time: {required: true}
+        },
+        messages : {	             
+        }
+    });
+			
 	 // 列出所有的司机
 	 /*red*/
 	 $('#driverMessage').on('keyup click', function(){
@@ -272,6 +282,8 @@
     	}else{
     		handlePickkupOrderDetail();
     	}
+ 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+        $("#finishBtn").attr('disabled', false);
     };
     
     $("#continueCreateBtn").click(function(){
@@ -282,6 +294,10 @@
     var clickSavePickupOrder = function(e){
     	//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();		
+		//提交前，校验数据
+        if(!$("#pickupOrderForm").valid()){
+	       	return false;
+        }
 		//异步向后台提交数据
         savePickupOrderFunction();
     };
@@ -300,8 +316,6 @@
  	$("#saveTransferOrderBtn").click(function(e){
  		e.preventDefault();
  		clickSavePickupOrder(e);
- 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-        $("#finishBtn").attr('disabled', false);
 	});
    
  	var pickupOrderMilestone = function(){
@@ -323,7 +337,11 @@
 	// 运输里程碑
 	$("#transferOrderMilestoneList").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
-		e.preventDefault();
+		e.preventDefault();			
+		//提交前，校验数据
+        if(!$("#pickupOrderForm").valid()){
+	       	return false;
+        }
 		//异步向后台提交数据
 		var bool = false;
 		if("chargeCheckOrderbasic" == parentId){
@@ -435,6 +453,10 @@
 	$("#addressList").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
+		//提交前，校验数据
+        if(!$("#pickupOrderForm").valid()){
+	       	return false;
+        }
 		//异步向后台提交数据
 		var bool = false;
 		if("chargeCheckOrderbasic" == parentId){
@@ -616,13 +638,13 @@
 	showFinishBut();
 	// 货品信息
 	$("#pickupOrderItemList").click(function(e){
+		//阻止a 的默认响应行为，不需要跳转
+		e.preventDefault();				
+		//提交前，校验数据
+        if(!$("#pickupOrderForm").valid()){
+	       	return false;
+        }
 		clickSavePickupOrder(e);
-		console.log(parentId);
-		if("chargeCheckOrderbasic"==parentId){
-			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-		}
-		
-		parentId = e.target.getAttribute("id");
 	});
 
 	//获取供应商的list，选中信息在下方展示其他信息
@@ -1105,17 +1127,17 @@
         ]      
     });
 	
-	$("#pickupOrderPayment").click(function(e){
+	$("#pickupOrderPayment").click(function(e){				
+		//提交前，校验数据
+        if(!$("#pickupOrderForm").valid()){
+	       	return false;
+        }
  		clickSavePickupOrder(e);
- 		if("chargeCheckOrderbasic" == parentId){
- 			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
- 		}
  		var pickupOrderId = $("#pickupOrderId").val();
  		incomeTab.fnSettings().sAjaxSource = "/yh/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId;
  		incomeTab.fnDraw();
  		pickupOrderPaymentTab.fnDraw();
  		paymenttable.fnDraw();
- 		parentId = e.target.getAttribute("id");
  		
 	});
 	$("#chargeCheckOrderbasic").click(function(e){
@@ -1232,5 +1254,24 @@
                 }
             }     
         ]      
+    });
+
+    $('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#turnout_time').trigger('keyup');
+    });
+
+
+    $('#datetimepicker2').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#return_time').trigger('keyup');
     });
 });

@@ -572,15 +572,12 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("car_size", getPara("car_size"));
             pickupOrder.set("driver", getPara("driver_name"));
             pickupOrder.set("phone", getPara("driver_phone"));
-            /*pickupOrder.set("car_follow_name", getPara("car_follow_name"));
-            pickupOrder.set("car_follow_phone", getPara("car_follow_phone"));*/
             pickupOrder.set("remark", getPara("remark"));
             pickupOrder.set("combine_type", DepartOrder.COMBINE_TYPE_PICKUP);
             pickupOrder.set("pickup_mode", getPara("pickupMode"));
             pickupOrder.set("address", getPara("address"));
-            /*pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
-            pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0 : getPara("roadBridge"));
-            pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));*/
+            pickupOrder.set("turnout_time", getPara("turnout_time"));
+            pickupOrder.set("return_time", getPara("return_time"));
             if(getPara("payment") != null && !"".equals(getPara("payment"))){
             	pickupOrder.set("payment", getPara("payment"));
             }
@@ -651,15 +648,12 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("car_size", getPara("car_size"));
             pickupOrder.set("driver", getPara("driver_name"));
             pickupOrder.set("phone", getPara("driver_phone"));
-            /*pickupOrder.set("car_follow_name", getPara("car_follow_name"));
-            pickupOrder.set("car_follow_phone", getPara("car_follow_phone"));*/
             pickupOrder.set("remark", getPara("remark"));
             pickupOrder.set("combine_type", DepartOrder.COMBINE_TYPE_PICKUP);
             pickupOrder.set("pickup_mode", getPara("pickupMode"));
             pickupOrder.set("address", getPara("address"));
-            /*pickupOrder.set("kilometres", getPara("kilometres").equals("") ? 0 : getPara("kilometres"));
-            pickupOrder.set("road_bridge", getPara("roadBridge").equals("") ? 0 : getPara("roadBridge"));
-            pickupOrder.set("income", getPara("income").equals("") ? 0 : getPara("income"));*/
+            pickupOrder.set("turnout_time", getPara("turnout_time"));
+            pickupOrder.set("return_time", getPara("return_time"));
             if(getPara("payment") != null && !"".equals(getPara("payment"))){
             	pickupOrder.set("payment", getPara("payment"));
             }
