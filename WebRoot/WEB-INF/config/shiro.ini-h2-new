@@ -1,0 +1,22 @@
+# =======================
+# Shiro INI configuration
+# =======================
+#  ref to http://shiro.apache.org/configuration.html
+
+[main]
+# Objects and their properties are defined here, 
+# Such as the securityManager, Realms and anything
+# else needed to build the SecurityManager
+ds= org.h2.jdbcx.JdbcDataSource
+ds.user = sa
+#ds.password =
+#ds.databaseName = eeda
+ds.URL = jdbc:h2:mem:eeda;
+
+jdbcRealm = org.apache.shiro.realm.jdbc.JdbcRealm
+jdbcRealm.permissionsLookupEnabled = true
+jdbcRealm.authenticationQuery = SELECT password FROM user_login WHERE user_name = ?
+jdbcRealm.userRolesQuery = SELECT role_name FROM user_roles WHERE user_name = ?
+jdbcRealm.permissionsQuery = SELECT role_permission FROM role_permissions WHERE role_name = ?
+jdbcRealm.dataSource = $ds
+

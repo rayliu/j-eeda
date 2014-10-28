@@ -27,6 +27,9 @@ import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
+import validator.AuthenticatedValidator;
+
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -34,14 +37,14 @@ import com.jfinal.plugin.activerecord.Record;
 import controllers.yh.LoginUserController;
 import controllers.yh.util.PoiUtils;
 
+//@Before(AuthenticatedValidator.class)
 public class TransferOrderController extends Controller {
 
 	private Logger logger = Logger.getLogger(TransferOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 
 	public void index() {
-		if (LoginUserController.isAuthenticated(this))
-			render("transferOrder/transferOrderList.html");
+		render("transferOrder/transferOrderList.html");
 	}
 
 	public void list() {
