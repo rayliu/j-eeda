@@ -446,21 +446,6 @@ public class DepartOrderController extends Controller {
         List<Record> paymentItemList = Collections.EMPTY_LIST;
         paymentItemList = Db.find("select * from fin_item where type='应付'");
         setAttr("paymentItemList", paymentItemList);
-        
-		Date arrivalTimeDate = departOrder.get("arrival_time");
-		String arrivalTime = "";
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		if (!"".equals(arrivalTimeDate) && arrivalTimeDate != null) {
-			arrivalTime = simpleDateFormat.format(arrivalTimeDate);
-		}
-		setAttr("arrivalTime", arrivalTime);
-		
-		Date departureTimeDate = departOrder.get("departure_time");
-		String departureTime = "";
-		if (!"".equals(departureTimeDate) && departureTimeDate != null) {
-			departureTime = simpleDateFormat.format(departureTimeDate);
-		}
-		setAttr("departureTime", departureTime);
         if (LoginUserController.isAuthenticated(this))
             render("/yh/departOrder/editDepartOrder.html");
     }

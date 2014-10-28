@@ -321,20 +321,6 @@ public class TransferOrderController extends Controller {
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
-		
-		Date planningTimeDate = transferOrder.get("planning_time");
-		Date arrivalTimeDate = transferOrder.get("arrival_time");
-		String planningTime = "";
-		String arrivalTime = "";
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		if (!"".equals(planningTimeDate) && planningTimeDate != null) {
-			planningTime = simpleDateFormat.format(planningTimeDate);
-		}
-		if (!"".equals(arrivalTimeDate) && arrivalTimeDate != null) {
-			arrivalTime = simpleDateFormat.format(arrivalTimeDate);
-		}
-		setAttr("planningTime", planningTime);
-		setAttr("arrivalTime", arrivalTime);
 		if (LoginUserController.isAuthenticated(this))
 			render("transferOrder/updateTransferOrder.html");
 	}

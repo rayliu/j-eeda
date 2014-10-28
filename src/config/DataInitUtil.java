@@ -97,7 +97,7 @@ public class DataInitUtil {
             // transfer_order 运输单
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment primary key,order_no varchar(255),customer_order_no varchar(255),status varchar(255),pickup_assign_status varchar(255),depart_assign_status varchar(255),"
                     + "cargo_nature varchar(255),cargo_nature_detail varchar(255),inventory_id bigint,pickup_mode varchar(255),arrival_mode varchar(255),charge_type varchar(50),charge_type2 varchar(50),receiving_unit varchar(255),remark varchar(255),operation_type varchar(255),pickup_seq varchar(255),payment varchar(50),car_size varchar(255),car_no varchar(255),car_type varchar(255),create_by bigint,"
-                    + "create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,eta timestamp,planning_time timestamp,arrival_time timestamp,address varchar(255),customer_province varchar(255),route_from varchar(255),route_to varchar(255),order_type varchar(255),"
+                    + "create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,eta timestamp,planning_time date,arrival_time date,address varchar(255),customer_province varchar(255),route_from varchar(255),route_to varchar(255),order_type varchar(255),"
                     + "customer_id bigint,sp_id bigint,notify_party_id bigint,driver_id bigint,warehouse_id bigint,office_id bigint,insurance_id bigint,foreign key(customer_id) references party(id),foreign key(sp_id) references party(id),"
                     + "foreign key(notify_party_id) references party(id),foreign key(driver_id) references party(id),foreign key(warehouse_id) references warehouse(id),foreign key(office_id) references office(id),foreign key(insurance_id) references insurance_order(id));");
             // transfer_order_item 货品明细
@@ -110,7 +110,7 @@ public class DataInitUtil {
 
             // 提货单/发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),audit_status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
-                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),driver varchar(255),phone varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,payment double,arrival_time timestamp,departure_time timestamp,remark varchar(255), charge_type varchar(50), driver_id bigint,"
+                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),driver varchar(255),phone varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,payment double,arrival_time date,departure_time date,remark varchar(255), charge_type varchar(50), driver_id bigint,"
                     + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id),car_summary_type varchar(50));");
 
             // Depart_Order_fin_item 提货单/发车单应付明细
