@@ -25,6 +25,7 @@ import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import validator.AuthenticatedValidator;
@@ -38,6 +39,8 @@ import controllers.yh.LoginUserController;
 import controllers.yh.util.PoiUtils;
 
 //@Before(AuthenticatedValidator.class)
+
+@RequiresAuthentication
 public class TransferOrderController extends Controller {
 
 	private Logger logger = Logger.getLogger(TransferOrderController.class);

@@ -78,6 +78,7 @@ import com.jfinal.config.Interceptors;
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
+import com.jfinal.ext.plugin.shiro.ShiroInterceptor;
 import com.jfinal.ext.plugin.shiro.ShiroPlugin;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
@@ -119,10 +120,14 @@ public class EedaConfig extends JFinalConfig {
         // 注册后，可以使beetl html中使用shiro tag
         templateFactory.groupTemplate.registerFunctionPackage("shiro", new ShiroExt());
 
-        // me.setErrorView(401, "/login.html");
-        // me.setErrorView(403, "/login.html");
-        me.setError404View("/404.html");
-        // me.setError500View("/login.html");
+        //没有权限时跳转到login
+        me.setErrorView(401, "/yh/login.html");
+        me.setErrorView(403, "/yh/login.html");
+        
+        //内部出错跳转到login,这个只是临时解决方案。
+        me.setError404View("/yh/login.html");
+        me.setError500View("/yh/login.html");
+        
         // me.setErrorView(503, "/login.html");
         // get name representing the running Java virtual machine.
         String name = ManagementFactory.getRuntimeMXBean().getName();
@@ -342,7 +347,7 @@ public class EedaConfig extends JFinalConfig {
     }
 
     public void configInterceptor(Interceptors me) {
-        // me.add(new ShiroInterceptor());
+        me.add(new ShiroInterceptor());
 
     }
 
