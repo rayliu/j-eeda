@@ -312,7 +312,7 @@ public class CostCheckOrderController extends Controller {
         	pickupOrderSql = " union select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, "
     			+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
     			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-    			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark"
+    			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
     			+ " from return_order ror "
     			+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
     			+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
@@ -325,6 +325,7 @@ public class CostCheckOrderController extends Controller {
     			+ " left join user_login ul on ul.id = dpr.create_by "
     			+ " left join party p on p.id = dpr.sp_id "
     			+ " left join contact c on c.id = p.contact_id"
+    			+ " left join office oe on oe.id = tor.office_id"
     			+ " where dor.id = ror.delivery_order_id and dpr.id in("+pickupOrderIds+") and (ifnull(dpr.id, 0) > 0)"
     			+ " group by dpr.id ";
         }
@@ -333,7 +334,7 @@ public class CostCheckOrderController extends Controller {
         	departOrderSql = " union select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
 				+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
 				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-				+ " transfer_order_no,'没回单' return_order_collection,dpr.remark"
+				+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
 				+ " from return_order ror "
 				+ " left join delivery_order dor on dor.id = ror.delivery_order_id  "
 				+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
@@ -346,6 +347,7 @@ public class CostCheckOrderController extends Controller {
 				+ " left join user_login ul on ul.id = dpr.create_by "
 				+ " left join party p on p.id = dpr.sp_id "
 				+ " left join contact c on c.id = p.contact_id"
+				+ " left join office oe on oe.id = tor.office_id"
 				+ " where dor.id = ror.delivery_order_id and dpr.id in("+departOrderIds+") and (ifnull(dpr.id, 0) > 0)"
 				+ " group by dpr.id ";
         }
@@ -354,7 +356,7 @@ public class CostCheckOrderController extends Controller {
         	deliveryOrderSql = "select distinct dor.id,dor.order_no,dor.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, "
 				+ " (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount, "
 				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n')"
-				+ " transfer_order_no,'有回单' return_order_collection,dor.remark"
+				+ " transfer_order_no,'有回单' return_order_collection,dor.remark,oe.office_name office_name"
 				+ " from return_order ror "
 				+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
 				+ " left join party p on p.id = dor.sp_id "
@@ -364,6 +366,8 @@ public class CostCheckOrderController extends Controller {
 				+ " left join transfer_order_item toi on toi.id = toid.item_id "
 				+ " left join product prod on toi.product_id = prod.id "
 				+ " left join user_login ul on ul.id = dor.create_by "
+				+ " left join warehouse w on w.id = dor.from_warehouse_id "
+				+ " left join office oe on oe.id = w.office_id"
 				+ " where dor.id = ror.delivery_order_id and dor.id in("+deliveryOrderIds+") group by dor.id ";
         }
         if(!"".equals(insuranceOrderIds)){

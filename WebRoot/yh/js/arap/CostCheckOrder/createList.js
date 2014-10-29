@@ -49,7 +49,7 @@ $(document).ready(function() {
             {"mDataProp":"VOLUME", "sWidth":"150px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"100px"},                        
             {"mDataProp":"PAY_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                       
+            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},                       
             {"mDataProp":"REMARK", "sWidth":"150px"}                         
         ]      
     });		
