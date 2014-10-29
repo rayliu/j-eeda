@@ -5,171 +5,52 @@ $(document).ready(function() {
     'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
     '</div>';
 	$('body').append(alerMsg);
+	//记录基本信息选项卡id，用作保存判断
+	var clickTabId = "carmanagebasic";
+	var num = 1;
 	
-	// 判断货场是否选中
-	$("#checkbox1").click(function(){
-		if($(this).prop('checked') == true){
-			$("#addressDiv").show();
-		}else{
-			$("#addressDiv").hide();			
+	//判断行车单是否审核
+	var isAudit = $("#isAudit").val();
+	if(isAudit == "no"){
+		//加载时隐藏"撤销审核"
+		$("#delAuditBtn").hide();
+		//启用“保存”
+		$("#saveCarSummaryBtn").prop("disabled",false);
+		$("#addCarSummaryRouteFee").prop("disabled",false);
+		$("#addCarSummaryDetailOilFee").prop("disabled",false);
+		$("#addCarSummaryDetailSalary").prop("disabled",false);
+	}else{
+		//加载时隐藏"审核"
+		$("#auditBtn").hide();
+		//不启用“保存”
+		$("#saveCarSummaryBtn").prop("disabled",true);
+		$("#addCarSummaryRouteFee").prop("disabled",true);
+		$("#addCarSummaryDetailOilFee").prop("disabled",true);
+		$("#addCarSummaryDetailSalary").prop("disabled",true);
+	}
+	
+ 	//列出所有的副司机 - 自营
+	$.get('/yh/carsummary/searchAllDriver', null, function(data){
+		
+		var minor_driver_name = $('#minor_driver_name');
+		var hidden_minor_driver_name = $('#hidden_minor_driver_name').val();
+		minor_driver_name.append("<option value=''></option>");
+		console.log(hidden_minor_driver_name);
+		for(var i = 0; i < data.length; i++)
+		{
+			if(hidden_minor_driver_name == data[i].DRIVER)
+				minor_driver_name.append("<option value='"+data[i].DRIVER+"'  selected='selected'>"+data[i].DRIVER+"</option>");
+			else
+				minor_driver_name.append("<option value='"+data[i].DRIVER+"'>"+data[i].DRIVER+"</option>");
 		}
 	});
 	
-	// 列出所有的提货地点
-	$("#addressList").click(function(e){
-		//阻止a 的默认响应行为，不需要跳转
-		e.preventDefault();
-		//异步向后台提交数据
-		var bool = false;
-		if("chargeCheckOrderbasic" == parentId){
-			bool= true;
-		}
-		
-        if($("#pickupOrderId").val() == ""){
-	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
-				$("#pickupOrderId").val(data.ID);
-				$("#addressPickupOrderId").val(data.ID);
-				$("#milestonePickupId").val(data.ID);
-				if(data.ID>0){
-					$("#pickupId").val(data.ID);
-			        showFinishBut();
-					findAllAddress();
-				  	//$("#style").show();
-				  	choiceExternalTransferOrder();
-			        if($("#transferOrderType").val() == 'replenishmentOrder'){
-			        	
-			        }
-			        if(bool){
-			        	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-			        }
-				}else{
-					$.scojs_message('保存失败', $.scojs_message.TYPE_OK);
-				}
-			},'json');
-        }else{
-        	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
-				$("#pickupOrderId").val(data.ID);
-				$("#addressPickupOrderId").val(data.ID);
-				$("#milestonePickupId").val(data.ID);
-				if(data.ID>0){		
-					$("#pickupId").val(data.ID);	
-			        showFinishBut();
-					findAllAddress();
-				  	//$("#style").show();	 
-				  	choiceExternalTransferOrder();
-			        if($("#transferOrderType").val() == 'replenishmentOrder'){
-			        	
-			        }
-			        if(bool){
-			        	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-			        }
-				}else{
-					$.scojs_message('保存失败', $.scojs_message.TYPE_OK);
-				}
-			},'json');
-        }
-        parentId = e.target.getAttribute("id");
-	});
-	
-	// 判断仓库是否选中
-	$("#checkbox2").click(function(){
-		if($(this).prop('checked') == true){
-			$("#warehouseDiv").show();
-		}else{
-			$("#warehouseDiv").hide();			
-		}
-	});
-	
-	// 获取所有仓库
-	$.post('/yh/transferOrder/searchAllWarehouse',function(data){
-		if(data.length > 0){
-		 var gateInSelect = $("#gateInSelect");
-		 gateInSelect.empty();
-		 var hideWarehouseId = $("#hideWarehouseId").val();
-		 var WarehouseId = $("#replenishmentOrderId").val();
-		 for(var i=0; i<data.length; i++){
-				 if(data[i].ID == hideWarehouseId || data[i].ID == WarehouseId){
-					 gateInSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");					 
-				 }else{
-					 gateInSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
-				 }
-			}
-		}
-	},'json');
-	
-	// 列出所有的主司机
-	$('#main_driver_name').on('keyup click', function(){
-		var inputStr = $('#main_driver_name').val();
-		
-		$.get('/yh/carsummary/searchAllDriver', {input:inputStr}, function(data){
-			console.log(data);
-			var driverList1 = $("#driverList1");
-			driverList1.empty();
-			for(var i = 0; i < data.length; i++)
-			{
-				driverList1.append("<li><a tabindex='-1' class='fromLocationItem' pid='"+data[i].ID+"' > "+data[i].DRIVER+"</a></li>");
-			}
-		},'json');
-		
-		$("#driverList1").css({ 
-        	left:$(this).position().left+"px", 
-        	top:$(this).position().top+32+"px" 
-       }); 
-       $('#driverList1').show();
-	 });
-	
-	// 选中主司机
- 	$('#driverList1').on('mousedown', '.fromLocationItem', function(e){	
- 		 //$("#driver_id").val($(this).attr('pid'));
-	  	 $('#main_driver_name').val($(this).html());
-	     $('#driverList1').hide();   
-     });
- 	
- 	// 没选中主司机，焦点离开，隐藏列表
- 	$('#main_driver_name').on('blur', function(){
-  		$('#driverList1').hide();
-  	});
- 	
- 	//列出所有的副司机
- 	$('#minor_driver_name').on('keyup click', function(){
-		var inputStr = $('#minor_driver_name').val();
-		
-		$.get('/yh/carsummary/searchAllDriver', {input:inputStr}, function(data){
-			console.log(data);
-			var driverList1 = $("#driverList2");
-			driverList1.empty();
-			for(var i = 0; i < data.length; i++)
-			{
-				driverList1.append("<li><a tabindex='-1' class='fromLocationItem' pid='"+data[i].ID+"' > "+data[i].DRIVER+"</a></li>");
-			}
-		},'json');
-		
-		$("#driverList2").css({ 
-        	left:$(this).position().left+"px", 
-        	top:$(this).position().top+32+"px" 
-       }); 
-       $('#driverList2').show();
-	 });
- 	
- 	// 选中副司机
- 	$('#driverList2').on('mousedown', '.fromLocationItem', function(e){	
- 		 //$("#driver_id").val($(this).attr('pid'));
-	  	 $('#minor_driver_name').val($(this).html());
-	     $('#driverList2').hide();   
-    });
- 	
- 	// 没选副司机，焦点离开，隐藏列表
- 	$('#minor_driver_name').on('blur', function(){
-  		$('#driverList2').hide();
-  	});
-	
- 	//保存创建或修改数据
+ 	//保存、修改数据
  	var saveCarSummaryData = function(){
- 		var result = $("#saveCarSummaryBtn").attr("disabled");
- 		if(!result){
+ 		//判断行车单是否审核
+ 		if(!$("#saveCarSummaryBtn").prop("disabled")){
  			$.post('/yh/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
  	 			if(data != null){
- 	 				$("#saveCarSummaryBtn").attr("disabled", true);
  	 				$("#car_summary_id").val(data);
  	 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  	 			}else{
@@ -183,6 +64,12 @@ $(document).ready(function() {
 	$("#saveCarSummaryBtn").click(function(e){
 		saveCarSummaryData();
 	});
+	
+	// 选显卡-基本信息
+	$("#carmanagebasic").click(function(e){
+		clickTabId = e.target.getAttribute("id");
+	});
+	
 	//刷新线路
 	var pickupAddressTbody = $('#pickupAddressTbody').dataTable({           
 		"bFilter": false, //不需要默认的搜索框
@@ -200,25 +87,28 @@ $(document).ready(function() {
             { "mDataProp": "ADDRESS1"},
             { "mDataProp": "CREATE_STAMP"},
             { "mDataProp": null,
-           	 "fnRender": function(obj) {    
-           		 if(obj.aData.ADDRESS2 != "" && obj.aData.ADDRESS2 != null && obj.aData.ADDRESS3 != "" && obj.aData.ADDRESS3 != null){
-          			 return "货场（"+obj.aData.ADDRESS2+"）仓库（"+obj.aData.ADDRESS3+"）";
-          		 }
-           		 if(obj.aData.ADDRESS3 != "" && obj.aData.ADDRESS3 != ""){
-           			 return "仓库（"+obj.aData.ADDRESS3+"）";
-           		 }
-           		 if(obj.aData.ADDRESS2 != "" && obj.aData.ADDRESS2 != "" ){
-           			 return "货场（"+obj.aData.ADDRESS2+"）";
-           		 }
-
-                }
-            }
+            	"fnRender": function(obj) {    
+            		if(obj.aData.ADDRESS2 != "" && obj.aData.ADDRESS2 != null )
+            			return obj.aData.ADDRESS2;
+            		else
+            			return "";
+            }},
+            { "mDataProp": null,
+            	"fnRender": function(obj) {    
+              		if(obj.aData.ADDRESS3 != "" && obj.aData.ADDRESS3 != null)
+              			return obj.aData.ADDRESS3;
+              		else
+            			return "";
+            }}
         ]        
     });
 	
 	// 选显卡-线路
-	$("#carmanageLine").click(function(){
-		saveCarSummaryData();
+	$("#carmanageLine").click(function(e){
+		if(clickTabId == "carmanagebasic"){
+			saveCarSummaryData();
+		}
+		clickTabId = e.target.getAttribute("id");
 		var pickupIds = $("#pickupIds").val();
 		pickupAddressTbody.fnSettings().oFeatures.bServerSide = true; 
 		pickupAddressTbody.fnSettings().sAjaxSource = "/yh/carsummary/findAllAddress?pickupIds="+pickupIds;   
@@ -249,8 +139,11 @@ $(document).ready(function() {
     });
 	
 	// 选显卡-货品信息
-	$("#carmanageItemList").click(function(){
-		saveCarSummaryData();
+	$("#carmanageItemList").click(function(e){
+		if(clickTabId == "carmanagebasic"){
+			saveCarSummaryData();
+		}
+		clickTabId = e.target.getAttribute("id");
 		var pickupIds = $("#pickupIds").val();
 		pickupItemTbody.fnSettings().oFeatures.bServerSide = true;
 		pickupItemTbody.fnSettings().sAjaxSource = "/yh/carsummary/findPickupOrderItems?pickupIds="+pickupIds;   
@@ -273,8 +166,11 @@ $(document).ready(function() {
          ]
 	});
 	// 选项卡-里程碑
-	$("#carmanageMilestoneList").click(function(){
-		saveCarSummaryData();
+	$("#carmanageMilestoneList").click(function(e){
+		if(clickTabId == "carmanagebasic"){
+			saveCarSummaryData();
+		}
+		clickTabId = e.target.getAttribute("id");
 		var pickupIds = $("#pickupIds").val();
 		pickupMilestoneTbody.fnSettings().oFeatures.bServerSide = true;
 		pickupMilestoneTbody.fnSettings().sAjaxSource = "/yh/carsummary/transferOrderMilestoneList?pickupIds="+pickupIds;   
@@ -297,42 +193,84 @@ $(document).ready(function() {
  			return nRow;
  		 },
          "aoColumns": [
-             { "mDataProp": "ITEM"},
-             { "mDataProp": "CHARGE_DATA"},
-             { "mDataProp": "CHARGE_SITE",
+             { "mDataProp": "ITEM","sWidth":"40px"},
+             { "mDataProp": "CHARGE_DATA", "sWidth":"180px",
+            	 "fnRender": function(obj) {
+                     if(obj.aData.CHARGE_DATA!='' && obj.aData.CHARGE_DATA != null){
+                    	 var str = obj.aData.CHARGE_DATA;
+ 						 str = str.substr(0,10);
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<div id='datetimepicker' class='input-append date'><input type='text' class='form-control search-control orderNo_filter' name='charge_data' id='charge_data' value='"+str+"' disabled='true'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar' onClick='datetimepicker(this)'></i></span></div>";
+                    	 else
+                    		 return "<div id='datetimepicker' class='input-append date'><input type='text' class='form-control search-control orderNo_filter' name='charge_data' id='charge_data' value='"+str+"'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar' onClick='datetimepicker(this)'></i></span></div>";
+                     }else{
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<div id='datetimepicker' class='input-append date'><input type='text' class='form-control search-control orderNo_filter' name='charge_data' id='charge_data' disabled='true'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar' onClick='datetimepicker(this)'></i></span></div>";
+                    	 else
+                    		 return "<div id='datetimepicker' class='input-append date'><input type='text' class='form-control search-control orderNo_filter' name='charge_data' id='charge_data'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar' onClick='datetimepicker(this)'></i></span></div>";
+                     }
+                 }
+             },
+             //{ "mDataProp": "CHARGE_DATA"},
+             { "mDataProp": "CHARGE_SITE","sWidth":"130px",
             	 "fnRender": function(obj) {
                      if(obj.aData.CHARGE_SITE!='' && obj.aData.CHARGE_SITE != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='charge_site' value='"+obj.aData.CHARGE_SITE+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='charge_site' value='"+obj.aData.CHARGE_SITE+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='charge_site' value='"+obj.aData.CHARGE_SITE+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='charge_site'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='charge_site' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='charge_site'>";
                      }
                  }
              },
-             { "mDataProp": "TRAVEL_AMOUNT",
+             { "mDataProp": "TRAVEL_AMOUNT","sWidth":"130px",
             	 "fnRender": function(obj) {
                      if(obj.aData.TRAVEL_AMOUNT!='' && obj.aData.TRAVEL_AMOUNT != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='travel_amount' value='"+obj.aData.TRAVEL_AMOUNT+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='travel_amount' value='"+obj.aData.TRAVEL_AMOUNT+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='travel_amount' value='"+obj.aData.TRAVEL_AMOUNT+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='travel_amount'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='travel_amount' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='travel_amount'>";
                      }
                  }
              },
-             { "mDataProp": "REMARK",
+             { "mDataProp": "REMARK","sWidth":"130px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='remark'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark'>";
                      }
                  }
              },
-             { "mDataProp": null, 
+             { "mDataProp": null,
                 "sWidth": "60px",  
                  "fnRender": function(obj) {
-                     return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
-               		"<i class='fa fa-trash-o fa-fw'> </i> "+
-               		"删除明细"+
-               		"</a>";
+                	 if($("#saveCarSummaryBtn").prop("disabled")){
+	                     return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"' disabled='true'>"+
+	               		"<i class='fa fa-trash-o fa-fw'> </i> "+
+	               		"删除明细"+
+	               		"</a>";
+                	 }else{
+                		 return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
+ 	               		"<i class='fa fa-trash-o fa-fw'> </i> "+
+ 	               		"删除明细"+
+ 	               		"</a>";
+                	 }
                  }
              }   
          ]
@@ -340,7 +278,10 @@ $(document).ready(function() {
 	
 	// 选项卡-路桥费明细
 	$("#carmanageRoadBridge").click(function(e){
-		saveCarSummaryData();
+		if(clickTabId == "carmanagebasic"){
+			saveCarSummaryData();
+		}
+		clickTabId = e.target.getAttribute("id");
 		var car_summary_id = $("#car_summary_id").val();
 		if(car_summary_id != "" && car_summary_id != null){
 			carSummaryDetailRouteFeeTbody.fnSettings().oFeatures.bServerSide = true;
@@ -382,11 +323,15 @@ $(document).ready(function() {
 	//修改路桥费明细
 	$("#carSummaryDetailRouteFeeTbody").on('blur', 'input', function(e){
 		e.preventDefault();
+		var car_summary_id = $("#car_summary_id").val();
 		var routeFeeId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
+		if(name ==  "charge_data"){
+			routeFeeId = $(this).parent().parent().parent().attr("id");
+		}
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
-		$.post('/yh/carsummary/updateCarSummaryDetailRouteFee', {routeFeeId:routeFeeId, name:name, value:value}, function(data){
+		$.post('/yh/carsummary/updateCarSummaryDetailRouteFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
 			if(data.success){
 			}else{
 				$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
@@ -409,67 +354,111 @@ $(document).ready(function() {
  		 },
          "aoColumns": [
              { "mDataProp": "ITEM", "sWidth":"50px"},
-             /*{ "mDataProp": "REFUEL_DATA", "sWidth":"150px",
+             { "mDataProp": "REFUEL_DATA", "sWidth":"200px",
             	 "fnRender": function(obj) {
-                     if(obj.aData.ODOMETER_MILEAGE!='' && obj.aData.ODOMETER_MILEAGE != null){
-                         return "<div id='datetimepicker' class='input-append date'><input type='text' name='refuel_data' id='refuel_data' value='"+obj.aData.REFUEL_DATA+"'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar'></i></span></div>";
+                     if(obj.aData.REFUEL_DATA!='' && obj.aData.REFUEL_DATA != null){
+                    	 var str = obj.aData.REFUEL_DATA;
+ 						 str = str.substr(0,10);
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<div class='input-append date'><input type='text' class='form-control search-control orderNo_filter' name='refuel_data' id='refuel_data' value='"+str+"' disabled='true'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar' onClick='datetimepicker(this)'></i></span></div>";
+                    	 else
+                    		 return "<div class='input-append date'><input type='text' class='form-control search-control orderNo_filter' name='refuel_data' id='refuel_data' value='"+str+"'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar' onClick='datetimepicker(this)'></i></span></div>";
+                    	 
                      }else{
-                     	 return "<div id='datetimepicker' class='input-append date'><input type='text' name='refuel_data' id='refuel_data'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar'></i></span></div>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<div class='input-append date'><input type='text' class='form-control search-control orderNo_filter' name='refuel_data' id='refuel_data' disabled='true'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar' onClick='datetimepicker(this)'></i></span></div>";
+                    	 else
+                    		 return "<div class='input-append date'><input type='text' class='form-control search-control orderNo_filter' name='refuel_data' id='refuel_data'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar' onClick='datetimepicker(this)'></i></span></div>";
                      }
                  }
-             },*/
-             { "mDataProp": "REFUEL_DATA", "sWidth":"150px"},
+             },
              { "mDataProp": "ODOMETER_MILEAGE", "sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.ODOMETER_MILEAGE!='' && obj.aData.ODOMETER_MILEAGE != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='odometer_mileage' value='"+obj.aData.ODOMETER_MILEAGE+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='odometer_mileage' value='"+obj.aData.ODOMETER_MILEAGE+"'  disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='odometer_mileage' value='"+obj.aData.ODOMETER_MILEAGE+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='odometer_mileage'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='odometer_mileage' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='odometer_mileage'>";
                      }
                  }
              },
              { "mDataProp": "REFUEL_SITE", "sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REFUEL_SITE !='' && obj.aData.REFUEL_SITE != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_site' value='"+obj.aData.REFUEL_SITE+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_site' value='"+obj.aData.REFUEL_SITE+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_site' value='"+obj.aData.REFUEL_SITE+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_site'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_site' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_site'>";
                      }
                  }
              },
              { "mDataProp": "REFUEL_TYPE","sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REFUEL_TYPE!='' && obj.aData.REFUEL_TYPE != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_type' value='"+obj.aData.REFUEL_TYPE+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_type' value='"+obj.aData.REFUEL_TYPE+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_type' value='"+obj.aData.REFUEL_TYPE+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_type'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_type' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_type'>";
                      }
                  }
              },
              { "mDataProp": "REFUEL_UNIT_COST","sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REFUEL_UNIT_COST!='' && obj.aData.REFUEL_UNIT_COST != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_unit_cost' value='"+obj.aData.REFUEL_UNIT_COST+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_unit_cost' value='"+obj.aData.REFUEL_UNIT_COST+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_unit_cost' value='"+obj.aData.REFUEL_UNIT_COST+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_unit_cost'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_unit_cost' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_unit_cost'>";
                      }
                  }
              },
              { "mDataProp": "REFUEL_NUMBER","sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REFUEL_NUMBER !='' && obj.aData.REFUEL_NUMBER != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number' value='"+obj.aData.REFUEL_NUMBER+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number' value='"+obj.aData.REFUEL_NUMBER+"'  disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number' value='"+obj.aData.REFUEL_NUMBER+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number'>";
                      }
                  }
              },
              { "mDataProp": "REFUEL_AMOUNT","sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REFUEL_AMOUNT!='' && obj.aData.REFUEL_AMOUNT != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_amount' value='"+obj.aData.REFUEL_AMOUNT+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_amount' value='"+obj.aData.REFUEL_AMOUNT+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_amount' value='"+obj.aData.REFUEL_AMOUNT+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_amount'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_amount' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_amount'>";
                      }
                  }
              },
@@ -483,43 +472,71 @@ $(document).ready(function() {
                  			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
                  		}
                  	 });
-                     return "<select name='payment_type'>"+str+"</select>";
+                     if($("#saveCarSummaryBtn").prop("disabled"))
+                    	 return "<select name='payment_type' disabled='true'>"+str+"</select>";
+                     else
+                    	 return "<select name='payment_type'>"+str+"</select>";
                  }
              },
              { "mDataProp": "LOAD_AMOUNT","sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.LOAD_AMOUNT!='' && obj.aData.LOAD_AMOUNT != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='load_amount' value='"+obj.aData.LOAD_AMOUNT+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='load_amount' value='"+obj.aData.LOAD_AMOUNT+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='load_amount' value='"+obj.aData.LOAD_AMOUNT+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='load_amount'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='load_amount' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='load_amount'>";
                      }
                  }
              },
              { "mDataProp": "AVG_ECON","sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.AVG_ECON!='' && obj.aData.AVG_ECON != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='avg_econ' value='"+obj.aData.AVG_ECON+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='avg_econ' value='"+obj.aData.AVG_ECON+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='avg_econ' value='"+obj.aData.AVG_ECON+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='avg_econ'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='avg_econ' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='avg_econ'>";
                      }
                  }
              },
              { "mDataProp": "REMARK","sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='remark'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark'>";
                      }
                  }
              },
              { "mDataProp": null, "sWidth":"120px",
                  "sWidth": "60px",  
                  "fnRender": function(obj) {
-                     return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
-               		"<i class='fa fa-trash-o fa-fw'> </i> "+
-               		"删除明细"+
-               		"</a>";
+                	 if($("#saveCarSummaryBtn").prop("disabled")){
+                		 return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"' disabled='true'>"+
+                    		"<i class='fa fa-trash-o fa-fw'> </i> "+
+                    		"删除明细"+
+                    		"</a>";
+                	 }else{
+                		 return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
+                    		"<i class='fa fa-trash-o fa-fw'> </i> "+
+                    		"删除明细"+
+                    		"</a>";
+                	 }
                  }
 	         }  
          ]
@@ -527,25 +544,16 @@ $(document).ready(function() {
 	
 	// 选项卡-加油记录
 	$("#carmanageRefuel").click(function(e){
-		saveCarSummaryData();
+		if(clickTabId == "carmanagebasic"){
+			saveCarSummaryData();
+		}
+		clickTabId = e.target.getAttribute("id");
 		var car_summary_id = $("#car_summary_id").val();
 		if(car_summary_id != "" && car_summary_id != null){
 			carSummaryDetailOilFeeTbody.fnSettings().oFeatures.bServerSide = true;
 			carSummaryDetailOilFeeTbody.fnSettings().sAjaxSource = "/yh/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;   
 			carSummaryDetailOilFeeTbody.fnDraw();
 		}
-		
-		/*//时间按钮
-	    $('#datetimepicker').datetimepicker({  
-		    format: 'yyyy-MM-dd',  
-		    language: 'zh-CN',
-		    autoclose: true,
-		    pickerPosition: "bottom-left"
-		}).on('changeDate', function(ev){
-		    $('#refuel_data').trigger('keyup');
-		});*/
-		
-		
 	});
 	// 新增加油记录
 	$("#addCarSummaryDetailOilFee").click(function(e){
@@ -579,11 +587,15 @@ $(document).ready(function() {
 	//修改加油记录
 	$("#carSummaryDetailOilFeeTbody").on('blur', 'input,select', function(e){
 		e.preventDefault();
+		var car_summary_id = $("#car_summary_id").val();
 		var routeFeeId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
+		if(name == "refuel_data"){
+			routeFeeId = $(this).parent().parent().parent().attr("id");
+		}
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
-		$.post('/yh/carsummary/updateCarSummaryDetailOilFee', {routeFeeId:routeFeeId, name:name, value:value}, function(data){
+		$.post('/yh/carsummary/updateCarSummaryDetailOilFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
 			if(data.success){
 			}else{
 				$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
@@ -609,55 +621,92 @@ $(document).ready(function() {
              { "mDataProp": "USERNAME", "sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.USERNAME!='' && obj.aData.USERNAME != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='username' value='"+obj.aData.USERNAME+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='username' value='"+obj.aData.USERNAME+"' disabled='true'>";
+                		 else
+                			 return "<input type='text' class='form-control search-control orderNo_filter' name='username' value='"+obj.aData.USERNAME+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='username'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='username' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='username'>";
                      }
                  }
              },
              { "mDataProp": "SALARY_SHEET", "sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.SALARY_SHEET !='' && obj.aData.SALARY_SHEET != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='salary_sheet' value='"+obj.aData.SALARY_SHEET+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='salary_sheet' value='"+obj.aData.SALARY_SHEET+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='salary_sheet' value='"+obj.aData.SALARY_SHEET+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='salary_sheet'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='salary_sheet' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='salary_sheet'>";
                      }
                  }
              },
              { "mDataProp": "WORK_TYPE","sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.WORK_TYPE!='' && obj.aData.WORK_TYPE != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='work_type' value='"+obj.aData.WORK_TYPE+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='work_type' value='"+obj.aData.WORK_TYPE+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='work_type' value='"+obj.aData.WORK_TYPE+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='work_type'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='work_type' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='work_type'>";
                      }
                  }
              },
              { "mDataProp": "DESERVED_AMOUNT","sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.DESERVED_AMOUNT!='' && obj.aData.DESERVED_AMOUNT != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='deserved_amount' value='"+obj.aData.DESERVED_AMOUNT+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='deserved_amount' value='"+obj.aData.DESERVED_AMOUNT+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='deserved_amount' value='"+obj.aData.DESERVED_AMOUNT+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='deserved_amount'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='deserved_amount' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='deserved_amount'>";
                      }
                  }
              },
              { "mDataProp": "REMARK","sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='remark'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark'>";
                      }
                  }
              },
              { "mDataProp": null, "sWidth":"120px",
                  "sWidth": "60px",  
                  "fnRender": function(obj) {
-                     return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
-               		"<i class='fa fa-trash-o fa-fw'> </i> "+
-               		"删除明细"+
-               		"</a>";
+                	 if($("#saveCarSummaryBtn").prop("disabled")){
+                		 return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"' disabled='true'>"+
+                    		"<i class='fa fa-trash-o fa-fw'> </i> "+
+                    		"删除明细"+
+                    		"</a>";
+                	 }else{
+                		 return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
+                    		"<i class='fa fa-trash-o fa-fw'> </i> "+
+                    		"删除明细"+
+                    		"</a>";
+                	 }
                  }
 	         }  
          ]
@@ -665,7 +714,10 @@ $(document).ready(function() {
 	
 	// 选项卡-送货员工资明细
 	$("#carmanageSalary").click(function(e){
-		saveCarSummaryData();
+		if(clickTabId == "carmanagebasic"){
+			saveCarSummaryData();
+		}
+		clickTabId = e.target.getAttribute("id");
 		var car_summary_id = $("#car_summary_id").val();
 		if(car_summary_id != "" && car_summary_id != null){
 			carSummaryDetailSalaryTbody.fnSettings().oFeatures.bServerSide = true;
@@ -697,11 +749,12 @@ $(document).ready(function() {
 	//修改送货员工资明细
 	$("#carSummaryDetailSalaryTbody").on('blur', 'input', function(e){
 		e.preventDefault();
+		var car_summary_id = $("#car_summary_id").val();
 		var routeFeeId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
-		$.post('/yh/carsummary/updateCarSummaryDetailSalary', {routeFeeId:routeFeeId, name:name, value:value}, function(data){
+		$.post('/yh/carsummary/updateCarSummaryDetailSalary', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
 			if(data.success){
 			}else{
 				$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
@@ -729,32 +782,46 @@ $(document).ready(function() {
             	 "fnRender": function(obj) {
                      if(obj.aData.ITEM =='1' || obj.aData.ITEM == '2' || obj.aData.ITEM =='4' ||
                     		 obj.aData.ITEM =='5' ||obj.aData.ITEM =='8' ){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='amount' value='"+obj.aData.AMOUNT+"' readonly='true'>";
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='amount' value='"+obj.aData.AMOUNT+"' disabled='true'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='amount' value='"+obj.aData.AMOUNT+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='amount' value='"+obj.aData.AMOUNT+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='amount' value='"+obj.aData.AMOUNT+"'>";
                      }
                  }
              },
              { "mDataProp": "IS_DELETE", "sWidth":"60px",
             	 "fnRender": function(obj) {
-            		 if(obj.aData.IS_DELETE != "" && obj.aData.IS_DELETE != null){
-            			 if(obj.aData.ITEM == '1' && obj.aData.IS_DELETE == "是"){
-            				 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' checked='true'>";
-            			 }
-            			 if(obj.aData.ITEM == '2' || obj.aData.ITEM =='4' || obj.aData.ITEM =='8' ){
-            				 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' checked='true'>";
+            		 if(obj.aData.IS_DELETE == "是"){
+            			 if(obj.aData.ITEM == '1' || obj.aData.ITEM == '2' || obj.aData.ITEM =='4' || obj.aData.ITEM =='8' ){
+            				 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' checked='true' disabled='true'>";
                 		 }
             		 }else{
-            			 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"'>";
+            			 if(obj.aData.ITEM == '1'){
+            				 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' disabled='true'>";
+            			 }
+            			 
+        				 if($("#saveCarSummaryBtn").prop("disabled"))
+        					 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' disabled='true'>";
+        				 else
+        					 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"'>";
+            			 
             		 }
                  }
              },
              { "mDataProp": "REMARK","sWidth":"300px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-                         return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' value='"+obj.aData.REMARK+"'>";
                      }else{
-                     	 return "<input type='text' class='form-control search-control orderNo_filter' name='remark'>";
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='remark'>";
                      }
                  }
              } 
@@ -763,7 +830,10 @@ $(document).ready(function() {
 	
 	// 选项卡-费用合计
 	$("#carmanageCostSummation").click(function(e){
-		saveCarSummaryData();
+		if(clickTabId == "carmanagebasic"){
+			saveCarSummaryData();
+		}
+		clickTabId = e.target.getAttribute("id");
 		var car_summary_id = $("#car_summary_id").val();
 		if(car_summary_id != "" && car_summary_id != null){
 			carSummaryDetailOtherFeeTbody.fnSettings().oFeatures.bServerSide = true;
@@ -778,15 +848,6 @@ $(document).ready(function() {
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		if(name == "is_delete"){
-			if(value == '1' || value == '2' || value =='4' || value =='8'){
-				$.scojs_message('所选为不可更改项目，操作失败', $.scojs_message.TYPE_OK);
-				if($(this).prop("checked") == true){
-					$(this).prop("checked",false);
-				}else{
-					$(this).prop("checked",true);
-				}
-				return false;
-			}
 			if($(this).prop("checked") == true){
 				value = "是";
 			}else{
@@ -802,6 +863,55 @@ $(document).ready(function() {
     	},'json');
 	});
 	
+	//费用合计-审核
+	$("#auditBtn").click(function(){
+		var car_summary_id = $("#car_summary_id").val();
+		var value = $(this).text();
+		if(car_summary_id != "" && car_summary_id != null){
+			$.post('/yh/carsummary/updateCarSummaryOrderStatus', {carSummaryId:car_summary_id,value:value}, function(data){
+				if(data.success){
+					$("#isAudit").val("yes");
+					$("#auditBtn").hide();
+					$("#delAuditBtn").show();
+					$("#saveCarSummaryBtn").prop("disabled",true);
+					$("#addCarSummaryRouteFee").prop("disabled",true);
+					$("#addCarSummaryDetailOilFee").prop("disabled",true);
+					$("#addCarSummaryDetailSalary").prop("disabled",true);
+					//刷新当前选项卡
+					$("#"+clickTabId+"").click();
+					
+				}else{
+					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+				}
+	    	},'json');
+		}else{
+			$.scojs_message('操作失败,请先保存行车单', $.scojs_message.TYPE_OK);
+		}
+	});	
+	
+	//费用合计-取消审核
+	$("#delAuditBtn").click(function(e){
+		var car_summary_id = $("#car_summary_id").val();
+		var value = $(this).text();
+		if(car_summary_id != "" && car_summary_id != null){
+			$.post('/yh/carsummary/updateCarSummaryOrderStatus', {carSummaryId:car_summary_id,value:value}, function(data){
+				if(data.success){
+					$("#isAudit").val("no");
+					$("#delAuditBtn").hide();
+					$("#auditBtn").show();
+					$("#saveCarSummaryBtn").prop("disabled",false);
+					$("#addCarSummaryRouteFee").prop("disabled",false);
+					$("#addCarSummaryDetailOilFee").prop("disabled",false);
+					$("#addCarSummaryDetailSalary").prop("disabled",false);
+					//刷新当前选项卡
+					$("#"+clickTabId+"").click();
+				}else{
+					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+				}
+	    	},'json');
+		}
+	});	
+	
 	//刷新运输单
 	var transferOrderTbody = $('#transferOrderTbody').dataTable({
 		"bFilter": false, //不需要默认的搜索框
@@ -813,18 +923,54 @@ $(document).ready(function() {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
         "aoColumns": [
-            { "mDataProp": "DEPART_NO"},
-            { "mDataProp": "ORDER_NO"},
-            { "mDataProp": "CUSTOMER"},
-            { "mDataProp": "ITEM_NO"},
-            { "mDataProp": "ITEM_NAME"},
+			{ "mDataProp": null,"sWidth":"40px",
+				"fnRender": function(obj) {
+				return num++;
+				}
+			}, 
+            { "mDataProp": "TRANSFER_ORDER_NO"},
+            { "mDataProp": "ABBR"},
             { "mDataProp": "AMOUNT"},
             { "mDataProp": "VOLUME"},
             { "mDataProp": "WEIGHT"},
-            { "mDataProp": "REMARK"},
+            { "mDataProp": null},
+            { "mDataProp": null},
         ]
     });
 	
+	// 选项卡-运输单
+	$("#transferOrderList").click(function(e){
+		if(clickTabId == "carmanagebasic"){
+			saveCarSummaryData();
+		}
+		clickTabId = e.target.getAttribute("id");
+		var pickupIds = $("#pickupIds").val();
+		if(pickupIds != "" && pickupIds != null){
+			transferOrderTbody.fnSettings().oFeatures.bServerSide = true; 
+			transferOrderTbody.fnSettings().sAjaxSource = "/yh/carsummary/findTransferOrder?pickupIds="+pickupIds;   
+			transferOrderTbody.fnDraw();
+		}
+	});
+	
+	
+	
+	
+	
+	
+	
+	
 });
-
+function datetimepicker(data){
+	if(!$("#saveCarSummaryBtn").prop("disabled")){
+		$('.input-append').datetimepicker({  
+			    format: 'yyyy-MM-dd',  
+			    language: 'zh-CN',
+			    autoclose: true,
+			    pickerPosition: "bottom-left"
+			}).on('changeDate', function(ev){
+				$(".bootstrap-datetimepicker-widget").hide();
+				$(data).parent().prev("input").focus();
+		});
+	}
+}
 

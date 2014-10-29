@@ -8,6 +8,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+
 import models.CarSummaryDetail;
 import models.CarSummaryDetailOilFee;
 import models.CarSummaryDetailOtherFee;
@@ -15,7 +18,9 @@ import models.CarSummaryDetailRouteFee;
 import models.CarSummaryDetailSalary;
 import models.CarSummaryOrder;
 import models.DepartOrder;
+import models.TransferOrder;
 import models.TransferOrderMilestone;
+import models.UserLogin;
 
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -27,6 +32,7 @@ import controllers.yh.LoginUserController;
 
 public class CarinfoControllerTest extends Controller {
 	private Logger logger = Logger.getLogger(CarinfoController.class);
+	Subject currentUser = SecurityUtils.getSubject();
 	
 	public void index() {
         HttpServletRequest re = getRequest();
@@ -61,69 +67,101 @@ public class CarinfoControllerTest extends Controller {
 				&& transferOrderNo == null && create_stamp == null ) {
 
 	        // 获取总条数
-	        sqlTotal = "select count(1) total from depart_order dor " + ""
-	                    + " left join carinfo c on dor.driver_id = c.id " + " where dor.status!='取消' and dor.car_summary_type = '未处理' and combine_type = '"
-	                    + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own'";
+	        sqlTotal = "select ifnull(count(0),0) total from depart_order dor "
+                    + " where dor.status!='取消' and dor.car_summary_type = '未处理' and combine_type = '"
+	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id order by dor.car_no,dor.create_stamp desc " + sLimit;
 
 	        // 获取当前页的数据
-	        sql = "select dor.*,ct.contact_person,ct.phone,c.driver,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  from depart_order dor "
-	                    + " left join carinfo c on dor.carinfo_id = c.id "
-	                    + " left join party p on dor.driver_id = p.id "
-	                    + " left join contact ct on p.contact_id = ct.id "
-	                    + " where dor.status!='取消' and dor.car_summary_type = '未处理' and combine_type = '"
-	                    + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' order by c.car_no,dor.create_stamp desc " + sLimit;
+	        sql = "select dor.*,"
+            		+ " dor.driver contact_person,"
+            		+ " dor.phone phone,"
+            		+ " dor.car_type cartype,"
+            		+ " u.user_name user_name,"
+            		+ " o.office_name office_name,"
+            		+ " (select sum(ifnull(toi.volume,p.volume)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) volume,"
+            		+ " (select sum(ifnull(nullif(toi.weight,0),p.weight)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) weight, "
+            		+ " (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  "
+            		+ " from depart_order dor "
+                    + " left join party p on dor.driver_id = p.id "
+                    + " left join contact ct on p.contact_id = ct.id "
+                    + " left join user_login u on u.id = dor.create_by "
+                    + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
+                    + " left join transfer_order t_o on t_o.id = dtf.order_id "
+                    + " left join office o on o.id = t_o.office_id "
+                    + " where dor.status!='取消' and dor.car_summary_type = '未处理' and combine_type = '"
+	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id order by dor.car_no,dor.create_stamp desc " + sLimit;
 	        
 		}else{
 			
 	        // 获取总条数
-	        sqlTotal="select count(1) total from depart_order dor " + ""
-                    + " left join carinfo c on dor.driver_id = c.id left join depart_transfer dt on dt.pickup_id = dor.id "
+	        sqlTotal="select ifnull(count(0),0) total from depart_order dor "
+                    + " left join party p on dor.driver_id = p.id "
+                    + " left join contact ct on p.contact_id = ct.id "
+                    + " left join user_login u on u.id = dor.create_by "
+                    + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
+                    + " left join transfer_order t_o on t_o.id = dtf.order_id "
+                    + " left join office o on o.id = t_o.office_id "
                     + " where dor.status!='取消' and dor.car_summary_type = '未处理' and combine_type = '"
-                    + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own'"
-                    + " and ifnull(c.driver, '') like '%"+driver+"%'"
-					+ " and ifnull(c.status, '') like '%"+status+"%'"
+	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id"
+                    + " and ifnull(dor.driver, '') like '%"+driver+"%'"
+					+ " and ifnull(dor.status, '') like '%"+status+"%'"
 					+ " and ifnull(dor.car_no, '') like '%"+car_no+"%'"
-					+ " and ifnull(dt.transfer_order_no, '') like '%"+transferOrderNo+"%'"
-					+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'";
+					+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'"
+					+ " and ifnull(dtf.transfer_order_no, '') like '%"+transferOrderNo+"%'"
+					+ " order by dor.car_no,dor.create_stamp desc " + sLimit;
 
 	        // 获取当前页的数据
-	        sql = "select dor.*,ct.contact_person,ct.phone,c.driver,c.cartype,c.status cstatus,c.length, (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  from depart_order dor "
-	                    + " left join carinfo c on dor.carinfo_id = c.id "
-	                    + " left join party p on dor.driver_id = p.id "
-	                    + " left join contact ct on p.contact_id = ct.id "
-	                    + " left join depart_transfer dt on dt.pickup_id = dor.id"
-	                    + " where dor.status!='取消' and dor.car_summary_type = '未处理' and combine_type = '"
-	                    + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' "
-	                    + " and ifnull(c.driver, '') like '%"+driver+"%'"
-						+ " and ifnull(c.status, '') like '%"+status+"%'"
-						+ " and ifnull(dor.car_no, '') like '%"+car_no+"%'"
-						+ " and ifnull(dt.transfer_order_no, '') like '%"+transferOrderNo+"%'"
-						+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'"
-	                    + " order by c.car_no,dor.create_stamp desc " + sLimit;
+	        sql = "select dor.*,"
+            		+ " dor.driver contact_person,"
+            		+ " dor.phone phone,"
+            		+ " dor.car_type cartype,"
+            		+ " u.user_name user_name,"
+            		+ " o.office_name office_name,"
+            		+ " (select sum(ifnull(toi.volume,p.volume)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) volume,"
+            		+ " (select sum(ifnull(nullif(toi.weight,0),p.weight)*toi.amount) from transfer_order_item toi left join product p on p.id=toi.product_id where toi.order_id in(select order_id from depart_transfer where pickup_id=dor.id)) weight, "
+            		+ " (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  "
+            		+ " from depart_order dor "
+                    + " left join party p on dor.driver_id = p.id "
+                    + " left join contact ct on p.contact_id = ct.id "
+                    + " left join user_login u on u.id = dor.create_by "
+                    + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
+                    + " left join transfer_order t_o on t_o.id = dtf.order_id "
+                    + " left join office o on o.id = t_o.office_id "
+                    + " where dor.status!='取消' and dor.car_summary_type = '未处理' and combine_type = '"
+	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own'"
+                    + " and ifnull(dor.driver, '') like '%"+driver+"%'"
+					+ " and ifnull(dor.status, '') like '%"+status+"%'"
+					+ " and ifnull(dor.car_no, '') like '%"+car_no+"%'"
+					+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'"
+					+ " and ifnull(dtf.transfer_order_no, '') like '%"+transferOrderNo+"%'"
+                    + " order by dor.car_no,dor.create_stamp desc " + sLimit;
 		}
-		Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
+		//Record rec = Db.findFirst(sqlTotal);
+        //logger.debug("total records:" + rec.getLong("total"));
         List<Record> orders = Db.find(sql);
 		
 	 	orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", rec.getLong("total"));
-        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        //orderMap.put("iTotalRecords", rec.getLong("total"));
+        //orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        orderMap.put("iTotalRecords", orders.size());
+        orderMap.put("iTotalDisplayRecords", orders.size());
         orderMap.put("aaData", orders);
         renderJson(orderMap);
 		
 	}
 	
 	//行车单查询
-	public void CarManageList(){
+	public void carSummaryOrderList(){
 		
 		Map orderMap = null;
 		String status = getPara("status");
 		String driver = getPara("driver");
 		String car_no = getPara("car_no");
 		String transferOrderNo = getPara("transferOrderNo");
-		String create_stamp = getPara("create_stamp");
-		
+		String order_no = getPara("order_no");
+		String start_data = getPara("start_data");
+		 
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -134,16 +172,56 @@ public class CarinfoControllerTest extends Controller {
         String sqlTotal = "";
         String sql = "";
 		if (driver == null && status == null && car_no == null
-				&& transferOrderNo == null && create_stamp == null ) {
-			sqlTotal = "";
-			
-			sql = "";
+				&& transferOrderNo == null && start_data == null ) {
+			sqlTotal = "select count(0) total from car_summary_order";
+			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
+					+ " (select group_concat( csd.pickup_order_no SEPARATOR '\r\n' ) from car_summary_order cso"
+					+ " left join car_summary_detail csd ON csd.car_summary_id = cso.id) as pickup_no,"
+					+ " (select group_concat( dt.transfer_order_no SEPARATOR '\r\n' ) from depart_transfer dt"
+					+ " where dt.pickup_id in(select pickup_order_id from car_summary_detail where car_summary_id = cso.id )) as transfer_order_no,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 3) amount3,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 4) amount4,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 5) amount5,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 6) amount6,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 7) amount7,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 8) amount8,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 9) amount9,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 10) amount10,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 11) amount11,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 12) amount12"
+					+ " from car_summary_order cso"
+					+ " order by cso.create_data desc " + sLimit;
 	        
 		}else{
 			
-			sqlTotal = "";
+			sqlTotal = "select count(0) total from car_summary_order";
 			
-			sql = "";
+			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
+					+ " (select group_concat( csd.pickup_order_no SEPARATOR '\r\n' ) from car_summary_order cso"
+					+ " left join car_summary_detail csd ON csd.car_summary_id = cso.id) as pickup_no,"
+					+ " (select group_concat( dt.transfer_order_no SEPARATOR '\r\n' ) from depart_transfer dt"
+					+ " where dt.pickup_id in(select pickup_order_id from car_summary_detail where car_summary_id = cso.id )) as transfer_order_no,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 3) amount3,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 4) amount4,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 5) amount5,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 6) amount6,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 7) amount7,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 8) amount8,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 9) amount9,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 10) amount10,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 11) amount11,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 12) amount12"
+					+ " from car_summary_order cso"
+					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
+					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
+					+ "	and ifnull(cso.status, '') like '%"+status+"%'"
+					+ " and ifnull(cso.car_no, '') like '%"+car_no+"%'"
+					+ " and ifnull(cso.main_driver_name, '') like '%"+driver+"%'"
+					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%'"
+					//+ " and ifnull(dor.start_data, '') like '%"+transferOrderNo+"%'"
+					+ " order by cso.create_data desc " + sLimit;
 		}
 		Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -169,14 +247,19 @@ public class CarinfoControllerTest extends Controller {
 				int num = 0;
 				for (int i = 0; i < pickupIds.length; i++) {
 					DepartOrder departOrder = DepartOrder.dao.findById(pickupIds[i]);
-					//车牌号
 					if(num == 0){
-						setAttr("turnoutNumber", departOrder.get("car_no"));
+						//车牌号
+						setAttr("car_no", departOrder.get("car_no"));
+						//主司机姓名
+						setAttr("driver", departOrder.get("driver"));
 					}
 					num++;
 				}
-				//出车次数
-				setAttr("turnoutCount", num);
+				//出车次
+				setAttr("carNumber", pickupIds.length);
+				//是否审核 isAudit
+				setAttr("isAudit", "no");
+				
 			} catch (Exception e) {
 				
 			}
@@ -191,24 +274,24 @@ public class CarinfoControllerTest extends Controller {
 		String pickupIdArray = getPara("pickupIds");
 		String pickupIds[] = pickupIdArray.split(",");
 		//行车单信息
-        String car_summary_id = getPara("car_summary_id");
-        String car_no = getPara("car_no");
-        String main_driver_name = getPara("main_driver_name");
-        String main_driver_amount = getPara("main_driver_amount").equals("") ?"0":getPara("main_driver_amount");
-        String minor_driver_name = getPara("minor_driver_name");
-        String minor_driver_amount = getPara("minor_driver_amount").equals("") ?"0":getPara("main_driver_amount");
-        String start_car_mileage = getPara("start_car_mileage").equals("") ?"0":getPara("start_car_mileage");
-        String finish_car_mileage = getPara("finish_car_mileage").equals("") ?"0":getPara("finish_car_mileage");
-        String month_start_car_next = getPara("month_start_car_next").equals("") ?"0":getPara("month_start_car_next");
-        String month_car_run_mileage = getPara("month_car_run_mileage").equals("") ?"0":getPara("month_car_run_mileage");
-        String month_refuel_amount = getPara("month_refuel_amount").equals("") ?"0":getPara("month_refuel_amount");
-        String next_start_car_mileage = getPara("next_start_car_mileage").equals("") ?"0":getPara("next_start_car_mileage");
-        String next_start_car_amount = getPara("next_start_car_amount").equals("") ?"0":getPara("next_start_car_amount");
-        String deduct_apportion_amount = getPara("deduct_apportion_amount").equals("") ?"0":getPara("deduct_apportion_amount");
-        String actual_payment_amount = getPara("actual_payment_amount").equals("") ?"0":getPara("actual_payment_amount");
+        String carSummaryId = getPara("car_summary_id");
+        String carNo = getPara("car_no");
+        String mainDriverName = getPara("main_driver_name");
+        String mainDriverAmount = getPara("main_driver_amount").equals("") ?"0":getPara("main_driver_amount");
+        String minorDriverName = getPara("minor_driver_name");
+        String minorDriverAmount = getPara("minor_driver_amount").equals("") ?"0":getPara("minor_driver_amount");
+        String startCarMileage = getPara("start_car_mileage").equals("") ?"0":getPara("start_car_mileage");
+        String finishCarMileage = getPara("finish_car_mileage").equals("") ?"0":getPara("finish_car_mileage");
+        String monthStartCarNext = getPara("month_start_car_next").equals("") ?"0":getPara("month_start_car_next");
+        String monthCarRunMileage = getPara("month_car_run_mileage").equals("") ?"0":getPara("month_car_run_mileage");
+        String monthRefuelAmount = getPara("month_refuel_amount").equals("") ?"0":getPara("month_refuel_amount");
+        String nextStartCarMileage = getPara("next_start_car_mileage").equals("") ?"0":getPara("next_start_car_mileage");
+        String nextStartCarAmount = getPara("next_start_car_amount").equals("") ?"0":getPara("next_start_car_amount");
+        String deductApportionAmount = getPara("deduct_apportion_amount").equals("") ?"0":getPara("deduct_apportion_amount");
+        String actualPaymentAmount = getPara("actual_payment_amount").equals("") ?"0":getPara("actual_payment_amount");
         boolean result;
         String order_no = null;
-        if(car_summary_id.equals("") || car_summary_id == null){ //新建时
+        if(carSummaryId.equals("") || carSummaryId == null){ //新建时
         	CarSummaryOrder carSummaryOrder = new CarSummaryOrder();
         	java.util.Date utilDate = new java.util.Date();
         	java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -234,14 +317,14 @@ public class CarinfoControllerTest extends Controller {
                 order_no = format + "00001";
             }
         	
-        	result = carSummaryOrder.set("order_no", "XC" + order_no).set("car_no", car_no).set("main_driver_name", main_driver_name)
-            		.set("main_driver_amount", main_driver_amount).set("minor_driver_name", minor_driver_name)
-            		.set("minor_driver_amount", minor_driver_amount).set("start_car_mileage", start_car_mileage)
-            		.set("finish_car_mileage", finish_car_mileage).set("month_start_car_next", month_start_car_next)
-            		.set("month_car_run_mileage", month_car_run_mileage).set("month_refuel_amount", month_refuel_amount)
-            		.set("next_start_car_mileage", next_start_car_mileage).set("next_start_car_amount", next_start_car_amount)
-            		.set("deduct_apportion_amount", deduct_apportion_amount).set("actual_payment_amount", actual_payment_amount)
-            		.set("create_data", sqlDate).save();
+        	result = carSummaryOrder.set("order_no", "XC" + order_no).set("car_no", carNo).set("main_driver_name", mainDriverName)
+            		.set("main_driver_amount", mainDriverAmount).set("minor_driver_name", minorDriverName)
+            		.set("minor_driver_amount", minorDriverAmount).set("start_car_mileage", startCarMileage)
+            		.set("finish_car_mileage", finishCarMileage).set("month_start_car_next", monthStartCarNext)
+            		.set("month_car_run_mileage", monthCarRunMileage).set("month_refuel_amount", monthRefuelAmount)
+            		.set("next_start_car_mileage", nextStartCarMileage).set("next_start_car_amount", nextStartCarAmount)
+            		.set("deduct_apportion_amount", deductApportionAmount).set("actual_payment_amount", actualPaymentAmount)
+            		.set("create_data", sqlDate).set("status", "新建").save();
         	
         	if(result){
         		CarSummaryOrder carSummary = CarSummaryOrder.dao
@@ -250,48 +333,49 @@ public class CarinfoControllerTest extends Controller {
         		long carSunmmaryId = carSummary.getLong("id");
         		
         		for (int i = 0; i < pickupIds.length; i++) {
-        			//插入从表数据
-        			CarSummaryDetail carSummaryDetail = new CarSummaryDetail();
-        			carSummaryDetail.set("car_summary_id", carSunmmaryId);
-        			carSummaryDetail.set("pickup_order_id", Long.parseLong(pickupIds[i]));
-        			carSummaryDetail.save();
         			//修改调车单状态为：已处理
         			DepartOrder departOrder = DepartOrder.dao.findById(pickupIds[i]);
         			departOrder.set("car_summary_type", "已处理");
         			departOrder.update();
+        			//插入从表数据
+        			CarSummaryDetail carSummaryDetail = new CarSummaryDetail();
+        			carSummaryDetail.set("car_summary_id", carSunmmaryId);
+        			carSummaryDetail.set("pickup_order_id", departOrder.get("id"));
+        			carSummaryDetail.set("pickup_order_no", departOrder.get("depart_no"));
+        			carSummaryDetail.save();
 				}
         		//创建费用合计表初始数据
         		initCarSummaryDetailOtherFeeData(carSunmmaryId);
+        		//创建行车里程碑
+        		saveCarSummaryOrderMilestone(carSunmmaryId,"新建");
         		
-        		car_summary_id = Long.toString(carSunmmaryId);
+        		carSummaryId = Long.toString(carSunmmaryId);
         	}
         }else{//修改时
-        	CarSummaryOrder carSummary = CarSummaryOrder.dao.findById(car_summary_id);
+        	CarSummaryOrder carSummary = CarSummaryOrder.dao.findById(carSummaryId);
         	if(carSummary != null){
-        		carSummary.set("main_driver_name", main_driver_name)
-	    		.set("main_driver_amount", main_driver_amount).set("minor_driver_name", minor_driver_name)
-	    		.set("minor_driver_amount", minor_driver_amount).set("start_car_mileage", start_car_mileage)
-	    		.set("finish_car_mileage", finish_car_mileage).set("month_start_car_next", month_start_car_next)
-	    		.set("month_car_run_mileage", month_car_run_mileage).set("month_refuel_amount", month_refuel_amount)
-	    		.set("next_start_car_mileage", next_start_car_mileage).set("next_start_car_amount", next_start_car_amount)
-	    		.set("deduct_apportion_amount", deduct_apportion_amount).set("actual_payment_amount", actual_payment_amount)
+        		carSummary.set("main_driver_name", mainDriverName)
+	    		.set("main_driver_amount", mainDriverAmount).set("minor_driver_name", minorDriverName)
+	    		.set("minor_driver_amount", minorDriverAmount).set("start_car_mileage", startCarMileage)
+	    		.set("finish_car_mileage", finishCarMileage).set("month_start_car_next", monthStartCarNext)
+	    		.set("month_car_run_mileage", monthCarRunMileage).set("month_refuel_amount", monthRefuelAmount)
+	    		.set("next_start_car_mileage", nextStartCarMileage).set("next_start_car_amount", nextStartCarAmount)
+	    		.set("deduct_apportion_amount", deductApportionAmount).set("actual_payment_amount", actualPaymentAmount)
 	    		.update();
         	}
         }
-        
-        renderJson(car_summary_id);
+        //修改费用合计中的司机工资
+        if(!"0".equals(mainDriverAmount) || !"0".equals(minorDriverAmount) ){
+	        double amount = Double.parseDouble(mainDriverAmount)+Double.parseDouble(minorDriverAmount);
+			String sql="update car_summary_detail_other_fee set amount = "+amount+" where amount_item  = '司机工资' and car_summary_id = "+carSummaryId;
+			Db.update(sql);
+        }
+        renderJson(carSummaryId);
 	}
 	
-	//查询所有司机
+	//查询所有自营副司机
 	public void searchAllDriver(){
-		String input = getPara("input");
-		String sql = "";
-		if(input != "" && input != null){
-			sql = "select * from carinfo c where driver like '"+input+"'";
-		}else{
-			sql = "select * from carinfo";
-		}
-		List<Record> carinfoList = Db.find(sql);
+		List<Record> carinfoList = Db.find("select * from carinfo where type = 'OWN'");
 		renderJson(carinfoList);
 	}
 	
@@ -345,15 +429,17 @@ public class CarinfoControllerTest extends Controller {
 
         String sql = "select dor.depart_no,toi.id,ifnull(toi.item_name, pd.item_name) item_name,"
         		+ "ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume) * toi.amount volume,"
-        		+ "ifnull(case toi.weight when 0.0 then null else toi.weight end,pd.weight) * toi.amount weight,"
-        		+ "c.abbr customer,	tor.order_no,toi.amount,toi.remark from	depart_order dor "
-        		+ " left join depart_transfer dt on dt.pickup_id = dor.id "
-        		+ " left join transfer_order tor on tor.id = dt.order_id "
-        		+ " left join transfer_order_item toi on toi.order_id = dt.pickup_id "
-        		+ " left join party p on p.id = tor.customer_id "
-        		+ " left join contact c on c.id = p.contact_id "
-        		+ " left join product pd on pd.id = toi.product_id "
-        		+ " where toi.order_id in ("+pickupIds+");";
+        		+ "ifnull(case toi.weight when 0.0 then null else toi.weight end,pd.weight ) * toi.amount weight,"
+        		+ "c.abbr customer,tor.order_no,toi.amount,toi.remark"
+        		+ " from depart_transfer dt"
+        		+ " left join depart_order dor on dor.id = dt.pickup_id  "
+        		+ " left join transfer_order tor on tor.id = dt.order_id"
+        		+ " left join transfer_order_item toi on toi.order_id = dt.order_id"
+        		+ " left join party p on p.id = tor.customer_id"
+        		+ " left join contact c on c.id = p.contact_id"
+        		+ " left join product pd on pd.id = toi.product_id"
+        		+ " where dt.pickup_id  IN ("+pickupIds+")"
+        		+ " order by dt.pickup_id " + sLimit;
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
@@ -374,7 +460,7 @@ public class CarinfoControllerTest extends Controller {
         String sqlTotal = "select count(0) total from transfer_order_milestone tom"
         		+ " left join user_login u on u.id = tom.create_by"
         		+ " where tom.type = '"
-                            + TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE + "' and tom.pickup_id in(" + pickupIds+");";
+                            + TransferOrderMilestone.TYPE_CAR_SUMMARY_MILESTONE + "' and tom.car_summary_id in(" + pickupIds+");";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -382,7 +468,7 @@ public class CarinfoControllerTest extends Controller {
         String sql = "select tom.*,u.user_name from transfer_order_milestone tom"
         		+ " left join user_login u on u.id = tom.create_by"
         		+ " where tom.type = '"
-                            + TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE + "' and tom.pickup_id in(" + pickupIds+");";
+                            + TransferOrderMilestone.TYPE_CAR_SUMMARY_MILESTONE + "' and tom.car_summary_id in(" + pickupIds+");";
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
@@ -442,6 +528,7 @@ public class CarinfoControllerTest extends Controller {
     }
     //修改路桥费明细
     public void updateCarSummaryDetailRouteFee(){
+    	String carSummaryId = getPara("car_summary_id");
     	String routeFeeId = getPara("routeFeeId");
     	String name = getPara("name");
     	String value = getPara("value");
@@ -452,6 +539,12 @@ public class CarinfoControllerTest extends Controller {
     		CarSummaryDetailRouteFee carSummaryDetailrouteFee = CarSummaryDetailRouteFee.dao.findById(routeFeeId);
     		carSummaryDetailrouteFee.set(name, value);
     		carSummaryDetailrouteFee.update();
+    		//修改费用合计中的路桥费
+    		if("travel_amount".equals(name) && !"0".equals(value)){
+    			Record rec = Db.findFirst("select sum(travel_amount) amount from car_summary_detail_route_fee where car_summary_id ="+carSummaryId);
+    			String sql="update car_summary_detail_other_fee set amount = "+rec.getDouble("amount")+" where amount_item  = '路桥费' and car_summary_id = "+carSummaryId;
+    			Db.update(sql);
+    		}
     	}
     	renderJson("{\"success\":true}");
     }
@@ -508,6 +601,7 @@ public class CarinfoControllerTest extends Controller {
     }
     //修改加油记录
     public void updateCarSummaryDetailOilFee(){
+    	String carSummaryId = getPara("car_summary_id");
     	String routeFeeId = getPara("routeFeeId");
     	String name = getPara("name");
     	String value = getPara("value");
@@ -522,25 +616,41 @@ public class CarinfoControllerTest extends Controller {
     		CarSummaryDetailOilFee carSummaryDetailOilFee = CarSummaryDetailOilFee.dao.findById(routeFeeId);
     		carSummaryDetailOilFee.set(name, value);
     		carSummaryDetailOilFee.update();
+    		
+    		//修改费用合计中的本次加油
+    		if("payment_type".equals(name) || "refuel_amount".equals(name) && !"0".equals(value)){
+    			try {
+    				Record rec = Db.findFirst("select ifnull(sum(refuel_amount),0) amount from car_summary_detail_oil_fee where payment_type = '油卡' and car_summary_id ="+carSummaryId);
+        			String isDelete = "是";
+        			if(rec.get("amount").equals(0)){
+        				isDelete = "否";
+        			}
+        			String sql="update car_summary_detail_other_fee set amount = "+rec.get("amount")+",is_delete = '"+isDelete+"'  where amount_item  = '本次加油' and car_summary_id = "+carSummaryId;
+        			Db.update(sql);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+    		}
+    		//修改费用合计中的本次油耗（有不确定性，暂不作）
     	}
     	renderJson("{\"success\":true}");
     }
     
     //查询送货员工资明细
     public void findCarSummaryDetailSalary(){
-    	String car_summary_id = getPara("car_summary_id");// 调车单id
-    	if(car_summary_id != ""){
+    	String carSummaryId = getPara("car_summary_id");// 调车单id
+    	if(carSummaryId != ""){
 	    	String sLimit = "";
 	        String pageIndex = getPara("sEcho");
 	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
 	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 	        }
-	        String sqlTotal = "select count(0) total from car_summary_detail_salary where car_summary_id ="+car_summary_id+";";
+	        String sqlTotal = "select count(0) total from car_summary_detail_salary where car_summary_id ="+carSummaryId+";";
 	        logger.debug("sql :" + sqlTotal);
 	        Record rec = Db.findFirst(sqlTotal);
 	        logger.debug("total records:" + rec.getLong("total"));
 	
-	        String sql = "select * from car_summary_detail_salary where car_summary_id ="+car_summary_id+";";
+	        String sql = "select * from car_summary_detail_salary where car_summary_id ="+carSummaryId+";";
 	        List<Record> departOrderitem = Db.find(sql);
 	        Map Map = new HashMap();
 	        Map.put("sEcho", pageIndex);
@@ -576,6 +686,7 @@ public class CarinfoControllerTest extends Controller {
     }
     //修改送货员工资明细
     public void updateCarSummaryDetailSalary(){
+    	String carSummaryId = getPara("car_summary_id");
     	String routeFeeId = getPara("routeFeeId");
     	String name = getPara("name");
     	String value = getPara("value");
@@ -586,6 +697,12 @@ public class CarinfoControllerTest extends Controller {
     		CarSummaryDetailSalary salary = CarSummaryDetailSalary.dao.findById(routeFeeId);
     		salary.set(name, value);
     		salary.update();
+    		//修改费用合计中的送货员工资
+    		if("deserved_amount".equals(name) && !"0".equals(value)){
+    			Record rec = Db.findFirst("select sum(deserved_amount) amount from car_summary_detail_salary where car_summary_id ="+carSummaryId);
+    			String sql="update car_summary_detail_other_fee set amount="+rec.getDouble("amount")+" where amount_item  = '送货员工资' and car_summary_id = "+carSummaryId;
+    			Db.update(sql);
+    		}
     	}
     	renderJson("{\"success\":true}");
     }
@@ -628,19 +745,127 @@ public class CarinfoControllerTest extends Controller {
     	}
     	renderJson("{\"success\":true}");
     }
+    //审核-撤销审核
+    public void updateCarSummaryOrderStatus(){
+    	String carSummaryId = getPara("carSummaryId");
+    	String value = getPara("value").trim();
+    	if(!"".equals(carSummaryId) && carSummaryId != null){
+    		if("审核".equals(value)){
+    			value = "已审核";
+    		}else if("撤销审核".equals(value)){
+    			value = "已撤销";
+    		}else if("报销".equals(value)){
+    			value = "已报销";
+    		}else{
+    			value = "";
+    		}
+    		CarSummaryOrder order = CarSummaryOrder.dao.findById(carSummaryId);
+    		order.set("status", value);
+    		order.update();
+    		//创建行车里程碑
+    		saveCarSummaryOrderMilestone(Long.parseLong(carSummaryId),value);
+    	}
+    	renderJson("{\"success\":true}");
+    }
     //每次新增调车单时要添加的数据
     private void initCarSummaryDetailOtherFeeData(long carSummaryOrderId){
-    	
     	String name[] = {"car_summary_id","item","amount_item","is_delete"};
     	String items[] = {"本次加油","本次油耗","出车补贴","司机工资","路桥费","装卸费","罚款","送货员工资","停车费","住宿费","过磅费","其他费用"};
-    	String isdeletes = "是";
+    	String isdeletes[] = {"是","否"};
     	for (int i = 0; i < items.length; i++) {
     		CarSummaryDetailOtherFee c = new CarSummaryDetailOtherFee();
     		if(i == 1 || i == 3 || i == 7)
-    			c.set(name[0], carSummaryOrderId).set(name[1], i+1).set(name[2], items[i]).set(name[3], isdeletes).set("amount", 0).save();
+    			c.set(name[0], carSummaryOrderId).set(name[1], i+1).set(name[2], items[i]).set(name[3], isdeletes[0]).set("amount", 0).save();
     		else
-    			c.set(name[0], carSummaryOrderId).set(name[1], i+1).set(name[2], items[i]).set("amount", 0).save();
+    			c.set(name[0], carSummaryOrderId).set(name[1], i+1).set(name[2], items[i]).set(name[3], isdeletes[1]).set("amount", 0).save();
 		}
     }
+    // 保存行车里程碑
+ 	private void saveCarSummaryOrderMilestone(long carSummaryOrderId,String status) {
+ 		TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+ 		transferOrderMilestone.set("status", status);
+ 		String name = (String) currentUser.getPrincipal();
+ 		List<UserLogin> users = UserLogin.dao
+ 				.find("select * from user_login where user_name='" + name + "'");
+ 		transferOrderMilestone.set("create_by", users.get(0).get("id"));
+ 		transferOrderMilestone.set("location", "");
+ 		java.util.Date utilDate = new java.util.Date();
+ 		java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+ 		transferOrderMilestone.set("create_stamp", sqlDate);
+ 		transferOrderMilestone.set("type",
+ 				TransferOrderMilestone.TYPE_CAR_SUMMARY_MILESTONE);
+ 		transferOrderMilestone.set("car_summary_id", carSummaryOrderId);
+ 		transferOrderMilestone.save();
+ 	}
+ 	//编辑行车单
+    public void edit(){
+    	String carSummaryId = getPara("carSummaryId");
+    	if(carSummaryId != "" && carSummaryId != null){
+    		CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(carSummaryId);
+    		//车牌号
+			setAttr("car_no", carSummaryOrder.get("car_no"));
+			//主司机姓名
+			setAttr("driver", carSummaryOrder.get("main_driver_name"));
+			//出车次
+			setAttr("carNumber", carSummaryOrder.get("month_start_car_next"));
+			//是否审核 isAudit
+			String status = carSummaryOrder.get("status");
+			if("新建".equals(status) || "已撤销".equals(status) )
+				setAttr("isAudit", "no");
+			else if("已审核".equals(status) || "已报销".equals(status))
+				setAttr("isAudit", "yes");
+			else
+				setAttr("isAudit", "no");
+			
+			setAttr("carSummaryOrder", carSummaryOrder);
+			
+			Record rec = Db.findFirst("select group_concat(csd.pickup_order_id separator ',') pickupids  from car_summary_detail csd where csd.car_summary_id in("+carSummaryId+") ;");
+			//拼车单号
+			setAttr("pickupIds", rec.get("pickupids"));
+    	}
+    	render("/yh/carmanage/carSummaryEdit.html");
+    }
+    
+  //查询运输单
+    public void findTransferOrder(){
+    	String pickupIds = getPara("pickupIds");// 调车单id
+    	if(pickupIds != ""){
+	    	String sLimit = "";
+	        String pageIndex = getPara("sEcho");
+	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+	        }
+	        String sqlTotal = "select count(0) total from depart_transfer dt where dt.pickup_id in(" + pickupIds+");";
+	        logger.debug("sql :" + sqlTotal);
+	        Record rec = Db.findFirst(sqlTotal);
+	        logger.debug("total records:" + rec.getLong("total"));
+	
+	        String sql = "select dt.*, tr.order_no,c.abbr,"
+	        		+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = dt.order_id ) amount,"
+	        		+ " (select sum( ifnull(toi.volume, p.volume) * toi.amount ) from transfer_order_item toi "
+	        		+ " left join product p on p.id = toi.product_id where toi.order_id = dt.order_id ) volume,"
+	        		+ " (select sum( ifnull( nullif(toi.weight, 0), p.weight ) * toi.amount ) from transfer_order_item toi"
+	        		+ " left join product p on p.id = toi.product_id where toi.order_id = dt.order_id ) weight"
+	        		+ " from depart_transfer dt"
+	        		+ " left join transfer_order tr on tr.id = dt.order_id"
+	        		+ " left join party p on p.id = tr.customer_id"
+	        		+ " left join contact c on c.id = p.contact_id"
+	        		+ " where dt.pickup_id in(" + pickupIds+")"
+	        		+ " order by dt.pickup_id asc "+ sLimit;
+	        List<Record> departOrderitem = Db.find(sql);
+	        Map Map = new HashMap();
+	        Map.put("sEcho", pageIndex);
+	        Map.put("iTotalRecords", rec.getLong("total"));
+	        Map.put("iTotalDisplayRecords", rec.getLong("total"));
+	        Map.put("aaData", departOrderitem);
+	        renderJson(Map); 
+    	}
+    }
+    
+    
+    
+    
+    
+    
     
 }

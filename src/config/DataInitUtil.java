@@ -151,7 +151,7 @@ public class DataInitUtil {
 
             // transfer_order_milestone 运输单里程碑
             stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
-                    + "last_modified_stamp timestamp,type varchar(255),order_id bigint,foreign key(order_id) references transfer_order(id),pickup_id bigint,depart_id bigint,foreign key(pickup_id) references depart_order(id));");
+                    + "last_modified_stamp timestamp,type varchar(255),order_id bigint,foreign key(order_id) references transfer_order(id),pickup_id bigint,depart_id bigint,foreign key(pickup_id) references depart_order(id),car_summary_id bigint);");
 
             stmt.executeUpdate("create table if not exists warehouse_order(id bigint auto_increment primary key,party_id bigint,warehouse_id bigint,order_no varchar(50),order_type varchar(50),status varchar(50),"
                     + "qualifier varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
@@ -201,12 +201,12 @@ public class DataInitUtil {
             		+ " create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,fin_item_id bigint,foreign key(fin_item_id) references fin_item(id),insurance_order_id bigint,foreign key(insurance_order_id) references insurance_order(id),transfer_order_item_id bigint,foreign key(transfer_order_item_id) references transfer_order_item(id));");
             
             //行车单
-            stmt.execute("create table if not exists car_summary_order(id bigint auto_increment primary key,order_no varchar(50),car_no varchar(50),main_driver_name varchar(50),main_driver_amount double,minor_driver_name varchar(50),"
+            stmt.execute("create table if not exists car_summary_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),car_no varchar(50),main_driver_name varchar(50),main_driver_amount double,minor_driver_name varchar(50),"
             		+ "minor_driver_amount double,start_car_mileage double,finish_car_mileage double,month_start_car_next int,month_car_run_mileage double,month_refuel_amount double,next_start_car_mileage double,"
             		+ "next_start_car_amount double,deduct_apportion_amount double,actual_payment_amount double,create_data timestamp);");
             
             //（行车单-拼车单）关联表
-            stmt.execute("create table if not exists car_summary_detail(id bigint auto_increment primary key,car_summary_id bigint,pickup_order_id  bigint);");
+            stmt.execute("create table if not exists car_summary_detail(id bigint auto_increment primary key,car_summary_id bigint,pickup_order_id  bigint,pickup_order_no varchar(50));");
             
             //行车单路桥费明细
             stmt.execute("create table if not exists car_summary_detail_route_fee(id bigint auto_increment primary key,"
@@ -304,12 +304,12 @@ public class DataInitUtil {
             // fin_item_id bigint,"
             // +
             // "fin_item_code varchar(20), amount double, status varchar(50), "
-            stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('1','1','20132014','5200','完成');");
+           /* stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('1','1','20132014','5200','完成');");
             stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('1','2','20132015','5200','完成');");
             stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('1','3','20132016','5200','完成');");
             stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('2','1','20132014','3200','未完成');");
             stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('2','2','20132015','3200','未完成');");
-
+            */
             // 角色定义
             stmt.executeUpdate("insert into role(role_name) values('文员');");
             stmt.executeUpdate("insert into role(role_name) values('经理');");
@@ -459,7 +459,7 @@ public class DataInitUtil {
             stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('SONY-电视1', 'SONY30329','1000','5000','6000', 30, '台', 30, 3, '普通货品');");
             stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('SONY-电视2', 'SONY30330','1000','5000','6000', 30, '台', 30, 3, '普通货品');");
 
-            // 运输单
+            /*// 运输单
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type,charge_type2) values('ATM', '4', '12', 'YS2014042600001', '3', '1', '已入货场', '2014-04-20 16:33:35.1', 'delivery','珠海','2','110102','440402','2','salesOrder','provinceOut','own','perUnit');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type, charge_type, pickup_mode,charge_type2) "
                     + "values('ATM', 4, '13', 'YS2014042600002', '4', 1, '新建', CURRENT_TIMESTAMP(), 'gateIn','中山', 4,'440100','110100','3','salesOrder','provinceIn','own','perUnit','routeSP','perUnit');");
@@ -527,7 +527,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
                     + "values(3,'456', 'ATM002', 6, 24);");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
-                    + "values(3,'789', 'ATM003', 6, 24);");
+                    + "values(3,'789', 'ATM003', 6, 24);");*/
 
             // 配送单
             stmt.execute("insert into delivery_order(order_no, cargo_nature, customer_id,sp_id,notify_party_id,status,create_stamp,route_from,route_to) values('PS2014042600013', 'ATM','5','7','9','配送在途','2014-04-25 16:35:35.1','440100','110100');");
@@ -604,12 +604,12 @@ public class DataInitUtil {
             stmt.execute("insert into depart_transfer(pickup_id,order_id,transfer_order_no) values(5, '5','YS2014042600005');");
             stmt.execute("insert into depart_transfer(pickup_id,order_id,transfer_order_no) values(5, '3','YS2014042600003');");*/
 
-            // 运输里程碑
+           /* // 运输里程碑
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(2, 3, '2014-06-28 10:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(3, 3, '2014-06-28 10:40:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(4, 3, '2014-06-28 10:43:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(6, 3, '2014-06-28 11:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
-
+            */
             stmt.execute("insert into arap_charge_order(begin_time, payee_id, order_no, remark, create_by, end_time, create_stamp, status) values('2014-08-15 9:39:35.1', 1, 'YSDZ2014081800001', '应收对账单测试数据', '3', '2014-08-19 9:39:35.1', '2014-08-18 9:39:35.1', '已确认');");
             stmt.execute("insert into arap_charge_item(charge_order_id, ref_order_id, create_by, create_stamp) values(1, 1, 3, '2014-08-18 9:39:35.1');");
             
