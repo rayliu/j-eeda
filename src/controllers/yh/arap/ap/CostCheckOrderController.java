@@ -245,6 +245,17 @@ public class CostCheckOrderController extends Controller {
     	UserLogin userLogin = UserLogin.dao.findById(arapAuditOrder.get("create_by"));
     	setAttr("userLogin", userLogin);
     	setAttr("arapAuditOrder", arapAuditOrder);
+    	String orderIds = "";
+    	String orderNos = "";
+    	List<ArapCostItem> arapCostItems = ArapCostItem.dao.find("select * from arap_cost_item where cost_order_id = ?", arapAuditOrder.get("id"));
+    	for(ArapCostItem arapCostItem : arapCostItems){
+    		orderIds += arapCostItem.get("ref_order_id") + ",";
+    		orderNos += arapCostItem.get("ref_order_no") + ",";
+    	}
+    	orderIds = orderIds.substring(0, orderIds.length() - 1);
+    	orderNos = orderNos.substring(0, orderNos.length() - 1);
+    	setAttr("orderIds", orderIds);
+    	setAttr("orderNos", orderNos);
     	if(LoginUserController.isAuthenticated(this))
     		render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
     }

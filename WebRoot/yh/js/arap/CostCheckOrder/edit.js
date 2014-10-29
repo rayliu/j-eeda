@@ -54,9 +54,6 @@ $(document).ready(function() {
 	});
 	
 	//datatable, 动态处理
-	var costCheckOrderId = $("#costCheckOrderId").val();
-	var orderNos = $("#orderNos").val();
-	var orderIds = $("#orderIds").val();
     var costConfiremTable = $('#costConfirem-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "bSort": false, 
@@ -66,7 +63,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/costCheckOrder/costConfirmList?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds,
+        "sAjaxSource": "/yh/costConfirmList/list",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px",
                 "fnRender": function(obj) {
@@ -107,4 +104,12 @@ $(document).ready(function() {
             {"mDataProp":"REMARK", "sWidth":"150px"}                         
         ]      
     });	
+    
+    $("#arapAuditList").click(function(){
+    	var costCheckOrderId = $("#costCheckOrderId").val();
+    	var orderNos = $("#orderNos").val();
+    	var orderIds = $("#orderIds").val();
+    	costConfiremTable.fnSettings().sAjaxSource = "/yh/costCheckOrder/costConfirmList?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
+    	costConfiremTable.fnDraw(); 
+    });
 } );
