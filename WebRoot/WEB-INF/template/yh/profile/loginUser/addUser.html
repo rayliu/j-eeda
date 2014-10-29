@@ -57,8 +57,8 @@
 <script>
 	$(document).ready(function() {
 		jQuery.validator.addMethod("stringCheck", function(value, element) {
-			return this.optional(element) || /^[u0391-uFFE5w]+$/.test(value);
-			}, "只能包括中文字、英文字母、数字和下划线");
+			return this.optional(element) || ( /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/).test(value);
+			}, "登陆名格式不正确");
 
     $('#menu_profile').addClass('active').find('ul').addClass('in');
         $('#leadsForm').validate({

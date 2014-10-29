@@ -1,0 +1,257 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <title>易达物流信息平台</title>
+
+    <!-- Core CSS - Include with every page -->
+    <link href="/yh/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/yh/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <!-- SB Admin CSS - Include with every page -->
+    <link href="/yh/css/sb-admin.css" rel="stylesheet">
+
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-4">
+				<div class="login-panel panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">新用户登陆</h3>
+					</div>
+					<div class="panel-body">
+						 <form action="/yh/register/saveRegistrant" method="post" id="registerForm" class="form-horizontal"  style="margin: 0 15px;">
+							<fieldset>
+								<div class="row">
+									<div class="form-group" id="registerNatures">
+										<span  class="col-md-2"></span>
+										<label class="radio-inline col-md-3">
+											<input type="radio" name ="officeRegister" value="register" id="exit" checked>公司已注册 
+										</label>
+										<label class="radio-inline">
+											<input type="radio" name ="officeRegister" id="unexit" value="unregister">公司未注册 
+										</label>
+
+									</div>
+									<div class=" form-group form-group-lg">
+										<label class="col-md-3 control-label">登&nbsp;&nbsp;陆&nbsp;&nbsp;名</label>
+										<div class=" col-md-6">
+											<input class="form-control" type="text" id = "username" name="username" placeholder="请输入你的登陆名(邮箱地址)">
+										</div>
+									</div>
+									<div class=" form-group form-group-lg">
+										<label class="col-md-3 control-label">登陆密码</label>
+										<div class=" col-md-6">
+											<input class="form-control" type="password" id="password" name="password"  placeholder="请输入你的登陆密码">
+										</div>
+										
+									</div>
+									<div class=" form-group form-group-lg">
+										<label class="col-md-3 control-label">确认密码</label>
+										<div class=" col-md-6">
+											<input class="form-control" type="password" id="affirmPass" name="affirmPass" placeholder="请再次输入你的登陆密码">
+										</div>
+										
+									</div>
+									
+								</div>
+								<div class="row" id="officeInformation" style="display:none">
+										<div class=" form-group form-group-lg">
+											<label class="col-md-3 control-label">公&nbsp;&nbsp;司&nbsp;&nbsp;名</label>
+											<div class=" col-md-6">
+												<input class="form-control" type="text" id="officeName" name ="officeName"placeholder="请输入公司名称">
+											</div>
+											
+										</div>
+										<div class=" form-group form-group-lg">
+											<label class="col-md-3 control-label">联&nbsp;&nbsp;系&nbsp;&nbsp;人</label>
+											<div class=" col-md-6">
+												<input class="form-control" type="text" id="contact_name" name="contact_name"placeholder="请输入公司联系人">
+											</div>
+										</div>
+										<div class=" form-group form-group-lg">
+											<label class="col-md-3 control-label">电&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;话</label>
+											<div class=" col-md-6">
+												<input class="form-control" type="text" id="contact_phone" name="contact_phone"placeholder="请输入联系人的联系方式">
+											</div>
+										</div>
+										<div class=" form-group form-group-lg">
+											<label class="col-md-3 control-label">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件</label>
+											<div class=" col-md-6">
+												<input class="form-control" type="text" id="email" name="email">
+											</div>
+										</div>
+										<div class="form-group form-group-sm">
+										    <label class="col-md-3 control-label">系统管理员</label>
+											<label class="control-label col-md-5">首次注册，默认是管理员</label>
+										</div>
+								</div>
+								<div class="form-group form-group-sm">
+								   <span  class="col-md-1"></span>
+									<button type="submit" class="btn btn-default btn-success col-sm-4">OK</button>
+								</div>
+								
+						 	</fieldset>
+						 	
+						 </form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+    <script src="/yh/js/jquery-1.10.2.js"></script>
+    <script src="/yh/js/bootstrap.min.js"></script>
+    <script src="/yh/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="/yh/js/jquery.validate.min.js"></script>
+    <script src="/yh/js/jvalidate.messages_cn.js"></script>
+    <!-- SB Admin Scripts - Include with every page -->
+    <script src="/yh/js/sb-admin.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+		var checkBoolean = false;
+		$("#exit").on("click", function() {
+			$("#officeInformation").hide();
+			checkBoolean = false;
+		});
+		$("#unexit").on("click", function() {
+			$("#officeInformation").show();
+			checkBoolean = true;
+		});
+		if(checkBoolean){
+			$("#officeInformation").show();
+		}else{
+			$("#officeInformation").hide();
+		}
+		
+		$("#username").on('blur',function(){
+			if(checkBoolean){
+				$("#email").val($("#username").val());
+			}
+		});
+		
+		
+		if(checkBoolean != false){
+			 $('#registerForm').validate({
+		         rules: {
+		        	 username: {
+		                required: true,
+		                email:true,
+		                minlength: 6,
+		                remote:{
+		                	url: "/yh/register/checkUserNameExist", //后台处理程序    
+                            type: "post",  //数据发送方式  
+                            data:  {                     //要传递的数据   
+                            	username: function() {   
+                                    return $("#username").val();   
+                                  }   
+  
+                            }   
+            
+                        } 
+					},
+		              password:{
+		                required: true,
+		                minlength: 6
+		              },
+		              affirmPass: { 
+		            	  required: true, 
+		            	  minlength: 5, 
+		            	  equalTo: "#password" 
+		            	  } 
+		             },
+		             messages:{
+		            	 username:{
+		            		 remote:"用户名一存在"
+		            	 }
+		             },
+		            highlight: function(element) {
+		            	$(element).parent().parent().closest('.form-group').removeClass('has-success').addClass('has-error');
+		            	
+		            },
+		            success: function(element) {
+		            	element.parent().parent().removeClass('has-error').addClass('has-success');
+		            }
+		        });
+		}else{
+			 $('#registerForm').validate({
+		            rules: {
+		            	username: {
+			                required: true,
+			                email:true,
+			                minlength: 6,
+			                remote:{
+			                	url: "/yh/register/checkUserNameExist", //后台处理程序    
+	                            type: "post",  //数据发送方式   
+	                            dataType: "json",       //接受数据格式       
+	                            data:  {                     //要传递的数据   
+	                            	username: function() {   
+	                                    return $("#username").val();   
+	                                  }   
+	  
+	                            }   
+	            
+	                        } 
+						},
+		              password:{
+		                required: true,
+		                minlength: 6
+		              },
+		              affirmPass: { 
+		            	  required: true, 
+		            	  minlength: 6, 
+		            	  equalTo: "#password" 
+		            	  } ,
+		           		officeName:{
+		           			required:true,
+		           			remote:{
+			                	url: "/yh/register/checkOfficeNameExist", //后台处理程序    
+	                            type: "post",  //数据发送方式   
+	                            dataType: "json",       //接受数据格式       
+	                            data:  {                     //要传递的数据   
+	                            	officeName: function() {   
+	                                    return $("#officeName").val();   
+	                                  }   
+	  
+	                            } 
+		           			}
+		           		},
+		           		contact_name:{
+		           			required:true
+		           		},
+		           		contact_phone:{
+		           			required:true
+		           		},
+		           		email:{
+		           			required: true,
+		           			email:true
+		           		}
+		           		
+		             },
+					messages:{
+		            	 username:{
+		            		 email:"登陆名格式步正确",
+		            		 remote:"用户名已存在"
+		            	 },
+		            	 officeName:{
+		            		 required:"公司名不能为空",
+		            		 remote:"公司名已注册"
+		            	 },
+		            	 email:{
+		            		 email:"邮件格式不正确"
+		            	 }
+		             },
+		            highlight: function(element) {
+		            	$(element).parent().parent().closest('.form-group').removeClass('has-success').addClass('has-error');
+		            },
+		            success: function(element) {
+		            	element.parent().parent().removeClass('has-error').addClass('has-success');
+		            }
+		        });
+		}
+		window.history.forward(1);
+	});
+		
+</script>
+</html>

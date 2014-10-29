@@ -92,6 +92,7 @@ import controllers.eeda.LoanController;
 import controllers.eeda.PropertyClientController;
 import controllers.eeda.SalesOrderController;
 import controllers.eeda.UserProfileController;
+import controllers.yh.RegisterUserController;
 
 public class EedaConfig extends JFinalConfig {
     private Logger logger = Logger.getLogger(EedaConfig.class);
@@ -158,6 +159,9 @@ public class EedaConfig extends JFinalConfig {
         // yh project controller
         me.add(contentPath, controllers.yh.AppController.class, contentPath);
         me.add(contentPath+"/loginUser", controllers.yh.LoginUserController.class, contentPath);
+        //register loginUser
+        me.add(contentPath+"/register",RegisterUserController.class,contentPath);
+        
         me.add(contentPath+"/role", controllers.yh.RoleController.class, contentPath);
         me.add(contentPath+"/toll", controllers.yh.TollController.class, contentPath);
         me.add(contentPath+"/privilege", controllers.yh.PrivilegeController.class, contentPath);
