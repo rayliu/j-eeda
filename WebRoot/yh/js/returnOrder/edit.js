@@ -16,7 +16,18 @@
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/yh/returnOrder/transferOrderItemList?order_id="+returnOrderId+"&id="+transferOrderId,
-        "aoColumns": [   
+        "aoColumns": [ 
+			{
+				"mDataProp":null,            	
+				"sWidth": "80px",
+				"fnRender":function(obj){
+					//判断是否为ATM机
+					if(obj.aData.ITEM_NAME == "ATM"){
+						return obj.aData.SERIAL_NO;
+					}
+					return "";
+				}
+			},
             {
             	"mDataProp":"ITEM_NO",            	
             	"sWidth": "80px",
@@ -24,7 +35,7 @@
         	},
             {
             	"mDataProp":"ITEM_NAME",
-            	"sWidth": "180px",
+            	"sWidth": "100px",
             	"sClass": "item_name"
             },
             {
@@ -49,12 +60,22 @@
             },
         	{
             	"mDataProp":"AMOUNT",
-            	"sWidth": "80px",
+            	"sWidth": "60px",
             	"sClass": "amount"
             }, 
+        	{
+            	"mDataProp":null,
+            	"sWidth": "60px",
+            	"fnRender":function(obj){
+            		if(obj.aData.TIEM_NAME =="ATM"){
+						return obj.Data.PIECES;
+					}
+					return "";
+				}
+            },
             {
             	"mDataProp":"UNIT",
-            	"sWidth": "80px",
+            	"sWidth": "60px",
             	"sClass": "unit"
             },
             {

@@ -670,7 +670,7 @@ public class ReturnOrderController extends Controller {
 		Record transferOrder = Db
 				.findFirst("select cargo_nature,cargo_nature_detail from transfer_order where id ="
 						+ transferOrderId);
-
+		//判断是否为ATM机
 		if (transferOrder.get("cargo_nature").equals("ATM")) {
 			sqlTotal = "select distinct count(1) total "
 					+ "from transfer_order_item_detail toid "
@@ -679,9 +679,11 @@ public class ReturnOrderController extends Controller {
 					+ "left join product p on toi.product_id = p.id where r.id ="
 					+ returnOrderId;
 
-			sql = "select distinct count(*) as amount ,item_no,item_name,width,size,weight,height,volume,unit,remark,tid from ( "
-					+ "select toi.id as id,"
-					+ "toid.id as tid,"
+			sql = "select distinct count(*) as amount ,item_no,item_name,width,size,weight,height,volume,unit,remark,tid,serial_no,pieces from ( "
+					+ "select toi.id as id, "
+					+ "toid.id as tid, "
+					+ "toid.serial_no serial_no, "
+					+ "toid.pieces pieces, "
 					+ "ifnull(p.item_no, toi.item_no) item_no, "
 					+ "ifnull(p.item_name, toi.item_name) item_name,"
 					+ "ifnull(p.size, toi.size) size, "
@@ -710,9 +712,11 @@ public class ReturnOrderController extends Controller {
 						+ "left join product p on toi.product_id = p.id where r.id ="
 						+ returnOrderId;
 				
-				sql = "select distinct count(*) as amount ,item_no,item_name,width,size,weight,height,volume,unit,remark,tid from ( "
+				sql = "select distinct count(*) as amount ,item_no,item_name,width,size,weight,height,volume,unit,remark,tid,serial_no,pieces from ( "
 						+ "select toi.id as id,"
 						+ "toid.id as tid,"
+						+ "toid.serial_no serial_no, "
+						+ "toid.pieces pieces, "
 						+ "ifnull(p.item_no, toi.item_no) item_no, "
 						+ "ifnull(p.item_name, toi.item_name) item_name,"
 						+ "ifnull(p.size, toi.size) size, "

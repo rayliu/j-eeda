@@ -62,15 +62,15 @@ public class TransferOrderController extends Controller {
 		String endTime = getPara("endTime");
 		
 		String order_type=getPara("order_type");
-		String oname =getPara("oname");
+	
 		String plantime=getPara("plantime");
 		String arrivarltime=getPara("arrivarltime");
 		String customer_order_no=getPara("customer_order_no");
 
 		if (orderNo == null && status == null && address == null
 				&& customer == null && sp == null && beginTime == null
-				&& endTime == null&& order_type == null&& oname == null
-				&& plantime == null&& arrivarltime == null&& customer_order_no == null) {
+				&& endTime == null&& order_type == null&& plantime == null
+				&& arrivarltime == null&& customer_order_no == null) {
 			String sLimit = "";
 			String pageIndex = getPara("sEcho");
 			if (getPara("iDisplayStart") != null
@@ -147,7 +147,6 @@ public class TransferOrderController extends Controller {
 					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ "%' and ifnull(ul.user_name,'') like '%" + oname
 					+ "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
@@ -181,7 +180,6 @@ public class TransferOrderController extends Controller {
 					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ "%' and ifnull(ul.user_name,'') like '%" + oname
 					+ "%' and create_stamp between '" + beginTime
 					+ "' and '" + endTime + "' order by create_stamp desc" + sLimit;
 
