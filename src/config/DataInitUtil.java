@@ -177,10 +177,10 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists arap_cost_item(id bigint auto_increment primary key,ref_order_no varchar(255),item_code varchar(255),item_status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
             		+ " remark varchar(5120),ref_order_id bigint,cost_order_id bigint,foreign key(cost_order_id) references arap_cost_order(id));");
             stmt.executeUpdate("create table if not exists arap_cost_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
-            stmt.executeUpdate("create table if not exists arap_cost_invoice_item_invoice_no(id bigint auto_increment primary key,invoice_no varchar(255),amount double,invoice_id bigint,foreign key(invoice_id) references arap_cost_invoice(id));");
-            stmt.executeUpdate("create table if not exists arap_cost_invoice_item_invoice_no(id bigint auto_increment primary key,invoice_no varchar(255),amount double,invoice_id bigint,foreign key(invoice_id) references arap_cost_invoice(id));");
+            stmt.executeUpdate("create table if not exists arap_cost_invoice_item_invoice_no(id bigint auto_increment primary key,invoice_no varchar(255),amount double,invoice_id bigint,foreign key(invoice_id) references arap_cost_invoice_application_order(id));");
             stmt.executeUpdate("create table if not exists arap_cost_application_invoice_no(id bigint auto_increment primary key,invoice_no varchar(255),application_order_id bigint,foreign key(application_order_id) references arap_cost_invoice_application_order(id));");
-            
+            stmt.executeUpdate("create table if not exists arap_cost_order_invoice_no(id bigint auto_increment primary key,invoice_no varchar(255),cost_order_id bigint,foreign key(cost_order_id) references arap_cost_order(id));");
+             
             stmt.executeUpdate("create table if not exists arap_charge_invoice_application_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),payment_method varchar(255),create_by bigint,create_stamp timestamp,audit_by bigint,audit_stamp timestamp,"
             		+ " approver_by bigint,approval_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),payee_id bigint,account_id bigint,foreign key(account_id) references fin_account(id));");
            

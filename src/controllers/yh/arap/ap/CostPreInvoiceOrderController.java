@@ -2,6 +2,7 @@ package controllers.yh.arap.ap;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,9 @@ import java.util.Map;
 
 import models.ArapChargeInvoiceApplication;
 import models.ArapCostInvoiceApplication;
+import models.ArapCostInvoiceItemInvoiceNo;
+import models.ArapCostOrder;
+import models.ArapCostOrderInvoiceNo;
 import models.Party;
 import models.UserLogin;
 import models.yh.profile.Contact;
@@ -151,7 +155,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("order_no", getPara("order_no"));
 			// arapAuditOrder.set("order_type", );
 			arapAuditInvoiceApplication.set("status", "new");
-			arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
+			//arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
@@ -168,18 +172,13 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
 			arapAuditInvoiceApplication.save();
 
-			/*String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
-			String[] chargeCheckOrderIdsArr = chargeCheckOrderIds.split(",");
-			for (int i = 0; i < chargeCheckOrderIdsArr.length; i++) {
-				ArapChargeInvoiceApplicationItem arapAuditInvoiceApplicationItem = new ArapChargeInvoiceApplicationItem();
-				arapAuditInvoiceApplicationItem.set("invoice_application_id", arapAuditInvoiceApplication.get("id"));
-				arapAuditInvoiceApplicationItem.set("charge_order_id", chargeCheckOrderIdsArr[i]);
-				arapAuditInvoiceApplicationItem.save();
-				
-				ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderIdsArr[i]);
-				arapAuditOrder.set("status", "开票申请中");
+			String costCheckOrderIds = getPara("costCheckOrderIds");
+			String[] costCheckOrderIdsArr = costCheckOrderIds.split(",");
+			for (int i = 0; i < costCheckOrderIdsArr.length; i++) {
+				ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findById(costCheckOrderIdsArr[i]);
+				arapAuditOrder.set("application_order_id", arapAuditInvoiceApplication.get("id"));
 				arapAuditOrder.update();
-			}*/
+			}
 		}
 		renderJson(arapAuditInvoiceApplication);;
 	}
@@ -229,69 +228,134 @@ public class CostPreInvoiceOrderController extends Controller {
 		setAttr("userLogin", userLogin);
 		setAttr("arapAuditInvoiceApplication", arapAuditInvoiceApplication);
 
-		/*Date beginTimeDate = arapAuditInvoiceApplication.get("begin_time");
-		Date endTimeDate = arapAuditInvoiceApplication.get("end_time");
-		String beginTime = "";
-		String endTime = "";
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		if (!"".equals(beginTimeDate) && beginTimeDate != null) {
-			beginTime = simpleDateFormat.format(beginTimeDate);
+		String costCheckOrderIds = "";
+		List<ArapCostOrder> arapCostOrders = ArapCostOrder.dao.find("select * from arap_cost_order where application_order_id = ?", id);
+		for(ArapCostOrder arapCostOrder : arapCostOrders){
+			costCheckOrderIds += arapCostOrder.get("id") + ",";
 		}
-		if (!"".equals(endTimeDate) && endTimeDate != null) {
-			endTime = simpleDateFormat.format(endTimeDate);
-		}
-		String chargeCheckOrderIds = "";
-		List<ArapChargeInvoiceApplicationItem> arapAuditInvoiceApplicationItems = ArapChargeInvoiceApplicationItem.dao.find("select * from arap_charge_invoice_application_item where charge_order_id = ?", id);
-		for(ArapChargeInvoiceApplicationItem arapAuditInvoiceApplicationItem : arapAuditInvoiceApplicationItems){
-			chargeCheckOrderIds += arapAuditInvoiceApplicationItem.get("charge_order_id") + ",";
-		}
-		chargeCheckOrderIds = chargeCheckOrderIds.substring(0, chargeCheckOrderIds.length() - 1);
-		setAttr("chargeCheckOrderIds", chargeCheckOrderIds);
-		/*setAttr("beginTime", beginTime);
-		setAttr("endTime", endTime);*/
+		costCheckOrderIds = costCheckOrderIds.substring(0, costCheckOrderIds.length() - 1);
+		setAttr("costCheckOrderIds", costCheckOrderIds);
 		if (LoginUserController.isAuthenticated(this))
 			render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
 	}
 	
-	public void chargeCheckOrderList() {
-		String returnOrderIds = getPara("returnOrderIds");
-		String sLimit = "";
-		String pageIndex = getPara("sEcho");
-		if (getPara("iDisplayStart") != null
-				&& getPara("iDisplayLength") != null) {
-			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-					+ getPara("iDisplayLength");
-		}
-		Map orderMap = new HashMap();
-		// 获取总条数
-		String totalWhere = "";
-		String sql = "select count(1) total from arap_charge_order where status = '已确认'";
-		Record rec = Db.findFirst(sql + totalWhere);
-		logger.debug("total records:" + rec.getLong("total"));
+    // 添加发票
+    public void addInvoiceItem(){
+    	String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
+    	if(costPreInvoiceOrderId != null && !"".equals(costPreInvoiceOrderId)){
+    		ArapCostInvoiceItemInvoiceNo arapCostInvoiceItemInvoiceNo = new ArapCostInvoiceItemInvoiceNo();
+    		arapCostInvoiceItemInvoiceNo.set("invoice_id", costPreInvoiceOrderId);
+    		arapCostInvoiceItemInvoiceNo.save();
+    	}
+        renderJson("{\"success\":true}");
+    }
+    
+    // 发票号列表
+    public void costInvoiceItemList(){
+    	String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        Map orderMap = new HashMap();
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(1) total from arap_cost_invoice_item_invoice_no acio"
+				+ " left join arap_cost_order_invoice_no  acoi on acoi.invoice_no = acio.invoice_no"
+				+ " where acio.invoice_id = " + costPreInvoiceOrderId;
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
 
-		// 获取当前页的数据
-		List<Record> orders = Db
-				.find("select distinct aao.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
-				+ " from arap_charge_order aao "
-				+ " left join arap_charge_item aai on aai.charge_order_id = aao.id"
-				+ " left join return_order ror on ror.id = aai.ref_order_id"
-				+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
-				+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
-				+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
-				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
-				+ " left join user_login usl on usl.id=aao.create_by"
-				+ " where aao.status = '已确认' order by aao.create_stamp desc " + sLimit);
+        // 获取当前页的数据
+        List<Record> orders = Db.find("select acio.*,(select group_concat(aco.order_no separator '\r\n') from arap_cost_order aco where aco.id = acoi.cost_order_id) cost_order_no "
+        		+ " from arap_cost_invoice_item_invoice_no acio"
+				+ " left join arap_cost_order_invoice_no  acoi on acoi.invoice_no = acio.invoice_no"
+				+ " where acio.invoice_id = " + costPreInvoiceOrderId + " " + sLimit);
 
-		orderMap.put("sEcho", pageIndex);
-		orderMap.put("iTotalRecords", rec.getLong("total"));
-		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-		orderMap.put("aaData", orders);
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        orderMap.put("aaData", orders);
+        renderJson(orderMap);
+    }
+    
+    // 更新InvoiceItem信息
+    public void updateInvoiceItem(){
+    	List<ArapCostInvoiceItemInvoiceNo> arapCostInvoiceItemInvoiceNos = new ArrayList<ArapCostInvoiceItemInvoiceNo>();
+    	ArapCostInvoiceItemInvoiceNo itemInvoiceNo = ArapCostInvoiceItemInvoiceNo.dao.findById(getPara("invoiceItemId"));
+    	String name = getPara("name");
+    	String value = getPara("value");
+    	if("amount".equals(name) && "".equals(value)){
+    		value = "0";
+    	}
+    	itemInvoiceNo.set(name, value);
+    	itemInvoiceNo.update();
+    	if("invoice_no".equals(name) && !"".equals(value)){
+    		arapCostInvoiceItemInvoiceNos = ArapCostInvoiceItemInvoiceNo.dao.find("select * from arap_cost_invoice_item_invoice_no where invoice_id = ?", getPara("costPreInvoiceOrderId"));    		
+    	}
+        renderJson(arapCostInvoiceItemInvoiceNos);
+    }
+    
+    // 获取所有的发票号
+    public void findAllInvoiceItemNo(){
+    	List<ArapCostInvoiceItemInvoiceNo> arapCostInvoiceItemInvoiceNos = ArapCostInvoiceItemInvoiceNo.dao.find("select * from arap_cost_invoice_item_invoice_no where invoice_id = ?", getPara("costPreInvoiceOrderId"));
+        renderJson(arapCostInvoiceItemInvoiceNos);
+    }
+    
+    // 更新开票申请单
+    public void updatePreInvoice(){
+    	String name = getPara("name");
+    	
+    	String[] values = null;
+    	Map<String,String[]> map = getParaMap();
+    	for(Map.Entry<String,String[]> entry : map.entrySet()){
+    		if("value[]".equals(entry.getKey())){
+    			values = entry.getValue();
+    		}
+    	}
+    	String costCheckOrderId = getPara("costCheckOrderId");
+    	List<ArapCostOrderInvoiceNo> arapCostOrderInvoiceNos = ArapCostOrderInvoiceNo.dao.find("select * from arap_cost_order_invoice_no where cost_order_id = ?", costCheckOrderId);
+    	for(ArapCostOrderInvoiceNo arapCostOrderInvoiceNo : arapCostOrderInvoiceNos){
+    		arapCostOrderInvoiceNo.delete();
+    	}
+    	for(int i=0;i<values.length;i++){
+    		ArapCostOrderInvoiceNo arapCostOrderInvoiceNo = ArapCostOrderInvoiceNo.dao.findFirst("select * from arap_cost_order_invoice_no where cost_order_id = ? and invoice_no = ?", costCheckOrderId, values[i]);
+	    	if(arapCostOrderInvoiceNo == null){
+	    		arapCostOrderInvoiceNo = new ArapCostOrderInvoiceNo();
+	    		arapCostOrderInvoiceNo.set(name, values[i]);
+	    		arapCostOrderInvoiceNo.set("cost_order_id", costCheckOrderId);
+	    		arapCostOrderInvoiceNo.save();
+	    	}
+    	}
+        renderJson("{\"success\":true}");
+    }
+    
+    public void costCheckOrderList(){
+    	String costCheckOrderIds = getPara("costCheckOrderIds");
+    	String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
 
-		orderMap.put("sEcho", pageIndex);
-		orderMap.put("iTotalRecords", rec.getLong("total"));
-		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-		orderMap.put("aaData", orders);
+        String sqlTotal = "select count(1) total from arap_cost_order where id in("+costCheckOrderIds+")";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
 
-		renderJson(orderMap);
-	}
+        String sql = "select aco.*,(select group_concat(acai.invoice_no) from arap_cost_order aaia"
+				+ " left join arap_cost_order_invoice_no acai on acai.cost_order_id = aaia.id) invoice_no from arap_cost_order aco where aco.id in("+costCheckOrderIds+") order by aco.create_stamp desc " + sLimit;
+
+        logger.debug("sql:" + sql);
+        List<Record> BillingOrders = Db.find(sql);
+
+        Map BillingOrderListMap = new HashMap();
+        BillingOrderListMap.put("sEcho", pageIndex);
+        BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        BillingOrderListMap.put("aaData", BillingOrders);
+
+        renderJson(BillingOrderListMap);
+    }
 }

@@ -87,25 +87,124 @@ $(document).ready(function() {
 				alert('数据保存失败。');
 			}
 		},'json');
-		parentId = e.target.getAttribute("id");
+		parentId = e.target.getAttribute("id");		
+
+	    var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();	
+		invoiceItemTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+	    invoiceItemTable.fnDraw();
+		var costCheckOrderIds = $("#costCheckOrderIds").val();	
+		costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
+		costPreInvoiceOrderTable.fnDraw();
 	});
 	
     if($("#costPreInvoiceOrderStatus").text() == 'new'){
     	$("#costPreInvoiceOrderStatus").text('新建');
-	}
+	}    
 
-    /*var datatable=$('#costCheckList-table').dataTable({
-        "bFilter": false, //不需要默认的搜索框
+	var invoiceItemTable =$('#invoiceItem-table').dataTable( {
+	    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
+        "sAjaxSource": "/yh/costPreInvoiceOrder/costInvoiceItemList",
+   			"aoColumns": [
+            { "mDataProp": null,
+  	            "fnRender": function(obj) {
+  	            	var str;
+  	            	if(obj.aData.INVOICE_NO == null){
+  	            		str = "<input type='text' name='invoice_no'>";
+  	            	}else{
+  	            		str = "<input type='text' name='invoice_no' value='"+obj.aData.INVOICE_NO+"'>";
+  	            	}
+  	            	return str;
+  	            }
+  	        },
+            {"mDataProp":null},
+            { "mDataProp": null,
+  	            "fnRender": function(obj) {
+  	            	var str;
+  	            	if(obj.aData.AMOUNT == null){
+  	            		str = "<input type='text' name='amount'>";
+  	            	}else{
+  	            		str = "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+  	            	}
+  	            	return str;
+  	            }
+  	        },
+            {"mDataProp":"COST_ORDER_NO"},            
+            {"mDataProp":null}
+         ]
+	});	
+
+	$("#invoiceItem-table").on('blur', 'input', function(e){
+		e.preventDefault();
+		var invoiceItemId = $(this).parent().parent().attr("id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
+		$.post('/yh/costPreInvoiceOrder/updateInvoiceItem', {costPreInvoiceOrderId:costPreInvoiceOrderId, invoiceItemId:invoiceItemId, name:name, value:value}, function(data){
+			if(data.length > 0){
+				var itemInvoiceNoList = $("#itemInvoiceNoList");
+				itemInvoiceNoList.empty();
+				var option = "<option></option>";
+				for(var i=0;i<data.length;i++){
+					option += "<option value='"+data[i].INVOICE_NO+"'>"+data[i].INVOICE_NO+"</option>";
+				}
+				itemInvoiceNoList.append(option);	
+			    var costCheckOrderIds = $("#costCheckOrderIds").val();	
+				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
+				costPreInvoiceOrderTable.fnDraw();
+			}
+    	},'json');
+	});	
+	
+	var costPreInvoiceOrderTable=$('#costPreInvoiceOrder-table').dataTable({
+		"bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
         "sAjaxSource": "/yh/costCheckOrder/list",
-        "aoColumns": [   
-            {"mDataProp":"ID", "bVisible": false},
-            {"mDataProp":"ORDER_NO"},
+        "aoColumns": [     
+          { "mDataProp": "INVOICE_NO",
+          	"fnRender": function(obj) {
+                  var str="";
+                  if(obj.aData.INVOICE_NO!='' && obj.aData.INVOICE_NO != null){
+                  	$("#itemInvoiceNoList").children().each(function(){
+                  		if(obj.aData.INVOICE_NO.indexOf($(this).text()) > -1 && $(this).text() != ''){
+                  			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
+                  		}else{
+                  			if($(this).text != null){
+                  				str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+                  			}
+                  		}
+                  	});
+                  }else{
+                  	$("#itemInvoiceNoList").children().each(function(){
+                  		if($(this).text != null){
+              				str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+              			}
+                  	});
+                  }
+                  return "<select name='invoice_no' multiple=''>"+str+"</select>";
+          	   }
+	        },  
+            {"mDataProp":"ORDER_NO",
+            	"fnRender": function(obj) {
+        			return "<a href='/yh/costCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        		}},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -124,7 +223,7 @@ $(document).ready(function() {
             },
             {"mDataProp":null},
             {"mDataProp":null},
-            {"mDataProp":"CNAME"},
+            {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
@@ -135,8 +234,57 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":"REMARK"},
-            {"mDataProp":"CREATOR_NAME"},        	
-            {"mDataProp":"CREATE_STAMP"}                       
+            {"mDataProp":null},        	
+            {"mDataProp":"CREATE_STAMP"}                        
         ]      
-    });*/
+    });	
+	
+	$("#addInvoiceItemBtn").click(function(){		
+		$.post('/yh/costPreInvoiceOrder/addInvoiceItem', {costPreInvoiceOrderId:$("#costPreInvoiceOrderId").val()}, function(data){
+			if(data.success){
+			    var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();	
+				invoiceItemTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+			    invoiceItemTable.fnDraw();
+			}
+		},'json');
+	});
+	
+	$("#costPreInvoiceOrderItem").click(function(){	
+		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
+		$.post('/yh/costPreInvoiceOrder/findAllInvoiceItemNo', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
+			if(data.length > 0){
+				var itemInvoiceNoList = $("#itemInvoiceNoList");
+				itemInvoiceNoList.empty();
+				var option = "<option></option>";
+				for(var i=0;i<data.length;i++){
+					option += "<option value='"+data[i].INVOICE_NO+"'>"+data[i].INVOICE_NO+"</option>";
+				}
+				itemInvoiceNoList.append(option);	
+			    var costCheckOrderIds = $("#costCheckOrderIds").val();	
+				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
+				costPreInvoiceOrderTable.fnDraw();
+			}
+    	},'json');
+			
+	    invoiceItemTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+	    invoiceItemTable.fnDraw();		
+	    var costCheckOrderIds = $("#costCheckOrderIds").val();	
+		costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;    
+		costPreInvoiceOrderTable.fnDraw();
+	});	
+
+	$("#costPreInvoiceOrder-table").on('blur', 'select', function(e){
+		e.preventDefault();
+		var costCheckOrderId = $(this).parent().parent().attr("id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
+		$.post('/yh/costPreInvoiceOrder/updatePreInvoice', {costPreInvoiceOrderId:costPreInvoiceOrderId, costCheckOrderId:costCheckOrderId, name:name, value:value}, function(data){
+			if(data.success){
+			    var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();	
+				invoiceItemTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+			    invoiceItemTable.fnDraw();
+			}
+    	},'json');
+	});	
 } );
