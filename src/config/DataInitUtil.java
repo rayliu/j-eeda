@@ -150,12 +150,10 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,pickup_id bigint,depart_id bigint,order_id bigint,transfer_order_no varchar(255),foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id),foreign key(pickup_id) references depart_order(id));");
 
             // transfer_order_milestone 运输单里程碑
-            stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
-                    + "last_modified_stamp timestamp,type varchar(255),order_id bigint,foreign key(order_id) references transfer_order(id),pickup_id bigint,depart_id bigint,foreign key(pickup_id) references depart_order(id),car_summary_id bigint);");
 
 
             stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),exception_record varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
-                    + "last_modified_stamp timestamp,type varchar(255),order_id bigint,foreign key(order_id) references transfer_order(id),pickup_id bigint,depart_id bigint,foreign key(pickup_id) references depart_order(id));");
+                    + "last_modified_stamp timestamp,type varchar(255),order_id bigint,foreign key(order_id) references transfer_order(id),pickup_id bigint,depart_id bigint,foreign key(pickup_id) references depart_order(id),car_summary_id bigint);");
 
 
             stmt.executeUpdate("create table if not exists warehouse_order(id bigint auto_increment primary key,party_id bigint,warehouse_id bigint,order_no varchar(50),order_type varchar(50),status varchar(50),"
@@ -463,7 +461,7 @@ public class DataInitUtil {
             stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('SONY-电视1', 'SONY30329','1000','5000','6000', 30, '台', 30, 3, '普通货品');");
             stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('SONY-电视2', 'SONY30330','1000','5000','6000', 30, '台', 30, 3, '普通货品');");
 
-            /*// 运输单
+            // 运输单
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type,charge_type2) values('ATM', '4', '12', 'YS2014042600001', '3', '1', '已入货场', '2014-04-20 16:33:35.1', 'delivery','珠海','2','110102','440402','2','salesOrder','provinceOut','own','perUnit');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type, charge_type, pickup_mode,charge_type2) "
                     + "values('ATM', 4, '13', 'YS2014042600002', '4', 1, '新建', CURRENT_TIMESTAMP(), 'gateIn','中山', 4,'440100','110100','3','salesOrder','provinceIn','own','perUnit','routeSP','perUnit');");
@@ -531,7 +529,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
                     + "values(3,'456', 'ATM002', 6, 24);");
             stmt.executeUpdate("insert into transfer_order_item_detail(order_id,serial_no,item_name,item_id,notify_party_id) "
-                    + "values(3,'789', 'ATM003', 6, 24);");*/
+                    + "values(3,'789', 'ATM003', 6, 24);");
 
             // 配送单
             stmt.execute("insert into delivery_order(order_no, cargo_nature, customer_id,sp_id,notify_party_id,status,create_stamp,route_from,route_to) values('PS2014042600013', 'ATM','5','7','9','配送在途','2014-04-25 16:35:35.1','440100','110100');");
