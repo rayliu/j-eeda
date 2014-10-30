@@ -268,7 +268,7 @@ public class DeliveryController extends Controller {
 	}
 
 	public void edit() {
-		String id = getPara();
+		String id = getPara("id");
 		//System.out.println(id);
 		DeliveryOrder tOrder = DeliveryOrder.dao.findById(id);
 		setAttr("cargoNature", tOrder.get("cargo_nature"));
