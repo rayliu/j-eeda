@@ -120,8 +120,9 @@ public class DepartOrderController extends Controller {
                     + DepartOrder.COMBINE_TYPE_DEPART + "'";
 
             sql = "select deo.id,deo.depart_no,deo.create_stamp,deo.status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,"
-            		+ " u.user_name user_name,o.office_name office_name,tor .arrival_time request_time,ct.abbr abbr,"
+            		+ " u.user_name user_name,o.office_name office_name,deo.departure_time departure_time,ct.abbr abbr,"
             		+ " (select	name from location where code = tor .route_from) route_from,(select name from location where code = tor .route_to) route_to,"
+            		+ " (select tom.create_stamp from transfer_order_milestone tom where tom.status='已发车' and tom.depart_id = deo.id) start_time, "
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (select order_id from depart_transfer dt where dt.depart_id = deo.id)) as transfer_order_no"
             		+ " from depart_order deo"
 					+ " left join carinfo c on deo.carinfo_id = c.id"
@@ -163,7 +164,8 @@ public class DepartOrderController extends Controller {
 					+ " left join location l2 on l2.code = deo.route_to " + whereSql;
 
             sql = "select deo.id,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,u.user_name user_name,"
-            		+ " o.office_name office_name,tor.arrival_time request_time,ct.abbr abbr,"
+            		+ " o.office_name office_name,deo.departure_time departure_time ,ct.abbr abbr,"
+            		+ " (select tom.create_stamp from transfer_order_milestone tom where tom.status='已发车' and tom.depart_id = deo.id) start_time, "
             		+ " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (dtf.order_id)) as transfer_order_no"
             		+ " from depart_order deo"
@@ -244,10 +246,12 @@ public class DepartOrderController extends Controller {
     				+ "deo.arrival_time plan_time, "
     				+ "t.arrival_time arrival_time, "
     				+ "deo.remark, "
+                    + "(select sum(amount) from transfer_order_item where order_id in (select order_id from depart_transfer dtp where dtp.depart_id=deo.id )) amount, "
     				+ "(select tom.create_stamp from transfer_order_milestone tom where tom.status='已发车' and tom.depart_id = deo.id) start_time, "
     				+ "(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode, "
     				+ "(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no, "		
-    				+ "(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location "
+    				+ "(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location, "
+    				+ "(select ifnull(exception_record,'') from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) exception_record "
     				+ " from depart_order deo "
     				+ " left join carinfo c on deo.carinfo_id = c.id "
     				+ " left join depart_transfer dt on dt.depart_id = deo.id "
@@ -307,10 +311,12 @@ public class DepartOrderController extends Controller {
     				+ "deo.arrival_time plan_time, "
     				+ "t.arrival_time arrival_time, "
     				+ "deo.remark, "
+    				+ "(select sum(amount) from transfer_order_item where order_id in (select order_id from depart_transfer dtp where dtp.depart_id=deo.id )) amount, "
     				+ "(select tom.create_stamp from transfer_order_milestone tom where tom.status='已发车' and tom.depart_id = deo.id) start_time, "
     				+ "(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode, "
     				+ "(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no, "		
-    				+ "(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location "
+    				+ "(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location, "
+    				+ "(select ifnull(exception_record,'') from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) exception_record "
     				+ " from depart_order deo "
     				+ " left join carinfo c on deo.carinfo_id = c.id "
     				+ " left join depart_transfer dt on dt.depart_id = deo.id "
@@ -921,6 +927,7 @@ public class DepartOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         transferOrderMilestone.set("create_by", users.get(0).get("id"));
         transferOrderMilestone.set("location", "");
+        transferOrderMilestone.set("exception_record", "");
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
         transferOrderMilestone.set("create_stamp", sqlDate);
@@ -1352,6 +1359,7 @@ public class DepartOrderController extends Controller {
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
             String status = getPara("status");
             String location = getPara("location");
+            String exception_record = getPara("exception_record");
             transferOrderstatus(milestoneDepartId, status, location);
             if (!status.isEmpty()) {
                 transferOrderMilestone.set("status", status);
@@ -1366,6 +1374,11 @@ public class DepartOrderController extends Controller {
             } else {
                 transferOrderMilestone.set("location", "");
             }
+            if(!exception_record.isEmpty()){
+                transferOrderMilestone.set("exception_record", exception_record);
+            }else{
+                transferOrderMilestone.set("exception_record", "");
+            }
             String name = (String) currentUser.getPrincipal();
             List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 
@@ -1373,6 +1386,9 @@ public class DepartOrderController extends Controller {
 
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+            
+            
+
             transferOrderMilestone.set("create_stamp", sqlDate);
             transferOrderMilestone.set("depart_id", milestoneDepartId);
             transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);

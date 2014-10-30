@@ -15,17 +15,38 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/yh/departOrder/onTripList",
-        "aoColumns": [   
-            {"mDataProp":"OFFICE_NAME","sWidth": "100px"},        
+        "aoColumns": [
+			{ 
+			    "mDataProp": null,
+			    "sWidth": "60px",
+			    "fnRender": function(obj) {
+			    	console.log(obj.aData.ARRIVAL_MODE);
+			    	if(obj.aData.ARRIVAL_MODE=='货品直送'){
+			    		return "";
+			    	}
+			    	else if(obj.aData.DEPART_STATUS=='已入库'){
+			    		return "已入库";
+			    	}else{
+			    		return "<a class='btn btn-primary confirmInWarehouse' code='"+obj.aData.ID+"'>"+
+			    		"入库确认"+
+			    		"</a>";
+			    	}
+			    }
+			},
+            {"mDataProp":"OFFICE_NAME","sWidth": "80px"},        
             {"mDataProp":null,
+            	"sWidth": "100px",
             	"fnRender": function(obj) {
             		 return "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
             	}
             },
-            {"mDataProp":"TRANSFER_ORDER_NO"},
+            {"mDataProp":"TRANSFER_ORDER_NO",
+            	"sWidth": "100px"},
             {"mDataProp":"CNAME"}, 
-            {"mDataProp":null},
             {"mDataProp":null,
+            	"sWidth": "80px"},
+            {"mDataProp":null,
+            	"sWidth": "90px",
                 "fnRender": function(obj) {
                 	if(obj.aData.LOCATION!=null && obj.aData.LOCATION!=''){
                 		return obj.aData.LOCATION+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
@@ -37,40 +58,41 @@ $(document).ready(function() {
                 	}                	
                 }
             },
-            {"mDataProp":null},
+            {"mDataProp":"AMOUNT",
+            	"sWidth": "40px"},
             {"mDataProp":"SPNAME"},
-            {"mDataProp":"DRIVER"},
-            {"mDataProp":"PHONE"},
-            {"mDataProp":"START_TIME"},
-            {"mDataProp":"ROUTE_FROM"},
-            {"mDataProp":"ROUTE_TO"},
+            {"mDataProp":"DRIVER",
+            	"sWidth": "60px"},
+            {"mDataProp":"PHONE",
+            	"sWidth": "60px"},
+            {"mDataProp":"START_TIME",
+            		"sWidth": "80px",
+            		"fnRender":function(obj){
+        				var create_stamp=obj.aData.START_TIME;
+        				var str=create_stamp.substr(0,10);
+        				return str;
+        			}},
+            {"mDataProp":"ROUTE_FROM",
+            		"sWidth": "80px"},
+            {"mDataProp":"ROUTE_TO",
+            		"sWidth": "80px"},
             {"mDataProp":"ARRIVAL_MODE",
-            	"fnRender": function(obj) {
-            		if(obj.aData.ARRIVAL_MODE == "delivery"){
-            			return "货品直送";
-            		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
-            			return "入中转仓";
-            		}else{
-            			return "";
-            		}}},
-            {"mDataProp":"ARRIVAL_TIME"},
-            {"mDataProp":"PLAN_TIME"},
-            {"mDataProp":"REMARK"},
-            { 
-                "mDataProp": null, 
-                "fnRender": function(obj) {  
-                	if(obj.aData.ARRIVAL_MODE=='delivery'){
-                		return "";
-                	}
-                	else if(obj.aData.DEPART_STATUS=='已入库'){
-                		return "已入库";
-                	}else{
-                		return "<a class='btn btn-primary confirmInWarehouse' code='"+obj.aData.ID+"'>"+
-                		"入库确认"+
-                		"</a>";
-                	}
-                }
-            }    
+            		"sWidth": "80px",
+                	"fnRender": function(obj) {
+                		if(obj.aData.ARRIVAL_MODE == "delivery"){
+                			return "货品直送";
+                		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
+                			return "入中转仓";
+                		}else{
+                			return "";
+                		}}},
+            {"mDataProp":"ARRIVAL_TIME",
+            		"sWidth": "100px"},
+            {"mDataProp":"PLAN_TIME",
+            		"sWidth": "100px"},
+            {"mDataProp":"EXCEPTION_RECORD"},
+            {"mDataProp":"REMARK"}
+                
         ]  
     });	
    
@@ -99,7 +121,7 @@ $(document).ready(function() {
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
 			{
-				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.transferOrderMilestones[i].EXCEPTION_RECORD+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 			}
 		},'json');
     	
@@ -109,7 +131,7 @@ $(document).ready(function() {
 	$("#transferOrderMilestoneFormBtn").click(function(){
 		$.post('/yh/departOrder/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
-			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
+			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.transferOrderMilestone.EXCEPTION_RECORD+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 			detailTable.fnDraw();  
 		},'json');
 		//$('#transferOrderMilestone').modal('hide');

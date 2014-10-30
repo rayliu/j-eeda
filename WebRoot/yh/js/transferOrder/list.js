@@ -205,6 +205,11 @@ $(document).ready(function() {
         
     });
     $('#companyList').on('click', '.fromLocationItem', function(e){        
+        $('#customer_filter').val($(this).text());
+        $("#companyList").hide();
+        var companyId = $(this).attr('partyId');
+        $('#customerId').val(companyId);
+
     	refreshData();
         
     });

@@ -35,7 +35,12 @@
 			    {"mDataProp":"CONTACT_PERSON"},
 			    {"mDataProp":"PHONE"},
 			    {"mDataProp":"CARTYPE"},     
-			    {"mDataProp":"CREATE_STAMP"}, 
+			    {"mDataProp":"CREATE_STAMP",
+			    	"fnRender":function(obj){
+        				var create_stamp=obj.aData.CREATE_STAMP;
+        				var str=create_stamp.substr(0,10);
+        				return str;
+        			}}, 
 			    {"mDataProp":"VOLUME"},
 			    {"mDataProp":"WEIGHT"},
 			    {"mDataProp":"TRANSFER_ORDER_NO"},
