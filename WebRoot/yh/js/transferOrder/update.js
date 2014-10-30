@@ -1574,15 +1574,12 @@ $(document).ready(function() {
 			 var officeSelect = $("#officeSelect");
 			 officeSelect.empty();
 			 var hideOfficeId = $("#hideOfficeId").val();
+			 officeSelect.append("<option ></option>");
 			 for(var i=0; i<data.length; i++){
-				 if(i == 0){
-					 officeSelect.append("<option ></option>");
+				 if(data[i].ID == hideOfficeId){
+					 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
 				 }else{
-					 if(data[i].ID == hideOfficeId){
-						 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
-					 }else{
-						 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
-					 }
+					 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
 				 }
 			 }
 		 }

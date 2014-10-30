@@ -64,7 +64,10 @@
 	                                        </div>                                        
 	                                        <div class="form-group">
 	                                            <label>电话</label>	${customerContact.phone!''}
-	                                        </div>  
+	                                        </div> 
+	                                        <input id="hideOfficeId" type="hidden" value="${insuranceOrder.office_id!''}" />    
+       										<label class="control-label" for="inputSuccess">请选择网点</label>
+                                            <select id="officeSelect" class="form-control" name="officeSelect"></select> 
 	                                    </div>
 	                                    <div class="col-lg-6">
 	                                   		<h3>保险信息</h3>                                           

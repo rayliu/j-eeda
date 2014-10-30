@@ -489,4 +489,21 @@
  			}
      	},'json');
  	});
+
+	// 获取所有城市
+	$.post('/yh/transferOrder/searchAllOffice',function(data){
+	 if(data.length > 0){
+		 var officeSelect = $("#officeSelect");
+		 officeSelect.empty();
+		 var hideOfficeId = $("#hideOfficeId").val();
+		 officeSelect.append("<option ></option>");
+		 for(var i=0; i<data.length; i++){
+			 if(data[i].ID == hideOfficeId){
+				 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+			 }else{
+				 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+			 }
+		 }
+	 }
+	},'json');
 });

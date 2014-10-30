@@ -42,7 +42,21 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                     return "未收款";
             }},
-            {"mDataProp":"ORDER_NO", "sWidth":"200px"},
+            {"mDataProp":"ORDER_NO", "sWidth":"200px", 
+                "fnRender": function(obj) {
+                	var str = "";
+                    if(obj.aData.ORDER_NO.indexOf("PS") > -1){
+                        str = "<a href='/yh/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                    }else if(obj.aData.ORDER_NO.indexOf("PC") > -1){
+                        str = "<a href='/yh/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                    }else if(obj.aData.ORDER_NO.indexOf("FC") > -1){
+                        str = "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                    }else {
+                        str = "<a href='/yh/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                    }
+                    return str;
+                }
+            },
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"CREATE_STAMP", "sWidth":"200px"},                 	
             {"mDataProp":"AMOUNT", "sWidth":"150px"},                        

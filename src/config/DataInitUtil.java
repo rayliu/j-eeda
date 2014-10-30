@@ -92,7 +92,7 @@ public class DataInitUtil {
                     + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120));");
 
             // 保险单
-            stmt.executeUpdate("create table if not exists insurance_order(id bigint auto_increment primary key,order_no varchar(255),ref_no varchar(255),status varchar(255),audit_status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
+            stmt.executeUpdate("create table if not exists insurance_order(id bigint auto_increment primary key,order_no varchar(255),ref_no varchar(255),status varchar(255),audit_status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),office_id bigint,foreign key(office_id) references office(id));");
             
             // transfer_order 运输单
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment primary key,order_no varchar(255),customer_order_no varchar(255),status varchar(255),pickup_assign_status varchar(255),depart_assign_status varchar(255),"

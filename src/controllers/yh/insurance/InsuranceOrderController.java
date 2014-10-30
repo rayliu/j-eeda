@@ -446,9 +446,13 @@ public class InsuranceOrderController extends Controller {
     public void save(){
     	InsuranceOrder insuranceOrder = null;
     	String insuranceOrderId = getPara("insuranceId");
+    	String officeSelect = getPara("officeSelect");
     	if(insuranceOrderId != null && !"".equals(insuranceOrderId)){
     		insuranceOrder = InsuranceOrder.dao.findById(insuranceOrderId);
     		insuranceOrder.set("remark", getPara("remark"));
+    		if(officeSelect != null && !"".equals(officeSelect)){
+    			insuranceOrder.set("office_id", officeSelect);    			
+    		}
     		insuranceOrder.update();
     	}else{
     		insuranceOrder = new InsuranceOrder();
@@ -457,6 +461,9 @@ public class InsuranceOrderController extends Controller {
     		insuranceOrder.set("status", getPara("status"));
     		insuranceOrder.set("create_by", getPara("create_by"));
     		insuranceOrder.set("remark", getPara("remark"));
+    		if(officeSelect != null && !"".equals(officeSelect)){
+    			insuranceOrder.set("office_id", officeSelect);    			
+    		}
     		insuranceOrder.save();
     		
     		String orderId = getPara("orderid");
