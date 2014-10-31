@@ -148,20 +148,25 @@ public class ChargePreInvoiceOrderController extends Controller {
 	public void save() {
 		ArapChargeInvoiceApplication arapAuditInvoiceApplication = null;
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
+		String paymentMethod = getPara("paymentMethod");
 		if (!"".equals(chargePreInvoiceOrderId) && chargePreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
 			arapAuditInvoiceApplication.set("order_no", getPara("order_no"));
 			// arapAuditOrder.set("order_type", );
 			arapAuditInvoiceApplication.set("status", "new");
-			arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
+			//arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
 			arapAuditInvoiceApplication.set("last_modified_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
-			arapAuditInvoiceApplication.set("payment_method", getPara("paymentMethod"));
-			if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
-				arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
+			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
+			if("transfers".equals(paymentMethod)){
+				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
+					arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
+				}
+			}else{
+				arapAuditInvoiceApplication.set("account_id", null);				
 			}
 			arapAuditInvoiceApplication.update();
 		} else {
@@ -173,8 +178,12 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
 			arapAuditInvoiceApplication.set("payment_method", getPara("paymentMethod"));
-			if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
-				arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
+			if("transfers".equals(paymentMethod)){
+				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
+					arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
+				}
+			}else{
+				arapAuditInvoiceApplication.set("account_id", null);				
 			}
 			arapAuditInvoiceApplication.save();
 
@@ -239,7 +248,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		setAttr("userLogin", userLogin);
 		setAttr("arapAuditInvoiceApplication", arapAuditInvoiceApplication);
 
-		Date beginTimeDate = arapAuditInvoiceApplication.get("begin_time");
+		/*Date beginTimeDate = arapAuditInvoiceApplication.get("begin_time");
 		Date endTimeDate = arapAuditInvoiceApplication.get("end_time");
 		String beginTime = "";
 		String endTime = "";
@@ -258,7 +267,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		chargeCheckOrderIds = chargeCheckOrderIds.substring(0, chargeCheckOrderIds.length() - 1);
 		setAttr("chargeCheckOrderIds", chargeCheckOrderIds);
 		setAttr("beginTime", beginTime);
-		setAttr("endTime", endTime);
+		setAttr("endTime", endTime);*/
 		if (LoginUserController.isAuthenticated(this))
 			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
 	}
@@ -306,7 +315,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 	}
 	
 	public void searchAllAccount(){
-		List<Account> accounts = Account.dao.find("select * from fin_account");
+		List<Account> accounts = Account.dao.find("select * from fin_account where type != 'PAY'");
 		renderJson(accounts);
 	}
 }

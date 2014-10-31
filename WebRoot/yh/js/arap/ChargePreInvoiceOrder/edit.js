@@ -144,17 +144,14 @@ $(document).ready(function() {
 		 if(data.length > 0){
 			 var accountTypeSelect = $("#accountTypeSelect");
 			 accountTypeSelect.empty();
-			 var hideOfficeId = $("#hideOfficeId").val();
+			 var hideAccountId = $("#hideAccountId").val();
+			 accountTypeSelect.append("<option ></option>");
 			 for(var i=0; i<data.length+1; i++){
-				 /*if(i == 0){
-					 accountTypeSelect.append("<option ></option>");
-				 }else{*/
-					 if(data[i].ID == hideOfficeId){
-						 accountTypeSelect.append("<option value='"+data[i].ID+"' selected='selected'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");
-					 }else{
-						 accountTypeSelect.append("<option value='"+data[i].ID+"'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");					 
-					 }
-				 //}
+				 if(data[i].ID == hideAccountId){
+					 accountTypeSelect.append("<option value='"+data[i].ID+"' selected='selected'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");
+				 }else{
+					 accountTypeSelect.append("<option value='"+data[i].ID+"'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");					 
+				 }
 			}
 		}
 	},'json');

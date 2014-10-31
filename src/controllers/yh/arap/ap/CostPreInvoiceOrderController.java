@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Account;
 import models.ArapChargeInvoiceApplication;
 import models.ArapCostInvoiceApplication;
 import models.ArapCostInvoiceItemInvoiceNo;
@@ -150,6 +151,7 @@ public class CostPreInvoiceOrderController extends Controller {
 	public void save() {
 		ArapCostInvoiceApplication arapAuditInvoiceApplication = null;
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
+		String paymentMethod = getPara("paymentMethod");
 		if (!"".equals(costPreInvoiceOrderId) && costPreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findById(costPreInvoiceOrderId);
 			arapAuditInvoiceApplication.set("order_no", getPara("order_no"));
@@ -161,6 +163,14 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
 			arapAuditInvoiceApplication.set("last_modified_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
+			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
+			if("transfers".equals(paymentMethod)){
+				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
+					arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
+				}
+			}else{
+				arapAuditInvoiceApplication.set("account_id", null);				
+			}
 			arapAuditInvoiceApplication.update();
 		} else {
 			arapAuditInvoiceApplication = new ArapCostInvoiceApplication();
@@ -170,6 +180,14 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
+			arapAuditInvoiceApplication.set("payment_method", getPara("paymentMethod"));
+			if("transfers".equals(paymentMethod)){
+				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
+					arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
+				}
+			}else{
+				arapAuditInvoiceApplication.set("account_id", null);				
+			}
 			arapAuditInvoiceApplication.save();
 
 			String costCheckOrderIds = getPara("costCheckOrderIds");
@@ -358,4 +376,9 @@ public class CostPreInvoiceOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
+
+	public void searchAllAccount(){
+		List<Account> accounts = Account.dao.find("select * from fin_account where type != 'REC'");
+		renderJson(accounts);
+	}
 }
