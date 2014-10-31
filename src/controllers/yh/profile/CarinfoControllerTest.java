@@ -1,15 +1,14 @@
 package controllers.yh.profile;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 
 import models.CarSummaryDetail;
 import models.CarSummaryDetailOilFee;
@@ -22,12 +21,14 @@ import models.TransferOrder;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import config.DataInitUtil;
 import controllers.yh.LoginUserController;
 
 public class CarinfoControllerTest extends Controller {
@@ -175,34 +176,54 @@ public class CarinfoControllerTest extends Controller {
 				&& transferOrderNo == null && start_data == null ) {
 			sqlTotal = "select count(0) total from car_summary_order";
 			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
+					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
 					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
-					+ " (select group_concat( csd.pickup_order_no SEPARATOR '\r\n' ) from car_summary_order cso"
-					+ " left join car_summary_detail csd ON csd.car_summary_id = cso.id) as pickup_no,"
+					+ " (select group_concat(pickup_order_no SEPARATOR '\r\n' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
 					+ " (select group_concat( dt.transfer_order_no SEPARATOR '\r\n' ) from depart_transfer dt"
 					+ " where dt.pickup_id in(select pickup_order_id from car_summary_detail where car_summary_id = cso.id )) as transfer_order_no,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 3) amount3,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 4) amount4,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 5) amount5,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 6) amount6,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 7) amount7,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 8) amount8,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 9) amount9,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 10) amount10,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 11) amount11,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 12) amount12"
+					+ " (select turnout_time from depart_order where id = ( select min(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as turnout_time,"
+					+ " (select return_time from depart_order where id = ( select max(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as return_time,"
+					+ " (select sum(ifnull(toi.volume, p.volume) * toi.amount ) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id IN "
+					+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as volume,"
+					+ " (select sum( ifnull(nullif(toi.weight, 0),p.weight) * toi.amount) from transfer_order_item toi left join product p on p.id = toi.product_id where toi.order_id IN "
+					+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as weight,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 3) subsidy,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 4) driver_salary,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 5) toll_charge,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 6) handling_charges,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 7) fine,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 8) deliveryman_salary,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 9) parking_charge,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 10) quarterage,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 11) weighing_charge,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 12) other_charges"
 					+ " from car_summary_order cso"
 					+ " order by cso.create_data desc " + sLimit;
 	        
 		}else{
 			
-			sqlTotal = "select count(0) total from car_summary_order";
+			sqlTotal = "select count(0) total from car_summary_order cso"
+					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
+					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
+					+ "	where ifnull(cso.status, '') like '%"+status+"%'"
+					+ " and ifnull(cso.car_no, '') like '%"+car_no+"%'"
+					+ " and ifnull(cso.main_driver_name, '') like '%"+driver+"%'"
+					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%'";
 			
 			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
+					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
 					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
-					+ " (select group_concat( csd.pickup_order_no SEPARATOR '\r\n' ) from car_summary_order cso"
-					+ " left join car_summary_detail csd ON csd.car_summary_id = cso.id) as pickup_no,"
+					+ " (select group_concat(pickup_order_no SEPARATOR '\r\n' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
 					+ " (select group_concat( dt.transfer_order_no SEPARATOR '\r\n' ) from depart_transfer dt"
 					+ " where dt.pickup_id in(select pickup_order_id from car_summary_detail where car_summary_id = cso.id )) as transfer_order_no,"
+					+ " (select turnout_time from depart_order where id = ( select min(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as turnout_time,"
+					+ " (select return_time from depart_order where id = ( select max(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as return_time,"
+					+ " (select sum(ifnull(toi.volume, p.volume) * toi.amount ) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id IN "
+					+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as volume,"
+					+ " (select sum( ifnull(nullif(toi.weight, 0),p.weight) * toi.amount) from transfer_order_item toi left join product p on p.id = toi.product_id where toi.order_id IN "
+					+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as weight,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 3) amount3,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 4) amount4,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 5) amount5,"
@@ -216,7 +237,7 @@ public class CarinfoControllerTest extends Controller {
 					+ " from car_summary_order cso"
 					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
 					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
-					+ "	and ifnull(cso.status, '') like '%"+status+"%'"
+					+ "	where ifnull(cso.status, '') like '%"+status+"%'"
 					+ " and ifnull(cso.car_no, '') like '%"+car_no+"%'"
 					+ " and ifnull(cso.main_driver_name, '') like '%"+driver+"%'"
 					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%'"
@@ -285,7 +306,6 @@ public class CarinfoControllerTest extends Controller {
         String monthStartCarNext = getPara("month_start_car_next").equals("") ?"0":getPara("month_start_car_next");
         String monthCarRunMileage = getPara("month_car_run_mileage").equals("") ?"0":getPara("month_car_run_mileage");
         String monthRefuelAmount = getPara("month_refuel_amount").equals("") ?"0":getPara("month_refuel_amount");
-        String nextStartCarMileage = getPara("next_start_car_mileage").equals("") ?"0":getPara("next_start_car_mileage");
         String nextStartCarAmount = getPara("next_start_car_amount").equals("") ?"0":getPara("next_start_car_amount");
         String deductApportionAmount = getPara("deduct_apportion_amount").equals("") ?"0":getPara("deduct_apportion_amount");
         String actualPaymentAmount = getPara("actual_payment_amount").equals("") ?"0":getPara("actual_payment_amount");
@@ -322,15 +342,15 @@ public class CarinfoControllerTest extends Controller {
             		.set("minor_driver_amount", minorDriverAmount).set("start_car_mileage", startCarMileage)
             		.set("finish_car_mileage", finishCarMileage).set("month_start_car_next", monthStartCarNext)
             		.set("month_car_run_mileage", monthCarRunMileage).set("month_refuel_amount", monthRefuelAmount)
-            		.set("next_start_car_mileage", nextStartCarMileage).set("next_start_car_amount", nextStartCarAmount)
-            		.set("deduct_apportion_amount", deductApportionAmount).set("actual_payment_amount", actualPaymentAmount)
-            		.set("create_data", sqlDate).set("status", "新建").save();
+            		.set("next_start_car_amount", nextStartCarAmount).set("deduct_apportion_amount", deductApportionAmount)
+            		.set("actual_payment_amount", actualPaymentAmount).set("create_data", sqlDate).set("status", "新建").save();
         	
         	if(result){
         		CarSummaryOrder carSummary = CarSummaryOrder.dao
         				.findFirst("select * from car_summary_order order by id desc limit 0,1");
         		
         		long carSunmmaryId = carSummary.getLong("id");
+        		List<Long> orderIds = new ArrayList<Long>();
         		
         		for (int i = 0; i < pickupIds.length; i++) {
         			//修改调车单状态为：已处理
@@ -343,12 +363,25 @@ public class CarinfoControllerTest extends Controller {
         			carSummaryDetail.set("pickup_order_id", departOrder.get("id"));
         			carSummaryDetail.set("pickup_order_no", departOrder.get("depart_no"));
         			carSummaryDetail.save();
+        			//记录运输单id
+        			List<Record> recList = Db.find("select * from depart_transfer where pickup_id = "+departOrder.get("id"));
+        			for (Record record : recList) {
+        				orderIds.add(record.getLong("order_id"));
+					}
 				}
         		//创建费用合计表初始数据
         		initCarSummaryDetailOtherFeeData(carSunmmaryId);
         		//创建行车里程碑
         		saveCarSummaryOrderMilestone(carSunmmaryId,"新建");
-        		
+        		//设置默认运输单分摊比例
+        		double number = 1.0D/orderIds.size();
+        		BigDecimal b = new BigDecimal(number); 
+        		double rate = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
+        		for (Long orderId : orderIds) {
+        			TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
+    				transferOrder.set("car_summary_order_share_ratio", rate);
+    				transferOrder.update();
+				}
         		carSummaryId = Long.toString(carSunmmaryId);
         	}
         }else{//修改时
@@ -359,9 +392,28 @@ public class CarinfoControllerTest extends Controller {
 	    		.set("minor_driver_amount", minorDriverAmount).set("start_car_mileage", startCarMileage)
 	    		.set("finish_car_mileage", finishCarMileage).set("month_start_car_next", monthStartCarNext)
 	    		.set("month_car_run_mileage", monthCarRunMileage).set("month_refuel_amount", monthRefuelAmount)
-	    		.set("next_start_car_mileage", nextStartCarMileage).set("next_start_car_amount", nextStartCarAmount)
-	    		.set("deduct_apportion_amount", deductApportionAmount).set("actual_payment_amount", actualPaymentAmount)
-	    		.update();
+	    		.set("next_start_car_amount", nextStartCarAmount).set("deduct_apportion_amount", deductApportionAmount)
+	    		.set("actual_payment_amount", actualPaymentAmount).update();
+        		
+        		/*//计算本次油耗
+        		if(!"0".equals(monthCarRunMileage)){
+        			Record rec =  Db.findFirst("select hundred_fuel_standard from carinfo where car_no ='"+carNo+"';");
+        			if(rec.get("hundred_fuel_standard") != "" && rec.get("hundred_fuel_standard") != null ){
+        				List<Record> oilList =  Db.find("select * from car_summary_detail_oil_fee where car_summary_id = "+carSummaryId);
+        				if(oilList.size() > 0){
+        					for (Record oilFee : oilList) {
+								if(oilFee.get("refuel_unit_cost") != "" && oilFee.get("refuel_unit_cost") != null && "0".equals(oilFee.get("refuel_unit_cost"))){
+									
+									 * 行驶里程 * 油耗 * 油价 / 100
+									 * 
+									 * 
+									 * 
+								}
+							}
+        					
+        				}
+        			}
+        		}*/
         	}
         }
         //修改费用合计中的司机工资
@@ -577,7 +629,6 @@ public class CarinfoControllerTest extends Controller {
     public void addCarSummaryDetailOilFee() {
         String carSummaryId = getPara();
         if(carSummaryId != ""){
-        	
         	java.util.Date utilDate = new java.util.Date();
         	java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
         	
@@ -826,7 +877,7 @@ public class CarinfoControllerTest extends Controller {
     	render("/yh/carmanage/carSummaryEdit.html");
     }
     
-  //查询运输单
+    //查询运输单
     public void findTransferOrder(){
     	String pickupIds = getPara("pickupIds");// 调车单id
     	if(pickupIds != ""){
@@ -840,7 +891,7 @@ public class CarinfoControllerTest extends Controller {
 	        Record rec = Db.findFirst(sqlTotal);
 	        logger.debug("total records:" + rec.getLong("total"));
 	
-	        String sql = "select dt.*, tr.order_no,c.abbr,"
+	        String sql = "select dt.*, tr.order_no,c.abbr,tr.car_summary_order_share_ratio,tr.remark,"
 	        		+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = dt.order_id ) amount,"
 	        		+ " (select sum( ifnull(toi.volume, p.volume) * toi.amount ) from transfer_order_item toi "
 	        		+ " left join product p on p.id = toi.product_id where toi.order_id = dt.order_id ) volume,"
@@ -861,8 +912,64 @@ public class CarinfoControllerTest extends Controller {
 	        renderJson(Map); 
     	}
     }
+    //修改运输单比例
+    public void updateTransferOrderShareRatio(){
+    	String[] orderIds  =  getPara("orderIds").split(",");
+    	String[] rates  =  getPara("rates").split(",");
+    	
+    	if(orderIds.length > 0 && rates.length > 0){
+	    	for (int i = 0; i < orderIds.length; i++) {
+	    		double rate = Double.parseDouble(rates[i])/100;
+	    		TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
+	    		transferOrder.set("car_summary_order_share_ratio", rate);
+	    		transferOrder.update();
+			}
+    	}
+    	renderJson("{\"success\":true}");
+    }
     
     
+    /**
+     * 费用计算
+     * return:本单总加油、本单出车成本、应扣分摊费用、实际应付费用
+     */
+    public void calculateCost(){
+    	String carSummaryId = getPara("carSummaryId");
+    	Map<String,Double > costMap = new HashMap<String, Double>();
+    	CarSummaryOrder order =CarSummaryOrder.dao.findById(carSummaryId);
+    	//出车成本
+    	Record rec1 = Db.findFirst("select sum(amount) amount from car_summary_detail_other_fee where item != 1 and car_summary_id = "+carSummaryId+";");
+    	if(rec1.get("amount") != null && rec1.get("amount") != ""){
+    		costMap.put("next_start_car_amount", rec1.getDouble("amount"));
+    		order.set("next_start_car_amount", rec1.getDouble("amount"));
+    	}
+    	//总加油费（油卡和现金）
+    	Record rec2 = Db.findFirst("select sum(refuel_amount) amount from car_summary_detail_oil_fee where car_summary_id = "+carSummaryId+";");
+    	if(rec2.get("amount") != null && rec2.get("amount") != ""){
+    		costMap.put("month_refuel_amount ", rec2.getDouble("amount"));
+    		order.set("month_refuel_amount", rec2.getDouble("amount"));
+    	}
+    	//应扣分摊费用
+    	Record rec4 = Db.findFirst("select sum(amount) amount  from car_summary_detail_other_fee where is_delete = '是' and car_summary_id = "+carSummaryId+";");
+    	if(rec4.get("amount") != null && rec4.get("amount") != ""){
+    		costMap.put("deduct_apportion_amount ", rec4.getDouble("amount"));
+    		order.set("deduct_apportion_amount", rec4.getDouble("amount"));
+    	}
+    	//实际应付费用
+    	Record rec3 = Db.findFirst("select sum(amount) amount  from car_summary_detail_other_fee where is_delete = '否' and car_summary_id = "+carSummaryId+";");
+    	Record rec5 = Db.findFirst("select sum(refuel_amount) amount from car_summary_detail_oil_fee where payment_type = '现金' and car_summary_id = "+carSummaryId+";");
+    	if(rec3.get("amount") != null && rec3.get("amount") != ""){
+    		if(rec5.get("amount") != null && rec5.get("amount") != ""){
+    			costMap.put("actual_payment_amount ", rec3.getDouble("amount")+rec5.getDouble("amount"));
+        		order.set("actual_payment_amount", rec3.getDouble("amount")+rec5.getDouble("amount"));
+    		}else{
+    			costMap.put("actual_payment_amount ", rec3.getDouble("amount"));
+        		order.set("actual_payment_amount", rec3.getDouble("amount"));
+    		}
+    	}
+    	order.update();
+    	renderJson(costMap); 
+    }
     
     
     

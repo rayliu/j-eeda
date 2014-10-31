@@ -104,10 +104,6 @@
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="month_refuel_amount" name="month_refuel_amount" value="${carSummaryOrder.month_refuel_amount!''}" readonly="true">
 			                                            </div>
 			                                            <div class="form-group">
-			                                                <label class="search-label">本单出车里程</label>
-			                                                <input type="text" class="form-control search-control orderNo_filter" id="next_start_car_mileage" name="next_start_car_mileage"  value="${carSummaryOrder.next_start_car_mileage!''}" readonly="true">
-			                                            </div>
-			                                            <div class="form-group">
 			                                                <label class="search-label">本单出车成本</label>
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="next_start_car_amount" name="next_start_car_amount"  value="${carSummaryOrder.next_start_car_amount!''}" readonly="true">
 			                                            </div>
@@ -159,7 +155,7 @@
                             	<div class="panel-body">
 	                            	<div class="controls">
 	                                	<button class="btn btn-primary" data-toggle="modal" id="editProportionBtn">
-										  增编辑比例
+										  编辑比例
 										</button>
 										<button class="btn btn-primary" data-toggle="modal" id="affirmBtn">
 										  确认
@@ -414,7 +410,7 @@
 		               		<button id="saveCarSummaryBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
 		               		<button id="auditBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">审核</button>
 		               		<button id="delAuditBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">撤销审核</button>
-		               		<a class="btn btn-default" href="/yh/carsummary">返回</a>
+		               		<button id="goBackBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">返回</button>
                         </div>                       
                     </div>
                     <!-- /.panel -->

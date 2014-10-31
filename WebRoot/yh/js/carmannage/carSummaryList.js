@@ -46,8 +46,8 @@ $(document).ready(function() {
 			{"mDataProp":"CONTACT_PERSON","sWidth":"60px"},
 			{"mDataProp":null,"sClass": "CREATE_STAMP","sWidth":"80px",
 				"fnRender": function(obj) {
-					if(obj.aData.CREATE_STAMP != "" && obj.aData.CREATE_STAMP != null){
-						var str = obj.aData.CREATE_STAMP;
+					if(obj.aData.TURNOUT_TIME != "" && obj.aData.TURNOUT_TIME != null){
+						var str = obj.aData.TURNOUT_TIME;
 						str = str.substr(0,10);
 						return str;
 					}else{
@@ -86,27 +86,33 @@ $(document).ready(function() {
 	          {"mDataProp":"STATUS", "sWidth":"60px"},
 			  {"mDataProp":"CAR_NO", "sWidth":"70px"},
 			  {"mDataProp":"MAIN_DRIVER_NAME", "sWidth":"70px"},
-			  {"mDataProp":null, "sWidth":"80px"},
-			  {"mDataProp":null, "sWidth":"80px"},
-			  {"mDataProp":null, "sWidth":"70px"},        	
-			  {"mDataProp":null, "sWidth":"70px"},           
-			  {"mDataProp":null, "sWidth":"70px"},        	
+			  {"mDataProp":"TURNOUT_TIME", "sWidth":"80px"},
+			  {"mDataProp":"RETURN_TIME", "sWidth":"80px"},
+			  {"mDataProp":null, "sWidth":"70px",
+				  "fnRender": function(obj) {
+						var data1 = obj.aData.TURNOUT_TIME.split("-");
+						var data2 = obj.aData.RETURN_TIME.split("-");
+						return data2[2] - data1[2];
+					}
+			  },        	
+			  {"mDataProp":"VOLUME", "sWidth":"70px"},           
+			  {"mDataProp":"WEIGHT", "sWidth":"70px"},        	
 			  {"mDataProp":"CARSUMMARYMILEAGE", "sWidth":"80px"},                        
-			  {"mDataProp":null, "sWidth":"110px"},                        
-			  {"mDataProp":null, "sWidth":"120px"},                        
-			  {"mDataProp":"AMOUNT3", "sWidth":"70px"},                        
-			  {"mDataProp":"AMOUNT4", "sWidth":"70px"},                        
-			  {"mDataProp":"AMOUNT5", "sWidth":"60px"},                        
-			  {"mDataProp":"AMOUNT6", "sWidth":"60px"},                        
-			  {"mDataProp":"AMOUNT7", "sWidth":"60px"},                        
-			  {"mDataProp":"AMOUNT8", "sWidth":"80px"},                        
-			  {"mDataProp":"AMOUNT9", "sWidth":"60px"},                        
-			  {"mDataProp":"AMOUNT10", "sWidth":"60px"},                        
-			  {"mDataProp":"AMOUNT11", "sWidth":"60px"},                        
-			  {"mDataProp":"AMOUNT12", "sWidth":"70px"},                        
-			  {"mDataProp":null, "sWidth":"100px"},           
-			  {"mDataProp":null, "sWidth":"100px"},  
-			  {"mDataProp":null, "sWidth":"100px"}
+			  {"mDataProp":"MONTH_REFUEL_AMOUNT", "sWidth":"90px"},                        
+			  {"mDataProp":null, "sWidth":"90px"},                        
+			  {"mDataProp":"SUBSIDY", "sWidth":"70px"},                        
+			  {"mDataProp":"DRIVER_SALARY", "sWidth":"70px"},                        
+			  {"mDataProp":"TOLL_CHARGE", "sWidth":"60px"},                        
+			  {"mDataProp":"HANDLING_CHARGES", "sWidth":"60px"},                        
+			  {"mDataProp":"FINE", "sWidth":"60px"},                        
+			  {"mDataProp":"DELIVERYMAN_SALARY", "sWidth":"80px"},                        
+			  {"mDataProp":"PARKING_CHARGE", "sWidth":"60px"},                        
+			  {"mDataProp":"QUARTERAGE", "sWidth":"60px"},                        
+			  {"mDataProp":"WEIGHING_CHARGE", "sWidth":"60px"},                        
+			  {"mDataProp":"OTHER_CHARGES", "sWidth":"70px"},                        
+			  {"mDataProp":"TOTAL_COST", "sWidth":"100px"},           
+			  {"mDataProp":"DEDUCT_APPORTION_AMOUNT", "sWidth":"100px"},  
+			  {"mDataProp":"ACTUAL_PAYMENT_AMOUNT", "sWidth":"100px"}
 		]          
     });
     
@@ -234,7 +240,7 @@ $(document).ready(function() {
 		var transferOrderNo = $("#carSummary_transfer_order").val();
 		var order_no = $("#carSummary_pickup_order").val();
 		var start_data = $("#carSummary_start_data").val();
-		num = 1;
+		num2 = 1;
 		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/yh/carsummary/carSummaryOrderList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&order_no="+order_no+"&start_data="+start_data;
 		travellingCraneReceipts_table.fnDraw();
 	} );

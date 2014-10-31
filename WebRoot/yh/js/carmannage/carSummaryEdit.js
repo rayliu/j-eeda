@@ -9,6 +9,44 @@ $(document).ready(function() {
 	var clickTabId = "carmanagebasic";
 	var num = 1;
 	
+	//from表单验证
+	var validate = $('#carSummaryForm').validate({
+        rules: {
+        	main_driver_name: {
+        		required: true
+            },
+          	main_driver_amount: {
+          		number:true
+          	},
+          	minor_driver_amount: {
+          		number:true
+          	},
+          	start_car_mileage:{
+          		number:true
+          	},
+          	finish_car_mileage:{
+          		number:true
+          	}
+        },
+        messages : {
+        	required:  "请输入主司机姓名！", 
+        	number :"请输入数字！"
+        }
+    });
+	
+	$("#finish_car_mileage,#start_car_mileage").on('blur', function(e){
+		var finish = $("#finish_car_mileage").val();
+		var start =  $("#start_car_mileage").val();
+		if(finish != "" && finish != 0){
+			if(finish > start){
+				$("#month_car_run_mileage").val(finish-start);
+			}else{
+				alert("请正确输入收车里程读数！");
+				$(this).focus();
+			}
+		}
+	});
+	
 	//判断行车单是否审核
 	var isAudit = $("#isAudit").val();
 	if(isAudit == "no"){
@@ -19,19 +57,22 @@ $(document).ready(function() {
 		$("#addCarSummaryRouteFee").prop("disabled",false);
 		$("#addCarSummaryDetailOilFee").prop("disabled",false);
 		$("#addCarSummaryDetailSalary").prop("disabled",false);
+		$("#editProportionBtn").prop("disabled",false);
+		$("#affirmBtn").prop("disabled",true);
 	}else{
-		//加载时隐藏"审核"
+		//加载时显示"审核"
 		$("#auditBtn").hide();
 		//不启用“保存”
 		$("#saveCarSummaryBtn").prop("disabled",true);
 		$("#addCarSummaryRouteFee").prop("disabled",true);
 		$("#addCarSummaryDetailOilFee").prop("disabled",true);
 		$("#addCarSummaryDetailSalary").prop("disabled",true);
+		$("#editProportionBtn").prop("disabled",false);
+		$("#affirmBtn").prop("disabled",false);
 	}
 	
  	//列出所有的副司机 - 自营
 	$.get('/yh/carsummary/searchAllDriver', null, function(data){
-		
 		var minor_driver_name = $('#minor_driver_name');
 		var hidden_minor_driver_name = $('#hidden_minor_driver_name').val();
 		minor_driver_name.append("<option value=''></option>");
@@ -47,6 +88,10 @@ $(document).ready(function() {
 	
  	//保存、修改数据
  	var saveCarSummaryData = function(){
+ 		//提交前，校验数据
+        if(!$("#carSummaryForm").valid()){
+	       	return false;
+        }
  		//判断行车单是否审核
  		if(!$("#saveCarSummaryBtn").prop("disabled")){
  			$.post('/yh/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
@@ -65,8 +110,44 @@ $(document).ready(function() {
 		saveCarSummaryData();
 	});
 	
-	// 选显卡-基本信息
+	//点击返回
+	$("#goBackBtn").click(function(e){
+		var car_summary_id = $("#car_summary_id").val();
+		if(car_summary_id != ""){
+			if(clickTabId != "carmanagebasic"){
+				//当用户不是从基本信息tab返回时，自动统计行车单相关数据
+				$.post('/yh/carsummary/calculateCost',{carSummaryId:car_summary_id},function(data){
+					if(data =="" && data == null){
+						alert('费用自动统计失败');
+					}
+				},'json');	
+			}else{
+				var msg = "是否保存行车单数据？";   
+				if (confirm(msg)==true){   
+					saveCarSummaryData(); 
+				}
+			}
+		}
+		window.location.href="/yh/carsummary"; 
+	});
+	// 选项卡-基本信息
 	$("#carmanagebasic").click(function(e){
+		if(clickTabId != "carmanagebasic"){
+			var car_summary_id = $("#car_summary_id").val();
+			if(car_summary_id != ""){
+				$.post('/yh/carsummary/calculateCost',{carSummaryId:car_summary_id},function(data){
+					console.log(data);
+					if(data !="" && data != null){
+						$.each(data, function(name, value) {
+							$("#"+name+"").val(value);
+						});
+					}else
+						alert('费用自动统计失败');
+				},'json');	
+			}else{
+				alert('费用自动统计失败');
+			}
+		}
 		clickTabId = e.target.getAttribute("id");
 	});
 	
@@ -323,6 +404,7 @@ $(document).ready(function() {
 	//修改路桥费明细
 	$("#carSummaryDetailRouteFeeTbody").on('blur', 'input', function(e){
 		e.preventDefault();
+		var result = true;
 		var car_summary_id = $("#car_summary_id").val();
 		var routeFeeId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
@@ -330,13 +412,20 @@ $(document).ready(function() {
 		if(name ==  "charge_data"){
 			routeFeeId = $(this).parent().parent().parent().attr("id");
 		}
+		if(name == "travel_amount" && isNaN(value)){
+			alert("【通行费】只能输入数字,请重新输入！");
+			$(this).val("");
+			$(this).focus();
+			result = false;
+		}
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
-		$.post('/yh/carsummary/updateCarSummaryDetailRouteFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
-			if(data.success){
-			}else{
-				$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
-			}
-    	},'json');
+		if(result && value != ""){
+			$.post('/yh/carsummary/updateCarSummaryDetailRouteFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
+				if(!data.success){
+					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+				}
+	    	},'json');
+		}
 	});	
 	//刷新加油记录
  	var carSummaryDetailOilFeeTbody = $('#carSummaryDetailOilFeeTbody').dataTable({
@@ -587,6 +676,7 @@ $(document).ready(function() {
 	//修改加油记录
 	$("#carSummaryDetailOilFeeTbody").on('blur', 'input,select', function(e){
 		e.preventDefault();
+		var result = true;
 		var car_summary_id = $("#car_summary_id").val();
 		var routeFeeId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
@@ -594,13 +684,50 @@ $(document).ready(function() {
 		if(name == "refuel_data"){
 			routeFeeId = $(this).parent().parent().parent().attr("id");
 		}
+		if(name == "odometer_mileage" && isNaN(value)){
+			alert("【里程表读数】只能输入数字,请重新输入！");
+			$(this).val("");
+			$(this).focus();
+			result = false;
+		}
+		if(name == "refuel_unit_cost" && isNaN(value)){
+			alert("【油价】只能输入数字,请重新输入！");
+			$(this).val("");
+			$(this).focus();
+			result = false;
+		}
+		if(name == "refuel_number" && isNaN(value)){
+			alert("【加油量】只能输入数字,请重新输入！");
+			$(this).val("");
+			$(this).focus();
+			result = false;
+		}
+		if(name == "refuel_amount" && isNaN(value)){
+			alert("【油费】只能输入数字,请重新输入！");
+			$(this).val("");
+			$(this).focus();
+			result = false;
+		}
+		if(name == "load_amount" && isNaN(value)){
+			alert("【载重】只能输入数字,请重新输入！");
+			$(this).val("");
+			$(this).focus();
+			result = false;
+		}
+		if(name == "avg_econ" && isNaN(value)){
+			alert("【平均油耗】只能输入数字,请重新输入！");
+			$(this).val("");
+			$(this).focus();
+			result = false;
+		}
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
-		$.post('/yh/carsummary/updateCarSummaryDetailOilFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
-			if(data.success){
-			}else{
-				$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
-			}
-    	},'json');
+		if(result && value != ""){
+			$.post('/yh/carsummary/updateCarSummaryDetailOilFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
+				if(!data.success){
+					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+				}
+	    	},'json');
+		}
 	});	
 	//刷新送货员工资明细
  	var carSummaryDetailSalaryTbody = $('#carSummaryDetailSalaryTbody').dataTable({
@@ -749,17 +876,25 @@ $(document).ready(function() {
 	//修改送货员工资明细
 	$("#carSummaryDetailSalaryTbody").on('blur', 'input', function(e){
 		e.preventDefault();
+		var result = true;
 		var car_summary_id = $("#car_summary_id").val();
 		var routeFeeId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
+		if(name == "deserved_amount" && isNaN(value)){
+			alert("【应得金额】只能输入数字,请重新输入！");
+			$(this).val("");
+			$(this).focus();
+			result = false;
+		}
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
-		$.post('/yh/carsummary/updateCarSummaryDetailSalary', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
-			if(data.success){
-			}else{
-				$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
-			}
-    	},'json');
+		if(result && value != ""){
+			$.post('/yh/carsummary/updateCarSummaryDetailSalary', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
+				if(!data.success){
+					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+				}
+	    	},'json');
+		}
 	});	
 	//刷新费用合计
  	var carSummaryDetailOtherFeeTbody = $('#carSummaryDetailOtherFeeTbody').dataTable({
@@ -796,6 +931,11 @@ $(document).ready(function() {
             		 if(obj.aData.IS_DELETE == "是"){
             			 if(obj.aData.ITEM == '1' || obj.aData.ITEM == '2' || obj.aData.ITEM =='4' || obj.aData.ITEM =='8' ){
             				 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' checked='true' disabled='true'>";
+                		 }else{
+                			 if($("#saveCarSummaryBtn").prop("disabled"))
+            					 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' checked='true' disabled='true'>";
+            				 else
+            					 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' checked='true'>";
                 		 }
             		 }else{
             			 if(obj.aData.ITEM == '1'){
@@ -844,6 +984,7 @@ $(document).ready(function() {
 	//修改费用合计
 	$("#carSummaryDetailOtherFeeTbody").on('blur', 'input', function(e){
 		e.preventDefault();
+		var result =true;
 		var routeFeeId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
@@ -854,13 +995,20 @@ $(document).ready(function() {
 				value = "否";
 			}
 		}
+		if(name == "amount" && isNaN(value)){
+			alert("【金额】只能输入数字,请重新输入！");
+			$(this).val("");
+			$(this).focus();
+			result = false;
+		}
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
-		$.post('/yh/carsummary/updateCarSummaryDetailOtherFee', {routeFeeId:routeFeeId, name:name, value:value}, function(data){
-			if(data.success){
-			}else{
-				$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
-			}
-    	},'json');
+		if(result && value != ""){
+			$.post('/yh/carsummary/updateCarSummaryDetailOtherFee', {routeFeeId:routeFeeId, name:name, value:value}, function(data){
+				if(!data.success){
+					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+				}
+	    	},'json');
+		}
 	});
 	
 	//费用合计-审核
@@ -877,6 +1025,8 @@ $(document).ready(function() {
 					$("#addCarSummaryRouteFee").prop("disabled",true);
 					$("#addCarSummaryDetailOilFee").prop("disabled",true);
 					$("#addCarSummaryDetailSalary").prop("disabled",true);
+					$("#editProportionBtn").prop("disabled",true);
+					$("#affirmBtn").prop("disabled",true);
 					//刷新当前选项卡
 					$("#"+clickTabId+"").click();
 					
@@ -903,6 +1053,8 @@ $(document).ready(function() {
 					$("#addCarSummaryRouteFee").prop("disabled",false);
 					$("#addCarSummaryDetailOilFee").prop("disabled",false);
 					$("#addCarSummaryDetailSalary").prop("disabled",false);
+					$("#editProportionBtn").prop("disabled",false);
+					$("#affirmBtn").prop("disabled",false);
 					//刷新当前选项卡
 					$("#"+clickTabId+"").click();
 				}else{
@@ -922,6 +1074,10 @@ $(document).ready(function() {
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
+        "fnRowCallback": function(nRow, aData) {
+			$(nRow).attr('id', aData.ORDER_ID);
+			return nRow;
+		 },
         "aoColumns": [
 			{ "mDataProp": null,"sWidth":"40px",
 				"fnRender": function(obj) {
@@ -933,8 +1089,12 @@ $(document).ready(function() {
             { "mDataProp": "AMOUNT"},
             { "mDataProp": "VOLUME"},
             { "mDataProp": "WEIGHT"},
-            { "mDataProp": null},
-            { "mDataProp": null},
+            { "mDataProp": null,
+				"fnRender": function(obj) {
+					return "<input type='text' size='3' name='car_summary_order_share_ratio' id='car_summary_order_share_ratio' value='"+obj.aData.CAR_SUMMARY_ORDER_SHARE_RATIO*100+"' disabled='true'>%";
+				}
+            },
+            { "mDataProp": "REMARK"}
         ]
     });
 	
@@ -951,13 +1111,37 @@ $(document).ready(function() {
 			transferOrderTbody.fnDraw();
 		}
 	});
-	
-	
-	
-	
-	
-	
-	
+	// 编辑比例
+	$("#editProportionBtn").click(function(e){
+		$(this).prop("disabled",true);
+		$("#affirmBtn").prop("disabled",false);
+		$('#transferOrderTbody input').prop("disabled",false);
+	});
+
+	// 比例修改确认
+	$("#affirmBtn").click(function(e){
+		var orderIds = [];
+		var rates = [];
+		var checkTates = 0;
+        $("#transferOrderTbody tbody tr").each(function(trindex,tritem){
+        	orderIds.push($(tritem).attr("id"));
+        	rates.push($(tritem).find("td").find("input").val());
+        });
+        for ( var i = 0; i < rates.length; i++) {
+        	checkTates = rates[i]*1+checkTates*1;
+		}
+        if(checkTates == 100 && orderIds.length == rates.length){
+			$.post('/yh/carsummary/updateTransferOrderShareRatio',{"orderIds":orderIds.toString(),"rates":rates.toString()}, function(data){
+				if(data.success){
+					$("#affirmBtn").prop("disabled",true);
+					$("#editProportionBtn").prop("disabled",false);
+					$('#transferOrderTbody input').prop("disabled",true);
+				}
+	    	},'json');
+		}else{
+			alert("所有分摊比例相加为100%,请重新输入！");
+		}
+	});
 	
 });
 function datetimepicker(data){
