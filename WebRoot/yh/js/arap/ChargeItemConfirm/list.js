@@ -28,7 +28,7 @@ $(document).ready(function() {
                     return "未收款";
             }},
             {"mDataProp":"CNAME", "sWidth":"200px"},
-            {"mDataProp":null, "sWidth":"150px"},
+            {"mDataProp":"DEPARTURE_TIME", "sWidth":"150px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"200px"},        	

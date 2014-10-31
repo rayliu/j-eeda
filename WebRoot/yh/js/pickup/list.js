@@ -18,7 +18,6 @@
 	            			return "<a href='/yh/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
 	            		}},
 	            {"mDataProp":"OFFICE_NAME"},
-	            {"mDataProp":null},		
 			    {"mDataProp":"STATUS"},
 			    {"mDataProp":"PICKUP_MODE",
 	            	"fnRender": function(obj) {

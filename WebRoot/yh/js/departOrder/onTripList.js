@@ -84,8 +84,7 @@ $(document).ready(function() {
             {"mDataProp":"PLAN_TIME",
             		"sWidth": "100px"},
             {"mDataProp":"EXCEPTION_RECORD"},
-            {"mDataProp":"REMARK"}
-                
+            {"mDataProp":"REMARK"}                
         ]  
     });	
    
