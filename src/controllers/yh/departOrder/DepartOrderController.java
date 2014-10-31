@@ -121,8 +121,7 @@ public class DepartOrderController extends Controller {
 
             sql = "select deo.id,deo.depart_no,deo.create_stamp,deo.status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,"
             		+ " u.user_name user_name,o.office_name office_name,deo.departure_time departure_time,ct.abbr abbr,"
-            		+ " (select	name from location where code = tor .route_from) route_from,(select name from location where code = tor .route_to) route_to,"
-            		+ " (select tom.create_stamp from transfer_order_milestone tom where tom.status='已发车' and tom.depart_id = deo.id) start_time, "
+            		+ " (select name from location where code = tor .route_from) route_from,(select name from location where code = tor .route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (select order_id from depart_transfer dt where dt.depart_id = deo.id)) as transfer_order_no"
             		+ " from depart_order deo"
 					+ " left join carinfo c on deo.carinfo_id = c.id"
@@ -165,7 +164,6 @@ public class DepartOrderController extends Controller {
 
             sql = "select deo.id,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,u.user_name user_name,"
             		+ " o.office_name office_name,deo.departure_time departure_time ,ct.abbr abbr,"
-            		+ " (select tom.create_stamp from transfer_order_milestone tom where tom.status='已发车' and tom.depart_id = deo.id) start_time, "
             		+ " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (dtf.order_id)) as transfer_order_no"
             		+ " from depart_order deo"
@@ -247,7 +245,6 @@ public class DepartOrderController extends Controller {
     				+ "t.arrival_time arrival_time, "
     				+ "deo.remark, "
                     + "(select sum(amount) from transfer_order_item where order_id in (select order_id from depart_transfer dtp where dtp.depart_id=deo.id )) amount, "
-    				+ "(select tom.create_stamp from transfer_order_milestone tom where tom.status='已发车' and tom.depart_id = deo.id) start_time, "
     				+ "(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode, "
     				+ "(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no, "		
     				+ "(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location, "
@@ -312,7 +309,6 @@ public class DepartOrderController extends Controller {
     				+ "t.arrival_time arrival_time, "
     				+ "deo.remark, "
     				+ "(select sum(amount) from transfer_order_item where order_id in (select order_id from depart_transfer dtp where dtp.depart_id=deo.id )) amount, "
-    				+ "(select tom.create_stamp from transfer_order_milestone tom where tom.status='已发车' and tom.depart_id = deo.id) start_time, "
     				+ "(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode, "
     				+ "(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no, "		
     				+ "(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location, "

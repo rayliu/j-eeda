@@ -27,24 +27,13 @@ var dataTable =$('#dataTables-example').dataTable({
             {"mDataProp":"ABBR"},
             {"mDataProp":"CONTACT_PERSON"},
             {"mDataProp":"PHONE"},
-            {"mDataProp":"START_TIME",
-            	"fnRender":function(obj){
-				var create_stamp=obj.aData.START_TIME;
-				var str=create_stamp.substr(0,10);
-				return str;
-			}},
             {"mDataProp":"ROUTE_FROM"},
             {"mDataProp":"ROUTE_TO"},
             {"mDataProp":"DEPARTURE_TIME"},
             {"mDataProp":"ARRIVAL_TIME"},
             {"mDataProp":"TRANSFER_ORDER_NO"},
             {"mDataProp":"USER_NAME"},
-            {"mDataProp":"CREATE_STAMP",
-            	"fnRender":function(obj){
-    				var create_stamp=obj.aData.CREATE_STAMP;
-    				var str=create_stamp.substr(0,10);
-    				return str;
-    			}},
+            {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"REMARK"} 
         ]      
     });
