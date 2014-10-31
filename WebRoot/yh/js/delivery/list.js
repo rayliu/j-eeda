@@ -15,7 +15,7 @@ $(document).ready(function() {
 	            
 	            {"mDataProp":"ORDER_NO",
 	            	"fnRender": function(obj) {
-         			return "<a href='/yh/delivery/edit/"+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+         			return "<a href='/yh/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
          		}
 	            },
 	            {"mDataProp":"CUSTOMER"},
