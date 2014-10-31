@@ -65,13 +65,6 @@ $(document).ready(function() {
             	"sWidth": "60px"},
             {"mDataProp":"PHONE",
             	"sWidth": "60px"},
-            {"mDataProp":"START_TIME",
-            		"sWidth": "80px",
-            		"fnRender":function(obj){
-        				var create_stamp=obj.aData.START_TIME;
-        				var str=create_stamp.substr(0,10);
-        				return str;
-        			}},
             {"mDataProp":"ROUTE_FROM",
             		"sWidth": "80px"},
             {"mDataProp":"ROUTE_TO",
