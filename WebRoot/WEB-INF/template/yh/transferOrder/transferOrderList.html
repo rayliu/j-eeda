@@ -33,26 +33,14 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <form role="form" style="margin: 0 15px;">
-                                <div class="row">
-                                    <div class="col-lg-6">
+                                <div class="row search_panel">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label class="search-label">运输单号</label>
                                             <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value="">
                                         </div>
                                          
-                                        <div class="form-group">
-                                            <label class="search-label">状态</label>
-                                            <select id="status_filter" class="form-control search-control status_filter">
-                                                <option value=""></option>
-                                                <option value="新建">新建</option>
-                                                <option value="已发车">已发车</option>
-                                                <option value="在途">在途</option>                                                
-                                                <option value="已入货场">已入货场</option>                                                
-                                                <option value="已入库">已入库</option>                                                
-                                                <option value="已签收">已签收</option>                                                
-                                            </select>
-                                            <!-- <input type="text" class="form-control search-control status_filter" id="status_filter"> -->
-                                        </div>
+                                       
                                         <div class="form-group">
                                             <label class="search-label">提货城市</label>
                                             <input type="text" class="form-control search-control address_filter" id="address_filter">
@@ -70,13 +58,39 @@
                                                 <option value="movesOrder">移机单</option>                                                 
                                             </select>
                                         </div>
-                                        
+                                        <div class="form-group">                                        
+                                            <div id="datetimepicker" class="input-append date "> 
+                                                <label class="search-label">开始时间</label> 
+                                                <input id="beginTime_filter" class="form-control search-control beginTime_filter" type="text">
+                                                <span class="add-on">  
+                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                                </span>  
+                                            </div>
+                                        </div>
+                                        <div class="form-group">                                                    
+                                            <span id="plandatetimepicker" class="input-append date search-control "> 
+                                                <label class="search-label">计划时间</label> 
+                                                <input id="plantime" class="form-control search-control beginTime_filter" type="text">
+                                                <span class="add-on">  
+                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                                </span>  
+                                            </span>
+                                        </div>   
                                     </div>
                                     <!-- end of col-lg-6-->
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                     	<div class="form-group">
-                                            <label class="search-label">客户单号</label>
-                                            <input type="text" class="form-control search-control address_filter" id="customer_order_no_filter">
+                                            <label class="search-label">状态</label>
+                                            <select id="status_filter" class="form-control search-control status_filter">
+                                                <option value=""></option>
+                                                <option value="新建">新建</option>
+                                                <option value="已发车">已发车</option>
+                                                <option value="在途">在途</option>                                                
+                                                <option value="已入货场">已入货场</option>                                                
+                                                <option value="已入库">已入库</option>                                                
+                                                <option value="已签收">已签收</option>                                                
+                                            </select>
+                                            <!-- <input type="text" class="form-control search-control status_filter" id="status_filter"> -->
                                         </div>
                                         <div class="form-group">
                                             <label class="search-label">客户名称</label>
@@ -89,30 +103,6 @@
                                         	<ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
 											</ul>
                                         </div>
-                                       
-                                        <div class="form-group">
-                                            <label class="search-label">网点</label>
-                                            <!-- <input type="text" class="form-control search-control officeName_filter" id="officeName_filter"> -->
-                                        	<select id="officeSelect" class="form-control search-control officeName_filter" name="officeSelect"></select>
-                                        </div>
-                                        
-                                    </div>
-                                    <!-- end of col-lg-6-->
-                                </div><!-- end of row-->
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="form-group">                                        
-                                            <div id="datetimepicker" class="input-append date "> 
-                                                <label class="search-label">开始时间</label> 
-                                                <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
-                                            </div>
-                                        </div>    
-                                    </div>
-                                    <!-- end of col-lg-6-->
-                                    <div class="col-lg-6">
                                         <div class="form-group">                                                    
                                             <span id="datetimepicker2" class="input-append date search-control "> 
                                                 <label class="search-label">结束时间</label> 
@@ -122,20 +112,6 @@
                                                 </span>  
                                             </span>
                                         </div>
-                                    </div>
-                                    <!-- end of col-lg-6-->
-                                    <div class="col-lg-6">
-                                        <div class="form-group">                                                    
-                                            <span id="plandatetimepicker" class="input-append date search-control "> 
-                                                <label class="search-label">计划时间</label> 
-                                                <input id="plantime" class="form-control search-control beginTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
                                         <div class="form-group">                                                    
                                             <span id="arrivaldatetimepicker" class="input-append date search-control "> 
                                                 <label class="search-label">要求到达时间</label> 
@@ -145,8 +121,24 @@
                                                 </span>  
                                             </span>
                                         </div>
+                                        
                                     </div>
+                                    <!-- end of col-lg-6-->
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label class="search-label">客户单号</label>
+                                            <input type="text" class="form-control search-control address_filter" id="customer_order_no_filter">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="search-label">网点</label>
+                                            <!-- <input type="text" class="form-control search-control officeName_filter" id="officeName_filter"> -->
+                                            <select id="officeSelect" class="form-control search-control officeName_filter" name="officeSelect"></select>
+                                        </div>
+                                        
+                                    </div>
+                                    <!-- end of col-lg-6-->
                                 </div><!-- end of row-->
+
                             
                             </form>
                             <div class="table-responsive">

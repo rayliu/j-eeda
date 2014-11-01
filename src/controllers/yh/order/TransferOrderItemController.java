@@ -72,11 +72,11 @@ public class TransferOrderItemController extends Controller {
 
         Contact contact = Contact.dao.findFirst("select * from contact where id=?", party.getLong("contact_id"));
         setAttr("contact", contact);
-            render("transferOrder/transferOrderEdit.html");
+            render("/yh/transferOrder/transferOrderEdit.html");
     }
 
     public void edit() {
-            render("transferOrder/editTransferOrder.html");
+            render("/yh/transferOrder/editTransferOrder.html");
     }
 
     public void delete() {

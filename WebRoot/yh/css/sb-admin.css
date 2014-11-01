@@ -346,7 +346,7 @@ label.error {
 
 .search-control{
     display: inline;  
-    width: 50%;
+    width: 70%;
 }
 
 .search-label{
@@ -369,6 +369,12 @@ label.error {
 
 .form-group{
 	margin-bottom: 5px !important;
+}
+.form-group .search-control{
+	height:30px;
+}
+.search_panel .form-group{
+    height:27px;
 }
 .label-margin{
 	margin-right: 20px;

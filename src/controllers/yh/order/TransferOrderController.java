@@ -47,7 +47,7 @@ public class TransferOrderController extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 
 	public void index() {
-		render("transferOrder/transferOrderList.html");
+		render("/yh/transferOrder/transferOrderList.html");
 	}
 
 	public void list() {
@@ -239,7 +239,7 @@ public class TransferOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "新建");
-			render("transferOrder/updateTransferOrder.html");
+			render("/yh/transferOrder/updateTransferOrder.html");
 	}
 
 	public void edit() {
@@ -324,7 +324,7 @@ public class TransferOrderController extends Controller {
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
-			render("transferOrder/updateTransferOrder.html");
+			render("/yh/transferOrder/updateTransferOrder.html");
 	}
 
 	public void save() {
@@ -350,7 +350,7 @@ public class TransferOrderController extends Controller {
 			party.save();
 		}
 		setAttr("saveOK", true);
-			render("transferOrder/transferOrderList.html");
+			render("/yh/transferOrder/transferOrderList.html");
 	}
 
 	// 保存客户
