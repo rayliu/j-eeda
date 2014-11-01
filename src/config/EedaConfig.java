@@ -156,7 +156,7 @@ public class EedaConfig extends JFinalConfig {
 
         // me.add("/fileUpload", HelloController.class);
         // yh project controller
-        me.add(contentPath, controllers.yh.AppController.class, contentPath);
+        me.add("/", controllers.yh.AppController.class, contentPath);
         me.add(contentPath+"/debug", controllers.yh.LogController.class, contentPath);
         
         me.add(contentPath+"/loginUser", controllers.yh.LoginUserController.class, contentPath);
@@ -179,7 +179,7 @@ public class EedaConfig extends JFinalConfig {
         me.add(contentPath+"/warehouse", controllers.yh.profile.WarehouseController.class, contentPath);
         me.add(contentPath+"/orderStatus", controllers.yh.profile.OrderStatusController.class, contentPath);
         me.add(contentPath+"/account", controllers.yh.AccountController.class, contentPath);
-        me.add(contentPath+"/transferOrder", controllers.yh.order.TransferOrderController.class, contentPath);
+        me.add("/transferOrder", controllers.yh.order.TransferOrderController.class);
         me.add(contentPath+"/transferOrderItem", controllers.yh.order.TransferOrderItemController.class, contentPath);
         me.add(contentPath+"/transferOrderItemDetail", controllers.yh.order.TransferOrderItemDetailController.class, contentPath);
         me.add(contentPath+"/transferOrderMilestone", controllers.yh.order.TransferOrderMilestoneController.class, contentPath);
