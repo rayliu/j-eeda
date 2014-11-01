@@ -157,71 +157,71 @@ public class EedaConfig extends JFinalConfig {
         // me.add("/fileUpload", HelloController.class);
         // yh project controller
         me.add("/", controllers.yh.AppController.class, contentPath);
-        me.add(contentPath+"/debug", controllers.yh.LogController.class, contentPath);
+        me.add("/debug", controllers.yh.LogController.class, contentPath);
         
-        me.add(contentPath+"/loginUser", controllers.yh.LoginUserController.class, contentPath);
+        me.add("/loginUser", controllers.yh.LoginUserController.class, contentPath);
         //register loginUser
-        me.add(contentPath+"/register",RegisterUserController.class,contentPath);
+        me.add("/register",RegisterUserController.class,contentPath);
         
-        me.add(contentPath+"/role", controllers.yh.RoleController.class, contentPath);
-        me.add(contentPath+"/toll", controllers.yh.TollController.class, contentPath);
-        me.add(contentPath+"/privilege", controllers.yh.PrivilegeController.class, contentPath);
-        me.add(contentPath+"/pay", controllers.yh.PayController.class, contentPath);
-        me.add(contentPath+"/ownCarPay", controllers.yh.PayController.class, contentPath);
-        me.add(contentPath+"/customer", controllers.yh.profile.CustomerController.class, contentPath);
-        me.add(contentPath+"/serviceProvider", controllers.yh.profile.ServiceProviderController.class, contentPath);
-        me.add(contentPath+"/location", controllers.yh.LocationController.class, contentPath);
-        me.add(contentPath+"/customerContract", controllers.yh.contract.ContractController.class, contentPath);
-        me.add(contentPath+"/spContract", controllers.yh.contract.ContractController.class, contentPath);
-        me.add(contentPath+"/route", controllers.yh.RouteController.class, contentPath);
-        me.add(contentPath+"/office", controllers.yh.OfficeController.class, contentPath);
-        me.add(contentPath+"/product", controllers.yh.profile.ProductController.class, contentPath);
-        me.add(contentPath+"/warehouse", controllers.yh.profile.WarehouseController.class, contentPath);
-        me.add(contentPath+"/orderStatus", controllers.yh.profile.OrderStatusController.class, contentPath);
-        me.add(contentPath+"/account", controllers.yh.AccountController.class, contentPath);
+        me.add("/role", controllers.yh.RoleController.class, contentPath);
+        me.add("/toll", controllers.yh.TollController.class, contentPath);
+        me.add("/privilege", controllers.yh.PrivilegeController.class, contentPath);
+        me.add("/pay", controllers.yh.PayController.class, contentPath);
+        me.add("/ownCarPay", controllers.yh.PayController.class, contentPath);
+        me.add("/customer", controllers.yh.profile.CustomerController.class, contentPath);
+        me.add("/serviceProvider", controllers.yh.profile.ServiceProviderController.class, contentPath);
+        me.add("/location", controllers.yh.LocationController.class, contentPath);
+        me.add("/customerContract", controllers.yh.contract.ContractController.class, contentPath);
+        me.add("/spContract", controllers.yh.contract.ContractController.class, contentPath);
+        me.add("/route", controllers.yh.RouteController.class, contentPath);
+        me.add("/office", controllers.yh.OfficeController.class, contentPath);
+        me.add("/product", controllers.yh.profile.ProductController.class, contentPath);
+        me.add("/warehouse", controllers.yh.profile.WarehouseController.class, contentPath);
+        me.add("/orderStatus", controllers.yh.profile.OrderStatusController.class, contentPath);
+        me.add("/account", controllers.yh.AccountController.class, contentPath);
         me.add("/transferOrder", controllers.yh.order.TransferOrderController.class);
-        me.add(contentPath+"/transferOrderItem", controllers.yh.order.TransferOrderItemController.class, contentPath);
-        me.add(contentPath+"/transferOrderItemDetail", controllers.yh.order.TransferOrderItemDetailController.class, contentPath);
-        me.add(contentPath+"/transferOrderMilestone", controllers.yh.order.TransferOrderMilestoneController.class, contentPath);
-        me.add(contentPath+"/returnOrder", controllers.yh.returnOrder.ReturnOrderController.class, contentPath);
-        me.add(contentPath+"/delivery", controllers.yh.delivery.DeliveryController.class, contentPath);
+        me.add("/transferOrderItem", controllers.yh.order.TransferOrderItemController.class, contentPath);
+        me.add("/transferOrderItemDetail", controllers.yh.order.TransferOrderItemDetailController.class, contentPath);
+        me.add("/transferOrderMilestone", controllers.yh.order.TransferOrderMilestoneController.class, contentPath);
+        me.add("/returnOrder", controllers.yh.returnOrder.ReturnOrderController.class, contentPath);
+        me.add("/delivery", controllers.yh.delivery.DeliveryController.class, contentPath);
 
-        me.add(contentPath+"/deliverySpContract", controllers.yh.contract.ContractController.class, contentPath);
+        me.add("/deliverySpContract", controllers.yh.contract.ContractController.class, contentPath);
 
-        me.add(contentPath+"/deliveryOrderMilestone", controllers.yh.delivery.DeliveryOrderMilestoneController.class, contentPath);
-        me.add(contentPath+"/pickupOrder", controllers.yh.pickup.PickupOrderController.class, contentPath);
+        me.add("/deliveryOrderMilestone", controllers.yh.delivery.DeliveryOrderMilestoneController.class, contentPath);
+        me.add("/pickupOrder", controllers.yh.pickup.PickupOrderController.class, contentPath);
 
-        me.add(contentPath+"/paymentCheckOrder", controllers.yh.arap.PaymentCheckOrderController.class, contentPath);
+        me.add("/paymentCheckOrder", controllers.yh.arap.PaymentCheckOrderController.class, contentPath);
 
-        me.add(contentPath+"/copeCheckOrder", controllers.yh.arap.CopeCheckOrderController.class, contentPath);
-        me.add(contentPath+"/departOrder", controllers.yh.departOrder.DepartOrderController.class, contentPath);
-        me.add(contentPath+"/gateIn", controllers.yh.inventory.InventoryController.class, contentPath);
-        me.add(contentPath+"/gateOut", controllers.yh.inventory.InventoryController.class, contentPath);
-        me.add(contentPath+"/stock", controllers.yh.inventory.InventoryController.class, contentPath);
-        me.add(contentPath+"/carinfo", controllers.yh.profile.CarinfoController.class, contentPath);
-        me.add(contentPath+"/carmanage", controllers.yh.profile.CarinfoController.class, contentPath);
-        me.add(contentPath+"/carsummary", controllers.yh.carmanage.CarSummaryController.class, contentPath);
-        me.add(contentPath+"/driverinfo", controllers.yh.profile.CarinfoController.class, contentPath);
-        me.add(contentPath+"/spdriverinfo", controllers.yh.profile.CarinfoController.class, contentPath);
-        me.add(contentPath+"/spcarinfo", controllers.yh.profile.CarinfoController.class, contentPath);
-        me.add(contentPath+"/deliveryMilestone", controllers.yh.delivery.DeliveryController.class, contentPath);
+        me.add("/copeCheckOrder", controllers.yh.arap.CopeCheckOrderController.class, contentPath);
+        me.add("/departOrder", controllers.yh.departOrder.DepartOrderController.class, contentPath);
+        me.add("/gateIn", controllers.yh.inventory.InventoryController.class, contentPath);
+        me.add("/gateOut", controllers.yh.inventory.InventoryController.class, contentPath);
+        me.add("/stock", controllers.yh.inventory.InventoryController.class, contentPath);
+        me.add("/carinfo", controllers.yh.profile.CarinfoController.class, contentPath);
+        me.add("/carmanage", controllers.yh.profile.CarinfoController.class, contentPath);
+        me.add("/carsummary", controllers.yh.carmanage.CarSummaryController.class, contentPath);
+        me.add("/driverinfo", controllers.yh.profile.CarinfoController.class, contentPath);
+        me.add("/spdriverinfo", controllers.yh.profile.CarinfoController.class, contentPath);
+        me.add("/spcarinfo", controllers.yh.profile.CarinfoController.class, contentPath);
+        me.add("/deliveryMilestone", controllers.yh.delivery.DeliveryController.class, contentPath);
         
         //ar= account revenue  应收条目处理
-        me.add(contentPath+"/chargeConfiremList", controllers.yh.arap.ar.ChargeItemConfirmController.class, contentPath);
-        me.add(contentPath+"/chargeCheckOrder", controllers.yh.arap.ar.ChargeCheckOrderController.class, contentPath);
-        me.add(contentPath+"/chargePreInvoiceOrder", controllers.yh.arap.ar.ChargePreInvoiceOrderController.class, contentPath);
-        me.add(contentPath+"/chargeInvoiceOrder", controllers.yh.arap.ar.ChargeInvoiceOrderController.class, contentPath);
-        me.add(contentPath+"/chargeAcceptOrder", controllers.yh.arap.ar.ChargeAcceptOrderController.class, contentPath);
-        me.add(contentPath+"/chargeAdjustOrder", controllers.yh.arap.ar.ChargeAdjustOrderController.class, contentPath);
+        me.add("/chargeConfiremList", controllers.yh.arap.ar.ChargeItemConfirmController.class, contentPath);
+        me.add("/chargeCheckOrder", controllers.yh.arap.ar.ChargeCheckOrderController.class, contentPath);
+        me.add("/chargePreInvoiceOrder", controllers.yh.arap.ar.ChargePreInvoiceOrderController.class, contentPath);
+        me.add("/chargeInvoiceOrder", controllers.yh.arap.ar.ChargeInvoiceOrderController.class, contentPath);
+        me.add("/chargeAcceptOrder", controllers.yh.arap.ar.ChargeAcceptOrderController.class, contentPath);
+        me.add("/chargeAdjustOrder", controllers.yh.arap.ar.ChargeAdjustOrderController.class, contentPath);
         //ap 应付条目处理
-        me.add(contentPath+"/costConfirmList", controllers.yh.arap.ap.CostItemConfirmController.class, contentPath);
-        me.add(contentPath+"/costCheckOrder", controllers.yh.arap.ap.CostCheckOrderController.class, contentPath);
-        me.add(contentPath+"/costPreInvoiceOrder", controllers.yh.arap.ap.CostPreInvoiceOrderController.class, contentPath);
-        me.add(contentPath+"/costAdjustOrder", controllers.yh.arap.ap.CostAdjustOrderController.class, contentPath);
+        me.add("/costConfirmList", controllers.yh.arap.ap.CostItemConfirmController.class, contentPath);
+        me.add("/costCheckOrder", controllers.yh.arap.ap.CostCheckOrderController.class, contentPath);
+        me.add("/costPreInvoiceOrder", controllers.yh.arap.ap.CostPreInvoiceOrderController.class, contentPath);
+        me.add("/costAdjustOrder", controllers.yh.arap.ap.CostAdjustOrderController.class, contentPath);
         //audit log
-        me.add(contentPath+"/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, contentPath);
+        me.add("/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, contentPath);
         //insuranceOrder
-        me.add(contentPath+"/insuranceOrder", controllers.yh.insurance.InsuranceOrderController.class, contentPath);
+        me.add("/insuranceOrder", controllers.yh.insurance.InsuranceOrderController.class, contentPath);
         
         
         
