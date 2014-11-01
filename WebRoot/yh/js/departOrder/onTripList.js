@@ -1,4 +1,4 @@
-
+﻿
 $(document).ready(function() {
 
     $('#menu_status').addClass('active').find('ul').addClass('in');
@@ -22,14 +22,9 @@ $(document).ready(function() {
 			    "fnRender": function(obj) {
 			    	console.log(obj.aData.ARRIVAL_MODE);
 			    	if(obj.aData.ARRIVAL_MODE=='货品直送'){
-			    		return "";
-			    	}
-			    	else if(obj.aData.DEPART_STATUS=='已入库'){
-			    		return "已入库";
+			    		return "<a class='btn btn-primary confirmReceipt' code='"+obj.aData.ID+"'>"+"收货确认"+"</a>";
 			    	}else{
-			    		return "<a class='btn btn-primary btn-xs confirmInWarehouse' code='"+obj.aData.ID+"'>"+
-			    		"入库确认"+
-			    		"</a>";
+			    		return "<a class='btn btn-primary confirmInWarehouse' code='"+obj.aData.ID+"'>"+"入库确认"+"</a>";
 			    	}
 			    }
 			},
@@ -99,6 +94,22 @@ $(document).ready(function() {
                     alert('入库失败');
                 }
     		},'json');
+        } else {
+            return;
+        }
+    });
+
+    // 收货确认
+    $("#eeda-table").on('click', '.confirmReceipt', function(e){
+    	var orderId =$(this).attr("code");
+    	if(confirm("确定收货吗？")){
+    		$.post('/yh/transferOrderMilestone/receipt', {orderId:orderId}, function(data){    
+    			if(data.success){
+    				detailTable.fnDraw(); 		
+                }else{
+                    alert('收货出错');
+                }
+        	});
         } else {
             return;
         }

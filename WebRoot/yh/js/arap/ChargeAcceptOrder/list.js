@@ -55,7 +55,6 @@ $(document).ready(function() {
         ]      
     });	
     
-<<<<<<< Updated upstream
     $('#eeda-table').on('click', '.chargeAccept', function(e){
 		e.preventDefault();
 		var code = $(this).attr('code');
@@ -69,7 +68,7 @@ $(document).ready(function() {
 			}
 		},'json');
     });
-=======
+
     /*--------------------------------------------------------------------*/
     //获取所有客户
     $('#customer_filter').on('keyup click', function(){
@@ -224,6 +223,4 @@ $(document).ready(function() {
               	* datatable.fnDraw(); 
                 * */ 
            });
-       
->>>>>>> Stashed changes
 } );

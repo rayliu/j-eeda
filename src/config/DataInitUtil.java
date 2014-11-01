@@ -111,11 +111,14 @@ public class DataInitUtil {
             // 提货单/发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),audit_status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
                     + "car_size varchar(255),car_no varchar(255),car_type varchar(255),driver varchar(255),phone varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,payment double,arrival_time date,departure_time date,remark varchar(255), charge_type varchar(50), driver_id bigint,"
-                    + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id),car_summary_type varchar(50),turnout_time date,return_time date,);");
+                    + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id),car_summary_type varchar(50),turnout_time date,return_time date);");
 
             // Depart_Order_fin_item 提货单/发车单应付明细
-            stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, pickup_order_id bigint, fin_item_id bigint, "
+            stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, fin_item_id bigint, "
                     + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120));");
+            
+            stmt.executeUpdate("create table if not exists pickup_order_fin_item (id bigint auto_increment primary key, pickup_order_id bigint, fin_item_id bigint, "
+            		+ "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120));");
 
             // Transfer_Order_item_detail 单件货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment primary key,order_id bigint,item_id bigint,item_no varchar(255),"
@@ -444,7 +447,7 @@ public class DataInitUtil {
 
             // 类别 ----采用面向对象的方式来获取party的id， 不必担心id不对。 --ray 2014-06-29
             Party party = Party.dao
-                    .findFirst("SELECT p.id FROM party p left join CONTACT c on p.contact_id =c.id where c.company_name ='示例客户---广州广电运通金融电子股份有限公司'");
+                    .findFirst("SELECT p.id FROM party p left join contact c on p.contact_id =c.id where c.company_name ='示例客户---广州广电运通金融电子股份有限公司'");
             Category rootCat = new Category();
             rootCat.set("name", "广电运通").set("customer_id", party.get("id")).save();
 

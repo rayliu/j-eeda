@@ -39,6 +39,7 @@ import models.Office;
 import models.OrderStatus;
 import models.Party;
 import models.PartyAttribute;
+import models.PickupOrderFinItem;
 import models.Privilege;
 import models.Product;
 import models.ReturnOrder;
@@ -292,6 +293,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("delivery_order_fin_item", DeliveryOrderFinItem.class);
         arp.addMapping("transfer_order_fin_item", TransferOrderFinItem.class);
         arp.addMapping("depart_order_fin_item", DepartOrderFinItem.class);//提货拼车单、发车单的应付表
+        arp.addMapping("pickup_order_fin_item", PickupOrderFinItem.class);//提货拼车单、发车单的应付表
         arp.addMapping("arap_charge_order", ArapChargeOrder.class);
         arp.addMapping("arap_charge_item", ArapChargeItem.class);
         arp.addMapping("arap_charge_invoice", ArapChargeInvoice.class);
@@ -329,7 +331,7 @@ public class EedaConfig extends JFinalConfig {
             connectH2();
         } else {
             cp = new C3p0Plugin(url, username, pwd);
-            // DataInitUtil.initH2Tables(cp);
+            //DataInitUtil.initH2Tables(cp);
 
         }
 
@@ -358,6 +360,6 @@ public class EedaConfig extends JFinalConfig {
         if (H2.equals(getProperty("dbType"))) {
             DataInitUtil.initData(cp);
         }
-        // DataInitUtil.initData(cp);
+        //DataInitUtil.initData(cp);
     }
 }

@@ -15,6 +15,7 @@ import models.DepartTransferOrder;
 import models.Fin_item;
 import models.InventoryItem;
 import models.Party;
+import models.PickupOrderFinItem;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
 import models.TransferOrderItem;
@@ -1399,13 +1400,13 @@ public class PickupOrderController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from depart_order_fin_item d "
+        String sql = "select count(1) total from pickup_order_fin_item d "
                 + "left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id =" + id + " and f.type = '应付'";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*,f.name from depart_order_fin_item d "
+        List<Record> orders = Db.find("select d.*,f.name from pickup_order_fin_item d "
                 + "left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id =" + id + " and f.type = '应付'");
 
         Map orderMap = new HashMap();
@@ -1458,9 +1459,9 @@ public class PickupOrderController extends Controller {
         String pickupOrderId = getPara();
         Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
         if(item != null){
-	        DepartOrderFinItem dFinItem = new DepartOrderFinItem();
-	        dFinItem.set("status", "新建").set("pickup_order_id", pickupOrderId).set("fin_item_id", item.get("id"));
-	        dFinItem.save();
+	        PickupOrderFinItem finItem = new PickupOrderFinItem();
+	        finItem.set("status", "新建").set("pickup_order_id", pickupOrderId).set("fin_item_id", item.get("id"));
+	        finItem.save();
         }
         items.add(item);
         renderJson(items);
@@ -1545,7 +1546,7 @@ public class PickupOrderController extends Controller {
     // 费用删除
     public void finItemdel() {
         String id = getPara();
-        DepartOrderFinItem.dao.deleteById(id);
+        PickupOrderFinItem.dao.deleteById(id);
         renderJson("{\"success\":true}");
     }
     
@@ -1572,7 +1573,7 @@ public class PickupOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select count(distinct tor.id) total from depart_order_fin_item dofi"
+        String sqlTotal = "select count(distinct tor.id) total from pickup_order_fin_item dofi"
 						+ " left join depart_order dor on dofi.pickup_order_id = dor.id"
 						+ " left join depart_transfer dt on dt.pickup_id = dor.id"
 						+ " left join transfer_order tor on tor.id = dt.order_id"
@@ -1580,7 +1581,7 @@ public class PickupOrderController extends Controller {
 						+ " left join contact c on c.id = p.contact_id"
 						+ " left join fin_item fi on fi.id = dofi.fin_item_id"
 						+ " where dor.combine_type='"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id ="+pickupOrderId+" and fi.type = '应收' and fi.name = '分摊费用'";
-        String sql = "select distinct tor.order_no transferno,c.abbr cname,dofi.amount amount,tor.create_stamp from depart_order_fin_item dofi"
+        String sql = "select distinct tor.order_no transferno,c.abbr cname,dofi.amount amount,tor.create_stamp from pickup_order_fin_item dofi"
 						+ " left join depart_order dor on dofi.pickup_order_id = dor.id"
 						+ " left join depart_transfer dt on dt.pickup_id = dor.id"
 						+ " left join transfer_order tor on tor.id = dt.order_id"
@@ -1611,7 +1612,7 @@ public class PickupOrderController extends Controller {
 								+ " left join contact c on c.id = p.contact_id"
 								+ " where dor.combine_type='"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id = " + pickupOrderId;
     	String amountSql = "select sum(amount) amount from ("
-								+ " select distinct dofi.id id,dofi.amount amount from depart_order_fin_item dofi"
+								+ " select distinct dofi.id id,dofi.amount amount from pickup_order_fin_item dofi"
 								+ " left join depart_order dor on dofi.pickup_order_id = dor.id"
 								+ " left join depart_transfer dt on dt.pickup_id = dor.id"
 								+ " left join transfer_order tor on tor.id = dt.order_id"
@@ -1626,7 +1627,7 @@ public class PickupOrderController extends Controller {
         Double avg = amount / customer;
         Fin_item finItem = Fin_item.dao.findFirst("select * from fin_item where name = '分摊费用' and type = '应收'");
         for(int i=0;i<customer;i++){
-        	DepartOrderFinItem departOrderFinItem = new DepartOrderFinItem();
+        	PickupOrderFinItem departOrderFinItem = new PickupOrderFinItem();
         	departOrderFinItem.set("pickup_order_id", pickupOrderId);
         	departOrderFinItem.set("fin_item_id", finItem.get("id"));
         	departOrderFinItem.set("amount", avg);
@@ -1650,7 +1651,7 @@ public class PickupOrderController extends Controller {
     		value = "0";
     	}
     	if(paymentId != null && !"".equals(paymentId)){
-    		DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao.findById(paymentId);
+    		PickupOrderFinItem departOrderFinItem = PickupOrderFinItem.dao.findById(paymentId);
     		departOrderFinItem.set(name, value);
     		departOrderFinItem.update();
     		//TransferOrderFinItem transferOrderFinItem = 

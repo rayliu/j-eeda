@@ -1,4 +1,4 @@
-<%layout("/yh/layout.html"){%>
+﻿<%layout("/yh/layout.html"){%>
     
 	<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
@@ -6,7 +6,10 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">运输单   <a class="btn btn-default" href="/transferOrder">返回</a></h1>
+                    <h1 class="page-header">运输单   
+                        <a class="btn btn-primary" href="/yh/transferOrder/add">新增运输单</a>
+                        <a class="btn btn-default" href="/yh/transferOrder">返回</a>
+                    </h1>
                     
                     <input id="order_id" type="hidden" name="order_id" value="${transferOrder.id!''}"/>
                     <input id="item_id" type="hidden" name="item_id" />
