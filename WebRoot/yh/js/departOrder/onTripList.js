@@ -14,7 +14,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/departOrder/onTripList",
+        "sAjaxSource": "/departOrder/onTripList",
         "aoColumns": [
 			{ 
 			    "mDataProp": null,
@@ -27,7 +27,7 @@ $(document).ready(function() {
 			    	else if(obj.aData.DEPART_STATUS=='已入库'){
 			    		return "已入库";
 			    	}else{
-			    		return "<a class='btn btn-primary confirmInWarehouse' code='"+obj.aData.ID+"'>"+
+			    		return "<a class='btn btn-primary btn-xs confirmInWarehouse' code='"+obj.aData.ID+"'>"+
 			    		"入库确认"+
 			    		"</a>";
 			    	}
@@ -37,7 +37,7 @@ $(document).ready(function() {
             {"mDataProp":null,
             	"sWidth": "100px",
             	"fnRender": function(obj) {
-            		 return "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+            		 return "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
             	}
             },
             {"mDataProp":"TRANSFER_ORDER_NO",
@@ -92,7 +92,7 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.confirmInWarehouse', function(e){
     	var departOrderId =$(this).attr("code");
     	if(confirm("确定入库吗？")){
-    		$.post('/yh/transferOrderMilestone/warehousingConfirm',{departOrderId:departOrderId},function(data){
+    		$.post('/transferOrderMilestone/warehousingConfirm',{departOrderId:departOrderId},function(data){
     			if(data.success){
     				detailTable.fnDraw(); 		
                 }else{
@@ -108,12 +108,15 @@ $(document).ready(function() {
     	e.preventDefault();	
     	var depart_id=$(this).attr("depart_id");
     	$("#milestoneDepartId").val(depart_id);
-    	$.post('/yh/departOrder/transferOrderMilestoneList',{departOrderId:depart_id},function(data){
+    	$.post('/departOrder/transferOrderMilestoneList',{departOrderId:depart_id},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
 			{
-				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.transferOrderMilestones[i].EXCEPTION_RECORD+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+				var exception_record='';
+				if(data.transferOrderMilestones[i].EXCEPTION_RECORD!=null)
+					exception_record = data.transferOrderMilestones[i].EXCEPTION_RECORD;
+				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+exception_record+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 			}
 		},'json');
     	
@@ -121,11 +124,16 @@ $(document).ready(function() {
     
     // 保存新里程碑
 	$("#transferOrderMilestoneFormBtn").click(function(){
-		$.post('/yh/departOrder/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
+		$.post('/departOrder/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
-			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.transferOrderMilestone.EXCEPTION_RECORD+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
+			var exception_record='';
+			if(data.transferOrderMilestone.EXCEPTION_RECORD!=null)
+				exception_record = data.transferOrderMilestone.EXCEPTION_RECORD;
+			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+exception_record+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 			detailTable.fnDraw();  
 		},'json');
+		$("#location").val("");
+		$("#exception_record").val("");
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
 	
@@ -144,7 +152,7 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/onTripList?orderNo="+orderNo
+    	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
 											+"&departNo="+departNo_filter
 											+"&status="+status
 											+"&sp="+sp
@@ -169,7 +177,7 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/onTripList?orderNo="+orderNo
+    	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
 											+"&departNo="+departNo_filter
 											+"&status="+status
 											+"&sp="+sp
@@ -203,7 +211,7 @@ $(document).ready(function() {
   //获取供应商的list，选中信息在下方展示其他信息
     $('#sp_filter').on('keyup click', function(){
 		var inputStr = $('#sp_filter').val();
-		$.get('/yh/departOrder/companyNameList',{input:inputStr}, function(data){
+		$.get('/departOrder/companyNameList',{input:inputStr}, function(data){
 			console.log(data);
 			var cpnameList =$("#cpnameList");
 			cpnameList.empty();
@@ -252,7 +260,7 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/onTripList?orderNo="+orderNo
+    	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
     										+"&departNo="+departNo_filter
     										+"&status="+status
     										+"&sp="+sp
@@ -270,7 +278,7 @@ $(document).ready(function() {
     	
         var inputStr = $('#customer_filter').val();
         
-        $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+        $.get("/customerContract/search", {locationName:inputStr}, function(data){
             console.log(data);
             var companyList =$("#companyList");
             companyList.empty();
@@ -302,7 +310,7 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/yh/departOrder/onTripList?orderNo="+orderNo
+    	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
 											+"&departNo="+departNo_filter
 											+"&status="+status
 											+"&sp="+sp
@@ -329,7 +337,7 @@ $(document).ready(function() {
     });
   //获取所有的网点
 
-	$.post('/yh/transferOrder/searchAllOffice',function(data){
+	$.post('/transferOrder/searchAllOffice',function(data){
 	 if(data.length > 0){
 		 var officeSelect = $("#officeSelect");
 		 officeSelect.empty();

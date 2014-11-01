@@ -17,7 +17,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/departOrder/createTransferOrderListForRouteSp",
+        "sAjaxSource": "/departOrder/createTransferOrderListForRouteSp",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
@@ -126,13 +126,13 @@ $(document).ready(function() {
     	var endTime = $("#endTime_filter").val();
     	var routeFrom = $("#routeFrom_filter").val();
     	var routeTo = $("#routeTo_filter").val();
-    	datatable.fnSettings().sAjaxSource = "/yh/departOrder/createTransferOrderListForRouteSp?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+    	datatable.fnSettings().sAjaxSource = "/departOrder/createTransferOrderListForRouteSp?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
     	datatable.fnDraw();    	
     });
   //获取所有客户
     $('#customer_filter').on('keyup click', function(){
            var inputStr = $('#customer_filter').val();
-           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+           $.get("/customerContract/search", {locationName:inputStr}, function(data){
                console.log(data);
                var companyList =$("#companyList");
                companyList.empty();
@@ -160,7 +160,7 @@ $(document).ready(function() {
 	       	var routeFrom = $("#routeFrom_filter").val();
 	       	var routeTo = $("#routeTo_filter").val();
 	       	if(customer!=null){
-	       		datatable.fnSettings().sAjaxSource = "/yh/departOrder/createTransferOrderListForRouteSp?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+	       		datatable.fnSettings().sAjaxSource = "/departOrder/createTransferOrderListForRouteSp?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
 		       	datatable.fnDraw(); 
 	       	}
 	       

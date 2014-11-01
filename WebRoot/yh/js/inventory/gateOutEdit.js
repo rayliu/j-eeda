@@ -14,7 +14,7 @@ $(document).ready(function() {
    			"oLanguage": {
            "sUrl": "/eeda/dataTables.ch.txt"
        },
-       "sAjaxSource":"/yh/gateIn/gateInProductlist2/"+wid,
+       "sAjaxSource":"/gateIn/gateInProductlist2/"+wid,
        "aoColumns": [
            {"mDataProp":"ITEM_NAME"},
            {"mDataProp":"ITEM_NO"},        	
@@ -42,7 +42,7 @@ $(document).ready(function() {
 	//gateInProduct编辑
 	$("#itemTable").on('click', '.editProduct', function(){
 	 var id = $(this).attr('code');
-	 $.post('/yh/gateIn/gateInProductEdit/'+id,function(data){
+	 $.post('/gateIn/gateInProductEdit/'+id,function(data){
         //保存成功后，刷新列表
         console.log(data);
         if(data!=null){
@@ -68,7 +68,7 @@ $(document).ready(function() {
 	//gateInProduct删除
 	$("#itemTable").on('click', '.deleteProduct', function(){
 	 var id = $(this).attr('code');
-	 $.post('/yh/gateIn/gateInProductDelect/'+id,function(data){
+	 $.post('/gateIn/gateInProductDelect/'+id,function(data){
         //保存成功后，刷新列表
         console.log(data);
         if(data.success){
@@ -81,7 +81,7 @@ $(document).ready(function() {
 	//选择仓库 
 	$('#warehouseSelect').on('keyup click', function(){
 	var inputStr = $('#warehouseSelect').val();
-	$.get('/yh/gateIn/searchAllwarehouse', {input:inputStr}, function(data){
+	$.get('/gateIn/searchAllwarehouse', {input:inputStr}, function(data){
 		console.log(data);
 		var warehouseList =$("#warehouseList");
 		warehouseList.empty();
@@ -112,7 +112,7 @@ $(document).ready(function() {
 		var id =$(this).attr('code');
 		$('#warehouseSelect').val($(this).text());
 		 $("#warehouseId").val(id);
-		//productDataTable.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist?categoryId="+partyId;
+		//productDataTable.fnSettings().sAjaxSource = "/gateIn/gateInProductlist?categoryId="+partyId;
 		//productDataTable.fnDraw();
 		$('#warehouseList').hide();
 	});
@@ -143,7 +143,7 @@ $(document).ready(function() {
 	 //var itemId = $("#item_id").val();
         e.preventDefault();
         //异步向后台提交数据
-       $.post('/yh/gateIn/gateOutSave',$("#inventoryForm").serialize(), function(data){
+       $.post('/gateIn/gateOutSave',$("#inventoryForm").serialize(), function(data){
             console.log(data);
          if(data>0){
         	 console.log(data);
@@ -163,7 +163,7 @@ $(document).ready(function() {
 	$('#customerMessage').on('keyup click', function(){
 	 	var warehouseId = $('#warehouseId').val();
 		var inputStr = $('#customerMessage').val();
-		$.get('/yh/gateIn/searchgateOutCustomer', {input:inputStr,warehouseId:warehouseId}, function(data){
+		$.get('/gateIn/searchgateOutCustomer', {input:inputStr,warehouseId:warehouseId}, function(data){
 			console.log(data);
 			var customerList =$("#customerList");
 			customerList.empty();
@@ -194,7 +194,7 @@ $(document).ready(function() {
 		var partyId =$(this).attr('code');
 		$('#customerMessage').val($(this).text());
 		$('#party_id').val(partyId);
-		//productDataTable.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist?categoryId="+partyId;
+		//productDataTable.fnSettings().sAjaxSource = "/gateIn/gateInProductlist?categoryId="+partyId;
 		//productDataTable.fnDraw();
 		$('#customerList').hide();
     }); 
@@ -204,7 +204,7 @@ $(document).ready(function() {
 		var inputStr = $('#itemNameMessage').val();
 		var customerId = $('#party_id').val();
 		var warehouseId = $('#warehouseId').val();
-		$.get('/yh/gateOut/searchName2', {warehouseId:warehouseId,input:inputStr,customerId:customerId}, function(data){
+		$.get('/gateOut/searchName2', {warehouseId:warehouseId,input:inputStr,customerId:customerId}, function(data){
 			console.log(data);
 			var itemNameList =$("#itemNameList");
 			itemNameList.empty();
@@ -266,7 +266,7 @@ $(document).ready(function() {
 		var inputStr = $('#itemNoMessage').val();
 		var customerId = $('#party_id').val();
 		var warehouseId = $('#warehouseId').val();
-		$.get('/yh/gateOut/searchNo2', {warehouseId:warehouseId,input:inputStr,customerId:customerId}, function(data){
+		$.get('/gateOut/searchNo2', {warehouseId:warehouseId,input:inputStr,customerId:customerId}, function(data){
 			console.log(data);
 			var itemNoList =$("#itemNoList");
 			itemNoList.empty();
@@ -327,13 +327,13 @@ $("#warehouseOrderItemFormBtn").click(function(){
 	if(!$("#warehouseOrderItemForm").valid())
     	return;
 	var warehouseorderid = $("#warehouseorderId").val();
-	$.post('/yh/gateIn/savewareOrderItem/'+warehouseorderid,$("#warehouseOrderItemForm").serialize(), function(id){
+	$.post('/gateIn/savewareOrderItem/'+warehouseorderid,$("#warehouseOrderItemForm").serialize(), function(id){
 			//保存成功后，刷新列表
             console.log(id);
             if(id>0){
             	$('#myModal').modal('hide');
             	var warehouseorderid = $("#warehouseorderId").val();
-            	productDataTable2.fnSettings().sAjaxSource = "/yh/gateIn/gateInProductlist/"+warehouseorderid;
+            	productDataTable2.fnSettings().sAjaxSource = "/gateIn/gateInProductlist/"+warehouseorderid;
             	productDataTable2.fnDraw();
             	$('#reset').click();
             }else{
@@ -358,10 +358,10 @@ $("#gateOutConfirmBtn").click(function(){
 	var orderType=$("input[name='orderType']:checked").val();
 	
 	var warehouseorderid = $("#warehouseorderId").val();
-	$.post('/yh/gateIn/gateOutConfirm/'+warehouseorderid,{orderType:orderType},function(data){
+	$.post('/gateIn/gateOutConfirm/'+warehouseorderid,{orderType:orderType},function(data){
 		console.log(data)
 		 if(data>0){
-			 window.location.href="/yh/transferOrder/edit?id="+data;
+			 window.location.href="/transferOrder/edit?id="+data;
 			}
 		if(data.success){
 			 $("#gateOutConfirmBtn").attr("disabled", true);

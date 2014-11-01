@@ -10,12 +10,12 @@ $(document).ready(function() {
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "/yh/delivery/deliveryList",
+	        "sAjaxSource": "/delivery/deliveryList",
 	        "aoColumns": [   
 	            
 	            {"mDataProp":"ORDER_NO",
 	            	"fnRender": function(obj) {
-         			return "<a href='/yh/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+         			return "<a href='/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
          		}
 	            },
 	            {"mDataProp":"CUSTOMER"},
@@ -41,7 +41,7 @@ $(document).ready(function() {
 			  var r=confirm("是否取消单据！");   
            if(r==true){
          	  var id = $(this).attr('code');
-				$.post('/yh/delivery/cancel/'+id,function(data){
+				$.post('/delivery/cancel/'+id,function(data){
 		                 //保存成功后，刷新列表
 		                 console.log(data);
 		                 if(data.success){
@@ -82,7 +82,7 @@ $(document).ready(function() {
       	var beginTime_filter = $("#beginTime_filter").val();
       	var endTime_filter = $("#endTime_filter").val();
       	var warehouse = $("#warehouse").val();
-      	dataTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse;
+      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse;
       	dataTable.fnDraw();
       });
 	
@@ -91,7 +91,7 @@ $(document).ready(function() {
 	 $('#customer_filter').on('keyup click', function(){
 	        var inputStr = $('#customer_filter').val();
 	        
-	        $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+	        $.get("/customerContract/search", {locationName:inputStr}, function(data){
 	            console.log(data);
 	            var companyList =$("#companyList");
 	            companyList.empty();
@@ -129,7 +129,7 @@ $(document).ready(function() {
 	          	var beginTime_filter = $("#beginTime_filter").val();
 	          	var endTime_filter = $("#endTime_filter").val();
 	          	var warehouse = $("#warehouse").val();
-	          	dataTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse;
+	          	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse;
 	          	dataTable.fnDraw();
 	        }
 	    });
@@ -158,7 +158,7 @@ $(document).ready(function() {
 	    			pageSpAddress.empty();
 	    			$('#sp_id').val($(this).attr(''));
 	    		}
-	    		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+	    		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
 	    			console.log(data);
 	    			var spList =$("#spList");
 	    			spList.empty();
@@ -238,7 +238,7 @@ $(document).ready(function() {
 	          	var beginTime_filter = $("#beginTime_filter").val();
 	          	var endTime_filter = $("#endTime_filter").val();
 	          	var warehouse = $("#warehouse").val();
-	          	dataTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse;
+	          	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse;
 	          	dataTable.fnDraw();
 	        });
 });

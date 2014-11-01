@@ -14,11 +14,11 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/transferOrder/list",
+        "sAjaxSource": "/transferOrder/list",
         "aoColumns": [   
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-            			return "<a href='/yh/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            			return "<a href='/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
             		}},
             {"mDataProp":"STATUS"},
             {"mDataProp":"CNAME"},
@@ -109,7 +109,7 @@ $(document).ready(function() {
 		  e.preventDefault();
        //异步向后台提交数据
 		 var id = $(this).attr('code');
-		$.post('/yh/transferOrder/cancel/'+id,function(data){
+		$.post('/transferOrder/cancel/'+id,function(data){
                //保存成功后，刷新列表
                console.log(data);
                if(data.success){
@@ -135,7 +135,7 @@ $(document).ready(function() {
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
     	
-    	transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo +"&status="+status+"&address=" +address
+    	transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo +"&status="+status+"&address=" +address
     											+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
     											+"&endTime="+endTime+"&officeName="+officeName
     											+"&order_type="+order_type
@@ -162,7 +162,7 @@ $(document).ready(function() {
     } );
     //获取所有的网点
 
-	$.post('/yh/transferOrder/searchAllOffice',function(data){
+	$.post('/transferOrder/searchAllOffice',function(data){
 	 if(data.length > 0){
 		 var officeSelect = $("#officeSelect");
 		 officeSelect.empty();
@@ -186,7 +186,7 @@ $(document).ready(function() {
     $('#customer_filter').on('keyup click', function(){
         var inputStr = $('#customer_filter').val();
         
-        $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+        $.get("/customerContract/search", {locationName:inputStr}, function(data){
             console.log(data);
             var companyList =$("#companyList");
             companyList.empty();
@@ -231,7 +231,7 @@ $(document).ready(function() {
   //获取供应商的list，选中信息在下方展示其他信息
     $('#sp_filter').on('keyup click', function(){
 		var inputStr = $('#sp_filter').val();
-		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
 			console.log(data);
 			var spList =$("#spList");
 			spList.empty();

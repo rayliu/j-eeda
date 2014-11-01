@@ -22,7 +22,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                <form id="warehouseForm" role="form" action="/yh/warehouse/save" method="post" enctype="multipart/form-data">
+                                <form id="warehouseForm" role="form" action="/warehouse/save" method="post" enctype="multipart/form-data">
                                     <input id="warehouseId" name="warehouse_id" type="hidden" value="${warehouse.id!''}">
                                     <input id="sp_id" type="hidden" name="sp_id"  value="${sp.id!''}"/>
                                     <input id="notifyPartyId" type="hidden" name="notifyPartyId"  value="${warehouse.notify_party_id!''}"/>
@@ -200,7 +200,7 @@
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
                                     <div class="col-lg-6" style="clear:both;">
                                         <button type="submit" class="btn btn-default">保存</button>
-                                        <a class="btn btn-default" href="/yh/warehouse">返回</a>
+                                        <a class="btn btn-default" href="/warehouse">返回</a>
                                     </div>
                             	<form role="form">
                             </div>

@@ -9,7 +9,7 @@ $(document).ready(function() {
 	       	return;
         }
 		//异步向后台提交数据
-		$.post('/yh/chargePreInvoiceOrder/save', $("#chargePreInvoiceOrderForm").serialize(), function(data){
+		$.post('/chargePreInvoiceOrder/save', $("#chargePreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargePreInvoiceOrderId").val(data.ID);
 			}else{
@@ -24,7 +24,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//异步向后台提交数据
 		var chargePreInvoiceOrderId = $("#chargePreInvoiceOrderId").val();
-		$.post('/yh/chargePreInvoiceOrder/auditChargePreInvoiceOrder', {chargePreInvoiceOrderId:chargePreInvoiceOrderId}, function(data){
+		$.post('/chargePreInvoiceOrder/auditChargePreInvoiceOrder', {chargePreInvoiceOrderId:chargePreInvoiceOrderId}, function(data){
 		},'json');
 	});
 	
@@ -34,7 +34,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//异步向后台提交数据
 		var chargePreInvoiceOrderId = $("#chargePreInvoiceOrderId").val();
-		$.post('/yh/chargePreInvoiceOrder/approvalChargePreInvoiceOrder', {chargePreInvoiceOrderId:chargePreInvoiceOrderId}, function(data){
+		$.post('/chargePreInvoiceOrder/approvalChargePreInvoiceOrder', {chargePreInvoiceOrderId:chargePreInvoiceOrderId}, function(data){
 		},'json');
 	});
 	
@@ -75,7 +75,7 @@ $(document).ready(function() {
 	       	return;
         }
 		//异步向后台提交数据
-		$.post('/yh/chargePreInvoiceOrder/save', $("#chargePreInvoiceOrderForm").serialize(), function(data){
+		$.post('/chargePreInvoiceOrder/save', $("#chargePreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargePreInvoiceOrderId").val(data.ID);
 			  	//$("#style").show();
@@ -102,7 +102,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeCheckOrder/list",
+        "sAjaxSource": "/chargeCheckOrder/list",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO"},
@@ -140,7 +140,7 @@ $(document).ready(function() {
         ]      
     });
     
-    $.post('/yh/chargePreInvoiceOrder/searchAllAccount',function(data){
+    $.post('/chargePreInvoiceOrder/searchAllAccount',function(data){
 		 if(data.length > 0){
 			 var accountTypeSelect = $("#accountTypeSelect");
 			 accountTypeSelect.empty();

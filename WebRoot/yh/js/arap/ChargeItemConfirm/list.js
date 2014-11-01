@@ -11,7 +11,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargeConfiremList/list",
+        "sAjaxSource": "/chargeConfiremList/list",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px",
               "fnRender": function(obj) {
@@ -21,7 +21,7 @@ $(document).ready(function() {
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/yh/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
 		    {"mDataProp":null, "sWidth":"120px",
                 "fnRender": function(obj) {
@@ -84,9 +84,9 @@ $(document).ready(function() {
         });     
         console.log(trArr);
         var returnOrderIds = trArr.join(",");
-        $.post("/yh/chargeConfiremList/chargeConfiremReturnOrder", {returnOrderIds:returnOrderIds}, function(data){
+        $.post("/chargeConfiremList/chargeConfiremReturnOrder", {returnOrderIds:returnOrderIds}, function(data){
         	if(data.success){
-        		chargeConfiremTable.fnSettings().sAjaxSource = "/yh/chargeConfiremList/list";
+        		chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list";
         		chargeConfiremTable.fnDraw(); 
         	}
         },'json');
@@ -96,7 +96,7 @@ $(document).ready(function() {
     $('#customer_filter').on('keyup click', function(){
            var inputStr = $('#customer_filter').val();
            
-           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+           $.get("/customerContract/search", {locationName:inputStr}, function(data){
                console.log(data);
                var companyList =$("#companyList");
                companyList.empty();
@@ -124,7 +124,7 @@ $(document).ready(function() {
     		var orderNo = $("#orderNo_filter").val();
     		var customerNO = $("#customerNO_filter").val();
     		var start =$("#start_filter").val();
-    	   chargeConfiremTable.fnSettings().sAjaxSource = "/yh/chargeConfiremList/list?customer="+customer
+    	   chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list?customer="+customer
     	   												+"&beginTime="+beginTime
     	   												+"&endTime="+endTime
     	   												+"&orderNo="+orderNo
@@ -155,7 +155,7 @@ $(document).ready(function() {
 	   		var orderNo = $("#orderNo_filter").val();
 	   		var customerNO = $("#customerNo_filter").val();
 	   		var start =$("#start_filter").val();
-	   	   chargeConfiremTable.fnSettings().sAjaxSource = "/yh/chargeConfiremList/list?customer="+customer
+	   	   chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list?customer="+customer
 	   	   												+"&beginTime="+beginTime
 	   	   												+"&endTime="+endTime
 	   	   												+"&orderNo="+orderNo

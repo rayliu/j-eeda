@@ -39,7 +39,7 @@
         //获取全国省份
        $(function(){
         	var province = $("#mbProvince");
-        	$.post('/yh/serviceProvider/province',function(data){
+        	$.post('/serviceProvider/province',function(data){
         		province.append("<option>--请选择省份--</option>");
 				var hideProvince = $("#hideProvince").val();
         		for(var i = 0; i < data.length; i++)
@@ -59,7 +59,7 @@
         $('#mbProvince').on('change', function(){
         	//var inputStr = $(this).parent("option").attr('id'); 
 			var inputStr = $(this).val();
-			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+			$.get('/serviceProvider/city', {id:inputStr}, function(data){
 				var cmbCity =$("#cmbCity");
 				var cmbArea =$("#cmbArea");
 				cmbCity.empty();
@@ -78,7 +78,7 @@
 			var inputStr = $(this).val();
 			var code = $("#location").val(inputStr);
 			
-			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+			$.get('/serviceProvider/area', {id:inputStr}, function(data){
 				var cmbArea =$("#cmbArea");
 				cmbArea.empty();
 				cmbArea.append("<option>--请选择区(县)--</option>");
@@ -98,7 +98,7 @@
 
         // 回显城市
 		var hideProvince = $("#hideProvince").val();
-        $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+        $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
 			if(data.length > 0){
 				var cmbCity =$("#cmbCity");
 				cmbCity.empty();
@@ -117,7 +117,7 @@
 
         // 回显区
         var hideCity = $("#hideCity").val();
-        $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+        $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
 			if(data.length > 0){
 				var cmbArea =$("#cmbArea");
 				cmbArea.empty();

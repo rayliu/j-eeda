@@ -13,7 +13,7 @@
                 <!-- /.col-lg-12 -->
             
             <div class="panel-heading">
-            <a  class="btn btn-outline btn-primary" href="/yh/pay/Edit">添加条目</a>
+            <a  class="btn btn-outline btn-primary" href="/pay/Edit">添加条目</a>
             </div>
             <!-- /.row -->
             <div class="row">
@@ -78,7 +78,7 @@
    	    	"oLanguage": {
    	            "sUrl": "/eeda/dataTables.ch.txt"
    	        },
-   	        "sAjaxSource": "/yh/pay/list",
+   	        "sAjaxSource": "/pay/list",
    			"aoColumns": [
    				{ "mDataProp": "TYPE" },
    	            { "mDataProp": "NAME" },
@@ -87,11 +87,11 @@
    	            { "mDataProp": null,
    	         		"sWidth": "8%", 
    	         "fnRender": function(obj) {                    
-                 return "<a class='btn btn-success' href='/yh/pay/Edit/"+obj.aData.ID+"'>"+
+                 return "<a class='btn btn-success' href='/pay/Edit/"+obj.aData.ID+"'>"+
                              "<i class='fa fa-edit fa-fw'></i> "+
                              "编辑"+
                          "</a>"+
-                         "<a class='btn btn-danger' href='/yh/pay/delete/"+obj.aData.ID+"'>"+
+                         "<a class='btn btn-danger' href='/pay/delete/"+obj.aData.ID+"'>"+
                              "<i class='fa fa-trash-o fa-fw'></i> "+ 
                              "删除"+
                          "</a>";

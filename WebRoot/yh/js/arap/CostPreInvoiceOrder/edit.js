@@ -9,7 +9,7 @@ $(document).ready(function() {
 	       	return;
         }
 		//异步向后台提交数据
-		$.post('/yh/costPreInvoiceOrder/save', $("#costPreInvoiceOrderForm").serialize(), function(data){
+		$.post('/costPreInvoiceOrder/save', $("#costPreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#costPreInvoiceOrderId").val(data.ID);
 			}else{
@@ -24,7 +24,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//异步向后台提交数据
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
-		$.post('/yh/costPreInvoiceOrder/auditCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
+		$.post('/costPreInvoiceOrder/auditCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
 		},'json');
 	});
 	
@@ -34,7 +34,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//异步向后台提交数据
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
-		$.post('/yh/costPreInvoiceOrder/approvalCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
+		$.post('/costPreInvoiceOrder/approvalCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
 		},'json');
 	});
 	
@@ -75,7 +75,7 @@ $(document).ready(function() {
 	       	return;
         }
 		//异步向后台提交数据
-		$.post('/yh/costPreInvoiceOrder/save', $("#costPreInvoiceOrderForm").serialize(), function(data){
+		$.post('/costPreInvoiceOrder/save', $("#costPreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#costPreInvoiceOrderId").val(data.ID);
 			  	//$("#style").show();
@@ -90,10 +90,10 @@ $(document).ready(function() {
 		parentId = e.target.getAttribute("id");		
 
 	    var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();	
-		invoiceItemTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+		invoiceItemTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
 	    invoiceItemTable.fnDraw();
 		var costCheckOrderIds = $("#costCheckOrderIds").val();	
-		costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
+		costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
 		costPreInvoiceOrderTable.fnDraw();
 	});
 	
@@ -112,7 +112,7 @@ $(document).ready(function() {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
-        "sAjaxSource": "/yh/costPreInvoiceOrder/costInvoiceItemList",
+        "sAjaxSource": "/costPreInvoiceOrder/costInvoiceItemList",
    			"aoColumns": [
             { "mDataProp": null,
   	            "fnRender": function(obj) {
@@ -148,7 +148,7 @@ $(document).ready(function() {
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
-		$.post('/yh/costPreInvoiceOrder/updateInvoiceItem', {costPreInvoiceOrderId:costPreInvoiceOrderId, invoiceItemId:invoiceItemId, name:name, value:value}, function(data){
+		$.post('/costPreInvoiceOrder/updateInvoiceItem', {costPreInvoiceOrderId:costPreInvoiceOrderId, invoiceItemId:invoiceItemId, name:name, value:value}, function(data){
 			if(data.length > 0){
 				var itemInvoiceNoList = $("#itemInvoiceNoList");
 				itemInvoiceNoList.empty();
@@ -158,7 +158,7 @@ $(document).ready(function() {
 				}
 				itemInvoiceNoList.append(option);	
 			    var costCheckOrderIds = $("#costCheckOrderIds").val();	
-				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
+				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
 				costPreInvoiceOrderTable.fnDraw();
 			}
     	},'json');
@@ -176,7 +176,7 @@ $(document).ready(function() {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
-        "sAjaxSource": "/yh/costCheckOrder/list",
+        "sAjaxSource": "/costCheckOrder/list",
         "aoColumns": [     
           { "mDataProp": "INVOICE_NO",
           	"fnRender": function(obj) {
@@ -203,7 +203,7 @@ $(document).ready(function() {
 	        },  
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/yh/costCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
@@ -240,10 +240,10 @@ $(document).ready(function() {
     });	
 	
 	$("#addInvoiceItemBtn").click(function(){		
-		$.post('/yh/costPreInvoiceOrder/addInvoiceItem', {costPreInvoiceOrderId:$("#costPreInvoiceOrderId").val()}, function(data){
+		$.post('/costPreInvoiceOrder/addInvoiceItem', {costPreInvoiceOrderId:$("#costPreInvoiceOrderId").val()}, function(data){
 			if(data.success){
 			    var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();	
-				invoiceItemTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+				invoiceItemTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
 			    invoiceItemTable.fnDraw();
 			}
 		},'json');
@@ -251,7 +251,7 @@ $(document).ready(function() {
 	
 	$("#costPreInvoiceOrderItem").click(function(){	
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
-		$.post('/yh/costPreInvoiceOrder/findAllInvoiceItemNo', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
+		$.post('/costPreInvoiceOrder/findAllInvoiceItemNo', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
 			if(data.length > 0){
 				var itemInvoiceNoList = $("#itemInvoiceNoList");
 				itemInvoiceNoList.empty();
@@ -261,15 +261,15 @@ $(document).ready(function() {
 				}
 				itemInvoiceNoList.append(option);	
 			    var costCheckOrderIds = $("#costCheckOrderIds").val();	
-				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
+				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
 				costPreInvoiceOrderTable.fnDraw();
 			}
     	},'json');
 			
-	    invoiceItemTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+	    invoiceItemTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
 	    invoiceItemTable.fnDraw();		
 	    var costCheckOrderIds = $("#costCheckOrderIds").val();	
-		costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;    
+		costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;    
 		costPreInvoiceOrderTable.fnDraw();
 	});	
 
@@ -279,16 +279,16 @@ $(document).ready(function() {
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
-		$.post('/yh/costPreInvoiceOrder/updatePreInvoice', {costPreInvoiceOrderId:costPreInvoiceOrderId, costCheckOrderId:costCheckOrderId, name:name, value:value}, function(data){
+		$.post('/costPreInvoiceOrder/updatePreInvoice', {costPreInvoiceOrderId:costPreInvoiceOrderId, costCheckOrderId:costCheckOrderId, name:name, value:value}, function(data){
 			if(data.success){
 			    var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();	
-				invoiceItemTable.fnSettings().sAjaxSource = "/yh/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+				invoiceItemTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
 			    invoiceItemTable.fnDraw();
 			}
     	},'json');
 	});
 
-    $.post('/yh/costPreInvoiceOrder/searchAllAccount',function(data){
+    $.post('/costPreInvoiceOrder/searchAllAccount',function(data){
 		 if(data.length > 0){
 			 var accountTypeSelect = $("#accountTypeSelect");
 			 accountTypeSelect.empty();

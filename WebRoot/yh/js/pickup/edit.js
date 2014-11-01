@@ -29,7 +29,7 @@
 			party_type = "SP_DRIVER";
 		}
  		
- 		$.get('/yh/transferOrder/searchAllDriver', {input:inputStr, partyType:party_type}, function(data){
+ 		$.get('/transferOrder/searchAllDriver', {input:inputStr, partyType:party_type}, function(data){
  			console.log(data);
  			var driverList = $("#driverList");
  			driverList.empty();
@@ -76,7 +76,7 @@
 			typeStr = "SP";
 		}
 			
-		$.get('/yh/transferOrder/searchAllCarInfo', {input:inputStr,type:typeStr}, function(data){
+		$.get('/transferOrder/searchAllCarInfo', {input:inputStr,type:typeStr}, function(data){
 			console.log(data);
 			var carNoList = $("#carNoList");
 			carNoList.empty();
@@ -133,7 +133,7 @@
      	 "oLanguage": {
              "sUrl": "/eeda/dataTables.ch.txt"
          },
-         "sAjaxSource": "/yh/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
+         "sAjaxSource": "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
          "aoColumns": [
              { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
              { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
@@ -174,7 +174,7 @@
 		$("#item_id").val(itemId);
 		$("#item_save").attr("disabled", false);
 		$("#style").hide();
-		detailTable.fnSettings().sAjaxSource = "/yh/pickupOrder/findAllItemDetail?item_id="+itemId+"&pickupId="+$("#pickupOrderId").val();
+		detailTable.fnSettings().sAjaxSource = "/pickupOrder/findAllItemDetail?item_id="+itemId+"&pickupId="+$("#pickupOrderId").val();
 		detailTable.fnDraw();  			
 	});
 	
@@ -195,7 +195,7 @@
      	 "oLanguage": {
              "sUrl": "/eeda/dataTables.ch.txt"
          },
-         "sAjaxSource": "/yh/departOrder/itemDetailList?item_id="+item_id+"",
+         "sAjaxSource": "/departOrder/itemDetailList?item_id="+item_id+"",
        
          "aoColumns": [
               { "mDataProp": null,
@@ -249,7 +249,7 @@
     
     var handlePickkupOrderDetail = function(){
     	// 保存单品
-    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+    	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 			$("#pickupOrderId").val(data.ID);
 			$("#addressPickupOrderId").val(data.ID);
 			$("#milestonePickupId").val(data.ID);
@@ -320,7 +320,7 @@
    
  	var pickupOrderMilestone = function(){
  		var pickupOrderId = $("#pickupOrderId").val();
-		$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{pickupOrderId:pickupOrderId},function(data){
+		$.post('/transferOrderMilestone/transferOrderMilestoneList',{pickupOrderId:pickupOrderId},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
@@ -349,7 +349,7 @@
 		}
 		
         if($("#pickupOrderId").val() == ""){
-	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+	    	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
 				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
@@ -366,7 +366,7 @@
 				}
 			},'json');
         }else{
-        	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+        	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
 				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
@@ -388,7 +388,7 @@
 
 	// 保存新里程碑
 	$("#transferOrderMilestoneFormBtn").click(function(){
-		$.post('/yh/transferOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
+		$.post('/transferOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 		},'json');
@@ -398,7 +398,7 @@
 	
 	var findAllAddress = function(){
 		var pickupOrderId = $("#pickupOrderId").val();
-		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
+		$.post('/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
 			var pickupAddressTbody = $("#pickupAddressTbody");
 			pickupAddressTbody.empty();
 			var num = 0;
@@ -434,7 +434,7 @@
 			$(this).focus();
 			return false;
 		}
-		$.post('/yh/pickupOrder/updateTransferOrderFinItem', {id:id, value:value}, function(data){
+		$.post('/pickupOrder/updateTransferOrderFinItem', {id:id, value:value}, function(data){
 			if(data.success){
 				findAllAddress();
 			}else{
@@ -445,7 +445,7 @@
 	
 	var choiceExternalTransferOrder = function(){
     	var pickupOrderId = $("#pickupOrderId").val();
-        externalTable.fnSettings().sAjaxSource = "/yh/pickupOrder/externTransferOrderList?pickupOrderId="+pickupOrderId;
+        externalTable.fnSettings().sAjaxSource = "/pickupOrder/externTransferOrderList?pickupOrderId="+pickupOrderId;
         externalTable.fnDraw();
 	};
 	 var parentId = "chargeCheckOrderbasic";
@@ -464,7 +464,7 @@
 		}
 		
         if($("#pickupOrderId").val() == ""){
-	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+	    	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
 				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
@@ -485,7 +485,7 @@
 				}
 			},'json');
         }else{
-        	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+        	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
 				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
@@ -510,7 +510,7 @@
 	});
 	
 	var swapPosition = function(currentId,targetId,currentVal,targetVal){
-		$.post('/yh/pickupOrder/swapPickupSeq', {currentId:currentId,targetId:targetId,currentVal:currentVal,targetVal:targetVal}, function(data){
+		$.post('/pickupOrder/swapPickupSeq', {currentId:currentId,targetId:targetId,currentVal:currentVal,targetVal:targetVal}, function(data){
 			//保存成功后，刷新列表
             console.log(data);
             if(data.success){
@@ -657,7 +657,7 @@
 			pageSpAddress.empty();
 			$('#sp_id').val($(this).attr(''));
 		}
-		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
 			console.log(data);
 			var spList =$("#spList");
 			spList.empty();
@@ -723,18 +723,18 @@
 	// 点击已完成按钮
 	$("#finishBtn").click(function(){
 		// 处理入库运输单
-		$.post('/yh/pickupOrder/getTransferOrderDestination', $("#pickupAddressForm").serialize(), function(data){
+		$.post('/pickupOrder/getTransferOrderDestination', $("#pickupAddressForm").serialize(), function(data){
 			//保存成功后，刷新列表
             console.log(data);
             if(data.success){
             	var pickupOrderId = $("#pickupOrderId").val();
             	var priceType = $("input[name='priceType']:checked").val();
-            	$.post('/yh/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType}, function(){
+            	$.post('/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType}, function(){
             		pickupOrderMilestone();	
                 	var pickupOrderId = $("#pickupOrderId").val();
-                	paymenttable.fnSettings().sAjaxSource = "/yh/pickupOrder/accountPayable/"+pickupOrderId;
+                	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable/"+pickupOrderId;
             		paymenttable.fnDraw(); 
-            		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
+            		$.post('/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
             			var pickupAddressTbody = $("#pickupAddressTbody");
             			pickupAddressTbody.empty();
             			for(var i=0;i<data.length;i++){
@@ -756,7 +756,7 @@
     $("#pickuparap").click(function(e){
     	var pickupOrderId = $("#pickupOrderId").val();
     	alert(pickupOrderId);
-		paymenttable.fnSettings().sAjaxSource = "/yh/pickupOrder/accountPayable/"+pickupOrderId;
+		paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable/"+pickupOrderId;
 		paymenttable.fnDraw(); 
     });	*/
     
@@ -770,7 +770,7 @@
 	});
 	
 	// 获取所有仓库
-	$.post('/yh/transferOrder/searchAllWarehouse',function(data){
+	$.post('/transferOrder/searchAllWarehouse',function(data){
 		if(data.length > 0){
 		 var gateInSelect = $("#gateInSelect");
 		 gateInSelect.empty();
@@ -821,7 +821,7 @@
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/pickupOrder/externTransferOrderList",
+        "sAjaxSource": "/pickupOrder/externTransferOrderList",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
@@ -878,7 +878,7 @@
         console.log(data);
         if(data.success){
         	var pickupOrderId = $("#pickupOrderId").val();
-    		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
+    		$.post('/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
     			var pickupAddressTbody = $("#pickupAddressTbody");
     			pickupAddressTbody.empty();
     			for(var i=0;i<data.length;i++){
@@ -904,7 +904,7 @@
         console.log(tableArr);
         $('#transferOrderIds').val(tableArr);
         $('#addExternalPickupOrderId').val($("#pickupOrderId").val());
-        $.post('/yh/pickupOrder/addExternalTransferOrder', $('#addExternalTransferOrderForm').serialize(),function(data){
+        $.post('/pickupOrder/addExternalTransferOrder', $('#addExternalTransferOrderForm').serialize(),function(data){
         	refreshAddress(data);
     	},'json');
         $('#addExternalTransferOrder').modal('hide');
@@ -926,7 +926,7 @@
     	$("#addressDiv").show();
     }
     
-//    $.post('/yh/pickupOrder/searchAllPayItem', function(data){
+//    $.post('/pickupOrder/searchAllPayItem', function(data){
 //		var paymentItemList=$("#paymentItemList");
 //		paymentItemList.append("<option></option>");
 //		for(var i = 0; i < data.length && data.length > 0 ; i++){
@@ -942,7 +942,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId,
+        "sAjaxSource": "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -1006,7 +1006,7 @@
 	$("#table_fin2").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		e.preventDefault();
-		$.post('/yh/pickupOrder/finItemdel/'+id,function(data){
+		$.post('/pickupOrder/finItemdel/'+id,function(data){
              //保存成功后，刷新列表
              console.log(data);
              paymenttable.fnDraw();
@@ -1015,7 +1015,7 @@
 
 	//var test ={'1':'1','2':'2'};
 	/*paymenttable.makeEditable({
-    	sUpdateURL: '/yh/pickupOrder/paymentSave',    	
+    	sUpdateURL: '/pickupOrder/paymentSave',    	
     	oEditableSettings: {event: 'click'},
     	"aoColumns": [  			            
             {            
@@ -1048,7 +1048,7 @@
 		    		return;
 		    	}
 	            $.ajax({
-	                url: "/yh/pickupOrder/getPaymentList",
+	                url: "/pickupOrder/getPaymentList",
 	                dataType: "json",
 	                data: {
 	                    input: request.term
@@ -1068,7 +1068,7 @@
         		//将选择的条目id先保存到数据库
 	        	var finId = $(this).parent().parent().parent()[0].id;
         		var finItemId = ui.item.id;
-        		$.post('/yh/pickupOrder/paymentSave',{id:finId, finItemId:finItemId},function(){ 
+        		$.post('/pickupOrder/paymentSave',{id:finId, finItemId:finItemId},function(){ 
         			//paymenttable.fnDraw();  
         		});  
         		
@@ -1080,10 +1080,10 @@
 	
 	$("#addrow").click(function(){	
 		var pickupOrderId =$("#pickupOrderId").val();
-		$.post('/yh/pickupOrder/addNewRow/'+pickupOrderId,function(data){
+		$.post('/pickupOrder/addNewRow/'+pickupOrderId,function(data){
 			console.log(data);
 			if(data[0] != null){
-				paymenttable.fnSettings().sAjaxSource = "/yh/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;   
+				paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;   
 				paymenttable.fnDraw();
 			}else{
 				alert("请到基础模块维护应付条目！");
@@ -1093,10 +1093,10 @@
 	
 	$("#addIncomeBtn").click(function(){	
 		var pickupOrderId =$("#pickupOrderId").val();
-		$.post('/yh/pickupOrder/addIncomeRow/'+pickupOrderId,function(data){
+		$.post('/pickupOrder/addIncomeRow/'+pickupOrderId,function(data){
 			console.log(data);
 			if(data[0] != null){
-				incomeTab.fnSettings().sAjaxSource = "/yh/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId;   
+				incomeTab.fnSettings().sAjaxSource = "/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId;   
 				incomeTab.fnDraw();
 			}else{
 				alert("请到基础模块维护应收条目！");
@@ -1112,7 +1112,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/pickupOrder/pickupOrderPaymentList?pickupOrderId="+pickupOrderId,
+        "sAjaxSource": "/pickupOrder/pickupOrderPaymentList?pickupOrderId="+pickupOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -1134,7 +1134,7 @@
         }
  		clickSavePickupOrder(e);
  		var pickupOrderId = $("#pickupOrderId").val();
- 		incomeTab.fnSettings().sAjaxSource = "/yh/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId;
+ 		incomeTab.fnSettings().sAjaxSource = "/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId;
  		incomeTab.fnDraw();
  		pickupOrderPaymentTab.fnDraw();
  		paymenttable.fnDraw();
@@ -1150,9 +1150,9 @@
 	$("#wentDutchBtn").click(function(){
 		if(confirm("确定分摊费用吗？")){
 		    var pickupOrderId = $("#pickupOrderId").val();
-			$.post('/yh/pickupOrder/wentDutch', {pickupOrderId:pickupOrderId}, function(data){
+			$.post('/pickupOrder/wentDutch', {pickupOrderId:pickupOrderId}, function(data){
 				if(data.success){
-					pickupOrderPaymentTab.fnSettings().sAjaxSource = "/yh/pickupOrder/pickupOrderPaymentList?pickupOrderId="+pickupOrderId;   
+					pickupOrderPaymentTab.fnSettings().sAjaxSource = "/pickupOrder/pickupOrderPaymentList?pickupOrderId="+pickupOrderId;   
 					pickupOrderPaymentTab.fnDraw();
 				}else{
 					alert("分摊费用失败!");
@@ -1168,7 +1168,7 @@
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$.post('/yh/pickupOrder/updatePickupOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+		$.post('/pickupOrder/updatePickupOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
 			if(data.success){
 			}else{
 				alert("修改失败!");
@@ -1181,7 +1181,7 @@
 	$("#table_fin3").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		e.preventDefault();
-		$.post('/yh/pickupOrder/delReceivable/'+id,function(data){
+		$.post('/pickupOrder/delReceivable/'+id,function(data){
              //保存成功后，刷新列表
              console.log(data);
              incomeTab.fnDraw();
@@ -1196,7 +1196,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId,
+        "sAjaxSource": "/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },

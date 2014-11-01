@@ -11,7 +11,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/costConfirmList/list",
+        "sAjaxSource": "/costConfirmList/list",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px",
                 "fnRender": function(obj) {
@@ -45,13 +45,13 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                 	var str = "";
                     if(obj.aData.ORDER_NO.indexOf("PS") > -1){
-                        str = "<a href='/yh/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
                     }else if(obj.aData.ORDER_NO.indexOf("PC") > -1){
-                        str = "<a href='/yh/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
                     }else if(obj.aData.ORDER_NO.indexOf("FC") > -1){
-                        str = "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
                     }else {
-                        str = "<a href='/yh/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
                     }
                     return str;
                 }
@@ -80,9 +80,9 @@ $(document).ready(function() {
         console.log(idArr);
         var ids = idArr.join(",");
         var orderNos = orderNoArr.join(",");
-        $.post("/yh/costConfirmList/costConfiremReturnOrder", {ids:ids, orderNos:orderNos}, function(data){
+        $.post("/costConfirmList/costConfiremReturnOrder", {ids:ids, orderNos:orderNos}, function(data){
         	if(data.success){
-        		costConfiremTable.fnSettings().sAjaxSource = "/yh/costConfirmList/list";
+        		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list";
         		costConfiremTable.fnDraw(); 
         	}
         },'json');
@@ -93,7 +93,7 @@ $(document).ready(function() {
     $('#customer_filter').on('keyup click', function(){
            var inputStr = $('#customer_filter').val();
            
-           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+           $.get("/customerContract/search", {locationName:inputStr}, function(data){
                console.log(data);
                var companyList =$("#companyList");
                companyList.empty();
@@ -133,7 +133,7 @@ $(document).ready(function() {
         	   /*
                 * 
                 * 
-                * datatable.fnSettings().sAjaxSource = "/yh/costCheckOrder/edit";
+                * datatable.fnSettings().sAjaxSource = "/costCheckOrder/edit";
               	* datatable.fnDraw(); 
                 * */
            }
@@ -162,7 +162,7 @@ $(document).ready(function() {
        			pageSpAddress.empty();
        			$('#sp_id').val($(this).attr(''));
        		}
-       		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+       		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
        			console.log(data);
        			var spList =$("#spList");
        			spList.empty();
@@ -237,7 +237,7 @@ $(document).ready(function() {
                /*
                 * 
                 * 
-                * datatable.fnSettings().sAjaxSource = "/yh/costCheckOrder/edit";
+                * datatable.fnSettings().sAjaxSource = "/costCheckOrder/edit";
               	* datatable.fnDraw(); 
                 * */
                
@@ -256,7 +256,7 @@ $(document).ready(function() {
      		var receiptBegin = $("#beginTime").val();
      		var receiptEnd = $("#endTime").val();
      		console.log("rr"+companyName);
-     		costCheckTable.fnSettings().sAjaxSource = "/yh/costCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
+     		costCheckTable.fnSettings().sAjaxSource = "/costCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
      	
      		costCheckTable.fnDraw();
      	} );

@@ -11,14 +11,14 @@ var dataTable =$('#dataTables-example').dataTable({
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/departOrder/list",
+        "sAjaxSource": "/departOrder/list",
         "aoColumns": [   
            
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
-                	return "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+                	return "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
                 }
             } ,
             {"mDataProp":"OFFICE_NAME"},
@@ -47,7 +47,7 @@ var dataTable =$('#dataTables-example').dataTable({
 				var sp = $("#sp_filter").val();
 				var beginTime = $("#beginTime_filter").val();
 				var endTime = $("#endTime_filter").val();
-				dataTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo
+				dataTable.fnSettings().sAjaxSource = "/departOrder/list?orderNo="+orderNo
 													+"&departNo="+departNo_filter
 													+"&status="+status
 													+"&sp="+sp
@@ -70,7 +70,7 @@ var dataTable =$('#dataTables-example').dataTable({
 				var sp = $("#sp_filter").val();
 				var beginTime = $("#beginTime_filter").val();
 				var endTime = $("#endTime_filter").val();
-				dataTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo
+				dataTable.fnSettings().sAjaxSource = "/departOrder/list?orderNo="+orderNo
 													+"&departNo="+departNo_filter
 													+"&status="+status
 													+"&sp="+sp
@@ -82,7 +82,7 @@ var dataTable =$('#dataTables-example').dataTable({
 				dataTable.fnDraw();
 			} );
 			
-			$.post('/yh/transferOrder/searchAllOffice',function(data){
+			$.post('/transferOrder/searchAllOffice',function(data){
 				 if(data.length > 0){
 					 var officeSelect = $("#officeSelect");
 					 officeSelect.empty();
@@ -128,7 +128,7 @@ var dataTable =$('#dataTables-example').dataTable({
 						pageSpAddress.empty();
 						$('#sp_id').val($(this).attr(''));
 					}
-					$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+					$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
 						console.log(data);
 						var spList =$("#spList");
 						spList.empty();
@@ -210,7 +210,7 @@ var dataTable =$('#dataTables-example').dataTable({
 					var sp = $("#sp_filter").val();
 					var beginTime = $("#beginTime_filter").val();
 					var endTime = $("#endTime_filter").val();
-					dataTable.fnSettings().sAjaxSource = "/yh/departOrder/list?orderNo="+orderNo
+					dataTable.fnSettings().sAjaxSource = "/departOrder/list?orderNo="+orderNo
 														+"&departNo="+departNo_filter
 														+"&status="+status
 														+"&sp="+sp

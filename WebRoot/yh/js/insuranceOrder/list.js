@@ -11,11 +11,11 @@
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "/yh/insuranceOrder/list",
+	        "sAjaxSource": "/insuranceOrder/list",
 	        "aoColumns": [   
 			    {"mDataProp":"ORDER_NO",
 	            	"fnRender": function(obj) {
-	            			return "<a href='/yh/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+	            			return "<a href='/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
 	            		}},
 			    {"mDataProp":"STATUS"},    
 			    {"mDataProp":"CREATE_STAMP"},     
@@ -37,7 +37,7 @@
     		e.preventDefault();
            //异步向后台提交数据
     	   var id = $(this).attr('code');
-    	   $.post('/yh/insuranceOrder/cancel/'+id,function(data){
+    	   $.post('/insuranceOrder/cancel/'+id,function(data){
                //保存成功后，刷新列表
                console.log(data);
                if(data.success){
@@ -53,7 +53,7 @@
 			var departNo_filter = $("#departNo_filter").val();
 			var beginTime = $("#beginTime_filter").val();
 			var endTime = $("#endTime_filter").val();
-			insuranceOrder.fnSettings().sAjaxSource = "/yh/insuranceOrder/pickuplist?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime;
+			insuranceOrder.fnSettings().sAjaxSource = "/insuranceOrder/pickuplist?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime;
 			insuranceOrder.fnDraw();
 		} );
 		

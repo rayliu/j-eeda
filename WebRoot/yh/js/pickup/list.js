@@ -11,11 +11,11 @@
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "/yh/pickupOrder/pickuplist",
+	        "sAjaxSource": "/pickupOrder/pickuplist",
 	        "aoColumns": [   
 			    {"mDataProp":"DEPART_NO",
 	            	"fnRender": function(obj) {
-	            			return "<a href='/yh/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+	            			return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
 	            		}},
 	            {"mDataProp":"OFFICE_NAME"},
 			    {"mDataProp":"STATUS"},
@@ -52,7 +52,7 @@
     		e.preventDefault();
            //异步向后台提交数据
     	   var id = $(this).attr('code');
-    	   $.post('/yh/pickupOrder/cancel/'+id,function(data){
+    	   $.post('/pickupOrder/cancel/'+id,function(data){
                //保存成功后，刷新列表
                console.log(data);
                if(data.success){
@@ -73,7 +73,7 @@
 			var departNo_filter = $("#departNo_filter").val();
 			var beginTime = $("#beginTime_filter").val();
 			var endTime = $("#endTime_filter").val();
-			pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/pickuplist?orderNo="+orderNo
+			pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/pickuplist?orderNo="+orderNo
 												+"&departNo="+departNo_filter
 												+"&beginTime="+beginTime
 												+"&endTime="+endTime+"&carNo="+carNo
@@ -91,7 +91,7 @@
 			var departNo_filter = $("#departNo_filter").val();
 			var beginTime = $("#beginTime_filter").val();
 			var endTime = $("#endTime_filter").val();
-			pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/pickuplist?orderNo="+orderNo
+			pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/pickuplist?orderNo="+orderNo
 												+"&departNo="+departNo_filter
 												+"&beginTime="+beginTime
 												+"&endTime="+endTime+"&carNo="+carNo
@@ -100,7 +100,7 @@
 			pickupOrder.fnDraw();
       });
 		//获取所有的网点
-        $.post('/yh/transferOrder/searchAllOffice',function(data){
+        $.post('/transferOrder/searchAllOffice',function(data){
        	 if(data.length > 0){
        		 var officeSelect = $("#officeSelect");
        		 officeSelect.empty();

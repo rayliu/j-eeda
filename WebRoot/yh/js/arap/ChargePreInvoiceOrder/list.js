@@ -12,11 +12,11 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/chargePreInvoiceOrder/list",
+        "sAjaxSource": "/chargePreInvoiceOrder/list",
         "aoColumns": [   
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/yh/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
@@ -62,7 +62,7 @@ $(document).ready(function() {
     $('#customer_filter').on('keyup click', function(){
            var inputStr = $('#customer_filter').val();
            
-           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+           $.get("/customerContract/search", {locationName:inputStr}, function(data){
                console.log(data);
                var companyList =$("#companyList");
                companyList.empty();
@@ -102,7 +102,7 @@ $(document).ready(function() {
         	   /*
                 * 
                 * 
-                * datatable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/edit";
+                * datatable.fnSettings().sAjaxSource = "/chargeCheckOrder/edit";
               	* datatable.fnDraw(); 
                 * */
            }
@@ -131,7 +131,7 @@ $(document).ready(function() {
        			pageSpAddress.empty();
        			$('#sp_id').val($(this).attr(''));
        		}
-       		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+       		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
        			console.log(data);
        			var spList =$("#spList");
        			spList.empty();
@@ -206,7 +206,7 @@ $(document).ready(function() {
                /*
                 * 
                 * 
-                * datatable.fnSettings().sAjaxSource = "/yh/chargeCheckOrder/edit";
+                * datatable.fnSettings().sAjaxSource = "/chargeCheckOrder/edit";
               	* datatable.fnDraw(); 
                 * */
                

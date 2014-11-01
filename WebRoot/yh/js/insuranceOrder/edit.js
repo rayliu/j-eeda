@@ -21,7 +21,7 @@
  			$(nRow).attr({item_id: aData.ITEM_ID, fin_id: aData.FIN_ID});
  			return nRow;
  		 },
-         "sAjaxSource": "/yh/insuranceOrder/getInitPickupOrderItems?insuranceOrderId="+insuranceOrderId+"&localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
+         "sAjaxSource": "/insuranceOrder/getInitPickupOrderItems?insuranceOrderId="+insuranceOrderId+"&localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
          "aoColumns": [
              { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
              { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
@@ -135,7 +135,7 @@
  		}
  		var insuranceAmount = $(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML;
  		var insuranceOrderId = $("#insuranceOrderId").val();
- 		$.post('/yh/insuranceOrder/updateInsuranceOrderFinItem', {itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value, insuranceAmount:insuranceAmount}, function(data){
+ 		$.post('/insuranceOrder/updateInsuranceOrderFinItem', {itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value, insuranceAmount:insuranceAmount}, function(data){
  			if(data.success){
  			}else{
  				alert("修改失败!");
@@ -155,7 +155,7 @@
 		$("#item_id").val(itemId);
 		$("#item_save").attr("disabled", false);
 		$("#style").hide();
-		detailTable.fnSettings().sAjaxSource = "/yh/pickupOrder/findAllItemDetail?item_id="+itemId+"&pickupId="+$("#pickupOrderId").val();
+		detailTable.fnSettings().sAjaxSource = "/pickupOrder/findAllItemDetail?item_id="+itemId+"&pickupId="+$("#pickupOrderId").val();
 		detailTable.fnDraw();  			
 	});
 		
@@ -168,7 +168,7 @@
      	 "oLanguage": {
              "sUrl": "/eeda/dataTables.ch.txt"
          },
-         "sAjaxSource": "/yh/departOrder/itemDetailList?item_id="+item_id+"",
+         "sAjaxSource": "/departOrder/itemDetailList?item_id="+item_id+"",
        
          "aoColumns": [
               { "mDataProp": null,
@@ -210,7 +210,7 @@
 		if("chargeCheckOrderbasic" == parentId){
 			bool = true;
 		}
- 		$.post('/yh/insuranceOrder/save', $("#insuranceOrderForm").serialize(), function(data){
+ 		$.post('/insuranceOrder/save', $("#insuranceOrderForm").serialize(), function(data){
 			$("#insuranceOrderId").val(data.ID);
 			if(data.ID>0){
 				$("#insuranceId").val(data.ID);
@@ -226,7 +226,7 @@
    
  	/*var pickupOrderMilestone = function(){
  		var pickupOrderId = $("#pickupOrderId").val();
-		$.post('/yh/transferOrderMilestone/transferOrderMilestoneList',{pickupOrderId:pickupOrderId},function(data){
+		$.post('/transferOrderMilestone/transferOrderMilestoneList',{pickupOrderId:pickupOrderId},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
@@ -251,7 +251,7 @@
 		}
 		
         if($("#pickupOrderId").val() == ""){
-	    	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+	    	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
 				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
@@ -267,7 +267,7 @@
 				}
 			},'json');
         }else{
-        	$.post('/yh/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+        	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
 				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
@@ -288,7 +288,7 @@
 
 	// 保存新里程碑
 	$("#transferOrderMilestoneFormBtn").click(function(){
-		$.post('/yh/transferOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
+		$.post('/transferOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 		},'json');
@@ -298,7 +298,7 @@
 	
 	var findAllAddress = function(){
 		var pickupOrderId = $("#pickupOrderId").val();
-		$.post('/yh/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
+		$.post('/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
 			var pickupAddressTbody = $("#pickupAddressTbody");
 			pickupAddressTbody.empty();
 			for(var i=0;i<data.length;i++){
@@ -312,7 +312,7 @@
 	$("#table_fin2").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		e.preventDefault();
-		$.post('/yh/pickupOrder/finItemdel/'+id,function(data){
+		$.post('/pickupOrder/finItemdel/'+id,function(data){
              //保存成功后，刷新列表
              console.log(data);
              paymenttable.fnDraw();
@@ -321,10 +321,10 @@
 	
 	$("#addrow").click(function(){	
 		var pickupOrderId =$("#pickupOrderId").val();
-		$.post('/yh/pickupOrder/addNewRow/'+pickupOrderId,function(data){
+		$.post('/pickupOrder/addNewRow/'+pickupOrderId,function(data){
 			console.log(data);
 			if(data[0] != null){
-				paymenttable.fnSettings().sAjaxSource = "/yh/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;   
+				paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;   
 				paymenttable.fnDraw();
 			}else{
 				alert("请到基础模块维护应付条目！");
@@ -340,7 +340,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/pickupOrder/pickupOrderPaymentList?pickupOrderId="+pickupOrderId,
+        "sAjaxSource": "/pickupOrder/pickupOrderPaymentList?pickupOrderId="+pickupOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -378,7 +378,7 @@
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$.post('/yh/pickupOrder/updatePickupOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+		$.post('/pickupOrder/updatePickupOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
 			if(data.success){
 			}else{
 				alert("修改失败!");
@@ -394,7 +394,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/insuranceOrder/accountPayable?insuranceOrderId="+insuranceOrderId,
+        "sAjaxSource": "/insuranceOrder/accountPayable?insuranceOrderId="+insuranceOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -420,7 +420,7 @@
 		//"sPaginationType": "bootstrap",
 		"iDisplayLength": 10,
 		"bServerSide": true,
-		"sAjaxSource": "/yh/insuranceOrder/incomePayable?insuranceOrderId="+insuranceOrderId,
+		"sAjaxSource": "/insuranceOrder/incomePayable?insuranceOrderId="+insuranceOrderId,
 		"oLanguage": {
 			"sUrl": "/eeda/dataTables.ch.txt"
 		},
@@ -461,9 +461,9 @@
 	
 	$("#insuranceOrderPayment").click(function(){
 		var insuranceOrderId = $("#insuranceOrderId").val();
-		accountTab.fnSettings().sAjaxSource = "/yh/insuranceOrder/accountPayable?insuranceOrderId="+insuranceOrderId;
+		accountTab.fnSettings().sAjaxSource = "/insuranceOrder/accountPayable?insuranceOrderId="+insuranceOrderId;
 		accountTab.fnDraw();
-		incomeTab.fnSettings().sAjaxSource = "/yh/insuranceOrder/incomePayable?insuranceOrderId="+insuranceOrderId;
+		incomeTab.fnSettings().sAjaxSource = "/insuranceOrder/incomePayable?insuranceOrderId="+insuranceOrderId;
 		incomeTab.fnDraw();
 	});
 
@@ -482,7 +482,7 @@
 			$(this).parent().siblings(".income_insurance_amount")[0].children[0].innerHTML = value * income_rate;
 		}
  		var insuranceOrderId = $("#insuranceOrderId").val();
- 		$.post('/yh/insuranceOrder/incomeFinItem', {id:id, itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value}, function(data){
+ 		$.post('/insuranceOrder/incomeFinItem', {id:id, itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value}, function(data){
  			if(data.success){
  			}else{
  				alert("修改失败!");
@@ -491,7 +491,7 @@
  	});
 
 	// 获取所有城市
-	$.post('/yh/transferOrder/searchAllOffice',function(data){
+	$.post('/transferOrder/searchAllOffice',function(data){
 	 if(data.length > 0){
 		 var officeSelect = $("#officeSelect");
 		 officeSelect.empty();

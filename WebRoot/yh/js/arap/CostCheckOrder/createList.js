@@ -12,7 +12,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/costConfirmList/list",
+        "sAjaxSource": "/costConfirmList/list",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px",
                 "fnRender": function(obj) {
@@ -46,13 +46,13 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                 	var str = "";
                     if(obj.aData.ORDER_NO.indexOf("PS") > -1){
-                        str = "<a href='/yh/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
                     }else if(obj.aData.ORDER_NO.indexOf("PC") > -1){
-                        str = "<a href='/yh/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
                     }else if(obj.aData.ORDER_NO.indexOf("FC") > -1){
-                        str = "<a href='/yh/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
                     }else {
-                        str = "<a href='/yh/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
                     }
                     return str;
                 }
@@ -77,7 +77,7 @@ $(document).ready(function() {
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
-    	"sAjaxSource": "/yh/chargeCheckOrder/createList2",
+    	"sAjaxSource": "/chargeCheckOrder/createList2",
     	"aoColumns": [ 
 			  {"mDataProp":null, "sWidth":"20px"},                        
 			  {"mDataProp":null, "sWidth":"100px"},                        
@@ -138,7 +138,7 @@ $(document).ready(function() {
     $('#companyName').on('keyup', function(){
         var inputStr = $('#companyName').val();
         
-        $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+        $.get("/customerContract/search", {locationName:inputStr}, function(data){
             console.log(data);
             var companyList =$("#companyList");
             companyList.empty();
@@ -217,7 +217,7 @@ $(document).ready(function() {
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
         var officeName = $("#officeName_filter").val();
-        // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+        // transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
         // transferOrder.fnDraw();
     } );
     
@@ -231,7 +231,7 @@ $(document).ready(function() {
         $("#beginTime").val(beginTime);
         var endTime = $("#endTime_filter").val();
         var officeName = $("#officeName_filter").val();
-        // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+        // transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
         // transferOrder.fnDraw();
     } );    
     
@@ -245,7 +245,7 @@ $(document).ready(function() {
         var endTime = $("#endTime_filter").val();
         $("#endTime").val(endTime);
         var officeName = $("#officeName_filter").val();
-        // transferOrder.fnSettings().sAjaxSource = "/yh/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+        // transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
         // transferOrder.fnDraw();
     } );
 

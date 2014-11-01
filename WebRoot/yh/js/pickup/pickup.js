@@ -14,7 +14,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/pickupOrder/createList",
+        "sAjaxSource": "/pickupOrder/createList",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
@@ -167,7 +167,7 @@ $(document).ready(function() {
     	var routeFrom = $("#routeFrom_filter").val();
     	var routeTo = $("#routeTo_filter").val();
     	var orderType = $("#orderType_filter").val();
-    	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo+"&orderType="+orderType;
+    	pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo+"&orderType="+orderType;
     	pickupOrder.fnDraw(); 
     } );
  
@@ -276,7 +276,7 @@ $(document).ready(function() {
 	 $('#customer_filter').on('keyup click', function(){
 	        var inputStr = $('#customer_filter').val();
 	        
-	        $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+	        $.get("/customerContract/search", {locationName:inputStr}, function(data){
 	            console.log(data);
 	            var companyList =$("#companyList");
 	            companyList.empty();
@@ -315,7 +315,7 @@ $(document).ready(function() {
 	        	var routeFrom = $("#routeFrom_filter").val();
 	        	var routeTo = $("#routeTo_filter").val();
 	        	var orderType = $("#orderType_filter").val();
-	        	pickupOrder.fnSettings().sAjaxSource = "/yh/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo+"&orderType="+orderType;
+	        	pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo+"&orderType="+orderType;
 	        	pickupOrder.fnDraw(); 
 	        }
 	    });

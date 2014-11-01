@@ -11,11 +11,11 @@ $('#menu_carmanage').addClass('active').find('ul').addClass('in');
 	   	"oLanguage": {
 	           "sUrl": "/eeda/dataTables.ch.txt"
 	       },
-       "sAjaxSource":"/yh/carinfo/carmanageList",
+       "sAjaxSource":"/carinfo/carmanageList",
 		"aoColumns": [
             {"mDataProp":"DEPART_NO",
             	"fnRender": function(obj) {
-            			return "<a href='/yh/pickupOrder/carManageEdit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+            			return "<a href='/pickupOrder/carManageEdit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
             		}}, 
     		{"mDataProp":"STATUS"},
 		    {"mDataProp":"PICKUP_MODE",

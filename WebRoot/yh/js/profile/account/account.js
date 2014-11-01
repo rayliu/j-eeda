@@ -11,7 +11,7 @@ $(document).ready(function() {
 	    },
 	    "bProcessing": true,
 	    "bServerSide": true,
-	    "sAjaxSource": "/yh/account/accountItem?accountId="+accountId,
+	    "sAjaxSource": "/account/accountItem?accountId="+accountId,
 	    "aoColumns": [   
 	        {"mDataProp":null},
 	        {"mDataProp":null},
@@ -36,7 +36,7 @@ $(document).ready(function() {
 	$("#dataTables-example").on('click', '.eidtAcountItem', function(){
 		  var accountId = $("#accountId2").val();
 		 	var id = $(this).attr('code');
-		 $.post('/yh/account/eidtAcountItem/'+id,{accountId:accountId},function(data){
+		 $.post('/account/eidtAcountItem/'+id,{accountId:accountId},function(data){
 	       //保存成功后，刷新列表
 	       console.log(data);
 	       if(data[0] !=null){
@@ -54,7 +54,7 @@ $(document).ready(function() {
 	$("#dataTables-example").on('click', '.delectAcountItem', function(){
 		  var accountId = $("#accountId2").val();
 		 	var id = $(this).attr('code2');
-		 $.post('/yh/account/delectAcountItem/'+id,{accountId:accountId},function(data){
+		 $.post('/account/delectAcountItem/'+id,{accountId:accountId},function(data){
 	     //保存成功后，刷新列表
 	     console.log(data);
 	     if(data.success){
@@ -75,13 +75,13 @@ $(document).ready(function() {
 	});
 	//添加账户
 	$('#save').click(function(){
-		 $.post('/yh/account/save', $("#accountFrom").serialize(), function(data){
+		 $.post('/account/save', $("#accountFrom").serialize(), function(data){
 	         if(data.ID > 0){
 	             //alert("添加合同成功！");
 	         	//$("#style").show();
 	         	//已经有一个重复的contractId 在前面了
 	         	$('#accountId2').val(data);
-	         	dataTable.fnSettings().sAjaxSource="/yh/account/accountItem?accountId="+data.ID; 
+	         	dataTable.fnSettings().sAjaxSource="/account/accountItem?accountId="+data.ID; 
 
 	         	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	         }else{
@@ -101,7 +101,7 @@ $(document).ready(function() {
 	   	}
 	   });
 	$('#saveAccountItemBtn').click(function(){
-			 $.post('/yh/account/saveAccountItemBtn', $("#accountItemForm").serialize(), function(data){
+			 $.post('/account/saveAccountItemBtn', $("#accountItemForm").serialize(), function(data){
 		         if(data.success){
 		        	 $('#myModal').modal('hide');
 		        	 dataTable.fnDraw();

@@ -47,9 +47,9 @@
             	                            <input type="hidden" name="order_no" value="${order_no!''}${departOrder.depart_no!''}"/>
                                          	<input type="hidden" name="status" value="${status!''}${departOrder.status!''}"/>
                                          	<input type="hidden" name="create_by" value="${create_by!''}${departOrder.create_by!''}"/>
-          	                              <input id="carinfoId" type="hidden" name="carinfoId" value="${departOrder.carinfo_id!''}"/> 
+          	                              	<input id="carinfoId" type="hidden" name="carinfoId" value="${departOrder.carinfo_id!''}"/> 
           	                       		    <input id="driver_id" type="hidden" name="driver_id" value="${departOrder.driver_id!''}"/>
-                                          <input id="checkedDetail" type="hidden" name="checkedDetail"/>                                    	
+                                            <input id="checkedDetail" type="hidden" name="checkedDetail"/>                                    	
           		                            <input id="uncheckedDetail" type="hidden" name="uncheckedDetail"/>
           		                            <input type="hidden" name="routeSp" value="${routeSp!''}"/>
                                    		   
@@ -71,7 +71,7 @@
                                               <lable>零担计费方式:  </lable>
                                               <input type="hidden" id="hibLtlUnitType" value="${departOrder.ltl_price_type!''}">
                                               <label class="radio-inline">
-                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn1" value="perCBM">按体积（每立方米）
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn1" value="perCBM" checked>按体积（每立方米）
                                               </label>
                                                <label class="radio-inline">
                                                   <input type="radio" name="ltlUnitType" id="optionsRadiosIn3" value="perKg">按重量（每公斤）
@@ -88,7 +88,7 @@
                                            <div class="form-group">     
                                            	   <h5 id="pageSpName">${spContact.contact_person!''} ${spContact.phone!''}</h5><h5 id="pageSpAddress">${spContact.address!''}</h5>     
                                            </div>                                                
-                                               
+                                    <div id="carInfomation" style="display:none">      
                                         <h2>车辆信息</h2>
                                         <div class="form-group">
                                             <label>车牌</label>
@@ -181,21 +181,25 @@
 	                                            </select>
 	                                       </div>
 	                                       </div> -->
-                                         <div class="form-group">
-	                                            <label>跟车人</label>
-	                                            <input class="form-control" id="car_follow_name" value="${departOrder.car_follow_name!''}" name="car_follow_name">
+	                                       <div id="carFollowInfomation" style="display:none">
+	                                         	<div class="form-group">
+		                                            <label>跟车人</label>
+		                                            <input class="form-control" id="car_follow_name" value="${departOrder.car_follow_name!''}" name="car_follow_name">
+	                                            </div>
+	                                                                               
+	                                            <div class="form-group">
+		                                            <label>跟车人电话</label>
+		                                            <input class="form-control" id="car_follow_phone" value="${departOrder.car_follow_phone!''}" name="car_follow_phone">
+	                                            </div>
                                             </div>
-                                                                               
-                                            <div class="form-group">
-	                                            <label>跟车人电话</label>
-	                                            <input class="form-control" id="car_follow_phone" value="${departOrder.car_follow_phone!''}" name="car_follow_phone">
-                                            </div>
-                                            
-                                           	<div class="form-group">
+                                       </div>
+                                       
+                                       
+                                        <div class="form-group">
                                             <label>备注</label>
                                             <textarea class="form-control" rows="4" id="remark" name="remark" style=" height: 108px">${departOrder.remark!''}</textarea>
                                         </div> 
-                                    </div>
+                                   	</div>
                                       <div class="col-lg-6">
                                       <h2>发车信息</h2>  
                                          <div class="form-group">
@@ -430,7 +434,7 @@
 		                       			<div class="panel-body">
 		                            		<p>单据创建完毕,是否继续创建？</p>
 		                        		</div>
-		                        		<form id="detailCheckBoxForm" method="post" action="/yh/departOrder/createDepartOrder">
+		                        		<form id="detailCheckBoxForm" method="post" action="/departOrder/createDepartOrder">
 		                        			<input type="hidden" name="localArr" value="${localArr!''}">
 			                       			<div class="panel-footer">
 			                          			<button id="cancelBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">否</button>
@@ -448,7 +452,7 @@
                             		<button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
                             <!-- <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
                             <button id="receiptBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button> -->
-        		             		<a class="btn btn-default" href="/yh/departOrder">返回</a>
+        		             		<a class="btn btn-default" href="/departOrder">返回</a>
                         </div>
                     	<div class="form-group">
                     </div>

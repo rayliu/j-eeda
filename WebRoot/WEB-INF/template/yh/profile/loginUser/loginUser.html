@@ -5,7 +5,7 @@
 <div class="row">
       <div class="col-lg-12">
             <h1 class="page-header">
-				<a class="btn btn-info" href="/yh/loginUser/addUser"><i class="fa fa-plus-square-o"></i>
+				<a class="btn btn-info" href="/loginUser/addUser"><i class="fa fa-plus-square-o"></i>
 				<span class="hidden-tablet">添加用户</span></a>
 			</h1>
 		<div class="panel panel-default">
@@ -67,7 +67,7 @@ $(document).ready(function() {
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "/yh/loginUser/listUser",
+	        "sAjaxSource": "/loginUser/listUser",
 			"aoColumns": [
 				{ "mDataProp": "USER_NAME" },
 	           
@@ -76,11 +76,11 @@ $(document).ready(function() {
 	                "mDataProp": null, 
 	                "sWidth": "15%",
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-info editbutton' href='/yh/loginUser/edit/"+obj.aData.ID+"'>"+
+	                    return "<a class='btn btn-info editbutton' href='/loginUser/edit/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-edit'> </i> "+
 	                                "编辑"+
 	                            "</a>"+
-	                            "<a class='btn btn-danger' href='/yh/loginUser/del/"+obj.aData.ID+"'>"+
+	                            "<a class='btn btn-danger' href='/loginUser/del/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
 	                                "删除"+
 	                            "</a>";

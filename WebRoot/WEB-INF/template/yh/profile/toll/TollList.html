@@ -13,7 +13,7 @@
                 <!-- /.col-lg-12 -->
             
             <div class="panel-heading">
-            <a  class="btn btn-outline btn-primary" href="/yh/toll/Edit">添加条目</a>
+            <a  class="btn btn-outline btn-primary" href="/toll/Edit">添加条目</a>
             </div>
             <!-- /.row -->
             <div class="row">
@@ -78,7 +78,7 @@
    	    	"oLanguage": {
    	            "sUrl": "/eeda/dataTables.ch.txt"
    	        },
-   	        "sAjaxSource": "/yh/toll/list",
+   	        "sAjaxSource": "/toll/list",
    			"aoColumns": [
    				{ "mDataProp": "TYPE" },
    	            { "mDataProp": "NAME" },
@@ -87,11 +87,11 @@
    	            { "mDataProp": null,
    	         		"sWidth": "8%", 
    	         "fnRender": function(obj) {                    
-                 return "<a class='btn btn-success' href='/yh/toll/Edit/"+obj.aData.ID+"'>"+
+                 return "<a class='btn btn-success' href='/toll/Edit/"+obj.aData.ID+"'>"+
                              "<i class='fa fa-edit fa-fw'></i> "+
                              "编辑"+
                          "</a>"+
-                         "<a class='btn btn-danger' href='/yh/toll/delete/"+obj.aData.ID+"'>"+
+                         "<a class='btn btn-danger' href='/toll/delete/"+obj.aData.ID+"'>"+
                              "<i class='fa fa-trash-o fa-fw'></i> "+ 
                              "删除"+
                          "</a>";

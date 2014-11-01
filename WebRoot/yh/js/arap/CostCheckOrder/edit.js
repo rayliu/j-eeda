@@ -8,7 +8,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		
 		//异步向后台提交数据
-		$.post('/yh/costCheckOrder/save', $("#costCheckOrderForm").serialize(), function(data){
+		$.post('/costCheckOrder/save', $("#costCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#costCheckOrderId").val(data.ID);
 			  	$("#style").show();
@@ -29,7 +29,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//异步向后台提交数据
 		var costCheckOrderId = $("#costCheckOrderId").val();
-		$.post('/yh/costCheckOrder/auditCostCheckOrder', {costCheckOrderId:costCheckOrderId}, function(data){
+		$.post('/costCheckOrder/auditCostCheckOrder', {costCheckOrderId:costCheckOrderId}, function(data){
 		},'json');
 	});
 	
@@ -63,7 +63,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/costConfirmList/list",
+        "sAjaxSource": "/costConfirmList/list",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px",
                 "fnRender": function(obj) {
@@ -109,7 +109,7 @@ $(document).ready(function() {
     	var costCheckOrderId = $("#costCheckOrderId").val();
     	var orderNos = $("#orderNos").val();
     	var orderIds = $("#orderIds").val();
-    	costConfiremTable.fnSettings().sAjaxSource = "/yh/costCheckOrder/costConfirmList?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
+    	costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmList?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
     	costConfiremTable.fnDraw(); 
     });
 } );

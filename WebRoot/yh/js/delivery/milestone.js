@@ -14,11 +14,11 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/delivery/deliveryMilestone",
+        "sAjaxSource": "/delivery/deliveryMilestone",
         "aoColumns": [   
             {"mDataProp":null,
             	"fnRender": function(obj) {
-            		 return "<a href='/yh/delivery/edit/"+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		 return "<a href='/delivery/edit/"+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
             		}
             },
             {"mDataProp":null,
@@ -56,7 +56,7 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.confirmDelivery', function(e){
     	var delivery_id =$(this).attr("code");
     	if(confirm("到达确认 吗？")){
-    		$.post('/yh/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
+    		$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
     			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
     			detailTable.fnDraw(); 
@@ -68,7 +68,7 @@ $(document).ready(function() {
     	e.preventDefault();	
     	var depart_id=$(this).attr("del_id");
     	$("#milestoneDepartId").val(depart_id);
-    	$.post('/yh/delivery/transferOrderMilestoneList',{departOrderId:depart_id},function(data){
+    	$.post('/delivery/transferOrderMilestoneList',{departOrderId:depart_id},function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
@@ -81,10 +81,10 @@ $(document).ready(function() {
     
     // 保存新里程碑
 	$("#transferOrderMilestoneFormBtn").click(function(){
-		$.post('/yh/delivery/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
+		$.post('/delivery/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
-			detailTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryMilestone";
+			detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone";
 			detailTable.fnDraw();  
 		},'json');
 		//$('#transferOrderMilestone').modal('hide');
@@ -100,7 +100,7 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
     	detailTable.fnDraw();
     } );
 	
@@ -127,7 +127,7 @@ $(document).ready(function() {
     $('#customer_filter').on('keyup click', function(){
            var inputStr = $('#customer_filter').val();
            
-           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+           $.get("/customerContract/search", {locationName:inputStr}, function(data){
                console.log(data);
                var companyList =$("#companyList");
                companyList.empty();
@@ -158,7 +158,7 @@ $(document).ready(function() {
 	           	var sp = $("#sp_filter").val();
 	           	var beginTime = $("#beginTime_filter").val();
 	           	var endTime = $("#endTime_filter").val();
-	           	detailTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+	           	detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
 	           	detailTable.fnDraw();
            }
        });
@@ -187,7 +187,7 @@ $(document).ready(function() {
        			pageSpAddress.empty();
        			$('#sp_id').val($(this).attr(''));
        		}
-       		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+       		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
        			console.log(data);
        			var spList =$("#spList");
        			spList.empty();
@@ -267,7 +267,7 @@ $(document).ready(function() {
 	    	var beginTime = $("#beginTime_filter").val();
 	    	var endTime = $("#endTime_filter").val();
 	    	console.log(sp);
-    		detailTable.fnSettings().sAjaxSource = "/yh/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    		detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
 	    	detailTable.fnDraw();	
            });
        	

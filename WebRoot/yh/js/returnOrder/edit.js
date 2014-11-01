@@ -15,7 +15,7 @@
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/returnOrder/transferOrderItemList?order_id="+returnOrderId+"&id="+transferOrderId,
+        "sAjaxSource": "/returnOrder/transferOrderItemList?order_id="+returnOrderId+"&id="+transferOrderId,
         "aoColumns": [ 
 			{
 				"mDataProp":null,            	
@@ -106,7 +106,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/returnOrder/transferOrderDetailList2?item_id="+returnOrderId,
+        "sAjaxSource": "/returnOrder/transferOrderDetailList2?item_id="+returnOrderId,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -195,7 +195,7 @@
 			e.preventDefault();
 	        //异步向后台提交数据
 			var id = $("#returnId").val();
-			$.post('/yh/returnOrder/returnOrderReceipt/'+id,function(data){
+			$.post('/returnOrder/returnOrderReceipt/'+id,function(data){
 	           //保存成功后，刷新列表
 	           console.log(data);
 	           if(data.success){
@@ -220,7 +220,7 @@
 		var itemId = code.substring(code.indexOf('=')+1);
 		$("#item_id").val(itemId);
 		
-		detailDataTable.fnSettings().sAjaxSource = "/yh/returnOrder/transferOrderDetailList2?item_id="+itemId;
+		detailDataTable.fnSettings().sAjaxSource = "/returnOrder/transferOrderDetailList2?item_id="+itemId;
 		detailDataTable.fnDraw();  			
 	});
 	// 删除货品
@@ -228,12 +228,12 @@
 		var code = $(this).attr('code');
 		var itemId = code.substring(code.indexOf('=')+1);
 		$("#item_id").val(itemId);
-		$.post('/yh/returnOrder/deleteTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
+		$.post('/returnOrder/deleteTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
 		},'json');
 		$("#transferOrderItemDateil").hide();
 		// 更新货品列表
 		var returnOrderId = $("#returnId").val();
-		transferOrder.fnSettings().sAjaxSource = "/yh/returnOrder/transferOrderItemList?order_id="+returnOrderId;
+		transferOrder.fnSettings().sAjaxSource = "/returnOrder/transferOrderItemList?order_id="+returnOrderId;
 		transferOrder.fnDraw(); 	  	
 	});	
 
@@ -272,7 +272,7 @@
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
-    	$.post('/yh/returnOrder/save', $("#returnOrderForm").serialize(), function(returnOrder){
+    	$.post('/returnOrder/save', $("#returnOrderForm").serialize(), function(returnOrder){
 			if(returnOrder.ID>0){
 			  	//$("#style").show();
 			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
@@ -324,7 +324,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource":"/yh/returnOrder/accountReceivable/"+order_id,
+        "sAjaxSource":"/returnOrder/accountReceivable/"+order_id,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -380,10 +380,10 @@
 	//应收
 	$("#addrow2").click(function(){	
 		 var order_id =$("#returnOrderid").val();
-		 $.post('/yh/returnOrder/addNewRow/'+order_id,function(data){
+		 $.post('/returnOrder/addNewRow/'+order_id,function(data){
 			console.log(data);
 			if(data[0] != null){
-				receipttable.fnSettings().sAjaxSource = "/yh/returnOrder/accountReceivable/"+order_id;
+				receipttable.fnSettings().sAjaxSource = "/returnOrder/accountReceivable/"+order_id;
 				receipttable.fnDraw();  
 			}else{
 				alert("请到基础模块维护应收条目！");
@@ -397,7 +397,7 @@
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$.post('/yh/returnOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+		$.post('/returnOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
 			if(data.success){
 			}else{
 				alert("修改失败!");
@@ -409,7 +409,7 @@
     //获取全国省份
     $(function(){
      	var province = $("#mbProvinceTo");
-     	$.post('/yh/serviceProvider/province',function(data){
+     	$.post('/serviceProvider/province',function(data){
      		province.append("<option>--请选择省份--</option>");
 				var hideProvince = $("#hideProvinceTo").val();
      		for(var i = 0; i < data.length; i++)
@@ -430,7 +430,7 @@
     $('#mbProvinceTo').on('change', function(){
 			var inputStr = $(this).val();
 			$('#locationChanged').val('true');
-			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+			$.get('/serviceProvider/city', {id:inputStr}, function(data){
 				var cmbCity =$("#cmbCityTo");
 				cmbCity.empty();
 				cmbCity.append("<option>--请选择城市--</option>");
@@ -447,7 +447,7 @@
     		$('#locationChanged').val('true');
 			var inputStr = $(this).val();
 			var code = $("#locationTo").val(inputStr);
-			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+			$.get('/serviceProvider/area', {id:inputStr}, function(data){
 				var cmbArea =$("#cmbAreaTo");
 				cmbArea.empty();
 				cmbArea.append("<option>--请选择区(县)--</option>");
@@ -467,7 +467,7 @@
     
     // 回显城市
     var hideProvince = $("#hideProvinceTo").val();
-    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+    $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
 		if(data.length > 0){
 			var cmbCity =$("#cmbCityTo");
 			cmbCity.empty();
@@ -486,7 +486,7 @@
 
     // 回显区
     var hideCity = $("#hideCityTo").val();
-    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+    $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
 		if(data.length > 0){
 			var cmbArea =$("#cmbAreaTo");
 			cmbArea.empty();

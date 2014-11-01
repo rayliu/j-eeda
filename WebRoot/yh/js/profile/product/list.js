@@ -2,7 +2,7 @@ $(document).ready(function() {
     $('#menu_profile').addClass('active').find('ul').addClass('in');
     
     // 显示所有的客户
-    $.get('/yh/product/searchAllCustomer', function(data){
+    $.get('/product/searchAllCustomer', function(data){
         console.log(data);
         var zNodes =[];
         for(var i=0;i<data.length && data.length>0;i++){
@@ -40,7 +40,7 @@ $(document).ready(function() {
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "sAjaxSource": "/yh/product/list",
+        "sAjaxSource": "/product/list",
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -122,12 +122,12 @@ $(document).ready(function() {
 	var refreshProductTable = function(){
 		var categoryId = $("#categoryId").val();
 		// 刷新产品列表
-		productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+categoryId;
+		productDataTable.fnSettings().sAjaxSource = "/product/list?categoryId="+categoryId;
 		productDataTable.fnDraw();
 	};
 	
     productDataTable.makeEditable({
-    	sUpdateURL: '/yh/product/saveProductByField',    	
+    	sUpdateURL: '/product/saveProductByField',    	
     	oEditableSettings: {event: 'click'},
     	"aoColumns": [  			            
             {            
@@ -239,7 +239,7 @@ $(document).ready(function() {
         		//将选择的产品id先保存到数据库
         		var itemId = $(this).parent().parent().parent()[0].id;
         		var productId = ui.item.id;
-        		$.post('/yh/transferOrderItem/saveTransferOrderItem', 
+        		$.post('/transferOrderItem/saveTransferOrderItem', 
         			{transferOrderItemId:itemId,productId:productId},
         			function(){ itemDataTable.fnDraw();  });        		
                 
@@ -254,7 +254,7 @@ $(document).ready(function() {
     	var categoryId = $(this).find('li').attr('categoryId');
     	var nodeElement = $(this);
     	nodeElement.unbind('click');
-    	$.get('/yh/product/searchNodeCategory', {categoryId: categoryId, customerId: customerId}, function(data){
+    	$.get('/product/searchNodeCategory', {categoryId: categoryId, customerId: customerId}, function(data){
     		console.log(data);
     		if(data.length > 0){		
 	    		addNode(data, nodeElement);
@@ -283,7 +283,7 @@ $(document).ready(function() {
     	var customerId = $('#customerId').val();
     	var categoryId = $(this).attr('categoryId');
     	var nodeElement = $(this);
-    	$.get('/yh/product/searchNodeCategory', {categoryId: categoryId, customerId: customerId}, function(data){
+    	$.get('/product/searchNodeCategory', {categoryId: categoryId, customerId: customerId}, function(data){
     		if(data.length > 0){
 	    		console.log(data);
 	    		addNode(data, nodeElement);
@@ -297,21 +297,21 @@ $(document).ready(function() {
     	*/
     	if($("#displayDiv").attr('style') != ""){
     		$("#displayDiv").show();
-    		productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+categoryId;
+    		productDataTable.fnSettings().sAjaxSource = "/product/list?categoryId="+categoryId;
         	productDataTable.fnDraw();
     	}else{
-    		productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+categoryId;
+    		productDataTable.fnSettings().sAjaxSource = "/product/list?categoryId="+categoryId;
         	productDataTable.fnDraw();
     	} 
     });
 	
     // 保存产品
     $("#productFormBtn").click(function(){
-    	$.post('/yh/product/save', $("#productForm").serialize(), function(data){    
+    	$.post('/product/save', $("#productForm").serialize(), function(data){    
     		//保存成功后，刷新列表
             console.log(data);
             if(data.ID>0){
-            	productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+$("#categoryId").val();
+            	productDataTable.fnSettings().sAjaxSource = "/product/list?categoryId="+$("#categoryId").val();
                 productDataTable.fnDraw();
             }else{
                 alert('数据保存失败。');
@@ -324,7 +324,7 @@ $(document).ready(function() {
     var searchAllCategory=function(){
     	var customerId = $('#customerId').val();
         if(customerId > 0){
-        	$.get('/yh/product/searchAllCategory', {customerId:customerId}, function(data){
+        	$.get('/product/searchAllCategory', {customerId:customerId}, function(data){
     			console.log(data);	
     			var productTreeUl = $("#productTreeUl");
     			productTreeUl.empty();
@@ -359,7 +359,7 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.editProduct', function(e){
     	var productId = $(this).attr('id');
 		$("#productId").val(productId);	
-		$.post('/yh/product/getProduct', {productId:productId}, function(data){
+		$.post('/product/getProduct', {productId:productId}, function(data){
   	    	// 编辑时回显数据
 			$("#hiddenProductId").val(data.ID);
 			$("#categoryId").val(data.CATEGORY_ID);	    	
@@ -381,7 +381,7 @@ $(document).ready(function() {
     // 删除产品
     $("#eeda-table").on('click', '.deleteProduct', function(e){
     	var productId = $(this).attr('id');	
-    	$.post('/yh/product/delete', {productId:productId}, function(data){ 	
+    	$.post('/product/delete', {productId:productId}, function(data){ 	
 		},'json');
     	refreshProductTable();
     });
@@ -395,7 +395,7 @@ $(document).ready(function() {
     		var categoryId = node.ID;
     		var customerId = sNodes[0].customerId;
     	}*/
-    	$.get('/yh/product/findCategory', {categoryId:$("#categoryId").val()}, function(data){
+    	$.get('/product/findCategory', {categoryId:$("#categoryId").val()}, function(data){
 	   		if(data.ID > 0){
 		   		$("#categorySelect").val(data.NAME);
 	   		}
@@ -405,7 +405,7 @@ $(document).ready(function() {
     // 新增产品
     $('#editProduct').on('click', function() { 
     	var categoryId = $("#categoryId").val();
- 		$.post('/yh/product/addNewRow', {categoryId:categoryId}, function(data){
+ 		$.post('/product/addNewRow', {categoryId:categoryId}, function(data){
  			productDataTable.fnDraw(); 
  		});
 
@@ -435,7 +435,7 @@ $(document).ready(function() {
             },
             async: {
                 enable: true,
-                url:"/yh/product/searchNodeCategory",
+                url:"/product/searchNodeCategory",
                 autoParam:["categoryId", "customerId", "level=lv"],
                 otherParam:{"otherParam":"zTreeAsyncTest"},
                 dataFilter: filter
@@ -482,7 +482,7 @@ $(document).ready(function() {
             var pNode = treeNode.getParentNode();
             pNode.isParent = true;
             var zTree = $.fn.zTree.getZTreeObj("categoryTree");
-            $.post('/yh/product/deleteCategory', {categoryId: treeNode.categoryId}, function(data){                
+            $.post('/product/deleteCategory', {categoryId: treeNode.categoryId}, function(data){                
                 zTree.reAsyncChildNodes(pNode, "refresh");
                 
                 zTree.selectNode(pNode,false);
@@ -505,7 +505,7 @@ $(document).ready(function() {
         }
         function onRename(e, treeId, treeNode, isCancel) {
             showLog((isCancel ? "<span style='color:red'>":"") + "[ "+getTime()+" onRename ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name + (isCancel ? "</span>":""));
-            $.post('/yh/product/saveCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:treeNode.name}, function(data){            
+            $.post('/product/saveCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:treeNode.name}, function(data){            
                 
             },'json');
         }
@@ -517,7 +517,7 @@ $(document).ready(function() {
             var subNodes=[];
             $.ajax({  
                   type : "post",  
-                  url : "/yh/product/searchNodeCategory",  
+                  url : "/product/searchNodeCategory",  
                   data : {categoryId: treeNode.categoryId, customerId: treeNode.customerId},  
                   async : false,  
                   success : function(data){  
@@ -553,7 +553,7 @@ $(document).ready(function() {
                 var nodeName = "新类别" + (newCount++);                
                
                 // 7-5 使用异步会导致树节点添加两次， 因为自己手动加了一个，ztree自己异步自动又加了一个
-                $.post('/yh/product/addCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:nodeName}, function(data){
+                $.post('/product/addCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:nodeName}, function(data){
                     if ((!treeNode && event.target.tagName.toLowerCase() != "button" && $(event.target).parents("a").length == 0) || treeNode.zAsync) 
                         zTree.addNodes(treeNode, {id:data.ID, categoryId: data.ID, customerId: treeNode.customerId, isParent:true, name:nodeName});
                     else
@@ -583,7 +583,7 @@ $(document).ready(function() {
         	}
             $("#categoryId").val(treeNode.categoryId);
             $("#hiddenCategoryId").val(treeNode.categoryId);
-            productDataTable.fnSettings().sAjaxSource = "/yh/product/list?categoryId="+treeNode.categoryId;
+            productDataTable.fnSettings().sAjaxSource = "/product/list?categoryId="+treeNode.categoryId;
             productDataTable.fnDraw();
         }
 

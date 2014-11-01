@@ -7,7 +7,7 @@ $(document).ready(function() {
 	    element : $.editable.types.text.element,
 	    plugin: function (settings, original) {
 	      $('input', this).autocomplete({
-	        //source: "/yh/transferOrderItem/transferOrderItemList?order_id="+order_id
+	        //source: "/transferOrderItem/transferOrderItemList?order_id="+order_id
 	        source: [ "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby" ]
 	      });
 	    }
@@ -339,7 +339,7 @@ $(document).ready(function() {
 				  	itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;
 				  	itemDataTable.fnDraw(); 
 			        
-			        //location.href = "/yh/transferOrder";               
+			        //location.href = "/transferOrder";               
 				}else{
 					alert('数据保存失败。');
 				}
@@ -367,7 +367,7 @@ $(document).ready(function() {
 				  	itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;
 				  	itemDataTable.fnDraw();
 			        
-			        //location.href = "/yh/transferOrder";                
+			        //location.href = "/transferOrder";                
 				}else{
 					alert('数据保存失败。');
 				}
@@ -1172,7 +1172,7 @@ $(document).ready(function() {
 	});	
 	
     /*detailDataTable.makeEditable({
-    	sUpdateURL: '/yh/transferOrderItemDetail/saveTransferOrderItemDetailByField',    	
+    	sUpdateURL: '/transferOrderItemDetail/saveTransferOrderItemDetailByField',    	
     	oEditableSettings: {event: 'click'},
     	"aoColumns": [  			            
             {            

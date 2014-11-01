@@ -34,7 +34,7 @@ $(document).ready(function() {
     //获取全国省份
     $(function(){
      	var province = $("#mbProvince");
-     	$.post('/yh/serviceProvider/province',function(data){
+     	$.post('/serviceProvider/province',function(data){
      		province.append("<option>--请选择省份--</option>");
 				var hideProvince = $("#hideProvince").val();
      		for(var i = 0; i < data.length; i++)
@@ -54,7 +54,7 @@ $(document).ready(function() {
      $('#mbProvince').on('change', function(){
      	//var inputStr = $(this).parent("option").attr('id'); 
 			var inputStr = $(this).val();
-			$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+			$.get('/serviceProvider/city', {id:inputStr}, function(data){
 				var cmbCity =$("#cmbCity");
 				cmbCity.empty();
 				cmbCity.append("<option>--请选择城市--</option>");
@@ -70,7 +70,7 @@ $(document).ready(function() {
      	//var inputStr = $(this).parent("option").attr('id'); 
 			var inputStr = $(this).val();
 		var code = $("#location").val(inputStr);
-			$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+			$.get('/serviceProvider/area', {id:inputStr}, function(data){
 				var cmbArea =$("#cmbArea");
 				cmbArea.empty();
 				cmbArea.append("<option>--请选择区(县)--</option>");
@@ -90,7 +90,7 @@ $(document).ready(function() {
 
      // 回显城市
 		var hideProvince = $("#hideProvince").val();
-     $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+     $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
 			if(data.length > 0){
 				var cmbCity =$("#cmbCity");
 				cmbCity.empty();
@@ -109,7 +109,7 @@ $(document).ready(function() {
 
      // 回显区
      var hideCity = $("#hideCity").val();
-     $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+     $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
 			if(data.length > 0){
 				var cmbArea =$("#cmbArea");
 				cmbArea.empty();
@@ -127,7 +127,7 @@ $(document).ready(function() {
 		},'json');
      
 	// 获取所有城市
-     $.post('/yh/transferOrder/searchAllOffice',function(data){
+     $.post('/transferOrder/searchAllOffice',function(data){
 		 if(data.length > 0){
 			 var officeSelect = $("#officeSelect");
 			 officeSelect.empty();
@@ -152,7 +152,7 @@ $(document).ready(function() {
 			pageSpAddress.empty();
 			$('#sp_id').val($(this).attr(''));
 		}
-		$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
 			console.log(data);
 			var spList =$("#spList");
 			spList.empty();

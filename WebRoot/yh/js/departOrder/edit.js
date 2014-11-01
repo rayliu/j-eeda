@@ -26,11 +26,19 @@
 			if(departOrderChargeType == $(this).val()){
 				//零担
 				if(departOrderChargeType == "perCargo"){
+					//隐藏车辆信息
+					$("#carInfomation").hide();
+					
 					$(this).prop('checked', true);
 					$("#ltl_price_type").show();
 					var hibLtlUnitType = $("#hibLtlUnitType").val();
 					$("input[value='"+hibLtlUnitType+"']").prop('checked', true);
-    			}else{
+				}else{
+    				if(departOrderChargeType=="perUnit"){
+    					$("#carInfomation").hide();
+    				}else{
+    					$("#carInfomation").show();
+    				}
     				$(this).prop('checked', true);
     			}
 			}
@@ -38,20 +46,29 @@
 	}else{
 		var transferOrderChargeType = $("#transferOrderChargeType").val();
 		$("input[name='chargeType']").each(function(){
+			
 			if(transferOrderChargeType == $(this).val()){
 				//零担
 				if(transferOrderChargeType == "perCargo"){
+					$("#carInfomation").hide();
 					$(this).prop('checked', true);
 					$("#ltl_price_type").show();
 					$("#optionsRadiosIn1").prop('checked', true);
+					//隐藏车辆信息
+								
     			}else{
+    				if(transferOrderChargeType=="perUnit"){
+    					$("#carInfomation").hide();
+    				}else{
+    					$("#carInfomation").show();
+    				}
+    				
     				$(this).prop('checked', true);
     			}
 			}
 		});
 	}
-    
-    
+   
     
     if(departOrderStatus=='新建'){
         $("#order_edit").attr("disabled",true);
@@ -78,17 +95,27 @@
      }
      
      $("input[name='chargeType']").click(function(){
+    	 //等于零担的时候
         if($('input[name="chargeType"]:checked').val()==='perCargo'){
             $('#ltl_price_type').show();
+            $("#carInfomation").hide();
         }else{
             $('#ltl_price_type').hide();
+            //计费方式为计件的时候
+            if($('input[name="chargeType"]:checked').val()==='perUnit'){
+            	$("#carInfomation").hide();
+            }else{
+            	$("#carInfomation").show();
+            }
         }
      });
 
+ 
+     
      // 列出所有的司机
    	 $('#driverMessage').on('keyup click', function(){
         var inputStr = $('#driverMessage').val();
-        $.get('/yh/transferOrder/searchAllDriver', {input:inputStr}, function(data){
+        $.get('/transferOrder/searchAllDriver', {input:inputStr}, function(data){
         	console.log(data);
         	var driverList = $("#driverList");
         	driverList.empty();
@@ -121,7 +148,7 @@
    // 列出所有的车辆
    	$('#carNoMessage').on('keyup click', function(){
    	var inputStr = $('#carNoMessage').val();
-   	$.get('/yh/transferOrder/searchAllCarInfo', {input:inputStr}, function(data){
+   	$.get('/transferOrder/searchAllCarInfo', {input:inputStr}, function(data){
    		console.log(data);
    		var carNoList = $("#carNoList");
    		carNoList.empty();
@@ -178,7 +205,7 @@
     	 "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
+        "sAjaxSource": "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
         "aoColumns": [
             { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
             { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
@@ -219,7 +246,7 @@
     		$("#item_id").val(itemId);
     		$("#item_save").attr("disabled", false);
     		$("#style").hide();
-    		detailTable.fnSettings().sAjaxSource = "/yh/departOrder/findAllItemDetail?item_id="+itemId+"&departId="+$("#departOrderId").val();
+    		detailTable.fnSettings().sAjaxSource = "/departOrder/findAllItemDetail?item_id="+itemId+"&departId="+$("#departOrderId").val();
     		detailTable.fnDraw();  			
     	});
     	
@@ -240,7 +267,7 @@
     	     	 "oLanguage": {
     	             "sUrl": "/eeda/dataTables.ch.txt"
     	         },
-    	         "sAjaxSource": "/yh/departOrder/itemDetailList?item_id="+item_id+"",
+    	         "sAjaxSource": "/departOrder/itemDetailList?item_id="+item_id+"",
     	       
     	         "aoColumns": [
     	              { "mDataProp": null,
@@ -261,7 +288,7 @@
     	    //获取全国省份
     	    $(function(){
     	     	var province = $("#mbProvince");
-    	     	$.post('/yh/serviceProvider/province',function(data){
+    	     	$.post('/serviceProvider/province',function(data){
     	     		province.append("<option>--请选择省份--</option>");
     					var hideProvince = $("#hideProvince").val();
     	     		for(var i = 0; i < data.length; i++)
@@ -282,7 +309,7 @@
     	     $('#mbProvince').on('change', function(){
     	     	//var inputStr = $(this).parent("option").attr('id'); 
     				var inputStr = $(this).val();
-    				$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+    				$.get('/serviceProvider/city', {id:inputStr}, function(data){
     					var cmbCity =$("#cmbCity");
     					cmbCity.empty();
     					cmbCity.append("<option>--请选择城市--</option>");
@@ -298,7 +325,7 @@
     	     	//var inputStr = $(this).parent("option").attr('id'); 
     				var inputStr = $(this).val();
     				var code = $("#notify_location").val(inputStr);
-    				$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+    				$.get('/serviceProvider/area', {id:inputStr}, function(data){
     					var cmbArea =$("#cmbArea");
     					cmbArea.empty();
     					cmbArea.append("<option>--请选择区(县)--</option>");
@@ -318,7 +345,7 @@
 
     	     // 回显城市
     	     var hideProvince = $("#hideProvince").val();
-    	     $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+    	     $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
     				if(data.length > 0){
     					var cmbCity =$("#cmbCity");
     					cmbCity.empty();
@@ -337,7 +364,7 @@
 
     	     // 回显区
     	     var hideCity = $("#hideCity").val();
-    	     $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+    	     $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
     				if(data.length > 0){
     					var cmbArea =$("#cmbArea");
     					cmbArea.empty();
@@ -357,7 +384,7 @@
     	    //获取全国省份
     	    $(function(){
     	     	var province = $("#mbProvinceFrom");
-    	     	$.post('/yh/serviceProvider/province',function(data){
+    	     	$.post('/serviceProvider/province',function(data){
     	     		province.append("<option>--请选择省份--</option>");
     					var hideProvince = $("#hideProvinceFrom").val();
     	     		for(var i = 0; i < data.length; i++)
@@ -375,7 +402,7 @@
     	    //获取省份的城市
     	    $('#mbProvinceFrom').on('change', function(){
     				var inputStr = $(this).val();
-    				$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+    				$.get('/serviceProvider/city', {id:inputStr}, function(data){
     					var cmbCity =$("#cmbCityFrom");
     					cmbCity.empty();
     					cmbCity.append("<option>--请选择城市--</option>");
@@ -390,7 +417,7 @@
     	    $('#cmbCityFrom').on('change', function(){
     				var inputStr = $(this).val();
     				var code = $("#locationForm").val(inputStr);
-    				$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+    				$.get('/serviceProvider/area', {id:inputStr}, function(data){
     					var cmbArea =$("#cmbAreaFrom");
     					cmbArea.empty();
     					cmbArea.append("<option>--请选择区(县)--</option>");
@@ -411,7 +438,7 @@
     	    //获取全国省份
     	    $(function(){
     	     	var province = $("#mbProvinceTo");
-    	     	$.post('/yh/serviceProvider/province',function(data){
+    	     	$.post('/serviceProvider/province',function(data){
     	     		province.append("<option>--请选择省份--</option>");
     					var hideProvince = $("#hideProvinceTo").val();
     	     		for(var i = 0; i < data.length; i++)
@@ -431,7 +458,7 @@
     	    //获取省份的城市
     	    $('#mbProvinceTo').on('change', function(){
     				var inputStr = $(this).val();
-    				$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+    				$.get('/serviceProvider/city', {id:inputStr}, function(data){
     					var cmbCity =$("#cmbCityTo");
     					cmbCity.empty();
     					cmbCity.append("<option>--请选择城市--</option>");
@@ -447,7 +474,7 @@
     	    $('#cmbCityTo').on('change', function(){
     				var inputStr = $(this).val();
     				var code = $("#locationTo").val(inputStr);
-    				$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+    				$.get('/serviceProvider/area', {id:inputStr}, function(data){
     					var cmbArea =$("#cmbAreaTo");
     					cmbArea.empty();
     					cmbArea.append("<option>--请选择区(县)--</option>");
@@ -467,7 +494,7 @@
 
     	    // 回显城市
     	    var hideProvince = $("#hideProvinceFrom").val();
-    	    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+    	    $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
     				if(data.length > 0){
     					var cmbCity =$("#cmbCityFrom");
     					cmbCity.empty();
@@ -486,7 +513,7 @@
 
     	    // 回显区
     	    var hideCity = $("#hideCityFrom").val();
-    	    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+    	    $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
     				if(data.length > 0){
     					var cmbArea =$("#cmbAreaFrom");
     					cmbArea.empty();
@@ -506,7 +533,7 @@
 
     	    // 回显城市
     	    var hideProvince = $("#hideProvinceTo").val();
-    	    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+    	    $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
     				if(data.length > 0){
     					var cmbCity =$("#cmbCityTo");
     					cmbCity.empty();
@@ -525,7 +552,7 @@
 
     	    // 回显区
     	    var hideCity = $("#hideCityTo").val();
-    	    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+    	    $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
     				if(data.length > 0){
     					var cmbArea =$("#cmbAreaTo");
     					cmbArea.empty();
@@ -556,7 +583,7 @@
         	    	}
     	    	}
 	
-    			$.post('/yh/departOrder/transferOrderMilestoneList',{departOrderId:$("#departOrderId").val()},function(data){
+    			$.post('/departOrder/transferOrderMilestoneList',{departOrderId:$("#departOrderId").val()},function(data){
     				var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     				transferOrderMilestoneTbody.empty();
     				for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
@@ -570,7 +597,7 @@
     	    
     	    // 保存新里程碑
     		$("#transferOrderMilestoneFormBtn").click(function(){
-    			$.post('/yh/departOrder/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
+    			$.post('/departOrder/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
     				var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
     			},'json');
@@ -578,8 +605,16 @@
     		});
     		
     	    var handlePickkupOrderDetail = function(){
+    	    	
+    	    	//如果计费方式为计件或者零担，此时车牌号，司机，电话为空
+    	    	if($('input[name="chargeType"]:checked').val()==='perCargo'||$('input[name="chargeType"]:checked').val()==='perUnit'){
+    	    		$("#carNoMessage").val("");
+    	    		$("#driverMessage").val("");
+    	    		$("#driver_phone").val("");
+    	    		$("#carinfoId").val("");
+    	    	}
     	    	// 保存单品
-    	    	$.post('/yh/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
+    	    	$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
     				$("#departOrderId").val(data.ID);
     				if(data.ID>0){
     					$("#departOrderId").val(data.ID);
@@ -624,8 +659,7 @@
     			e.preventDefault();	
     			//异步向后台提交数据
     	        saveDepartOrderFunction();
-    	    };    	       	    
-    	    /*--------------------------------------------------------------------*/
+    	    }; 
     	    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
     	        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
     	        'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
@@ -696,8 +730,8 @@
     	    	
 
     	    	var departOrderId = $("#departOrderId").val();
-    	    	$.post('/yh/transferOrderMilestone/departureConfirmation?departOrderId='+departOrderId, function(){
-    	    		paymenttable.fnSettings().sAjaxSource = "/yh/departOrder/accountPayable/"+$("#departOrderId").val();
+    	    	$.post('/transferOrderMilestone/departureConfirmation?departOrderId='+departOrderId, function(){
+    	    		paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
     	    		paymenttable.fnDraw(); 
     	    		$("#departOrderStatus").val('已发车');
     	    	});
@@ -705,9 +739,9 @@
     	    	$("#saveDepartOrderBtn").attr("disabled", true);
 
                 //计算应付
-                $.post('/yh/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
+                $.post('/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
                       //$("#warehousingConfirmBtn").attr("disabled",false);
-                      paymenttable.fnSettings().sAjaxSource = "/yh/departOrder/accountPayable/"+$("#departOrderId").val();
+                      paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
                       
                       paymenttable.fnDraw(); 
                       $("#departOrderStatus").val('已发车');
@@ -716,7 +750,7 @@
 
     	    /*$("#warehousingConfirmBtn").click(function(e){
     	    	$(this).attr("disabled",true);
-    	    	$.post('/yh/departOrder/updatestate?order_state='+"已入库", $("#orderForm").serialize(), function(data){
+    	    	$.post('/departOrder/updatestate?order_state='+"已入库", $("#orderForm").serialize(), function(data){
     	    		if(data.amount>0){
     	    			alert("有"+data.amount+"个货品没入库,可以到产品中维护信息！");
     	    		}                    
@@ -726,13 +760,13 @@
     	    	$(this).attr("disabled",true);
     	    	$("#order_hd").attr("disabled",false);
     	    	 $("#edit_status").attr("disabled",true);
-    	    	$.post('/yh/departOrder/updatestate?order_state='+"已签收", $("#orderForm").serialize(), function(){
+    	    	$.post('/departOrder/updatestate?order_state='+"已签收", $("#orderForm").serialize(), function(){
     	    	
     	    	});
     	    });
     	    $("#order_hd").click(function(e){
     	    	$(this).attr("disabled",true);
-    	    	$.post('/yh/departOrder/CreatReturnOrder?order_id=', $("#orderForm").serialize(), function(data){
+    	    	$.post('/departOrder/CreatReturnOrder?order_id=', $("#orderForm").serialize(), function(data){
         	    	if(data==true){
         	    		alert("已生成回单！");
         	    	}else{
@@ -750,7 +784,7 @@
     				pageSpAddress.empty();
     				$('#sp_id').val($(this).attr(''));
     			}
-    			$.get('/yh/transferOrder/searchSp', {input:inputStr}, function(data){
+    			$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
     				console.log(data);
     				var spList =$("#spList");
     				spList.empty();
@@ -826,13 +860,13 @@
     		//回显供应商
     		var sp_id=$("#sp_id").val();
     		if(sp_id!=""){
-    			$.get('/yh/departOrder/getIntsp', {sp_id:sp_id}, function(data){
+    			$.get('/departOrder/getIntsp', {sp_id:sp_id}, function(data){
     				console.log(data);
     				$('#spMessage').val(data.COMPANY_NAME);
     			},'json');
     		}
     		//会显收货人
-    		$.get('/yh/departOrder/ginNotifyPerson', {order_id:message}, function(data){
+    		$.get('/departOrder/ginNotifyPerson', {order_id:message}, function(data){
 				console.log(data);
 				if(data.ADDRESS==null){
 					data.ADDRESS='';
@@ -903,7 +937,7 @@
     	        //"sPaginationType": "bootstrap",
     	        "iDisplayLength": 10,
     	        "bServerSide": true,
-    	        "sAjaxSource": "/yh/departOrder/accountPayable/"+depart_id,
+    	        "sAjaxSource": "/departOrder/accountPayable/"+depart_id,
     	    	"oLanguage": {
     	            "sUrl": "/eeda/dataTables.ch.txt"
     	        },
@@ -966,7 +1000,7 @@
     		 $("#table_fin2").on('click', '.finItemdel', function(e){
     			 var id = $(this).attr('code');
     			  e.preventDefault();
-    			$.post('/yh/pickupOrder/finItemdel/'+id,function(data){
+    			$.post('/pickupOrder/finItemdel/'+id,function(data){
     	               //保存成功后，刷新列表
     	               console.log(data);
     	               paymenttable.fnDraw();
@@ -976,10 +1010,10 @@
     		//应付
     		$("#addrow").click(function(){	
     			var departId=$("#depart_id").val();
-    			$.post('/yh/departOrder/addNewRow/'+departId,function(data){
+    			$.post('/departOrder/addNewRow/'+departId,function(data){
     				console.log(data);
     				if(data[0] != null){
-    					paymenttable.fnSettings().sAjaxSource = "/yh/departOrder/accountPayable/"+departId;
+    					paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+departId;
     					paymenttable.fnDraw();
     				}else{
     					alert("请到基础模块维护应付条目！");
@@ -993,7 +1027,7 @@
     			var paymentId = $(this).parent().parent().attr("id");
     			var name = $(this).attr("name");
     			var value = $(this).val();
-    			$.post('/yh/departOrder/updateDepartOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+    			$.post('/departOrder/updateDepartOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
     				if(data.success){
     				}else{
     					alert("修改失败!");

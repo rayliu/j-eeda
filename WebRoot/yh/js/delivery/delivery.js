@@ -16,7 +16,7 @@ $(document).ready(function() {
 		  // 获取供应商的list，选中信息在下方展示其他信息
 			$('#spMessage').on('keyup click', function(){
 				var inputStr = $('#spMessage').val();
-				$.get('/yh/delivery/searchSp', {input:inputStr}, function(data){
+				$.get('/delivery/searchSp', {input:inputStr}, function(data){
 					console.log(data);
 					var spList =$("#spList");
 					spList.empty();
@@ -64,9 +64,9 @@ $(document).ready(function() {
 			var aa =$("#transferstatus").val();
 			
 			if(localArr!=""){
-				sAjaxSource ="/yh/delivery/orderList?localArr="+localArr+"&localArr2="+localArr2+"&localArr3="+localArr3+"&aa="+aa;
+				sAjaxSource ="/delivery/orderList?localArr="+localArr+"&localArr2="+localArr2+"&localArr3="+localArr3+"&aa="+aa;
 			}else{
-				sAjaxSource ="/yh/delivery/orderList?localArr="+trandferOrderId+"&aa="+aa;
+				sAjaxSource ="/delivery/orderList?localArr="+trandferOrderId+"&aa="+aa;
 			}
 			// var ser = $("#ser_no").val();
 			
@@ -106,7 +106,7 @@ $(document).ready(function() {
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
-		        "sAjaxSource": "/yh/delivery/orderList2?localArr="+localArr+"&localArr2="+localArr2,
+		        "sAjaxSource": "/delivery/orderList2?localArr="+localArr+"&localArr2="+localArr2,
 		        "aoColumns": [
 					
 		            {"mDataProp":"ITEM_NO"},  
@@ -155,7 +155,7 @@ $(document).ready(function() {
 					}*/
 		            
 		            // 异步向后台提交数据
-		            $.post('/yh/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
+		            $.post('/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
 		                console.log(data);
 	                    if(data.ID>0){
 	                    	$("#delivery_id").val(data.ID);
@@ -188,7 +188,7 @@ $(document).ready(function() {
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
-		        "sAjaxSource": "/yh/delivery/searchTransfer",
+		        "sAjaxSource": "/delivery/searchTransfer",
 		        "aoColumns": [ 
 		        			{ "mDataProp": null,
 							    "fnRender": function(obj) {
@@ -218,12 +218,12 @@ $(document).ready(function() {
 				  e.preventDefault();
 		         // 异步向后台提交数据
 				var transferNo= ($(this).attr('pcode'));
-				$.post('/yh/delivery/creat/'+id,function(id){
+				$.post('/delivery/creat/'+id,function(id){
 		                 // 保存成功后，刷新列表
 		                 console.log(id);
 		                 if(id>0){
-		                	 // dataTable2.fnSettings().sAjaxSource="/yh/delivery/orderList?trandferOrderId="+id;
-		                	 window.location.href="/yh/delivery/creat2?id="+id+"&localArr="+transferNo;
+		                	 // dataTable2.fnSettings().sAjaxSource="/delivery/orderList?trandferOrderId="+id;
+		                	 window.location.href="/delivery/creat2?id="+id+"&localArr="+transferNo;
 		                 }else{
 		                     alert('取消失败');
 		                 }
@@ -244,7 +244,7 @@ $(document).ready(function() {
 			    	"oLanguage": {
 			            "sUrl": "/eeda/dataTables.ch.txt"
 			        },
-			        "sAjaxSource": "/yh/delivery/searchTransferByATM",
+			        "sAjaxSource": "/delivery/searchTransferByATM",
 			        "aoColumns": [
 						{ "mDataProp": null,
 						    "fnRender": function(obj) {
@@ -426,11 +426,11 @@ $(document).ready(function() {
 					var locationTo = $("#locationTo").val();
 					var delivery_id = $("#delivery_id").val();
 					var priceType = $("input[name='priceType']:checked").val();
-					$.post('/yh/deliveryOrderMilestone/departureConfirmation',{delivery_id:delivery_id,code:code,locationTo:locationTo,priceType:priceType},function(data){
+					$.post('/deliveryOrderMilestone/departureConfirmation',{delivery_id:delivery_id,code:code,locationTo:locationTo,priceType:priceType},function(data){
 						var MilestoneTbody = $("#transferOrderMilestoneTbody");
 						MilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 
-						paymenttable.fnSettings().sAjaxSource="/yh/deliveryOrderMilestone/accountPayable/"+delivery_id;
+						paymenttable.fnSettings().sAjaxSource="/deliveryOrderMilestone/accountPayable/"+delivery_id;
 						paymenttable.fnDraw();
 					},'json');
 					$("#ConfirmationBtn").attr("disabled", true);
@@ -455,7 +455,7 @@ $(document).ready(function() {
 				$('#customerName2').on('keyup click', function(){
 			           var inputStr = $('#customerName2').val();
   
-			           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+			           $.get("/customerContract/search", {locationName:inputStr}, function(data){
 			               console.log(data);
 			               var companyList =$("#companyList");
 			               companyList.empty();
@@ -481,7 +481,7 @@ $(document).ready(function() {
 			           var deliveryOrderNo = $("#deliveryOrderNo2").val();
 			           //如果客户和仓库都有值，触发查询
 			           if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""){
-				            dab.fnSettings().sAjaxSource ="/yh/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
+				            dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
 				        	+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
 				        	dab.fnDraw();
 			           }
@@ -505,7 +505,7 @@ $(document).ready(function() {
 			       $('#customerName1').on('keyup click', function(){
 			           var inputStr = $('#customerName1').val();
   
-			           $.get("/yh/customerContract/search", {locationName:inputStr}, function(data){
+			           $.get("/customerContract/search", {locationName:inputStr}, function(data){
 			               console.log(data);
 			               var companyList =$("#companyList1");
 			               companyList.empty();
@@ -528,10 +528,10 @@ $(document).ready(function() {
 			           	var customerName1 = $("#customerName1").val();
 				      	var warehouse1 = $("#warehouse1").val();
 				      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
-				      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
+				      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
 					      	dab2.fnDraw();
 				      	}else{
-				      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer";
+				      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer";
 					      	dab2.fnDraw();
 				      	}
 			       });
@@ -551,7 +551,7 @@ $(document).ready(function() {
 			     //选择仓库 
 				  	 $('#warehouse1').on('keyup click', function(){
 				  		var warehouse_Name =$("#warehouse1").val();
-				  		$.get('/yh/gateIn/searchAllwarehouse',{warehouseName:warehouse_Name}, function(data){
+				  		$.get('/gateIn/searchAllwarehouse',{warehouseName:warehouse_Name}, function(data){
 				  			console.log(data);
 				  			var warehouseList =$("#warehouseList1");
 				  			warehouseList.empty();
@@ -584,10 +584,10 @@ $(document).ready(function() {
 				  		var customerName1 = $("#customerName1").val();
 				      	var warehouse1 = $("#warehouse1").val();
 				      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
-				      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
+				      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
 					      	dab2.fnDraw();
 				      	}else{
-				      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer";
+				      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer";
 					      	dab2.fnDraw();
 				      	}
 				      	$('#warehouseList1').hide();
@@ -595,7 +595,7 @@ $(document).ready(function() {
 			     //选择仓库 
 			  	 $('#warehouse2').on('keyup click', function(){
 			  		var warehouse_Name =$("#warehouse2").val();
-			  		$.get('/yh/gateIn/searchAllwarehouse',{warehouseName:warehouse_Name}, function(data){
+			  		$.get('/gateIn/searchAllwarehouse',{warehouseName:warehouse_Name}, function(data){
 			  			console.log(data);
 			  			var warehouseList =$("#warehouseList");
 			  			warehouseList.empty();
@@ -630,7 +630,7 @@ $(document).ready(function() {
 		            var deliveryOrderNo = $("#deliveryOrderNo2").val();
 		           //如果客户和仓库都有值，触发查询
 		            if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""){
-		            	dab.fnSettings().sAjaxSource ="/yh/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
+		            	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
 		        		+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
 		        		dab.fnDraw();
 		            }
@@ -645,11 +645,11 @@ $(document).ready(function() {
 		            var deliveryOrderNo = $("#deliveryOrderNo2").val();
 		           //如果客户和仓库都有值，触发查询
 		            if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""){
-		            	dab.fnSettings().sAjaxSource ="/yh/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
+		            	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
 		        		+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
 		        		dab.fnDraw();
 		            }else{
-		            	dab.fnSettings().sAjaxSource ="/yh/delivery/searchTransferByATM?"
+		            	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"
 		        		+"code="+code+"&deliveryOrderNo="+deliveryOrderNo;
 		        		dab.fnDraw();
 		            }
@@ -692,7 +692,7 @@ $(document).ready(function() {
 					 */
 			        
 			        if($("#delivery_id").val() == ""){
-				    	$.post('/yh/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+				    	$.post('/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
 							$("#transfer_order_id").val(transferOrder.ID);
 							$("#update_transfer_order_id").val(transferOrder.ID);
 							$("#order_id").val(transferOrder.ID);
@@ -708,7 +708,7 @@ $(document).ready(function() {
 							  	// $("#style").show();
 							  	
 							  	var order_id = $("#order_id").val();
-								$.post('/yh/deliveryOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
+								$.post('/deliveryOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
 									var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 									transferOrderMilestoneTbody.empty();
 									for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
@@ -725,7 +725,7 @@ $(document).ready(function() {
 			        }else{
 					  	var delivery_id = $("#delivery_id").val(); 
 					  	$("#transfer_milestone_delivery_id").val(delivery_id); 
-						$.post('/yh/deliveryOrderMilestone/transferOrderMilestoneList',{delivery_id:delivery_id},function(data){
+						$.post('/deliveryOrderMilestone/transferOrderMilestoneList',{delivery_id:delivery_id},function(data){
 							var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 							transferOrderMilestoneTbody.empty();
 							for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
@@ -740,7 +740,7 @@ $(document).ready(function() {
 			
 				// 保存新里程碑
 				$("#deliveryOrderMilestoneFormBtn").click(function(){
-					$.post('/yh/deliveryOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
+					$.post('/deliveryOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 						var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 						transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 					},'json');
@@ -751,7 +751,7 @@ $(document).ready(function() {
 				// 回单签收
 				$("#receiptBtn").click(function(){
 					var delivery_id = $("#delivery_id").val();
-					$.post('/yh/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
+					$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
 						var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 						transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 					},'json');
@@ -768,10 +768,10 @@ $(document).ready(function() {
 			      	var customerName1 = $("#customerName1").val();
 			      	var warehouse1 = $("#warehouse1").val();
 			      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
-			      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
+			      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
 				      	dab2.fnDraw();
 			      	}else{
-			      		dab2.fnSettings().sAjaxSource = "/yh/delivery/searchTransfer";
+			      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer";
 				      	dab2.fnDraw();
 			      	}
 			      });
@@ -823,7 +823,7 @@ $(document).ready(function() {
 				 * center'p>>", "bFilter": false, //不需要默认的搜索框
 				 * //"sPaginationType": "bootstrap", "iDisplayLength": 10,
 				 * "bServerSide": true,
-				 * "sAjaxSource":"/yh/deliveryOrderMilestone/accountReceivable/"+deliveryid,
+				 * "sAjaxSource":"/deliveryOrderMilestone/accountReceivable/"+deliveryid,
 				 * "oLanguage": { "sUrl": "/eeda/dataTables.ch.txt" },
 				 * "fnRowCallback": function( nRow, aData, iDisplayIndex,
 				 * iDisplayIndexFull ) { $(nRow).attr('id', aData.ID); return
@@ -845,7 +845,7 @@ $(document).ready(function() {
 			        // "sPaginationType": "bootstrap",
 			        "iDisplayLength": 10,
 			        "bServerSide": true,
-			        "sAjaxSource": "/yh/deliveryOrderMilestone/accountPayable/"+deliveryid,
+			        "sAjaxSource": "/deliveryOrderMilestone/accountPayable/"+deliveryid,
 			    	"oLanguage": {
 			            "sUrl": "/eeda/dataTables.ch.txt"
 			        },
@@ -919,7 +919,7 @@ $(document).ready(function() {
 		/*
 		 * //应收 $("#item_fin_save").click(function(){ var deliveryid
 		 * =$("#delivery_id").val();
-		 * $.post('/yh/deliveryOrderMilestone/receiptSave/'+deliveryid,
+		 * $.post('/deliveryOrderMilestone/receiptSave/'+deliveryid,
 		 * $("#fin_form").serialize(), function(data){ console.log(data);
 		 * if(data.success){ //receipttable.fnDraw();
 		 * $('#fin_item').modal('hide'); $('#resetbutton').click(); }else{ }
@@ -929,10 +929,10 @@ $(document).ready(function() {
 		// 应付
 		$("#addrow").click(function(){	
 			var deliveryid =$("#delivery_id").val();
-			$.post('/yh/deliveryOrderMilestone/addNewRow/'+deliveryid,function(data){
+			$.post('/deliveryOrderMilestone/addNewRow/'+deliveryid,function(data){
 				console.log(data);
 				if(data[0] != null){
-					paymenttable.fnSettings().sAjaxSource = "/yh/deliveryOrderMilestone/accountPayable/"+deliveryid;
+					paymenttable.fnSettings().sAjaxSource = "/deliveryOrderMilestone/accountPayable/"+deliveryid;
 					paymenttable.fnDraw();
 				}else{
 					alert("请到基础模块维护应付条目！");
@@ -945,7 +945,7 @@ $(document).ready(function() {
 			var paymentId = $(this).parent().parent().attr("id");
 			var name = $(this).attr("name");
 			var value = $(this).val();
-			$.post('/yh/deliveryOrderMilestone/updateDeliveryOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+			$.post('/deliveryOrderMilestone/updateDeliveryOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
 				if(data.success){
 				}else{
 					alert("修改失败!");
@@ -955,7 +955,7 @@ $(document).ready(function() {
 		/*
 		 * //应收 $("#addrow2").click(function(){ var deliveryid
 		 * =$("#delivery_id").val();
-		 * $.post('/yh/deliveryOrderMilestone/addNewRow2/'+deliveryid,function(data){
+		 * $.post('/deliveryOrderMilestone/addNewRow2/'+deliveryid,function(data){
 		 * console.log(data); if(data.success){ paymenttable.fnDraw();
 		 * //$('#fin_item2').modal('hide'); //$('#resetbutton2').click(); }else{ }
 		 * }); });
@@ -964,7 +964,7 @@ $(document).ready(function() {
 	    // 获取全国省份
 	    $(function(){
 	     	var province = $("#mbProvinceTo");
-	     	$.post('/yh/serviceProvider/province',function(data){
+	     	$.post('/serviceProvider/province',function(data){
 	     		province.append("<option>--请选择省份--</option>");
 					var hideProvince = $("#hideProvinceTo").val();
 	     		for(var i = 0; i < data.length; i++)
@@ -984,7 +984,7 @@ $(document).ready(function() {
 	    // 获取省份的城市
 	    $('#mbProvinceTo').on('change', function(){
 				var inputStr = $(this).val();
-				$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+				$.get('/serviceProvider/city', {id:inputStr}, function(data){
 					var cmbCity =$("#cmbCityTo");
 					cmbCity.empty();
 					cmbCity.append("<option>--请选择城市--</option>");
@@ -1000,7 +1000,7 @@ $(document).ready(function() {
 	    $('#cmbCityTo').on('change', function(){
 				var inputStr = $(this).val();
 				var code = $("#locationTo").val(inputStr);
-				$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+				$.get('/serviceProvider/area', {id:inputStr}, function(data){
 					var cmbArea =$("#cmbAreaTo");
 					cmbArea.empty();
 					cmbArea.append("<option>--请选择区(县)--</option>");
@@ -1019,7 +1019,7 @@ $(document).ready(function() {
 
 	    // 回显城市
 	    var hideProvince = $("#hideProvinceTo").val();
-	    $.get('/yh/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+	    $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
 				if(data.length > 0){
 					var cmbCity =$("#cmbCityTo");
 					cmbCity.empty();
@@ -1038,7 +1038,7 @@ $(document).ready(function() {
 
 	    // 回显区
 	    var hideCity = $("#hideCityTo").val();
-	    $.get('/yh/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+	    $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
 				if(data.length > 0){
 					var cmbArea =$("#cmbAreaTo");
 					cmbArea.empty();

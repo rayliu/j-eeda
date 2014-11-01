@@ -863,6 +863,8 @@ public class DepartOrderController extends Controller {
             }
             if (!"".equals(carinfoId) && carinfoId != null) {
                 dp.set("carinfo_id", carinfoId);
+            }else{
+            	dp.set("carinfo_id",null);
             }
             if (!"".equals(sp_id)) {
                 dp.set("sp_id", Integer.parseInt(sp_id));

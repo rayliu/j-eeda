@@ -22,7 +22,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/yh/carsummary/untreatedCarManageList",
+        "sAjaxSource": "/carsummary/untreatedCarManageList",
         "aoColumns": [ 
 			{ "mDataProp": null,"sWidth":"10px",
 				"fnRender": function(obj) {
@@ -37,7 +37,7 @@ $(document).ready(function() {
 			}, 
 			{"mDataProp":null,"sWidth":"120px",
 					"fnRender": function(obj) {
-					return "<a href='/yh/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+					return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
 				}
 			},
 			{"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
@@ -79,7 +79,7 @@ $(document).ready(function() {
 			  },
 	          {"mDataProp": null,
 				  "fnRender": function(obj) {
-          			return "<a href='/yh/carsummary/edit?carSummaryId="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+          			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
           	  }},  
 	          {"mDataProp":"PICKUP_NO", "sWidth":"120px"},
 	          {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"120px"},
@@ -156,7 +156,7 @@ $(document).ready(function() {
 	$("#chargeCheckOrderbasic").click(function(){
 		num = 1;
 		unDispose_table.fnSettings().oFeatures.bServerSide = true; 
-		unDispose_table.fnSettings().sAjaxSource = "/yh/carsummary/untreatedCarManageList";
+		unDispose_table.fnSettings().sAjaxSource = "/carsummary/untreatedCarManageList";
 		unDispose_table.fnDraw();
 	});
     
@@ -169,7 +169,7 @@ $(document).ready(function() {
 		var create_stamp = $("#create_stamp").val();
 		num = 1;
 		unDispose_table.fnSettings().oFeatures.bServerSide = true; 
-		unDispose_table.fnSettings().sAjaxSource = "/yh/carsummary/untreatedCarManageList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&create_stamp="+create_stamp;
+		unDispose_table.fnSettings().sAjaxSource = "/carsummary/untreatedCarManageList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&create_stamp="+create_stamp;
 		unDispose_table.fnDraw();
 	} );
     
@@ -243,7 +243,7 @@ $(document).ready(function() {
 		num2 = 1;
 		unDispose_table.fnSettings().oFeatures.bServerSide = false; 
 		travellingCraneReceipts_table.fnSettings().oFeatures.bServerSide = true; 
-		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/yh/carsummary/carSummaryOrderList";
+		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList";
 		travellingCraneReceipts_table.fnDraw();
 	});
 	//行车单查询各种搜索
@@ -255,7 +255,7 @@ $(document).ready(function() {
 		var order_no = $("#carSummary_pickup_order").val();
 		var start_data = $("#carSummary_start_data").val();
 		num2 = 1;
-		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/yh/carsummary/carSummaryOrderList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&order_no="+order_no+"&start_data="+start_data;
+		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&order_no="+order_no+"&start_data="+start_data;
 		travellingCraneReceipts_table.fnDraw();
 	} );
     

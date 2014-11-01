@@ -19,7 +19,7 @@ $(document).ready(function() {
 	        },
 	        "bProcessing": true,
 	        "bServerSide": true,
-	        "sAjaxSource": "/yh/spContract/routeEdit?routId="+contractId,
+	        "sAjaxSource": "/spContract/routeEdit?routId="+contractId,
 	        "aoColumns": [  
 				{"mDataProp":"PRICETYPE", "bVisible":false},
 				{"mDataProp":"ITEM_NAME"},   
@@ -72,7 +72,7 @@ $(document).ready(function() {
 		        },
 		        "bProcessing": true,
 		        "bServerSide": true,
-		        "sAjaxSource": "/yh/spContract/routeEdit2?routId="+contractId,
+		        "sAjaxSource": "/spContract/routeEdit2?routId="+contractId,
 		        "aoColumns": [  
 					{"mDataProp":"PRICETYPE", "bVisible":false},
 					{"mDataProp":"CARTYPE"},
@@ -126,7 +126,7 @@ $(document).ready(function() {
 		        },
 		        "bProcessing": true,
 		        "bServerSide": true,
-		        "sAjaxSource": "/yh/spContract/routeEdit3?routId="+contractId,
+		        "sAjaxSource": "/spContract/routeEdit3?routId="+contractId,
 		        "aoColumns": [  
 					{"mDataProp":"PRICETYPE", "bVisible":false},
 					{"mDataProp":"LTLUNITTYPE",
@@ -211,7 +211,7 @@ $(document).ready(function() {
 	     	 $("#cmbAreaTo").empty();
 			 var contractId = $("#routeContractId").val();
 			 var id = $(this).attr('code');
-			 $.post('/yh/customerContract/contractRouteEdit/'+id,{contractId:contractId},function(data){
+			 $.post('/customerContract/contractRouteEdit/'+id,{contractId:contractId},function(data){
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data[0] !=null){
@@ -249,7 +249,7 @@ $(document).ready(function() {
 	     	 $("#cmbAreaTo").empty();
 			 var contractId = $("#routeContractId").val();
 			 var id = $(this).attr('code');
-			 $.post('/yh/customerContract/contractRouteEdit/'+id,{contractId:contractId},function(data){
+			 $.post('/customerContract/contractRouteEdit/'+id,{contractId:contractId},function(data){
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data[0] !=null){
@@ -288,7 +288,7 @@ $(document).ready(function() {
 	     	 $("#cmbAreaTo").empty();
 			 var contractId = $("#routeContractId").val();
 			 var id = $(this).attr('code');
-			 $.post('/yh/customerContract/contractRouteEdit/'+id,{contractId:contractId},function(data){
+			 $.post('/customerContract/contractRouteEdit/'+id,{contractId:contractId},function(data){
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data[0] !=null){
@@ -334,7 +334,7 @@ $(document).ready(function() {
 		 //计件删除
 		 $("#dataTables-example").on('click', '.routeDelete', function(){
 			 var id = $(this).attr('code2');
-			 $.post('/yh/customerContract/routeDelete/'+id,function(data){
+			 $.post('/customerContract/routeDelete/'+id,function(data){
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data.success){
@@ -348,7 +348,7 @@ $(document).ready(function() {
 		 //整车删除
 		 $("#dataTables-example2").on('click', '.routeDelete', function(){
 			 var id = $(this).attr('code2');
-			 $.post('/yh/customerContract/routeDelete/'+id,function(data){
+			 $.post('/customerContract/routeDelete/'+id,function(data){
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data.success){
@@ -362,7 +362,7 @@ $(document).ready(function() {
 		 //零担删除
 		 $("#dataTables-example3").on('click', '.routeDelete', function(){
 			 var id = $(this).attr('code2');
-			 $.post('/yh/customerContract/routeDelete/'+id,function(data){
+			 $.post('/customerContract/routeDelete/'+id,function(data){
                  //保存成功后，刷新列表
                  console.log(data);
                  if(data.success){
@@ -456,7 +456,7 @@ $(document).ready(function() {
 			e.preventDefault();
 		});
 		var tijiao = function(locationtoid,datatable){
-			$.post('/yh/customerContract/routeAdd', $("#routeItemForm").serialize(), function(data){
+			$.post('/customerContract/routeAdd', $("#routeItemForm").serialize(), function(data){
                 //保存成功后，刷新列表
                 console.log(data);
                 if(data.success){
@@ -651,9 +651,9 @@ $(document).ready(function() {
 			var type2 = $("#type3").val();
 			 var urlSource;
 			if(type=='CUSTOMER'||type2=='CUSTOMER'){
-				urlSource ="/yh/customerContract/search";
+				urlSource ="/customerContract/search";
 			}else{
-				urlSource ="/yh/spContract/search2";
+				urlSource ="/spContract/search2";
 			}
 			$.get(urlSource, {locationName:inputStr}, function(data){
 				console.log(data);
@@ -704,16 +704,16 @@ $(document).ready(function() {
 	            if(!$("#customerForm").valid())
 	            	return;
 	            //异步向后台提交数据
-	            $.post('/yh/customerContract/save', $("#customerForm").serialize(), function(contractId){
+	            $.post('/customerContract/save', $("#customerForm").serialize(), function(contractId){
 	                    
 	                    if(contractId>0){
 	                        //alert("添加合同成功！");
 	                    	//$("#style").show();
 	                    	//已经有一个重复的contractId 在前面了
 	                    	$('#routeContractId').val(contractId);
-	                    	dataTable.fnSettings().sAjaxSource="/yh/spContract/routeEdit?routId="+contractId;
-	                    	dataTable2.fnSettings().sAjaxSource="/yh/spContract/routeEdit2?routId="+contractId;
-	                    	dataTable3.fnSettings().sAjaxSource="/yh/spContract/routeEdit3?routId="+contractId;
+	                    	dataTable.fnSettings().sAjaxSource="/spContract/routeEdit?routId="+contractId;
+	                    	dataTable2.fnSettings().sAjaxSource="/spContract/routeEdit2?routId="+contractId;
+	                    	dataTable3.fnSettings().sAjaxSource="/spContract/routeEdit3?routId="+contractId;
 	                    	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	                    }else{
 	                        alert('数据保存失败。');
@@ -727,7 +727,7 @@ $(document).ready(function() {
 		//选择出发地点
 		$('#fromName').on('keyup click', function(){
 			var inputStr = $('#fromName').val();
-			$.get('/yh/customerContract/searchlocation', {locationName:inputStr}, function(data){
+			$.get('/customerContract/searchlocation', {locationName:inputStr}, function(data){
 				console.log(data);
 				var fromLocationList =$("#fromLocationList");
 				fromLocationList.empty();
@@ -764,7 +764,7 @@ $(document).ready(function() {
         	 /*var inputStr = $('#fromName').val();
 			 var inputStr2 = $('#toName').val();
 			 if(inputStr!=''&&inputStr2!=''){
-				 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
+				 $.get('/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
 					 for(var i = 0; i < data.length; i++){
 						 	$('#routeItemId').val(data[i].RID);
 					 }
@@ -775,7 +775,7 @@ $(document).ready(function() {
 		//选择目的地点
 		$('#toName').on('keyup click', function(){
 			var inputStr = $('#toName').val();
-			$.get('/yh/customerContract/searchlocation', {locationName:inputStr}, function(data){
+			$.get('/customerContract/searchlocation', {locationName:inputStr}, function(data){
 				
 				var toLocationList =$("#toLocationList");
 				toLocationList.empty();
@@ -811,7 +811,7 @@ $(document).ready(function() {
         	/* var inputStr = $('#fromName').val();
 			 var inputStr2 = $('#toName').val();
 			 if(inputStr!=''&&inputStr2!=''){
-				 $.get('/yh/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
+				 $.get('/spContract/searchRoute', {fromName:inputStr,toName:inputStr2}, function(data){
 					 for(var i = 0; i < data.length; i++){
 						 	$('#routeId').val(data[i].RID);
 					 }
@@ -828,7 +828,7 @@ $(document).ready(function() {
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "/yh/delivery/deliveryList",
+	        "sAjaxSource": "/delivery/deliveryList",
 	        "aoColumns": [   
 	            
 	            {"mDataProp":"ORDER_NO"},
@@ -841,7 +841,7 @@ $(document).ready(function() {
 	                "mDataProp": null, 
 	                "sWidth": "8%",                
 	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-success ' href='/yh/transferOrder/edit/"+obj.aData.ID+"'>"+
+	                    return "<a class='btn btn-success ' href='/transferOrder/edit/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-edit fa-fw'></i>"+
 	                                "查看"+
 	                            "</a>"+
@@ -858,11 +858,11 @@ $(document).ready(function() {
 	    	var type= $("#type3").val();
 	    	var type2= $("#type2").val();
 	    	if(type=='CUSTOMER'||type2=='CUSTOMER'){
-	    		window.location.href="/yh/customerContract";
+	    		window.location.href="/customerContract";
 	    	}if(type=='SERVICE_PROVIDER'||type2=='SERVICE_PROVIDER'){
-	    		window.location.href="/yh/spContract";
+	    		window.location.href="/spContract";
 	    	}if(type=='DELIVERY_SERVICE_PROVIDER'||type2=='DELIVERY_SERVICE_PROVIDER'){
-	    		window.location.href="/yh/deliverySpContract";
+	    		window.location.href="/deliverySpContract";
 	    	}
 	    });
 
@@ -895,7 +895,7 @@ $(document).ready(function() {
 		$('#itemNameMessage').on('keyup click', function(){
 			var inputStr = $('#itemNameMessage').val();
 			var customerId = $('#partyid').val();
-			$.get('/yh/customerContract/searchItemName', {input:inputStr,customerId:customerId}, function(data){
+			$.get('/customerContract/searchItemName', {input:inputStr,customerId:customerId}, function(data){
 				console.log(data);
 				var itemNameList =$("#itemNameList");
 				itemNameList.empty();
@@ -964,7 +964,7 @@ $(document).ready(function() {
 	    //获取全国省份
 	    $(function(){
 	     	var province = $("#mbProvinceFrom");
-	     	$.post('/yh/serviceProvider/province',function(data){
+	     	$.post('/serviceProvider/province',function(data){
 	     		province.append("<option>--请选择省份--</option>");
 					var hideProvince = $("#hideProvinceFrom").val();
 	     		for(var i = 0; i < data.length; i++)
@@ -984,7 +984,7 @@ $(document).ready(function() {
 	    //获取省份的城市
 	    $('#mbProvinceFrom').on('change', function(){
 				var inputStr = $(this).val();
-				$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+				$.get('/serviceProvider/city', {id:inputStr}, function(data){
 					var cmbCity =$("#cmbCityFrom");
 					cmbCity.empty();
 					cmbCity.append("<option>--请选择城市--</option>");
@@ -999,7 +999,7 @@ $(document).ready(function() {
 	    $('#cmbCityFrom').on('change', function(){
 				var inputStr = $(this).val();
 				var code = $("#locationForm").val(inputStr);
-				$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+				$.get('/serviceProvider/area', {id:inputStr}, function(data){
 					var cmbArea =$("#cmbAreaFrom");
 					cmbArea.empty();
 					cmbArea.append("<option>--请选择区(县)--</option>");
@@ -1019,7 +1019,7 @@ $(document).ready(function() {
 	    //获取全国省份
 	    $(function(){
 	     	var province = $("#mbProvinceTo");
-	     	$.post('/yh/serviceProvider/province',function(data){
+	     	$.post('/serviceProvider/province',function(data){
 	     		province.append("<option>--请选择省份--</option>");
 				var hideProvince = $("#hideProvinceTo").val();
 	     		for(var i = 0; i < data.length; i++)
@@ -1039,7 +1039,7 @@ $(document).ready(function() {
 	    //获取省份的城市
 	    $('#mbProvinceTo').on('change', function(){
 				var inputStr = $(this).val();
-				$.get('/yh/serviceProvider/city', {id:inputStr}, function(data){
+				$.get('/serviceProvider/city', {id:inputStr}, function(data){
 					var cmbCity =$("#cmbCityTo");
 					cmbCity.empty();
 					cmbCity.append("<option>--请选择城市--</option>");
@@ -1054,7 +1054,7 @@ $(document).ready(function() {
 	    $('#cmbCityTo').on('change', function(){
 				var inputStr = $(this).val();
 				var code = $("#locationTo").val(inputStr);
-				$.get('/yh/serviceProvider/area', {id:inputStr}, function(data){
+				$.get('/serviceProvider/area', {id:inputStr}, function(data){
 					var cmbArea =$("#cmbAreaTo");
 					cmbArea.empty();
 					cmbArea.append("<option>--请选择区(县)--</option>");
@@ -1073,12 +1073,12 @@ $(document).ready(function() {
 
     var searchAllLocationFrom = function(locationFrom){
     	//var locationFrom = $('#hideLocationFrom').val();
-    	$.get('/yh/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
+    	$.get('/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
     		console.log(data);			
     		var provinceVal = data.PROVINCE;
     		var cityVal = data.CITY;
     		var districtVal = data.DISTRICT;
-	        $.get('/yh/serviceProvider/searchAllLocation', {province:provinceVal, city:cityVal}, function(data){	
+	        $.get('/serviceProvider/searchAllLocation', {province:provinceVal, city:cityVal}, function(data){	
 		        //获取全国省份
 	         	var province = $("#mbProvinceFrom");
 	     		province.empty();
@@ -1128,12 +1128,12 @@ $(document).ready(function() {
     
     var searchAllLocationTo = function(locationTo){
     	//var locationFrom = $('#hideLocationFrom').val();
-    	$.get('/yh/transferOrder/searchLocationFrom', {locationFrom:locationTo}, function(data){
+    	$.get('/transferOrder/searchLocationFrom', {locationFrom:locationTo}, function(data){
     		console.log(data);			
     		var provinceVal = data.PROVINCE;
     		var cityVal = data.CITY;
     		var districtVal = data.DISTRICT;
-    		$.get('/yh/serviceProvider/searchAllLocation', {province:provinceVal, city:cityVal}, function(data){	
+    		$.get('/serviceProvider/searchAllLocation', {province:provinceVal, city:cityVal}, function(data){	
     			//获取全国省份
     			var province = $("#mbProvinceTo");
     			province.empty();
