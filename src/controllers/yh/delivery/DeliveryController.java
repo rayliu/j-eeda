@@ -48,10 +48,10 @@ public class DeliveryController extends Controller {
 		String url = re.getRequestURI();
 		logger.debug("URI:" + url);
 		if (url.equals("/delivery")) {
-				render("delivery/deliveryOrderList.html");
+				render("/yh/delivery/deliveryOrderList.html");
 		}
 		if (url.equals("/deliveryMilestone")) {
-				render("delivery/deliveryOrderStatus.html");
+				render("/yh/delivery/deliveryOrderStatus.html");
 		}
 	}
 

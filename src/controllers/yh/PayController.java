@@ -30,10 +30,10 @@ public class PayController extends Controller {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();logger.debug("URI:" + url);
         if (url.equals("/pay")) {
-	        render("profile/toll/PayList.html");
+	        render("/yh/profile/toll/PayList.html");
         }
         if (url.equals("/ownCarPay")) {
-        	render("profile/toll/ownCarPayList.html");
+        	render("/yh/profile/toll/ownCarPayList.html");
         }
     }
 
@@ -75,9 +75,9 @@ public class PayController extends Controller {
         if (id != null) {
             Toll h = Toll.dao.findById(id);
             setAttr("to", h);
-            render("profile/toll/PayEdit.html");
+            render("/yh/profile/toll/PayEdit.html");
         } else {
-            render("profile/toll/PayEdit.html");
+            render("/yh/profile/toll/PayEdit.html");
         }
     }
 
@@ -107,14 +107,14 @@ public class PayController extends Controller {
             boolean s = r.set("name", name).set("code", code).set("type", type)
                     .set("Remark", remark).save();
             if (s == true) {
-                render("profile/toll/PayList.html");
+                render("/yh/profile/toll/PayList.html");
                 // render("profile/toll/TollList.html");
             }
         } else {
             Toll toll = Toll.dao.findById(id);
             boolean b = toll.set("name", name).set("type", type)
                     .set("code", code).set("Remark", remark).update();
-            render("profile/toll/PayList.html");
+            render("/yh/profile/toll/PayList.html");
         }
 
     }
@@ -158,7 +158,7 @@ public class PayController extends Controller {
     		Toll h = Toll.dao.findById(id);
     		setAttr("to", h);
     	}
-		render("profile/toll/ownCarPayEdit.html");
+		render("/yh/profile/toll/ownCarPayEdit.html");
     }
     
     // 删除条目
@@ -186,6 +186,6 @@ public class PayController extends Controller {
     		toll = new Toll();    		
     		toll.set("name", name).set("code", code).set("type", type).set("driver_type", Carinfo.CARINFO_TYPE_OWN).set("remark", remark).save();
     	}    	
-		render("profile/toll/ownCarPayList.html");
+		render("/yh/profile/toll/ownCarPayList.html");
     }
 }

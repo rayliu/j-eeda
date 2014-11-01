@@ -46,15 +46,15 @@ public class InventoryController extends Controller {
         if (url.equals("/gateIn")) {
 
             setAttr("inventory", "gateIn");
-                render("inventory/inventoryList.html");
+                render("/yh/inventory/inventoryList.html");
         }
         if (url.equals("/gateOut")) {
 
             setAttr("inventory", "gateOut");
-                render("inventory/inventoryList.html");
+                render("/yh/inventory/inventoryList.html");
         }
         if (url.equals("/stock")) {
-                render("inventory/stock.html");
+                render("/yh/inventory/stock.html");
         }
     }
 

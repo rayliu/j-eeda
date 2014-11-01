@@ -32,7 +32,7 @@ public class CustomerController extends Controller {
     // in config route已经将路径默认设置为/yh
     // me.add("/yh", controllers.yh.AppController.class, "/yh");
     public void index() {
-            render("profile/customer/CustomerList.html");
+            render("/yh/profile/customer/CustomerList.html");
     }
 
     public void list() {
@@ -141,7 +141,7 @@ public class CustomerController extends Controller {
                 + id);
         setAttr("contact", contact);
 
-        render("profile/customer/CustomerEdit.html");
+        render("/yh/profile/customer/CustomerEdit.html");
     }
 
     public void delete() {

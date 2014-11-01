@@ -30,7 +30,7 @@ public class ServiceProviderController extends Controller {
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-        render("profile/serviceProvider/serviceProviderList.html");
+        render("/yh/profile/serviceProvider/serviceProviderList.html");
     }
 
     public void list() {
@@ -117,7 +117,7 @@ public class ServiceProviderController extends Controller {
 
     public void add() {
         setAttr("saveOK", false);
-            render("profile/serviceProvider/serviceProviderEdit.html");
+            render("/yh/profile/serviceProvider/serviceProviderEdit.html");
     }
 
     public void edit() {
@@ -148,7 +148,7 @@ public class ServiceProviderController extends Controller {
         Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
                 + id);
         setAttr("contact", contact);
-            render("profile/serviceProvider/serviceProviderEdit.html");
+            render("/yh/profile/serviceProvider/serviceProviderEdit.html");
     }
 
     public void delete() {

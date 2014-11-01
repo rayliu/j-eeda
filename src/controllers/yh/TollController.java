@@ -25,7 +25,7 @@ public class TollController extends Controller {
 		 * setAttr("page", "收款条目定义"); } if(page.equals("付款")){
 		 * //System.out.print("没获取参数page"); setAttr("page", "付款条目定义"); }
 		 **/
-		render("profile/toll/TollList.html");
+		render("/yh/profile/toll/TollList.html");
 
 	}
 
@@ -64,9 +64,9 @@ public class TollController extends Controller {
 		if (id != null) {
 			Toll h = Toll.dao.findById(id);
 			setAttr("to", h);
-			render("profile/toll/TollEdit.html");
+			render("/yh/profile/toll/TollEdit.html");
 		} else {
-			render("profile/toll/TollEdit.html");
+			render("/yh/profile/toll/TollEdit.html");
 		}
 	}
 
@@ -96,14 +96,14 @@ public class TollController extends Controller {
 			boolean s = r.set("name", name).set("code", code).set("type", type)
 					.set("remark", remark).save();
 			if (s == true) {
-				render("profile/toll/TollList.html");
+				render("/yh/profile/toll/TollList.html");
 				// render("profile/toll/TollList.html");
 			}
 		} else {
 			Toll toll = Toll.dao.findById(id);
 			boolean b = toll.set("name", name).set("type", type)
 					.set("code", code).set("remark", remark).update();
-			render("profile/toll/TollList.html");
+			render("/yh/profile/toll/TollList.html");
 		}
 
 	}

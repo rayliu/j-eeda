@@ -398,7 +398,7 @@ public class TransferOrderController extends Controller {
 	}
 
 	public void saveItem() {
-			render("transferOrder/transferOrderList.html");
+			render("/yh/transferOrder/transferOrderList.html");
 	}
 
 	// 保存订单项

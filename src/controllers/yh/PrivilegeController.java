@@ -20,7 +20,7 @@ public class PrivilegeController extends Controller {
 	private Logger logger = Logger.getLogger(PrivilegeController.class);
 
 	public void index() {
-		render("profile/privilege/PrivilegeList.html");
+		render("/yh/profile/privilege/PrivilegeList.html");
 	}
 
 	public void privilegelist() {
@@ -73,11 +73,11 @@ public class PrivilegeController extends Controller {
 	}
 
 	public void userrole() {
-		render("profile/privilege/UserRole.html");
+		render("/yh/profile/privilege/UserRole.html");
 	}
 
 	public void roleprivilege() {
-		render("profile/privilege/RolePrivilege.html");
+		render("/yh/profile/privilege/RolePrivilege.html");
 	}
 
 	public void SelectUser() {

@@ -45,11 +45,11 @@ public class DepartOrderController extends Controller {
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-            render("departOrder/departOrderList.html");
+            render("/yh/departOrder/departOrderList.html");
     }
 
     public void onTrip() {
-            render("departOrder/departOrderOnTripList.html");
+            render("/yh/departOrder/departOrderOnTripList.html");
     }
     //发车单在途供应商
     public void companyNameList(){
@@ -1318,7 +1318,7 @@ public class DepartOrderController extends Controller {
         DepartOrder re = DepartOrder.dao.findById(id);
         re.set("driver_id", null).update();
         re.delete();
-        render("departOrder/departOrderList.html");
+        render("/yh/departOrder/departOrderList.html");
     }
 
     // 单击tab里程碑
@@ -1445,7 +1445,7 @@ public class DepartOrderController extends Controller {
 
     // 在途运输单管理
     public void transferMilestoneIndex() {
-            render("departOrder/TransferOrderStatus.html");
+            render("/yh/departOrder/TransferOrderStatus.html");
     }
 
     public void ownTransferMilestone() {
@@ -1537,7 +1537,7 @@ public class DepartOrderController extends Controller {
 
     // 外包运输单更新
     public void transferonTrip() {
-            render("departOrder/transferOrderOnTripList.html");
+            render("/yh/departOrder/transferOrderOnTripList.html");
     }
 
     public void transferonTriplist() {

@@ -21,7 +21,7 @@ public class OrderStatusController extends Controller{
     private Logger logger = Logger.getLogger(OrderStatusController.class);
     
 	public void index() {
-		render("profile/orderStatus/orderStatusList.html");
+		render("/yh/profile/orderStatus/orderStatusList.html");
 	}
 
 	public void list() {
@@ -56,7 +56,7 @@ public class OrderStatusController extends Controller{
 
 	public void add() {
 		setAttr("saveOK", false);
-		render("profile/orderStatus/orderStatusEdit.html");
+		render("/yh/profile/orderStatus/orderStatusEdit.html");
 	}
 
 	public void edit() {
@@ -64,7 +64,7 @@ public class OrderStatusController extends Controller{
 
 		OrderStatus orderStatus = OrderStatus.dao.findById(id);
 		setAttr("orderStatus", orderStatus);
-		render("profile/orderStatus/orderStatusEdit.html");
+		render("/yh/profile/orderStatus/orderStatusEdit.html");
 	}
 
 	public void delete() {
@@ -93,6 +93,6 @@ public class OrderStatusController extends Controller{
 			orderStatus.set("status_code", status_code).set("status_name", status_name)
 			        .set("order_type", order_type).set("remark", remark).save();
 		}
-		render("profile/orderStatus/orderStatusList.html");
+		render("/yh/profile/orderStatus/orderStatusList.html");
 	}
 }

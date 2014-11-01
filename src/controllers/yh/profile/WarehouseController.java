@@ -27,7 +27,7 @@ public class WarehouseController extends Controller{
     private Logger logger = Logger.getLogger(WarehouseController.class);
     
 	public void index() {
-		render("profile/warehouse/warehouseList.html");
+		render("/yh/profile/warehouse/warehouseList.html");
 	}
 
 	public void list() {
@@ -98,7 +98,7 @@ public class WarehouseController extends Controller{
 
 	public void add() {
 		setAttr("saveOK", false);
-		render("profile/warehouse/warehouseEdit.html");
+		render("/yh/profile/warehouse/warehouseEdit.html");
 	}
 
 	public void edit() {
@@ -129,7 +129,7 @@ public class WarehouseController extends Controller{
 		setAttr("contact", contact);
 		Contact sp = Contact.dao.findFirst("select * from contact where id = (select contact_id from party where id="+warehouse.get("sp_id")+")");
 		setAttr("sp", sp);
-		render("profile/warehouse/warehouseEdit.html");
+		render("/yh/profile/warehouse/warehouseEdit.html");
 	}
 
 	public void delete() {

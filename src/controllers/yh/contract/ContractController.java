@@ -38,15 +38,15 @@ public class ContractController extends Controller {
         logger.debug("URI:" + url);
         if (url.equals("/customerContract")) {
             setAttr("contractType", "CUSTOMER");
-                render("contract/ContractList.html");
+                render("/yh/contract/ContractList.html");
         }
         if (url.equals("/deliverySpContract")) {
             setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
-                render("contract/ContractList.html");
+                render("/yh/contract/ContractList.html");
         }
         if (url.equals("/spContract")) {
             setAttr("contractType", "SERVICE_PROVIDER");
-                render("contract/ContractList.html");
+                render("/yh/contract/ContractList.html");
         }
 
     }
@@ -272,7 +272,7 @@ public class ContractController extends Controller {
             setAttr("saveOK", false);
             List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
             setAttr("finItemList", finItemList);
-                render("/contract/ContractEdit.html");
+                render("/yh/contract/ContractEdit.html");
         }
         if (url.equals("/deliverySpContract/add")) {
             setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");

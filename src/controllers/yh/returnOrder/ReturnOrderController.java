@@ -42,7 +42,7 @@ public class ReturnOrderController extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 
 	public void index() {
-			render("returnOrder/returnOrderList.html");
+			render("/yh/returnOrder/returnOrderList.html");
 	}
 
 	public static String createReturnOrderNo() {
@@ -302,7 +302,7 @@ public class ReturnOrderController extends Controller {
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
-		render("returnOrder/returnOrder.html");
+		render("/yh/returnOrder/returnOrder.html");
 	}
 
 	public void save() {

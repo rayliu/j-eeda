@@ -25,7 +25,7 @@ public class ProductController extends Controller {
     private Logger logger = Logger.getLogger(ProductController.class);
 
     public void index() {
-        render("profile/product/productList.html");
+        render("/yh/profile/product/productList.html");
     }
 
     public void list() {
@@ -59,7 +59,7 @@ public class ProductController extends Controller {
 
     public void add() {
         setAttr("saveOK", false);
-        render("profile/product/productEdit.html");
+        render("/yh/profile/product/productEdit.html");
     }
 
     public void edit() {
@@ -67,7 +67,7 @@ public class ProductController extends Controller {
 
         Product product = Product.dao.findById(id);
         setAttr("product", product);
-        render("profile/product/productEdit.html");
+        render("/yh/profile/product/productEdit.html");
     }
 
     public void delete() {
