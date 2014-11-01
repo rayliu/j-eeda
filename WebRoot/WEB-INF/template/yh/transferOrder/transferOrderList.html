@@ -9,14 +9,14 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        <a class="btn btn-primary" href="/yh/transferOrder/add">新增运输单</a>
+                        <a class="btn btn-primary" href="/transferOrder/add">新增运输单</a>
                         <input id="fileUploadBtn" type="button" class="btn btn-primary" value="导入运输单" size="30" />
-                        <form id="toFileUploadForm" method="post" action="/yh/transferOrder/intoTransferOrder" enctype="multipart/form-data">
+                        <form id="toFileUploadForm" method="post" action="/transferOrder/intoTransferOrder" enctype="multipart/form-data">
 						     
 						     
 						     <input type="file" id="toFileUpload" name="files[]" 
 						     style="position:absolute; filter:alpha(opacity=0); opacity:0; width:30px; " size="1" 
-						     data-url="/yh/transferOrder/importTransferOrder" multiple>
+						     data-url="/transferOrder/importTransferOrder" multiple>
 						</form>
                     </h1>
                 </div>
