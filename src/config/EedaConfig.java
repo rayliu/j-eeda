@@ -142,22 +142,23 @@ public class EedaConfig extends JFinalConfig {
         this.routes = me;
 
         //TODO: 为之后去掉 yh做准备
-        String contentPath="/yh";
+        String contentPath="/";//"yh";
         
         // eeda project controller
-        me.add("/", AppController.class);
-        me.add("/case", CaseController.class);
-        me.add("/user", UserProfileController.class);
-        me.add("/salesOrder", SalesOrderController.class);
-        me.add("/loan", LoanController.class);
-        me.add("/propertyClient", PropertyClientController.class);
-        me.add("/sp", controllers.eeda.ServiceProviderController.class);
+//        me.add("/", AppController.class);
+//        me.add("/case", CaseController.class);
+//        me.add("/user", UserProfileController.class);
+//        me.add("/salesOrder", SalesOrderController.class);
+//        me.add("/loan", LoanController.class);
+//        me.add("/propertyClient", PropertyClientController.class);
+//        me.add("/sp", controllers.eeda.ServiceProviderController.class);
         // me.add("/au", AdminUserController.class);
 
         // me.add("/fileUpload", HelloController.class);
-        me.add(contentPath+"/debug", controllers.yh.LogController.class, contentPath);
         // yh project controller
         me.add(contentPath, controllers.yh.AppController.class, contentPath);
+        me.add(contentPath+"/debug", controllers.yh.LogController.class, contentPath);
+        
         me.add(contentPath+"/loginUser", controllers.yh.LoginUserController.class, contentPath);
         //register loginUser
         me.add(contentPath+"/register",RegisterUserController.class,contentPath);

@@ -22,6 +22,7 @@ import models.TransferOrderMilestone;
 import models.UserLogin;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -31,6 +32,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class CarinfoControllerTest extends Controller {
 	private Logger logger = Logger.getLogger(CarinfoController.class);
 	Subject currentUser = SecurityUtils.getSubject();
@@ -39,8 +41,7 @@ public class CarinfoControllerTest extends Controller {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();
         logger.debug("URI:" + url);
-        if (url.equals("/yh/carsummary")) {
-            if (LoginUserController.isAuthenticated(this))
+        if (url.equals("/carsummary")) {
                 render("/yh/carmanage/carSummaryList.html");
         }
     }

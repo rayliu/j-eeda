@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
 import models.DepartOrder;
 import models.InsuranceOrder;
 import models.Party;
@@ -17,11 +19,11 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class CostItemConfirmController extends Controller {
     private Logger logger = Logger.getLogger(CostItemConfirmController.class);
 
     public void index() {
-    	if(LoginUserController.isAuthenticated(this))
     	    render("/yh/arap/CostItemConfirm/CostItemConfirmList.html");
     }
 
@@ -38,7 +40,6 @@ public class CostItemConfirmController extends Controller {
         setAttr("customer", contact);
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
-    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/CostAcceptOrder/CostCheckOrderEdit.html");
     }
 

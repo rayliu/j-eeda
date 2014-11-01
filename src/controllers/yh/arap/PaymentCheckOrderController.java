@@ -12,6 +12,7 @@ import models.UserLogin;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -21,6 +22,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class PaymentCheckOrderController extends Controller {
     private Logger logger = Logger.getLogger(PaymentCheckOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
@@ -28,14 +30,12 @@ public class PaymentCheckOrderController extends Controller {
     public void index() {
         setAttr("type", "SERVICE_PROVIDER");
         setAttr("classify", "");
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/arap/PaymentCheckOrder/PaymentCheckOrderList.html");
     }
 
     public void add() {
         setAttr("type", "SERVICE_PROVIDER");
         setAttr("classify", "");
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/arap/PaymentCheckOrder/PaymentCheckOrderCreateSearchList.html");
     }
 
@@ -93,7 +93,6 @@ public class PaymentCheckOrderController extends Controller {
 
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/arap/PaymentCheckOrder/PaymentCheckOrderEdit.html");
     }
 

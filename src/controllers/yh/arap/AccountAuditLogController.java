@@ -13,6 +13,7 @@ import models.UserLogin;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -22,12 +23,12 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class AccountAuditLogController extends Controller {
     private Logger logger = Logger.getLogger(AccountAuditLogController.class);
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-    	if(LoginUserController.isAuthenticated(this))
     	    render("/yh/arap/AccountAuditLog/AccountAuditLogList.html");
     }
 

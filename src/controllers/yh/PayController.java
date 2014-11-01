@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
 import models.Toll;
 import models.yh.profile.Carinfo;
 
@@ -13,7 +15,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-
+@RequiresAuthentication
 public class PayController extends Controller {
     private Logger logger = Logger.getLogger(PayController.class);
 
@@ -27,13 +29,11 @@ public class PayController extends Controller {
          **/
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();logger.debug("URI:" + url);
-        if (url.equals("/yh/pay")) {
-	        if (LoginUserController.isAuthenticated(this))
-	            render("profile/toll/PayList.html");
+        if (url.equals("/pay")) {
+	        render("profile/toll/PayList.html");
         }
-        if (url.equals("/yh/ownCarPay")) {
-        	if (LoginUserController.isAuthenticated(this))
-        		render("profile/toll/ownCarPayList.html");
+        if (url.equals("/ownCarPay")) {
+        	render("profile/toll/ownCarPayList.html");
         }
     }
 
@@ -75,11 +75,9 @@ public class PayController extends Controller {
         if (id != null) {
             Toll h = Toll.dao.findById(id);
             setAttr("to", h);
-            if (LoginUserController.isAuthenticated(this))
-                render("profile/toll/PayEdit.html");
+            render("profile/toll/PayEdit.html");
         } else {
-            if (LoginUserController.isAuthenticated(this))
-                render("profile/toll/PayEdit.html");
+            render("profile/toll/PayEdit.html");
         }
     }
 
@@ -90,8 +88,7 @@ public class PayController extends Controller {
             Toll l = Toll.dao.findById(id);
             l.delete();
         }
-        if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/pay");
+        redirect("/pay");
     }
 
     // 添加编辑保存
@@ -117,8 +114,7 @@ public class PayController extends Controller {
             Toll toll = Toll.dao.findById(id);
             boolean b = toll.set("name", name).set("type", type)
                     .set("code", code).set("Remark", remark).update();
-            if (LoginUserController.isAuthenticated(this))
-                render("profile/toll/PayList.html");
+            render("profile/toll/PayList.html");
         }
 
     }
@@ -162,8 +158,7 @@ public class PayController extends Controller {
     		Toll h = Toll.dao.findById(id);
     		setAttr("to", h);
     	}
-		if (LoginUserController.isAuthenticated(this))
-			render("profile/toll/ownCarPayEdit.html");
+		render("profile/toll/ownCarPayEdit.html");
     }
     
     // 删除条目
@@ -173,8 +168,7 @@ public class PayController extends Controller {
     		Toll l = Toll.dao.findById(id);
     		l.delete();
     	}
-    	if (LoginUserController.isAuthenticated(this))
-    		redirect("/yh/ownCarPay");
+		redirect("/ownCarPay");
     }
     
     // 添加编辑保存
@@ -192,7 +186,6 @@ public class PayController extends Controller {
     		toll = new Toll();    		
     		toll.set("name", name).set("code", code).set("type", type).set("driver_type", Carinfo.CARINFO_TYPE_OWN).set("remark", remark).save();
     	}    	
-    	if (LoginUserController.isAuthenticated(this))
-    		render("profile/toll/ownCarPayList.html");
+		render("profile/toll/ownCarPayList.html");
     }
 }

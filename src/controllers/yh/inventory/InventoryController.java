@@ -22,6 +22,7 @@ import models.WarehouseOrderItem;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -30,39 +31,29 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class InventoryController extends Controller {
 
     private Logger logger = Logger.getLogger(InventoryController.class);
     Subject currentUser = SecurityUtils.getSubject();
 
-    private boolean isAuthenticated() {
-        if (!currentUser.isAuthenticated()) {
-            if (LoginUserController.isAuthenticated(this))
-                redirect("/yh/login");
-            return false;
-        }
-        setAttr("userId", currentUser.getPrincipal());
-        return true;
-    }
+    
 
     public void index() {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();
         logger.debug("URI:" + url);
-        if (url.equals("/yh/gateIn")) {
+        if (url.equals("/gateIn")) {
 
             setAttr("inventory", "gateIn");
-            if (LoginUserController.isAuthenticated(this))
                 render("inventory/inventoryList.html");
         }
-        if (url.equals("/yh/gateOut")) {
+        if (url.equals("/gateOut")) {
 
             setAttr("inventory", "gateOut");
-            if (LoginUserController.isAuthenticated(this))
                 render("inventory/inventoryList.html");
         }
-        if (url.equals("/yh/stock")) {
-            if (LoginUserController.isAuthenticated(this))
+        if (url.equals("/stock")) {
                 render("inventory/stock.html");
         }
     }
@@ -160,7 +151,6 @@ public class InventoryController extends Controller {
 
     // 入库单添加
     public void gateIn_add() {
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/inventory/gateInEdit.html");
     }
 
@@ -184,7 +174,6 @@ public class InventoryController extends Controller {
 
     // 出库单添加
     public void gateOut_add() {
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/inventory/gateOutEdit.html");
     }
 
@@ -197,7 +186,6 @@ public class InventoryController extends Controller {
                         + "left join party p on p.id =w_o.party_id " + "left join contact c on p.contact_id =c.id "
                         + "left join warehouse w on w.id = w_o.warehouse_id where w_o.id='" + id + "'");
         setAttr("warehouseOrder", orders);
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/inventory/gateInEdit.html");
     }
 
@@ -210,7 +198,6 @@ public class InventoryController extends Controller {
                         + "left join party p on p.id =w_o.party_id " + "left join contact c on p.contact_id =c.id "
                         + "left join warehouse w on w.id = w_o.warehouse_id where w_o.id='" + id + "'");
         setAttr("warehouseOrder", orders);
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/inventory/gateOutEdit.html");
     }
 

@@ -13,6 +13,7 @@ import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -22,6 +23,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class CustomerController extends Controller {
 
     private Logger logger = Logger.getLogger(CustomerController.class);
@@ -30,7 +32,6 @@ public class CustomerController extends Controller {
     // in config route已经将路径默认设置为/yh
     // me.add("/yh", controllers.yh.AppController.class, "/yh");
     public void index() {
-        if (LoginUserController.isAuthenticated(this))
             render("profile/customer/CustomerList.html");
     }
 
@@ -108,14 +109,10 @@ public class CustomerController extends Controller {
 
     public void add() {
         setAttr("saveOK", false);
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/profile/customer/CustomerEdit.html");
     }
 
     public void edit() {
-        if (!LoginUserController.isAuthenticated(this))
-            return;
-
         String id = getPara();
 
         Party party = Party.dao.findById(id);
@@ -170,8 +167,7 @@ public class CustomerController extends Controller {
         contact.delete();
 
         party.delete();
-        if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/customer");
+            redirect("/customer");
     }
 
     public void save() {
@@ -211,8 +207,7 @@ public class CustomerController extends Controller {
         }
 
         setAttr("saveOK", true);
-        if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/customer");
+            redirect("/customer");
     }
 
     private void setContact(Contact contact) {

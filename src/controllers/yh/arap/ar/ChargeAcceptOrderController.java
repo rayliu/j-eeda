@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
 import models.ArapChargeOrder;
 import models.Party;
 import models.yh.profile.Contact;
@@ -15,20 +17,19 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class ChargeAcceptOrderController extends Controller {
     private Logger logger = Logger.getLogger(ChargeAcceptOrderController.class);
 
     public void index() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
-    	if(LoginUserController.isAuthenticated(this))
     	    render("/yh/arap/ChargeAcceptOrder/ChargeAcceptOrderList.html");
     }
 
     public void add() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
-    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeAcceptOrder/ChargeCheckOrderCreateSearchList.html");
     }
 
@@ -44,7 +45,6 @@ public class ChargeAcceptOrderController extends Controller {
         setAttr("customer", contact);
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
-    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeAcceptOrder/ChargeCheckOrderEdit.html");
     }
 

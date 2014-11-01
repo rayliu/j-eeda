@@ -16,6 +16,7 @@ import models.UserLogin;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -25,12 +26,12 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class ChargePreInvoiceOrderController extends Controller {
     private Logger logger = Logger.getLogger(ChargePreInvoiceOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-    	if(LoginUserController.isAuthenticated(this))
     	    render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderList.html");
     }
 
@@ -47,7 +48,6 @@ public class ChargePreInvoiceOrderController extends Controller {
         setAttr("customer", contact);
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
-    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeAcceptOrder/ChargeCheckOrderEdit.html");
     }
 
@@ -141,7 +141,6 @@ public class ChargePreInvoiceOrderController extends Controller {
 		setAttr("userLogin", userLogin);
 
 		setAttr("status", "new");
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
 	}
 
@@ -268,7 +267,6 @@ public class ChargePreInvoiceOrderController extends Controller {
 		setAttr("chargeCheckOrderIds", chargeCheckOrderIds);
 		setAttr("beginTime", beginTime);
 		setAttr("endTime", endTime);*/
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
 	}
 	

@@ -29,6 +29,7 @@ import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -37,18 +38,17 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class DepartOrderController extends Controller {
 
     private Logger logger = Logger.getLogger(DepartOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-        if (LoginUserController.isAuthenticated(this))
             render("departOrder/departOrderList.html");
     }
 
     public void onTrip() {
-        if (LoginUserController.isAuthenticated(this))
             render("departOrder/departOrderOnTripList.html");
     }
     //发车单在途供应商
@@ -349,12 +349,10 @@ public class DepartOrderController extends Controller {
     }
 
     public void add() {
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/departOrder/allTransferOrderList.html");
     }
     
     public void addForRouteSp() {
-    	if (LoginUserController.isAuthenticated(this))
     		render("/yh/departOrder/allTransferOrderListForRouteSp.html");
     }
 
@@ -448,7 +446,6 @@ public class DepartOrderController extends Controller {
         List<Record> paymentItemList = Collections.EMPTY_LIST;
         paymentItemList = Db.find("select * from fin_item where type='应付'");
         setAttr("paymentItemList", paymentItemList);
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/departOrder/editDepartOrder.html");
     }
 
@@ -751,7 +748,6 @@ public class DepartOrderController extends Controller {
 
         setAttr("status", "新建");
         setAttr("saveOK", false);
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/departOrder/editDepartOrder.html");
     }
 
@@ -1447,7 +1443,6 @@ public class DepartOrderController extends Controller {
 
     // 在途运输单管理
     public void transferMilestoneIndex() {
-        if (LoginUserController.isAuthenticated(this))
             render("departOrder/TransferOrderStatus.html");
     }
 
@@ -1540,7 +1535,6 @@ public class DepartOrderController extends Controller {
 
     // 外包运输单更新
     public void transferonTrip() {
-        if (LoginUserController.isAuthenticated(this))
             render("departOrder/transferOrderOnTripList.html");
     }
 

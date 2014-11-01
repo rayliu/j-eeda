@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
 import models.Fin_item;
 import models.Location;
 import models.yh.contract.Contract;
@@ -23,6 +25,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class ContractController extends Controller {
 
     private Logger logger = Logger.getLogger(ContractController.class);
@@ -33,19 +36,16 @@ public class ContractController extends Controller {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();
         logger.debug("URI:" + url);
-        if (url.equals("/yh/customerContract")) {
+        if (url.equals("/customerContract")) {
             setAttr("contractType", "CUSTOMER");
-            if (LoginUserController.isAuthenticated(this))
                 render("contract/ContractList.html");
         }
-        if (url.equals("/yh/deliverySpContract")) {
+        if (url.equals("/deliverySpContract")) {
             setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
-            if (LoginUserController.isAuthenticated(this))
                 render("contract/ContractList.html");
         }
-        if (url.equals("/yh/spContract")) {
+        if (url.equals("/spContract")) {
             setAttr("contractType", "SERVICE_PROVIDER");
-            if (LoginUserController.isAuthenticated(this))
                 render("contract/ContractList.html");
         }
 
@@ -267,28 +267,25 @@ public class ContractController extends Controller {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();
         logger.debug("URI:" + url);
-        if (url.equals("/yh/customerContract/add")) {
+        if (url.equals("/customerContract/add")) {
             setAttr("contractType", "CUSTOMER");
             setAttr("saveOK", false);
             List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
             setAttr("finItemList", finItemList);
-            if (LoginUserController.isAuthenticated(this))
-                render("/yh/contract/ContractEdit.html");
+                render("/contract/ContractEdit.html");
         }
-        if (url.equals("/yh/deliverySpContract/add")) {
+        if (url.equals("/deliverySpContract/add")) {
             setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
             setAttr("saveOK", false);
             List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
             setAttr("finItemList", finItemList);
-            if (LoginUserController.isAuthenticated(this))
                 render("/yh/contract/ContractEdit.html");
         }
-        if (url.equals("/yh/spContract/add")) {
+        if (url.equals("/spContract/add")) {
             setAttr("contractType", "SERVICE_PROVIDER");
             setAttr("saveOK", false);
             List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
             setAttr("finItemList", finItemList);
-            if (LoginUserController.isAuthenticated(this))
                 render("/yh/contract/ContractEdit.html");
         }
         setAttr("saveOK", false);
@@ -308,7 +305,6 @@ public class ContractController extends Controller {
             List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
             setAttr("finItemList", finItemList);
         }
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/contract/ContractEdit.html");
     }
 
@@ -342,8 +338,7 @@ public class ContractController extends Controller {
         if (id != null) {
             Db.deleteById("contract", id);
         }
-        if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/customerContract");
+            redirect("/customerContract");
     }
 
     public void delete2() {
@@ -351,8 +346,7 @@ public class ContractController extends Controller {
         if (id != null) {
             Db.deleteById("contract", id);
         }
-        if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/spContract");
+            redirect("/spContract");
     }
 
     // 列出客户公司名称

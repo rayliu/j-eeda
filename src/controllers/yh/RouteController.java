@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
 import models.yh.profile.Route;
 
 import com.jfinal.core.Controller;
@@ -11,17 +13,16 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+@RequiresAuthentication
 public class RouteController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);
 
     public void index() {
-        if (LoginUserController.isAuthenticated(this))
-            render("/yh/profile/route/route.html");
+        render("/yh/profile/route/route.html");
     }
 
     // 链接到添加干线页面
     public void editRoute() {
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/profile/route/edit.html");
     }
 
@@ -32,7 +33,6 @@ public class RouteController extends Controller {
             Route l = Route.dao.findById(id);
             setAttr("ul", l);
         }
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/profile/route/edit.html");
 
     }
@@ -60,7 +60,6 @@ public class RouteController extends Controller {
             logger.debug("insert....");
             Db.save("route", user);
         }
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/profile/route/route.html");
 
     }
@@ -75,7 +74,6 @@ public class RouteController extends Controller {
         if (id != null) {
             Db.deleteById("route", id);
         }
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/profile/route/route.html");
     }
 

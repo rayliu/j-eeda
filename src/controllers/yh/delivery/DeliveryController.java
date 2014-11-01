@@ -25,6 +25,7 @@ import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -34,32 +35,22 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class DeliveryController extends Controller {
 	private Logger logger = Logger.getLogger(DeliveryController.class);
 	// in config route已经将路径默认设置为/yh
 	// me.add("/yh", controllers.yh.AppController.class, "/yh");
 	Subject currentUser = SecurityUtils.getSubject();
 
-	private boolean isAuthenticated() {
-		if (!currentUser.isAuthenticated()) {
-			if (LoginUserController.isAuthenticated(this))
-				redirect("/yh/login");
-			return false;
-		}
-		setAttr("userId", currentUser.getPrincipal());
-		return true;
-	}
-
+	
 	public void index() {
 		HttpServletRequest re = getRequest();
 		String url = re.getRequestURI();
 		logger.debug("URI:" + url);
-		if (url.equals("/yh/delivery")) {
-			if (LoginUserController.isAuthenticated(this))
+		if (url.equals("/delivery")) {
 				render("delivery/deliveryOrderList.html");
 		}
-		if (url.equals("/yh/deliveryMilestone")) {
-			if (LoginUserController.isAuthenticated(this))
+		if (url.equals("/deliveryMilestone")) {
 				render("delivery/deliveryOrderStatus.html");
 		}
 	}
@@ -263,7 +254,6 @@ public class DeliveryController extends Controller {
 
 	public void add() {
 		setAttr("saveOK", false);
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/delivery/deliveryOrderSearchTransfer.html");
 	}
 
@@ -377,7 +367,6 @@ public class DeliveryController extends Controller {
 			paymentItemList = Db.find("select * from fin_item where type='应付'");
 			setAttr("paymentItemList", paymentItemList);
 		}
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/delivery/deliveryOrderEdit.html");
 
 	}
@@ -438,7 +427,6 @@ public class DeliveryController extends Controller {
 		setAttr("deliveryOrder", tOrder);
 		setAttr("localArr3", list);
 		setAttr("notifyParty", notity);
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/delivery/deliveryOrderEdit.html");
 	}
 
@@ -446,7 +434,6 @@ public class DeliveryController extends Controller {
 	public void creat() {
 		// customer, sp, notify_party
 		String id = getPara();
-		if (LoginUserController.isAuthenticated(this))
 			// render("/yh/delivery/deliveryOrderEdit.html");
 			renderJson(id);
 		// renderJson("{\"success\":true}");
@@ -488,7 +475,6 @@ public class DeliveryController extends Controller {
 		List<Record> paymentItemList = Collections.EMPTY_LIST;
 		paymentItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("paymentItemList", paymentItemList);
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/delivery/deliveryOrderEdit.html");
 	}
 

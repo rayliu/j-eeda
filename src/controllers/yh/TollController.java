@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
 import models.Toll;
 
 import com.jfinal.core.Controller;
@@ -11,6 +13,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+@RequiresAuthentication
 public class TollController extends Controller {
 	private Logger logger = Logger.getLogger(TollController.class);
 
@@ -22,7 +25,6 @@ public class TollController extends Controller {
 		 * setAttr("page", "收款条目定义"); } if(page.equals("付款")){
 		 * //System.out.print("没获取参数page"); setAttr("page", "付款条目定义"); }
 		 **/
-		if(LoginUserController.isAuthenticated(this))
 		render("profile/toll/TollList.html");
 
 	}
@@ -62,10 +64,8 @@ public class TollController extends Controller {
 		if (id != null) {
 			Toll h = Toll.dao.findById(id);
 			setAttr("to", h);
-			if(LoginUserController.isAuthenticated(this))
 			render("profile/toll/TollEdit.html");
 		} else {
-			if(LoginUserController.isAuthenticated(this))
 			render("profile/toll/TollEdit.html");
 		}
 	}
@@ -77,8 +77,7 @@ public class TollController extends Controller {
 			Toll l = Toll.dao.findById(id);
 			l.delete();
 		}
-		if(LoginUserController.isAuthenticated(this))
-		redirect("/yh/toll");
+		redirect("/toll");
 	}
 
 	// 添加编辑保存
@@ -97,7 +96,6 @@ public class TollController extends Controller {
 			boolean s = r.set("name", name).set("code", code).set("type", type)
 					.set("remark", remark).save();
 			if (s == true) {
-				if(LoginUserController.isAuthenticated(this))
 				render("profile/toll/TollList.html");
 				// render("profile/toll/TollList.html");
 			}
@@ -105,7 +103,6 @@ public class TollController extends Controller {
 			Toll toll = Toll.dao.findById(id);
 			boolean b = toll.set("name", name).set("type", type)
 					.set("code", code).set("remark", remark).update();
-			if(LoginUserController.isAuthenticated(this))
 			render("profile/toll/TollList.html");
 		}
 

@@ -18,6 +18,7 @@ import models.UserLogin;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -27,17 +28,16 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class InsuranceOrderController extends Controller {
     private Logger logger = Logger.getLogger(InsuranceOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-    	if(LoginUserController.isAuthenticated(this))
     	    render("/yh/insuranceOrder/insuranceOrderList.html");
     }
 
     public void add() {
-    	if(LoginUserController.isAuthenticated(this))
     		render("/yh/insuranceOrder/insuranceOrderSearchTransfer.html");
     }
 
@@ -53,7 +53,6 @@ public class InsuranceOrderController extends Controller {
         setAttr("customer", contact);
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
-    	if(LoginUserController.isAuthenticated(this))
     		render("/yh/insuranceOrder/insuranceOrderEdit.html");
     }
 
@@ -334,7 +333,6 @@ public class InsuranceOrderController extends Controller {
         List<Record> paymentItemList = Collections.EMPTY_LIST;
         paymentItemList = Db.find("select * from fin_item where type='应付'");
         setAttr("paymentItemList", paymentItemList);
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/insuranceOrder/insuranceOrderEdit.html");
     }
 
@@ -504,7 +502,6 @@ public class InsuranceOrderController extends Controller {
             Contact customerContact = Contact.dao.findById(costomerParty.get("contact_id"));
             setAttr("customerContact", customerContact);
         }
-    	if(LoginUserController.isAuthenticated(this))
     		render("/yh/insuranceOrder/insuranceOrderEdit.html");
     }
     

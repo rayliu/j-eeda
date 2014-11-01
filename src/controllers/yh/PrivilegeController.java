@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
 import models.Privilege;
 import models.Role;
 import models.UserLogin;
@@ -13,12 +15,12 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+@RequiresAuthentication
 public class PrivilegeController extends Controller {
 	private Logger logger = Logger.getLogger(PrivilegeController.class);
 
 	public void index() {
-		if (LoginUserController.isAuthenticated(this))
-			render("profile/privilege/PrivilegeList.html");
+		render("profile/privilege/PrivilegeList.html");
 	}
 
 	public void privilegelist() {
@@ -71,13 +73,11 @@ public class PrivilegeController extends Controller {
 	}
 
 	public void userrole() {
-		if (LoginUserController.isAuthenticated(this))
-			render("profile/privilege/UserRole.html");
+		render("profile/privilege/UserRole.html");
 	}
 
 	public void roleprivilege() {
-		if (LoginUserController.isAuthenticated(this))
-			render("profile/privilege/RolePrivilege.html");
+		render("profile/privilege/RolePrivilege.html");
 	}
 
 	public void SelectUser() {

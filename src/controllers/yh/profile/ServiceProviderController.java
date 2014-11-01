@@ -14,6 +14,7 @@ import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -22,14 +23,14 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class ServiceProviderController extends Controller {
 
     private Logger logger = Logger.getLogger(ServiceProviderController.class);
     Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-        if (LoginUserController.isAuthenticated(this))
-            render("profile/serviceProvider/serviceProviderList.html");
+        render("profile/serviceProvider/serviceProviderList.html");
     }
 
     public void list() {
@@ -116,7 +117,6 @@ public class ServiceProviderController extends Controller {
 
     public void add() {
         setAttr("saveOK", false);
-        if (LoginUserController.isAuthenticated(this))
             render("profile/serviceProvider/serviceProviderEdit.html");
     }
 
@@ -148,7 +148,6 @@ public class ServiceProviderController extends Controller {
         Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
                 + id);
         setAttr("contact", contact);
-        if (LoginUserController.isAuthenticated(this))
             render("profile/serviceProvider/serviceProviderEdit.html");
     }
 
@@ -178,8 +177,7 @@ public class ServiceProviderController extends Controller {
 
         contact.delete();
         party.delete();
-        if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/serviceProvider");
+            redirect("/serviceProvider");
     }
 
     public void save() {
@@ -218,8 +216,7 @@ public class ServiceProviderController extends Controller {
         }
 
         setAttr("saveOK", true);
-        if (LoginUserController.isAuthenticated(this))
-            redirect("/yh/serviceProvider");
+            redirect("/serviceProvider");
     }
 
     private void setContact(Contact contact) {

@@ -26,6 +26,7 @@ import models.yh.profile.Contact;
 import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -35,12 +36,12 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class ReturnOrderController extends Controller {
 	private Logger logger = Logger.getLogger(ReturnOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 
 	public void index() {
-		if (LoginUserController.isAuthenticated(this))
 			render("returnOrder/returnOrderList.html");
 	}
 
@@ -301,8 +302,7 @@ public class ReturnOrderController extends Controller {
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
-		if (LoginUserController.isAuthenticated(this))
-			render("returnOrder/returnOrder.html");
+		render("returnOrder/returnOrder.html");
 	}
 
 	public void save() {
@@ -344,8 +344,7 @@ public class ReturnOrderController extends Controller {
 		}
 		returnOrder.set("remark", getPara("remark"));
 		returnOrder.update();
-		if (LoginUserController.isAuthenticated(this))
-			renderJson(returnOrder);
+		renderJson(returnOrder);
 
 	}
 

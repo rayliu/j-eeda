@@ -26,6 +26,7 @@ import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -35,27 +36,16 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class PickupOrderController extends Controller {
     private Logger logger = Logger.getLogger(PickupOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
 
-    private boolean isAuthenticated() {
-        if (!currentUser.isAuthenticated()) {
-            redirect("/yh/login");
-            return false;
-        }
-        setAttr("userId", currentUser.getPrincipal());
-        return true;
-    }
-
     public void index() {
-        if (!isAuthenticated())
-            return;
         render("/yh/pickup/pickupOrderList.html");
     }
 
     public void add() {
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/pickup/pickupOrderSearchTransfer.html");
     }
 
@@ -124,7 +114,6 @@ public class PickupOrderController extends Controller {
         List<Record> incomeItemList = Collections.EMPTY_LIST;
         incomeItemList = Db.find("select * from fin_item where type='应收'");
         setAttr("incomeItemList", incomeItemList);
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/pickup/editPickupOrder.html");
     }
 
@@ -912,14 +901,12 @@ public class PickupOrderController extends Controller {
     // 修改拼车单页面
     public void edit() {
     	pickupOrderEdit();
-        if (LoginUserController.isAuthenticated(this))
             render("/yh/pickup/editPickupOrder.html");
     }
     
     // 修改拼车单页面
     public void carManageEdit() {
     	pickupOrderEdit();
-    	if (LoginUserController.isAuthenticated(this))
     		render("/yh/pickup/carManageEditPickupOrder.html");
     }
 

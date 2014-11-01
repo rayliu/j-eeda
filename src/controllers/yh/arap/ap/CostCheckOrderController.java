@@ -11,6 +11,7 @@ import models.ArapCostOrder;
 import models.UserLogin;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -20,6 +21,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class CostCheckOrderController extends Controller {
     private Logger logger = Logger.getLogger(CostCheckOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
@@ -27,14 +29,12 @@ public class CostCheckOrderController extends Controller {
     public void index() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "");
-    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/CostCheckOrder/CostCheckOrderList.html");
     }
 
     public void add() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "");
-    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/CostCheckOrder/CostCheckOrderCreateSearchList.html");
     }
 
@@ -96,7 +96,6 @@ public class CostCheckOrderController extends Controller {
         setAttr("userLogin", userLogin);
 
         setAttr("status", "new");
-    	if(LoginUserController.isAuthenticated(this))
     		render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
     }
 
@@ -256,7 +255,6 @@ public class CostCheckOrderController extends Controller {
     	orderNos = orderNos.substring(0, orderNos.length() - 1);
     	setAttr("orderIds", orderIds);
     	setAttr("orderNos", orderNos);
-    	if(LoginUserController.isAuthenticated(this))
     		render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
     }
 

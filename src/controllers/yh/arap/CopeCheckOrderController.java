@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
 import models.Party;
 import models.yh.profile.Contact;
 
@@ -14,20 +16,19 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class CopeCheckOrderController extends Controller {
     private Logger logger = Logger.getLogger(CopeCheckOrderController.class);
 
     public void index() {
     	setAttr("type", "SERVICE_PROVIDER");
     	setAttr("classify", "cope");
-    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
     }
 
     public void add() {
     	setAttr("type", "SERVICE_PROVIDER");
     	setAttr("classify", "cope");
-    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderCreateSearchList.html");
     }
 
@@ -43,7 +44,6 @@ public class CopeCheckOrderController extends Controller {
         setAttr("customer", contact);
     	setAttr("type", "SERVICE_PROVIDER");
     	setAttr("classify", "cope");
-    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
     }
 

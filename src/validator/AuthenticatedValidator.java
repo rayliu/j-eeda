@@ -17,7 +17,7 @@ public class AuthenticatedValidator extends Validator {
 	
 	@Override
 	protected void handleError(Controller controller) {
-		controller.redirect("/yh/login");
+		controller.redirect("/login");
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import models.Product;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
@@ -18,13 +19,13 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class ProductController extends Controller {
 
     private Logger logger = Logger.getLogger(ProductController.class);
 
     public void index() {
-        if (LoginUserController.isAuthenticated(this))
-            render("profile/product/productList.html");
+        render("profile/product/productList.html");
     }
 
     public void list() {
@@ -58,8 +59,7 @@ public class ProductController extends Controller {
 
     public void add() {
         setAttr("saveOK", false);
-        if (LoginUserController.isAuthenticated(this))
-            render("profile/product/productEdit.html");
+        render("profile/product/productEdit.html");
     }
 
     public void edit() {
@@ -67,8 +67,7 @@ public class ProductController extends Controller {
 
         Product product = Product.dao.findById(id);
         setAttr("product", product);
-        if (LoginUserController.isAuthenticated(this))
-            render("profile/product/productEdit.html");
+        render("profile/product/productEdit.html");
     }
 
     public void delete() {

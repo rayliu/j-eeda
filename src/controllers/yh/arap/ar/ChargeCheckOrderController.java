@@ -15,6 +15,7 @@ import models.UserLogin;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -24,19 +25,18 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class ChargeCheckOrderController extends Controller {
 	private Logger logger = Logger.getLogger(ChargeCheckOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 
 	public void index() {
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
 	}
 
 	public void add() {
 		setAttr("type", "CUSTOMER");
 		setAttr("classify", "");
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderCreateSearchList.html");
 	}
 
@@ -100,7 +100,6 @@ public class ChargeCheckOrderController extends Controller {
 		setAttr("userLogin", userLogin);
 
 		setAttr("status", "new");
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
 	}
 
@@ -381,7 +380,6 @@ public class ChargeCheckOrderController extends Controller {
 		setAttr("returnOrderIds", returnOrderIds);
 		setAttr("beginTime", beginTime);
 		setAttr("endTime", endTime);
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
 	}
 

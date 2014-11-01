@@ -19,6 +19,7 @@ import models.UserLogin;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -28,13 +29,13 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
+@RequiresAuthentication
 public class CostPreInvoiceOrderController extends Controller {
     private Logger logger = Logger.getLogger(CostPreInvoiceOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
-    	if(LoginUserController.isAuthenticated(this))
-    	    render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderList.html");
+	    render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderList.html");
     }
 
 
@@ -50,7 +51,6 @@ public class CostPreInvoiceOrderController extends Controller {
         setAttr("customer", contact);
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
-    	if(LoginUserController.isAuthenticated(this))
         render("/yh/arap/ChargeAcceptOrder/ChargeCheckOrderEdit.html");
     }
 
@@ -144,7 +144,6 @@ public class CostPreInvoiceOrderController extends Controller {
 		setAttr("userLogin", userLogin);
 
 		setAttr("status", "new");
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
 	}
 
@@ -253,7 +252,6 @@ public class CostPreInvoiceOrderController extends Controller {
 		}
 		costCheckOrderIds = costCheckOrderIds.substring(0, costCheckOrderIds.length() - 1);
 		setAttr("costCheckOrderIds", costCheckOrderIds);
-		if (LoginUserController.isAuthenticated(this))
 			render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
 	}
 	

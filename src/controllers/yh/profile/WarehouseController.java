@@ -13,6 +13,7 @@ import models.Warehouse;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
@@ -20,13 +21,12 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
-
+@RequiresAuthentication
 public class WarehouseController extends Controller{
 
     private Logger logger = Logger.getLogger(WarehouseController.class);
     
 	public void index() {
-		if(LoginUserController.isAuthenticated(this))
 		render("profile/warehouse/warehouseList.html");
 	}
 
@@ -98,7 +98,6 @@ public class WarehouseController extends Controller{
 
 	public void add() {
 		setAttr("saveOK", false);
-		if(LoginUserController.isAuthenticated(this))
 		render("profile/warehouse/warehouseEdit.html");
 	}
 
@@ -130,7 +129,6 @@ public class WarehouseController extends Controller{
 		setAttr("contact", contact);
 		Contact sp = Contact.dao.findFirst("select * from contact where id = (select contact_id from party where id="+warehouse.get("sp_id")+")");
 		setAttr("sp", sp);
-		if(LoginUserController.isAuthenticated(this))
 		render("profile/warehouse/warehouseEdit.html");
 	}
 
@@ -146,8 +144,7 @@ public class WarehouseController extends Controller{
 		warehouse.set("sp_id", null);
 		warehouse.update();
 		warehouse.delete();
-		if(LoginUserController.isAuthenticated(this))
-		redirect("/yh/warehouse");
+		redirect("/warehouse");
 	}
 
 	@SuppressWarnings("unused")
@@ -222,8 +219,7 @@ public class WarehouseController extends Controller{
 			warehouse.save();
 		}
 		setAttr("saveOK", true);
-		if(LoginUserController.isAuthenticated(this))
-		redirect("/yh/warehouse");
+		redirect("/warehouse");
 	}
 
 	private void setContact(Contact contact) {

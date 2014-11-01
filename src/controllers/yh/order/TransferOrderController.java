@@ -239,7 +239,6 @@ public class TransferOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "新建");
-		if (LoginUserController.isAuthenticated(this))
 			render("transferOrder/updateTransferOrder.html");
 	}
 
@@ -325,7 +324,6 @@ public class TransferOrderController extends Controller {
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
-		if (LoginUserController.isAuthenticated(this))
 			render("transferOrder/updateTransferOrder.html");
 	}
 
@@ -352,7 +350,6 @@ public class TransferOrderController extends Controller {
 			party.save();
 		}
 		setAttr("saveOK", true);
-		if (LoginUserController.isAuthenticated(this))
 			render("transferOrder/transferOrderList.html");
 	}
 
@@ -401,7 +398,6 @@ public class TransferOrderController extends Controller {
 	}
 
 	public void saveItem() {
-		if (LoginUserController.isAuthenticated(this))
 			render("transferOrder/transferOrderList.html");
 	}
 
@@ -863,8 +859,7 @@ public class TransferOrderController extends Controller {
 		transferOrder.set("sp_id", null);
 
 		transferOrder.delete();
-		if (LoginUserController.isAuthenticated(this))
-			redirect("/yh/transferOrder");
+			redirect("/transferOrder");
 	}
 
 	// 取消
