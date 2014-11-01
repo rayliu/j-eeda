@@ -83,7 +83,21 @@ $(document).ready(function() {
           	  }},  
 	          {"mDataProp":"PICKUP_NO", "sWidth":"120px"},
 	          {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"120px"},
-	          {"mDataProp":"STATUS", "sWidth":"60px"},
+	          {"mDataProp":"STATUS", "sWidth":"60px",
+					"fnRender": function(obj) {
+						if("new" == obj.aData.STATUS){
+			    			return "新建";
+			    		}else if("checked" == obj.aData.STATUS){
+			    			return "已审核";
+			    		}else if("revocation" == obj.aData.STATUS){
+			    			return "已撤销";
+			    		}else if("reimbursement" == obj.aData.STATUS){
+			    			return "已报销";
+			    		}else{
+			    			return "";
+			    		}
+					}
+	          },
 			  {"mDataProp":"CAR_NO", "sWidth":"70px"},
 			  {"mDataProp":"MAIN_DRIVER_NAME", "sWidth":"70px"},
 			  {"mDataProp":"TURNOUT_TIME", "sWidth":"80px"},

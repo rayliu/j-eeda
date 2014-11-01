@@ -1,4 +1,4 @@
-package controllers.yh.profile;
+package controllers.yh.carmanage;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -30,10 +30,10 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.LoginUserController;
+import controllers.yh.profile.CarinfoController;
 
 @RequiresAuthentication
-public class CarinfoControllerTest extends Controller {
+public class CarSummaryController extends Controller {
 	private Logger logger = Logger.getLogger(CarinfoController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 	
@@ -70,7 +70,7 @@ public class CarinfoControllerTest extends Controller {
 
 	        // 获取总条数
 	        sqlTotal = "select ifnull(count(0),0) total from depart_order dor "
-                    + " where dor.status!='取消' and dor.car_summary_type = '未处理' and combine_type = '"
+                    + " where dor.status!='取消' and dor.car_summary_type = 'untreated' and combine_type = '"
 	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id order by dor.car_no,dor.create_stamp desc " + sLimit;
 
 	        // 获取当前页的数据
@@ -90,7 +90,7 @@ public class CarinfoControllerTest extends Controller {
                     + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
                     + " left join transfer_order t_o on t_o.id = dtf.order_id "
                     + " left join office o on o.id = t_o.office_id "
-                    + " where dor.status!='取消' and dor.car_summary_type = '未处理' and combine_type = '"
+                    + " where dor.status!='取消' and dor.car_summary_type = 'untreated' and combine_type = '"
 	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id order by dor.car_no,dor.create_stamp desc " + sLimit;
 	        
 		}else{
@@ -103,7 +103,7 @@ public class CarinfoControllerTest extends Controller {
                     + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
                     + " left join transfer_order t_o on t_o.id = dtf.order_id "
                     + " left join office o on o.id = t_o.office_id "
-                    + " where dor.status!='取消' and dor.car_summary_type = '未处理' and combine_type = '"
+                    + " where dor.status!='取消' and dor.car_summary_type = 'untreated' and combine_type = '"
 	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id"
                     + " and ifnull(dor.driver, '') like '%"+driver+"%'"
 					+ " and ifnull(dor.status, '') like '%"+status+"%'"
@@ -129,7 +129,7 @@ public class CarinfoControllerTest extends Controller {
                     + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
                     + " left join transfer_order t_o on t_o.id = dtf.order_id "
                     + " left join office o on o.id = t_o.office_id "
-                    + " where dor.status!='取消' and dor.car_summary_type = '未处理' and combine_type = '"
+                    + " where dor.status!='取消' and dor.car_summary_type = 'untreated' and combine_type = '"
 	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own'"
                     + " and ifnull(dor.driver, '') like '%"+driver+"%'"
 					+ " and ifnull(dor.status, '') like '%"+status+"%'"
@@ -344,7 +344,7 @@ public class CarinfoControllerTest extends Controller {
             		.set("finish_car_mileage", finishCarMileage).set("month_start_car_next", monthStartCarNext)
             		.set("month_car_run_mileage", monthCarRunMileage).set("month_refuel_amount", monthRefuelAmount)
             		.set("next_start_car_amount", nextStartCarAmount).set("deduct_apportion_amount", deductApportionAmount)
-            		.set("actual_payment_amount", actualPaymentAmount).set("create_data", sqlDate).set("status", "新建").save();
+            		.set("actual_payment_amount", actualPaymentAmount).set("create_data", sqlDate).set("status", "new").save();
         	
         	if(result){
         		CarSummaryOrder carSummary = CarSummaryOrder.dao
@@ -356,7 +356,7 @@ public class CarinfoControllerTest extends Controller {
         		for (int i = 0; i < pickupIds.length; i++) {
         			//修改调车单状态为：已处理
         			DepartOrder departOrder = DepartOrder.dao.findById(pickupIds[i]);
-        			departOrder.set("car_summary_type", "已处理");
+        			departOrder.set("car_summary_type", "processed");
         			departOrder.update();
         			//插入从表数据
         			CarSummaryDetail carSummaryDetail = new CarSummaryDetail();
@@ -373,7 +373,7 @@ public class CarinfoControllerTest extends Controller {
         		//创建费用合计表初始数据
         		initCarSummaryDetailOtherFeeData(carSunmmaryId);
         		//创建行车里程碑
-        		saveCarSummaryOrderMilestone(carSunmmaryId,"新建");
+        		saveCarSummaryOrderMilestone(carSunmmaryId,"new");
         		//设置默认运输单分摊比例
         		double number = 1.0D/orderIds.size();
         		BigDecimal b = new BigDecimal(number); 
@@ -803,18 +803,18 @@ public class CarinfoControllerTest extends Controller {
     	String value = getPara("value").trim();
     	if(!"".equals(carSummaryId) && carSummaryId != null){
     		if("审核".equals(value)){
-    			value = "已审核";
+    			value = "checked";
     		}else if("撤销审核".equals(value)){
-    			value = "已撤销";
+    			value = "revocation";
     		}else if("报销".equals(value)){
-    			value = "已报销";
+    			value = "reimbursement";
     		}else{
     			value = "";
     		}
     		CarSummaryOrder order = CarSummaryOrder.dao.findById(carSummaryId);
     		order.set("status", value);
     		order.update();
-    		//创建行车里程碑
+    		//修改行车里程碑状态
     		saveCarSummaryOrderMilestone(Long.parseLong(carSummaryId),value);
     	}
     	renderJson("{\"success\":true}");
@@ -862,9 +862,9 @@ public class CarinfoControllerTest extends Controller {
 			setAttr("carNumber", carSummaryOrder.get("month_start_car_next"));
 			//是否审核 isAudit
 			String status = carSummaryOrder.get("status");
-			if("新建".equals(status) || "已撤销".equals(status) )
+			if("new".equals(status) || "revocation".equals(status) )
 				setAttr("isAudit", "no");
-			else if("已审核".equals(status) || "已报销".equals(status))
+			else if("checked".equals(status) || "reimbursement".equals(status))
 				setAttr("isAudit", "yes");
 			else
 				setAttr("isAudit", "no");

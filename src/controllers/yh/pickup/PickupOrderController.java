@@ -622,7 +622,7 @@ public class PickupOrderController extends Controller {
                 pickupOrder.set("address", null);
                 pickupOrder.set("warehouse_id", null);
             }
-            pickupOrder.set("car_summary_type", "未处理");
+            pickupOrder.set("car_summary_type", "untreated");
             pickupOrder.save();
             saveDepartTransfer(pickupOrder, getPara("orderid"), checkedDetail, uncheckedDetailIds);
             savePickupOrderMilestone(pickupOrder);

@@ -33,16 +33,19 @@ $(document).ready(function() {
         	number :"请输入数字！"
         }
     });
-	
+	//根据出车里程和收车里程自动统计行驶里程
 	$("#finish_car_mileage,#start_car_mileage").on('blur', function(e){
-		var finish = $("#finish_car_mileage").val();
-		var start =  $("#start_car_mileage").val();
-		if(finish != "" && finish != 0){
-			if(finish > start){
-				$("#month_car_run_mileage").val(finish-start);
-			}else{
-				alert("请正确输入收车里程读数！");
-				$(this).focus();
+		var isAudit = $("#isAudit").val();
+		if(isAudit == "no"){
+			var finish = $("#finish_car_mileage").val();
+			var start =  $("#start_car_mileage").val();
+			if(finish != "" && finish != 0){
+				if(finish > start){
+					$("#month_car_run_mileage").val(finish-start);
+				}else{
+					$.scojs_message('请输入正确的收车里程读数', $.scojs_message.TYPE_OK);
+					$(this).focus();
+				}
 			}
 		}
 	});
@@ -60,15 +63,15 @@ $(document).ready(function() {
 		$("#editProportionBtn").prop("disabled",false);
 		$("#affirmBtn").prop("disabled",true);
 	}else{
-		//加载时显示"审核"
+		//加载时隐藏"审核"
 		$("#auditBtn").hide();
 		//不启用“保存”
 		$("#saveCarSummaryBtn").prop("disabled",true);
 		$("#addCarSummaryRouteFee").prop("disabled",true);
 		$("#addCarSummaryDetailOilFee").prop("disabled",true);
 		$("#addCarSummaryDetailSalary").prop("disabled",true);
-		$("#editProportionBtn").prop("disabled",false);
-		$("#affirmBtn").prop("disabled",false);
+		$("#editProportionBtn").prop("disabled",true);
+		$("#affirmBtn").prop("disabled",true);
 	}
 	
  	//列出所有的副司机 - 自营
@@ -112,15 +115,23 @@ $(document).ready(function() {
 	
 	//点击返回
 	$("#goBackBtn").click(function(e){
+		var isAudit = $("#isAudit").val();
 		var car_summary_id = $("#car_summary_id").val();
-		if(car_summary_id != ""){
-			if(clickTabId != "carmanagebasic"){
-				//当用户不是从基本信息tab返回时，自动统计行车单相关数据
-				$.post('/yh/carsummary/calculateCost',{carSummaryId:car_summary_id},function(data){
-					if(data =="" && data == null){
-						alert('费用自动统计失败');
+		if(isAudit == "no"){
+			if(car_summary_id != ""){
+				if(clickTabId != "carmanagebasic"){
+					//当用户不是从基本信息tab返回时，自动统计行车单相关数据
+					$.post('/yh/carsummary/calculateCost',{carSummaryId:car_summary_id},function(data){
+						if(data =="" && data == null){
+							$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_OK);
+						}
+					},'json');	
+				}else{
+					var msg = "是否保存行车单数据？";   
+					if (confirm(msg)==true){   
+						saveCarSummaryData(); 
 					}
-				},'json');	
+				}
 			}else{
 				var msg = "是否保存行车单数据？";   
 				if (confirm(msg)==true){   
@@ -142,10 +153,10 @@ $(document).ready(function() {
 							$("#"+name+"").val(value);
 						});
 					}else
-						alert('费用自动统计失败');
+						$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_OK);
 				},'json');	
 			}else{
-				alert('费用自动统计失败');
+				$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_OK);
 			}
 		}
 		clickTabId = e.target.getAttribute("id");
@@ -241,7 +252,21 @@ $(document).ready(function() {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
          "aoColumns": [
-             { "mDataProp": "STATUS"},
+             { "mDataProp": "STATUS",
+				"fnRender": function(obj) {
+		    		if("new" == obj.aData.STATUS){
+		    			return "新建";
+		    		}else if("checked" == obj.aData.STATUS){
+		    			return "已审核";
+		    		}else if("revocation" == obj.aData.STATUS){
+		    			return "已撤销";
+		    		}else if("reimbursement" == obj.aData.STATUS){
+		    			return "已报销";
+		    		}else{
+		    			return "";
+		    		}
+				}
+             },
              { "mDataProp": "USER_NAME"},
              { "mDataProp": "CREATE_STAMP"}
          ]
@@ -413,7 +438,7 @@ $(document).ready(function() {
 			routeFeeId = $(this).parent().parent().parent().attr("id");
 		}
 		if(name == "travel_amount" && isNaN(value)){
-			alert("【通行费】只能输入数字,请重新输入！");
+			$.scojs_message('【通行费】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
@@ -685,37 +710,37 @@ $(document).ready(function() {
 			routeFeeId = $(this).parent().parent().parent().attr("id");
 		}
 		if(name == "odometer_mileage" && isNaN(value)){
-			alert("【里程表读数】只能输入数字,请重新输入！");
+			$.scojs_message('【里程表读数】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
 		}
 		if(name == "refuel_unit_cost" && isNaN(value)){
-			alert("【油价】只能输入数字,请重新输入！");
+			$.scojs_message('【油价】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
 		}
 		if(name == "refuel_number" && isNaN(value)){
-			alert("【加油量】只能输入数字,请重新输入！");
+			$.scojs_message('【加油量】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
 		}
 		if(name == "refuel_amount" && isNaN(value)){
-			alert("【油费】只能输入数字,请重新输入！");
+			$.scojs_message('【油费】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
 		}
 		if(name == "load_amount" && isNaN(value)){
-			alert("【载重】只能输入数字,请重新输入！");
+			$.scojs_message('【载重】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
 		}
 		if(name == "avg_econ" && isNaN(value)){
-			alert("【平均油耗】只能输入数字,请重新输入！");
+			$.scojs_message('【平均油耗】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
@@ -744,7 +769,7 @@ $(document).ready(function() {
  			return nRow;
  		 },
          "aoColumns": [
-             { "mDataProp": "ITEM", "sWidth":"50px"},
+             { "mDataProp": "ITEM", "sWidth":"80px"},
              { "mDataProp": "USERNAME", "sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.USERNAME!='' && obj.aData.USERNAME != null){
@@ -882,7 +907,7 @@ $(document).ready(function() {
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		if(name == "deserved_amount" && isNaN(value)){
-			alert("【应得金额】只能输入数字,请重新输入！");
+			$.scojs_message('【应得金额】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
@@ -996,7 +1021,7 @@ $(document).ready(function() {
 			}
 		}
 		if(name == "amount" && isNaN(value)){
-			alert("【金额】只能输入数字,请重新输入！");
+			$.scojs_message('【金额】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
@@ -1027,7 +1052,7 @@ $(document).ready(function() {
 					$("#addCarSummaryDetailSalary").prop("disabled",true);
 					$("#editProportionBtn").prop("disabled",true);
 					$("#affirmBtn").prop("disabled",true);
-					//刷新当前选项卡
+					//刷新当前选项卡 
 					$("#"+clickTabId+"").click();
 					
 				}else{
@@ -1054,7 +1079,7 @@ $(document).ready(function() {
 					$("#addCarSummaryDetailOilFee").prop("disabled",false);
 					$("#addCarSummaryDetailSalary").prop("disabled",false);
 					$("#editProportionBtn").prop("disabled",false);
-					$("#affirmBtn").prop("disabled",false);
+					$("#affirmBtn").prop("disabled",true);
 					//刷新当前选项卡
 					$("#"+clickTabId+"").click();
 				}else{
@@ -1123,23 +1148,41 @@ $(document).ready(function() {
 		var orderIds = [];
 		var rates = [];
 		var checkTates = 0;
+		var result = true;
         $("#transferOrderTbody tbody tr").each(function(trindex,tritem){
         	orderIds.push($(tritem).attr("id"));
         	rates.push($(tritem).find("td").find("input").val());
         });
         for ( var i = 0; i < rates.length; i++) {
-        	checkTates = rates[i]*1+checkTates*1;
+        	if(isNaN(Number(rates[i]))){
+        		$.scojs_message('【分摊比例】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
+    			result = false;
+    			break;
+    		}else{
+    			checkTates = rates[i]*1+checkTates*1;
+    		}
 		}
-        if(checkTates == 100 && orderIds.length == rates.length){
-			$.post('/yh/carsummary/updateTransferOrderShareRatio',{"orderIds":orderIds.toString(),"rates":rates.toString()}, function(data){
-				if(data.success){
-					$("#affirmBtn").prop("disabled",true);
-					$("#editProportionBtn").prop("disabled",false);
-					$('#transferOrderTbody input').prop("disabled",true);
-				}
-	    	},'json');
-		}else{
-			alert("所有分摊比例相加为100%,请重新输入！");
+        if(result && orderIds.length == rates.length){
+        	 if(orderIds.length % 3 == 0 ){
+             	if(!(checkTates >=99 && checkTates <=100)){
+             		$.scojs_message('所有分摊比例相加为99%-100%,请重新输入', $.scojs_message.TYPE_OK);
+             		result = false;
+             	}
+             }else{
+             	if(checkTates != 100){
+             		$.scojs_message('所有分摊比例相加为100%,请重新输入', $.scojs_message.TYPE_OK);
+     	        	result = false;
+             	}
+             }
+        	if(result){
+				$.post('/yh/carsummary/updateTransferOrderShareRatio',{"orderIds":orderIds.toString(),"rates":rates.toString()}, function(data){
+					if(data.success){
+						$("#affirmBtn").prop("disabled",true);
+						$("#editProportionBtn").prop("disabled",false);
+						$('#transferOrderTbody input').prop("disabled",true);
+					}
+		    	},'json');
+        	}
 		}
 	});
 	

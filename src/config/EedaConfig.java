@@ -200,7 +200,7 @@ public class EedaConfig extends JFinalConfig {
         me.add(contentPath+"/stock", controllers.yh.inventory.InventoryController.class, contentPath);
         me.add(contentPath+"/carinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add(contentPath+"/carmanage", controllers.yh.profile.CarinfoController.class, contentPath);
-        me.add(contentPath+"/carsummary", controllers.yh.profile.CarinfoControllerTest.class, contentPath);
+        me.add(contentPath+"/carsummary", controllers.yh.carmanage.CarSummaryController.class, contentPath);
         me.add(contentPath+"/driverinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add(contentPath+"/spdriverinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add(contentPath+"/spcarinfo", controllers.yh.profile.CarinfoController.class, contentPath);
