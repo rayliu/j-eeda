@@ -75,7 +75,7 @@ $(document).ready(function() {
 	}
 	
  	//列出所有的副司机 - 自营
-	$.get('/yh/carsummary/searchAllDriver', null, function(data){
+	$.get('/carsummary/searchAllDriver', null, function(data){
 		var minor_driver_name = $('#minor_driver_name');
 		var hidden_minor_driver_name = $('#hidden_minor_driver_name').val();
 		minor_driver_name.append("<option value=''></option>");
@@ -97,7 +97,7 @@ $(document).ready(function() {
         }
  		//判断行车单是否审核
  		if(!$("#saveCarSummaryBtn").prop("disabled")){
- 			$.post('/yh/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
+ 			$.post('/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
  	 			if(data != null){
  	 				$("#car_summary_id").val(data);
  	 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
@@ -121,7 +121,7 @@ $(document).ready(function() {
 			if(car_summary_id != ""){
 				if(clickTabId != "carmanagebasic"){
 					//当用户不是从基本信息tab返回时，自动统计行车单相关数据
-					$.post('/yh/carsummary/calculateCost',{carSummaryId:car_summary_id},function(data){
+					$.post('/carsummary/calculateCost',{carSummaryId:car_summary_id},function(data){
 						if(data =="" && data == null){
 							$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_OK);
 						}
@@ -139,14 +139,14 @@ $(document).ready(function() {
 				}
 			}
 		}
-		window.location.href="/yh/carsummary"; 
+		window.location.href="/carsummary"; 
 	});
 	// 选项卡-基本信息
 	$("#carmanagebasic").click(function(e){
 		if(clickTabId != "carmanagebasic"){
 			var car_summary_id = $("#car_summary_id").val();
 			if(car_summary_id != ""){
-				$.post('/yh/carsummary/calculateCost',{carSummaryId:car_summary_id},function(data){
+				$.post('/carsummary/calculateCost',{carSummaryId:car_summary_id},function(data){
 					console.log(data);
 					if(data !="" && data != null){
 						$.each(data, function(name, value) {
@@ -203,7 +203,7 @@ $(document).ready(function() {
 		clickTabId = e.target.getAttribute("id");
 		var pickupIds = $("#pickupIds").val();
 		pickupAddressTbody.fnSettings().oFeatures.bServerSide = true; 
-		pickupAddressTbody.fnSettings().sAjaxSource = "/yh/carsummary/findAllAddress?pickupIds="+pickupIds;   
+		pickupAddressTbody.fnSettings().sAjaxSource = "/carsummary/findAllAddress?pickupIds="+pickupIds;   
 		pickupAddressTbody.fnDraw();
 	});
 	
@@ -238,7 +238,7 @@ $(document).ready(function() {
 		clickTabId = e.target.getAttribute("id");
 		var pickupIds = $("#pickupIds").val();
 		pickupItemTbody.fnSettings().oFeatures.bServerSide = true;
-		pickupItemTbody.fnSettings().sAjaxSource = "/yh/carsummary/findPickupOrderItems?pickupIds="+pickupIds;   
+		pickupItemTbody.fnSettings().sAjaxSource = "/carsummary/findPickupOrderItems?pickupIds="+pickupIds;   
 		pickupItemTbody.fnDraw();
 	});
 	//刷新里程碑
@@ -279,7 +279,7 @@ $(document).ready(function() {
 		clickTabId = e.target.getAttribute("id");
 		var pickupIds = $("#pickupIds").val();
 		pickupMilestoneTbody.fnSettings().oFeatures.bServerSide = true;
-		pickupMilestoneTbody.fnSettings().sAjaxSource = "/yh/carsummary/transferOrderMilestoneList?pickupIds="+pickupIds;   
+		pickupMilestoneTbody.fnSettings().sAjaxSource = "/carsummary/transferOrderMilestoneList?pickupIds="+pickupIds;   
 		pickupMilestoneTbody.fnDraw();
 	});
 	
@@ -391,7 +391,7 @@ $(document).ready(function() {
 		var car_summary_id = $("#car_summary_id").val();
 		if(car_summary_id != "" && car_summary_id != null){
 			carSummaryDetailRouteFeeTbody.fnSettings().oFeatures.bServerSide = true;
-			carSummaryDetailRouteFeeTbody.fnSettings().sAjaxSource = "/yh/carsummary/findCarSummaryRouteFee?car_summary_id="+car_summary_id;   
+			carSummaryDetailRouteFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryRouteFee?car_summary_id="+car_summary_id;   
 			carSummaryDetailRouteFeeTbody.fnDraw();
 		}
 	});
@@ -400,10 +400,10 @@ $(document).ready(function() {
 	$("#addCarSummaryRouteFee").click(function(e){
 		var car_summary_id = $("#car_summary_id").val();
 		if(car_summary_id != ""){
-			$.post('/yh/carsummary/addCarSummaryRouteFee/'+car_summary_id,function(data){
+			$.post('/carsummary/addCarSummaryRouteFee/'+car_summary_id,function(data){
 				console.log(data);
 				if(data.success){
-					carSummaryDetailRouteFeeTbody.fnSettings().sAjaxSource = "/yh/carsummary/findCarSummaryRouteFee?car_summary_id="+car_summary_id;   
+					carSummaryDetailRouteFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryRouteFee?car_summary_id="+car_summary_id;   
 					carSummaryDetailRouteFeeTbody.fnDraw();
 				}else{
 					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
@@ -419,9 +419,9 @@ $(document).ready(function() {
 	$("#carSummaryDetailRouteFeeTbody").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		var car_summary_id = $("#car_summary_id").val();
-		$.post('/yh/carsummary/delCarSummaryRouteFee/'+id,function(data){
+		$.post('/carsummary/delCarSummaryRouteFee/'+id,function(data){
 			console.log(data);
-			carSummaryDetailRouteFeeTbody.fnSettings().sAjaxSource = "/yh/carsummary/findCarSummaryRouteFee?car_summary_id="+car_summary_id;   
+			carSummaryDetailRouteFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryRouteFee?car_summary_id="+car_summary_id;   
 			carSummaryDetailRouteFeeTbody.fnDraw();
 			
         });
@@ -445,7 +445,7 @@ $(document).ready(function() {
 		}
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
 		if(result && value != ""){
-			$.post('/yh/carsummary/updateCarSummaryDetailRouteFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
+			$.post('/carsummary/updateCarSummaryDetailRouteFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
 				if(!data.success){
 					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
 				}
@@ -665,7 +665,7 @@ $(document).ready(function() {
 		var car_summary_id = $("#car_summary_id").val();
 		if(car_summary_id != "" && car_summary_id != null){
 			carSummaryDetailOilFeeTbody.fnSettings().oFeatures.bServerSide = true;
-			carSummaryDetailOilFeeTbody.fnSettings().sAjaxSource = "/yh/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;   
+			carSummaryDetailOilFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;   
 			carSummaryDetailOilFeeTbody.fnDraw();
 		}
 	});
@@ -673,10 +673,10 @@ $(document).ready(function() {
 	$("#addCarSummaryDetailOilFee").click(function(e){
 		var car_summary_id = $("#car_summary_id").val();
 		if(car_summary_id != ""){
-			$.post('/yh/carsummary/addCarSummaryDetailOilFee/'+car_summary_id,function(data){
+			$.post('/carsummary/addCarSummaryDetailOilFee/'+car_summary_id,function(data){
 				console.log(data);
 				if(data.success){
-					carSummaryDetailOilFeeTbody.fnSettings().sAjaxSource = "/yh/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;   
+					carSummaryDetailOilFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;   
 					carSummaryDetailOilFeeTbody.fnDraw();
 				}else{
 					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
@@ -691,9 +691,9 @@ $(document).ready(function() {
 	$("#carSummaryDetailOilFeeTbody").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		var car_summary_id = $("#car_summary_id").val();
-		$.post('/yh/carsummary/delCarSummaryDetailOilFee/'+id,function(data){
+		$.post('/carsummary/delCarSummaryDetailOilFee/'+id,function(data){
 			console.log(data);
-			carSummaryDetailOilFeeTbody.fnSettings().sAjaxSource = "/yh/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;   
+			carSummaryDetailOilFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;   
 			carSummaryDetailOilFeeTbody.fnDraw();
 			
         });
@@ -747,7 +747,7 @@ $(document).ready(function() {
 		}
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
 		if(result && value != ""){
-			$.post('/yh/carsummary/updateCarSummaryDetailOilFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
+			$.post('/carsummary/updateCarSummaryDetailOilFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
 				if(!data.success){
 					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
 				}
@@ -873,7 +873,7 @@ $(document).ready(function() {
 		var car_summary_id = $("#car_summary_id").val();
 		if(car_summary_id != "" && car_summary_id != null){
 			carSummaryDetailSalaryTbody.fnSettings().oFeatures.bServerSide = true;
-			carSummaryDetailSalaryTbody.fnSettings().sAjaxSource = "/yh/carsummary/findCarSummaryDetailSalary?car_summary_id="+car_summary_id;   
+			carSummaryDetailSalaryTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailSalary?car_summary_id="+car_summary_id;   
 			carSummaryDetailSalaryTbody.fnDraw();
 		}
 	});
@@ -881,9 +881,9 @@ $(document).ready(function() {
 	$("#addCarSummaryDetailSalary").click(function(e){
 		var car_summary_id = $("#car_summary_id").val();
 		if(car_summary_id != ""){
-			$.post('/yh/carsummary/addCarSummaryDetailSalary/'+car_summary_id,function(data){
+			$.post('/carsummary/addCarSummaryDetailSalary/'+car_summary_id,function(data){
 				console.log(data);
-				carSummaryDetailSalaryTbody.fnSettings().sAjaxSource = "/yh/carsummary/findCarSummaryDetailSalary?car_summary_id="+car_summary_id;   
+				carSummaryDetailSalaryTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailSalary?car_summary_id="+car_summary_id;   
 				carSummaryDetailSalaryTbody.fnDraw();
 			});	
 		}
@@ -892,9 +892,9 @@ $(document).ready(function() {
 	$("#carSummaryDetailSalaryTbody").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		var car_summary_id = $("#car_summary_id").val();
-		$.post('/yh/carsummary/delCarSummaryDatailSalary/'+id,function(data){
+		$.post('/carsummary/delCarSummaryDatailSalary/'+id,function(data){
 			console.log(data);
-			carSummaryDetailSalaryTbody.fnSettings().sAjaxSource = "/yh/carsummary/findCarSummaryDetailSalary?car_summary_id="+car_summary_id;   
+			carSummaryDetailSalaryTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailSalary?car_summary_id="+car_summary_id;   
 			carSummaryDetailSalaryTbody.fnDraw();
         });
 	});
@@ -914,7 +914,7 @@ $(document).ready(function() {
 		}
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
 		if(result && value != ""){
-			$.post('/yh/carsummary/updateCarSummaryDetailSalary', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
+			$.post('/carsummary/updateCarSummaryDetailSalary', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
 				if(!data.success){
 					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
 				}
@@ -1002,7 +1002,7 @@ $(document).ready(function() {
 		var car_summary_id = $("#car_summary_id").val();
 		if(car_summary_id != "" && car_summary_id != null){
 			carSummaryDetailOtherFeeTbody.fnSettings().oFeatures.bServerSide = true;
-			carSummaryDetailOtherFeeTbody.fnSettings().sAjaxSource = "/yh/carsummary/findCarSummaryDetailOtherFee?car_summary_id="+car_summary_id;   
+			carSummaryDetailOtherFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOtherFee?car_summary_id="+car_summary_id;   
 			carSummaryDetailOtherFeeTbody.fnDraw();
 		}
 	});
@@ -1028,7 +1028,7 @@ $(document).ready(function() {
 		}
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
 		if(result && value != ""){
-			$.post('/yh/carsummary/updateCarSummaryDetailOtherFee', {routeFeeId:routeFeeId, name:name, value:value}, function(data){
+			$.post('/carsummary/updateCarSummaryDetailOtherFee', {routeFeeId:routeFeeId, name:name, value:value}, function(data){
 				if(!data.success){
 					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
 				}
@@ -1041,7 +1041,7 @@ $(document).ready(function() {
 		var car_summary_id = $("#car_summary_id").val();
 		var value = $(this).text();
 		if(car_summary_id != "" && car_summary_id != null){
-			$.post('/yh/carsummary/updateCarSummaryOrderStatus', {carSummaryId:car_summary_id,value:value}, function(data){
+			$.post('/carsummary/updateCarSummaryOrderStatus', {carSummaryId:car_summary_id,value:value}, function(data){
 				if(data.success){
 					$("#isAudit").val("yes");
 					$("#auditBtn").hide();
@@ -1069,7 +1069,7 @@ $(document).ready(function() {
 		var car_summary_id = $("#car_summary_id").val();
 		var value = $(this).text();
 		if(car_summary_id != "" && car_summary_id != null){
-			$.post('/yh/carsummary/updateCarSummaryOrderStatus', {carSummaryId:car_summary_id,value:value}, function(data){
+			$.post('/carsummary/updateCarSummaryOrderStatus', {carSummaryId:car_summary_id,value:value}, function(data){
 				if(data.success){
 					$("#isAudit").val("no");
 					$("#delAuditBtn").hide();
@@ -1132,7 +1132,7 @@ $(document).ready(function() {
 		var pickupIds = $("#pickupIds").val();
 		if(pickupIds != "" && pickupIds != null){
 			transferOrderTbody.fnSettings().oFeatures.bServerSide = true; 
-			transferOrderTbody.fnSettings().sAjaxSource = "/yh/carsummary/findTransferOrder?pickupIds="+pickupIds;   
+			transferOrderTbody.fnSettings().sAjaxSource = "/carsummary/findTransferOrder?pickupIds="+pickupIds;   
 			transferOrderTbody.fnDraw();
 		}
 	});
@@ -1175,7 +1175,7 @@ $(document).ready(function() {
              	}
              }
         	if(result){
-				$.post('/yh/carsummary/updateTransferOrderShareRatio',{"orderIds":orderIds.toString(),"rates":rates.toString()}, function(data){
+				$.post('/carsummary/updateTransferOrderShareRatio',{"orderIds":orderIds.toString(),"rates":rates.toString()}, function(data){
 					if(data.success){
 						$("#affirmBtn").prop("disabled",true);
 						$("#editProportionBtn").prop("disabled",false);
