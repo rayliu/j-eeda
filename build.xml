@@ -50,11 +50,11 @@
     </target>
 	
 	<target name="yh-prod">
-			<copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-yhprod" overwrite="true"/>
-			<copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-yhprod" overwrite="true"/>
+			<copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-yh-prod" overwrite="true"/>
+			<copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-yh-prod" overwrite="true"/>
 	        <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
 	            <arg value="WebRoot"/>
-	            <arg value="8080"/>
+	            <arg value="8000"/>
 	            <arg value="/"/>
 	            <arg value="0"/>
 	            <classpath path="WebRoot/WEB-INF/classes"></classpath>
