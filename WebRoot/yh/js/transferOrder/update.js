@@ -473,7 +473,7 @@ $(document).ready(function() {
 	var order_id = $("#order_id").val();
 	//datatable, 动态处理
     var itemDataTable = $('#itemTable').dataTable({
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bFilter": false, //不需要默认的搜索框
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
@@ -490,49 +490,88 @@ $(document).ready(function() {
             {
             	"mDataProp":"ITEM_NO",            	
             	"sWidth": "80px",
-            	"sClass": "item_no"
+            	"sClass": "item_no",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ITEM_NO==null)
+            			obj.aData.ITEM_NO='';
+            		var inputBox = "<input type='text' name='item_no' value='"+obj.aData.ITEM_NO+"' valueholder='至少输入两个字符查询'>";
+        			return inputBox;
+                }
         	},
             {
             	"mDataProp":"ITEM_NAME",
             	"sWidth": "180px",
-            	"sClass": "item_name"
+            	"sClass": "item_name",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ITEM_NAME==null)
+            			obj.aData.ITEM_NAME='';
+            		var inputBox = "<input type='text' value='"+obj.aData.ITEM_NAME+"'>";
+        			return inputBox;
+                }
             },
             {
             	"mDataProp":"SIZE",            	
             	"sWidth": "50px",
-            	"sClass": "size"
+            	"sClass": "size",
+            	"fnRender": function(obj) {
+            		var inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.SIZE+"'>";
+        			return inputBox;
+                }
         	},
             {
             	"mDataProp":"WIDTH",
             	"sWidth": "50px",
-            	"sClass": "width"
+            	"sClass": "width",
+            	"fnRender": function(obj) {
+            		var inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.WIDTH+"'>";
+        			return inputBox;
+                }
             },
             {
             	"mDataProp":"HEIGHT",            	
             	"sWidth": "50px",
-            	"sClass": "height"
+            	"sClass": "height",
+            	"fnRender": function(obj) {
+            		var inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.HEIGHT+"'>";
+        			return inputBox;
+                }
         	}, 
             {
             	"mDataProp":"WEIGHT",
             	"sWidth": "50px",
             	"sClass": "weight",
+            	"fnRender": function(obj) {
+            		var inputBox = "<input type='text' style='width:70px;' value='"+obj.aData.WEIGHT+"'>";
+        			return inputBox;
+                }
             },
         	{
             	"mDataProp":"AMOUNT",
             	"sWidth": "50px",
-            	"sClass": "amount"
+            	"sClass": "amount",
+            	"fnRender": function(obj) {
+            		if(obj.aData.AMOUNT==null)
+            			obj.aData.AMOUNT='';
+            		var inputBox = "<input type='text' name='amount' style='width:60px;' value='"+obj.aData.AMOUNT+"'>";
+        			return inputBox;
+                }
             }, 
             {
             	"mDataProp":"UNIT",
             	"sWidth": "50px",
-            	"sClass": "unit"
+            	"sClass": "unit",
+            	"fnRender": function(obj) {
+            		var inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.UNIT+"'>";
+        			return inputBox;
+                }
             },
             {
             	"mDataProp":null,
             	"sWidth": "50px",
             	"sClass": "sumWeight",
-            	"fnRender": function(obj) {
-        			return obj.aData.WEIGHT * obj.aData.AMOUNT;
+            	"fnRender": function(obj) {//
+            		var inputBox = "<input type='text' style='width:80px;' value='"+(obj.aData.WEIGHT * obj.aData.AMOUNT)+"'>";
+        			return inputBox;
                 }
             },
             {
@@ -540,10 +579,19 @@ $(document).ready(function() {
             	"sWidth": "50px",
             	"sClass": "volume",
             	"fnRender": function(obj) {
-            		return obj.aData.VOLUME * obj.aData.AMOUNT;
-            	}
+            		var inputBox = "<input type='text' style='width:80px;' value='"+(obj.aData.VOLUME * obj.aData.AMOUNT)+"'>";
+        			return inputBox;
+                }
             },            
-            {"mDataProp":"REMARK"},
+            {   
+            	"mDataProp":"REMARK",
+            	"fnRender": function(obj) {
+            		if(obj.aData.REMARK==null)
+            			obj.aData.REMARK='';
+            		var inputBox = "<input type='text' style='width:360px;' value='"+obj.aData.REMARK+"'>";
+        			return inputBox;
+                }
+            },
             {  
                 "mDataProp": null, 
                 "sWidth": "60px",  
@@ -584,7 +632,61 @@ $(document).ready(function() {
         itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;                		
     	itemDataTable.fnDraw();
 	};
-	
+
+	//item_no
+	$('#itemTable').on('click', 'input[name=item_no]', function(){
+		console.log(this);
+		var inputBox=$(this);
+		inputBox.autocomplete({
+	        source: function( request, response ) {
+	        	if(inputBox.parent().parent()[0].cellIndex >1){//从第3列开始，不需要去后台查数据
+		    		return;
+		    	}
+	            $.ajax({
+	                url: "/transferOrder/searchItemNo",
+	                dataType: "json",
+	                data: {
+	                    customerId: $('#customerId').val(),
+	                    input: request.term
+	                },
+	                success: function( data ) {
+	                	console.log(data);
+						var columnName = inputBox.parent().parent()[0].className;
+		        		
+	                    response($.map( data, function( data ) {
+	                        return {
+	                            label: '型号:'+data.ITEM_NO+' 名称:'+data.ITEM_NAME,
+	                            value: columnName=='item_name'?data.ITEM_NAME:data.ITEM_NO,
+	                            id: data.ID,
+	                            item_no: data.ITEM_NO,
+	                            item_name: data.ITEM_NAME
+	                        };
+	                    }));
+	                }
+	            });
+	        },
+        	select: function( event, ui ) {        		
+        		//将选择的产品id先保存到数据库
+        		var itemId = $(this).parent().parent()[0].id;
+        		var productId = ui.item.id;
+        		$.post('/transferOrderItem/saveTransferOrderItem', {transferOrderItemId:itemId,productId:productId},	function(data){   					
+					refreshItemTable();					
+    			}, 'json');    
+            },
+        	minLength: 2
+        });
+	});
+
+
+	$('#itemTable').on('blur', 'input', function(){
+		var itemId = $(this).parent().parent()[0].id;
+		var fieldName=$(this).attr("name");
+		var value= $(this).val();
+		$.post('/transferOrderItem/saveTransferOrderItemByField?order_id='+$("#order_id").val()+'&id='+itemId+'&'+fieldName+'='+value,	function(data){   					
+			refreshItemTable();			
+		}, 'json'); 
+	});
+	/*
     itemDataTable.makeEditable({
     	sUpdateURL: '/transferOrderItem/saveTransferOrderItemByField',    	
     	oEditableSettings: {event: 'click'},
@@ -597,17 +699,7 @@ $(document).ready(function() {
             	name:"item_no",
             	placeholder: "", 
             	callback: function () {
-            		/*var currentEle = this;
-            		$("input[name='cargoNature']").each(function(){
-            			if($(this).prop('checked') == true){
-            				if($(this).val() == $(currentEle).parent().children('.item_name')[0].innerHTML){            					
-            					refreshItemTable();
-            				}else{
-            					alert("请使用与货品属性一致的产品!");
-            					return false;
-            				}
-            			}
-            		});*/
+            		
             	}
         	},
             {
@@ -708,18 +800,7 @@ $(document).ready(function() {
     }).click(function(){
 
     	var inputBox = $(this).find('input');
-      //   inputBox.bind('keydown', function(e){
-      //   	var code = e.keyCode || e.which;
-		    // if (code == '9') {
-		    // 	var currentCell = e.target.parentNode.parentNode;
-		    // 	var nextCellIndex = currentCell.cellIndex+1;
-		    // 	var parentRow = $(e.target.parentNode.parentNode.parentNode);
-		    // 	var nextCell = parentRow.children('td:eq('+nextCellIndex+')');
-		    // 	$(currentCell).text(inputBox.val());
-		    // 	nextCell.click().focus();
-		    // 	//return false;
-		    // }
-      //   });
+  
         inputBox.autocomplete({
 	        source: function( request, response ) {
 	        	if(inputBox.parent().parent()[0].cellIndex >1){//从第3列开始，不需要去后台查数据
@@ -755,27 +836,13 @@ $(document).ready(function() {
         		var productId = ui.item.id;
         		$.post('/transferOrderItem/saveTransferOrderItem', {transferOrderItemId:itemId,productId:productId},	function(data){   					
 					refreshItemTable();
-					/*$("input[name='cargoNature']").each(function(){
-    					if($(this).prop('checked') == true){
-    						if($(this).val() == 'ATM'){
-                				if(data.ITEM_NAME == 'ATM'){            					
-                					refreshItemTable();
-                					return;
-                				}else{
-                					alert("请使用与货品属性一致的产品!");
-                					$.post('/transferOrderItem/deleteTransferOrderItemProduct', {transferOrderItemId:itemId,productId:productId},function(data){                						
-                					}, 'json');
-                					return false;
-                				}
-    						}
-            			}
-					});*/
+					
     			}, 'json');    
             },
         	minLength: 2
         });
     });                                                                      
-        
+   */
     // 保存货品
     $("#transferOrderItemFormBtn").click(function(){
     	$.post('/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemForm").serialize(), function(data){
