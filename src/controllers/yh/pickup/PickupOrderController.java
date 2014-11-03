@@ -1471,11 +1471,12 @@ public class PickupOrderController extends Controller {
     	String pickupOrderId = getPara();
     	Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应收' order by id asc");
     	if(item != null){
-    		DepartOrderFinItem dFinItem = new DepartOrderFinItem();
-    		dFinItem.set("status", "新建").set("pickup_order_id", pickupOrderId).set("fin_item_id", item.get("id"));
-    		dFinItem.save();
+    		//DepartOrderFinItem dFinItem = new DepartOrderFinItem();
+    		PickupOrderFinItem pFinItem = new PickupOrderFinItem();
+    		pFinItem.set("status", "新建").set("pickup_order_id", pickupOrderId).set("fin_item_id", item.get("id"));
+    		pFinItem.save();
     		//找出新建应收的ID
-    		List<Record> departOrderFinItemids = Db.find("select top 1 * from depart_order_fin_item order by id desc");
+    		List<Record> departOrderFinItemids = Db.find("select * from pickup_order_fin_item order by id desc limit 0,1");
     		//此处按拼车单中运输单数量添加tranfer_order_fin_item表中数据
     		List<Record> list = Db.find("select order_id from depart_transfer where pickup_id = ?",pickupOrderId);
     		int num = list.size();
@@ -1551,7 +1552,7 @@ public class PickupOrderController extends Controller {
     //删除应收
     public void delReceivable() {
         String id = getPara();
-        DepartOrderFinItem.dao.deleteById(id);
+        PickupOrderFinItem.dao.deleteById(id);
         //同时删除transfer_order_fin_item表中对应的费用信息
         List<TransferOrderFinItem> transferOrderFinItems = TransferOrderFinItem.dao.
         		find("select * from transfer_order_fin_item where depart_order_fin_item_id = ?",id);
@@ -1725,13 +1726,13 @@ public class PickupOrderController extends Controller {
     			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
     		}
     		String totalWhere = "";
-            String sql = "select count(1) total from depart_order_fin_item d "
+            String sql = "select count(1) total from pickup_order_fin_item d "
                     + "left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id =" + pickupOrderId + " and f.type = '应收'";
             Record rec = Db.findFirst(sql + totalWhere);
             logger.debug("total records:" + rec.getLong("total"));
 
             // 获取当前页的数据
-            List<Record> orders = Db.find("select d.*,f.name from depart_order_fin_item d "
+            List<Record> orders = Db.find("select d.*,f.name from pickup_order_fin_item d "
                     + "left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id =" + pickupOrderId + " and f.type = '应收'");
     		
             orderMap.put("sEcho", pageIndex);

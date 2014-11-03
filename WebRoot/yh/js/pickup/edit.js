@@ -277,7 +277,7 @@
     	$("#uncheckedDetail").val(uncheckedDetailIds);
     	if(uncheckedDetailIds.length > 0){
     		handlePickkupOrderDetail();
-    		// 对一张单进行多次提货,把选中的和没选中的单品区分开来,然后在进行判断
+    		// 对一张单进行多次提货,把选中的和没选中的单品区分开来,然后在进行判断s
     		$("#detailDialog").modal('show');
     	}else{
     		handlePickkupOrderDetail();
@@ -1168,12 +1168,14 @@
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$.post('/pickupOrder/updatePickupOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
-			if(data.success){
-			}else{
-				alert("修改失败!");
-			}
-    	},'json');
+		if(value != "" && value != null){
+			$.post('/pickupOrder/updatePickupOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+				if(data.success){
+				}else{
+					alert("修改失败!");
+				}
+	    	},'json');
+		}
 	});	
 	
 	
@@ -1181,11 +1183,13 @@
 	$("#table_fin3").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		e.preventDefault();
-		$.post('/pickupOrder/delReceivable/'+id,function(data){
-             //保存成功后，刷新列表
-             console.log(data);
-             incomeTab.fnDraw();
-        },'text');
+		if(id != "" ){
+			$.post('/pickupOrder/delReceivable/'+id,function(data){
+	             //保存成功后，刷新列表
+	             console.log(data);
+	             incomeTab.fnDraw();
+	        },'text');
+		}
 	});
 	
 	
