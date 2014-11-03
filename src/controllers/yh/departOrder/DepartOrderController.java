@@ -1701,8 +1701,8 @@ public class DepartOrderController extends Controller {
         String[] order_id = getPara("order_id").split(",");
         if (order_id.length == 1) {
             id = Integer.parseInt(getPara("order_id").toString());
-            String Sql = "select co.* from contact  co " + "left join transfer_order tro  on tro.id= " + id
-                    + "left join party p on p.id=tro.notify_party_id " + "where co.id=p.contact_id";
+            String Sql = "select co.* from contact  co left join transfer_order tro  on tro.id= " + id
+                    + " left join party p on p.id=tro.notify_party_id " + "where co.id=p.contact_id";
             Contact co = Contact.dao.findFirst(Sql);
             renderJson(co);
         }

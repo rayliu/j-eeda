@@ -1,10 +1,9 @@
-
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
     <title>易达物流信息平台</title>
-
     <!-- Core CSS - Include with every page -->
     <link href="/yh/css/bootstrap.min.css" rel="stylesheet">
     <link href="/yh/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -15,7 +14,7 @@
 <body>
 	<div class="container">
 		<div class="row">
-			<div class="col-md-6 col-md-offset-4">
+			<div class=" col-md-offset-4 col-lg-6">
 				<div class="login-panel panel panel-default">
 					<div class="panel-heading">
 						<h3 class="panel-title">新用户登陆</h3>
@@ -101,6 +100,8 @@
 		</div>
 	</div>
 </body>
+    <!-- Core Scripts - Include with every page -->
+    <script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="101116610" data-redirecturi="http://56.eeda123.com" charset="utf-8"></script>
     <script src="/yh/js/jquery-1.10.2.js"></script>
     <script src="/yh/js/bootstrap.min.js"></script>
     <script src="/yh/js/plugins/metisMenu/jquery.metisMenu.js"></script>
@@ -108,6 +109,7 @@
     <script src="/yh/js/jvalidate.messages_cn.js"></script>
     <!-- SB Admin Scripts - Include with every page -->
     <script src="/yh/js/sb-admin.js"></script>
+    
 <script type="text/javascript">
 $(document).ready(function() {
 		var checkBoolean = false;
@@ -166,12 +168,12 @@ $(document).ready(function() {
 		            		 remote:"用户名一存在"
 		            	 }
 		             },
-		            highlight: function(element) {
+		             highlight: function(element) {
 		            	$(element).parent().parent().closest('.form-group').removeClass('has-success').addClass('has-error');
 		            	
 		            },
 		            success: function(element) {
-		            	element.parent().parent().removeClass('has-error').addClass('has-success');
+		            	element.parent().parent().addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
 		            }
 		        });
 		}else{
@@ -203,52 +205,68 @@ $(document).ready(function() {
 		            	  minlength: 6, 
 		            	  equalTo: "#password" 
 		            	  } ,
-		           		officeName:{
-		           			required:true,
-		           			remote:{
-			                	url: "/register/checkOfficeNameExist", //后台处理程序    
-	                            type: "post",  //数据发送方式   
-	                            dataType: "json",       //接受数据格式       
-	                            data:  {                     //要传递的数据   
-	                            	officeName: function() {   
-	                                    return $("#officeName").val();   
-	                                  }   
-	  
-	                            } 
-		           			}
-		           		},
-		           		contact_name:{
-		           			required:true
-		           		},
-		           		contact_phone:{
-		           			required:true
-		           		},
-		           		email:{
-		           			required: true,
-		           			email:true
-		           		}
+	           		officeName:{
+	           			required:true,
+	           			remote:{
+		                	url: "/register/checkOfficeNameExist", //后台处理程序    
+                            type: "post",  //数据发送方式   
+                            dataType: "json",       //接受数据格式       
+                            data:  {                     //要传递的数据   
+                            	officeName: function() {   
+                                    return $("#officeName").val();   
+                                  }   
+  
+                            } 
+	           			}
+	           		},
+	           		contact_name:{
+	           			required:true
+	           		},
+	           		contact_phone:{
+	           			required:true
+	           		},
+	           		email:{
+	           			required: true,
+	           			email:true
+	           		}
 		           		
-		             },
-					messages:{
-		            	 username:{
-		            		 email:"登陆名格式步正确",
-		            		 remote:"用户名已存在"
-		            	 },
-		            	 officeName:{
-		            		 required:"公司名不能为空",
-		            		 remote:"公司名已注册"
-		            	 },
-		            	 email:{
-		            		 email:"邮件格式不正确"
-		            	 }
-		             },
-		            highlight: function(element) {
-		            	$(element).parent().parent().closest('.form-group').removeClass('has-success').addClass('has-error');
-		            },
-		            success: function(element) {
-		            	element.parent().parent().removeClass('has-error').addClass('has-success');
-		            }
-		        });
+		         },
+	             messages:{
+	            	 username:{
+	            		 required:"登陆名不能为空",
+	            		 email:"登陆名格式不正确",
+	            		 remote:"登陆名已注册"
+	            	 },
+	            	 password:{
+	            		 required:"密码至少为6位"
+	            	 },
+	            	 affirmPass:{
+	            		 equalTo:"两次密码不同"
+	            	 },
+	            	 officeName:{
+	            		 required:"公司名不能为空",
+	            		 remote:"公司名已注册"
+	            	 },
+	            	 contact_name:{
+		           			required:"联系人不能空"
+	           		},
+	           		contact_phone:{
+	           			required:"联系人电话不能为空"
+	           		},
+	           		email:{
+	           			required: "公司邮箱不能为空",
+	           			email:"邮箱格式不正确"
+	           		}
+	           		},
+	            highlight: function(element) {
+	            	$(element).parent().parent().closest('.form-group').removeClass('has-success').addClass('has-error');
+	            },
+	            success: function(element) {
+	            	element.parent().parent().removeClass('has-error').addClass('has-success');
+	            	element.detach();
+	            	
+	            }
+	        });
 		}
 		window.history.forward(1);
 	});

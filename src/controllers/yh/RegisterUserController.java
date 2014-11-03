@@ -8,7 +8,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-@RequiresAuthentication
+
 public class RegisterUserController  extends Controller{
 	//这个是记录操作日志的类
 	private Logger logger = Logger.getLogger(LoginUserController.class);
