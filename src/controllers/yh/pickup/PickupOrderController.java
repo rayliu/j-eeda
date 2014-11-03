@@ -35,8 +35,6 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.LoginUserController;
-
 @RequiresAuthentication
 public class PickupOrderController extends Controller {
     private Logger logger = Logger.getLogger(PickupOrderController.class);
@@ -568,9 +566,9 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("address", getPara("address"));
             pickupOrder.set("turnout_time", getPara("turnout_time"));
             pickupOrder.set("return_time", getPara("return_time"));
-            if(getPara("payment") != null && !"".equals(getPara("payment"))){
+            /*if(getPara("payment") != null && !"".equals(getPara("payment"))){
             	pickupOrder.set("payment", getPara("payment"));
-            }
+            }*/
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
             pickupOrder.set("create_stamp", sqlDate);
@@ -644,9 +642,9 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("address", getPara("address"));
             pickupOrder.set("turnout_time", getPara("turnout_time"));
             pickupOrder.set("return_time", getPara("return_time"));
-            if(getPara("payment") != null && !"".equals(getPara("payment"))){
+            /*if(getPara("payment") != null && !"".equals(getPara("payment"))){
             	pickupOrder.set("payment", getPara("payment"));
-            }
+            }*/
             updateTransferOrderPickupMode(pickupOrder);
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -889,7 +887,7 @@ public class PickupOrderController extends Controller {
         setAttr("incomeItemList", incomeItemList);
         
         String finItemIds = "";
-        List<DepartOrderFinItem> departOrderFinItems = DepartOrderFinItem.dao.find("select * from depart_order_fin_item where pickup_order_id = ?", pickupOrder.get("id"));
+        List<DepartOrderFinItem> departOrderFinItems = DepartOrderFinItem.dao.find("select * from pickup_order_fin_item where pickup_order_id = ?", pickupOrder.get("id"));
         for(DepartOrderFinItem departOrderFinItem : departOrderFinItems){
         	finItemIds += departOrderFinItem.get("fin_item_id") + ",";
         }

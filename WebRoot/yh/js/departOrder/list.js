@@ -2,6 +2,7 @@
 	$('#menu_assign').addClass('active').find('ul').addClass('in');
 var dataTable =$('#dataTables-example').dataTable({
 		"bFilter": false, //不需要默认的搜索框
+        "bSort": false, 
 		//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
@@ -15,7 +16,7 @@ var dataTable =$('#dataTables-example').dataTable({
         "aoColumns": [   
            
             { 
-                "mDataProp": null, 
+                "mDataProp": null, "sWidth":"70px",
                 "sWidth": "8%",                
                 "fnRender": function(obj) {                    
                 	return "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
@@ -34,7 +35,7 @@ var dataTable =$('#dataTables-example').dataTable({
             {"mDataProp":"TRANSFER_ORDER_NO"},
             {"mDataProp":"USER_NAME"},
             {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"REMARK"} 
+            {"mDataProp":"REMARK", "sWidth":"200px"} 
         ]      
     });
 			$('#departNo_filter,#endTime_filter ,#beginTime_filter ,#sp_filter ,#orderNo_filter,#start_filter,#destination_filter').on( 'keyup click', function () {

@@ -3,6 +3,7 @@
     	
 		var pickupOrder = $('#dataTables-example').dataTable({
             "bFilter": false, //不需要默认的搜索框
+            "bSort": false, 
 	        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
 	        //"sPaginationType": "bootstrap",
@@ -13,13 +14,13 @@
 	        },
 	        "sAjaxSource": "/pickupOrder/pickuplist",
 	        "aoColumns": [   
-			    {"mDataProp":"DEPART_NO",
+			    {"mDataProp":"DEPART_NO", "sWidth":"70px",
 	            	"fnRender": function(obj) {
 	            			return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
 	            		}},
-	            {"mDataProp":"OFFICE_NAME"},
-			    {"mDataProp":"STATUS"},
-			    {"mDataProp":"PICKUP_MODE",
+	            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},
+			    {"mDataProp":"STATUS", "sWidth":"80px"},
+			    {"mDataProp":"PICKUP_MODE", "sWidth":"120px",
 	            	"fnRender": function(obj) {
 	            		if(obj.aData.PICKUP_MODE == "routeSP"){
 	            			return "干线供应商自提";
@@ -30,20 +31,20 @@
 	            		}else{
 	            			return "";
 	            		}}},
-	            {"mDataProp":"CAR_NO"},	 
-			    {"mDataProp":"CONTACT_PERSON"},
-			    {"mDataProp":"PHONE"},
-			    {"mDataProp":"CARTYPE"},     
-			    {"mDataProp":"CREATE_STAMP",
+	            {"mDataProp":"CAR_NO", "sWidth":"100px"},	 
+			    {"mDataProp":"CONTACT_PERSON", "sWidth":"70px"},
+			    {"mDataProp":"PHONE", "sWidth":"50px"},
+			    {"mDataProp":"CARTYPE", "sWidth":"80px"},     
+			    {"mDataProp":"CREATE_STAMP", "sWidth":"100px",
 			    	"fnRender":function(obj){
         				var create_stamp=obj.aData.CREATE_STAMP;
         				var str=create_stamp.substr(0,10);
         				return str;
         			}}, 
-			    {"mDataProp":"VOLUME"},
-			    {"mDataProp":"WEIGHT"},
-			    {"mDataProp":"TRANSFER_ORDER_NO"},
-			    {"mDataProp":"USER_NAME"},
+			    {"mDataProp":"VOLUME", "sWidth":"100px"},
+			    {"mDataProp":"WEIGHT", "sWidth":"100px"},
+			    {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"70px"},
+			    {"mDataProp":"USER_NAME", "sWidth":"70px"},
 			    {"mDataProp":"REMARK"}
 	        ]      
 	    });	

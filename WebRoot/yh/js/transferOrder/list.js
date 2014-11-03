@@ -6,6 +6,7 @@ $(document).ready(function() {
 	//datatable, 动态处理
     var transferOrder = $('#eeda-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
+        "bSort": false, 
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
@@ -16,13 +17,13 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/transferOrder/list",
         "aoColumns": [   
-            {"mDataProp":"ORDER_NO",
+            {"mDataProp":"ORDER_NO", "sWidth":"70px",
             	"fnRender": function(obj) {
             			return "<a href='/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
             		}},
-            {"mDataProp":"STATUS"},
-            {"mDataProp":"CNAME"},
-            {"mDataProp":"CARGO_NATURE",
+            {"mDataProp":"STATUS", "sWidth":"100px"},
+            {"mDataProp":"CNAME", "sWidth":"200px"},
+            {"mDataProp":"CARGO_NATURE", "sWidth":"70px",
             	"fnRender": function(obj) {
             		if(obj.aData.CARGO_NATURE == "cargo"){
             			return "普通货品";
@@ -33,7 +34,7 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},        	
-    		{"mDataProp":"OPERATION_TYPE",
+    		{"mDataProp":"OPERATION_TYPE", "sWidth":"70px",
     			"fnRender": function(obj) {
     				if(obj.aData.OPERATION_TYPE == "out_source"){
     					return "外包";
@@ -42,25 +43,25 @@ $(document).ready(function() {
     				}else{
     					return "";
     				}}},
-    		{"mDataProp":"ARRIVAL_MODE",
-    	            	"fnRender": function(obj) {
-    	            		if(obj.aData.ARRIVAL_MODE == "delivery"){
-    	            			return "货品直送";
-    	            		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
-    	            			return "入中转仓";
-    	            		}else{
-    	            			return "";
-    	            		}}},
-            {"mDataProp":"AMOUNT"},
-            {"mDataProp":"PIECES"},
-            {"mDataProp":"VOLUME"},
-            {"mDataProp":"WEIGHT"},
-            {"mDataProp":"PLANNING_TIME"},
-            {"mDataProp":"ARRIVAL_TIME"},
-            {"mDataProp":"ROUTE_FROM"},
-            {"mDataProp":"ROUTE_TO"},
-            {"mDataProp":"ADDRESS"},
-            {"mDataProp":"ORDER_TYPE",
+    		{"mDataProp":"ARRIVAL_MODE", "sWidth":"70px",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ARRIVAL_MODE == "delivery"){
+            			return "货品直送";
+            		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
+            			return "入中转仓";
+            		}else{
+            			return "";
+            		}}},
+            {"mDataProp":"AMOUNT", "sWidth":"70px"},
+            {"mDataProp":"PIECES", "sWidth":"70px"},
+            {"mDataProp":"VOLUME", "sWidth":"100px"},
+            {"mDataProp":"WEIGHT", "sWidth":"100px"},
+            {"mDataProp":"PLANNING_TIME", "sWidth":"100px"},
+            {"mDataProp":"ARRIVAL_TIME", "sWidth":"100px"},
+            {"mDataProp":"ROUTE_FROM", "sWidth":"70px"},
+            {"mDataProp":"ROUTE_TO", "sWidth":"70px"},
+            {"mDataProp":"ADDRESS", "sWidth":"100px",},
+            {"mDataProp":"ORDER_TYPE", "sWidth":"70px",
             	"fnRender": function(obj) {
             		if(obj.aData.ORDER_TYPE == "salesOrder"){
             			return "销售订单";
@@ -79,10 +80,10 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
-            {"mDataProp":"SPNAME"},
+            {"mDataProp":"SPNAME", "sWidth":"200px"},
             {"mDataProp":"CUSTOMER_ORDER_NO"},
             {"mDataProp":"ONAME"},
-            {"mDataProp":"PICKUP_MODE",
+            {"mDataProp":"PICKUP_MODE", "sWidth":"70px",
             	"fnRender": function(obj) {
             		if(obj.aData.PICKUP_MODE == "routeSP"){
             			return "干线供应商自提";
@@ -93,12 +94,12 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
-            {"mDataProp":"CREATE_STAMP",
-            			"fnRender":function(obj){
-            				var create_stamp=obj.aData.CREATE_STAMP;
-            				var str=create_stamp.substr(0,10);
-            				return str;
-            			}},
+            {"mDataProp":"CREATE_STAMP", "sWidth":"100px",
+    			"fnRender":function(obj){
+    				var create_stamp=obj.aData.CREATE_STAMP;
+    				var str=create_stamp.substr(0,10);
+    				return str;
+    			}},
             	
             {"mDataProp":"REMARK"}
                                   
