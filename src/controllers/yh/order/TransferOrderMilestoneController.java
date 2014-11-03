@@ -218,7 +218,9 @@ public class TransferOrderMilestoneController extends Controller {
     // 收货确认
     public void receipt() {
         Long order_id = Long.parseLong(getPara("orderId"));
+        Long departOrderId = Long.parseLong(getPara("departOrderId"));
         TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
+        DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
         List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
                 .find("select toid.pickup_id from transfer_order_item_detail toid where order_id = ? group by toid.pickup_id",
                         transferOrder.get("id"));
@@ -237,6 +239,19 @@ public class TransferOrderMilestoneController extends Controller {
             transferOrderMilestone.set("order_id", order_id);
             transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
             transferOrderMilestone.save();
+            
+            departOrder.set("status", "部分已收货");
+            departOrder.update();
+            transferOrderMilestone = new TransferOrderMilestone();
+            transferOrderMilestone.set("status", "部分已收货");
+            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+            transferOrderMilestone.set("location", "");
+            utilDate = new java.util.Date();
+            sqlDate = new java.sql.Timestamp(utilDate.getTime());
+            transferOrderMilestone.set("create_stamp", sqlDate);
+            transferOrderMilestone.set("depart_id", departOrderId);
+            transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
+            transferOrderMilestone.save();
         } else {
             transferOrder.set("status", "已收货");
             transferOrder.update();
@@ -253,6 +268,19 @@ public class TransferOrderMilestoneController extends Controller {
             transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
             transferOrderMilestone.save();
 
+            departOrder.set("status", "已收货");
+            departOrder.update();
+            transferOrderMilestone = new TransferOrderMilestone();
+            transferOrderMilestone.set("status", "已收货");
+            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+            transferOrderMilestone.set("location", "");
+            utilDate = new java.util.Date();
+            sqlDate = new java.sql.Timestamp(utilDate.getTime());
+            transferOrderMilestone.set("create_stamp", sqlDate);
+            transferOrderMilestone.set("depart_id", departOrderId);
+            transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
+            transferOrderMilestone.save();
+            
             ReturnOrder returnOrder = new ReturnOrder();
             returnOrder.set("order_no", ReturnOrderController.createReturnOrderNo());
             returnOrder.set("transaction_status", "新建");

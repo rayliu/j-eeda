@@ -21,8 +21,8 @@ $(document).ready(function() {
 			    "sWidth": "60px",
 			    "fnRender": function(obj) {
 			    	console.log(obj.aData.ARRIVAL_MODE);
-			    	if(obj.aData.ARRIVAL_MODE=='货品直送'){
-			    		return "<a class='btn btn-primary confirmReceipt' code='"+obj.aData.ID+"'>"+"收货确认"+"</a>";
+			    	if(obj.aData.ARRIVAL_MODE == '货品直送'){
+			    		return "<a class='btn btn-primary confirmReceipt' departOrderId='"+obj.aData.ID+"' code='"+obj.aData.ORDER_ID+"'>"+"收货确认"+"</a>";
 			    	}else{
 			    		return "<a class='btn btn-primary confirmInWarehouse' code='"+obj.aData.ID+"'>"+"入库确认"+"</a>";
 			    	}
@@ -102,8 +102,9 @@ $(document).ready(function() {
     // 收货确认
     $("#eeda-table").on('click', '.confirmReceipt', function(e){
     	var orderId =$(this).attr("code");
+    	var departOrderId =$(this).attr("departOrderId");
     	if(confirm("确定收货吗？")){
-    		$.post('/yh/transferOrderMilestone/receipt', {orderId:orderId}, function(data){    
+    		$.post('/transferOrderMilestone/receipt', {orderId:orderId, departOrderId:departOrderId}, function(data){    
     			if(data.success){
     				detailTable.fnDraw(); 		
                 }else{

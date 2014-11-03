@@ -25,7 +25,7 @@ var dataTable =$('#dataTables-example').dataTable({
             {"mDataProp":"OFFICE_NAME"},
             {"mDataProp":null},
             {"mDataProp":"DEPART_STATUS"},
-            {"mDataProp":"ABBR"},
+            {"mDataProp":"ABBR", "sWidth":"200px"},
             {"mDataProp":"CONTACT_PERSON"},
             {"mDataProp":"PHONE"},
             {"mDataProp":"ROUTE_FROM"},

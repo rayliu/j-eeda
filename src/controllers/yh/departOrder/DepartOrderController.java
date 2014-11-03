@@ -36,8 +36,6 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.LoginUserController;
-
 @RequiresAuthentication
 public class DepartOrderController extends Controller {
 
@@ -248,7 +246,8 @@ public class DepartOrderController extends Controller {
     				+ "(select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode, "
     				+ "(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no, "		
     				+ "(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location, "
-    				+ "(select ifnull(exception_record,'') from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) exception_record "
+    				+ "(select ifnull(exception_record,'') from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) exception_record, "
+    				+ " (select dt.order_id from depart_transfer dt where dt.depart_id = deo.id limit 0,1) order_id "
     				+ " from depart_order deo "
     				+ " left join carinfo c on deo.carinfo_id = c.id "
     				+ " left join depart_transfer dt on dt.depart_id = deo.id "
