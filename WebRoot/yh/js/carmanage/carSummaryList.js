@@ -104,16 +104,18 @@ $(document).ready(function() {
 			  {"mDataProp":"RETURN_TIME", "sWidth":"80px"},
 			  {"mDataProp":null, "sWidth":"70px",
 				  "fnRender": function(obj) {
-						var data1 = obj.aData.TURNOUT_TIME.split("-");
+						/*var data1 = obj.aData.TURNOUT_TIME.split("-");
 						var data2 = obj.aData.RETURN_TIME.split("-");
-						return data2[2] - data1[2];
+						return data2[2] - data1[2];*/
+						
+						return DateDiff(obj.aData.RETURN_TIME,obj.aData.TURNOUT_TIME);
 					}
 			  },        	
 			  {"mDataProp":"VOLUME", "sWidth":"70px"},           
 			  {"mDataProp":"WEIGHT", "sWidth":"70px"},        	
 			  {"mDataProp":"CARSUMMARYMILEAGE", "sWidth":"80px"},                        
 			  {"mDataProp":"MONTH_REFUEL_AMOUNT", "sWidth":"90px"},                        
-			  {"mDataProp":null, "sWidth":"90px"},                        
+			  {"mDataProp":"REFUEL_CONSUME", "sWidth":"90px"},                        
 			  {"mDataProp":"SUBSIDY", "sWidth":"70px"},                        
 			  {"mDataProp":"DRIVER_SALARY", "sWidth":"70px"},                        
 			  {"mDataProp":"TOLL_CHARGE", "sWidth":"60px"},                        
@@ -260,3 +262,22 @@ $(document).ready(function() {
 	} );
     
 });
+function DateDiff(d1,d2){ 
+    var day = 24 * 60 * 60 *1000; 
+	try{     
+	   var dateArr = d1.split("-"); 
+	   var checkDate = new Date(); 
+	   checkDate.setFullYear(dateArr[0], dateArr[1]-1, dateArr[2]); 
+	   var checkTime = checkDate.getTime(); 
+	   
+	   var dateArr2 = d2.split("-"); 
+	   var checkDate2 = new Date(); 
+	   checkDate2.setFullYear(dateArr2[0], dateArr2[1]-1, dateArr2[2]); 
+	   var checkTime2 = checkDate2.getTime(); 
+	     
+	   var cha = (checkTime - checkTime2)/day;   
+	        return cha; 
+    }catch(e){ 
+    	return false; 
+    }
+};

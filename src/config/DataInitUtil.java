@@ -106,7 +106,7 @@ public class DataInitUtil {
 
             // carinfo 车辆信息表
             stmt.executeUpdate("create table if not exists carinfo(id bigint auto_increment primary key,type varchar(50),driver varchar(50),phone varchar(50),car_no varchar(50),cartype varchar(50),"
-                    + "status varchar(50),length double);");
+                    + "status varchar(50),length double,hundred_fuel_standard double);");
 
             // 提货单/发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),audit_status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
@@ -585,8 +585,8 @@ public class DataInitUtil {
                     + "last_modified_stamp timestamp, approver bigint, approve_date timestamp);");
 
             // 自营车辆司机
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13312345678', '粤A5687', '平板车', 18.5, '王五', '"+Carinfo.CARINFO_TYPE_OWN+"');");
-            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13412345678', '粤A2341', '高栏车', 12.5, '赵六', '"+Carinfo.CARINFO_TYPE_OWN+"');");
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type, hundred_fuel_standard) values('13312345678', '粤A5687', '平板车', 18.5, '王五', '"+Carinfo.CARINFO_TYPE_OWN+"',13);");
+            stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type, hundred_fuel_standard) values('13412345678', '粤A2341', '高栏车', 12.5, '赵六', '"+Carinfo.CARINFO_TYPE_OWN+"',13);");
             
             // 供应商司机
             stmt.execute("insert into carinfo(phone, car_no, cartype, length, driver, type) values('13898765432', '粤A9874', '集装车', 17.5, '王五五', '"+Carinfo.CARINFO_TYPE_SP+"');");

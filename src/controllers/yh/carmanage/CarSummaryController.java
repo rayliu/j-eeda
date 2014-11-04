@@ -189,6 +189,7 @@ public class CarSummaryController extends Controller {
 					+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as volume,"
 					+ " (select sum( ifnull(nullif(toi.weight, 0),p.weight) * toi.amount) from transfer_order_item toi left join product p on p.id = toi.product_id where toi.order_id IN "
 					+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as weight,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 2) refuel_consume,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 3) subsidy,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 4) driver_salary,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 5) toll_charge,"
@@ -225,6 +226,7 @@ public class CarSummaryController extends Controller {
 					+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as volume,"
 					+ " (select sum( ifnull(nullif(toi.weight, 0),p.weight) * toi.amount) from transfer_order_item toi left join product p on p.id = toi.product_id where toi.order_id IN "
 					+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as weight,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 2) refuel_consume,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 3) amount3,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 4) amount4,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 5) amount5,"
@@ -350,7 +352,7 @@ public class CarSummaryController extends Controller {
         		CarSummaryOrder carSummary = CarSummaryOrder.dao
         				.findFirst("select * from car_summary_order order by id desc limit 0,1");
         		
-        		long carSunmmaryId = carSummary.getLong("id");
+        		long id = carSummary.getLong("id");
         		List<Long> orderIds = new ArrayList<Long>();
         		
         		for (int i = 0; i < pickupIds.length; i++) {
@@ -360,7 +362,7 @@ public class CarSummaryController extends Controller {
         			departOrder.update();
         			//插入从表数据
         			CarSummaryDetail carSummaryDetail = new CarSummaryDetail();
-        			carSummaryDetail.set("car_summary_id", carSunmmaryId);
+        			carSummaryDetail.set("car_summary_id", id);
         			carSummaryDetail.set("pickup_order_id", departOrder.get("id"));
         			carSummaryDetail.set("pickup_order_no", departOrder.get("depart_no"));
         			carSummaryDetail.save();
@@ -371,9 +373,9 @@ public class CarSummaryController extends Controller {
 					}
 				}
         		//创建费用合计表初始数据
-        		initCarSummaryDetailOtherFeeData(carSunmmaryId);
+        		initCarSummaryDetailOtherFeeData(id);
         		//创建行车里程碑
-        		saveCarSummaryOrderMilestone(carSunmmaryId,"new");
+        		saveCarSummaryOrderMilestone(id,"new");
         		//设置默认运输单分摊比例
         		double number = 1.0D/orderIds.size();
         		BigDecimal b = new BigDecimal(number); 
@@ -383,7 +385,8 @@ public class CarSummaryController extends Controller {
     				transferOrder.set("car_summary_order_share_ratio", rate);
     				transferOrder.update();
 				}
-        		carSummaryId = Long.toString(carSunmmaryId);
+        		
+        		carSummaryId = Long.toString(id);
         	}
         }else{//修改时
         	CarSummaryOrder carSummary = CarSummaryOrder.dao.findById(carSummaryId);
@@ -395,26 +398,6 @@ public class CarSummaryController extends Controller {
 	    		.set("month_car_run_mileage", monthCarRunMileage).set("month_refuel_amount", monthRefuelAmount)
 	    		.set("next_start_car_amount", nextStartCarAmount).set("deduct_apportion_amount", deductApportionAmount)
 	    		.set("actual_payment_amount", actualPaymentAmount).update();
-        		
-        		/*//计算本次油耗
-        		if(!"0".equals(monthCarRunMileage)){
-        			Record rec =  Db.findFirst("select hundred_fuel_standard from carinfo where car_no ='"+carNo+"';");
-        			if(rec.get("hundred_fuel_standard") != "" && rec.get("hundred_fuel_standard") != null ){
-        				List<Record> oilList =  Db.find("select * from car_summary_detail_oil_fee where car_summary_id = "+carSummaryId);
-        				if(oilList.size() > 0){
-        					for (Record oilFee : oilList) {
-								if(oilFee.get("refuel_unit_cost") != "" && oilFee.get("refuel_unit_cost") != null && "0".equals(oilFee.get("refuel_unit_cost"))){
-									
-									 * 行驶里程 * 油耗 * 油价 / 100
-									 * 
-									 * 
-									 * 
-								}
-							}
-        					
-        				}
-        			}
-        		}*/
         	}
         }
         //修改费用合计中的司机工资
@@ -423,6 +406,10 @@ public class CarSummaryController extends Controller {
 			String sql="update car_summary_detail_other_fee set amount = "+amount+" where amount_item  = '司机工资' and car_summary_id = "+carSummaryId;
 			Db.update(sql);
         }
+        //计算本次油耗
+		if(!"0".equals(monthCarRunMileage)){
+			updateNextFuelStandard(carSummaryId);
+		}
         renderJson(carSummaryId);
 	}
 	
@@ -683,7 +670,10 @@ public class CarSummaryController extends Controller {
 					e.printStackTrace();
 				}
     		}
-    		//修改费用合计中的本次油耗（有不确定性，暂不作）
+    		//修改费用合计中的本次油耗
+    		if("refuel_unit_cost".equals(name) && !"0".equals(value)){
+    			updateNextFuelStandard(carSummaryId);
+    		}
     	}
     	renderJson("{\"success\":true}");
     }
@@ -953,25 +943,56 @@ public class CarSummaryController extends Controller {
     	//应扣分摊费用
     	Record rec4 = Db.findFirst("select sum(amount) amount  from car_summary_detail_other_fee where is_delete = '是' and car_summary_id = "+carSummaryId+";");
     	if(rec4.get("amount") != null && rec4.get("amount") != ""){
-    		costMap.put("deduct_apportion_amount ", rec4.getDouble("amount"));
-    		order.set("deduct_apportion_amount", rec4.getDouble("amount"));
+    		BigDecimal b = new BigDecimal(rec4.getDouble("amount")); 
+    		double money = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
+    		costMap.put("deduct_apportion_amount ", money);
+    		order.set("deduct_apportion_amount", money);
     	}
     	//实际应付费用
     	Record rec3 = Db.findFirst("select sum(amount) amount  from car_summary_detail_other_fee where is_delete = '否' and car_summary_id = "+carSummaryId+";");
     	Record rec5 = Db.findFirst("select sum(refuel_amount) amount from car_summary_detail_oil_fee where payment_type = '现金' and car_summary_id = "+carSummaryId+";");
     	if(rec3.get("amount") != null && rec3.get("amount") != ""){
+    		BigDecimal b = new BigDecimal(rec3.getDouble("amount")); 
+    		double money3 = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
     		if(rec5.get("amount") != null && rec5.get("amount") != ""){
-    			costMap.put("actual_payment_amount ", rec3.getDouble("amount")+rec5.getDouble("amount"));
-        		order.set("actual_payment_amount", rec3.getDouble("amount")+rec5.getDouble("amount"));
+    			BigDecimal c = new BigDecimal(rec5.getDouble("amount")); 
+        		double money5 = c.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+    			costMap.put("actual_payment_amount ", money3 + money5);
+        		order.set("actual_payment_amount", money3 + money5);
     		}else{
-    			costMap.put("actual_payment_amount ", rec3.getDouble("amount"));
-        		order.set("actual_payment_amount", rec3.getDouble("amount"));
+    			costMap.put("actual_payment_amount ", money3);
+        		order.set("actual_payment_amount", money3);
     		}
     	}
     	order.update();
     	renderJson(costMap); 
     }
-    
+    //本次油耗
+    public void updateNextFuelStandard(String carSummaryId){
+    	CarSummaryOrder order = CarSummaryOrder.dao.findById(carSummaryId);
+    	String carNo = order.getStr("car_no");
+    	double mileage = 0;
+    	double refuelCost = 0;
+    	double hundredFuelStandard = 0;
+    	if(order.get("month_car_run_mileage") != null && !"".equals(order.getDouble("month_car_run_mileage"))){
+    		mileage = order.getDouble("month_car_run_mileage");//行驶里程
+    	}
+    	Record oilFee = Db.findFirst("select avg(refuel_unit_cost) refuel_cost from car_summary_detail_oil_fee where car_summary_id = "+carSummaryId);
+    	if(oilFee.get("refuel_cost") != null && !"".equals(oilFee.get("refuel_cost"))){
+    		refuelCost = oilFee.getDouble("refuel_cost");//平均油价
+    	}
+    	Record carinfo = Db.findFirst("select hundred_fuel_standard from carinfo where car_no = '"+carNo+"';");
+    	if(carinfo.get("hundred_fuel_standard") != null && !"".equals(carinfo.get("hundred_fuel_standard"))){
+    		hundredFuelStandard = carinfo.getDouble("hundred_fuel_standard");//百公里油耗
+    	}
+    	if(mileage > 0 && refuelCost > 0 && hundredFuelStandard > 0){
+    		double number = mileage * refuelCost * hundredFuelStandard / 100;
+    		BigDecimal b = new BigDecimal(number); 
+    		double money = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
+    		String sql = "update car_summary_detail_other_fee set amount = ? where car_summary_id = '"+carSummaryId+"' and item = 2 ;";
+    		Db.update(sql, money);
+    	}
+    }
     
     
     
