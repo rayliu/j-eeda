@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 
-import models.Privilege;
+import models.Permission;
 import models.Role;
 import models.UserLogin;
 
@@ -94,7 +94,7 @@ public class PrivilegeController extends Controller {
 			renderJson(rolejson);
 		}
 		if (select.equals("3")) {
-			List<Privilege> rolejson = Privilege.dao
+			List<Permission> rolejson = Permission.dao
 			        .find("select * from privilege_table");
 			renderJson(rolejson);
 		}

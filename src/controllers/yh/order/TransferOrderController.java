@@ -26,6 +26,8 @@ import models.yh.profile.Contact;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 
 import validator.AuthenticatedValidator;
@@ -36,20 +38,24 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.PoiUtils;
 
 //@Before(AuthenticatedValidator.class)
 
 @RequiresAuthentication
-public class TransferOrderController extends Controller {
 
+public class TransferOrderController extends Controller {
+	
 	private Logger logger = Logger.getLogger(TransferOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 
+	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST })
 	public void index() {
 		render("/yh/transferOrder/transferOrderList.html");
 	}
 
+	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_SAVE})
 	public void list() {
 		Map transferOrderListMap = null;
 		String orderNo = getPara("orderNo");

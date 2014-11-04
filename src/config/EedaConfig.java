@@ -40,10 +40,11 @@ import models.OrderStatus;
 import models.Party;
 import models.PartyAttribute;
 import models.PickupOrderFinItem;
-import models.Privilege;
+import models.Permission;
 import models.Product;
 import models.ReturnOrder;
 import models.Role;
+import models.RolePermission;
 import models.Toll;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
@@ -51,6 +52,7 @@ import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.UserRole;
 import models.Warehouse;
 import models.WarehouseOrder;
 import models.WarehouseOrderItem;
@@ -248,21 +250,26 @@ public class EedaConfig extends JFinalConfig {
         // 配置属性名(字段名)大小写不敏感容器工厂
         arp.setContainerFactory(new CaseInsensitiveContainerFactory());
 
+        arp.addMapping("office", Office.class);
+        arp.addMapping("user_login", UserLogin.class);
+        arp.addMapping("role", Role.class);
+        arp.addMapping("permission", Permission.class);
+        arp.addMapping("user_role", UserRole.class);
+        arp.addMapping("role_permission", RolePermission.class);
+        
         arp.addMapping("leads", Leads.class);
         arp.addMapping("support_case", Case.class);
-        arp.addMapping("user_login", UserLogin.class);
+        
         arp.addMapping("order_header", Order.class);
         arp.addMapping("order_item", OrderItem.class);
         arp.addMapping("party", Party.class);
         arp.addMapping("party_attribute", PartyAttribute.class);
         arp.addMapping("dp_prof_provider_info", ServiceProvider.class);
 
-        arp.addMapping("contact", Contact.class);
-        arp.addMapping("office", Office.class);
+        arp.addMapping("contact", Contact.class);        
         arp.addMapping("fin_account", Account.class);
-        arp.addMapping("role", Role.class);
-        arp.addMapping("fin_item", Toll.class);
-        arp.addMapping("privileges", Privilege.class);
+        
+        arp.addMapping("fin_item", Toll.class);        
         arp.addMapping("route", Route.class);
         arp.addMapping("product", Product.class);
         arp.addMapping("category", Category.class);

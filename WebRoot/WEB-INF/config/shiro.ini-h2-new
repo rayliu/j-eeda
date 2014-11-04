@@ -16,7 +16,7 @@ ds.URL = jdbc:h2:mem:eeda;
 jdbcRealm = org.apache.shiro.realm.jdbc.JdbcRealm
 jdbcRealm.permissionsLookupEnabled = true
 jdbcRealm.authenticationQuery = SELECT password FROM user_login WHERE user_name = ?
-jdbcRealm.userRolesQuery = SELECT role_name FROM user_roles WHERE user_name = ?
-jdbcRealm.permissionsQuery = SELECT role_permission FROM role_permissions WHERE role_name = ?
+jdbcRealm.userRolesQuery = SELECT r.code FROM user_role ur, role r WHERE ur.role_code=r.code and ur.user_name= ?
+jdbcRealm.permissionsQuery = SELECT rp.permission_code FROM role_permission rp WHERE rp.role_code = ?
 jdbcRealm.dataSource = $ds
 

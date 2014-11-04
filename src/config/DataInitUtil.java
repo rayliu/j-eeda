@@ -24,15 +24,17 @@ public class DataInitUtil {
             // 登陆及授权的3个表
             stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),contact_phone_name varchar(50),contact_phone varchar(50),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255));");
             stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255), office_id bigint, foreign key(office_id) references office(id));");
-            stmt.executeUpdate("create table if not exists user_roles(id bigint auto_increment primary key, user_name varchar(50) not null, role_name varchar(255) not null, remark varchar(255));");
-            stmt.executeUpdate("create table if not exists role_permissions(id bigint auto_increment primary key, role_name varchar(50) not null, role_permission varchar(50), remark varchar(255));");
+            stmt.executeUpdate("create table if not exists role(id bigint auto_increment primary key,code varchar(50), name varchar(50), p_code varchar(50), remark varchar(255));");
+            stmt.executeUpdate("create table if not exists permission(id bigint auto_increment primary key, code varchar(50), name varchar(50), value varchar(50), url varchar(255), remark varchar(255));");
+            stmt.executeUpdate("create table if not exists user_role(id bigint auto_increment primary key, user_name varchar(50) not null, role_code varchar(255) not null, remark varchar(255));");
+            stmt.executeUpdate("create table if not exists role_permission(id bigint auto_increment primary key, role_code varchar(50) not null, permission_code varchar(50) not null, remark varchar(255));");
+            
             stmt.executeUpdate("create table if not exists location(id bigint auto_increment primary key, code varchar(50) not null, name varchar(50), pcode varchar(255));");
             stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment primary key, type varchar(50), currency varchar(50), bank_name varchar(50), account_no varchar(50), bank_person varchar(50),remark varchar(255), creator bigint, office_id bigint);");
             //stmt.executeUpdate("create table if not exists fin_account_item(id bigint auto_increment primary key,account_id bigint,currency varchar(50),org_name varchar(50),account_pin varchar(50),org_person varchar(50));");
             stmt.executeUpdate("create table if not exists contract(id bigint auto_increment primary key, name varchar(50) not null, type varchar(50), party_id bigint,period_from timestamp,period_to timestamp, remark varchar(255));");
-            stmt.executeUpdate("create table if not exists role(id bigint auto_increment primary key,role_name varchar(50),role_time timestamp,role_people varchar(50),role_lasttime timestamp,role_lastpeople varchar(50));");
-            stmt.executeUpdate("create table if not exists fin_item(id bigint auto_increment primary key,code varchar(20),name varchar(20),type varchar(20),driver_type varchar(20),remark varchar(255));");
-            stmt.executeUpdate("create table if not exists privileges(id bigint auto_increment primary key,privilege varchar(50));");
+            
+            stmt.executeUpdate("create table if not exists fin_item(id bigint auto_increment primary key,code varchar(20),name varchar(20),type varchar(20),driver_type varchar(20),remark varchar(255));");            
             stmt.executeUpdate("create table if not exists modules(id bigint auto_increment primary key,module_name varchar(50));");
             stmt.executeUpdate("create table if not exists modules_privilege(id bigint auto_increment primary key,module_id bigint,privilege_id bigint);");
             stmt.executeUpdate("create table if not exists contract_item(id bigint auto_increment primary key,product_id bigint,contract_id bigint,fin_item_id bigint,pricetype varchar(50),cartype varchar(255),carlength varchar(255),ltlunittype varchar(50), from_id varchar(50),location_from varchar(50),to_id varchar(50),location_to varchar(50) ,amount double,remark varchar(255),unit varchar(20),dayFrom varchar(50),dayTo varchar(50),amountFrom double,amountTo double,kilometer varchar(50));");
@@ -316,22 +318,25 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('2','2','20132015','3200','未完成');");
             */
             // 角色定义
-            stmt.executeUpdate("insert into role(role_name) values('文员');");
-            stmt.executeUpdate("insert into role(role_name) values('经理');");
-            stmt.executeUpdate("insert into role(role_name) values('老板');");
-            stmt.executeUpdate("insert into role(role_name) values('调度员');");
-            stmt.executeUpdate("insert into role(role_name) values('司机');");
+            stmt.executeUpdate("insert into role(code, name) values('admin', '系统管理员');");
+            stmt.executeUpdate("insert into role(code, name) values('clerk', '文员');");
+            stmt.executeUpdate("insert into role(code, name) values('manager', '经理');");
+            //stmt.executeUpdate("insert into role(code, name) values('', '老板');");
+            stmt.executeUpdate("insert into role(code, name) values('scheduler', '调度员');");
+            //stmt.executeUpdate("insert into role(code, name) values('driver', '司机');");
 
-            // 权限定义
-            stmt.executeUpdate("insert into privileges(privilege) values('*');");
-            stmt.executeUpdate("insert into privileges(privilege) values('view');");
-            stmt.executeUpdate("insert into privileges(privilege) values('create');");
-            stmt.executeUpdate("insert into privileges(privilege) values('update');");
-            stmt.executeUpdate("insert into privileges(privilege) values('delete');");
-
+            // 权限定义 
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.List', '运输单查询权限');");
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.Save', '运输单保存权限');");
+//            stmt.executeUpdate("insert into permission(code, name) values('view', '');");
+//            stmt.executeUpdate("insert into permission(code, name) values('create');");
+//            stmt.executeUpdate("insert into permission(code, name) values('update');");
+//            stmt.executeUpdate("insert into permission(code, name) values('delete');");
+            
+            stmt.executeUpdate("insert into user_role(user_name, role_code) values('demo', 'admin');");
             // 系统权限
-            stmt.executeUpdate("insert into role_permissions(role_name, role_permission, remark) values('root', '123456', '1-6');");
-
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.List', '运输单查询权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.Save', '运输单保存权限');");
             // 模块定义
             stmt.executeUpdate("insert into modules(module_name) values('调度管理');");
             stmt.executeUpdate("insert into modules(module_name) values('运输在途管理');");
