@@ -1166,10 +1166,11 @@
 	$("#table_fin2,#table_fin3").on('blur', 'input,select', function(e){
 		e.preventDefault();
 		var paymentId = $(this).parent().parent().attr("id");
+		var orderId = $(this).parent().parent().attr("order_id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		if(value != "" && value != null){
-			$.post('/pickupOrder/updatePickupOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+			$.post('/pickupOrder/updatePickupOrderFinItem', {paymentId:paymentId, name:name, value:value, orderId:orderId}, function(data){
 				if(data.success){
 				}else{
 					alert("修改失败!");
@@ -1181,10 +1182,10 @@
 	
 	//异步删除应收
 	$("#table_fin3").on('click', '.finItemdel', function(e){
-		var id = $(this).attr('code');
+		var orderId = $(this).attr('code');
 		e.preventDefault();
-		if(id != "" ){
-			$.post('/pickupOrder/delReceivable/'+id,function(data){
+		if(orderId != "" ){
+			$.post('/pickupOrder/delReceivable/'+orderId,function(data){
 	             //保存成功后，刷新列表
 	             console.log(data);
 	             incomeTab.fnDraw();
@@ -1205,10 +1206,20 @@
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-			$(nRow).attr('id', aData.ID);
+			$(nRow).attr({id: aData.ID, order_id: aData.ORDER_ID});
 			return nRow;
 		},
-        "aoColumns": [
+        "aoColumns": [ 
+  			{"mDataProp":"ORDER_NO"}, 
+			{"mDataProp":"CNAME"},
+			{"mDataProp":"AMOUNT",
+                "fnRender": function(obj) {
+                    if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+                        return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+                    }else{
+                    	 return "<input type='text' name='amount'>";
+                    }
+            }},  
 			{"mDataProp":"NAME",
                 "fnRender": function(obj) {
                     if(obj.aData.NAME!='' && obj.aData.NAME != null){
@@ -1229,14 +1240,6 @@
                     	return "<select name='fin_item_id'>"+str+"</select>";
                     }
              }},
-			{"mDataProp":"AMOUNT",
-                 "fnRender": function(obj) {
-                     if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-                         return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
-                     }else{
-                     	 return "<input type='text' name='amount'>";
-                     }
-             }},  
 			{"mDataProp":"REMARK",
                  "fnRender": function(obj) {
                      if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
@@ -1251,7 +1254,7 @@
                 "sWidth": "60px",  
             	"sClass": "remark",              
                 "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
+                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ORDER_ID+"'>"+
               		"<i class='fa fa-trash-o fa-fw'> </i> "+
               		"删除"+
               		"</a>";

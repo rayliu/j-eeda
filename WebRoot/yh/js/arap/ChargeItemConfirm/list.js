@@ -68,8 +68,6 @@ $(document).ready(function() {
             {"mDataProp":null, "sWidth":"150px"},                        
             {"mDataProp":null, "sWidth":"150px"},                        
             {"mDataProp":null, "sWidth":"150px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
             {"mDataProp":null, "sWidth":"200px"}                       
         ]      
     });	

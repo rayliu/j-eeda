@@ -475,6 +475,7 @@ $(document).ready(function() {
     var itemDataTable = $('#itemTable').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bFilter": false, //不需要默认的搜索框
+        "bSort": false, 
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
@@ -494,7 +495,7 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		if(obj.aData.ITEM_NO==null)
             			obj.aData.ITEM_NO='';
-            		var inputBox = "<input type='text' name='item_no' value='"+obj.aData.ITEM_NO+"' valueholder='至少输入两个字符查询'>";
+            		var inputBox = "<input type='text' name='item_no' value='"+obj.aData.ITEM_NO+"' placeholder='至少输入两个字符查询'>";
         			return inputBox;
                 }
         	},
@@ -561,7 +562,10 @@ $(document).ready(function() {
             	"sWidth": "50px",
             	"sClass": "unit",
             	"fnRender": function(obj) {
-            		var inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.UNIT+"'>";
+            		var inputBox = "";
+            		if(obj.aData.UNIT != null){
+            			inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.UNIT+"'>";
+            		}
         			return inputBox;
                 }
             },
@@ -570,8 +574,8 @@ $(document).ready(function() {
             	"sWidth": "50px",
             	"sClass": "sumWeight",
             	"fnRender": function(obj) {//
-            		var inputBox = "<input type='text' style='width:80px;' value='"+(obj.aData.WEIGHT * obj.aData.AMOUNT)+"'>";
-        			return inputBox;
+                    var inputBox = "<input type='text' style='width:80px;' value='"+(obj.aData.WEIGHT * obj.aData.AMOUNT)+"'>";
+            		return inputBox;
                 }
             },
             {
@@ -1113,6 +1117,7 @@ $(document).ready(function() {
     var detailDataTable = $('#detailTable').dataTable({
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "bFilter": false, //不需要默认的搜索框
+        "bSort": false, 
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,

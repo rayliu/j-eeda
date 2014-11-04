@@ -1551,14 +1551,15 @@ public class PickupOrderController extends Controller {
     
     //删除应收
     public void delReceivable() {
-        String id = getPara();
-        PickupOrderFinItem.dao.deleteById(id);
-        //同时删除transfer_order_fin_item表中对应的费用信息
+        String orderId = getPara();
+        TransferOrderFinItem transferOrderFinItem = TransferOrderFinItem.dao.findFirst("select * from transfer_order_fin_item where order_id = ?", orderId);
+        transferOrderFinItem.delete();
+        /*//同时删除transfer_order_fin_item表中对应的费用信息
         List<TransferOrderFinItem> transferOrderFinItems = TransferOrderFinItem.dao.
         		find("select * from transfer_order_fin_item where depart_order_fin_item_id = ?",id);
         for (TransferOrderFinItem transferOrderFinItem : transferOrderFinItems) {
 			transferOrderFinItem.delete();
-		}
+		}*/
         renderJson("{\"success\":true}");
     }
     
@@ -1643,13 +1644,26 @@ public class PickupOrderController extends Controller {
     }
     
     public void updatePickupOrderFinItem(){
+    	// 由于应收中只存在一条总金额,所以简化处理
+    	String orderId = getPara("orderId");
     	String paymentId = getPara("paymentId");
     	String name = getPara("name");
     	String value = getPara("value");
+    	TransferOrderFinItem transferOrderFinItem = TransferOrderFinItem.dao.findFirst("select * from transfer_order_fin_item where order_id = ?", orderId);
     	if("amount".equals(name) && "".equals(value)){
     		value = "0";
     	}
-    	if(paymentId != null && !"".equals(paymentId)){
+    	if(transferOrderFinItem != null){
+    		transferOrderFinItem.set(name, value);
+    		transferOrderFinItem.update();
+    	}else{
+    		transferOrderFinItem = new TransferOrderFinItem();
+    		transferOrderFinItem.set(name, value);
+    		transferOrderFinItem.set("order_id", orderId);
+    		transferOrderFinItem.set("status", "未结算");
+    		transferOrderFinItem.save();
+    	}
+    	/*if(paymentId != null && !"".equals(paymentId)){
     		PickupOrderFinItem departOrderFinItem = PickupOrderFinItem.dao.findById(paymentId);
     		departOrderFinItem.set(name, value);
     		departOrderFinItem.update();
@@ -1675,7 +1689,7 @@ public class PickupOrderController extends Controller {
     				transferOrderFinItem.update();
     			}
     		}
-    	}
+    	}*/
     	
         renderJson("{\"success\":true}");
     }
@@ -1726,14 +1740,22 @@ public class PickupOrderController extends Controller {
     			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
     		}
     		String totalWhere = "";
-            String sql = "select count(1) total from pickup_order_fin_item d "
-                    + "left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id =" + pickupOrderId + " and f.type = '应收'";
+            String sql = "select count(tor.id) total from depart_order dor "
+				+ " left join depart_transfer dt on dt.pickup_id = dor.id"
+				+ " left join transfer_order tor on dt.order_id = tor.id"
+				+ " where dor.combine_type = '"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id = "+pickupOrderId;
             Record rec = Db.findFirst(sql + totalWhere);
             logger.debug("total records:" + rec.getLong("total"));
 
             // 获取当前页的数据
-            List<Record> orders = Db.find("select d.*,f.name from pickup_order_fin_item d "
-                    + "left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id =" + pickupOrderId + " and f.type = '应收'");
+            List<Record> orders = Db.find("select tor.id order_id,tor.order_no order_no,c.company_name cname,fi.name name,tofi.id id,tofi.amount amount,tofi.remark,tofi.status status from depart_order dor "
+				+ " left join depart_transfer dt on dt.pickup_id = dor.id"
+				+ " left join transfer_order tor on dt.order_id = tor.id"
+				+ " left join party p on p.id = tor.customer_id"
+				+ " left join contact c on c.id = p.contact_id"
+				+ " left join transfer_order_fin_item tofi on tofi.order_id = tor.id"
+				+ " left join fin_item fi on fi.id  = tofi.fin_item_id"
+				+ " where dor.combine_type = '"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id = "+pickupOrderId);
     		
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));
