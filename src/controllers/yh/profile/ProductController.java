@@ -39,10 +39,10 @@ public class ProductController extends Controller {
         String sqlTotal = "";
         if (categoryId == null || "".equals(categoryId)) {
             sqlTotal = "select count(1) total from product";
-            sql = "select *,(select name from category where id = "+categoryId+") category_name from product";
+            sql = "select *,(select name from category where id = "+categoryId+") category_name from product "+sLimit;
         } else {
             sqlTotal = "select count(1) total from product where category_id = " + categoryId;
-            sql = "select *,(select name from category where id = "+categoryId+") category_name from product where category_id = " + categoryId;
+            sql = "select *,(select name from category where id = "+categoryId+") category_name from product where category_id = " + categoryId + " "+sLimit;
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));

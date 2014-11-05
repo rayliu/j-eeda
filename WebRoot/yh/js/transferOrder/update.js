@@ -504,9 +504,14 @@ $(document).ready(function() {
             	"sWidth": "180px",
             	"sClass": "item_name",
             	"fnRender": function(obj) {
-            		if(obj.aData.ITEM_NAME==null)
-            			obj.aData.ITEM_NAME='';
-            		var inputBox = "<input type='text' value='"+obj.aData.ITEM_NAME+"'>";
+            		var inputBox = "";
+            		if(obj.aData.PROD_ID != null){
+            			inputBox = obj.aData.ITEM_NAME;
+            		}else{
+	            		if(obj.aData.ITEM_NAME==null)
+	            			obj.aData.ITEM_NAME='';
+	            		inputBox = "<input type='text' value='"+obj.aData.ITEM_NAME+"'>";
+            		}
         			return inputBox;
                 }
             },
