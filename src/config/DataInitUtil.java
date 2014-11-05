@@ -108,7 +108,7 @@ public class DataInitUtil {
 
             // carinfo 车辆信息表
             stmt.executeUpdate("create table if not exists carinfo(id bigint auto_increment primary key,type varchar(50),driver varchar(50),phone varchar(50),car_no varchar(50),cartype varchar(50),"
-                    + "status varchar(50),length double,hundred_fuel_standard double);");
+                    + "status varchar(50),length double,hundred_fuel_standard double,rated_load double,rated_cube double,initial_mileage double);");
 
             // 提货单/发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),audit_status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
