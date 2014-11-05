@@ -573,8 +573,8 @@ $(document).ready(function() {
             	"mDataProp":null,
             	"sWidth": "50px",
             	"sClass": "sumWeight",
-            	"fnRender": function(obj) {//
-                    var inputBox = "<input type='text' style='width:80px;' value='"+(obj.aData.WEIGHT * obj.aData.AMOUNT)+"'>";
+            	"fnRender": function(obj) {
+                    var inputBox = "<input type='text' style='width:80px;' value='"+$(obj.aData.WEIGHT).val() * $(obj.aData.AMOUNT).val()+"'>";
             		return inputBox;
                 }
             },
@@ -583,7 +583,8 @@ $(document).ready(function() {
             	"sWidth": "50px",
             	"sClass": "volume",
             	"fnRender": function(obj) {
-            		var inputBox = "<input type='text' style='width:80px;' value='"+(obj.aData.VOLUME * obj.aData.AMOUNT)+"'>";
+            		var sumVolume = ($(obj.aData.SIZE).val() / 1000 * $(obj.aData.WIDTH).val() / 1000 * $(obj.aData.HEIGHT).val() / 1000 * $(obj.aData.AMOUNT).val()).toFixed(2);
+            		var inputBox = "<input type='text' style='width:80px;' value='"+sumVolume+"'>";
         			return inputBox;
                 }
             },            

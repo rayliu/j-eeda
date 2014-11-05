@@ -17,8 +17,6 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.LoginUserController;
-
 @RequiresAuthentication
 public class ProductController extends Controller {
 
@@ -347,6 +345,7 @@ public class ProductController extends Controller {
 	    }
         if (item.get("size") != null && item.get("width") != null && item.get("height") != null) {
 	        Double volume = Double.parseDouble(item.get("size")+"")/1000 * Double.parseDouble(item.get("width")+"")/1000 * Double.parseDouble(item.get("height")+"")/1000;
+	        volume = Double.parseDouble(String.format("%.2f", volume));
 	        item.set("volume", volume).update();
         }
         renderText(returnValue);// 必须返回传进来的值，否则js会报错
