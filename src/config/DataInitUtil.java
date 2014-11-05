@@ -326,17 +326,29 @@ public class DataInitUtil {
             //stmt.executeUpdate("insert into role(code, name) values('driver', '司机');");
 
             // 权限定义 
-            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.List', '运输单查询权限');");
-            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.Save', '运输单保存权限');");
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.list', '运输单查询权限');");
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.create', '运输单创建权限');");
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.update', '运输单保存权限');");
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.delete', '运输单删除权限');");
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.add_revenue', '运输单添加/删除应收条目权限');");
 //            stmt.executeUpdate("insert into permission(code, name) values('view', '');");
 //            stmt.executeUpdate("insert into permission(code, name) values('create');");
 //            stmt.executeUpdate("insert into permission(code, name) values('update');");
 //            stmt.executeUpdate("insert into permission(code, name) values('delete');");
             
             stmt.executeUpdate("insert into user_role(user_name, role_code) values('demo', 'admin');");
+            stmt.executeUpdate("insert into user_role(user_name, role_code) values('jason', 'clerk');");
             // 系统权限
-            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.List', '运输单查询权限');");
-            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.Save', '运输单保存权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.list', '运输单查询权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.create', '运输单创建权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.update', '运输单保存权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.delete', '运输单删除权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.add_revenue', '运输单添加/删除应收条目权限');");
+            
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('clerk', 'TransferOrder.list', '运输单查询权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('clerk', 'TransferOrder.create', '运输单创建权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('clerk', 'TransferOrder.update', '运输单保存权限');");
+            
             // 模块定义
             stmt.executeUpdate("insert into modules(module_name) values('调度管理');");
             stmt.executeUpdate("insert into modules(module_name) values('运输在途管理');");
