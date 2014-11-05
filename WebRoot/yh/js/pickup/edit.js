@@ -247,43 +247,48 @@
     	}
     }
     
+    // 保存单品
     var handlePickkupOrderDetail = function(){
-    	// 保存单品
-    	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
-			$("#pickupOrderId").val(data.ID);
-			$("#addressPickupOrderId").val(data.ID);
-			$("#milestonePickupId").val(data.ID);
-			if(data.ID>0){
-				$("#pickupId").val(data.ID);
-		        showFinishBut();
-			  	//$("#style").show();				    
-			}else{
-				alert('数据保存失败。');
-			}
-		},'json');
+    	if(!$("#saveTransferOrderBtn").prop('disabled')){
+	    	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
+				$("#pickupOrderId").val(data.ID);
+				$("#addressPickupOrderId").val(data.ID);
+				$("#milestonePickupId").val(data.ID);
+				if(data.ID>0){
+					$("#pickupId").val(data.ID);
+			        showFinishBut();
+				  	//$("#style").show();	
+			        $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+				}else{
+					alert('数据保存失败。');
+				}
+			},'json');
+    	}
     };
     
     var savePickupOrderFunction = function(){
-    	var detailIds = [];
-    	var uncheckedDetailIds = [];
-	    $("input[name='detailCheckBox']").each(function(){
-	    	if($(this).prop('checked') == true){
-	    		detailIds.push($(this).val());
+    	if(!$("#saveTransferOrderBtn").prop('disabled')){
+	    	var detailIds = [];
+	    	var uncheckedDetailIds = [];
+		    $("input[name='detailCheckBox']").each(function(){
+		    	if($(this).prop('checked') == true){
+		    		detailIds.push($(this).val());
+		    	}else{
+		    		uncheckedDetailIds.push($(this).val());
+		    	}
+		    });
+	    	$("#checkedDetail").val(detailIds);
+	    	$("#uncheckedDetail").val(uncheckedDetailIds);
+	    	if(uncheckedDetailIds.length > 0){
+	    		handlePickkupOrderDetail();
+	    		// 对一张单进行多次提货,把选中的和没选中的单品区分开来,然后在进行判断s
+	    		$("#detailDialog").modal('show');
 	    	}else{
-	    		uncheckedDetailIds.push($(this).val());
+	    		handlePickkupOrderDetail();
 	    	}
-	    });
-    	$("#checkedDetail").val(detailIds);
-    	$("#uncheckedDetail").val(uncheckedDetailIds);
-    	if(uncheckedDetailIds.length > 0){
-    		handlePickkupOrderDetail();
-    		// 对一张单进行多次提货,把选中的和没选中的单品区分开来,然后在进行判断s
-    		$("#detailDialog").modal('show');
-    	}else{
-    		handlePickkupOrderDetail();
+	 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	        $("#finishBtn").attr('disabled', false);
     	}
- 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-        $("#finishBtn").attr('disabled', false);
     };
     
     $("#continueCreateBtn").click(function(){
@@ -347,42 +352,7 @@
 		if("chargeCheckOrderbasic" == parentId){
 			bool = true;
 		}
-		
-        if($("#pickupOrderId").val() == ""){
-	    	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
-				$("#pickupOrderId").val(data.ID);
-				$("#addressPickupOrderId").val(data.ID);
-				$("#milestonePickupId").val(data.ID);
-				if(data.ID>0){
-					$("#pickupId").val(data.ID);
-			        showFinishBut();
-					pickupOrderMilestone();
-				  	//$("#style").show();
-					if(bool){
-						$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-					}
-				}else{
-					alert('数据保存失败。');
-				}
-			},'json');
-        }else{
-        	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
-				$("#pickupOrderId").val(data.ID);
-				$("#addressPickupOrderId").val(data.ID);
-				$("#milestonePickupId").val(data.ID);
-				if(data.ID>0){		
-					$("#pickupId").val(data.ID);	
-			        showFinishBut();
-					pickupOrderMilestone();
-				  	//$("#style").show();
-					if(bool){
-						$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-					}
-				}else{
-					alert('数据保存失败。');
-				}
-			},'json');
-        }
+		handlePickkupOrderDetail();
         parentId = e.target.getAttribute("id");
 	});
 
@@ -463,49 +433,7 @@
 			bool= true;
 		}
 		
-        if($("#pickupOrderId").val() == ""){
-	    	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
-				$("#pickupOrderId").val(data.ID);
-				$("#addressPickupOrderId").val(data.ID);
-				$("#milestonePickupId").val(data.ID);
-				if(data.ID>0){
-					$("#pickupId").val(data.ID);
-			        showFinishBut();
-					findAllAddress();
-				  	//$("#style").show();
-				  	choiceExternalTransferOrder();
-			        if($("#transferOrderType").val() == 'replenishmentOrder'){
-			        	
-			        }
-			        if(bool){
-			        	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-			        }
-				}else{
-					alert('数据保存失败。');
-				}
-			},'json');
-        }else{
-        	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
-				$("#pickupOrderId").val(data.ID);
-				$("#addressPickupOrderId").val(data.ID);
-				$("#milestonePickupId").val(data.ID);
-				if(data.ID>0){		
-					$("#pickupId").val(data.ID);	
-			        showFinishBut();
-					findAllAddress();
-				  	//$("#style").show();	 
-				  	choiceExternalTransferOrder();
-			        if($("#transferOrderType").val() == 'replenishmentOrder'){
-			        	
-			        }
-			        if(bool){
-			        	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-			        }
-				}else{
-					alert('数据保存失败。');
-				}
-			},'json');
-        }
+		handlePickkupOrderDetail();
         parentId = e.target.getAttribute("id");
 	});
 	
@@ -625,7 +553,7 @@
 	// 显示已完成按钮
 	var showFinishBut = function(){
 		if($("#pickupOrderId").val() != ""){
-			if($("#finishBtnVal").val() == "已入货场"){
+			if($("#finishBtnVal").val() == "已入货场" || $("#finishBtnVal").val() == "已入库"){
 				$("#finishBtn").attr('disabled', true);					
 				$("#saveTransferOrderBtn").attr('disabled', true);					
 			}else{
@@ -1012,71 +940,6 @@
              paymenttable.fnDraw();
         },'text');
 	});
-
-	//var test ={'1':'1','2':'2'};
-	/*paymenttable.makeEditable({
-    	sUpdateURL: '/pickupOrder/paymentSave',    	
-    	oEditableSettings: {event: 'click'},
-    	"aoColumns": [  			            
-            {            
-            	style: "inherit",
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"name",
-            	//type: 'select',
-            	//data: test,
-            	placeholder: "", 
-            	callback: function () {
-            		
-            	}
-        	},
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"amount",
-            	placeholder: "",
-            	callback: function () {} 
-            }
-        ]      
-    }).click(function(){
-    	var inputBox = $(this).find('input');
-        inputBox.autocomplete({
-	        source: function( request, response ) {
-	        	if(inputBox.parent().parent()[0].cellIndex >0){//从第2列开始，不需要去后台查数据
-		    		return;
-		    	}
-	            $.ajax({
-	                url: "/pickupOrder/getPaymentList",
-	                dataType: "json",
-	                data: {
-	                    input: request.term
-	                },
-	                success: function( data ) {
-	                    response($.map( data, function( data ) {
-	                        return {
-	                            label: data.NAME,
-	                            value: data.NAME,
-	                            id: data.ID,
-	                            name: data.NAME
-	                        };
-	                    }));
-	                }
-	            });
-	        },select: function( event, ui ) {
-        		//将选择的条目id先保存到数据库
-	        	var finId = $(this).parent().parent().parent()[0].id;
-        		var finItemId = ui.item.id;
-        		$.post('/pickupOrder/paymentSave',{id:finId, finItemId:finItemId},function(){ 
-        			//paymenttable.fnDraw();  
-        		});  
-        		
-        		return false;
-            },
-        	minLength: 2
-        });
-    }); */
 	
 	$("#addrow").click(function(){	
 		var pickupOrderId =$("#pickupOrderId").val();

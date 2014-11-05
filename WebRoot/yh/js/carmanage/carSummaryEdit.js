@@ -126,11 +126,6 @@ $(document).ready(function() {
 							$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_OK);
 						}
 					},'json');	
-				}else{
-					var msg = "是否保存行车单数据？";   
-					if (confirm(msg)==true){   
-						saveCarSummaryData(); 
-					}
 				}
 			}else{
 				var msg = "是否保存行车单数据？";   
