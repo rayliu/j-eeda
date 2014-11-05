@@ -39,8 +39,8 @@ import models.Office;
 import models.OrderStatus;
 import models.Party;
 import models.PartyAttribute;
-import models.PickupOrderFinItem;
 import models.Permission;
+import models.PickupOrderFinItem;
 import models.Product;
 import models.ReturnOrder;
 import models.Role;
@@ -88,14 +88,6 @@ import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.SqlReporter;
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import com.jfinal.plugin.c3p0.C3p0Plugin;
-
-import controllers.eeda.AppController;
-import controllers.eeda.CaseController;
-import controllers.eeda.LoanController;
-import controllers.eeda.PropertyClientController;
-import controllers.eeda.SalesOrderController;
-import controllers.eeda.UserProfileController;
-import controllers.yh.RegisterUserController;
 
 public class EedaConfig extends JFinalConfig {
     private Logger logger = Logger.getLogger(EedaConfig.class);
