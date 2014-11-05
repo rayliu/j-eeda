@@ -390,6 +390,32 @@ $(document).ready(function() {
 	        	companyName: {required :"不能为空"},
 	        }
 	    });
+		//零担-表单验证
+		var routeItemForm = $('#routeItemForm').validate({
+	        rules: {
+	          amountFrom: {
+	            required: true,
+	            number:true
+	          },
+	          amountTo:{
+	            required: true,
+	            number:true
+	          },
+	          price:{
+	          	number:true
+	          },
+	          day: {
+	            number:true
+	          },
+	          day2:{
+	            number:true
+	          },
+	        },
+	        messages : {
+	        	required:  "不能为空",
+	        	number:"请输入数字！" 
+	        }
+	    });
 	
         //点击button显示添加合同干线div
         $("#addPriceBtn").click(function(){
@@ -472,7 +498,13 @@ $(document).ready(function() {
         //点击保存的事件，保存干线信息
         //routeItemForm 不需要提交
         $("#saveRouteBtn").click(function(e){
-        	 
+        	var priceType = $("#routeTabs .active").attr("price-type");
+        	if(priceType=="perCargo"){
+				//提交前，校验数据
+		        if(!$("#routeItemForm").valid()){
+			       	return false;
+		        }
+			}
         	//新增时目的地id
         	var saveid = [];
 		    var price = $("#price").val();
@@ -528,7 +560,6 @@ $(document).ready(function() {
             //当前选中的目的地id
         	var toid = saveid[saveid.length-1];
             var id =  $('#routeItemId').val();
-            var priceType = $("#routeTabs .active").attr("price-type");
             $("#priceTypeHidden").val(priceType);
 	    	if(priceType=="perUnit"){//计费
 	    		if(id == null || id ==""){//新增合同运价时
@@ -643,6 +674,8 @@ $(document).ready(function() {
 	            }
 	    	}
         });
+        
+        
 
         //获取客户的list，选中信息自动填写其他信息
         $('#companyName').on('keyup click', function(){
