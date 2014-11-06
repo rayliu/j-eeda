@@ -18,7 +18,7 @@ $(document).ready(function() {
         "aoColumns": [   
             {"mDataProp":null,
             	"fnRender": function(obj) {
-            		 return "<a href='/delivery/edit/"+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                    	return "<a href='/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
             		}
             },
             {"mDataProp":null,
