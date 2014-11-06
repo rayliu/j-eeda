@@ -25,33 +25,29 @@ import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.PoiUtils;
 
 //@Before(AuthenticatedValidator.class)
 
-@RequiresAuthentication
+//@RequiresAuthentication
 
 public class TransferOrderController extends Controller {
 	
 	private Logger logger = Logger.getLogger(TransferOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 
-	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST })
+	//@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST })
 	public void index() {
 		render("/yh/transferOrder/transferOrderList.html");
 	}
 
-	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST})
+	//@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST})
 	public void list() {
 		Map transferOrderListMap = null;
 		String orderNo = getPara("orderNo");
@@ -404,8 +400,7 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 保存订单项
-	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE, 
-			PermissionConstant.PERMISSION_TO_UPDATE}, logical=Logical.OR)
+	//@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE, PermissionConstant.PERMISSION_TO_UPDATE}, logical=Logical.OR)
 	public void saveOrderItem() {
 		TransferOrderItem orderItem = new TransferOrderItem();
 		orderItem.set("item_name", getPara("item_name"));
@@ -422,8 +417,7 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 保存运输单
-	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE, 
-			PermissionConstant.PERMISSION_TO_UPDATE}, logical=Logical.OR)
+	//@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE, PermissionConstant.PERMISSION_TO_UPDATE}, logical=Logical.OR)
 	public void saveTransferOrder() {
 		String order_id = getPara("id");
 		String warehouseId = getPara("gateInSelect");
@@ -680,8 +674,7 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 保存运输里程碑
-	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE, 
-			PermissionConstant.PERMISSION_TO_UPDATE}, logical=Logical.OR)
+	//@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE,PermissionConstant.PERMISSION_TO_UPDATE}, logical=Logical.OR)
 	private void saveTransferOrderMilestone(TransferOrder transferOrder) {
 		TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
 		transferOrderMilestone.set("status", "新建");
@@ -857,7 +850,7 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 删除订单
-	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_DELETE})
+	//@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_DELETE})
 	public void delete() {
 		long id = getParaToLong();
 
