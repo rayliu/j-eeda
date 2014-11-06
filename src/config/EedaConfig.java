@@ -92,9 +92,12 @@ import com.jfinal.plugin.c3p0.C3p0Plugin;
 public class EedaConfig extends JFinalConfig {
     private Logger logger = Logger.getLogger(EedaConfig.class);
 
-    private static String H2 = "H2";
-    private static String Mysql = "Mysql";
-    private static String ProdMysql = "ProdMysql";
+    private static final String H2 = "H2";
+    private static final String Mysql = "Mysql";
+    private static final String ProdMysql = "ProdMysql";
+    
+    public static String mailUser;
+    public static String mailPwd;
     /**
      * 
      * 供Shiro插件使用 。
@@ -229,6 +232,8 @@ public class EedaConfig extends JFinalConfig {
 
         loadPropertyFile("app_config.txt");
 
+        mailUser = getProperty("mail_user_name");
+        mailPwd = getProperty("mail_pwd");
         // H2 or mysql
         initDBconnector();
 

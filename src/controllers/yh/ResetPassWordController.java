@@ -9,6 +9,8 @@ import org.apache.commons.mail.SimpleEmail;
 
 import com.jfinal.core.Controller;
 
+import config.EedaConfig;
+
 public class ResetPassWordController extends Controller{
 	
 	public void index(){
@@ -28,17 +30,16 @@ public class ResetPassWordController extends Controller{
         email.setSmtpPort(465);
         
         /*输入公司的邮箱和密码*/
-        email.setAuthenticator(new DefaultAuthenticator("", ""));
-        
+        email.setAuthenticator(new DefaultAuthenticator(EedaConfig.mailUser, EedaConfig.mailPwd));        
         email.setSSLOnConnect(true);
         
-        email.setFrom(userEmail);//设置发信人
-        email.setSubject("忘记密码");
+        email.setFrom(EedaConfig.mailUser);//设置发信人
+        email.setSubject("重置密码");
         
        HttpServletRequest req = this.getRequest();
        String basePath = req.getScheme()+"://"+req.getServerName()+":"+req.getServerPort()+"/reset/input";
 
-        email.setMsg("请点击下面超连接，完成重置密码工作  \t "+ basePath);
+        email.setMsg("请点击下面超链接，完成重置密码工作  \t "+ basePath);
         email.addTo(userEmail);//设置收件人
       
         try{
