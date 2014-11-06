@@ -58,9 +58,17 @@
 			                 <input id="driver" name="driver" type="text" class="form-control" value="${lu.driver!''}">
 			             	</div>
 			             	<div class="form-group ">
-			                 <label class="control-label">司机电话</label>
-			                 <input type="text" class="form-control" id="phone" name="phone" value="${lu.phone!''}">
-			            	 </div>
+				                <label class="control-label">司机电话</label>
+				                <input type="text" class="form-control" id="phone" name="phone" value="${lu.phone!''}">
+			            	</div>
+			            	<div class="form-group ">
+				                <label class="control-label">身份证号</label>
+				                <input type="text" class="form-control" id="identity_number" name="identity_number" value="${lu.identity_number!''}">
+			            	</div>
+			            	<div class="form-group ">
+                                <label>备注</label>
+								<textarea class="form-control" rows="3" name="remark">${lu.remark!''}</textarea>
+                            </div>
 			           </div>
 			           <div class="col-lg-6">
 			             <div class="form-group ">
@@ -92,7 +100,15 @@
 			             <div class="form-group ">
 			                 <label class="control-label">车牌</label>
 			                 <input type="text" class="form-control" id="car_number" name="car_number" value="${lu.car_number!''}">
-			             	</div>
+			             </div>
+			             <div class="form-group ">
+			                 <label class="control-label">家庭联系人</label>
+			                 <input type="text" class="form-control" id="family_contact" name="family_contact" value="${lu.family_contact!''}">
+			             </div>
+			             <div class="form-group ">
+			                 <label class="control-label">家庭联系电话</label>
+			                 <input type="text" class="form-control" id="mobile" name="mobile" value="${lu.mobile!''}">
+			             </div>
 			            </div>
 			           
 			            
