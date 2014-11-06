@@ -6,20 +6,16 @@ import models.UserLogin;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.SimpleEmail;
-import org.eclipse.jetty.server.Request;
 
 import com.jfinal.core.Controller;
 
 public class ResetPassWordController extends Controller{
+	
 	public void index(){
-		String input = getPara("input");
-		if(input==null){
-			render("/yh/profile/resetPassWord/resetPass.html");
-		}else{
-
-			render("/yh/profile/resetPassWord/inputPass.html");
-		}
-		
+		render("/yh/profile/resetPassWord/resetPass.html");
+	}
+	public void input(){
+		render("/yh/profile/resetPassWord/inputPass.html");
 	}
 	  // 使用common-email, javamail
     public void sendMail() throws Exception {
@@ -30,14 +26,17 @@ public class ResetPassWordController extends Controller{
         /*smtp.exmail.qq.com*/
         email.setHostName("smtp.exmail.qq.com");
         email.setSmtpPort(465);
-        email.setAuthenticator(new DefaultAuthenticator("red.luo@eeda123.com", "luo0330"));
+        
+        /*输入公司的邮箱和密码*/
+        email.setAuthenticator(new DefaultAuthenticator("", ""));
+        
         email.setSSLOnConnect(true);
         
         email.setFrom(userEmail);//设置发信人
         email.setSubject("忘记密码");
         
        HttpServletRequest req = this.getRequest();
-       String basePath = req.getScheme()+"://"+req.getServerName()+":"+req.getServerPort()+"/reset/index?input=1";
+       String basePath = req.getScheme()+"://"+req.getServerName()+":"+req.getServerPort()+"/reset/input";
 
         email.setMsg("请点击下面超连接，完成重置密码工作  \t "+ basePath);
         email.addTo(userEmail);//设置收件人
