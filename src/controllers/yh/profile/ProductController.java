@@ -191,12 +191,18 @@ public class ProductController extends Controller {
     // 保存类别
     public void saveCategory() {
         String categoryId = getPara("categoryId");
-        // String parentId = getPara("parentId");
+        String name = getPara("name");
+        String categoryName = "";
         Category category = Category.dao.findById(categoryId);
-        category.set("name", getPara("name"));
-        category.set("customer_id", getPara("customerId"));
-        category.update();
-
+    	List<Category> categories = Category.dao.find("select * from category where parent_id = ? and id != ?", category.get("parent_id"), categoryId);
+    	for(Category c :  categories){
+    		categoryName += c.get("name");
+    	}
+    	if(!categoryName.contains(name)){
+    		category.set("name", getPara("name"));
+	        category.set("customer_id", getPara("customerId"));
+	        category.update();
+    	}
         renderJson(category);
     }
 
@@ -349,5 +355,17 @@ public class ProductController extends Controller {
 	        item.set("volume", volume).update();
         }
         renderText(returnValue);// 必须返回传进来的值，否则js会报错
+    }
+    
+    // 校验类别是否已存在
+    public void checkCategory(){
+    	String id = getPara("id");
+    	String name = getPara("name");
+    	Category category = Category.dao.findById(id);
+    	List<Category> categories = Category.dao.find("select * from category where parent_id = ? and id != ?", category.get("parent_id"), id);
+    	Map<String, Object> map = new HashMap<String, Object>();
+    	map.put("name", name);
+    	map.put("categories", categories);
+    	renderJson(map);
     }
 }

@@ -505,8 +505,28 @@ $(document).ready(function() {
         }
         function onRename(e, treeId, treeNode, isCancel) {
             showLog((isCancel ? "<span style='color:red'>":"") + "[ "+getTime()+" onRename ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name + (isCancel ? "</span>":""));
-            $.post('/product/saveCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:treeNode.name}, function(data){            
-                
+            var name = treeNode.name;
+            /*$.ajax({  
+                type : "post",  
+                url : "/product/checkCategory",  
+                data : {id: treeNode.ID, name: name},  
+                async : false,  
+                success : function(data){  
+	                subNodes=data; 
+	          		alert("该类别已存在!");
+	        		return false;
+                }  
+            });*/
+            $.post('/product/checkCategory', {id: treeNode.ID, name: name}, function(data){            
+                for(var i=0;i<data.categories.length && data.categories.length > 0;i++){
+                	if(data.name == data.categories[i].NAME){
+                		searchAllCategory();
+                		alert("该类别已存在!");
+                		return false;
+                	}
+                }
+            },'json');
+            $.post('/product/saveCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:treeNode.name}, function(data){     
             },'json');
         }
         function showRemoveBtn(treeId, treeNode) {
