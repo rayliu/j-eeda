@@ -734,4 +734,26 @@ public class ContractController extends Controller {
             renderJson("");
         }
     }
+    //保存校验
+    public void checkedRepetition(){
+    	String contractId = getPara("contractId");
+    	String priceType = getPara("priceType");
+    	String toId = getPara("toId");
+    	String productId = getPara("productId");
+    	
+    	String sql = "";
+    	if("".equals(productId) || productId == null)
+    		sql = "select count(0) total from contract_item  where contract_id  = '"+contractId+"' and pricetype = '"+priceType+"' and  to_id = '"+toId+"';";
+    	else
+    		sql = "select count(0) total from contract_item  where contract_id  = '"+contractId+"' and pricetype = '"+priceType+"' and  to_id = '"+toId+"' and product_id = '"+productId+"';";
+    	
+    	Record rec = Db.findFirst(sql);
+    	if(rec.getLong("total") > 0)
+    		renderJson("{\"success\":true}");
+    	else
+    		renderJson("{\"success\":false}");
+    }
+    
+    
+    
 }
