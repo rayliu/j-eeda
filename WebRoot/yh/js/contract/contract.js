@@ -6,8 +6,6 @@ $(document).ready(function() {
 	var locationToId3 = [];
 	//编辑前的目的地
 	var startTo = [];
-	//编辑前的产品
-	var itemTo = "";
 	
 	$('#menu_contract').addClass('active').find('ul').addClass('in');
 		var contractId=$('#contractId').val();
@@ -235,7 +233,6 @@ $(document).ready(function() {
                 	 searchAllLocationTo(data[0].TO_ID);
                 	 startTo = [];
                 	 startTo = data[0].TO_ID.split(" ");
-                	 itemTo =data[0].PID;
                  }else{
                      alert('取消失败');
                  }
@@ -396,14 +393,6 @@ $(document).ready(function() {
 		//零担-表单验证
 		var routeItemForm = $('#routeItemForm').validate({
 	        rules: {
-	          amountFrom: {
-	            required: true,
-	            number:true
-	          },
-	          amountTo:{
-	            required: true,
-	            number:true
-	          },
 	          price:{
 	          	number:true
 	          },
@@ -493,7 +482,6 @@ $(document).ready(function() {
                 	$('#reset').click();
                 	locationtoid = [];
                 	datatable.fnDraw();
-                	$("#tishi1").text("");
                 }else{
                     alert('数据保存失败。');
                 }
@@ -561,58 +549,124 @@ $(document).ready(function() {
             	$("#hideDistrictTo").val(cmbAreaTo);
             }
             
-            //合同id
-            var contractId = $("#routeContractId").val();
             //当前选中的目的地id
         	var toid = saveid[saveid.length-1];
-        	//当前产品
-        	var item = $('#itemNameMessage').val();
-        	//产品id
-        	var productId = $("#productId").val();
-        	
-        	var type= $("#type3").val();
-	    	var type2= $("#type2").val();
-	    	if(type=='CUSTOMER'||type2=='CUSTOMER'){
-	    		if(item == "" || item == null){
-					$("#tishi1").text("产品不能为空！");
-					return false;
-				}
-	    	}
-	    	if(itemTo == null)
-	    		itemTo = "";
-            //var id =  $('#routeItemId').val();
+            var id =  $('#routeItemId').val();
             $("#priceTypeHidden").val(priceType);
-	    		$.post('/customerContract/checkedRepetition', {"contractId":contractId,"priceType":priceType,"toId":toid,"productId":productId}, function(data){
-                if(data.success){//有数据
-                	var routeItemId = $("#routeItemId").val();
-                	if(routeItemId == "" || routeItemId == null){
-                		alert("货品目的地已存在！");
-                	}else{
-                		var startid = startTo[startTo.length-1];
-    	            	if(startid == "" || startid == null){
-    	            		startid = startTo[startTo.length-2];
-    	            	}
-                		if(toid == startid && productId == itemTo){
-                			if(priceType=="perUnit")
-    	                		tijiao(locationToId1,dataTable);
-    	                	else if(priceType=="perCar")
-    	                		tijiao(locationToId2,dataTable2);
-    	                	else if(priceType=="perCargo")
-    	                		tijiao(locationToId3,dataTable3);
+	    	if(priceType=="perUnit"){//计费
+	    		if(id == null || id ==""){//新增合同运价时
+	    			var result = true;
+	                for(var i=0;i<locationToId1.length;i++){
+	                    if(locationToId1[i] == toid){
+	                    	alert("目的地已存在！");
+	                    	result = false;
+	                    	break;
+	                    }
+	            	}
+	                if(result){
+	                	tijiao(locationToId1,dataTable);
+	                }
+	            }else{//修改合同运价
+	            	var result = false;
+	            	var startid = startTo[startTo.length-1];
+	            	if(startid == "" || startid == null){
+	            		startid = startTo[startTo.length-2];
+	            	}
+	        		for(var k=0;k<locationToId1.length;k++){
+	        			if(toid == locationToId1[k]){
+	        				result = true;
+	        				break;
 	        			}else{
-	        				alert("货品目的地已存在！");
+	        				result = false;
 	        			}
-                	}
-                }else{//没有数据
-                	if(priceType=="perUnit")
-                		tijiao(locationToId1,dataTable);
-                	else if(priceType=="perCar")
-                		tijiao(locationToId2,dataTable2);
-                	else if(priceType=="perCargo")
-                		tijiao(locationToId3,dataTable3);
-                }
-            },'json');
+	            	}
+	        		if(result){
+	        			if(toid == startid){
+	        				tijiao(locationToId1,dataTable);
+	        			}else{
+	        				alert("目的地已存在！");
+	        			}
+	        		}else{
+	        			tijiao(locationToId1,dataTable);
+	        		}
+	            }
+	    	}else if(priceType=="perCar"){//整车
+	    		if(id == null || id ==""){//新增合同运价时
+	    			var result = true;
+	                for(var i=0;i<locationToId2.length;i++){
+	                    if(locationToId2[i] == toid){
+	                    	alert("目的地已存在！");
+	                    	result = false;
+	                    	break;
+	                    }
+	            	}
+	                if(result){
+	                	tijiao(locationToId2,dataTable2);
+	                }
+	            }else{//修改合同运价
+	            	var result = false;
+	            	var startid = startTo[startTo.length-1];
+	            	if(startid == "" || startid == null){
+	            		startid = startTo[startTo.length-2];
+	            	}
+	        		for(var k=0;k<locationToId2.length;k++){
+	        			if(toid == locationToId2[k]){
+	        				result = true;
+	        				break;
+	        			}else{
+	        				result = false;
+	        			}
+	            	}
+	        		if(result){
+	        			if(toid == startid){
+	        				tijiao(locationToId2,dataTable2);
+	        			}else{
+	        				alert("目的地已存在！");
+	        			}
+	        		}else{
+	        			tijiao(locationToId2,dataTable2);
+	        		}
+	            }
+	    	}else if(priceType=="perCargo"){//零担
+	    		if(id == null || id ==""){//新增合同运价时
+	    			var result = true;
+	                for(var i=0;i<locationToId3.length;i++){
+	                    if(locationToId3[i] == toid){
+	                    	alert("目的地已存在！");
+	                    	result = false;
+	                    	break;
+	                    }
+	            	}
+	                if(result){
+	                	tijiao(locationToId3,dataTable3);
+	                }
+	            }else{//修改合同运价
+	            	var result = false;
+	            	var startid = startTo[startTo.length-1];
+	            	if(startid == "" || startid == null){
+	            		startid = startTo[startTo.length-2];
+	            	}
+	        		for(var k=0;k<locationToId3.length;k++){
+	        			if(toid == locationToId3[k]){
+	        				result = true;
+	        				break;
+	        			}else{
+	        				result = false;
+	        			}
+	            	}
+	        		if(result){
+	        			if(toid == startid){
+	        				tijiao(locationToId3,dataTable3);
+	        			}else{
+	        				alert("目的地已存在！");
+	        			}
+	        		}else{
+	        			tijiao(locationToId3,dataTable3);
+	        		}
+	            }
+	    	}
         });
+        
         
 
         //获取客户的list，选中信息自动填写其他信息

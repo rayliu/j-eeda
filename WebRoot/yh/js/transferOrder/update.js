@@ -520,8 +520,15 @@ $(document).ready(function() {
             	"sWidth": "50px",
             	"sClass": "size",
             	"fnRender": function(obj) {
-            		var inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.SIZE+"'>";
-        			return inputBox;
+            		var inputBox = "";
+            		if(obj.aData.PROD_ID != null){
+            			inputBox = obj.aData.SIZE + '';
+            		}else{
+	            		if(obj.aData.SIZE==null)
+	            			obj.aData.SIZE='';
+	            		inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.SIZE+"'>";
+            		}
+            		return inputBox;
                 }
         	},
             {
@@ -529,8 +536,15 @@ $(document).ready(function() {
             	"sWidth": "50px",
             	"sClass": "width",
             	"fnRender": function(obj) {
-            		var inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.WIDTH+"'>";
-        			return inputBox;
+            		var inputBox = "";
+            		if(obj.aData.PROD_ID != null){
+            			inputBox = obj.aData.WIDTH + '';
+            		}else{
+	            		if(obj.aData.WIDTH==null)
+	            			obj.aData.WIDTH='';
+	            		inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.WIDTH+"'>";;
+            		}
+            		return inputBox;
                 }
             },
             {
@@ -538,16 +552,30 @@ $(document).ready(function() {
             	"sWidth": "50px",
             	"sClass": "height",
             	"fnRender": function(obj) {
-            		var inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.HEIGHT+"'>";
-        			return inputBox;
+            		var inputBox = "";
+            		if(obj.aData.PROD_ID != null){
+            			inputBox = obj.aData.HEIGHT + '';
+            		}else{
+	            		if(obj.aData.HEIGHT==null)
+	            			obj.aData.HEIGHT='';
+	            		inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.HEIGHT+"'>";
+            		}
+            		return inputBox;
                 }
         	}, 
             {
             	"mDataProp":"WEIGHT",
-            	"sWidth": "50px",
+            	"sWidth": "60px",
             	"sClass": "weight",
             	"fnRender": function(obj) {
-            		var inputBox = "<input type='text' style='width:70px;' value='"+obj.aData.WEIGHT+"'>";
+            		var inputBox = "";
+            		if(obj.aData.PROD_ID != null){
+            			inputBox = obj.aData.WEIGHT + '';
+            		}else{
+	            		if(obj.aData.WEIGHT==null)
+	            			obj.aData.WEIGHT='';
+	            		inputBox = "<input type='text' style='width:70px;' value='"+obj.aData.WEIGHT+"'>";
+            		}
         			return inputBox;
                 }
             },
@@ -568,29 +596,35 @@ $(document).ready(function() {
             	"sClass": "unit",
             	"fnRender": function(obj) {
             		var inputBox = "";
-            		if(obj.aData.UNIT != null){
-            			inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.UNIT+"'>";
+            		if(obj.aData.PROD_ID != null){
+            			inputBox = obj.aData.UNIT + '';
+            		}else{
+	            		if(obj.aData.UNIT==null)
+	            			obj.aData.UNIT='';
+	            		inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.UNIT+"'>";
             		}
         			return inputBox;
                 }
             },
             {
             	"mDataProp":null,
-            	"sWidth": "50px",
+            	"sWidth": "80px",
             	"sClass": "sumWeight",
             	"fnRender": function(obj) {
-                    var inputBox = "<input type='text' style='width:80px;' value='"+$(obj.aData.WEIGHT).val() * $(obj.aData.AMOUNT).val()+"'>";
+                    //var inputBox = "<input type='text' style='width:80px;' value='"+obj.aData.WEIGHT * $(obj.aData.AMOUNT).val()+"'>";
+                    var inputBox = obj.aData.WEIGHT * $(obj.aData.AMOUNT).val();
             		return inputBox;
                 }
             },
             {
             	"mDataProp":"VOLUME",
-            	"sWidth": "50px",
+            	"sWidth": "80px",
             	"sClass": "volume",
             	"fnRender": function(obj) {
-            		var sumVolume = ($(obj.aData.SIZE).val() / 1000 * $(obj.aData.WIDTH).val() / 1000 * $(obj.aData.HEIGHT).val() / 1000 * $(obj.aData.AMOUNT).val()).toFixed(2);
-            		var inputBox = "<input type='text' style='width:80px;' value='"+sumVolume+"'>";
-        			return inputBox;
+            		var sumVolume = (obj.aData.SIZE / 1000 * obj.aData.WIDTH / 1000 * obj.aData.HEIGHT / 1000 * $(obj.aData.AMOUNT).val()).toFixed(2);
+            		//var inputBox = "<input type='text' style='width:80px;' value='"+sumVolume+"'>";
+        			//return inputBox;
+            		return sumVolume;
                 }
             },            
             {   
@@ -598,7 +632,7 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		if(obj.aData.REMARK==null)
             			obj.aData.REMARK='';
-            		var inputBox = "<input type='text' style='width:360px;' value='"+obj.aData.REMARK+"'>";
+            		var inputBox = "<input type='text' style='width:360px;' name='remark' value='"+obj.aData.REMARK+"'>";
         			return inputBox;
                 }
             },

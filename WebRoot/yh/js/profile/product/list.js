@@ -249,7 +249,7 @@ $(document).ready(function() {
     });                                                                      
         
     var nodePlusClickHandler= function(e){
-    	e.preventDefault();
+    	//e.preventDefault();
     	var customerId = $('#customerId').val();
     	var categoryId = $(this).find('li').attr('categoryId');
     	var nodeElement = $(this);
@@ -506,6 +506,7 @@ $(document).ready(function() {
         function onRename(e, treeId, treeNode, isCancel) {
             showLog((isCancel ? "<span style='color:red'>":"") + "[ "+getTime()+" onRename ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name + (isCancel ? "</span>":""));
             var name = treeNode.name;
+            $("#customerId").val(treeNode.customerId);
             /*$.ajax({  
                 type : "post",  
                 url : "/product/checkCategory",  
@@ -514,14 +515,15 @@ $(document).ready(function() {
                 success : function(data){  
 	                subNodes=data; 
 	          		alert("该类别已存在!");
+            		searchAllCategory();
 	        		return false;
                 }  
             });*/
             $.post('/product/checkCategory', {id: treeNode.ID, name: name}, function(data){            
                 for(var i=0;i<data.categories.length && data.categories.length > 0;i++){
                 	if(data.name == data.categories[i].NAME){
-                		searchAllCategory();
                 		alert("该类别已存在!");
+                		nodePlusClickHandler();
                 		return false;
                 	}
                 }
