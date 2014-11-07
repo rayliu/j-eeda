@@ -184,7 +184,6 @@ $(document).ready(function() {
         }else{
         	alert("请选择要创建的调车单");
         }
-        
     });
     
 	// 选中或取消事件

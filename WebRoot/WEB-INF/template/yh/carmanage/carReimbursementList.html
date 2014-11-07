@@ -6,7 +6,7 @@
             
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">行车单</h1>
+                    <h1 class="page-header">行车报销单</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -16,9 +16,9 @@
                         
                             <!-- Nav tabs -->
                             <ul id="orderTabs" class="nav nav-tabs">
-                                <li class="active"><a href="#create" data-toggle="tab" data-src="create" id ="chargeCheckOrderbasic" >未处理行车单</a>
+                                <li class="active"><a href="#create" data-toggle="tab" data-src="create" id ="unReimbursementList" >未报销行车单</a>
                                 </li>
-                                <li class=""><a href="#search" data-toggle="tab" id="carSummaryOrderList">行车单查询</a>
+                                <li class=""><a href="#search" data-toggle="tab" id="carReimbursementList">行车报销单</a>
                                 </li>                               
                             </ul>
                             <!-- Tab panes -->
@@ -45,6 +45,10 @@
 	                                                                    <input type="text" class="form-control search-control orderNo_filter" id="driver" value="">
 	                                                                </div>
 	                                                                
+	                                                                <div class="form-group">
+	                                                                    <label class="search-label">行车单号</label>
+	                                                                    <input type="text" class="form-control search-control orderNo_filter" id="carSummaryOrderNo" value="">
+	                                                                </div>
 	                                                             </div><!-- end of col-lg-6-->
 	                                                             <div class="col-lg-6">
 	                                                             	<div class="form-group">
@@ -56,6 +60,7 @@
 	                                                                    <label class="search-label">运输单号</label>
 	                                                                    <input type="text" class="form-control search-control orderNo_filter" id="transferOrderNo" value="">
 	                                                                </div>
+	                                                                
                                                                     <div class="form-group">                                        
                                                                         <div id="datetimepicker" class="input-append date "> 
                                                                             <label class="search-label">出车日期</label> 
@@ -70,12 +75,12 @@
                                                         </form>                                                        
 
 														<div class="row">
-									                        <form id="createForm" action="/carsummary/createCarSummary" method="post">
+									                        <form id="createForm" action="/carreimbursement/createCarReimbursement" method="post">
 									                            <input id='pickupIds' name='pickupIds' type="hidden">
 									                            <div class="col-lg-6">
 									                                <div class="form-group">
 									                                    <div class="controls">
-									                                      <button id="saveBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建行车单</button>
+									                                      <button id="createBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建报销单</button>
 									                                    </div>
 									                                </div>
 									                            </div>    
@@ -86,22 +91,37 @@
                                                        
 	                               					 <div class="tab-pane fade active in" id="unchecked">
 	                                                    <div class="table-responsive">
-	                                                        <table class="table table-striped table-bordered table-hover" id="unDispose_table" style="width: 1400px;">
+	                                                        <table class="table table-striped table-bordered table-hover" id="carSummaryTbody" style="width: 2700px;">
 	                                                            <thead>
 	                                                                <tr>
-							                                            <th></th>
 							                                            <th>序号</th>
-							                                            <th>调车单号</th>
+							                                            <th>行车单号</th>
+							                                            <th>调车(拼车)单号</th>
 							                                            <th>运输单号</th>
 							                                            <th>状态</th>
 							                                            <th>车牌号</th>
 							                                            <th>司机</th>
 							                                            <th>出车日期</th>
-							                                            <th>起止点</th>                                            
+							                                            <th>返回日期</th>
+							                                            <th>出车天数</th>
 							                                            <th>装载体积</th>
 							                                            <th>装载重量</th>
-							                                            <th>调度员</th>
-							                                            <th>备注</th>
+							                                            <th>行车里程</th>
+							                                            <th>本行程加油</th>
+							                                            <th>本行程油耗</th>
+							                                            <th>出车补贴</th>
+							                                            <th>司机工资</th>
+							                                            <th>路桥费</th>
+							                                            <th>装卸费</th>
+							                                            <th>罚款</th>
+							                                            <th>送货员工资</th>
+							                                            <th>停车费</th>
+							                                            <th>住宿费</th>
+							                                            <th>过磅费</th>
+							                                            <th>其它费用</th>
+							                                            <th>行车费总费用</th>
+							                                            <th>扣除分摊金额</th>
+							                                            <th>实际应付金额</th>
 							                                        </tr>
 	                                                            </thead>
 	                                                            <tbody id="uncheckedChargeCheckList">
@@ -129,8 +149,7 @@
 		                                            <select id="carSummary_status" class="form-control search-control status_filter">
 		                                            	<option value=""></option>
 		                                            	<option value="新建">新建</option>
-		                                                <option value="已审核">已审核</option>
-		                                                <option value="已撤销">已撤销</option>
+		                                                <option value="已审核">已确认</option>
 		                                                <option value="已报销">已报销</option>                                                
 		                                            </select>
 		                                            <!-- <input type="text" class="form-control search-control status_filter" id="status_filter"> -->
@@ -147,10 +166,6 @@
 		                                    </div>
 		                                    <!-- end of col-lg-6-->
 		                                    <div class="col-lg-6">
-		                                        <div class="form-group">
-		                                            <label class="search-label">运输单号</label>
-		                                            <input type="text" class="form-control search-control customer_filter" id="carSummary_transfer_order">
-		                                        </div>
 		                                        <div class="form-group">
 		                                            <label class="search-label">行车单号</label>
 		                                            <input type="text" class="form-control search-control sp_filter" id="carSummary_pickup_order">
@@ -172,37 +187,18 @@
 		                            </form>
 		                            
 		                            <div class="table-responsive">
-		                                <table class="table table-striped table-bordered table-hover" id="travellingCraneReceipts_table" style="width: 2700px;">
+		                                <table class="table table-striped table-bordered table-hover" id="carReimbursementTbody">
 		                                    <thead>
 		                                        <tr>
 		                                            <th>序号</th>
+		                                            <th>报销单号</th>
 		                                            <th>行车单号</th>
-		                                            <th>调车单号</th>
-		                                            <th>运输单号</th>
 		                                            <th>状态</th>
 		                                            <th>车牌号</th>
 		                                            <th>司机</th>
-		                                            <th>出车日期</th>
-		                                            <th>返回日期</th>
-		                                            <th>出车天数</th>
-		                                            <th>装载体积</th>
-		                                            <th>装载重量</th>
-		                                            <th>行车里程</th>
-		                                            <th>本行程加油</th>
-		                                            <th>本行程油耗</th>
-		                                            <th>出车补贴</th>
-		                                            <th>司机工资</th>
-		                                            <th>路桥费</th>
-		                                            <th>装卸费</th>
-		                                            <th>罚款</th>
-		                                            <th>送货员工资</th>
-		                                            <th>停车费</th>
-		                                            <th>住宿费</th>
-		                                            <th>过磅费</th>
-		                                            <th>其它费用</th>
-		                                            <th>行车费总费用</th>
-		                                            <th>扣除分摊金额</th>
-		                                            <th>实际应付金额</th>
+		                                            <th>创建日期</th>
+		                                            <th>总行车费用</th>
+		                                            <th>实际报销费用</th>
 		                                        </tr>
 		                                    </thead>
 		                                    <tbody>
@@ -226,7 +222,7 @@
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 
-<script src="/yh/js/carmanage/carSummaryList.js"></script>
+<script src="/yh/js/carmanage/carReimbursementList.js"></script>
 
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
