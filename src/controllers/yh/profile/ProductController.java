@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import models.Category;
 import models.Party;
@@ -191,9 +193,8 @@ public class ProductController extends Controller {
     // 保存类别
     public void saveCategory() {
         String categoryId = getPara("categoryId");
-        String name = getPara("name");
-        String categoryName = "";
         Category category = Category.dao.findById(categoryId);
+        /*String categoryName = "";
     	List<Category> categories = Category.dao.find("select * from category where parent_id = ? and id != ?", category.get("parent_id"), categoryId);
     	for(Category c :  categories){
     		categoryName += c.get("name");
@@ -202,7 +203,10 @@ public class ProductController extends Controller {
     		category.set("name", getPara("name"));
 	        category.set("customer_id", getPara("customerId"));
 	        category.update();
-    	}
+    	}*/
+		category.set("name", getPara("categoryName"));
+        category.set("customer_id", getPara("customerId"));
+        category.update();
         renderJson(category);
     }
 
@@ -212,7 +216,19 @@ public class ProductController extends Controller {
         Category category = null;
         if (parentId != null) {
             category = new Category();
-            category.set("name", getPara("name"));
+            Category c = Category.dao.findFirst("select * from category where name like '%新类别%' and parent_id = ? order by name desc limit 0,1", parentId);
+            if(c != null){
+            	String categoryName = c.get("name");
+            	Pattern pattern = Pattern.compile("\\d+");  
+                Matcher matcher = pattern.matcher(categoryName); 
+                Integer integer = 1;
+                if(matcher.find()){
+                	integer = Integer.parseInt(matcher.group(0)) + 1;
+                }
+                category.set("name", "新类别" + integer);
+            }else{            	
+            	category.set("name", "新类别1");
+            }
             category.set("customer_id", getPara("customerId"));
             category.set("parent_id", parentId);
             category.save();

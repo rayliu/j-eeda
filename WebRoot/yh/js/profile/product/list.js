@@ -507,19 +507,44 @@ $(document).ready(function() {
             showLog((isCancel ? "<span style='color:red'>":"") + "[ "+getTime()+" onRename ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name + (isCancel ? "</span>":""));
             var name = treeNode.name;
             $("#customerId").val(treeNode.customerId);
-            /*$.ajax({  
+            var isNodeExist =false;
+            var id = treeNode.id;
+            if(id == null){
+            	id = treeNode.ID;
+            }
+            $.ajax({  
                 type : "post",  
                 url : "/product/checkCategory",  
-                data : {id: treeNode.ID, name: name},  
+                data : {id: id, name: name},  
                 async : false,  
                 success : function(data){  
-	                subNodes=data; 
-	          		alert("该类别已存在!");
-            		searchAllCategory();
-	        		return false;
+                	subNodes=data; 
+                	for(var i=0;i<data.categories.length && data.categories.length > 0;i++){
+	                	if(data.name == data.categories[i].NAME){
+	                		isNodeExist = true;
+	                	}
+                	}
                 }  
-            });*/
-            $.post('/product/checkCategory', {id: treeNode.ID, name: name}, function(data){            
+            });
+            if(isNodeExist){
+            	alert("该类别已存在!");
+            	treeNode.name = treeNode.NAME;
+            }else{
+                $.post('/product/saveCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, categoryName:name}, function(data){     
+                },'json');
+            }
+	            /*var treeObj = $.fn.zTree.getZTreeObj("tree");
+	            var nodes = treeObj.getNodes();
+	            if (nodes.length>0) {
+	            	nodes[0].name = "test";
+	            	treeObj.updateNode(nodes[0]);
+	            }*/
+            	//var zTree = $.fn.zTree.getZTreeObj("categoryTree");
+            	//zTree.reAsyncChildNodes(treeNode, "refresh");
+            	//zTree.updateNode(treeNode);
+            	//zTree.refresh();
+            
+            /*$.post('/product/checkCategory', {id: treeNode.ID, name: name}, function(data){            
                 for(var i=0;i<data.categories.length && data.categories.length > 0;i++){
                 	if(data.name == data.categories[i].NAME){
                 		alert("该类别已存在!");
@@ -527,9 +552,7 @@ $(document).ready(function() {
                 		return false;
                 	}
                 }
-            },'json');
-            $.post('/product/saveCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:treeNode.name}, function(data){     
-            },'json');
+            },'json');*/
         }
         function showRemoveBtn(treeId, treeNode) {
             //根节点，不能删除
@@ -576,11 +599,12 @@ $(document).ready(function() {
                
                 // 7-5 使用异步会导致树节点添加两次， 因为自己手动加了一个，ztree自己异步自动又加了一个
                 $.post('/product/addCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, name:nodeName}, function(data){
-                    if ((!treeNode && event.target.tagName.toLowerCase() != "button" && $(event.target).parents("a").length == 0) || treeNode.zAsync) 
+                    if ((!treeNode && event.target.tagName.toLowerCase() != "button" && $(event.target).parents("a").length == 0) || treeNode.zAsync){ 
                         zTree.addNodes(treeNode, {id:data.ID, categoryId: data.ID, customerId: treeNode.customerId, isParent:true, name:nodeName});
-                    else
                         zTree.reAsyncChildNodes(treeNode, "refresh");
-                    //
+                    } else{
+                        zTree.reAsyncChildNodes(treeNode, "refresh");
+                    }
                 },'json');
 
                 
