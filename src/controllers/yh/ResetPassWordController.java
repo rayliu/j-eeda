@@ -33,11 +33,11 @@ public class ResetPassWordController extends Controller{
         
         /*输入公司的邮箱和密码*/
         /*EedaConfig.mailUser, EedaConfig.mailPwd*/
-        email.setAuthenticator(new DefaultAuthenticator("red.luo@eeda123.com","luo0330"));        
+        email.setAuthenticator(new DefaultAuthenticator(EedaConfig.mailUser, EedaConfig.mailPwd));        
         email.setSSLOnConnect(true);
         
         /*EedaConfig.mailUser*/
-        email.setFrom("red.luo@eeda123.com");//设置发信人
+        email.setFrom("EedaConfig.mailUser");//设置发信人
         email.setSubject("重置密码");
         
         
