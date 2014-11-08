@@ -6,6 +6,18 @@ $(document).ready(function() {
 	var locationToId3 = [];
 	//编辑前的目的地
 	var startTo = [];
+	//编辑前的产品
+	var itemTo = "";
+	//编辑前的车型
+	var carTypeTo = "";
+	//编辑前的车辆长度
+	var carLengthTo = "";
+	//编辑前的计费方式
+	var ltlUnitTypeTo = "";
+	//编辑前的计费区间1
+	var amountFromTo = "";
+	//编辑前的计费区间2
+	var amountToTo = "";
 	
 	$('#menu_contract').addClass('active').find('ul').addClass('in');
 		var contractId=$('#contractId').val();
@@ -233,6 +245,7 @@ $(document).ready(function() {
                 	 searchAllLocationTo(data[0].TO_ID);
                 	 startTo = [];
                 	 startTo = data[0].TO_ID.split(" ");
+                	 itemTo = data[0].PID;
                  }else{
                      alert('取消失败');
                  }
@@ -272,6 +285,10 @@ $(document).ready(function() {
                 	 searchAllLocationTo(data[0].TO_ID);
                 	 startTo = [];
                 	 startTo = data[0].TO_ID.split(" ");
+                	 itemTo =data[0].PID;
+                	 $('#productId').val(data[0].PID);
+                	 carTypeTo = data[0].CARTYPE;
+                	 carLengthTo = data[0].CARLENGTH;
                 	 //$('#optionsRadiosInline2').prop('checked', true).trigger('change');
                  }else{
                      alert('取消失败');
@@ -311,6 +328,11 @@ $(document).ready(function() {
                 	 searchAllLocationTo(data[0].TO_ID);
                 	 startTo = [];
                 	 startTo = data[0].TO_ID.split(" ");
+                	 itemTo =data[0].PID;
+                	 $('#productId').val(data[0].PID);
+                	 ltlUnitTypeTo = data[0].LTLUNITTYPE;
+                	 amountFromTo = data[0].AMOUNTFROM;
+                	 amountToTo = data[0].AMOUNTTO;
                 	 //console.log($('#typeRadio').val(data[0].LTLUNITTYPE));
                 	 //$('#optionsRadiosInline3').prop('checked', true).trigger('change');
                 	
@@ -393,6 +415,14 @@ $(document).ready(function() {
 		//零担-表单验证
 		var routeItemForm = $('#routeItemForm').validate({
 	        rules: {
+	          amountFrom: {
+	            required: true,
+	            number:true
+	          },
+	          amountTo:{
+	            required: true,
+	            number:true
+	          },
 	          price:{
 	          	number:true
 	          },
@@ -482,6 +512,8 @@ $(document).ready(function() {
                 	$('#reset').click();
                 	locationtoid = [];
                 	datatable.fnDraw();
+                	$("#tishi1").text("");
+                	$("#productId").val("");
                 }else{
                     alert('数据保存失败。');
                 }
@@ -491,14 +523,11 @@ $(document).ready(function() {
         //routeItemForm 不需要提交
         $("#saveRouteBtn").click(function(e){
         	var priceType = $("#routeTabs .active").attr("price-type");
-        	if(priceType=="perCargo"){
-				//提交前，校验数据
-		        if(!$("#routeItemForm").valid()){
-			       	return false;
-		        }
-			}
+
         	//新增时目的地id
         	var saveid = [];
+        	//新增时初始地id
+        	var saveid1 = [];
 		    var price = $("#price").val();
 			$("#tishi").text("");
 			if(price == "" || price == null){
@@ -525,12 +554,18 @@ $(document).ready(function() {
             var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
             var cmbAreaTo = $("#cmbAreaTo").find("option:selected").text();
             if(mbProvinceFrom!="--请选择省份--"){
+            	saveid1.push($("#mbProvinceFrom").val());
             	$("#hideProvinceFrom").val(mbProvinceFrom);
             }
-            if(cmbCityFrom!="--请选择城市--"){
+            if(cmbCityFrom =="--请选择城市--"){
+            	alert("请选择初始地城市！");
+            	return false;
+            }else{
+            	saveid1.push($("#cmbCityFrom").val());
             	$("#hideCityFrom").val(cmbCityFrom);
             }
             if(cmbAreaFrom!="--请选择区(县)--"){
+            	saveid1.push($("#cmbAreaFrom").val());
             	$("#hideDistrictFrom").val(cmbAreaFrom);
             }
             if(mbProvinceTo!="--请选择省份--"){
@@ -549,124 +584,89 @@ $(document).ready(function() {
             	$("#hideDistrictTo").val(cmbAreaTo);
             }
             
-            //当前选中的目的地id
+            //合同id
+            var contractId = $("#routeContractId").val();
+            //当前类型：priceType = perUnit
+            //当前选中的初始地id 
+        	var toid1 = saveid1[saveid1.length-1];
+        	$("#locationForm").val(toid1);
+            //当前选中的目的地id 
         	var toid = saveid[saveid.length-1];
-            var id =  $('#routeItemId').val();
-            $("#priceTypeHidden").val(priceType);
-	    	if(priceType=="perUnit"){//计费
-	    		if(id == null || id ==""){//新增合同运价时
-	    			var result = true;
-	                for(var i=0;i<locationToId1.length;i++){
-	                    if(locationToId1[i] == toid){
-	                    	alert("目的地已存在！");
-	                    	result = false;
-	                    	break;
-	                    }
-	            	}
-	                if(result){
-	                	tijiao(locationToId1,dataTable);
-	                }
-	            }else{//修改合同运价
-	            	var result = false;
-	            	var startid = startTo[startTo.length-1];
-	            	if(startid == "" || startid == null){
-	            		startid = startTo[startTo.length-2];
-	            	}
-	        		for(var k=0;k<locationToId1.length;k++){
-	        			if(toid == locationToId1[k]){
-	        				result = true;
-	        				break;
+        	$("#locationTo").val(toid);
+        	//当前产品名称
+        	var item = $('#itemNameMessage').val();
+        	//当前费用名称
+        	var finItemId = $('#fin_item_list').val();
+        	//当前产品id
+        	var productId  = $("#productId").val();
+        	//当前类型：priceType = perCar
+        	//当前车型
+        	var carType2 = $('#carType2').val();
+        	//当前车辆长度
+        	var carLength2 = $('#carLength2').val();
+        	//当前类型：priceType = perCargo
+        	//当前零担计费方式
+        	var ltlUnitType = $('input[name="ltlUnitType"]:checked').val();
+        	//当前计费区间
+        	var amountFrom = $('#amountFrom').val();
+        	var amountTo = $('#amountTo').val();
+        	
+        	//编辑前的产品
+	    	if(itemTo == null)
+	    		itemTo = "";
+	    	//判断当前是否有选中产品，用来清除产品id的缓存
+	    	if(item == "")
+	    		$("#productId").val("");
+        	
+        	$.post('/customerContract/checkedRepetition', {"contractId":contractId,"priceType":priceType,"toId":toid,"productId":productId,
+        		"carType2":carType2,"carLength2":carLength2,"ltlUnitType":ltlUnitType,"amountFrom":amountFrom,"amountTo":amountTo,"finItemId":finItemId}, function(data){
+        		if(data.success){//有数据
+        			var routeItemId = $("#routeItemId").val();
+                	if(routeItemId == "" || routeItemId == null){
+                		alert("货品目的地已存在！");
+                	}else{
+                		//编辑前目的地
+                		var startid = startTo[startTo.length-1];
+    	            	if(startid == "" || startid == null){
+    	            		startid = startTo[startTo.length-2];
+    	            	}
+                		if(toid == startid && productId == itemTo){
+                			var type= $("#type3").val();
+                	    	var type2= $("#type2").val();
+                			//if(type=='CUSTOMER'||type2=='CUSTOMER'){
+                				if(priceType=="perUnit"){
+                    				tijiao(locationToId1,dataTable);
+                    			}else if(priceType=="perCar"){
+                    				//判断车型、车辆长度
+                    				if(carType2 == carTypeTo && carLengthTo == carLength2)
+                    					tijiao(locationToId2,dataTable2);
+                    				else
+                    					alert("货品目的地已存在！");
+                    			}else if(priceType=="perCargo"){
+                    				//判断计费方式、计费区间
+                    				if(ltlUnitType == ltlUnitTypeTo && amountFrom == amountFromTo && amountTo == amountToTo)
+                    					tijiao(locationToId3,dataTable3);
+                    				else
+                    					alert("货品目的地已存在！");
+                    			}
+                			/*}else{
+                				alert("货品目的地已存在！");
+                			}*/
 	        			}else{
-	        				result = false;
+	        				alert("货品目的地已存在！");
 	        			}
-	            	}
-	        		if(result){
-	        			if(toid == startid){
-	        				tijiao(locationToId1,dataTable);
-	        			}else{
-	        				alert("目的地已存在！");
-	        			}
-	        		}else{
-	        			tijiao(locationToId1,dataTable);
-	        		}
-	            }
-	    	}else if(priceType=="perCar"){//整车
-	    		if(id == null || id ==""){//新增合同运价时
-	    			var result = true;
-	                for(var i=0;i<locationToId2.length;i++){
-	                    if(locationToId2[i] == toid){
-	                    	alert("目的地已存在！");
-	                    	result = false;
-	                    	break;
-	                    }
-	            	}
-	                if(result){
-	                	tijiao(locationToId2,dataTable2);
-	                }
-	            }else{//修改合同运价
-	            	var result = false;
-	            	var startid = startTo[startTo.length-1];
-	            	if(startid == "" || startid == null){
-	            		startid = startTo[startTo.length-2];
-	            	}
-	        		for(var k=0;k<locationToId2.length;k++){
-	        			if(toid == locationToId2[k]){
-	        				result = true;
-	        				break;
-	        			}else{
-	        				result = false;
-	        			}
-	            	}
-	        		if(result){
-	        			if(toid == startid){
-	        				tijiao(locationToId2,dataTable2);
-	        			}else{
-	        				alert("目的地已存在！");
-	        			}
-	        		}else{
-	        			tijiao(locationToId2,dataTable2);
-	        		}
-	            }
-	    	}else if(priceType=="perCargo"){//零担
-	    		if(id == null || id ==""){//新增合同运价时
-	    			var result = true;
-	                for(var i=0;i<locationToId3.length;i++){
-	                    if(locationToId3[i] == toid){
-	                    	alert("目的地已存在！");
-	                    	result = false;
-	                    	break;
-	                    }
-	            	}
-	                if(result){
-	                	tijiao(locationToId3,dataTable3);
-	                }
-	            }else{//修改合同运价
-	            	var result = false;
-	            	var startid = startTo[startTo.length-1];
-	            	if(startid == "" || startid == null){
-	            		startid = startTo[startTo.length-2];
-	            	}
-	        		for(var k=0;k<locationToId3.length;k++){
-	        			if(toid == locationToId3[k]){
-	        				result = true;
-	        				break;
-	        			}else{
-	        				result = false;
-	        			}
-	            	}
-	        		if(result){
-	        			if(toid == startid){
-	        				tijiao(locationToId3,dataTable3);
-	        			}else{
-	        				alert("目的地已存在！");
-	        			}
-	        		}else{
-	        			tijiao(locationToId3,dataTable3);
-	        		}
-	            }
-	    	}
+                	}
+        		}else{
+        			if(priceType=="perUnit")
+                		tijiao(locationToId1,dataTable);
+                	else if(priceType=="perCar")
+                		tijiao(locationToId2,dataTable2);
+                	else if(priceType=="perCargo")
+                		tijiao(locationToId3,dataTable3);
+        		}
+        	});
+        	
         });
-        
         
 
         //获取客户的list，选中信息自动填写其他信息
@@ -940,7 +940,7 @@ $(document).ready(function() {
 			$('#itemNameList').show();        
 		});
 		$('#itemNameMessage').on('blur', function(){
-		$("#itemNameList").hide();
+			$("#itemNameList").hide();
 		});
 		$('#itemNameList').on('blur', function(){
 			$('#itemNameList').hide();
@@ -990,7 +990,7 @@ $(document).ready(function() {
 	    $(function(){
 	     	var province = $("#mbProvinceFrom");
 	     	$.post('/serviceProvider/province',function(data){
-	     		province.append("<option>--请选择省份--</option>");
+	     		province.append("<option  value=''>--请选择省份--</option>");
 					var hideProvince = $("#hideProvinceFrom").val();
 	     		for(var i = 0; i < data.length; i++)
 					{
@@ -1012,7 +1012,7 @@ $(document).ready(function() {
 				$.get('/serviceProvider/city', {id:inputStr}, function(data){
 					var cmbCity =$("#cmbCityFrom");
 					cmbCity.empty();
-					cmbCity.append("<option>--请选择城市--</option>");
+					cmbCity.append("<option  value=''>--请选择城市--</option>");
 					for(var i = 0; i < data.length; i++)
 					{
 						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
@@ -1027,7 +1027,7 @@ $(document).ready(function() {
 				$.get('/serviceProvider/area', {id:inputStr}, function(data){
 					var cmbArea =$("#cmbAreaFrom");
 					cmbArea.empty();
-					cmbArea.append("<option>--请选择区(县)--</option>");
+					cmbArea.append("<option value=''>--请选择区(县)--</option>");
 					for(var i = 0; i < data.length; i++)
 					{
 						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
@@ -1067,7 +1067,7 @@ $(document).ready(function() {
 				$.get('/serviceProvider/city', {id:inputStr}, function(data){
 					var cmbCity =$("#cmbCityTo");
 					cmbCity.empty();
-					cmbCity.append("<option>--请选择城市--</option>");
+					cmbCity.append("<option  value=''>--请选择城市--</option>");
 					for(var i = 0; i < data.length; i++)
 					{
 						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
@@ -1082,7 +1082,7 @@ $(document).ready(function() {
 				$.get('/serviceProvider/area', {id:inputStr}, function(data){
 					var cmbArea =$("#cmbAreaTo");
 					cmbArea.empty();
-					cmbArea.append("<option>--请选择区(县)--</option>");
+					cmbArea.append("<option  value=''>--请选择区(县)--</option>");
 					for(var i = 0; i < data.length; i++)
 					{
 						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
@@ -1119,7 +1119,7 @@ $(document).ready(function() {
 
 				var cmbCity =$("#cmbCityFrom");
 	     		cmbCity.empty();
-				cmbCity.append("<option>--请选择城市--</option>");
+				cmbCity.append("<option  value=''>--请选择城市--</option>");
 				for(var i = 0; i < data.cityLocations.length; i++)
 				{
 					if(data.cityLocations[i].NAME == cityVal){
@@ -1133,7 +1133,7 @@ $(document).ready(function() {
 				if(data.districtLocations.length > 0){
     				var cmbArea =$("#cmbAreaFrom");
     				cmbArea.empty();
-    				cmbArea.append("<option>--请选择区(县)--</option>");
+    				cmbArea.append("<option  value=''>--请选择区(县)--</option>");
     				for(var i = 0; i < data.districtLocations.length; i++)
     				{
     					if(data.districtLocations[i].NAME == districtVal){

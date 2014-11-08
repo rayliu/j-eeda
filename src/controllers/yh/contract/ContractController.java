@@ -639,9 +639,12 @@ public class ContractController extends Controller {
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("perCargo")) {
-                item.set("id", getPara("routeItemId")).set("amountFrom", getPara("amountFrom")).set("fin_item_id", getPara("fin_item"))
-                        .set("amountTo", getPara("amountTo"));
-
+                item.set("id", getPara("routeItemId")).set("fin_item_id", getPara("fin_item"));
+                if(!"".equals(getPara("amountFrom")) && getPara("amountFrom") != null)
+                	item.set("amountFrom", getPara("amountFrom"));
+                if(!"".equals(getPara("amountTo")) && getPara("amountTo") != null)
+                	item.set("amountTo", getPara("amountTo"));
+                
                 item.set("ltlUnitType", getPara("ltlUnitType")).set("cartype", null).set("carlength", null);
                 item.update();
                 renderJson("{\"success\":true}");
@@ -658,8 +661,11 @@ public class ContractController extends Controller {
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("perCargo")) {
-                item.set("ltlUnitType", getPara("ltlUnitType")).set("amountFrom", getPara("amountFrom"))
-                        .set("amountTo", getPara("amountTo"));
+                item.set("ltlUnitType", getPara("ltlUnitType"));
+                if(!"".equals(getPara("amountFrom")) && getPara("amountFrom") != null)
+                	item.set("amountFrom", getPara("amountFrom"));
+                if(!"".equals(getPara("amountTo")) && getPara("amountTo") != null)
+                	item.set("amountTo", getPara("amountTo"));
                 item.save();
                 renderJson("{\"success\":true}");
             }
@@ -740,12 +746,35 @@ public class ContractController extends Controller {
     	String priceType = getPara("priceType");
     	String toId = getPara("toId");
     	String productId = getPara("productId");
+    	String carType2 = getPara("carType2");
+    	String carLength2 = getPara("carLength2");
+    	String ltlUnitType = getPara("ltlUnitType");
+    	String amountFrom = getPara("amountFrom");
+    	String amountTo = getPara("amountTo");
+    	String finItemId = getPara("finItemId");
     	
-    	String sql = "";
-    	if("".equals(productId) || productId == null)
-    		sql = "select count(0) total from contract_item  where contract_id  = '"+contractId+"' and pricetype = '"+priceType+"' and  to_id = '"+toId+"';";
+    	String sql = "select count(0) total from contract_item  where contract_id  = '"+contractId+"' and pricetype = '"+priceType+"' and  to_id = '"+toId+"' ";
+    	if(!"".equals(productId) && productId != null)
+    		sql = sql + " and product_id = '"+productId+"' ";
     	else
-    		sql = "select count(0) total from contract_item  where contract_id  = '"+contractId+"' and pricetype = '"+priceType+"' and  to_id = '"+toId+"' and product_id = '"+productId+"';";
+    		sql = sql + " and product_id is null";
+    	if(!"".equals(finItemId) && finItemId != null)
+    		sql = sql + " and fin_item_id = '"+finItemId+"' ";
+    	
+    	if(!"".equals(carType2) && carType2 != null)
+    		sql = sql + " and cartype = '"+carType2+"' ";
+    	if(!"".equals(carLength2) && carLength2 != null)
+    		sql = sql + " and carlength = '"+carLength2+"' ";
+    	if(!"".equals(ltlUnitType) && ltlUnitType != null)
+    		sql = sql + " and ltlunittype = '"+ltlUnitType+"' ";
+    	if(!"".equals(amountFrom) && amountFrom != null)
+    		sql = sql + " and amountFrom is not null ";
+    	else
+    		sql = sql + " and amountFrom is null ";
+    	if(!"".equals(amountTo) && amountTo != null)
+    		sql = sql + " and amountTo is not null ";
+    	else
+    		sql = sql + " and amountTo is null ";
     	
     	Record rec = Db.findFirst(sql);
     	if(rec.getLong("total") > 0)
