@@ -54,8 +54,8 @@
 			         rules: {
 			        	 userEmail: {
 			                required: true,
-			                email:true
-			               /*  remote:{
+			                email:true,
+			                remote:{
 			                	url: "/reset/checkEmailExist", //后台处理程序    
 	                            type: "post",  //数据发送方式  
 	                            data:  {                     //要传递的数据   
@@ -65,14 +65,14 @@
 	  
 	                            }   
 	            
-	                        }  */
+	                        } 
 			        	 }
 					},
 					 messages:{
 						 userEmail:{
 		            		 required:"邮箱不为空",
-					 	     email:"格式不正确"
-		            		 /* remote:"邮箱不存在" */
+					 	     email:"格式不正确",
+		            		 remote:"邮箱不存在"
 		            	 }
 		             },
 		             highlight: function(element) {

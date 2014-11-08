@@ -27,19 +27,20 @@
 					<div class="panel-body">
 						<form class="form-inline" role="form" id="resetForm" action="/reset/resetUserPass" method="post">
 							<div class="row col-md-offset-1" >
-								<div class="form-group has-feedback">
-									<label class="control-label">登陆名</label>　
+								<input id="token" type="hidden" name="token"/>
+								<!-- <div class="form-group has-feedback">
+									 <label class="control-label">登陆名</label>　
 									 <input type="text" class="form-control" id="email" name="email"> 
 									 <span class="glyphicon form-control-feedback"></span>	
-								</div>
+								</div> -->
 								<div class="form-group has-feedback">
 									<label class="control-label">新密码</label>　
-									 <input type="text" class="form-control" id="pass" name="pass"> 
+									 <input type="password" class="form-control" id="pass" name="pass"> 
 									 <span class="glyphicon form-control-feedback"></span>	
 								</div>
 								<div class="form-group has-feedback">
 									<label class="control-label">确认密码</label>
-									 <input type="text" class="form-control" id="affirmPass" name="affirmPass"> 
+									 <input type="password" class="form-control" id="affirmPass" name="affirmPass"> 
 									 <span class="glyphicon form-control-feedback"></span>	
 								</div>
 							</div>
@@ -59,12 +60,17 @@
     <script src="/yh/js/sb-admin.js"></script>
     <script>
 	    $(document).ready(function() {
+	    	var url = location.href;
+            var paraString = url.substring(url.indexOf("=") + 1, url.length);
+	    
+	    	$("#token").val(paraString);
+	    
 			$('#resetForm').validate({
 			         rules: {
 			        	 email: {
 			                required: true,
-			                email:true,
-			                remote:{
+			                email:true
+			     /*            remote:{
 			                	url: "/reset/checkEmailExist", //后台处理程序    
 	                            type: "post",  //数据发送方式  
 	                            data:  {                     //要传递的数据   
@@ -74,7 +80,7 @@
 	  
 	                            }   
 	            
-	                        } 
+	                        }  */
 			        	 },
 			        	 pass:{
 			        		 required:true,
@@ -89,8 +95,8 @@
 					 messages:{
 						 email:{
 		            		 required:"邮箱不为空",
-					 	     email:"格式不正确",
-		            		 remote:"邮箱不存在"
+					 	     email:"格式不正确"
+		            		/*  remote:"邮箱不存在" */
 		            	 },
 		            	 pass:{
 		            		 required:"密码不为空",

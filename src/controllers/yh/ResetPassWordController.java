@@ -1,4 +1,6 @@
 package controllers.yh;
+import java.util.Random;
+
 import javax.servlet.http.HttpServletRequest;
 
 import models.UserLogin;
@@ -30,14 +32,29 @@ public class ResetPassWordController extends Controller{
         email.setSmtpPort(465);
         
         /*输入公司的邮箱和密码*/
-        email.setAuthenticator(new DefaultAuthenticator(EedaConfig.mailUser, EedaConfig.mailPwd));        
+        /*EedaConfig.mailUser, EedaConfig.mailPwd*/
+        email.setAuthenticator(new DefaultAuthenticator("red.luo@eeda123.com","luo0330"));        
         email.setSSLOnConnect(true);
         
-        email.setFrom(EedaConfig.mailUser);//设置发信人
+        /*EedaConfig.mailUser*/
+        email.setFrom("red.luo@eeda123.com");//设置发信人
         email.setSubject("重置密码");
         
+        
+        int max=5;
+        int min=10;
+        Random random = new Random();
+
+        int s = random.nextInt(max)%(max-min+1) + min;
+        //随机数保存到数据库
+        UserLogin userLogin = UserLogin.dao.findFirst("select * from user_login where user_name=?",userEmail);
+        
+        userLogin.set("token", s);
+        userLogin.update();
+        
+        
        HttpServletRequest req = this.getRequest();
-       String basePath = req.getScheme()+"://"+req.getServerName()+":"+req.getServerPort()+"/reset/input";
+       String basePath = req.getScheme()+"://"+req.getServerName()+":"+req.getServerPort()+"/reset/input?token="+s;
 
         email.setMsg("请点击下面超链接，完成重置密码工作  \t "+ basePath);
         email.addTo(userEmail);//设置收件人
@@ -66,9 +83,11 @@ public class ResetPassWordController extends Controller{
 		renderJson(checkObjectExist);
 	}
     public void resetUserPass(){
-    	UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name=?", getPara("email"));
-    	user.set("password", getPara("pass"));
+    	UserLogin user = UserLogin.dao.findFirst("select * from user_login where token=?", getPara("token"));
+		user.set("password", getPara("pass"));
+    	user.set("token", "");
     	user.update();
     	render("/yh/profile/resetPassWord/resetSuccess.html");
+    	
     }
 }
