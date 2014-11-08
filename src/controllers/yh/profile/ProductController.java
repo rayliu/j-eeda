@@ -238,14 +238,23 @@ public class ProductController extends Controller {
 
     // 删除类别
     public void deleteCategory() {
+    	boolean flag = true;
         String cid = getPara("categoryId");
         // removeChildern(cid);
         List<Product> products = Product.dao.find("select * from product where category_id = ?", cid);
-        for (Product product : products) {
-            product.delete();
+        try {
+			for (Product product : products) {
+			    product.delete();
+			}
+			Category.dao.deleteById(cid);
+		} catch (RuntimeException e) {
+			flag = false;
+		}
+        if(flag){
+        	renderJson("{\"success\":true}");
+        }else{
+			renderJson("{\"success\":false}");
         }
-        Category.dao.deleteById(cid);
-        renderJson("{\"success\":true}");
     }
 
     // 删除子类别

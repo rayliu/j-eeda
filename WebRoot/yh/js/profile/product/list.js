@@ -482,12 +482,16 @@ $(document).ready(function() {
             var pNode = treeNode.getParentNode();
             pNode.isParent = true;
             var zTree = $.fn.zTree.getZTreeObj("categoryTree");
-            $.post('/product/deleteCategory', {categoryId: treeNode.categoryId}, function(data){                
-                zTree.reAsyncChildNodes(pNode, "refresh");
-                
-                zTree.selectNode(pNode,false);
-                //设置选中节点后右边编辑内容的载入
-                onNodeClick(e, pNode.categoryId, pNode);
+            $.post('/product/deleteCategory', {categoryId: treeNode.categoryId}, function(data){  
+            	if(data.success){
+	                zTree.reAsyncChildNodes(pNode, "refresh");
+	                
+	                zTree.selectNode(pNode,false);
+	                //设置选中节点后右边编辑内容的载入
+	                onNodeClick(e, pNode.categoryId, pNode);
+            	}else{
+            		alert("该类别下面的产品已被应用不能删除!");
+            	}
             },'json');
 
             
@@ -533,26 +537,6 @@ $(document).ready(function() {
                 $.post('/product/saveCategory', {categoryId: treeNode.categoryId, customerId: treeNode.customerId, categoryName:name}, function(data){     
                 },'json');
             }
-	            /*var treeObj = $.fn.zTree.getZTreeObj("tree");
-	            var nodes = treeObj.getNodes();
-	            if (nodes.length>0) {
-	            	nodes[0].name = "test";
-	            	treeObj.updateNode(nodes[0]);
-	            }*/
-            	//var zTree = $.fn.zTree.getZTreeObj("categoryTree");
-            	//zTree.reAsyncChildNodes(treeNode, "refresh");
-            	//zTree.updateNode(treeNode);
-            	//zTree.refresh();
-            
-            /*$.post('/product/checkCategory', {id: treeNode.ID, name: name}, function(data){            
-                for(var i=0;i<data.categories.length && data.categories.length > 0;i++){
-                	if(data.name == data.categories[i].NAME){
-                		alert("该类别已存在!");
-                		nodePlusClickHandler();
-                		return false;
-                	}
-                }
-            },'json');*/
         }
         function showRemoveBtn(treeId, treeNode) {
             //根节点，不能删除
