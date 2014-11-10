@@ -510,7 +510,7 @@ $(document).ready(function() {
             		}else{
 	            		if(obj.aData.ITEM_NAME==null)
 	            			obj.aData.ITEM_NAME='';
-	            		inputBox = "<input type='text' value='"+obj.aData.ITEM_NAME+"'>";
+	            		inputBox = "<input type='text' name='item_name' value='"+obj.aData.ITEM_NAME+"'>";
             		}
         			return inputBox;
                 }
@@ -526,7 +526,7 @@ $(document).ready(function() {
             		}else{
 	            		if(obj.aData.SIZE==null)
 	            			obj.aData.SIZE='';
-	            		inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.SIZE+"'>";
+	            		inputBox = "<input type='text' name='size' style='width:60px;' value='"+obj.aData.SIZE+"'>";
             		}
             		return inputBox;
                 }
@@ -542,7 +542,7 @@ $(document).ready(function() {
             		}else{
 	            		if(obj.aData.WIDTH==null)
 	            			obj.aData.WIDTH='';
-	            		inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.WIDTH+"'>";;
+	            		inputBox = "<input type='text' name='width' style='width:60px;' value='"+obj.aData.WIDTH+"'>";;
             		}
             		return inputBox;
                 }
@@ -558,7 +558,7 @@ $(document).ready(function() {
             		}else{
 	            		if(obj.aData.HEIGHT==null)
 	            			obj.aData.HEIGHT='';
-	            		inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.HEIGHT+"'>";
+	            		inputBox = "<input type='text' name='height' style='width:60px;' value='"+obj.aData.HEIGHT+"'>";
             		}
             		return inputBox;
                 }
@@ -574,7 +574,7 @@ $(document).ready(function() {
             		}else{
 	            		if(obj.aData.WEIGHT==null)
 	            			obj.aData.WEIGHT='';
-	            		inputBox = "<input type='text' style='width:70px;' value='"+obj.aData.WEIGHT+"'>";
+	            		inputBox = "<input type='text' name='weight' style='width:70px;' value='"+obj.aData.WEIGHT+"'>";
             		}
         			return inputBox;
                 }
@@ -601,7 +601,7 @@ $(document).ready(function() {
             		}else{
 	            		if(obj.aData.UNIT==null)
 	            			obj.aData.UNIT='';
-	            		inputBox = "<input type='text' style='width:60px;' value='"+obj.aData.UNIT+"'>";
+	            		inputBox = "<input type='text' name='unit' style='width:60px;' value='"+obj.aData.UNIT+"'>";
             		}
         			return inputBox;
                 }
@@ -611,8 +611,12 @@ $(document).ready(function() {
             	"sWidth": "80px",
             	"sClass": "sumWeight",
             	"fnRender": function(obj) {
-                    //var inputBox = "<input type='text' style='width:80px;' value='"+obj.aData.WEIGHT * $(obj.aData.AMOUNT).val()+"'>";
-                    var inputBox = obj.aData.WEIGHT * $(obj.aData.AMOUNT).val();
+            		var inputBox = "";
+            		if(obj.aData.PROD_ID != null){
+            			inputBox = obj.aData.WEIGHT * $(obj.aData.AMOUNT).val();
+            		}else{
+            			inputBox = "<input type='text' name='sumWeight' style='width:80px;' value='"+obj.aData.WEIGHT * $(obj.aData.AMOUNT).val()+"'>";
+            		}
             		return inputBox;
                 }
             },
@@ -621,10 +625,14 @@ $(document).ready(function() {
             	"sWidth": "80px",
             	"sClass": "volume",
             	"fnRender": function(obj) {
+            		var inputBox = "";
             		var sumVolume = (obj.aData.SIZE / 1000 * obj.aData.WIDTH / 1000 * obj.aData.HEIGHT / 1000 * $(obj.aData.AMOUNT).val()).toFixed(2);
-            		//var inputBox = "<input type='text' style='width:80px;' value='"+sumVolume+"'>";
-        			//return inputBox;
-            		return sumVolume;
+            		if(obj.aData.PROD_ID != null){
+            			inputBox = sumVolume;
+            		}else{
+            			inputBox = "<input type='text' name='volume' style='width:80px;' value='"+sumVolume+"'>";
+            		}
+            		return inputBox;
                 }
             },            
             {   
@@ -726,9 +734,27 @@ $(document).ready(function() {
 		var itemId = $(this).parent().parent()[0].id;
 		var fieldName=$(this).attr("name");
 		var value= $(this).val();
-		$.post('/transferOrderItem/saveTransferOrderItemByField?order_id='+$("#order_id").val()+'&id='+itemId+'&'+fieldName+'='+value,	function(data){   					
-			refreshItemTable();			
-		}, 'json'); 
+		var weight;
+		var volume;
+		/*$.post('/transferOrderItem/saveTransferOrderItemByField?order_id='+$("#order_id").val()+'&id='+itemId+'&'+fieldName+'='+value,	function(data){   					
+			//refreshItemTable();			
+		}, 'json');*/
+		$.ajax({  
+            type : "post",  
+            url : "/transferOrderItem/saveTransferOrderItemByField",  
+            data : {order_id: $("#order_id").val(), id: itemId, fieldName: value},  
+            async : false,  
+            success : function(data){  
+            	weight = data.WEIGHT;
+            	volume = data.VOLUME;
+            }  
+        });
+		var amount = $(this).parent().parent().children('.amount').children().val();
+		if(amount == ""){
+			amount = 0;
+		}
+		$(this).parent().parent().children('.sumWeight').children().val(weight * amount);
+		$(this).parent().parent().children('.volume').children().val(volume * amount);
 	});
 	/*
     itemDataTable.makeEditable({

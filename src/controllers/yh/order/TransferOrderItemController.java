@@ -171,6 +171,7 @@ public class TransferOrderItemController extends Controller {
             if (item.get("size") != null && item.get("width") != null && item.get("height") != null) {
                 Double volume = Double.parseDouble(item.get("size") + "") / 1000 * Double.parseDouble(item.get("width") + "") / 1000
                         * Double.parseDouble(item.get("height") + "") / 1000;
+                volume = Double.parseDouble(String.format("%.2f", volume));
                 item.set("volume", volume).update();
             }
             updateTransferOrderItemDetail(item, product);
@@ -214,8 +215,100 @@ public class TransferOrderItemController extends Controller {
                 returnValue = amount;
             }
         }
-        renderText(returnValue);// 必须返回传进来的值，否则js会报错
+        renderJson(item);
+        //renderText(returnValue);// 必须返回传进来的值，否则js会报错
     }
+    
+    /*// 保存货品
+    public void updateTransferOrderItem() {
+    	String id = getPara("id");
+    	TransferOrderItem item = TransferOrderItem.dao.findById(id);
+    	TransferOrder transferOrder = TransferOrder.dao.findById(item.get("order_id"));
+    	Long productId = item.getLong("product_id");
+    	if (productId != null || !"".equals(productId)) {
+    		if (!"".equals(amount) && amount != null) {
+    			if(item.get("amount") != null && !"".equals(item.get("amount"))){
+    				if("cargo".equals(transferOrder.get("cargo_nature"))){
+    					if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
+    						Double doubleAmount = Double.parseDouble(amount);
+    						double result = new Double(item.getDouble("amount") - doubleAmount).doubleValue();
+    						if(Math.abs(result)>0){
+    							Double oldAmount = item.getDouble("amount");
+    							Double subtractAmount = doubleAmount - oldAmount;
+    							saveTransferOrderDetail(item, productId, subtractAmount);    
+    						}                 		
+    					}
+    				}else{ 
+    					Double doubleAmount = Double.parseDouble(amount);
+    					double result = new Double(item.getDouble("amount") - doubleAmount).doubleValue();
+    					if(Math.abs(result)>0){
+    						Double oldAmount = item.getDouble("amount");
+    						Double subtractAmount = doubleAmount - oldAmount;
+    						saveTransferOrderDetail(item, productId, subtractAmount);    
+    					}
+    				}
+    			}else{
+    				if (amount != null && !"".equals(amount)) {
+    					if("cargo".equals(transferOrder.get("cargo_nature"))){
+    						if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
+    							saveTransferOrderDetail(item, productId, Double.parseDouble(amount));                    		
+    						}
+    					}else{                		
+    						saveTransferOrderDetail(item, productId, Double.parseDouble(amount));
+    					}
+    				}
+    			}
+    			item.set("amount", amount).update();
+    		}
+    	} else {   
+    			if (amount != null && !"".equals(amount)) {
+    				if("cargo".equals(transferOrder.get("cargo_nature"))){
+    					if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
+    						Double doubleAmount = Double.parseDouble(amount);
+    						Double doubleAmount2 = item.getDouble("amount")==null?0:item.getDouble("amount");
+    						double result = new Double(doubleAmount2 - doubleAmount).doubleValue();
+    						if(Math.abs(result)>0){
+    							Double oldAmount = item.getDouble("amount")==null?0:item.getDouble("amount");
+    							Double subtractAmount = doubleAmount - oldAmount;
+    							saveTransferOrderDetail(item, productId, subtractAmount);    
+    						}               		
+    					}
+    				}else{ 
+    					Double doubleAmount = Double.parseDouble(amount);
+    					Double doubleAmount2 = item.getDouble("amount")==null?0:item.getDouble("amount");
+    					double result = new Double(doubleAmount2 - doubleAmount).doubleValue();
+    					if(Math.abs(result)>0){
+    						Double oldAmount = item.getDouble("amount")==null?0:item.getDouble("amount");
+    						Double subtractAmount = doubleAmount - oldAmount;
+    						saveTransferOrderDetail(item, productId, subtractAmount);    
+    					}
+    				}
+    			}else{
+    				if (amount != null && !"".equals(amount)) {
+    					if("cargo".equals(transferOrder.get("cargo_nature"))){
+    						if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
+    							saveTransferOrderDetail(item, productId, Double.parseDouble(amount));                    		
+    						}
+    					}else{                		
+    						saveTransferOrderDetail(item, productId, Double.parseDouble(amount));
+    					}
+    				}
+    			}
+    			item.set("amount", amount).update();
+    		} else if (!"".equals(unit) && unit != null) {
+    			item.set("unit", unit).update();
+    		}
+    		
+    		if (item.get("size") != null && item.get("width") != null && item.get("height") != null) {
+    			Double volume = Double.parseDouble(item.get("size") + "") / 1000 * Double.parseDouble(item.get("width") + "") / 1000
+    					* Double.parseDouble(item.get("height") + "") / 1000;
+    			volume = Double.parseDouble(String.format("%.2f", volume));
+    			item.set("volume", volume).update();
+    		}
+    		updateTransferOrderItemDetail(item, product);
+    	}
+    	renderJson(item);
+    }*/
 
     // 更新单品信息
     private void updateTransferOrderItemDetail(TransferOrderItem item, Product product) {

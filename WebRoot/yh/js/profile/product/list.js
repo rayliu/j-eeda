@@ -490,7 +490,7 @@ $(document).ready(function() {
 	                //设置选中节点后右边编辑内容的载入
 	                onNodeClick(e, pNode.categoryId, pNode);
             	}else{
-            		alert("该类别下面的产品已被应用不能删除!");
+            		alert("该类别下面的产品已被引用不能删除!");
             	}
             },'json');
 
