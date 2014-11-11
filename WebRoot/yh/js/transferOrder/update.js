@@ -595,14 +595,28 @@ $(document).ready(function() {
             	"sWidth": "50px",
             	"sClass": "unit",
             	"fnRender": function(obj) {
-            		var inputBox = "";
+            		/*var inputBox = "";
             		if(obj.aData.PROD_ID != null){
             			inputBox = obj.aData.UNIT + '';
             		}else{
 	            		if(obj.aData.UNIT==null)
 	            			obj.aData.UNIT='';
-	            		inputBox = "<input type='text' name='unit' style='width:60px;' value='"+obj.aData.UNIT+"'>";
-            		}
+	            		//inputBox = "<input type='text' name='unit' style='width:60px;' value='"+obj.aData.UNIT+"'>";
+	            		inputBox = "<select name='unit'><option></option><option>台</option><option>件</option><option>套</option></select>";
+            		}*/
+            		if(obj.aData.PROD_ID !='' && obj.aData.PROD_ID != null){
+            			inputBox = obj.aData.UNIT + '';
+			        }else{
+			        	var str="";
+			        	$("#unitOptions").children().each(function(){
+			        		if(obj.aData.UNIT == $(this).val()){
+			        			str+="<option value='"+$(this).val()+"' selected=''>"+$(this).text()+"</option>";			        			
+			        		}else{			        			
+			        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+			        		}
+			        	});
+			        	inputBox = "<select name='unit'>"+str+"</select>";
+			        }
         			return inputBox;
                 }
             },
@@ -612,10 +626,10 @@ $(document).ready(function() {
             	"sClass": "sumWeight",
             	"fnRender": function(obj) {
             		var inputBox = "";
-            		if(obj.aData.PROD_ID != null){
-            			inputBox = obj.aData.WEIGHT * $(obj.aData.AMOUNT).val();
+            		if(obj.aData.SUM_WEIGHT != null){
+            			inputBox = "<input type='text' name='sum_weight' style='width:80px;' value='"+obj.aData.SUM_WEIGHT+"'>";
             		}else{
-            			inputBox = "<input type='text' name='sumWeight' style='width:80px;' value='"+obj.aData.WEIGHT * $(obj.aData.AMOUNT).val()+"'>";
+            			inputBox = "<input type='text' name='sum_weight' style='width:80px;' value=''>";
             		}
             		return inputBox;
                 }
@@ -626,12 +640,12 @@ $(document).ready(function() {
             	"sClass": "volume",
             	"fnRender": function(obj) {
             		var inputBox = "";
-            		var sumVolume = (obj.aData.SIZE / 1000 * obj.aData.WIDTH / 1000 * obj.aData.HEIGHT / 1000 * $(obj.aData.AMOUNT).val()).toFixed(2);
-            		if(obj.aData.PROD_ID != null){
-            			inputBox = sumVolume;
+            		if(obj.aData.VOLUME != null){
+            			inputBox = "<input type='text' name='volume' style='width:80px;' value='"+obj.aData.VOLUME+"'>";
             		}else{
-            			inputBox = "<input type='text' name='volume' style='width:80px;' value='"+sumVolume+"'>";
+            			inputBox = "<input type='text' name='volume' style='width:80px;' value=''>";
             		}
+            		//var sumVolume = (obj.aData.SIZE / 1000 * obj.aData.WIDTH / 1000 * obj.aData.HEIGHT / 1000 * $(obj.aData.AMOUNT).val()).toFixed(2);
             		return inputBox;
                 }
             },            
@@ -730,22 +744,19 @@ $(document).ready(function() {
 	});
 
 
-	$('#itemTable').on('blur', 'input', function(){
+	$('#itemTable').on('blur', 'input,select', function(){
 		var itemId = $(this).parent().parent()[0].id;
 		var fieldName=$(this).attr("name");
 		var value= $(this).val();
 		var weight;
 		var volume;
-		/*$.post('/transferOrderItem/saveTransferOrderItemByField?order_id='+$("#order_id").val()+'&id='+itemId+'&'+fieldName+'='+value,	function(data){   					
-			//refreshItemTable();			
-		}, 'json');*/
 		$.ajax({  
             type : "post",  
-            url : "/transferOrderItem/saveTransferOrderItemByField",  
-            data : {order_id: $("#order_id").val(), id: itemId, fieldName: value},  
+            url : "/transferOrderItem/updateTransferOrderItem",  
+            data : {order_id: $("#order_id").val(), id: itemId, fieldName: fieldName, value: value},  
             async : false,  
             success : function(data){  
-            	weight = data.WEIGHT;
+            	weight = data.SUM_WEIGHT;
             	volume = data.VOLUME;
             }  
         });
@@ -753,8 +764,8 @@ $(document).ready(function() {
 		if(amount == ""){
 			amount = 0;
 		}
-		$(this).parent().parent().children('.sumWeight').children().val(weight * amount);
-		$(this).parent().parent().children('.volume').children().val(volume * amount);
+		$(this).parent().parent().children('.sumWeight').children().val(weight);
+		$(this).parent().parent().children('.volume').children().val(volume);
 	});
 	/*
     itemDataTable.makeEditable({

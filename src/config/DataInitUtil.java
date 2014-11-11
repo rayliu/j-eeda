@@ -104,7 +104,7 @@ public class DataInitUtil {
                     + "foreign key(notify_party_id) references party(id),foreign key(driver_id) references party(id),foreign key(warehouse_id) references warehouse(id),foreign key(office_id) references office(id),foreign key(insurance_id) references insurance_order(id));");
             // transfer_order_item 货品明细
             stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment primary key,item_no varchar(255),item_name varchar(255),item_desc varchar(255),"
-                    + "amount double,size double,width double,height double,unit varchar(255),volume double,weight double,remark varchar(5120),order_id bigint,foreign key(order_id) references transfer_order(id),product_id bigint,foreign key(product_id) references product(id));");
+                    + "amount double,size double,width double,height double,unit varchar(255),volume double,weight double,sum_weight double,remark varchar(5120),order_id bigint,foreign key(order_id) references transfer_order(id),product_id bigint,foreign key(product_id) references product(id));");
 
             // carinfo 车辆信息表
             stmt.executeUpdate("create table if not exists carinfo(id bigint auto_increment primary key,type varchar(50),driver varchar(50),phone varchar(50),car_no varchar(50),cartype varchar(50),"
