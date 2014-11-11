@@ -2004,7 +2004,11 @@ $(document).ready(function() {
 			        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
 			        		}
 			        	});
-			            return "<select name='fin_item_id'>"+str+"</select>";
+			        	if(obj.aData.CREATE_NAME == 'system'){
+			        		return obj.aData.NAME;
+			        	}else{
+			        		return "<select name='fin_item_id'>"+str+"</select>";
+			        	}
 			        }else{
 			        	var str="";
 			        	$("#receivableItemList").children().each(function(){
@@ -2015,11 +2019,19 @@ $(document).ready(function() {
 			 }},
 			{"mDataProp":"AMOUNT",
 			     "fnRender": function(obj) {
-			         if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-			             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
-			         }else{
-			         	 return "<input type='text' name='amount'>";
-			         }
+			         if(obj.aData.CREATE_NAME == 'system'){
+			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+				             return obj.aData.AMOUNT;
+				         }else{
+				         	 return "";
+				         }
+			    	 }else{
+			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+				             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+				         }else{
+				         	 return "<input type='text' name='amount'>";
+				         }
+			    	 }
 			 }},  
 			{"mDataProp":"TRANSFERORDERNO","sClass": "remark"},
 			{"mDataProp":"TRANSFERORDERNO","sClass": "remark"},

@@ -1095,8 +1095,8 @@ public class TransferOrderController extends Controller {
         if (item != null) {
             TransferOrderFinItem dFinItem = new TransferOrderFinItem();
             dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
-                    .set("order_id", orderId);
-            dFinItem.save();
+                    .set("order_id", orderId).set("create_name", dFinItem.CREATE_NAME_USER)
+                    .save();
         }
         items.add(item);
         renderJson(items);
@@ -1211,4 +1211,23 @@ public class TransferOrderController extends Controller {
 		map.put("warehouse", warehouse);
 		renderJson(map);
 	}
+	
+    // 修改应收
+    public void updateTransferOrderFinItem() {
+        String paymentId = getPara("paymentId");
+        String name = getPara("name");
+        String value = getPara("value");
+        if ("amount".equals(name) && "".equals(value)) {
+            value = "0";
+        }
+        if (paymentId != null && !"".equals(paymentId)) {
+            TransferOrderFinItem transferOrderFinItem = TransferOrderFinItem.dao
+                    .findById(paymentId);
+            transferOrderFinItem.set(name, value);
+            transferOrderFinItem.update();
+        }
+        renderJson("{\"success\":true}");
+    }
+	
+	
 }

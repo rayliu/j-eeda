@@ -240,6 +240,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         deliveryFinItem.set("status", "未完成");
         deliveryFinItem.set("creator", LoginUserController.getLoginUserId(this));
         deliveryFinItem.set("create_date", now);
+        deliveryFinItem.set("create_name", deliveryFinItem.CREATE_NAME_SYSTEM);
         deliveryFinItem.save();
     }
     // 扣库存
@@ -512,8 +513,9 @@ public class DeliveryOrderMilestoneController extends Controller {
         Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
         if(item != null){
         	DeliveryOrderFinItem dFinItem = new DeliveryOrderFinItem();
-	        dFinItem.set("status", "新建").set("fin_item_id", item.get("id")).set("order_id", orderId);
-	        dFinItem.save();
+	        dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
+	        .set("order_id", orderId).set("create_name", dFinItem.CREATE_NAME_USER)
+	        .save();
         }
         items.add(item);
         renderJson(items);

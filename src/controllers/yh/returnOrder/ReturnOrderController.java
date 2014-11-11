@@ -539,6 +539,7 @@ public class ReturnOrderController extends Controller {
 		transferFinItem
 				.set("creator", LoginUserController.getLoginUserId(this));
 		transferFinItem.set("create_date", now);
+		transferFinItem.set("create_name", transferFinItem.CREATE_NAME_SYSTEM);
 
 		transferFinItem.save();
 	}

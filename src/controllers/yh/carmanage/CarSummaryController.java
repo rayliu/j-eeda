@@ -10,16 +10,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import models.CarSummaryDetail;
-import models.CarSummaryDetailOilFee;
-import models.CarSummaryDetailOtherFee;
-import models.CarSummaryDetailRouteFee;
-import models.CarSummaryDetailSalary;
-import models.CarSummaryOrder;
 import models.DepartOrder;
 import models.TransferOrder;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.yh.carmanage.CarSummaryDetail;
+import models.yh.carmanage.CarSummaryDetailOilFee;
+import models.yh.carmanage.CarSummaryDetailOtherFee;
+import models.yh.carmanage.CarSummaryDetailRouteFee;
+import models.yh.carmanage.CarSummaryDetailSalary;
+import models.yh.carmanage.CarSummaryOrder;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -346,7 +346,8 @@ public class CarSummaryController extends Controller {
             		.set("finish_car_mileage", finishCarMileage).set("month_start_car_next", monthStartCarNext)
             		.set("month_car_run_mileage", monthCarRunMileage).set("month_refuel_amount", monthRefuelAmount)
             		.set("next_start_car_amount", nextStartCarAmount).set("deduct_apportion_amount", deductApportionAmount)
-            		.set("actual_payment_amount", actualPaymentAmount).set("create_data", sqlDate).set("status", "new").save();
+            		.set("actual_payment_amount", actualPaymentAmount).set("create_data", sqlDate)
+            		.set("status", carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW).save();
         	
         	if(result){
         		CarSummaryOrder carSummary = CarSummaryOrder.dao
@@ -375,7 +376,7 @@ public class CarSummaryController extends Controller {
         		//创建费用合计表初始数据
         		initCarSummaryDetailOtherFeeData(id);
         		//创建行车里程碑
-        		saveCarSummaryOrderMilestone(id,"new");
+        		saveCarSummaryOrderMilestone(id,carSummary.CAR_SUMMARY_SYSTEM_NEW);
         		//设置默认运输单分摊比例
         		double number = 1.0D/orderIds.size();
         		BigDecimal b = new BigDecimal(number); 
@@ -792,16 +793,16 @@ public class CarSummaryController extends Controller {
     	String carSummaryId = getPara("carSummaryId");
     	String value = getPara("value").trim();
     	if(!"".equals(carSummaryId) && carSummaryId != null){
+    		CarSummaryOrder order = CarSummaryOrder.dao.findById(carSummaryId);
     		if("审核".equals(value)){
-    			value = "checked";
+    			value = order.CAR_SUMMARY_SYSTEM_CHECKED;
     		}else if("撤销审核".equals(value)){
-    			value = "revocation";
+    			value = order.CAR_SUMMARY_SYSTEM_REVOCATION;
     		}else if("报销".equals(value)){
-    			value = "reimbursement";
+    			value = order.CAR_SUMMARY_SYSTEM_REIMBURSEMENT;
     		}else{
     			value = "";
     		}
-    		CarSummaryOrder order = CarSummaryOrder.dao.findById(carSummaryId);
     		order.set("status", value);
     		order.update();
     		//修改行车里程碑状态
@@ -852,9 +853,9 @@ public class CarSummaryController extends Controller {
 			setAttr("carNumber", carSummaryOrder.get("month_start_car_next"));
 			//是否审核 isAudit
 			String status = carSummaryOrder.get("status");
-			if("new".equals(status) || "revocation".equals(status) )
+			if(carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW.equals(status) ||carSummaryOrder.CAR_SUMMARY_SYSTEM_REVOCATION.equals(status) )
 				setAttr("isAudit", "no");
-			else if("checked".equals(status) || "reimbursement".equals(status))
+			else if(carSummaryOrder.CAR_SUMMARY_SYSTEM_CHECKED.equals(status) || carSummaryOrder.CAR_SUMMARY_SYSTEM_REIMBURSEMENT.equals(status))
 				setAttr("isAudit", "yes");
 			else
 				setAttr("isAudit", "no");

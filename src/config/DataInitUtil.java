@@ -42,7 +42,7 @@ public class DataInitUtil {
             // fin_item
             stmt.executeUpdate("create table if not exists fin_item(id bigint auto_increment primary key,code varchar(50),name varchar(50),type varchar(50),remark varchar(50));");
             // fin_item
-            stmt.executeUpdate("create table if not exists delivery_order_fin_item(id bigint auto_increment primary key,order_id bigint,fin_item_id bigint,fin_item_code varchar(50),amount double,status varchar(20),creator bigint,create_date timestamp,last_updator bigint,last_updator_date timestamp,remark varchar(5120));");
+            stmt.executeUpdate("create table if not exists delivery_order_fin_item(id bigint auto_increment primary key,order_id bigint,fin_item_id bigint,fin_item_code varchar(50),amount double,status varchar(20),creator bigint,create_date timestamp,last_updator bigint,last_updator_date timestamp,remark varchar(5120),create_name varchar(50));");
             // eeda 平台的SP
             stmt.executeUpdate("create table if not exists dp_prof_provider_info(OID bigint auto_increment PRIMARY KEY, ADDITIONAL_SERVICES VARCHAR(600),  BIZNATURE VARCHAR(60),  PROVIDER_SYS_CODE VARCHAR(90),  PROVIDER_NAME  VARCHAR(270),  PROVIDER_BIZ_CODE VARCHAR(60),  MAINTENANCE_OFFICE  VARCHAR(90),  COUNTRY_BAK VARCHAR(90),  PROVINCE_BAK VARCHAR(90),  CITY_BAK VARCHAR(90),  POST_CODE   VARCHAR(90),  CONTACT VARCHAR(120),  FAX_BAK VARCHAR(60),  EMAIL   VARCHAR(450),  TELEPHONE_BAK   VARCHAR(90),  ADDRESS1 VARCHAR(300),  ADDRESS2 VARCHAR(300),  ADDRESS3 VARCHAR(300),  ADDRESS4 VARCHAR(300),  STATUS  CHAR(1) default 'A',  CREATOR VARCHAR(20),  CREATE_DATE DATE,  LAST_UPDATER VARCHAR(20),  LAST_UPDATE_DATE DATE,  COUNTRY_OID bigint,  COUNTRY VARCHAR(300),  PROVINCE_OID bigint,  PROVINCE VARCHAR(300),  CITY_OID bigint,  CITY VARCHAR(300),  PHONE_COUNTRY_CODE  VARCHAR(10),  PHONE_AREA_CODE VARCHAR(10),  PHONE_NO VARCHAR(120),  FAX_COUNTRY_CODE VARCHAR(10),  FAX_AREA_CODE   VARCHAR(10),  FAX_NO  VARCHAR(120),  SPPM_OID bigint,  PROVIDER_FULL_NAME  VARCHAR(300),  CONTROL_OFFICE  VARCHAR(90),  DATA_REALM  VARCHAR(20),  COPY_FROM_SP_OID bigint,  ONE_OFF VARCHAR(1) default 'N',  EFFECTIVE_FROM  DATE,  EFFECTIVE_TO DATE, MAIL_SENT_TIME TIMESTAMP);");
 
@@ -117,7 +117,7 @@ public class DataInitUtil {
 
             // Depart_Order_fin_item 提货单/发车单应付明细
             stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, fin_item_id bigint, "
-                    + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120));");
+                    + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120),create_name varchar(50));");
             
             stmt.executeUpdate("create table if not exists pickup_order_fin_item (id bigint auto_increment primary key, pickup_order_id bigint, fin_item_id bigint, "
             		+ "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120));");
@@ -133,7 +133,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists transfer_order_fin_item (id bigint auto_increment primary key, " +
             		"order_id bigint,depart_id bigint,delivery_id bigint, fin_item_id bigint,depart_order_fin_item_id bigint, contract_id bigint,"
                     + "fin_item_code varchar(20), amount double, status varchar(50), fin_type varchar(20), "
-                    + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp,rate double,remark varchar(5120));");
+                    + "creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp,rate double,remark varchar(5120),create_name varchar(50));");
 
             // billing_order 应收应付单主表 --total_amount 应收(付)总额, total_actual_amount
             // 实收(付)总额

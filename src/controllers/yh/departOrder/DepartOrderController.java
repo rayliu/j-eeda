@@ -1227,6 +1227,7 @@ public class DepartOrderController extends Controller {
         departOrderFinItem.set("status", "未完成");
         departOrderFinItem.set("creator", users.get(0).get("id"));
         departOrderFinItem.set("create_date", now);
+        departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
         departOrderFinItem.save();
     }
 
@@ -1850,8 +1851,9 @@ public class DepartOrderController extends Controller {
         Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
         if(item != null){
         	DepartOrderFinItem dFinItem = new DepartOrderFinItem();
-	        dFinItem.set("status", "新建").set("fin_item_id", item.get("id")).set("depart_order_id", orderId);
-	        dFinItem.save();
+	        dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
+	        .set("depart_order_id", orderId).set("create_name", dFinItem.CREATE_NAME_USER)
+	        .save();
         }
         items.add(item);
         renderJson(items);

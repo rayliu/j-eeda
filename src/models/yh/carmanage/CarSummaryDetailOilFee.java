@@ -1,4 +1,4 @@
-package models;
+package models.yh.carmanage;
 
 import com.jfinal.plugin.activerecord.Model;
 @SuppressWarnings("serial")
