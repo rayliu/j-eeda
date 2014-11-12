@@ -162,7 +162,7 @@ $(document).ready(function() {
             	name:"item_name",
             	placeholder: "",
             	callback: function () {
-            		refreshDetailTable();
+            		//refreshDetailTable();
             	} 
             },
             {

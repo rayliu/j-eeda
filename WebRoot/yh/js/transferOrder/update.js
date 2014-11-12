@@ -1541,7 +1541,7 @@ $(document).ready(function() {
 				{
 					cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
 				}
-				toLocationList.show();
+				//toLocationList.show();
 			},'json');
 		});
     
@@ -1557,7 +1557,7 @@ $(document).ready(function() {
 				{
 					cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
 				}
-				toLocationList.show();
+				//toLocationList.show();
 			},'json');
 		});
     
@@ -1598,7 +1598,7 @@ $(document).ready(function() {
 				{
 					cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
 				}
-				toLocationList.show();
+				//toLocationList.show();
 			},'json');
 		});
     
@@ -1614,7 +1614,7 @@ $(document).ready(function() {
 				{
 					cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
 				}
-				toLocationList.show();
+				//toLocationList.show();
 			},'json');
 		});
     

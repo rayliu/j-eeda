@@ -254,7 +254,12 @@ $(document).ready(function() {
 			            {"mDataProp":null,
 							"sWidth": "10%", 
 							"fnRender": function(obj) {
-							       return  "<a class='serId' style='color:#464D51;text-decoration:none;' code='"+obj.aData.TID+"'>"+obj.aData.SERIAL_NO+ "</a>";
+									if(obj.aData.SERIAL_NO==null){
+										return "<a class='serId' style='color:#464D51;text-decoration:none;' code='"+obj.aData.TID+"'></a>";
+									}else{
+										 return  "<a class='serId' style='color:#464D51;text-decoration:none;' code='"+obj.aData.TID+"'>"+obj.aData.SERIAL_NO+ "</a>";
+									}
+							      
 							    }
 			            	},
 			            {"mDataProp":null,
@@ -1004,7 +1009,6 @@ $(document).ready(function() {
 					{
 						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
 					}
-					toLocationList.show();
 				},'json');
 			});
 	    
@@ -1020,7 +1024,6 @@ $(document).ready(function() {
 					{
 						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
 					}
-					toLocationList.show();
 				},'json');
 			});
 	    
