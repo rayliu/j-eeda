@@ -287,8 +287,8 @@ public class PickupOrderController extends Controller {
             		+ "tor.operation_type,"
             		+ "tor.cargo_nature,"
             		+ "tor.order_type,"
-            		+ " (select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id) total_volume, "
-                    + " (select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id) total_weight, "
+            		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
+                    + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,"
                     + "tor.pickup_mode,"
@@ -343,8 +343,8 @@ public class PickupOrderController extends Controller {
                     + "' and tor.order_type like '%"
                     + orderType + "%'";
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
-            		+ " (select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id) total_volume, "
-                    + " (select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id) total_weight, "
+            		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
+                    + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status, "
@@ -411,8 +411,8 @@ public class PickupOrderController extends Controller {
                     + orderType + "%'";
 
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
-            		+ " (select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id) total_volume, "
-                    + " (select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id) total_weight, "
+            		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
+                    + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                     + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
@@ -482,8 +482,8 @@ public class PickupOrderController extends Controller {
                 + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                 + TransferOrder.ASSIGN_STATUS_ALL + "' and tor.id not in(" + orderIds + ")";
         String sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
-        		+ " (select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id) total_volume, "
-                + " (select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id) total_weight, "
+        		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
+                + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
                 + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                 + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                 + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
