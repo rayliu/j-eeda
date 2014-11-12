@@ -287,8 +287,8 @@ public class PickupOrderController extends Controller {
             		+ "tor.operation_type,"
             		+ "tor.cargo_nature,"
             		+ "tor.order_type,"
-                    + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
-                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
+            		+ " (select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id) total_volume, "
+                    + " (select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id) total_weight, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,"
                     + "tor.pickup_mode,"
@@ -343,8 +343,8 @@ public class PickupOrderController extends Controller {
                     + "' and tor.order_type like '%"
                     + orderType + "%'";
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
-                    + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
-                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
+            		+ " (select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id) total_volume, "
+                    + " (select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id) total_weight, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status, "
@@ -411,8 +411,8 @@ public class PickupOrderController extends Controller {
                     + orderType + "%'";
 
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
-                    + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
-                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
+            		+ " (select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id) total_volume, "
+                    + " (select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id) total_weight, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                     + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
@@ -482,8 +482,8 @@ public class PickupOrderController extends Controller {
                 + " where tor.status not in ('已入库','已签收') and tor.operation_type = 'own' and ifnull(tor.pickup_assign_status, '') !='"
                 + TransferOrder.ASSIGN_STATUS_ALL + "' and tor.id not in(" + orderIds + ")";
         String sql = "select tor.id,tor.order_no,tor.cargo_nature,tor.order_type,"
-                + " (select sum(tori.weight) from transfer_order_item tori where tori.order_id = tor.id) as total_weight,"
-                + " (select sum(tori.volume) from transfer_order_item tori where tori.order_id = tor.id) as total_volumn,"
+        		+ " (select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id) total_volume, "
+                + " (select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id) total_weight, "
                 + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                 + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                 + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status from transfer_order tor "
@@ -521,9 +521,10 @@ public class PickupOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume)*toi.amount volume, "
-                + " ifnull(case toi.weight when 0.0 then null else toi.weight end, pd.weight)*toi.amount weight"
-                + " ,c.abbr customer,tor.order_no,toi.amount,toi.remark  from transfer_order_item toi "
+        String sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,"
+        		+ " toi.volume volume,  "
+        		+ " toi.sum_weight weight,"
+                + " c.abbr customer,tor.order_no,toi.amount,toi.remark  from transfer_order_item toi "
                 + " left join transfer_order tor on tor.id = toi.order_id"
                 + " left join party p on p.id = tor.customer_id"
                 + " left join contact c on c.id = p.contact_id"
