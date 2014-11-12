@@ -514,6 +514,9 @@
 		if($("#pickupModeRadio").val() == $(this).val()){
 			if($(this).val() != 'own'){
 				$("#spDiv").show();
+				$("#pickupOrderPayment").show();
+			}else{
+				$("#pickupOrderPayment").hide();
 			}
 			$(this).attr('checked', true);
 		}
@@ -544,9 +547,11 @@
 	  if(inputId=='pickupMode1'){
 		  $("#spDiv").hide();
 		  $("#paymentDiv").hide();
+		  $("#pickupOrderPayment").hide();
 	  }else{
 		  $("#spDiv").show();
 		  $("#paymentDiv").show();
+		  $("#pickupOrderPayment").show();
 	  } 
   	});  
 	
