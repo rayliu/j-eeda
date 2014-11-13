@@ -1204,7 +1204,36 @@ public class PickupOrderController extends Controller {
         renderJson(transferOrders);
     }
 
-    // 查出所有运输单的提货地点
+    // 获取所有的路线
+    public void findAllRoute(){
+    	String orderIds = getPara("orderIds");
+    	String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        String sqlTotal = "select count(1) total from transfer_order tor where tor.id in("+orderIds+")";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select tor.*,c.abbr cname from transfer_order tor "
+        		+ " left join party p on tor.customer_id = p.id left join contact c on c.id = p.contact_id"
+        		+ " where tor.id in("+orderIds+") order by tor.pickup_seq desc " + sLimit;
+
+        logger.debug("sql:" + sql);
+        List<Record> transferOrders = Db.find(sql);
+
+        Map transferOrderListMap = new HashMap();
+        transferOrderListMap.put("sEcho", pageIndex);
+        transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        transferOrderListMap.put("aaData", transferOrders);
+
+        renderJson(transferOrderListMap);    	
+    }
+    
     public void swapPickupSeq() {
         TransferOrder transferOrder = TransferOrder.dao.findById(getPara("currentId"));
         transferOrder.set("pickup_seq", getPara("currentVal"));
@@ -1223,7 +1252,7 @@ public class PickupOrderController extends Controller {
     }
 
     // 筛选掉入库的运输单
-    public void getTransferOrderDestination() {
+    public void getTransferOrderDestinationBak() {
         String pickupOrderId = getPara("pickupOrderId");
         Map<String, String[]> map = getParaMap();
         String orderId = "";
@@ -1263,6 +1292,34 @@ public class PickupOrderController extends Controller {
             }
         }
         renderJson("{\"success\":true}");
+    }
+    
+    // 筛选掉入库的运输单
+    public void getTransferOrderDestination() {
+    	String warehouseIds = getPara("warehouseIds");
+    	if(warehouseIds != null && !"".equals(warehouseIds)){
+    		String[] warehouseIdArr = warehouseIds.split(",");
+			for (int i=0;i<warehouseIdArr.length;i++) {
+				// 去掉入库的单据
+				TransferOrder transferOrder = TransferOrder.dao.findById(warehouseIdArr[i]);
+				transferOrder.set("status", "已入库");
+				transferOrder.update();
+				TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+				transferOrderMilestone.set("status", "已入库");
+				String name = (String) currentUser.getPrincipal();
+				List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+				transferOrderMilestone.set("create_by", users.get(0).get("id"));
+				java.util.Date utilDate = new java.util.Date();
+				java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+				transferOrderMilestone.set("create_stamp", sqlDate);
+				transferOrderMilestone.set("order_id", transferOrder.get("id"));
+				transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+				
+				// 产品入库
+				productInWarehouseOnTransferOrderId(warehouseIdArr[i]);
+			}
+    	}
+    	renderJson("{\"success\":true}");
     }
 
     // 产品入库

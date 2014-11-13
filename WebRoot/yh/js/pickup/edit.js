@@ -442,13 +442,73 @@
 			//保存成功后，刷新列表
             console.log(data);
             if(data.success){
-        		findAllAddress();
+            	routeTable.fnDraw();
             }else{
                 alert('移动失败');
             }
 		},'json');
 	};
 	
+	// 上移
+	$("#route-table").on('click', '.moveUp', function(e){
+		var currentNode = $(this).parent().parent();
+		var currentVal = currentNode.attr("value");
+		var targetNode = currentNode.prev();
+		var targetVal = targetNode.attr("value");
+		currentNode.attr("value", targetVal);
+		targetNode.attr("value", currentVal);
+		var currentId = currentNode.attr("id");
+		var targetId = targetNode.attr("id");
+		var currentNewVal = currentNode.attr("value");
+		var targetNewVal = targetNode.attr("value");
+		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
+	});
+	
+	// 下移
+	$("#route-table").on('click', '.moveDown', function(e){
+		var currentNode = $(this).parent().parent();
+		var currentVal = currentNode.attr("value");
+		var targetNode = currentNode.next();
+		var targetVal = targetNode.attr("value");
+		currentNode.attr("value", targetVal);
+		targetNode.attr("value", currentVal);
+		var currentId = currentNode.attr("id");
+		var targetId = targetNode.attr("id");
+		var currentNewVal = currentNode.attr("value");
+		var targetNewVal = targetNode.attr("value");
+		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
+	});
+	
+	// 移至顶部
+	$("#route-table").on('click', '.moveTop', function(e){
+		var currentNode = $(this).parent().parent();
+		var currentVal = currentNode.attr("value");
+		var targetNode = currentNode.siblings().first();
+		var targetVal = targetNode.attr("value");
+		currentNode.attr("value", targetVal);
+		targetNode.attr("value", currentVal);
+		var currentId = currentNode.attr("id");
+		var targetId = targetNode.attr("id");
+		var currentNewVal = currentNode.attr("value");
+		var targetNewVal = targetNode.attr("value");
+		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
+	});
+	
+	// 移至底部
+	$("#route-table").on('click', '.moveButtom', function(e){
+		var currentNode = $(this).parent().parent();
+		var currentVal = currentNode.attr("value");
+		var targetNode = currentNode.siblings().last();
+		var targetVal = targetNode.attr("value");
+		currentNode.attr("value", targetVal);
+		targetNode.attr("value", currentVal);
+		var currentId = currentNode.attr("id");
+		var targetId = targetNode.attr("id");
+		var currentNewVal = currentNode.attr("value");
+		var targetNewVal = targetNode.attr("value");
+		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
+	});
+/*	
 	// 上移
 	$("#pickupAddressTbody").on('click', '.moveUp', function(e){
 		var currentNode = $(this).parent().parent();
@@ -508,7 +568,7 @@
 		var targetNewVal = targetNode.attr("value");
 		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
 	});
-
+*/
 	// 回显提货方式
 	$("input[name='pickupMode']").each(function(){
 		if($("#pickupModeRadio").val() == $(this).val()){
@@ -656,7 +716,7 @@
 	// 点击已完成按钮
 	$("#finishBtn").click(function(){
 		// 处理入库运输单
-		$.post('/pickupOrder/getTransferOrderDestination', $("#pickupAddressForm").serialize(), function(data){
+		$.post('/pickupOrder/getTransferOrderDestination', {warehouseIds: $("#warehouseIds").val()}, function(data){
 			//保存成功后，刷新列表
             console.log(data);
             if(data.success){
@@ -667,13 +727,8 @@
                 	var pickupOrderId = $("#pickupOrderId").val();
                 	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable/"+pickupOrderId;
             		paymenttable.fnDraw(); 
-            		$.post('/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
-            			var pickupAddressTbody = $("#pickupAddressTbody");
-            			pickupAddressTbody.empty();
-            			for(var i=0;i<data.length;i++){
-            				pickupAddressTbody.append("<tr value='"+data[i].PICKUP_SEQ+"' id='"+data[i].ID+"'><td>"+data[i].ORDER_NO+"</td><td>"+data[i].CNAME+"</td><td>"+data[i].ADDRESS+"</td><td>"+data[i].CREATE_STAMP+"</td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' checked='' value='yard"+data[i].ID+"'></td><td><input type='radio' name='lastStopRadio"+data[i].ID+"' value='warehouse"+data[i].ID+"'></td><td>"+data[i].STATUS+"</td><td><a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a></td></tr>");					
-            			}
-            		},'json');
+            		            		
+            		routeTable.fnDraw(); 
             	},'json');
             	
             	$("#finishBtn").attr('disabled', true);	
@@ -831,14 +886,17 @@
         $("input[name='order_check_box']").each(function(){
         	if($(this).prop('checked') == true){
         		trArr.push($(this).val());
+        		tableArr.push($(this).val());
         	}
         });
-        tableArr.push(trArr);        
+        tableArr.push($("#message").val());
+        $("#message").val(tableArr);
         console.log(tableArr);
-        $('#transferOrderIds').val(tableArr);
+        $('#transferOrderIds').val(trArr);
         $('#addExternalPickupOrderId').val($("#pickupOrderId").val());
         $.post('/pickupOrder/addExternalTransferOrder', $('#addExternalTransferOrderForm').serialize(),function(data){
-        	refreshAddress(data);
+        	routeTable.fnSettings().sAjaxSource = "/pickupOrder/findAllRoute?orderIds="+$("#message").val();
+        	routeTable.fnDraw(); 
     	},'json');
         $('#addExternalTransferOrder').modal('hide');
     });
@@ -1149,4 +1207,51 @@
         $(".bootstrap-datetimepicker-widget").hide();
         $('#return_time').trigger('keyup');
     });
+    
+    //datatable, 动态处理
+    var routeTable = $('#route-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "bSort": false, 
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "iDisplayLength": 25,
+        "bServerSide": true,
+    	  "oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr({id: aData.ID, value: aData.PICKUP_SEQ}); 
+			return nRow;
+		},
+        "sAjaxSource": "/pickupOrder/findAllRoute?orderIds="+$("#message").val(),
+        "aoColumns": [ 
+            {"mDataProp":"ORDER_NO", "sWidth":"80px"},
+            {"mDataProp":"CNAME", "sWidth":"200px"},
+            {"mDataProp":"ADDRESS", "sWidth":"200px"},                 	
+            {"mDataProp":"CREATE_STAMP", "sWidth":"150px"},                        
+            {"mDataProp":null, "sWidth":"150px",
+            	"fnRender": function(obj) {
+            		return "<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' checked='' value='yard'>货场</label>		<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' value='warehouse'>中转仓</label>";
+            }},                           
+            {"mDataProp":"STATUS", "sWidth":"100px"},                        
+            {"mDataProp":"REMARK", "sWidth":"150px"},                         
+            {"mDataProp":null, "sWidth":"200px",
+            	"fnRender": function(obj) {
+                    return "<a href='javascript:void(0)' class='moveUp'>上移</a> <a href='javascript:void(0)' class='moveDown'>下移</a> <a href='javascript:void(0)' class='moveTop'>移至顶部</a> <a href='javascript:void(0)' class='moveButtom'>移至底部</a>";
+            }}                         
+        ]      
+    });
+    
+    var warehouseIds = [];
+    $("#route-table").on('click', "input[type='radio']", function(e){
+    	var id = $(this).parent().parent().parent().attr('id');
+		if($(this).val() == "warehouse"){
+			warehouseIds.push(id);
+			$("#warehouseIds").val(warehouseIds);
+		}else{
+			if(warehouseIds.length > 0){
+				warehouseIds.splice($.inArray(id,warehouseIds), 1);
+				$("#warehouseIds").val(warehouseIds);
+			}
+		}
+	});
 });
