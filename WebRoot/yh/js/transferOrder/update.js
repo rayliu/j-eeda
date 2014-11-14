@@ -950,14 +950,28 @@ $(document).ready(function() {
   	  var inputId  = $(this).attr('id');
 	  if(inputId=='cargoNature2'){
 		 $("#cargoNatureDetailSpan").show();
+		 $("input[name='cargoNatureDetail']").each(function(){
+			if($(this).val() == "cargoNatureDetailNo" && $(this).prop('checked')){
+				$("#transferOrderItemDateil").hide(); 
+			}
+		 });
 	  }else{
 		  if(inputId=='cargoNature1'){
 			  $("#cargoNatureDetailSpan").hide(); 
-		  }
-		  
-	  }
-	  
+			  $("#transferOrderItemDateil").show(); 
+		  }		  
+	  }	  
   	}); 
+    
+    $("#cargoNatureDetailSpan").on('click', 'input', function(){
+    	console.log(this);
+    	var inputId  = $(this).attr('id');
+    	if(inputId=='cargoNatureDetail2'){
+    		$("#transferOrderItemDateil").show(); 
+    	}else{
+    		$("#transferOrderItemDateil").hide(); 
+    	}	  
+    }); 
 
     
     // 当arrivalMode1为货品直送时则显示收货人的信息
@@ -1143,16 +1157,29 @@ $(document).ready(function() {
 	});
 	
 	// 回显货品属性
-	$("input[name='cargoNature']").each(function(){
-		if($("#cargoNatureRadio").val() == $(this).val()){
-			$(this).attr('checked', true);
-			if($("#cargoNatureRadio").val() == 'cargo'){
-				$("#cargoNatureDetailSpan").show();
-				$("input[name='cargoNatureDetail']").each(function(){
-					if($(this).val() == $("#cargoNatureDetailRadio").val()){
-						$(this).attr('checked', true);
-					}
-				});
+	$("input[name='cargoNature']").each(function(){		
+		if($("#cargoNatureRadio").val() != null && $("#cargoNatureRadio").val() != ''){
+			if($("#cargoNatureRadio").val() == $(this).val()){
+				$(this).attr('checked', true);
+				if($("#cargoNatureRadio").val() == 'cargo'){
+					$("#cargoNatureDetailSpan").show();
+					$("input[name='cargoNatureDetail']").each(function(){
+						if($(this).val() == $("#cargoNatureDetailRadio").val()){
+							$(this).attr('checked', true);
+							if($(this).val() == "cargoNatureDetailYes"){
+								$("#transferOrderItemDateil").show(); 
+							}else{
+								$("#transferOrderItemDateil").hide(); 
+							}
+						}
+					});
+				}else{
+					$("#transferOrderItemDateil").show(); 
+				}
+			}
+		}else{
+			if($(this).val() == 'ATM'){
+				$("#transferOrderItemDateil").show(); 				
 			}
 		}
 	});
