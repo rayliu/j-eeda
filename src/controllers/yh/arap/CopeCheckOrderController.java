@@ -19,7 +19,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
-//@RequiresAuthentication
+@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class CopeCheckOrderController extends Controller {
     private Logger logger = Logger.getLogger(CopeCheckOrderController.class);

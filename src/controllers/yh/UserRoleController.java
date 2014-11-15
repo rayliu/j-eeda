@@ -1,12 +1,10 @@
 package controllers.yh;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import interceptor.SetAttrLoginUserInterceptor;
 import models.Role;
 import models.UserRole;
 
@@ -19,9 +17,8 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.util.CompareStrList;
 import controllers.yh.util.PermissionConstant;
-//@RequiresAuthentication
+@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class UserRoleController extends Controller {
 	private Logger logger = Logger.getLogger(PrivilegeController.class);
@@ -102,49 +99,20 @@ public class UserRoleController extends Controller {
 		
 		String[] roles = r.split(",");
 		//先删除所有的数据，在保存
-		//旧 [1，2，3，4，5]，  新的[3,5,6]
-		//比较两个数组，delet [1,2,4], add [6]
-		//旧数据
-		List<UserRole> list = UserRole.dao.find("select id from user_role where user_name=?",name);
-		
-		List<Object> ids = new ArrayList<Object>();
-		for (UserRole ur : list) {
-			ids.add(ur.get("id"));
-		}
-		
-		CompareStrList compare = new CompareStrList();
-		
-		List returnList = compare.compare(ids, roles);
-		
-		ids = (List<Object>) returnList.get(0);
-		List<String> saveList = (List<String>) returnList.get(1);
-		
-		for (Object id : ids) {
-			UserRole.dao.findFirst("select * from user_role where id=?", id).delete();
-		}
-		
-		for (Object object : saveList) {
-			UserRole ur = new UserRole();
-			ur.set("user_name", name);
-			/*根据id找到Role*/
-			Role role = Role.dao.findFirst("select * from role where id=?",object);
-			ur.set("role_code", role.get("code"));
-			ur.save();
-		}
-		
-		/*for (UserRole userRole : list) {
+		List<UserRole> list = UserRole.dao.find("select * from user_role where user_name=?",name);
+		for (UserRole userRole : list) {
 			userRole.delete();
 		}
 		if(!r.equals("")){
 			for (String id : roles) {
 				UserRole ur = new UserRole();
 				ur.set("user_name", name);
-				根据id找到Role
+				/*根据id找到Role*/
 				Role role = Role.dao.findFirst("select * from role where id=?",id);
 				ur.set("role_code", role.get("code"));
 				ur.save();
 			}
-		}*/
+		}
 		
 		renderJson();
 	}

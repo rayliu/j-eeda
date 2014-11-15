@@ -26,7 +26,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.util.PermissionConstant;
-//@RequiresAuthentication
+@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class WarehouseController extends Controller{
 

@@ -20,7 +20,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.PermissionConstant;
-//@RequiresAuthentication
+@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class AccountController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);

@@ -43,7 +43,7 @@ import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.PoiUtils;
 
 
-//@RequiresAuthentication
+@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class TransferOrderController extends Controller {
 	

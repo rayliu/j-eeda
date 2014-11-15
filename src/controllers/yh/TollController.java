@@ -20,7 +20,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.PermissionConstant;
 
-//@RequiresAuthentication
+@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class TollController extends Controller {
 	private Logger logger = Logger.getLogger(TollController.class);
