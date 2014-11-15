@@ -561,6 +561,7 @@ public class PickupOrderController extends Controller {
         String uncheckedDetailIds = getPara("uncheckedDetail");
         String replenishmentOrderId = getPara("replenishmentOrderId");
         String gateInSelect = getPara("gateInSelect");
+        String returnTime = getPara("return_time");
         if (pickId == null || "".equals(pickId)) {
             pickupOrder = new DepartOrder();
             pickupOrder.set("depart_no", getPara("order_no"));
@@ -577,7 +578,9 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("pickup_mode", getPara("pickupMode"));
             pickupOrder.set("address", getPara("address"));
             pickupOrder.set("turnout_time", getPara("turnout_time"));
-            pickupOrder.set("return_time", getPara("return_time"));
+            if(returnTime != null && !"".equals(returnTime)){
+            	pickupOrder.set("return_time", returnTime);
+            }
             /*if(getPara("payment") != null && !"".equals(getPara("payment"))){
             	pickupOrder.set("payment", getPara("payment"));
             }*/
@@ -653,7 +656,9 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("pickup_mode", getPara("pickupMode"));
             pickupOrder.set("address", getPara("address"));
             pickupOrder.set("turnout_time", getPara("turnout_time"));
-            pickupOrder.set("return_time", getPara("return_time"));
+            if(returnTime != null && !"".equals(returnTime)){
+            	pickupOrder.set("return_time", returnTime);
+            }
             /*if(getPara("payment") != null && !"".equals(getPara("payment"))){
             	pickupOrder.set("payment", getPara("payment"));
             }*/
