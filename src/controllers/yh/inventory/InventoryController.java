@@ -50,17 +50,17 @@ public class InventoryController extends Controller {
         if (url.equals("/gateIn")) {
 
             setAttr("inventory", "gateIn");
-            //currentUser.checkPermission(PermissionConstant.PERMISSION_WO_INLIST );
+            currentUser.checkPermission(PermissionConstant.PERMISSION_WO_INLIST );
                 render("/yh/inventory/inventoryList.html");
         }
         if (url.equals("/gateOut")) {
 
             setAttr("inventory", "gateOut");
-            //currentUser.checkPermission(PermissionConstant.PERMISSION_WO_OUTLIST);
+            currentUser.checkPermission(PermissionConstant.PERMISSION_WO_OUTLIST);
                 render("/yh/inventory/inventoryList.html");
         }
         if (url.equals("/stock")) {
-        	//currentUser.checkPermission(PermissionConstant.PERMSSION_II_LIST);
+        	currentUser.checkPermission(PermissionConstant.PERMSSION_II_LIST);
                 render("/yh/inventory/stock.html");
         }
     }

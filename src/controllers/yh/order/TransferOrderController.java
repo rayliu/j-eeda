@@ -858,7 +858,7 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 删除订单
-	//@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_DELETE})
+	// //@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_DELETE})
 	public void delete() {
 		long id = getParaToLong();
 

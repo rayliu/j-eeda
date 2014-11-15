@@ -35,7 +35,7 @@ import controllers.yh.util.PermissionConstant;
 public class ChargeCheckOrderController extends Controller {
 	private Logger logger = Logger.getLogger(ChargeCheckOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_LIST})
+	// //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_LIST})
 	public void index() {
 			render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
 	}
@@ -45,7 +45,7 @@ public class ChargeCheckOrderController extends Controller {
 		setAttr("classify", "");
 			render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderCreateSearchList.html");
 	}
-	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_CREATE})
+	// //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
 		String[] idArray = ids.split(",");

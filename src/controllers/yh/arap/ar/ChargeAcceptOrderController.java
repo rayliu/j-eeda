@@ -20,7 +20,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 
-//@RequiresAuthentication
+@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class ChargeAcceptOrderController extends Controller {
     private Logger logger = Logger.getLogger(ChargeAcceptOrderController.class);

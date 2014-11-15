@@ -61,7 +61,7 @@ public class CostPreInvoiceOrderController extends Controller {
     }
 
     // 应付条目列表
-    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_LIST})
+    // //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_LIST})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -90,7 +90,7 @@ public class CostPreInvoiceOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE})
+    // //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
 		String[] idArray = ids.split(",");
@@ -153,7 +153,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		setAttr("status", "new");
 			render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
 	}
-    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE, PermissionConstant.PERMSSION_CPO_UPDATE}, logical=Logical.OR)
+    // //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE, PermissionConstant.PERMSSION_CPO_UPDATE}, logical=Logical.OR)
 	public void save() {
 		ArapCostInvoiceApplication arapAuditInvoiceApplication = null;
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
