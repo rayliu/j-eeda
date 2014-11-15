@@ -346,7 +346,7 @@ public class TransferOrderMilestoneController extends Controller {
     }
 
     // 发车确认
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_COMPLETED})
+     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_COMPLETED})
     public void departureConfirmation() {
         String departOrderId = getPara("departOrderId");
         int num = 1;
@@ -414,7 +414,7 @@ public class TransferOrderMilestoneController extends Controller {
     }
     
     // 入库确认
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_UPDATE})
+     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_UPDATE})
     public void warehousingConfirm() {
     	String departOrderId = getPara("departOrderId");
     	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departOrderId);

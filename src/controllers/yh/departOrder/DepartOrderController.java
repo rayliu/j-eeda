@@ -48,11 +48,11 @@ public class DepartOrderController extends Controller {
 
     private Logger logger = Logger.getLogger(DepartOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_LIST})
+     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_LIST})
     public void index() {
             render("/yh/departOrder/departOrderList.html");
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_LIST})
+     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_LIST})
     public void onTrip() {
             render("/yh/departOrder/departOrderOnTripList.html");
     }
@@ -96,7 +96,7 @@ public class DepartOrderController extends Controller {
     	List<Record> companyNameList = Db.find(sql);
     	renderJson(companyNameList);
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_LIST})
+     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_LIST})
     public void list() {
         String orderNo = getPara("orderNo");
         String departNo = getPara("departNo");
@@ -196,7 +196,7 @@ public class DepartOrderController extends Controller {
     }
     
     // 发车单在途列表
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_LIST})
+     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_LIST})
     public void onTripList() {
     	String orderNo = getPara("orderNo");
     	String departNo = getPara("departNo");
@@ -354,7 +354,7 @@ public class DepartOrderController extends Controller {
     	map.put("aaData", departOrders);
     	renderJson(map);
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
+     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
     public void add() {
             render("/yh/departOrder/allTransferOrderList.html");
     }
@@ -364,7 +364,7 @@ public class DepartOrderController extends Controller {
     }
 
     // 修改发车单页面
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_UPDATE})
+     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_UPDATE})
     public void edit() {
         String sql = "select do.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
                 + "where dt.depart_id =do.id)as order_id from depart_order  do "
@@ -458,7 +458,7 @@ public class DepartOrderController extends Controller {
     }
 
     // 创建发车单的运输单列表
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
+     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
     public void createTransferOrderList() {
         String orderNo = getPara("orderNo");
         String status = getPara("status");
@@ -653,7 +653,7 @@ public class DepartOrderController extends Controller {
     	transferOrderListMap.put("aaData", transferOrders);
     	renderJson(transferOrderListMap);
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
+     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
     public void createDepartOrder() {
         String list = this.getPara("localArr");
         setAttr("localArr", list);
@@ -1853,7 +1853,7 @@ public class DepartOrderController extends Controller {
         }
         renderJson(orderMap);
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_ADD_COST})
+     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_ADD_COST})
     public void addNewRow() {
         
         List<Fin_item> items = new ArrayList<Fin_item>();

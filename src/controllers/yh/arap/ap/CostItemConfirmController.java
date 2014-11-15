@@ -27,7 +27,7 @@ import controllers.yh.util.PermissionConstant;
 @Before(SetAttrLoginUserInterceptor.class)
 public class CostItemConfirmController extends Controller {
     private Logger logger = Logger.getLogger(CostItemConfirmController.class);
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
+    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void index() {
     	    render("/yh/arap/CostItemConfirm/CostItemConfirmList.html");
     }
@@ -49,7 +49,7 @@ public class CostItemConfirmController extends Controller {
     }
 
     // 应付条目列表
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
+    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -181,7 +181,7 @@ public class CostItemConfirmController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
+    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void costConfiremReturnOrder(){
     	String ids = getPara("ids");
     	String orderNos = getPara("orderNos");

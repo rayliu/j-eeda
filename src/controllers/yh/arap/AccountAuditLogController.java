@@ -18,7 +18,7 @@ import controllers.yh.util.PermissionConstant;
 public class AccountAuditLogController extends Controller {
     private Logger logger = Logger.getLogger(AccountAuditLogController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PCO_LIST})
+     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PCO_LIST})
     public void index() {
     	    render("/yh/arap/AccountAuditLog/AccountAuditLogList.html");
     }

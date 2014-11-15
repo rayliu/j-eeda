@@ -26,11 +26,11 @@ import controllers.yh.util.PermissionConstant;
 @Before(SetAttrLoginUserInterceptor.class)
 public class PrivilegeController extends Controller {
 	private Logger logger = Logger.getLogger(PrivilegeController.class);
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_LIST})
+	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_LIST})
 	public void index() {
 		render("/yh/profile/privilege/PrivilegeList.html");
 	}
-	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_LIST})
+	// //@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_LIST})
 	//编辑和分配都是用这个list
 	public void list() {
 		
@@ -78,7 +78,7 @@ public class PrivilegeController extends Controller {
 		renderJson(orderMap);
 
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_LIST})
+	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_LIST})
 	public void roleList() {
 		String sql_m = "select distinct r.name,r.code from role_permission  rp left join role r on r.code =rp.role_code group by r.name,r.code";
 
@@ -86,18 +86,18 @@ public class PrivilegeController extends Controller {
 		List<Record> orders = Db.find(sql_m);
 		renderJson(orders);
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_CREATE})
+	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_CREATE})
 	public void add(){
 		render("/yh/profile/privilege/RolePrivilege.html");
 	}
 	/*查找没有权限的角色*/
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_CREATE})
+	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_CREATE})
 	public void seachNewRole(){
 		String sql_m = "select r.code,r.name from role r left join role_permission rp on r.code = rp.role_code where rp.role_code is null";
 		List<Record> orders = Db.find(sql_m);
 		renderJson(orders);
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_CREATE})
+	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_CREATE})
 	public void save(){
 		String rolename = getPara("name");
 		String permissions = getPara("permissions");
@@ -112,7 +112,7 @@ public class PrivilegeController extends Controller {
 		}
 		renderJson();
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_UPDATE})
+	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_UPDATE})
 	public void update(){
 		String rolename = getPara("name");
 		String permissions = getPara("permissions");
@@ -134,7 +134,7 @@ public class PrivilegeController extends Controller {
 		}
 		renderJson();
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_UPDATE})
+	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_UPDATE})
 	public void edit(){
 		String rolename = getPara("rolename");
 		setAttr("rolename", rolename);

@@ -60,7 +60,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     }
 
     // 发车确认
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_COMPLETED})
+     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_COMPLETED})
     public void departureConfirmation() {
         Long delivery_id = Long.parseLong(getPara("delivery_id"));
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
@@ -323,7 +323,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     // 配送单  到达确认
 
-@RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_COMPLETED})
+ //@RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_COMPLETED})
     public void receipt() {
         Long delivery_id = Long.parseLong(getPara("delivery_id"));
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
@@ -509,7 +509,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         renderJson(orderMap);
     }
 
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_ADD_COST})
+     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_ADD_COST})
     public void addNewRow() {
         List<Fin_item> items = new ArrayList<Fin_item>();
         String orderId = getPara();
@@ -569,7 +569,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     
     //修改应付
 
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_LIST})
+     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_LIST})
     public void updateDeliveryOrderFinItem(){
     	String paymentId = getPara("paymentId");
     	String name = getPara("name");

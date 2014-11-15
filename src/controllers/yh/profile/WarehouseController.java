@@ -31,11 +31,11 @@ import controllers.yh.util.PermissionConstant;
 public class WarehouseController extends Controller{
 
     private Logger logger = Logger.getLogger(WarehouseController.class);
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_W_LIST})
+     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_LIST})
 	public void index() {
 		render("/yh/profile/warehouse/warehouseList.html");
 	}
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_W_LIST})
+     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_LIST})
 	public void list() {
 		Map warehouseListMap = null;
 		String warehouseName = getPara("warehouseName");
@@ -101,12 +101,12 @@ public class WarehouseController extends Controller{
 		List<Contact> contactjson = Contact.dao.find("select * from contact");			
         renderJson(contactjson);
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_CREATE})
+	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_CREATE})
 	public void add() {
 		setAttr("saveOK", false);
 		render("/yh/profile/warehouse/warehouseEdit.html");
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_UPDATE})
+	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_UPDATE})
 	public void edit() {
 		long id = getParaToLong();
 
@@ -137,7 +137,7 @@ public class WarehouseController extends Controller{
 		setAttr("sp", sp);
 		render("/yh/profile/warehouse/warehouseEdit.html");
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_DELETE})
+	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_DELETE})
 	public void delete() {
 		long id = getParaToLong();
 		List<TransferOrder> orders = TransferOrder.dao.find("select * from transfer_order where warehouse_id = "+id);
@@ -153,7 +153,7 @@ public class WarehouseController extends Controller{
 		redirect("/warehouse");
 	}
 
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_CREATE, PermissionConstant.PERMSSION_W_UPDATE}, logical=Logical.OR)
+	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_CREATE, PermissionConstant.PERMSSION_W_UPDATE}, logical=Logical.OR)
 	public void save() {
 		UploadFile uploadFile = getFile("fileupload");
         String spId = getPara("sp_id");

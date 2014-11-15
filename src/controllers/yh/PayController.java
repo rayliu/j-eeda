@@ -51,7 +51,7 @@ public class PayController extends Controller {
     /**
      *  付费条目
      */
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_LIST})
+     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_LIST})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -82,7 +82,7 @@ public class PayController extends Controller {
     }
 
     // 编辑条目按钮
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_CREATE, PermissionConstant.PERMSSION_PAY_UPDATE}, logical=Logical.OR)
+     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_CREATE, PermissionConstant.PERMSSION_PAY_UPDATE}, logical=Logical.OR)
     public void Edit() {
         String id = getPara();
         if (id != null) {
@@ -95,7 +95,7 @@ public class PayController extends Controller {
     }
 
     // 删除条目
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_DELETE})
+     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_DELETE})
     public void delete() {
         String id = getPara();
         if (id != null) {
@@ -106,7 +106,7 @@ public class PayController extends Controller {
     }
 
     // 添加编辑保存
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_CREATE, PermissionConstant.PERMSSION_PAY_UPDATE}, logical=Logical.OR)
+     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_CREATE, PermissionConstant.PERMSSION_PAY_UPDATE}, logical=Logical.OR)
     public void SaveEdit() {
 
         String id = getPara("id");

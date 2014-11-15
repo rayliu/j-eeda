@@ -31,7 +31,7 @@ import controllers.yh.util.PermissionConstant;
 public class CostCheckOrderController extends Controller {
     private Logger logger = Logger.getLogger(CostCheckOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_LIST})
+    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_LIST})
     public void index() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "");
@@ -43,7 +43,7 @@ public class CostCheckOrderController extends Controller {
     	setAttr("classify", "");
         render("/yh/arap/CostCheckOrder/CostCheckOrderCreateSearchList.html");
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_CREATE})
+    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_CREATE})
     public void create() {
         String ids = getPara("ids");
         String orderNos = getPara("orderNos");
@@ -158,7 +158,7 @@ public class CostCheckOrderController extends Controller {
     }
 
     // billing order 列表
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE})
+    //@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -184,7 +184,7 @@ public class CostCheckOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_CREATE, PermissionConstant.PERMSSION_CCOI_UPDATE}, logical=Logical.OR)
+    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_CREATE, PermissionConstant.PERMSSION_CCOI_UPDATE}, logical=Logical.OR)
     public void save(){
     	ArapCostOrder arapAuditOrder = null;
     	String costCheckOrderId = getPara("costCheckOrderId");
@@ -239,7 +239,7 @@ public class CostCheckOrderController extends Controller {
         renderJson(arapAuditOrder);;
     }
 
-@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_UPDATE})
+//@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_UPDATE})
     public void edit(){
     	ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findById(getPara("id"));
     	/*String customerId = arapAuditOrder.get("payee_id");
