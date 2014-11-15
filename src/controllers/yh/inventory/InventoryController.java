@@ -41,9 +41,7 @@ import controllers.yh.util.PermissionConstant;
 public class InventoryController extends Controller {
 
     private Logger logger = Logger.getLogger(InventoryController.class);
-    Subject currentUser = SecurityUtils.getSubject();
-
-    
+    Subject currentUser = SecurityUtils.getSubject();    
 
     public void index() {
         HttpServletRequest re = getRequest();

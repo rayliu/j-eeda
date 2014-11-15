@@ -5,8 +5,7 @@
     //from表单验证
 	var validate = $('#pickupOrderForm').validate({
         rules: {
-        	turnout_time: {required: true},
-        	return_time: {required: true}
+        	turnout_time: {required: true}
         },
         messages : {	             
         }

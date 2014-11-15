@@ -2,9 +2,9 @@
 	$('#menu_return').addClass('active').find('ul').addClass('in');
 	
 	var dataTable =$('#example').dataTable( {
-		"bFilter": false, //不需要默认的搜索框
-		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",insert into return_order(status_code,create_date,order_type,creator,remark,transfer_order,distribution_order_id,contract_id
+    	"bSort": false, // 不要排序
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
     	"oLanguage": {
