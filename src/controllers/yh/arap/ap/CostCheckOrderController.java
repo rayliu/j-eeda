@@ -268,7 +268,7 @@ public class CostCheckOrderController extends Controller {
 
 	// 审核
 
-@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_AFFIRM})
+//@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_AFFIRM})
 	public void auditCostCheckOrder(){
 		String costCheckOrderId = getPara("costCheckOrderId");
 		if(costCheckOrderId != null && !"".equals(costCheckOrderId)){

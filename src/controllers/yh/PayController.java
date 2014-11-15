@@ -40,7 +40,7 @@ public class PayController extends Controller {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();logger.debug("URI:" + url);
         if (url.equals("/pay")) {
-        	currentUser.checkPermission(PermissionConstant.PERMSSION_PAY_LIST);
+        	//currentUser.checkPermission(PermissionConstant.PERMSSION_PAY_LIST);
 	        render("/yh/profile/toll/PayList.html");
         }
         if (url.equals("/ownCarPay")) {

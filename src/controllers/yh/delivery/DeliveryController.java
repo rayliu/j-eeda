@@ -53,11 +53,11 @@ public class DeliveryController extends Controller {
 		String url = re.getRequestURI();
 		logger.debug("URI:" + url);
 		if (url.equals("/delivery")) {
-			currentUser.checkPermission(PermissionConstant.PERMSSION_DYO_LIST);
+			//currentUser.checkPermission(PermissionConstant.PERMSSION_DYO_LIST);
 				render("/yh/delivery/deliveryOrderList.html");
 		}
 		if (url.equals("/deliveryMilestone")) {
-			currentUser.checkPermission(PermissionConstant.PERMSSION_DOM_LIST);
+			//currentUser.checkPermission(PermissionConstant.PERMSSION_DOM_LIST);
 				render("/yh/delivery/deliveryOrderStatus.html");
 		}
 	}

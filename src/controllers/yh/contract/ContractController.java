@@ -45,17 +45,17 @@ public class ContractController extends Controller {
         logger.debug("URI:" + url);
         if (url.equals("/customerContract")) {
             setAttr("contractType", "CUSTOMER");
-            	currentUser.checkPermission(PermissionConstant.PERMSSION_CC_LIST);
+            	////currentUser.checkPermission(PermissionConstant.PERMSSION_CC_LIST);
                 render("/yh/contract/ContractList.html");
         }
         if (url.equals("/deliverySpContract")) {
             setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
-            currentUser.checkPermission(PermissionConstant.PERMSSION_CD_LIST);
+            ////currentUser.checkPermission(PermissionConstant.PERMSSION_CD_LIST);
                 render("/yh/contract/ContractList.html");
         }
         if (url.equals("/spContract")) {
             setAttr("contractType", "SERVICE_PROVIDER");
-            currentUser.checkPermission(PermissionConstant.PERMSSION_CP_LIST);
+            //currentUser.checkPermission(PermissionConstant.PERMSSION_CP_LIST);
                 render("/yh/contract/ContractList.html");
         }
 
