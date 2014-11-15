@@ -66,7 +66,7 @@ public class InventoryController extends Controller {
     }
 
     // 入库单list
-     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INLIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INLIST})
     public void gateInlist() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -95,7 +95,7 @@ public class InventoryController extends Controller {
     }
 
     // 出库单list
-     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTLIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTLIST})
     public void gateOutlist() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -124,7 +124,7 @@ public class InventoryController extends Controller {
     }
 
     // 库存list
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
     public void stocklist() {
         String id = getPara();
         if (id == null) {
@@ -160,7 +160,7 @@ public class InventoryController extends Controller {
     }
 
     // 入库单添加
-     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCREATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCREATE})
     public void gateIn_add() {
             render("/yh/inventory/gateInEdit.html");
     }
@@ -184,13 +184,13 @@ public class InventoryController extends Controller {
     }
 
     // 出库单添加
-     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTCREATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTCREATE})
     public void gateOut_add() {
             render("/yh/inventory/gateOutEdit.html");
     }
 
     // 入库单修改edit
-     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INUPDATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INUPDATE})
     public void gateInEdit() {
         String id = getPara();
         System.out.println(id);
@@ -203,7 +203,7 @@ public class InventoryController extends Controller {
     }
 
     // 出库单修改edit
-     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTUPDATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTUPDATE})
     public void gateOutEdit() {
         String id = getPara();
         System.out.println(id);
@@ -318,7 +318,7 @@ public class InventoryController extends Controller {
     }
 
     // 保存入库单
-     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCREATE,PermissionConstant.PERMISSION_WO_INUPDATE},logical=Logical.OR)
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCREATE,PermissionConstant.PERMISSION_WO_INUPDATE},logical=Logical.OR)
     public void gateInSave() {
         String orderNo = creat_order_no();// 构造发车单号
         WarehouseOrder warehouseOrder = new WarehouseOrder();
@@ -345,7 +345,7 @@ public class InventoryController extends Controller {
     }
 
     // 保存出库单
-     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTCREATE,PermissionConstant.PERMISSION_WO_OUTUPDATE},logical=Logical.OR)
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTCREATE,PermissionConstant.PERMISSION_WO_OUTUPDATE},logical=Logical.OR)
     public void gateOutSave() {
         String orderNo = creat_order_no2();// 构造发车单号
         WarehouseOrder warehouseOrder = new WarehouseOrder();
@@ -567,7 +567,7 @@ public class InventoryController extends Controller {
     }
 
     // 入仓确认
-     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCOMPLETED})
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCOMPLETED})
     public void gateInConfirm() {
         String id = getPara();
 
@@ -632,7 +632,7 @@ public class InventoryController extends Controller {
     }
 
     // 出仓确认
-     //@RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTCOMPLETED})
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTCOMPLETED})
     public void gateOutConfirm() {
         String id = getPara();
 

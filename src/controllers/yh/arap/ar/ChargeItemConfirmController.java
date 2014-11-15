@@ -21,11 +21,11 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.PermissionConstant;
 
-//@RequiresAuthentication
+@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class ChargeItemConfirmController extends Controller {
     private Logger logger = Logger.getLogger(ChargeItemConfirmController.class);
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CI_AFFIRM})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CI_AFFIRM})
     public void index() {
     	    render("/yh/arap/ChargeItemConfirm/ChargeItemConfirmList.html");
     }
@@ -148,7 +148,7 @@ public class ChargeItemConfirmController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CI_AFFIRM})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CI_AFFIRM})
     public void chargeConfiremReturnOrder(){
     	String returnOrderIds = getPara("returnOrderIds");
     	String[] returnOrderArr = returnOrderIds.split(",");

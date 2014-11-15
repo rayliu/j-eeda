@@ -70,7 +70,7 @@ public class ContractController extends Controller {
     }
 
     // 客户合同列表
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_LIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_LIST})
     public void customerList() {
         String contractName_filter = getPara("contractName_filter");
         String contactPerson_filter = getPara("contactPerson_filter");
@@ -211,7 +211,7 @@ public class ContractController extends Controller {
     }
 
     // 干线供应商合同列表
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CP_LIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CP_LIST})
     public void spList() {
         String contractName_filter = getPara("contractName_filter");
         String contactPerson_filter = getPara("contactPerson_filter");
@@ -274,7 +274,7 @@ public class ContractController extends Controller {
         }
 
     }
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_CREATE,PermissionConstant.PERMSSION_CP_CREATE,PermissionConstant.PERMSSION_CD_CREATE},logical=Logical.OR)
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_CREATE,PermissionConstant.PERMSSION_CP_CREATE,PermissionConstant.PERMSSION_CD_CREATE},logical=Logical.OR)
     public void add() {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();
@@ -303,7 +303,7 @@ public class ContractController extends Controller {
         setAttr("saveOK", false);
 
     }
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_UPDAET,PermissionConstant.PERMSSION_CP_UPDATE,PermissionConstant.PERMSSION_CD_UPDATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_UPDAET,PermissionConstant.PERMSSION_CP_UPDATE,PermissionConstant.PERMSSION_CD_UPDATE})
     public void edit() {
         String id = getPara();
         if (id != null) {
@@ -319,7 +319,7 @@ public class ContractController extends Controller {
         }
             render("/yh/contract/ContractEdit.html");
     }
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_CREATE, PermissionConstant.PERMSSION_CC_UPDAET,PermissionConstant.PERMSSION_CD_CREATE,PermissionConstant.PERMSSION_CD_UPDATE,PermissionConstant.PERMSSION_CP_CREATE,PermissionConstant.PERMSSION_CP_UPDATE}, logical=Logical.OR)
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_CREATE, PermissionConstant.PERMSSION_CC_UPDAET,PermissionConstant.PERMSSION_CD_CREATE,PermissionConstant.PERMSSION_CD_UPDATE,PermissionConstant.PERMSSION_CP_CREATE,PermissionConstant.PERMSSION_CP_UPDATE}, logical=Logical.OR)
     public void save() {
         String id = getPara("contractId");
         Date createDate = Calendar.getInstance().getTime();
@@ -344,7 +344,7 @@ public class ContractController extends Controller {
         }
         renderJson(c.get("id"));
     }
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_DELETE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_DELETE})
     public void delete() {
         String id = getPara();
         if (id != null) {
@@ -352,7 +352,7 @@ public class ContractController extends Controller {
         }
             redirect("/customerContract");
     }
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CP_DELETE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CP_DELETE})
     public void delete2() {
         String id = getPara();
         if (id != null) {

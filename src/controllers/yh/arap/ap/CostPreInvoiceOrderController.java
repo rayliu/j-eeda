@@ -39,7 +39,7 @@ import controllers.yh.util.PermissionConstant;
 public class CostPreInvoiceOrderController extends Controller {
     private Logger logger = Logger.getLogger(CostPreInvoiceOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_LIST})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_LIST})
     public void index() {
 	    render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderList.html");
     }
@@ -61,7 +61,7 @@ public class CostPreInvoiceOrderController extends Controller {
     }
 
     // 应付条目列表
-    // //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_LIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_LIST})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -90,7 +90,7 @@ public class CostPreInvoiceOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-    // //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
 		String[] idArray = ids.split(",");
@@ -153,7 +153,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		setAttr("status", "new");
 			render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
 	}
-    // //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE, PermissionConstant.PERMSSION_CPO_UPDATE}, logical=Logical.OR)
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE, PermissionConstant.PERMSSION_CPO_UPDATE}, logical=Logical.OR)
 	public void save() {
 		ArapCostInvoiceApplication arapAuditInvoiceApplication = null;
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
@@ -209,7 +209,7 @@ public class CostPreInvoiceOrderController extends Controller {
 	
 	// 审核
 
- //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_APPROVAL})
+@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_APPROVAL})
 	public void auditCostPreInvoiceOrder(){
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
 		if(costPreInvoiceOrderId != null && !"".equals(costPreInvoiceOrderId)){
@@ -225,7 +225,7 @@ public class CostPreInvoiceOrderController extends Controller {
 	}
 	
 	// 审批
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CONFIRMATION})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CONFIRMATION})
 	public void approvalCostPreInvoiceOrder(){
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
 		if(costPreInvoiceOrderId != null && !"".equals(costPreInvoiceOrderId)){
@@ -239,7 +239,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		}
 		renderJson("{\"success\":true}");
 	}
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_UPDATE})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_UPDATE})
 	public void edit() throws ParseException {
 		String id = getPara("id");
 		ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findById(id);

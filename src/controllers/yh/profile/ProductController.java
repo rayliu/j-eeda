@@ -31,11 +31,11 @@ import controllers.yh.util.PermissionConstant;
 public class ProductController extends Controller {
 
     private Logger logger = Logger.getLogger(ProductController.class);
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_LIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_LIST})
     public void index() {
         render("/yh/profile/product/productList.html");
     }
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_LIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_LIST})
     public void list() {
         String sLimit = "";
         Map productListMap = null;
@@ -219,7 +219,7 @@ public class ProductController extends Controller {
     }
 
     // 新增类别
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_CREATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_CREATE})
     public void addCategory() {
         String parentId = getPara("categoryId");
         Category category = null;
@@ -246,7 +246,7 @@ public class ProductController extends Controller {
     }
 
     // 删除类别
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_DELETE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_DELETE})
     public void deleteCategory() {
     	boolean flag = true;
         String cid = getPara("categoryId");
@@ -268,7 +268,7 @@ public class ProductController extends Controller {
     }
 
     // 删除子类别
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_DELETE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_DELETE})
     private void removeChildern(String cid) {
         List<Category> categories = Category.dao.find("select * from category where parent_id = ?", cid);
         if (categories.size() > 0) {
@@ -337,7 +337,7 @@ public class ProductController extends Controller {
     }
 
     // 保存产品
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_CREATE, PermissionConstant.PERMSSION_PT_UPDATE}, logical=Logical.OR)
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_CREATE, PermissionConstant.PERMSSION_PT_UPDATE}, logical=Logical.OR)
     public void saveProductByField() {
         String returnValue = "";
         String id = getPara("id");

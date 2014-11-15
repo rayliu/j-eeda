@@ -24,7 +24,7 @@ import controllers.yh.util.PermissionConstant;
 @Before(SetAttrLoginUserInterceptor.class)
 public class TollController extends Controller {
 	private Logger logger = Logger.getLogger(TollController.class);
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_LIST})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_LIST})
 	public void index() {
 		/**
 		 * String page=getPara("page"); //System.out.print(page);
@@ -36,7 +36,7 @@ public class TollController extends Controller {
 		render("/yh/profile/toll/TollList.html");
 
 	}
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_LIST})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_LIST})
 	public void list() {
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -67,7 +67,7 @@ public class TollController extends Controller {
 	}
 
 	// 编辑条目按钮
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_CREATE,PermissionConstant.PERMSSION_T_UPDATE},logical=Logical.OR)
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_CREATE,PermissionConstant.PERMSSION_T_UPDATE},logical=Logical.OR)
 	public void Edit() {
 		String id = getPara();
 		if (id != null) {
@@ -80,7 +80,7 @@ public class TollController extends Controller {
 	}
 
 	// 删除条目
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_DELETE})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_DELETE})
 	public void delete() {
 		String id = getPara();
 		if (id != null) {
@@ -91,7 +91,7 @@ public class TollController extends Controller {
 	}
 
 	// 添加编辑保存
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_CREATE, PermissionConstant.PERMSSION_T_UPDATE}, logical=Logical.OR)
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_CREATE, PermissionConstant.PERMSSION_T_UPDATE}, logical=Logical.OR)
 	public void SaveEdit() {
 
 		String id = getPara("id");

@@ -31,12 +31,12 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.PermissionConstant;
 
-//@RequiresAuthentication
+@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class ChargePreInvoiceOrderController extends Controller {
     private Logger logger = Logger.getLogger(ChargePreInvoiceOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_LIST})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_LIST})
     public void index() {
     	    render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderList.html");
     }
@@ -58,7 +58,7 @@ public class ChargePreInvoiceOrderController extends Controller {
     }
 
     // 应付条目列表
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_LIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_LIST})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -87,7 +87,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
 		String[] idArray = ids.split(",");
@@ -150,7 +150,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		setAttr("status", "new");
 			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
 	}
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
 	public void save() {
 		ArapChargeInvoiceApplication arapAuditInvoiceApplication = null;
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
@@ -210,7 +210,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 	}
 	
 	// 审核
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_APPROVAL})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_APPROVAL})
 	public void auditChargePreInvoiceOrder(){
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
 		if(chargePreInvoiceOrderId != null && !"".equals(chargePreInvoiceOrderId)){
@@ -226,7 +226,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 	}
 	
 	// 审批
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CONFIRMATION})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CONFIRMATION})
 	public void approvalChargePreInvoiceOrder(){
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
 		if(chargePreInvoiceOrderId != null && !"".equals(chargePreInvoiceOrderId)){
@@ -240,7 +240,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		}
 		renderJson("{\"success\":true}");
 	}
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_UPDATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_UPDATE})
 	public void edit() throws ParseException {
 		String id = getPara("id");
 		ArapChargeInvoiceApplication arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(id);
@@ -278,7 +278,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		setAttr("endTime", endTime);*/
 			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
 	}
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
 	public void chargeCheckOrderList() {
 		String returnOrderIds = getPara("returnOrderIds");
 		String sLimit = "";

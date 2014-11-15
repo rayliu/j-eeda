@@ -157,7 +157,7 @@ public class PaymentCheckOrderController extends Controller {
     }
 
     // billing order 列表
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PCO_LIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PCO_LIST})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");

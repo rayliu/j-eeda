@@ -24,18 +24,18 @@ import controllers.yh.util.PermissionConstant;
 @Before(SetAttrLoginUserInterceptor.class)
 public class AccountController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_A_LIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_LIST})
     public void index() {
         render("/yh/profile/account/account.html");
     }
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_A_CREATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_CREATE})
     // 链接到添加金融账户页面
     public void editAccount() {
         render("/yh/profile/account/edit.html");
     }
 
     // 编辑金融账户信息
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_A_UPDATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_UPDATE})
     public void edit() {
         String id = getPara();
         if (id != null) {
@@ -47,7 +47,7 @@ public class AccountController extends Controller {
     }
 
     // 添加金融账户
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_A_CREATE, PermissionConstant.PERMSSION_A_UPDATE}, logical=Logical.OR)
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_CREATE, PermissionConstant.PERMSSION_A_UPDATE}, logical=Logical.OR)
     public void save() {
         /*
          * if (!isAuthenticated()) return;
@@ -76,7 +76,7 @@ public class AccountController extends Controller {
     }
 
     // 删除金融账户
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_A_DELETE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_DELETE})
     public void del() {
         String id = getPara();
         if (id != null) {
@@ -86,7 +86,7 @@ public class AccountController extends Controller {
     }
 
     // 列出金融账户信息
-     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_A_LIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_LIST})
     public void listAccount() {
         /*
          * Paging

@@ -30,12 +30,12 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.PermissionConstant;
 
-//@RequiresAuthentication
+@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class ChargeCheckOrderController extends Controller {
 	private Logger logger = Logger.getLogger(ChargeCheckOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-	// //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_LIST})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_LIST})
 	public void index() {
 			render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderList.html");
 	}
@@ -45,7 +45,7 @@ public class ChargeCheckOrderController extends Controller {
 		setAttr("classify", "");
 			render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderCreateSearchList.html");
 	}
-	// //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_CREATE})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
 		String[] idArray = ids.split(",");
@@ -111,7 +111,7 @@ public class ChargeCheckOrderController extends Controller {
 
 	// 创建应收对帐单时，先选取合适的回单，条件：客户，时间段
 	
-	// //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_CREATE})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_CREATE})
 	public void createList() {
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -294,7 +294,7 @@ public class ChargeCheckOrderController extends Controller {
 
 		renderJson(BillingOrderListMap);
 	}
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_UPDATE, PermissionConstant.PERMSSION_CCO_CREATE}, logical=Logical.OR)
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_UPDATE, PermissionConstant.PERMSSION_CCO_CREATE}, logical=Logical.OR)
 	public void save() {
 		ArapChargeOrder arapAuditOrder = null;
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
@@ -351,7 +351,7 @@ public class ChargeCheckOrderController extends Controller {
 		}
 		renderJson(arapAuditOrder);;
 	}
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_UPDATE})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_UPDATE})
 	public void edit() throws ParseException {
 		String id = getPara("id");
 		ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(id);
@@ -439,7 +439,7 @@ public class ChargeCheckOrderController extends Controller {
 	}
 	
 	// 审核
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_AFFIRM})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_AFFIRM})
 	public void auditChargeCheckOrder(){
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
 		if(chargeCheckOrderId != null && !"".equals(chargeCheckOrderId)){
@@ -463,7 +463,7 @@ public class ChargeCheckOrderController extends Controller {
 	}
 	
 	// billing order 列表
-	 //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_LIST})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_LIST})
 	public void list() {
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
