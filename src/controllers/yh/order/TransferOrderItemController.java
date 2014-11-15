@@ -1,5 +1,7 @@
 package controllers.yh.order;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,11 +19,13 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class TransferOrderItemController extends Controller {
 
     private Logger logger = Logger.getLogger(TransferOrderItemController.class);

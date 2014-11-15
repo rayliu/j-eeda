@@ -1,5 +1,7 @@
 package controllers.yh.inventory;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -22,16 +24,20 @@ import models.WarehouseOrderItem;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.LoginUserController;
+import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class InventoryController extends Controller {
 
     private Logger logger = Logger.getLogger(InventoryController.class);
@@ -46,19 +52,23 @@ public class InventoryController extends Controller {
         if (url.equals("/gateIn")) {
 
             setAttr("inventory", "gateIn");
+            currentUser.checkPermission(PermissionConstant.PERMISSION_WO_INLIST );
                 render("/yh/inventory/inventoryList.html");
         }
         if (url.equals("/gateOut")) {
 
             setAttr("inventory", "gateOut");
+            currentUser.checkPermission(PermissionConstant.PERMISSION_WO_OUTLIST);
                 render("/yh/inventory/inventoryList.html");
         }
         if (url.equals("/stock")) {
+        	currentUser.checkPermission(PermissionConstant.PERMSSION_II_LIST);
                 render("/yh/inventory/stock.html");
         }
     }
 
     // 入库单list
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INLIST})
     public void gateInlist() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -87,6 +97,7 @@ public class InventoryController extends Controller {
     }
 
     // 出库单list
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTLIST})
     public void gateOutlist() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -115,6 +126,7 @@ public class InventoryController extends Controller {
     }
 
     // 库存list
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
     public void stocklist() {
         String id = getPara();
         if (id == null) {
@@ -150,6 +162,7 @@ public class InventoryController extends Controller {
     }
 
     // 入库单添加
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCREATE})
     public void gateIn_add() {
             render("/yh/inventory/gateInEdit.html");
     }
@@ -173,11 +186,13 @@ public class InventoryController extends Controller {
     }
 
     // 出库单添加
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTCREATE})
     public void gateOut_add() {
             render("/yh/inventory/gateOutEdit.html");
     }
 
     // 入库单修改edit
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INUPDATE})
     public void gateInEdit() {
         String id = getPara();
         System.out.println(id);
@@ -190,6 +205,7 @@ public class InventoryController extends Controller {
     }
 
     // 出库单修改edit
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTUPDATE})
     public void gateOutEdit() {
         String id = getPara();
         System.out.println(id);
@@ -304,6 +320,7 @@ public class InventoryController extends Controller {
     }
 
     // 保存入库单
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCREATE,PermissionConstant.PERMISSION_WO_INUPDATE},logical=Logical.OR)
     public void gateInSave() {
         String orderNo = creat_order_no();// 构造发车单号
         WarehouseOrder warehouseOrder = new WarehouseOrder();
@@ -330,6 +347,7 @@ public class InventoryController extends Controller {
     }
 
     // 保存出库单
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTCREATE,PermissionConstant.PERMISSION_WO_OUTUPDATE},logical=Logical.OR)
     public void gateOutSave() {
         String orderNo = creat_order_no2();// 构造发车单号
         WarehouseOrder warehouseOrder = new WarehouseOrder();
@@ -551,6 +569,7 @@ public class InventoryController extends Controller {
     }
 
     // 入仓确认
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCOMPLETED})
     public void gateInConfirm() {
         String id = getPara();
 
@@ -615,6 +634,7 @@ public class InventoryController extends Controller {
     }
 
     // 出仓确认
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTCOMPLETED})
     public void gateOutConfirm() {
         String id = getPara();
 

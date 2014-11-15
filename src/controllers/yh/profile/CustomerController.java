@@ -1,5 +1,7 @@
 package controllers.yh.profile;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,17 +15,21 @@ import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.LoginUserController;
+import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class CustomerController extends Controller {
 
     private Logger logger = Logger.getLogger(CustomerController.class);
@@ -31,10 +37,11 @@ public class CustomerController extends Controller {
 
     // in config route已经将路径默认设置为/yh
     // me.add("/yh", controllers.yh.AppController.class, "/yh");
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_C_LIST})
     public void index() {
             render("/yh/profile/customer/CustomerList.html");
     }
-
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_C_LIST})
     public void list() {
         String company_name = getPara("COMPANY_NAME");
         String contact_person = getPara("CONTACT_PERSON");
@@ -106,12 +113,12 @@ public class CustomerController extends Controller {
             renderJson(customerListMap);
         }
     }
-
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_C_CREATE})
     public void add() {
         setAttr("saveOK", false);
             render("/yh/profile/customer/CustomerEdit.html");
     }
-
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_C_UPDATE})
     public void edit() {
         String id = getPara();
 
@@ -143,7 +150,7 @@ public class CustomerController extends Controller {
 
         render("/yh/profile/customer/CustomerEdit.html");
     }
-
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_C_DELETE})
     public void delete() {
         long id = getParaToLong();
 
@@ -169,7 +176,7 @@ public class CustomerController extends Controller {
         party.delete();
             redirect("/customer");
     }
-
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_C_CREATE, PermissionConstant.PERMSSION_C_UPDATE}, logical=Logical.OR)
     public void save() {
 
         String id = getPara("party_id");

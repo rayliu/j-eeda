@@ -1,5 +1,7 @@
 package controllers.yh.arap.ar;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,7 @@ import models.ArapChargeOrder;
 import models.Party;
 import models.yh.profile.Contact;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
@@ -18,6 +21,7 @@ import com.jfinal.plugin.activerecord.Record;
 import controllers.yh.LoginUserController;
 
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class ChargeAcceptOrderController extends Controller {
     private Logger logger = Logger.getLogger(ChargeAcceptOrderController.class);
 

@@ -1,5 +1,7 @@
 package controllers.yh.profile;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,23 +15,27 @@ import models.Warehouse;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
-import controllers.yh.LoginUserController;
+import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class WarehouseController extends Controller{
 
     private Logger logger = Logger.getLogger(WarehouseController.class);
-    
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_W_LIST})
 	public void index() {
 		render("/yh/profile/warehouse/warehouseList.html");
 	}
-
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_W_LIST})
 	public void list() {
 		Map warehouseListMap = null;
 		String warehouseName = getPara("warehouseName");
@@ -95,12 +101,12 @@ public class WarehouseController extends Controller{
 		List<Contact> contactjson = Contact.dao.find("select * from contact");			
         renderJson(contactjson);
 	}
-
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_CREATE})
 	public void add() {
 		setAttr("saveOK", false);
 		render("/yh/profile/warehouse/warehouseEdit.html");
 	}
-
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_UPDATE})
 	public void edit() {
 		long id = getParaToLong();
 
@@ -131,7 +137,7 @@ public class WarehouseController extends Controller{
 		setAttr("sp", sp);
 		render("/yh/profile/warehouse/warehouseEdit.html");
 	}
-
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_DELETE})
 	public void delete() {
 		long id = getParaToLong();
 		List<TransferOrder> orders = TransferOrder.dao.find("select * from transfer_order where warehouse_id = "+id);
@@ -147,7 +153,7 @@ public class WarehouseController extends Controller{
 		redirect("/warehouse");
 	}
 
-	@SuppressWarnings("unused")
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_CREATE, PermissionConstant.PERMSSION_W_UPDATE}, logical=Logical.OR)
 	public void save() {
 		UploadFile uploadFile = getFile("fileupload");
         String spId = getPara("sp_id");

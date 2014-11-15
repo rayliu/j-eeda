@@ -1,5 +1,7 @@
 package controllers.yh.arap;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,16 +15,20 @@ import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class PaymentCheckOrderController extends Controller {
     private Logger logger = Logger.getLogger(PaymentCheckOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
@@ -151,6 +157,7 @@ public class PaymentCheckOrderController extends Controller {
     }
 
     // billing order 列表
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PCO_LIST})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");

@@ -16,6 +16,7 @@ import models.UserLogin;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.core.Controller;
@@ -24,6 +25,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.departOrder.DepartOrderController;
 import controllers.yh.returnOrder.ReturnOrderController;
+import controllers.yh.util.PermissionConstant;
 
 public class TransferOrderMilestoneController extends Controller {
 
@@ -344,6 +346,7 @@ public class TransferOrderMilestoneController extends Controller {
     }
 
     // 发车确认
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_COMPLETED})
     public void departureConfirmation() {
         String departOrderId = getPara("departOrderId");
         int num = 1;
@@ -411,6 +414,7 @@ public class TransferOrderMilestoneController extends Controller {
     }
     
     // 入库确认
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_UPDATE})
     public void warehousingConfirm() {
     	String departOrderId = getPara("departOrderId");
     	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departOrderId);
