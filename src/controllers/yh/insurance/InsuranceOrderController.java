@@ -1,5 +1,7 @@
 package controllers.yh.insurance;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,25 +20,30 @@ import models.UserLogin;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.LoginUserController;
+import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class InsuranceOrderController extends Controller {
     private Logger logger = Logger.getLogger(InsuranceOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
-
+    
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_LIST})
     public void index() {
     	    render("/yh/insuranceOrder/insuranceOrderList.html");
     }
-
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_CREATE})
     public void add() {
     		render("/yh/insuranceOrder/insuranceOrderSearchTransfer.html");
     }
@@ -249,6 +256,7 @@ public class InsuranceOrderController extends Controller {
     }
 
     // billing order 列表
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_LIST})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -274,7 +282,7 @@ public class InsuranceOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_CREATE})
     public void createInsuranceOrder() {
         String list = this.getPara("localArr");
         setAttr("localArr", list);
@@ -440,7 +448,7 @@ public class InsuranceOrderController extends Controller {
     	}
     	renderJson("{\"success\":true}");
     }
-    
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_CREATE, PermissionConstant.PERMSSION_IO_UPDATE}, logical=Logical.OR)
     public void save(){
     	InsuranceOrder insuranceOrder = null;
     	String insuranceOrderId = getPara("insuranceId");
@@ -474,7 +482,7 @@ public class InsuranceOrderController extends Controller {
     	}
     	renderJson(insuranceOrder);
     }
-    
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_UPDATE})
     public void edit(){
     	String id = getPara("id");
     	List paymentItemList = new ArrayList();

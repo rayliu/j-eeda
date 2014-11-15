@@ -1,5 +1,7 @@
 package controllers.yh.pickup;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,27 +29,34 @@ import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.PermissionConstant;
+
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class PickupOrderController extends Controller {
     private Logger logger = Logger.getLogger(PickupOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
-
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_LIST})
     public void index() {
         render("/yh/pickup/pickupOrderList.html");
     }
 
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_CREATE})
     public void add() {
             render("/yh/pickup/pickupOrderSearchTransfer.html");
     }
-
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_CREATE})
     public void createPickupOrder() {
         String list = this.getPara("localArr");
         setAttr("localArr", list);
@@ -116,7 +125,8 @@ public class PickupOrderController extends Controller {
             render("/yh/pickup/editPickupOrder.html");
     }
 
- // 拼车单列表显示
+    // 拼车单列表
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_LIST})
     public void pickuplist() {
         String orderNo = getPara("orderNo");
         String departNo = getPara("departNo");
@@ -239,7 +249,7 @@ public class PickupOrderController extends Controller {
         map.put("aaData", warehouses);
         renderJson(map);
     }
-
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_CREATE})
     public void createList() {
         Map transferOrderListMap = null;
         String orderNo = getPara("orderNo");
@@ -539,7 +549,8 @@ public class PickupOrderController extends Controller {
         renderJson(Map);
     }
 
-    // 保存拼车单
+    // 保存/更新调车单
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_CREATE,PermissionConstant.PERMISSION_PO_UPDATE},logical=Logical.OR)
     public void savePickupOrder() {
         DepartOrder pickupOrder = null;
         String pickId = getPara("pickupId");
@@ -904,6 +915,7 @@ public class PickupOrderController extends Controller {
     }
     
     // 修改拼车单页面
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_UPDATE})
     public void edit() {
     	pickupOrderEdit();
             render("/yh/pickup/editPickupOrder.html");
@@ -916,6 +928,7 @@ public class PickupOrderController extends Controller {
     }
 
     // 保存拼车里程碑
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_CREATE})
     private void savePickupOrderMilestone(DepartOrder pickupOrder) {
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         transferOrderMilestone.set("status", "新建");
@@ -963,6 +976,7 @@ public class PickupOrderController extends Controller {
     }
 
     // 完成
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_COMPLETED})
     public void finishPickupOrder() {
         String pickupOrderId = getPara("pickupOrderId");
         DepartOrder pickupOrder = DepartOrder.dao.findById(pickupOrderId);
@@ -1515,6 +1529,7 @@ public class PickupOrderController extends Controller {
     }
 
     // 添加应付
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_ADD_COST})
     public void addNewRow() {
     	List<Fin_item> items = new ArrayList<Fin_item>();
         String pickupOrderId = getPara();
@@ -1625,7 +1640,7 @@ public class PickupOrderController extends Controller {
 		}*/
         renderJson("{\"success\":true}");
     }
-    
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE})
     public void pickupOrderPaymentList(){
     	String pickupOrderId = getPara("pickupOrderId");
     	if(pickupOrderId == null || "".equals(pickupOrderId)){
@@ -1705,7 +1720,7 @@ public class PickupOrderController extends Controller {
     	List<Fin_item> items = Fin_item.dao.find("select * from fin_item where type = '应付'");
     	renderJson(items);
     }
-    
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_ADD_COST})
     public void updatePickupOrderFinItem(){
     	// 由于应收中只存在一条总金额,所以简化处理
     	String orderId = getPara("orderId");

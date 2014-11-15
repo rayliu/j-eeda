@@ -1,5 +1,7 @@
 package controllers.yh.delivery;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,37 +27,43 @@ import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.LoginUserController;
+import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class DeliveryController extends Controller {
 	private Logger logger = Logger.getLogger(DeliveryController.class);
 	// in config route已经将路径默认设置为/yh
 	// me.add("/yh", controllers.yh.AppController.class, "/yh");
 	Subject currentUser = SecurityUtils.getSubject();
 
-	
 	public void index() {
 		HttpServletRequest re = getRequest();
 		String url = re.getRequestURI();
 		logger.debug("URI:" + url);
 		if (url.equals("/delivery")) {
+			currentUser.checkPermission(PermissionConstant.PERMSSION_DYO_LIST);
 				render("/yh/delivery/deliveryOrderList.html");
 		}
 		if (url.equals("/deliveryMilestone")) {
+			currentUser.checkPermission(PermissionConstant.PERMSSION_DOM_LIST);
 				render("/yh/delivery/deliveryOrderStatus.html");
 		}
 	}
 
 	// 配送单list
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_LIST})
 	public void deliveryList() {
 		String orderNo_filter = getPara("orderNo_filter");
 		String transfer_filter = getPara("transfer_filter");
@@ -154,6 +162,8 @@ public class DeliveryController extends Controller {
 	}
 
 	// 在途配送单list
+
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_ADD_COST})
 	public void deliveryMilestone() {
 
 		String transferorderNo = getPara("transferorderNo");
@@ -251,12 +261,12 @@ public class DeliveryController extends Controller {
 		}
 		return the_order_no;
 	}
-
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_CREATE})
 	public void add() {
 		setAttr("saveOK", false);
 			render("/yh/delivery/deliveryOrderSearchTransfer.html");
 	}
-
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_UPDATE})
 	public void edit() {
 		String id = getPara("id");
 		//System.out.println(id);
@@ -807,6 +817,8 @@ public class DeliveryController extends Controller {
 	}
 
 	// 配送单保存
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_CREATE,PermissionConstant.PERMSSION_DYO_UPDATE},logical=Logical.OR)
+
 	public void deliverySave() {
 		String orderNo = creat_order_no();// 构造配送单号
 		String deliveryid = getPara("delivery_id");

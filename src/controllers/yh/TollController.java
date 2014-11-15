@@ -1,22 +1,30 @@
 package controllers.yh;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-
 import models.Toll;
 
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.PermissionConstant;
+
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class TollController extends Controller {
 	private Logger logger = Logger.getLogger(TollController.class);
-
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_LIST})
 	public void index() {
 		/**
 		 * String page=getPara("page"); //System.out.print(page);
@@ -28,7 +36,7 @@ public class TollController extends Controller {
 		render("/yh/profile/toll/TollList.html");
 
 	}
-
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_LIST})
 	public void list() {
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -59,6 +67,7 @@ public class TollController extends Controller {
 	}
 
 	// 编辑条目按钮
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_CREATE,PermissionConstant.PERMSSION_T_UPDATE},logical=Logical.OR)
 	public void Edit() {
 		String id = getPara();
 		if (id != null) {
@@ -71,6 +80,7 @@ public class TollController extends Controller {
 	}
 
 	// 删除条目
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_DELETE})
 	public void delete() {
 		String id = getPara();
 		if (id != null) {
@@ -81,6 +91,7 @@ public class TollController extends Controller {
 	}
 
 	// 添加编辑保存
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_CREATE, PermissionConstant.PERMSSION_T_UPDATE}, logical=Logical.OR)
 	public void SaveEdit() {
 
 		String id = getPara("id");

@@ -1,10 +1,10 @@
 package controllers.yh.arap.ap;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 
 import models.DepartOrder;
 import models.InsuranceOrder;
@@ -12,17 +12,22 @@ import models.Party;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.LoginUserController;
+import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class CostItemConfirmController extends Controller {
     private Logger logger = Logger.getLogger(CostItemConfirmController.class);
-
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void index() {
     	    render("/yh/arap/CostItemConfirm/CostItemConfirmList.html");
     }
@@ -44,6 +49,7 @@ public class CostItemConfirmController extends Controller {
     }
 
     // 应付条目列表
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -175,7 +181,7 @@ public class CostItemConfirmController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-    
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void costConfiremReturnOrder(){
     	String ids = getPara("ids");
     	String orderNos = getPara("orderNos");

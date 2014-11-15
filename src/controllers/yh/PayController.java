@@ -1,24 +1,34 @@
 package controllers.yh;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-
 import models.Toll;
 import models.yh.profile.Carinfo;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
+
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+
+import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class PayController extends Controller {
     private Logger logger = Logger.getLogger(PayController.class);
-
+    Subject currentUser = SecurityUtils.getSubject();
     public void index() {
         /**
          * String page=getPara("page"); //System.out.print(page);
@@ -30,6 +40,7 @@ public class PayController extends Controller {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();logger.debug("URI:" + url);
         if (url.equals("/pay")) {
+        	currentUser.checkPermission(PermissionConstant.PERMSSION_PAY_LIST);
 	        render("/yh/profile/toll/PayList.html");
         }
         if (url.equals("/ownCarPay")) {
@@ -40,6 +51,7 @@ public class PayController extends Controller {
     /**
      *  付费条目
      */
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_LIST})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -70,6 +82,7 @@ public class PayController extends Controller {
     }
 
     // 编辑条目按钮
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_CREATE, PermissionConstant.PERMSSION_PAY_UPDATE}, logical=Logical.OR)
     public void Edit() {
         String id = getPara();
         if (id != null) {
@@ -82,6 +95,7 @@ public class PayController extends Controller {
     }
 
     // 删除条目
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_DELETE})
     public void delete() {
         String id = getPara();
         if (id != null) {
@@ -92,6 +106,7 @@ public class PayController extends Controller {
     }
 
     // 添加编辑保存
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_CREATE, PermissionConstant.PERMSSION_PAY_UPDATE}, logical=Logical.OR)
     public void SaveEdit() {
 
         String id = getPara("id");
