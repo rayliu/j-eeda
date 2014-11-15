@@ -705,7 +705,7 @@ public class ReturnOrderController extends Controller {
 					+ "left join transfer_order_item toi ON toid.item_id = toi.id "
 					+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
 					+ "left join product p on toi.product_id = p.id where r.id ="
-					+ returnOrderId + ") group by tid" + sLimit;
+					+ returnOrderId + ") toid group by tid" + sLimit;
 		} else {
 			sqlTotal = "select distinct count(1) total "
 					+ " from transfer_order_item toi "
@@ -738,7 +738,7 @@ public class ReturnOrderController extends Controller {
 						+ "left join transfer_order_item toi on toid.item_id = toi.id "
 						+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
 						+ "left join product p on toi.product_id = p.id where r.id ="
-						+ returnOrderId + ") group by tid" + sLimit;
+						+ returnOrderId + ") toid group by tid" + sLimit;
 						
 			} else {
 				sql = "select toi.id,"
