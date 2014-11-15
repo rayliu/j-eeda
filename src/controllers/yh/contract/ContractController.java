@@ -1,7 +1,5 @@
 package controllers.yh.contract;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -11,32 +9,27 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
 import models.Fin_item;
 import models.Location;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.subject.Subject;
-
-import com.jfinal.aop.Before;
+import com.jfinal.config.JFinalConfig;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.util.PermissionConstant;
+import controllers.yh.LoginUserController;
 
 @RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class ContractController extends Controller {
 
     private Logger logger = Logger.getLogger(ContractController.class);
-    Subject currentUser = SecurityUtils.getSubject();
+
     // in config route已经将路径默认设置为/yh
     // me.add("/yh", controllers.yh.AppController.class, "/yh");
     public void index() {
@@ -45,17 +38,14 @@ public class ContractController extends Controller {
         logger.debug("URI:" + url);
         if (url.equals("/customerContract")) {
             setAttr("contractType", "CUSTOMER");
-            	currentUser.checkPermission(PermissionConstant.PERMSSION_CC_LIST);
                 render("/yh/contract/ContractList.html");
         }
         if (url.equals("/deliverySpContract")) {
             setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
-            currentUser.checkPermission(PermissionConstant.PERMSSION_CD_LIST);
                 render("/yh/contract/ContractList.html");
         }
         if (url.equals("/spContract")) {
             setAttr("contractType", "SERVICE_PROVIDER");
-            currentUser.checkPermission(PermissionConstant.PERMSSION_CP_LIST);
                 render("/yh/contract/ContractList.html");
         }
 
@@ -70,7 +60,6 @@ public class ContractController extends Controller {
     }
 
     // 客户合同列表
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_LIST})
     public void customerList() {
         String contractName_filter = getPara("contractName_filter");
         String contactPerson_filter = getPara("contactPerson_filter");
@@ -211,7 +200,6 @@ public class ContractController extends Controller {
     }
 
     // 干线供应商合同列表
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CP_LIST})
     public void spList() {
         String contractName_filter = getPara("contractName_filter");
         String contactPerson_filter = getPara("contactPerson_filter");
@@ -274,7 +262,7 @@ public class ContractController extends Controller {
         }
 
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_CREATE,PermissionConstant.PERMSSION_CP_CREATE,PermissionConstant.PERMSSION_CD_CREATE},logical=Logical.OR)
+
     public void add() {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();
@@ -303,7 +291,7 @@ public class ContractController extends Controller {
         setAttr("saveOK", false);
 
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_UPDAET,PermissionConstant.PERMSSION_CP_UPDATE,PermissionConstant.PERMSSION_CD_UPDATE})
+
     public void edit() {
         String id = getPara();
         if (id != null) {
@@ -319,7 +307,7 @@ public class ContractController extends Controller {
         }
             render("/yh/contract/ContractEdit.html");
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_CREATE, PermissionConstant.PERMSSION_CC_UPDAET,PermissionConstant.PERMSSION_CD_CREATE,PermissionConstant.PERMSSION_CD_UPDATE,PermissionConstant.PERMSSION_CP_CREATE,PermissionConstant.PERMSSION_CP_UPDATE}, logical=Logical.OR)
+
     public void save() {
         String id = getPara("contractId");
         Date createDate = Calendar.getInstance().getTime();
@@ -344,7 +332,7 @@ public class ContractController extends Controller {
         }
         renderJson(c.get("id"));
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_DELETE})
+
     public void delete() {
         String id = getPara();
         if (id != null) {
@@ -352,7 +340,7 @@ public class ContractController extends Controller {
         }
             redirect("/customerContract");
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CP_DELETE})
+
     public void delete2() {
         String id = getPara();
         if (id != null) {

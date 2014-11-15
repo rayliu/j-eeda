@@ -1,7 +1,5 @@
 package controllers.yh.arap.ar;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,26 +9,21 @@ import models.ReturnOrder;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.util.PermissionConstant;
-
 @RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class ChargeItemConfirmController extends Controller {
     private Logger logger = Logger.getLogger(ChargeItemConfirmController.class);
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CI_AFFIRM})
+
     public void index() {
     	    render("/yh/arap/ChargeItemConfirm/ChargeItemConfirmList.html");
     }
 
-   
+
     public void confirm() {
         String ids = getPara("ids");
         String[] idArray = ids.split(",");
@@ -148,7 +141,7 @@ public class ChargeItemConfirmController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CI_AFFIRM})
+    
     public void chargeConfiremReturnOrder(){
     	String returnOrderIds = getPara("returnOrderIds");
     	String[] returnOrderArr = returnOrderIds.split(",");

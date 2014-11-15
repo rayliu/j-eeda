@@ -1,7 +1,5 @@
 package controllers.yh.profile;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,29 +14,25 @@ import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.util.PermissionConstant;
+import controllers.yh.LoginUserController;
 
 @RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class ServiceProviderController extends Controller {
 
     private Logger logger = Logger.getLogger(ServiceProviderController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_LIST})
+
     public void index() {
         render("/yh/profile/serviceProvider/serviceProviderList.html");
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_LIST})
+
     public void list() {
         String company_name = getPara("COMPANY_NAME");
         String contact_person = getPara("CONTACT_PERSON");
@@ -120,12 +114,12 @@ public class ServiceProviderController extends Controller {
             renderJson(customerListMap);
         }
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_CREATE})
+
     public void add() {
         setAttr("saveOK", false);
             render("/yh/profile/serviceProvider/serviceProviderEdit.html");
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_UPDATE})
+
     public void edit() {
         long id = getParaToLong();
         
@@ -156,7 +150,7 @@ public class ServiceProviderController extends Controller {
         setAttr("contact", contact);
             render("/yh/profile/serviceProvider/serviceProviderEdit.html");
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_DELETE})
+
     public void delete() {
         // long id = getParaToLong();
         String id = getPara();
@@ -185,7 +179,7 @@ public class ServiceProviderController extends Controller {
         party.delete();
             redirect("/serviceProvider");
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_CREATE, PermissionConstant.PERMSSION_P_UPDATE}, logical=Logical.OR)
+
     public void save() {
 
         String id = getPara("party_id");

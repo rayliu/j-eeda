@@ -1,7 +1,5 @@
 package controllers.yh.arap.ap;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,25 +11,21 @@ import models.ArapCostOrder;
 import models.UserLogin;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.util.PermissionConstant;
+import controllers.yh.LoginUserController;
 
 @RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class CostCheckOrderController extends Controller {
     private Logger logger = Logger.getLogger(CostCheckOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_LIST})
+
     public void index() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "");
@@ -43,7 +37,7 @@ public class CostCheckOrderController extends Controller {
     	setAttr("classify", "");
         render("/yh/arap/CostCheckOrder/CostCheckOrderCreateSearchList.html");
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_CREATE})
+
     public void create() {
         String ids = getPara("ids");
         String orderNos = getPara("orderNos");
@@ -158,7 +152,6 @@ public class CostCheckOrderController extends Controller {
     }
 
     // billing order 列表
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -184,7 +177,7 @@ public class CostCheckOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_CREATE, PermissionConstant.PERMSSION_CCOI_UPDATE}, logical=Logical.OR)
+    
     public void save(){
     	ArapCostOrder arapAuditOrder = null;
     	String costCheckOrderId = getPara("costCheckOrderId");
@@ -238,8 +231,7 @@ public class CostCheckOrderController extends Controller {
     	}
         renderJson(arapAuditOrder);;
     }
-
-@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_UPDATE})
+    
     public void edit(){
     	ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findById(getPara("id"));
     	/*String customerId = arapAuditOrder.get("payee_id");
@@ -267,8 +259,6 @@ public class CostCheckOrderController extends Controller {
     }
 
 	// 审核
-
-@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_AFFIRM})
 	public void auditCostCheckOrder(){
 		String costCheckOrderId = getPara("costCheckOrderId");
 		if(costCheckOrderId != null && !"".equals(costCheckOrderId)){

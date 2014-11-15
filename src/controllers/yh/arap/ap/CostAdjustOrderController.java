@@ -1,7 +1,5 @@
 package controllers.yh.arap.ap;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +9,6 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import models.Party;
 import models.yh.profile.Contact;
 
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
@@ -20,7 +17,6 @@ import com.jfinal.plugin.activerecord.Record;
 import controllers.yh.LoginUserController;
 
 @RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class CostAdjustOrderController extends Controller {
     private Logger logger = Logger.getLogger(CostAdjustOrderController.class);
 

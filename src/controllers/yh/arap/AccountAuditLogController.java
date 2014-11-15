@@ -1,24 +1,33 @@
 package controllers.yh.arap;
 
-import interceptor.SetAttrLoginUserInterceptor;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import models.ArapChargeItem;
+import models.ArapChargeOrder;
+import models.Party;
+import models.UserLogin;
+import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.util.PermissionConstant;
+import controllers.yh.LoginUserController;
 
 @RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class AccountAuditLogController extends Controller {
     private Logger logger = Logger.getLogger(AccountAuditLogController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PCO_LIST})
+
     public void index() {
     	    render("/yh/arap/AccountAuditLog/AccountAuditLogList.html");
     }

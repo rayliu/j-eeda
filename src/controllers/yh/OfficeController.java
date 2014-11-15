@@ -1,44 +1,34 @@
 package controllers.yh;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 
 import models.Office;
 import models.TransferOrder;
 import models.UserLogin;
 
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-
-import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class OfficeController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_O_LIST})
+
     public void index() {
         render("/yh/profile/office/office.html");
     }
 
     // 链接到添加分公司页面
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_O_CREATE})
     public void editOffice() {
     	
         render("/yh/profile/office/edit.html");
     }
 
     // 编辑分公司信息
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_O_UPDATE})
     public void edit() {
         String id = getPara();
         if (id != null) {
@@ -53,7 +43,6 @@ public class OfficeController extends Controller {
     }
 
     // 添加分公司
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_O_CREATE, PermissionConstant.PERMSSION_O_UPDATE}, logical=Logical.OR)
     public void saveOffice() {
         /*
          * if (!isAuthenticated()) return;
@@ -85,7 +74,6 @@ public class OfficeController extends Controller {
     }
 
     // 删除分公司
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_O_DELETE})
     public void del() {
         /*
          * UserLogin.dao.find("select * from user_login");
@@ -105,7 +93,6 @@ public class OfficeController extends Controller {
     }
 
     // 列出分公司信息
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_O_LIST})
     public void listOffice() {
         /*
          * Paging

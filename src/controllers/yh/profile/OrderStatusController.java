@@ -1,7 +1,5 @@
 package controllers.yh.profile;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +9,6 @@ import models.OrderStatus;
 import org.apache.log4j.Logger;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -19,7 +16,6 @@ import com.jfinal.plugin.activerecord.Record;
 import controllers.yh.LoginUserController;
 
 @RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class OrderStatusController extends Controller{
 
     private Logger logger = Logger.getLogger(OrderStatusController.class);

@@ -1,7 +1,5 @@
 package config;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
@@ -165,7 +163,6 @@ public class EedaConfig extends JFinalConfig {
         me.add("/reset",controllers.yh.ResetPassWordController.class,contentPath);
         
         me.add("/role", controllers.yh.RoleController.class, contentPath);
-        me.add("/userRole",controllers.yh.UserRoleController.class,contentPath);
         me.add("/toll", controllers.yh.TollController.class, contentPath);
         me.add("/privilege", controllers.yh.PrivilegeController.class, contentPath);
         me.add("/pay", controllers.yh.PayController.class, contentPath);
@@ -362,7 +359,7 @@ public class EedaConfig extends JFinalConfig {
 
     public void configInterceptor(Interceptors me) {
         me.add(new ShiroInterceptor());
-       // me.add(new SetAttrLoginUserInterceptor());
+
     }
 
     public void configHandler(Handlers me) {

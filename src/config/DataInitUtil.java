@@ -23,9 +23,9 @@ public class DataInitUtil {
 
             // 登陆及授权的3个表
             stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),contact_phone_name varchar(50),contact_phone varchar(50),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255));");
-            stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255), office_id bigint, token varchar(10), foreign key(office_id) references office(id));");
+            stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255), office_id bigint, foreign key(office_id) references office(id));");
             stmt.executeUpdate("create table if not exists role(id bigint auto_increment primary key,code varchar(50), name varchar(50), p_code varchar(50), remark varchar(255));");
-            stmt.executeUpdate("create table if not exists permission(id bigint auto_increment primary key, module_name varchar(50) ,code varchar(50), name varchar(50), value varchar(50), url varchar(255), remark varchar(255));");
+            stmt.executeUpdate("create table if not exists permission(id bigint auto_increment primary key, code varchar(50), name varchar(50), value varchar(50), url varchar(255), remark varchar(255));");
             stmt.executeUpdate("create table if not exists user_role(id bigint auto_increment primary key, user_name varchar(50) not null, role_code varchar(255) not null, remark varchar(255));");
             stmt.executeUpdate("create table if not exists role_permission(id bigint auto_increment primary key, role_code varchar(50) not null, permission_code varchar(50) not null, remark varchar(255));");
             
@@ -248,9 +248,7 @@ public class DataInitUtil {
 
             // location init
             LocationDataInit.initLocation(stmt);
-            initPermission(stmt);
             ProfileDataInit.initProfile(stmt);
-            
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('1201', '广州分公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','自营','这是一家公司');");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','控股','这是一家公司');");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('101', '深圳分公司','张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','合作','这是一家公司');");
@@ -320,7 +318,6 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('2','1','20132014','3200','未完成');");
             stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('2','2','20132015','3200','未完成');");
             */
-            
             // 角色定义
             stmt.executeUpdate("insert into role(code, name) values('admin', '系统管理员');");
             stmt.executeUpdate("insert into role(code, name) values('clerk', '文员');");
@@ -329,12 +326,25 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into role(code, name) values('scheduler', '调度员');");
             //stmt.executeUpdate("insert into role(code, name) values('driver', '司机');");
 
+            // 权限定义 
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.list', '运输单查询权限');");
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.create', '运输单创建权限');");
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.update', '运输单保存权限');");
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.delete', '运输单删除权限');");
+            stmt.executeUpdate("insert into permission(code, name) values('TransferOrder.add_revenue', '运输单添加/删除应收条目权限');");
+//            stmt.executeUpdate("insert into permission(code, name) values('view', '');");
+//            stmt.executeUpdate("insert into permission(code, name) values('create');");
+//            stmt.executeUpdate("insert into permission(code, name) values('update');");
+//            stmt.executeUpdate("insert into permission(code, name) values('delete');");
             
-       
             stmt.executeUpdate("insert into user_role(user_name, role_code) values('demo', 'admin');");
             stmt.executeUpdate("insert into user_role(user_name, role_code) values('jason', 'clerk');");
-            
-
+            // 系统权限
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.list', '运输单查询权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.create', '运输单创建权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.update', '运输单保存权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.delete', '运输单删除权限');");
+            stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('admin', 'TransferOrder.add_revenue', '运输单添加/删除应收条目权限');");
             
             stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('clerk', 'TransferOrder.list', '运输单查询权限');");
             stmt.executeUpdate("insert into role_permission(role_code, permission_code, remark) values('clerk', 'TransferOrder.create', '运输单创建权限');");
@@ -637,217 +647,6 @@ public class DataInitUtil {
             e.printStackTrace();
         }
     }
-
-	private static void initPermission(Statement stmt) throws SQLException {
-		// 运输单权限定义 
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('运输单','TransferOrder.list', '运输单查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('运输单','TransferOrder.create', '运输单创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('运输单','TransferOrder.update', '运输单保存权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('运输单','TransferOrder.delete', '运输单删除权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('运输单','TransferOrder.add_revenue', '运输单添加/删除应收条目权限');");
-		/*-----------------------------------------red---------------------------------*/
-		/*调车单权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('调车单','PickupOrder.list', '调车单查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('调车单','PickupOrder.create', '调车单创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('调车单','PickupOrder.update', '调车单更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('调车单','PickupOrder.add_cost', '调车单添加应付权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('调车单','PickupOrder.completed', '调车单已完成权限');");
-		/*发车单权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('发车单','DepartOrder.list', '发车单查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('发车单','DepartOrder.create', '发车单创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('发车单','DepartOrder.update', '发车单更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('发车单','DepartOrder.add_cost', '发车单添加应付权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('发车单','DepartOrder.completed', '发车单已发车权限');");
-		/*自营车辆权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('自营车辆','CarInfo.list', '自营车辆查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('自营车辆','CarInfo.create', '自营车辆创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('自营车辆','CarInfo.update', '自营车辆更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('自营车辆','CarInfo.delete', '自营车辆删除权限');");
-		/*自营司机权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('自营司机','Driver.list', '自营司机查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('自营司机','Driver.create', '自营司机创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('自营司机','Driver.update', '自营司机更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('自营司机','Driver.delete', '自营司机删除权限');");
-		/*保险单权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('保险单','InsuranceOrder.list', '查询保险单权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('保险单','InsuranceOrder.create', '创建保险单权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('保险单','InsuranceOrder.update', '更新保险单权限');");
-		/*在途运输单更新*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('在途更新','Ontrip.list', '在途更新查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('在途更新','Ontrip.update', '入库确认权限');");
-		
-		/*配送单*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('配送单','DeliveryOder.list', '配送单查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('配送单','DeliveryOder.create', '配送单创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('配送单','DeliveryOder.update', '配送单更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('配送单','DeliveryOder.completed', '配送单已完成权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('配送单','DeliveryOder.add_cost', '配送单添加应付权限');");
-		/*配送在途更新*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('配送单在途','DeliveryOderMilestone.list', '配送单在途查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('配送单在途','DeliveryOderMilestone.completed', '配送单在途到达权限');");
-		/*回单权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('回单','ReturnOrder.list', '回单查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('回单','ReturnOder.add_revenue', '回单添加应收权限');");
-		//stmt.executeUpdate("insert into permission(module_name,code, name) values('ReturnOrder.completed', '回单签收权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('回单','ReturnOrder.update', '回单更改权限');");
-		/*入库单权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('入库单','WarehouseOrder.inList', '入库单查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('入库单','WarehouseOrder.inCreate', '入库单创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('入库单','WarehouseOrder.inUpdate', '入库单更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('入库单','WarehouseOrder.inCompleted', '入库单已完成权限');");
-		/*出库单权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('出库单','WarehouseOrder.outList', '出库单查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('出库单','WarehouseOrder.outCreate', '出库单创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('出库单','WarehouseOrder.outUpdate', '出库单更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('出库单','WarehouseOrder.outCompleted', '出库单已完成权限');");
-		
-		/*库存权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('库存','InventoryItem.list', '库存查询权限');");
-		
-		/*应收明细确认*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收明细确认','ChargeItem.affirm', '应收明细确认权限');");
-		//stmt.executeUpdate("insert into permission(module_name,code, name) values('ChargeItem.list', '应收明细确认查询权限');");
-		
-		/*应收对账单*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收对账单','ChargeCheckOrder.list', '应收对账单查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收对账单','ChargeCheckOrder.update', '应收对账单更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收对账单','ChargeCheckOrder.create', '应收对账单创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收对账单','ChargeCheckOrder.affirm', '应收对账单确认权限');");
-		
-		/*应收开票申请*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收开票','ChargePreInvoiceOrder.list', '应收开票查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收开票','ChargePreInvoiceOrder.update', '应收开票更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收开票','ChargePreInvoiceOrder.create', '应收开票创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收开票','ChargePreInvoiceOrder.approval', '应收开票审核权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收开票','ChargePreInvoiceOrder.confirmation', '应收开票审批权限');");
-		/*应收开票记录*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收开票记录','ChargeInvoiceOrder.list', '应收开票记录查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收开票记录','ChargeInvoiceOrder.create', '应收开票记录创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收开票记录','ChargeInvoiceOrder.update', '应收开票记录更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应收开票记录','ChargeInvoiceOrder.approval', '应收开票记录审核权限');");
-		/*收账核销权限*/
-		
-		/*应付明细确认*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应付明细确认','CostItemConfirm.affirm', '应付明细确认权限');");
-		/*应付对账单权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应付对账单','CostCheckOrder.list', '应付对账单查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应付对账单','CostCheckOrder.create', '应付对账单创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应付对账单','CostCheckOrder.update', '应付对账单更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('应付对账单','CostCheckOrder.affirm', '应付对账单审核权限');");
-		/*付款申请*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('付款申请','CostPreInvoiceOrder.list', '付款申请查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('付款申请','CostPreInvoiceOrder.create', '付款申请创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('付款申请','CostPreInvoiceOrder.update', '付款申请更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('付款申请','CostPreInvoiceOrder.approval', '付款申请审核权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('付款申请','CostPreInvoiceOrder.confirmation', '付款申请审核权限');");
-		/*出纳日记账权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('出纳日记','PaymentCheckOrder.list', '出纳日记账查询权限');");
-		/*-------------------------------合同权限-------------------------------------------*/
-		/*客户合同权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('客户合同','ContractCustomer.list', '客户合同查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('客户合同','ContractCustomer.create', '客户合同创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('客户合同','ContractCustomer.update', '客户合同更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('客户合同','ContractCustomer.delete', '客户合同删除权限');");
-		/*干线供应商合同权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('干线供应商合同','ContractProvider.list', '干线供应商合同查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('干线供应商合同','ContractProvider.create', '干线供应商合同创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('干线供应商合同','ContractProvider.update', '干线供应商合同更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('干线供应商合同','ContractProvider.delete', '干线供应商合同删除权限');");
-		/*配送供应商合同权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('配送供应商合同','ContractDelivery.list', '配送供应商合同查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('配送供应商合同','ContractDelivery.create', '配送供应商合同创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('配送供应商合同','ContractDelivery.update', '配送供应商合同更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('配送供应商合同','ContractDelivery.delete', '配送供应商合同删除权限');");
-		
-		/*-------------------------------基础数据权限---------------------------------------*/
-		/*登录用户权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户','User.list', '登录用户查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户','User.create', '登录用户创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户','User.update', '登录用户更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户','User.delete', '登录用户删除权限');");
-		
-		/*角色权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色','Role.list', '角色查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色','Role.create', '角色创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色','Role.update', '角色更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色','Role.delete', '角色删除权限');");
-		/*用户角色权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.list', '用户角色查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.create', '角色创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.update', '角色更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.permission_list', '角色权限查询权限');");
-		/*角色权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色操作','RolePermission.list', '角色操作查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色操作','RolePermission.create', '角色操作创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色操作','RolePermission.update', '角色操作更新权限');");
-
-		/*客户权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('客户','Customer.list', '客户查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('客户','Customer.create', '客户创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('客户','Customer.update', '客户更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('客户','Customer.delete', '客户删除权限');");
-		/*供应商权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商','Provider.list', '供应商查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商','Provider.create', '供应商创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商','Provider.update', '供应商更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商','Provider.delete', '供应商删除权限');");
-		/*供应商车辆信息权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商车辆','ProviderCar.list', '供应商车辆信息查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商车辆','ProviderCar.create', '供应商车辆信息创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商车辆','ProviderCar.update', '供应商车辆信息更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商车辆','ProviderCar.delete', '供应商车辆信息删除权限');");
-		/*供应商司机信息权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商司机','ProviderDriver.list', '供应商司机信息查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商司机','ProviderDriver.create', '供应商司机信息创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商司机','ProviderDriver.update', '供应商司机信息更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('供应商司机','ProviderDriver.delete', '供应商司机信息删除权限');");
-		/*网点[分公司]权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('网点[分公司]','Office.list', '网点[分公司]查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('网点[分公司]','Office.create', '网点[分公司]创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('网点[分公司]','Office.update', '网点[分公司]更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('网点[分公司]','Office.delete', '网点[分公司]删除权限');");
-		/*产品信息权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('产品','Product.list', '产品信息查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('产品','Product.create', '产品信息创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('产品','Product.update', '产品信息更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('产品','Product.delete', '产品信息删除权限');");
-		/*仓库信息权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('仓库','Warehouse.list', '仓库信息查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('仓库','Warehouse.create', '仓库信息创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('仓库','Warehouse.update', '仓库信息更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('仓库','Warehouse.delete', '仓库信息删除权限');");
-		/*干线定义权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('干线定义','Route.list', '干线定义查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('干线定义','Route.create', '干线定义创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('干线定义','Route.update', '干线定义更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('干线定义','Route.delete', '干线定义删除权限');");
-		/*收费条目定义*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('收费条目定义','Toll.list', '收费条目定义查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('收费条目定义','Toll.create', '收费条目定义创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('收费条目定义','Toll.update', '收费条目定义更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('收费条目定义','Toll.delete', '收费条目定义删除权限');");
-		/*付费条目定义*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('付费条目定义','Pay.list', '付费条目定义查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('付费条目定义','Pay.create', '付费条目定义创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('付费条目定义','Pay.update', '付费条目定义更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('付费条目定义','Pay.delete', '付费条目定义删除权限');");
-		/*金融账户信息权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('金融账户','Account.list', '金融账户信息查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('金融账户','Account.create', '金融账户信息创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('金融账户','Account.update', '金融账户信息更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('金融账户','Account.delete', '金融账户信息删除权限');");
-		/*行车单权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('行车单','CarSummary.list', '行车单查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('行车单','CarSummary.create', '行车单创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('行车单','CarSummary.update', '行车单更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('行车单','CarSummary.approval', '行车单审核权限');");
-		
-		
-		
-		
-		// 将系统管理员 赋予所有权限
-        stmt.executeUpdate("insert into role_permission(role_code,permission_code, remark) select 'admin', code, name from permission;");
-	}
 
     private static void initEedaData(Statement stmt) throws SQLException {
         String propertySql = "insert into leads(title, create_date, creator, status, type, "

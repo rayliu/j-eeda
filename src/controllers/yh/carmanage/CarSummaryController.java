@@ -1,7 +1,5 @@
 package controllers.yh.carmanage;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,26 +22,21 @@ import models.yh.carmanage.CarSummaryDetailSalary;
 import models.yh.carmanage.CarSummaryOrder;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.profile.CarinfoController;
-import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class CarSummaryController extends Controller {
 	private Logger logger = Logger.getLogger(CarinfoController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_LIST, PermissionConstant.PERMSSION_CS_CREATE,PermissionConstant.PERMSSION_CS_UPDATE}, logical=Logical.OR)
+	
 	public void index() {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();
@@ -54,7 +47,6 @@ public class CarSummaryController extends Controller {
     }
 	
 	//未处理调车单
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_CREATE})
 	public void untreatedCarManageList(){
 		
 		Map orderMap = null;
@@ -162,7 +154,6 @@ public class CarSummaryController extends Controller {
 	}
 	
 	//行车单查询
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_LIST})
 	public void carSummaryOrderList(){
 		
 		Map orderMap = null;
@@ -271,7 +262,6 @@ public class CarSummaryController extends Controller {
 	}
 	
 	//创建行车单
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_CREATE})
 	public void createCarSummary(){
 		String pickupIdsArray = getPara("pickupIds");
 		setAttr("pickupIds", pickupIdsArray);
@@ -303,7 +293,6 @@ public class CarSummaryController extends Controller {
 	}
 	
 	//保存行车单
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_CREATE, PermissionConstant.PERMSSION_CS_UPDATE}, logical=Logical.OR)
 	public void saveCarSummary(){
 		//拼车单id
 		String pickupIdArray = getPara("pickupIds");
@@ -800,7 +789,6 @@ public class CarSummaryController extends Controller {
     	renderJson("{\"success\":true}");
     }
     //审核-撤销审核
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_APPROVAL})
     public void updateCarSummaryOrderStatus(){
     	String carSummaryId = getPara("carSummaryId");
     	String value = getPara("value").trim();
@@ -853,7 +841,6 @@ public class CarSummaryController extends Controller {
  		transferOrderMilestone.save();
  	}
  	//编辑行车单
- 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_CREATE})
     public void edit(){
     	String carSummaryId = getPara("carSummaryId");
     	if(carSummaryId != "" && carSummaryId != null){

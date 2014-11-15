@@ -1,7 +1,5 @@
 package controllers.yh.arap.ar;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,25 +16,21 @@ import models.UserLogin;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.util.PermissionConstant;
+import controllers.yh.LoginUserController;
 
 @RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class ChargeInvoiceOrderController extends Controller {
     private Logger logger = Logger.getLogger(ChargeInvoiceOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CIO_LIST})
+
     public void index() {
     	    render("/yh/arap/ChargeInvoiceOrder/ChargeInvoiceOrderList.html");
     }
@@ -46,7 +40,7 @@ public class ChargeInvoiceOrderController extends Controller {
     	setAttr("classify", "");
         render("/yh/arap/ChargeInvoiceOrder/ChargeInvoiceOrderCreateSearchList.html");
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CIO_CREATE})
+
     public void create() {
         String ids = getPara("ids");
         String[] idArray = ids.split(",");
@@ -133,7 +127,6 @@ public class ChargeInvoiceOrderController extends Controller {
     }
 
     // billing order 列表
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CIO_LIST})
     public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -164,7 +157,7 @@ public class ChargeInvoiceOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CIO_CREATE, PermissionConstant.PERMSSION_CIO_UPDATE}, logical=Logical.OR)
+    
     public void save(){
     	ArapChargeInvoice arapAuditInvoice = null;
     	String chargeInvoiceOrderId = getPara("chargeInvoiceOrderId");
@@ -186,7 +179,7 @@ public class ChargeInvoiceOrderController extends Controller {
     	}
         renderJson(arapAuditInvoice);;
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CIO_UPDATE})
+    
     public void edit() throws ParseException{
     	ArapChargeInvoice arapAuditInvoice = ArapChargeInvoice.dao.findById(getPara("id"));  	
     	UserLogin userLogin = UserLogin.dao.findById(arapAuditInvoice.get("create_by"));

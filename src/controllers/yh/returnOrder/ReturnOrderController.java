@@ -1,7 +1,5 @@
 package controllers.yh.returnOrder;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,25 +27,20 @@ import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
-import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class ReturnOrderController extends Controller {
 	private Logger logger = Logger.getLogger(ReturnOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-	
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_LIST})
+
 	public void index() {
 			render("/yh/returnOrder/returnOrderList.html");
 	}
@@ -79,7 +72,7 @@ public class ReturnOrderController extends Controller {
 		}
 		return orderNo;
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_LIST})
+
 	public void list() {
 		String order_no = getPara("order_no");
 		String tr_order_no = getPara("tr_order_no");
@@ -197,7 +190,6 @@ public class ReturnOrderController extends Controller {
 	}
 
 	// 点击查看
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_UPDATE})
 	public void edit() {
 		ReturnOrder returnOrder = ReturnOrder.dao.findById(getPara("id"));
 		TransferOrder transferOrder = null;
@@ -312,7 +304,7 @@ public class ReturnOrderController extends Controller {
 		setAttr("receivableItemList", receivableItemList);
 		render("/yh/returnOrder/returnOrder.html");
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_UPDATE})
+
 	public void save() {
 		ReturnOrder returnOrder = ReturnOrder.dao.findById(getPara("id"));
 		Long deliveryId = returnOrder.get("delivery_order_id");
@@ -837,7 +829,6 @@ public class ReturnOrderController extends Controller {
 	}
 
 	// 应收
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_ADD_REVENUE})
 	public void addNewRow() {
 		List<Fin_item> items = new ArrayList<Fin_item>();
 		String returnOrderId = getPara();
@@ -855,7 +846,6 @@ public class ReturnOrderController extends Controller {
 	}
 
 	// 修改应付
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_ADD_REVENUE})
 	public void updateTransferOrderFinItem() {
 		String paymentId = getPara("paymentId");
 		String name = getPara("name");
