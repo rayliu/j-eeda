@@ -74,15 +74,17 @@ $(document).ready(function() {
     });
     
 	var role=[];
+	
     $('#saveBtn').click(function(e){
         e.preventDefault();
         role.splice(0,role.length);
+        var username = $("#user_filter").val();
         $("input[name='roleCheck']").each(function(){
         	if($(this).prop('checked') == true){
         		role.push($(this).val());
         	}
         });
-        var username = $("#user_filter").val();
+        
         var roles = role.toString();
         if(username != ""&&role.length!=0){
         	$.post('/userRole/saveUserRole?name='+username+'&roles='+roles, function(data){

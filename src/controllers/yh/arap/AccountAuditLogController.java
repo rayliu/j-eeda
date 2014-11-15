@@ -13,7 +13,7 @@ import com.jfinal.log.Logger;
 
 import controllers.yh.util.PermissionConstant;
 
-@RequiresAuthentication
+//@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class AccountAuditLogController extends Controller {
     private Logger logger = Logger.getLogger(AccountAuditLogController.class);

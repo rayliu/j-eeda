@@ -40,7 +40,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.PermissionConstant;
 
-@RequiresAuthentication
+//@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class DeliveryController extends Controller {
 	private Logger logger = Logger.getLogger(DeliveryController.class);

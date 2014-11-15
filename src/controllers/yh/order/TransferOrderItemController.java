@@ -24,7 +24,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-@RequiresAuthentication
+//@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class TransferOrderItemController extends Controller {
 

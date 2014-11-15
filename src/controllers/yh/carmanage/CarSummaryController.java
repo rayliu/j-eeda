@@ -38,7 +38,7 @@ import com.jfinal.plugin.activerecord.Record;
 import controllers.yh.profile.CarinfoController;
 import controllers.yh.util.PermissionConstant;
 
-@RequiresAuthentication
+//@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class CarSummaryController extends Controller {
 	private Logger logger = Logger.getLogger(CarinfoController.class);

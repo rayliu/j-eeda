@@ -28,7 +28,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.PermissionConstant;
 
-@RequiresAuthentication
+//@RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class ServiceProviderController extends Controller {
 
