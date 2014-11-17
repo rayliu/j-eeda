@@ -47,7 +47,7 @@ $(document).ready(function() {
 			$('#spList').on('mousedown', '.fromLocationItem', function(e){
 				$('#spMessage').val($(this).text());
 				$('#sp_id').val($(this).attr('spid'));
-				$('#cid').val($(this).attr('code'));
+				$('#cid').val($(this).attr('spid'));
 				$('#a1').html($(this).attr('contact_person'));
 				$('#a2').html($(this).attr('company_name'));
 				$('#a3').html($(this).attr('address'));
