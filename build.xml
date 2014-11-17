@@ -61,9 +61,9 @@
 	        </java>
 	    </target>
 	
-	<!--<target name="uat">
-        <copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-uat" overwrite="true"/>
-        <copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-uat" overwrite="true"/>
+	<target name="uat">
+        <!--<copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-uat" overwrite="true"/>
+        <copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-uat" overwrite="true"/>-->
         <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
             <arg value="WebRoot"/>
             <arg value="8000"/>
@@ -71,7 +71,7 @@
             <arg value="0"/>
             <classpath path="WebRoot/WEB-INF/classes"></classpath>
         </java>	
-    </target>-->
+    </target>
 	
    <target name="clean"> 
        <delete includeEmptyDirs="true" failonerror="false"> 
