@@ -17,7 +17,7 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": null, "sWidth": "7%"	,
             	 "fnRender": function(obj) {
-                     return '<input type="checkbox" name="roleCheck" value="'+obj.aData.ID+'">';
+                     return '<input type="checkbox" name="roleCheck" class="unChecked" value="'+obj.aData.ID+'">';
                   }	
             },
            { "mDataProp": "CODE"},
@@ -74,16 +74,22 @@ $(document).ready(function() {
     });
     
 	var role=[];
+	 $("#eeda-table").on('click','.unChecked',function(){
+		 role.splice(0,role.length);
+		 $("input[name='roleCheck']").each(function(){
+	        	if($(this).prop('checked') == true){
+	        		role.push($(this).val());
+	        	}
+	     });
+		 console.log(role);
+	  });
     $('#saveBtn').click(function(e){
         e.preventDefault();
-        role.splice(0,role.length);
-        $("input[name='roleCheck']").each(function(){
-        	if($(this).prop('checked') == true){
-        		role.push($(this).val());
-        	}
-        });
+       
+        
         var username = $("#user_filter").val();
         var roles = role.toString();
+        
         if(username != ""&&role.length!=0){
         	$.post('/userRole/saveUserRole?name='+username+'&roles='+roles, function(data){
         		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
@@ -98,14 +104,11 @@ $(document).ready(function() {
        
     });
     
-    
-    
-    
     var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable"  style="display:none">'+
 			    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
 			    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
 			    '</div>';
     $('body').append(alerMsg);
-    
+   
 
 });	

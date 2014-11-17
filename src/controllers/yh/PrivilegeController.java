@@ -2,6 +2,7 @@ package controllers.yh;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import models.Permission;
 import models.Role;
 import models.RolePermission;
 import models.UserLogin;
+import models.UserRole;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -20,6 +22,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.CompareStrList;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -120,10 +123,37 @@ public class PrivilegeController extends Controller {
 		//根据角色名称找到角色代码
 		Role role = Role.dao.findFirst("select * from role where name=?",rolename);
 		List<RolePermission> rp = RolePermission.dao.find("select * from role_permission where role_code =?",role.get("code"));
-		for (RolePermission rolePermission : rp) {
+		
+		 List<Object> ids = new ArrayList<Object>();
+		 for (RolePermission r : rp) {
+			ids.add(r.get("permission_code"));
+		 }
+		
+		 CompareStrList compare = new CompareStrList();
+	        
+	     List<Object> returnList = compare.compare(ids, ps);
+	     
+	     ids = (List<Object>) returnList.get(0);
+	     List<String> saveList = (List<String>) returnList.get(1);
+	     for (Object pc : ids) {
+	    	 RolePermission.dao.findFirst("select * from role_permission where role_code=? and permission_code=?", role.get("code"),pc).delete();
+        }
+        
+        for (Object object : saveList) {
+        	
+			RolePermission r = new RolePermission();
+			r.set("role_code", role.get("code"));
+			r.set("permission_code", object);
+			r.save();
+			
+        }
+	     
+	     
+	     
+		/*for (RolePermission rolePermission : rp) {
 			rolePermission.delete();
 		}
-		/*重新保存数据*/
+		重新保存数据
 		if(!permissions.equals("")){
 			for (String str : ps) {
 				RolePermission r = new RolePermission();
@@ -131,7 +161,7 @@ public class PrivilegeController extends Controller {
 				r.set("permission_code", str);
 				r.save();
 			}
-		}
+		}*/
 		renderJson();
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_UPDATE})

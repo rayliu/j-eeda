@@ -54,7 +54,7 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": null, "sWidth": "7%"	,
             	 "fnRender": function(obj) {
-            			 return '<input type="checkbox" name="permissionCheck" value="'+obj.aData.CODE+'">';
+            			 return '<input type="checkbox" name="permissionCheck" class="unChecked" value="'+obj.aData.CODE+'">';
                   }	
             },
             { "mDataProp": "MODULE_NAME","sWidth": "20%"},
@@ -70,14 +70,18 @@ $(document).ready(function() {
 	
 	/*点击下一页没有保存上页的数据*/
 	var permission=[];
+	 $("#eeda-table").on('click','.unChecked',function(){
+		 permission.splice(0,permission.length);	
+	        $("input[name='permissionCheck']").each(function(){
+	        	if($(this).prop('checked') == true){
+	        		permission.push($(this).val());
+	        	}
+	        });
+		 console.log(permission);
+	  });
     $('#saveBtn').click(function(e){
         e.preventDefault();
-        permission.splice(0,permission.length);	
-        $("input[name='permissionCheck']").each(function(){
-        	if($(this).prop('checked') == true){
-        		permission.push($(this).val());
-        	}
-        });
+       
         var rolename = $("#role_filter").val();
         var permissions = permission.toString();
         if(rolename != ""&&permission!=0){

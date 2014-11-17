@@ -18,9 +18,9 @@ $(document).ready(function() {
             { "mDataProp": null, "sWidth": "7%"	,
             	 "fnRender": function(obj) {
             		 if(obj.aData.ROLE_CODE==null){
-            			 return '<input type="checkbox" name="roleCheck" value="'+obj.aData.ID+'">'; 
+            			 return '<input type="checkbox" name="roleCheck" class="unChecked" value="'+obj.aData.ID+'">'; 
             		 }else{
-            			 return '<input type="checkbox" checked="true" name="roleCheck" value="'+obj.aData.ID+'">';
+            			 return '<input type="checkbox" checked="true" class="unChecked" name="roleCheck" value="'+obj.aData.ID+'">';
             		 } 
                   }	
             },
@@ -30,14 +30,18 @@ $(document).ready(function() {
         ]
     });	
     var role=[];
+    $("#eeda-table").on('click','.unChecked',function(){
+		 role.splice(0,role.length);
+		 $("input[name='roleCheck']").each(function(){
+	        	if($(this).prop('checked') == true){
+	        		role.push($(this).val());
+	        	}
+	     });
+		 console.log(role);
+	  });
     $('#saveBtn').click(function(e){
         e.preventDefault();
-        role.splice(0,role.length);	
-        $("input[name='roleCheck']").each(function(){
-        	if($(this).prop('checked') == true){
-        		role.push($(this).val());
-        	}
-        });
+       
         var username = $("#user_name").val();
         var roles = role.toString();
     	$.post('/userRole/updateRole?name='+username+'&roles='+roles,function(data){
