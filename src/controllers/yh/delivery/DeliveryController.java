@@ -672,29 +672,7 @@ public class DeliveryController extends Controller {
 	public void searchSp() {
 		String input = getPara("input");
 		List<Record> locationList = Collections.EMPTY_LIST;
-		if (input.trim().length() > 0) {
-			locationList = Db
-					.find("select *,p.id as pid from contact c,party p where p.contact_id= c.id and p.party_type ='SERVICE_PROVIDER' and c.sp_type='delivery' and (c.abbr like '%"
-							+ input
-							+ "%' or c.contact_person like '%"
-							+ input
-							+ "%' or c.email like '%"
-							+ input
-							+ "%' or c.mobile like '%"
-							+ input
-							+ "%' or c.phone like '%"
-							+ input
-							+ "%' or c.address like '%"
-							+ input
-							+ "%' or c.postal_code like '%"
-							+ input
-							+ "%') limit 0,10");
-		} else {
-			locationList = Db
-					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER
-							+ "' and c.sp_type='delivery'");
-		}
+		locationList = Db.find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'");
 		renderJson(locationList);
 	}
 
