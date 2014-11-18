@@ -458,7 +458,7 @@ public class ContractController extends Controller {
 		}
 		
 		String locCode=record.getStr(colName);
-		if(locCode!=null){
+		if(locCode != null && !"".equals(locCode)){
 			String last2=locCode.substring(4);
 			Integer in=Integer.parseInt(last2);
 			if(in>0){
@@ -617,9 +617,12 @@ public class ContractController extends Controller {
         toNameId.append(getPara("mbProvinceTo")+" ");
         toNameId.append(getPara("cmbCityTo")+" ");
         toNameId.append(getPara("cmbAreaTo"));
-        
-        String locationFrom = getRouteAddress(getPara("route_from"));
-        String locationTo = getRouteAddress(getPara("route_to"));
+        String locationFrom = "";
+        String locationTo = "";
+        if(getPara("route_from") != null && !"".equals(getPara("route_from")))
+        	locationFrom = getRouteAddress(getPara("route_from"));
+        if(getPara("route_to") != null && !"".equals(getPara("route_to")))
+        	locationTo = getRouteAddress(getPara("route_to"));
         
         // 判断合同干线是否存在
         item.set("contract_id", contractId).set("fin_item_id", getPara("fin_item")).set("pricetype", getPara("priceType"))

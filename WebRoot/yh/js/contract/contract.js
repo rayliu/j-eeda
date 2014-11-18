@@ -557,10 +557,7 @@ $(document).ready(function() {
             	saveid1.push($("#mbProvinceFrom").val());
             	$("#hideProvinceFrom").val(mbProvinceFrom);
             }
-            if(cmbCityFrom =="--请选择城市--"){
-            	alert("请选择初始地城市！");
-            	return false;
-            }else{
+            if(cmbCityFrom !="--请选择城市--"){
             	saveid1.push($("#cmbCityFrom").val());
             	$("#hideCityFrom").val(cmbCityFrom);
             }
