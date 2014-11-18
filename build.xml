@@ -62,8 +62,8 @@
 	    </target>
 	
 	<target name="uat">
-        <!--<copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-uat" overwrite="true"/>
-        <copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-uat" overwrite="true"/>-->
+        <copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-uat" overwrite="true"/>
+        <copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-uat" overwrite="true"/>
         <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
             <arg value="WebRoot"/>
             <arg value="8000"/>
