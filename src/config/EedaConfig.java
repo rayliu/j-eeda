@@ -97,9 +97,10 @@ public class EedaConfig extends JFinalConfig {
     private static final String H2 = "H2";
     private static final String Mysql = "Mysql";
     private static final String ProdMysql = "ProdMysql";
-    
+      
     public static String mailUser;
     public static String mailPwd;
+    
     /**
      * 
      * 供Shiro插件使用 。
@@ -232,8 +233,9 @@ public class EedaConfig extends JFinalConfig {
 
     public void configPlugin(Plugins me) {
         // 加载Shiro插件, for backend notation, not for UI
-        me.add(new ShiroPlugin(routes));
-
+    	me.add(new ShiroPlugin(routes));
+    	
+    	
         loadPropertyFile("app_config.txt");
 
         mailUser = getProperty("mail_user_name");
@@ -361,8 +363,9 @@ public class EedaConfig extends JFinalConfig {
     }
 
     public void configInterceptor(Interceptors me) {
-        me.add(new ShiroInterceptor());
-       // me.add(new SetAttrLoginUserInterceptor());
+    	if(getProperty("is_check_permission").equals("Y"))
+         	me.add(new ShiroInterceptor());
+        //me.add(new SetAttrLoginUserInterceptor());
     }
 
     public void configHandler(Handlers me) {
