@@ -40,25 +40,32 @@ $(document).ready(function() {
 
 	
 
-	
+	var numberName="";
 	var privilege_table = $('#eeda-table').dataTable({
     	"bFilter" : false,
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
-        "iDisplayLength": 25,
+    	"bPaginate": false,
+    	"bLengthChange": false,
+    	"bInfo": false,
+    	"bStateSave":true,
+    	"iDisplayLength": 25,
         "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/privilege/list",
-        "aoColumns": [
-            { "mDataProp": null, "sWidth": "7%"	,
-            	 "fnRender": function(obj) {
-            			 return '<input type="checkbox" name="permissionCheck" class="unChecked" value="'+obj.aData.CODE+'">';
-                  }	
-            },
-            { "mDataProp": "MODULE_NAME","sWidth": "20%"},
-            { "mDataProp": "NAME"}
+        "aoColumns": [           
+            { "mDataProp": "MODULE_NAME","sWidth":"15%"},
+			{ "mDataProp": null,
+				"fnRender":function(obj){
+					var str = "";
+					for(var i=0;i<obj.aData.CHILDRENS.length;i++){
+						str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;"  name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">'+obj.aData.CHILDRENS[i].NAME+'</div>';
+					}
+				
+				return str;
+			}}
         ] 
     });
 	
@@ -70,18 +77,14 @@ $(document).ready(function() {
 	
 	/*点击下一页没有保存上页的数据*/
 	var permission=[];
-	 $("#eeda-table").on('click','.unChecked',function(){
-		 permission.splice(0,permission.length);	
-	        $("input[name='permissionCheck']").each(function(){
-	        	if($(this).prop('checked') == true){
-	        		permission.push($(this).val());
-	        	}
-	        });
-		 console.log(permission);
-	  });
     $('#saveBtn').click(function(e){
         e.preventDefault();
-       
+        permission.splice(0,permission.length);	
+        $("input[name='permissionCheck']").each(function(){
+        	if($(this).prop('checked') == true){
+        		permission.push($(this).val());
+        	}
+        });
         var rolename = $("#role_filter").val();
         var permissions = permission.toString();
         if(rolename != ""&&permission!=0){

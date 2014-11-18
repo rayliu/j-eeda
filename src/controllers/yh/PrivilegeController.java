@@ -7,14 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-
 import models.Permission;
 import models.Role;
 import models.RolePermission;
-import models.UserLogin;
-import models.UserRole;
+
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -44,38 +42,20 @@ public class PrivilegeController extends Controller {
 			code = role.get("code");
 		}
 		
+		List<Record> orders = new ArrayList<Record>();
+		List<Permission> parentOrders =Permission.dao.find("select  module_name from permission group by module_name");
 		
-		String sLimit = "";
-		String pageIndex = getPara("sEcho");
-		if (getPara("iDisplayStart") != null
-		        && getPara("iDisplayLength") != null) {
-			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-			        + getPara("iDisplayLength");
+		for (Permission rp : parentOrders) {
+			String key = rp.get("module_name");
+			List<RolePermission> childOrders = RolePermission.dao.find("select p.code, p.name,p.module_name ,r.permission_code from permission p left join  (select * from role_permission rp where rp.role_code =?) r on r.permission_code = p.code where p.module_name=?",code,key);
+			Record r = new Record();
+			r.set("module_name", key);
+			r.set("childrens", childOrders);
+			orders.add(r);
+			
 		}
-
-		// 获取总条数
-		String totalWhere = "";
-		String sql_m ="";
-		Record rec=null;
-		List<Record> orders=null;
-		
-		
-		totalWhere ="select count(*) total from permission p left join  (select * from role_permission rp where rp.role_code =?) r on r.permission_code = p.code";
-		sql_m ="select p.code, p.name,p.module_name ,r.permission_code from permission p left join  (select * from role_permission rp where rp.role_code =?) r on r.permission_code = p.code";
-		
-		rec = Db.findFirst(totalWhere,code);
-		
-		// 获取当前页的数据
-		orders = Db.find(sql_m  + sLimit,code);
-		
-
-		logger.debug("total records:" + rec.getLong("total"));
 		
 		Map orderMap = new HashMap();
-		orderMap.put("sEcho", pageIndex);
-		orderMap.put("iTotalRecords", rec.getLong("total"));
-		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
 		orderMap.put("aaData", orders);
 
 		renderJson(orderMap);
@@ -147,21 +127,6 @@ public class PrivilegeController extends Controller {
 			r.save();
 			
         }
-	     
-	     
-	     
-		/*for (RolePermission rolePermission : rp) {
-			rolePermission.delete();
-		}
-		重新保存数据
-		if(!permissions.equals("")){
-			for (String str : ps) {
-				RolePermission r = new RolePermission();
-				r.set("role_code", role.get("code"));
-				r.set("permission_code", str);
-				r.save();
-			}
-		}*/
 		renderJson();
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_UPDATE})

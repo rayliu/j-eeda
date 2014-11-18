@@ -45,25 +45,33 @@ $(document).ready(function() {
     	"bFilter" : false,
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
-        "iDisplayLength": 25,
+    	"bPaginate": false,
+    	"bLengthChange": false,
+    	"bInfo": false,
         "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/privilege/list",
         "aoColumns": [
-            { "mDataProp": null, "sWidth": "7%"	,
-            	 "fnRender": function(obj) {
-            		 if(obj.aData.PERMISSION_CODE==null){
-            			 return '<input type="checkbox" disabled="true" name="permissionCheck" value="'+obj.aData.CODE+'">';
-            		 }else{
-            			 return '<input type="checkbox" disabled="true" checked="true" name="permissionCheck" value="'+obj.aData.CODE+'">';
-            		 }
-                     
-                  }	
-            },
-            { "mDataProp": "MODULE_NAME","sWidth": "20%"},
-            { "mDataProp": "NAME"}
+            { "mDataProp": "MODULE_NAME","sWidth":"15%"},
+            { "mDataProp": null,
+            	"fnRender":function(obj){
+            		var str = "";
+            		for(var i=0;i<obj.aData.CHILDRENS.length;i++){
+            			
+            			if(obj.aData.CHILDRENS[i].PERMISSION_CODE==null){
+            				
+            				str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" disabled="true" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">'+obj.aData.CHILDRENS[i].NAME+'</div>';
+               			 	 
+	               		}else{
+	               		    str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" disabled="true" checked="true" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">'+obj.aData.CHILDRENS[i].NAME+'</div>';
+	               			
+	               		}   
+            		}
+            		
+            		return str;
+            	}}
         ] 
     });
 	
@@ -73,7 +81,6 @@ $(document).ready(function() {
 		$('#roleList').hide();
 		
 		var rolename = $('#role_filter').val();
-		console.log(rolename);
 		
 		privilege_table.fnSettings().sAjaxSource = "/privilege/list?rolename="+rolename;
 		privilege_table.fnDraw(); 
