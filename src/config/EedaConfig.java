@@ -363,7 +363,7 @@ public class EedaConfig extends JFinalConfig {
     }
 
     public void configInterceptor(Interceptors me) {
-    	if(getProperty("is_check_permission").equals("Y"))
+    	if("Y".equals(getProperty("is_check_permission")))
          	me.add(new ShiroInterceptor());
         //me.add(new SetAttrLoginUserInterceptor());
     }
