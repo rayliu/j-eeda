@@ -605,11 +605,11 @@ public class DeliveryController extends Controller {
 					+ "left join party p2 on t1.notify_party_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join contact c on p.contact_id = c.id "
-					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE) order by t1.id desc "
+					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) order by t1.id desc "
 					+ sLimit;
 			
 		} else {
-			 sql ="SELECT  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.abbr from transfer_order_item_detail t1 "
+			 sql ="select  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.abbr from transfer_order_item_detail t1 "
 					+ "left join transfer_order t2 on t1.order_id=t2.id "
 					+ "left join warehouse w on t2.warehouse_id = w.id "
 					+ "left join party p on t2.customer_id = p.id "
@@ -636,7 +636,7 @@ public class DeliveryController extends Controller {
 					+ warehouse
 					+ "%' and c.abbr like '%"
 					+ customerName
-					+ "%'";
+					+ "%' order by t1.id desc";
 			}
 			if(orderStatue!=""&&orderStatue!=null){
 				sqlTotal =sqlTotal+"and ifnull(t2.status,'') like '%"
@@ -644,7 +644,7 @@ public class DeliveryController extends Controller {
 						+ "%'";
 				sql = sql+"and ifnull(t2.status,'') like '%"
 						+ orderStatue
-						+ "%'";
+						+ "%' order by t1.id desc";
 			}
 			sql = sql + sLimit;
 		
@@ -672,7 +672,7 @@ public class DeliveryController extends Controller {
 	public void searchSp() {
 		String input = getPara("input");
 		List<Record> locationList = Collections.EMPTY_LIST;
-		locationList = Db.find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'");
+		locationList = Db.find("select p.id pid,p.*, c.*,c.id cid from	party p left join contact c on c.id = p.contact_id where sp_type = 'delivery'");
 		renderJson(locationList);
 	}
 
