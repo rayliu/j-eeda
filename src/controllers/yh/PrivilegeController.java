@@ -4,8 +4,10 @@ import interceptor.SetAttrLoginUserInterceptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import models.Permission;
 import models.Role;
@@ -43,9 +45,21 @@ public class PrivilegeController extends Controller {
 		}
 		
 		List<Record> orders = new ArrayList<Record>();
-		List<Permission> parentOrders =Permission.dao.find("select  module_name from permission group by module_name");
+		//List<Permission> parentOrders =Permission.dao.find("select module_name from permission group by module_name");
+		List<Permission> parentOrders = Permission.dao.find("select module_name from permission");
+		List<Permission> po = new ArrayList<Permission>();
+		for (int i = 0; i < parentOrders.size(); i++) {
+			if(i!=0){
+				if(!parentOrders.get(i).get("module_name").equals(parentOrders.get(i-1).get("module_name"))){
+					po.add(parentOrders.get(i));
+				}
+			}else{
+				po.add(parentOrders.get(i));
+			}
+			
+		}	
 		
-		for (Permission rp : parentOrders) {
+		for (Permission rp : po) {
 			String key = rp.get("module_name");
 			List<RolePermission> childOrders = RolePermission.dao.find("select p.code, p.name,p.module_name ,r.permission_code from permission p left join  (select * from role_permission rp where rp.role_code =?) r on r.permission_code = p.code where p.module_name=?",code,key);
 			Record r = new Record();
