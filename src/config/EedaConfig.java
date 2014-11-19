@@ -1,7 +1,5 @@
 package config;
 
-import interceptor.SetAttrLoginUserInterceptor;
-
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
