@@ -54,7 +54,7 @@ public class DepartOrderController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_LIST})
     public void onTrip() {
-            render("/yh/departOrder/departOrderOnTripList.html");
+         render("/yh/departOrder/departOrderOnTripList.html");
     }
     //发车单在途供应商
     public void companyNameList(){

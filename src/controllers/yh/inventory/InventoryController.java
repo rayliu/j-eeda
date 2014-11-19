@@ -42,27 +42,20 @@ public class InventoryController extends Controller {
 
     private Logger logger = Logger.getLogger(InventoryController.class);
     Subject currentUser = SecurityUtils.getSubject();    
-
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INLIST})
     public void index() {
-        HttpServletRequest re = getRequest();
-        String url = re.getRequestURI();
-        logger.debug("URI:" + url);
-        if (url.equals("/gateIn")) {
-
-            setAttr("inventory", "gateIn");
-            currentUser.checkPermission(PermissionConstant.PERMISSION_WO_INLIST );
-                render("/yh/inventory/inventoryList.html");
-        }
-        if (url.equals("/gateOut")) {
-
-            setAttr("inventory", "gateOut");
-            currentUser.checkPermission(PermissionConstant.PERMISSION_WO_OUTLIST);
-                render("/yh/inventory/inventoryList.html");
-        }
-        if (url.equals("/stock")) {
-        	currentUser.checkPermission(PermissionConstant.PERMSSION_II_LIST);
-                render("/yh/inventory/stock.html");
-        }
+        setAttr("inventory", "gateIn");
+        render("/yh/inventory/inventoryList.html");
+    }
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
+    public void stockIndex(){
+        render("/yh/inventory/stock.html");
+    }
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTLIST})
+    public void outIndex(){
+    	 setAttr("inventory", "gateOut");
+         
+         render("/yh/inventory/inventoryList.html");
     }
 
     // 入库单list

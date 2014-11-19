@@ -38,7 +38,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_LIST})
     public void index() {
-    	    render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderList.html");
+    	   render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderList.html");
     }
 
 

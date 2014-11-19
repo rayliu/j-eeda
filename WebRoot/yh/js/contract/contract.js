@@ -882,9 +882,9 @@ $(document).ready(function() {
 	    	if(type=='CUSTOMER'||type2=='CUSTOMER'){
 	    		window.location.href="/customerContract";
 	    	}if(type=='SERVICE_PROVIDER'||type2=='SERVICE_PROVIDER'){
-	    		window.location.href="/spContract";
+	    		window.location.href="/spContract/spIndex";
 	    	}if(type=='DELIVERY_SERVICE_PROVIDER'||type2=='DELIVERY_SERVICE_PROVIDER'){
-	    		window.location.href="/deliverySpContract";
+	    		window.location.href="/deliverySpContract/deliverySpIndex";
 	    	}
 	    });
 

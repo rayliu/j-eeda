@@ -47,19 +47,15 @@ public class DeliveryController extends Controller {
 	// in config route已经将路径默认设置为/yh
 	// me.add("/yh", controllers.yh.AppController.class, "/yh");
 	Subject currentUser = SecurityUtils.getSubject();
-
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_LIST})
 	public void index() {
-		HttpServletRequest re = getRequest();
-		String url = re.getRequestURI();
-		logger.debug("URI:" + url);
-		if (url.equals("/delivery")) {
-			currentUser.checkPermission(PermissionConstant.PERMSSION_DYO_LIST);
-				render("/yh/delivery/deliveryOrderList.html");
-		}
-		if (url.equals("/deliveryMilestone")) {
-			currentUser.checkPermission(PermissionConstant.PERMSSION_DOM_LIST);
-				render("/yh/delivery/deliveryOrderStatus.html");
-		}
+		render("/yh/delivery/deliveryOrderList.html");
+		
+	}
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_LIST})
+	public void deliverOnTrip(){
+		
+		render("/yh/delivery/deliveryOrderStatus.html");
 	}
 
 	// 配送单list

@@ -39,11 +39,14 @@ public class ContractController extends Controller {
     Subject currentUser = SecurityUtils.getSubject();
     // in config route已经将路径默认设置为/yh
     // me.add("/yh", controllers.yh.AppController.class, "/yh");
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_LIST})
     public void index() {
         HttpServletRequest re = getRequest();
         String url = re.getRequestURI();
         logger.debug("URI:" + url);
-        if (url.equals("/customerContract")) {
+        setAttr("contractType", "CUSTOMER");    	
+        render("/yh/contract/ContractList.html");
+        /*if (url.equals("/customerContract")) {
             setAttr("contractType", "CUSTOMER");
             	currentUser.checkPermission(PermissionConstant.PERMSSION_CC_LIST);
                 render("/yh/contract/ContractList.html");
@@ -57,8 +60,18 @@ public class ContractController extends Controller {
             setAttr("contractType", "SERVICE_PROVIDER");
             currentUser.checkPermission(PermissionConstant.PERMSSION_CP_LIST);
                 render("/yh/contract/ContractList.html");
-        }
+        }*/
 
+    }
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CD_LIST})
+    public void spIndex(){
+    	setAttr("contractType", "SERVICE_PROVIDER");
+        render("/yh/contract/ContractList.html");
+    }
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CD_LIST})
+    public void deliverySpIndex(){
+    	 setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
+         render("/yh/contract/ContractList.html");
     }
 
     public void companyNameList() {

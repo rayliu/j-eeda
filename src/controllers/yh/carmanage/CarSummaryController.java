@@ -45,12 +45,7 @@ public class CarSummaryController extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_LIST, PermissionConstant.PERMSSION_CS_CREATE,PermissionConstant.PERMSSION_CS_UPDATE}, logical=Logical.OR)
 	public void index() {
-        HttpServletRequest re = getRequest();
-        String url = re.getRequestURI();
-        logger.debug("URI:" + url);
-        if (url.equals("/carsummary")) {
-                render("/yh/carmanage/carSummaryList.html");
-        }
+       render("/yh/carmanage/carSummaryList.html");
     }
 	
 	//未处理调车单
@@ -361,10 +356,7 @@ public class CarSummaryController extends Controller {
             		.set("status", carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW).save();
         	
         	if(result){
-        		CarSummaryOrder carSummary = CarSummaryOrder.dao
-        				.findFirst("select * from car_summary_order order by id desc limit 0,1");
-        		
-        		long id = carSummary.getLong("id");
+        		long id = carSummaryOrder.getLong("id");
         		List<Long> orderIds = new ArrayList<Long>();
         		
         		for (int i = 0; i < pickupIds.length; i++) {
@@ -387,7 +379,7 @@ public class CarSummaryController extends Controller {
         		//创建费用合计表初始数据
         		initCarSummaryDetailOtherFeeData(id);
         		//创建行车里程碑
-        		saveCarSummaryOrderMilestone(id,carSummary.CAR_SUMMARY_SYSTEM_NEW);
+        		saveCarSummaryOrderMilestone(id,carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW);
         		//设置默认运输单分摊比例
         		double number = 1.0D/orderIds.size();
         		BigDecimal b = new BigDecimal(number); 

@@ -29,6 +29,7 @@ import controllers.yh.util.PermissionConstant;
 public class PayController extends Controller {
     private Logger logger = Logger.getLogger(PayController.class);
     Subject currentUser = SecurityUtils.getSubject();
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_LIST})
     public void index() {
         /**
          * String page=getPara("page"); //System.out.print(page);
@@ -37,15 +38,14 @@ public class PayController extends Controller {
          * setAttr("page", "收款条目定义"); } if(page.equals("付款")){
          * //System.out.print("没获取参数page"); setAttr("page", "付款条目定义"); }
          **/
-        HttpServletRequest re = getRequest();
-        String url = re.getRequestURI();logger.debug("URI:" + url);
-        if (url.equals("/pay")) {
-        	currentUser.checkPermission(PermissionConstant.PERMSSION_PAY_LIST);
-	        render("/yh/profile/toll/PayList.html");
-        }
-        if (url.equals("/ownCarPay")) {
-        	render("/yh/profile/toll/ownCarPayList.html");
-        }
+        
+        	
+	     render("/yh/profile/toll/PayList.html");
+       
+    }
+    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_LIST})
+    public void ownCarPayIndex(){
+    	render("/yh/profile/toll/ownCarPayList.html");
     }
 
     /**
@@ -200,7 +200,8 @@ public class PayController extends Controller {
     	} else {
     		toll = new Toll();    		
     		toll.set("name", name).set("code", code).set("type", type).set("driver_type", Carinfo.CARINFO_TYPE_OWN).set("remark", remark).save();
-    	}    	
+    	} 
+    	
 		render("/yh/profile/toll/ownCarPayList.html");
     }
 }
