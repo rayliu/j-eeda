@@ -170,7 +170,7 @@ public class CostCheckOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no  from arap_cost_order aco left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id";
+        String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no  from arap_cost_order aco left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id group by aco.id";
 
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
