@@ -1745,7 +1745,7 @@ $(document).ready(function() {
 		 }
 	 },'json');	 
 
-	 // 获取所有城市
+	 // 获取所有网点
 	 $.post('/transferOrder/searchAllOffice',function(data){
 		 if(data.length > 0){
 			 var officeSelect = $("#officeSelect");

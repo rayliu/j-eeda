@@ -1,7 +1,11 @@
 
 $(document).ready(function() {
-
     $('#menu_transfer').addClass('active').find('ul').addClass('in');
+    
+    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
+    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+    '</div>';
     
 	//datatable, 动态处理
     var transferOrder = $('#eeda-table').dataTable({
@@ -331,16 +335,13 @@ $(document).ready(function() {
     	$("#toFileUpload").click();
     });
     
-    
 	$('#toFileUpload').fileupload({
         dataType: 'json',
         done: function (e, data) {
-            $.each(data.result.files, function (index, file) {
-                $('<p/>').text(file.name).appendTo(document.body);
-            });
-            //transferOrder.fnDraw();
+        	$.scojs_message(data.result.result, $.scojs_message.TYPE_OK);
         }
     });
+
 
     $('#datetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  

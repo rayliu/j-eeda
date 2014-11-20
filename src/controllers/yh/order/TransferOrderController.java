@@ -3,6 +3,7 @@ package controllers.yh.order;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,7 +31,6 @@ import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
@@ -38,9 +38,11 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import controllers.yh.util.PermissionConstant;
-import controllers.yh.util.PoiUtils;
+import controllers.yh.util.ReaderXLS;
+import controllers.yh.util.ReaderXlSX;
 
 
 @RequiresAuthentication
@@ -724,7 +726,7 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 保存联系人
-	private Contact setContact() {
+	public Contact setContact() {
 		Contact contact = new Contact();
 		contact.set("contact_person", getPara("notify_contact_person"));
 		contact.set("phone", getPara("notify_phone"));
@@ -881,11 +883,37 @@ public class TransferOrderController extends Controller {
 
 	// 导入运输单
 	public void importTransferOrder() {
-		// UploadFile uploadFile = getFile();
-		// logger.debug("上传的文件名:" + uploadFile.getFileName());
-		Map<String, List<Object>> map = PoiUtils.readExcel("c:/c.xlsx");
-
-		renderJson("{\"success\":true}");
+		UploadFile uploadFile = getFile();
+		File file = uploadFile.getFile();
+		String fileName = file.getName();
+		logger.debug("文件名:" + file.getName() +",路径："+file.getPath());
+		Map<String,String> resultMap = new HashMap<String,String>();
+ 		try {
+ 			String[] title = null;
+ 			List<Map<String,String>> content = new ArrayList<Map<String,String>>();
+ 			if(fileName.endsWith(".xls")){
+ 				title = ReaderXLS.getXlsTitle(file);
+ 				content = ReaderXLS.getXlsContent(file);
+ 			}else if(fileName.endsWith(".xlsx")){
+ 				title = ReaderXlSX.getXlsTitle(file);
+ 				content = ReaderXlSX.getXlsContent(file);
+ 			}else{
+ 				resultMap.put("result", "导入失败，请选择正确的execl文件");
+ 			}
+ 			if(title != null && content.size() > 0){
+				TransferOrderExeclHandeln handeln = new TransferOrderExeclHandeln();
+				if(handeln.checkoutExeclTitle(title,"transferOrder")){
+					Party party = saveContact();
+					resultMap = handeln.importTransferOrder(content, party);
+				}else{
+					resultMap.put("result", "导入失败，execl标题与系统默认标题不一致");
+				}
+ 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("result", "未知错误");
+		}
+		renderJson(resultMap);
 	}
 
 	// 根据客户查出location
@@ -1236,6 +1264,5 @@ public class TransferOrderController extends Controller {
         }
         renderJson("{\"success\":true}");
     }
-	
 	
 }

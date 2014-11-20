@@ -229,7 +229,10 @@ public class DataInitUtil {
             
             //行车单费用合计
             stmt.execute("create table if not exists car_summary_detail_other_fee(id bigint auto_increment primary key,car_summary_id bigint,item bigint,amount_item varchar(100),amount double,is_delete varchar(4),remark varchar(500));");
-
+            
+            //execl标题表
+            stmt.execute("create table if not exists execl_title(id bigint auto_increment primary key,execl_type varchar(50),execl_title varchar(100));");
+            
             stmt.close();
             // conn.commit();
             conn.close();
@@ -630,6 +633,14 @@ public class DataInitUtil {
             /*stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(1, 5, 1, 300);");
             stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(2, 5, 2, 100);");
             stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(3, 5, 3, 100);");*/
+           
+            //execl标题表
+            String titles = "运输单 产品型号 发货数量 序列号 件数 收货单位 收货人 收货人联系电话 业务经理 业务经理联系电话 客户名称 名称1 网点 供应商名称 仓储地点 始发城市 到达城市 计划日期 预计到货日期";
+            String[] title = titles.split(" ");
+            for (int i = 0; i < title.length; i++) {
+            	stmt.executeUpdate("insert into execl_title(execl_type, execl_title) values('transferOrder','"+title[i]+"');");
+			}
+            
             stmt.close();
             // conn.commit();
             conn.close();
