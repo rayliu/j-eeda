@@ -7,6 +7,7 @@ $(document).ready(function() {
 		   "iDisplayLength": 10,
 	       "bSort": false, // 不要排序
 	       "bFilter": false, //不需要默认的搜索框
+	       "bServerSide": true,
 	   	   "oLanguage": {
 	           "sUrl": "/eeda/dataTables.ch.txt"
 	       },
@@ -57,9 +58,10 @@ $(document).ready(function() {
 		var id =$(this).attr('code');
 		$('#warehouseSelect').val($(this).text());
 		$("#warehouseId").val(id);
-		tab.fnSettings().sAjaxSource = "/stock/stocklist/"+id;
-		tab.fnDraw();
 		$('#warehouseList').hide();
+		tab.fnSettings().sAjaxSource ="/stock/stocklist/"+id;
+		tab.fnDraw();
+		
 	});
 
 });

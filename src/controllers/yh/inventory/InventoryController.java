@@ -127,7 +127,7 @@ public class InventoryController extends Controller {
             orderMap.put("iTotalDisplayRecords", 0);
             orderMap.put("aaData", null);
             renderJson(orderMap);
-            return;
+            //return;
         }
         String sLimit = "";
         String pageIndex = getPara("sEcho");
