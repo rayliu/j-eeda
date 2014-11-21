@@ -33,7 +33,7 @@ public class CostAdjustOrderController extends Controller {
     public void add() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
-        render("/yh/arap/CostAdjustOrder/CostCheckOrderCreateSearchList.html");
+        render("/yh/arap/CostAdjustOrder/CostAdjustOrderCreateSearchList.html");
     }
 
     public void create() {

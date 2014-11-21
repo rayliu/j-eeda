@@ -6,9 +6,9 @@
             
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">
-                     应付明细确认
-                    </h1>
+                    <h3 class="page-header">
+                     	<!-- 应付明细确认 -->
+                    </h3>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -23,8 +23,8 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                         <form role="form" style="margin: 0 15px;">
-                                <div class="row">
-                                    <div class="col-lg-6">
+                                <div class="row search_panel">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label class="search-label">运输单号</label>
                                             <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
@@ -34,14 +34,10 @@
                                             <label class="search-label">操作类型</label>
                                             <input type="text" class="form-control search-control address_filter" id="address_filter">
                                         </div>
-                                        <div class="form-group">
-                                            <label class="search-label">操作单号</label>
-                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
-                                            <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 21.5%;"></ul>
-                                        </div>
+                                        
                                     </div>
                                     <!-- end of col-lg-6-->
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label class="search-label">供应商</label>
                                             <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
@@ -50,16 +46,24 @@
                                          <div class="form-group">
                                             <label class="search-label">确认状态</label>
                                             <input type="text" class="form-control search-control address_filter" id="address_filter">
-                                         <div class="form-group">
+                                         
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                    	<div class="form-group">
+                                            <label class="search-label">操作单号</label>
+                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
+                                            <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 21.5%;"></ul>
+                                        </div>
+                                        <div class="form-group">
                                             <label class="search-label">业务状态</label>
                                             <input type="text" class="form-control search-control address_filter" id="address_filter">
-                                        </div>
                                         </div>
                                     </div>
                                     <!-- end of col-lg-6-->
                                 </div><!-- end of row-->
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">                                        
                                             <div id="datetimepicker" class="input-append date "> 
                                                 <label class="search-label">开始时间</label> 
@@ -71,7 +75,7 @@
                                         </div>    
                                     </div>
                                     <!-- end of col-lg-6-->
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">                                                    
                                             <span id="datetimepicker2" class="input-append date search-control "> 
                                                 <label class="search-label">结束时间</label> 
@@ -82,6 +86,7 @@
                                             </span>
                                         </div>
                                     </div>
+                                    
                                     <div class="col-lg-6">
                                         <div class="form-group">                                                    
                                             <span id="datetimepicker2" class="input-append date search-control "> 

@@ -18,7 +18,7 @@
             	
 	            	<div id="basic"  style='display:none'>
 		            	<div class="panel-body">
-			            	<div class="row">
+			            	<div class="row ">
 				            	<div class="col-lg-6">
 									<div class="form-group">
 										<label class="search-label">客户：</label>
@@ -72,8 +72,8 @@
 	            	
 	            	<div id="cargos">
 	            		<div class="panel-body">
-	            	 		<div class="row">
-				            	<div class="col-lg-6">
+	            	 		<div class="row search_panel">
+				            	<div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="search-label">客户：</label>
                                         <input id="customerName2" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择客户">
@@ -84,7 +84,7 @@
 										<input id="deliveryOrderNo2" class="form-control search-control orderNo_filter" type="text">
 									</div>									
 								</div>
-								<div class="col-lg-6">
+								<div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="search-label">仓库：</label>
                                         <input id="warehouse2" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择仓库">
@@ -98,7 +98,7 @@
 								</div>
 							</div>
                         </div>
-                        <div>
+                        <div class="col-lg-4">
 	                        <form id='createForm' action="/delivery/creat3" method="post">
 	                        	<input id='cusId' name='cusId' type="hidden">
 	                        	<input id='createId' name='createId' type="hidden">

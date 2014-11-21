@@ -61,7 +61,7 @@ $(document).ready(function() {
 				"fnRender":function(obj){
 					var str = "";
 					for(var i=0;i<obj.aData.CHILDRENS.length;i++){
-						str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;"  name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">'+obj.aData.CHILDRENS[i].NAME+'</div>';
+						str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;"  name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
 					}
 				
 				return str;

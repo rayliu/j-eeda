@@ -23,11 +23,13 @@ $(document).ready(function() {
     
 	//datatable, 动态处理
    var tab2= $('#eeda-table').dataTable({
-        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+	   "bFilter": false, 
+	   //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
-    	"oLanguage": {
+    	
+        "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "bProcessing": true,

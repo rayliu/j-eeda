@@ -13,8 +13,8 @@
             	</div>
             <div class="panel-body">
             <form role="form" style="margin: 0 15px;">
-                            <div class="row">
-                                <div class="col-lg-6">
+                            <div class="row search_panel">
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="search-label">公司名称</label>
                                         <input type="text" class="form-control search-control orderNo_filter" id="name_filter" value="">
@@ -27,7 +27,7 @@
                                     
                                 </div>
                                 <!-- end of col-lg-6-->
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="search-label">负责人</label>
                                         <input type="text" class="form-control search-control customer_filter" id="person_filter">
@@ -91,7 +91,7 @@ var datatable=$('#example').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	        //"sPaginationType": "bootstrap",
 	        "iDisplayLength": 10,
-	      
+	        "bFilter": false,
             "bServerSide": true,
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
