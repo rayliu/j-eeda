@@ -91,7 +91,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,receipt_date timestamp,transaction_status varchar(20),order_type varchar(20),creator bigint,remark varchar(255), depart_order_id bigint, delivery_order_id bigint,transfer_order_id bigint, notity_party_id bigint,customer_id bigint);");
             // Depart_Order_fin_item 回单应收明细
             stmt.executeUpdate("create table if not exists return_order_fin_item (id bigint auto_increment primary key, return_order_id bigint, fin_item_id bigint, "
-                    + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120),transfer_order_id bigint,delivery_order_id bigint, contract_id bigint, fin_type varchar(20));");
+                    + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120),transfer_order_id bigint,delivery_order_id bigint, contract_id bigint, fin_type varchar(20),create_name varchar(50));");
 
             // 保险单
             stmt.executeUpdate("create table if not exists insurance_order(id bigint auto_increment primary key,order_no varchar(255),ref_no varchar(255),status varchar(255),audit_status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),office_id bigint,foreign key(office_id) references office(id));");

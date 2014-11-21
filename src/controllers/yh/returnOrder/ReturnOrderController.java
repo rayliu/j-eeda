@@ -558,6 +558,7 @@ public class ReturnOrderController extends Controller {
 		returnOrderFinItem.set("contract_id", contractFinItem.get("contract_id"));// 类型是应收
 		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
 		returnOrderFinItem.set("create_date", now);
+		returnOrderFinItem.set("create_name", "system");
 		
 		returnOrderFinItem.save();
 	}
@@ -775,6 +776,7 @@ public class ReturnOrderController extends Controller {
 		returnOrderFinItem.set("contract_id", contractFinItem.get("contract_id"));// 类型是应收
 		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
 		returnOrderFinItem.set("create_date", now);
+		returnOrderFinItem.set("create_name", "system");
 		
 		returnOrderFinItem.save();
 	}

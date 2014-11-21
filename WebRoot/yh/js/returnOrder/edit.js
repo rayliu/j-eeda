@@ -340,32 +340,68 @@
 			{"mDataProp":"DELIVERY_ORDER_NO","sWidth": "80px"},
 			{"mDataProp":"NAME",
 			    "fnRender": function(obj) {
-			        if(obj.aData.NAME!='' && obj.aData.NAME != null){
-			        	var str="";
-			        	$("#receivableItemList").children().each(function(){
-			        		if(obj.aData.NAME == $(this).text()){
-			        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";   
-			        			$("#receivableTotal").val(obj.aData.NAME);
-			        		}else{
-			        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-			        		}
-			        	});
-			            return "<select name='fin_item_id'>"+str+"</select>";
-			        }else{
-			        	var str="";
-			        	$("#receivableItemList").children().each(function(){
-			        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-			        	});
-			        	return "<select name='fin_item_id'>"+str+"</select>";
-			        }
+			    	if(obj.aData.CREATE_NAME == 'system'){
+		        		return obj.aData.NAME;
+		        	}else{
+				        if(obj.aData.NAME!='' && obj.aData.NAME != null){
+				        	var str="";
+				        	$("#receivableItemList").children().each(function(){
+				        		if(obj.aData.NAME == $(this).text()){
+				        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";   
+				        			$("#receivableTotal").val(obj.aData.NAME);
+				        		}else{
+				        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+				        		}
+				        	});
+				            return "<select name='fin_item_id'>"+str+"</select>";
+				        }else{
+				        	var str="";
+				        	$("#receivableItemList").children().each(function(){
+				        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+				        	});
+				        	return "<select name='fin_item_id'>"+str+"</select>";
+				        }
+		        	}
 			 }},
+			 /*{"mDataProp":"NAME",
+				    "fnRender": function(obj) {
+				    	if(obj.aData.NAME!='' && obj.aData.NAME != null){
+				        	var str="";
+				        	$("#paymentItemList").children().each(function(){
+				        		if(obj.aData.NAME == $(this).text()){
+				        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";
+				        		}else{
+				        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+				        		}
+				        	});
+				        	if(obj.aData.CREATE_NAME == 'system'){
+				        		return obj.aData.NAME;
+				        	}else{
+				        		return "<select name='fin_item_id'>"+str+"</select>";
+				        	}
+				        }else{
+				        	var str="";
+				        	$("#paymentItemList").children().each(function(){
+				        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+				        	});
+				        	return "<select name='fin_item_id'>"+str+"</select>";
+				        }
+				 }},*/
 			{"mDataProp":"AMOUNT",
 			     "fnRender": function(obj) {
-			         if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-			             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
-			         }else{
-			         	 return "<input type='text' name='amount'>";
-			         }
+			    	 if(obj.aData.CREATE_NAME == 'system'){
+			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+				             return obj.aData.AMOUNT;
+				         }else{
+				         	 return "";
+				         }
+			    	 }else{
+			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+				             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+				         }else{
+				         	 return "<input type='text' name='amount'>";
+				         }
+			    	 }
 			 }},  
 			{"mDataProp":"REMARK",
                 "fnRender": function(obj) {
