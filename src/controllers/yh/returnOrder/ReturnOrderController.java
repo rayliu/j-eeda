@@ -475,13 +475,13 @@ public class ReturnOrderController extends Controller {
 		// 算最长的路程的应收
 		List<Record> deliveryOrderItemList = Db
 				.find("select count(1) amount, toi.product_id, doi.transfer_order_id, t_o.route_from, d_o.route_to from delivery_order_item doi "
-						+ "left join transfer_order_item_detail toid on doi.transfer_item_detail_id =toid.id "
-						+ "left join transfer_order_item toi on toid.item_id = toi.id "
-						+ "left join delivery_order d_o on doi.delivery_id = d_o.id "
-						+ "left join transfer_order t_o on t_o.id = doi.transfer_order_id "
-						+ "where doi.delivery_id ="
+						+ " left join transfer_order_item_detail toid on doi.transfer_item_detail_id =toid.id "
+						+ " left join transfer_order_item toi on toid.item_id = toi.id "
+						+ " left join delivery_order d_o on doi.delivery_id = d_o.id "
+						+ " left join transfer_order t_o on t_o.id = doi.transfer_order_id "
+						+ " where doi.delivery_id ="
 						+ deliveryOrderId
-						+ "group by  toi.product_id, doi.transfer_order_id, t_o.route_from, d_o.route_to ");
+						+ " group by  toi.product_id, doi.transfer_order_id, t_o.route_from, d_o.route_to ");
 		for (Record dOrderItemRecord : deliveryOrderItemList) {
 			Record contractFinItem = Db
 					.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
