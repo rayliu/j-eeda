@@ -17,7 +17,6 @@ import models.Location;
 import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
-import models.TransferOrderFinItem;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
@@ -354,7 +353,7 @@ public class ReturnOrderController extends Controller {
 				deleteContractFinItem(deliveryOrder);
 			}
 			// 计算配送单的触发的应收
-			calculateCharge(deliveryOrder);
+			calculateCharge(deliveryOrder, returnOrder.getLong("id"));
 		}
 		returnOrder.set("remark", getPara("remark"));
 		returnOrder.update();
@@ -372,7 +371,7 @@ public class ReturnOrderController extends Controller {
 		if (customerContract == null)
 			return;
 
-		Db.update("delete from transfer_order_fin_item where contract_id="
+		Db.update("delete from return_order_fin_item where contract_id="
 				+ customerContract.getLong("id"));
 	}
 	
@@ -457,7 +456,7 @@ public class ReturnOrderController extends Controller {
 		renderJson("{\"success\":true}");
 	}
 
-	public void calculateCharge(DeliveryOrder deliveryOrder) {
+	public void calculateCharge(DeliveryOrder deliveryOrder, Long returnOrderId) {
 		// TODO 运输单的计费类型
 		String chargeType = "perUnit";
 
@@ -496,7 +495,7 @@ public class ReturnOrderController extends Controller {
 							+ "' and priceType='" + chargeType + "'");
 
 			if (contractFinItem != null) {
-				genFinItem(deliveryOrderId, dOrderItemRecord, contractFinItem);
+				genFinItem(deliveryOrderId, dOrderItemRecord, contractFinItem, returnOrderId);
 			} else {
 				contractFinItem = Db
 						.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
@@ -507,6 +506,112 @@ public class ReturnOrderController extends Controller {
 								+ dOrderItemRecord.get("route_to")
 								+ "' and priceType='" + chargeType + "'");
 
+				if (contractFinItem != null) {
+					genFinItem(deliveryOrderId, dOrderItemRecord, contractFinItem, returnOrderId);
+				} else {
+					contractFinItem = Db
+							.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
+									+ customerContract.getLong("id")
+									+ " and from_id = '"
+									+ dOrderItemRecord.get("route_from")
+									+ "' and to_id = '"
+									+ dOrderItemRecord.get("route_to")
+									+ "' and priceType='" + chargeType + "'");
+
+					if (contractFinItem != null) {
+						genFinItem(deliveryOrderId, dOrderItemRecord, contractFinItem, returnOrderId);
+					} else {
+						contractFinItem = Db
+								.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
+										+ customerContract.getLong("id")
+										+ " and to_id = '"
+										+ dOrderItemRecord.get("route_to")
+										+ "' and priceType='"
+										+ chargeType
+										+ "'");
+
+						if (contractFinItem != null) {
+							genFinItem(deliveryOrderId, dOrderItemRecord, contractFinItem, returnOrderId);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void genFinItem(Long deliveryOrderId, Record tOrderItemRecord, Record contractFinItem, Long returnOrderId) {
+		java.util.Date utilDate = new java.util.Date();
+		java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
+		ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
+		returnOrderFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
+		
+		if (tOrderItemRecord == null) {
+			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount"));
+		} else {
+			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount") * tOrderItemRecord.getLong("amount"));
+		}
+		
+		returnOrderFinItem.set("delivery_order_id", deliveryOrderId);
+		returnOrderFinItem.set("return_order_id", returnOrderId);
+		returnOrderFinItem.set("status", "未完成");
+		returnOrderFinItem.set("fin_type", "charge");// 类型是应收
+		returnOrderFinItem.set("contract_id", contractFinItem.get("contract_id"));// 类型是应收
+		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
+		returnOrderFinItem.set("create_date", now);
+		
+		returnOrderFinItem.save();
+	}
+/*	
+	public void calculateCharge(DeliveryOrder deliveryOrder) {
+		// TODO 运输单的计费类型
+		String chargeType = "perUnit";
+		
+		Long deliveryOrderId = deliveryOrder.getLong("id");
+		// 找到该回单对应的配送单中的ATM
+		Long customerId = deliveryOrder.getLong("customer_id");
+		// 先获取有效期内的客户合同, 如有多个，默认取第一个
+		Contract customerContract = Contract.dao
+				.findFirst("select * from contract where type='CUSTOMER' "
+						+ "and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="
+						+ customerId);
+		if (customerContract == null)
+			return;
+		
+		// 运输单的始发地, 配送单的目的地
+		// 算最长的路程的应收
+		List<Record> deliveryOrderItemList = Db
+				.find("select count(1) amount, toi.product_id, doi.transfer_order_id, t_o.route_from, d_o.route_to from delivery_order_item doi "
+						+ "left join transfer_order_item_detail toid on doi.transfer_item_detail_id =toid.id "
+						+ "left join transfer_order_item toi on toid.item_id = toi.id "
+						+ "left join delivery_order d_o on doi.delivery_id = d_o.id "
+						+ "left join transfer_order t_o on t_o.id = doi.transfer_order_id "
+						+ "where doi.delivery_id ="
+						+ deliveryOrderId
+						+ "group by  toi.product_id, doi.transfer_order_id, t_o.route_from, d_o.route_to ");
+		for (Record dOrderItemRecord : deliveryOrderItemList) {
+			Record contractFinItem = Db
+					.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
+							+ customerContract.getLong("id")
+							+ " and product_id ="
+							+ dOrderItemRecord.get("product_id")
+							+ " and from_id = '"
+							+ dOrderItemRecord.get("route_from")
+							+ "' and to_id = '"
+							+ dOrderItemRecord.get("route_to")
+							+ "' and priceType='" + chargeType + "'");
+			
+			if (contractFinItem != null) {
+				genFinItem(deliveryOrderId, dOrderItemRecord, contractFinItem);
+			} else {
+				contractFinItem = Db
+						.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
+								+ customerContract.getLong("id")
+								+ " and product_id ="
+								+ dOrderItemRecord.get("product_id")
+								+ " and to_id = '"
+								+ dOrderItemRecord.get("route_to")
+								+ "' and priceType='" + chargeType + "'");
+				
 				if (contractFinItem != null) {
 					genFinItem(deliveryOrderId, dOrderItemRecord,
 							contractFinItem);
@@ -519,7 +624,7 @@ public class ReturnOrderController extends Controller {
 									+ "' and to_id = '"
 									+ dOrderItemRecord.get("route_to")
 									+ "' and priceType='" + chargeType + "'");
-
+					
 					if (contractFinItem != null) {
 						genFinItem(deliveryOrderId, dOrderItemRecord,
 								contractFinItem);
@@ -532,7 +637,7 @@ public class ReturnOrderController extends Controller {
 										+ "' and priceType='"
 										+ chargeType
 										+ "'");
-
+						
 						if (contractFinItem != null) {
 							genFinItem(deliveryOrderId, dOrderItemRecord,
 									contractFinItem);
@@ -542,14 +647,14 @@ public class ReturnOrderController extends Controller {
 			}
 		}
 	}
-
+	
 	private void genFinItem(Long deliveryOrderId, Record tOrderItemRecord,
 			Record contractFinItem) {
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
 		TransferOrderFinItem transferFinItem = new TransferOrderFinItem();
 		transferFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
-
+		
 		if (tOrderItemRecord == null) {
 			transferFinItem.set("amount", contractFinItem.getDouble("amount"));
 		} else {
@@ -557,7 +662,7 @@ public class ReturnOrderController extends Controller {
 			transferFinItem.set("amount", contractFinItem.getDouble("amount")
 					* itemAmount);
 		}
-
+		
 		transferFinItem.set("order_id",
 				tOrderItemRecord.get("transfer_order_id"));
 		transferFinItem.set("delivery_id", deliveryOrderId);
@@ -565,13 +670,13 @@ public class ReturnOrderController extends Controller {
 		transferFinItem.set("fin_type", "charge");// 类型是应收
 		transferFinItem.set("contract_id", contractFinItem.get("contract_id"));// 类型是应收
 		transferFinItem
-				.set("creator", LoginUserController.getLoginUserId(this));
+		.set("creator", LoginUserController.getLoginUserId(this));
 		transferFinItem.set("create_date", now);
 		transferFinItem.set("create_name", transferFinItem.CREATE_NAME_SYSTEM);
-
+		
 		transferFinItem.save();
 	}
-	
+*/	
 	public void calculateChargeByCustomer(TransferOrder transferOrder, Long returnOrderId) {
 		// TODO 运输单的计费类型
 		String chargeType = "perUnit";

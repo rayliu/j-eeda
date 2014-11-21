@@ -367,7 +367,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         //ATM
         if("ATM".equals(deliveryOrder.get("cargo_nature"))){
 	        ReturnOrderController roController= new ReturnOrderController();
-	        roController.calculateCharge(deliveryOrder);
+	        roController.calculateCharge(deliveryOrder, returnOrder.getLong("id"));
         }
         //TODO:  普通货品的先不算
     }
