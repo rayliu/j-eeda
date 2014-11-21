@@ -343,12 +343,8 @@ public class TransferOrderMilestoneController extends Controller {
             }
             
             // 生成应收
-            //ATM
-            if("ATM".equals(transferOrder.get("cargo_nature"))){
-    	        ReturnOrderController roController= new ReturnOrderController();
-    	        roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"));
-            }
-            //TODO:  普通货品的先不算
+	        ReturnOrderController roController= new ReturnOrderController();
+	        roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"));
         }
         renderJson("{\"success\":true}");
     }

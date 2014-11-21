@@ -570,7 +570,7 @@ public class ReturnOrderController extends Controller {
 		// 运输单的始发地, 配送单的目的地
 		// 算最长的路程的应收
 		List<Record> transferOrderItemList = Db
-				.find("select count(1) amount, toi.product_id, t_o.id, t_o.route_from, t_o.route_to from transfer_order_item toi "
+				.find("select distinct toi.amount amount, toi.product_id, t_o.id, t_o.route_from, t_o.route_to from transfer_order_item toi "
 						+ " left join transfer_order_item_detail toid on toid.item_id = toi.id "
 						+ " left join transfer_order t_o on t_o.id = toi.order_id "
 						+ " where toi.order_id = "+ transferOrderId);
@@ -640,9 +640,7 @@ public class ReturnOrderController extends Controller {
 		if (tOrderItemRecord == null) {
 			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount"));
 		} else {
-			Long itemAmount = tOrderItemRecord.getLong("amount");
-			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount")
-					* itemAmount);
+			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
 		}
 		
 		returnOrderFinItem.set("transfer_order_id", transferOrderId);
@@ -652,7 +650,6 @@ public class ReturnOrderController extends Controller {
 		returnOrderFinItem.set("contract_id", contractFinItem.get("contract_id"));// 类型是应收
 		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
 		returnOrderFinItem.set("create_date", now);
-		//returnOrderFinItem.set("create_name", returnOrderFinItem.CREATE_NAME_SYSTEM);
 		
 		returnOrderFinItem.save();
 	}
