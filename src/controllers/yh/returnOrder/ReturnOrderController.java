@@ -331,6 +331,12 @@ public class ReturnOrderController extends Controller {
 			if (notifyPartyId != null) {
 				updateContact(notifyPartyId);
 			}
+			// 如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
+			if (isLocationChanged) {
+				deleteContractFinItemByTransfer(transferOrder);
+			}
+			// 计算配送单的触发的应收
+			calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"));
 		} else {
 			// 非直送
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao
@@ -367,6 +373,20 @@ public class ReturnOrderController extends Controller {
 			return;
 
 		Db.update("delete from transfer_order_fin_item where contract_id="
+				+ customerContract.getLong("id"));
+	}
+	
+	private void deleteContractFinItemByTransfer(TransferOrder deliveryOrder) {
+		Long customerId = deliveryOrder.getLong("customer_id");
+		// 先获取有效期内的客户合同, 如有多个，默认取第一个
+		Contract customerContract = Contract.dao
+				.findFirst("select * from contract where type='CUSTOMER' "
+						+ "and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="
+						+ customerId);
+		if (customerContract == null)
+			return;
+		
+		Db.update("delete from return_order_fin_item where contract_id="
 				+ customerContract.getLong("id"));
 	}
 

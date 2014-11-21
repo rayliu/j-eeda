@@ -256,6 +256,8 @@
 	$("#returnOrderPayment").click(function(e){
 		e.preventDefault();
 		parentId = e.target.getAttribute("id");
+		
+		receipttable.fnDraw(); 
 	});
 	$("#chargeCheckOrderbasic").click(function(e){
 		e.preventDefault();
