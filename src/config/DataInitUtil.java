@@ -234,6 +234,10 @@ public class DataInitUtil {
             //execl标题表
             stmt.execute("create table if not exists execl_title(id bigint auto_increment primary key,execl_type varchar(50),execl_title varchar(100));");
             
+            // 手工收款单
+            stmt.execute("create table if not exists arap_misc_charge_order(id bigint auto_increment primary key,order_no varchar(255),type varchar(50),status varchar(50),remark varchar(255),payment_method varchar(255),create_by bigint,create_stamp timestamp,charge_order_id bigint,foreign key(charge_order_id) references arap_charge_order(id),account_id bigint,foreign key(account_id) references fin_account(id));");
+            stmt.execute("create table if not exists arap_misc_charge_order_item(id bigint auto_increment primary key,fin_item_id bigint,fin_item_code varchar(20),amount double,status varchar(50),creator varchar(50),create_date timestamp,last_updator varchar(50),last_update_date timestamp,remark varchar(5120),misc_order_id bigint,foreign key(misc_order_id) references arap_misc_charge_order(id));");
+            
             stmt.close();
             // conn.commit();
             conn.close();

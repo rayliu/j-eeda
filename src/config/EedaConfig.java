@@ -17,6 +17,8 @@ import models.ArapCostInvoiceItemInvoiceNo;
 import models.ArapCostItem;
 import models.ArapCostOrder;
 import models.ArapCostOrderInvoiceNo;
+import models.ArapMiscChargeOrder;
+import models.ArapMiscChargeOrderItem;
 import models.Category;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
@@ -215,6 +217,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/chargeInvoiceOrder", controllers.yh.arap.ar.ChargeInvoiceOrderController.class, contentPath);
         me.add("/chargeAcceptOrder", controllers.yh.arap.ar.ChargeAcceptOrderController.class, contentPath);
         me.add("/chargeAdjustOrder", controllers.yh.arap.ar.ChargeAdjustOrderController.class, contentPath);
+        me.add("/chargeMiscOrder", controllers.yh.arap.ar.ChargeMiscOrderController.class, contentPath);
         //ap 应付条目处理
         me.add("/costConfirmList", controllers.yh.arap.ap.CostItemConfirmController.class, contentPath);
         me.add("/costCheckOrder", controllers.yh.arap.ap.CostCheckOrderController.class, contentPath);
@@ -308,10 +311,13 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_charge_invoice", ArapChargeInvoice.class);
         arp.addMapping("insurance_order", InsuranceOrder.class);
         arp.addMapping("insurance_fin_item", InsuranceFinItem.class);
+        
         arp.addMapping("arap_charge_invoice_application_order", ArapChargeInvoiceApplication.class);
         arp.addMapping("arap_charge_invoice_application_item", ArapChargeInvoiceApplicationItem.class);
         arp.addMapping("arap_charge_invoice_item_invoice_no", ArapChargeInvoiceItemInvoiceNo.class);
         arp.addMapping("arap_charge_application_invoice_no", ArapChargeApplicationInvoiceNo.class);
+        arp.addMapping("arap_misc_charge_order", ArapMiscChargeOrder.class);
+        arp.addMapping("arap_misc_charge_order_item", ArapMiscChargeOrderItem.class);
         // 应付对账单
         arp.addMapping("arap_cost_order", ArapCostOrder.class);
         arp.addMapping("arap_cost_item", ArapCostItem.class);
