@@ -2,7 +2,6 @@ package controllers.yh.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -18,7 +17,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-@SuppressWarnings({"rawtypes","unused","deprecation"})
+@SuppressWarnings({ "unused", "deprecation" })
 public class ReaderXLS{
 	private POIFSFileSystem fs;
     private HSSFWorkbook wb;
@@ -133,34 +132,6 @@ public class ReaderXLS{
     }
 
     /**
-     * 获取单元格数据内容为日期类型的数据
-     * 
-     * @param cell
-     *            Excel单元格
-     * @return String 单元格数据内容
-     */
-	private String getDateCellValue(HSSFCell cell) {
-        String result = "";
-        try {
-            int cellType = cell.getCellType();
-            if (cellType == HSSFCell.CELL_TYPE_NUMERIC) {
-                Date date = cell.getDateCellValue();
-                result = (date.getYear() + 1900) + "-" + (date.getMonth() + 1)
-                        + "-" + date.getDate();
-            } else if (cellType == HSSFCell.CELL_TYPE_STRING) {
-                String date = getStringCellValue(cell);
-                result = date.replaceAll("[年月]", "-").replace("日", "").trim();
-            } else if (cellType == HSSFCell.CELL_TYPE_BLANK) {
-                result = "";
-            }
-        } catch (Exception e) {
-            System.out.println("日期格式不正确!");
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    /**
      * 根据HSSFCell类型设置数据
      * @param cell
      * @return
@@ -210,15 +181,6 @@ public class ReaderXLS{
     }
     
     //读取Excel表格标题
-    public static String[] getXlsTitle(String xlsPath) throws Exception {
-    	
-    	InputStream is = new FileInputStream(xlsPath);
-        ReaderXLS excelReader = new ReaderXLS();
-        excelReader.readExcelTitle(is);
-    	return xlsTitle;
-    }
-    
-    //读取Excel表格标题
     public static String[] getXlsTitle(File xlsFile) throws Exception {
     	
     	InputStream is = new FileInputStream(xlsFile);
@@ -228,37 +190,11 @@ public class ReaderXLS{
     }
     
     //读取Excel表格内容
-    public static List<Map<String,String>> getXlsContent(String xlsPath) throws Exception {
-    	InputStream is = new FileInputStream(xlsPath);
-    	ReaderXLS excelReader = new ReaderXLS();
-    	xlsContent = excelReader.readExcelContent(is);
-    	return xlsContent;
-    }
-    
-    //读取Excel表格内容
     public static List<Map<String,String>> getXlsContent(File xlsFile) throws Exception {
     	InputStream is = new FileInputStream(xlsFile);
     	ReaderXLS excelReader = new ReaderXLS();
     	xlsContent = excelReader.readExcelContent(is);
     	return xlsContent;
-    }
-    
-    //获取xls文件内容
-    public static Map<String, Object> readerXLS(String xlsPath) throws Exception {
-    	Map<String, Object> xlsData = new HashMap<String, Object>();
-		//读取Excel表格标题
-    	InputStream is = new FileInputStream(xlsPath);
-        ReaderXLS excelReader = new ReaderXLS();
-        excelReader.readExcelTitle(is);
-        //读取Excel表格内容
-        InputStream is2 = new FileInputStream(xlsPath);
-        excelReader.readExcelContent(is2);
-        //设值
-        xlsData.put("title", xlsTitle);
-        xlsData.put("content", xlsContent);
-	        
-    	return xlsData;
-    	
     }
     
     //获取xls文件内容
@@ -278,32 +214,19 @@ public class ReaderXLS{
     	return xlsData;
     	
     }
-    public static void main(String[] args) {
-        try {
-            // 对读取Excel表格标题测试
-            InputStream is = new FileInputStream("d:\\广电运通.xls");
-            ReaderXLS excelReader = new ReaderXLS();
-            String[] title = excelReader.readExcelTitle(is);
-            System.out.println("获得Excel表格的标题:");
-            for (String s : title) {
-                System.out.print(s + " ");
-            }
-
-            // 对读取Excel表格内容测试
-            InputStream is2 = new FileInputStream("d:\\广电运通.xls");
-            //Map<Integer, String> map = excelReader.readExcelContent(is2);
-            List<Map<String,String>> content = excelReader.readExcelContent(is2);
-        	for (Map map2 : content) {
-            	System.out.println();
-            	for (int i = 0; i <= map2.size()-1; i++) {
-                    System.out.print(title[i]+":"+map2.get(title[i])+"  ");
-                }
+    /*public static void main(String[] args) {
+    	try {
+    		File file = new File("d:\\广电运通.xls");
+    		getXlsTitle(file);
+			getXlsContent(file);
+			for (Map map : xlsContent) {
+				for (int i = 0; i < xlsTitle.length; i++) {
+					System.out.print(xlsTitle[i] + ":" + xlsContent.get(i).get(xlsTitle[i]) + "	");
+				}
+				System.out.println();
 			}
-				
-        } catch (FileNotFoundException e) {
-            System.out.println("未找到指定路径的文件!");
-            e.printStackTrace();
-        }
-    }
-    
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}*/
 }

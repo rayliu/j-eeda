@@ -333,13 +333,23 @@ $(document).ready(function() {
     // 导入运输单
     $("#fileUploadBtn").click(function(){
     	$("#toFileUpload").click();
+        //$('#myModal').modal('show');
     });
     
 	$('#toFileUpload').fileupload({
         dataType: 'json',
         done: function (e, data) {
-        	$.scojs_message(data.result.result, $.scojs_message.TYPE_OK);
-        }
+        	$('#myModal').modal('hide');
+        	if(data.result.result = "true"){
+        		$.scojs_message(data.result.cause, $.scojs_message.TYPE_OK);
+        	}else{
+        		$.scojs_message(data.result.cause, $.scojs_message.TYPE_ERROR);
+        	}
+        	transferOrder.fnDraw();
+        },  
+        progressall: function (e, data) {//设置上传进度事件的回调函数  
+        	$('#myModal').modal('show');
+        } 
     });
 
 
@@ -347,7 +357,7 @@ $(document).ready(function() {
         format: 'yyyy-MM-dd',  
         language: 'zh-CN'
     }).on('changeDate', function(ev){
-        $(".bootstrap-datetimepicker-widget").hide();
+        $(".bootstrap-datetimepicker-widget").hide();   
         $('#beginTime_filter').trigger('keyup');
     });
 

@@ -247,7 +247,7 @@ public class TransferOrderItemDetailController extends Controller {
 
     	if(detailId != null && !"".equals(detailId)){
     		TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailId);
-    		if(!"serial_no".equals(name) && !"pieces".equals(name) && !"remark".equals(name)){
+    		/*if(!"serial_no".equals(name) && !"pieces".equals(name) && !"remark".equals(name)){
     			String pId = getPara("pId");
     			if(pId != null && !"".equals(pId)){
 	    			Party party = Party.dao.findById(pId);
@@ -255,10 +255,10 @@ public class TransferOrderItemDetailController extends Controller {
 	    			contact.set(name, value);
 	    			contact.update();
     			}    			
-    		}else{
+    		}else{*/
     			detail.set(name, value);
     			detail.update();
-    		}
+    		//}
 	    	
     	}
         renderJson("{\"success\":true}");

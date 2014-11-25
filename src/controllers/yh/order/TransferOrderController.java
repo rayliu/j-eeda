@@ -898,21 +898,23 @@ public class TransferOrderController extends Controller {
  				title = ReaderXlSX.getXlsTitle(file);
  				content = ReaderXlSX.getXlsContent(file);
  			}else{
- 				resultMap.put("result", "导入失败，请选择正确的execl文件");
+ 				resultMap.put("result", "false");
+				resultMap.put("cause", "导入失败，请选择正确的execl文件");
  			}
  			if(title != null && content.size() > 0){
 				TransferOrderExeclHandeln handeln = new TransferOrderExeclHandeln();
 				if(handeln.checkoutExeclTitle(title,"transferOrder")){
-					Party party = saveContact();
-					resultMap = handeln.importTransferOrder(content, party);
+					resultMap = handeln.importTransferOrder(content);
 				}else{
-					resultMap.put("result", "导入失败，execl标题与系统默认标题不一致");
+					resultMap.put("result", "false");
+					resultMap.put("cause", "导入失败，execl标题列与系统默认execl标题列不一致");
 				}
  			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultMap.put("result", "未知错误");
 		}
+ 		logger.debug("result:" + resultMap.get("result") +",cause:"+resultMap.get("cause"));
+ 		
 		renderJson(resultMap);
 	}
 

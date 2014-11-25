@@ -1278,36 +1278,36 @@ $(document).ready(function() {
                     }
             }},
             {
-            	"mDataProp":"CONTACT_PERSON",
+            	"mDataProp":"NOTIFY_PARTY_NAME",
         		"sWidth": "80px",
-            	"sClass": "contact_person",
+            	"sClass": "notify_party_name",
             	"fnRender": function(obj) {
-                    if(obj.aData.CONTACT_PERSON!='' && obj.aData.CONTACT_PERSON != null){
-                        return "<input type='text' name='contact_person' value='"+obj.aData.CONTACT_PERSON+"'>";
+                    if(obj.aData.NOTIFY_PARTY_NAME!='' && obj.aData.NOTIFY_PARTY_NAME != null){
+                        return "<input type='text' name='notify_party_name' value='"+obj.aData.NOTIFY_PARTY_NAME+"'>";
                     }else{
-                    	 return "<input type='text' name='contact_person'>";
+                    	 return "<input type='text' name='notify_party_name'>";
                     }
             }},
             {
-            	"mDataProp":"PHONE",
+            	"mDataProp":"NOTIFY_PARTY_PHONE",
         		"sWidth": "80px",
-            	"sClass": "phone",
+            	"sClass": "notify_party_phone",
             	"fnRender": function(obj) {
-                    if(obj.aData.PHONE!='' && obj.aData.PHONE != null){
-                        return "<input type='text' name='phone' value='"+obj.aData.PHONE+"'>";
+                    if(obj.aData.NOTIFY_PARTY_PHONE!='' && obj.aData.NOTIFY_PARTY_PHONE != null){
+                        return "<input type='text' name='notify_party_phone' value='"+obj.aData.NOTIFY_PARTY_PHONE+"'>";
                     }else{
-                    	 return "<input type='text' name='phone'>";
+                    	 return "<input type='text' name='notify_party_phone'>";
                     }
             }},
             {
-            	"mDataProp":"ADDRESS",
+            	"mDataProp":"NOTIFY_PARTY_COMPANY",
         		"sWidth": "80px",
-            	"sClass": "address",
+            	"sClass": "notify_party_company",
             	"fnRender": function(obj) {
-                    if(obj.aData.ADDRESS!='' && obj.aData.ADDRESS != null){
-                        return "<input type='text' name='address' value='"+obj.aData.ADDRESS+"'>";
+                    if(obj.aData.NOTIFY_PARTY_COMPANY !='' && obj.aData.NOTIFY_PARTY_COMPANY != null){
+                        return "<input type='text' name='notify_party_company' value='"+obj.aData.NOTIFY_PARTY_COMPANY +"'>";
                     }else{
-                    	 return "<input type='text' name='address'>";
+                    	 return "<input type='text' name='notify_party_company'>";
                     }
             }},
             {
