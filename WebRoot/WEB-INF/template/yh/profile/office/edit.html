@@ -74,6 +74,7 @@
 					                 	<!-- <option>自营</option>
 					                 	<option>控股</option>
 					                 	<option>合作</option> -->
+					                 	<option>总公司</option>
 					                 	<option>分公司</option>
 					                 	<option>合作公司</option>
 					                 	<option>配送中心RDC</option>
@@ -140,7 +141,11 @@
 <script>
 	$(document).ready(function() {
 		var type = '${ul.type!''}';
-		$('#type').val(type);
+		if(type == "总公司"){
+			$('#type').val(type).attr("disabled",true);	
+		}else{
+			$('#type').val(type);
+		}
     	$('#menu_profile').addClass('active').find('ul').addClass('in');
         $('#leadsForm').validate({
             rules: {

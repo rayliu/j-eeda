@@ -70,7 +70,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists order_header(id bigint auto_increment primary key, order_no varchar(50) not null, type varchar(50), status varchar(50), creator varchar(50), create_date timestamp, remark varchar(256));");
             stmt.executeUpdate("create table if not exists order_item(id bigint auto_increment primary key, order_id bigint, item_name varchar(50), item_desc varchar(50), quantity decimal(10,2), unit_price decimal(10,2), status varchar(50), foreign key(order_id) references order_header(id) );");
             // party 当事人，可以有各种type
-            stmt.executeUpdate("create table if not exists party(id bigint auto_increment primary key, party_type varchar(32), contact_id bigint, create_date timestamp, creator varchar(50), last_update_date timestamp, last_updator varchar(50), status varchar(50),remark varchar(255),receipt varchar(50),payment varchar(50), charge_type varchar(50));");
+            stmt.executeUpdate("create table if not exists party(id bigint auto_increment primary key, party_type varchar(32), contact_id bigint, create_date timestamp, creator varchar(50), last_update_date timestamp, last_updator varchar(50), status varchar(50),remark varchar(255),receipt varchar(50),payment varchar(50), charge_type varchar(50),office_id bigint);");
             stmt.executeUpdate("create table if not exists party_attribute(id bigint auto_increment primary key, party_id bigint, attr_name varchar(60), attr_value varchar(255), create_date timestamp, creator varchar(50), foreign key(party_id) references party(id));");
             stmt.executeUpdate("create table if not exists contact(id bigint auto_increment primary key,company_id bigint,license varchar(20),identification varchar(50), company_name varchar(100),sp_type varchar(60),abbr varchar(60), contact_person varchar(100),location varchar(255),introduction varchar(255),email varchar(100), mobile varchar(100), phone varchar(100), address varchar(255), city varchar(100), postal_code varchar(60),"
                     + " create_date timestamp, last_updated_stamp timestamp);");
@@ -108,7 +108,7 @@ public class DataInitUtil {
 
             // carinfo 车辆信息表
             stmt.executeUpdate("create table if not exists carinfo(id bigint auto_increment primary key,type varchar(50),driver varchar(50),phone varchar(50),car_no varchar(50),cartype varchar(50),"
-                    + "status varchar(50),length double,hundred_fuel_standard double,rated_load double,rated_cube double,initial_mileage double,identity_number varchar(20),family_contact varchar(20),mobile varchar(100),remark varchar(5120));");
+                    + "status varchar(50),length double,hundred_fuel_standard double,rated_load double,rated_cube double,initial_mileage double,identity_number varchar(20),family_contact varchar(20),mobile varchar(100),remark varchar(5120),office_id bigint);");
 
             // 提货单/发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),audit_status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"

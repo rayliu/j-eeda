@@ -2,20 +2,31 @@ package controllers.yh.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+@SuppressWarnings({"rawtypes","unused","deprecation"})
 public class ReaderXlSX{
     private XSSFWorkbook wb;
     private XSSFSheet sheet;
@@ -75,15 +86,29 @@ public class ReaderXlSX{
             row = sheet.getRow(i);
             int j = 0;
             while (j < colNum) {
+        		//rowData.put(xlsxTitle[j], row.getCell((short) j).getStringCellValue().trim());
         		rowData.put(xlsxTitle[j], getCellFormatValue(row.getCell((short) j),xlsxTitle[j]).trim());
             	j++;
             	
             }
             xlsxContent.add(rowData);
         }
+        
+        int ss = xlsxContent.size()-1;
+        for (int j = ss; j >=0; j--) {
+        	int num = 0;
+    		for (int i = 0; i < xlsxTitle.length; i++) {
+                if("".equals(xlsxContent.get(j).get(xlsxTitle[i]))){
+                	if(num == xlsxTitle.length-1){
+                		xlsxContent.remove(j);
+                	}
+                	++num;
+                }
+            }
+        }
+        
         return xlsxContent;
     }
-    
 	/**
      * 根据XSSFCell类型设置数据
      * @param cell
@@ -149,7 +174,6 @@ public class ReaderXlSX{
     	xlsxContent = excelReader.readExcelContent(is);
     	return xlsxContent;
     }
-    
     //获取xls文件内容
     public static Map<String, Object> readerXLS(File xlsFile) throws Exception {
     	Map<String, Object> xlsData = new HashMap<String, Object>();
@@ -167,25 +191,32 @@ public class ReaderXlSX{
     	return xlsData;
     	
     }
-    public static void main(String[] args) {
-    	try {
-    		File file = new File("d:\\广电运通.xlsx");
-    		getXlsTitle(file);
-			getXlsContent(file);
-			for (String str: xlsxTitle) {
-				System.out.print(str + " ");
+    /*public static void main(String[] args) {
+        try {
+        	
+            // 对读取Excel表格标题测试
+            InputStream is = new FileInputStream("d:\\广电运通 - 副本.xlsx");
+            ReaderXlSX excelReader = new ReaderXlSX();
+            String[] title = excelReader.readExcelTitle(is);
+            System.out.println("获得Excel表格的标题:");
+            for (String s : title) {
+                System.out.print(s + " ");
+            }
+
+            // 对读取Excel表格内容测试
+            InputStream is2 = new FileInputStream("d:\\广电运通 - 副本.xlsx");
+            //Map<Integer, String> map = excelReader.readExcelContent(is2);
+            List<Map<String,String>> content = excelReader.readExcelContent(is2);
+        	for (Map map2 : content) {
+            	System.out.println();
+            	for (int i = 0; i <= map2.size()-1; i++) {
+                    System.out.print(title[i]+":"+map2.get(title[i])+"  ");
+                }
 			}
-			System.out.println();
-			for (Map map : xlsxContent) {
-				for (int i = 0; i < xlsxTitle.length; i++) {
-					System.out.print(xlsxTitle[i] + ":" + xlsxContent.get(i).get(xlsxTitle[i]) + "	");
-				}
-				System.out.println();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-    
-    
+				
+        } catch (FileNotFoundException e) {
+            System.out.println("未找到指定路径的文件!");
+            e.printStackTrace();
+        }
+    }*/
 }
