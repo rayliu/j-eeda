@@ -150,17 +150,22 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 			    				break;
 			    			}
 		        		}
-		    			Record tansferOrder = Db.findFirst("select * from transfer_order where customer_order_no = '" + customerOrderNo + "';");
+		        		TransferOrder tansferOrder = TransferOrder.dao.findFirst("select * from transfer_order where customer_order_no = '" + customerOrderNo + "';");
 		    			if(tansferOrder != null){
-		    				Record tansferOrderItem= Db.findFirst("select * from transfer_order_item where order_id = '" + tansferOrder.get("id") +"' and item_no = '" + content.get(j).get("产品型号") + "';");
+		    				TransferOrderItem tansferOrderItem= TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = '" + tansferOrder.get("id") +"' and item_no = '" + content.get(j).get("产品型号") + "';");
 		    				if(tansferOrderItem != null){
 		    					//本来这里是要修改货品明细表中amount（数量），
 		    					//由于execl中“发货数量”列是货品总数，所以不用修改
+		    					//体积相加
+		    					double sumVolume = tansferOrderItem.getDouble("volume") + (product.getDouble("volume")*Double.parseDouble(content.get(j).get("件数")));
+		    					tansferOrderItem.set("volume", sumVolume).update();
+		    					
 		    					TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where order_id = '" + tansferOrder.get("id") +"' and item_id = '" + tansferOrderItem.get("id") +"' and serial_no = '" + content.get(j).get("序列号") + "';");
 		    					if(transferOrderItemDetail != null){
 		    						int num = transferOrderItemDetail.getInt("pieces") + Integer.parseInt(content.get(j).get("件数"));
 		    						transferOrderItemDetail.set("pieces", num).update();
 		    					}else{
+		    						
 		    						//创建保存单品货品明细
 		    						TransferOrderItemDetail itemDatail = new TransferOrderItemDetail();
 		    						itemDatail.set("order_id", tansferOrder.get("id"))
@@ -180,6 +185,8 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				}else{
 		    					//创建保存货品明细
 		    					TransferOrderItem item =new TransferOrderItem();
+		    					//体积相加
+		    					double sumVolume = product.getDouble("volume")*Double.parseDouble(content.get(j).get("件数"));
 		    					double num = product.getDouble("weight") * Double.parseDouble(content.get(j).get("发货数量"));
 		    					item.set("order_id", tansferOrder.get("id"))
 		    					.set("amount", content.get(j).get("发货数量"))
@@ -189,7 +196,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					.set("unit", product.get("unit"))
 		    					.set("width", product.get("width"))
 		    					.set("height", product.get("height"))
-		    					.set("volume", product.get("volume"))
+		    					.set("volume", sumVolume)
 		    					.set("weight", product.getDouble("weight"))
 		    					.set("sum_weight", num)
 		    					.set("product_id", product.get("id"))
@@ -286,7 +293,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				.set("unit", product.get("unit"))
 		    				.set("width", product.get("width"))
 		    				.set("height", product.get("height"))
-		    				.set("volume", product.get("volume"))
+		    				.set("volume", product.getDouble("volume")*Double.parseDouble(content.get(j).get("件数")))
 		    				.set("weight", product.getDouble("weight"))
 		    				.set("sum_weight", num)
 		    				.set("product_id", product.get("id"))
