@@ -124,4 +124,30 @@ $(document).ready(function() {
         		}}
          ]
 	});
+	
+    var chargeMiscListTable = $('#chargeMiscList-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+    	  "oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "sAjaxSource": "/chargeCheckOrder/checkChargeMiscList",
+        "aoColumns": [   
+            {"mDataProp":"MISC_ORDER_NO", "sWidth":"80px",
+            	"fnRender": function(obj) {
+        			return "<a href='/chargeMiscOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.MISC_ORDER_NO+"</a>";
+        		}},
+            {"mDataProp":"CNAME", "sWidth":"200px"},
+            {"mDataProp":"NAME", "sWidth":"200px"},
+            {"mDataProp":"AMOUNT", "sWidth":"100px"},
+            {"mDataProp":"REMARK", "sWidth":"200px"}                        
+        ]      
+    });
+    
+    $("#chargeMiscList").click(function(){
+    	chargeMiscListTable.fnSettings().sAjaxSource = "/chargeCheckOrder/checkChargeMiscList?chargeCheckOrderId="+$("#chargeCheckOrderId").val();
+	  	chargeMiscListTable.fnDraw();  
+    });
 } );

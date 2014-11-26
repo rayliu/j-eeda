@@ -500,4 +500,46 @@ public class ChargeCheckOrderController extends Controller {
 
 		renderJson(BillingOrderListMap);
 	}
+	
+	public void checkChargeMiscList(){
+		String chargeCheckOrderId = getPara("chargeCheckOrderId");
+		if(chargeCheckOrderId == null || "".equals(chargeCheckOrderId)){
+			chargeCheckOrderId = "-1";
+		}
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+		Map orderMap = new HashMap();
+		// 获取总条数
+		String totalWhere = "";
+		String sql = "select count(amcoi.id) total from arap_charge_order aco"
+					+ " left join arap_misc_charge_order amco on amco.charge_order_id = aco.id"
+					+ " left join arap_misc_charge_order_item amcoi on amcoi.misc_order_id = amco.id where aco.id = "+chargeCheckOrderId;
+		Record rec = Db.findFirst(sql + totalWhere);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		// 获取当前页的数据
+		List<Record> orders = Db
+				.find("select amcoi.*,amco.order_no misc_order_no,c.abbr cname,fi.name name from arap_charge_order aco "
+					+ " left join arap_misc_charge_order amco on aco.id = amco.charge_order_id "
+					+ " left join arap_misc_charge_order_item amcoi on amcoi.misc_order_id = amco.id "
+					+ " left join party p on p.id = aco.payee_id left join contact c on c.id = p.contact_id "
+					+ " left join fin_item fi on amcoi.fin_item_id = fi.id where aco.id =  "+ chargeCheckOrderId +" " + sLimit);
+
+		orderMap.put("sEcho", pageIndex);
+		orderMap.put("iTotalRecords", rec.getLong("total"));
+		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		orderMap.put("aaData", orders);
+
+		orderMap.put("sEcho", pageIndex);
+		orderMap.put("iTotalRecords", rec.getLong("total"));
+		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		orderMap.put("aaData", orders);
+
+		renderJson(orderMap);
+	}
 }
