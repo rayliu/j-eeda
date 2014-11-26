@@ -18,6 +18,7 @@ import models.Fin_item;
 import models.InventoryItem;
 import models.Location;
 import models.Party;
+import models.PickupOrderFinItem;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
@@ -1958,6 +1959,11 @@ public class DepartOrderController extends Controller {
     	}
         renderJson("{\"success\":true}");
     }
-    
+    // 删除应付 
+    public void finItemdel() {
+        String id = getPara();
+        DepartOrderFinItem.dao.deleteById(id);
+        renderJson("{\"success\":true}");
+    }
 
 }

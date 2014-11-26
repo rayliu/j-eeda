@@ -11,13 +11,16 @@ import java.util.Map;
 import models.Location;
 import models.Party;
 import models.TransferOrder;
+import models.UserLogin;
 import models.Warehouse;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -31,6 +34,8 @@ import controllers.yh.util.PermissionConstant;
 public class WarehouseController extends Controller{
 
     private Logger logger = Logger.getLogger(WarehouseController.class);
+    Subject currentUser = SecurityUtils.getSubject();
+    
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_W_LIST})
 	public void index() {
 		render("/yh/profile/warehouse/warehouseList.html");
@@ -222,6 +227,12 @@ public class WarehouseController extends Controller{
             	warehouse.set("office_id", officeId);
             }
 			warehouse.set("warehouse_type", getPara("warehouseType"));
+			//所属网点
+			/*String name = (String) currentUser.getPrincipal();
+	 		List<UserLogin> users = UserLogin.dao
+	 				.find("select * from user_login where user_name='" + name + "'");
+	 		warehouse.set("office_id", users.get(0).get("office_id"));*/
+			
 			warehouse.save();
 		}
 		setAttr("saveOK", true);

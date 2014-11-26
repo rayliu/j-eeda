@@ -11,6 +11,7 @@ import java.util.Map;
 
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderMilestone;
+import models.DepartOrderFinItem;
 import models.Fin_item;
 import models.InventoryItem;
 import models.ReturnOrder;
@@ -582,6 +583,12 @@ public class DeliveryOrderMilestoneController extends Controller {
     		deliveryOrderFinItem.set(name, value);
     		deliveryOrderFinItem.update();
     	}
+        renderJson("{\"success\":true}");
+    }
+    // 删除应付 
+    public void finItemdel() {
+        String id = getPara();
+        DeliveryOrderFinItem.dao.deleteById(id);
         renderJson("{\"success\":true}");
     }
 }

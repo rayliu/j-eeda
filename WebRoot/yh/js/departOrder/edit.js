@@ -1016,11 +1016,11 @@
     		 $("#table_fin2").on('click', '.finItemdel', function(e){
     			 var id = $(this).attr('code');
     			  e.preventDefault();
-    			$.post('/pickupOrder/finItemdel/'+id,function(data){
+    			  $.post('/departOrder/finItemdel/'+id,function(data){
     	               //保存成功后，刷新列表
     	               console.log(data);
     	               paymenttable.fnDraw();
-    	           },'text');
+    	           },'json');
     		 });
     		 
     		//应付

@@ -10,9 +10,11 @@ import models.Office;
 import models.TransferOrder;
 import models.UserLogin;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -25,6 +27,8 @@ import controllers.yh.util.PermissionConstant;
 @Before(SetAttrLoginUserInterceptor.class)
 public class OfficeController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);
+    Subject currentUser = SecurityUtils.getSubject();
+    
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_O_LIST})
     public void index() {
         render("/yh/profile/office/office.html");
@@ -77,6 +81,16 @@ public class OfficeController extends Controller {
             Db.update("office", user);
         } else {
             logger.debug("insert....");
+            //记录总公司
+			String name = (String) currentUser.getPrincipal();
+	 		List<UserLogin> users = UserLogin.dao
+	 				.find("select * from user_login where user_name='" + name + "'");
+	 		//创建用户是总公司用户
+	 		user.set("belong_office", users.get(0).get("office_id"));
+	 		//创建用户是网点用户
+	 		//Record rec = Db.findFirst("select belong_office  from office  where id = " + users.get(0).get("office_id"));
+	 		//user.set("office_id", rec.get("belong_office"));
+            
             Db.save("office", user);
         }
         
@@ -148,5 +162,36 @@ public class OfficeController extends Controller {
 
         renderJson(orderMap);
     }
+    
+    //查询分公司所有仓库
+    public void findOfficeWarehouse(){
+    	String office_id = getPara();// 调车单id
+    	if(office_id != ""){
+	    	String sLimit = "";
+	        String pageIndex = getPara("sEcho");
+	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+	        }
+	        String sqlTotal = "select count(0) total from warehouse where office_id ="+office_id+";";
+	        logger.debug("sql :" + sqlTotal);
+	        Record rec = Db.findFirst(sqlTotal);
+	        logger.debug("total records:" + rec.getLong("total"));
+	
+	        //String sql = "select * from warehouse where office_id ="+office_id+";";
+	        String sql = "select w.*,c.contact_person,c.phone,(select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.location) dname,lc.name from warehouse w"
+			+ " left join party p on w.notify_party_id = p.id"
+			+ " left join contact c on p.contact_id = c.id"
+			+ " left join location lc on c.location = lc.code "
+			+ " where w.office_id = "+office_id+" order by w.id desc ";
+	        List<Record> warehouseList = Db.find(sql);
+	        Map Map = new HashMap();
+	        Map.put("sEcho", pageIndex);
+	        Map.put("iTotalRecords", rec.getLong("total"));
+	        Map.put("iTotalDisplayRecords", rec.getLong("total"));
+	        Map.put("aaData", warehouseList);
+	        renderJson(Map); 
+    	}
+    }
+    
 
 }

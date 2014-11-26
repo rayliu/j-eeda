@@ -388,6 +388,17 @@
                     }
             }}, 
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
+			{  
+                "mDataProp": null, 
+                "sWidth": "60px",  
+            	"sClass": "remark",              
+                "fnRender": function(obj) {
+                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
+              		"<i class='fa fa-trash-o fa-fw'> </i> "+
+              		"删除"+
+              		"</a>";
+                }
+            }   
         ]      
     });
 	
@@ -418,7 +429,16 @@
 			}
     	},'json');
 	});
-	
+	//异步删除应付
+	 $("#table_fin").on('click', '.finItemdel', function(e){
+		 var id = $(this).attr('code');
+		  e.preventDefault();
+		  $.post('/returnOrder/finItemdel/'+id,function(data){
+              //保存成功后，刷新列表
+              console.log(data);
+              receipttable.fnDraw();
+          },'json');
+	 });
 
     //获取全国省份
     $(function(){

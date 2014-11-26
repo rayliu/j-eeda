@@ -12,6 +12,7 @@ import java.util.Map;
 
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
+import models.DepartOrderFinItem;
 import models.Fin_item;
 import models.Location;
 import models.Party;
@@ -1149,4 +1150,10 @@ public class ReturnOrderController extends Controller {
 
 		renderJson(orderMap);
 	}
+	// 删除应收
+    public void finItemdel() {
+        String id = getPara();
+        ReturnOrderFinItem.dao.deleteById(id);
+        renderJson("{\"success\":true}");
+    }
 }

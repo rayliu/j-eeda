@@ -22,7 +22,7 @@ public class DataInitUtil {
             Statement stmt = conn.createStatement();
 
             // 登陆及授权的3个表
-            stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),contact_phone_name varchar(50),contact_phone varchar(50),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255));");
+            stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),contact_phone_name varchar(50),contact_phone varchar(50),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255),belong_office bigint);");
             stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255), office_id bigint, token varchar(10), foreign key(office_id) references office(id));");
             stmt.executeUpdate("create table if not exists role(id bigint auto_increment primary key,code varchar(50), name varchar(50), p_code varchar(50), remark varchar(255));");
             stmt.executeUpdate("create table if not exists permission(id bigint auto_increment primary key, module_name varchar(50) ,code varchar(50), name varchar(50), value varchar(50), url varchar(255), remark varchar(255));");
@@ -259,16 +259,16 @@ public class DataInitUtil {
             initPermission(stmt);
             ProfileDataInit.initProfile(stmt);
             
-            stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('1201', '广州分公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','自营','这是一家公司');");
-            stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','控股','这是一家公司');");
-            stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro) values('101', '深圳分公司','张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','合作','这是一家公司');");
             stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('广州源鸿物流有限公司','侯晓辉','66343695','侯晓辉','66343695','广州市萝岗区宏明路严田商业街11号','总公司');");
-            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('源鸿物流珠海分公司','陈秋明','13925642153','陈秋明','13925642153','广东省珠海市','合资分公司');");
-            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('上海源鸿物流有限公司','刘涛','18688696863','刘涛','18688696863','上海市','合作公司');");
-            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type) values('贵阳源鸿物流有限公司','林伟军','13358215635','林伟军','13358215635','贵阳市','合作公司');");
+            stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro,belong_office) values('1201', '广州分公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','分公司','这是一家分公司',1);");
+            stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro,belong_office) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','配送中心RDC','这是一家配送中心RDC',1);");
+            stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro,belong_office) values('101', '深圳分公司','张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','分公司','这是一家分公司',1);");
+            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type,belong_office) values('源鸿物流珠海分公司','陈秋明','13925642153','陈秋明','13925642153','广东省珠海市','分公司',1);");
+            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type,belong_office) values('上海源鸿物流有限公司','刘涛','18688696863','刘涛','18688696863','上海市','分公司',1);");
+            stmt.executeUpdate("insert into office(office_name, office_person, phone, contact_phone_name,contact_phone,address,type,belong_office) values('贵阳源鸿物流有限公司','林伟军','13358215635','林伟军','13358215635','贵阳市','分公司',1);");
 
             stmt.executeUpdate("insert into inventory_item(party_id, warehouse_id, product_id,total_quantity) values(1, 1, 4, 100);");
-            stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user1', '123456', '1-6');");
+            stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('d_user1', '123456', '1-6',1);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('demo', '123456', '1-6', 3);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('jason', '123456', '1-6',3);");
@@ -458,8 +458,8 @@ public class DataInitUtil {
             newCustomer();
 
             // 仓库
-            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,office_id,warehouse_type) values('582','源鸿广州总仓', '这是广州总仓','萝岗','9','2','ownWarehouse');");
-            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,sp_id,warehouse_type,office_id) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse',5);");
+            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,office_id,warehouse_type) values('582','源鸿广州总仓', '这是广州总仓','萝岗','9','4','ownWarehouse');");
+            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,sp_id,warehouse_type,office_id) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse',1);");
 
             // 类别 ----采用面向对象的方式来获取party的id， 不必担心id不对。 --ray 2014-06-29
             Party party = Party.dao

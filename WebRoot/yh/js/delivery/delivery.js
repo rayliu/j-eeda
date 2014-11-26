@@ -969,6 +969,17 @@ $(document).ready(function() {
 				}
 	    	},'json');
 		});
+		
+		//异步删除应付
+		 $("#table_fin2").on('click', '.finItemdel', function(e){
+			 var id = $(this).attr('code');
+			  e.preventDefault();
+			  $.post('/deliveryOrderMilestone/finItemdel/'+id,function(data){
+	               //保存成功后，刷新列表
+	               console.log(data);
+	               paymenttable.fnDraw();
+	           },'json');
+		 });
 		/*
 		 * //应收 $("#addrow2").click(function(){ var deliveryid
 		 * =$("#delivery_id").val();
