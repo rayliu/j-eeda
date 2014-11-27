@@ -51,6 +51,11 @@
 			                 <label class="control-label">身份证</label>
 			                 <input type="text" class="form-control" id="identification" name="identification" value="${lu2.identification!''}">
 			             </div>
+			             <div class="form-group ">
+			                 <label class="control-label">所属公司</label>
+			                 <input type="hidden" class="form-control" id="hideOfficeId" name="hideOfficeId" value="${lu.office_id!''}">
+			                 <select id="officeSelect" class="form-control" name="officeSelect"></select>
+			             </div>
 			            </div>
 			           
 			            
@@ -105,4 +110,20 @@
             }
         });
     });
+	// 获取所有公司
+    $.post('/carinfo/searchAllOffice',function(data){
+		 if(data.length > 0){
+			 var officeSelect = $("#officeSelect");
+			 officeSelect.empty();
+			 var hideOfficeId = $("#hideOfficeId").val();
+			 officeSelect.append("<option class='form-control' value='' ></option>");
+			 for(var i=0; i<data.length; i++){
+				 if(data[i].ID == hideOfficeId){
+					 officeSelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+				 }else{
+					 officeSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+				 }
+			 }
+		 }
+	 },'json');
 </script>
