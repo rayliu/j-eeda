@@ -10,8 +10,6 @@ import java.util.Map;
 
 import models.Location;
 import models.Party;
-import models.TransferOrder;
-import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -153,26 +151,8 @@ public class CustomerController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_C_DELETE})
     public void delete() {
         long id = getParaToLong();
-
         Party party = Party.dao.findById(id);
-        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where sp_id="
-                + party.get("id"));
-        for (TransferOrder transferOrder : transferOrders) {
-            transferOrder.set("sp_id", null);
-            transferOrder.update();
-        }
-        List<DeliveryOrder> deliveryOrders = DeliveryOrder.dao.find("select * from delivery_order where sp_id="
-                + party.get("id"));
-        for (DeliveryOrder deliveryOrder : deliveryOrders) {
-            deliveryOrder.set("sp_id", null);
-            deliveryOrder.update();
-        }
-
-        Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
-                + id);
-        ;
-        contact.delete();
-
+        Db.update("delete from contact where id = "+ party.get("contact_id"));
         party.delete();
             redirect("/customer");
     }
