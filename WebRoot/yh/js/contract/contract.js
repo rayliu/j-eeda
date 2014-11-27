@@ -616,7 +616,7 @@ $(document).ready(function() {
 	    	if(item == "")
 	    		$("#productId").val("");
         	
-        	$.post('/customerContract/checkedRepetition', {"contractId":contractId,"priceType":priceType,"toId":toid,"productId":productId,
+        	$.post('/customerContract/checkedRepetition', {"contractId":contractId,"priceType":priceType,"fromId":toid1,"toId":toid,"productId":productId,
         		"carType2":carType2,"carLength2":carLength2,"ltlUnitType":ltlUnitType,"amountFrom":amountFrom,"amountTo":amountTo,"finItemId":finItemId}, function(data){
         		if(data.success){//有数据
         			var routeItemId = $("#routeItemId").val();

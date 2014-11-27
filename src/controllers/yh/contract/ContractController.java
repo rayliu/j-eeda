@@ -772,6 +772,7 @@ public class ContractController extends Controller {
     public void checkedRepetition(){
     	String contractId = getPara("contractId");
     	String priceType = getPara("priceType");
+    	String fromId = getPara("fromId");
     	String toId = getPara("toId");
     	String productId = getPara("productId");
     	String carType2 = getPara("carType2");
@@ -781,7 +782,7 @@ public class ContractController extends Controller {
     	String amountTo = getPara("amountTo");
     	String finItemId = getPara("finItemId");
     	
-    	String sql = "select count(0) total from contract_item  where contract_id  = '"+contractId+"' and pricetype = '"+priceType+"' and  to_id = '"+toId+"' ";
+    	String sql = "select count(0) total from contract_item  where contract_id  = '"+contractId+"' and pricetype = '"+priceType+"'and from_id = " + fromId + " and  to_id = '"+toId+"' ";
     	if(!"".equals(productId) && productId != null)
     		sql = sql + " and product_id = '"+productId+"' ";
     	else
