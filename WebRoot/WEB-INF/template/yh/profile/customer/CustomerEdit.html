@@ -206,14 +206,59 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
     	
     	var payment = '${party.payment!}';
     	$("#payment").val(payment);
-    	
+    	var cname = $("#company_name").val();
+    	var sname = $("#abbr").val();
         $('#customerForm').validate({
             rules: {
+            	mbProvince:{
+  	        	  digits:true 
+  	          },
+  	          cmbCity:{
+              	  digits:true 
+                },
               company_name: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
-                required: true
+                required: true,
+                remote:{
+                	url: "/customer/checkCustomerNameExist", //后台处理程序    
+                    type: "post",  //数据发送方式  
+                    data:  {                     //要传递的数据   
+                    	company_name: function() { 
+                    		// $("#company_name").val()
+                    		if($("#partyId").val()==null||$("#partyId").val()==""){
+                    			 return $("#company_name").val();
+                    		}else{
+                    			if(cname==$("#company_name").val()){
+                    				return true;
+                    			}else{
+                    				return $("#company_name").val();
+                    			}
+                    		}
+                              
+                          }   
+
+                    }
+                }
               },
               abbr:{//form 中 abbr为必填
-                  required: true
+                  required: true,
+                  remote:{
+                  	url: "/customer/checkCustomerAbbrExist", //后台处理程序    
+                      type: "post",  //数据发送方式  
+                      data:  {                     //要传递的数据   
+                    	  abbr: function() { 
+                    		  if($("#partyId").val()==null||$("#partyId").val()==""){
+                    			  return $("#abbr").val();  
+                     		}else{
+                     			if(sname==$("#abbr").val()){
+                     				return true;
+                     			}else{
+                     				return $("#abbr").val();  
+                     			}
+                     		}
+                               
+                            }   
+                      }
+                    }
                 },
               contact_person:{//form 中 name为必填
                 required: true
@@ -224,6 +269,20 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
            	  email:{
                 email: true
               }
+            },
+            messages:{
+            	company_name:{
+            		remote:"公司名称已存在"
+            	},
+            	abbr:{
+            		remote:"简称已存在"
+            	},
+            	mbProvince: {
+	           		digits: "请选择省份"
+	           	},
+	           	cmbCity: {
+	           		digits: "请选择城市"
+	           	}
             },
             highlight: function(element) {
                 $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
@@ -329,8 +388,7 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
 				}
 			}
 		},'json');
-    });
-    
+
     // 回显车长
     var chargeTypeOption=$("#chargeType>option");
     var chargeTypeVal=$("#chargeTypeSelect").val();
@@ -340,5 +398,6 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
     	   $("#chargeType option[value='"+svalue+"']").attr("selected","selected");
        }
     }
-    
+            });
+            
 </script>

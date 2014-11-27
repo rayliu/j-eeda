@@ -10,6 +10,7 @@ import java.util.Map;
 
 import models.Location;
 import models.Party;
+import models.UserLogin;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -220,4 +221,28 @@ public class CustomerController extends Controller {
      * 
      * }
      */
+    public void checkCustomerNameExist(){
+ 		String company_name= getPara("company_name");
+ 		boolean checkObjectExist;
+ 		Contact contact = Contact.dao.findFirst("select * from contact where company_name =?",company_name);
+ 		
+ 		if(contact == null){
+ 			checkObjectExist=true;
+ 		}else{
+ 			checkObjectExist=false;
+ 		}
+ 		renderJson(checkObjectExist);
+ 	}
+    public void checkCustomerAbbrExist(){
+    	String abbr= getPara("abbr");
+ 		boolean checkObjectExist;
+
+ 		Contact contact = Contact.dao.findFirst("select * from contact where abbr =?",abbr);
+ 		if(contact == null){
+ 			checkObjectExist=true;
+ 		}else{
+ 			checkObjectExist=false;
+ 		}
+ 		renderJson(checkObjectExist);
+ 	}
 }
