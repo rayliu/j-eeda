@@ -47,8 +47,6 @@ import controllers.yh.util.PermissionConstant;
 public class PickupOrderController extends Controller {
     private Logger logger = Logger.getLogger(PickupOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name =?",currentUser.getPrincipal());
-    
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_LIST})
     public void index() {
         render("/yh/pickup/pickupOrderList.html");
@@ -160,7 +158,7 @@ public class PickupOrderController extends Controller {
                     + " left join transfer_order_item toi on toi.order_id = t_o.id "
                     + " left join product pd on pd.id = toi.product_id "
                     + " where dor.status!='取消' and combine_type = '"
-            			+ DepartOrder.COMBINE_TYPE_PICKUP + "' and o.id = "+user.get("office_id");
+            			+ DepartOrder.COMBINE_TYPE_PICKUP + "'";
 
             sql = "select dor.*,"
             		+ " ifnull(dor.driver,c.driver) contact_person,"
@@ -181,7 +179,7 @@ public class PickupOrderController extends Controller {
                     + " left join transfer_order t_o on t_o.id = dtf.order_id "
                     + " left join office o on o.id = t_o.office_id "
                     + " where dor.status!='取消' and combine_type = '"
-                    + DepartOrder.COMBINE_TYPE_PICKUP + "' and o.id = "+user.get("office_id") +" group by dor.id order by dor.create_stamp desc" + sLimit;
+                    + DepartOrder.COMBINE_TYPE_PICKUP + "' group by dor.id order by dor.create_stamp desc" + sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -200,8 +198,7 @@ public class PickupOrderController extends Controller {
                     + " left join office o on o.id = t_o.office_id "
                     + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP 
-                    + "' and o.id = "+user.get("office_id")
-                    + " and ifnull(depart_no,'') like '%"+ departNo
+                    + "' and ifnull(depart_no,'') like '%"+ departNo
                     + "%' and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo
                     + "%' and dor.create_stamp between '" + beginTime + "' and '" + endTime
                     + "' and ifnull(dor.car_no,'') like '%"+carNo
@@ -230,8 +227,7 @@ public class PickupOrderController extends Controller {
                     + " left join office o on o.id = t_o.office_id "
                     + " where dor.status!='取消' and combine_type = '"
                     + DepartOrder.COMBINE_TYPE_PICKUP
-                    + "' and o.id = "+user.get("office_id")
-                    + " and ifnull(depart_no,'') like '%"+ departNo
+                    + "' and ifnull(depart_no,'') like '%"+ departNo
                     + "%' and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo
                     + "%' and dor.create_stamp between '" + beginTime + "' and '" + endTime
                     + "' and ifnull(dor.car_no,'') like '%"+carNo
@@ -291,15 +287,11 @@ public class PickupOrderController extends Controller {
         }
         if (orderNo == null && status == null && address == null && customer == null && routeFrom == null && routeTo == null
                 && beginTime == null && endTime == null) {
-            sqlTotal = "select count(1) total  from transfer_order tor " 
-            		+ " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " 
-                    + " left join location l1 on tor.route_from = l1.code "
+            sqlTotal = "select count(1) total  from transfer_order tor " + " left join party p on tor.customer_id = p.id "
+                    + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
-                    + " left join user_login ul on ul.id=tor.create_by "
-                    + " left join office o on tor.office_id = o.id "
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL + "' and o.id = "+user.get("office_id");
+                    + TransferOrder.ASSIGN_STATUS_ALL + "'";
             sql = "select tor.id,"
             		+ "tor.order_no,"
             		+ "tor.operation_type,"
@@ -325,8 +317,7 @@ public class PickupOrderController extends Controller {
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on o.id = tor.office_id "
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL + "' and o.id ="+ user.get("office_id")
-                    + " order by tor.create_stamp desc" + sLimit;
+                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " order by tor.create_stamp desc" + sLimit;
         } else if ("".equals(routeFrom) && "".equals(routeTo)) {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -340,7 +331,7 @@ public class PickupOrderController extends Controller {
                     + " left join office o on tor.office_id = o.id "
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
-                    + "' and o.id = "+ user.getStr("office_id")
+                    + "'"
                     + " "
                     + " and ifnull(l1.name, '') like '%"
                     + routeFrom
@@ -375,7 +366,7 @@ public class PickupOrderController extends Controller {
                     + " left join office o on o.id= tor.office_id"
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
-                    + "' and o.id = " + user.get("office_id")
+                    + "'"
                     + " and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"

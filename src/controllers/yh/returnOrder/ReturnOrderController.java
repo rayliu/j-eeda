@@ -46,8 +46,7 @@ import controllers.yh.util.PermissionConstant;
 public class ReturnOrderController extends Controller {
 	private Logger logger = Logger.getLogger(ReturnOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-	UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name =?",currentUser.getPrincipal());
-
+	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_LIST})
 	public void index() {
 			render("/yh/returnOrder/returnOrderList.html");
@@ -103,8 +102,7 @@ public class ReturnOrderController extends Controller {
 				&& time_two == null && customer == null) {
 			// 获取总条数
 			String totalWhere = "";
-			String sql = "select count(1) total from return_order ro left join user_login  usl on usl.id=ro.creator "
-					+ " left join office o on o.id=usl.office_id where o.id = "+ user.get("office_id");
+			String sql = "select count(1) total from return_order ro ";
 			Record rec = Db.findFirst(sql + totalWhere);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -115,8 +113,7 @@ public class ReturnOrderController extends Controller {
 							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
 							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
 							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator "
-							+ " left join office o on o.id=usl.office_id "
-							+ " where o.id = "+ user.get("office_id") +" order by r_o.create_date desc " + sLimit);
+							+ " order by r_o.create_date desc " + sLimit);
 
 			orderMap.put("sEcho", pageIndex);
 			orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -137,7 +134,6 @@ public class ReturnOrderController extends Controller {
 					+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
 					+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
 					+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator "
-					+ " left join office o on o.id=usl.office_id "
 					+ " where ifnull(r_o.order_no,'')  like'%"
 					+ order_no
 					+ "%' and  "
@@ -157,7 +153,7 @@ public class ReturnOrderController extends Controller {
 					+ customer
 					+ "%' and "
 					+ "r_o.create_date between '"
-					+ time_one + "' and '" + time_two + "' and o.id = "+user.get("office_id");
+					+ time_one + "' and '" + time_two + "'";
 			Record rec = Db.findFirst(sql + totalWhere);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -168,7 +164,6 @@ public class ReturnOrderController extends Controller {
 							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
 							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
 							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator "
-							+ " left join office o on o.id=usl.office_id "
 							+ " where ifnull(r_o.order_no,'')  like'%"
 							+ order_no
 							+ "%' and  "
@@ -190,7 +185,7 @@ public class ReturnOrderController extends Controller {
 							+ time_one
 							+ "' and '"
 							+ time_two
-							+ "' and o.id = "+user.get("office_id") +" order by r_o.create_date desc " + sLimit);
+							+ "' order by r_o.create_date desc " + sLimit);
 
 			orderMap.put("sEcho", pageIndex);
 			orderMap.put("iTotalRecords", rec.getLong("total"));

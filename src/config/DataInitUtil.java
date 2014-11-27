@@ -22,10 +22,8 @@ public class DataInitUtil {
             Statement stmt = conn.createStatement();
 
             // 登陆及授权的3个表
-
             stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),contact_phone_name varchar(50),contact_phone varchar(50),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255),belong_office bigint);");
             stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255), office_id bigint, token varchar(10), foreign key(office_id) references office(id));");
-
             stmt.executeUpdate("create table if not exists role(id bigint auto_increment primary key,code varchar(50), name varchar(50), p_code varchar(50), remark varchar(255));");
             stmt.executeUpdate("create table if not exists permission(id bigint auto_increment primary key, module_name varchar(50) ,code varchar(50), name varchar(50), value varchar(50), url varchar(255), remark varchar(255));");
             stmt.executeUpdate("create table if not exists user_role(id bigint auto_increment primary key, user_name varchar(50) not null, role_code varchar(255) not null, remark varchar(255));");
@@ -34,7 +32,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists location(id bigint auto_increment primary key, code varchar(50) not null, name varchar(50), pcode varchar(255));");
             stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment primary key, type varchar(50), currency varchar(50), bank_name varchar(50), account_no varchar(50), bank_person varchar(50),remark varchar(255), creator bigint, office_id bigint);");
             //stmt.executeUpdate("create table if not exists fin_account_item(id bigint auto_increment primary key,account_id bigint,currency varchar(50),org_name varchar(50),account_pin varchar(50),org_person varchar(50));");
-            stmt.executeUpdate("create table if not exists contract(id bigint auto_increment primary key, name varchar(50) not null, type varchar(50), create_by bigint,party_id bigint,period_from timestamp,period_to timestamp, remark varchar(255));");
+            stmt.executeUpdate("create table if not exists contract(id bigint auto_increment primary key, name varchar(50) not null, type varchar(50), party_id bigint,period_from timestamp,period_to timestamp, remark varchar(255));");
             
             stmt.executeUpdate("create table if not exists fin_item(id bigint auto_increment primary key,code varchar(20),name varchar(20),type varchar(20),driver_type varchar(20),remark varchar(255));");            
             stmt.executeUpdate("create table if not exists modules(id bigint auto_increment primary key,module_name varchar(50));");
@@ -213,7 +211,7 @@ public class DataInitUtil {
             //行车单
             stmt.execute("create table if not exists car_summary_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),car_no varchar(50),main_driver_name varchar(50),main_driver_amount double,minor_driver_name varchar(50),"
             		+ "minor_driver_amount double,start_car_mileage double,finish_car_mileage double,month_start_car_next int,month_car_run_mileage double,month_refuel_amount double,next_start_car_mileage double,"
-            		+ "next_start_car_amount double,deduct_apportion_amount double,actual_payment_amount double,create_id bigint,create_data timestamp);");
+            		+ "next_start_car_amount double,deduct_apportion_amount double,actual_payment_amount double,create_data timestamp);");
             
             //（行车单-拼车单）关联表
             stmt.execute("create table if not exists car_summary_detail(id bigint auto_increment primary key,car_summary_id bigint,pickup_order_id  bigint,pickup_order_no varchar(50));");

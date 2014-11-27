@@ -47,7 +47,6 @@ public class DeliveryController extends Controller {
 	// in config route已经将路径默认设置为/yh
 	// me.add("/yh", controllers.yh.AppController.class, "/yh");
 	Subject currentUser = SecurityUtils.getSubject();
-	UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name =?",currentUser.getPrincipal());
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_LIST})
 	public void index() {
 		render("/yh/delivery/deliveryOrderList.html");
@@ -82,22 +81,15 @@ public class DeliveryController extends Controller {
 				&& status_filter == null && customer_filter == null
 				&& sp_filter == null && beginTime_filter == null
 				&& endTime_filter == null) {
-			String sqlTotal = "select count(1) total from delivery_order d "
-					+ " left join user_login ul on ul.id=d.create_by "
-					+ " left join office o on ul.office_id = o.id "
-					+ " where (o.id = "+ user.get("office_id") +" or ul.user_name = '"+ user.get("user_name") +"')";
+			String sqlTotal = "select count(1) total from delivery_order";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
 			String sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
-					+ " left join party p on d.customer_id = p.id "
-					+ " left join contact c on p.contact_id = c.id "
-					+ " left join party p2 on d.sp_id = p2.id "
-					+ " left join contact c2 on p2.contact_id = c2.id "
-					+ " left join user_login ul on ul.id=d.create_by "
-					+ " left join office o on ul.office_id = o.id "
-					+ " where (o.id = "+user.get("office_id") +" or ul.user_name = '"+user.get("user_name")
-					+ "') order by d.create_stamp desc "
+					+ "left join party p on d.customer_id = p.id "
+					+ "left join contact c on p.contact_id = c.id "
+					+ "left join party p2 on d.sp_id = p2.id "
+					+ "left join contact c2 on p2.contact_id = c2.id order by d.create_stamp desc "
 					+ sLimit;
 			List<Record> transferOrders = Db.find(sql);
 
@@ -120,9 +112,7 @@ public class DeliveryController extends Controller {
 					+ "left join party p2 on d.sp_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
-					+ " left join user_login ul on ul.id=d.create_by "
-					+ " left join office o on ul.office_id = o.id "
-					+ " where ifnull(d.order_no,'') like '%" + orderNo_filter
+					+ "where ifnull(d.order_no,'') like '%" + orderNo_filter
 					+ "%' and ifnull(d.status,'') like '%" + status_filter
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer_filter
@@ -130,7 +120,7 @@ public class DeliveryController extends Controller {
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
 					+ transfer_filter + sp_filter + "%' "
 					+ "and d.create_stamp between '" + beginTime_filter
-					+ "' and '" + endTime_filter + "' and (o.id = "+user.get("office_id") +" or ul.user_name = '"+user.get("user_name") +"')";
+					+ "' and '" + endTime_filter + "' ";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -140,8 +130,6 @@ public class DeliveryController extends Controller {
 					+ "left join party p2 on d.sp_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
-					+ " left join user_login ul on ul.id=d.create_by "
-					+ " left join office o on ul.office_id = o.id "
 					+ "where ifnull(d.order_no,'') like '%"
 					+ orderNo_filter
 					+ "%' and ifnull(d.status,'') like '%"
@@ -154,8 +142,7 @@ public class DeliveryController extends Controller {
 					+ sp_filter
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
-					+ "' and '" + endTime_filter 
-					+ "' and (o.id = "+user.get("office_id") +" or ul.user_name = '"+user.get("user_name") +"')" + sLimit;
+					+ "' and '" + endTime_filter + "' " + sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
 
@@ -190,10 +177,7 @@ public class DeliveryController extends Controller {
 					+ getPara("iDisplayLength");
 		}
 
-		String sqlTotal = "select count(1) total from delivery_order d "
-				+ " left join user_login ul on ul.id=d.create_by "
-				+ " left join office o on ul.office_id = o.id "
-				+ " where o.id = "+user.get("office_id");
+		String sqlTotal = "select count(1) total from delivery_order";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
@@ -202,10 +186,7 @@ public class DeliveryController extends Controller {
 				+ "left join contact c on p.contact_id = c.id "
 				+ "left join party p2 on d.sp_id = p2.id "
 				+ "left join contact c2 on p2.contact_id = c2.id "
-				+ " left join user_login ul on ul.id=d.create_by "
-				+ " left join office o on ul.office_id = o.id "
-				+ " where o.id = "+user.get("office_id")
-				+ " order by d.create_stamp desc" + sLimit;
+				+ "order by d.create_stamp desc" + sLimit;
 
 		List<Record> depart = null;
 		if (transferorderNo == null && deliveryNo == null && customer == null
@@ -224,8 +205,6 @@ public class DeliveryController extends Controller {
 					+ "left join party p2 on d.sp_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
-					+ " left join user_login ul on ul.id=d.create_by "
-					+ " left join office o on ul.office_id = o.id "				
 					+ "where ifnull(d.order_no,'') like '%"
 					+ deliveryNo
 					+ "%' and ifnull(c.abbr,'') like '%"
@@ -237,7 +216,7 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"
-					+ endTime + "' and o.id = "+user.get("office_id") + sLimit;
+					+ endTime + "' " + sLimit;
 			depart = Db.find(sql_seach);
 		}
 		Map map = new HashMap();
@@ -867,8 +846,7 @@ public class DeliveryController extends Controller {
 					.set("route_to", getPara("route_to"))
 					.set("pricetype", getPara("chargeType"))
 					.set("from_warehouse_id", getPara("warehouse_id"))
-					.set("cargo_nature", cargoNature)
-					.set("create_by", user.get("id"));
+					.set("cargo_nature", cargoNature);
 
 			if (notifyId == null || notifyId.equals("")) {
 				deliveryOrder.set("notify_party_id", party.get("id"));
