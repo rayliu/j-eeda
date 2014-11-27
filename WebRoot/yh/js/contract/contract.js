@@ -90,6 +90,7 @@ $(document).ready(function() {
 					{"mDataProp":"PRICETYPE", "bVisible":false},
 					{"mDataProp":"CARTYPE"},
 					{"mDataProp":"CARLENGTH"},
+					{"mDataProp":"CARLOAD"},
 					{"mDataProp":"LOCATION_FROM"},
 		            {"mDataProp":"LOCATION_TO"},
 		            {"mDataProp":"FIN_ITEM_NAME"},
@@ -272,6 +273,7 @@ $(document).ready(function() {
 
                 	 $('#myModal').modal('show');
                 	 $('#routeId').val(data[0].ID);
+                	 $('#carload').val(data[0].CARLOAD);
                 	 $('#from_id').val(data[0].FROM_ID);
                 	 $('#to_id').val(data[0].TO_ID);
                 	 $("#fin_item_list").val(data[0].FIN_ITEM_ID);
@@ -498,12 +500,14 @@ $(document).ready(function() {
 	    		$("#carType").hide();
 	    		$("#carLength").hide();
 	    		$("#ltlUnitType").hide();
+	    		$("#load").hide();
 	    	}else if(priceType=="perCar"){
 	    		$("#priceType").text('整车');
 	    		$("#carType").show();
 	    		$("#carLength").show();
 	    		$("#ltlUnitType").hide();
 	    		$("#unit").hide();
+	    		$("#load").show();
 	    		//$("#cargoNature").hide();
 	    	}else if(priceType=="perCargo"){
 	    		$("#priceType").text('零担');
@@ -511,6 +515,7 @@ $(document).ready(function() {
 	    		$("#carLength").hide();
 	    		$("#ltlUnitType").show();
 	    		$("#unit").hide();
+	    		$("#load").hide();
 	    	}
 	    };
 	    //定义一个全局的信息提示框
@@ -627,6 +632,7 @@ $(document).ready(function() {
         	//当前计费区间
         	var amountFrom = $('#amountFrom').val();
         	var amountTo = $('#amountTo').val();
+        	var carload = $('#carload').val();
         	
         	//编辑前的产品
 	    	if(itemTo == null)
@@ -635,7 +641,7 @@ $(document).ready(function() {
 	    	if(item == "")
 	    		$("#productId").val("");
         	
-        	$.post('/customerContract/checkedRepetition', {"contractId":contractId,"priceType":priceType,"fromId":toid1,"toId":toid,"productId":productId,
+        	$.post('/customerContract/checkedRepetition', {"contractId":contractId,"priceType":priceType,"fromId":toid1,"toId":toid,"productId":productId,"carload":carload,
         		"carType2":carType2,"carLength2":carLength2,"ltlUnitType":ltlUnitType,"amountFrom":amountFrom,"amountTo":amountTo,"finItemId":finItemId}, function(data){
         		if(data.success){//有数据
         			var routeItemId = $("#routeItemId").val();
