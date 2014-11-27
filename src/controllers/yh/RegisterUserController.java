@@ -1,9 +1,8 @@
 package controllers.yh;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-
 import models.Office;
 import models.UserLogin;
+import models.UserRole;
 
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -40,6 +39,7 @@ public class RegisterUserController  extends Controller{
         	office.set("contact_phone_name",phone_name);
         	office.set("contact_phone", phone);
         	office.set("email", email);
+        	office.set("type","总公司");
         	Db.save("office", office);
         	//根据名称查询到刚才保存的注册公司
         	Office user_office = Office.dao.findFirst("select * from office where office_name=?",officeName);
@@ -47,6 +47,11 @@ public class RegisterUserController  extends Controller{
         	user.set("office_id", user_office.get("id"));
         	
         	Db.save("user_login", user);
+        	//给新公司第一个注册的人加入系统用户的角色
+        	UserRole ur = new UserRole();
+        	ur.set("user_name", userName);
+        	ur.set("role_code", "admin");
+        	ur.save();
         	//查询新注册用户
         	//UserLogin newUser = UserLogin.dao.findFirst("select * from user_login where user_name=?",userName);
         	setAttr("userId", userName);

@@ -58,7 +58,7 @@ public class TransferOrderController extends Controller {
 	}
 
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST})
-	public void list() {		
+	public void list() {
 		Map transferOrderListMap = null;
 		String orderNo = getPara("orderNo");
 		String status = getPara("status");
@@ -74,7 +74,10 @@ public class TransferOrderController extends Controller {
 		String plantime=getPara("plantime");
 		String arrivarltime=getPara("arrivarltime");
 		String customer_order_no=getPara("customer_order_no");
-
+		/*获取到当前用户*/
+		UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name =?",currentUser.getPrincipal());
+		
+		//currentUser.getPrincipal();
 		if (orderNo == null && status == null && address == null
 				&& customer == null && sp == null && beginTime == null
 				&& endTime == null&& order_type == null&& plantime == null
@@ -86,8 +89,11 @@ public class TransferOrderController extends Controller {
 				sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 						+ getPara("iDisplayLength");
 			}
-
-			String sqlTotal = "select count(1) total from transfer_order t where t.status!='取消'";
+			/*user.get("office_id")+" or o.id = '"+ ul.office_id */
+			String sqlTotal = "select count(1) total from transfer_order t "
+							+ " left join user_login ul on ul.id=t.create_by "
+							+ " left join office o on t.office_id = o.id "
+							+ " where t.status!='取消' and (o.id = "+user.get("office_id")+" or ul.user_name= '"+user.get("user_name")+"')";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -109,10 +115,9 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.status !='取消' order by create_stamp desc"
-					+ sLimit;
+					+ " where t.status !='取消' and (o.id = "+user.get("office_id")+" or ul.user_name= '"+user.get("user_name")+"') order by create_stamp desc";
 
-			List<Record> transferOrders = Db.find(sql);
+			List<Record> transferOrders = Db.find(sql+ sLimit);
 
 			transferOrderListMap = new HashMap();
 			transferOrderListMap.put("sEcho", pageIndex);
@@ -145,6 +150,7 @@ public class TransferOrderController extends Controller {
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
 					+ " where t.status !='取消' "
+					+ " and (o.id = "+user.get("office_id")+" or ul.user_name= '"+user.get("user_name")+"')"
 					+ " and t.order_no like '%"+ orderNo 
 					+ "%' and t.status like '%" + status
 					+ "%' and t.address like '%" + address
@@ -177,7 +183,8 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.status !='取消'"
+					+ " where t.status !='取消' "
+					+ " and (o.id = "+user.get("office_id")+" or ul.user_name= '"+user.get("user_name")+"')"
 					+ " and t.order_no like '%" + orderNo
 					+ "%' and t.status like '%" + status
 					+ "%' and t.address like '%" + address

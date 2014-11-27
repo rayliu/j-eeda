@@ -151,7 +151,7 @@ $(document).ready(function() {
 	
  
 	//供应商暂时去除:#sp_filter ,
-    $('#endTime_filter ,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup click', function () {
+    $('#customer_filter,#endTime_filter ,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup click', function () {
     	
     	var office =$("#officeSelect").val();
     	var start =$("#start_filter").val();

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import models.Fin_item;
 import models.Location;
+import models.UserLogin;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
@@ -37,6 +38,7 @@ public class ContractController extends Controller {
 
     private Logger logger = Logger.getLogger(ContractController.class);
     Subject currentUser = SecurityUtils.getSubject();
+    UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name =?",currentUser.getPrincipal());
     // in config route已经将路径默认设置为/yh
     // me.add("/yh", controllers.yh.AppController.class, "/yh");
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_LIST})
@@ -102,15 +104,16 @@ public class ContractController extends Controller {
             }
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'";
-            System.out.println(sql);
+            String sql = "select count(1) total from contract c,party p,contact c1,user_login ul, office o "
+            		+ " where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id");
+            //System.out.println(sql);
             Record rec = Db.findFirst(sql + totalWhere);
             long total = rec.getLong("total");
             logger.debug("total records:" + total);
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'"
+                    .find("select *,c.id as cid from contract c,party p,contact c1,user_login ul, office o  where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id") 
                             + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
@@ -130,15 +133,15 @@ public class ContractController extends Controller {
             }
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'";
+            String sql = "select count(1) total from contract c,party p,contact c1,user_login ul, office o  where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id") ;
             System.out.println(sql);
             Record rec = Db.findFirst(sql + totalWhere);
             long total = rec.getLong("total");
             logger.debug("total records:" + total);
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' "
-                            + "and c.name like '%"
+                    .find("select *,c.id as cid from contract c,party p,contact c1,user_login ul, office o  where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id") 
+                            + " and c.name like '%"
                             + contractName_filter
                             + "%' and ifnull(c1.contact_person,'') like '%"
                             + contactPerson_filter
@@ -176,7 +179,7 @@ public class ContractController extends Controller {
                 && phone_filter == null && periodTo_filter == null) {
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'";
+            String sql = "select count(1) total from contract c,party p,contact c1,user_login ul, office o  where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id") ;
             System.out.println(sql);
             Record rec = Db.findFirst(sql + totalWhere);
             long total = rec.getLong("total");
@@ -184,7 +187,7 @@ public class ContractController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
+                    .find("select *,c.id as cid from contract c,party p,contact c1,user_login ul, office o  where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id") 
                             + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
@@ -194,7 +197,7 @@ public class ContractController extends Controller {
         } else {
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'";
+            String sql = "select count(1) total from contract c,party p,contact c1,user_login ul, office o  where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id") ;
             System.out.println(sql);
             Record rec = Db.findFirst(sql + totalWhere);
             long total = rec.getLong("total");
@@ -202,8 +205,8 @@ public class ContractController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
-                            + "and c.name like '%"
+                    .find("select *,c.id as cid from contract c,party p,contact c1,user_login ul, office o  where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id") 
+                            + " and c.name like '%"
                             + contractName_filter
                             + "%' and ifnull(c1.contact_person,'') like '%"
                             + contactPerson_filter
@@ -243,14 +246,14 @@ public class ContractController extends Controller {
                 && phone_filter == null && periodTo_filter == null) {
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'";
+            String sql = "select count(1) total from contract c,party p,contact c1,user_login ul, office o  where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id") ;
             System.out.println(sql);
             Record rec = Db.findFirst(sql + totalWhere);
             logger.debug("total records:" + rec.getLong("total"));
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'"
+                    .find("select *,c.id as cid from contract c,party p,contact c1,user_login ul, office o  where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id") 
                             + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -260,15 +263,15 @@ public class ContractController extends Controller {
         } else {
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'";
+            String sql = "select count(1) total from contract c,party p,contact c1,user_login ul, office o  where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id") ;
             System.out.println(sql);
             Record rec = Db.findFirst(sql + totalWhere);
             logger.debug("total records:" + rec.getLong("total"));
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER' "
-                            + "and c.name like '%"
+                    .find("select *,c.id as cid from contract c,party p,contact c1,user_login ul, office o  where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER' and ul.id = c.create_by and o.id = ul.id and o.id ="+user.get("office_id") 
+                            + " and c.name like '%"
                             + contractName_filter
                             + "%' and ifnull(c1.contact_person,'') like '%"
                             + contactPerson_filter
@@ -345,6 +348,7 @@ public class ContractController extends Controller {
         c.set("period_from", getPara("period_from"));
         c.set("period_to", getPara("period_to"));
         c.set("remark", getPara("remark"));
+        c.set("create_by", user.get("id"));
         if (id != "") {
             logger.debug("update....");
             c.set("id", id);

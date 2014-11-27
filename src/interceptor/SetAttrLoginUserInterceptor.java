@@ -11,7 +11,7 @@ public class SetAttrLoginUserInterceptor implements Interceptor{
 	@Override
 	public void intercept(ActionInvocation ai) {
 		Subject currentUser = SecurityUtils.getSubject();
-		ai.getController().setAttr("userId", currentUser.getPrincipal());
+		ai.getController().setAttr("userId", currentUser.getPrincipal());	
 		ai.invoke();
 	}
 

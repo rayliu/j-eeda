@@ -38,7 +38,7 @@ import controllers.yh.util.PermissionConstant;
 public class InsuranceOrderController extends Controller {
     private Logger logger = Logger.getLogger(InsuranceOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    
+    UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name =?",currentUser.getPrincipal());
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_LIST})
     public void index() {
     	    render("/yh/insuranceOrder/insuranceOrderList.html");
@@ -101,9 +101,13 @@ public class InsuranceOrderController extends Controller {
         }
         if (orderNo == null && status == null && address == null && customer == null && routeFrom == null && routeTo == null
                 && beginTime == null && endTime == null) {
-            sqlTotal = "select count(1) total  from transfer_order tor " + " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code where tor.status = '已发车'";
+            sqlTotal = "select count(1) total  from transfer_order tor " 
+            		+ " left join party p on tor.customer_id = p.id "
+                    + " left join contact c on p.contact_id = c.id " 
+            		+ " left join location l1 on tor.route_from = l1.code "
+                    + " left join location l2 on tor.route_to = l2.code "
+                    + " left join office o on o.id=tor.office_id "
+                    + " where tor.status = '已发车' and o.id = "+user.get("office_id");
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
             		+ "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to, "
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
@@ -116,8 +120,11 @@ public class InsuranceOrderController extends Controller {
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + " left join user_login ul on ul.id = tor.create_by "  
-                    + " left join depart_transfer dt on dt.order_id = tor.id "              
-                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by tor.create_stamp desc" + sLimit;
+                    + " left join depart_transfer dt on dt.order_id = tor.id "  
+                    + " left join office o on o.id=ul.office_id "
+                    + " left join depart_order dor on dor.id = dt.depart_id "
+                    + "where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and o.id = "+user.get("office_id")
+                    + "order by tor.create_stamp desc" + sLimit;
         } else if ("".equals(routeFrom) && "".equals(routeTo)) {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -125,10 +132,15 @@ public class InsuranceOrderController extends Controller {
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-            sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
+            sqlTotal = "select count(1) total from transfer_order tor " 
+            		+ " left join party p on tor.customer_id = p.id "
+                    + " left join contact c on p.contact_id = c.id " 
+                    + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
-                    + "  where tor.status = '已发车' and ifnull(l1.name, '') like '%"
+                    + " left join office o on o.id=tor.office_id "
+                    + "  where tor.status = '已发车' "
+                    + " and o.id = "+user.get("office_id")
+                    + " and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
@@ -159,8 +171,12 @@ public class InsuranceOrderController extends Controller {
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + " left join user_login ul on ul.id = tor.create_by "  
-                    + " left join depart_transfer dt on dt.order_id = tor.id "              
-                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and ifnull(l1.name, '') like '%"
+                    + " left join depart_transfer dt on dt.order_id = tor.id "
+                    + " left join office o on o.id=tor.office_id "
+                    + " left join depart_order dor on dor.id = dt.depart_id "
+                    + "where tor.status = '已发车' "
+                    + " and o.id = "+user.get("office_id")
+                    + "and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
@@ -186,10 +202,14 @@ public class InsuranceOrderController extends Controller {
                 endTime = "9999-12-31";
             }
 
-            sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
+            sqlTotal = "select count(1) total from transfer_order tor " 
+            		+ " left join party p on tor.customer_id = p.id "
+                    + " left join contact c on p.contact_id = c.id " 
+                    + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor.status = '已发车' and ifnull(l1.name, '') like '%"
+                    + " left join office o on o.id=tor.office_id "
+                    + " where tor.status = '已发车' and o.id = "+user.get("office_id")
+                    + " and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
@@ -222,7 +242,11 @@ public class InsuranceOrderController extends Controller {
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + " left join user_login ul on ul.id = tor.create_by "  
                     + " left join depart_transfer dt on dt.order_id = tor.id "              
-                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and ifnull(l1.name, '') like '%"
+                    + " left join depart_order dor on dor.id = dt.depart_id "
+                    + " left join office o on o.id=tor.office_id "
+                    + "where tor.status = '已发车' "
+                    + " and o.id = "+user.get("office_id")
+                    + " and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo

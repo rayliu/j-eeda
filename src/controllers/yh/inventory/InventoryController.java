@@ -41,7 +41,8 @@ import controllers.yh.util.PermissionConstant;
 public class InventoryController extends Controller {
 
     private Logger logger = Logger.getLogger(InventoryController.class);
-    Subject currentUser = SecurityUtils.getSubject();    
+    Subject currentUser = SecurityUtils.getSubject();   
+    UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name =?",currentUser.getPrincipal());
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INLIST})
     public void index() {
         setAttr("inventory", "gateIn");
@@ -69,14 +70,20 @@ public class InventoryController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from warehouse_order";
+        String sql = "select count(1) total from warehouse_order w_o"
+        		+ " left join user_login ul on ul.id = w_o.creator "
+                + " left join office o on o.id=ul.office_id where o.id = "+user.get("office_id");
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db.find("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
-                + "left join party p on p.id =w_o.party_id " + "left join contact c on p.contact_id =c.id "
-                + "left join warehouse w on w.id = w_o.warehouse_id where order_type='入库'");
+                + " left join party p on p.id =w_o.party_id "
+        		+ " left join contact c on p.contact_id =c.id "
+                + " left join warehouse w on w.id = w_o.warehouse_id "
+                + " left join user_login ul on ul.id = w_o.creator "
+                + " left join office o on o.id=ul.office_id "
+                + " where order_type='入库' and o.id = "+ user.get("office_id"));
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -98,14 +105,20 @@ public class InventoryController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from warehouse_order";
+        String sql = "select count(1) total from warehouse_order w_o"
+        		+ " left join user_login ul on ul.id = w_o.creator "
+                + " left join office o on o.id=ul.office_id where o.id = "+user.get("office_id");
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db.find("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
-                + "left join party p on p.id =w_o.party_id " + "left join contact c on p.contact_id =c.id "
-                + "left join warehouse w on w.id = w_o.warehouse_id where order_type='出库'");
+                + " left join party p on p.id =w_o.party_id " 
+        		+ " left join contact c on p.contact_id =c.id "
+                + " left join warehouse w on w.id = w_o.warehouse_id "
+                + " left join user_login ul on ul.id = w_o.creator "
+                + " left join office o on o.id=ul.office_id "
+                + " where order_type='出库' and o.id = "+user.get("office_id"));
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -533,12 +546,13 @@ public class InventoryController extends Controller {
 
     // 查找仓库
     public void searchAllwarehouse() {
+    	UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name =?",currentUser.getPrincipal());
     	String inputStr = getPara("warehouseName");
     	String sql ="";
     	if(inputStr!=null){
-    		sql = "select * from warehouse where warehouse_name like '%"+inputStr+"%'";
+    		sql = "select * from warehouse where warehouse_name like '%"+inputStr+"%' and office_id = "+user.get("office_id");
     	}else{
-    		sql= "select * from warehouse";
+    		sql= "select * from warehouse where office_id = "+user.get("office_id");
     	}
         List<Warehouse> warehouses = Warehouse.dao.find(sql);
         renderJson(warehouses);
