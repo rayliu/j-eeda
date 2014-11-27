@@ -1088,7 +1088,22 @@ $(document).ready(function() {
 				$(this).attr('checked', true);		
 			}
 		});
-		
+		$("#mbProvinceTo,#cmbCityTo,#cmbAreaTo").on('change',function(){
+			var str;
+			if($("#mbProvinceTo").find("option:selected").text()=="--请选择省份--"){
+				str="";
+			}else if($("#cmbCityTo").find("option:selected").text()=="--请选择城市--"){
+				str=$("#mbProvinceTo").find("option:selected").text();
+			}else if($("#cmbAreaTo").find("option:selected").text()=="--请选择区(县)--"){
+				str=$("#mbProvinceTo").find("option:selected").text()+" "+$("#cmbCityTo").find("option:selected").text();
+			}else{
+				str = $("#mbProvinceTo").find("option:selected").text()+" "+$("#cmbCityTo").find("option:selected").text()+" "+$("#cmbAreaTo").find("option:selected").text();
+			}
+			
+			
+			
+			$("#notify_address").val(str);
+		});
 		
 });
 

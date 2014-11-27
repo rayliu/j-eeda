@@ -668,7 +668,14 @@ public class DeliveryController extends Controller {
 	public void searchSp() {
 		String input = getPara("input");
 		List<Record> locationList = Collections.EMPTY_LIST;
-		locationList = Db.find("select p.id pid,p.*, c.*,c.id cid from	party p left join contact c on c.id = p.contact_id where sp_type = 'delivery'");
+		String sql = "";
+		if(input!=null&&input!=""){
+			sql= "select p.id pid,p.*, c.*,c.id cid from	party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and c.abbr like '%"+input+"%'";
+		}else{
+			sql= "select p.id pid,p.*, c.*,c.id cid from	party p left join contact c on c.id = p.contact_id where sp_type = 'delivery'";
+		}
+		
+		locationList = Db.find(sql);
 		renderJson(locationList);
 	}
 
