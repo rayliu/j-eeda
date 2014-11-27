@@ -400,7 +400,7 @@ $(document).ready(function() {
 			});
 	
 		//from表单验证
-		 
+		 var cname =$("#contract_name").val();
 		var validate = $('#customerForm').validate({
 	        rules: {
 	          contract_name: {
@@ -410,7 +410,17 @@ $(document).ready(function() {
                     type: "post",  //数据发送方式  
                     data:  {                     //要传递的数据   
                     	contract_name: function() {
-                            return $("#contract_name").val()+","+$("#type2").val();   
+                    	
+                    		if($("#contractId").val()==null||$("#contractId").val()==""){                    			
+                    			return $("#contract_name").val()+","+$("#type2").val();
+                    		}else{
+                    			if(cname==$("#contract_name").val()){
+                    				return true;
+                    			}else{
+                    				return $("#contract_name").val()+","+$("#type3").val();
+                    			}
+                    		}
+                               
                           }   
 
                     }   
