@@ -816,5 +816,23 @@ public class ContractController extends Controller {
     }
     
     
+    public void checkContractNameExist(){
+    	
+		String name= getPara("contract_name");
+		String[] str =name.split(",");
+		String contract_name = str[0];
+		String type =str[1];
+		
+		boolean checkObjectExist;
+
+		Contract contract = Contract.dao.findFirst("select * from contract where name =? and type=?",contract_name,type);
+		if(contract == null){
+			checkObjectExist=true;
+		}else{
+			checkObjectExist=false;
+		}
+		renderJson(checkObjectExist);
+	}
+    
     
 }

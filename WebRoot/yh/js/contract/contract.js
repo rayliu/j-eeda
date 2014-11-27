@@ -398,18 +398,37 @@ $(document).ready(function() {
 			});
 	
 		//from表单验证
+		 
 		var validate = $('#customerForm').validate({
 	        rules: {
 	          contract_name: {
-	            required: true
+	            required: true,
+	            remote:{
+                	url: "/customerContract/checkContractNameExist", //后台处理程序    
+                    type: "post",  //数据发送方式  
+                    data:  {                     //要传递的数据   
+                    	contract_name: function() {
+                            return $("#contract_name").val()+","+$("#type2").val();   
+                          }   
+
+                    }   
+    
+                } 
 	          },
 	          companyName:{//form 中 name为必填
 	            required: true
+	          },
+	          period_from:{
+	        	  required:true
+	          },
+	          period_to:{
+	        	  required:true
 	          }
+	          
 	        },
 	        messages : {
-	             
-	        	contract_name : {required:  "不能为空"}, 
+	        	contract_name : {required:  "不能为空",
+	        		remote:"合同名称已存在"}, 
 	        	companyName: {required :"不能为空"},
 	        }
 	    });
