@@ -46,21 +46,7 @@ public class ContractController extends Controller {
         logger.debug("URI:" + url);
         setAttr("contractType", "CUSTOMER");    	
         render("/yh/contract/ContractList.html");
-        /*if (url.equals("/customerContract")) {
-            setAttr("contractType", "CUSTOMER");
-            	currentUser.checkPermission(PermissionConstant.PERMSSION_CC_LIST);
-                render("/yh/contract/ContractList.html");
-        }
-        if (url.equals("/deliverySpContract")) {
-            setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
-            currentUser.checkPermission(PermissionConstant.PERMSSION_CD_LIST);
-                render("/yh/contract/ContractList.html");
-        }
-        if (url.equals("/spContract")) {
-            setAttr("contractType", "SERVICE_PROVIDER");
-            currentUser.checkPermission(PermissionConstant.PERMSSION_CP_LIST);
-                render("/yh/contract/ContractList.html");
-        }*/
+
 
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CD_LIST})
@@ -817,20 +803,23 @@ public class ContractController extends Controller {
     
     
     public void checkContractNameExist(){
-    	
+    	boolean checkObjectExist;
 		String name= getPara("contract_name");
 		String[] str =name.split(",");
 		String contract_name = str[0];
-		String type =str[1];
-		
-		boolean checkObjectExist;
-
-		Contract contract = Contract.dao.findFirst("select * from contract where name =? and type=?",contract_name,type);
-		if(contract == null){
-			checkObjectExist=true;
+		String type ="";
+		if(str.length>=2){
+			type =str[1];
+			Contract contract = Contract.dao.findFirst("select * from contract where name =? and type=?",contract_name,type);
+			if(contract == null){
+				checkObjectExist=true;
+			}else{
+				checkObjectExist=false;
+			}
 		}else{
-			checkObjectExist=false;
+			checkObjectExist=true;
 		}
+
 		renderJson(checkObjectExist);
 	}
     

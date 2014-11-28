@@ -410,13 +410,27 @@ $(document).ready(function() {
                     type: "post",  //数据发送方式  
                     data:  {                     //要传递的数据   
                     	contract_name: function() {
-                    	
+                    		/*console.log($("#contractId").val());*/
+                    		console.log("2----"+$("#type2").val());
+                    		console.log("3===="+$("#type3").val());
+
                     		if($("#contractId").val()==null||$("#contractId").val()==""){                    			
+                    			
                     			return $("#contract_name").val()+","+$("#type2").val();
                     		}else{
+                    			/*console.log(cname);
+                    			
+                    			console.log($("#contract_name").val());
+                    			
+                    			console.log("2----"+$("#type2").val());
+                        		console.log("3===="+$("#type3").val());*/
+                    			
+                    			
                     			if(cname==$("#contract_name").val()){
+                    				
                     				return true;
                     			}else{
+                    				
                     				return $("#contract_name").val()+","+$("#type3").val();
                     			}
                     		}

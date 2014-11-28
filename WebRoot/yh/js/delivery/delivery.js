@@ -1089,53 +1089,6 @@ $(document).ready(function() {
 			}
 		});
 
-		/*$("#mbProvinceTo,#cmbCityTo,#cmbAreaTo").on('change',function(){
-			$("#notify_address").val("");
-			var str="";
-			var mbProvinceTo=$("#mbProvinceTo").find("option:selected").text();
-			var cmbCityTo=$("#cmbCityTo").find("option:selected").text();
-			var cmbAreaTo=$("#cmbAreaTo").find("option:selected").text();
-			if(mbProvinceTo =="--请选择省份--"){
-				str="";
-			}else{
-				str = mbProvinceTo;
-			}
-			if(cmbCityTo =="--请选择城市--"){
-				str=mbProvinceTo;
-			}else{
-				str +=" "+cmbCityTo;
-			}
-			if(cmbAreaTo =="--请选择区(县)--"){
-				str=mbProvinceTo+" "+cmbCityTo;
-			}else{
-				str +=" "+cmbAreaTo;
-			}
-			if(mbProvinceTo =="--请选择省份--"){
-				str="";
-				$("#cmbCityTo").get(0).selectedIndex=1;
-				$("#cmbAreaTo").get(1).selectedIndex=1;
-			}else if(cmbCityTo =="--请选择城市--"){
-				str=mbProvinceTo;
-				$("#cmbAreaTo").get(1).selectedIndex=1;
-			}else if(cmbAreaTo =="--请选择区(县)--"){
-				str=mbProvinceTo+" "+cmbCityTo;
-			}else{
-				mbProvinceTo="";
-				cmbCityTo="";
-				cmbAreaTo="";
-				
-				mbProvinceTo=$("#mbProvinceTo").find("option:selected").text();
-				cmbCityTo=$("#cmbCityTo").find("option:selected").text();
-				cmbAreaTo=$("#cmbAreaTo").find("option:selected").text();
-				
-				str = mbProvinceTo+" "+cmbCityTo+" "+cmbAreaTo;				
-			}
-			$("#notify_address").val(str);
-		});*/
-		/*var str ="";
-		var mbProvinceTo=$("#mbProvinceTo").find("option:selected").text();
-		var cmbCityTo=$("#cmbCityTo").find("option:selected").text();
-		var cmbAreaTo=$("#cmbAreaTo").find("option:selected").text();*/
 		$("#mbProvinceTo").on('change',function(){
 			$("#notify_address").val("");
 			if($("#mbProvinceTo").find("option:selected").text() =="--请选择省份--"){
@@ -1143,7 +1096,7 @@ $(document).ready(function() {
 			}else{
 				$("#notify_address").val($("#mbProvinceTo").find("option:selected").text());
 			}
-			
+			$("#cmbAreaTo").get(0).selectedIndex=0;
 			
 		});
 		$("#cmbCityTo").on('change',function(){
@@ -1158,7 +1111,9 @@ $(document).ready(function() {
 		});
 		$("#cmbAreaTo").on('change',function(){
 			$("#notify_address").val("");
-			if($("#cmbAreaTo").find("option:selected").text() =="--请选择区(县)--"){
+			if($("#cmbCityTo").find("option:selected").text() =="--请选择城市--"){
+				$("#notify_address").val($("#mbProvinceTo").find("option:selected").text());
+			}else if($("#cmbAreaTo").find("option:selected").text() =="--请选择区(县)--"){
 				$("#notify_address").val($("#mbProvinceTo").find("option:selected").text()+" "+$("#cmbCityTo").find("option:selected").text());
 			}else{
 				$("#notify_address").val($("#mbProvinceTo").find("option:selected").text()+" "+$("#cmbCityTo").find("option:selected").text()+" "+$("#cmbAreaTo").find("option:selected").text());
