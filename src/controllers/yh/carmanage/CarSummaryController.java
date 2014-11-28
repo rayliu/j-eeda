@@ -36,6 +36,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.profile.CarinfoController;
+import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -325,26 +326,7 @@ public class CarSummaryController extends Controller {
         	java.util.Date utilDate = new java.util.Date();
         	java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
         	//调车单号
-        	CarSummaryOrder order = CarSummaryOrder.dao
-    				.findFirst("select * from car_summary_order order by id desc limit 0,1");
-        	if (order != null) {
-	        	String num = order.get("order_no");
-	            String str = num.substring(2, num.length());
-	            Long oldTime = Long.parseLong(str);
-	            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-	            String format = sdf.format(new Date());
-	            String time = format + "00001";
-	            Long newTime = Long.parseLong(time);
-	            if (oldTime >= newTime) {
-	                order_no = String.valueOf((oldTime + 1));
-	            } else {
-	                order_no = String.valueOf(newTime);
-	            }
-        	} else {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-                String format = sdf.format(new Date());
-                order_no = format + "00001";
-            }
+        	order_no = OrderNoUtil.getOrderNo("car_summary_order",null);
         	
         	result = carSummaryOrder.set("order_no", "XC" + order_no).set("car_no", carNo).set("main_driver_name", mainDriverName)
             		.set("main_driver_amount", mainDriverAmount).set("minor_driver_name", minorDriverName)

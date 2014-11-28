@@ -25,6 +25,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.departOrder.DepartOrderController;
 import controllers.yh.returnOrder.ReturnOrderController;
+import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 public class TransferOrderMilestoneController extends Controller {
@@ -283,8 +284,9 @@ public class TransferOrderMilestoneController extends Controller {
             transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
             transferOrderMilestone.save();
             
+            String orderNo = OrderNoUtil.getOrderNo("return_order", null);
             ReturnOrder returnOrder = new ReturnOrder();
-            returnOrder.set("order_no", ReturnOrderController.createReturnOrderNo());
+            returnOrder.set("order_no", "HD" + orderNo);
             returnOrder.set("transaction_status", "新建");
             returnOrder.set("creator", users.get(0).get("id"));
             returnOrder.set("create_date", sqlDate);

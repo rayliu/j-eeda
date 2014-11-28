@@ -38,6 +38,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -247,35 +248,6 @@ public class DeliveryController extends Controller {
 		renderJson(map);
 	}
 
-	// 构造单号
-	public String creat_order_no() {
-		String order_no = null;
-		String the_order_no = null;
-		DeliveryOrder order = DeliveryOrder.dao
-				.findFirst("select * from delivery_order order by order_no desc limit 0,1");
-		if (order != null) {
-			String num = order.get("order_no");
-			String str = num.substring(2, num.length());
-			System.out.println(str);
-			Long oldTime = Long.parseLong(str);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-			String format = sdf.format(new Date());
-			String time = format + "00001";
-			Long newTime = Long.parseLong(time);
-			if (oldTime >= newTime) {
-				order_no = String.valueOf((oldTime + 1));
-			} else {
-				order_no = String.valueOf(newTime);
-			}
-			the_order_no = "PS" + order_no;
-		} else {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-			String format = sdf.format(new Date());
-			order_no = format + "00001";
-			the_order_no = "PS" + order_no;
-		}
-		return the_order_no;
-	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_CREATE})
 	public void add() {
 		setAttr("saveOK", false);
@@ -820,7 +792,8 @@ public class DeliveryController extends Controller {
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_CREATE,PermissionConstant.PERMSSION_DYO_UPDATE},logical=Logical.OR)
 
 	public void deliverySave() {
-		String orderNo = creat_order_no();// 构造配送单号
+		
+		String orderNo = OrderNoUtil.getOrderNo("delivery_order",null);
 		String deliveryid = getPara("delivery_id");
 		DeliveryOrder deliveryOrder = null;
 		String notifyId = getPara("notify_id");
@@ -867,7 +840,7 @@ public class DeliveryController extends Controller {
 
 		if (deliveryid == null || "".equals(deliveryid)) {
 
-			deliveryOrder.set("order_no", orderNo)
+			deliveryOrder.set("order_no", "PS" + orderNo)
 					.set("customer_id", getPara("customer_id"))
 					.set("sp_id", getPara("cid"))
 					.set("notify_party_id", party.get("id"))

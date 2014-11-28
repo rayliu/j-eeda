@@ -31,6 +31,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -311,27 +312,8 @@ public class InsuranceOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
 
-        InsuranceOrder order = InsuranceOrder.dao.findFirst("select * from insurance_order order by order_no desc limit 0,1");
-        if (order != null) {
-            String num = order.get("order_no");
-            String str = num.substring(2, num.length());
-            Long oldTime = Long.parseLong(str);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-            String format = sdf.format(new Date());
-            String time = format + "00001";
-            Long newTime = Long.parseLong(time);
-            if (oldTime >= newTime) {
-                order_no = String.valueOf((oldTime + 1));
-            } else {
-                order_no = String.valueOf(newTime);
-            }
-            setAttr("order_no", "BX" + order_no);
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-            String format = sdf.format(new Date());
-            order_no = format + "00001";
-            setAttr("order_no", "BX" + order_no);
-        }
+        String orderNo = OrderNoUtil.getOrderNo("insurance_order", null);
+        setAttr("order_no", "BX" + orderNo);
 
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
