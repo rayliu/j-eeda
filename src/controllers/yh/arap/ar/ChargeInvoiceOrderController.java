@@ -12,6 +12,7 @@ import java.util.Map;
 
 import models.ArapChargeApplicationInvoiceNo;
 import models.ArapChargeInvoice;
+import models.ArapChargeInvoiceApplication;
 import models.ArapChargeInvoiceItemInvoiceNo;
 import models.Party;
 import models.UserLogin;
@@ -183,6 +184,17 @@ public class ChargeInvoiceOrderController extends Controller {
 	    	arapAuditInvoice.set("create_stamp", new Date());
 	    	arapAuditInvoice.set("remark", getPara("remark"));
 	    	arapAuditInvoice.save();
+	    	
+	    	String ids = getPara("chargeCheckOrderIds");
+	    	String[] idArr = null;
+	    	if(ids != null && !"".equals(ids)){
+	    		idArr = ids.split(",");
+	    	}
+	    	for(int i=0;i<idArr.length;i++){
+	    		ArapChargeInvoiceApplication application = ArapChargeInvoiceApplication.dao.findById(idArr[i]);
+	    		application.set("status", "已开票");
+	    		application.update();
+	    	}
     	}
         renderJson(arapAuditInvoice);;
     }
