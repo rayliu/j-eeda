@@ -23,6 +23,7 @@ $(document).ready(function() {
 	            {"mDataProp":"CREATE_STAMP"},
 	            {"mDataProp":"STATUS"},
 	            {"mDataProp":"TRANSFER_ORDER_NO"},
+	            {"mDataProp":"SERIAL_NO","sWidth": "10%"},
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "5%",                
@@ -73,7 +74,7 @@ $(document).ready(function() {
     });
 	
   //条件筛选
-	$("#orderNo_filter ,#transfer_filter ,#status_filter,#customer_filter,#sp_filter,#beginTime_filter,#endTime_filter,#warehouse").on('keyup click', function () {    	 	
+	$("#orderNo_filter ,#transfer_filter ,#status_filter,#customer_filter,#sp_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no").on('keyup click', function () {    	 	
       	var orderNo_filter = $("#orderNo_filter").val();
       	var transfer_filter = $("#transfer_filter").val();
     	var status_filter = $("#status_filter").val();
@@ -82,7 +83,8 @@ $(document).ready(function() {
       	var beginTime_filter = $("#beginTime_filter").val();
       	var endTime_filter = $("#endTime_filter").val();
       	var warehouse = $("#warehouse").val();
-      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse;
+      	var serial_no = $("#serial_no").val();
+      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no;
       	dataTable.fnDraw();
       });
 	

@@ -1121,5 +1121,36 @@ $(document).ready(function() {
 			
 		});
 		
+		$('#datetimepicker').datetimepicker({  
+	        format: 'yyyy-MM-dd',  
+	        language: 'zh-CN', 
+	        autoclose: true,
+	        pickerPosition: "bottom-left"
+	    }).on('changeDate', function(ev){
+	        $(".bootstrap-datetimepicker-widget").hide();
+	        $('#order_delivery_stamp').trigger('keyup');
+	    });	
+		
+		$('#datetimepicker1').datetimepicker({  
+	        format: 'yyyy-MM-dd',  
+	        language: 'zh-CN', 
+	        autoclose: true,
+	        pickerPosition: "bottom-left"
+	    }).on('changeDate', function(ev){
+	        $(".bootstrap-datetimepicker-widget").hide();
+	        $('#client_order_stamp').trigger('keyup');
+	    });	
+		
+		$('#datetimepicker2').datetimepicker({  
+	        format: 'yyyy-MM-dd',  
+	        language: 'zh-CN', 
+	        autoclose: true,
+	        pickerPosition: "bottom-left"
+	    }).on('changeDate', function(ev){
+	        $(".bootstrap-datetimepicker-widget").hide();
+	        $('#business_stamp').trigger('keyup');
+	    });	
+		
+		
 });
 

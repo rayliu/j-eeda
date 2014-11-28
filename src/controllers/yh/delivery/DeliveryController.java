@@ -69,6 +69,7 @@ public class DeliveryController extends Controller {
 		String beginTime_filter = getPara("beginTime_filter");
 		String endTime_filter = getPara("endTime_filter");
 		String warehouse = getPara("warehouse");
+		String serial_no = getPara("serial_no");
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -81,15 +82,21 @@ public class DeliveryController extends Controller {
 				&& status_filter == null && customer_filter == null
 				&& sp_filter == null && beginTime_filter == null
 				&& endTime_filter == null) {
-			String sqlTotal = "select count(1) total from delivery_order";
+			String sqlTotal = "select count(1) total from delivery_order d "
+					+ " left join party p on d.customer_id = p.id "
+					+ " left join contact c on p.contact_id = c.id "
+					+ " left join party p2 on d.sp_id = p2.id "
+					+ " left join contact c2 on p2.contact_id = c2.id";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
-					+ "left join party p on d.customer_id = p.id "
-					+ "left join contact c on p.contact_id = c.id "
-					+ "left join party p2 on d.sp_id = p2.id "
-					+ "left join contact c2 on p2.contact_id = c2.id order by d.create_stamp desc "
+			String sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no,"
+					+ " (select group_concat(trid.serial_no separator '\r\n') from delivery_order_item doi left join transfer_order_item_detail trid on trid.id = doi.transfer_item_detail_id where doi.delivery_id = d.id) as serial_no"
+					+ " from delivery_order d "
+					+ " left join party p on d.customer_id = p.id "
+					+ " left join contact c on p.contact_id = c.id "
+					+ " left join party p2 on d.sp_id = p2.id "
+					+ " left join contact c2 on p2.contact_id = c2.id order by d.create_stamp desc "
 					+ sLimit;
 			List<Record> transferOrders = Db.find(sql);
 
@@ -107,30 +114,13 @@ public class DeliveryController extends Controller {
 			}
 
 			String sqlTotal = "select count(1) total from delivery_order d "
-					+ "left join party p on d.customer_id = p.id "
-					+ "left join contact c on p.contact_id = c.id "
-					+ "left join party p2 on d.sp_id = p2.id "
-					+ "left join contact c2 on p2.contact_id = c2.id "
-					+ "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
-					+ "where ifnull(d.order_no,'') like '%" + orderNo_filter
-					+ "%' and ifnull(d.status,'') like '%" + status_filter
-					+ "%' and ifnull(c.abbr,'') like '%"
-					+ customer_filter
-					+ "%' and ifnull(c2.company_name,'') like'%"
-					+ "%' and ifnull(dt2.transfer_no,'') like '%"
-					+ transfer_filter + sp_filter + "%' "
-					+ "and d.create_stamp between '" + beginTime_filter
-					+ "' and '" + endTime_filter + "' ";
-			Record rec = Db.findFirst(sqlTotal);
-			logger.debug("total records:" + rec.getLong("total"));
-
-			String sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
-					+ "left join party p on d.customer_id = p.id "
-					+ "left join contact c on p.contact_id = c.id "
-					+ "left join party p2 on d.sp_id = p2.id "
-					+ "left join contact c2 on p2.contact_id = c2.id "
-					+ "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
-					+ "where ifnull(d.order_no,'') like '%"
+					+ " left join party p on d.customer_id = p.id "
+					+ " left join contact c on p.contact_id = c.id "
+					+ " left join party p2 on d.sp_id = p2.id "
+					+ " left join contact c2 on p2.contact_id = c2.id "
+					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
+					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
+					+ " where ifnull(d.order_no,'') like '%"
 					+ orderNo_filter
 					+ "%' and ifnull(d.status,'') like '%"
 					+ status_filter
@@ -140,9 +130,38 @@ public class DeliveryController extends Controller {
 					+ transfer_filter
 					+ "%' and ifnull(c2.company_name,'') like'%"
 					+ sp_filter
+					+ "%' and ifnull(trid.serial_no,'') like'%"
+					+ serial_no
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
-					+ "' and '" + endTime_filter + "' " + sLimit;
+					+ "' and '" + endTime_filter + "'" ;
+			Record rec = Db.findFirst(sqlTotal);
+			logger.debug("total records:" + rec.getLong("total"));
+
+			String sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no,"
+					+ " (select group_concat(trid.serial_no separator '\r\n') from delivery_order_item doi left join transfer_order_item_detail trid on trid.id = doi.transfer_item_detail_id where doi.delivery_id = d.id) as serial_no"
+					+ " from delivery_order d "
+					+ " left join party p on d.customer_id = p.id "
+					+ " left join contact c on p.contact_id = c.id "
+					+ " left join party p2 on d.sp_id = p2.id "
+					+ " left join contact c2 on p2.contact_id = c2.id "
+					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
+					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
+					+ " where ifnull(d.order_no,'') like '%"
+					+ orderNo_filter
+					+ "%' and ifnull(d.status,'') like '%"
+					+ status_filter
+					+ "%' and ifnull(c.abbr,'') like '%"
+					+ customer_filter
+					+ "%' and ifnull(dt2.transfer_no,'') like '%"
+					+ transfer_filter
+					+ "%' and ifnull(c2.company_name,'') like'%"
+					+ sp_filter
+					+ "%' and ifnull(trid.serial_no,'') like'%"
+					+ serial_no
+					+ "%' and d.create_stamp between '"
+					+ beginTime_filter
+					+ "' and '" + endTime_filter + "' group by d.id " + sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
 
@@ -808,6 +827,9 @@ public class DeliveryController extends Controller {
 		String cargoNature = getPara("cargoNature");
 		String idlist3 = getPara("localArr");
 		String idlist5 = getPara("localArr3");
+		String businessStamp = getPara("business_stamp");
+		String clientOrderStamp = getPara("client_order_stamp");
+		String orderDeliveryStamp  = getPara("order_delivery_stamp");
 
 		String[] idlist = getPara("localArr").split(",");
 		String[] idlist2 = getPara("localArr2").split(",");
@@ -853,13 +875,22 @@ public class DeliveryController extends Controller {
 					.set("route_to", getPara("route_to"))
 					.set("pricetype", getPara("chargeType"))
 					.set("from_warehouse_id", getPara("warehouse_id"))
-					.set("cargo_nature", cargoNature);
+					.set("cargo_nature", cargoNature)
+					.set("client_requirement", getPara("client_requirement"));
 
 			if (notifyId == null || notifyId.equals("")) {
 				deliveryOrder.set("notify_party_id", party.get("id"));
 			} else {
 				deliveryOrder.set("notify_party_id", notifyId);
 			}
+			
+			if(!"".equals(businessStamp) && businessStamp != null)
+				deliveryOrder.set("business_stamp", businessStamp);
+			if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
+				deliveryOrder.set("client_order_stamp", clientOrderStamp);
+			if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null)
+				deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);
+			
 			deliveryOrder.save();
 
 			String string = getPara("tranferid");
@@ -907,7 +938,16 @@ public class DeliveryController extends Controller {
 					.set("notify_party_id", getPara("notify_id"))
 					.set("Customer_id", getPara("customer_id"))
 					.set("id", deliveryid).set("route_to", getPara("route_to"))
-					.set("priceType", getPara("chargeType"));
+					.set("priceType", getPara("chargeType"))
+					.set("client_requirement", getPara("client_requirement"));
+			
+			if(!"".equals(businessStamp) && businessStamp != null)
+				deliveryOrder.set("business_stamp", businessStamp);
+			if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
+				deliveryOrder.set("client_order_stamp", clientOrderStamp);
+			if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null)
+				deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);
+			
 			deliveryOrder.update();
 		}
 		renderJson(deliveryOrder);
