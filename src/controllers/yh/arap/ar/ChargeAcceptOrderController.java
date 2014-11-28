@@ -6,9 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.ArapAccountAuditLog;
+import models.ArapChargeInvoice;
 import models.ArapChargeOrder;
+import models.UserLogin;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -20,6 +25,7 @@ import com.jfinal.plugin.activerecord.Record;
 @Before(SetAttrLoginUserInterceptor.class)
 public class ChargeAcceptOrderController extends Controller {
     private Logger logger = Logger.getLogger(ChargeAcceptOrderController.class);
+    Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
     	setAttr("type", "CUSTOMER");
@@ -41,7 +47,7 @@ public class ChargeAcceptOrderController extends Controller {
 
         String sql = "select aci.*,group_concat(invoice_item.invoice_no separator '\r\n') invoice_no"
 					  + " from arap_charge_invoice aci"
-					  + " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id order by aci.create_stamp desc " + sLimit;
+					  + " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id group by aci.id order by aci.create_stamp desc " + sLimit;
 
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
@@ -62,5 +68,33 @@ public class ChargeAcceptOrderController extends Controller {
     	arapAuditOrder.set("status", "completed");
     	arapAuditOrder.update();
         renderJson("{\"success\":true}");
+    }
+    
+    public void save(){
+    	String chargeIds = getPara("chargeIds");
+    	String paymentMethod = getPara("paymentMethod");
+    	String[] chargeIdArr = null; 
+    	if(chargeIds != null && !"".equals(chargeIds)){
+    		chargeIdArr = chargeIds.split(",");
+    	}
+    	for(int i=0;i<chargeIdArr.length;i++){
+    		ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(chargeIdArr[i]);
+    		arapChargeInvoice.set("status", "已收款确认");
+    		arapChargeInvoice.update();
+    		
+    		ArapAccountAuditLog accountAuditLog = new ArapAccountAuditLog();
+    		accountAuditLog.set("account_id", getPara("accountTypeSelect"));
+    		accountAuditLog.set("invoice_order_id", chargeIdArr[i]);
+    		accountAuditLog.set("payment_method", paymentMethod);
+    		//accountAuditLog.set("amount", );
+    		String name = (String) currentUser.getPrincipal();            
+    		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+            java.util.Date utilDate = new java.util.Date();
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+    		accountAuditLog.set("creator", users.get(0).get("id"));
+    		accountAuditLog.set("create_date", sqlDate);
+    		accountAuditLog.save();
+    	}
+    	redirect("/chargeAcceptOrder");
     }
 }

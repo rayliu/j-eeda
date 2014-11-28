@@ -12,11 +12,15 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr({id: aData.ID}); 
+			return nRow;
+		},
         "sAjaxSource": "/chargeAcceptOrder/list",
         "aoColumns": [   
 	        { "mDataProp": null, "sWidth":"20px",
 	            "fnRender": function(obj) {
-	              return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+	              return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
 	            }
             }, 
             {"mDataProp":"ORDER_NO",
@@ -84,5 +88,30 @@ $(document).ready(function() {
    	}else{
    		$("#accountTypeDiv").show();    		
    	}
-   }); 	
+   });    
+   
+    var ids = [];
+    // 未选中列表
+	$("#chargeAccept-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == true){
+			ids.push($(this).val());
+			$("#chargeIds").val(ids);
+		}else{
+			if(ids.length != 0){
+				ids.splice($.inArray($(this).val(),ids),1);
+				$("#chargeIds").val(ids);
+			}
+		}			
+	});
+	
+	// 已选中列表
+	$("#checkedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == false){
+			$(this).parent().parent().appendTo($("#uncheckedChargeCheckList"));
+			if(ids.length != 0){
+				ids.splice($.inArray($(this).val(),ids),1);
+				$("#checkedReturnOrder").val(ids);
+			}
+		}			
+	});	
 } );

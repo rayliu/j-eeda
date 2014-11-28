@@ -637,7 +637,7 @@ public class ContractController extends Controller {
         if (routeItemId != "") {
 
             if (priceType.equals("perUnit")) {
-                item.set("id", getPara("routeItemId")).set("cartype", null).set("carlength", null).set("carload", null).set("fin_item_id", getPara("fin_item"))
+                item.set("id", getPara("routeItemId")).set("cartype", null).set("carlength", null).set("fin_item_id", getPara("fin_item"))
                         .set("ltlUnitType", null);
                 item.set("unit", getPara("unit2"));
 
@@ -646,7 +646,7 @@ public class ContractController extends Controller {
             }
             if (priceType.equals("perCar")) {
                 item.set("id", getPara("routeItemId"));
-                item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2")).set("carload", getPara("carload")).set("fin_item_id", getPara("fin_item"))
+                item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2")).set("fin_item_id", getPara("fin_item"))
                         .set("ltlUnitType", null);
 
                 item.update();
@@ -659,7 +659,7 @@ public class ContractController extends Controller {
                 if(!"".equals(getPara("amountTo")) && getPara("amountTo") != null)
                 	item.set("amountTo", getPara("amountTo"));
                 
-                item.set("ltlUnitType", getPara("ltlUnitType")).set("cartype", null).set("carlength", null).set("carload", null);
+                item.set("ltlUnitType", getPara("ltlUnitType")).set("cartype", null).set("carlength", null);
                 item.update();
                 renderJson("{\"success\":true}");
             }
@@ -670,7 +670,7 @@ public class ContractController extends Controller {
                 renderJson("{\"success\":true}");
             }
             if (priceType.equals("perCar")) {
-                item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2")).set("carload", getPara("carload"));
+                item.set("cartype", getPara("carType2")).set("carlength", getPara("carLength2"));
                 item.save();
                 renderJson("{\"success\":true}");
             }
@@ -767,7 +767,6 @@ public class ContractController extends Controller {
     	String amountFrom = getPara("amountFrom");
     	String amountTo = getPara("amountTo");
     	String finItemId = getPara("finItemId");
-    	String carload = getPara("carload");
     	
     	String sql = "select count(0) total from contract_item  where contract_id  = '"+contractId+"' and pricetype = '"+priceType+"'and from_id = " + fromId + " and  to_id = '"+toId+"' ";
     	if(!"".equals(productId) && productId != null)
@@ -781,8 +780,6 @@ public class ContractController extends Controller {
     		sql = sql + " and cartype = '"+carType2+"' ";
     	if(!"".equals(carLength2) && carLength2 != null)
     		sql = sql + " and carlength = '"+carLength2+"' ";
-    	if(!"".equals(carload) && carload != null)
-    		sql = sql + " and carload = '"+carload+"' ";
     	if(!"".equals(ltlUnitType) && ltlUnitType != null)
     		sql = sql + " and ltlunittype = '"+ltlUnitType+"' ";
     	if(!"".equals(amountFrom) && amountFrom != null)

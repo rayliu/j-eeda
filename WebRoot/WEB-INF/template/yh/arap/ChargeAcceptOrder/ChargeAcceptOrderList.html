@@ -94,7 +94,9 @@
 						        <h4 class="modal-title" id="myModalLabel">确认账户信息</h4>
 						      </div>
 						      <div class="modal-body">
+						      <form action="/chargeAcceptOrder/save">
 						           <div class="form-group" id="paymentMethods">
+						           <input id="chargeIds" name="chargeIds" type="hidden"/>
                                        <label class="label-margin">收款方式</label>
                                        <input id="paymentMethodRadio" type="hidden" value="${arapMiscChargeOrder.payment_method!''}"/>
                                           <label class="radio-inline">
@@ -112,8 +114,10 @@
 						      </div>
 						      <div class="modal-footer">
 						        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-						        <button type="button" class="btn btn-primary">保存</button>
+						        <button type="submit" class="btn btn-primary">保存</button>
+						        <!-- <button type="button" class="btn btn-primary">保存</button> -->
 						      </div>
+						      </form>
 						    </div>
 						  </div>
 						</div>

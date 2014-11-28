@@ -48,7 +48,7 @@ $(document).ready(function() {
                                 "<i class='fa fa-edit fa-fw'></i>"+
                                 "编辑"+
                             "</a>"+
-                            "<a class='btn btn-danger' href='/customer/delete/"+obj.aData.ID+"'>"+
+                            "<a class='btn btn-danger' href='/customer/delete/"+obj.aData.PID+"'>"+
                                 "<i class='fa fa-trash-o fa-fw'></i>"+ 
                                 "删除"+
                             "</a>";

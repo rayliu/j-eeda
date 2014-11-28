@@ -90,7 +90,6 @@ $(document).ready(function() {
 					{"mDataProp":"PRICETYPE", "bVisible":false},
 					{"mDataProp":"CARTYPE"},
 					{"mDataProp":"CARLENGTH"},
-					{"mDataProp":"CARLOAD"},
 					{"mDataProp":"LOCATION_FROM"},
 		            {"mDataProp":"LOCATION_TO"},
 		            {"mDataProp":"FIN_ITEM_NAME"},

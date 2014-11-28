@@ -173,7 +173,7 @@
     				                </li>
     				                <li class="" price-type="perCargo"><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">零担</a>
     			                     </li>
-                                     <button id="addPriceBtn" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="margin-left: 15px;">
+                                     <button id="addPriceBtn" class="btn btn-primary" data-toggle="modal" data-backdrop="static" data-target="#myModal" style="margin-left: 15px;">
                                                  新增合同运价
                                         </button>
     			            	</ul>
@@ -215,8 +215,7 @@
 	                                        <tr>
 	                                        	<th>计费方式</th>
 	                                        	<th>车型</th>
-	                                        	<th>长度</th>
-	                                        	<th>载重</th>
+	                                        	<th>长度(M),载重(T)</th>
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
 	                                            <th>费用名称</th>
@@ -329,46 +328,52 @@
                                                             </select>
                                                         </div>
                                                         <div class="form-group" id="carLength">
-                                                            <lable>车辆规格</lable>
+                                                            <lable>车辆规格(M),载重(T)</lable>
                                                             <select class="form-control" id="carLength2" name="carLength2">
                                                                 <option></option>
-                                                                <option>21</option>
-                                                                <option>18.5</option>
-                                                                <option>18.0</option>
-                                                                <option>17.8</option>
-                                                                <option>17.5</option>
-                                                                <option>17.0</option>
-                                                                <option>16.0</option>
-                                                                <option>15.0</option>
-                                                                <option>14.5</option>
-                                                                <option>13.5</option>
-                                                                <option>13.0</option>
-                                                                <option>12.5</option>
-                                                                <option>9.6</option>
-                                                                <option>8.6</option>
-                                                                <option>8.0</option>
-                                                                <option>7.6</option>
-                                                                <option>7.2</option>
-                                                                <option>6.8</option>
-                                                                <option>6.5</option>
-                                                                <option>5.3</option>
-                                                                <option>4.3</option>
-								                                <option>4.2</option>
-								                                <option>2.6</option>
+                                                                <option>40T</option>
+                                                                <option>20T</option>
+                                                                <option>10T</option>
+                                                                <option>8T</option>
+								                                <option>5T</option>
+								                                <option>3T</option>
+                                                                <option>21M</option>
+                                                                <option>18.5M</option>
+                                                                <option>18.0M</option>
+                                                                <option>17.8M</option>
+                                                                <option>17.5M</option>
+                                                                <option>17.0M</option>
+                                                                <option>16.0M</option>
+                                                                <option>15.0M</option>
+                                                                <option>14.5M</option>
+                                                                <option>13.5M</option>
+                                                                <option>13.0M</option>
+                                                                <option>12.5M</option>
+                                                                <option>9.6M</option>
+                                                                <option>8.6M</option>
+                                                                <option>8.0M</option>
+                                                                <option>7.6M</option>
+                                                                <option>7.2M</option>
+                                                                <option>6.8M</option>
+                                                                <option>6.5M</option>
+                                                                <option>5.3M</option>
+                                                                <option>4.3M</option>
+								                                <option>4.2M</option>
+								                                <option>2.6M</option>
                                                             </select>
                                                         </div>
-                                                        <div class="form-group" id="load">
+                                                        <!-- <div class="form-group" id="load">
                                                             <lable>载重(T)</lable>
                                                             <select class="form-control" id="carload" name="carload">
                                                                 <option></option>
-                                                                <option>40</option>
-                                                                <option>20</option>
-                                                                <option>10</option>
-                                                                <option>8</option>
-								                                <option>5</option>
-								                                <option>3</option>
+                                                                <option>40T</option>
+                                                                <option>20T</option>
+                                                                <option>10T</option>
+                                                                <option>8T</option>
+								                                <option>5T</option>
+								                                <option>3T</option>
                                                             </select>
-                                                        </div>
+                                                        </div> -->
                                                        <div class="form-group" id="unit">
                                                             <lable>单位</lable>
                                                             <select class="form-control" id="unit2" name="unit2">

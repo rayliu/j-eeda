@@ -4,6 +4,7 @@ import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
 import models.Account;
+import models.ArapAccountAuditLog;
 import models.ArapChargeApplicationInvoiceNo;
 import models.ArapChargeInvoice;
 import models.ArapChargeInvoiceApplication;
@@ -319,6 +320,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_charge_application_invoice_no", ArapChargeApplicationInvoiceNo.class);
         arp.addMapping("arap_misc_charge_order", ArapMiscChargeOrder.class);
         arp.addMapping("arap_misc_charge_order_item", ArapMiscChargeOrderItem.class);
+        arp.addMapping("arap_account_audit_log", ArapAccountAuditLog.class);
         // 应付对账单
         arp.addMapping("arap_cost_order", ArapCostOrder.class);
         arp.addMapping("arap_cost_item", ArapCostItem.class);
