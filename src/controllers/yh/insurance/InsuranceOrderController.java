@@ -477,6 +477,7 @@ public class InsuranceOrderController extends Controller {
     		for(int i = 0; i < orderIds.length; i++){
     			TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
     			transferOrder.set("insurance_id", insuranceOrder.get("id"));
+    			transferOrder.set("status", "已投保");
     			transferOrder.update();
     		}
     	}
