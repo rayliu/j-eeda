@@ -52,33 +52,6 @@ public class ReturnOrderController extends Controller {
 			render("/yh/returnOrder/returnOrderList.html");
 	}
 
-	public static String createReturnOrderNo() {
-		String orderNo = null;
-		ReturnOrder order = ReturnOrder.dao
-				.findFirst("select * from return_order order by order_no desc limit 0,1");
-		if (order != null) {
-			String num = order.get("order_no");
-			String str = num.substring(2, num.length());
-			System.out.println(str);
-			Long oldTime = Long.parseLong(str);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-			String format = sdf.format(new Date());
-			String time = format + "00001";
-			Long newTime = Long.parseLong(time);
-			if (oldTime >= newTime) {
-				orderNo = String.valueOf((oldTime + 1));
-			} else {
-				orderNo = String.valueOf(newTime);
-			}
-			orderNo = "HD" + orderNo;
-		} else {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-			String format = sdf.format(new Date());
-			orderNo = format + "00001";
-			orderNo = "HD" + orderNo;
-		}
-		return orderNo;
-	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_LIST})
 	public void list() {
 		String order_no = getPara("order_no");
