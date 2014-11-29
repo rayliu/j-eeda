@@ -16,8 +16,8 @@ $(document).ready(function() {
         "aoColumns": [   
             
             {"mDataProp":"WAREHOUSE_NAME"}, 
-            {"mDataProp":"CONTACT_PERSON"},        	
-            {"mDataProp":"PHONE"},
+            {"mDataProp":"NOTIFY_NAME"},        	
+            {"mDataProp":"NOTIFY_MOBILE"},
             {"mDataProp":"DNAME"},       	
             {"mDataProp":"WAREHOUSE_ADDRESS"},        	
             {"mDataProp":"WAREHOUSE_DESC"},

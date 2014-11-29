@@ -84,7 +84,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists product(id bigint auto_increment primary key,item_name varchar(50),item_no varchar(255),serial_no varchar(255),size double,width double,height double,unit varchar(255),volume double,weight double,item_desc varchar(5120),category_id bigint,foreign key(category_id) references category(id));");
 
             // warehouse 仓库
-            stmt.executeUpdate("create table if not exists warehouse(id bigint auto_increment primary key,warehouse_name varchar(50),warehouse_address varchar(255),warehouse_area double,path varchar(255),warehouse_type varchar(255),status varchar(20),code varchar(20),warehouse_desc varchar(5120),sp_id bigint,notify_party_id bigint,office_id bigint,foreign key(sp_id) references party(id),foreign key(notify_party_id) references party(id),foreign key(office_id) references office(id),sp_name varchar(255));");
+            stmt.executeUpdate("create table if not exists warehouse(id bigint auto_increment primary key,warehouse_name varchar(50),warehouse_address varchar(255),warehouse_area double,path varchar(255),warehouse_type varchar(255),notify_name varchar(50),notify_mobile varchar(50),location varchar(255),status varchar(20),code varchar(20),warehouse_desc varchar(5120),sp_id bigint,office_id bigint,foreign key(sp_id) references party(id),foreign key(office_id) references office(id),sp_name varchar(255));");
 
             // order_status 里程碑
             stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment primary key,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
@@ -463,8 +463,8 @@ public class DataInitUtil {
             newCustomer();
 
             // 仓库
-            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,office_id,warehouse_type) values('582','源鸿广州总仓', '这是广州总仓','萝岗','9','4','ownWarehouse');");
-            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,notify_party_id,sp_id,warehouse_type,office_id) values('582','源鸿分仓', '这是广州分仓','东莞','10','8','deliverySpWarehouse',1);");
+            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,office_id,warehouse_type) values('582','源鸿广州总仓', '这是广州总仓','萝岗','4','ownWarehouse');");
+            stmt.execute("insert into warehouse(warehouse_area,warehouse_name,warehouse_desc,warehouse_address,sp_id,warehouse_type,office_id) values('582','源鸿分仓', '这是广州分仓','东莞','8','deliverySpWarehouse',1);");
 
             // 类别 ----采用面向对象的方式来获取party的id， 不必担心id不对。 --ray 2014-06-29
             Party party = Party.dao

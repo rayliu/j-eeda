@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.Location;
-import models.Party;
 import models.TransferOrder;
-import models.UserLogin;
 import models.Warehouse;
 import models.yh.profile.Contact;
 
@@ -57,10 +55,8 @@ public class WarehouseController extends Controller{
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 	
-			String sql = "select w.*,c.contact_person,c.phone,(select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.location) dname,lc.name from warehouse w"
-							+ " left join party p on w.notify_party_id = p.id"
-							+ " left join contact c on p.contact_id = c.id"
-							+ " left join location lc on c.location = lc.code order by w.id desc "
+			String sql = "select w.*, lc.name dname from warehouse w"
+							+ " left join location lc on w.location = lc.code order by w.id desc "
 							+ sLimit;
 	
 			List<Record> warehouses = Db.find(sql);
@@ -83,10 +79,8 @@ public class WarehouseController extends Controller{
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 	
-			String sql = "select w.*,c.contact_person,c.phone,(select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.location) dname,lc.name from warehouse w"
-							+ " left join party p on w.notify_party_id = p.id"
-							+ " left join contact c on p.contact_id = c.id"
-							+ " left join location lc on c.location = lc.code"
+			String sql = "select w.*,(select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=w.location) dname,lc.name from warehouse w"
+							+ " left join location lc on w.location = lc.code"
 							+ "  where warehouse_name like '%"+warehouseName+"%' and warehouse_address like '%"+warehouseAddress+"%' order by w.id desc "
 							+ sLimit;
 	
@@ -117,10 +111,11 @@ public class WarehouseController extends Controller{
 
 		Warehouse warehouse = Warehouse.dao.findById(id);
 		setAttr("warehouse", warehouse);
-		Party party = Party.dao.findById(warehouse.get("notify_party_id"));
-		if(party != null){
-			Contact locationCode = Contact.dao.findById(party.get("contact_id"), "location");
-	        String code = locationCode.get("location");
+		//Party party = Party.dao.findById(warehouse.get("notify_party_id"));
+		//if(party != null){
+			//Contact locationCode = Contact.dao.findById(party.get("contact_id"), "location");
+		if(warehouse.get("location") != null && !"".equals(warehouse.get("location"))){
+	        String code = warehouse.get("location");
 	
 	        List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
 	        Location l = Location.dao.findFirst("select * from location where code = (select pcode from location where code = '"+code+"')");
@@ -136,8 +131,8 @@ public class WarehouseController extends Controller{
 	        }
 	        setAttr("location", location);
 		}
-		Contact contact = Contact.dao.findFirst("select * from contact where id = (select contact_id from party where id="+warehouse.get("notify_party_id")+")");
-		setAttr("contact", contact);
+		//Contact contact = Contact.dao.findFirst("select * from contact where id = (select contact_id from party where id="+warehouse.get("notify_party_id")+")");
+		//setAttr("contact", contact);
 		Contact sp = Contact.dao.findFirst("select * from contact where id = (select contact_id from party where id="+warehouse.get("sp_id")+")");
 		setAttr("sp", sp);
 		render("/yh/profile/warehouse/warehouseEdit.html");
@@ -166,23 +161,26 @@ public class WarehouseController extends Controller{
 		Warehouse warehouse = null;
 		String id = getPara("warehouse_id");	
 		
-		Contact contact = null;
-		Party party = null;
+		//Contact contact = null;
+		//Party party = null;
 		Date createDate = Calendar.getInstance().getTime();
 		if (id != null && !id.equals("")) {
-			party = Party.dao.findFirst("select * from party where id = ?", getPara("notifyPartyId"));
-			contact = Contact.dao.findFirst("select * from contact where id = ?", party.get("contact_id"));
-			setContact(contact);
-			contact.update();
+			//party = Party.dao.findFirst("select * from party where id = ?", getPara("notifyPartyId"));
+			//contact = Contact.dao.findFirst("select * from contact where id = ?", party.get("contact_id"));
+			//setContact(contact);
+			//contact.update();
 			warehouse = Warehouse.dao.findById(id);
 			warehouse.set("warehouse_name", getPara("warehouse_name"));
 			warehouse.set("warehouse_address", getPara("warehouse_address"));
 			warehouse.set("status", getPara("warehouseStatus"));
 			warehouse.set("warehouse_desc", getPara("warehouse_desc"));
+			warehouse.set("notify_name", getPara("notify_name"));
+			warehouse.set("notify_mobile", getPara("notify_mobile"));
+			warehouse.set("location", getPara("location"));
 			if(uploadFile != null){
 				warehouse.set("path", uploadFile.getFileName());
 			}
-			warehouse.set("notify_party_id", party.get("id"));
+			//warehouse.set("notify_party_id", party.get("id"));
 			if (getPara("warehouseType") != null && getPara("warehouseType").equals("ownWarehouse")) {
             	spId = null;
             }else{
@@ -197,24 +195,27 @@ public class WarehouseController extends Controller{
 			warehouse.set("warehouse_type", getPara("warehouseType"));
 			warehouse.update();
 		} else {
-			party = new Party();
-			contact = new Contact();
-			setContact(contact);
-			contact.save();
-			party.save();
-			party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
-			party.set("contact_id", contact.get("id"));
-			party.update();
+			//party = new Party();
+			//contact = new Contact();
+			//setContact(contact);
+			//contact.save();
+			//party.save();
+			//party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
+			//party.set("contact_id", contact.get("id"));
+			//party.update();
 			warehouse = new Warehouse();
 			warehouse.set("warehouse_name", getPara("warehouse_name"))
 					 .set("warehouse_address", getPara("warehouse_address"))
 					 .set("warehouse_desc", getPara("warehouse_desc"))
 					 .set("status", getPara("warehouseStatus"))
-					 .set("warehouse_area", getPara("warehouse_area"));					 
+					 .set("warehouse_area", getPara("warehouse_area"));	
+			warehouse.set("notify_name", getPara("notify_name"));
+			warehouse.set("notify_mobile", getPara("notify_mobile"));
+			warehouse.set("location", getPara("location"));				 
 			if(uploadFile != null){
 				warehouse.set("path", uploadFile.getFileName());
 			}
-			warehouse.set("notify_party_id", party.get("id"));
+			//warehouse.set("notify_party_id", party.get("id"));
 			if (getPara("warehouseType") != null && getPara("warehouseType").equals("ownWarehouse")) {
             	spId = null;
             }else{
@@ -239,7 +240,7 @@ public class WarehouseController extends Controller{
 		redirect("/warehouse");
 	}
 
-	private void setContact(Contact contact) {
+	/*private void setContact(Contact contact) {
 		contact.set("company_name", getPara("company_name"));
 		contact.set("contact_person", getPara("contact_person"));
 		contact.set("email", getPara("email"));
@@ -249,5 +250,5 @@ public class WarehouseController extends Controller{
 		contact.set("city", getPara("city"));
 		contact.set("postal_code", getPara("postal_code"));
 		contact.set("location", getPara("location"));
-	}
+	}*/
 }

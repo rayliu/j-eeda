@@ -9,12 +9,6 @@ $(document).ready(function() {
           	warehouse_address:{
             required: true
           },
-          	company_name:{
-            required: true
-          },
-          	contact_person:{
-            required: true
-          },
           	email:{
           	email: true
           },

@@ -1,0 +1,4 @@
+dbType=ProdMysql
+dbUrl=jdbc:mysql://120.24.67.19/eeda_yh?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+username=eeda_root
+pwd=Eeda123

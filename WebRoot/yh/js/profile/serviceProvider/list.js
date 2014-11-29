@@ -20,9 +20,23 @@ $(document).ready(function() {
             
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":"ABBR"},
-            {"mDataProp":"SP_TYPE"}, 
+            {"mDataProp":"SP_TYPE",
+            	"fnRender": function(obj) {
+            		var str = "";
+            		if(obj.aData.SP_TYPE == "line"){
+            			str = "干线运输供应商";
+            		}else if(obj.aData.SP_TYPE == "delivery"){
+            			str = "配送供应商";
+            		}else if(obj.aData.SP_TYPE == "pickup"){
+            			str = "提货供应商";
+            		}else if(obj.aData.SP_TYPE == "personal"){
+            			str = "个体供应商";
+            		}
+            		return str;
+            	}
+            }, 
             {"mDataProp":"CONTACT_PERSON"},        	
-            {"mDataProp":"MOBILE"},
+            {"mDataProp":"PHONE"},
             {"mDataProp":"ADDRESS"},
             {"mDataProp":"RECEIPT"},
             {"mDataProp":"PAYMENT",

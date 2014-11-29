@@ -145,11 +145,11 @@ public class OfficeController extends Controller {
  		+ " where office_name  like '%"+name+"%'  and "
  		+ "office_person like '%"+person+"%' "
  		+ "and type  like '%"+type+"%' "
- 		+ "and address  like '%"+address+"%'";
+ 		+ "and address  like '%"+address+"%' " + sLimit;
         // 获取当前页的数据
         List<Record> orders = null;
         if(type==null&&name==null&&address==null&&person==null){
-        	orders = Db.find("select * from office");
+        	orders = Db.find("select * from office " + sLimit);
         }else{
         	 orders = Db.find(list_sql);
         }
@@ -182,7 +182,7 @@ public class OfficeController extends Controller {
 			+ " left join party p on w.notify_party_id = p.id"
 			+ " left join contact c on p.contact_id = c.id"
 			+ " left join location lc on c.location = lc.code "
-			+ " where w.office_id = "+office_id+" order by w.id desc ";
+			+ " where w.office_id = "+office_id+" order by w.id desc " + sLimit;
 	        List<Record> warehouseList = Db.find(sql);
 	        Map Map = new HashMap();
 	        Map.put("sEcho", pageIndex);
