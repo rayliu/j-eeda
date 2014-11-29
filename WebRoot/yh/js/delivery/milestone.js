@@ -21,7 +21,7 @@ $(document).ready(function() {
                     	return "<a href='/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
             		}
             },
-            {"mDataProp":null,
+            {"mDataProp":null,"sWidth":"90px",
                 "fnRender": function(obj) {
                 	if(obj.aData.STATUS==null){
                 		obj.aData.STATUS="";
@@ -34,10 +34,10 @@ $(document).ready(function() {
                 	}
                 }
             },
-            {"mDataProp":"CUSTOMER"},
-            {"mDataProp":"C2"},
+            {"mDataProp":"CUSTOMER","sWidth":"70px"},
+            {"mDataProp":"C2","sWidth":"70px"},
             {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"TRANSFER_ORDER_NO"},
+            {"mDataProp":"TRANSFER_ORDER_NO"},          
             { 
                 "mDataProp": null, 
                 "fnRender": function(obj) {   
@@ -73,20 +73,82 @@ $(document).ready(function() {
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
 			{
-				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+				var arrival_time=data.transferOrderMilestones[i].ARRIVAL_TIME;
+				var performance=data.transferOrderMilestones[i].PERFORMANCE;
+				var ufr=data.transferOrderMilestones[i].UNFINISHED_REASON;
+				var fs=data.transferOrderMilestones[i].FINISHED_SERAL;
+				var ur=data.transferOrderMilestones[i].UNSERAL_REASON;
+				var uh=data.transferOrderMilestones[i].UNUSUAL_HANDLE;
+				if(arrival_time==null){
+					arrival_time="";
+				}
+				if(performance==null){
+					performance="";
+				}
+				if(ufr==null){
+					ufr="";
+				}
+				if(fs==null){
+					fs="";
+				}
+				if(ur==null){
+					ur="";
+				}
+				if(uh==null){
+					uh="";
+				}
+				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS
+													+"</th><th>"+data.transferOrderMilestones[i].LOCATION
+													+"</th><th>"+data.usernames[j]
+													+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP
+													+"</th><th>"+arrival_time
+													+"</th><th>"+performance
+													+"</th><th>"+ufr
+													+"</th><th>"+fs
+													+"</th><th>"+ur
+													+"</th><th>"+uh
+													+"</th></tr>");
 			}
+			
 		},'json');
     	
+    	
     });
-    
+    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable"  style="display:none">'+
+    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+    '</div>';
+    $('body').append(alerMsg);
     // 保存新里程碑
 	$("#transferOrderMilestoneFormBtn").click(function(){
+		if($("#location").val()==""){
+			
+			$.scojs_message('地点必填', $.scojs_message.ERROE);
+			return false;
+		}
 		$.post('/delivery/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
-			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
+			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS
+											+"</th><th>"+data.transferOrderMilestone.LOCATION
+											+"</th><th>"+data.username
+											+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP
+											+"</th><th>"+data.transferOrderMilestone.ARRIVAL_TIME
+											+"</th><th>"+data.transferOrderMilestone.PERFORMANCE
+											+"</th><th>"+data.transferOrderMilestone.UNFINISHED_REASON
+											+"</th><th>"+data.transferOrderMilestone.FINISHED_SERAL
+											+"</th><th>"+data.transferOrderMilestone.UNSERAL_REASON
+											+"</th><th>"+data.transferOrderMilestone.UNUSUAL_HANDLE
+											+"</th></tr>");
 			detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone";
 			detailTable.fnDraw();  
 		},'json');
+		$("#location").val("");
+    	$("#arrival_filter").val("");
+    	$("#deliveryException").val("");
+    	$("#completeRemark").val("");
+    	$("#remark").val("");
+    	$("#completeOK").attr("check","checked");
+    	$("#sealOK").attr("check","checked");
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
 	
@@ -119,6 +181,18 @@ $(document).ready(function() {
         pickerPosition: "bottom-left"
     }).on('changeDate', function(ev){
         $('#endTime_filter').trigger('keyup');
+    });
+    $('#datetimepickerArrival').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $('#arrival_filter').trigger('keyup');
+    });
+    $("#sealNO").on("click",function(){    	
+    	$("#remark").show();
+    });
+    $("#sealOK").on("click",function(){    	
+    	$("#remark").hide();
     });
     /*----------------------------------------------------------------*/
     

@@ -85,17 +85,64 @@
 								      	<form id="transferOrderMilestoneForm" action="">
 								      		<input id="milestoneDepartId" type="hidden" name="milestoneDepartId" />
 											<div class="row">
-											<div class="form-group " style="border-left-width: 0px; padding-left: 12px;">
-								
-											<!--label class="control-label" for="inputSuccess">状态(不填默认为"在途")</label--> 
-                                            <input id="status" class="" type="hidden"	name="status">
-											<label class="control-label" for="inputSuccess">地点</label> 
-                                            <input id="location" class="" type="text" name="location">
-											<label>
-												 <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-primary">添加</button>
-											</label>
+												<div class="form-group " style="border-left-width: 0px; padding-left: 12px;">									 
+		                                            <div class="col-lg-12">
+		                                            	<div class="row">
+		                                            		<div class="col-lg-5">
+				                                            	<div class ="form-group">
+						                                            <input id="status" class="" type="hidden"	name="status">
+																	<label class="control-label" for="inputSuccess">地点</label>
+						                                            <input id="location" class="form-control search-control"  type="text" name="location">
+				                                            	</div>
+			                                            	</div>
+			                                            	<div class="col-lg-7">
+				                                            	 <div class="form-group">                                                    
+							                                        <span id="datetimepickerArrival" class="input-append date search-control "> 
+							                                            <label class="search-label">实际到达时间</label> 
+							                                            <input id="arrival_filter" name ="arrival_filter" class="form-control search-control endTime_filter" type="text">
+							                                            <span class="add-on">  
+							                                                <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+							                                            </span>  
+							                                        </span>
+							                                    </div>
+						                                    </div>
+					                                    </div>
+					                                    <div class="form-group">
+															<label class="control-label" for="inputSuccess">配送异常即处理情况</label> 
+				                                            <textarea class="form-control" id="deliveryException" name="deliveryException" rows="2"></textarea>
+		                                            	</div>
+		                                            	<div class="form-group">
+			                                                <label class="label-margin">完成状况</label>
+		                                                	
+		                                                    <label class="radio-inline">
+		                                                        <input type="radio" name="complete" id="completeOK" value="yes" checked="checked">完成
+		                                                    </label>
+		                                                    <label class="radio-inline">
+		                                                        <input type="radio" name="complete" id="completeNO" value="no">未完成
+		                                                    </label>
+		                                                    <textarea class="form-control" id="completeRemark" name="completeRemark" rows="2"></textarea>
+			                                            </div>
+		                                            	<div class="form-group">
+			                                                <label class="label-margin">盖章状况</label>
+		                                                    <label class="radio-inline">
+		                                                        <input type="radio" name="seal" id="sealOK" value="yes" checked="checked">盖章
+		                                                    </label>
+		                                                    <label class="radio-inline">
+		                                                        <input type="radio" name="seal" id="sealNO" value="no">未盖章
+		                                                    </label>
+		                                                    <textarea style="display:none" class="form-control" id="remark" name="remark" rows="2"></textarea>
+			                                            </div>
+		                                            	<div class="form-group">
+															<label>
+																 <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-primary">添加</button>
+															</label>
+														</div>
+		                                            </div>
+		                                            	                                           
+		                                            
+												</div>
 											</div>
-											</div>
+											
 											<div class="table-responsive">                                        
                                             <table class="table table-striped table-bordered table-hover">
                                                 <thead>
@@ -104,6 +151,12 @@
                                                         <th>地点</th>
                                                         <th>更新用户</th>
                                                         <th>更新时间</th>
+                                                        <th>实际到货时间</th>
+                                                        <th>完成情况</th>
+                                                        <th>客户不安装原因</th>
+                                                        <th>签收单盖章</th>
+                                                        <th>无盖章原因</th>
+                                                        <th>配送异常及处理情况</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="transferOrderMilestoneTbody" >
@@ -111,13 +164,13 @@
                                             </table>
                                             
                                         </div>
-										
+										</form>
 									      </div>
 									      <div class="modal-footer">
 									        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
 									       
 									      </div>
-										</form>
+										
 								    </div><!-- /.modal-content -->
 								  </div><!-- /.modal-dialog -->
 								</div><!-- /.modal -->
@@ -156,7 +209,7 @@
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 
-<script src="/yh/js/bootstrap.min.js"></script>
+<!-- <script src="/yh/js/bootstrap.min.js"></script> -->
 
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>

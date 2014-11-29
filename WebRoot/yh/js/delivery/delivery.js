@@ -1097,7 +1097,7 @@ $(document).ready(function() {
 				$("#notify_address").val($("#mbProvinceTo").find("option:selected").text());
 			}
 			$("#cmbAreaTo").get(0).selectedIndex=0;
-			
+			$("#cmbAreaTo").empty();
 		});
 		$("#cmbCityTo").on('change',function(){
 			$("#notify_address").val("");

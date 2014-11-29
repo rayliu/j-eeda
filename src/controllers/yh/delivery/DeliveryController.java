@@ -2,6 +2,8 @@ package controllers.yh.delivery;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,8 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
@@ -1038,9 +1038,43 @@ public class DeliveryController extends Controller {
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao
 					.findById(milestoneDepartId);
 			DeliveryOrderMilestone deliveryOrderMilestone = new DeliveryOrderMilestone();
+			/*取值*/
 			String status = getPara("status");
 			String location = getPara("location");
-
+			/*String arrivalTime =;*/
+			String deliveryException =getPara("deliveryException");
+			String completeType =getPara("complete");//完成情况
+			String completeRemark =getPara("completeRemark");
+			String sealType =getPara("seal");//是否盖章
+			String sealRemark =getPara("remark");
+			/*取值*/
+			
+			
+			if(getPara("arrival_filter")!=null&&!"".equalsIgnoreCase(getPara("arrival_filter"))){
+				deliveryOrderMilestone.set("arrival_time",getPara("arrival_filter"));
+			}else{
+				Date date = new Date();
+			
+				deliveryOrderMilestone.set("arrival_time",date);
+			}
+			
+			deliveryOrderMilestone.set("unusual_handle", deliveryException);
+			if(completeType.equalsIgnoreCase("yes")){
+				deliveryOrderMilestone.set("performance", completeRemark);
+				deliveryOrderMilestone.set("unfinished_reason", "");
+			}else{
+				deliveryOrderMilestone.set("performance", "");
+				deliveryOrderMilestone.set("unfinished_reason", completeRemark);
+			}
+			if(sealType.equalsIgnoreCase("yes")){
+				deliveryOrderMilestone.set("finished_seral", "是");
+				deliveryOrderMilestone.set("unseral_reason", "");
+			}else{
+				deliveryOrderMilestone.set("finished_seral", "");
+				deliveryOrderMilestone.set("unseral_reason", sealRemark);
+			}
+			
+						
 			if (!status.isEmpty()) {
 				deliveryOrderMilestone.set("status", status);
 				deliveryOrder.set("status", status);

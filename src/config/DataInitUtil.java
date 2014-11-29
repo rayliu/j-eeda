@@ -51,7 +51,9 @@ public class DataInitUtil {
 
             // delivery_order_milestone 配送单里程碑
             stmt.executeUpdate("create table if not exists delivery_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
-                    + "last_modified_stamp timestamp,delivery_id bigint,foreign key(delivery_id) references delivery_order(id));");
+                    + "last_modified_stamp timestamp,delivery_id bigint,"
+                    + "arrival_time date,performance varchar(255),unfinished_reason varchar(255),finished_seral varchar(10),unseral_reason varchar(255),unusual_handle varchar(255),"
+                    + "foreign key(delivery_id) references delivery_order(id));");
 
             // 干线表
             stmt.executeUpdate("create table if not exists route(id bigint auto_increment primary key,from_id varchar(50), location_from varchar(50) not null,to_id varchar(50), location_to varchar(50) not null, remark varchar(255));");
