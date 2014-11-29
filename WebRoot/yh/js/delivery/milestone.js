@@ -2,7 +2,7 @@
 $(document).ready(function() {
 
 	$('#menu_deliver').addClass('active').find('ul').addClass('in');
-    
+	 
 	//datatable, 动态处理
     var detailTable = $('#eeda-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -114,18 +114,21 @@ $(document).ready(function() {
     	
     	
     });
-    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable"  style="display:none">'+
-    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
-    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
-    '</div>';
-    $('body').append(alerMsg);
+    $('#transferOrderMilestoneForm').validate({
+        rules: {
+        	location: {
+               required: true
+			},
+			arrival_filter: { 
+           	  	required: true 
+           	  } 
+            }
+       });
     // 保存新里程碑
 	$("#transferOrderMilestoneFormBtn").click(function(){
-		if($("#location").val()==""){
-			
-			$.scojs_message('地点必填', $.scojs_message.ERROE);
-			return false;
-		}
+		if(!$("#transferOrderMilestoneForm").valid()){
+	       	return false;
+        }
 		$.post('/delivery/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS
@@ -149,6 +152,7 @@ $(document).ready(function() {
     	$("#remark").val("");
     	$("#completeOK").attr("check","checked");
     	$("#sealOK").attr("check","checked");
+	
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
 	
@@ -182,6 +186,9 @@ $(document).ready(function() {
     }).on('changeDate', function(ev){
         $('#endTime_filter').trigger('keyup');
     });
+   /* var date = new Date();
+    
+    $("#arrival_filter").val(date.getFullYear()+"-"+date.getDate()+"-"+date.getDay());*/
     $('#datetimepickerArrival').datetimepicker({  
         format: 'yyyy-MM-dd',  
         language: 'zh-CN'
