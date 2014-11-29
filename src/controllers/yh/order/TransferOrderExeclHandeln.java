@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.DepartOrder;
 import models.Party;
 import models.TransferOrder;
 import models.TransferOrderItem;
@@ -18,8 +17,6 @@ import models.UserLogin;
 
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-
-import controllers.yh.util.OrderNoUtil;
 public class TransferOrderExeclHandeln extends TransferOrderController{
 	
 	
@@ -222,7 +219,29 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					.save();
 		    				}
 		    			}else{
-		    	    		String order_no = OrderNoUtil.getOrderNo("transfer_order", null);
+		    				String order_no = "";
+		    	    		TransferOrder order = TransferOrder.dao
+		    	    				.findFirst("select * from transfer_order order by order_no desc limit 0,1");
+		    	    		if (order != null) {
+		    	    			String num = order.get("order_no");
+		    	    			String str = num.substring(2, num.length());
+		    	    			System.out.println(str);
+		    	    			Long oldTime = Long.parseLong(str);
+		    	    			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		    	    			String format = sdf.format(new Date());
+		    	    			String time = format + "00001";
+		    	    			Long newTime = Long.parseLong(time);
+		    	    			if (oldTime >= newTime) {
+		    	    				order_no = String.valueOf((oldTime + 1));
+		    	    			} else {
+		    	    				order_no = String.valueOf(newTime);
+		    	    			}
+		    	    		} else {
+		    	    			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		    	    			String format = sdf.format(new Date());
+		    	    			order_no = format + "00001";
+		    	    		}
+		    				
 		    				//生成运输单数量
 		    				++resultNum;
 		    				//创建保存运输单

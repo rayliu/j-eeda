@@ -40,7 +40,6 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.ReaderXLS;
 import controllers.yh.util.ReaderXlSX;
@@ -214,6 +213,30 @@ public class TransferOrderController extends Controller {
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
 		setAttr("create_by", users.get(0).get("id"));
+
+		TransferOrder order = TransferOrder.dao
+				.findFirst("select * from transfer_order order by order_no desc limit 0,1");
+		if (order != null) {
+			String num = order.get("order_no");
+			String str = num.substring(2, num.length());
+			System.out.println(str);
+			Long oldTime = Long.parseLong(str);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			String format = sdf.format(new Date());
+			String time = format + "00001";
+			Long newTime = Long.parseLong(time);
+			if (oldTime >= newTime) {
+				order_no = String.valueOf((oldTime + 1));
+			} else {
+				order_no = String.valueOf(newTime);
+			}
+			setAttr("order_no", "YS" + order_no);
+		} else {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			String format = sdf.format(new Date());
+			order_no = format + "00001";
+			setAttr("order_no", "YS" + order_no);
+		}
 
 		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
 		setAttr("userLogin", userLogin);
@@ -414,14 +437,13 @@ public class TransferOrderController extends Controller {
 		TransferOrder transferOrder = null;
 		String cargoNature = getPara("cargoNature");
 		if (order_id == null || "".equals(order_id)) {
-			String orderNo = OrderNoUtil.getOrderNo("transfer_order", null);
 			transferOrder = new TransferOrder();
 			if (!"".equals(spId) && spId != null) {
 				transferOrder.set("sp_id", spId);
 			}
 			transferOrder.set("customer_id", customerId);
 			transferOrder.set("status", getPara("status"));
-			transferOrder.set("order_no", "YS" + orderNo);
+			transferOrder.set("order_no", getPara("order_no"));
 			transferOrder.set("create_by", getPara("create_by"));
 			if ("cargo".equals(cargoNature)) {
 				transferOrder.set("cargo_nature_detail",
@@ -576,8 +598,7 @@ public class TransferOrderController extends Controller {
 
 	// 创建发车单
 	private void createDepartOrder(TransferOrder transferOrder) {
-		String orderNo = OrderNoUtil.getOrderNo("depart_order", DepartOrder.COMBINE_TYPE_DEPART);
-		
+		String depart_no = creatDepartNo();
 		String name = (String) currentUser.getPrincipal();
 		UserLogin users = UserLogin.dao
 				.findFirst("select * from user_login where user_name='" + name
@@ -587,7 +608,7 @@ public class TransferOrderController extends Controller {
 		DepartOrder departOrder = new DepartOrder();
 		departOrder.set("create_by", Integer.parseInt(creat_id))
 				.set("create_stamp", createDate).set("combine_type", "DEPART")
-				.set("depart_no", "FC" + orderNo)
+				.set("depart_no", depart_no)
 				.set("car_no", transferOrder.get("car_no"))
 				.set("car_type", transferOrder.get("car_type"))
 				.set("car_size", transferOrder.get("car_size"));
@@ -605,9 +626,7 @@ public class TransferOrderController extends Controller {
 	// 更新发车单
 	private void updateDepartOrder(TransferOrder transferOrder,
 			DepartTransferOrder departTransferOrder) {
-		
-		String orderNo = OrderNoUtil.getOrderNo("depart_order", DepartOrder.COMBINE_TYPE_DEPART);
-		
+		String depart_no = creatDepartNo();
 		String name = (String) currentUser.getPrincipal();
 		UserLogin users = UserLogin.dao
 				.findFirst("select * from user_login where user_name='" + name
@@ -618,7 +637,7 @@ public class TransferOrderController extends Controller {
 				.get("depart_id"));
 		departOrder.set("create_by", Integer.parseInt(creat_id))
 				.set("create_stamp", createDate).set("combine_type", "DEPART")
-				.set("depart_no", "FC" + orderNo)
+				.set("depart_no", depart_no)
 				.set("car_no", transferOrder.get("car_no"))
 				.set("car_type", transferOrder.get("car_type"))
 				.set("car_size", transferOrder.get("car_size"));
@@ -632,6 +651,37 @@ public class TransferOrderController extends Controller {
 		departTransferOrder.update();
 	}
 
+	// 创建发车单序列号
+	private String creatDepartNo() {
+		String order_no = null;
+		String the_order_no = null;
+		DepartOrder order = DepartOrder.dao
+				.findFirst("select * from depart_order where  combine_type= '"
+						+ DepartOrder.COMBINE_TYPE_DEPART
+						+ "' order by depart_no desc limit 0,1");
+		if (order != null) {
+			String num = order.get("DEPART_no");
+			String str = num.substring(2, num.length());
+			System.out.println(str);
+			Long oldTime = Long.parseLong(str);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			String format = sdf.format(new Date());
+			String time = format + "00001";
+			Long newTime = Long.parseLong(time);
+			if (oldTime >= newTime) {
+				order_no = String.valueOf((oldTime + 1));
+			} else {
+				order_no = String.valueOf(newTime);
+			}
+			the_order_no = "FC" + order_no;
+		} else {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			String format = sdf.format(new Date());
+			order_no = format + "00001";
+			the_order_no = "FC" + order_no;
+		}
+		return the_order_no;
+	}
 
 	// 保存运输里程碑
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE,PermissionConstant.PERMISSION_TO_UPDATE}, logical=Logical.OR)

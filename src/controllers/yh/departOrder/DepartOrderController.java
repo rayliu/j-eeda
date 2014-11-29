@@ -41,7 +41,6 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -725,8 +724,31 @@ public class DepartOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
 
-        String orderNo = OrderNoUtil.getOrderNo("depart_order", DepartOrder.COMBINE_TYPE_DEPART);
-        setAttr("order_no", "FC" + orderNo);
+        DepartOrder order = DepartOrder.dao.findFirst("select * from depart_order where combine_type='"
+                + DepartOrder.COMBINE_TYPE_DEPART + "' order by depart_no desc limit 0,1");
+        
+        
+        if (order != null) {
+            String num = order.get("depart_no");
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) { 
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            setAttr("order_no", "FC" + order_no);
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            setAttr("order_no", "FC" + order_no);
+        }
 
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
@@ -1062,10 +1084,9 @@ public class DepartOrderController extends Controller {
         if ("已签收".equals(order_state)) {
             // 生成回单
             Date createDate = Calendar.getInstance().getTime();
-            String orderNo = OrderNoUtil.getOrderNo("return_order",null);
-            
+            String orderNo = creatOrderNo();
             ReturnOrder returnOrder = new ReturnOrder();
-            returnOrder.set("order_no", "HD" + orderNo);
+            returnOrder.set("order_no", orderNo);
             returnOrder.set("depart_order_id", depart_id);
             // returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
             // returnOrder.set("notity_party_id",
@@ -1219,6 +1240,35 @@ public class DepartOrderController extends Controller {
         departOrderFinItem.set("create_date", now);
         departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
         departOrderFinItem.save();
+    }
+
+    // 构造单号
+    public static String creatOrderNo() {
+        String order_no = null;
+        String the_order_no = null;
+        ReturnOrder order = ReturnOrder.dao.findFirst("select * from return_order " + " order by id desc limit 0,1");
+        if (order != null) {
+            String num = order.get("order_no");
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) {
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            the_order_no = "HD" + order_no;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            the_order_no = "HD" + order_no;
+        }
+        return the_order_no;
     }
 
     // 点击货品table的查看 ，显示对应货品的单品

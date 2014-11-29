@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import models.DepartOrder;
 import models.InventoryItem;
 import models.Party;
 import models.Product;
@@ -35,7 +34,6 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -315,9 +313,7 @@ public class InventoryController extends Controller {
     // 保存入库单
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCREATE,PermissionConstant.PERMISSION_WO_INUPDATE},logical=Logical.OR)
     public void gateInSave() {
-        
-        String orderNo = OrderNoUtil.getOrderNo("warehouse_order", "入库");
-        
+        String orderNo = creat_order_no();// 构造发车单号
         WarehouseOrder warehouseOrder = new WarehouseOrder();
         String gateInId = getPara("warehouseorderId");
         System.out.println();
@@ -335,7 +331,7 @@ public class InventoryController extends Controller {
             warehouseOrder.update();
         } else {
             warehouseOrder.set("creator", users.get(0).get("id")).set("create_date", createDate)
-                    .set("order_no", "RK" + orderNo);
+                    .set("order_no", orderNo);
             warehouseOrder.save();
         }
         renderJson(warehouseOrder.get("id"));
@@ -344,8 +340,7 @@ public class InventoryController extends Controller {
     // 保存出库单
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTCREATE,PermissionConstant.PERMISSION_WO_OUTUPDATE},logical=Logical.OR)
     public void gateOutSave() {
-        String orderNo = OrderNoUtil.getOrderNo("warehouse_order", "出库");
-        
+        String orderNo = creat_order_no2();// 构造发车单号
         WarehouseOrder warehouseOrder = new WarehouseOrder();
         String gateOutId = getPara("warehouseorderId");
         System.out.println();
@@ -354,7 +349,7 @@ public class InventoryController extends Controller {
         Date createDate = Calendar.getInstance().getTime();
 
         warehouseOrder.set("party_id", getPara("party_id")).set("warehouse_id", getPara("warehouseId"))
-                .set("order_no", "CK" + orderNo).set("order_type", "出库").set("status", "新建")
+                .set("order_no", orderNo).set("order_type", "出库").set("status", "新建")
                 .set("qualifier", getPara("qualifier")).set("remark", getPara("remark"));
 
         if (gateOutId != "") {
@@ -406,6 +401,66 @@ public class InventoryController extends Controller {
                 .set("lot_no", getPara("lot_no")).set("uom", getPara("uom")).set("caton_no", getPara("caton_no"))
                 .set("total_quantity", getPara("total_quantity")).set("unit_price", getPara("unit_price"))
                 .set("unit_cost", getPara("unit_cost")).set("item_desc", getPara("item_desc"));
+    }
+
+    // 构造入库单号
+    public String creat_order_no() {
+        String order_no = null;
+        String the_order_no = null;
+        WarehouseOrder order = WarehouseOrder.dao
+                .findFirst("select * from warehouse_order where order_type ='入库' order by order_no desc limit 0,1");
+        if (order != null) {
+            String num = order.get("order_no");
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) {
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            the_order_no = "RK" + order_no;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            the_order_no = "RK" + order_no;
+        }
+        return the_order_no;
+    }
+
+    // 构造出库单号
+    public String creat_order_no2() {
+        String order_no = null;
+        String the_order_no = null;
+        WarehouseOrder order = WarehouseOrder.dao
+                .findFirst("select * from warehouse_order where order_type ='出库' order by order_no desc limit 0,1");
+        if (order != null) {
+            String num = order.get("order_no");
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) {
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            the_order_no = "CK" + order_no;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            the_order_no = "CK" + order_no;
+        }
+        return the_order_no;
     }
 
     // 查找序列号
@@ -624,14 +679,13 @@ public class InventoryController extends Controller {
     public void creatTransferOrder(String id, List<UserLogin> users, Date createDate, List<Record> warehouseItem,
             List<Record> inventory) {
         if (inventory.size() > 0) {
-            String orderNo = OrderNoUtil.getOrderNo("transfer_order", null);
-            
+            String orderNo = creat_order_no3();// 构造运输单号
             TransferOrder transferOrder = new TransferOrder();
             Party party = Party.dao
                     .findFirst(" select c.location from party p,contact c where p.contact_id =c.id and p.id='"
                             + inventory.get(0).get("party_id") + "'");
 
-            transferOrder.set("order_no", "YS" + orderNo);
+            transferOrder.set("order_no", orderNo);
             transferOrder.set("customer_id", inventory.get(0).get("party_id"));
             transferOrder.set("status", "新建");
             transferOrder.set("warehouse_id", inventory.get(0).get("warehouse_id"));
@@ -679,4 +733,33 @@ public class InventoryController extends Controller {
 
     }
 
+    // 运输单构造单号
+    public String creat_order_no3() {
+        String order_no = null;
+        String the_order_no = null;
+        TransferOrder order = TransferOrder.dao
+                .findFirst("select * from transfer_order order by order_no desc limit 0,1");
+        if (order != null) {
+            String num = order.get("order_no");
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) {
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            the_order_no = "YS" + order_no;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            the_order_no = "YS" + order_no;
+        }
+        return the_order_no;
+    }
 }

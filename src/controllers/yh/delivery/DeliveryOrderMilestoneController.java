@@ -11,7 +11,6 @@ import java.util.Map;
 
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderMilestone;
-import models.DepartOrder;
 import models.DepartOrderFinItem;
 import models.Fin_item;
 import models.InventoryItem;
@@ -35,7 +34,6 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.returnOrder.ReturnOrderController;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 public class DeliveryOrderMilestoneController extends Controller {
@@ -352,11 +350,11 @@ public class DeliveryOrderMilestoneController extends Controller {
         renderJson(map);
 
         Date createDate = Calendar.getInstance().getTime();
-        String orderNo = OrderNoUtil.getOrderNo("return_order", null);
+        String orderNo = creatOrderNo();
         
         //如果是配送单生成回单：一张配送单只生成一张回单
         ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.set("order_no", "HD" + orderNo);
+        returnOrder.set("order_no", orderNo);
         returnOrder.set("delivery_order_id", delivery_id);
         returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
         returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
@@ -373,6 +371,35 @@ public class DeliveryOrderMilestoneController extends Controller {
 	        roController.calculateCharge(deliveryOrder, returnOrder.getLong("id"));
         }
         //TODO:  普通货品的先不算
+    }
+
+    // 构造单号
+    public static String creatOrderNo() {
+        String order_no = null;
+        String the_order_no = null;
+        ReturnOrder order = ReturnOrder.dao.findFirst("select * from return_order " + " order by id desc limit 0,1");
+        if (order != null) {
+            String num = order.get("order_no");
+            String str = num.substring(2, num.length());
+            System.out.println(str);
+            Long oldTime = Long.parseLong(str);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            String time = format + "00001";
+            Long newTime = Long.parseLong(time);
+            if (oldTime >= newTime) {
+                order_no = String.valueOf((oldTime + 1));
+            } else {
+                order_no = String.valueOf(newTime);
+            }
+            the_order_no = "HD" + order_no;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String format = sdf.format(new Date());
+            order_no = format + "00001";
+            the_order_no = "HD" + order_no;
+        }
+        return the_order_no;
     }
 
     // 入库确认
