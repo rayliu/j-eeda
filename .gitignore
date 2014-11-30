@@ -45,3 +45,5 @@ src/controllers/yh/profile/CustomerController.java.orig
 src/controllers/yh/pickup/PickupOrderController.java.orig
 WebRoot/WEB-INF/config/app_config.txt-yhprod
 WebRoot/WEB-INF/config/shiro.ini-yhprod
+WebRoot/WEB-INF/config/shiro.ini-yh-prod
+WebRoot/WEB-INF/config/app_config.txt-yh-prod
