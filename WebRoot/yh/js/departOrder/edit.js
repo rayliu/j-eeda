@@ -638,6 +638,8 @@
     				if(data.ID>0){
     					$("#departOrderId").val(data.ID);
     					$("#depart_id").val(data.ID);
+    					$("#saveDepartOrderBtn").prop('disabled',false);
+    					$("#showDepartNo").text(data.DEPART_NO);
     				  	//$("#style").show();	
 
     		    	    $("#departureConfirmationBtn").attr("disabled", false);
@@ -697,6 +699,7 @@
     		       	return false;
     	        }
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
+    	    		$("#saveDepartOrderBtn").attr("disabled", true);
 				   	clickSaveDepartOrder(e);
 				   	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	 
