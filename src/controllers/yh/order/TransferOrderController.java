@@ -4,7 +4,6 @@ package controllers.yh.order;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -299,6 +298,8 @@ public class TransferOrderController extends Controller {
 			}
 			setAttr("locationTo", locationTo);
 		}
+		Office office = Office.dao.findFirst("select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?", transferOrder.get("warehouse_id"));
+		setAttr("office", office);		
 
 		UserLogin userLogin = UserLogin.dao.findById(transferOrder
 				.get("create_by"));
@@ -454,8 +455,7 @@ public class TransferOrderController extends Controller {
 			}
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
-			if (getPara("arrivalMode") != null
-					&& getPara("arrivalMode").equals("delivery")) {
+			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
 				if (notifyPartyId == null || "".equals(notifyPartyId)) {
 					party = saveContact();
 				} else {
@@ -521,14 +521,14 @@ public class TransferOrderController extends Controller {
 			}
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
-			if (getPara("arrivalMode") != null
-					&& getPara("arrivalMode").equals("delivery")) {
+			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
 				if (notifyPartyId == null || "".equals(notifyPartyId)) {
 					party = saveContact();
 				} else {
 					party = updateContact(notifyPartyId);
 				}
 				transferOrder.set("notify_party_id", party.get("id"));
+				transferOrder.set("warehouse_id", null);
 			} else {
 				if (warehouseId != null && !"".equals(warehouseId)) {
 					transferOrder.set("warehouse_id", warehouseId);
@@ -893,8 +893,13 @@ public class TransferOrderController extends Controller {
 
 	// 查出所有的warehouse
 	public void searchAllWarehouse() {
-		List<Warehouse> warehouses = Warehouse.dao
-				.find("select * from warehouse");
+		String officeId = getPara("officeId");
+		List<Warehouse> warehouses = null;
+		if(officeId != null && !"".equals(officeId)){
+			warehouses = Warehouse.dao.find("select * from warehouse where office_id = "+getPara("officeId"));
+		}else{
+			warehouses = Warehouse.dao.find("select * from warehouse");			
+		}
 		renderJson(warehouses);
 	}
 

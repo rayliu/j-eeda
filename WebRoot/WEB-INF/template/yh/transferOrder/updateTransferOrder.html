@@ -159,9 +159,15 @@
                                                 </label>  
                                                 <label class="radio-inline">
                                                     <input type="radio" name="arrivalMode" id="arrivalMode1" value="delivery">货品直送
-                                                </label>    
-                                                <input id="hideWarehouseId" type="hidden" value="${transferOrder.warehouse_id!''}" />     
-                                                <select id="gateInSelect" class="form-control" name="gateInSelect" style="display: none;"></select>                                  
+                                                </label> 
+                                                <div id="gateInDiv" style="display: none;">  
+	                                                <input id="hideWarehouseId" type="hidden" value="${transferOrder.warehouse_id!''}" />     
+	                                                <input id="hideDeliveryOfficeSelect" type="hidden" value="${office.id!''}" />     
+	                                                <label class="label-margin">网点 </label>
+	                                                <select id="deliveryOfficeSelect" name="deliveryOfficeSelect"></select>                                  
+	                                                <label class="label-margin">仓库 </label>
+	                                                <select id="gateInSelect" name="gateInSelect"></select> 
+                                                </div>                                  
                                             </div>
    	                                        <div class="form-group">
    	                                            <label>收货单位</label>

@@ -2,7 +2,6 @@ package controllers.yh.departOrder;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -18,7 +17,6 @@ import models.Fin_item;
 import models.InventoryItem;
 import models.Location;
 import models.Party;
-import models.PickupOrderFinItem;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
@@ -270,7 +268,7 @@ public class DepartOrderController extends Controller {
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
     				+ " where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
-    				+ DepartOrder.COMBINE_TYPE_DEPART + "' and deo.status in('已发车','在途') group by deo.id order by deo.create_stamp desc";
+    				+ DepartOrder.COMBINE_TYPE_DEPART + "' and deo.status in('已发车','在途') group by deo.id order by deo.create_stamp desc " + sLimit;
     	} else {
     		if (beginTime == null || "".equals(beginTime)) {
     			beginTime = "1-1-1";
@@ -300,7 +298,7 @@ public class DepartOrderController extends Controller {
     				+ "%' and ifnull(l1.name,'') like '%" + start 
     				+ "%' and ifnull(l2.name,'') like '%" + end 
     				+ "%' and ifnull(c1.abbr,'') like '%" + customer  
-    				+ "%' and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime +"'";
+    				+ "%' and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime +"' " + sLimit;
     		
     		sql = "select deo.id,"
     				+ "deo.depart_no ,"

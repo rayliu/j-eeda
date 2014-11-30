@@ -983,11 +983,13 @@ $(document).ready(function() {
     	if(inputId=='arrivalMode1'){
     		$("#contactInformation").show();
     		$("#warehousingConfirmBtn").attr("disabled", true);
-    		$("#gateInSelect").hide();
+    		//$("#gateInSelect").hide();
+    		$("#gateInDiv").hide();
     		$("#warehousingConfirmBtn").attr("disabled", true);
     	}else{
     		$("#contactInformation").hide();
-    		$("#gateInSelect").show();
+    		//$("#gateInSelect").show();
+    		$("#gateInDiv").show();
     	} 
     });    
 						
@@ -1198,7 +1200,8 @@ $(document).ready(function() {
 		if($("#arrivalModeRadio").val() == $(this).val()){
 			$(this).attr('checked', true);			
 			if($(this).val() == 'gateIn'){
-				$("#gateInSelect").show();
+				//$("#gateInSelect").show();
+				$("#gateInDiv").show();
 				$("#contactInformation").hide();
 			}
 		}
@@ -1731,34 +1734,60 @@ $(document).ready(function() {
 			}
 		},'json');
     
-     // 获取所有仓库
-	 $.post('/transferOrder/searchAllWarehouse',function(data){
-		 if(data.length > 0){
+	 $('#deliveryOfficeSelect').on('change', function(){ 
+		 if($(this).val() != ""){
+			 // 获取所有仓库
+			 findWarehouseForOffice($(this).val());
+		 }else{
 			 var gateInSelect = $("#gateInSelect");
 			 gateInSelect.empty();
-			 var hideWarehouseId = $("#hideWarehouseId").val();
-			 for(var i=0; i<data.length; i++){
-				 if(data[i].ID == hideWarehouseId){
-					 gateInSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");					 
-				 }else{
-					 gateInSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+		 }
+	 });
+	 
+	 var findWarehouseForOffice = function(officeId){
+		 $.post('/transferOrder/searchAllWarehouse', {officeId: officeId},function(data){
+			 if(data.length > 0){
+				 var gateInSelect = $("#gateInSelect");
+				 gateInSelect.empty();
+				 var hideWarehouseId = $("#hideWarehouseId").val();
+				 for(var i=0; i<data.length; i++){
+					 if(data[i].ID == hideWarehouseId){
+						 gateInSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");					 
+					 }else{
+						 gateInSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+					 }
 				 }
 			 }
-		 }
-	 },'json');	 
-
+		 },'json');	
+	 };
+	 
+	 var deliveryOfficeId = $("#hideDeliveryOfficeSelect").val();
+	 if(deliveryOfficeId != null && deliveryOfficeId != ""){
+		 findWarehouseForOffice(deliveryOfficeId);
+	 }
+	 
 	 // 获取所有网点
 	 $.post('/transferOrder/searchAllOffice',function(data){
 		 if(data.length > 0){
+			 var deliveryOfficeSelect = $("#deliveryOfficeSelect");
+			 deliveryOfficeSelect.empty();
+			 var hideDeliveryOfficeSelect = $("#hideDeliveryOfficeSelect").val();
+			 deliveryOfficeSelect.append("<option ></option>");			 
+
 			 var officeSelect = $("#officeSelect");
 			 officeSelect.empty();
 			 var hideOfficeId = $("#hideOfficeId").val();
-			 officeSelect.append("<option ></option>");
 			 for(var i=0; i<data.length; i++){
-				 if(data[i].ID == hideOfficeId){
-					 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+				 if(data[i].ID == hideDeliveryOfficeSelect){
+					 deliveryOfficeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
 				 }else{
-					 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+					 deliveryOfficeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+				 }
+				 
+				 if(data[i].ID == hideOfficeId){
+					 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");					 
+				 }else{
+					 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");
 				 }
 			 }
 		 }
@@ -1958,7 +1987,8 @@ $(document).ready(function() {
     
     if($("#arrivalMode2").prop('checked') == true){
     	$("#contactInformation").hide();
-    	$("#gateInSelect").show();    	
+    	//$("#gateInSelect").show();    	
+    	$("#gateInDiv").show();    	
     }
     
     // 查看所有单品
