@@ -775,6 +775,7 @@ public class DepartOrderController extends Controller {
     public void saveDepartOrder() {
         String depart_id = getPara("depart_id");// 发车单id
         String charge_type = getPara("chargeType");// 供应商计费类型
+        String car_type = getPara("car_type");// 供应商计费类型, 如果是整车，需要知道整车类型
         String ltlPriceType = getPara("ltlUnitType");//如果是零担，需要知道零担计费类型：按体积，按重量
         String sp_id = getPara("sp_id");// 供应商id
         // 查找创建人id
@@ -795,7 +796,7 @@ public class DepartOrderController extends Controller {
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
                     .set("route_to", getPara("route_to")).set("status", getPara("status"))
-                    .set("ltl_price_type", ltlPriceType)
+                    .set("ltl_price_type", ltlPriceType).set("car_type", car_type)
                     .set("driver", getPara("driver_name")).set("phone", getPara("driver_phone")).set("car_no", getPara("car_no"));
             if (!"".equals(driver_id) && driver_id != null) {
                 dp.set("driver_id", driver_id);
@@ -842,7 +843,8 @@ public class DepartOrderController extends Controller {
             dp.set("charge_type", charge_type).set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
-                    .set("route_to", getPara("route_to")).set("status", getPara("status")).set("ltl_price_type", ltlPriceType)
+                    .set("route_to", getPara("route_to")).set("status", getPara("status"))
+                    .set("ltl_price_type", ltlPriceType).set("car_type", car_type)
                     .set("driver", getPara("driver_name")).set("phone", getPara("driver_phone")).set("car_no", getPara("car_no"));
             if (!"".equals(driver_id) && driver_id != null) {
                 dp.set("driver_id", driver_id);
@@ -1120,12 +1122,12 @@ public class DepartOrderController extends Controller {
 
     
     private void genFinPerCar(List<UserLogin> users, DepartOrder departOrder, Contract spContract, String chargeType) {
-        // 根据发车单整车的车型，长度，始发地，目的地，计算合同价
+        // 根据发车单整车的车型，始发地，目的地，计算合同价
         Record contractFinItem = Db
                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                        +" and cartype = " + departOrder.get("car_type")
-                        +" and carlength = " + departOrder.get("car_size")
-                        +" and from_id = '" + departOrder.get("route_from")
+                        //+" and cartype = " + departOrder.get("car_type")
+                        +" and carlength = '" + departOrder.get("car_type")//对应发车单的 car_type
+                        +"' and from_id = '" + departOrder.get("route_from")
                         +"' and to_id = '" + departOrder.get("route_to")
                         + "' and priceType='"+chargeType+"'");
         if (contractFinItem != null) {
@@ -1133,8 +1135,9 @@ public class DepartOrderController extends Controller {
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            +" and cartype = " + departOrder.get("car_type")
-                            +" and from_id = '" + departOrder.get("route_from")
+                            //+" and cartype = " + departOrder.get("car_type")
+                            +" and carlength = '" + departOrder.get("car_type")//对应发车单的 car_type
+                            +"' and from_id = '" + departOrder.get("route_from")
                             +"' and to_id = '" + departOrder.get("route_to")
                             + "' and priceType='"+chargeType+"'");
             if (contractFinItem != null) {

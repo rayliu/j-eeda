@@ -22,6 +22,7 @@
 	var departOrderId = $("#departOrderId").val();
 	if(departOrderId != '' && departOrderId != null){
 		var departOrderChargeType = $("#departOrderChargeType").val();
+
 		$("input[name='chargeType']").each(function(){
 			if(departOrderChargeType == $(this).val()){
 				//零担
@@ -33,7 +34,13 @@
 					$("#ltl_price_type").show();
 					var hibLtlUnitType = $("#hibLtlUnitType").val();
 					$("input[value='"+hibLtlUnitType+"']").prop('checked', true);
-				}else{
+				}else if(departOrderChargeType == "perCar"){
+                    //显示车辆信息                   
+                    $(this).prop('checked', true);
+                    $("#car_type_div").show();
+                    var departOrderCarType = $("#hiddenDepartOrderCarType").val();
+                    $("#car_type").val(departOrderCarType);
+                }else{
     				if(departOrderChargeType=="perUnit"){
     					$("#carInfomation").hide();
     				}else{
@@ -54,9 +61,13 @@
 					$(this).prop('checked', true);
 					$("#ltl_price_type").show();
 					$("#optionsRadiosIn1").prop('checked', true);
-					//隐藏车辆信息
-								
-    			}else{
+					//隐藏车辆信息								
+    			}else if(transferOrderChargeType == "perCar"){
+                    $("#carInfomation").show();
+                    //显示车辆信息                   
+                    $(this).prop('checked', true);
+                    $("#car_type_div").show();
+                }else{
     				if(transferOrderChargeType=="perUnit"){
     					$("#carInfomation").hide();
     				}else{
@@ -99,8 +110,16 @@
         if($('input[name="chargeType"]:checked').val()==='perCargo'){
             $('#ltl_price_type').show();
             $("#carInfomation").hide();
+            $("#car_type_div").hide();
+        }else if($('input[name="chargeType"]:checked').val()==='perCar'){
+            $("#carInfomation").show();
+            //显示车辆信息                   
+            $(this).prop('checked', true);
+            $("#car_type_div").show();
+            $('#ltl_price_type').hide();
         }else{
             $('#ltl_price_type').hide();
+            $("#car_type_div").hide();
             //计费方式为计件的时候
             if($('input[name="chargeType"]:checked').val()==='perUnit'){
             	$("#carInfomation").hide();
