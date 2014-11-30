@@ -40,6 +40,8 @@ public class RegisterUserController  extends Controller{
         	office.set("contact_phone_name",phone_name);
         	office.set("contact_phone", phone);
         	office.set("email", email);
+        	office.set("type", "总公司");
+        	
         	Db.save("office", office);
         	//根据名称查询到刚才保存的注册公司
         	Office user_office = Office.dao.findFirst("select * from office where office_name=?",officeName);

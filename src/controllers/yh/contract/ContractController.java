@@ -62,8 +62,9 @@ public class ContractController extends Controller {
 
     public void companyNameList() {
         String type = getPara("type");
+        String input = getPara("input");
         String sql = "select c1.company_name as company  from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type = '"
-                + type + "'";
+                + type + "' and c1.company_name like '%"+input+"%'";
         List<Record> companyNameList = Db.find(sql);
         renderJson(companyNameList);
     }

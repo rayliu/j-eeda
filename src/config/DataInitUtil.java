@@ -242,6 +242,11 @@ public class DataInitUtil {
             
             // 出纳日记账
             stmt.execute("create table if not exists arap_account_audit_log(id bigint auto_increment primary key,payment_method varchar(255),amount double,creator varchar(50),create_date timestamp,remark varchar(5120),misc_order_id bigint,foreign key(misc_order_id) references arap_misc_charge_order(id),invoice_order_id bigint,foreign key(invoice_order_id) references arap_charge_invoice(id),account_id bigint,foreign key(account_id) references fin_account(id));");
+            // 基础信息——单位表
+            //stmt.execute("create table if not exists tally(id bigint auto_increment primary key,code varchar(20),name varchar(20));");
+            
+            
+            
             
             stmt.close();
             // conn.commit();
@@ -485,6 +490,8 @@ public class DataInitUtil {
             stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('SONY-电视1', 'SONY30329','1000','5000','6000', 30, '台', 30, 3, '普通货品');");
             stmt.execute("insert into product(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('SONY-电视2', 'SONY30330','1000','5000','6000', 30, '台', 30, 3, '普通货品');");
 
+            //单位
+            //stmt.execute("insert into tally(item_name,item_no,size,width,height,volume,unit,weight,category_id,item_desc) values('ATM', '2014042600001','1000','5000','7000', 35,'台', 10, 2, '这是一台ATM');");
             // 运输单
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type,charge_type2) values('ATM', '4', '12', 'YS2014042600001', '3', '1', '已入货场', '2014-04-20 16:33:35.1', 'delivery','珠海','2','110102','440402','2','salesOrder','provinceOut','own','perUnit');");
             stmt.executeUpdate("insert into transfer_order(cargo_nature, sp_id, notify_party_id, order_no, create_by, customer_id, status, create_stamp, arrival_mode,address,warehouse_id,route_from,route_to,office_id,order_type,customer_province,operation_type, charge_type, pickup_mode,charge_type2) "

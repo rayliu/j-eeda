@@ -27,7 +27,7 @@ public class UserRoleController extends Controller {
 	private Logger logger = Logger.getLogger(PrivilegeController.class);
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_UR_LIST})
 	public void index(){
-		render("/yh/profile/userRole/userRolelist.html");
+		render("/yh/profile/userRole/userRoleList.html");
 	}
 	
 	/*查询用户角色*/
