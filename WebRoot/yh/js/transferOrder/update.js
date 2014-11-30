@@ -331,7 +331,7 @@ $(document).ready(function() {
 					$("#departureConfirmationBtn").attr("disabled", false);
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 					$("#showOrderNo").text(transferOrder.ORDER_NO);
-					
+					$("#order_no").text(transferOrder.ORDER_NO);
 				  	//$("#style").show();	
 				  	
 				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
@@ -418,6 +418,7 @@ $(document).ready(function() {
 					if(transferOrder.ID>0){
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 						$("#showOrderNo").text(transferOrder.ORDER_NO);
+						$("#order_no").text(transferOrder.ORDER_NO);
 					  	//$("#style").show();
 	
 						if(bool){
@@ -1086,6 +1087,7 @@ $(document).ready(function() {
 						console.Log("\\\\\\\\\\\\\\"+parentId);
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 						$("#showOrderNo").text(transferOrder.ORDER_NO);
+						$("#order_no").text(transferOrder.ORDER_NO);
 					  	//$("#style").show();	
 					  	transferOrderMilestone();
 					  	console.Log(parentId);
@@ -1994,6 +1996,7 @@ $(document).ready(function() {
 				$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
 				$("#id").val(transferOrder.ID);
 				$("#showOrderNo").text(transferOrder.ORDER_NO);
+				$("#order_no").text(transferOrder.ORDER_NO);
 				
 			
 				

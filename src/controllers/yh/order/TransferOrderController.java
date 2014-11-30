@@ -490,7 +490,7 @@ public class TransferOrderController extends Controller {
 				transferOrder.set("sp_id", spId);
 			}
 			transferOrder.set("customer_id", customerId);
-			transferOrder.set("order_no", getPara("order_no"));
+			//transferOrder.set("order_no", getPara("order_no"));
 			transferOrder.set("create_by", getPara("create_by"));
 			if ("cargo".equals(cargoNature)) {
 				transferOrder.set("cargo_nature_detail",
