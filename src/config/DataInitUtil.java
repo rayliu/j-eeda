@@ -22,7 +22,7 @@ public class DataInitUtil {
             Statement stmt = conn.createStatement();
 
             // 登陆及授权的3个表
-            stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),contact_phone_name varchar(50),contact_phone varchar(50),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255),belong_office bigint);");
+            stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),contact_phone_name varchar(50),contact_phone varchar(50),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255),belong_office bigint,location varchar(50));");
             stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255), office_id bigint, token varchar(10), foreign key(office_id) references office(id));");
             stmt.executeUpdate("create table if not exists role(id bigint auto_increment primary key,code varchar(50), name varchar(50), p_code varchar(50), remark varchar(255));");
             stmt.executeUpdate("create table if not exists permission(id bigint auto_increment primary key, module_name varchar(50) ,code varchar(50), name varchar(50), value varchar(50), url varchar(255), remark varchar(255));");

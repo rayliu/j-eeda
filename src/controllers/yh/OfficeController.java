@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Location;
 import models.Office;
 import models.TransferOrder;
 import models.UserLogin;
@@ -45,15 +46,26 @@ public class OfficeController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_O_UPDATE})
     public void edit() {
         String id = getPara();
-        if (id != null) {
-            Office l = Office.dao.findById(id);
-            setAttr("ul", l);
-        } else {
-            setAttr("ul", new UserLogin());
-        }
-        
+        Office office = Office.dao.findById(id);
+        setAttr("ul", office);
+        if(office.get("location") != null && !"".equals(office.get("location"))){
+	        String code = office.get("location");
+	
+	        List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
+	        Location l = Location.dao.findFirst("select * from location where code = (select pcode from location where code = '"+code+"')");
+	        Location location = null;
+	        if(provinces.contains(l)){
+	        	location = Location.dao
+		                .findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+		                        + code + "'");
+	        }else{
+	        	location = Location.dao
+		                .findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+		                        + code + "'");
+	        }
+	        setAttr("location", location);
+		}
         render("/yh/profile/office/edit.html");
-
     }
 
     // 添加分公司
@@ -75,6 +87,7 @@ public class OfficeController extends Controller {
         user.set("email", getPara("email"));
         user.set("type", getPara("type"));
         user.set("company_intro", getPara("company_intro"));
+        user.set("location", getPara("location"));
         if (id != "") {
             logger.debug("update....");
             user.set("id", id);
@@ -149,7 +162,7 @@ public class OfficeController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if(type==null&&name==null&&address==null&&person==null){
-        	orders = Db.find("select * from office " + sLimit);
+        	orders = Db.find("select o.*,lc.name dname from office o left join location lc on o.location = lc.code " + sLimit);
         }else{
         	 orders = Db.find(list_sql);
         }
@@ -166,31 +179,32 @@ public class OfficeController extends Controller {
     //查询分公司所有仓库
     public void findOfficeWarehouse(){
     	String office_id = getPara();// 调车单id
+    	String sLimit = "";
+    	String pageIndex = getPara("sEcho");
+    	if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+    		sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+    	}
+        String sqlTotal = "";
+        Record rec = null;
+        String sql = "";
     	if(office_id != ""){
-	    	String sLimit = "";
-	        String pageIndex = getPara("sEcho");
-	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-	        }
-	        String sqlTotal = "select count(0) total from warehouse where office_id ="+office_id+";";
+	        sqlTotal = "select count(0) total from warehouse where office_id ="+office_id+";";
 	        logger.debug("sql :" + sqlTotal);
-	        Record rec = Db.findFirst(sqlTotal);
+	        rec = Db.findFirst(sqlTotal);
 	        logger.debug("total records:" + rec.getLong("total"));
 	
 	        //String sql = "select * from warehouse where office_id ="+office_id+";";
-	        String sql = "select w.*,c.contact_person,c.phone,(select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=c.location) dname,lc.name from warehouse w"
-			+ " left join party p on w.notify_party_id = p.id"
-			+ " left join contact c on p.contact_id = c.id"
-			+ " left join location lc on c.location = lc.code "
+	        sql = "select w.*,lc.name dname from warehouse w"
+			+ " left join location lc on w.location = lc.code "
 			+ " where w.office_id = "+office_id+" order by w.id desc " + sLimit;
-	        List<Record> warehouseList = Db.find(sql);
-	        Map Map = new HashMap();
-	        Map.put("sEcho", pageIndex);
-	        Map.put("iTotalRecords", rec.getLong("total"));
-	        Map.put("iTotalDisplayRecords", rec.getLong("total"));
-	        Map.put("aaData", warehouseList);
-	        renderJson(Map); 
     	}
+    	List<Record> warehouseList = Db.find(sql);
+    	Map Map = new HashMap();
+    	Map.put("sEcho", pageIndex);
+    	Map.put("iTotalRecords", rec.getLong("total"));
+    	Map.put("iTotalDisplayRecords", rec.getLong("total"));
+    	Map.put("aaData", warehouseList);
+    	renderJson(Map); 
     }
     
 
