@@ -166,16 +166,14 @@ $(document).ready(function() {
 	                    }else{
 	                        alert('数据保存失败。');
 	                    }
-	                    $("#saveBtn").attr("disabled", false);
 		             },'json');
-		            
+		           
 			 };
 			// 添加配送单
 			$("#saveBtn").click(function(e){
 		        // 阻止a 的默认响应行为，不需要跳转
 				// var itemId = $("#item_id").val();
 				e.preventDefault();
-				$("#saveBtn").attr("disabled", true);
 				saveDelivery();
 	        });
 			var dab2= $('#eeda-table2').dataTable({

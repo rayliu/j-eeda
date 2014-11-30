@@ -97,7 +97,6 @@ $(document).ready(function() {
         }
  		//判断行车单是否审核
  		if(!$("#saveCarSummaryBtn").prop("disabled")){
- 			$("#saveCarSummaryBtn").prop("disabled",true);
  			$.post('/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
  	 			if(data != null){
  	 				$("#car_summary_id").val(data);
@@ -105,23 +104,13 @@ $(document).ready(function() {
  	 			}else{
  	 				$.scojs_message('保存失败', $.scojs_message.TYPE_OK);
  	 			}
- 	 			$("#saveCarSummaryBtn").prop("disabled",false);
  	 		},'json');
  		}
  	};
  	
  	//点击保存
 	$("#saveCarSummaryBtn").click(function(e){
-		$("#saveCarSummaryBtn").prop("disabled",true);
-			$.post('/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
-	 			if(data != null){
-	 				$("#car_summary_id").val(data);
-	 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-	 			}else{
-	 				$.scojs_message('保存失败', $.scojs_message.TYPE_OK);
-	 			}
-	 			$("#saveCarSummaryBtn").prop("disabled",false);
-	 	},'json');
+		saveCarSummaryData();
 	});
 	
 	//点击返回

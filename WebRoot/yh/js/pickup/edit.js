@@ -249,15 +249,12 @@
     // 保存单品
     var handlePickkupOrderDetail = function(){
     	if(!$("#saveTransferOrderBtn").prop('disabled')){
-    		$("#saveTransferOrderBtn").prop('disabled',true);
 	    	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
 				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
 				if(data.ID>0){
 					$("#pickupId").val(data.ID);
-					$("#showOrderNo").text(data.DEPART_NO);
-					$("#saveTransferOrderBtn").prop('disabled',false);
 			        showFinishBut();
 				  	//$("#style").show();	
 			        $.scojs_message('保存成功', $.scojs_message.TYPE_OK);

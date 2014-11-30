@@ -725,6 +725,9 @@ public class DepartOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
 
+        String sql = "select * from depart_order where combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by id desc limit 0,1";
+        setAttr("order_no", OrderNoUtil.getOrderNo(sql, "FC"));
+
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
         List<Record> paymentItemList = Collections.EMPTY_LIST;
@@ -787,10 +790,9 @@ public class DepartOrderController extends Controller {
         String uncheckedDetailIds = getPara("uncheckedDetail");
         DepartOrder dp = null;
         if ("".equals(depart_id)) {
-        	 String sql = "select * from depart_order where combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by id desc limit 0,1";
             dp = new DepartOrder();
             dp.set("charge_type", charge_type).set("create_by", users.get(0).get("id")).set("create_stamp", createDate)
-                    .set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", OrderNoUtil.getOrderNo(sql, "FC"))
+                    .set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
                     .set("route_to", getPara("route_to")).set("status", getPara("status"))
@@ -838,7 +840,7 @@ public class DepartOrderController extends Controller {
             }
         } else {//TODO update不需要更改create_by, create_date
             dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
-            dp.set("charge_type", charge_type).set("combine_type", DepartOrder.COMBINE_TYPE_DEPART)
+            dp.set("charge_type", charge_type).set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", getPara("order_no"))
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
                     .set("route_to", getPara("route_to")).set("status", getPara("status"))

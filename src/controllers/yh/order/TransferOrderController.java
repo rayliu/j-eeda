@@ -415,13 +415,14 @@ public class TransferOrderController extends Controller {
 		String cargoNature = getPara("cargoNature");
 		if (order_id == null || "".equals(order_id)) {
 			String sql = "select * from transfer_order order by id desc limit 0,1";
+			String orderNo = OrderNoUtil.getOrderNo(sql, "YS");
 			transferOrder = new TransferOrder();
 			if (!"".equals(spId) && spId != null) {
 				transferOrder.set("sp_id", spId);
 			}
 			transferOrder.set("customer_id", customerId);
 			transferOrder.set("status", getPara("status"));
-			transferOrder.set("order_no", OrderNoUtil.getOrderNo(sql, "YS"));
+			transferOrder.set("order_no", orderNo);
 			transferOrder.set("create_by", getPara("create_by"));
 			if ("cargo".equals(cargoNature)) {
 				transferOrder.set("cargo_nature_detail",
@@ -489,6 +490,7 @@ public class TransferOrderController extends Controller {
 				transferOrder.set("sp_id", spId);
 			}
 			transferOrder.set("customer_id", customerId);
+			//transferOrder.set("order_no", getPara("order_no"));
 			transferOrder.set("create_by", getPara("create_by"));
 			if ("cargo".equals(cargoNature)) {
 				transferOrder.set("cargo_nature_detail",

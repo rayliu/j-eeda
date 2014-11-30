@@ -88,6 +88,9 @@ public class PickupOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
 
+        String sql = "select * from depart_order where combine_type = '"+DepartOrder.COMBINE_TYPE_PICKUP+"' order by id desc limit 0,1";
+        setAttr("order_no", OrderNoUtil.getOrderNo(sql, "PC"));
+        
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
 
@@ -540,9 +543,8 @@ public class PickupOrderController extends Controller {
         String gateInSelect = getPara("gateInSelect");
         String returnTime = getPara("return_time");
         if (pickId == null || "".equals(pickId)) {
-        	String sql = "select * from depart_order where combine_type = '"+DepartOrder.COMBINE_TYPE_PICKUP+"' order by id desc limit 0,1";
             pickupOrder = new DepartOrder();
-            pickupOrder.set("depart_no", OrderNoUtil.getOrderNo(sql, "PC"));
+            pickupOrder.set("depart_no", getPara("order_no"));
             pickupOrder.set("status", getPara("status"));
             pickupOrder.set("charge_type", getPara("chargeType"));
             pickupOrder.set("create_by", getPara("create_by"));
@@ -620,6 +622,7 @@ public class PickupOrderController extends Controller {
             savePickupOrderMilestone(pickupOrder);
         } else {
             pickupOrder = DepartOrder.dao.findById(pickId);
+            pickupOrder.set("depart_no", getPara("order_no"));
             pickupOrder.set("charge_type", getPara("chargeType"));
             pickupOrder.set("status", getPara("status"));
             pickupOrder.set("create_by", getPara("create_by"));
