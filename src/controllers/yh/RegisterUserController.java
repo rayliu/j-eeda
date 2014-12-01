@@ -1,9 +1,9 @@
 package controllers.yh;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 
 import models.Office;
 import models.UserLogin;
+import models.UserRole;
 
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -51,9 +51,14 @@ public class RegisterUserController  extends Controller{
         	Db.save("user_login", user);
         	//查询新注册用户
         	//UserLogin newUser = UserLogin.dao.findFirst("select * from user_login where user_name=?",userName);
-        	setAttr("userId", userName);
+        	UserRole userRole = new UserRole();
+        	userRole.set("user_name", userName);
+        	userRole.set("role_code", "admin");
+        	userRole.save();
         	
-        	render("/yh/index.html");
+        	//保存成功后登录
+        	forwardAction("/login");
+
         }else{
         	Db.save("user_login", user);
         	render("/yh/profile/registerUser/registerSuccess.html");

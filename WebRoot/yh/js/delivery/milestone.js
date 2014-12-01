@@ -23,15 +23,21 @@ $(document).ready(function() {
             },
             {"mDataProp":null,"sWidth":"90px",
                 "fnRender": function(obj) {
-                	if(obj.aData.STATUS==null){
-                		obj.aData.STATUS="";
-                	}
-                	if(obj.aData.STATUS=='已签收'){
-                		//return obj.aData.STATUS;
-                		return "已送达";
+                	if(obj.aData.LOCATION!=null && obj.aData.LOCATION!=''){
+                		return obj.aData.LOCATION+"<a id='edit_status' del_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
                 	}else{
-                		return obj.aData.STATUS+"<a id='edit_status' del_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                		if(obj.aData.STATUS==null){
+                    		obj.aData.STATUS="";
+                    	}
+                    	if(obj.aData.STATUS=='已签收'){
+                    		//return obj.aData.STATUS;
+                    		return "已送达";
+                    	}else{
+                    		return obj.aData.STATUS+"<a id='edit_status' del_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                    	
+                    	}
                 	}
+                	
                 }
             },
             {"mDataProp":"CUSTOMER","sWidth":"70px"},
@@ -193,6 +199,7 @@ $(document).ready(function() {
         format: 'yyyy-MM-dd',  
         language: 'zh-CN'
     }).on('changeDate', function(ev){
+    	$(".bootstrap-datetimepicker-widget").hide();
         $('#arrival_filter').trigger('keyup');
     });
     $("#sealNO").on("click",function(){    	

@@ -197,11 +197,15 @@ public class DeliveryController extends Controller {
 					+ getPara("iDisplayLength");
 		}
 
-		String sqlTotal = "select count(1) total from delivery_order";
-		Record rec = Db.findFirst(sqlTotal);
-		logger.debug("total records:" + rec.getLong("total"));
+		String sqlTotal = "";
+		
 
-		String sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
+		String sql = "select d.*,"
+				+ "c.abbr as customer,"
+				+ "c2.company_name as c2,"
+				+ "(select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
+				+ "(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
+				+ " from delivery_order d "
 				+ "left join party p on d.customer_id = p.id "
 				+ "left join contact c on p.contact_id = c.id "
 				+ "left join party p2 on d.sp_id = p2.id "
@@ -211,6 +215,7 @@ public class DeliveryController extends Controller {
 		List<Record> depart = null;
 		if (transferorderNo == null && deliveryNo == null && customer == null
 				&& sp == null && beginTime == null && endTime == null) {
+			sqlTotal ="select count(1) total from delivery_order";
 			depart = Db.find(sql);
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
@@ -219,7 +224,35 @@ public class DeliveryController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
-			String sql_seach = "select distinct d.*,c.abbr as customer,c2.company_name as c2,(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no from delivery_order d "
+			sqlTotal ="select count(*) total from (select distinct d.*,"
+					+ "c.abbr as customer,"
+					+ "c2.company_name as c2,"
+					+ "(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
+					+ "(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
+					+ "from delivery_order d "
+					+ "left join party p on d.customer_id = p.id "
+					+ "left join contact c on p.contact_id = c.id "
+					+ "left join party p2 on d.sp_id = p2.id "
+					+ "left join contact c2 on p2.contact_id = c2.id "
+					+ "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
+					+ "where ifnull(d.order_no,'') like '%"
+					+ deliveryNo
+					+ "%' and ifnull(c.abbr,'') like '%"
+					+ customer
+					+ "%' and ifnull(dt2.transfer_no,'') like '%"
+					+ transferorderNo
+					+ "%' and ifnull(c2.company_name,'') like'%"
+					+ sp
+					+ "%' and d.create_stamp between '"
+					+ beginTime
+					+ "' and '"
+					+ endTime + "')";
+			String sql_seach = "select distinct d.*,"
+					+ "c.abbr as customer,"
+					+ "c2.company_name as c2,"
+					+ "(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
+					+ "(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
+					+ "from delivery_order d "
 					+ "left join party p on d.customer_id = p.id "
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join party p2 on d.sp_id = p2.id "
@@ -239,6 +272,9 @@ public class DeliveryController extends Controller {
 					+ endTime + "' " + sLimit;
 			depart = Db.find(sql_seach);
 		}
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+		
 		Map map = new HashMap();
 		map.put("sEcho", pageIndex);
 		map.put("iTotalRecords", rec.getLong("total"));
