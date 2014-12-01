@@ -2,7 +2,6 @@ package controllers.yh.inventory;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -10,10 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import models.DepartOrder;
 import models.InventoryItem;
+import models.Office;
 import models.Party;
 import models.Product;
 import models.TransferOrder;
@@ -679,7 +676,34 @@ public class InventoryController extends Controller {
         } else {
             renderJson("{\"success\":false}");
         }
-
+    }
+    
+    // 查找所有网点
+    public void searchAllOffice() {
+    	String officeName = getPara("officeName");
+    	String sql ="";
+    	if(officeName != null && !"".equals(officeName)){
+    		sql = "select * from office where office_name like '%"+officeName+"%'";
+    	}else{
+    		sql = "select * from office";
+    	}
+        List<Office> office = Office.dao.find(sql);
+        renderJson(office);
+    }
+    // 按网点查找仓库
+    public void findWarehouseById() {
+    	String warehouseName = getPara("warehouseName");
+    	String officeId = getPara("officeId");
+    	String sql ="";
+    	if(officeId != null && !"".equals(officeId)){
+    		sql = "select * from warehouse where office_id = " + officeId;
+    	}else if(warehouseName != null && !"".equals(warehouseName)){
+    		sql = "select * from warehouse where warehouse_name like '%"+warehouseName+"%'";
+    	}else{
+    		sql = "select * from warehouse";
+    	}
+        List<Warehouse> warehouses = Warehouse.dao.find(sql);
+        renderJson(warehouses);
     }
 
 }

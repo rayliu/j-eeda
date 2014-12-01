@@ -26,7 +26,9 @@ $(document).ready(function() {
 	
 	//选择仓库 
 	 $('#warehouseSelect').on('keyup click', function(){
-		$.get('/gateIn/searchAllwarehouse', function(data){
+		var warehouseName = $(this).val();
+		var officeId = $("#hiddenOfficeId").val();
+		$.get('/gateIn/findWarehouseById',{"warehouseName":warehouseName,"officeId":officeId}, function(data){
 			console.log(data);
 			var warehouseList =$("#warehouseList");
 			warehouseList.empty();
@@ -62,6 +64,48 @@ $(document).ready(function() {
 		tab.fnSettings().sAjaxSource ="/stock/stocklist/"+id;
 		tab.fnDraw();
 		
+	});
+	
+	// 获取所有网点
+	$('#officeSelect').on('keyup click', function(){
+		if($("#officeSelect").val() == "")
+	    	$("#hiddenOfficeId").val("");
+		$.get('/gateIn/searchAllOffice',{"officeName":$(this).val()}, function(data){
+			console.log(data);
+			var officeList =$("#officeList");
+			officeList.empty();
+			for(var i = 0; i < data.length; i++)
+			{
+				officeList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</a></li>");
+			}
+		},'json');
+		$("#officeList").css({ 
+	    	left:$(this).position().left+"px", 
+	    	top:$(this).position().top+32+"px" 
+	    }); 
+	    $('#officeList').show();
+	});
+	
+	// 选中网点
+	$('#officeList').on('mousedown', '.fromLocationItem', function(e){
+		var id =$(this).attr('code');
+		$('#officeSelect').val($(this).text());
+		$("#hiddenOfficeId").val(id);
+		$('#officeList').hide();
+	});
+	$('#officeSelect').on('blur', function(){
+		if($("#officeSelect").val() == "")
+	    	$("#hiddenOfficeId").val("");
+		$("#officeList").hide();
+	});
+	$('#officeList').on('blur', function(){
+		if($("#officeSelect").val() == "")
+	    	$("#hiddenOfficeId").val("");
+		$('#officeList').hide();
+	});
+
+	$('#officeList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
 	});
 
 });
