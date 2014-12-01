@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Permission;
 import models.Role;
+import models.RolePermission;
 import models.UserRole;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -130,23 +132,7 @@ public class UserRoleController extends Controller {
             ur.save();
         }
 
-		
-		
-		//先删除所有的数据，在保存
-		/*List<UserRole> list = UserRole.dao.find("select * from user_role where user_name=?",name);
-		for (UserRole userRole : list) {
-			userRole.delete();
-		}
-		if(!r.equals("")){
-			for (String id : roles) {
-				UserRole ur = new UserRole();
-				ur.set("user_name", name);
-				根据id找到Role
-				Role role = Role.dao.findFirst("select * from role where id=?",id);
-				ur.set("role_code", role.get("code"));
-				ur.save();
-			}
-		}*/
+	
 		
 		renderJson();
 	}
@@ -188,35 +174,34 @@ public class UserRoleController extends Controller {
 		/*获取到用户的名称*/
 		String username = getPara("username");
 		
-		//根据用户的名称查到用户的所有角色，然后根据角色查到权限
-		String sLimit = "";
-		String pageIndex = getPara("sEcho");
-		if (getPara("iDisplayStart") != null
-		        && getPara("iDisplayLength") != null) {
-			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-			        + getPara("iDisplayLength");
+		List<Record> orders = new ArrayList<Record>();
+		//List<Permission> parentOrders =Permission.dao.find("select module_name from permission group by module_name");
+		List<Permission> parentOrders = Permission.dao.find("select module_name from permission");
+		List<Permission> po = new ArrayList<Permission>();
+		for (int i = 0; i < parentOrders.size(); i++) {
+			if(i!=0){
+				if(!parentOrders.get(i).get("module_name").equals(parentOrders.get(i-1).get("module_name"))){
+					po.add(parentOrders.get(i));
+				}
+			}else{
+				po.add(parentOrders.get(i));
+			}
+			
+		}	
+		
+		for (Permission rp : po) {
+			String key = rp.get("module_name");
+			/*select p.code, p.name,p.module_name ,r.permission_code from permission p left join  (select * from role_permission rp where rp.role_code =?) r on r.permission_code = p.code where p.module_name=?*/
+			
+			List<RolePermission> childOrders = RolePermission.dao.find("select distinct p.id, p.code, p.name,p.module_name ,r.permission_code from permission p left join (select rp.* from user_role  ur left join role_permission  rp on rp.role_code = ur.role_code where ur.user_name =?)r on r.permission_code = p.code where p.module_name=? order by p.id",username,key);
+			Record r = new Record();
+			r.set("module_name", key);
+			r.set("childrens", childOrders);
+			orders.add(r);
+			
 		}
-
-		// 获取总条数
-		String totalWhere = "";
-		String sql_m ="";
-		Record rec=null;
-		List<Record> orders=null;
-		
-		
-		totalWhere ="select distinct count(*) total from permission p left join (select rp.* from user_role  ur left join role_permission  rp on rp.role_code = ur.role_code where ur.user_name =?) r on r.permission_code = p.code ";
-		
-		rec = Db.findFirst(totalWhere,username);
-		
-		// 获取当前页的数据
-		orders = Db.find("select distinct p.id, p.code, p.name,p.module_name ,r.permission_code from permission p left join (select rp.* from user_role  ur left join role_permission  rp on rp.role_code = ur.role_code where ur.user_name =?) r on r.permission_code = p.code order by p.id" + sLimit,username);
-
-		logger.debug("total records:" + rec.getLong("total"));
-		
 		Map orderMap = new HashMap();
-		orderMap.put("sEcho", pageIndex);
-		orderMap.put("iTotalRecords", rec.getLong("total"));
-		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		orderMap.put("aaData", orders);
 
 		orderMap.put("aaData", orders);
 
