@@ -358,7 +358,7 @@ public class ContractController extends Controller {
         if (id != null) {
             Db.deleteById("contract", id);
         }
-            redirect("/spContract");
+            redirect("/spContract/spIndex");
     }
 
     // 列出客户公司名称

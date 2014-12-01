@@ -417,13 +417,6 @@ $(document).ready(function() {
                     			
                     			return $("#contract_name").val()+","+$("#type2").val();
                     		}else{
-                    			/*console.log(cname);
-                    			
-                    			console.log($("#contract_name").val());
-                    			
-                    			console.log("2----"+$("#type2").val());
-                        		console.log("3===="+$("#type3").val());*/
-                    			
                     			
                     			if(cname==$("#contract_name").val()){
                     				
@@ -791,6 +784,7 @@ $(document).ready(function() {
 	                    }
 	                    
 	                },'json');
+	            $("#saveContract").attr("disabled",true);
 	            
 	        });
 		 

@@ -246,7 +246,7 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"
-					+ endTime + "')";
+					+ endTime + "') as delivery_view";
 			String sql_seach = "select distinct d.*,"
 					+ "c.abbr as customer,"
 					+ "c2.company_name as c2,"
