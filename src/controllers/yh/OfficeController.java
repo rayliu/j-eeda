@@ -206,6 +206,23 @@ public class OfficeController extends Controller {
     	Map.put("aaData", warehouseList);
     	renderJson(Map); 
     }
+    public void checkOfficeNameExist(){
+    	boolean result = true;
+    	String officeName= getPara("office_name");
+    	String[] str =officeName.split(",");
+    	Office office= Office.dao.findFirst("select * from office where office_name = '" + str[0] + "'");
+    	if(office != null){
+    		if(str.length == 1){
+    			result = false;
+    		}else{
+    			logger.debug("1:"+str[0]+","+str[1]);
+    			if(!str[0].equals(str[1])){
+    				result = false;
+    			}
+    		}
+    	}
+    	renderJson(result);
+    }
     
 
 }

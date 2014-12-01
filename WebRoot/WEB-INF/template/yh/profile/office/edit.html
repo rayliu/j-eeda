@@ -158,24 +158,40 @@
 <script>
 	$(document).ready(function() {
 		var type = '${ul.type!''}';
+		var officeName = '${ul.office_name!''}';
 		if(type == "总公司"){
-			$('#type').val(type).attr("disabled",true);	
+			$('#type').empty().append("<option>" + type + "</option>");	
 		}else{
 			$('#type').val(type);
 		}
     	$('#menu_profile').addClass('active').find('ul').addClass('in');
         $('#leadsForm').validate({
             rules: {
-            	office_code: {
+              office_code: {
                 required: true
               },
               office_name:{//form 中 name为必填
-                required: true
+                required: true,
+                remote:{
+                	url: "/office/checkOfficeNameExist", //后台处理程序    
+                    type: "post",  //数据发送方式  
+                    data:  {                     //要传递的数据   
+                    	office_name: function() {
+                            return $("#office_name").val()+","+officeName;
+                        }   
+                    } 
+                }
               },
               contact_id:{//form 中 name为必填
                   required: true
-                }
+              }
             },
+            messages : {
+            	office_name : {
+	        		required:  "不能为空",
+	        		remote:"名称已存在"
+	        	}
+	        },
             highlight: function(element) {
                 $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
             },
@@ -195,12 +211,12 @@
             },
             "sAjaxSource": "/office/findOfficeWarehouse/"+$("#officeId").val(),
             "aoColumns": [   
-                {"mDataProp":"WAREHOUSE_NAME"}, 
-                {"mDataProp":"CONTACT_PERSON"},        	
-                {"mDataProp":"PHONE"},
-                {"mDataProp":"DNAME"},       	
-                {"mDataProp":"WAREHOUSE_ADDRESS"},        	
-                {"mDataProp":"WAREHOUSE_DESC"}
+					{"mDataProp":"WAREHOUSE_NAME"}, 
+					{"mDataProp":"NOTIFY_NAME"},        	
+					{"mDataProp":"NOTIFY_MOBILE"},
+					{"mDataProp":"DNAME"},       	
+					{"mDataProp":"WAREHOUSE_ADDRESS"},        	
+					{"mDataProp":"WAREHOUSE_DESC"},
             ],      
         });	        
 
@@ -235,7 +251,6 @@
     				{
     					cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
     				}
-    				toLocationList.show();
     			},'json');
     		});
          //获取城市的区县
@@ -251,7 +266,6 @@
     				{
     					cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
     				}
-    				toLocationList.show();
     			},'json');
     		});
          
