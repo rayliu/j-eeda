@@ -2,7 +2,6 @@ package controllers.yh.returnOrder;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -12,7 +11,6 @@ import java.util.Map;
 
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
-import models.DepartOrderFinItem;
 import models.Fin_item;
 import models.Location;
 import models.Party;
@@ -431,8 +429,11 @@ public class ReturnOrderController extends Controller {
 	}
 
 	public void calculateCharge(DeliveryOrder deliveryOrder, Long returnOrderId) {
-		// TODO 运输单的计费类型
-		String chargeType = "perUnit";
+		// TODO 运输单的计费类型,当一张配送单对应多张运输单时chargeType如何处理?
+		//String chargeType = "perUnit";
+		List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryOrder.get("id"));
+		TransferOrder transferOrder = TransferOrder.dao.findById(deliveryOrderItems.get(0).get("transfer_order_id"));
+		String chargeType = transferOrder.get("charge_type");
 
 		Long deliveryOrderId = deliveryOrder.getLong("id");
 		// 找到该回单对应的配送单中的ATM
@@ -654,7 +655,8 @@ public class ReturnOrderController extends Controller {
 */	
 	public void calculateChargeByCustomer(TransferOrder transferOrder, Long returnOrderId) {
 		// TODO 运输单的计费类型
-		String chargeType = "perUnit";
+		//String chargeType = "perUnit";
+		String chargeType = transferOrder.get("charge_type");
 		
 		Long transferOrderId = transferOrder.getLong("id");
 		// 找到该回单对应的配送单中的ATM

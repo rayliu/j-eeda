@@ -195,6 +195,14 @@ $(document).ready(function() {
 		
         $('#customerList').hide();
     }); 
+
+	var chargeType = $("#chargeTypeRadio").val();
+	// 回显计费方式
+	$("input[name='chargeType']").each(function(){
+		if(chargeType == $(this).val()){
+			$(this).prop('checked', true);
+		}
+	});
 	
 	//获取供应商的list，选中信息在下方展示其他信息
 	$('#spMessage').on('keyup click', function(){

@@ -23,7 +23,7 @@ $(document).ready(function() {
 		var contractId=$('#contractId').val();
 		var dataTable = $('#dataTables-example').dataTable({
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-			"bFilter": false,
+			//"bSort": true,
 			"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	        //"sPaginationType": "bootstrap",
 	        "iDisplayLength": 10,
@@ -31,7 +31,7 @@ $(document).ready(function() {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
 	        "bProcessing": true,
-	        "bServerSide": true,
+	        //"bServerSide": true,
 	        "sAjaxSource": "/spContract/routeEdit?routId="+contractId,
 	        "aoColumns": [  
 				{"mDataProp":"PRICETYPE", "bVisible":false},
@@ -78,13 +78,14 @@ $(document).ready(function() {
 		var dataTable2 = $('#dataTables-example2').dataTable({
 	        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+				//"bSort": true,
 		        //"sPaginationType": "bootstrap",
 		        "iDisplayLength": 10,
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
 		        "bProcessing": true,
-		        "bServerSide": true,
+		        //"bServerSide": true,
 		        "sAjaxSource": "/spContract/routeEdit2?routId="+contractId,
 		        "aoColumns": [  
 					{"mDataProp":"PRICETYPE", "bVisible":false},
@@ -132,13 +133,14 @@ $(document).ready(function() {
 		var dataTable3 = $('#dataTables-example3').dataTable({
 	        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+				//"bSort": true,
 		        //"sPaginationType": "bootstrap",
 		        "iDisplayLength": 10,
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
 		        "bProcessing": true,
-		        "bServerSide": true,
+		        //"bServerSide": true,
 		        "sAjaxSource": "/spContract/routeEdit3?routId="+contractId,
 		        "aoColumns": [  
 					{"mDataProp":"PRICETYPE", "bVisible":false},

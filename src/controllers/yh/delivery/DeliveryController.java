@@ -2,9 +2,6 @@ package controllers.yh.delivery;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -921,7 +918,12 @@ public class DeliveryController extends Controller {
 					deliveryOrderItem
 							.set("transfer_item_detail_id", idlist2[i]);
 					deliveryOrderItem.set("transfer_no", idlist4[i]);
+					deliveryOrderItem.set("amount", 1);
 					deliveryOrderItem.save();
+					
+					/*TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(idlist2[i]);
+					transferOrderItemDetail.set("delivery_id", deliveryOrder.get("id"));
+					transferOrderItemDetail.update();*/
 				}
 			} else {
 				DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();

@@ -1,6 +1,5 @@
 package controllers.yh.delivery;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -11,8 +10,6 @@ import java.util.Map;
 
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderMilestone;
-import models.DepartOrder;
-import models.DepartOrderFinItem;
 import models.Fin_item;
 import models.InventoryItem;
 import models.ReturnOrder;
@@ -113,7 +110,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         if(spContract==null)
             return;
         
-        String chargeType = deliverOrder.get("pricetype");
+        String chargeType = deliverOrder.get("priceType");
         
         Long deliverOrderId = deliverOrder.getLong("id");
         if (spId != null) {
@@ -374,8 +371,60 @@ public class DeliveryOrderMilestoneController extends Controller {
 	        roController.calculateCharge(deliveryOrder, returnOrder.getLong("id"));
         }
         //TODO:  普通货品的先不算
+        
+        /*// TODO 减库存,以下是针对单品处理,普通货品的配送暂未处理
+        productOutWarehouse(delivery_id.toString());*/
     }
 
+	/*// 产品出库
+	public void productOutWarehouse(String deliveryId) {
+	    if (!"".equals(deliveryId) && deliveryId != null) {
+	        String orderIds = "";
+	        List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find(
+	                "select * from delivery_order_item where delivery_id = ?", deliveryId);
+	        for (DeliveryOrderItem deliveryOrderItem : deliveryOrderItems) {
+	            orderIds += deliveryOrderItem.get("order_id") + ",";
+	        }
+	        orderIds = orderIds.substring(0, orderIds.length() - 1);
+	        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in("
+	                + orderIds + ")");
+	        for (TransferOrder transferOrder : transferOrders) {
+	            InventoryItem inventoryItem = null;
+	            List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find(
+	                    "select * from transfer_order_item where order_id = ?", transferOrder.get("id"));
+	            for (TransferOrderItem transferOrderItem : transferOrderItems) {
+	                if (transferOrderItem != null) {
+	                    if (transferOrderItem.get("product_id") != null) {
+	                        String inventoryItemSql = "select * from inventory_item where product_id = "
+	                                + transferOrderItem.get("product_id") + " and warehouse_id = "
+	                                + transferOrder.get("warehouse_id");
+	                        inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
+	                        String sqlTotal = "select count(1) total from transfer_order_item_detail where depart_id = "
+	                                + deliveryId + " and order_id = " + transferOrder.get("id");
+	                        Record rec = Db.findFirst(sqlTotal);
+	                        Long amount = rec.getLong("total");
+	                        if(amount == 0){
+	                        	amount = Math.round(transferOrderItem.getDouble("amount"));
+	                        }
+	                        if (inventoryItem != null) {
+	                            inventoryItem = new InventoryItem();
+	                            inventoryItem.set("party_id", transferOrder.get("customer_id"));
+	                            inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
+	                            inventoryItem.set("product_id", transferOrderItem.get("product_id"));
+	                            inventoryItem.set("total_quantity", amount);
+	                            inventoryItem.save();
+	                        } else {
+	                            inventoryItem.set("total_quantity",
+	                                    Double.parseDouble(inventoryItem.get("total_quantity").toString()) - amount);
+	                            inventoryItem.update();
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	    }
+	}*/
+	
     // 入库确认
     public void warehousingConfirm() {
         Long order_id = Long.parseLong(getPara("order_id"));
