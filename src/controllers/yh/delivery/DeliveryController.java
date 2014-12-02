@@ -618,7 +618,7 @@ public class DeliveryController extends Controller {
 		String sql="";
 		if (deliveryOrderNo == null && customerName == null
 				&& orderStatue == null && warehouse == null&&code==null) {
-			sql= "select  t1.serial_no,t1.id as tid,t2.*,w.warehouse_name,c.abbr,c2.address as Naddress from transfer_order_item_detail t1 "
+			sql= "select  t1.serial_no,t1.item_no,t1.id as tid,t2.*,w.warehouse_name,c.abbr,c2.address as Naddress from transfer_order_item_detail t1 "
 					+ "left join transfer_order t2 on t1.order_id=t2.id "
 					+ "left join warehouse w on t2.warehouse_id = w.id "
 					+ "left join party p on t2.customer_id = p.id "
@@ -629,7 +629,7 @@ public class DeliveryController extends Controller {
 					+ sLimit;
 			
 		} else {
-			 sql ="select  t1.serial_no, t1.id as tid, t2.*,w.warehouse_name,c.abbr from transfer_order_item_detail t1 "
+			 sql ="select  t1.serial_no,t1.item_no, t1.id as tid, t2.*,w.warehouse_name,c.abbr from transfer_order_item_detail t1 "
 					+ "left join transfer_order t2 on t1.order_id=t2.id "
 					+ "left join warehouse w on t2.warehouse_id = w.id "
 					+ "left join party p on t2.customer_id = p.id "

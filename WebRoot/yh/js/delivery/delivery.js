@@ -263,6 +263,7 @@ $(document).ready(function() {
 							      
 							    }
 			            	},
+			            {"mDataProp":"ITEM_NO"},
 			            {"mDataProp":null,
 			            		"sWidth": "10%", 
 								"fnRender": function(obj) {
