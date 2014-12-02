@@ -883,7 +883,8 @@ public class DeliveryController extends Controller {
 					.set("pricetype", getPara("chargeType"))
 					.set("from_warehouse_id", getPara("warehouse_id"))
 					.set("cargo_nature", cargoNature)
-					.set("client_requirement", getPara("client_requirement"));
+					.set("client_requirement", getPara("client_requirement"))
+					.set("customer_delivery_no",getPara("customerDelveryNo"));
 
 			if (notifyId == null || notifyId.equals("")) {
 				deliveryOrder.set("notify_party_id", party.get("id"));
@@ -951,7 +952,8 @@ public class DeliveryController extends Controller {
 					.set("Customer_id", getPara("customer_id"))
 					.set("id", deliveryid).set("route_to", getPara("route_to"))
 					.set("priceType", getPara("chargeType"))
-					.set("client_requirement", getPara("client_requirement"));
+					.set("client_requirement", getPara("client_requirement"))
+					.set("customer_delivery_no", getPara("customerDelveryNo"));
 			
 			if(!"".equals(businessStamp) && businessStamp != null)
 				deliveryOrder.set("business_stamp", businessStamp);

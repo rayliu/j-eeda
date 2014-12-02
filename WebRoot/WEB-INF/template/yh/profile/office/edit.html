@@ -182,6 +182,9 @@
                     } 
                 }
               },
+              email:{
+            	  email:true
+              },
               contact_id:{//form 中 name为必填
                   required: true
               }
@@ -190,7 +193,10 @@
             	office_name : {
 	        		required:  "不能为空",
 	        		remote:"名称已存在"
-	        	}
+	        	},
+	        	email:{
+	            	  email:"邮箱格式不正确"
+	              }
 	        },
             highlight: function(element) {
                 $(element).closest('.form-group').removeClass('has-success').addClass('has-error');

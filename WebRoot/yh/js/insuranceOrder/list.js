@@ -53,7 +53,7 @@
 			var departNo_filter = $("#departNo_filter").val();
 			var beginTime = $("#beginTime_filter").val();
 			var endTime = $("#endTime_filter").val();
-			insuranceOrder.fnSettings().sAjaxSource = "/insuranceOrder/pickuplist?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime;
+			insuranceOrder.fnSettings().sAjaxSource = "/insuranceOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime;
 			insuranceOrder.fnDraw();
 		} );
 		

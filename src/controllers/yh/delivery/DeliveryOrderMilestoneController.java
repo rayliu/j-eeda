@@ -514,7 +514,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         // 获取总条数
 
-        String sql = "SELECT count(1) total FROM  delivery_order_fin_item d LEFT JOIN  fin_item f ON d.fin_item_id = f.id WHERE d.order_id = 5  and f.type='应付'";
+        String sql = "SELECT count(1) total FROM  delivery_order_fin_item d LEFT JOIN  fin_item f ON d.fin_item_id = f.id WHERE d.order_id = "+id+"  and f.type='应付'";
         Record rec = Db.findFirst(sql);
         logger.debug("total records:" + rec.getLong("total"));
 
