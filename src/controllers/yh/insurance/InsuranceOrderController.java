@@ -2,7 +2,6 @@ package controllers.yh.insurance;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -269,7 +268,7 @@ public class InsuranceOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select ior.*,'YS2014092200001' transfer_order_no from insurance_order ior order by ior.create_stamp desc " + sLimit;
+        String sql = "select ior.*,(select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id) transfer_order_no from insurance_order ior order by ior.create_stamp desc " + sLimit;
 
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
