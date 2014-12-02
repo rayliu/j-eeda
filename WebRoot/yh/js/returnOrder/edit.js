@@ -22,10 +22,10 @@
 				"sWidth": "80px",
 				"fnRender":function(obj){
 					//判断是否为ATM机
-					if(obj.aData.ITEM_NAME == "ATM"){
+					//if(obj.aData.ITEM_NAME == "ATM"){
 						return obj.aData.SERIAL_NO;
-					}
-					return "";
+					//}
+					//return "";
 				}
 			},
             {

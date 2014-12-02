@@ -1328,14 +1328,58 @@ $(document).ready(function() {
                     }
             }},
             {
+            	"mDataProp":"BUSINESS_MANAGER",
+        		"sWidth": "80px",
+            	"sClass": "business_manager",
+            	"fnRender": function(obj) {
+                    if(obj.aData.BUSINESS_MANAGER !='' && obj.aData.BUSINESS_MANAGER != null){
+                        return "<input type='text' name='business_manager' value='"+obj.aData.BUSINESS_MANAGER +"'>";
+                    }else{
+                    	 return "<input type='text' name='business_manager'>";
+                    }
+            }},
+            {
+            	"mDataProp":"RESPONSIBLE_PERSON",
+        		"sWidth": "80px",
+            	"sClass": "responsible_person",
+            	"fnRender": function(obj) {
+                    if(obj.aData.RESPONSIBLE_PERSON !='' && obj.aData.RESPONSIBLE_PERSON != null){
+                        return "<input type='text' name='responsible_person' value='"+obj.aData.RESPONSIBLE_PERSON +"'>";
+                    }else{
+                    	 return "<input type='text' name='responsible_person'>";
+                    }
+            }},
+            {
+            	"mDataProp":"SERVICE_TELEPHONE",
+        		"sWidth": "80px",
+            	"sClass": "service_telephone",
+            	"fnRender": function(obj) {
+                    if(obj.aData.SERVICE_TELEPHONE !='' && obj.aData.SERVICE_TELEPHONE != null){
+                        return "<input type='text' name='service_telephone' value='"+obj.aData.SERVICE_TELEPHONE +"'>";
+                    }else{
+                    	 return "<input type='text' name='service_telephone'>";
+                    }
+            }},
+            {
+            	"mDataProp":"STATION_NAME",
+        		"sWidth": "80px",
+            	"sClass": "station_name",
+            	"fnRender": function(obj) {
+                    if(obj.aData.STATION_NAME !='' && obj.aData.STATION_NAME != null){
+                        return "<input type='text' name='station_name' value='" + obj.aData.STATION_NAME +"'>";
+                    }else{
+                    	 return "<input type='text' name='station_name'>";
+                    }
+            }},
+            {
             	"mDataProp":"REMARK",
         		"sWidth": "80px",
             	"sClass": "remark",
             	"fnRender": function(obj) {
                     if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-                        return "<input type='text' name='remark' value='"+obj.aData.REMARK+"'>";
+                        return "<input type='text' style='width:360px;' name='remark' value='"+obj.aData.REMARK+"'>";
                     }else{
-                    	 return "<input type='text' name='remark'>";
+                    	 return "<input type='text' style='width:360px;' name='remark'>";
                     }
             }},
             /*,
@@ -1357,12 +1401,14 @@ $(document).ready(function() {
 		var pId = $(this).parent().parent().attr("notify_party_id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$.post('/transferOrderItemDetail/saveTransferOrderItemDetailByField', {detailId: detailId, pId: pId, name: name, value: value}, function(data){
-			if(data.success){
-			}else{
-				alert("修改失败!");
-			}
-    	},'json');
+		if(value != ""){
+			$.post('/transferOrderItemDetail/saveTransferOrderItemDetailByField', {detailId: detailId, pId: pId, name: name, value: value}, function(data){
+				if(data.success){
+				}else{
+					alert("修改失败!");
+				}
+	    	},'json');
+		}
 	});	
 	
     /*detailDataTable.makeEditable({
