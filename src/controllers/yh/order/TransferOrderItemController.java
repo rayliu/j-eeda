@@ -2,7 +2,6 @@ package controllers.yh.order;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -422,7 +421,6 @@ public class TransferOrderItemController extends Controller {
 	                transferOrderItemDetail.set("pieces", "1");
 	                transferOrderItemDetail.set("item_id", item.get("id"));
 	                transferOrderItemDetail.set("order_id", item.get("order_id"));
-	                saveNotifyParty(transferOrderItemDetail);
 	                transferOrderItemDetail.save();
 	            }
 	        } else {
@@ -436,7 +434,6 @@ public class TransferOrderItemController extends Controller {
 	                transferOrderItemDetail.set("pieces", "1");
 	                transferOrderItemDetail.set("item_id", item.get("id"));
 	                transferOrderItemDetail.set("order_id", item.get("order_id"));
-	                saveNotifyParty(transferOrderItemDetail);
 	                transferOrderItemDetail.save();
 	            }
 	        } 
@@ -451,25 +448,6 @@ public class TransferOrderItemController extends Controller {
         		party.delete();
         	}
         }
-    }
-
-    // 保存收货人
-    private void saveNotifyParty(TransferOrderItemDetail transferOrderItemDetail) {
-        String notifyPartyId = transferOrderItemDetail.get("notify_party_id");
-        Party party = null;
-        if (notifyPartyId != null && !notifyPartyId.equals("")) {
-            party = Party.dao.findById(notifyPartyId);
-        } else {
-            party = new Party();
-            party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
-            Contact contact = new Contact();
-            contact.save();
-            party.set("contact_id", contact.getLong("id"));
-            party.set("create_date", new Date());
-            party.set("creator", currentUser.getPrincipal());
-            party.save();
-        }
-        transferOrderItemDetail.set("notify_party_id", party.get("id"));
     }
 
     // 获取TransferOrderItem对象

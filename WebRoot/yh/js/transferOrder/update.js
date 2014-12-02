@@ -1258,19 +1258,30 @@ $(document).ready(function() {
             	"sClass": "serial_no",
             	"fnRender": function(obj) {
                     if(obj.aData.SERIAL_NO!='' && obj.aData.SERIAL_NO != null){
-                        return "<input type='text' name='serial_no' value='"+obj.aData.SERIAL_NO+"'>";
+                        return "<input type='text' style='width:120px;' name='serial_no' value='"+obj.aData.SERIAL_NO+"'>";
                     }else{
-                    	 return "<input type='text' name='serial_no'>";
+                    	 return "<input type='text' style='width:120px;' name='serial_no'>";
+                    }
+            }},
+            {
+            	"mDataProp":"SALES_ORDER_NO",
+        		"sWidth": "80px",
+            	"sClass": "sales_order_no",
+            	"fnRender": function(obj) {
+                    if(obj.aData.SALES_ORDER_NO!='' && obj.aData.SALES_ORDER_NO != null){
+                        return "<input type='text' style='width:120px;' name='sales_order_no' value='"+obj.aData.SALES_ORDER_NO+"'>";
+                    }else{
+                    	 return "<input type='text' style='width:120px;' name='sales_order_no'>";
                     }
             }},
             {
             	"mDataProp":"ITEM_NO",
-        		"sWidth": "80px",
+        		"sWidth": "150px",
             	"sClass": "item_no"            		
             },  
 		    {
 		    	"mDataProp":"ITEM_NAME",
-		    	"sWidth": "80px",
+		    	"sWidth": "180px",
 		    	"sClass": "item_name"            		
 		    },       	
             {
@@ -1289,9 +1300,9 @@ $(document).ready(function() {
             	"sClass": "pieces",
             	"fnRender": function(obj) {
                     if(obj.aData.PIECES!='' && obj.aData.PIECES != null){
-                        return "<input type='text' name='pieces' value='"+obj.aData.PIECES+"'>";
+                        return "<input type='text' style='width:60px;' name='pieces' value='"+obj.aData.PIECES+"'>";
                     }else{
-                    	 return "<input type='text' name='pieces'>";
+                    	 return "<input type='text' style='width:60px;' name='pieces'>";
                     }
             }},
             {

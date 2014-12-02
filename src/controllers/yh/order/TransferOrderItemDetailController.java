@@ -2,7 +2,6 @@ package controllers.yh.order;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +20,6 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-
-import controllers.yh.LoginUserController;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -106,7 +103,6 @@ public class TransferOrderItemDetailController extends Controller {
 
     // 保存单品
     public void saveTransferOrderItemDetail() {
-    	Party party = null;
         TransferOrderItemDetail item = null;
         String id = getPara("transfer_order_item_detail_id");
         String itemId = getPara("transfer_order_item_id");
@@ -119,16 +115,6 @@ public class TransferOrderItemDetailController extends Controller {
             item.set("volume", getPara("detail_volume").equals("") ? 0 : getPara("detail_volume"));
             item.set("weight", getPara("detail_weight").equals("") ? 0 : getPara("detail_weight"));
             item.set("remark", getPara("detail_remark"));
-            String notifyPartyId = getPara("notify_party_id");
-            if("null".equals(notifyPartyId)){
-            	notifyPartyId = null;
-            }
-            if(notifyPartyId == null || "".equals(notifyPartyId)){
-            	party = saveContact();
-            }else{
-            	party = updateContact(notifyPartyId);
-            }
-            item.set("notify_party_id", party.get("id"));
             item.set("order_id", getPara("transfer_order_id"));
             item.set("item_id", getPara("transfer_order_item_id"));
             item.update();
@@ -140,66 +126,13 @@ public class TransferOrderItemDetailController extends Controller {
             item.set("volume", getPara("detail_volume").equals("") ? 0 : getPara("detail_volume"));
             item.set("weight", getPara("detail_weight").equals("") ? 0 : getPara("detail_weight"));
             item.set("remark", getPara("detail_remark"));
-            String notifyPartyId = getPara("notify_party_id");
-            if("null".equals(notifyPartyId)){
-            	notifyPartyId = null;
-            }
-            if(notifyPartyId == null || "".equals(notifyPartyId)){
-            	party = saveContact();
-            }else{
-            	party = updateContact(notifyPartyId);
-            }
-            item.set("notify_party_id", party.get("id"));
             item.set("order_id", getPara("transfer_order_id"));
             item.set("item_id", getPara("transfer_order_item_id"));
             item.save();
         }
         renderJson(item);
     }
-
-    // 保存收货人
-    public Party saveContact() {
-        Party party = new Party();
-        Contact contact = setContact();
-        party.set("contact_id", contact.getLong("id"));
-        party.set("create_date", new Date());
-        party.set("creator", currentUser.getPrincipal());
-        party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
-        party.save();
-        return party;
-    }
-
-    // 更新收货人party
-    public Party updateContact(String notifyPartyId) {
-        Party party = Party.dao.findById(notifyPartyId);
-        Contact contact = editContact(party);
-        party.set("create_date", new Date());
-        party.set("creator", currentUser.getPrincipal());
-        party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
-        party.update();
-        return party;
-    }
-
-    // 保存联系人
-    private Contact setContact() {
-        Contact contact = new Contact();
-        contact.set("contact_person", getPara("detail_contact_person"));
-        contact.set("phone", getPara("detail_phone"));
-        contact.set("address", getPara("detail_address"));
-        contact.save();
-        return contact;
-    }
-
-    // 更新联系人
-    private Contact editContact(Party party) {
-        Contact contact = Contact.dao.findById(party.get("contact_id"));
-        contact.set("contact_person", getPara("detail_contact_person"));
-        contact.set("phone", getPara("detail_phone"));
-        contact.set("address", getPara("detail_address"));
-        contact.update();
-        return contact;
-    }
-
+    
     // 获取getTransferOrderItemDetail对象
     public void getTransferOrderItemDetail() {
         Map<String, Object> map = new HashMap<String, Object>();

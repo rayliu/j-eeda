@@ -128,7 +128,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists transfer_order_item_detail(id bigint auto_increment primary key,order_id bigint,item_id bigint,item_no varchar(255),"
                     + "serial_no varchar(255),item_name varchar(255),status varchar(255),item_desc varchar(255),unit varchar(255),volume double,weight double,notify_party_id bigint,"
                     + "remark varchar(5120), is_delivered boolean default false, is_damage boolean,estimate_damage_amount double,damage_revenue double,damage_payment double,pieces int,damage_remark varchar(255),"
-                    + "notify_party_company varchar(200), notify_party_name varchar(50), notify_party_phone varchar(20),business_manager varchar(50),station_name varchar(200),responsible_person varchar(50),service_telephone varchar(20)," 
+                    + "notify_party_company varchar(200), notify_party_name varchar(50), notify_party_phone varchar(20),business_manager varchar(50),station_name varchar(200),responsible_person varchar(50),service_telephone varchar(20),sales_order_no varchar(20)," 
                     + "pickup_id bigint,foreign key(pickup_id) references depart_order(id),depart_id bigint,foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id),"
                     + "foreign key(item_id) references transfer_order_item(id),foreign key(notify_party_id) references party(id),delivery_id bigint,foreign key(delivery_id) references delivery_order(id));");
 
