@@ -153,7 +153,7 @@ $(document).ready(function() {
 						alert("请输入目的地区（县）");
 						return false;
 					}*/
-		            
+					$("#saveBtn").attr("disabled", true);
 		            // 异步向后台提交数据
 		            $.post('/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
 		                console.log(data);
@@ -166,7 +166,7 @@ $(document).ready(function() {
 	                    }else{
 	                        alert('数据保存失败。');
 	                    }
-	                    $("#saveBtn").attr("disabled", false);
+	                    
 		             },'json');
 		            
 			 };
@@ -175,7 +175,6 @@ $(document).ready(function() {
 		        // 阻止a 的默认响应行为，不需要跳转
 				// var itemId = $("#item_id").val();
 				e.preventDefault();
-				$("#saveBtn").attr("disabled", true);
 				saveDelivery();
 	        });
 			var dab2= $('#eeda-table2').dataTable({

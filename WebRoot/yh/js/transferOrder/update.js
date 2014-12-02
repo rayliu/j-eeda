@@ -1747,8 +1747,7 @@ $(document).ready(function() {
 			 // 获取所有仓库
 			 findWarehouseForOffice($(this).val());
 		 }else{
-			 var gateInSelect = $("#gateInSelect");
-			 gateInSelect.empty();
+			 $("#gateInSelect").empty();
 		 }
 	 });
 	 
@@ -1765,6 +1764,8 @@ $(document).ready(function() {
 						 gateInSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
 					 }
 				 }
+			 }else{
+				 $("#gateInSelect").empty();
 			 }
 		 },'json');	
 	 };

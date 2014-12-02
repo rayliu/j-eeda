@@ -23,6 +23,7 @@ import models.yh.delivery.DeliveryOrder;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
@@ -35,6 +36,7 @@ import controllers.yh.returnOrder.ReturnOrderController;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
+@RequiresAuthentication
 public class DeliveryOrderMilestoneController extends Controller {
 
     private Logger logger = Logger.getLogger(DeliveryOrderMilestoneController.class);

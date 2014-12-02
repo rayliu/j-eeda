@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.Location;
+import models.Office;
 import models.TransferOrder;
 import models.Warehouse;
 import models.yh.profile.Contact;
@@ -251,4 +252,17 @@ public class WarehouseController extends Controller{
 		contact.set("postal_code", getPara("postal_code"));
 		contact.set("location", getPara("location"));
 	}*/
+	
+	public void findDocaltion(){
+		String officeId = getPara("officeId");
+		Office office = Office.dao.findById(officeId);
+		String code = null;
+		if(office.get("location") != null && !"".equals(office.get("location"))){
+			code = office.get("location");
+		}
+		logger.debug("所在地："+code);
+        renderJson(code);
+	}
+	
+	
 }
