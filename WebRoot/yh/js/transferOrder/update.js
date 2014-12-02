@@ -1,6 +1,72 @@
 ﻿
 $(document).ready(function() {
 	$('#menu_transfer').addClass('active').find('ul').addClass('in');
+
+	$("input[name='chargeType']").click(function(){
+    	 //等于零担的时候
+        if($('input[name="chargeType"]:checked').val()==='perCargo'){
+            $('#ltl_price_type').show();
+            $("#carInfomation").hide();
+            $("#car_type_div").hide();
+        }else if($('input[name="chargeType"]:checked').val()==='perCar'){
+            $("#carInfomation").show();
+            //显示车辆信息
+            $(this).prop('checked', true);
+            $("#car_type_div").show();
+            $('#ltl_price_type').hide();
+        }else{
+            $('#ltl_price_type').hide();
+            $("#car_type_div").hide();
+            //计费方式为计件的时候
+            if($('input[name="chargeType"]:checked').val()==='perUnit'){
+            	$("#carInfomation").hide();
+            }else{
+            	$("#carInfomation").show();
+            }
+        }
+     });
+
+	var chargeType = $("#chargeTypeRadio").val();
+	
+	$("input[name='chargeType']").each(function(){
+		if(chargeType == $(this).val()){
+			$(this).prop('checked', true);
+		}
+	});
+
+	//客户计费方式回显
+	var transferOrderId = $("#order_id").val();
+	if(transferOrderId != '' && transferOrderId != null){
+		var customerChargeType = $("#customerChargeType").val();
+
+		$("input[name='chargeType']").each(function(){
+			if(chargeType == $(this).val()){
+				//零担
+				if(chargeType == "perCargo"){
+					//隐藏车辆信息
+					$("#carInfomation").hide();					
+					$(this).prop('checked', true);
+					$("#ltl_price_type").show();
+					var hibLtlUnitType = $("#hibLtlUnitType").val();
+					$("input[value='"+hibLtlUnitType+"']").prop('checked', true);
+				}else if(chargeType == "perCar"){
+                    //显示车辆信息                   
+                    $(this).prop('checked', true);
+                    $("#car_type_div").show();
+                    var departOrderCarType = $("#hiddenOrderCarType").val();
+                    $("#car_type").val(departOrderCarType);
+                }else{
+    				if(chargeType=="perUnit"){
+    					$("#carInfomation").hide();
+    				}else{
+    					$("#carInfomation").show();
+    				}
+    				$(this).prop('checked', true);
+    			}
+			}
+		});
+	}
+
 	//设置一个变量值，用来保存当前的ID
 	
 	$.editable.addInputType('autocompleteType', {
@@ -196,13 +262,7 @@ $(document).ready(function() {
         $('#customerList').hide();
     }); 
 
-	var chargeType = $("#chargeTypeRadio").val();
-	// 回显计费方式
-	$("input[name='chargeType']").each(function(){
-		if(chargeType == $(this).val()){
-			$(this).prop('checked', true);
-		}
-	});
+	
 	
 	//获取供应商的list，选中信息在下方展示其他信息
 	$('#spMessage').on('keyup click', function(){

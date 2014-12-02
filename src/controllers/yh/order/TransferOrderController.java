@@ -444,6 +444,8 @@ public class TransferOrderController extends Controller {
 					TransferOrder.ASSIGN_STATUS_NEW);
 			transferOrder.set("payment", getPara("payment"));
 			transferOrder.set("charge_type", getPara("chargeType"));
+			transferOrder.set("car_type", getPara("car_type"));
+			transferOrder.set("ltl_unit_type", getPara("ltlUnitType"));
 			transferOrder.set("charge_type2", getPara("chargeType2"));
 			transferOrder.set("customer_order_no", getPara("customerOrderNo")); 
 			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
@@ -510,6 +512,8 @@ public class TransferOrderController extends Controller {
 					TransferOrder.ASSIGN_STATUS_NEW);
 			transferOrder.set("payment", getPara("payment"));
 			transferOrder.set("charge_type", getPara("chargeType"));
+			transferOrder.set("car_type", getPara("car_type"));
+			transferOrder.set("ltl_unit_type", getPara("ltlUnitType"));
 			transferOrder.set("charge_type2", getPara("chargeType2"));
 			transferOrder.set("customer_order_no", getPara("customerOrderNo"));
 			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
