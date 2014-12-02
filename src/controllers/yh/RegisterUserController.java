@@ -37,8 +37,8 @@ public class RegisterUserController  extends Controller{
         	//保存注册公司
         	Record office = new Record();
         	office.set("OFFICE_NAME", officeName);
-        	office.set("contact_phone_name",phone_name);
-        	office.set("contact_phone", phone);
+        	office.set("office_person",phone_name);
+        	office.set("phone", phone);
         	office.set("email", email);
         	office.set("type", "总公司");
         	

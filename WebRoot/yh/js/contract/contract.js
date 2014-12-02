@@ -771,22 +771,25 @@ $(document).ready(function() {
 	            	return;
 	            //异步向后台提交数据
 	            $.post('/customerContract/save', $("#customerForm").serialize(), function(contractId){
-	                    
+	                    console.log(contractId);
 	                    if(contractId>0){
 	                        //alert("添加合同成功！");
 	                    	//$("#style").show();
 	                    	//已经有一个重复的contractId 在前面了
 	                    	$('#routeContractId').val(contractId);
+	                    	//$("#contractId").val(contractId);
+	                    	
 	                    	dataTable.fnSettings().sAjaxSource="/spContract/routeEdit?routId="+contractId;
 	                    	dataTable2.fnSettings().sAjaxSource="/spContract/routeEdit2?routId="+contractId;
 	                    	dataTable3.fnSettings().sAjaxSource="/spContract/routeEdit3?routId="+contractId;
 	                    	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	                    	$("#contractId").val(contractId);
 	                    }else{
 	                        alert('数据保存失败。');
 	                    }
-	                    
+	                    //$("#contractId").val(contractId);
 	                },'json');
-	            $("#saveContract").attr("disabled",true);
+	           
 	            
 	        });
 		 
