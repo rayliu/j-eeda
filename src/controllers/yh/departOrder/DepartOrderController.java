@@ -1127,7 +1127,7 @@ public class DepartOrderController extends Controller {
                         +"' and to_id = '" + departOrder.get("route_to")
                         + "' and priceType='"+chargeType+"'");
         if (contractFinItem != null) {
-            genFinItem(users, departOrder, null, contractFinItem);
+            genFinItem(users, departOrder, null, contractFinItem, chargeType);
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -1137,7 +1137,7 @@ public class DepartOrderController extends Controller {
                             +"' and to_id = '" + departOrder.get("route_to")
                             + "' and priceType='"+chargeType+"'");
             if (contractFinItem != null) {
-                genFinItem(users, departOrder, null, contractFinItem);
+                genFinItem(users, departOrder, null, contractFinItem, chargeType);
             }else{
                 contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -1145,14 +1145,14 @@ public class DepartOrderController extends Controller {
                                 +"' and to_id = '" + departOrder.get("route_to")
                                 + "' and priceType='"+chargeType+"'");
                 if (contractFinItem != null) {
-                    genFinItem(users, departOrder, null, contractFinItem);
+                    genFinItem(users, departOrder, null, contractFinItem, chargeType);
                 }else{
                     contractFinItem = Db
                             .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
                                     +" and to_id = '" + departOrder.get("route_to")
                                     + "' and priceType='"+chargeType+"'");
                     if (contractFinItem != null) {
-                        genFinItem(users, departOrder, null, contractFinItem);
+                        genFinItem(users, departOrder, null, contractFinItem, chargeType);
                     }
                 }
             }
@@ -1170,7 +1170,7 @@ public class DepartOrderController extends Controller {
                             +"' and to_id = '" + tOrderItemRecord.get("route_to")
                             + "' and priceType='"+chargeType+"'");
             if (contractFinItem != null) {
-                genFinItem(users, departOrder, tOrderItemRecord, contractFinItem);
+                genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
             }else{
                 contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -1178,7 +1178,7 @@ public class DepartOrderController extends Controller {
                                 +" and to_id = '" + tOrderItemRecord.get("route_to")
                                 + "' and priceType='"+chargeType+"'");
                 if (contractFinItem != null) {
-                    genFinItem(users, departOrder, tOrderItemRecord, contractFinItem);
+                    genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
                 }else{
                     contractFinItem = Db
                             .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -1186,14 +1186,14 @@ public class DepartOrderController extends Controller {
                                     +"' and to_id = '" + tOrderItemRecord.get("route_to")
                                     + "' and priceType='"+chargeType+"'");
                     if (contractFinItem != null) {
-                        genFinItem(users, departOrder, tOrderItemRecord, contractFinItem);
+                        genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
                     }else{
                         contractFinItem = Db
                                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
                                         +" and to_id = '" + tOrderItemRecord.get("route_to")
                                         + "' and priceType='"+chargeType+"'");
                         if (contractFinItem != null) {
-                            genFinItem(users, departOrder, tOrderItemRecord, contractFinItem);
+                            genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
                         }
                     }
                 }
@@ -1201,18 +1201,18 @@ public class DepartOrderController extends Controller {
         }
     }
 
-    private void genFinItem( List<UserLogin> users, DepartOrder departOrder, Record tOrderItemRecord,
-            Record contractFinItem) {
+    private void genFinItem( List<UserLogin> users, DepartOrder departOrder, Record tOrderItemRecord, Record contractFinItem, String chargeType) {
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
         DepartOrderFinItem departOrderFinItem = new DepartOrderFinItem();
         departOrderFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
-        if(tOrderItemRecord==null){
-            departOrderFinItem.set("amount", contractFinItem.getDouble("amount") );
-        }else{
-            departOrderFinItem.set("amount",
-                contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
-        }
+    	if("perCar".equals(chargeType)){
+    		departOrderFinItem.set("amount", contractFinItem.getDouble("amount"));        		
+    	}else{
+    		if(tOrderItemRecord != null){
+    			departOrderFinItem.set("amount", contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
+    		}
+    	}
         departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
         departOrderFinItem.set("status", "未完成");
         departOrderFinItem.set("creator", users.get(0).get("id"));
