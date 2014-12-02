@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import models.Fin_item;
 import models.Location;
+import models.Party;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
@@ -61,12 +62,33 @@ public class ContractController extends Controller {
     }
 
     public void companyNameList() {
-        String type = getPara("type");
         String input = getPara("input");
-        String sql = "select c1.company_name as company  from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type = '"
-                + type + "' and c1.company_name like '%"+input+"%'";
-        List<Record> companyNameList = Db.find(sql);
-        renderJson(companyNameList);
+        List<Record> locationList = Collections.EMPTY_LIST;
+		if (input.trim().length() > 0) {
+			locationList = Db
+					.find("select *,p.id as pid, p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"
+							+ Party.PARTY_TYPE_SERVICE_PROVIDER
+							+ "' and (company_name like '%"
+							+ input
+							+ "%' or contact_person like '%"
+							+ input
+							+ "%' or email like '%"
+							+ input
+							+ "%' or mobile like '%"
+							+ input
+							+ "%' or phone like '%"
+							+ input
+							+ "%' or address like '%"
+							+ input
+							+ "%' or postal_code like '%"
+							+ input
+							+ "%') limit 0,10");
+		} else {
+			locationList = Db
+					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
+							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "'");
+		}
+		renderJson(locationList);
     }
 
     // 客户合同列表
