@@ -364,7 +364,7 @@ public class DeliveryController extends Controller {
 			notifyPartyContact = (Contact) Contact.dao
 					.findFirst(
 							"select c.abbr as company,c.phone,c.contact_person,"
-							+ "c.address,c.mobile,"
+							+ "c.address,c.mobile,c.company_name, "
 							+ "p.id as pid,c.id as contactId from party p, contact c where p.contact_id=c.id and p.id =?",
 							tOrder.get("notify_party_id"));
 		}
@@ -485,7 +485,8 @@ public class DeliveryController extends Controller {
 		setAttr("localArr3", list3);
 		setAttr("customer", party);
 
-		String sql="select t.receiving_unit as company,c1.*  "
+		String sql="select t.receiving_unit as company,c1.* ,td.notify_party_phone as phone,"
+				+ " td.notify_party_name as contact_person,td.notify_party_company as address "
 				+ "from transfer_order_item_detail td "
 				+ "left join transfer_order t on t.id =td.order_id "
 				+ "left join contact c on t.notify_party_id= c.id "
