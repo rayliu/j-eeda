@@ -365,6 +365,7 @@ $(document).ready(function() {
                  console.log(data);
                  if(data.success){
                 	 locationToId1 = [];
+                	 dataTable.fnSettings().oFeatures.bServerSide = true; 
                 	 dataTable.fnDraw();
                  }else{
                      alert('取消失败');
@@ -379,6 +380,7 @@ $(document).ready(function() {
                  console.log(data);
                  if(data.success){
                 	 locationToId2 = [];
+                	 dataTable2.fnSettings().oFeatures.bServerSide = true; 
                 	 dataTable2.fnDraw();
                  }else{
                      alert('取消失败');
@@ -393,6 +395,7 @@ $(document).ready(function() {
                  console.log(data);
                  if(data.success){
                 	 locationToId3 = [];
+                	 dataTable3.fnSettings().oFeatures.bServerSide = true; 
                 	 dataTable3.fnDraw();
                  }else{
                      alert('取消失败');
@@ -554,17 +557,20 @@ $(document).ready(function() {
                 	$('#myModal').modal('hide');
                 	$('#reset').click();
                 	locationtoid = [];
+                	datatable.fnSettings().oFeatures.bServerSide = true; 
                 	datatable.fnDraw();
                 	$("#tishi1").text("");
                 	$("#productId").val("");
                 }else{
                     alert('数据保存失败。');
                 }
+                $("#saveRouteBtn").prop("disabled",false);
             },'json');
 		}
         //点击保存的事件，保存干线信息
         //routeItemForm 不需要提交
         $("#saveRouteBtn").click(function(e){
+        	$("#saveRouteBtn").prop("disabled",true);
         	var priceType = $("#routeTabs .active").attr("price-type");
 
         	//新增时目的地id
@@ -575,10 +581,12 @@ $(document).ready(function() {
 			$("#tishi").text("");
 			if(price == "" || price == null){
 				$("#tishi").text("金额不能为空！");
+				$("#saveRouteBtn").prop("disabled",false);
 				return false;
 			}
 			if(isNaN(price)){
 				$("#tishi").text("请输入数字");
+				$("#saveRouteBtn").prop("disabled",false);
 				return false;
 			}
 	    	//阻止a 的默认响应行为，不需要跳转
@@ -614,6 +622,7 @@ $(document).ready(function() {
             }
             if(cmbCityTo == "--请选择城市--"){
             	alert("请选择目的地城市！");
+            	$("#saveRouteBtn").prop("disabled",false);
             	return false;
             }else{
             	saveid.push($("#cmbCityTo").val());
@@ -665,6 +674,7 @@ $(document).ready(function() {
         			var routeItemId = $("#routeItemId").val();
                 	if(routeItemId == "" || routeItemId == null){
                 		alert("货品目的地已存在！");
+                		$("#saveRouteBtn").prop("disabled",false);
                 	}else{
                 		//编辑前目的地
                 		var startid = startTo[startTo.length-1];
@@ -679,22 +689,27 @@ $(document).ready(function() {
                     				tijiao(locationToId1,dataTable);
                     			}else if(priceType=="perCar"){
                     				//判断车型、车辆长度
-                    				if(carType2 == carTypeTo && carLengthTo == carLength2)
+                    				if(carType2 == carTypeTo && carLengthTo == carLength2){
                     					tijiao(locationToId2,dataTable2);
-                    				else
+                    				}else{
                     					alert("货品目的地已存在！");
+                    					$("#saveRouteBtn").prop("disabled",false);
+                    				}
                     			}else if(priceType=="perCargo"){
                     				//判断计费方式、计费区间
-                    				if(ltlUnitType == ltlUnitTypeTo && amountFrom == amountFromTo && amountTo == amountToTo)
+                    				if(ltlUnitType == ltlUnitTypeTo && amountFrom == amountFromTo && amountTo == amountToTo){
                     					tijiao(locationToId3,dataTable3);
-                    				else
+                    				}else{
                     					alert("货品目的地已存在！");
+                    					$("#saveRouteBtn").prop("disabled",false);
+                    				}
                     			}
                 			/*}else{
                 				alert("货品目的地已存在！");
                 			}*/
 	        			}else{
 	        				alert("货品目的地已存在！");
+	        				$("#saveRouteBtn").prop("disabled",false);
 	        			}
                 	}
         		}else{
