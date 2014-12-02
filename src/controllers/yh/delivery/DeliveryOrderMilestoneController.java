@@ -133,24 +133,24 @@ public class DeliveryOrderMilestoneController extends Controller {
     
         Record contractFinItem = Db
                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                        +" and cartype = " + deliverOrder.get("car_type")
+                        +" and carType = '" + deliverOrder.get("car_type") +"' "
                         +" and carlength = " + deliverOrder.get("car_size")
                         +" and from_id = '"+ deliverOrder.get("route_from")
                         +"' and to_id = '"+ deliverOrder.get("route_to")
                         + "' and priceType='"+chargeType+"'");
         
         if (contractFinItem != null) {
-            genFinItem(deliverOrderId, null, contractFinItem);
+            genFinItem(deliverOrderId, null, contractFinItem, chargeType);
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            +" and cartype = " + deliverOrder.get("car_type")
+                            +" and cartype = '" + deliverOrder.get("car_type") +"' "
                             +" and from_id = '"+ deliverOrder.get("route_from")
                             +"' and to_id = '"+ deliverOrder.get("route_to")
                             + "' and priceType='"+chargeType+"'");
             
             if (contractFinItem != null) {
-                genFinItem(deliverOrderId, null, contractFinItem);
+                genFinItem(deliverOrderId, null, contractFinItem, chargeType);
             }else{
                 contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -159,7 +159,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                                 + "' and priceType='"+chargeType+"'");
                 
                 if (contractFinItem != null) {
-                    genFinItem(deliverOrderId, null, contractFinItem);
+                    genFinItem(deliverOrderId, null, contractFinItem, chargeType);
                 }else{
                     contractFinItem = Db
                             .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -167,7 +167,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                                     + "' and priceType='"+chargeType+"'");
                     
                     if (contractFinItem != null) {
-                        genFinItem(deliverOrderId, null, contractFinItem);
+                        genFinItem(deliverOrderId, null, contractFinItem, chargeType);
                     }
                 }
             }
@@ -190,7 +190,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                             + "' and priceType='"+chargeType+"'");
             
             if (contractFinItem != null) {
-                genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem);
+                genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType);
             }else{
                 contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -199,7 +199,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                                 + "' and priceType='"+chargeType+"'");
                 
                 if (contractFinItem != null) {
-                    genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem);
+                    genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType);
                 }else{
                     contractFinItem = Db
                             .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -208,7 +208,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                                     + "' and priceType='"+chargeType+"'");
                     
                     if (contractFinItem != null) {
-                        genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem);
+                        genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType);
                     }else{
                         contractFinItem = Db
                                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -216,7 +216,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                                         +"' and priceType='"+chargeType+"'");
                         
                         if (contractFinItem != null) {
-                            genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem);
+                            genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType);
                         }
                     }
                 }
@@ -224,20 +224,18 @@ public class DeliveryOrderMilestoneController extends Controller {
         }
     }
 
-    private void genFinItem(Long departOrderId, Record tOrderItemRecord,
-            Record contractFinItem) {
+    private void genFinItem(Long departOrderId, Record tOrderItemRecord, Record contractFinItem, String chargeType) {
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
         DeliveryOrderFinItem deliveryFinItem = new DeliveryOrderFinItem();
         deliveryFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
-        
-        if(tOrderItemRecord==null){
-            deliveryFinItem.set("amount", contractFinItem.getDouble("amount") );
-        }else{            
-            Long itemAmount=tOrderItemRecord.getLong("amount");
-            deliveryFinItem.set("amount", contractFinItem.getDouble("amount") * itemAmount);
-        }
-        
+        if("perCar".equals(chargeType)){
+        	deliveryFinItem.set("amount", contractFinItem.getDouble("amount"));        		
+    	}else{
+    		if(tOrderItemRecord != null){
+    			deliveryFinItem.set("amount", contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
+    		}
+    	}
         deliveryFinItem.set("order_id", departOrderId);
         deliveryFinItem.set("status", "未完成");
         deliveryFinItem.set("creator", LoginUserController.getLoginUserId(this));
@@ -245,6 +243,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         deliveryFinItem.set("create_name", deliveryFinItem.CREATE_NAME_SYSTEM);
         deliveryFinItem.save();
     }
+    
     // 扣库存
     private void gateOutProduct(DeliveryOrder deliveryOrder) {
         Long deliveryOrderId=deliveryOrder.getLong("id");

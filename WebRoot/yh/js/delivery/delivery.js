@@ -1084,13 +1084,93 @@ $(document).ready(function() {
 			},'json');
 	    
 
-	 // 回显付款方式
-		$("input[name='chargeType']").each(function(){
-			if($("#chargeTypeRadio").val() == $(this).val()){
-				$(this).attr('checked', true);		
-			}
-		});
 
+	    //计费方式回显
+		var departOrderId = $("#delivery_id").val();
+		if(departOrderId != '' && departOrderId != null){
+			var departOrderChargeType = $("#chargeTypeRadio").val();
+
+			$("input[name='chargeType']").each(function(){
+				if(departOrderChargeType == $(this).val()){
+					//零担
+					if(departOrderChargeType == "perCargo"){
+						//隐藏车辆信息
+						$("#carInfomation").hide();
+						
+						$(this).prop('checked', true);
+						$("#ltl_price_type").show();
+						var hibLtlUnitType = $("#hibLtlUnitType").val();
+						$("input[value='"+hibLtlUnitType+"']").prop('checked', true);
+					}else if(departOrderChargeType == "perCar"){
+	                    //显示车辆信息                   
+	                    $(this).prop('checked', true);
+	                    $("#car_type_div").show();
+	                    var departOrderCarType = $("#hiddenDeliveryOrderCarType").val();
+	                    $("#car_type").val(departOrderCarType);
+	                }else{
+	    				if(departOrderChargeType=="perUnit"){
+	    					$("#carInfomation").hide();
+	    				}else{
+	    					$("#carInfomation").show();
+	    				}
+	    				$(this).prop('checked', true);
+	    			}
+				}
+			});
+		}else{
+			var transferOrderChargeType = $("#transferOrderChargeType").val();
+			$("input[name='chargeType']").each(function(){
+				
+				if(transferOrderChargeType == $(this).val()){
+					//零担
+					if(transferOrderChargeType == "perCargo"){
+						$("#carInfomation").hide();
+						$(this).prop('checked', true);
+						$("#ltl_price_type").show();
+						$("#optionsRadiosIn1").prop('checked', true);
+						//隐藏车辆信息								
+	    			}else if(transferOrderChargeType == "perCar"){
+	                    $("#carInfomation").show();
+	                    //显示车辆信息                   
+	                    $(this).prop('checked', true);
+	                    $("#car_type_div").show();
+	                }else{
+	    				if(transferOrderChargeType=="perUnit"){
+	    					$("#carInfomation").hide();
+	    				}else{
+	    					$("#carInfomation").show();
+	    				}
+	    				
+	    				$(this).prop('checked', true);
+	    			}
+				}
+			});
+		}
+
+	     $("input[name='chargeType']").click(function(){
+	    	 //等于零担的时候
+	        if($('input[name="chargeType"]:checked').val()==='perCargo'){
+	            $('#ltl_price_type').show();
+	            $("#carInfomation").hide();
+	            $("#car_type_div").hide();
+	        }else if($('input[name="chargeType"]:checked').val()==='perCar'){
+	            $("#carInfomation").show();
+	            //显示车辆信息                   
+	            $(this).prop('checked', true);
+	            $("#car_type_div").show();
+	            $('#ltl_price_type').hide();
+	        }else{
+	            $('#ltl_price_type').hide();
+	            $("#car_type_div").hide();
+	            //计费方式为计件的时候
+	            if($('input[name="chargeType"]:checked').val()==='perUnit'){
+	            	$("#carInfomation").hide();
+	            }else{
+	            	$("#carInfomation").show();
+	            }
+	        }
+	     });
+		
 		$("#mbProvinceTo").on('change',function(){
 			$("#notify_address").val("");
 			if($("#mbProvinceTo").find("option:selected").text() =="--请选择省份--"){

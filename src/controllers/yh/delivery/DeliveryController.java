@@ -826,7 +826,8 @@ public class DeliveryController extends Controller {
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_CREATE,PermissionConstant.PERMSSION_DYO_UPDATE},logical=Logical.OR)
 
 	public void deliverySave() {
-		
+        String car_type = getPara("car_type");// 供应商计费类型, 如果是整车，需要知道整车类型
+        String ltlPriceType = getPara("ltlUnitType");//如果是零担，需要知道零担计费类型：按体积，按重量
 		String sql = "select * from delivery_order order by id desc limit 0,1";
 		String orderNo = OrderNoUtil.getOrderNo(sql,"PS");
 		String deliveryid = getPara("delivery_id");
@@ -885,6 +886,7 @@ public class DeliveryController extends Controller {
 					.set("from_warehouse_id", getPara("warehouse_id"))
 					.set("cargo_nature", cargoNature)
 					.set("client_requirement", getPara("client_requirement"))
+					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no",getPara("customerDelveryNo"));
 
 			if (notifyId == null || notifyId.equals("")) {
@@ -954,6 +956,7 @@ public class DeliveryController extends Controller {
 					.set("id", deliveryid).set("route_to", getPara("route_to"))
 					.set("priceType", getPara("chargeType"))
 					.set("client_requirement", getPara("client_requirement"))
+					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no", getPara("customerDelveryNo"));
 			
 			if(!"".equals(businessStamp) && businessStamp != null)

@@ -115,6 +115,7 @@
 		                                   	 <div class="form-group">
                                                     <label><h3>计费方式</h3></label>
                                                     <input id="chargeTypeRadio" type="hidden" value="${deliveryId.priceType!''}"/>
+                                                	<input type="hidden" id="hiddenDeliveryOrderCarType" value="${deliveryId.car_type!''}">
                                                     <label class="radio-inline">
                                                     	<input type="radio" name="chargeType" id="chargeType1" value="perUnit" checked="">计件
                                                     </label>
@@ -125,6 +126,58 @@
 	                                                    <input type="radio" name="chargeType" id="chargeType3" value="perCargo">零担
 	                                                </label> 
                                              </div>
+                                             
+                                             <div style="display: none;" class="form-group" id="car_type_div" >
+                                              <lable>车辆规格(M),载重(T),集装箱(GP)</lable>
+                                              <select class="form-control" id="car_type" name="car_type">
+                                                  <option></option>
+                                                  <option>40GP</option>
+                                                  <option>20GP</option>
+                                                  <option>40T</option>
+                                                  <option>20T</option>
+                                                  <option>10T</option>
+                                                  <option>8T</option>
+                                                  <option>5T</option>
+                                                  <option>3T</option>
+                                                  <option>21M</option>
+                                                  <option>18.5M</option>
+                                                  <option>18.0M</option>
+                                                  <option>17.8M</option>
+                                                  <option>17.5M</option>
+                                                  <option>17.0M</option>
+                                                  <option>16.0M</option>
+                                                  <option>15.0M</option>
+                                                  <option>14.5M</option>
+                                                  <option>13.5M</option>
+                                                  <option>13.0M</option>
+                                                  <option>12.5M</option>
+                                                  <option>9.6M</option>
+                                                  <option>8.6M</option>
+                                                  <option>8.0M</option>
+                                                  <option>7.6M</option>
+                                                  <option>7.2M</option>
+                                                  <option>6.8M</option>
+                                                  <option>6.5M</option>
+                                                  <option>5.3M</option>
+                                                  <option>4.3M</option>
+                                                  <option>4.2M</option>
+                                                  <option>2.6M</option>
+                                              </select>
+                                          </div>
+                                          <div style="display: none;" class="form-group" id="ltl_price_type" >
+                                              <lable>零担计费方式:  </lable>
+                                              <input type="hidden" id="hibLtlUnitType" value="${deliveryId.ltl_price_type!''}">
+                                              <label class="radio-inline">
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn1" value="perCBM" checked>按体积（每立方米）
+                                              </label>
+                                               <label class="radio-inline">
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn3" value="perKg">按重量（每公斤）
+                                              </label>
+                                              <label class="radio-inline">
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn2" value="perTon">按重量（每吨）
+                                              </label>
+                                          </div>
+                                          
                                              <div class="form-group">
 	                                        	<label>配送仓库：</label><lable>${warehouse.WAREHOUSE_NAME!''}</lable>
 	                                        	<input type="hidden" id="warehouse_id" name="warehouse_id" value ="${warehouse.id!''}">
