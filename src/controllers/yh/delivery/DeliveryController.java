@@ -374,7 +374,28 @@ public class DeliveryController extends Controller {
 
 		setAttr("notifyParty", notifyPartyContact);
 		setAttr("spContact", spContact);
-
+		
+		String routeFrom = tOrder.get("route_from");
+		Location locationFrom = null;
+		if (routeFrom != null || !"".equals(routeFrom)) {
+			List<Location> provinces = Location.dao
+					.find("select * from location where pcode ='1'");
+			Location l = Location.dao
+					.findFirst("select * from location where code = (select pcode from location where code = '"
+							+ routeFrom + "')");
+			if (provinces.contains(l)) {
+				locationFrom = Location.dao
+						.findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+								+ routeFrom + "'");
+			} else {
+				locationFrom = Location.dao
+						.findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+								+ routeFrom + "'");
+			}
+			setAttr("locationFrom", locationFrom);
+		}
+		
+		
 		String routeTo = tOrder.get("route_to");
 		Location locationTo = null;
 		if (routeTo != null || !"".equals(routeTo)) {
@@ -486,18 +507,39 @@ public class DeliveryController extends Controller {
 		setAttr("customer", party);
 
 		String sql="select t.receiving_unit as company,c1.* ,td.notify_party_phone as phone,"
-				+ " td.notify_party_name as contact_person,td.notify_party_company as address "
-				+ "from transfer_order_item_detail td "
-				+ "left join transfer_order t on t.id =td.order_id "
-				+ "left join contact c on t.notify_party_id= c.id "
-				+ "left join party p on p.id = td.notify_party_id "
-				+ "left join contact c1 on p.contact_id =c1.id  where td.id in(" + list2 + ")";
+				+ " td.notify_party_name as contact_person,td.notify_party_company as address,t.route_from "
+				+ " from transfer_order_item_detail td "
+				+ " left join transfer_order t on t.id =td.order_id "
+				+ " left join contact c on t.notify_party_id= c.id "
+				+ " left join party p on p.id = td.notify_party_id "
+				+ " left join contact c1 on p.contact_id =c1.id  where td.id in(" + list2 + ")";
 		TransferOrderItemDetail notify = TransferOrderItemDetail.dao
 				.findFirst(sql);
 		// 选取的配送货品的仓库必须一致
 		TransferOrder tOrder = TransferOrder.dao
 				.findFirst("select warehouse_id from transfer_order where id in("
 						+ list + ")");
+		
+		String routeFrom = notify.get("route_from");
+		Location locationFrom = null;
+		if (routeFrom != null || !"".equals(routeFrom)) {
+			List<Location> provinces = Location.dao
+					.find("select * from location where pcode ='1'");
+			Location l = Location.dao
+					.findFirst("select * from location where code = (select pcode from location where code = '"
+							+ routeFrom + "')");
+			if (provinces.contains(l)) {
+				locationFrom = Location.dao
+						.findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+								+ routeFrom + "'");
+			} else {
+				locationFrom = Location.dao
+						.findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+								+ routeFrom + "'");
+			}
+			setAttr("locationFrom", locationFrom);
+		}
+		
 		Warehouse warehouse = Warehouse.dao
 				.findById(tOrder.get("warehouse_id"));
 		setAttr("notifyParty", notify);
@@ -882,6 +924,7 @@ public class DeliveryController extends Controller {
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate).set("status", "新建")
 					.set("route_to", getPara("route_to"))
+					.set("route_from", getPara("route_from"))
 					.set("pricetype", getPara("chargeType"))
 					.set("from_warehouse_id", getPara("warehouse_id"))
 					.set("cargo_nature", cargoNature)
@@ -954,6 +997,7 @@ public class DeliveryController extends Controller {
 					.set("notify_party_id", getPara("notify_id"))
 					.set("Customer_id", getPara("customer_id"))
 					.set("id", deliveryid).set("route_to", getPara("route_to"))
+					.set("route_from", getPara("route_from"))
 					.set("priceType", getPara("chargeType"))
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
