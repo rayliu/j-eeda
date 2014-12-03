@@ -118,15 +118,18 @@ public class InventoryController extends Controller {
     // 库存list
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
     public void stocklist() {
-        String id = getPara();
-        if (id == null) {
+        String customerId = getPara("customerId");
+        String warehouseId = getPara("warehouseId");
+        logger.debug("customerId:"+customerId+",warehouseId:"+warehouseId);
+        logger.debug((customerId == null && warehouseId == null ) || ( "".equals(customerId) && "".equals(warehouseId)));
+        if ((customerId == null && warehouseId == null ) || ( "".equals(customerId) && "".equals(warehouseId))) {
             Map orderMap = new HashMap();
             orderMap.put("sEcho", 0);
             orderMap.put("iTotalRecords", 0);
             orderMap.put("iTotalDisplayRecords", 0);
             orderMap.put("aaData", null);
             renderJson(orderMap);
-            //return;
+            return;
         }
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -135,14 +138,29 @@ public class InventoryController extends Controller {
         }
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from inventory_item where warehouse_id =" + id;
-        Record rec = Db.findFirst(sql + totalWhere);
+        String sqlTotal = "select count(1) total from inventory_item i_t"
+        		+ " left join product p on  p.id =i_t.product_id " + "left join party p2 on i_t.party_id =p2.id "
+                + " left join contact c on p2.contact_id = c.id ";
+        String sql = "select i_t.*,c.company_name,p.* from inventory_item i_t "
+                + " left join product p on  p.id =i_t.product_id " + "left join party p2 on i_t.party_id =p2.id "
+                + " left join contact c on p2.contact_id = c.id ";
+        
+        if(customerId == null || "".equals(customerId)){
+        	sqlTotal = sqlTotal +  " where i_t.warehouse_id =" + warehouseId;
+        	sql = sql + " where i_t.warehouse_id =" + warehouseId ;
+        }else if((warehouseId == null) || "".equals(warehouseId)){
+        	sqlTotal = sqlTotal +  " where p2.id =" + customerId;
+        	sql = sql + " where .p2.id =" + customerId ;
+        }else{
+        	sqlTotal = sqlTotal +  " where i_t.warehouse_id =" + warehouseId + " and p2.id =" + customerId;
+        	sql = sql + " where i_t.warehouse_id =" + warehouseId  + " and p2.id =" + customerId;;
+        }
+        
+        Record rec = Db.findFirst(sqlTotal + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
         // 获取当前页的数据
-        List<Record> orders = Db.find("select i_t.*,c.company_name,p.* from inventory_item i_t "
-                + "left join product p on  p.id =i_t.product_id " + "left join party p2 on i_t.party_id =p2.id "
-                + "left join contact c on p2.contact_id = c.id " + "where i_t.warehouse_id =" + id);
-
+        List<Record> orders = Db.find(sql);
+        
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));

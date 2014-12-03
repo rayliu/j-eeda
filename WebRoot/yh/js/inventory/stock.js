@@ -26,6 +26,8 @@ $(document).ready(function() {
 	
 	//选择仓库 
 	 $('#warehouseSelect').on('keyup click', function(){
+		if($("#warehouseList").val() == "")
+	    	$("#warehouseId").val("");
 		var warehouseName = $(this).val();
 		var officeId = $("#hiddenOfficeId").val();
 		$.get('/gateIn/findWarehouseById',{"warehouseName":warehouseName,"officeId":officeId}, function(data){
@@ -42,13 +44,18 @@ $(document).ready(function() {
 	    	top:$(this).position().top+32+"px" 
 	    }); 
 	    $('#warehouseList').show();
+	    
+	    var customerId = $("#hiddenCustomerId").val();
+		var warehouseId = $("#warehouseId").val();
+	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId;
+		tab.fnDraw();
 	});
 	$('#warehouseSelect').on('blur', function(){
 		$("#warehouseList").hide();
 	});
 	$('#warehouseList').on('blur', function(){
-			$('#warehouseList').hide();
-		});
+		$('#warehouseList').hide();
+	});
 
 	$('#warehouseList').on('mousedown', function(){
 		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
@@ -61,7 +68,12 @@ $(document).ready(function() {
 		$('#warehouseSelect').val($(this).text());
 		$("#warehouseId").val(id);
 		$('#warehouseList').hide();
-		tab.fnSettings().sAjaxSource ="/stock/stocklist/"+id;
+		/*tab.fnSettings().sAjaxSource ="/stock/stocklist/"+id;
+		tab.fnDraw();*/
+		
+		var customerId = $("#hiddenCustomerId").val();
+		
+		tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+id;
 		tab.fnDraw();
 		
 	});
@@ -94,18 +106,77 @@ $(document).ready(function() {
 		$('#officeList').hide();
 	});
 	$('#officeSelect').on('blur', function(){
-		if($("#officeSelect").val() == "")
-	    	$("#hiddenOfficeId").val("");
 		$("#officeList").hide();
 	});
 	$('#officeList').on('blur', function(){
-		if($("#officeSelect").val() == "")
-	    	$("#hiddenOfficeId").val("");
 		$('#officeList').hide();
 	});
 
 	$('#officeList').on('mousedown', function(){
 		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
 	});
+	
+	//获取客户的list，选中信息在下方展示其他信息
+	$('#customerMessage').on('keyup click', function(){
+		if($('#customerMessage').val() == "")
+			$("#hiddenCustomerId").val("");
+		$.get('/transferOrder/searchCustomer', {input:$('#customerMessage').val()}, function(data){
+			console.log(data);
+			var customerList =$("#customerList");
+			customerList.empty();
+			for(var i = 0; i < data.length; i++)
+			{
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name = '';
+				}
+				var contact_person = data[i].CONTACT_PERSON;
+				if(contact_person == null){
+					contact_person = '';
+				}
+				var phone = data[i].PHONE;
+				if(phone == null){
+					phone = '';
+				}
+				customerList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' payment='"+data[i].PAYMENT+"' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
+			}
+		},'json');
+		$("#customerList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        }); 
+        $('#customerList').show();
+        
+        var customerId = $("#hiddenCustomerId").val();
+		var warehouseId = $("#warehouseId").val();
+	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId;
+		tab.fnDraw();
+	});
+
+ 	// 没选中客户，焦点离开，隐藏列表
+	$('#customerMessage').on('blur', function(){
+ 		$('#customerList').hide();
+ 	});
+
+	//当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+	$('#customerList').on('blur', function(){
+ 		$('#customerList').hide();
+ 	});
+
+	$('#customerList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
+	// 选中客户
+	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
+		var message = $(this).text();
+		var customerId = $(this).attr('partyId');
+		var warehouseId = $("#warehouseId").val();
+		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
+		$("#hiddenCustomerId").val($(this).attr('partyId'));
+		$('#customerList').hide();
+		
+		tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId;
+		tab.fnDraw();
+    }); 
 
 });

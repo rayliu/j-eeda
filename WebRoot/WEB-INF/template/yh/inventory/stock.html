@@ -10,20 +10,29 @@
 		<div class="panel-body">
               <!-- 基本信息 -->
               <div class="row">
-                 <div class="col-lg-6">
+              	<div class="col-lg-4">
+                     <div class="form-group">
+                     	<label class="label-margin">客户 </label>
+                     	<input type="hidden" id="hiddenCustomerId" name="hiddenCustomerId" value=""> 
+                      	<input id="customerMessage" class="form-control search-control orderNo_filter" name="customerMessage" placeholder="请输入客户">
+                      	<ul id='customerList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+						</ul>   
+                     </div>
+                 </div> 
+                 <div class="col-lg-4">
                      <div class="form-group">
                      	<label class="label-margin">网点 </label>
                      	<input type="hidden" id="hiddenOfficeId" name="hiddenOfficeId" value=""> 
-                      	<input id="officeSelect" class="form-control search-control sp_filter" name="officeSelect" placeholder="选择网点筛选仓库">
+                      	<input id="officeSelect" class="form-control search-control orderNo_filter" name="officeSelect" placeholder="选择网点筛选仓库">
                       	<ul id='officeList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
 						</ul>   
                      </div>
                  </div> 
-                 <div class="col-lg-6">
+                 <div class="col-lg-4">
                  	<div class="form-group">
                  		<label class="label-margin">仓库</label>
                  		<input type="hidden" id="warehouseId" name="warehouseId" value=""> 
-                 		<input id="warehouseSelect" class="form-control search-control sp_filter" name="warehouseSelect" placeholder="请输入仓库"> 
+                 		<input id="warehouseSelect" class="form-control search-control orderNo_filter" name="warehouseSelect" placeholder="请输入仓库"> 
 						<ul id='warehouseList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
 						</ul>
                      </div>
