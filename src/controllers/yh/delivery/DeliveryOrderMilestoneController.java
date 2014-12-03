@@ -90,8 +90,11 @@ public class DeliveryOrderMilestoneController extends Controller {
         renderJson(map);
         // 扣库存
         gateOutProduct(deliveryOrder);
+        
+        List<Record> transferOrderItemDetailList = Db.
+        										find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
         // 生成应付
-        setPay(deliveryOrder, users, sqlDate);
+        setPay(deliveryOrder, users, sqlDate, transferOrderItemDetailList);
 
     }
 
@@ -100,7 +103,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     // 级别2：计费类别 + 货  品 + 目的地
     // 级别3：计费类别 + 始发地 + 目的地
     // 级别4：计费类别 + 目的地
-    private void setPay(DeliveryOrder deliverOrder, List<UserLogin> users, java.sql.Timestamp sqlDate) {
+    private void setPay(DeliveryOrder deliverOrder, List<UserLogin> users, java.sql.Timestamp sqlDate, List<Record> transferOrderItemDetailList) {
         // 生成应付
         Long spId=deliverOrder.getLong("sp_id");
         if ( spId== null)
@@ -121,7 +124,8 @@ public class DeliveryOrderMilestoneController extends Controller {
             } else if ("perCar".equals(chargeType)) {
                 genFinPerCar(spContract, chargeType, deliverOrder);
             } else if ("perCargo".equals(chargeType)) {
-
+            	//每次都新生成一个helper来处理计算，防止并发问题。
+                DeliveryOrderPaymentHelper.getInstance().genFinPerCargo(users, deliverOrder, transferOrderItemDetailList, spContract, chargeType);
             }
             
             
