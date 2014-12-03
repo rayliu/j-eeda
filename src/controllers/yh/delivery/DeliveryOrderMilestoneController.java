@@ -132,7 +132,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         }
     }
 
-    private void genFinPerCar(Contract spContract, String chargeType, DeliveryOrder deliverOrder) {
+    public void genFinPerCar(Contract spContract, String chargeType, DeliveryOrder deliverOrder) {
         Long deliverOrderId = deliverOrder.getLong("id");
     
         Record contractFinItem = Db
@@ -178,7 +178,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         }
         
     }
-    private void genFinPerUnit(Contract spContract, String chargeType, Long deliverOrderId) {
+    public void genFinPerUnit(Contract spContract, String chargeType, Long deliverOrderId) {
         List<Record> deliveryOrderItemList = Db
                 .find("SELECT count(1) amount, toi.product_id, d_o.route_from, d_o.route_to FROM "+
 					    "delivery_order_item doi LEFT JOIN transfer_order_item_detail toid ON doi.transfer_item_detail_id = toid.id "+
@@ -373,7 +373,9 @@ public class DeliveryOrderMilestoneController extends Controller {
         //ATM
         if("ATM".equals(deliveryOrder.get("cargo_nature"))){
 	        ReturnOrderController roController= new ReturnOrderController();
-	        roController.calculateCharge(deliveryOrder, returnOrder.getLong("id"));
+	        List<Record> transferOrderItemDetailList = Db.
+					find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
+	        roController.calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
         }
         //TODO:  普通货品的先不算
         

@@ -285,6 +285,8 @@ public class ReturnOrderController extends Controller {
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_UPDATE})
 	public void save() {
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 		ReturnOrder returnOrder = ReturnOrder.dao.findById(getPara("id"));
 		Long deliveryId = returnOrder.get("delivery_order_id");
 		String routeTo = getPara("route_to");
@@ -325,7 +327,9 @@ public class ReturnOrderController extends Controller {
 				deleteContractFinItem(deliveryOrder);
 			}
 			// 计算配送单的触发的应收
-			calculateCharge(deliveryOrder, returnOrder.getLong("id"));
+			/*List<Record> transferOrderItemDetailList = Db.
+					find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
+	        calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);*/
 		}
 		returnOrder.set("remark", getPara("remark"));
 		returnOrder.update();
@@ -428,7 +432,7 @@ public class ReturnOrderController extends Controller {
 		renderJson("{\"success\":true}");
 	}
 
-	public void calculateCharge(DeliveryOrder deliveryOrder, Long returnOrderId) {
+	public void calculateCharge(List<UserLogin> users, DeliveryOrder deliveryOrder, Long returnOrderId, List<Record> transferOrderItemDetailList) {
 		// TODO 运输单的计费类型,当一张配送单对应多张运输单时chargeType如何处理?
 		//String chargeType = "perUnit";
 		List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryOrder.get("id"));
@@ -446,86 +450,125 @@ public class ReturnOrderController extends Controller {
 		if (customerContract == null)
 			return;
 
-		// 运输单的始发地, 配送单的目的地
-		// 算最长的路程的应收
-		List<Record> deliveryOrderItemList = Db
-				.find("select count(1) amount, toi.product_id, doi.transfer_order_id, t_o.route_from, d_o.route_to from delivery_order_item doi "
-						+ " left join transfer_order_item_detail toid on doi.transfer_item_detail_id =toid.id "
-						+ " left join transfer_order_item toi on toid.item_id = toi.id "
-						+ " left join delivery_order d_o on doi.delivery_id = d_o.id "
-						+ " left join transfer_order t_o on t_o.id = doi.transfer_order_id "
-						+ " where doi.delivery_id ="
-						+ deliveryOrderId
-						+ " group by  toi.product_id, doi.transfer_order_id, t_o.route_from, d_o.route_to ");
-		for (Record dOrderItemRecord : deliveryOrderItemList) {
-			Record contractFinItem = Db
-					.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
-							+ customerContract.getLong("id")
-							+ " and product_id ="
-							+ dOrderItemRecord.get("product_id")
-							+ " and from_id = '"
-							+ dOrderItemRecord.get("route_from")
-							+ "' and to_id = '"
-							+ dOrderItemRecord.get("route_to")
-							+ "' and priceType='" + chargeType + "'");
-
-			if (contractFinItem != null) {
-				genFinItem(deliveryOrderId, dOrderItemRecord, contractFinItem, returnOrderId);
-			} else {
-				contractFinItem = Db
-						.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
-								+ customerContract.getLong("id")
-								+ " and product_id ="
-								+ dOrderItemRecord.get("product_id")
-								+ " and to_id = '"
-								+ dOrderItemRecord.get("route_to")
-								+ "' and priceType='" + chargeType + "'");
-
-				if (contractFinItem != null) {
-					genFinItem(deliveryOrderId, dOrderItemRecord, contractFinItem, returnOrderId);
-				} else {
-					contractFinItem = Db
-							.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
-									+ customerContract.getLong("id")
-									+ " and from_id = '"
-									+ dOrderItemRecord.get("route_from")
-									+ "' and to_id = '"
-									+ dOrderItemRecord.get("route_to")
-									+ "' and priceType='" + chargeType + "'");
-
-					if (contractFinItem != null) {
-						genFinItem(deliveryOrderId, dOrderItemRecord, contractFinItem, returnOrderId);
-					} else {
-						contractFinItem = Db
-								.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
-										+ customerContract.getLong("id")
-										+ " and to_id = '"
-										+ dOrderItemRecord.get("route_to")
-										+ "' and priceType='"
-										+ chargeType
-										+ "'");
-
-						if (contractFinItem != null) {
-							genFinItem(deliveryOrderId, dOrderItemRecord, contractFinItem, returnOrderId);
-						}
-					}
-				}
-			}
-		}
+		if ("perUnit".equals(chargeType)) {
+            genFinPerUnit(customerContract, chargeType, deliveryOrder.getLong("id"), transferOrder, returnOrderId);
+        } else if ("perCar".equals(chargeType)) {
+        	genFinPerCar(customerContract, chargeType, deliveryOrder, transferOrder, returnOrderId);
+        } else if ("perCargo".equals(chargeType)) {
+        	//每次都新生成一个helper来处理计算，防止并发问题。
+            ReturnOrderPaymentHelper.getInstance().genFinPerCargo(users, deliveryOrder, transferOrderItemDetailList, customerContract, chargeType, returnOrderId, transferOrder);
+        } 
 	}
 
-	private void genFinItem(Long deliveryOrderId, Record tOrderItemRecord, Record contractFinItem, Long returnOrderId) {
+    private void genFinPerCar(Contract spContract, String chargeType, DeliveryOrder deliverOrder, TransferOrder transferOrder, Long returnOrderId) {
+        Long deliverOrderId = deliverOrder.getLong("id");
+    
+        Record contractFinItem = Db
+                .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                        +" and carType = '" + transferOrder.get("car_type") +"' "
+                        +" and carlength = " + deliverOrder.get("car_size")
+                        +" and from_id = '"+ transferOrder.get("route_from")
+                        +"' and to_id = '"+ deliverOrder.get("route_to")
+                        + "' and priceType='"+chargeType+"'");
+        
+        if (contractFinItem != null) {
+            genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId);
+        }else{
+            contractFinItem = Db
+                    .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                            +" and cartype = '" + transferOrder.get("car_type") +"' "
+                            +" and from_id = '"+ transferOrder.get("route_from")
+                            +"' and to_id = '"+ deliverOrder.get("route_to")
+                            + "' and priceType='"+chargeType+"'");
+            
+            if (contractFinItem != null) {
+            	genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId);
+            }else{
+                contractFinItem = Db
+                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                +" and from_id = '"+ transferOrder.get("route_from")
+                                +"' and to_id = '"+ deliverOrder.get("route_to")
+                                + "' and priceType='"+chargeType+"'");
+                
+                if (contractFinItem != null) {
+                	genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId);
+                }else{
+                    contractFinItem = Db
+                            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                    +" and to_id = '"+ deliverOrder.get("route_to")
+                                    + "' and priceType='"+chargeType+"'");
+                    
+                    if (contractFinItem != null) {
+                    	genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId);
+                    }
+                }
+            }
+        }
+        
+    } 
+    
+    private void genFinPerUnit(Contract spContract, String chargeType, Long deliverOrderId, TransferOrder transferOrder, Long returnOrderId) {
+        List<Record> deliveryOrderItemList = Db
+                .find("SELECT count(1) amount, toi.product_id, d_o.route_from, d_o.route_to FROM "+
+					    "delivery_order_item doi LEFT JOIN transfer_order_item_detail toid ON doi.transfer_item_detail_id = toid.id "+
+					        "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "+
+					        "LEFT JOIN delivery_order d_o ON doi.delivery_id = d_o.id "+
+                		"WHERE  doi.delivery_id = "+ deliverOrderId+" group by toi.product_id, d_o.route_from, d_o.route_to" );
+        for (Record dOrderItemRecord : deliveryOrderItemList) {
+            Record contractFinItem = Db
+                    .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                            + " and product_id ="+dOrderItemRecord.get("product_id")
+                            +" and from_id = '"+ transferOrder.get("route_from")
+                            +"' and to_id = '"+ dOrderItemRecord.get("route_to")
+                            + "' and priceType='"+chargeType+"'");
+            
+            if (contractFinItem != null) {
+                genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+            }else{
+                contractFinItem = Db
+                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                + " and product_id ="+dOrderItemRecord.get("product_id")
+                                +" and to_id = '"+ dOrderItemRecord.get("route_to")
+                                + "' and priceType='"+chargeType+"'");
+                
+                if (contractFinItem != null) {
+                	genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+                }else{
+                    contractFinItem = Db
+                            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                    +" and from_id = '"+ transferOrder.get("route_from")
+                                    +"' and to_id = '"+ dOrderItemRecord.get("route_to")
+                                    + "' and priceType='"+chargeType+"'");
+                    
+                    if (contractFinItem != null) {
+                    	genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+                    }else{
+                        contractFinItem = Db
+                                .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                        +" and to_id = '"+ dOrderItemRecord.get("route_to")
+                                        +"' and priceType='"+chargeType+"'");
+                        
+                        if (contractFinItem != null) {
+                        	genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+	private void genFinItem(Long deliveryOrderId, Record tOrderItemRecord, Record contractFinItem, String chargeType, Long returnOrderId) {
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
 		ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
 		returnOrderFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
-		
-		if (tOrderItemRecord == null) {
-			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount"));
-		} else {
-			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount") * tOrderItemRecord.getLong("amount"));
-		}
-		
+		if("perCar".equals(chargeType)){
+			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount"));        		
+    	}else{
+    		if(tOrderItemRecord != null){
+    			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString()));
+    		}
+    	}
 		returnOrderFinItem.set("delivery_order_id", deliveryOrderId);
 		returnOrderFinItem.set("return_order_id", returnOrderId);
 		returnOrderFinItem.set("status", "未完成");

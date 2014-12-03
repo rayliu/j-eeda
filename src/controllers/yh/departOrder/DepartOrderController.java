@@ -1111,8 +1111,7 @@ public class DepartOrderController extends Controller {
             } else if ("perCargo".equals(chargeType)) {
                 //每次都新生成一个helper来处理计算，防止并发问题。
                 DepartOrderPaymentHelper.getInstance().genFinPerCargo(users, departOrder, transferOrderItemList, spContract, chargeType);
-            }
-            
+            }            
         }
     }
 
@@ -1121,7 +1120,6 @@ public class DepartOrderController extends Controller {
         // 根据发车单整车的车型，始发地，目的地，计算合同价
         Record contractFinItem = Db
                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                        //+" and cartype = " + departOrder.get("car_type")
                         +" and carlength = '" + departOrder.get("car_type")//对应发车单的 car_type
                         +"' and from_id = '" + departOrder.get("route_from")
                         +"' and to_id = '" + departOrder.get("route_to")
@@ -1131,7 +1129,6 @@ public class DepartOrderController extends Controller {
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            //+" and cartype = " + departOrder.get("car_type")
                             +" and carlength = '" + departOrder.get("car_type")//对应发车单的 car_type
                             +"' and from_id = '" + departOrder.get("route_from")
                             +"' and to_id = '" + departOrder.get("route_to")
