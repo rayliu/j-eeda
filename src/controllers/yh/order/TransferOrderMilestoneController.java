@@ -9,7 +9,6 @@ import models.DepartOrder;
 import models.DepartTransferOrder;
 import models.ReturnOrder;
 import models.TransferOrder;
-import models.TransferOrderFinItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -296,10 +295,7 @@ public class TransferOrderMilestoneController extends Controller {
             returnOrder.set("transfer_order_id", order_id);
             returnOrder.save();
 
-            // 生成应收
-
-            TransferOrderFinItem tFinItem = new TransferOrderFinItem();
-
+            /*TransferOrderFinItem tFinItem = new TransferOrderFinItem();
             if (transferOrder.get("coustomer_id") != null) {
                 // ATM计件算
                 List<Record> list = Db.find("select * from transfer_order_item where order_id ='"
@@ -345,11 +341,11 @@ public class TransferOrderMilestoneController extends Controller {
                         tFinItem.save();
                     }
                 }
-            }
+            }*/
             
             // 生成应收
 	        ReturnOrderController roController= new ReturnOrderController();
-	        roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"));
+	        roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
         }
         renderJson("{\"success\":true}");
     }
