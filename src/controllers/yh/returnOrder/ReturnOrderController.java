@@ -327,9 +327,9 @@ public class ReturnOrderController extends Controller {
 				deleteContractFinItem(deliveryOrder);
 			}
 			// 计算配送单的触发的应收
-			/*List<Record> transferOrderItemDetailList = Db.
-					find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
-	        calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);*/
+			List<Record> transferOrderItemDetailList = Db.
+					find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", deliveryOrder.get("id"));
+	        calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
 		}
 		returnOrder.set("remark", getPara("remark"));
 		returnOrder.update();
