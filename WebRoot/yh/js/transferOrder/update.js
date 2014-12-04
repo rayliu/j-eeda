@@ -489,6 +489,7 @@ $(document).ready(function() {
 					$("#id").val(transferOrder.ID);
 					if(transferOrder.ID>0){
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
+						$("#showOrderNo").text(transferOrder.ORDER_NO);
 					  	//$("#style").show();
 	
 						if(bool){

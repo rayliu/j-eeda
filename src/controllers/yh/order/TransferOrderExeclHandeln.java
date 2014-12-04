@@ -61,7 +61,6 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     			Record tansferOrder = Db.findFirst("select * from transfer_order where customer_order_no = '" + content.get(j).get("运输单").trim() + "';");
     			if(tansferOrder == null){
     				executeNum.add(j);
-    				System.out.println(j);
     			}
     		}
         	for (int j = 0; j < content.size(); j++) {
