@@ -56,12 +56,15 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/privilege/list",
         "aoColumns": [           
-            { "mDataProp": "MODULE_NAME","sWidth":"15%"},
+            { "mDataProp": null,"sWidth":"15%",
+            	"fnRender":function(obj){
+					return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" name="checkmodel" >本模块全选</div>';
+            }},
 			{ "mDataProp": null,
 				"fnRender":function(obj){
 					var str = "";
 					for(var i=0;i<obj.aData.CHILDRENS.length;i++){
-						str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;"  name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
+						str +='<div class="col-md-6"><input type="checkbox" class="unChecked" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
 					}
 				
 				return str;
@@ -100,6 +103,48 @@ $(document).ready(function() {
         }
        
     });
-
-	
+    $("#allCheck").on('click',function(){
+    	$("input[name='permissionCheck']").each(function(){
+        	$(this).prop('checked',$("#allCheck").prop('checked'));	
+        });
+    	$("input[name='checkmodel']").each(function(){
+        	$(this).prop('checked',$("#allCheck").prop('checked'));	
+        });
+    });
+    $("#eeda-table").on('click','.unChecked',function(){    	
+    	var size=$("input[name='permissionCheck']").length;    
+    	 if($("input[name='permissionCheck']:checked").length != size ){
+    		 $("#allCheck").attr("checked",false);
+    	 }else{
+    		 $("#allCheck").prop('checked',true);
+    		 
+    		 
+    	 }
+    });
+    $("#eeda-table").on('click','.model_checkAll',function(){
+    	if($(this).prop("checked")==true){
+    		$(this).parent().parent().next().find("input[name='permissionCheck']").prop("checked",true);
+    	}else{
+    		$(this).parent().parent().next().find("input[name='permissionCheck']").prop("checked",false);
+    	}
+    	var size=$("input[name='permissionCheck']").length;
+        
+	   	 if($("input[name='permissionCheck']:checked").length != size ){
+	   		 $("#allCheck").attr("checked",false);
+	   	 }else{
+	   		 $("#allCheck").prop('checked',true);
+	   		 
+	   		 
+	   	 }
+    });
+    $("#eeda-table").on('click','.unChecked',function(){
+    	var size = $(this).parent().parent().find("input[name='permissionCheck']").length;
+    	var checkedSize = $(this).parent().parent().find("input[name='permissionCheck']:checked").length
+    	if(checkedSize != size){
+    		$(this).parent().parent().parent().find("input[name='checkmodel']").prop("checked",false);
+    	}else{
+    		$(this).parent().parent().parent().find("input[name='checkmodel']").prop("checked",true);
+    	}
+    	
+    });
 });

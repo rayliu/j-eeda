@@ -124,8 +124,8 @@ public class EedaConfig extends JFinalConfig {
         templateFactory.groupTemplate.registerFunctionPackage("shiro", new ShiroExt());
 
         //没有权限时跳转到login
-        me.setErrorView(401, "/yh/login.html");
-        me.setErrorView(403, "/yh/login.html");
+        me.setErrorView(401, "/yh/login.html");//401 authenticate err
+        me.setErrorView(403, "/yh/noPermission.html");// authorization err
         
         //内部出错跳转到login,这个只是临时解决方案。
         me.setError404View("/yh/login.html");
