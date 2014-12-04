@@ -1120,7 +1120,7 @@ public class DepartOrderController extends Controller {
         // 根据发车单整车的车型，始发地，目的地，计算合同价
         Record contractFinItem = Db
                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                        +" and carlength = '" + departOrder.get("car_type")//对应发车单的 car_type
+                        +" and carType = '" + departOrder.get("car_type")//对应发车单的 car_type
                         +"' and from_id = '" + departOrder.get("route_from")
                         +"' and to_id = '" + departOrder.get("route_to")
                         + "' and priceType='"+chargeType+"'");
@@ -1129,7 +1129,7 @@ public class DepartOrderController extends Controller {
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            +" and carlength = '" + departOrder.get("car_type")//对应发车单的 car_type
+                            +" and carType = '" + departOrder.get("car_type")//对应发车单的 car_type
                             +"' and from_id = '" + departOrder.get("route_from")
                             +"' and to_id = '" + departOrder.get("route_to")
                             + "' and priceType='"+chargeType+"'");

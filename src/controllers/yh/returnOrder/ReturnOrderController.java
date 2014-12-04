@@ -594,7 +594,7 @@ public class ReturnOrderController extends Controller {
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            +" and cartype = '" + transferOrder.get("car_type") +"' "
+                            +" and carType = '" + transferOrder.get("car_type") +"' "
                             +" and from_id = '"+ transferOrder.get("route_from")
                             +"' and to_id = '"+ transferOrder.get("route_to")
                             + "' and priceType='"+chargeType+"'");

@@ -148,7 +148,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            +" and cartype = '" + deliverOrder.get("car_type") +"' "
+                            +" and carType = '" + deliverOrder.get("car_type") +"' "
                             +" and from_id = '"+ deliverOrder.get("route_from")
                             +"' and to_id = '"+ deliverOrder.get("route_to")
                             + "' and priceType='"+chargeType+"'");
