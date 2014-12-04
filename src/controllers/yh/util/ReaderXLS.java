@@ -240,7 +240,7 @@ public class ReaderXLS{
     /*public static void main(String[] args) {
         try {
             // 对读取Excel表格标题测试
-            InputStream is = new FileInputStream("d:\\广电运通 - 副本.xls");
+            InputStream is = new FileInputStream("d:\\广电运通.xls");
             ReaderXLS excelReader = new ReaderXLS();
             String[] title = excelReader.readExcelTitle(is);
             System.out.println("获得Excel表格的标题:");
@@ -249,7 +249,7 @@ public class ReaderXLS{
             }
 
             // 对读取Excel表格内容测试
-            InputStream is2 = new FileInputStream("d:\\广电运通 - 副本.xls");
+            InputStream is2 = new FileInputStream("d:\\广电运通.xls");
             //Map<Integer, String> map = excelReader.readExcelContent(is2);
             List<Map<String,String>> content = excelReader.readExcelContent(is2);
             

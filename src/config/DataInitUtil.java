@@ -652,12 +652,11 @@ public class DataInitUtil {
             stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(3, 5, 3, 100);");*/
            
             //execl标题表
-            String titles = "运输单 产品型号 发货数量 序列号 件数 网点 仓储地点 收货单位 收货人 收货人联系电话 客户名称(简称) 供应商名称(简称) 始发城市 到达城市 计划日期 预计到货日期";
+            String titles = "运输单 货品名称 货品型号 货品属性 发货数量 序列号 件数 销售单号 收货单位 收货人 收货人联系电话 责任人 业务经理 服务站名称 服务站电话 网点 客户名称(简称) 供应商名称(简称) 仓储地点 始发城市 到达城市 计划日期 预计到货日期";
             String[] title = titles.split(" ");
             for (int i = 0; i < title.length; i++) {
             	stmt.executeUpdate("insert into execl_title(execl_type, execl_title) values('transferOrder','"+title[i]+"');");
 			}
-            
             stmt.close();
             // conn.commit();
             conn.close();

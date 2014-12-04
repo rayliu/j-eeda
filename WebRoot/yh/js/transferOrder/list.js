@@ -337,7 +337,6 @@ $(document).ready(function() {
     // 导入运输单
     $("#fileUploadBtn").click(function(){
     	$("#toFileUpload").click();
-        //$('#myModal').modal('show');
     });
     
 	$('#toFileUpload').fileupload({

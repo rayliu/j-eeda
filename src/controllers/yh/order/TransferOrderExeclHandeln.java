@@ -16,8 +16,10 @@ import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 
+import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.mysql.jdbc.log.Log;
 
 import controllers.yh.util.OrderNoUtil;
 public class TransferOrderExeclHandeln extends TransferOrderController{
@@ -48,11 +50,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     		List<UserLogin> users = UserLogin.dao
     				.find("select * from user_login where user_name='" + name + "'");
         	
-        	//SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     		SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");
-    		/*String format = sdf.format(new Date());
-    		String time = format + "00001";
-    		Long newTime = Long.parseLong(time);*/
     		
     		int resultNum = 0;
     		int causeRow = 0;
@@ -63,6 +61,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     			Record tansferOrder = Db.findFirst("select * from transfer_order where customer_order_no = '" + content.get(j).get("运输单").trim() + "';");
     			if(tansferOrder == null){
     				executeNum.add(j);
+    				System.out.println(j);
     			}
     		}
         	for (int j = 0; j < content.size(); j++) {
@@ -92,10 +91,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		        		because = "数据有误";
 		        		//货品属性
 		        		Record product = null;
-		        		if(!"".equals(content.get(j).get("产品型号"))){
-			        		product = Db.findFirst("select * from product where item_no = '"+content.get(j).get("产品型号")+"';");
+		        		if(!"".equals(content.get(j).get("货品型号"))){
+			        		product = Db.findFirst("select * from product where item_no = '"+content.get(j).get("货品型号")+"';");
 			    			if(product == null){
-			    				title = "产品型号";
+			    				title = "货品型号";
 			    				break;
 			    			}
 		        		}
@@ -156,7 +155,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		        		}
 		        		TransferOrder tansferOrder = TransferOrder.dao.findFirst("select * from transfer_order where customer_order_no = '" + customerOrderNo + "';");
 		    			if(tansferOrder != null){
-		    				TransferOrderItem tansferOrderItem= TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = '" + tansferOrder.get("id") +"' and item_no = '" + content.get(j).get("产品型号") + "';");
+		    				TransferOrderItem tansferOrderItem= TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = '" + tansferOrder.get("id") +"' and item_no = '" + product.get("item_no") + "';");
 		    				if(tansferOrderItem != null){
 		    					//本来这里是要修改货品明细表中amount（数量），
 		    					//由于execl中“发货数量”列是货品总数，所以不用修改
@@ -169,7 +168,6 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    						int num = transferOrderItemDetail.getInt("pieces") + Integer.parseInt(content.get(j).get("件数"));
 		    						transferOrderItemDetail.set("pieces", num).update();
 		    					}else{
-		    						
 		    						//创建保存单品货品明细
 		    						TransferOrderItemDetail itemDatail = new TransferOrderItemDetail();
 		    						itemDatail.set("order_id", tansferOrder.get("id"))
@@ -179,11 +177,15 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    						.set("item_name", product.get("item_name"))
 		    						.set("volume", product.get("volume"))
 		    						.set("weight", product.get("weight"))
-		    						//.set("notify_party_id", customer.get("id"))
 		    						.set("pieces", content.get(j).get("件数")) 
 		    						.set("notify_party_company", content.get(j).get("收货单位"))//收货单位
 			    					.set("notify_party_name", content.get(j).get("收货人"))//收货人
 			    					.set("notify_party_phone", content.get(j).get("收货人联系电话"))//收货人电话
+			    					.set("sales_order_no", content.get(j).get("销售单号"))//销售单号
+			    					.set("responsible_person", content.get(j).get("责任人"))//责任人
+			    					.set("business_manager", content.get(j).get("业务经理"))//业务经理
+			    					.set("station_name", content.get(j).get("服务站名称"))//服务站名称
+			    					.set("service_telephone", content.get(j).get("服务站电话"))//服务站电话
 		    						.save();
 		    					}
 		    				}else{
@@ -214,11 +216,15 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					.set("item_name", product.get("item_name"))
 		    					.set("volume", product.get("volume"))
 		    					.set("weight", product.get("weight"))
-		    					//.set("notify_party_id", customer.get("id"))
 		    					.set("pieces", content.get(j).get("件数")) 
 		    					.set("notify_party_company", content.get(j).get("收货单位"))//收货单位
 		    					.set("notify_party_name", content.get(j).get("收货人"))//收货人
 		    					.set("notify_party_phone", content.get(j).get("收货人联系电话"))//收货人电话
+		    					.set("sales_order_no", content.get(j).get("销售单号"))//销售单号
+		    					.set("responsible_person", content.get(j).get("责任人"))//责任人
+		    					.set("business_manager", content.get(j).get("业务经理"))//业务经理
+		    					.set("station_name", content.get(j).get("服务站名称"))//服务站名称
+		    					.set("service_telephone", content.get(j).get("服务站电话"))//服务站电话
 		    					.save();
 		    				}
 		    			}else{
@@ -263,7 +269,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				//网点
 		    				transferOrder.set("office_id", office.get("id"));
 		    				//货品属性
-							if(product.get("item_name").equals("ATM"))
+							if(content.get(j).get("货品属性").equals("ATM"))
 								transferOrder.set("cargo_nature","ATM");
 							else
 								transferOrder.set("cargo_nature","cargo");
@@ -319,6 +325,11 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					.set("notify_party_company", content.get(j).get("收货单位"))//收货单位
 		    					.set("notify_party_name", content.get(j).get("收货人"))//收货人
 		    					.set("notify_party_phone", content.get(j).get("收货人联系电话"))//收货人电话
+		    					.set("sales_order_no", content.get(j).get("销售单号"))//销售单号
+		    					.set("responsible_person", content.get(j).get("责任人"))//责任人
+		    					.set("business_manager", content.get(j).get("业务经理"))//业务经理
+		    					.set("station_name", content.get(j).get("服务站名称"))//服务站名称
+		    					.set("service_telephone", content.get(j).get("服务站电话"))//服务站电话
 		    					.save();
 		    				}
 		    			}

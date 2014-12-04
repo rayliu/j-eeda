@@ -341,6 +341,7 @@
 			{"mDataProp":"NAME",
 			    "fnRender": function(obj) {
 			    	if(obj.aData.CREATE_NAME == 'system'){
+			    		$("#receivableTotal").val(obj.aData.NAME);
 		        		return obj.aData.NAME;
 		        	}else{
 				        if(obj.aData.NAME!='' && obj.aData.NAME != null){

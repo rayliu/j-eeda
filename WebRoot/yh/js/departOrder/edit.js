@@ -1030,10 +1030,15 @@
 		                "sWidth": "60px",  
 		            	"sClass": "remark",              
 		                "fnRender": function(obj) {
-		                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
-		              		"<i class='fa fa-trash-o fa-fw'> </i> "+
-		              		"删除"+
-		              		"</a>";
+		                	if(obj.aData.CREATE_NAME == 'system'){
+				        		return "";
+				        	}else{
+				        		return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
+			              		"<i class='fa fa-trash-o fa-fw'> </i> "+
+			              		"删除"+
+			              		"</a>";
+				        	}
+		                    
 		                }
 		            }      
     	        ]      
