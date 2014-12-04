@@ -919,15 +919,15 @@ public class ReturnOrderController extends Controller {
 						+ "ifnull(p.width, toi.width) width, "
 						+ "ifnull(p.height, toi.height) height, "
 						+ "ifnull(p.weight, toi.weight) weight, "
-						+ "ifnull(p.volume, toi.volume) volume,"
+						+ "toi.volume volume,"
 						+ "ifnull(p.unit, toi.unit) unit, "
+						+ "toi.sum_weight, "
 						+ "toi.remark "
 						+ "from transfer_order_item_detail toid "
 						+ "left join transfer_order_item toi on toid.item_id = toi.id "
 						+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
 						+ "left join product p on toi.product_id = p.id where r.id ="
-						+ returnOrderId + ") toid group by tid" + sLimit;
-						
+						+ returnOrderId + ") toid group by tid" + sLimit;						
 			} else {
 				sql = "select toi.id,"
 						+ " ifnull(p.item_no, toi.item_no) item_no, "
@@ -936,8 +936,9 @@ public class ReturnOrderController extends Controller {
 						+ " ifnull(p.width, toi.width) width, "
 						+ " ifnull(p.height, toi.height) height, "
 						+ " ifnull(p.weight, toi.weight) weight, "
-						+ " ifnull(p.volume, toi.volume) volume,"
+						+ "toi.volume volume,"
 						+ " ifnull(p.unit, toi.unit) unit, "
+						+ " toi.sum_weight, "
 						+ " toi.amount amount, "
 						+ " toi.remark "
 						+ " from transfer_order_item toi "

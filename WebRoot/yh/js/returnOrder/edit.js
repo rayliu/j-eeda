@@ -21,11 +21,11 @@
 				"mDataProp":null,            	
 				"sWidth": "80px",
 				"fnRender":function(obj){
-					//判断是否为ATM机
-					//if(obj.aData.ITEM_NAME == "ATM"){
-						return obj.aData.SERIAL_NO;
-					//}
-					//return "";
+					var str = "";
+            		if(obj.aData.SERIAL_NO != undefined && obj.aData.SERIAL_NO != null && obj.aData.SERIAL_NO != ""){
+            			str = obj.aData.SERIAL_NO;
+            		}
+            		return str;
 				}
 			},
             {
@@ -83,7 +83,11 @@
             	"sWidth": "95px",
             	"sClass": "sumWeight",
             	"fnRender": function(obj) {
-        			return obj.aData.WEIGHT * obj.aData.AMOUNT;
+            		var str = "";
+            		if(obj.aData.SUM_WEIGHT != undefined && obj.aData.SUM_WEIGHT != null && obj.aData.SUM_WEIGHT != ""){
+            			str = obj.aData.SUM_WEIGHT;
+            		}
+            		return str;
                 }
             },
             {
@@ -91,7 +95,7 @@
             	"sWidth": "95px",
             	"sClass": "volume",
             	"fnRender": function(obj) {
-            		return obj.aData.VOLUME * obj.aData.AMOUNT;
+            		return obj.aData.VOLUME;
             	}
             },            
             {"mDataProp":"REMARK"},
