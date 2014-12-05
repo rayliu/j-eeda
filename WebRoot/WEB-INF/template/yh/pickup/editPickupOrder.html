@@ -11,6 +11,7 @@
                     <input type="hidden" id="pickupOrderId" value="${pickupOrder.id!''}">
                     <input type="hidden" id="transferOrderType" value="${transferOrderAttr.order_type!''}">
                     <input type="hidden" id="finishBtnVal" value="${transferOrderMilestone.status!''}">
+                    <input type="hidden" id="transferOrderFinItemId">
                     <input type="hidden" id="warehouseIds">
                 </div>
                 <!-- /.col-lg-12 -->
@@ -531,6 +532,7 @@
 		               		<button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
 		               		<button id="finishBtn" disabled="disabled" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">已完成</button>
 		               		<a class="btn btn-default" href="/pickupOrder">返回</a>
+		               		<p>应收应付: 提货方式不是源鸿自提,并且需要先点击保存按钮</p>
                         </div>                       
                     </div>
                     <!-- /.panel -->

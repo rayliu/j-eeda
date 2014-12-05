@@ -1699,23 +1699,16 @@ public class PickupOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_ADD_COST})
     public void updatePickupOrderFinItem(){
     	// 由于应收中只存在一条总金额,所以简化处理
-    	String orderId = getPara("orderId");
     	String paymentId = getPara("paymentId");
     	String name = getPara("name");
     	String value = getPara("value");
-    	TransferOrderFinItem transferOrderFinItem = TransferOrderFinItem.dao.findFirst("select * from transfer_order_fin_item where order_id = ?", orderId);
+    	PickupOrderFinItem pickupOrderFinItem = PickupOrderFinItem.dao.findById(paymentId);
     	if("amount".equals(name) && "".equals(value)){
     		value = "0";
     	}
-    	if(transferOrderFinItem != null){
-    		transferOrderFinItem.set(name, value);
-    		transferOrderFinItem.update();
-    	}else{
-    		transferOrderFinItem = new TransferOrderFinItem();
-    		transferOrderFinItem.set(name, value);
-    		transferOrderFinItem.set("order_id", orderId);
-    		transferOrderFinItem.set("status", "未结算");
-    		transferOrderFinItem.save();
+    	if(pickupOrderFinItem != null){
+    		pickupOrderFinItem.set(name, value);
+    		pickupOrderFinItem.update();
     	}
     	/*if(paymentId != null && !"".equals(paymentId)){
     		PickupOrderFinItem departOrderFinItem = PickupOrderFinItem.dao.findById(paymentId);
@@ -1797,6 +1790,10 @@ public class PickupOrderController extends Controller {
             String sql = "select count(tor.id) total from depart_order dor "
 				+ " left join depart_transfer dt on dt.pickup_id = dor.id"
 				+ " left join transfer_order tor on dt.order_id = tor.id"
+				+ " left join party p on p.id = tor.customer_id"
+				+ " left join contact c on c.id = p.contact_id"
+				+ " left join transfer_order_fin_item tofi on tofi.order_id = tor.id"
+				+ " left join fin_item fi on fi.id  = tofi.fin_item_id"
 				+ " where dor.combine_type = '"+DepartOrder.COMBINE_TYPE_PICKUP+"' and dor.id = "+pickupOrderId;
             Record rec = Db.findFirst(sql + totalWhere);
             logger.debug("total records:" + rec.getLong("total"));

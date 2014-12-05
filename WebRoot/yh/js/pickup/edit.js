@@ -1095,14 +1095,13 @@
         }
 	});
 	
-	$("#table_fin2,#table_fin3").on('blur', 'input,select', function(e){
+	$("#table_fin2").on('blur', 'input,select', function(e){
 		e.preventDefault();
 		var paymentId = $(this).parent().parent().attr("id");
-		var orderId = $(this).parent().parent().attr("order_id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		if(value != "" && value != null){
-			$.post('/pickupOrder/updatePickupOrderFinItem', {paymentId:paymentId, name:name, value:value, orderId:orderId}, function(data){
+			$.post('/pickupOrder/updatePickupOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
 				if(data.success){
 				}else{
 					alert("修改失败!");
@@ -1110,7 +1109,27 @@
 	    	},'json');
 		}
 	});	
-	
+		
+	$("#table_fin3").on('blur', 'input,select', function(e){
+		e.preventDefault();
+		var paymentId = $(this).parent().parent().attr("id");
+		var orderId = $(this).parent().parent().attr("order_id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		var transferOrderFinItemId = $("#transferOrderFinItemId").val();
+		if(transferOrderFinItemId != null && transferOrderFinItemId != ""){
+			paymentId = transferOrderFinItemId;
+		}
+		if(value != "" && value != null){
+			$.post('/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value, orderId:orderId}, function(data){
+				if(data.ID > 0){
+					$("#transferOrderFinItemId").val(data.ID);
+				}else{
+					alert("修改失败!");
+				}
+			},'json');
+		}
+	});	
 	
 	//异步删除应收
 	$("#table_fin3").on('click', '.finItemdel', function(e){

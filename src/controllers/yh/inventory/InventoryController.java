@@ -155,7 +155,8 @@ public class InventoryController extends Controller {
         	sqlTotal = sqlTotal +  " where i_t.warehouse_id =" + warehouseId + " and p2.id =" + customerId;
         	sql = sql + " where i_t.warehouse_id =" + warehouseId  + " and p2.id =" + customerId;;
         }
-        
+        sqlTotal = sqlTotal + " group by p.item_no";
+        sql = sql + " group by p.item_no " + sLimit;
         Record rec = Db.findFirst(sqlTotal + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
         // 获取当前页的数据

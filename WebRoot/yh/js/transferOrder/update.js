@@ -2416,7 +2416,7 @@ $(document).ready(function() {
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		$.post('/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
-			if(data.success){
+			if(data.ID > 0){
 			}else{
 				alert("修改失败!");
 			}

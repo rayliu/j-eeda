@@ -1217,16 +1217,27 @@ public class TransferOrderController extends Controller {
         String paymentId = getPara("paymentId");
         String name = getPara("name");
         String value = getPara("value");
+    	String orderId = getPara("orderId");
         if ("amount".equals(name) && "".equals(value)) {
             value = "0";
         }
+        TransferOrderFinItem transferOrderFinItem = null;
         if (paymentId != null && !"".equals(paymentId)) {
-            TransferOrderFinItem transferOrderFinItem = TransferOrderFinItem.dao
-                    .findById(paymentId);
+            transferOrderFinItem = TransferOrderFinItem.dao.findById(paymentId);
             transferOrderFinItem.set(name, value);
             transferOrderFinItem.update();
+        }else{
+        	// 假定金额都是第一个填,如果不进行判断会创建多条记录
+        	if ("amount".equals(name) && !"".equals(value)) {
+	        	transferOrderFinItem = new TransferOrderFinItem();
+	            transferOrderFinItem.set(name, value);
+	            transferOrderFinItem.set("order_id", orderId);
+	            transferOrderFinItem.set("status", "未结算");
+	            //transferOrderFinItem.set("create", TransferOrderFinItem.CREATE_NAME_PICKUP);
+	            transferOrderFinItem.save();
+        	}
         }
-        renderJson("{\"success\":true}");
+        renderJson(transferOrderFinItem);
     }
     
     //运输单状态
