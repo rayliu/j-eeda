@@ -355,7 +355,7 @@ $(document).ready(function() {
 			            	"sClass": "warehouse"},
 			            {"mDataProp":"ABBR",
 			            	"sClass": "cname"},
-			            {"mDataProp":"ADDRESS"}
+			            {"mDataProp":"COMPANY"}
 			        ]      
 			    });	
 			
