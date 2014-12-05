@@ -750,6 +750,8 @@ public class TransferOrderController extends Controller {
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER
 							+ "' and (company_name like '%"
 							+ input
+							+ "%' or abbr like '%"
+							+ input
 							+ "%' or contact_person like '%"
 							+ input
 							+ "%' or email like '%"

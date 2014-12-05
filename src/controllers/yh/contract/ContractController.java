@@ -207,15 +207,15 @@ public class ContractController extends Controller {
             String sql = "select count(*) total from (select c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
                             + "and c.name like '%"
                             + contractName_filter
-                            + "%' and ifnull(c1.contact_person,'') like '%"
+                            + "%' or ifnull(c1.contact_person,'') like '%"
                             + contactPerson_filter
-                            + "%' and ifnull(c1.company_name,'') like '%"
+                            + "%' or ifnull(c1.company_name,'') like '%"
                             + companyName_filter
-                            + "%' and ifnull(c1.mobile,'') like '%"
+                            + "%' or ifnull(c1.mobile,'') like '%"
                             + phone_filter
-                            + "%' and c.period_from like '%"
+                            + "%' or c.period_from like '%"
                             + periodFrom_filter
-                            + "%' and c.period_to like '%" + periodTo_filter + "%') as contract_view";
+                            + "%' or c.period_to like '%" + periodTo_filter + "%') as contract_view";
             System.out.println(sql);
             Record rec = Db.findFirst(sql + totalWhere);
             long total = rec.getLong("total");
@@ -226,15 +226,15 @@ public class ContractController extends Controller {
                     .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
                             + "and c.name like '%"
                             + contractName_filter
-                            + "%' and ifnull(c1.contact_person,'') like '%"
+                            + "%' or ifnull(c1.contact_person,'') like '%"
                             + contactPerson_filter
-                            + "%' and ifnull(c1.company_name,'') like '%"
+                            + "%' or ifnull(c1.company_name,'') like '%"
                             + companyName_filter
-                            + "%' and ifnull(c1.mobile,'') like '%"
+                            + "%' or ifnull(c1.mobile,'') like '%"
                             + phone_filter
-                            + "%' and c.period_from like '%"
+                            + "%' or c.period_from like '%"
                             + periodFrom_filter
-                            + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
+                            + "%' or c.period_to like '%" + periodTo_filter + "%'" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
             orderMap.put("iTotalDisplayRecords", total);

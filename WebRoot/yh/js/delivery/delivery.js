@@ -13,7 +13,7 @@ $(document).ready(function() {
 	}
 
 	var hang="";
-		  // 获取供应商的list，选中信息在下方展示其他信息
+		  /*// 获取供应商的list，选中信息在下方展示其他信息
 			$('#spMessage').on('keyup click', function(){
 				var inputStr = $('#spMessage').val();
 				$.get('/delivery/searchSp', {input:inputStr}, function(data){
@@ -22,7 +22,23 @@ $(document).ready(function() {
 					spList.empty();
 					for(var i = 0; i < data.length; i++)
 					{
-						spList.append("<li><a tabindex='-1' class='fromLocationItem' code='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].COMPANY_NAME+"</a></li>");
+						var abbr = data[i].ABBR;
+						if(abbr == null){
+							abbr = '';
+						}
+						var company_name = data[i].COMPANY_NAME;
+						if(company_name == null){
+							company_name = '';
+						}
+						var contact_person = data[i].CONTACT_PERSON;
+						if(contact_person == null){
+							contact_person = '';
+						}
+						var phone = data[i].PHONE;
+						if(phone == null){
+							phone = '';
+						}
+						spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
 					}
 				},'json');
 				$("#spList").css({ 
@@ -41,8 +57,62 @@ $(document).ready(function() {
 
 			$('#spList').on('mousedown', function(){
 				return false;// 阻止事件回流，不触发 $('#spMessage').on('blur'
-			});
+			});*/
+	$('#spMessage').on('keyup click', function(){
+		var inputStr = $('#spMessage').val();
+		if(inputStr == ""){
+			var pageSpName = $("#pageSpName");
+			pageSpName.empty();
+			var pageSpAddress = $("#pageSpAddress");
+			pageSpAddress.empty();
+			$('#sp_id').val($(this).attr(''));
+		}
+		$.get('/delivery/searchSp', {input:inputStr}, function(data){
+			console.log(data);
+			var spList =$("#spList");
+			spList.empty();
+			for(var i = 0; i < data.length; i++)
+			{
+				var abbr = data[i].ABBR;
+				if(abbr == null){
+					abbr = '';
+				}
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name = '';
+				}
+				var contact_person = data[i].CONTACT_PERSON;
+				if(contact_person == null){
+					contact_person = '';
+				}
+				var phone = data[i].PHONE;
+				if(phone == null){
+					phone = '';
+				}
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
+			}
+		},'json');
 
+		$("#spList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        }); 
+        $('#spList').show();
+	});
+
+	// 没选中供应商，焦点离开，隐藏列表
+	$('#spMessage').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+
+	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
+	$('#spList').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+
+	$('#spList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
 			// 选中供应商
 			$('#spList').on('mousedown', '.fromLocationItem', function(e){
 				$('#spMessage').val($(this).text());
