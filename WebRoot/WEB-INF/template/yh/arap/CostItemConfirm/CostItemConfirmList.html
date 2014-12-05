@@ -1,6 +1,5 @@
-
-
 <%layout("/yh/layout.html"){%>
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
         <div id="page-wrapper">
             
@@ -27,12 +26,16 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label class="search-label">运输单号</label>
-                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
-                                            <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 21.5%;"></ul>
+                                            <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value="">
                                         </div>
                                         <div class="form-group">
                                             <label class="search-label">操作类型</label>
-                                            <input type="text" class="form-control search-control address_filter" id="address_filter">
+                                            <select id="order_type_filter" class="form-control search-control status_filter">
+                                                <option value=""></option>
+                                                <option value="">配送</option>
+                                                <option value="">零担</option>
+                                                <option value="">提货</option>
+                                            </select>
                                         </div>
                                         
                                     </div>
@@ -40,8 +43,9 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label class="search-label">供应商</label>
-                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
-                                            <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 21.5%;"></ul>
+                                            <input type="text" class="form-control search-control sp_filter" id="sp_filter" placeholder="请选择供应商">
+                                        	<ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
+											</ul>
                                         </div>
                                          <div class="form-group">
                                             <label class="search-label">确认状态</label>
@@ -52,12 +56,19 @@
                                     <div class="col-lg-4">
                                     	<div class="form-group">
                                             <label class="search-label">操作单号</label>
-                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
-                                            <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 21.5%;"></ul>
+                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter">
                                         </div>
                                         <div class="form-group">
                                             <label class="search-label">业务状态</label>
-                                            <input type="text" class="form-control search-control address_filter" id="address_filter">
+                                            <select id="order_type_filter" class="form-control search-control status_filter">
+                                                <option value=""></option>
+                                                <option value="">新建</option>
+                                                <option value="">已签收</option>
+                                                <option value="">已确认</option>
+                                                <option value="">对账中</option>
+                                                <option value="">对账已确认</option>
+                                            </select>
+                                            
                                         </div>
                                     </div>
                                     <!-- end of col-lg-6-->
@@ -67,7 +78,7 @@
                                         <div class="form-group">                                        
                                             <div id="datetimepicker" class="input-append date "> 
                                                 <label class="search-label">开始时间</label> 
-                                                <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
+                                                <input id="beginTime_filter" class="form-control search-control beginTime_filter" type="text">
                                                 <span class="add-on">  
                                                     <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
                                                 </span>  
@@ -142,7 +153,8 @@
 
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
-
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/yh/js/arap/CostItemConfirm/list.js"></script>
 
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>

@@ -79,7 +79,10 @@ $(document).ready(function() {
                    companyList.show();
                
            },'json');
-
+           $("#companyList").css({ 
+              	left:$(this).position().left+"px", 
+              	top:$(this).position().top+32+"px" 
+           }); 
            if(inputStr==''){
         	   datatable.fnFilter('', 2);
            }

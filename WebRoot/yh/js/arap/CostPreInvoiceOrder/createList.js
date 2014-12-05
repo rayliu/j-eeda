@@ -127,7 +127,10 @@ $(document).ready(function() {
             if(data.length>0)
                 companyList.show();
         },'json');
-
+        $("#companyList").css({ 
+           	left:$(this).position().left+"px", 
+           	top:$(this).position().top+32+"px" 
+        }); 
         if(inputStr==''){
         	chargeCheckTable.fnFilter('', 2);
         }
