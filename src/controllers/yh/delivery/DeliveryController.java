@@ -875,6 +875,7 @@ public class DeliveryController extends Controller {
 		String deliveryid = getPara("delivery_id");
 		DeliveryOrder deliveryOrder = null;
 		String notifyId = getPara("notify_id");
+		String spId = getPara("sp_id");
 		String cargoNature = getPara("cargoNature");
 		String idlist3 = getPara("localArr");
 		String idlist5 = getPara("localArr3");
@@ -920,7 +921,7 @@ public class DeliveryController extends Controller {
 
 			deliveryOrder.set("order_no", orderNo)
 					.set("customer_id", getPara("customer_id"))
-					.set("sp_id", getPara("cid"))
+					.set("sp_id", getPara("sp_id"))
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate).set("status", "新建")
 					.set("route_to", getPara("route_to"))
