@@ -8,16 +8,19 @@ $(document).ready(function() {
 	       "bSort": false, // 不要排序
 	       "bFilter": false, //不需要默认的搜索框
 	       "bServerSide": true,
+	       "bAutoWidth":true,
 	   	   "oLanguage": {
 	           "sUrl": "/eeda/dataTables.ch.txt"
 	       },
 	       "sAjaxSource":"/stock/stocklist",
 			"aoColumns": [
-				{"mDataProp":"ITEM_NAME"},
-	            {"mDataProp":"ITEM_NO"}, 
-	            {"mDataProp":"COMPANY_NAME"},
-	            {"mDataProp":"TOTAL_QUANTITY"},
-	            {"mDataProp":"UNIT"},
+				{"mDataProp":"ITEM_NAME", "sWidth":"100px"},
+	            {"mDataProp":"ITEM_NO", "sWidth":"80px"}, 
+	            {"mDataProp":"COMPANY_NAME", "sWidth":"150px"},
+	            {"mDataProp":"TOTAL_QUANTITY", "sWidth":"40px"},
+	            {"mDataProp":"UNIT", "sWidth":"30px"},
+	            {"mDataProp":"WAREHOUSE_NAME", "sWidth":"120px"},
+	            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},
 	            {"mDataProp":"EXPIRE_DATE", "bVisible":false},
 	            {"mDataProp":"LOT_NO", "bVisible":false},
 	            {"mDataProp":"CATON_NO", "bVisible":false}
@@ -47,7 +50,8 @@ $(document).ready(function() {
 	    
 	    var customerId = $("#hiddenCustomerId").val();
 		var warehouseId = $("#warehouseId").val();
-	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId;
+		var offeceId = $("#hiddenOfficeId").val();
+	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
 		tab.fnDraw();
 	});
 	$('#warehouseSelect').on('blur', function(){
@@ -72,8 +76,8 @@ $(document).ready(function() {
 		tab.fnDraw();*/
 		
 		var customerId = $("#hiddenCustomerId").val();
-		
-		tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+id;
+		var offeceId = $("#hiddenOfficeId").val();
+		tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+id+"&offeceId="+offeceId;
 		tab.fnDraw();
 		
 	});
@@ -102,8 +106,13 @@ $(document).ready(function() {
 	$('#officeList').on('mousedown', '.fromLocationItem', function(e){
 		var id =$(this).attr('code');
 		$('#officeSelect').val($(this).text());
-		$("#hiddenOfficeId").val(id);
 		$('#officeList').hide();
+		$("#hiddenOfficeId").val(id);
+		
+		var customerId = $("#hiddenCustomerId").val();
+		var warehouseId = $("#warehouseId").val();
+	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+id;
+		tab.fnDraw();
 	});
 	$('#officeSelect').on('blur', function(){
 		$("#officeList").hide();
@@ -149,7 +158,8 @@ $(document).ready(function() {
         
         var customerId = $("#hiddenCustomerId").val();
 		var warehouseId = $("#warehouseId").val();
-	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId;
+		var offeceId = $("#hiddenOfficeId").val();
+	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
 		tab.fnDraw();
 	});
 
@@ -171,11 +181,12 @@ $(document).ready(function() {
 		var message = $(this).text();
 		var customerId = $(this).attr('partyId');
 		var warehouseId = $("#warehouseId").val();
+		var offeceId = $("#hiddenOfficeId").val();
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$("#hiddenCustomerId").val($(this).attr('partyId'));
 		$('#customerList').hide();
 		
-		tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId;
+		tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
 		tab.fnDraw();
     }); 
 

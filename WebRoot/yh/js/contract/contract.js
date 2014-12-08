@@ -560,6 +560,7 @@ $(document).ready(function() {
                 	datatable.fnSettings().oFeatures.bServerSide = true; 
                 	datatable.fnDraw();
                 	$("#tishi1").text("");
+                	$("#tishi2").text("");
                 	$("#productId").val("");
                 }else{
                     alert('数据保存失败。');
@@ -578,7 +579,17 @@ $(document).ready(function() {
         	//新增时初始地id
         	var saveid1 = [];
 		    var price = $("#price").val();
+		    var carType2 = $("#carType2").val();
 			$("#tishi").text("");
+			$("#tishi2").text("");
+			if(priceType=="perCar"){
+				if(carType2 == "" || carType2 == null){
+					$("#tishi2").text("车型不能为空！");
+					$("#saveRouteBtn").prop("disabled",false);
+					return false;
+				}
+        	}
+				
 			if(price == "" || price == null){
 				$("#tishi").text("金额不能为空！");
 				$("#saveRouteBtn").prop("disabled",false);
@@ -589,6 +600,7 @@ $(document).ready(function() {
 				$("#saveRouteBtn").prop("disabled",false);
 				return false;
 			}
+			
 	    	//阻止a 的默认响应行为，不需要跳转
             e.preventDefault();
             //重设初始地、目的地值

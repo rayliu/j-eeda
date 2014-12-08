@@ -120,9 +120,9 @@ public class InventoryController extends Controller {
     public void stocklist() {
         String customerId = getPara("customerId");
         String warehouseId = getPara("warehouseId");
+        String offeceId = getPara("offeceId");
         logger.debug("customerId:"+customerId+",warehouseId:"+warehouseId);
-        logger.debug((customerId == null && warehouseId == null ) || ( "".equals(customerId) && "".equals(warehouseId)));
-        if ((customerId == null && warehouseId == null ) || ( "".equals(customerId) && "".equals(warehouseId))) {
+        if ((customerId == null && warehouseId == null && offeceId == null) || ( "".equals(customerId) && "".equals(warehouseId) && "".equals(offeceId))) {
             Map orderMap = new HashMap();
             orderMap.put("sEcho", 0);
             orderMap.put("iTotalRecords", 0);
@@ -139,21 +139,33 @@ public class InventoryController extends Controller {
         // 获取总条数
         String totalWhere = "";
         String sqlTotal = "select count(1) total from inventory_item i_t"
-        		+ " left join product p on  p.id =i_t.product_id " + "left join party p2 on i_t.party_id =p2.id "
-                + " left join contact c on p2.contact_id = c.id ";
-        String sql = "select i_t.*,c.company_name,p.* from inventory_item i_t "
-                + " left join product p on  p.id =i_t.product_id " + "left join party p2 on i_t.party_id =p2.id "
-                + " left join contact c on p2.contact_id = c.id ";
+        		+ " left join product p on  p.id =i_t.product_id " 
+        		+ " left join party p2 on i_t.party_id =p2.id "
+                + " left join contact c on p2.contact_id = c.id "
+		        + " left join warehouse w on w.id = i_t.warehouse_id"
+		        + " left join office o on o.id = w.office_id";
+        String sql = "select i_t.*,c.company_name,p.*, "
+        		+ " (select warehouse_name from warehouse where id = i_t.warehouse_id) warehouse_name,"
+        		+ " (select office_name from office o left join warehouse w on o.id = w.office_id where w.id = i_t.warehouse_id) office_name "
+        		+ " from inventory_item i_t "
+                + " left join product p on  p.id =i_t.product_id " 
+        		+ " left join party p2 on i_t.party_id =p2.id "
+                + " left join contact c on p2.contact_id = c.id "
+                + " left join warehouse w on w.id = i_t.warehouse_id"
+                + " left join office o on o.id = w.office_id "
+                + " where i_t.id != '' ";
         
-        if(customerId == null || "".equals(customerId)){
-        	sqlTotal = sqlTotal +  " where i_t.warehouse_id =" + warehouseId;
-        	sql = sql + " where i_t.warehouse_id =" + warehouseId ;
-        }else if((warehouseId == null) || "".equals(warehouseId)){
-        	sqlTotal = sqlTotal +  " where p2.id =" + customerId;
-        	sql = sql + " where .p2.id =" + customerId ;
-        }else{
-        	sqlTotal = sqlTotal +  " where i_t.warehouse_id =" + warehouseId + " and p2.id =" + customerId;
-        	sql = sql + " where i_t.warehouse_id =" + warehouseId  + " and p2.id =" + customerId;;
+        if(warehouseId != null && !"".equals(warehouseId)){
+        	sqlTotal = sqlTotal + " and w.id =" + warehouseId;
+        	sql = sql + " and w.id =" + warehouseId ;
+        }
+        if((customerId != null) && !"".equals(customerId)){
+        	sqlTotal = sqlTotal +  " and p2.id =" + customerId;
+        	sql = sql + " and .p2.id =" + customerId ;
+        }
+        if((offeceId != null) && !"".equals(offeceId)){
+        	sqlTotal = sqlTotal +  " and o.id =" + offeceId;
+        	sql = sql + " and o.id =" + offeceId ;
         }
         sqlTotal = sqlTotal + " group by p.item_no";
         sql = sql + " group by p.item_no " + sLimit;
