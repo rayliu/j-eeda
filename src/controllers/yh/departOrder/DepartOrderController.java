@@ -1207,7 +1207,7 @@ public class DepartOrderController extends Controller {
     		departOrderFinItem.set("amount", contractFinItem.getDouble("amount"));        		
     	}else{
     		if(tOrderItemRecord != null){
-    			departOrderFinItem.set("amount", contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
+    			departOrderFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString()));
     		}
     	}
         departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));

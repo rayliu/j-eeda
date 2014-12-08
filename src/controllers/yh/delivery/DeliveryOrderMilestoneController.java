@@ -237,7 +237,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         	deliveryFinItem.set("amount", contractFinItem.getDouble("amount"));        		
     	}else{
     		if(tOrderItemRecord != null){
-    			deliveryFinItem.set("amount", contractFinItem.getDouble("amount") * tOrderItemRecord.getDouble("amount"));
+    			deliveryFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString()));
     		}
     	}
         deliveryFinItem.set("order_id", departOrderId);
