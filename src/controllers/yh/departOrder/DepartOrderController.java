@@ -1135,7 +1135,7 @@ public class DepartOrderController extends Controller {
                             + "' and priceType='"+chargeType+"'");
             if (contractFinItem != null) {
                 genFinItem(users, departOrder, null, contractFinItem, chargeType);
-            }else{
+            }/*else{
                 contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
                                 +" and from_id = '" + departOrder.get("route_from")
@@ -1143,14 +1143,15 @@ public class DepartOrderController extends Controller {
                                 + "' and priceType='"+chargeType+"'");
                 if (contractFinItem != null) {
                     genFinItem(users, departOrder, null, contractFinItem, chargeType);
-                }else{
-                    contractFinItem = Db
-                            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                    +" and to_id = '" + departOrder.get("route_to")
-                                    + "' and priceType='"+chargeType+"'");
-                    if (contractFinItem != null) {
-                        genFinItem(users, departOrder, null, contractFinItem, chargeType);
-                    }
+                }*/
+            else{
+                contractFinItem = Db
+                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                +" and carType = '" + departOrder.get("car_type")//对应发车单的 car_type
+                                +"' and to_id = '" + departOrder.get("route_to")
+                                + "' and priceType='"+chargeType+"'");
+                if (contractFinItem != null) {
+                    genFinItem(users, departOrder, null, contractFinItem, chargeType);
                 }
             }
         }

@@ -156,27 +156,16 @@ public class DeliveryOrderMilestoneController extends Controller {
             if (contractFinItem != null) {
                 genFinItem(deliverOrderId, null, contractFinItem, chargeType);
             }else{
-                contractFinItem = Db
-                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                +" and from_id = '"+ deliverOrder.get("route_from")
-                                +"' and to_id = '"+ deliverOrder.get("route_to")
-                                + "' and priceType='"+chargeType+"'");
-                
-                if (contractFinItem != null) {
-                    genFinItem(deliverOrderId, null, contractFinItem, chargeType);
-                }else{
-                    contractFinItem = Db
-                            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                    +" and to_id = '"+ deliverOrder.get("route_to")
-                                    + "' and priceType='"+chargeType+"'");
-                    
-                    if (contractFinItem != null) {
-                        genFinItem(deliverOrderId, null, contractFinItem, chargeType);
-                    }
-                }
-            }
-        }
-        
+			    contractFinItem = Db
+			            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+			                    +" and carType = '" + deliverOrder.get("car_type")//对应发车单的 car_type
+			                    +"' and to_id = '" + deliverOrder.get("route_to")
+			                    + "' and priceType='"+chargeType+"'");
+			    if (contractFinItem != null) {
+			        genFinItem(deliverOrderId, null, contractFinItem, chargeType);
+			    }
+			}
+        }        
     }
     public void genFinPerUnit(Contract spContract, String chargeType, Long deliverOrderId) {
         List<Record> deliveryOrderItemList = Db

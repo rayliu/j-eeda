@@ -484,25 +484,15 @@ public class ReturnOrderController extends Controller {
             if (contractFinItem != null) {
             	genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId);
             }else{
-                contractFinItem = Db
-                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                +" and from_id = '"+ transferOrder.get("route_from")
-                                +"' and to_id = '"+ deliverOrder.get("route_to")
-                                + "' and priceType='"+chargeType+"'");
-                
-                if (contractFinItem != null) {
-                	genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId);
-                }else{
-                    contractFinItem = Db
-                            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                    +" and to_id = '"+ deliverOrder.get("route_to")
-                                    + "' and priceType='"+chargeType+"'");
-                    
-                    if (contractFinItem != null) {
-                    	genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId);
-                    }
-                }
-            }
+			    contractFinItem = Db
+			            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+			                    +" and carType = '" + deliverOrder.get("car_type")//对应发车单的 car_type
+			                    +"' and to_id = '" + deliverOrder.get("route_to")
+			                    + "' and priceType='"+chargeType+"'");
+			    if (contractFinItem != null) {
+			        genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId);
+			    }
+			}
         }        
     } 
     
@@ -602,25 +592,15 @@ public class ReturnOrderController extends Controller {
             if (contractFinItem != null) {
             	genFinItem2(transferOrder.getLong("id"), null, contractFinItem, chargeType, returnOrderId);
             }else{
-                contractFinItem = Db
-                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                +" and from_id = '"+ transferOrder.get("route_from")
-                                +"' and to_id = '"+ transferOrder.get("route_to")
-                                + "' and priceType='"+chargeType+"'");
-                
-                if (contractFinItem != null) {
-                	genFinItem2(transferOrder.getLong("id"), null, contractFinItem, chargeType, returnOrderId);
-                }else{
-                    contractFinItem = Db
-                            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                    +" and to_id = '"+ transferOrder.get("route_to")
-                                    + "' and priceType='"+chargeType+"'");
-                    
-                    if (contractFinItem != null) {
-                    	genFinItem2(transferOrder.getLong("id"), null, contractFinItem, chargeType, returnOrderId);
-                    }
-                }
-            }
+			    contractFinItem = Db
+			            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+			                    +" and carType = '" + transferOrder.get("car_type")//对应发车单的 car_type
+			                    +"' and to_id = '" + transferOrder.get("route_to")
+			                    + "' and priceType='"+chargeType+"'");
+			    if (contractFinItem != null) {
+			        genFinItem2(transferOrder.getLong("id"), null, contractFinItem, chargeType, returnOrderId);
+			    }
+			}
         }        
     } 
 	
