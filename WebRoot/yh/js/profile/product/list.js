@@ -205,7 +205,7 @@ $(document).ready(function() {
             	tooltip: '点击可以编辑',
             	name:"unit",
             	type: 'select',
-            	data: "{'':'', '台':'台','件':'件','套':'套'}",
+            	data: "{'':'', '台':'台','件':'件','套':'套','只':'只','个':'个','盒':'盒','箱':'箱','包':'包'}",
             	placeholder: "",
             	callback: function () {} 
             },
