@@ -23,7 +23,7 @@ public class DataInitUtil {
 
             // 登陆及授权的3个表
             stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255),belong_office bigint,location varchar(50));");
-            stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255), office_id bigint, token varchar(10), foreign key(office_id) references office(id));");
+            stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255), office_id bigint, token varchar(10),c_name varchar(50), foreign key(office_id) references office(id));");
             stmt.executeUpdate("create table if not exists role(id bigint auto_increment primary key,code varchar(50), name varchar(50), p_code varchar(50), remark varchar(255));");
             stmt.executeUpdate("create table if not exists permission(id bigint auto_increment primary key, module_name varchar(50) ,code varchar(50), name varchar(50), value varchar(50), url varchar(255), remark varchar(255));");
             stmt.executeUpdate("create table if not exists user_role(id bigint auto_increment primary key, user_name varchar(50) not null, role_code varchar(255) not null, remark varchar(255));");
@@ -280,7 +280,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into inventory_item(party_id, warehouse_id, product_id,total_quantity) values(1, 1, 4, 100);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('d_user1', '123456', '1-6',1);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
-            stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('demo', '123456', '1-6', 3);");
+            stmt.executeUpdate("insert into user_login(user_name,c_name, password, password_hint, office_id) values('demo','管理员' ,'123456', '1-6', 3);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('jason', '123456', '1-6',3);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('ray.liu@eeda123.com', '123456', '1-6',3);");
            

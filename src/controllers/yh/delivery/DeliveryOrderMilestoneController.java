@@ -53,7 +53,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                 .find("select * from delivery_order_milestone where delivery_id=" + delivery_id);
         for (DeliveryOrderMilestone transferOrderMilestone : transferOrderMilestones) {
             UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-            String username = userLogin.get("user_name");
+            String username = userLogin.get("c_name");
             usernames.add(username);
         }
         map.put("transferOrderMilestones", transferOrderMilestones);
@@ -84,7 +84,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.save();
         map.put("transferOrderMilestone", transferOrderMilestone);
         UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-        String username = userLogin.get("user_name");
+        String username = userLogin.get("c_name");
         map.put("username", username);
         
         renderJson(map);
@@ -321,7 +321,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 
         map.put("transferOrderMilestone", transferOrderMilestone);
         UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-        String username = userLogin.get("user_name");
+        String username = userLogin.get("c_name");
         map.put("username", username);
         renderJson(map);
     }

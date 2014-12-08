@@ -125,10 +125,14 @@ $(document).ready(function() {
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
 			{
+				var str=data.usernames[j];
+				if(str==null){
+					str="";
+				}
 				var exception_record='';
 				if(data.transferOrderMilestones[i].EXCEPTION_RECORD!=null)
 					exception_record = data.transferOrderMilestones[i].EXCEPTION_RECORD;
-				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+exception_record+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+exception_record+"</th><th>"+str+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 			}
 		},'json');
     	
@@ -139,9 +143,13 @@ $(document).ready(function() {
 		$.post('/departOrder/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){
 			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
 			var exception_record='';
+			var str=data.username;
+			if(str==null){
+				str="";
+			}
 			if(data.transferOrderMilestone.EXCEPTION_RECORD!=null)
 				exception_record = data.transferOrderMilestone.EXCEPTION_RECORD;
-			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+exception_record+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
+			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+exception_record+"</th><th>"+str+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 			detailTable.fnDraw();  
 		},'json');
 		$("#location").val("");

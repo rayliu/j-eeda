@@ -1157,11 +1157,11 @@ $(document).ready(function() {
 					//$("#driver_id").val(transferOrder.DRIVER_ID);
 					$("#id").val(transferOrder.ID);
 					if(transferOrder.ID>0){
-						console.Log("\\\\\\\\\\\\\\"+parentId);
+						//console.Log("\\\\\\\\\\\\\\"+parentId);
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 					  	//$("#style").show();	
 					  	transferOrderMilestone();
-					  	console.Log(parentId);
+					  	//console.Log(parentId);
 					  	if(bool){
 					  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 					  	}
@@ -1206,7 +1206,11 @@ $(document).ready(function() {
 			transferOrderMilestoneTbody.empty();
 			for(var i = 0,j = 0; i < data.transferOrderMilestones.length,j < data.usernames.length; i++,j++)
 			{
-				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+				var str = data.usernames[j];
+				if(str==null){
+					str="";
+				}
+				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+str+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 			}
 		},'json');
 		parentId = e.target.getAttribute("id");

@@ -8,7 +8,11 @@ $(document).ready(function() {
 		pickupOrderMilestoneTbody.empty();
 		for(var i = 0,j = 0; i < data.milestones.length,j < data.usernames.length; i++,j++)
 		{
-			pickupOrderMilestoneTbody.append("<tr><th>"+data.milestones[i].DEPART_NO+"</th><th>"+data.milestones[i].STATUS+"</th><th>"+data.milestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.milestones[i].CREATE_STAMP+"</th></tr>");
+			var str = data.usernames[j];
+			if(str==null){
+				str=="";
+			}
+			pickupOrderMilestoneTbody.append("<tr><th>"+data.milestones[i].DEPART_NO+"</th><th>"+data.milestones[i].STATUS+"</th><th>"+data.milestones[i].LOCATION+"</th><th>"+str+"</th><th>"+data.milestones[i].CREATE_STAMP+"</th></tr>");
 		}
 	},'json');  
 } );
