@@ -472,7 +472,7 @@ public class ReturnOrderController extends Controller {
                         + "' and priceType='"+chargeType+"'");
         
         if (contractFinItem != null) {
-            genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId);
+            genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId, spContract);
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -482,7 +482,7 @@ public class ReturnOrderController extends Controller {
                             + "' and priceType='"+chargeType+"'");
             
             if (contractFinItem != null) {
-            	genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId);
+            	genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId, spContract);
             }else{
 			    contractFinItem = Db
 			            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -490,7 +490,7 @@ public class ReturnOrderController extends Controller {
 			                    +"' and to_id = '" + deliverOrder.get("route_to")
 			                    + "' and priceType='"+chargeType+"'");
 			    if (contractFinItem != null) {
-			        genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId);
+			        genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId, spContract);
 			    }
 			}
         }        
@@ -512,7 +512,7 @@ public class ReturnOrderController extends Controller {
                             + "' and priceType='"+chargeType+"'");
             
             if (contractFinItem != null) {
-                genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+                genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId, spContract);
             }else{
                 contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -521,7 +521,7 @@ public class ReturnOrderController extends Controller {
                                 + "' and priceType='"+chargeType+"'");
                 
                 if (contractFinItem != null) {
-                	genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+                	genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId, spContract);
                 }else{
                     contractFinItem = Db
                             .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -530,7 +530,7 @@ public class ReturnOrderController extends Controller {
                                     + "' and priceType='"+chargeType+"'");
                     
                     if (contractFinItem != null) {
-                    	genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+                    	genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId, spContract);
                     }else{
                         contractFinItem = Db
                                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -538,7 +538,7 @@ public class ReturnOrderController extends Controller {
                                         +"' and priceType='"+chargeType+"'");
                         
                         if (contractFinItem != null) {
-                        	genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+                        	genFinItem(deliverOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId, spContract);
                         }
                     }
                 }
@@ -546,7 +546,7 @@ public class ReturnOrderController extends Controller {
         }
     }
 
-	private void genFinItem(Long deliveryOrderId, Record tOrderItemRecord, Record contractFinItem, String chargeType, Long returnOrderId) {
+	private void genFinItem(Long deliveryOrderId, Record tOrderItemRecord, Record contractFinItem, String chargeType, Long returnOrderId, Contract contract) {
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
 		ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
@@ -566,6 +566,7 @@ public class ReturnOrderController extends Controller {
 		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
 		returnOrderFinItem.set("create_date", now);
 		returnOrderFinItem.set("create_name", "system");
+		returnOrderFinItem.set("contract_id", contract.get("id"));
 		
 		returnOrderFinItem.save();
 	}
@@ -580,7 +581,7 @@ public class ReturnOrderController extends Controller {
                         + "' and priceType='"+chargeType+"'");
         
         if (contractFinItem != null) {
-            genFinItem2(transferOrder.getLong("id"), null, contractFinItem, chargeType, returnOrderId);
+            genFinItem2(transferOrder.getLong("id"), null, contractFinItem, chargeType, returnOrderId, spContract);
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -590,7 +591,7 @@ public class ReturnOrderController extends Controller {
                             + "' and priceType='"+chargeType+"'");
             
             if (contractFinItem != null) {
-            	genFinItem2(transferOrder.getLong("id"), null, contractFinItem, chargeType, returnOrderId);
+            	genFinItem2(transferOrder.getLong("id"), null, contractFinItem, chargeType, returnOrderId, spContract);
             }else{
 			    contractFinItem = Db
 			            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -598,7 +599,7 @@ public class ReturnOrderController extends Controller {
 			                    +"' and to_id = '" + transferOrder.get("route_to")
 			                    + "' and priceType='"+chargeType+"'");
 			    if (contractFinItem != null) {
-			        genFinItem2(transferOrder.getLong("id"), null, contractFinItem, chargeType, returnOrderId);
+			        genFinItem2(transferOrder.getLong("id"), null, contractFinItem, chargeType, returnOrderId, spContract);
 			    }
 			}
         }        
@@ -651,7 +652,7 @@ public class ReturnOrderController extends Controller {
 							+ "' and priceType='" + chargeType + "'");
 			
 			if (contractFinItem != null) {
-				genFinItem2(transferOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+				genFinItem2(transferOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId, customerContract);
 			} else {
 				contractFinItem = Db
 						.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
@@ -663,7 +664,7 @@ public class ReturnOrderController extends Controller {
 								+ "' and priceType='" + chargeType + "'");
 				
 				if (contractFinItem != null) {
-					genFinItem2(transferOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+					genFinItem2(transferOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId, customerContract);
 				} else {
 					contractFinItem = Db
 							.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
@@ -675,7 +676,7 @@ public class ReturnOrderController extends Controller {
 									+ "' and priceType='" + chargeType + "'");
 					
 					if (contractFinItem != null) {
-						genFinItem2(transferOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+						genFinItem2(transferOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId, customerContract);
 					} else {
 						contractFinItem = Db
 								.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
@@ -687,7 +688,7 @@ public class ReturnOrderController extends Controller {
 										+ "'");
 						
 						if (contractFinItem != null) {
-							genFinItem2(transferOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId);
+							genFinItem2(transferOrderId, dOrderItemRecord, contractFinItem, chargeType, returnOrderId, customerContract);
 						}
 					}
 				}
@@ -695,7 +696,7 @@ public class ReturnOrderController extends Controller {
 		}
 	}
 	
-	private void genFinItem2(Long transferOrderId, Record tOrderItemRecord,	Record contractFinItem, String chargeType, Long returnOrderId) {
+	private void genFinItem2(Long transferOrderId, Record tOrderItemRecord,	Record contractFinItem, String chargeType, Long returnOrderId, Contract contract) {
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
 		ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
@@ -715,6 +716,7 @@ public class ReturnOrderController extends Controller {
 		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
 		returnOrderFinItem.set("create_date", now);
 		returnOrderFinItem.set("create_name", "system");
+		returnOrderFinItem.set("contract_id", contract.get("id"));
 		
 		returnOrderFinItem.save();
 	}
