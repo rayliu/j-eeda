@@ -158,14 +158,17 @@ public class InventoryController extends Controller {
         sqlTotal = sqlTotal + " group by p.item_no";
         sql = sql + " group by p.item_no " + sLimit;
         Record rec = Db.findFirst(sqlTotal + totalWhere);
-        logger.debug("total records:" + rec.getLong("total"));
         // 获取当前页的数据
         List<Record> orders = Db.find(sql);
-        
         Map orderMap = new HashMap();
+        if(rec == null ){
+        	orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+        }else{
+        	orderMap.put("iTotalRecords", rec.getLong("total"));
+            orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        }
         orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", rec.getLong("total"));
-        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
         orderMap.put("aaData", orders);
         renderJson(orderMap);
     }
