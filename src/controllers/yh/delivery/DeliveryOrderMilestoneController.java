@@ -356,6 +356,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         returnOrder.set("transaction_status", "新建");
         returnOrder.set("creator", users.get(0).get("id"));
         returnOrder.set("create_date", createDate);
+        returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
         returnOrder.save();
 
         // 生成应收

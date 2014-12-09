@@ -294,6 +294,7 @@ public class TransferOrderMilestoneController extends Controller {
             returnOrder.set("creator", users.get(0).get("id"));
             returnOrder.set("create_date", sqlDate);
             returnOrder.set("transfer_order_id", order_id);
+            returnOrder.set("customer_id", transferOrder.get("customer_id"));
             returnOrder.save();
 
             /*TransferOrderFinItem tFinItem = new TransferOrderFinItem();

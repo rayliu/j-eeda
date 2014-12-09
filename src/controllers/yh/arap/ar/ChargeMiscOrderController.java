@@ -3,7 +3,6 @@ package controllers.yh.arap.ar;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -295,5 +294,41 @@ public class ChargeMiscOrderController extends Controller {
 	public void finItemdel(){
 		ArapMiscChargeOrderItem.dao.deleteById(getPara());
 		renderJson("{\"success\":true}");
+	}
+	
+	public void chargeCheckList() {
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+		String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
+		if(chargeCheckOrderIds == null || "".equals(chargeCheckOrderIds)){
+			chargeCheckOrderIds = "-1";
+		}
+		String sqlTotal = "select count(1) total from arap_charge_order";
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		String sql = "select distinct aao.*, usl.user_name as creator_name,c.abbr cname"
+				+ " from arap_charge_order aao "
+				+ " left join party p on p.id = aao.payee_id "
+				+ " left join contact c on c.id = p.contact_id"
+				+ " left join user_login usl on usl.id=aao.create_by"
+				+ " where aao.id in ("+chargeCheckOrderIds+") order by aao.create_stamp desc " + sLimit;
+
+		logger.debug("sql:" + sql);
+		List<Record> BillingOrders = Db.find(sql);
+
+		Map BillingOrderListMap = new HashMap();
+		BillingOrderListMap.put("sEcho", pageIndex);
+		BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+		BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+		BillingOrderListMap.put("aaData", BillingOrders);
+
+		renderJson(BillingOrderListMap);
 	}
 }

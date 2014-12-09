@@ -74,7 +74,7 @@ $(document).ready(function() {
     	$("#chargeMiscOrderStatus").text('新建');
 	}
 
-    var feeTable = $('#chargeCheckList-table').dataTable({
+    var feeTable = $('#feeItemList-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
@@ -196,7 +196,7 @@ $(document).ready(function() {
 	});	
 	
 	//应收修改
-	$("#chargeCheckList-table").on('blur', 'input,select', function(e){
+	$("#feeItemList-table").on('blur', 'input,select', function(e){
 		e.preventDefault();
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
@@ -215,7 +215,7 @@ $(document).ready(function() {
 	});
 	
 	//异步删除应付
-	$("#chargeCheckList-table").on('click', '.finItemdel', function(e){
+	$("#feeItemList-table").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		e.preventDefault();
 		$.post('/chargeMiscOrder/finItemdel/'+id,function(data){
@@ -232,4 +232,58 @@ $(document).ready(function() {
 			$(this).prop('checked', true);
 		}
 	});
+	
+	var chargeCheckListTab = $('#chargeCheckList-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+    	  "oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "sAjaxSource": "/chargeMiscOrder/chargeCheckList",
+        "aoColumns": [   
+            {"mDataProp":"ID", "bVisible": false},
+            {"mDataProp":"ORDER_NO",
+            	"fnRender": function(obj) {
+        			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        		}},
+            {"mDataProp":"STATUS",
+                "fnRender": function(obj) {
+                    if(obj.aData.STATUS=='new'){
+                        return '新建';
+                    }else if(obj.aData.STATUS=='checking'){
+                        return '已发送对帐';
+                    }else if(obj.aData.STATUS=='confirmed'){
+                        return '已审核';
+                    }else if(obj.aData.STATUS=='completed'){
+                        return '已结算';
+                    }else if(obj.aData.STATUS=='cancel'){
+                        return '取消';
+                    }
+                    return obj.aData.STATUS;
+                }
+            },
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":"CNAME"},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":"REMARK"},
+            {"mDataProp":"CREATOR_NAME"},        	
+            {"mDataProp":"CREATE_STAMP"}                        
+        ]      
+    });	
+
+    $("#chargeCheckList").click(function(){
+    	chargeCheckListTab.fnSettings().sAjaxSource = "/chargeMiscOrder/chargeCheckList?chargeCheckOrderIds="+$("#chargeCheckOrderIds").val();
+    	chargeCheckListTab.fnDraw();  
+    });
 } );

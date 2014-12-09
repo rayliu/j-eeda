@@ -175,7 +175,7 @@ public class DataInitUtil {
 
             // 应收对账单
             stmt.executeUpdate("create table if not exists arap_charge_order(id bigint auto_increment primary key,order_no varchar(255),order_type varchar(255),status varchar(255),payee_id varchar(255),create_by bigint,create_stamp timestamp,"
-                    + " begin_time timestamp,end_time timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
+                    + " begin_time date,end_time date,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
             stmt.executeUpdate("create table if not exists arap_charge_item(id bigint auto_increment primary key,ref_order_type varchar(255),item_code varchar(255),item_status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
             		+ " remark varchar(5120),charge_order_id bigint,foreign key(charge_order_id) references arap_charge_order(id),ref_order_id bigint,foreign key(ref_order_id) references return_order(id));");
             stmt.executeUpdate("create table if not exists arap_audit_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
@@ -326,8 +326,8 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into contract_item(contract_id,fin_item_id,pricetype,amount,to_id,location_to,remark) values(5, 2,'perCar', 333,'110101','北京市东城区','配送路线');");
             
             // 回单notity_party_id bigint,customer_id
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark) values('HD2013021400001', '2014-08-5 16:35:35.1', '新建','应收',1,1,'这是一张回单');");
-            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,transfer_order_id,creator,remark) values('HD2013021400002', '2014-08-6 16:35:35.1', '新建','应收',1,2,'这是一张回单');");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,delivery_order_id,creator,remark,customer_id) values('HD2013021400001', '2014-08-5 16:35:35.1', '已签收','应收',1,1,'这是一张回单',1);");
+            stmt.executeUpdate("insert into return_order(order_no,create_date,transaction_status,order_type,transfer_order_id,creator,remark,customer_id) values('HD2013021400002', '2014-08-6 16:35:35.1', '已签收','应收',1,2,'这是一张回单',1);");
             // 运输单应收应付明细id bigint auto_increment PRIMARY KEY, order_id bigint,
             // fin_item_id bigint,"
             // +
@@ -643,7 +643,7 @@ public class DataInitUtil {
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(4, 3, '2014-06-28 10:43:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             stmt.execute("insert into transfer_order_milestone(ORDER_ID, CREATE_BY, CREATE_STAMP, STATUS, TYPE) values(6, 3, '2014-06-28 11:39:35.1', '新建', 'TRANSFERORDERMILESTONE');");
             */
-            stmt.execute("insert into arap_charge_order(begin_time, payee_id, order_no, remark, create_by, end_time, create_stamp, status) values('2014-08-15 9:39:35.1', 1, 'YSDZ2014081800001', '应收对账单测试数据', '3', '2014-08-19 9:39:35.1', '2014-08-18 9:39:35.1', '已确认');");
+            stmt.execute("insert into arap_charge_order(begin_time, payee_id, order_no, remark, create_by, end_time, create_stamp, status) values('2014-08-15', 1, 'YSDZ2014081800001', '应收对账单测试数据', '3', '2014-08-19', '2014-08-18 9:39:35.1', '已确认');");
             stmt.execute("insert into arap_charge_item(charge_order_id, ref_order_id, create_by, create_stamp) values(1, 1, 3, '2014-08-18 9:39:35.1');");
             
             // 拼车单收费条目
