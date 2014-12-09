@@ -63,11 +63,12 @@ public class ContractController extends Controller {
 
     public void companyNameList() {
         String input = getPara("input");
+        String type = getPara("type");
         List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
 					.find("select *,p.id as pid, p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER
+							+ type
 							+ "' and (company_name like '%"
 							+ input
 							+ "%' or contact_person like '%"
@@ -86,7 +87,7 @@ public class ContractController extends Controller {
 		} else {
 			locationList = Db
 					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "'");
+							+ type + "'");
 		}
 		renderJson(locationList);
     }
@@ -139,7 +140,18 @@ public class ContractController extends Controller {
             }
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'";
+            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER'"
+            		 + "and c.name like '%"
+                     + contractName_filter
+                     + "%' and ifnull(c1.contact_person,'') like '%"
+                     + contactPerson_filter
+                     + "%' and ifnull(c1.company_name,'') like '%"
+                     + companyName_filter
+                     + "%' and ifnull(c1.mobile,'') like '%"
+                     + phone_filter
+                     + "%' and c.period_from like '%"
+                     + periodFrom_filter
+                     + "%' and c.period_to like '%" + periodTo_filter + "%'";
             System.out.println(sql);
             Record rec = Db.findFirst(sql + totalWhere);
             long total = rec.getLong("total");
@@ -204,18 +216,18 @@ public class ContractController extends Controller {
         } else {
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(*) total from (select c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
+            String sql = "select count(*) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
                             + "and c.name like '%"
                             + contractName_filter
-                            + "%' or ifnull(c1.contact_person,'') like '%"
+                            + "%' and ifnull(c1.contact_person,'') like '%"
                             + contactPerson_filter
-                            + "%' or ifnull(c1.company_name,'') like '%"
+                            + "%' and ifnull(c1.company_name,'') like '%"
                             + companyName_filter
-                            + "%' or ifnull(c1.mobile,'') like '%"
+                            + "%' and ifnull(c1.mobile,'') like '%"
                             + phone_filter
-                            + "%' or c.period_from like '%"
+                            + "%' and c.period_from like '%"
                             + periodFrom_filter
-                            + "%' or c.period_to like '%" + periodTo_filter + "%') as contract_view";
+                            + "%' and c.period_to like '%" + periodTo_filter + "%'";
             System.out.println(sql);
             Record rec = Db.findFirst(sql + totalWhere);
             long total = rec.getLong("total");
@@ -226,15 +238,15 @@ public class ContractController extends Controller {
                     .find("select *,c.id as cid from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER'"
                             + "and c.name like '%"
                             + contractName_filter
-                            + "%' or ifnull(c1.contact_person,'') like '%"
+                            + "%' and ifnull(c1.contact_person,'') like '%"
                             + contactPerson_filter
-                            + "%' or ifnull(c1.company_name,'') like '%"
+                            + "%' and ifnull(c1.company_name,'') like '%"
                             + companyName_filter
-                            + "%' or ifnull(c1.mobile,'') like '%"
+                            + "%' and ifnull(c1.mobile,'') like '%"
                             + phone_filter
-                            + "%' or c.period_from like '%"
+                            + "%' and c.period_from like '%"
                             + periodFrom_filter
-                            + "%' or c.period_to like '%" + periodTo_filter + "%'" + sLimit);
+                            + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
             orderMap.put("iTotalDisplayRecords", total);
@@ -281,7 +293,18 @@ public class ContractController extends Controller {
         } else {
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'";
+            String sql = "select count(1) total from contract c,party p,contact c1 where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER'"
+            		+ "and c.name like '%"
+                    + contractName_filter
+                    + "%' and ifnull(c1.contact_person,'') like '%"
+                    + contactPerson_filter
+                    + "%' and ifnull(c1.company_name,'') like '%"
+                    + companyName_filter
+                    + "%' and ifnull(c1.mobile,'') like '%"
+                    + phone_filter
+                    + "%' and c.period_from like '%"
+                    + periodFrom_filter
+                    + "%' and c.period_to like '%" + periodTo_filter + "%'";
             System.out.println(sql);
             Record rec = Db.findFirst(sql + totalWhere);
             logger.debug("total records:" + rec.getLong("total"));
