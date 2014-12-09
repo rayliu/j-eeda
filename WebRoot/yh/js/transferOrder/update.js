@@ -257,6 +257,29 @@ $(document).ready(function() {
 				$(this).prop('checked', true);
 			}
 		});
+
+		//等于零担的时候
+        if(chargeType==='perCargo'){
+            $('#ltl_price_type').show();
+            $("#carInfomation").hide();
+            $("#car_type_div").hide();
+        }else if(chargeType==='perCar'){
+            $("#carInfomation").show();
+            //显示车辆信息
+            $(this).prop('checked', true);
+            $("#car_type_div").show();
+            $('#ltl_price_type').hide();
+        }else{
+            $('#ltl_price_type').hide();
+            $("#car_type_div").hide();
+            //计费方式为计件的时候
+            if($('input[name="chargeType"]:checked').val()==='perUnit'){
+            	$("#carInfomation").hide();
+            }else{
+            	$("#carInfomation").show();
+            }
+        }
+		
 		searchAllLocation();
 		
         $('#customerList').hide();

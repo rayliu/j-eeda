@@ -520,7 +520,10 @@ public class DeliveryController extends Controller {
 				.findFirst("select warehouse_id from transfer_order where id in("
 						+ list + ")");
 		
-		String routeFrom = notify.get("route_from");
+		Warehouse warehouse = Warehouse.dao
+				.findById(tOrder.get("warehouse_id"));
+		
+		String routeFrom = warehouse.get("location");
 		Location locationFrom = null;
 		if (routeFrom != null || !"".equals(routeFrom)) {
 			List<Location> provinces = Location.dao
@@ -540,8 +543,6 @@ public class DeliveryController extends Controller {
 			setAttr("locationFrom", locationFrom);
 		}
 		
-		Warehouse warehouse = Warehouse.dao
-				.findById(tOrder.get("warehouse_id"));
 		setAttr("notifyParty", notify);
 		setAttr("warehouse", warehouse);
 		setAttr("cargoNature", cargoNature);
