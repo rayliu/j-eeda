@@ -1096,4 +1096,32 @@ public class ReturnOrderController extends Controller {
         ReturnOrderFinItem.dao.deleteById(id);
         renderJson("{\"success\":true}");
     }
+    
+    //回单状态
+    public void findReturnOrderType(){
+    	String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        String sqlTotal = "select count(0) total from return_order";
+        logger.debug("sql :" + sqlTotal);
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select ro.order_no,ro.transaction_status,ro.create_date,"
+        		+ " ifnull((select name from location where code = dor.route_from ), '') route_from,"
+        		+ " ifnull((select name from location where code = dor.route_to ), '') route_to,"
+        		+ " (select sum(amount) from return_order_fin_item where return_order_id = ro.id ) amount"
+        		+ " from return_order ro left join delivery_order dor on dor.id = ro.delivery_order_id  order by ro.id desc " + sLimit;
+        List<Record> transferOrderItems = Db.find(sql);
+        Map Map = new HashMap();
+        Map.put("sEcho", pageIndex);
+        Map.put("iTotalRecords", rec.getLong("total"));
+        Map.put("iTotalDisplayRecords", rec.getLong("total"));
+        Map.put("aaData", transferOrderItems);
+        renderJson(Map); 
+    }
+    
+    
 }
