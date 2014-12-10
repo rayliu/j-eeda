@@ -243,8 +243,8 @@ public class TransferOrderItemController extends Controller {
             	}
 
                 if (item.get("size") != null && item.get("width") != null && item.get("height") != null) {
-                    Double volume = Double.parseDouble(item.get("size") + "") / 1000 * Double.parseDouble(item.get("width") + "") / 1000
-                            * Double.parseDouble(item.get("height") + "") / 1000 * itemAmount;
+                    Double volume = Double.parseDouble(String.format("%.2f", item.get("size") + "")) / 1000 * Double.parseDouble(String.format("%.2f", item.get("width") + "")) / 1000
+                            * Double.parseDouble(String.format("%.2f", item.get("height") + "")) / 1000 * itemAmount;
                     volume = Double.parseDouble(String.format("%.2f", volume));
                     item.set("volume", volume);
                 }

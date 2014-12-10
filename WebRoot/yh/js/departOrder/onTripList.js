@@ -37,9 +37,13 @@ $(document).ready(function() {
             },
             {"mDataProp":"TRANSFER_ORDER_NO",
             	"sWidth": "100px"},
-            {"mDataProp":"CNAME"}, 
+            {"mDataProp":"CNAME",
+            	"sWidth": "100px"}, 
             {"mDataProp":null,
-            	"sWidth": "80px"},
+            	"sWidth": "80px",
+            	"fnRender": function(obj) {
+            		return "";
+            	}},
             {"mDataProp":null,
             	"sWidth": "90px",
                 "fnRender": function(obj) {
@@ -59,7 +63,7 @@ $(document).ready(function() {
             {"mDataProp":"DRIVER",
             	"sWidth": "60px"},
             {"mDataProp":"PHONE",
-            	"sWidth": "60px"},
+            	"sWidth": "80px"},
             {"mDataProp":"ROUTE_FROM",
             		"sWidth": "80px"},
             {"mDataProp":"ROUTE_TO",

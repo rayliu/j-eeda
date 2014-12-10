@@ -2,6 +2,7 @@ package controllers.yh.departOrder;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -237,10 +238,11 @@ public class DepartOrderController extends Controller {
     		
     		sql = "select deo.id,"
     				+ "deo.depart_no ,"
+    				+ "deo.charge_type,"
     				+ "deo.create_stamp ,"
     				+ "deo.status as depart_status,"
-    				+ "c.driver,"
-    				+ "c.phone,"
+    				+ "c2.contact_person driver,"
+    				+ "c2.phone,"
     				+ "c1.abbr cname,"
     				+ "c2.abbr spname,"
     				+ "o.office_name office_name, "
@@ -302,10 +304,11 @@ public class DepartOrderController extends Controller {
     		
     		sql = "select deo.id,"
     				+ "deo.depart_no ,"
+    				+ "deo.charge_type,"
     				+ "deo.create_stamp ,"
     				+ "deo.status as depart_status,"
-    				+ "c.driver,"
-    				+ "c.phone,"
+    				+ "c2.contact_person driver,"
+    				+ "c2.phone,"
     				+ "c1.abbr cname,"
     				+ "c2.abbr spname,"
     				+ "o.office_name office_name, "
@@ -1204,11 +1207,18 @@ public class DepartOrderController extends Controller {
         java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
         DepartOrderFinItem departOrderFinItem = new DepartOrderFinItem();
         departOrderFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
+        
     	if("perCar".equals(chargeType)){
-    		departOrderFinItem.set("amount", contractFinItem.getDouble("amount"));        		
+    		double money=contractFinItem.getDouble("amount");
+    		BigDecimal bg = new BigDecimal(money);
+            double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    		departOrderFinItem.set("amount", amountDouble);        		
     	}else{
     		if(tOrderItemRecord != null){
-    			departOrderFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString()));
+    			double money=contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString());
+        		BigDecimal bg = new BigDecimal(money);
+                double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    			departOrderFinItem.set("amount", amountDouble);
     		}
     	}
         departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));

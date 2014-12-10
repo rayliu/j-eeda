@@ -195,6 +195,7 @@ public class ReturnOrderController extends Controller {
 						.get("transfer_order_id"));
 				break;
 			}
+			setAttr("deliveryOrder", deliveryOrder);
 			notify_party_id = deliveryOrder.get("notify_party_id");
 		}
 		setAttr("transferOrder", transferOrder);

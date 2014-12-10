@@ -49,6 +49,7 @@ import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.UserOffice;
 import models.UserRole;
 import models.Warehouse;
 import models.WarehouseOrder;
@@ -229,7 +230,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, contentPath);
         //insuranceOrder
         me.add("/insuranceOrder", controllers.yh.insurance.InsuranceOrderController.class, contentPath);
-        
+        me.add("/userOffice",controllers.yh.profile.UserOfficeController.class,contentPath);
         
         
     }
@@ -336,7 +337,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("car_summary_detail_oil_fee", CarSummaryDetailOilFee.class);
         arp.addMapping("car_summary_detail_salary", CarSummaryDetailSalary.class);
         arp.addMapping("car_summary_detail_other_fee", CarSummaryDetailOtherFee.class);
-
+        //基本数据用户网点
+        arp.addMapping("user_office", UserOffice.class);
     }
 
     private void initDBconnector() {

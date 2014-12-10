@@ -78,6 +78,9 @@
                                         <div class="form-group">
                                             <label>电话</label>	${customerContact.phone!''}
                                         </div>  
+                                        <div class="form-group">
+                                            <label>客户配送单号</label> ${deliveryOrder.customer_delivery_no!''}	
+                                        </div>
                                         <input id="locationChanged" name='locationChanged' type="hidden" value="false"/>
                                         <div id="contactInformation">
     	                                        <h2>收货人信息</h2>
@@ -110,7 +113,7 @@
 	                                    </div> 
 	                                                                            
 	                                    <div class="form-group">
-	                                     <label >业务员</label>  ${userLoginTo.user_name!''}                                    
+	                                     <label >业务员</label>  ${userLoginTo.c_name!''}                                    
 	                                    </div>
 	                                    <div class="form-group">
 	                                        <label>货品属性</label>	<span id="cargoNatureSpan"><input id="cargoNature" type="hidden" value="${transferOrder.cargo_nature!''}"></span>

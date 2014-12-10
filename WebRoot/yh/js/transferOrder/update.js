@@ -1437,17 +1437,7 @@ $(document).ready(function() {
                     	 return "<input type='text' name='business_manager'>";
                     }
             }},
-            {
-            	"mDataProp":"RESPONSIBLE_PERSON",
-        		"sWidth": "80px",
-            	"sClass": "responsible_person",
-            	"fnRender": function(obj) {
-                    if(obj.aData.RESPONSIBLE_PERSON !='' && obj.aData.RESPONSIBLE_PERSON != null){
-                        return "<input type='text' name='responsible_person' value='"+obj.aData.RESPONSIBLE_PERSON +"'>";
-                    }else{
-                    	 return "<input type='text' name='responsible_person'>";
-                    }
-            }},
+            
             {
             	"mDataProp":"SERVICE_TELEPHONE",
         		"sWidth": "80px",
@@ -1468,6 +1458,17 @@ $(document).ready(function() {
                         return "<input type='text' name='station_name' value='" + obj.aData.STATION_NAME +"'>";
                     }else{
                     	 return "<input type='text' name='station_name'>";
+                    }
+            }},
+            {
+            	"mDataProp":"RESPONSIBLE_PERSON",
+        		"sWidth": "80px",
+            	"sClass": "responsible_person",
+            	"fnRender": function(obj) {
+                    if(obj.aData.RESPONSIBLE_PERSON !='' && obj.aData.RESPONSIBLE_PERSON != null){
+                        return "<input type='text' name='responsible_person' value='"+obj.aData.RESPONSIBLE_PERSON +"'>";
+                    }else{
+                    	 return "<input type='text' name='responsible_person'>";
                     }
             }},
             {

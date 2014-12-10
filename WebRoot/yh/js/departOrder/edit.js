@@ -22,8 +22,9 @@
 	var departOrderId = $("#departOrderId").val();
 	if(departOrderId != '' && departOrderId != null){
 		var departOrderChargeType = $("#departOrderChargeType").val();
-
+		
 		$("input[name='chargeType']").each(function(){
+			
 			if(departOrderChargeType == $(this).val()){
 				//零担
 				if(departOrderChargeType == "perCargo"){
@@ -35,9 +36,11 @@
 					var hibLtlUnitType = $("#hibLtlUnitType").val();
 					$("input[value='"+hibLtlUnitType+"']").prop('checked', true);
 				}else if(departOrderChargeType == "perCar"){
+					
                     //显示车辆信息                   
                     $(this).prop('checked', true);
                     $("#car_type_div").show();
+                    $("#carInfomation").show();
                     var departOrderCarType = $("#hiddenDepartOrderCarType").val();
                     $("#car_type").val(departOrderCarType);
                 }else{
@@ -887,13 +890,13 @@
     		var sp_id=$("#sp_id").val();
     		if(sp_id!=""){
     			$.get('/departOrder/getIntsp', {sp_id:sp_id}, function(data){
-    				console.log(data);
+    				//console.log(data);
     				$('#spMessage').val(data.COMPANY_NAME);
     			},'json');
     		}
     		//会显收货人
     		$.get('/departOrder/ginNotifyPerson', {order_id:message}, function(data){
-				console.log(data);
+				//console.log(data);
 				if(data.ADDRESS==null){
 					data.ADDRESS='';
 				}
