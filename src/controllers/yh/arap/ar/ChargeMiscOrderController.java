@@ -11,6 +11,7 @@ import java.util.Map;
 
 import models.Account;
 import models.ArapChargeInvoiceApplication;
+import models.ArapChargeOrder;
 import models.ArapMiscChargeOrder;
 import models.ArapMiscChargeOrderItem;
 import models.Party;
@@ -101,12 +102,12 @@ public class ChargeMiscOrderController extends Controller {
 		if (endTime != null && !"".equals(endTime)) {
 			setAttr("endTime", endTime);
 		}
-		String customerId = getPara("customerId");
+		ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
+		String customerId = arapChargeOrder.get("payee_id");
 		if (!"".equals(customerId) && customerId != null) {
 			Party party = Party.dao.findById(customerId);
 			setAttr("party", party);
-			Contact contact = Contact.dao.findById(party.get("contact_id")
-					.toString());
+			Contact contact = Contact.dao.findById(party.get("contact_id").toString());
 			setAttr("customer", contact);
 			setAttr("type", "CUSTOMER");
 			setAttr("classify", "");
@@ -211,6 +212,8 @@ public class ChargeMiscOrderController extends Controller {
 		setAttr("receivableItemList", receivableItemList);
 		
 		ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(id);
+		UserLogin userLogin = UserLogin.dao.findById(arapMiscChargeOrder.get("create_by"));
+		setAttr("userLogin", userLogin);
 		setAttr("arapMiscChargeOrder", arapMiscChargeOrder);
 			render("/yh/arap/ChargeMiscOrder/ChargeMiscOrderEdit.html");
 	}
