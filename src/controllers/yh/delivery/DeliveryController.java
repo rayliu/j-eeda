@@ -922,7 +922,7 @@ public class DeliveryController extends Controller {
 
 			deliveryOrder.set("order_no", orderNo)
 					.set("customer_id", getPara("customer_id"))
-					.set("sp_id", getPara("sp_id"))
+					.set("sp_id", spId)
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate).set("status", "新建")
 					.set("route_to", getPara("route_to"))
@@ -996,7 +996,7 @@ public class DeliveryController extends Controller {
 			saveDeliveryOrderMilestone(deliveryOrder);
 		} else {
 
-			deliveryOrder.set("sp_id", getPara("cid"))
+			deliveryOrder.set("sp_id", spId)
 					.set("notify_party_id", getPara("notify_id"))
 					.set("Customer_id", getPara("customer_id"))
 					.set("id", deliveryid).set("route_to", getPara("route_to"))
