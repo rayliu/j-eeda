@@ -220,7 +220,9 @@
 								</div>
                                 <div class="tab-pane fade" id="cargos">
                                     <div class="panel-body">
-                                    <button id="" type="button" class="btn btn-primary">选择应付扣款单</button>
+                                    <button id="addExternalMiscOrderBtn" class="btn btn-primary" data-toggle="modal" data-target="#addExternalMiscOrder" data-backdrop="static">
+										选择应付扣款单
+									</button>
                                         <div class="table-responsive">
 			                                <table class="table table-striped table-bordered table-hover" id="chargeMiscList-table">
 			                                    <thead>
@@ -241,6 +243,44 @@
                                     </div>
                                     <!-- /.panel-body -->
 								</div>
+								
+								<!-- 模态框 -->
+								<div class="modal fade" id="addExternalMiscOrder" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+								  <div class="modal-dialog">
+								    <div class="modal-content">
+								      <div class="modal-header">
+								        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								        <h4 class="modal-title" id="myModalLabel">选取手工单</h4>
+								      </div>
+								      <div class="modal-body">
+								      	<form id="addExternalTransferOrderForm" action="">
+								      		<input type="hidden" name="micsOrderIds" id="micsOrderIds"/>
+								      		<div class="table-responsive">
+				                                <table class="table table-striped table-bordered table-hover" id="external-table">
+				                                    <thead>
+				                                        <tr>
+			                                            	<th></th>
+				                                            <th>手工收款单号</th>
+				                                            <th>类型</th>
+				                                            <th>状态</th>
+				                                            <th>创建时间</th>
+				                                            <th>对账单号</th>
+				                                            <th>备注</th>                                       
+				                                         </tr>
+				                                    </thead>
+				                                    <tbody>                                        
+				                                    </tbody>
+				                                </table>
+				                            </div>
+									      <div class="modal-footer">
+									        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									        <button id="addExternalFormBtn" type="button" class="btn btn-primary">保存</button>
+									      </div>
+										</form>
+									  </div>
+								    </div><!-- /.modal-content -->
+								  </div><!-- /.modal-dialog -->
+								</div><!-- /.modal -->
                                 <div class=".tooltip-demo">
                                     <hr/>
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>

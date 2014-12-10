@@ -90,27 +90,21 @@ public class ChargeMiscOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
-		String[] idArray = ids.split(",");
-		logger.debug(String.valueOf(idArray.length));
-
-		setAttr("chargeCheckOrderIds", ids);
-		String beginTime = getPara("beginTime");
-		if (beginTime != null && !"".equals(beginTime)) {
-			setAttr("beginTime", beginTime);
-		}
-		String endTime = getPara("endTime");
-		if (endTime != null && !"".equals(endTime)) {
-			setAttr("endTime", endTime);
-		}
-		ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
-		String customerId = arapChargeOrder.get("payee_id");
-		if (!"".equals(customerId) && customerId != null) {
-			Party party = Party.dao.findById(customerId);
-			setAttr("party", party);
-			Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-			setAttr("customer", contact);
-			setAttr("type", "CUSTOMER");
-			setAttr("classify", "");
+		if(ids != null && !"".equals(ids)){
+			String[] idArray = ids.split(",");
+			logger.debug(String.valueOf(idArray.length));
+	
+			setAttr("chargeCheckOrderIds", ids);
+			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
+			String customerId = arapChargeOrder.get("payee_id");
+			if (!"".equals(customerId) && customerId != null) {
+				Party party = Party.dao.findById(customerId);
+				setAttr("party", party);
+				Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+				setAttr("customer", contact);
+				setAttr("type", "CUSTOMER");
+				setAttr("classify", "");
+			}
 		}
 
 		setAttr("saveOK", false);
@@ -118,9 +112,6 @@ public class ChargeMiscOrderController extends Controller {
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
 		setAttr("create_by", users.get(0).get("id"));
-
-		String sql = "select * from arap_charge_invoice_application_order order by id desc limit 0,1";
-		setAttr("order_no", OrderNoUtil.getOrderNo(sql,"SGSK"));
 		
 		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
 		setAttr("userLogin", userLogin);
@@ -152,13 +143,16 @@ public class ChargeMiscOrderController extends Controller {
 			arapMiscChargeOrder.update();
 		} else {
 			arapMiscChargeOrder = new ArapMiscChargeOrder();
-			arapMiscChargeOrder.set("order_no", getPara("order_no"));
 			arapMiscChargeOrder.set("status", "新建");
 			arapMiscChargeOrder.set("type", getPara("type"));
 			arapMiscChargeOrder.set("create_by", getPara("create_by"));
 			arapMiscChargeOrder.set("create_stamp", new Date());
 			arapMiscChargeOrder.set("remark", getPara("remark"));
-			arapMiscChargeOrder.set("charge_order_id", getPara("chargeCheckOrderIds"));
+			String sql = "select * from arap_misc_charge_order order by id desc limit 0,1";
+			arapMiscChargeOrder.set("order_no", OrderNoUtil.getOrderNo(sql,"SGSK"));
+			if(getPara("chargeCheckOrderIds") != null && !"".equals(getPara("chargeCheckOrderIds"))){
+				arapMiscChargeOrder.set("charge_order_id", getPara("chargeCheckOrderIds"));
+			}
 			arapMiscChargeOrder.set("payment_method", getPara("paymentMethod"));
 			if("transfers".equals(paymentMethod)){
 				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){

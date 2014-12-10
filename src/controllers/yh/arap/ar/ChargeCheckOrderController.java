@@ -11,6 +11,7 @@ import java.util.Map;
 
 import models.ArapChargeItem;
 import models.ArapChargeOrder;
+import models.ArapMiscChargeOrder;
 import models.Party;
 import models.ReturnOrder;
 import models.UserLogin;
@@ -505,16 +506,16 @@ public class ChargeCheckOrderController extends Controller {
 		Map orderMap = new HashMap();
 		// 获取总条数
 		String totalWhere = "";
-		String sql = "select count(amcoi.id) total from arap_charge_order aco"
-					+ " left join arap_misc_charge_order amco on amco.charge_order_id = aco.id"
+		String sql = "select count(amco.id) total from arap_misc_charge_order amco"
+					+ " left join arap_charge_order aco on amco.charge_order_id = aco.id"
 					+ " left join arap_misc_charge_order_item amcoi on amcoi.misc_order_id = amco.id where aco.id = "+chargeCheckOrderId;
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
 		List<Record> orders = Db
-				.find("select amcoi.*,amco.order_no misc_order_no,c.abbr cname,fi.name name from arap_charge_order aco "
-					+ " left join arap_misc_charge_order amco on aco.id = amco.charge_order_id "
+				.find("select amcoi.*,amco.order_no misc_order_no,c.abbr cname,fi.name name from arap_misc_charge_order amco"
+					+ " left join arap_charge_order aco on aco.id = amco.charge_order_id "
 					+ " left join arap_misc_charge_order_item amcoi on amcoi.misc_order_id = amco.id "
 					+ " left join party p on p.id = aco.payee_id left join contact c on c.id = p.contact_id "
 					+ " left join fin_item fi on amcoi.fin_item_id = fi.id where aco.id =  "+ chargeCheckOrderId +" " + sLimit);
@@ -530,5 +531,47 @@ public class ChargeCheckOrderController extends Controller {
 		orderMap.put("aaData", orders);
 
 		renderJson(orderMap);
+	}
+	
+	public void externalMiscOrderList(){
+		String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        String sqlTotal = "select count(1) total from arap_misc_charge_order where ifnull(charge_order_id, 0) = 0";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select amco.*,aco.order_no charge_order_no from arap_misc_charge_order amco"
+					+ " left join arap_charge_order aco on aco.id = amco.charge_order_id"
+					+ " where ifnull(charge_order_id, 0) = 0 order by amco.create_stamp desc " + sLimit;
+
+        logger.debug("sql:" + sql);
+        List<Record> BillingOrders = Db.find(sql);
+
+        Map BillingOrderListMap = new HashMap();
+        BillingOrderListMap.put("sEcho", pageIndex);
+        BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        BillingOrderListMap.put("aaData", BillingOrders);
+
+        renderJson(BillingOrderListMap);
+	}
+	
+	public void updateChargeMiscOrder(){
+		String micsOrderIds = getPara("micsOrderIds");
+		String chargeCheckOrderId = getPara("chargeCheckOrderId");
+		if(micsOrderIds != null && !"".equals(micsOrderIds)){
+			String[] micsOrderIdArr = micsOrderIds.split(",");
+			for(int i=0;i<micsOrderIdArr.length;i++){
+				ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(micsOrderIdArr[i]);
+				arapMiscChargeOrder.set("charge_order_id", chargeCheckOrderId);
+				arapMiscChargeOrder.update();
+			}
+		}
+        renderJson("{\"success\":true}");
 	}
 }

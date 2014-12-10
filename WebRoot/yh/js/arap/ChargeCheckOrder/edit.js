@@ -198,4 +198,91 @@ $(document).ready(function() {
     	$(".bootstrap-datetimepicker-widget").hide();
     	$('#arrival_time').trigger('keyup');
     });	
+    
+    var externalTab = $('#external-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+    	  "oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "sAjaxSource": "/chargeCheckOrder/externalMiscOrderList",
+        "aoColumns": [      
+	        { "mDataProp": null,
+	            "fnRender": function(obj) {
+	              return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	            }
+	        }, 
+            {"mDataProp":"ORDER_NO","sWidth": "80px",
+            	"fnRender": function(obj) {
+        			return "<a href='/chargeMiscOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        		}},
+            {"mDataProp":"TYPE","sWidth": "100px",
+            	"fnRender": function(obj) {
+                    if(obj.aData.TYPE=='ordinary_receivables'){
+                        return '普通收款';
+                    }else if(obj.aData.TYPE=='offset_payment'){
+                        return '抵销货款';
+                    }
+                    return obj.aData.TYPE;
+                }
+            },
+            {"mDataProp":"STATUS","sWidth": "100px",
+                "fnRender": function(obj) {
+                    if(obj.aData.STATUS=='new'){
+                        return '新建';
+                    }else if(obj.aData.STATUS=='checking'){
+                        return '已发送对帐';
+                    }else if(obj.aData.STATUS=='confirmed'){
+                        return '已审核';
+                    }else if(obj.aData.STATUS=='completed'){
+                        return '已结算';
+                    }else if(obj.aData.STATUS=='cancel'){
+                        return '取消';
+                    }
+                    return obj.aData.STATUS;
+                }
+            },
+            {"mDataProp":"CREATE_STAMP","sWidth": "150px"},
+            {"mDataProp":"CHARGE_ORDER_NO","sWidth": "150px"},
+            {"mDataProp":"REMARK","sWidth": "150px"}                       
+        ]      
+    });	
+
+    $("#addExternalMiscOrderBtn").click(function(){
+    	externalTab.fnSettings().sAjaxSource = "/chargeCheckOrder/externalMiscOrderList";
+    	externalTab.fnDraw();  
+    });    
+
+    var ids = [];
+    // 未选中列表
+	$("#external-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == true){
+			ids.push($(this).val());
+			$("#micsOrderIds").val(ids);
+		}			
+	});
+	
+	// 已选中列表
+	$("#external-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == false){
+			if(ids.length != 0){
+				ids.splice($.inArray($(this).val(),ids),1);
+				$("#micsOrderIds").val(ids);
+			}
+		}			
+	});
+	
+	$("#addExternalFormBtn").click(function(){
+		var micsOrderIds = $("#micsOrderIds").val();
+		var chargeCheckOrderId = $("#chargeCheckOrderId").val();
+		$.post('/chargeCheckOrder/updateChargeMiscOrder', {micsOrderIds: micsOrderIds, chargeCheckOrderId: chargeCheckOrderId}, function(data){
+			if(data.success){
+				$('#addExternalMiscOrder').modal('hide');
+		    	chargeMiscListTable.fnSettings().sAjaxSource = "/chargeCheckOrder/checkChargeMiscList?chargeCheckOrderId="+$("#chargeCheckOrderId").val();
+		    	chargeMiscListTable.fnDraw();  
+			}
+		},'json');
+	});
 } );
