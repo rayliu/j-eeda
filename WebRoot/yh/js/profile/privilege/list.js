@@ -94,7 +94,7 @@ $(document).ready(function() {
        	 },  	
 		 messages:{
 			 rolename:{
-				 required:"角色不为空"
+				 required:"角色不能为空"
 			 }
        },
        highlight: function(element) {
