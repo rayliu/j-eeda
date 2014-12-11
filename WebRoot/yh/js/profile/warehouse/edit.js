@@ -250,7 +250,7 @@ $(document).ready(function() {
 	     		province.append("<option>--请选择省份--</option>");
 	     		for(var i = 0; i < data.provinceLocations.length; i++){
 					if(data.provinceLocations[i].NAME == provinceVal){
-						$("#locationForm").val(data.provinceLocations[i].CODE);
+						$("#location").val(data.provinceLocations[i].CODE);
 						province.append("<option value= "+data.provinceLocations[i].CODE+" selected='selected'>"+data.provinceLocations[i].NAME+"</option>");
 					}else{
 						province.append("<option value= "+data.provinceLocations[i].CODE+">"+data.provinceLocations[i].NAME+"</option>");						
@@ -263,7 +263,7 @@ $(document).ready(function() {
 				for(var i = 0; i < data.cityLocations.length; i++)
 				{
 					if(data.cityLocations[i].NAME == cityVal){
-						$("#locationForm").val(data.cityLocations[i].CODE);
+						$("#location").val(data.cityLocations[i].CODE);
 						cmbCity.append("<option value= "+data.cityLocations[i].CODE+" selected='selected'>"+data.cityLocations[i].NAME+"</option>");
 					}else{
 						cmbCity.append("<option value= "+data.cityLocations[i].CODE+">"+data.cityLocations[i].NAME+"</option>");						
@@ -277,7 +277,7 @@ $(document).ready(function() {
     				for(var i = 0; i < data.districtLocations.length; i++)
     				{
     					if(data.districtLocations[i].NAME == districtVal){
-    						$("#locationForm").val(data.districtLocations[i].CODE);
+    						$("#location").val(data.districtLocations[i].CODE);
     						cmbArea.append("<option value= "+data.districtLocations[i].CODE+" selected='selected'>"+data.districtLocations[i].NAME+"</option>");
     					}else{
     						cmbArea.append("<option value= "+data.districtLocations[i].CODE+">"+data.districtLocations[i].NAME+"</option>");						
@@ -288,6 +288,7 @@ $(document).ready(function() {
     				cmbArea.empty();
     			}
 	        },'json');
+	        
     	},'json');
     };
 } );

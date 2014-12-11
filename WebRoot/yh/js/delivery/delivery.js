@@ -556,8 +556,9 @@ $(document).ready(function() {
 			           var warehouseName =$("#warehouse2").val();
 			           var code= $("#orderStatue2").val();
 			           var deliveryOrderNo = $("#deliveryOrderNo2").val();
+			           var rdc = $('#hiddenRdc').val();
 			           //如果客户和仓库都有值，触发查询
-			           if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""){
+			           if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""&&rdc!=null&&rdc!=""){
 				            dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
 				        	+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
 				        	dab.fnDraw();
@@ -672,20 +673,23 @@ $(document).ready(function() {
 			     //选择仓库 
 			  	 $('#warehouse2').on('keyup click', function(){
 			  		var warehouse_Name =$("#warehouse2").val();
-			  		$.get('/gateIn/searchAllwarehouse',{warehouseName:warehouse_Name}, function(data){
-			  			console.log(data);
-			  			var warehouseList =$("#warehouseList");
-			  			warehouseList.empty();
-			  			for(var i = 0; i < data.length; i++)
-			  			{
-			  				warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</a></li>");
-			  			}
-			  		},'json');
-			  		$("#warehouseList").css({ 
-			  	    	left:$(this).position().left+"px", 
-			  	    	top:$(this).position().top+32+"px" 
-			  	    }); 
-			  	    $('#warehouseList').show();
+			  		var rdc = $('#hiddenRdc').val();
+			  		if(rdc != null && rdc != ""){
+				  		$.get('/delivery/searchAllwarehouse',{warehouseName:warehouse_Name,rdc:rdc}, function(data){
+				  			console.log(data);
+				  			var warehouseList =$("#warehouseList");
+				  			warehouseList.empty();
+				  			for(var i = 0; i < data.length; i++)
+				  			{
+				  				warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</a></li>");
+				  			}
+				  		},'json');
+				  		$("#warehouseList").css({ 
+				  	    	left:$(this).position().left+"px", 
+				  	    	top:$(this).position().top+32+"px" 
+				  	    }); 
+				  	    $('#warehouseList').show();
+			  		}
 			  	    
 			  	});
 			  	$('#warehouse2').on('blur', function(){
@@ -705,8 +709,9 @@ $(document).ready(function() {
 		            var warehouseName =$("#warehouse2").val();
 		            var code= $("#orderStatue2").val();
 		            var deliveryOrderNo = $("#deliveryOrderNo2").val();
+		            var rdc = $('#hiddenRdc').val();
 		           //如果客户和仓库都有值，触发查询
-		            if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""){
+		            if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""&&rdc!=null&&rdc!=""){
 		            	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
 		        		+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
 		        		dab.fnDraw();
@@ -714,6 +719,45 @@ $(document).ready(function() {
 	        		  
 			  		$('#warehouseList').hide();
 			  	});
+			  	
+			  	//选择RDC
+			  	$('#rdc').on('keyup click', function(){
+			  		var rdc =$("#rdc").val();
+			  		if(rdc == "")
+						$("#hiddenRdc").val("");
+			  		$.get('/delivery/searchAllRDC',{rdc:rdc}, function(data){
+			  			console.log(data);
+			  			var warehouseList =$("#rdcList");
+			  			warehouseList.empty();
+			  			for(var i = 0; i < data.length; i++)
+			  			{
+			  				warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</a></li>");
+			  			}
+			  		},'json');
+			  		$("#rdcList").css({ 
+			  	    	left:$(this).position().left+"px", 
+			  	    	top:$(this).position().top+32+"px" 
+			  	    }); 
+			  	    $('#rdcList').show();
+			  	    
+			  	});
+			  	$('#rdc').on('blur', function(){
+			  		$("#rdcList").hide();
+			  	});
+			  	$('#rdcList').on('blur', function(){
+			  			$('#rdcList').hide();
+			  		});
+
+			  	$('#rdcList').on('mousedown', function(){
+			  		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+			  	});
+			  	$('#rdcList').on('mousedown', '.fromLocationItem', function(e){
+			  		var id =$(this).attr('code');
+			  		$('#rdc').val($(this).text());
+			  		$('#hiddenRdc').val(id);
+			  		$('#rdcList').hide();
+			  	});
+			  	
 			  	/***red,? 客户和仓库一有值得时候触发事件****/
 			  	$('#customerName2,#warehouse2,#orderStatue2,#deliveryOrderNo2').on('keyup click', function(){
 			  		var inputStr = $('#customerName2').val();

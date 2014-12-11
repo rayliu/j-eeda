@@ -99,7 +99,7 @@
                                         	
                                         	</div>
                                         	<div class="form-group">
-		                                       <label>始发城市</label>
+		                                       <label>始发地城市（默认RDC城市）</label>
 		                                       <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;" >
 		                                           <input id="locationForm" type="hidden" name="route_from" value="${deliveryId.route_from!''}">
 	                                               <label>省</label>
@@ -113,21 +113,6 @@
 	                                               <select  id="cmbAreaFrom" class="valid" name="cmbAreaFrom" value=""></select>
                                             	</div>
                                             </div>
-						                    <div class="form-group" >
-                                            	<input id="locationTo" type="hidden" name="route_to" value="${deliveryId.route_to!''}">
-                                           		<label>目的地城市</label>
-		                                   		 <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">
-		                                        <label>省</label>
-		                                        <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
-		                                        <select id="mbProvinceTo" class="valid" name="mbProvinceTo"></select>
-		                                        <label>市</label>
-		                                        <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
-		                                        <select  id="cmbCityTo"  class="valid" name="cmbCityTo"></select>
-		                                        <label>区(县)</label>
-		                                        <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}" />
-		                                        <select  id="cmbAreaTo" class="valid" name="cmbAreaTo"></select>
-		                                    	</div>
-	                                   		 </div>
 		                                   	 <div class="form-group">
                                                     <label><h3>计费方式</h3></label>
                                                     <input id="chargeTypeRadio" type="hidden" value="${deliveryId.priceType!''}"/>
@@ -234,6 +219,9 @@
 	                                      		
 		                                        <h3><label >配送单信息</label></h3>
 		                                        <div class="form-group">
+		                                            <label>RDC:</label>&nbsp;&nbsp;<span id='order_no'>${office.office_name!''}</span>
+		                                        </div>
+		                                        <div class="form-group">
 		                                            <label>配送单号:</label>&nbsp;&nbsp;<span id='order_no'>${deliveryOrder.order_no!''}</span>
 		                                        </div>
 		                                        <div class="form-group">
@@ -281,6 +269,21 @@
 		                                            <label>收货人公司名称</label>
 		                                            <input name="notify_company_name" class="form-control" placeholder="请输入公司名称" value="${notifyParty.company!''}">
 		                                        </div>
+		                                        <div class="form-group" >
+	                                            	<input id="locationTo" type="hidden" name="route_to" value="${deliveryId.route_to!''}">
+	                                           		<label>目的地城市</label>
+			                                   		 <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;">
+			                                        <label>省</label>
+			                                        <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
+			                                        <select id="mbProvinceTo" class="valid" name="mbProvinceTo"></select>
+			                                        <label>市</label>
+			                                        <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
+			                                        <select  id="cmbCityTo"  class="valid" name="cmbCityTo"></select>
+			                                        <label>区(县)</label>
+			                                        <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}" />
+			                                        <select  id="cmbAreaTo" class="valid" name="cmbAreaTo"></select>
+			                                    	</div>
+		                                   		 </div>
 		                                        <div class="form-group">
 		                                            <label>收货地址</label>
 		                                            <input name="notify_address" id ="notify_address" class="form-control" placeholder="请输入收货地址" value="${notifyParty.address!''}">

@@ -14,6 +14,7 @@ import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.DepartTransferOrder;
 import models.Location;
+import models.Office;
 import models.Party;
 import models.TransferOrder;
 import models.TransferOrderItemDetail;
@@ -497,6 +498,7 @@ public class DeliveryController extends Controller {
 		String list2 = this.getPara("localArr2");// 序列号id
 		String list3 = this.getPara("localArr3");
 		String cusId = getPara("cusId");
+		String rdc = getPara("hiddenRdc");
 		String cargoNature = getPara("cargoNature");
 		Party party = Party.dao
 				.findFirst("select *,p.id as customerId from party p left join contact c on p.contact_id=c.id where p.id ='"
@@ -505,6 +507,11 @@ public class DeliveryController extends Controller {
 		setAttr("localArr2", list2);
 		setAttr("localArr3", list3);
 		setAttr("customer", party);
+		
+		//rdc
+		Office office =  Office.dao.findById(rdc);
+		setAttr("office", office);
+		
 
 		String sql="select t.receiving_unit as company,c1.* ,td.notify_party_phone as phone,"
 				+ " td.notify_party_name as contact_person,td.notify_party_company as address,t.route_from "
@@ -523,7 +530,7 @@ public class DeliveryController extends Controller {
 		Warehouse warehouse = Warehouse.dao
 				.findById(tOrder.get("warehouse_id"));
 		
-		String routeFrom = warehouse.get("location");
+		String routeFrom = office.get("location");
 		Location locationFrom = null;
 		if (routeFrom != null || !"".equals(routeFrom)) {
 			List<Location> provinces = Location.dao
@@ -1245,6 +1252,43 @@ public class DeliveryController extends Controller {
         Map.put("aaData", deliveryOrderItems);
         renderJson(Map); 
     }
-	
-	
+    // 查找RDC	
+    public void searchAllRDC() {
+    	String inputStr = getPara("rdc");
+    	String sql ="";
+    	if(inputStr!=null){
+    		sql = "select * from office where type = '配送中心RDC' and office_name like '%"+inputStr+"%'";
+    	}else{
+    		sql= "select * from office where type = '配送中心RDC'";
+    	}
+        List<Office> office = Office.dao.find(sql);
+        renderJson(office);
+    }
+    // 查找仓库
+    public void searchAllwarehouse() {
+    	String inputStr = getPara("warehouseName");
+    	String rdc = getPara("rdc");
+    	String sql ="";
+    	/*if(inputStr!=null){
+    		sql = "select * from warehouse where warehouse_name like '%"+inputStr+"%'";
+    	}else{
+    		sql= "select * from warehouse";
+    	}*/
+    	
+    	if(inputStr != null && rdc != null && !"".equals(inputStr) && !"".equals(rdc)){
+    		sql = "select * from warehouse w left join office o on o.id = w.office_id where o.type = '配送中心RDC' "
+    				+ "and w.warehouse_name LIKE '%"+inputStr+"%' and o.id = "+rdc;
+    	}else if(inputStr != null && !"".equals(inputStr)){
+    		sql = "select * from warehouse where warehouse_name like '%"+inputStr+"%'";
+    	}else if(rdc != null && !"".equals(rdc)){
+    		sql = "select * from warehouse w left join office o on o.id = w.office_id where o.type = '配送中心RDC' and o.id = "+rdc;
+    	}else{
+    		sql= "select * from warehouse";
+    	}
+    	
+    	
+        List<Warehouse> warehouses = Warehouse.dao.find(sql);
+        renderJson(warehouses);
+    }
+
 }
