@@ -70,7 +70,9 @@ public class ChargePreInvoiceOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aaia.*,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_charge_invoice_application_order aaia "
+        String sql = "select aaia.*,c.abbr cname,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_charge_invoice_application_order aaia "
+				+ " left join party p on p.id = aaia.payee_id"
+				+ " left join contact c on c.id = p.contact_id"
 				+ " left join user_login ul on ul.id = aaia.create_by"
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by order by aaia.create_stamp desc " + sLimit;
@@ -233,27 +235,6 @@ public class ChargePreInvoiceOrderController extends Controller {
 		UserLogin userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication.get("create_by"));
 		setAttr("userLogin", userLogin);
 		setAttr("arapAuditInvoiceApplication", arapAuditInvoiceApplication);
-
-		/*Date beginTimeDate = arapAuditInvoiceApplication.get("begin_time");
-		Date endTimeDate = arapAuditInvoiceApplication.get("end_time");
-		String beginTime = "";
-		String endTime = "";
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		if (!"".equals(beginTimeDate) && beginTimeDate != null) {
-			beginTime = simpleDateFormat.format(beginTimeDate);
-		}
-		if (!"".equals(endTimeDate) && endTimeDate != null) {
-			endTime = simpleDateFormat.format(endTimeDate);
-		}
-		String chargeCheckOrderIds = "";
-		List<ArapChargeInvoiceApplicationItem> arapAuditInvoiceApplicationItems = ArapChargeInvoiceApplicationItem.dao.find("select * from arap_charge_invoice_application_item where charge_order_id = ?", id);
-		for(ArapChargeInvoiceApplicationItem arapAuditInvoiceApplicationItem : arapAuditInvoiceApplicationItems){
-			chargeCheckOrderIds += arapAuditInvoiceApplicationItem.get("charge_order_id") + ",";
-		}
-		chargeCheckOrderIds = chargeCheckOrderIds.substring(0, chargeCheckOrderIds.length() - 1);
-		setAttr("chargeCheckOrderIds", chargeCheckOrderIds);
-		setAttr("beginTime", beginTime);
-		setAttr("endTime", endTime);*/
 			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
 	}
     

@@ -24,6 +24,8 @@ $(document).ready(function() {
 	//transferOrderForm 不需要提交	
  	$("#saveChargeInvoiceOrderBtn").click(function(e){
  		saveChargeCheckOrder(e);
+
+ 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	
 	if($("#chargeCheckOrderStatus").text() == 'new'){
@@ -54,7 +56,7 @@ $(document).ready(function() {
   	            	return str;
   	            }
   	        },
-            {"mDataProp":null},
+            {"mDataProp":"CNAME"},
             { "mDataProp": null,
   	            "fnRender": function(obj) {
   	            	var str;
@@ -86,8 +88,8 @@ $(document).ready(function() {
 					option += "<option value='"+data[i].INVOICE_NO+"'>"+data[i].INVOICE_NO+"</option>";
 				}
 				itemInvoiceNoList.append(option);	
-			    var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
-				chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList";   
+			    //var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
+			    chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList?chargePreInvoiceOrderIds="+$("#chargePreInvoiceOrderIds").val();   
 				chargePreInvoiceOrderTable.fnDraw();
 			}
     	},'json');
@@ -184,16 +186,19 @@ $(document).ready(function() {
 					option += "<option value='"+data[i].INVOICE_NO+"'>"+data[i].INVOICE_NO+"</option>";
 				}
 				itemInvoiceNoList.append(option);	
-			    chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
-				chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList";   
-				chargePreInvoiceOrderTable.fnDraw();
+			    //chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
+				//chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList";   
+				//chargePreInvoiceOrderTable.fnDraw();
 			}
     	},'json');
 			
 	    invoiceItemTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargeInvoiceItemList?chargeInvoiceOrderId="+chargeInvoiceOrderId;   
-	    invoiceItemTable.fnDraw();		
-		chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList";   
+	    invoiceItemTable.fnDraw();		    
+	    
+		chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList?chargePreInvoiceOrderIds="+$("#chargePreInvoiceOrderIds").val();   
 		chargePreInvoiceOrderTable.fnDraw();
+
+ 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});	
 
 	$("#chargePreInvoiceOrder-table").on('blur', 'select', function(e){

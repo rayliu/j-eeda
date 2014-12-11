@@ -1,5 +1,5 @@
 <%layout("/yh/layout.html"){%>
-
+<link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
@@ -30,7 +30,7 @@
                                         <form role="form" id="chargeInvoiceOrderForm">
                                         	<input id="chargeInvoiceOrderId" type="hidden" name="chargeInvoiceOrderId" value="${ArapAuditInvoice.id!''}"/>
                                         	<input id="customer_id" type="hidden" name="customer_id" value="${party.id!''}"/>
-                                        	<input type="hidden" id="chargeCheckOrderIds" name="chargeCheckOrderIds" value="${chargeCheckOrderIds!''}"/>
+                                        	<input type="hidden" id="chargePreInvoiceOrderIds" name="chargePreInvoiceOrderIds" value="${chargePreInvoiceOrderIds!''}"/>
                                         	<input type="hidden" name="order_no" value="${order_no!''}${ArapAuditInvoice.order_no!''}"/>
                                         	<input type="hidden" name="status" value="${status!''}${ArapAuditInvoice.status!''}"/>
                                         	<input type="hidden" name="create_by" value="${create_by!''}${ArapAuditInvoice.create_by!''}"/>
@@ -160,4 +160,5 @@
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/arap/ChargeInvoiceOrder/edit.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.editable.js" type="text/javascript"></script>

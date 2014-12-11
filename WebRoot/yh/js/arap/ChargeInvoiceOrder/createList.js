@@ -11,7 +11,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargeInvoiceOrder/chargePreInvoiceOrderList",
+        "sAjaxSource": "/chargeInvoiceOrder/createList",
         "aoColumns": [    
             { "mDataProp": null,
   	            "fnRender": function(obj) {
@@ -39,7 +39,7 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":null},
-            {"mDataProp":null},
+            {"mDataProp":"CNAME"},
             {"mDataProp":null},
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATE_BY"},

@@ -35,7 +35,7 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":null},
-            {"mDataProp":null},
+            {"mDataProp":"CNAME"},
             {"mDataProp":null},
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATE_BY"},
