@@ -88,13 +88,16 @@ $(document).ready(function() {
 			}
 		},'json');
 		parentId = e.target.getAttribute("id");
+		
+		chargeCheckListTab.fnSettings().sAjaxSource = "/chargePreInvoiceOrder/chargeOrderListByIds?chargeCheckOrderIds="+$("#chargeCheckOrderIds").val();
+		chargeCheckListTab.fnDraw(); 
 	});
 	
     if($("#chargePreInvoiceOrderStatus").text() == 'new'){
     	$("#chargePreInvoiceOrderStatus").text('新建');
 	}
 
-    var datatable=$('#chargeCheckList-table').dataTable({
+    var chargeCheckListTab = $('#chargeCheckList-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
@@ -102,10 +105,13 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargeCheckOrder/list",
+        "sAjaxSource": "/chargePreInvoiceOrder/chargeOrderListByIds",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
-            {"mDataProp":"ORDER_NO"},
+            {"mDataProp":"ORDER_NO",
+            	"fnRender": function(obj) {
+        			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        	}},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
