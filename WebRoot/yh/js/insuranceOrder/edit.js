@@ -1,14 +1,8 @@
 ﻿$(document).ready(function() {
 	 $('#menu_damage').addClass('active').find('ul').addClass('in');	 
 	
-	 var message=$("#message").val();
-     var type=$("#type").val();
-     var depart_id=$("#depart_id").val();
-     var tr_item=$("#tr_itemid_list").val();
-     var item_detail=$("#item_detail").val();
-     var insuranceOrderId=$("#insuranceOrderId").val();
  	 //显示货品table
- 	 var datatable = $('#pickupItem-table').dataTable({
+ 	 var pickupItemTable = $('#pickupItem-table').dataTable({
          "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
          //"sPaginationType": "bootstrap",
          "iDisplayLength": 10,
@@ -21,7 +15,7 @@
  			$(nRow).attr({item_id: aData.ITEM_ID, fin_id: aData.FIN_ID});
  			return nRow;
  		 },
-         "sAjaxSource": "/insuranceOrder/getInitPickupOrderItems?insuranceOrderId="+insuranceOrderId+"&localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
+         "sAjaxSource": "/insuranceOrder/getInitPickupOrderItems",
          "aoColumns": [
              { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
              { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
@@ -32,8 +26,9 @@
              {"mDataProp":null,
             	 "sClass": "insurance_category", 
                  "fnRender": function(obj) {
-             	 var str = "<option value='综合险,附加险' selected = 'selected'>综合险,附加险</option>";                    			
-                 return "<select name='insurance_category'>"+str+"</select>";
+             	 /*var str = "<option value='综合险,附加险' selected = 'selected'>综合险,附加险</option>";                    			
+                 return "<select name='insurance_category'>"+str+"</select>";*/
+                 return "<span>综合险,附加险</span>";
              }},
              {"mDataProp": "FIN_AMOUNT",
             	 "sClass": "fin_amount", 
@@ -73,13 +68,6 @@
              { "mDataProp": "INSURANCE_AMOUNT",
             	 "sClass": "insurance_amount", 
                  "fnRender": function(obj) {
-                	 /*var str = "";
-                     if(obj.aData.INSURANCE_AMOUNT!='' && obj.aData.INSURANCE_AMOUNT != null){
-                         str = "<input type='text' name='insurance_amount' disabled value='"+obj.aData.INSURANCE_AMOUNT+"'>";
-                     }else{
-                     	 str = "<input type='text' name='insurance_amount' disabled>";
-                     }
-                	 return str;*/
                 	var str = obj.aData.INSURANCE_AMOUNT;
                  	if(obj.aData.INSURANCE_AMOUNT == null){
                  		str = "";
@@ -96,25 +84,18 @@
                      	 str = "<input type='text' name='insurance_no'>";
                      }
                 	 return str;
-             }},
-             /*{ 
-                 "mDataProp": null, 
-                 "sWidth": "8%",                
-                 "fnRender": function(obj) {                    
-                     return "<a class='btn btn-success dateilEdit' code='?id="+obj.aData.ID+"'>"+
-                                 "<i class='fa fa-search fa-fw'></i>"+
-                                 "查看"+
-                             "</a>";
-                 },
-             }    */                                   
-         ],
-         "fnInitComplete": function(oSettings, json) {
-         	$("#eeda-table td").on('click', '', function(){
-         	 hang = $(this).parent("tr").prevAll().length; 
-        		  	hang = Number(hang)+1;
-         	});         	    
-         }       
+             }}                                  
+         ]       
      });
+ 	 
+ 	 $("#insuranceOrderItemList").click(function(){
+ 		 var message=$("#message").val();
+ 	     var tr_item=$("#tr_itemid_list").val();
+ 	     var item_detail=$("#item_detail").val();
+ 	     var insuranceOrderId=$("#insuranceOrderId").val();
+ 	     pickupItemTable.fnSettings().sAjaxSource = "/insuranceOrder/getInitPickupOrderItems?insuranceOrderId="+insuranceOrderId+"&localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
+ 	     pickupItemTable.fnDraw();
+ 	 });
 
  	// 投保
  	$("#pickupItem-table").on('blur', 'input,select', function(e){
@@ -413,14 +394,13 @@
     });	
 	
 	// 应收datatable
-	var insuranceOrderId = $("#insuranceOrderId").val();
 	var incomeTab = $('#incomeTab').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 		"bFilter": false, //不需要默认的搜索框
 		//"sPaginationType": "bootstrap",
 		"iDisplayLength": 10,
 		"bServerSide": true,
-		"sAjaxSource": "/insuranceOrder/incomePayable?insuranceOrderId="+insuranceOrderId,
+		"sAjaxSource": "/insuranceOrder/incomePayable",
 		"oLanguage": {
 			"sUrl": "/eeda/dataTables.ch.txt"
 		},

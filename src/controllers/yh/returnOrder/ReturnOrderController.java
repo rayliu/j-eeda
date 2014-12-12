@@ -308,9 +308,9 @@ public class ReturnOrderController extends Controller {
 			// 如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
 			if (isLocationChanged) {
 				deleteContractFinItemByTransfer(transferOrder);
+				// 计算配送单的触发的应收
+				calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
 			}
-			// 计算配送单的触发的应收
-			calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
 		} else {
 			// 非直送
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao
@@ -326,11 +326,11 @@ public class ReturnOrderController extends Controller {
 			// 如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
 			if (isLocationChanged) {
 				deleteContractFinItem(deliveryOrder);
+				// 计算配送单的触发的应收
+				List<Record> transferOrderItemDetailList = Db.
+						find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", deliveryOrder.get("id"));
+		        calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
 			}
-			// 计算配送单的触发的应收
-			List<Record> transferOrderItemDetailList = Db.
-					find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", deliveryOrder.get("id"));
-	        calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
 		}
 		returnOrder.set("remark", getPara("remark"));
 		returnOrder.update();
