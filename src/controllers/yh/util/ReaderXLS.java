@@ -24,8 +24,8 @@ public class ReaderXLS{
     private HSSFWorkbook wb;
     private HSSFSheet sheet;
     private HSSFRow row;
-    private static String[] xlsTitle;
-	private static List<Map<String,String>> xlsContent = new ArrayList<Map<String,String>>();;
+    public static String[] xlsTitle;
+    public static List<Map<String,String>> xlsContent;
 
     /**
      * 读取Excel表格表头的内容
@@ -60,6 +60,7 @@ public class ReaderXLS{
      */
     private List<Map<String,String>> readExcelContent(InputStream is) {
         //String str = "";
+    	xlsContent = new ArrayList<Map<String,String>>();
         try {
             fs = new POIFSFileSystem(is);
             wb = new HSSFWorkbook(fs);

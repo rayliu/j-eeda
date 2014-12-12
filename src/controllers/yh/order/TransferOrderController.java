@@ -468,12 +468,12 @@ public class TransferOrderController extends Controller {
 				if (warehouseId != null && !"".equals(warehouseId)) {
 					transferOrder.set("warehouse_id", warehouseId);
 				}
-				if (notifyPartyId == null || "".equals(notifyPartyId)) {
+				/*if (notifyPartyId == null || "".equals(notifyPartyId)) {
 					party = saveContact();
 				} else {
 					party = updateContact(notifyPartyId);
 				}
-				transferOrder.set("notify_party_id", party.get("id"));
+				transferOrder.set("notify_party_id", party.get("id"));*/
 			}
 			if (officeId != null && !"".equals(officeId)) {
 				transferOrder.set("office_id", officeId);
@@ -491,7 +491,6 @@ public class TransferOrderController extends Controller {
 				transferOrder.set("sp_id", spId);
 			}
 			transferOrder.set("customer_id", customerId);
-			transferOrder.set("create_by", getPara("create_by"));
 			if ("cargo".equals(cargoNature)) {
 				transferOrder.set("cargo_nature_detail",
 						getPara("cargoNatureDetail"));
@@ -500,7 +499,6 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("operation_type", getPara("operationType"));
 			transferOrder.set("arrival_mode", getPara("arrivalMode"));
 			transferOrder.set("address", getPara("address"));
-			transferOrder.set("create_stamp", new Date());
 			transferOrder.set("remark", getPara("remark"));
 			transferOrder.set("route_from", getPara("route_from"));
 			transferOrder.set("route_to", getPara("route_to"));
@@ -537,12 +535,12 @@ public class TransferOrderController extends Controller {
 				if (warehouseId != null && !"".equals(warehouseId)) {
 					transferOrder.set("warehouse_id", warehouseId);
 				}
-				if (notifyPartyId == null || "".equals(notifyPartyId)) {
+				/*if (notifyPartyId == null || "".equals(notifyPartyId)) {
 					party = saveContact();
 				} else {
 					party = updateContact(notifyPartyId);
 				}
-				transferOrder.set("notify_party_id", party.get("id"));
+				transferOrder.set("notify_party_id", party.get("id"));*/
 			}
 			if (officeId != null && !"".equals(officeId)) {
 				transferOrder.set("office_id", officeId);
@@ -851,6 +849,8 @@ public class TransferOrderController extends Controller {
  			if(fileName.endsWith(".xls")){
  				title = ReaderXLS.getXlsTitle(file);
  				content = ReaderXLS.getXlsContent(file);
+ 				/*ReaderXLS.xlsTitle = null;
+ 				ReaderXLS.xlsContent = null;*/
  			}else if(fileName.endsWith(".xlsx")){
  				title = ReaderXlSX.getXlsTitle(file);
  				content = ReaderXlSX.getXlsContent(file);

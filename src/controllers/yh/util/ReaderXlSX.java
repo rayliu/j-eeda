@@ -26,13 +26,16 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 @SuppressWarnings({"rawtypes","unused","deprecation"})
 public class ReaderXlSX{
     private XSSFWorkbook wb;
     private XSSFSheet sheet;
     private XSSFRow row;
-    private static String[] xlsxTitle;
-	private static List<Map<String,String>> xlsxContent = new ArrayList<Map<String,String>>();;
+    public static String[] xlsxTitle;
+    public static List<Map<String,String>> xlsxContent;
 
     /**
      * 读取Excel表格表头的内容
@@ -66,6 +69,7 @@ public class ReaderXlSX{
      */
     private List<Map<String,String>> readExcelContent(InputStream is) {
         //String str = "";
+    	xlsxContent = new ArrayList<Map<String,String>>();
         try {
             wb = new XSSFWorkbook(is);
         } catch (IOException e) {
@@ -191,7 +195,7 @@ public class ReaderXlSX{
     	return xlsData;
     	
     }
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         try {
         	
             // 对读取Excel表格标题测试
@@ -202,21 +206,24 @@ public class ReaderXlSX{
             for (String s : title) {
                 System.out.print(s + " ");
             }
+            
 
             // 对读取Excel表格内容测试
-            InputStream is2 = new FileInputStream("d:\\广电运通.xlsx");
+            /*InputStream is2 = new FileInputStream("d:\\广电运通.xlsx");
             //Map<Integer, String> map = excelReader.readExcelContent(is2);
             List<Map<String,String>> content = excelReader.readExcelContent(is2);
+            System.out.println();
+            System.out.print("获得Excel表格的内容:"+content.size());
         	for (Map map2 : content) {
             	System.out.println();
             	for (int i = 0; i <= map2.size()-1; i++) {
                     System.out.print(title[i]+":"+map2.get(title[i])+"  ");
                 }
-			}
+			}*/
 				
         } catch (FileNotFoundException e) {
             System.out.println("未找到指定路径的文件!");
             e.printStackTrace();
         }
-    }*/
+    }
 }

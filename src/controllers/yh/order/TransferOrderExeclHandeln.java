@@ -8,28 +8,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.DepartOrder;
 import models.Party;
 import models.TransferOrder;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.yh.profile.Contact;
 
-import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.mysql.jdbc.log.Log;
 
 import controllers.yh.util.OrderNoUtil;
 public class TransferOrderExeclHandeln extends TransferOrderController{
-	
 	
 	//校验execl标题是否与默认标题一致
     public boolean checkoutExeclTitle(String[] title,String execlType){
     	int num = 0;
     	List<Record> titleList = Db.find("select execl_title from execl_title where execl_type = '"+ execlType +"';");
     	if(titleList != null){
+    		System.out.println();
     		for (Record record : titleList) {
 				if(record.get("execl_title").equals(title[num])){
 					num++;
@@ -47,8 +45,8 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     	Map<String, String> importResult = new HashMap<String, String>();
     	try{
         	String name = (String) currentUser.getPrincipal();
-    		List<UserLogin> users = UserLogin.dao
-    				.find("select * from user_login where user_name='" + name + "'");
+    		UserLogin user = UserLogin.dao
+    				.findFirst("select * from user_login where user_name='" + name + "'");
         	
     		SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");
     		
@@ -58,7 +56,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     		String because = "数据不能为空";
     		List<Integer> executeNum = new ArrayList<Integer>();
     		for (int j = 0; j < content.size(); j++) {
-    			Record tansferOrder = Db.findFirst("select * from transfer_order where customer_order_no = '" + content.get(j).get("运输单").trim() + "';");
+    			Record tansferOrder = Db.findFirst("select * from transfer_order where customer_order_no = '" + content.get(j).get("运输单号").trim() + "';");
     			if(tansferOrder == null){
     				executeNum.add(j);
     			}
@@ -66,10 +64,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
         	for (int j = 0; j < content.size(); j++) {
         		for (int exeNum : executeNum) {
 					if(j == exeNum){
-						String customerOrderNo = content.get(j).get("运输单").trim();
+						String customerOrderNo = content.get(j).get("运输单号").trim();
 		        		causeRow = j+2;
 		        		if("".equals(customerOrderNo)){
-		        			title = "运输单";
+		        			title = "运输单号";
 		        			break;
 		        		}
 		        		String customerName = content.get(j).get("客户名称(简称)").trim();
@@ -87,6 +85,16 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		        			title = "预计到货日期";
 		        			break;
 		        		}
+		        		String operationType = content.get(j).get("运营方式");
+		        		if("".equals(operationType)){
+		        			title = "运营方式";
+		        			break;
+		        		}
+		        		String arrivalMode = content.get(j).get("到达方式");
+		        		if("".equals(arrivalMode)){
+		        			title = "到达方式";
+		        			break;
+		        		}
 		        		because = "数据有误";
 		        		//货品属性
 		        		Record product = null;
@@ -99,10 +107,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		        		}
 		    			//仓库
 		        		Record warehouse = null;
-		        		if(!"".equals(content.get(j).get("仓储地点"))){
-			    			warehouse = Db.findFirst("select id from warehouse where warehouse_name = '" + content.get(j).get("仓储地点") + "';");
+		        		if(!"".equals(content.get(j).get("中转仓"))){
+			    			warehouse = Db.findFirst("select id from warehouse where warehouse_name = '" + content.get(j).get("中转仓") + "';");
 			    			if(warehouse == null){
-			    				title = "仓储地点";
+			    				title = "中转仓";
 			    				break;
 			    			}
 		        		}
@@ -130,16 +138,16 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 			    			String sql = "select p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称(简称)") + "';";
 			    			customer = Db.findFirst(sql);
 			    			if(customer == null){
-			    				title = "客户名称";
+			    				title = "客户名称(简称)";
 			    				break;
 			    			}
 		        		}
 		    			//供应商名称
 		        		Record provider = null;
 		        		if(!"".equals(content.get(j).get("供应商名称(简称)"))){
-			    			provider = Db.findFirst("select p.id from party p,contact c where p.contact_id = c.id and p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称(简称)") + "';");
+			    			provider = Db.findFirst("select p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称(简称)") + "';");
 			    			if(provider == null){
-			    				title = "供应商名称";
+			    				title = "供应商名称(简称)";
 			    				break;
 			    			}
 		        		}
@@ -158,13 +166,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				if(tansferOrderItem != null){
 		    					//本来这里是要修改货品明细表中amount（数量），
 		    					//由于execl中“发货数量”列是货品总数，所以不用修改
-		    					//体积相加
-		    					double sumVolume = tansferOrderItem.getDouble("volume") + (product.getDouble("volume")*Double.parseDouble(content.get(j).get("件数")));
-		    					tansferOrderItem.set("volume", sumVolume).update();
 		    					
-		    					TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where order_id = '" + tansferOrder.get("id") +"' and item_id = '" + tansferOrderItem.get("id") +"' and serial_no = '" + content.get(j).get("序列号") + "';");
+		    					TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where order_id = '" + tansferOrder.get("id") +"' and item_id = '" + tansferOrderItem.get("id") +"' and serial_no = '" + content.get(j).get("单品序列号") + "';");
 		    					if(transferOrderItemDetail != null){
-		    						int num = transferOrderItemDetail.getInt("pieces") + Integer.parseInt(content.get(j).get("件数"));
+		    						int num = transferOrderItemDetail.getInt("pieces") + Integer.parseInt(content.get(j).get("单品件数"));
 		    						transferOrderItemDetail.set("pieces", num).update();
 		    					}else{
 		    						//创建保存单品货品明细
@@ -172,15 +177,15 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    						itemDatail.set("order_id", tansferOrder.get("id"))
 		    						.set("item_id", tansferOrderItem.get("id"))
 		    						.set("item_no", product.get("item_no"))
-		    						.set("serial_no", content.get(j).get("序列号"))
+		    						.set("serial_no", content.get(j).get("单品序列号"))
 		    						.set("item_name", product.get("item_name"))
 		    						.set("volume", product.get("volume"))
 		    						.set("weight", product.get("weight"))
-		    						.set("pieces", content.get(j).get("件数")) 
-		    						.set("notify_party_company", content.get(j).get("收货单位"))//收货单位
-			    					.set("notify_party_name", content.get(j).get("收货人"))//收货人
-			    					.set("notify_party_phone", content.get(j).get("收货人联系电话"))//收货人电话
-			    					.set("sales_order_no", content.get(j).get("销售单号"))//销售单号
+		    						.set("pieces", content.get(j).get("单品件数")) 
+		    						.set("notify_party_company", content.get(j).get("单品收货地址"))//收货地址
+			    					.set("notify_party_name", content.get(j).get("单品收货人"))//收货人
+			    					.set("notify_party_phone", content.get(j).get("单品收货人联系电话"))//收货人电话
+			    					.set("sales_order_no", content.get(j).get("单品销售单号"))//销售单号
 			    					.set("responsible_person", content.get(j).get("责任人"))//责任人
 			    					.set("business_manager", content.get(j).get("业务经理"))//业务经理
 			    					.set("station_name", content.get(j).get("服务站名称"))//服务站名称
@@ -191,7 +196,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					//创建保存货品明细
 		    					TransferOrderItem item =new TransferOrderItem();
 		    					//体积相加
-		    					double sumVolume = product.getDouble("volume")*Double.parseDouble(content.get(j).get("件数"));
+		    					double size = product.getDouble("size")/1000;
+			    				double width = product.getDouble("width")/1000;
+			    				double height = product.getDouble("height")/1000;
+			    				double sumVolume = size * width * height * Double.parseDouble(content.get(j).get("发货数量"));
 		    					double num = product.getDouble("weight") * Double.parseDouble(content.get(j).get("发货数量"));
 		    					item.set("order_id", tansferOrder.get("id"))
 		    					.set("amount", content.get(j).get("发货数量"))
@@ -211,15 +219,15 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					itemDatail.set("order_id", tansferOrder.get("id"))
 		    					.set("item_id", item.get("id"))
 		    					.set("item_no", product.get("item_no"))
-		    					.set("serial_no", content.get(j).get("序列号"))
+		    					.set("serial_no", content.get(j).get("单品序列号"))
 		    					.set("item_name", product.get("item_name"))
 		    					.set("volume", product.get("volume"))
 		    					.set("weight", product.get("weight"))
-		    					.set("pieces", content.get(j).get("件数")) 
-		    					.set("notify_party_company", content.get(j).get("收货单位"))//收货单位
-		    					.set("notify_party_name", content.get(j).get("收货人"))//收货人
-		    					.set("notify_party_phone", content.get(j).get("收货人联系电话"))//收货人电话
-		    					.set("sales_order_no", content.get(j).get("销售单号"))//销售单号
+		    					.set("pieces", content.get(j).get("单品件数")) 
+		    					.set("notify_party_company", content.get(j).get("单品收货地址"))//收货地址
+		    					.set("notify_party_name", content.get(j).get("单品收货人"))//收货人
+		    					.set("notify_party_phone", content.get(j).get("单品收货人联系电话"))//收货人电话
+		    					.set("sales_order_no", content.get(j).get("单品销售单号"))//销售单号
 		    					.set("responsible_person", content.get(j).get("责任人"))//责任人
 		    					.set("business_manager", content.get(j).get("业务经理"))//业务经理
 		    					.set("station_name", content.get(j).get("服务站名称"))//服务站名称
@@ -237,25 +245,50 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				TransferOrder transferOrder = new TransferOrder();
 		    				transferOrder.set("order_no", orderNo)
 		    				.set("order_type", "salesOrder")//订单类型：默认为销售订单
-		    				.set("operation_type", "own")//运营方式：默认自营
 		    				.set("charge_type", "perUnit")//客户计费方式：默认计件
 		    				.set("charge_type2", "perUnit")//供应商计费方式：默认计件
 		    				.set("pickup_assign_status",TransferOrder.ASSIGN_STATUS_NEW)
 		    				.set("depart_assign_status",TransferOrder.ASSIGN_STATUS_NEW)
 		    				.set("status", "新建")
-		    				.set("create_by", users.get(0).get("id"))//创建人id
+		    				.set("create_by", user.get("id"))//创建人id
 		    				.set("create_stamp", new Date())//创建时间
 		    				.set("planning_time", planningTime)//计划时间
 		    				.set("arrival_time", arrivalTime)//预计到货时间
 		    				.set("customer_order_no", customerOrderNo);//客户订单号
 		    				
-		    				//到达方式
-		    				if(!"".equals(content.get(j).get("仓储地点"))){
-		    					transferOrder.set("arrival_mode", "gateIn")
-		    					.set("warehouse_id", warehouse.get("id"));//仓库
+		    				//运营方式
+		    				if("外包".equals(content.get(j).get("运营方式"))){
+		    					transferOrder.set("operation_type", "out_source");
 		    				}else{
-		    					transferOrder.set("arrival_mode", "delivery")
-		    					.set("receiving_unit", content.get(j).get("收货单位"));//收货单位
+		    					transferOrder.set("operation_type", "own");
+		    				}
+		    				//取货地址、收货单位
+		    				transferOrder.set("address", content.get(j).get("取货地址"))
+	    					.set("receiving_unit", content.get(j).get("收货单位"));
+		    				
+		    				//到达方式
+		    				if("入中转仓".equals(content.get(j).get("到达方式"))){
+		    					//入中转仓
+		    					transferOrder.set("arrival_mode", "gateIn")
+		    					.set("warehouse_id", warehouse.get("id"));
+		    				}else{
+		    					//货品直送
+		    					transferOrder.set("arrival_mode", "delivery");
+		    					// 保存联系人
+		    					Contact contact = new Contact();
+		    					contact.set("contact_person", content.get(j).get("联系人(直送)"));
+		    					contact.set("phone", content.get(j).get("电话(直送)"));
+		    					contact.set("address", content.get(j).get("收货地址(直送)"));
+		    					contact.save();
+		    					// 保存收货人
+		    					Party party = new Party();
+		    					party.set("contact_id", contact.getLong("id"));
+		    					party.set("create_date", new Date());
+		    					party.set("creator", currentUser.getPrincipal());
+		    					party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
+		    					party.save();
+		    					//收货人
+			    				transferOrder.set("notify_party_id", party.get("id"));
 		    				}
 		    				//始发城市
 		    				transferOrder.set("route_from",location1.get("code"));
@@ -264,7 +297,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				//客户名称
 		    				transferOrder.set("customer_id",customer.get("pid"));
 		    				//供应商名称
-		    				transferOrder.set("sp_id", provider.get("id"));
+		    				transferOrder.set("sp_id", provider.get("pid"));
 		    				//网点
 		    				transferOrder.set("office_id", office.get("id"));
 		    				//货品属性
@@ -273,18 +306,16 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 							else
 								transferOrder.set("cargo_nature","cargo");
 		    				//是否有单品
-		    				if(!"".equals(content.get(j).get("序列号"))){
+		    				if(!"".equals(content.get(j).get("单品序列号"))){
 		    					transferOrder.set("cargo_nature_detail","cargoNatureDetailYes");
 		    				}else{
 		    					transferOrder.set("cargo_nature_detail","cargoNatureDetailNo");
 		    				}
-		    				//收货人
-		    				transferOrder.set("notify_party_id", customer.get("id"));
 		    				transferOrder.save();
 		    				//保存运输里程碑
 		    				TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
 		    				transferOrderMilestone.set("status", "新建");
-		    				transferOrderMilestone.set("create_by", users.get(0).get("id"));
+		    				transferOrderMilestone.set("create_by", user.get("id"));
 		    				transferOrderMilestone.set("location", "");
 		    				java.util.Date utilDate = new java.util.Date();
 		    				java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -296,6 +327,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				//创建保存货品明细
 		    				TransferOrderItem item =new TransferOrderItem();
 		    				double num = product.getDouble("weight") * Double.parseDouble(content.get(j).get("发货数量"));
+		    				double size = product.getDouble("size")/1000;
+		    				double width = product.getDouble("width")/1000;
+		    				double height = product.getDouble("height")/1000;
+		    				double sumVolume = size * width * height * Double.parseDouble(content.get(j).get("发货数量"));
 		    				item.set("order_id", transferOrder.get("id"))
 		    				.set("amount", content.get(j).get("发货数量"))
 		    				.set("item_no", product.get("item_no"))
@@ -304,27 +339,27 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				.set("unit", product.get("unit"))
 		    				.set("width", product.get("width"))
 		    				.set("height", product.get("height"))
-		    				.set("volume", product.getDouble("volume")*Double.parseDouble(content.get(j).get("件数")))
+		    				.set("volume", sumVolume)
 		    				.set("weight", product.getDouble("weight"))
 		    				.set("sum_weight", num)
 		    				.set("product_id", product.get("id"))
 		    				.save();
 		    				//创建保存单品货品明细
-		    				if(!"".equals(content.get(j).get("序列号"))){
+		    				if(!"".equals(content.get(j).get("单品序列号"))){
 		    					TransferOrderItemDetail itemDatail = new TransferOrderItemDetail();
 		    					itemDatail.set("order_id", transferOrder.get("id"))
 		    					.set("item_id", item.get("id"))
 		    					.set("item_no", product.get("item_no"))
-		    					.set("serial_no", content.get(j).get("序列号"))
+		    					.set("serial_no", content.get(j).get("单品序列号"))
 		    					.set("item_name", product.get("item_name"))
 		    					.set("volume", product.get("volume"))
 		    					.set("weight", product.get("weight"))
 		    					//.set("notify_party_id", customer.get("id"))
-		    					.set("pieces", content.get(j).get("件数"))
-		    					.set("notify_party_company", content.get(j).get("收货单位"))//收货单位
-		    					.set("notify_party_name", content.get(j).get("收货人"))//收货人
-		    					.set("notify_party_phone", content.get(j).get("收货人联系电话"))//收货人电话
-		    					.set("sales_order_no", content.get(j).get("销售单号"))//销售单号
+		    					.set("pieces", content.get(j).get("单品件数"))
+		    					.set("notify_party_company", content.get(j).get("单品收货地址"))//收货地址
+		    					.set("notify_party_name", content.get(j).get("单品收货人"))//收货人
+		    					.set("notify_party_phone", content.get(j).get("单品收货人联系电话"))//收货人电话
+		    					.set("sales_order_no", content.get(j).get("单品销售单号"))//销售单号
 		    					.set("responsible_person", content.get(j).get("责任人"))//责任人
 		    					.set("business_manager", content.get(j).get("业务经理"))//业务经理
 		    					.set("station_name", content.get(j).get("服务站名称"))//服务站名称
@@ -344,7 +379,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
         		}
         	}else{ 
         		importResult.put("result","false");
-        		importResult.put("cause", "成功导入至第" + (causeRow-1) + "行,因【" + title + "】列第【" + causeRow + "】行" + because);
+        		importResult.put("cause", "成功导入至第" + (causeRow-1) + "行,因第【" + causeRow + "】行【" + title + "】列" + because);
         	}
         	
     	} catch (ParseException e) {
