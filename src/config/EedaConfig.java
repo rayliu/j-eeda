@@ -61,6 +61,8 @@ import models.eeda.OrderItem;
 import models.eeda.ServiceProvider;
 import models.yh.arap.BillingOrder;
 import models.yh.arap.BillingOrderItem;
+import models.yh.arap.ReimbursementOrder;
+import models.yh.arap.ReimbursementOrderFinItem;
 import models.yh.carmanage.CarSummaryDetail;
 import models.yh.carmanage.CarSummaryDetailOilFee;
 import models.yh.carmanage.CarSummaryDetailOtherFee;
@@ -226,6 +228,9 @@ public class EedaConfig extends JFinalConfig {
         me.add("/costCheckOrder", controllers.yh.arap.ap.CostCheckOrderController.class, contentPath);
         me.add("/costPreInvoiceOrder", controllers.yh.arap.ap.CostPreInvoiceOrderController.class, contentPath);
         me.add("/costAdjustOrder", controllers.yh.arap.ap.CostAdjustOrderController.class, contentPath);
+        //应付报销单
+        me.add("/costReimbursement", controllers.yh.arap.ap.CostReimbursementOrder.class, contentPath);
+        
         //audit log
         me.add("/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, contentPath);
         //insuranceOrder
@@ -329,6 +334,9 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_cost_invoice", ArapCostInvoice.class);
         arp.addMapping("arap_cost_invoice_item_invoice_no", ArapCostInvoiceItemInvoiceNo.class);
         arp.addMapping("arap_cost_order_invoice_no", ArapCostOrderInvoiceNo.class);
+        //应付报销单
+        arp.addMapping("reimbursement_order", ReimbursementOrder.class);
+        arp.addMapping("reimbursement_order_fin_item", ReimbursementOrderFinItem.class);
         // yh mapping
         //行车单
         arp.addMapping("car_summary_order", CarSummaryOrder.class);

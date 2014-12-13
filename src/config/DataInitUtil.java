@@ -246,8 +246,11 @@ public class DataInitUtil {
             //stmt.execute("create table if not exists tally(id bigint auto_increment primary key,code varchar(20),name varchar(20));");
             stmt.execute("create table if not exists user_office(id bigint auto_increment primary key,user_name varchar(20),office_id bigint);");
             
+            //应付报销单主表
+            stmt.execute("create table if not exists reimbursement_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),account_name varchar(50),account_no varchar(50),amount double,create_id bigint,create_stamp timestamp,audit_id bigint,audit_stamp timestamp,approval_id bigint,approval_stamp timestamp,remark varchar(500));");
             
-            
+            //应付报销单费用明细
+            stmt.execute("create table if not exists reimbursement_order_fin_item(id bigint auto_increment primary key,order_id varchar(50),fin_item_id bigint,amount double,remark varchar(500));");
             
             stmt.close();
             // conn.commit();
