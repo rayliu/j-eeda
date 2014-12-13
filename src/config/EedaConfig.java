@@ -235,7 +235,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, contentPath);
         //insuranceOrder
         me.add("/insuranceOrder", controllers.yh.insurance.InsuranceOrderController.class, contentPath);
-        me.add("/userOffice",controllers.yh.profile.UserOfficeController.class,contentPath);
+        
         
         
     }

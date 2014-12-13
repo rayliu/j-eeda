@@ -244,7 +244,7 @@ public class DataInitUtil {
             stmt.execute("create table if not exists arap_account_audit_log(id bigint auto_increment primary key,payment_method varchar(255),amount double,creator varchar(50),create_date timestamp,remark varchar(5120),misc_order_id bigint,foreign key(misc_order_id) references arap_misc_charge_order(id),invoice_order_id bigint,foreign key(invoice_order_id) references arap_charge_invoice(id),account_id bigint,foreign key(account_id) references fin_account(id));");
             // 基础信息——单位表
             //stmt.execute("create table if not exists tally(id bigint auto_increment primary key,code varchar(20),name varchar(20));");
-            stmt.execute("create table if not exists user_office(id bigint auto_increment primary key,user_name varchar(20),office_id bigint);");
+            stmt.execute("create table if not exists user_office(id bigint auto_increment primary key,user_name varchar(20),office_id bigint,is_main bigint);");
             
             //应付报销单主表
             stmt.execute("create table if not exists reimbursement_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),account_name varchar(50),account_no varchar(50),amount double,create_id bigint,create_stamp timestamp,audit_id bigint,audit_stamp timestamp,approval_id bigint,approval_stamp timestamp,remark varchar(500));");

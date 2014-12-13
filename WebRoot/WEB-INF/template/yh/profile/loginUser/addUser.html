@@ -27,44 +27,21 @@
                         <hr>
                         <div class="form-group ">
                           <label class="control-label">用户可见网点 </label>
-                          <table class="table table-striped table-bordered table-hover" id="eeda-table" >
+                          <table class="table table-striped table-bordered table-hover" id="office-table" >
                               <thead>
                                   <tr>
-                                      <th>网点  <button type="button" class="btn btn-default btn-sm">添加</button></th>
+                                      <th>网点  <button id = "addOffice" type="button" class="btn btn-default btn-sm">添加</button></th>
                                       <th>默认网点</th>
                                       <th></th>
                                   </tr>
                               </thead>
-                              <tbody>
-                                  <tr>
-                                    <td>
-                                      <select class="form-control">
-                                        <option></option>
-                                        <option selected="">北京</option>
-                                        <option>上海</option>
-                                        <option>广州</option>
-                                      </select>
-                                    </td>
-                                    <td><input type="checkbox" checked="true" class="unChecked" name="roleCheck" value="1"></td>
-                                    <td>删除</td>
-                                  </tr>
-                                  <tr>
-                                    <td>
-                                      <select class="form-control">
-                                        <option></option>
-                                        <option>北京</option>
-                                        <option selected>上海</option>
-                                        <option>广州</option>
-                                      </select>
-                                    </td>
-                                    <td><input type="checkbox" class="unChecked" name="roleCheck" value="1"></td>
-                                    <td>删除</td>
-                                  </tr>
+                              <tbody id="tobdy">
+                                      
                               </tbody>
                           </table>
                         </div>
                         <div class="form-group ">
-                          <button type="submit" class="btn btn-default">保存</button>
+                          <button id="saveBtn" type="submit" class="btn btn-default">保存</button>
                           <a class="btn btn-default" href="/loginUser">返回</a>
                         </div>
                       </div><!-- col-md-6 -->
@@ -87,22 +64,15 @@
                         <hr>
                         <div class="form-group ">
                           <label class="control-label">用户可见客户 </label>
-                          <table class="table table-striped table-bordered table-hover" id="eeda-table" >
+                          <table class="table table-striped table-bordered table-hover" id="customer-table" >
                               <thead>
                                   <tr>
-                                      <th>客户  <button type="button" class="btn btn-default btn-sm">添加</button></th>
+                                      <th>客户  <button id="addCustomer" type="button" class="btn btn-default btn-sm">添加</button></th>
                                       <th></th>
                                   </tr>
                               </thead>
-                              <tbody>
-                                  <tr>
-                                    <td><input  name="customer" type="text" class="form-control" value="广电运通" placeholder="请输入客户"></td>
-                                    <td>删除</td>
-                                  </tr>
-                                  <tr>
-                                    <td><input  name="customer" type="text" class="form-control" value="广州理想" placeholder="请输入客户"></td>
-                                    <td>删除</td>
-                                  </tr>
+                              <tbody id="customerTbody">
+                                 
                               </tbody>
                           </table>
                         </div>
@@ -125,6 +95,12 @@
 <!-- 引入校验的js 文件及其 中文 文件-->
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
+
+<script src="/yh/js/profile/loginUser/add.js"></script>
+
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+
 
 <script>
 	$(document).ready(function() {
@@ -189,24 +165,6 @@
         });
         
 
-	   	 // 获取所有城市
-	   	 $.post('/transferOrder/searchAllOffice',function(data){
-	   		 if(data.length > 0){
-	   			 var officeSelect = $("#officeSelect");
-	   			 officeSelect.empty();
-	   			 var hideOfficeId = $("#hideOfficeId").val();
-	   			 for(var i=0; i<data.length; i++){
-	   				 if(i == 0){
-	   					 officeSelect.append("<option ></option>");
-	   				 }else{
-	   					 if(data[i].ID == hideOfficeId){
-	   						 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
-	   					 }else{
-	   						 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
-	   					 }
-	   				 }
-	   			 }
-	   		 }
-	   	 },'json');
+	   	 
     });
 </script>
