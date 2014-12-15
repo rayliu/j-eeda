@@ -90,7 +90,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment primary key,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
 
             // return_order 回单
-            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,receipt_date timestamp,transaction_status varchar(20),order_type varchar(20),creator bigint,remark varchar(255), depart_order_id bigint, delivery_order_id bigint,transfer_order_id bigint, notity_party_id bigint,customer_id bigint);");
+            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,receipt_date timestamp,transaction_status varchar(20),order_type varchar(20),creator bigint,remark varchar(255), depart_order_id bigint, delivery_order_id bigint,transfer_order_id bigint, notity_party_id bigint,customer_id bigint,total_amount double);");
             // Depart_Order_fin_item 回单应收明细
             stmt.executeUpdate("create table if not exists return_order_fin_item (id bigint auto_increment primary key, return_order_id bigint, fin_item_id bigint, "
                     + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120),transfer_order_id bigint,delivery_order_id bigint, contract_id bigint, fin_type varchar(20),create_name varchar(50));");

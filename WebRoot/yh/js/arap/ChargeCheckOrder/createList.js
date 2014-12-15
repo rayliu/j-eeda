@@ -63,6 +63,8 @@ $(document).ready(function() {
 	          {"mDataProp":"WAREHOUSE_AMOUNT", "sWidth":"100px"},                        
 	          {"mDataProp":null, "sWidth":"100px"},                        
 	          {"mDataProp":null, "sWidth":"100px"},                        
+	          {"mDataProp":"TOTAL_AMOUNT", "sWidth":"150px"},                        
+	          {"mDataProp":null, "sWidth":"150px"},                        
 	          {"mDataProp":null, "sWidth":"150px"},                        
 	          {"mDataProp":null, "sWidth":"150px"},                        
 	          {"mDataProp":null, "sWidth":"150px"},                        
