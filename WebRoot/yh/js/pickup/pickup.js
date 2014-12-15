@@ -39,7 +39,16 @@ $(document).ready(function() {
     					return "自营";
     				}else{
     					return "";
-    				}}},  
+    				}}
+            },
+    		{ 
+            	"mDataProp": "ROUTE_FROM",
+            	"sClass": "route_from"
+            },
+    		{ 
+            	"mDataProp": "ROUTE_TO",
+            	"sClass": "route_to"
+            }, 
 		    {"mDataProp":"ORDER_TYPE",
             	"sClass": "order_type",
             	"fnRender": function(obj) {
@@ -110,17 +119,9 @@ $(document).ready(function() {
             	"mDataProp": "STATUS",
             	"sClass": "status"
             },
-
-    		{ 
-            	"mDataProp": "ROUTE_FROM",
-            	"sClass": "route_from"
-            },
-    		{ 
-            	"mDataProp": "ROUTE_TO",
-            	"sClass": "route_to"
-            },
             { 
             	"mDataProp": "OFFICE_NAME",
+            	"sWidth": "120px",
             	"sClass": "office_name"
             },  
     		{ 
@@ -217,6 +218,8 @@ $(document).ready(function() {
 		var ckeckedTransferOrderList = $("#ckeckedTransferOrderList");
 		var order_no = $(this).parent().siblings('.order_no')[0].textContent;		
 		var operation_type = $(this).parent().siblings('.operation_type')[0].textContent;		
+		var route_from = $(this).parent().siblings('.route_from')[0].textContent;		
+		var route_to = $(this).parent().siblings('.route_to')[0].textContent;		
 		var order_type = $(this).parent().siblings('.order_type')[0].textContent;		
 		var cargo_nature = $(this).parent().siblings('.cargo_nature')[0].textContent;		
 		var total_weight = $(this).parent().siblings('.total_weight')[0].textContent;		
@@ -227,8 +230,6 @@ $(document).ready(function() {
 		var arrival_mode = $(this).parent().siblings('.arrival_mode')[0].textContent;		
 		var status = $(this).parent().siblings('.status')[0].textContent;		
 		var cname = $(this).parent().siblings('.cname')[0].textContent;		
-		var route_from = $(this).parent().siblings('.route_from')[0].textContent;		
-		var route_to = $(this).parent().siblings('.route_to')[0].textContent;		
 		var create_stamp = $(this).parent().siblings('.create_stamp')[0].textContent;		
 		var assign_status = $(this).parent().siblings('.assign_status')[0].textContent;
 		var office_name = $(this).parent().siblings('.office_name')[0].textContent;
@@ -254,8 +255,8 @@ $(document).ready(function() {
 				}
 			}
 			sumValue();
-			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+operation_type+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
-					+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");			
+			ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
+					+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");			
 		}else{
 			sumValue();
 			var allTrs = ckeckedTransferOrderList.children();
