@@ -126,7 +126,7 @@ public class DepartOrderController extends Controller {
                     + DepartOrder.COMBINE_TYPE_DEPART + "'";
 
             sql = "select deo.id,deo.depart_no,deo.create_stamp,deo.status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,"
-            		+ " u.c_name user_name,o.office_name office_name,deo.departure_time departure_time,ct.abbr abbr,"
+            		+ " ifnull(u.c_name,u.user_name) user_name,o.office_name office_name,deo.departure_time departure_time,ct.abbr abbr,"
             		+ " (select name from location where code = tor .route_from) route_from,(select name from location where code = tor .route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (select order_id from depart_transfer dt where dt.depart_id = deo.id)) as transfer_order_no"
             		+ " from depart_order deo"
@@ -168,7 +168,7 @@ public class DepartOrderController extends Controller {
 					+ " left join location l1 on l1.code = deo.route_from"
 					+ " left join location l2 on l2.code = deo.route_to " + whereSql;
 
-            sql = "select deo.id,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,u.c_name user_name,"
+            sql = "select deo.id,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,ifnull(u.c_name,u.user_name) user_name,"
             		+ " o.office_name office_name,deo.departure_time departure_time ,ct.abbr abbr,"
             		+ " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (dtf.order_id)) as transfer_order_no"
@@ -1305,6 +1305,9 @@ public class DepartOrderController extends Controller {
             for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
                 UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
                 String username = userLogin.get("c_name");
+                if(username==null||"".equals(username)){
+                	username=userLogin.get("user_name");
+                }
                 usernames.add(username);
             }
             map.put("transferOrderMilestones", transferOrderMilestones);
@@ -1360,6 +1363,9 @@ public class DepartOrderController extends Controller {
             map.put("transferOrderMilestone", transferOrderMilestone);
             UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
             String username = userLogin.get("c_name");
+            if(username==null||"".equals(username)){
+            	username=userLogin.get("user_name");
+            }
             map.put("username", username);
         }
         renderJson(map);
@@ -1602,6 +1608,9 @@ public class DepartOrderController extends Controller {
             for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
                 UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
                 String username = userLogin.get("c_name");
+                if(username==null||"".equals(username)){
+                	username=userLogin.get("user_name");
+                }
                 usernames.add(username);
             }
             map.put("transferOrderMilestones", transferOrderMilestones);
@@ -1613,6 +1622,9 @@ public class DepartOrderController extends Controller {
             for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
                 UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
                 String username = userLogin.get("c_name");
+                if(username==null||"".equals(username)){
+                	username=userLogin.get("user_name");
+                }
                 usernames.add(username);
             }
             map.put("transferOrderMilestones", transferOrderMilestones);

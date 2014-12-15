@@ -51,8 +51,12 @@ public class TransferOrderMilestoneController extends Controller {
                             + TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE + "' and order_id=" + order_id);
             for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
                 UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-                String username = userLogin.get("c_name");
-                
+                String username = "";
+                if(userLogin.get("c_name")!=null&&!"".equals(userLogin.get("c_name"))){
+                	username=userLogin.get("c_name");
+                }else{
+                	username=userLogin.get("user_name");
+                }
                 usernames.add(username);
             }
             map.put("transferOrderMilestones", transferOrderMilestones);
@@ -63,7 +67,12 @@ public class TransferOrderMilestoneController extends Controller {
                             + TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE + "' and pickup_id=" + pickupOrderId);
             for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
                 UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-                String username = userLogin.get("c_name");
+                String username = "";
+                if(userLogin.get("c_name")!=null&&!"".equals(userLogin.get("c_name"))){
+                	username=userLogin.get("c_name");
+                }else{
+                	username=userLogin.get("user_name");
+                }
                 usernames.add(username);
             }
             map.put("transferOrderMilestones", transferOrderMilestones);
@@ -111,6 +120,9 @@ public class TransferOrderMilestoneController extends Controller {
             map.put("transferOrderMilestone", transferOrderMilestone);
             UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
             String username = userLogin.get("c_name");
+            if(username==null||"".equals(username)){
+            	username=userLogin.get("user_name");
+            }
             map.put("username", username);
         } else if (milestonePickupId != null && !"".equals(milestonePickupId)) {
             TransferOrder transferOrder = null;
@@ -181,6 +193,9 @@ public class TransferOrderMilestoneController extends Controller {
             map.put("transferOrderMilestone", transferOrderMilestone);
             UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
             String username = userLogin.get("c_name");
+            if(username==null||"".equals(username)){
+            	username=userLogin.get("user_name");
+            }
             map.put("username", username);
         } else if (milestoneDepartId != null && !"".equals(milestoneDepartId)) {
             DepartOrder departOrder = DepartOrder.dao.findById(milestoneDepartId);
@@ -215,6 +230,9 @@ public class TransferOrderMilestoneController extends Controller {
             map.put("transferOrderMilestone", transferOrderMilestone);
             UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
             String username = userLogin.get("c_name");
+            if(username==null||"".equals(username)){
+            	username=userLogin.get("user_name");
+            }
             map.put("username", username);
         }
         renderJson(map);
