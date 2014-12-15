@@ -15,6 +15,7 @@ import models.InsuranceFinItem;
 import models.InsuranceOrder;
 import models.Party;
 import models.TransferOrder;
+import models.TransferOrderItem;
 import models.UserLogin;
 import models.yh.profile.Contact;
 
@@ -507,33 +508,39 @@ public class InsuranceOrderController extends Controller {
 		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
-		
+
+        String sqlTotal = "select count(1) total from transfer_order tor where tor.insurance_id = "+insuranceOrderId;
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
 		// 获取当前页的数据
-		String sql = "select ior.id,(select sum(ifi.amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where fi.type = '应付' and fi.name = '保险费' and ior.id = ifi.insurance_order_id) sum_amount,(group_concat(distinct tor.order_no separator '\r\n')) as transfer_order_no ,c.abbr cname,ifi.income_rate,"
-				+ "(ifi.income_rate*(select sum(ifi.amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where fi.type = '应付' and fi.name = '保险费' and ior.id = ifi.insurance_order_id)) income_insurance_amount from insurance_fin_item ifi "
-				+ " left join insurance_order ior  on ior.id = ifi.insurance_order_id"
-				+ " left join fin_item fi on fi.id = ifi.fin_item_id"
-				+ " left join transfer_order_item toi on toi.id = ifi.transfer_order_item_id left join transfer_order tor on tor.id = toi.order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
-				+ " where fi.type = '应付' and fi.name = '保险费' and ior.id = " + insuranceOrderId;
+		String sql = "select c.abbr cname,tor.id order_id,tor.order_no transfer_order_no,sum(ifi.amount*ifi.rate) sum_amount,ifi.income_rate,sum(ifi.amount) sum_insurance,sum(ifi.amount)*income_rate income_insurance_amount from transfer_order tor"
+						+ " left join insurance_order ior on ior.id = tor.insurance_id"
+						+ " left join transfer_order_item toi on toi.order_id = tor.id"
+						+ " left join insurance_fin_item ifi on ifi.transfer_order_item_id = toi.id"
+						+ " left join party p on p.id = tor.customer_id"
+						+ " left join contact c on c.id = p.contact_id"
+						+ " where tor.insurance_id = "+insuranceOrderId+" group by tor.id";
 		List<Record> orders = Db.find(sql);
 		
 		orderMap.put("sEcho", pageIndex);
-		orderMap.put("iTotalRecords", 1);
-		orderMap.put("iTotalDisplayRecords", 1);
+		orderMap.put("iTotalRecords", rec.getLong("total"));
+		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 		orderMap.put("aaData", orders);
     	renderJson(orderMap);
     }
     
     // 应收条目
     public void incomeFinItem(){
-    	String insuranceOrderId = getPara("insuranceOrderId");
+    	String orderId = getPara("orderId");
     	String name = getPara("name");
     	String value = getPara("value");
     	if("income_rate".equals(name) && "".equals(value)){
     		value = "0";
     	}
-		List<InsuranceFinItem> insuranceFinItems = InsuranceFinItem.dao.find("select ifi.* from insurance_order ior left join insurance_fin_item ifi on ior.id = ifi.insurance_order_id left join fin_item fi on fi.id = ifi.fin_item_id where fi.name = '保险费' and fi.type = '应付' and ior.id = "+insuranceOrderId);
-		for(InsuranceFinItem insuranceFinItem : insuranceFinItems){
+		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item toi where toi.order_id =?", orderId);
+		for(TransferOrderItem transferOrderItem : transferOrderItems){
+			InsuranceFinItem insuranceFinItem = InsuranceFinItem.dao.findFirst("select * from insurance_fin_item ifi where ifi.transfer_order_item_id=?", transferOrderItem.get("id"));
 			insuranceFinItem.set(name, value);
 			insuranceFinItem.update();
 		}    

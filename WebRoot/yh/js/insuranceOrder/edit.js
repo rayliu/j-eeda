@@ -405,7 +405,7 @@
 			"sUrl": "/eeda/dataTables.ch.txt"
 		},
 		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-			$(nRow).attr('id', aData.ID);
+			$(nRow).attr('order_id', aData.ORDER_ID);
 			return nRow;
 		},
 		"aoColumns": [
@@ -416,6 +416,7 @@
 		      		return "保险费";
 		      	}
 	        },   
+		  	{"mDataProp":"SUM_INSURANCE","sClass": "sum_insurance"},   
 		  	{"mDataProp":"SUM_AMOUNT","sClass": "income_rate"},   
 		  	{"mDataProp":"INCOME_RATE",
 		      	"fnRender": function(obj) {
@@ -450,19 +451,14 @@
  	// 应收
  	$("#incomeTab").on('blur', 'input', function(e){
  		e.preventDefault();
- 		var id = $(this).parent().parent().attr("id");
- 		var itemId = $(this).parent().parent().attr("item_id");
- 		if(itemId == 0){
- 			itemId = '';
- 		}
+ 		var order_id = $(this).parent().parent().attr("order_id");
  		var name = $(this).attr("name");
  		var value = $(this).val();
 		if(value != null && value != ''){
-			var income_rate = $(this).parent().siblings(".income_rate")[0].innerHTML;
+			var income_rate = $(this).parent().siblings(".sum_insurance")[0].innerHTML;
 			$(this).parent().siblings(".income_insurance_amount")[0].children[0].innerHTML = value * income_rate;
 		}
- 		var insuranceOrderId = $("#insuranceOrderId").val();
- 		$.post('/insuranceOrder/incomeFinItem', {id:id, itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value}, function(data){
+ 		$.post('/insuranceOrder/incomeFinItem', {orderId:order_id, name:name, value:value}, function(data){
  			if(data.success){
  			}else{
  				alert("修改失败!");
