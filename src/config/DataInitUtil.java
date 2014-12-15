@@ -30,7 +30,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists role_permission(id bigint auto_increment primary key, role_code varchar(50) not null, permission_code varchar(50) not null, remark varchar(255));");
             
             stmt.executeUpdate("create table if not exists location(id bigint auto_increment primary key, code varchar(50) not null, name varchar(50), pcode varchar(255));");
-            stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment primary key, type varchar(50), currency varchar(50), bank_name varchar(50), account_no varchar(50), bank_person varchar(50),remark varchar(255), creator bigint, office_id bigint);");
+            stmt.executeUpdate("create table if not exists fin_account(id bigint auto_increment primary key, type varchar(50), currency varchar(50), bank_name varchar(50), account_no varchar(50), bank_person varchar(50),remark varchar(255), creator bigint, office_id bigint, amount double);");
             //stmt.executeUpdate("create table if not exists fin_account_item(id bigint auto_increment primary key,account_id bigint,currency varchar(50),org_name varchar(50),account_pin varchar(50),org_person varchar(50));");
             stmt.executeUpdate("create table if not exists contract(id bigint auto_increment primary key, name varchar(50) not null, type varchar(50), party_id bigint,period_from timestamp,period_to timestamp, remark varchar(255));");
             
@@ -293,9 +293,9 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('ray.liu@eeda123.com', '123456', '1-6',3);");
            
             //金融账户
-            stmt.executeUpdate("insert into fin_account(type, currency, bank_name, account_no, bank_person) values('PAY', '人民币','建设银行','12123123123','张三');");
-            stmt.executeUpdate("insert into fin_account(type, currency, bank_name, account_no, bank_person) values('REC', '人民币','中国银行','12123123123','李四');");
-            stmt.executeUpdate("insert into fin_account(type, currency, bank_name, account_no, bank_person) values('ALL', '人民币','农业银行','12123123123','王五');");
+            stmt.executeUpdate("insert into fin_account(type, currency, bank_name, account_no, bank_person, amount) values('PAY', '人民币','建设银行','12123123123','张三', 12345);");
+            stmt.executeUpdate("insert into fin_account(type, currency, bank_name, account_no, bank_person, amount) values('REC', '人民币','中国银行','12123123123','李四',23456);");
+            stmt.executeUpdate("insert into fin_account(type, currency, bank_name, account_no, bank_person, amount) values('ALL', '人民币','现金','12123123123','王五',34567);");
 
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('广电运通-客户合同','CUSTOMER', 1,'2013-11-12','2015-11-14','无');");
             stmt.executeUpdate("insert into contract(name,type,party_id,period_from,period_to,remark) values('客户合同','CUSTOMER', 5,'2013-10-12','2015-11-15','无');");

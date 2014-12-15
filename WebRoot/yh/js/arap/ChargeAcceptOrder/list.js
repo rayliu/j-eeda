@@ -94,7 +94,11 @@ $(document).ready(function() {
     // 未选中列表
 	$("#chargeAccept-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
-			ids.push($(this).val());
+            var orderNo = $(this).parent().parent().find('a').text();
+            var orderObj=$(this).val()+":"+orderNo;
+            var order = ids.pop();
+			ids.push(orderObj);
+
 			$("#chargeIds").val(ids);
 		}else{
 			if(ids.length != 0){

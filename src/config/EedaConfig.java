@@ -132,7 +132,7 @@ public class EedaConfig extends JFinalConfig {
         
         //内部出错跳转到login,这个只是临时解决方案。
         me.setError404View("/yh/login.html");
-        me.setError500View("/yh/login.html");
+        me.setError500View("/yh/err500.html");
         
         // me.setErrorView(503, "/login.html");
         // get name representing the running Java virtual machine.
