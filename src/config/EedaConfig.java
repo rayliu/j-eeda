@@ -132,8 +132,8 @@ public class EedaConfig extends JFinalConfig {
         me.setErrorView(401, "/yh/login.html");//401 authenticate err
         me.setErrorView(403, "/yh/noPermission.html");// authorization err
         
-        //内部出错跳转到login,这个只是临时解决方案。
-        me.setError404View("/yh/login.html");
+        //内部出错跳转到对应的提示页面，需要考虑提供更详细的信息。
+        me.setError404View("/yh/err404.html");
         me.setError500View("/yh/err500.html");
         
         // me.setErrorView(503, "/login.html");
