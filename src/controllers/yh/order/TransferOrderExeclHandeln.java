@@ -62,8 +62,8 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     			}
     		}
         	for (int j = 0; j < content.size(); j++) {
-        		for (int exeNum : executeNum) {
-					if(j == exeNum){
+        		for (int i = 0; i < executeNum.size(); i++) {
+					if(j == i){
 						String customerOrderNo = content.get(j).get("运输单号").trim();
 		        		causeRow = j+2;
 		        		if("".equals(customerOrderNo)){
@@ -263,7 +263,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					transferOrder.set("operation_type", "own");
 		    				}
 		    				//取货地址、收货单位
-		    				transferOrder.set("address", content.get(j).get("取货地址"))
+		    				transferOrder.set("address", content.get(j).get("始发城市"))
 	    					.set("receiving_unit", content.get(j).get("收货单位"));
 		    				
 		    				//到达方式
@@ -276,9 +276,9 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					transferOrder.set("arrival_mode", "delivery");
 		    					// 保存联系人
 		    					Contact contact = new Contact();
-		    					contact.set("contact_person", content.get(j).get("联系人(直送)"));
-		    					contact.set("phone", content.get(j).get("电话(直送)"));
-		    					contact.set("address", content.get(j).get("收货地址(直送)"));
+		    					contact.set("address", content.get(j).get("单品收货地址"));//收货地址
+		    					contact.set("contact_person", content.get(j).get("单品收货人"));//收货人
+		    					contact.set("phone", content.get(j).get("单品收货人联系电话"));//收货人电话
 		    					contact.save();
 		    					// 保存收货人
 		    					Party party = new Party();
@@ -369,6 +369,9 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    			}
 		        	}
 				}
+        		if(!"".equals(title)){
+        			break;
+        		}
 			}
         	if("".equals(title)){
         		importResult.put("result","true");
