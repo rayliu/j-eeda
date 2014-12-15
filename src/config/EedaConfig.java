@@ -20,6 +20,7 @@ import models.ArapCostOrder;
 import models.ArapCostOrderInvoiceNo;
 import models.ArapMiscChargeOrder;
 import models.ArapMiscChargeOrderItem;
+import models.ArapMiscCostOrderItem;
 import models.Category;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
@@ -59,6 +60,7 @@ import models.eeda.Leads;
 import models.eeda.Order;
 import models.eeda.OrderItem;
 import models.eeda.ServiceProvider;
+import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.BillingOrder;
 import models.yh.arap.BillingOrderItem;
 import models.yh.arap.ReimbursementOrder;
@@ -231,7 +233,7 @@ public class EedaConfig extends JFinalConfig {
         //应付报销单
         me.add("/costReimbursement", controllers.yh.arap.ap.CostReimbursementOrder.class, contentPath);
         
-        //me.add("/costMiscOrder", controllers.yh.arap.ap.CostMiscOrderController.class, contentPath);
+        me.add("/costMiscOrder", controllers.yh.arap.ap.CostMiscOrderController.class, contentPath);
         
         //audit log
         me.add("/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, contentPath);
@@ -336,8 +338,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_cost_invoice", ArapCostInvoice.class);
         arp.addMapping("arap_cost_invoice_item_invoice_no", ArapCostInvoiceItemInvoiceNo.class);
         arp.addMapping("arap_cost_order_invoice_no", ArapCostOrderInvoiceNo.class);
-        //arp.addMapping("arap_misc_cost_order", ArapMiscCostOrder.class);
-        //arp.addMapping("arap_misc_cost_order_item", ArapMiscCostOrderItem.class);
+        arp.addMapping("arap_misc_cost_order", ArapMiscCostOrder.class);
+        arp.addMapping("arap_misc_cost_order_item", ArapMiscCostOrderItem.class);
         //应付报销单
         arp.addMapping("reimbursement_order", ReimbursementOrder.class);
         arp.addMapping("reimbursement_order_fin_item", ReimbursementOrderFinItem.class);
