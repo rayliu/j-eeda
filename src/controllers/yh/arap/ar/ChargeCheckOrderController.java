@@ -50,8 +50,6 @@ public class ChargeCheckOrderController extends Controller {
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
-		String[] idArray = ids.split(",");
-		logger.debug(String.valueOf(idArray.length));
 
 		setAttr("returnOrderIds", ids);
 		String beginTime = getPara("beginTime");
@@ -62,16 +60,27 @@ public class ChargeCheckOrderController extends Controller {
 		if (endTime != null && !"".equals(endTime)) {
 			setAttr("endTime", endTime);
 		}
-		ReturnOrder returnOrder = ReturnOrder.dao.findById(idArray[0]);
-		Long customerId = returnOrder.getLong("customer_id");
-		if (!"".equals(customerId) && customerId != null) {
-			Party party = Party.dao.findById(customerId);
-			setAttr("party", party);
-			Contact contact = Contact.dao.findById(party.get("contact_id")
-					.toString());
-			setAttr("customer", contact);
-			setAttr("type", "CUSTOMER");
-			setAttr("classify", "");
+		if(ids != null && !"".equals(ids)){
+			String[] idArray = ids.split(",");
+			logger.debug(String.valueOf(idArray.length));
+			Double totalAmount = 0.0;
+			for(int i=0;i<idArray.length;i++){
+				ReturnOrder rOrder = ReturnOrder.dao.findById(idArray[i]);
+				totalAmount = totalAmount + rOrder.getDouble("total_amount");
+			}
+			setAttr("totalAmount", totalAmount);
+			
+			ReturnOrder returnOrder = ReturnOrder.dao.findById(idArray[0]);
+			Long customerId = returnOrder.getLong("customer_id");
+			if (!"".equals(customerId) && customerId != null) {
+				Party party = Party.dao.findById(customerId);
+				setAttr("party", party);
+				Contact contact = Contact.dao.findById(party.get("contact_id")
+						.toString());
+				setAttr("customer", contact);
+				setAttr("type", "CUSTOMER");
+				setAttr("classify", "");
+			}
 		}
 
 		setAttr("saveOK", false);

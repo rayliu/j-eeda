@@ -275,6 +275,7 @@ public class ChargeMiscOrderController extends Controller {
 	
 	public void updateChargeMiscOrderItem(){
 		String paymentId = getPara("paymentId");
+		String chargeMiscOrderId = getPara("chargeMiscOrderId");
 		String name = getPara("name");
 		String value = getPara("value");
 		if ("amount".equals(name) && "".equals(value)) {
@@ -285,7 +286,11 @@ public class ChargeMiscOrderController extends Controller {
 			arapMiscChargeOrderItem.set(name, value);
 			arapMiscChargeOrderItem.update();
 		}
-		renderJson("{\"success\":true}");
+		ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(chargeMiscOrderId);
+		Record record = Db.findFirst("select sum(amount) sum_amount from arap_misc_charge_order_item where misc_order_id = ?", chargeMiscOrderId);
+		arapMiscChargeOrder.set("total_amount", record.get("sum_amount"));
+		arapMiscChargeOrder.update();
+		renderJson(arapMiscChargeOrder);
 	}
 	
 	public void finItemdel(){

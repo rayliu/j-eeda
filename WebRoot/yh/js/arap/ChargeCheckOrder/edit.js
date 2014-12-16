@@ -141,7 +141,7 @@ $(document).ready(function() {
             {"mDataProp":null, "sWidth":"100px"},                        
             {"mDataProp":"WAREHOUSE_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
+            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"150px"},                        
             {"mDataProp":null, "sWidth":"150px"},                        
             {"mDataProp":null, "sWidth":"150px"},                        
             {"mDataProp":null, "sWidth":"200px"}                       

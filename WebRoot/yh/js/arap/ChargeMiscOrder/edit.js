@@ -198,11 +198,18 @@ $(document).ready(function() {
 	//应收修改
 	$("#feeItemList-table").on('blur', 'input,select', function(e){
 		e.preventDefault();
+		var chargeMiscOrderId = $("#chargeMiscOrderId").val();
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$.post('/chargeMiscOrder/updateChargeMiscOrderItem', {paymentId:paymentId, name:name, value:value}, function(data){
-			if(data.success){
+		/*var totalAmount = $("#totalAmount").val();
+		if(name == 'amount'){
+			totalAmount = parseFloat(totalAmount) + parseFloat(value);
+			$("#totalAmountSpan")[0].innerHTML = totalAmount;
+		}*/
+		$.post('/chargeMiscOrder/updateChargeMiscOrderItem', {paymentId:paymentId, name:name, value:value, chargeMiscOrderId: chargeMiscOrderId}, function(data){
+			if(data.ID > 0){
+				$("#totalAmountSpan")[0].innerHTML = data.TOTAL_AMOUNT;
 			}else{
 				alert("修改失败!");
 			}

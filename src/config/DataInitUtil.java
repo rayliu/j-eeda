@@ -175,7 +175,7 @@ public class DataInitUtil {
 
             // 应收对账单
             stmt.executeUpdate("create table if not exists arap_charge_order(id bigint auto_increment primary key,order_no varchar(255),order_type varchar(255),status varchar(255),payee_id varchar(255),create_by bigint,create_stamp timestamp,"
-                    + " begin_time date,end_time date,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),total_amount double);");
+                    + " begin_time date,end_time date,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),total_amount double,debit_amount double,charge_amount double);");
             stmt.executeUpdate("create table if not exists arap_charge_item(id bigint auto_increment primary key,ref_order_type varchar(255),item_code varchar(255),item_status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,"
             		+ " remark varchar(5120),charge_order_id bigint,foreign key(charge_order_id) references arap_charge_order(id),ref_order_id bigint,foreign key(ref_order_id) references return_order(id));");
             stmt.executeUpdate("create table if not exists arap_audit_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120));");
@@ -237,7 +237,7 @@ public class DataInitUtil {
             stmt.execute("create table if not exists execl_title(id bigint auto_increment primary key,execl_type varchar(50),execl_title varchar(100));");
             
             // 手工收款单
-            stmt.execute("create table if not exists arap_misc_charge_order(id bigint auto_increment primary key,order_no varchar(255),type varchar(50),status varchar(50),remark varchar(255),payment_method varchar(255),create_by bigint,create_stamp timestamp,charge_order_id bigint,foreign key(charge_order_id) references arap_charge_order(id),account_id bigint,foreign key(account_id) references fin_account(id));");
+            stmt.execute("create table if not exists arap_misc_charge_order(id bigint auto_increment primary key,order_no varchar(255),type varchar(50),status varchar(50),remark varchar(255),payment_method varchar(255),create_by bigint,create_stamp timestamp,total_amount double,charge_order_id bigint,foreign key(charge_order_id) references arap_charge_order(id),account_id bigint,foreign key(account_id) references fin_account(id));");
             stmt.execute("create table if not exists arap_misc_charge_order_item(id bigint auto_increment primary key,fin_item_id bigint,fin_item_code varchar(20),amount double,status varchar(50),creator varchar(50),create_date timestamp,last_updator varchar(50),last_update_date timestamp,remark varchar(5120),misc_order_id bigint,foreign key(misc_order_id) references arap_misc_charge_order(id));");
             
             // 手工付款单
