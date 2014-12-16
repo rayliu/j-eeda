@@ -12,6 +12,7 @@ $(document).ready(function() {
 		$.post('/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargeCheckOrderId").val(data.ID);
+				$("#chargeAmount")[0].innerHTML = data.CHARGE_AMOUNT;
 			}else{
 				alert('数据保存失败。');
 			}
@@ -278,7 +279,12 @@ $(document).ready(function() {
 		var micsOrderIds = $("#micsOrderIds").val();
 		var chargeCheckOrderId = $("#chargeCheckOrderId").val();
 		$.post('/chargeCheckOrder/updateChargeMiscOrder', {micsOrderIds: micsOrderIds, chargeCheckOrderId: chargeCheckOrderId}, function(data){
-			if(data.success){
+			if(data.ID > 0){
+				$("#debitAmountSpan")[0].innerHTML = data.DEBIT_AMOUNT;
+				$("#debitAmount")[0].innerHTML = data.DEBIT_AMOUNT;
+				$("#chargeAmount")[0].innerHTML = data.CHARGE_AMOUNT;
+				$("#hiddenDebitAmount").val(data.DEBIT_AMOUNT);
+				
 				$('#addExternalMiscOrder').modal('hide');
 		    	chargeMiscListTable.fnSettings().sAjaxSource = "/chargeCheckOrder/checkChargeMiscList?chargeCheckOrderId="+$("#chargeCheckOrderId").val();
 		    	chargeMiscListTable.fnDraw();  

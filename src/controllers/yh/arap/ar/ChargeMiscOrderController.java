@@ -276,6 +276,7 @@ public class ChargeMiscOrderController extends Controller {
 	public void updateChargeMiscOrderItem(){
 		String paymentId = getPara("paymentId");
 		String chargeMiscOrderId = getPara("chargeMiscOrderId");
+		String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
 		String name = getPara("name");
 		String value = getPara("value");
 		if ("amount".equals(name) && "".equals(value)) {
@@ -290,6 +291,18 @@ public class ChargeMiscOrderController extends Controller {
 		Record record = Db.findFirst("select sum(amount) sum_amount from arap_misc_charge_order_item where misc_order_id = ?", chargeMiscOrderId);
 		arapMiscChargeOrder.set("total_amount", record.get("sum_amount"));
 		arapMiscChargeOrder.update();
+		
+		if(chargeCheckOrderIds != null && !"".equals(chargeCheckOrderIds)){
+			if("amount".equals(name) && value != null && !"".equals(value)){
+				ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(chargeCheckOrderIds);
+				Double debit_amount = arapChargeOrder.getDouble("debit_amount");  
+				Double misc_total_amount = Double.parseDouble(value);
+				Double total_amount = arapChargeOrder.getDouble("total_amount");
+				arapChargeOrder.set("debit_amount", debit_amount + misc_total_amount);
+				arapChargeOrder.set("charge_amount", total_amount - (debit_amount + misc_total_amount));
+				arapChargeOrder.update();
+			}
+		}
 		renderJson(arapMiscChargeOrder);
 	}
 	

@@ -136,7 +136,8 @@ $(document).ready(function() {
 			        }
 			}}, 
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},                    
-			{
+			/* TODO 由于暂时未处理,所以先注释
+			 * {
 				"mDataProp": null, 
                 "sWidth": "60px",  
             	"sClass": "remark",              
@@ -146,7 +147,7 @@ $(document).ready(function() {
               		"删除"+
               		"</a>";
                 }
-			}                    
+			}*/                    
         ]      
     });
     
@@ -202,12 +203,8 @@ $(document).ready(function() {
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		/*var totalAmount = $("#totalAmount").val();
-		if(name == 'amount'){
-			totalAmount = parseFloat(totalAmount) + parseFloat(value);
-			$("#totalAmountSpan")[0].innerHTML = totalAmount;
-		}*/
-		$.post('/chargeMiscOrder/updateChargeMiscOrderItem', {paymentId:paymentId, name:name, value:value, chargeMiscOrderId: chargeMiscOrderId}, function(data){
+		var chargeCheckOrderIds = $("#chargeCheckOrderIds").val()
+		$.post('/chargeMiscOrder/updateChargeMiscOrderItem', {paymentId:paymentId, name:name, value:value, chargeMiscOrderId: chargeMiscOrderId, chargeCheckOrderIds: chargeCheckOrderIds}, function(data){
 			if(data.ID > 0){
 				$("#totalAmountSpan")[0].innerHTML = data.TOTAL_AMOUNT;
 			}else{

@@ -291,6 +291,8 @@ public class ChargeCheckOrderController extends Controller {
 	public void save() {
 		ArapChargeOrder arapAuditOrder = null;
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
+		String total_amount = getPara("total_amount");
+		String debit_amount = getPara("debit_amount");
 		if (!"".equals(chargeCheckOrderId) && chargeCheckOrderId != null) {
 			arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
 			arapAuditOrder.set("status", "new");
@@ -305,6 +307,10 @@ public class ChargeCheckOrderController extends Controller {
 			}
             if(getParaToDate("end_time") != null){
             	arapAuditOrder.set("end_time", getPara("end_time")); 
+            }
+            arapAuditOrder.set("total_amount", total_amount);
+            if(total_amount != null && !"".equals(total_amount) && debit_amount != null && !"".equals(debit_amount)){
+            	arapAuditOrder.set("charge_amount", Double.parseDouble(total_amount) - Double.parseDouble(debit_amount));
             }
 			arapAuditOrder.update();
 
@@ -335,6 +341,10 @@ public class ChargeCheckOrderController extends Controller {
             if(getParaToDate("end_time") != null){
             	arapAuditOrder.set("end_time", getPara("end_time")); 
             }
+            arapAuditOrder.set("total_amount", total_amount);
+            if(total_amount != null && !"".equals(total_amount) && debit_amount != null && !"".equals(debit_amount)){
+            	arapAuditOrder.set("charge_amount", Double.parseDouble(total_amount) - Double.parseDouble(debit_amount));
+            }
 			arapAuditOrder.save();
 
 			String returnOrderIds = getPara("returnOrderIds");
@@ -354,7 +364,7 @@ public class ChargeCheckOrderController extends Controller {
 				returnOrder.update();
 			}
 		}
-		renderJson(arapAuditOrder);;
+		renderJson(arapAuditOrder);
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_UPDATE})
 	public void edit() throws ParseException {
@@ -579,6 +589,7 @@ public class ChargeCheckOrderController extends Controller {
 	public void updateChargeMiscOrder(){
 		String micsOrderIds = getPara("micsOrderIds");
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
+		ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
 		if(micsOrderIds != null && !"".equals(micsOrderIds)){
 			String[] micsOrderIdArr = micsOrderIds.split(",");
 			for(int i=0;i<micsOrderIdArr.length;i++){
@@ -586,7 +597,15 @@ public class ChargeCheckOrderController extends Controller {
 				arapMiscChargeOrder.set("charge_order_id", chargeCheckOrderId);
 				arapMiscChargeOrder.update();
 			}
+			
+			Record record = Db.findFirst("select sum(amount) sum_amount from arap_misc_charge_order mco"
+								+ " left join arap_misc_charge_order_item mcoi on mcoi.misc_order_id = mco.id where mco.id in("+micsOrderIds+")");
+			Double total_amount = arapChargeOrder.getDouble("total_amount");
+			Double debit_amount = record.getDouble("sum_amount");
+			arapChargeOrder.set("debit_amount", debit_amount);
+			arapChargeOrder.set("charge_amount", total_amount - debit_amount);
+			arapChargeOrder.update();
 		}
-        renderJson("{\"success\":true}");
+        renderJson(arapChargeOrder);
 	}
 }

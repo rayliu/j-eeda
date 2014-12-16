@@ -43,9 +43,8 @@
                                         	<input type="hidden" name="create_by" value="${create_by!''}${arapAuditOrder.create_by!''}"/>
                                         	<input type="hidden" name="beginTime" value="${beginTime!''}${arapAuditOrder.beginTime!''}"/>
                                         	<input type="hidden" name="endTime" value="${endTime!''}${arapAuditOrder.endTime!''}"/>
-                                        	<input type="hidden" name="total_amount" value="${totalAmount!''}"/>
-                                        	<input type="hidden" name="debit_amount" value="${debitAmount!''}"/>
-                                        	<input type="hidden" name="charge_amount" value="${chargeAmount!''}"/>
+                                        	<input type="hidden" name="total_amount" value="${totalAmount!''}${arapAuditOrder.total_amount!''}"/>
+                                        	<input type="hidden" id="hiddenDebitAmount" name="debit_amount" value="${debitAmount!''}${arapAuditOrder.debit_amount!''}"/>
                                             <h3>客户信息</h3>
                                             <div class="form-group">
                                                 <label>公司名称</label>
@@ -63,9 +62,9 @@
                                                 <label>电话</label>
                                                 <label class="radio-inline" id="company">${customer.phone!''}</label>
                                             </div>
-                                            <div><label>应收总金额:</label>	<span id="returnOrderAmountSpan">${totalAmount!''}</span></div>
-                                            <div><label>扣款金额:</label>	<span id="returnOrderAmountSpan">${debitAmount!''}</span></div>
-                                            <div><label>实收金额:</label>	<span id="returnOrderAmountSpan">${chargeAmount!''}</span></div>
+                                            <div><label>应收总金额:</label><label class="radio-inline">${totalAmount!''}${arapAuditOrder.total_amount!''}</label></div>
+                                            <div><label>扣款金额</label><label class="radio-inline" id="debitAmount">${arapAuditOrder.debit_amount!''}</label></div>
+                                            <div><label>实收金额</label><label class="radio-inline" id="chargeAmount">${totalAmount!''}${arapAuditOrder.charge_amount!''}</label></span></div>
                                             
                                             <div class="form-group">
                                                 <label>备注</label>
@@ -180,7 +179,7 @@
                                 </div>
                                 <div class="tab-pane fade" id="arap">
                                     <div class="panel-body">
-                                		<label>应收总金额:	<span id="returnOrderAmountSpan">${totalAmount!''}</span></label>
+                                		<label>应收总金额:</label><label class="radio-inline">${totalAmount!''}${arapAuditOrder.total_amount!''}</label>
                                         <div class="table-responsive">
 			                                <table class="table table-striped table-bordered table-hover" id="chargeConfirem-table" style="width: 2800px;">
 			                                    <thead>
@@ -227,9 +226,13 @@
 								</div>
                                 <div class="tab-pane fade" id="cargos">
                                     <div class="panel-body">
-                                    <button id="addExternalMiscOrderBtn" class="btn btn-primary" data-toggle="modal" data-target="#addExternalMiscOrder" data-backdrop="static">
-										选择应付扣款单
-									</button>
+                                    <div>
+	                                    <button id="addExternalMiscOrderBtn" class="btn btn-primary" data-toggle="modal" data-target="#addExternalMiscOrder" data-backdrop="static">
+											选择应付扣款单
+										</button>
+									</div>
+                                	<label>扣款金额</label>
+                                    <label class="radio-inline" id="debitAmountSpan">${arapAuditOrder.debit_amount!''}</label>
                                         <div class="table-responsive">
 			                                <table class="table table-striped table-bordered table-hover" id="chargeMiscList-table">
 			                                    <thead>
