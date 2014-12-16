@@ -317,7 +317,8 @@
  	if($("#arrivalMode").val() == 'gateIn'){
  		$("#arrivalModeSpan").text('入中转仓');
  	}else if($("#arrivalMode").val() == 'delivery'){
- 		$("#arrivalModeSpan").text('货品直送'); 		
+ 		$("#arrivalModeSpan").text('货品直送'); 
+ 		$("#customer_deliver_no").hide();
  	}else{
  		$("#arrivalModeSpan").text(''); 		
  	}

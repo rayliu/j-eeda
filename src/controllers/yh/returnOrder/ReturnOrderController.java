@@ -318,6 +318,11 @@ public class ReturnOrderController extends Controller {
 			if (!"".equals(routeTo) && routeTo != null) {
 				deliveryOrder.set("route_to", routeTo);
 			}
+			if(!"".equals(getPara("customer_delivery_no")) && getPara("customer_delivery_no") != null){
+				if(!getPara("customer_delivery_no").equals(deliveryOrder.get("customer_delivery_no"))){
+					deliveryOrder.set("customer_delivery_no", getPara("customer_delivery_no"));
+				}
+			}
 			deliveryOrder.update();
 			notifyPartyId = deliveryOrder.get("notify_party_id");
 			if (notifyPartyId != null) {

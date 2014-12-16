@@ -77,10 +77,13 @@
                                         </div>                                        
                                         <div class="form-group">
                                             <label>电话</label>	${customerContact.phone!''}
-                                        </div>  
-                                        <div class="form-group">
-                                            <label>客户配送单号</label> ${deliveryOrder.customer_delivery_no!''}	
                                         </div>
+                                        <div id="customer_deliver_no">  
+	                                        <div class="form-group">
+	                                            <label>客户配送单号</label> 
+	                                            <input name="customer_delivery_no" value="${deliveryOrder.customer_delivery_no!''}" class="form-control">	
+	                                        </div>
+	                                    </div>
                                         <input id="locationChanged" name='locationChanged' type="hidden" value="false"/>
                                         <div id="contactInformation">
     	                                        <h2>收货人信息</h2>
