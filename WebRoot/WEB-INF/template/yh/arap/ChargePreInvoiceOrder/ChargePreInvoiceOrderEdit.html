@@ -40,6 +40,7 @@
                                         	<input type="hidden" name="create_by" value="${create_by!''}${arapAuditInvoiceApplication.create_by!''}"/>
                                         	<input type="hidden" name="beginTime" value="${beginTime!''}${arapAuditInvoiceApplication.beginTime!''}"/>
                                         	<input type="hidden" name="endTime" value="${endTime!''}${arapAuditInvoiceApplication.endTime!''}"/>
+                                        	<input type="hidden" name="total_amount" value="${totalAmount!''}"/>
 		                                    <h2>开票申请单信息</h2>
 		                                    <div class="form-group">
 		                                        <label>开票申请单号</label> <strong>${order_no!''}${arapAuditInvoiceApplication.order_no!''}</strong>
@@ -78,8 +79,8 @@
                                             <label class="radio-inline" id="company">${customer.company_name!''}</label>
                                         </div>
                                         <div class="form-group">
-                                            <label>应收总金额</label>
-                                            <label class="radio-inline" id=""></label>
+                                        	<label>应收总金额:</label>
+                                        	<label class="radio-inline">${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}</label>
                                         </div>
                                         <!-- <div class="form-group" id="paymentMethods">
                                             <label class="label-margin">收款方式</label>

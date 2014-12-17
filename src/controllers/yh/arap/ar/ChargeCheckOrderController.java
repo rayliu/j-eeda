@@ -292,7 +292,7 @@ public class ChargeCheckOrderController extends Controller {
 		ArapChargeOrder arapAuditOrder = null;
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
 		String total_amount = getPara("total_amount");
-		String debit_amount = getPara("debit_amount");
+		String debit_amount = getPara("debit_amount")==""?"0":getPara("debit_amount");
 		if (!"".equals(chargeCheckOrderId) && chargeCheckOrderId != null) {
 			arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
 			arapAuditOrder.set("status", "new");

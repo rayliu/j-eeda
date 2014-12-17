@@ -28,14 +28,15 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <form role="form" id="chargeInvoiceOrderForm">
-                                        	<input id="chargeInvoiceOrderId" type="hidden" name="chargeInvoiceOrderId" value="${ArapAuditInvoice.id!''}"/>
+                                        	<input id="chargeInvoiceOrderId" type="hidden" name="chargeInvoiceOrderId" value="${arapAuditInvoice.id!''}"/>
                                         	<input id="customer_id" type="hidden" name="customer_id" value="${party.id!''}"/>
                                         	<input type="hidden" id="chargePreInvoiceOrderIds" name="chargePreInvoiceOrderIds" value="${chargePreInvoiceOrderIds!''}"/>
-                                        	<input type="hidden" name="order_no" value="${order_no!''}${ArapAuditInvoice.order_no!''}"/>
-                                        	<input type="hidden" name="status" value="${status!''}${ArapAuditInvoice.status!''}"/>
-                                        	<input type="hidden" name="create_by" value="${create_by!''}${ArapAuditInvoice.create_by!''}"/>
-                                        	<input type="hidden" name="beginTime" value="${beginTime!''}${ArapAuditInvoice.beginTime!''}"/>
-                                        	<input type="hidden" name="endTime" value="${endTime!''}${ArapAuditInvoice.endTime!''}"/>
+                                        	<input type="hidden" name="order_no" value="${order_no!''}${arapAuditInvoice.order_no!''}"/>
+                                        	<input type="hidden" name="status" value="${status!''}${arapAuditInvoice.status!''}"/>
+                                        	<input type="hidden" name="create_by" value="${create_by!''}${arapAuditInvoice.create_by!''}"/>
+                                        	<input type="hidden" name="beginTime" value="${beginTime!''}${arapAuditInvoice.beginTime!''}"/>
+                                        	<input type="hidden" name="endTime" value="${endTime!''}${arapAuditInvoice.endTime!''}"/>
+                                        	<input type="hidden" name="total_amount" value="${totalAmount!''}"/>
                                             <h2>客户信息</h2>
                                             <div class="form-group">
                                                 <label>公司名称</label>
@@ -54,23 +55,23 @@
                                                 <label class="radio-inline" id="company">${customer.phone!''}</label>
                                             </div>
                                             <div class="form-group">
-                                                <label>应收总金额</label>
-                                                <label class="radio-inline" id=""></label>
+                                                <label>应收总金额:</label>
+                                        		<label class="radio-inline">${totalAmount!''}${arapAuditInvoice.total_amount!''}</label>
                                             </div>
                                             
                                             <div class="form-group">
                                                 <label>备注</label>
-                                                <textarea class="form-control" rows="3" name="remark">${ArapAuditInvoice.remark!''}</textarea>
+                                                <textarea class="form-control" rows="3" name="remark">${arapAuditInvoice.remark!''}</textarea>
                                             </div>                               
                                     </div>
                                     <!-- /.col-lg-6 (nested) -->
                                     <div class="col-lg-6">
                                     <h2>发票信息</h2>
                                     <div class="form-group">
-                                        <label>发票号</label> <strong>${order_no!''}${ArapAuditInvoice.order_no!''}</strong>
+                                        <label>发票号</label> <strong>${order_no!''}${arapAuditInvoice.order_no!''}</strong>
                                     </div>
                                     <div class="form-group">
-                                        <label>单据状态</label>   <span  id="chargeInvoiceOrderStatus">${status!''}${ArapAuditInvoice.status!''}</span>
+                                        <label>单据状态</label>   <span  id="chargeInvoiceOrderStatus">${status!''}${arapAuditInvoice.status!''}</span>
                                     </div>
                                     <div class="form-group">
                                         <label>创建人</label>  <%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>

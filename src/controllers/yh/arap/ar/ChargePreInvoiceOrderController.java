@@ -92,20 +92,28 @@ public class ChargePreInvoiceOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
-		String[] idArray = ids.split(",");
-		logger.debug(String.valueOf(idArray.length));
 
 		setAttr("chargeCheckOrderIds", ids);
-
-		ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
-		String customerId = arapChargeOrder.get("payee_id");
-		if (!"".equals(customerId) && customerId != null) {
-			Party party = Party.dao.findById(customerId);
-			setAttr("party", party);
-			Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-			setAttr("customer", contact);
-			setAttr("type", "CUSTOMER");
-			setAttr("classify", "");
+		if(ids != null && !"".equals(ids)){
+			String[] idArray = ids.split(",");
+			logger.debug(String.valueOf(idArray.length));
+			Double totalAmount = 0.0;
+			for(int i=0;i<idArray.length;i++){
+				ArapChargeOrder rOrder = ArapChargeOrder.dao.findById(idArray[i]);
+				totalAmount = totalAmount + rOrder.getDouble("charge_amount");
+			}
+			setAttr("totalAmount", totalAmount);
+			
+			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
+			String customerId = arapChargeOrder.get("payee_id");
+			if (!"".equals(customerId) && customerId != null) {
+				Party party = Party.dao.findById(customerId);
+				setAttr("party", party);
+				Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+				setAttr("customer", contact);
+				setAttr("type", "CUSTOMER");
+				setAttr("classify", "");
+			}
 		}
 
 		setAttr("saveOK", false);
@@ -155,6 +163,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
+			arapAuditInvoiceApplication.set("total_amount", getPara("total_amount"));
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
 			arapAuditInvoiceApplication.set("payment_method", getPara("paymentMethod"));
 			if("transfers".equals(paymentMethod)){

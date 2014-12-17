@@ -16,7 +16,7 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
         			return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         	}},
-            {"mDataProp":null},
+            {"mDataProp":"CNAME"},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){

@@ -50,19 +50,28 @@ public class ChargeInvoiceOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CIO_CREATE})
     public void create() {
         String ids = getPara("ids");
-        String[] idArray = ids.split(",");
-        logger.debug(String.valueOf(idArray.length));
 
-        setAttr("chargePreInvoiceOrderIds", ids);	 
-        ArapChargeInvoiceApplication arapChargeInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(idArray[0]);
-		Long customerId = arapChargeInvoiceApplication.get("payee_id");
-        if(!"".equals(customerId) && customerId != null){
-	        Party party = Party.dao.findById(customerId);
-	        setAttr("party", party);	        
-	        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-	        setAttr("customer", contact);
-	        setAttr("type", "CUSTOMER");
-	    	setAttr("classify", "");
+        setAttr("chargePreInvoiceOrderIds", ids);	
+        if(ids != null && !"".equals(ids)){
+			String[] idArray = ids.split(",");
+			logger.debug(String.valueOf(idArray.length));
+			Double totalAmount = 0.0;
+			for(int i=0;i<idArray.length;i++){
+				ArapChargeInvoiceApplication rOrder = ArapChargeInvoiceApplication.dao.findById(idArray[i]);
+				totalAmount = totalAmount + rOrder.getDouble("total_amount");
+			}
+			setAttr("totalAmount", totalAmount);
+			
+	        ArapChargeInvoiceApplication arapChargeInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(idArray[0]);
+			Long customerId = arapChargeInvoiceApplication.get("payee_id");
+	        if(!"".equals(customerId) && customerId != null){
+		        Party party = Party.dao.findById(customerId);
+		        setAttr("party", party);	        
+		        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+		        setAttr("customer", contact);
+		        setAttr("type", "CUSTOMER");
+		    	setAttr("classify", "");
+	        }
         }
         
         setAttr("saveOK", false);
@@ -128,11 +137,13 @@ public class ChargeInvoiceOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aci.*,group_concat(acai.invoice_no separator '\r\n') invoice_item_no,ul.user_name creator_name from arap_charge_invoice aci"
+        String sql = "select aci.*,group_concat(acai.invoice_no separator '\r\n') invoice_item_no,ul.user_name creator_name,c.abbr cname from arap_charge_invoice aci"
 				+ " left join arap_charge_invoice_item_invoice_no acio on acio.invoice_id = aci.id "
 				+ " left join arap_charge_application_invoice_no acai on acai.invoice_no = acio.invoice_no"
 				+ " left join arap_charge_invoice_application_order acao on acao.id = acai.application_order_id"
 				+ " left join user_login ul on ul.id = aci.create_by "
+				+ " left join party p on p.id = aci.payee_id "
+				+ " left join contact c on c.id = p.contact_id "
 				+ " group by aci.id order by aci.create_stamp desc";
 
         logger.debug("sql:" + sql);
@@ -164,6 +175,7 @@ public class ChargeInvoiceOrderController extends Controller {
     		arapAuditInvoice.set("create_by", getPara("create_by"));
     		arapAuditInvoice.set("status", getPara("status"));
 	    	arapAuditInvoice.set("create_stamp", new Date());
+	    	arapAuditInvoice.set("total_amount", getPara("total_amount"));
 	    	arapAuditInvoice.set("remark", getPara("remark"));
 	    	arapAuditInvoice.set("payee_id", getPara("customer_id"));
 	    	arapAuditInvoice.save();
@@ -176,6 +188,7 @@ public class ChargeInvoiceOrderController extends Controller {
 	    	for(int i=0;i<idArr.length;i++){
 	    		ArapChargeInvoiceApplication application = ArapChargeInvoiceApplication.dao.findById(idArr[i]);
 	    		application.set("status", "已开票");
+	    		application.set("invoice_order_id", arapAuditInvoice.get("id"));
 	    		application.update();
 	    	}
     	}
@@ -186,11 +199,21 @@ public class ChargeInvoiceOrderController extends Controller {
     	ArapChargeInvoice arapAuditInvoice = ArapChargeInvoice.dao.findById(getPara("id"));  	
     	UserLogin userLogin = UserLogin.dao.findById(arapAuditInvoice.get("create_by"));
     	setAttr("userLogin", userLogin);
-    	setAttr("ArapAuditInvoice", arapAuditInvoice); 
+    	setAttr("arapAuditInvoice", arapAuditInvoice); 
+    	
+    	Long customerId = arapAuditInvoice.get("payee_id");
+    	if(customerId != null && !"".equals(customerId)){
+    		Party party = Party.dao.findById(customerId);
+	        setAttr("party", party);	        
+	        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+	        setAttr("customer", contact);
+	        setAttr("type", "CUSTOMER");
+	    	setAttr("classify", "");
+    	}
     	String chargePreInvoiceOrderIds = "";
-    	List<ArapChargeApplicationInvoiceNo> arapChargeApplicationInvoiceNos = ArapChargeApplicationInvoiceNo.dao.find("select * from arap_charge_application_invoice_no where invoice_order_id = ?", getPara("id"));
-    	for(ArapChargeApplicationInvoiceNo chargeApplicationInvoiceNo : arapChargeApplicationInvoiceNos){
-    		chargePreInvoiceOrderIds += chargeApplicationInvoiceNo.get("application_order_id") + ",";
+    	List<ArapChargeInvoiceApplication> arapChargeInvoiceApplications = ArapChargeInvoiceApplication.dao.find("select * from arap_charge_invoice_application_order where invoice_order_id = ?", getPara("id"));
+    	for(ArapChargeInvoiceApplication arapChargeInvoiceApplication : arapChargeInvoiceApplications){
+    		chargePreInvoiceOrderIds += arapChargeInvoiceApplication.get("id") + ",";
     	}
     	chargePreInvoiceOrderIds = chargePreInvoiceOrderIds.substring(0, chargePreInvoiceOrderIds.length() - 1);
 		setAttr("chargePreInvoiceOrderIds", chargePreInvoiceOrderIds);

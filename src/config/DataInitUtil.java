@@ -192,13 +192,13 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists arap_cost_order_invoice_no(id bigint auto_increment primary key,invoice_no varchar(255),cost_order_id bigint,foreign key(cost_order_id) references arap_cost_order(id));");
              
             stmt.executeUpdate("create table if not exists arap_charge_invoice_application_order(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),payment_method varchar(255),create_by bigint,create_stamp timestamp,audit_by bigint,audit_stamp timestamp,"
-            		+ " approver_by bigint,approval_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),payee_id bigint,account_id bigint,foreign key(account_id) references fin_account(id));");
+            		+ " approver_by bigint,approval_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),total_amount double,payee_id bigint,account_id bigint,foreign key(account_id) references fin_account(id),invoice_order_id bigint);");
            
             // 开票申请从表
             stmt.executeUpdate("create table if not exists arap_charge_invoice_application_item(id bigint auto_increment primary key,invoice_application_id bigint,foreign key(invoice_application_id) references arap_charge_invoice_application_order(id),charge_order_id bigint,foreign key(charge_order_id) references arap_charge_order(id));");
 
             // 开票单费用表
-            stmt.executeUpdate("create table if not exists arap_charge_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),payee_id bigint);");
+            stmt.executeUpdate("create table if not exists arap_charge_invoice(id bigint auto_increment primary key,order_no varchar(255),status varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),payee_id bigint,total_amount double);");
             
             // 开票单费用从表
             stmt.executeUpdate("create table if not exists arap_charge_invoice_item_invoice_no(id bigint auto_increment primary key,invoice_no varchar(255),amount double,invoice_id bigint,foreign key(invoice_id) references arap_charge_invoice(id));");

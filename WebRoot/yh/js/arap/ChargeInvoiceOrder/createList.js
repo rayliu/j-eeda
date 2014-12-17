@@ -40,7 +40,7 @@ $(document).ready(function() {
             },
             {"mDataProp":null},
             {"mDataProp":"CNAME"},
-            {"mDataProp":null},
+            {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATE_BY"},
             {"mDataProp":"CREATE_STAMP"},

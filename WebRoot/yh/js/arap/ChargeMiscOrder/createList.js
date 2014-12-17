@@ -12,7 +12,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargeCheckOrder/list",
+        "sAjaxSource": "/chargeMiscOrder/chargeCheckOrderList",
         "aoColumns": [   
             { "mDataProp": null,
 	            "fnRender": function(obj) {

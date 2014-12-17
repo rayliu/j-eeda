@@ -346,4 +346,41 @@ public class ChargeMiscOrderController extends Controller {
 
 		renderJson(BillingOrderListMap);
 	}
+	
+	public void chargeCheckOrderList(){
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+
+		String sqlTotal = "select count(distinct aao.id) total from arap_charge_order aao"
+				+ " left join arap_misc_charge_order amco on amco.charge_order_id = aao.id"	
+				+ " where ifnull(amco.charge_order_id,0)>0";
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		String sql = "select distinct aao.*, usl.user_name as creator_name,c.abbr cname"
+				+ " from arap_charge_order aao "
+				+ " left join party p on p.id = aao.payee_id "
+				+ " left join contact c on c.id = p.contact_id"
+				+ " left join user_login usl on usl.id=aao.create_by"
+				+ " left join arap_misc_charge_order amco on amco.charge_order_id = aao.id"	
+				+ " where ifnull(amco.charge_order_id,0)>0"
+				+ " order by aao.create_stamp desc " + sLimit;
+
+		logger.debug("sql:" + sql);
+		List<Record> BillingOrders = Db.find(sql);
+
+		Map BillingOrderListMap = new HashMap();
+		BillingOrderListMap.put("sEcho", pageIndex);
+		BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+		BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+		BillingOrderListMap.put("aaData", BillingOrders);
+
+		renderJson(BillingOrderListMap);
+	}
 }
