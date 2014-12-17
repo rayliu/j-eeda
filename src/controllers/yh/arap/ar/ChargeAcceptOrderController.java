@@ -2,10 +2,12 @@ package controllers.yh.arap.ar;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Account;
 import models.ArapAccountAuditLog;
 import models.ArapChargeInvoice;
 import models.ArapChargeOrder;
@@ -84,13 +86,36 @@ public class ChargeAcceptOrderController extends Controller {
     	}
     	for(int i=0;i<chargeIdArr.length;i++){
     		String[] arr = chargeIdArr[i].split(":");
+    		String orderId = arr[0];
     		String orderNo = arr[1];
     		if(orderNo.startsWith("SGSK")){
-    			ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(arr[0]);
+    			ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(orderId);
     			arapMiscChargeOrder.set("status", "已收款确认");
     			arapMiscChargeOrder.update();
     			
     			//TODO: 现金 或 银行  金额处理
+    			if("cash".equals(paymentMethod)){
+    				Account account = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
+    				if(account!=null){
+    					Record rec = Db.findFirst("SELECT sum(amcoi.amount) total FROM ARAP_MISC_CHARGE_ORDER amco, ARAP_MISC_CHARGE_ORDER_ITEM amcoi "
+    							+ "where amco.id = amcoi.id and amco.order_no='"+orderNo+"'");
+    					if(rec!=null){
+    						double total = rec.getDouble("total");
+    						account.set("amount", account.getDouble("amount")-total).update();
+    						ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
+    						auditLog.set("PAYMENT_METHOD", "cash");
+    						auditLog.set("AMOUNT", total);
+    						auditLog.set("CREATOR", currentUser.getPrincipal());
+    						auditLog.set("CREATE_DATE", new Date());
+    						auditLog.set("MISC_ORDER_ID", orderId);
+    						auditLog.set("INVOICE_ORDER_ID", null);
+    						auditLog.set("ACCOUNT_ID", account.get("id"));
+    						auditLog.save();
+    					}
+    				}
+    			}else{
+    				
+    			}
     			
     			//TODO: 日记账
     		}else{
