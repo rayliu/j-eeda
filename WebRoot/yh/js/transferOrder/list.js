@@ -37,7 +37,9 @@ $(document).ready(function() {
             			return "ATM";
             		}else{
             			return "";
-            		}}},        	
+            		}}}, 
+            {"mDataProp":"ROUTE_FROM", "sWidth":"70px"},
+            {"mDataProp":"ROUTE_TO", "sWidth":"70px"},       	
     		{"mDataProp":"OPERATION_TYPE", "sWidth":"70px",
     			"fnRender": function(obj) {
     				if(obj.aData.OPERATION_TYPE == "out_source"){
@@ -62,8 +64,6 @@ $(document).ready(function() {
             {"mDataProp":"WEIGHT", "sWidth":"100px"},
             {"mDataProp":"PLANNING_TIME", "sWidth":"100px"},
             {"mDataProp":"ARRIVAL_TIME", "sWidth":"100px"},
-            {"mDataProp":"ROUTE_FROM", "sWidth":"70px"},
-            {"mDataProp":"ROUTE_TO", "sWidth":"70px"},
             {"mDataProp":"ADDRESS", "sWidth":"100px",},
             {"mDataProp":"ORDER_TYPE", "sWidth":"70px",
             	"fnRender": function(obj) {
