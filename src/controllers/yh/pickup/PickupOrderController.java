@@ -318,7 +318,7 @@ public class PickupOrderController extends Controller {
                     + orderNo
                     + "%' and tor.status like '%"
                     + status
-                    + "%' and tor.address like '%"
+                    + "%' and ifnull(tor.address, '') like '%"
                     + address
                     + "%' and c.abbr like '%"
                     + customer
@@ -351,7 +351,7 @@ public class PickupOrderController extends Controller {
                     + orderNo
                     + "%' and tor.status like '%"
                     + status
-                    + "%' and tor.address like '%"
+                    + "%' and ifnull(tor.address, '') like '%"
                     + address
                     + "%' and c.abbr like '%"
                     + customer
@@ -385,7 +385,7 @@ public class PickupOrderController extends Controller {
                     + orderNo
                     + "%' and tor.status like '%"
                     + status
-                    + "%' and tor.address like '%"
+                    + "%' and ifnull(tor.address, '') like '%"
                     + address
                     + "%' and c.abbr like '%"
                     + customer
@@ -415,7 +415,7 @@ public class PickupOrderController extends Controller {
                     + orderNo
                     + "%' and tor.status like '%"
                     + status
-                    + "%' and tor.address like '%"
+                    + "%' and ifnull(tor.address, '') like '%"
                     + address
                     + "%' and c.abbr like '%"
                     + customer
