@@ -57,7 +57,7 @@
 		                                        <label>状态</label>   <span  id="chargeMiscOrderStatus">${status!''}${arapMiscChargeOrder.status!''}</span>
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>创建人</label>   ${userLogin.c_name!''} ${userLogin.user_name!''}                                        
+		                                        <label>创建人</label>  <%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>                                       
 		                                    </div>
 		                                    <div class="form-group">
 		                                        <label>创建时间</label>   ${arapMiscChargeOrder.create_stamp!''}                                     

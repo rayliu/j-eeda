@@ -78,7 +78,8 @@
 	                                                 <label>单据状态</label>   ${status!''} ${insuranceOrder.status!''}
 	                                             </div>
 	                                             <div class="form-group">
-	                                             <label>创建人</label>   ${userLogin.c_name!''}${userLogin.user_name!''}   ${userLogin2.c_name!''}${userLogin2.user_name!''}                                         
+	                                             <label>创建人</label>  <%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>
+	                                             <%if(userLogin2.c_name!''==''){ %>${userLogin2.user_name!''}<%}else{%>${userLogin2.c_name!''}<%}%>                                         
 	                                         </div>
 		                                                                                                                          
 									 		<div class="form-group">

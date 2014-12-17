@@ -49,13 +49,13 @@
                                         <label>单据状态</label>   <span  id="costCheckOrderStatus">${status!''}${arapAuditOrder.status!''}</span>
                                     </div>
                                     <div class="form-group">
-                                        <label>创建人</label>   ${userLogin.c_name!''} ${userLogin.user_name!''}                                       
+                                        <label>创建人</label> <%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>                                     
                                     </div>                             
                                     <div class="form-group">
                                         <label>创建时间</label>   ${arapAuditOrder.create_stamp!''}                                        
                                     </div>                             
                                     <div class="form-group">
-                                        <label>对账单确认人</label>   ${userLogin.c_name!''} ${userLogin.user_name!''}                                  
+                                        <label>对账单确认人</label>  <%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>                                 
                                     </div>                             
                                     <div class="form-group">
                                         <label>对账单确认时间</label>    ${arapAuditOrder.confirm_stamp!''}                                    

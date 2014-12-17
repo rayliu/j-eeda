@@ -289,7 +289,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into inventory_item(party_id, warehouse_id, product_id,total_quantity) values(1, 1, 4, 100);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('d_user1', '123456', '1-6',1);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
-            stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('demo','123456', '1-6', 3);");
+            stmt.executeUpdate("insert into user_login(user_name,c_name, password, password_hint, office_id) values('demo','管理员','123456', '1-6', 3);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('jason', '123456', '1-6',3);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('ray.liu@eeda123.com', '123456', '1-6',3);");
            
