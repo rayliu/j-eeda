@@ -953,7 +953,8 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("client_order_stamp", clientOrderStamp);
 			if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null)
 				deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);
-			
+
+			deliveryOrder.set("audit_status", "新建");
 			deliveryOrder.save();
 
 			String string = getPara("tranferid");

@@ -70,7 +70,7 @@ public class CostItemConfirmController extends Controller {
 			+ " left join transfer_order_item toi on toi.id = toid.item_id "
 			+ " left join product prod on toi.product_id = prod.id "
 			+ " left join user_login ul on ul.id = dor.create_by "
-			+ " where dor.id = ror.delivery_order_id group by dor.id"
+			+ " where dor.id = ror.delivery_order_id and dor.audit_status='新建' group by dor.id"
 			+ " union"
 			+ " select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
 			+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
@@ -88,7 +88,7 @@ public class CostItemConfirmController extends Controller {
 			+ " left join user_login ul on ul.id = dpr.create_by "
 			+ " left join party p on p.id = dpr.sp_id "
 			+ " left join contact c on c.id = p.contact_id"
-			+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0)"
+			+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0) and dpr.audit_status='新建'"
 			+ " group by dpr.id"
 			+ " union"
 			+ " select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
@@ -105,7 +105,7 @@ public class CostItemConfirmController extends Controller {
 			+ " left join user_login ul on ul.id = dpr.create_by "
 			+ " left join party p on p.id = dpr.sp_id "
 			+ " left join contact c on c.id = p.contact_id"
-			+ " where (ifnull(dpr.id, 0) > 0)"
+			+ " where (ifnull(dpr.id, 0) > 0) and dpr.audit_status='新建'"
 			+ " group by dpr.id"
 			+ " union"
 			+ " select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, "
@@ -124,12 +124,12 @@ public class CostItemConfirmController extends Controller {
 			+ " left join user_login ul on ul.id = dpr.create_by "
 			+ " left join party p on p.id = dpr.sp_id "
 			+ " left join contact c on c.id = p.contact_id"
-			+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0)"
+			+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0) and dpr.audit_status='新建'"
 			+ " group by dpr.id) a";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select distinct dor.id,dor.order_no,dor.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, "
+        String sql = "select distinct dor.id,dor.order_no order_no,dor.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, "
 			+ " (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n')"
 			+ " transfer_order_no,'有回单' return_order_collection,dor.remark,oe.office_name office_name"
@@ -144,9 +144,9 @@ public class CostItemConfirmController extends Controller {
 			+ " left join user_login ul on ul.id = dor.create_by "
 			+ " left join warehouse w on w.id = dor.from_warehouse_id "
 			+ " left join office oe on oe.id = w.office_id"
-			+ " where dor.id = ror.delivery_order_id group by dor.id"
+			+ " where dor.id = ror.delivery_order_id and dor.audit_status='新建' group by dor.id"
 			+ " union"
-			+ " select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
+			+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
 			+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
 			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
@@ -163,10 +163,10 @@ public class CostItemConfirmController extends Controller {
 			+ " left join party p on p.id = dpr.sp_id "
 			+ " left join contact c on c.id = p.contact_id"
 			+ " left join office oe on oe.id = tor.office_id"
-			+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0)"
+			+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0) and dpr.audit_status='新建'"
 			+ " group by dpr.id"
 			+ " union"
-			+ " select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
+			+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
 			+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
 			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
@@ -181,10 +181,10 @@ public class CostItemConfirmController extends Controller {
 			+ " left join party p on p.id = dpr.sp_id "
 			+ " left join contact c on c.id = p.contact_id"
 			+ " left join office oe on oe.id = tor.office_id"
-			+ " where (ifnull(dpr.id, 0) > 0)"
+			+ " where (ifnull(dpr.id, 0) > 0) and dpr.audit_status='新建'"
 			+ " group by dpr.id"
 			+ " union"
-			+ " select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, "
+			+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, "
 			+ " (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
 			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
@@ -201,7 +201,7 @@ public class CostItemConfirmController extends Controller {
 			+ " left join party p on p.id = dpr.sp_id "
 			+ " left join contact c on c.id = p.contact_id"
 			+ " left join office oe on oe.id = tor.office_id"
-			+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0)"
+			+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0) and dpr.audit_status='新建'"
 			+ " group by dpr.id " + sLimit;
 
         logger.debug("sql:" + sql);
@@ -223,16 +223,15 @@ public class CostItemConfirmController extends Controller {
     	String[] idArr = ids.split(",");
     	String[] orderNoArr = orderNos.split(",");
     	for(int i=0 ; i<idArr.length ; i++){
-    		String preOrderNo = orderNoArr[i].substring(0,2);
-    		if("PC".equals(preOrderNo)){
+    		if("提货".equals(orderNoArr[i])){
     			DepartOrder pickupOrder = DepartOrder.dao.findById(idArr[i]);
     			pickupOrder.set("audit_status", "已确认");
     			pickupOrder.update();
-    		}else if("FC".equals(preOrderNo)){
+    		}else if("零担".equals(orderNoArr[i])){
     			DepartOrder departOrder = DepartOrder.dao.findById(idArr[i]);
     			departOrder.set("audit_status", "已确认");
     			departOrder.update();
-    		}else if("PS".equals(preOrderNo)){
+    		}else if("配送".equals(orderNoArr[i])){
     			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(idArr[i]);
     			deliveryOrder.set("audit_status", "已确认");
     			deliveryOrder.update();

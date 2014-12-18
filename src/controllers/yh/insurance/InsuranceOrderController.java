@@ -427,6 +427,7 @@ public class InsuranceOrderController extends Controller {
     		if(officeSelect != null && !"".equals(officeSelect)){
     			insuranceOrder.set("office_id", officeSelect);    			
     		}
+			insuranceOrder.set("audit_status", "新建");
     		insuranceOrder.save();
     		
     		String orderId = getPara("orderid");

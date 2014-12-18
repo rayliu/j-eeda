@@ -97,11 +97,11 @@ public class ChargeAcceptOrderController extends Controller {
     			if("cash".equals(paymentMethod)){
     				Account account = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
     				if(account!=null){
-    					Record rec = Db.findFirst("SELECT sum(amcoi.amount) total FROM ARAP_MISC_CHARGE_ORDER amco, ARAP_MISC_CHARGE_ORDER_ITEM amcoi "
-    							+ "where amco.id = amcoi.id and amco.order_no='"+orderNo+"'");
+    					Record rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_charge_order amco, arap_misc_charge_order_item amcoi "
+    							+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
     					if(rec!=null){
     						double total = rec.getDouble("total");
-    						account.set("amount", account.getDouble("amount")-total).update();
+    						account.set("amount", account.getDouble("amount")==null?0.0:account.getDouble("amount") + total).update();
     						ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
     						auditLog.set("PAYMENT_METHOD", "cash");
     						auditLog.set("AMOUNT", total);
