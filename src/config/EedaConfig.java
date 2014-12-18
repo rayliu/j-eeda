@@ -74,6 +74,9 @@ import models.yh.carmanage.CarSummaryOrder;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.delivery.DeliveryOrder;
+import models.yh.delivery.DeliveryPlanOrder;
+import models.yh.delivery.DeliveryPlanOrderDetail;
+import models.yh.delivery.DeliveryPlanOrderMilestone;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 import models.yh.profile.Route;
@@ -215,6 +218,8 @@ public class EedaConfig extends JFinalConfig {
         me.add("/spdriverinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add("/spcarinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add("/deliveryMilestone", controllers.yh.delivery.DeliveryController.class, contentPath);
+        //配送调车单
+        me.add("/deliveryPlanOrder", controllers.yh.delivery.DeliveryPlanOrderController.class, contentPath);
         
         //ar= account revenue  应收条目处理
         me.add("/chargeConfiremList", controllers.yh.arap.ar.ChargeItemConfirmController.class, contentPath);
@@ -305,6 +310,10 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("billing_order_item", BillingOrderItem.class);
         arp.addMapping("delivery_order_milestone", DeliveryOrderMilestone.class);
         arp.addMapping("location", Location.class);
+        //配送调车单
+        arp.addMapping("delivery_plan_order", DeliveryPlanOrder.class);
+        arp.addMapping("delivery_plan_order_detail", DeliveryPlanOrderDetail.class);
+        arp.addMapping("delivery_plan_order_milestone", DeliveryPlanOrderMilestone.class);
         //arp.addMapping("fin_account_item", AccountItem.class);
         arp.addMapping("delivery_order_item", DeliveryOrderItem.class);
         arp.addMapping("depart_order", DepartOrder.class);
@@ -338,7 +347,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_cost_invoice", ArapCostInvoice.class);
         arp.addMapping("arap_cost_invoice_item_invoice_no", ArapCostInvoiceItemInvoiceNo.class);
         arp.addMapping("arap_cost_order_invoice_no", ArapCostOrderInvoiceNo.class);
-       // arp.addMapping("arap_misc_cost_order", ArapMiscCostOrder.class);
+        //arp.addMapping("arap_misc_cost_order", ArapMiscCostOrder.class);
         //arp.addMapping("arap_misc_cost_order_item", ArapMiscCostOrderItem.class);
         //应付报销单
         arp.addMapping("reimbursement_order", ReimbursementOrder.class);

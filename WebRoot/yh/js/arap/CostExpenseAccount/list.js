@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('#menu_cost').addClass('active').find('ul').addClass('in');
+	 $('#menu_finance').addClass('active').find('ul').addClass('in');
     
     //datatable, 动态处理
     var costExpenseAccountTbody = $('#costExpenseAccountTbody').dataTable({

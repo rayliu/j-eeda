@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('#menu_cost').addClass('active').find('ul').addClass('in');
+	 $('#menu_finance').addClass('active').find('ul').addClass('in');
     
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+

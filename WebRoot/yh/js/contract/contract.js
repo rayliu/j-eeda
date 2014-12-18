@@ -562,6 +562,8 @@ $(document).ready(function() {
                 	$("#tishi1").text("");
                 	$("#tishi2").text("");
                 	$("#productId").val("");
+                	$('#amountFrom').val("");
+                	$('#amountTo').val("");
                 }else{
                     alert('数据保存失败。');
                 }
@@ -709,7 +711,7 @@ $(document).ready(function() {
                     				}
                     			}else if(priceType=="perCargo"){
                     				//判断计费方式、计费区间
-                    				if(ltlUnitType == ltlUnitTypeTo && amountFrom == amountFromTo && amountTo == amountToTo){
+                    				if(ltlUnitType == ltlUnitTypeTo){
                     					tijiao(locationToId3,dataTable3);
                     				}else{
                     					alert("货品目的地已存在！");
