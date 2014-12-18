@@ -9,7 +9,11 @@ import java.util.Map;
 
 import models.ArapCostItem;
 import models.ArapCostOrder;
+import models.DepartOrder;
+import models.Party;
 import models.UserLogin;
+import models.yh.delivery.DeliveryOrder;
+import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -45,13 +49,6 @@ public class CostCheckOrderController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_CREATE})
     public void create() {
-        String ids = getPara("ids");
-        String orderNos = getPara("orderNos");
-        String[] idArray = ids.split(",");
-        logger.debug(String.valueOf(idArray.length));
-
-        setAttr("orderIds", ids);	 
-        setAttr("orderNos", orderNos);	 
         String beginTime = getPara("beginTime");
         if(beginTime != null && !"".equals(beginTime)){
         	setAttr("beginTime", beginTime);
@@ -60,15 +57,43 @@ public class CostCheckOrderController extends Controller {
         if(endTime != null && !"".equals(endTime)){
         	setAttr("endTime", endTime);	
         }
-        /*String customerId = getPara("customerId");
-        if(!"".equals(customerId) && customerId != null){
-	        Party party = Party.dao.findById(customerId);
-	        setAttr("party", party);	        
-	        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-	        setAttr("customer", contact);
-	        setAttr("type", "CUSTOMER");
-	    	setAttr("classify", "");
-        }*/
+
+    	String orderIds = getPara("ids");
+    	String orderNos = getPara("orderNos");
+    	String[] orderIdsArr = orderIds.split(",");
+    	String[] orderNoArr = orderNos.split(",");
+    	Double totalAmount = 0.0;
+    	Long spId = null;
+    	for(int i=0;i<orderIdsArr.length;i++){
+            Record rec = null;
+            if("提货".equals(orderNoArr[i])){
+            	rec = Db.findFirst("select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
+            	totalAmount = totalAmount + rec.getDouble("sum_amount");
+            	DepartOrder departOrder = DepartOrder.dao.findById(orderIdsArr[i]);
+            	spId = departOrder.getLong("sp_id");
+            }else if("零担".equals(orderNoArr[i])){
+            	rec = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
+            	totalAmount = totalAmount + rec.getDouble("sum_amount");
+            	DepartOrder departOrder = DepartOrder.dao.findById(orderIdsArr[i]);
+            	spId = departOrder.getLong("sp_id");
+            }else if("配送".equals(orderNoArr[i])){
+            	rec = Db.findFirst("select sum(amount) sum_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ? and fi.type = '应付'", orderIdsArr[i]);
+            	totalAmount = totalAmount + rec.getDouble("sum_amount");
+            	DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(orderIdsArr[i]);
+            	spId = deliveryOrder.getLong("sp_id");
+            }else{
+            	//rec = Db.findFirst("", orderIdsArr[i]);
+            }
+    	}
+    	if(!"".equals(spId) && spId != null){
+    		Party party = Party.dao.findById(spId);
+    		setAttr("party", party);	        
+    		Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+    		setAttr("sp", contact);
+    	}
+    	setAttr("orderIds", orderIds);	 
+    	setAttr("orderNos", orderNos);	 
+    	setAttr("totalAmount", totalAmount);	 
         
         setAttr("saveOK", false);
         String name = (String) currentUser.getPrincipal();
@@ -547,4 +572,145 @@ public class CostCheckOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
+	
+	public void costConfirmListById() {
+		String orderIds = getPara("orderIds");
+    	String orderNos = getPara("orderNos");
+    	String pickupId = "";
+    	String departId = "";
+    	String deliveryId = "";
+    	if(orderIds == null || orderIds == ""){
+    		pickupId = "-1";
+        	departId = "-1";
+        	deliveryId = "-1";
+    	}else{
+	    	String[] orderIdsArr = orderIds.split(",");
+	    	String[] orderNoArr = orderNos.split(",");
+	    	for(int i=0;i<orderIdsArr.length;i++){
+	            Record rec = null;
+	            if("提货".equals(orderNoArr[i])){
+	            	pickupId += orderIdsArr[i] + ",";
+	            }else if("零担".equals(orderNoArr[i])){
+	            	departId += orderIdsArr[i] + ",";
+	            }else if("配送".equals(orderNoArr[i])){
+	            	deliveryId += orderIdsArr[i] + ",";
+	            }else{
+	            	//rec = Db.findFirst("", orderIdsArr[i]);
+	            }
+	    	}
+	    	if(pickupId != null && !"".equals(pickupId)){
+	    		pickupId = pickupId.substring(0, pickupId.length() - 1);
+	    	} else{
+	    		pickupId = "-1";
+	    	}
+	    	if(departId != null && !"".equals(departId)){
+	    		departId = departId.substring(0, departId.length() - 1);
+	    	} else{
+	    		departId = "-1";
+	    	}
+	    	if(deliveryId != null && !"".equals(deliveryId)){
+	    		deliveryId = deliveryId.substring(0, deliveryId.length() - 1);
+			} else{
+				deliveryId = "-1";
+			}
+    	}
+    	String searchSql = "select distinct dor.id,dor.order_no order_no,dor.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, "
+				+ " (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount, "
+				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n')"
+				+ " transfer_order_no,'有回单' return_order_collection,dor.remark,oe.office_name office_name"
+				+ " from return_order ror "
+				+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
+				+ " left join party p on p.id = dor.sp_id "
+				+ " left join contact c on c.id = p.contact_id "
+				+ " left join delivery_order_item doi on doi.delivery_id = dor.id "
+				+ " left join transfer_order_item_detail toid on toid.id = doi.transfer_item_detail_id "
+				+ " left join transfer_order_item toi on toi.id = toid.item_id "
+				+ " left join product prod on toi.product_id = prod.id "
+				+ " left join user_login ul on ul.id = dor.create_by "
+				+ " left join warehouse w on w.id = dor.from_warehouse_id "
+				+ " left join office oe on oe.id = w.office_id"
+				+ " where dor.id = ror.delivery_order_id and dor.id in("+deliveryId+") group by dor.id"
+				+ " union"
+				+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
+				+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
+				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
+				+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
+				+ " from return_order ror "
+				+ " left join delivery_order dor on dor.id = ror.delivery_order_id  "
+				+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
+				+ " left join depart_transfer dtr on dtr.order_id = doi.transfer_order_id"
+				+ " left join depart_order dpr on dpr.id = dtr.depart_id"
+				+ " left join transfer_order tor on tor.id = dtr.order_id "
+				+ " left join transfer_order_item toi on toi.order_id = tor.id "
+				+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id"
+				+ " left join product prod on toi.product_id = prod.id "
+				+ " left join user_login ul on ul.id = dpr.create_by "
+				+ " left join party p on p.id = dpr.sp_id "
+				+ " left join contact c on c.id = p.contact_id"
+				+ " left join office oe on oe.id = tor.office_id"
+				+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0) and dpr.id in("+departId+")"
+				+ " group by dpr.id"
+				+ " union"
+				+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
+				+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
+				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
+				+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
+				+ " from return_order ror "
+				+ " left join depart_transfer dtr on dtr.order_id = ror.transfer_order_id"
+				+ " left join depart_order dpr on dpr.id = dtr.depart_id"
+				+ " left join transfer_order tor on tor.id = dtr.order_id "
+				+ " left join transfer_order_item toi on toi.order_id = tor.id "
+				+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id"
+				+ " left join product prod on toi.product_id = prod.id "
+				+ " left join user_login ul on ul.id = dpr.create_by "
+				+ " left join party p on p.id = dpr.sp_id "
+				+ " left join contact c on c.id = p.contact_id"
+				+ " left join office oe on oe.id = tor.office_id"
+				+ " where (ifnull(dpr.id, 0) > 0) and dpr.id in("+departId+")"
+				+ " group by dpr.id"
+				+ " union"
+				+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, "
+				+ " (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, "
+				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
+				+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
+				+ " from return_order ror "
+				+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
+				+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
+				+ " left join depart_transfer dtr on dtr.order_id = doi.transfer_order_id"
+				+ " left join depart_order dpr on dpr.id = dtr.pickup_id"
+				+ " left join transfer_order tor on tor.id = dtr.order_id "
+				+ " left join transfer_order_item_detail toid on toid.order_id = tor.id "
+				+ " left join transfer_order_item toi on toi.id = toid.item_id "
+				+ " left join product prod on toi.product_id = prod.id "
+				+ " left join user_login ul on ul.id = dpr.create_by "
+				+ " left join party p on p.id = dpr.sp_id "
+				+ " left join contact c on c.id = p.contact_id"
+				+ " left join office oe on oe.id = tor.office_id"
+				+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0) and dpr.id in("+pickupId+")"
+				+ " group by dpr.id ";
+    	
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+		}
+		
+		String sqlTotal = "select count(1) total from ("+searchSql+") a";
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+		
+		String sql = searchSql + sLimit;
+		
+		logger.debug("sql:" + sql);
+		List<Record> BillingOrders = Db.find(sql);
+		
+		Map BillingOrderListMap = new HashMap();
+		BillingOrderListMap.put("sEcho", pageIndex);
+		BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+		BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		
+		BillingOrderListMap.put("aaData", BillingOrders);
+		
+		renderJson(BillingOrderListMap);
+	}
 }

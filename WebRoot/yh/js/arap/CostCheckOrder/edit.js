@@ -63,13 +63,8 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/costConfirmList/list",
+        "sAjaxSource": "/costCheckOrder/costConfirmListById",
         "aoColumns": [ 
-            { "mDataProp": null, "sWidth":"20px",
-                "fnRender": function(obj) {
-                  return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" order_no="'+obj.aData.ORDER_NO+'">';
-                }
-            },
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"100px"},            	
             {"mDataProp":"SPNAME", "sWidth":"200px"},
             {"mDataProp":null, "sWidth": "120px", 
@@ -109,7 +104,7 @@ $(document).ready(function() {
     	var costCheckOrderId = $("#costCheckOrderId").val();
     	var orderNos = $("#orderNos").val();
     	var orderIds = $("#orderIds").val();
-    	costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmList?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
+    	costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
     	costConfiremTable.fnDraw(); 
     });
 } );

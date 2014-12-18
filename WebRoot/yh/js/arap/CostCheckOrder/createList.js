@@ -16,7 +16,7 @@ $(document).ready(function() {
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px",
                 "fnRender": function(obj) {
-                  return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.ORDER_NO+'">';
+                  return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">';
                 }
             },
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"100px"},            	
