@@ -1264,9 +1264,9 @@ public class DeliveryController extends Controller {
     	String inputStr = getPara("rdc");
     	String sql ="";
     	if(inputStr!=null){
-    		sql = "select * from office where type = '配送中心RDC' and office_name like '%"+inputStr+"%'";
+    		sql = "select * from office where  office_name like '%"+inputStr+"%'";
     	}else{
-    		sql= "select * from office where type = '配送中心RDC'";
+    		sql= "select * from office ";
     	}
         List<Office> office = Office.dao.find(sql);
         renderJson(office);
