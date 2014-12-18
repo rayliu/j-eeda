@@ -76,7 +76,7 @@ var queryCustomer=function(){
    					}
    				}
 		 		if(data[i].ID!=n){
-		 			customerSelect.append("<option value='"+data[i].ID+"'>"+data[i].RECEIPT+"</option>");		 		
+		 			customerSelect.append("<option value='"+data[i].PID+"'>"+data[i].COMPANY_NAME+"</option>");		 		
 				}
    				
    			}
@@ -214,7 +214,7 @@ $(document).ready(function(){
 						+'<select class="form-control customer" name="customerSelect"></select></td>'
 		                +' <td><a class="btn removeCustomer" title="删除"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
 					
-					$("select[name='customerSelect']:last").append("<option value='"+data.customerlist[i].CUSTOMER_ID+"'>"+data.customerlist[i].RECEIPT+"</option>");
+					$("select[name='customerSelect']:last").append("<option value='"+data.customerlist[i].CUSTOMER_ID+"'>"+data.customerlist[i].COMPANY_NAME+"</option>");
 					queryCustomer();
 				}
 				
