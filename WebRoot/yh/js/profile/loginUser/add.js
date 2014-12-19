@@ -67,15 +67,15 @@ var queryCustomer=function(){
    					$(this).append("<option ></option>");
    				}
 	   		});
-   			
+   			//console.log(customers);
    			for(var i=0; i<data.length; i++){
    				var n=0;
    				for(var j=0;j<customers.length;j++){
-   					if(data[i].ID==customers[j]){
+   					if(data[i].PID==customers[j]){
    						n=customers[j];
    					}
    				}
-		 		if(data[i].ID!=n){
+		 		if(data[i].PID!=n){
 		 			customerSelect.append("<option value='"+data[i].PID+"'>"+data[i].COMPANY_NAME+"</option>");		 		
 				}
    				
@@ -154,10 +154,10 @@ $(document).ready(function(){
 		var id = $("#userId").val();
 		if(id!=null&&id!=""&&office_id!=null&&office_id!=""){
 			$.post('/loginUser/delOffice',{id:id,office_id:office_id},function(){
-				
+				$(this).parent().parent().remove();
 			},'json');
 		}
-		$(this).parent().parent().remove();
+		
 		queryOffice();
 	});
 	//移除客户
@@ -182,19 +182,20 @@ $(document).ready(function(){
 	});
 	//查询
 	var userId = $("#userId").val();
-	$.post('/loginUser/officeList',{userId:userId},function(data){
+	var refresh=$.post('/loginUser/officeList',{userId:userId},function(data){
 		var tobdy = $("#tobdy");
 		tobdy.empty();
 		if(data.userOffice!=null){
 			if(data.userOffice.length>0){
 				for(var i =0;i<data.userOffice.length;i++){
-					if(data.userOffice[i].IS_MAIN==null||data.userOffice[i].IS_MAIN==""||data.userOffice[i].IS_MAIN==false||data.userOffice[i].IS_MAIN==0){
+					console.log(data.userOffice[i].IS_MAIN);
+					if(data.userOffice[i].IS_MAIN!=null){
 						tobdy.append('<tr><td><select class="form-control sOffice" name="officeSelect"></select>'
-			                    +' </td><td><input type="radio"  class="is_main" name="isMain_radio" value="'+data.userOffice[i].OFFICE_ID+'"></td>'
+			                    +' </td><td><input type="radio" checked class="is_main" name="isMain_radio" value="'+data.userOffice[i].OFFICE_ID+'"></td>'
 			                    +' <td><a class="btn removeOffice" title="删除"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
 					}else{
 						tobdy.append('<tr><td><select class="form-control sOffice" name="officeSelect"></select>'
-			                    +' </td><td><input type="radio" checked class="is_main" name="isMain_radio" value="'+data.userOffice[i].OFFICE_ID+'"></td>'
+			                    +' </td><td><input type="radio"  class="is_main" name="isMain_radio" value="'+data.userOffice[i].OFFICE_ID+'"></td>'
 			                    +' <td><a class="btn removeOffice" title="删除"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
 					}
 					$("select[name='officeSelect']:last").append("<option value='"+data.userOffice[i].OFFICE_ID+"'>"+data.userOffice[i].OFFICE_NAME+"</option>");

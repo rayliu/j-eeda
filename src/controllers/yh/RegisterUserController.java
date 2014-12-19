@@ -3,6 +3,7 @@ package controllers.yh;
 
 import models.Office;
 import models.UserLogin;
+import models.UserOffice;
 import models.UserRole;
 
 import com.jfinal.core.Controller;
@@ -56,6 +57,11 @@ public class RegisterUserController  extends Controller{
         	userRole.set("role_code", "admin");
         	userRole.save();
         	
+        	UserOffice uo = new  UserOffice();
+        	uo.set("user_name",userName);
+        	uo.set("office_id", user_office.get("id"));
+        	uo.set("is_main", true);
+        	uo.save();
         	//保存成功后登录
         	forwardAction("/login");
 
