@@ -1,6 +1,7 @@
 $(document).ready(function() {
-	 $('#menu_finance').addClass('active').find('ul').addClass('in');
-    
+	$('#menu_finance').addClass('active').find('ul').addClass('in');
+	var num = 1;
+	var clickTabId = "carmanagebasic";
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
     'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
@@ -16,10 +17,10 @@ $(document).ready(function() {
 			$("#approvalBtn,#cancelAuditBtn,#cancelApprovalBtn").hide();
 		}else if("已审核" == status){
 			$("#auditBtn,#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",true);
-			$("#auditBtn,#cancelApprovalBtn").hide();
+			$("#auditBtn,#cancelApprovalBtn,#cancelAuditBtn").hide();
 		}else if("已审批" == status){
 			$("#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",true);
-			$("#auditBtn,#approvalBtn,#cancelAuditBtn").hide();
+			$("#auditBtn,#approvalBtn,#cancelAuditBtn,#cancelApprovalBtn").hide();
 		}else if("取消审核" == status){
 			$("#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",false);
 			$("#approvalBtn,#cancelAuditBtn,#cancelApprovalBtn").hide();
@@ -28,6 +29,11 @@ $(document).ready(function() {
 			$("#auditBtn,#cancelAuditBtn,#cancelApprovalBtn").hide();
 		}
 	}
+	
+	var invoicePayment = $("#invoicePayment").val();
+	$("input[name='invoice_payment'][value='"+invoicePayment+"']").attr("checked","checked");
+	var paymentType = $("#paymentType").val();
+	$('#payment_type').val(paymentType);
 	
 	//from表单验证
 	var validate = $('#expenseAccountForm').validate({
@@ -67,6 +73,11 @@ $(document).ready(function() {
 	$("#saveExpenseAccount").click(function(e){
 		saveCarSummaryData();
     });
+	
+	//tab - 基本信息
+	$("#carmanagebasic").click(function(e){
+		clickTabId = e.target.getAttribute("id");
+    });
     
 	//点击审核、审批、取消审核、取消审批
 	$("#auditBtn,#approvalBtn,#cancelAuditBtn,#cancelApprovalBtn").click(function(e){
@@ -95,11 +106,11 @@ $(document).ready(function() {
 				$("#approval_name").val("");
 			}
 			if("审核" == btntTxt){
-				$("#cancelAuditBtn").show();
+				//$("#cancelAuditBtn").show();
 				$("#approvalBtn").show();
 			}else if("审批" == btntTxt){
 				$("#cancelAuditBtn").hide();
-				$("#cancelApprovalBtn").show();
+				//$("#cancelApprovalBtn").show();
 			}else if("取消审核" == btntTxt){
 				$("#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",false);
 				$("#auditBtn").show();
@@ -109,9 +120,13 @@ $(document).ready(function() {
 				$("#approvalBtn").show();
 				$("#cancelAuditBtn").show();
 			}
+			num = 1;
 			reimbursementOrderFinItemTbody.fnSettings().oFeatures.bServerSide = true;
 			reimbursementOrderFinItemTbody.fnSettings().sAjaxSource = "/costReimbursement/accountPayable/"+reimbursementId;   
 			reimbursementOrderFinItemTbody.fnDraw();
+			reimbursermentMilestoneTbody.fnSettings().oFeatures.bServerSide = true;
+			reimbursermentMilestoneTbody.fnSettings().sAjaxSource = "/costReimbursement/findAllMilestone/"+reimbursementId;   
+			reimbursermentMilestoneTbody.fnDraw();
 	 	},'json');
     });
 	//应付datatable
@@ -129,19 +144,24 @@ $(document).ready(function() {
 			return nRow;
 		},
         "aoColumns": [
-			{"mDataProp":"NAME",
+			{ "mDataProp": null,"sWidth":"40px",
+				"fnRender": function(obj) {
+					return num++;
+				}
+			}, 
+			{"mDataProp":"ITEM",
 			    "fnRender": function(obj) {
-			        if(obj.aData.NAME!='' && obj.aData.NAME != null){
+			        if(obj.aData.ITEM!='' && obj.aData.ITEM != null){
 			        	var str="";
 			        	if($("#saveExpenseAccount").prop("disabled")){
 				        	$("#paymentItemList").children().each(function(){
-				        		if(obj.aData.NAME == $(this).text())
+				        		if(obj.aData.ITEM == $(this).text())
 				        			str+=$(this).text();
 				        	});
 				        	return str;
 			        	}else{
 			        		$("#paymentItemList").children().each(function(){
-				        		if(obj.aData.NAME == $(this).text()){
+				        		if(obj.aData.ITEM == $(this).text()){
 				        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";
 				        		}else{
 				        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
@@ -155,28 +175,75 @@ $(document).ready(function() {
 			        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
 			        	});
 			        	if($("#saveExpenseAccount").prop("disabled"))
-			        		return "<select name='fin_item_id' disabled='true'>"+str+"</select>";
+			        		return "";
 			        	else
 			        		return "<select name='fin_item_id'>"+str+"</select>";
 			        }
 			 }},
-			{"mDataProp":"AMOUNT",
+			 {"mDataProp":"INVOICE_AMOUNT",
 			     "fnRender": function(obj) {
 			    	 
 			    	 if($("#saveExpenseAccount").prop("disabled")){
-			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-				             return obj.aData.AMOUNT;
+			    		 if(obj.aData.INVOICE_AMOUNT!='' && obj.aData.INVOICE_AMOUNT != null){
+				             return obj.aData.INVOICE_AMOUNT;
 				         }else{
 				         	 return "";
 				         }
 			    	 }else{
-			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-				             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+			    		 if(obj.aData.INVOICE_AMOUNT!='' && obj.aData.INVOICE_AMOUNT != null){
+				             return "<input type='text' name='invoice_amount' value='"+obj.aData.INVOICE_AMOUNT+"'>";
 				         }else{
-				         	 return "<input type='text' name='amount'>";
+				         	 return "<input type='text' name='invoice_amount'>";
+				         }
+			    	 }
+			}},
+			{"mDataProp":"REVOCATION_AMOUNT",
+			     "fnRender": function(obj) {
+			    	 if($("#saveExpenseAccount").prop("disabled")){
+			    		 if(obj.aData.REVOCATION_AMOUNT!='' && obj.aData.REVOCATION_AMOUNT != null){
+				             return obj.aData.REVOCATION_AMOUNT;
+				         }else{
+				         	 return "";
+				         }
+			    	 }else{
+			    		 if(obj.aData.REVOCATION_AMOUNT!='' && obj.aData.REVOCATION_AMOUNT != null){
+				             return "<input type='text' name='revocation_amount' value='"+obj.aData.REVOCATION_AMOUNT+"'>";
+				         }else{
+				         	 return "<input type='text' name='revocation_amount'>";
 				         }
 			    	 }
 			 }},
+			 {"mDataProp":"ATTRIBUTION",
+				 "fnRender": function(obj) {
+					 if(obj.aData.ATTRIBUTION!='' && obj.aData.ATTRIBUTION != null){
+				        	var str="";
+				        	if($("#saveExpenseAccount").prop("disabled")){
+					        	$("#attributionItemList").children().each(function(){
+					        		if(obj.aData.ATTRIBUTION == $(this).text())
+					        			str+=$(this).text();
+					        	});
+					        	return str;
+				        	}else{
+				        		$("#attributionItemList").children().each(function(){
+					        		if(obj.aData.ATTRIBUTION == $(this).text()){
+					        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";
+					        		}else{
+					        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+					        		}
+					        	});
+					        	return "<select name='fin_attribution_id'>"+str+"</select>";
+				        	}
+				        }else{
+				        	var str="";
+				        	$("#attributionItemList").children().each(function(){
+				        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+				        	});
+				        	if($("#saveExpenseAccount").prop("disabled"))
+				        		return "";
+				        	else
+				        		return "<select name='fin_attribution_id'>"+str+"</select>";
+				        }
+	         }}, 
 			 {"mDataProp":"REMARK",
 				 "fnRender": function(obj) {
                     if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
@@ -213,10 +280,20 @@ $(document).ready(function() {
 	// tab - 应付
 	$("#carmanageLine").click(function(e){
 		if(!$("#saveExpenseAccount").prop("disabled")){
-			saveCarSummaryData();
+			if(clickTabId == "carmanagebasic"){
+	    		//提交前，校验数据
+	            if(!$("#expenseAccountForm").valid()){
+	            	$.scojs_message('请先保存报销单', $.scojs_message.TYPE_OK);
+	    	       	return false;
+	            }else{
+	            	saveCarSummaryData();
+	            }
+			}
 		}
+		clickTabId = e.target.getAttribute("id");
 		var reimbursementId = $("#reimbursementId").val();
 		if(reimbursementId != null && reimbursementId != ""){
+			num = 1;
 			reimbursementOrderFinItemTbody.fnSettings().oFeatures.bServerSide = true;
 			reimbursementOrderFinItemTbody.fnSettings().sAjaxSource = "/costReimbursement/accountPayable/"+reimbursementId;   
 			reimbursementOrderFinItemTbody.fnDraw();
@@ -228,6 +305,7 @@ $(document).ready(function() {
 			var reimbursementId = $("#reimbursementId").val();
 			if(reimbursementId != ""){
 				$.post('/costReimbursement/addNewRow/'+reimbursementId,function(data){
+					num = 1;
 					reimbursementOrderFinItemTbody.fnSettings().oFeatures.bServerSide = true;
 					reimbursementOrderFinItemTbody.fnSettings().sAjaxSource = "/costReimbursement/accountPayable/"+reimbursementId;   
 					reimbursementOrderFinItemTbody.fnDraw();
@@ -247,10 +325,11 @@ $(document).ready(function() {
 				$(this).focus();
 				return false;
 			}
-			
-			$.post('/costReimbursement/updateReimbursementOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
-				$("#amount").val(data.AMOUNT);
-	    	},'json');
+			if(value != "" && value != null){
+				$.post('/costReimbursement/updateReimbursementOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+					$("#amount").val(data.AMOUNT);
+		    	},'json');
+			}
 		}
 	});    
 	//异步删除应付
@@ -261,10 +340,50 @@ $(document).ready(function() {
 			 $.post('/costReimbursement/finItemdel/'+id,function(data){
 	             //保存成功后，刷新列表
 	             console.log(data);
+	             num = 1;
 	             reimbursementOrderFinItemTbody.fnDraw();
 	         },'json');
 		 }
 	 });
 	
+	//刷新线路
+	var reimbursermentMilestoneTbody = $('#reimbursermentMilestoneTbody').dataTable({           
+		"bFilter": false, //不需要默认的搜索框
+    	"bSort": false, // 不要排序
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+    	"iDisplayLength": 20,
+    	"bServerSide": false,
+    	 "bLengthChange":false,
+    	"oLanguage": {
+    		"sUrl": "/eeda/dataTables.ch.txt"
+    	},
+        "aoColumns": [
+            { "mDataProp": "STATUS"},
+            { "mDataProp": "USER_NAME"},      
+            { "mDataProp": "CREATE_STAMP"}
+        ]        
+    });
+	 
+	// tab - 应付
+	$("#milestoneList").click(function(e){
+		if(!$("#saveExpenseAccount").prop("disabled")){
+			if(clickTabId == "carmanagebasic"){
+	    		//提交前，校验数据
+	            if(!$("#expenseAccountForm").valid()){
+	            	$.scojs_message('请先保存报销单', $.scojs_message.TYPE_OK);
+	    	       	return false;
+	            }else{
+	            	saveCarSummaryData();
+	            }
+			}
+		}
+		clickTabId = e.target.getAttribute("id");
+		var reimbursementId = $("#reimbursementId").val();
+		if(reimbursementId != null && reimbursementId != ""){
+			reimbursermentMilestoneTbody.fnSettings().oFeatures.bServerSide = true;
+			reimbursermentMilestoneTbody.fnSettings().sAjaxSource = "/costReimbursement/findAllMilestone/"+reimbursementId;   
+			reimbursermentMilestoneTbody.fnDraw();
+		}
+	});
     
 });
