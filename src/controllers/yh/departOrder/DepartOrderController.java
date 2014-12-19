@@ -1341,7 +1341,7 @@ public class DepartOrderController extends Controller {
             } else {
                 transferOrderMilestone.set("location", "");
             }
-            if(!exception_record.isEmpty()){
+            if(exception_record != null && "".equals(exception_record)){
                 transferOrderMilestone.set("exception_record", exception_record);
             }else{
                 transferOrderMilestone.set("exception_record", "");

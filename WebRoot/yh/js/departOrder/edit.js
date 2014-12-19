@@ -623,6 +623,8 @@
     				var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
     			},'json');
+    			$("#status").val("");
+    			$("#location").val("");
     			$('#transferOrderMilestone').modal('hide');
     		});
     		
@@ -643,6 +645,7 @@
     					$("#depart_id").val(data.ID);
     					$("#saveDepartOrderBtn").prop('disabled',false);
     					$("#showDepartNo").text(data.DEPART_NO);
+    					$("#milestoneDepartId").val(data.ID);
     				  	//$("#style").show();	
 
     		    	    $("#departureConfirmationBtn").attr("disabled", false);
@@ -895,7 +898,7 @@
     			},'json');
     		}
     		//会显收货人
-    		$.get('/departOrder/ginNotifyPerson', {order_id:message}, function(data){
+    		/*$.get('/departOrder/ginNotifyPerson', {order_id:message}, function(data){
 				//console.log(data);
 				if(data.ADDRESS==null){
 					data.ADDRESS='';
@@ -909,7 +912,7 @@
 				$('#notify_address').text(data.ADDRESS);
 				$('#notify_contact_person').text(data.CONTACT_PERSON);
 				$('#notify_phone').text(data.PHONE);
-			},'json');
+			},'json');*/
     		//是直送显示“确认收货”
     		var check_sh=$("#check_sh").val();
     		if(check_sh==false){

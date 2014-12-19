@@ -48,6 +48,7 @@ public class OfficeController extends Controller {
         String id = getPara();
         Office office = Office.dao.findById(id);
         setAttr("ul", office);
+        logger.debug("abbr:"+office.getStr("abbr"));
         if(office.get("location") != null && !"".equals(office.get("location"))){
 	        String code = office.get("location");
 	
@@ -88,6 +89,7 @@ public class OfficeController extends Controller {
         user.set("type", getPara("type"));
         user.set("company_intro", getPara("company_intro"));
         user.set("location", getPara("location"));
+        user.set("abbr", getPara("abbr"));
         if (id != "") {
             logger.debug("update....");
             user.set("id", id);
