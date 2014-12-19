@@ -154,8 +154,11 @@ $(document).ready(function(){
 		var id = $("#userId").val();
 		if(id!=null&&id!=""&&office_id!=null&&office_id!=""){
 			$.post('/loginUser/delOffice',{id:id,office_id:office_id},function(){
-				$(this).parent().parent().remove();
+				//$(this).parent().parent().remove();
 			},'json');
+		}
+		if($(this).parent().parent().find("input[type='radio']").prop("checked")==false){
+			$(this).parent().parent().remove();
 		}
 		
 		queryOffice();
@@ -171,6 +174,7 @@ $(document).ready(function(){
 				
 			},'json');
 		}
+		
 		$(this).parent().parent().remove();
 		queryCustomer();
 	});
@@ -182,7 +186,7 @@ $(document).ready(function(){
 	});
 	//查询
 	var userId = $("#userId").val();
-	var refresh=$.post('/loginUser/officeList',{userId:userId},function(data){
+	$.post('/loginUser/officeList',{userId:userId},function(data){
 		var tobdy = $("#tobdy");
 		tobdy.empty();
 		if(data.userOffice!=null){
