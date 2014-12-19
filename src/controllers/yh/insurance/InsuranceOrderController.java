@@ -85,9 +85,14 @@ public class InsuranceOrderController extends Controller {
         }
         if (orderNo == null &&  customer == null && routeFrom == null && routeTo == null
                 && beginTime == null && endTime == null) {
-            sqlTotal = "select count(1) total  from transfer_order tor " + " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code where tor.status = '已发车'";
+            sqlTotal = "select count(1) total  from transfer_order tor "
+            		+ " left join party p on tor.customer_id = p.id "
+                    + " left join contact c on p.contact_id = c.id " 
+            		+ " left join location l1 on tor.route_from = l1.code "
+                    + " left join location l2 on tor.route_to = l2.code "
+                    + " left join office o on o.id = tor .office_id"
+                    + " where tor.status = '已发车' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
             sql = "select distinct tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
             		+ "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to, "
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
@@ -100,8 +105,11 @@ public class InsuranceOrderController extends Controller {
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + " left join user_login ul on ul.id = tor.create_by "  
-                    + " left join depart_transfer dt on dt.order_id = tor.id "              
-                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by tor.create_stamp desc" + sLimit;
+                    + " left join depart_transfer dt on dt.order_id = tor.id "  
+                    + " left join office o on o.id = tor .office_id"
+                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+                    + " order by tor.create_stamp desc" + sLimit;
         } else if ("".equals(routeFrom) && "".equals(routeTo)) {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -114,6 +122,7 @@ public class InsuranceOrderController extends Controller {
                     + " left join contact c on p.contact_id = c.id " 
             		+ " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
+                    + " left join office o on o.id = tor .office_id"
                     + "  where tor.status = '已发车' and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
@@ -127,7 +136,8 @@ public class InsuranceOrderController extends Controller {
                     + beginTime
                     + "' and '"
                     + endTime
-                    + "') ";
+                    + "')  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
                 	+ "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to, "
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
@@ -140,8 +150,10 @@ public class InsuranceOrderController extends Controller {
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + " left join user_login ul on ul.id = tor.create_by "  
-                    + " left join depart_transfer dt on dt.order_id = tor.id "              
-                    + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and ifnull((select name from location l where l.code = dor.route_from), '') like '%"
+                    + " left join depart_transfer dt on dt.order_id = tor.id "
+                    + " left join office o on o.id = tor .office_id"
+                    + " left join depart_order dor on dor.id = dt.depart_id "
+                    + " where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and ifnull((select name from location l where l.code = dor.route_from), '') like '%"
                     + routeFrom
                     + "%' and ifnull((select name from location l where l.code = dor.route_to), '') like '%"
                     + routeTo
@@ -153,7 +165,9 @@ public class InsuranceOrderController extends Controller {
                     + beginTime
                     + "' and '"
                     + endTime
-                    + "' order by tor.CREATE_STAMP desc" + sLimit;
+                    + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + "  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+                    + " order by tor.CREATE_STAMP desc" + sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -167,6 +181,7 @@ public class InsuranceOrderController extends Controller {
                     + " left join contact c on p.contact_id = c.id " 
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
+                    + " left join office o on o.id = tor .office_id"
                     + " where tor.status = '已发车' and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
@@ -180,7 +195,8 @@ public class InsuranceOrderController extends Controller {
                     + beginTime
                     + "' and '"
                     + endTime
-                    + "' ";
+                    + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
                 	+ "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to, "
@@ -194,7 +210,8 @@ public class InsuranceOrderController extends Controller {
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
                     + " left join user_login ul on ul.id = tor.create_by "  
-                    + " left join depart_transfer dt on dt.order_id = tor.id "              
+                    + " left join depart_transfer dt on dt.order_id = tor.id "  
+                    + " left join office o on o.id = tor .office_id"
                     + " left join depart_order dor on dor.id = dt.depart_id where tor.status = '已发车' and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and ifnull((select name from location l where l.code = dor.route_from), '') like '%"
                     + routeFrom
                     + "%' and ifnull((select name from location l where l.code = dor.route_to), '') like '%"
@@ -207,7 +224,9 @@ public class InsuranceOrderController extends Controller {
                     + beginTime
                     + "' and '"
                     + endTime
-                    + "'  order by tor.create_stamp desc" + sLimit;
+                    + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + "  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+                    + " order by tor.create_stamp desc" + sLimit;
 
         }
         Record rec = Db.findFirst(sqlTotal);
@@ -239,8 +258,14 @@ public class InsuranceOrderController extends Controller {
         String sqlTotal="";
         String sql = "";
         
-        sqlTotal = "select count(1) total from insurance_order ior ";
-        sql = "select ior.*,(select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id) transfer_order_no from insurance_order ior ";
+        sqlTotal = "select count(1) total from insurance_order ior "
+        		+ " left join transfer_order tor on tor.insurance_id = ior.id "
+        		+ " left join office o on o.id = tor .office_id where  o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+        		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+        sql = "select ior.*,(select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id) transfer_order_no from insurance_order ior "
+        		+ " left join transfer_order tor on tor.insurance_id = ior.id "
+        		+ " left join office o on o.id = tor .office_id where  o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+        		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
         
         String orderBysql = " order by ior.create_stamp desc ";
         if(orderNo==null&&departNo==null&&beginTime==null&&endTime==null){
@@ -252,11 +277,11 @@ public class InsuranceOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
-        	String condition=" where ifnull(order_no,'') like '%"
+        	String condition=" and ifnull(ior.order_no,'') like '%"
 		    				+departNo
 		    				+"%' and ifnull((select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id),'') like '%"
 		    				+orderNo
-		    				+"%' and create_stamp between '"
+		    				+"%' and ior.create_stamp between '"
 		    				+beginTime
 		    				+"' and '"+endTime+"'";
         	sqlTotal = sqlTotal + condition;

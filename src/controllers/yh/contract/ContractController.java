@@ -432,11 +432,10 @@ public class ContractController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (locationName.trim().length() > 0) {
             locationList = Db
-                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and c.company_name like ?",
-                            "%" + locationName + "%");
+                    .find("select *,p.id as pid from party p,contact c,user_customer uc where uc.customer_id = p.id and p.contact_id = c.id and p.party_type = 'CUSTOMER' and c.company_name like '%"+locationName+"%' and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
 
         } else {
-            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER'");
+            locationList = Db.find("select *,p.id as pid from party p,contact c,user_customer uc where uc.customer_id = p.id and p.contact_id = c.id and p.party_type = 'CUSTOMER' and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
 
         }
         renderJson(locationList);
