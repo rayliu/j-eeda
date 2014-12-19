@@ -153,18 +153,13 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists pickup_order_item(id bigint auto_increment primary key,order_id bigint,customer_id bigint,serial_no varchar(50),item_no bigint,item_name varchar(50),item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
             // 配送单货品表
             stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment primary key,transfer_no varchar(50),delivery_id bigint,transfer_order_id bigint, transfer_item_id bigint, amount double, transfer_item_detail_id bigint);");
-           //配送单调车
-            stmt.executeUpdate("create table if not exists delivery_plan_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),office_id bigint,"
-            		+ "create_id bigint,create_stamp timestamp,sp_id bigint,carinfo_id bigint,car_no varchar(50),driver varchar(50),phone varchar(50),turnout_time date,return_time date,remark varchar(500));");
-            stmt.executeUpdate("create table if not exists delivery_plan_order_milestone(id bigint auto_increment primary key,order_id varchar(50),idstatus varchar(50),"
-            		+ "address varchar(50),create_id bigint,create_stamp timestamp);");
-            stmt.executeUpdate("create table if not exists delivery_plan_order_detail(id bigint auto_increment primary key,order_id varchar(50),delivery_id bigint);");
-            
-            
+
             // 发车单运输单中间表
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,pickup_id bigint,depart_id bigint,order_id bigint,transfer_order_no varchar(255),foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id),foreign key(pickup_id) references depart_order(id));");
 
             // transfer_order_milestone 运输单里程碑
+
+
             stmt.executeUpdate("create table if not exists transfer_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),exception_record varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
                     + "last_modified_stamp timestamp,type varchar(255),order_id bigint,foreign key(order_id) references transfer_order(id),pickup_id bigint,depart_id bigint,foreign key(pickup_id) references depart_order(id),car_summary_id bigint);");
 
@@ -251,7 +246,6 @@ public class DataInitUtil {
             
             // 出纳日记账
             stmt.execute("create table if not exists arap_account_audit_log(id bigint auto_increment primary key,payment_method varchar(255),amount double,creator varchar(50),create_date timestamp,remark varchar(5120),misc_order_id bigint,foreign key(misc_order_id) references arap_misc_charge_order(id),invoice_order_id bigint,foreign key(invoice_order_id) references arap_charge_invoice(id),account_id bigint,foreign key(account_id) references fin_account(id));");
- 
             // 基础信息——单位表
             //stmt.execute("create table if not exists tally(id bigint auto_increment primary key,code varchar(20),name varchar(20));");
             stmt.execute("create table if not exists user_office(id bigint auto_increment primary key,user_name varchar(20),office_id bigint,is_main boolean);");

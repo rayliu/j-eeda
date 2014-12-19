@@ -23,7 +23,6 @@ import models.TransferOrderFinItem;
 import models.TransferOrderItem;
 import models.TransferOrderMilestone;
 import models.UserLogin;
-import models.UserOffice;
 import models.Warehouse;
 import models.yh.profile.Contact;
 
@@ -52,7 +51,7 @@ public class TransferOrderController extends Controller {
 	
 	private Logger logger = Logger.getLogger(TransferOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-	
+
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST })
 	public void index() {		
 		render("/yh/transferOrder/transferOrderList.html");
@@ -75,7 +74,7 @@ public class TransferOrderController extends Controller {
 		String plantime=getPara("plantime");
 		String arrivarltime=getPara("arrivarltime");
 		String customer_order_no=getPara("customer_order_no");
-		
+
 		if (orderNo == null && status == null && address == null
 				&& customer == null && sp == null && beginTime == null
 				&& endTime == null&& order_type == null&& plantime == null
@@ -88,9 +87,7 @@ public class TransferOrderController extends Controller {
 						+ getPara("iDisplayLength");
 			}
 
-			String sqlTotal = "select count(1) total from transfer_order t "
-					+ " where t.status!='取消' and t.office_id in(select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+			String sqlTotal = "select count(1) total from transfer_order t where t.status!='取消'";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -112,9 +109,7 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.status !='取消' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
-					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
-					+ " order by create_stamp desc"
+					+ " where t.status !='取消' order by create_stamp desc"
 					+ sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
@@ -160,9 +155,7 @@ public class TransferOrderController extends Controller {
 					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'  "
-					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+					+ "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -184,7 +177,7 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.status !='取消' "
+					+ " where t.status !='取消'"
 					+ " and t.order_no like '%" + orderNo
 					+ "%' and t.status like '%" + status
 					+ "%' and t.address like '%" + address
@@ -196,9 +189,7 @@ public class TransferOrderController extends Controller {
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
 					+ "%' and create_stamp between '" + beginTime
-					+ "' and '" + endTime + "' "
-					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by create_stamp desc" + sLimit;
+					+ "' and '" + endTime + "' order by create_stamp desc" + sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
 
@@ -738,11 +729,11 @@ public class TransferOrderController extends Controller {
 							+ input
 							+ "%' or postal_code like '%"
 							+ input
-							+ "%') and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') limit 0,10");
+							+ "%') limit 0,10");
 		} else {
 			locationList = Db
 					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_CUSTOMER + "' and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
+							+ Party.PARTY_TYPE_CUSTOMER + "'");
 		}
 		renderJson(locationList);
 	}
@@ -911,7 +902,7 @@ public class TransferOrderController extends Controller {
 		String officeId = getPara("officeId");
 		List<Warehouse> warehouses = null;
 		if(officeId != null && !"".equals(officeId)){
-			warehouses = Warehouse.dao.find("select * from warehouse where office_id in ("+getPara("officeId")+")");
+			warehouses = Warehouse.dao.find("select * from warehouse where office_id = "+getPara("officeId"));
 		}else{
 			warehouses = Warehouse.dao.find("select * from warehouse");			
 		}
@@ -920,7 +911,7 @@ public class TransferOrderController extends Controller {
 
 	// 查出所有的office
 	public void searchAllOffice() {
-		List<Record> offices = Db.find("select o.id,o.office_name from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')");
+		List<Office> offices = Office.dao.find("select * from office");
 		renderJson(offices);
 	}
 

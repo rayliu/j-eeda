@@ -163,7 +163,7 @@ $(document).ready(function() {
 	
  
 	//供应商暂时去除:#sp_filter ,
-    $('#customer_filter,#endTime_filter ,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup click', function () {
+    $('#endTime_filter ,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup click', function () {
     	
     	var office =$("#officeSelect").val();
     	var start =$("#start_filter").val();
@@ -218,7 +218,6 @@ $(document).ready(function() {
         format: 'yyyy-MM-dd',  
         language: 'zh-CN'
     }).on('changeDate', function(ev){
-    	$(".bootstrap-datetimepicker-widget").hide();
         $('#beginTime_filter').trigger('keyup');
     });
 
@@ -229,7 +228,6 @@ $(document).ready(function() {
         autoclose: true,
         pickerPosition: "bottom-left"
     }).on('changeDate', function(ev){
-    	$(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
     });
     
@@ -301,7 +299,9 @@ $(document).ready(function() {
     });
 	 //获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(){
+    	
         var inputStr = $('#customer_filter').val();
+        
         $.get("/customerContract/search", {locationName:inputStr}, function(data){
             console.log(data);
             var companyList =$("#companyList");
@@ -365,10 +365,17 @@ $(document).ready(function() {
 	 if(data.length > 0){
 		 var officeSelect = $("#officeSelect");
 		 officeSelect.empty();
-		 officeSelect.append("<option ></option>");
-		
+		 var hideOfficeId = $("#hideOfficeId").val();
 		 for(var i=0; i<data.length; i++){
-			 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");					 
+			 if(i == 0){
+				 officeSelect.append("<option ></option>");
+			 }else{
+				 if(data[i].ID == hideOfficeId){
+					 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+				 }else{
+					 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");					 
+				 }
+			 }
 		 }
 		
 	 }

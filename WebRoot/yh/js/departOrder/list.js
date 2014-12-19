@@ -87,10 +87,17 @@ var dataTable =$('#dataTables-example').dataTable({
 				 if(data.length > 0){
 					 var officeSelect = $("#officeSelect");
 					 officeSelect.empty();
-					 officeSelect.append("<option ></option>");
-					
+					 var hideOfficeId = $("#hideOfficeId").val();
 					 for(var i=0; i<data.length; i++){
-						  officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");	
+						 if(i == 0){
+							 officeSelect.append("<option ></option>");
+						 }else{
+							 if(data[i].ID == hideOfficeId){
+								 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+							 }else{
+								 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");					 
+							 }
+						 }
 					 }
 				 }
 			 },'json');

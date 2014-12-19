@@ -134,8 +134,7 @@ public class PickupOrderController extends Controller {
                     + " left join transfer_order_item toi on toi.order_id = t_o.id "
                     + " left join product pd on pd.id = toi.product_id "
                     + " where dor.status!='取消' and combine_type = '"
-            		+ DepartOrder.COMBINE_TYPE_PICKUP + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-            		+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+            			+ DepartOrder.COMBINE_TYPE_PICKUP + "'";
 
             sql = "select dor.*,"
             		+ " ifnull(dor.driver,c.driver) contact_person,"
@@ -156,10 +155,7 @@ public class PickupOrderController extends Controller {
                     + " left join transfer_order t_o on t_o.id = dtf.order_id "
                     + " left join office o on o.id = t_o.office_id "
                     + " where dor.status!='取消' and combine_type = '"
-                    + DepartOrder.COMBINE_TYPE_PICKUP 
-                    + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + " group by dor.id order by dor.create_stamp desc" + sLimit;
+                    + DepartOrder.COMBINE_TYPE_PICKUP + "' group by dor.id order by dor.create_stamp desc" + sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -185,8 +181,7 @@ public class PickupOrderController extends Controller {
                     + "%' and ifnull(dor.status,'') like '%"+status
                     + "%' and ifnull(o.office_name,'') like '%"+office
                     + "%' and ifnull(dor.pickup_mode,'') like '%"+take
-                    + "%' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + "  and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+                    + "%' ";
 
             sql = "select dor.*,"
             		+ " ifnull(dor.driver,c.driver) contact_person,"
@@ -215,10 +210,8 @@ public class PickupOrderController extends Controller {
                     + "%' and ifnull(dor.status,'') like '%"+status
                     + "%' and ifnull(o.office_name,'') like '%"+office
                     + "%' and ifnull(dor.pickup_mode,'') like '%"+take
-                    + "%' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-            		+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-            		+ " group by dor.id order by dor.create_stamp desc" + sLimit;
-    
+                    + "%' group by dor.id order by dor.create_stamp desc" + sLimit;
+            
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -270,16 +263,11 @@ public class PickupOrderController extends Controller {
         }
         if (orderNo == null && status == null && address == null && customer == null && routeFrom == null && routeTo == null
                 && beginTime == null && endTime == null) {
-            sqlTotal = "select count(1) total  from transfer_order tor "
-            		+ " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " 
-            		+ " left join location l1 on tor.route_from = l1.code "
+            sqlTotal = "select count(1) total  from transfer_order tor " + " left join party p on tor.customer_id = p.id "
+                    + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
-                    + " left join office o on o.id = tor.office_id "
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL 
-                    + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+                    + TransferOrder.ASSIGN_STATUS_ALL + "'";
             sql = "select tor.id,"
             		+ "tor.order_no,"
             		+ "tor.operation_type,"
@@ -305,10 +293,7 @@ public class PickupOrderController extends Controller {
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on o.id = tor.office_id "
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL + "'" 
-                    + " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + " order by tor.create_stamp desc" + sLimit;
+                    + TransferOrder.ASSIGN_STATUS_ALL + "'" + " order by tor.create_stamp desc" + sLimit;
         } else if ("".equals(routeFrom) && "".equals(routeTo)) {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -316,14 +301,14 @@ public class PickupOrderController extends Controller {
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-            sqlTotal = "select count(1) total from transfer_order tor " 
-            		+ " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " 
-            		+ " left join location l1 on tor.route_from = l1.code "
+            sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
+                    + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on tor.office_id = o.id "
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
-                    + TransferOrder.ASSIGN_STATUS_ALL+ "'"
+                    + TransferOrder.ASSIGN_STATUS_ALL
+                    + "'"
+                    + " "
                     + " and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
@@ -342,8 +327,7 @@ public class PickupOrderController extends Controller {
                     + "' and '"
                     + endTime
                     + "' and tor.order_type like '%"
-                    + orderType + "%' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
+                    + orderType + "%'";
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
             		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
@@ -376,9 +360,7 @@ public class PickupOrderController extends Controller {
                     + "' and '"
                     + endTime
                     + "' and tor.order_type like '%"
-                    + orderType + "%' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + " order by tor.CREATE_STAMP desc" + sLimit;
+                    + orderType + "%' order by tor.CREATE_STAMP desc" + sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -412,8 +394,7 @@ public class PickupOrderController extends Controller {
                     + "' and '"
                     + endTime
                     + "' and tor.order_type like '%"
-                    + orderType + "%' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+                    + orderType + "%'";
 
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
             		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
@@ -443,9 +424,7 @@ public class PickupOrderController extends Controller {
                     + "' and '"
                     + endTime
                     + "' and tor.order_type like '%"
-                    + orderType + "%' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + " order by tor.create_stamp desc" + sLimit;
+                    + orderType + "%' order by tor.create_stamp desc" + sLimit;
 
         }
         Record rec = Db.findFirst(sqlTotal);

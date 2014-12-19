@@ -83,7 +83,6 @@
         format: 'yyyy-MM-dd',  
         language: 'zh-CN'
     }).on('changeDate', function(ev){
-    	 $(".bootstrap-datetimepicker-widget").hide();
         $('#time_one').trigger('keyup');
     });
 
@@ -93,7 +92,6 @@
         autoclose: true,
         pickerPosition: "bottom-left"
     }).on('changeDate', function(ev){
-    	 $(".bootstrap-datetimepicker-widget").hide();
     	$('#time_two').trigger('keyup');
     });
     

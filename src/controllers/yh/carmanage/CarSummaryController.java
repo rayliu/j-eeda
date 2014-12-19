@@ -74,14 +74,8 @@ public class CarSummaryController extends Controller {
 
 	        // 获取总条数
 	        sqlTotal = "select ifnull(count(0),0) total from depart_order dor "
-	        		+ " left join depart_transfer dtf on dtf.depart_id = dor.id"
-					+ " left join transfer_order tor on tor .id = dtf.order_id"
-					+ " left join user_login u on u.id = tor .create_by"
-					+ " left join office o on o.id = tor .office_id"
                     + " where dor.status!='取消' and dor.car_summary_type = 'untreated' and combine_type = '"
-	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-	                + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-	                + " and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id order by dor.car_no,dor.create_stamp desc " + sLimit;
+	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id order by dor.car_no,dor.create_stamp desc " + sLimit;
 
 	        // 获取当前页的数据
 	        sql = "select dor.*,"
@@ -101,9 +95,7 @@ public class CarSummaryController extends Controller {
                     + " left join transfer_order t_o on t_o.id = dtf.order_id "
                     + " left join office o on o.id = t_o.office_id "
                     + " where dor.status!='取消' and dor.car_summary_type = 'untreated' and combine_type = '"
-	                + DepartOrder.COMBINE_TYPE_PICKUP + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-	                + " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-	                + " and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id order by dor.car_no,dor.create_stamp desc " + sLimit;
+	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id order by dor.car_no,dor.create_stamp desc " + sLimit;
 	        
 		}else{
 			
@@ -122,8 +114,6 @@ public class CarSummaryController extends Controller {
 					+ " and ifnull(dor.car_no, '') like '%"+car_no+"%'"
 					+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'"
 					+ " and ifnull(dtf.transfer_order_no, '') like '%"+transferOrderNo+"%'"
-					+ "  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " order by dor.car_no,dor.create_stamp desc " + sLimit;
 
 	        // 获取当前页的数据
@@ -150,9 +140,7 @@ public class CarSummaryController extends Controller {
 					+ " and ifnull(dor.car_no, '') like '%"+car_no+"%'"
 					+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'"
 					+ " and ifnull(dtf.transfer_order_no, '') like '%"+transferOrderNo+"%'"
-                    + "  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + "order by dor.car_no,dor.create_stamp desc " + sLimit;
+                    + " order by dor.car_no,dor.create_stamp desc " + sLimit;
 		}
 		//Record rec = Db.findFirst(sqlTotal);
         //logger.debug("total records:" + rec.getLong("total"));
@@ -192,12 +180,7 @@ public class CarSummaryController extends Controller {
         String sql = "";
 		if (driver == null && status == null && car_no == null
 				&& transferOrderNo == null && start_data == null ) {
-			sqlTotal = "select count(0) total from car_summary_order cso "
-					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
-					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
-					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
-					+ " left join transfer_order tor on tor.id = dt.order_id where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+			sqlTotal = "select count(0) total from car_summary_order";
 			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
 					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
@@ -222,12 +205,7 @@ public class CarSummaryController extends Controller {
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 10) quarterage,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 11) weighing_charge,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 12) other_charges"
-					+ " from car_summary_order cso "
-					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
-					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
-					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
-					+ " left join transfer_order tor on tor.id = dt.order_id where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+					+ " from car_summary_order cso"
 					+ " order by cso.create_data desc " + sLimit;
 	        
 		}else{
@@ -235,13 +213,10 @@ public class CarSummaryController extends Controller {
 			sqlTotal = "select count(0) total from car_summary_order cso"
 					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
 					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
-					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
-					+ " left join transfer_order tor on tor.id = dt.order_id "
 					+ "	where ifnull(cso.status, '') like '%"+status+"%'"
 					+ " and ifnull(cso.car_no, '') like '%"+car_no+"%'"
 					+ " and ifnull(cso.main_driver_name, '') like '%"+driver+"%'"
-					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%'";
 			
 			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
@@ -270,14 +245,10 @@ public class CarSummaryController extends Controller {
 					+ " from car_summary_order cso"
 					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
 					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
-					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
-					+ " left join transfer_order tor on tor.id = dt.order_id "
 					+ "	where ifnull(cso.status, '') like '%"+status+"%'"
 					+ " and ifnull(cso.car_no, '') like '%"+car_no+"%'"
 					+ " and ifnull(cso.main_driver_name, '') like '%"+driver+"%'"
-					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%' "
-					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%'"
 					//+ " and ifnull(dor.start_data, '') like '%"+transferOrderNo+"%'"
 					+ " order by cso.create_data desc " + sLimit;
 		}

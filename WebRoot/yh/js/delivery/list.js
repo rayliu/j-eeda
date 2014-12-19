@@ -60,7 +60,6 @@ $(document).ready(function() {
         format: 'yyyy-MM-dd',  
         language: 'zh-CN'
     }).on('changeDate', function(ev){
-    	$(".bootstrap-datetimepicker-widget").hide();
         $('#beginTime_filter').trigger('keyup');
     });
 
@@ -71,7 +70,6 @@ $(document).ready(function() {
         autoclose: true,
         pickerPosition: "bottom-left"
     }).on('changeDate', function(ev){
-    	$(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
     });
 	
