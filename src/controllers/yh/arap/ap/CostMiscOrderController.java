@@ -2,7 +2,6 @@ package controllers.yh.arap.ap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,10 +10,8 @@ import java.util.Map;
 
 import models.Account;
 import models.ArapChargeInvoiceApplication;
-import models.ArapChargeOrder;
 import models.ArapCostInvoiceApplication;
-import models.ArapMiscChargeOrder;
-import models.ArapMiscChargeOrderItem;
+import models.ArapCostOrder;
 import models.Party;
 import models.UserLogin;
 import models.yh.arap.ArapMiscCostOrder;
@@ -97,16 +94,14 @@ public class CostMiscOrderController extends Controller {
 			String[] idArray = ids.split(",");
 			logger.debug(String.valueOf(idArray.length));
 	
-			setAttr("chargeCheckOrderIds", ids); 
-			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
-			String customerId = arapChargeOrder.get("payee_id");
-			if (!"".equals(customerId) && customerId != null) {
-				Party party = Party.dao.findById(customerId);
+			setAttr("CostCheckOrderIds", ids); 
+			ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(idArray[0]);
+			String spId = arapCostOrder.get("payee_id");
+			if (!"".equals(spId) && spId != null) {
+				Party party = Party.dao.findById(spId);
 				setAttr("party", party);
 				Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-				setAttr("customer", contact);
-				setAttr("type", "CUSTOMER");
-				setAttr("classify", "");
+				setAttr("sp", contact); 
 			}
 		}
 
@@ -120,7 +115,7 @@ public class CostMiscOrderController extends Controller {
 		setAttr("userLogin", userLogin);
 
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
-		receivableItemList = Db.find("select * from fin_item where type='应收'");
+		receivableItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "new");
 			render("/yh/arap/CostMiscOrder/CostMiscOrderEdit.html");
@@ -151,10 +146,10 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("create_by", getPara("create_by"));
 			arapMiscCostOrder.set("create_stamp", new Date());
 			arapMiscCostOrder.set("remark", getPara("remark"));
-			String sql = "select * from arap_misc_charge_order order by id desc limit 0,1";
-			arapMiscCostOrder.set("order_no", OrderNoUtil.getOrderNo(sql,"SGSK"));
-			if(getPara("chargeCheckOrderIds") != null && !"".equals(getPara("chargeCheckOrderIds"))){
-				arapMiscCostOrder.set("charge_order_id", getPara("chargeCheckOrderIds"));
+			String sql = "select * from arap_misc_cost_order order by id desc limit 0,1";
+			arapMiscCostOrder.set("order_no", OrderNoUtil.getOrderNo(sql,"SGFK"));
+			if(getPara("costCheckOrderIds") != null && !"".equals(getPara("costCheckOrderIds"))){
+				arapMiscCostOrder.set("cost_order_id", getPara("costCheckOrderIds"));
 			}
 			arapMiscCostOrder.set("payment_method", getPara("paymentMethod"));
 			if("transfers".equals(paymentMethod)){
@@ -330,5 +325,38 @@ public class CostMiscOrderController extends Controller {
 		BillingOrderListMap.put("aaData", BillingOrders);
 
 		renderJson(BillingOrderListMap);
+	}
+	
+	public void costCheckorderListById(){
+		String costCheckOrderIds = getPara("costCheckOrderIds");
+		if(costCheckOrderIds == null || "".equals(costCheckOrderIds)){
+			costCheckOrderIds = "-1";
+		}
+		String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        String sqlTotal = "select count(1) total from arap_cost_order";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no,c.abbr cname,ul.user_name creator_name from arap_cost_order aco"
+        		+ " left join party p on p.id = aco.payee_id left join contact c on c.id = p.contact_id"
+        		+ " left join user_login ul on ul.id = aco.create_by"
+        		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id where aco.id = "+costCheckOrderIds+" group by aco.id";
+
+        logger.debug("sql:" + sql);
+        List<Record> BillingOrders = Db.find(sql);
+
+        Map BillingOrderListMap = new HashMap();
+        BillingOrderListMap.put("sEcho", pageIndex);
+        BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        BillingOrderListMap.put("aaData", BillingOrders);
+
+        renderJson(BillingOrderListMap);
 	}
 }

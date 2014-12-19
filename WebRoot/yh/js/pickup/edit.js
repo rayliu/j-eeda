@@ -350,11 +350,10 @@
 	       	return false;
         }
 		//异步向后台提交数据
-		var bool = false;
-		if("chargeCheckOrderbasic" == parentId){
-			bool = true;
-		}
-		handlePickkupOrderDetail();
+        if("chargeCheckOrderbasic" == parentId){
+        	clickSavePickupOrder(e);
+        }
+        pickupOrderMilestone();
         parentId = e.target.getAttribute("id");
 	});
 
@@ -369,7 +368,7 @@
 			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+name+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 		},'json');
 		$('#transferOrderMilestone').modal('hide');
-		
+		pickupOrderMilestone();
 	});
 	
 	var findAllAddress = function(){
@@ -434,11 +433,9 @@
 	       	return false;
         }
 		//异步向后台提交数据
-		var bool = false;
 		if("chargeCheckOrderbasic" == parentId){
-			bool= true;
+			clickSavePickupOrder(e);
 		}
-		
 		handlePickkupOrderDetail();
         parentId = e.target.getAttribute("id");
 	});
@@ -643,7 +640,9 @@
         if(!$("#pickupOrderForm").valid()){
 	       	return false;
         }
-		clickSavePickupOrder(e);
+        if("chargeCheckOrderbasic" == parentId){
+        	clickSavePickupOrder(e);
+        }
 	});
 
 	//获取供应商的list，选中信息在下方展示其他信息
@@ -814,8 +813,9 @@
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
-        "iDisplayLength": 25,
+        "iDisplayLength": 8,
         "bServerSide": true,
+        "bLengthChange":false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },

@@ -577,6 +577,7 @@ $(document).ready(function() {
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
+        "bLengthChange":false,
         "sAjaxSource": "/transferOrderItem/transferOrderItemList?order_id="+order_id,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
@@ -1330,6 +1331,7 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
+        "bLengthChange":false,
         "bServerSide": true,
         "sAjaxSource": "/transferOrderItemDetail/transferOrderDetailList?orderId="+orderId,
     	"oLanguage": {
@@ -2214,6 +2216,7 @@ $(document).ready(function() {
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
+        "bLengthChange":false,
         "sAjaxSource":"/transferOrder/accountReceivable/"+order_id,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"

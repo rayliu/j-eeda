@@ -3,62 +3,61 @@ $(document).ready(function() {
     $('#menu_finance').addClass('active').find('ul').addClass('in');
     
 	//datatable, 动态处理
-	var uncheckedChargeCheckTable=$('#uncheckedChargeMisc-table').dataTable({
-        "bFilter": false, //不需要默认的搜索框
+	var uncheckedCostCheckTable=$('#uncheckedCostMisc-table').dataTable({
+		"bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
-        "bSort": false,
         "bServerSide": true,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargeCheckOrder/list",
+        "sAjaxSource": "/costCheckOrder/list",
         "aoColumns": [   
-            { "mDataProp": null,
-	            "fnRender": function(obj) {
-	              return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
-	            }
-	        },  
-	        {"mDataProp":"ID", "bVisible": false},
-	        {"mDataProp":"ORDER_NO", "sWidth":"100px",
-	        	"fnRender": function(obj) {
-	      		return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
-	      	}},
-	        {"mDataProp":"STATUS","sWidth":"50px",
-	            "fnRender": function(obj) {
-	                if(obj.aData.STATUS=='new'){
-	                    return '新建';
-	                }else if(obj.aData.STATUS=='checking'){
-	                    return '已发送对帐';
-	                }else if(obj.aData.STATUS=='confirmed'){
-	                    return '已审核';
-	                }else if(obj.aData.STATUS=='completed'){
-	                    return '已结算';
-	                }else if(obj.aData.STATUS=='cancel'){
-	                    return '取消';
-	                }
-	                return obj.aData.STATUS;
-	            }
-	        },
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":"CNAME","sWidth":"200px"},
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":"REMARK","sWidth":"200px"},
-	        {"mDataProp":"CREATOR_NAME","sWidth":"80px"},        	
-	        {"mDataProp":"CREATE_STAMP","sWidth":"80px"}                         
+            { "mDataProp": null, "sWidth":"20px",
+                "fnRender": function(obj) {
+                  return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+                }
+            }, 
+            {"mDataProp":"ID", "bVisible": false},
+            {"mDataProp":"ORDER_NO",
+            	"fnRender": function(obj) {
+        			return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        		}},
+            {"mDataProp":"STATUS",
+                "fnRender": function(obj) {
+                    if(obj.aData.STATUS=='new'){
+                        return '新建';
+                    }else if(obj.aData.STATUS=='checking'){
+                        return '已发送对帐';
+                    }else if(obj.aData.STATUS=='confirmed'){
+                        return '已审核';
+                    }else if(obj.aData.STATUS=='completed'){
+                        return '已结算';
+                    }else if(obj.aData.STATUS=='cancel'){
+                        return '取消';
+                    }
+                    return obj.aData.STATUS;
+                }
+            },
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":"REMARK"},
+            {"mDataProp":null},        	
+            {"mDataProp":"CREATE_STAMP"}                        
         ]      
     });	
 	 
-    var checkedChargeMiscTable = $('#checkedChargeMisc-table').dataTable({
+    var checkedCostMiscTable = $('#checkedCostMisc-table').dataTable({
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -67,7 +66,7 @@ $(document).ready(function() {
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
-    	"sAjaxSource": "/chargePreInvoiceOrder/chargeCheckOrderList2",
+    	"sAjaxSource": "/costPreInvoiceOrder/costCheckOrderList2",
     	"aoColumns": [ 
 	          {"mDataProp": null},  
 	          {"mDataProp":null, "bVisible": false},
@@ -99,28 +98,27 @@ $(document).ready(function() {
 			  {"mDataProp":null, "sWidth":"150px"},                        
 			  {"mDataProp":null, "sWidth":"150px"},                        
 			  {"mDataProp":null, "sWidth":"150px"},                        
-			  {"mDataProp":null, "sWidth":"150px"},                        
-			  {"mDataProp":null, "sWidth":"200px"}                      
+			  {"mDataProp":null, "sWidth":"150px"}                     
 		]          
     });
     
     var ids = [];
     // 未选中列表
-	$("#uncheckedChargeMisc-table").on('click', '.checkedOrUnchecked', function(e){
+	$("#uncheckedCostMisc-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
-			$(this).parent().parent().appendTo($("#checkedChargeMiscList"));
+			$(this).parent().parent().appendTo($("#checkedCostMiscList"));
 			ids.push($(this).val());
-			$("#checkedChargeCheckOrderId").val(ids);
+			$("#checkedCostCheckOrderId").val(ids);
 		}			
 	});
 	
 	// 已选中列表
-	$("#checkedChargeMisc-table").on('click', '.checkedOrUnchecked', function(e){
+	$("#checkedCostMisc-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == false){
-			$(this).parent().parent().appendTo($("#uncheckedChargeMiscList"));
+			$(this).parent().parent().appendTo($("#uncheckedCostMiscList"));
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).val(),ids),1);
-				$("#checkedChargeCheckOrderId").val(ids);
+				$("#checkedCostCheckOrderId").val(ids);
 			}
 		}			
 	});
@@ -130,7 +128,7 @@ $(document).ready(function() {
         $('#createForm').submit();
     });
 	
-	$("#checkedChargeCheckOrder").click(function(){
+	$("#checkedCostCheckOrder").click(function(){
 		$("#checked").show();
 	});
     
@@ -152,7 +150,7 @@ $(document).ready(function() {
         },'json');
 
         if(inputStr==''){
-        	chargeCheckTable.fnFilter('', 2);
+        	costCheckTable.fnFilter('', 2);
         }
         
     });    
@@ -164,8 +162,8 @@ $(document).ready(function() {
 		var endTime = $("#endTime_filter").val();
 		var receiptBegin = $("#beginTime").val();
 		var receiptEnd = $("#endTime").val();
-		uncheckedChargeCheckTable.fnSettings().sAjaxSource = "/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
-		uncheckedChargeCheckTable.fnDraw();
+		uncheckedCostCheckTable.fnSettings().sAjaxSource = "/costCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
+		uncheckedCostCheckTable.fnDraw();
 	} );
 
     $('#companyList').on('click', '.fromLocationItem', function(e){        
@@ -174,13 +172,13 @@ $(document).ready(function() {
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
         //过滤回单列表
-        //chargeCheckTable.fnFilter(companyId, 2);
+        //CostCheckTable.fnFilter(companyId, 2);
         var inputStr = $('#companyName').val();
         if(inputStr!=null){
         	console.log(inputStr);
-        	uncheckedChargeCheckTable.fnSettings().sAjaxSource = "/chargeCheckOrder/createList?companyName="+inputStr;
+        	uncheckedCostCheckTable.fnSettings().sAjaxSource = "/costCheckOrder/createList?companyName="+inputStr;
         	
-    		uncheckedChargeCheckTable.fnDraw();
+    		uncheckedCostCheckTable.fnDraw();
         }
     });
     // 没选中客户，焦点离开，隐藏列表

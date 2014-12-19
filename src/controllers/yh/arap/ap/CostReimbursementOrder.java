@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DeliveryOrderMilestone;
 import models.DepartOrderFinItem;
 import models.Fin_item;
 import models.UserLogin;
@@ -39,17 +40,19 @@ public class CostReimbursementOrder extends Controller {
 	}
 
 	public void create() {
-		List<Record> paymentItemList = Collections.EMPTY_LIST;
-        paymentItemList = Db.find("select * from fin_item where type='应付'");
+		List<Record> paymentItemList  = Db.find("select * from fin_item where type='报销'");
         setAttr("paymentItemList", paymentItemList);
+        List<Record> attributionItemList  = Db.find("select * from fin_item where type='报销分类'");
+        setAttr("attributionItemList", attributionItemList);
 		render("/yh/arap/CostReimbursement/CostReimbursementEdit.html");
 	}
 	
 	public void saveReimbursementOrder() {
 		String id = getPara("reimbursementId");
-		String status = getPara("status");
+		//String status = getPara("status");
 		String accountName = getPara("account_name");
 		String accountNo = getPara("account_no");
+		/*
 		String amount = getPara("amount");
 		String createId = getPara("create_id");
 		String createStamp = getPara("create_stamp");
@@ -57,7 +60,10 @@ public class CostReimbursementOrder extends Controller {
 		String auditStamp = getPara("audit_stamp");
 		String approvalId = getPara("approval_id");
 		String approvalStamp = getPara("approval_stamp");
+		*/
 		String remark = getPara("remark");
+		String invoicePayment = getPara("invoice_payment");
+		String payment_type = getPara("payment_type");
 		String orderNo = null;
 		ReimbursementOrder rei = null;
 		if (id == null || "".equals(id)) {
@@ -74,13 +80,19 @@ public class CostReimbursementOrder extends Controller {
 					.set("account_name", accountName).set("account_no", accountNo)
 					.set("create_id", users.get("id"))
 					.set("create_stamp", new Date()).set("remark", remark)
-					//.set("amount", amount)
+					.set("invoice_payment", invoicePayment).set("payment_type", payment_type)
 					.save();
+			
+			DeliveryOrderMilestone milestone = new DeliveryOrderMilestone();
+			milestone.set("status", "新建").set("create_by", users.get("id"))
+					.set("create_stamp", new Date()).set("reimbursement_id", rei.get("id"))
+					.save();
+			
 		} else {
 
 			rei = ReimbursementOrder.dao.findById(id);
 			rei.set("account_name", accountName).set("account_no", accountNo)
-				//.set("amount", amount)
+				.set("invoice_payment", invoicePayment).set("payment_type", payment_type)
 				.set("remark", remark).update();
 		}
 		
@@ -102,7 +114,7 @@ public class CostReimbursementOrder extends Controller {
         if(orderNo == null && status == null && auditName == null){
 	        sqlTotal = "select count(1) total from reimbursement_order";
 	    	 
-	        sql = "select ro.*,(select sum(amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
+	        sql = "select ro.*,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
 	        		+ " (select user_name from user_login where id = ro.create_id) createName,"
 	        		+ " (select user_name from user_login where id = ro.audit_id) auditName,"
 	        		+ " (select user_name from user_login where id = ro.approval_id)  approvalName"
@@ -115,7 +127,7 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " and ro.status like '%" + status + "%'"
 	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'";
 	    	 
-	        sql = "select ro.*,(select sum(amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
+	        sql = "select ro.*,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
 	        		+ " (select user_name from user_login where id = ro.create_id) createName,"
 	        		+ " (select user_name from user_login where id = ro.audit_id) auditName,"
 	        		+ " (select user_name from user_login where id = ro.approval_id)  approvalName"
@@ -159,9 +171,10 @@ public class CostReimbursementOrder extends Controller {
 			setAttr("approvalName", approval.get("user_name"));
 		}
 		
-		List<Record> paymentItemList = Collections.EMPTY_LIST;
-        paymentItemList = Db.find("select * from fin_item where type='应付'");
+		List<Record> paymentItemList  = Db.find("select * from fin_item where type='报销'");
         setAttr("paymentItemList", paymentItemList);
+        List<Record> attributionItemList  = Db.find("select * from fin_item where type='报销分类'");
+        setAttr("attributionItemList", attributionItemList);
 		
 		render("/yh/arap/CostReimbursement/CostReimbursementEdit.html");
 	}
@@ -180,18 +193,24 @@ public class CostReimbursementOrder extends Controller {
 		UserLogin users = UserLogin.dao
 				.findFirst("select * from user_login where user_name='" + name + "'");
 		ReimbursementOrder rei = ReimbursementOrder.dao.findById(reimbursementId);
+		DeliveryOrderMilestone milestone = new DeliveryOrderMilestone();
+		milestone.set("create_by", users.get("id")).set("create_stamp", new Date()).set("reimbursement_id", rei.get("id"));
 		if("审核".equals(btntTxt)){
 			rei.set("status", "已审核").set("audit_id", users.get("id"))
 			.set("audit_stamp", new Date()).update();
+			milestone.set("status", "已审核").save();
 		}else if("审批".equals(btntTxt)){
 			rei.set("status", "已审批").set("approval_id", users.get("id"))
 			.set("approval_stamp", new Date()).update();
+			milestone.set("status", "已审批").save();
 		}else if("取消审核".equals(btntTxt)){
 			rei.set("status", "取消审核").set("audit_id", null)
 			.set("audit_stamp", null).update();
+			milestone.set("status", "取消审核").save();
 		}else if("取消审批".equals(btntTxt)){
 			rei.set("status", "取消审批").set("approval_id", null)
 			.set("approval_stamp", null).update();
+			milestone.set("status", "取消审批").save();
 		}
 		renderJson(rei);
 	} 
@@ -221,9 +240,10 @@ public class CostReimbursementOrder extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*,f.name from reimbursement_order_fin_item d "
-                + "left join fin_item f on d.fin_item_id = f.id " + "where d.order_id ='" + id
-                + "' and f.type='应付'");
+        List<Record> orders = Db.find("select d.*, f1.name item,f2.name attribution from reimbursement_order_fin_item d "
+        		+ " left join fin_item f1 on d.fin_item_id = f1.id"
+        		+ " left join fin_item f2 on d.fin_attribution_id  = f2.id"
+                + " where d.order_id =" + id);
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
@@ -236,10 +256,12 @@ public class CostReimbursementOrder extends Controller {
     public void addNewRow() {
         List<Fin_item> items = new ArrayList<Fin_item>();
         String orderId = getPara();
-        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
+        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '报销' order by id asc");
+        Fin_item attribution = Fin_item.dao.findFirst("select * from fin_item where type = '报销分类' order by id asc");
         if(item != null){
         	ReimbursementOrderFinItem dFinItem = new ReimbursementOrderFinItem();
 	        dFinItem.set("fin_item_id", item.get("id"))
+	        .set("fin_attribution_id", attribution.get("id"))
 	        .set("order_id", orderId)
 	        .save();
         }
@@ -252,16 +274,19 @@ public class CostReimbursementOrder extends Controller {
     	String name = getPara("name");
     	String value = getPara("value");
     	ReimbursementOrder rei = null;
-    	if("amount".equals(name) && "".equals(value)){
+    	if("revocation_amount".equals(name) && "".equals(value)){
+    		value = "0";
+    	}
+    	if("invoice_amount ".equals(name) && "".equals(value)){
     		value = "0";
     	}
     	if(paymentId != null && !"".equals(paymentId)){
     		ReimbursementOrderFinItem reimbursementOrderFinItem = ReimbursementOrderFinItem.dao.findById(paymentId);
     		reimbursementOrderFinItem.set(name, value);
     		reimbursementOrderFinItem.update();
-    		if("amount".equals(name) && !"0".equals(value)){
-    			rei = ReimbursementOrder.dao.findById(reimbursementOrderFinItem.get("order_id"));
-    			Record rec = Db.findFirst("select sum(amount) amount from reimbursement_order_fin_item where order_id = "+ reimbursementOrderFinItem.get("order_id"));
+    		rei = ReimbursementOrder.dao.findById(reimbursementOrderFinItem.get("order_id"));
+    		if("revocation_amount".equals(name) && !"0".equals(value)){
+    			Record rec = Db.findFirst("select sum(revocation_amount) amount from reimbursement_order_fin_item where order_id = "+ reimbursementOrderFinItem.get("order_id"));
     			rei.set("amount", rec.getDouble("amount")).update();
     		} 
     	}
@@ -273,5 +298,39 @@ public class CostReimbursementOrder extends Controller {
         ReimbursementOrderFinItem.dao.deleteById(id);
         renderJson("{\"success\":true}");
     }
-	
+    
+    // 应付list
+    public void findAllMilestone() {
+        String id = getPara();
+        if (id == null || id.equals("")) {
+            Map orderMap = new HashMap();
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+            renderJson(orderMap);
+            return;
+        }
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        // 获取总条数
+        String totalWhere = "";
+        String sql = "select count(0) total from delivery_order_milestone where reimbursement_id = " + id;
+        Record rec = Db.findFirst(sql + totalWhere);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        // 获取当前页的数据
+        List<Record> orders = Db.find("select d.*,u.user_name from delivery_order_milestone d left join user_login u on u.id = d.create_by where d.reimbursement_id = " + id);
+
+        Map orderMap = new HashMap();
+        orderMap.put("sEcho", pageIndex);
+        orderMap.put("iTotalRecords", rec.getLong("total"));
+        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+        orderMap.put("aaData", orders);
+        renderJson(orderMap);
+    }
 }

@@ -22,7 +22,7 @@ public class DataInitUtil {
             Statement stmt = conn.createStatement();
 
             // 登陆及授权的3个表
-            stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255),belong_office bigint,location varchar(50));");
+            stmt.executeUpdate("create table if not exists office(id bigint auto_increment primary key, office_code varchar(50), office_name varchar(50), office_person varchar(50),phone varchar(255),address varchar(255),email varchar(50),type varchar(50),company_intro varchar(255),remark varchar(255),belong_office bigint,location varchar(50),abbr varchar(100));");
             stmt.executeUpdate("create table if not exists user_login(id bigint auto_increment primary key, user_name varchar(50) not null, password varchar(50) not null, password_hint varchar(255), office_id bigint, token varchar(10),c_name varchar(50), foreign key(office_id) references office(id));");
             stmt.executeUpdate("create table if not exists role(id bigint auto_increment primary key,code varchar(50), name varchar(50), p_code varchar(50), remark varchar(255));");
             stmt.executeUpdate("create table if not exists permission(id bigint auto_increment primary key, module_name varchar(50) ,code varchar(50), name varchar(50), value varchar(50), url varchar(255), remark varchar(255));");
@@ -47,12 +47,12 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists dp_prof_provider_info(OID bigint auto_increment PRIMARY KEY, ADDITIONAL_SERVICES VARCHAR(600),  BIZNATURE VARCHAR(60),  PROVIDER_SYS_CODE VARCHAR(90),  PROVIDER_NAME  VARCHAR(270),  PROVIDER_BIZ_CODE VARCHAR(60),  MAINTENANCE_OFFICE  VARCHAR(90),  COUNTRY_BAK VARCHAR(90),  PROVINCE_BAK VARCHAR(90),  CITY_BAK VARCHAR(90),  POST_CODE   VARCHAR(90),  CONTACT VARCHAR(120),  FAX_BAK VARCHAR(60),  EMAIL   VARCHAR(450),  TELEPHONE_BAK   VARCHAR(90),  ADDRESS1 VARCHAR(300),  ADDRESS2 VARCHAR(300),  ADDRESS3 VARCHAR(300),  ADDRESS4 VARCHAR(300),  STATUS  CHAR(1) default 'A',  CREATOR VARCHAR(20),  CREATE_DATE DATE,  LAST_UPDATER VARCHAR(20),  LAST_UPDATE_DATE DATE,  COUNTRY_OID bigint,  COUNTRY VARCHAR(300),  PROVINCE_OID bigint,  PROVINCE VARCHAR(300),  CITY_OID bigint,  CITY VARCHAR(300),  PHONE_COUNTRY_CODE  VARCHAR(10),  PHONE_AREA_CODE VARCHAR(10),  PHONE_NO VARCHAR(120),  FAX_COUNTRY_CODE VARCHAR(10),  FAX_AREA_CODE   VARCHAR(10),  FAX_NO  VARCHAR(120),  SPPM_OID bigint,  PROVIDER_FULL_NAME  VARCHAR(300),  CONTROL_OFFICE  VARCHAR(90),  DATA_REALM  VARCHAR(20),  COPY_FROM_SP_OID bigint,  ONE_OFF VARCHAR(1) default 'N',  EFFECTIVE_FROM  DATE,  EFFECTIVE_TO DATE, MAIL_SENT_TIME TIMESTAMP);");
 
             // 配送单
-            stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment primary key,order_no varchar(50),customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status varchar(50),audit_status varchar(255),cargo_nature varchar(20),from_warehouse_id bigint,remark varchar(255),route_from varchar(255),route_to varchar(255),priceType varchar(50),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,business_stamp date,client_order_stamp date,order_delivery_stamp date,client_requirement varchar(1000),customer_delivery_no varchar(50),ltl_price_type varchar(20),car_type varchar(255));");
+            stmt.executeUpdate("create table if not exists delivery_order(id bigint auto_increment primary key,order_no varchar(50),customer_id bigint,sp_id bigint,notify_party_id bigint,appointment_stamp timestamp,status varchar(50),audit_status varchar(255),cargo_nature varchar(20),from_warehouse_id bigint,remark varchar(255),route_from varchar(255),route_to varchar(255),priceType varchar(50),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,business_stamp date,client_order_stamp date,order_delivery_stamp date,client_requirement varchar(1000),customer_delivery_no varchar(50),ltl_price_type varchar(20),car_type varchar(255),delivery_plan_type varchar(50));");
 
             // delivery_order_milestone 配送单里程碑
             stmt.executeUpdate("create table if not exists delivery_order_milestone(id bigint auto_increment primary key,status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,"
                     + "last_modified_stamp timestamp,delivery_id bigint,"
-                    + "arrival_time date,performance varchar(255),unfinished_reason varchar(255),finished_seral varchar(10),unseral_reason varchar(255),unusual_handle varchar(255),"
+                    + "arrival_time date,performance varchar(255),unfinished_reason varchar(255),finished_seral varchar(10),unseral_reason varchar(255),unusual_handle varchar(255),reimbursement_id bigint,"
                     + "foreign key(delivery_id) references delivery_order(id));");
 
             // 干线表
@@ -256,11 +256,22 @@ public class DataInitUtil {
             stmt.execute("create table if not exists user_office(id bigint auto_increment primary key,user_name varchar(20),office_id bigint,is_main boolean);");
             stmt.execute("create table if not exists user_customer(id bigint auto_increment primary key,user_name varchar(20),customer_id bigint);");
             
-            //应付报销单主表
-            stmt.execute("create table if not exists reimbursement_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),account_name varchar(50),account_no varchar(50),amount double,create_id bigint,create_stamp timestamp,audit_id bigint,audit_stamp timestamp,approval_id bigint,approval_stamp timestamp,remark varchar(500));");
+            //报销单
+            stmt.execute("create table if not exists reimbursement_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),account_name varchar(50),account_no varchar(50),payment_type varchar(30),invoice_payment varchar(30),"
+            		+ "amount double,create_id bigint,create_stamp timestamp,audit_id bigint,audit_stamp timestamp,approval_id bigint,approval_stamp timestamp,remark varchar(500));");
             
-            //应付报销单费用明细
-            stmt.execute("create table if not exists reimbursement_order_fin_item(id bigint auto_increment primary key,order_id varchar(50),fin_item_id bigint,amount double,remark varchar(500));");
+            //报销单明细
+            stmt.execute("create table if not exists reimbursement_order_fin_item(id bigint auto_increment primary key,order_id varchar(50),fin_item_id bigint,invoice_amount double, revocation_amount double,fin_attribution_id bigint, remark varchar(500));");
+            
+            //配送调车单-主表
+            stmt.execute("create table if not exists delivery_plan_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),office_id bigint,create_id bigint,create_stamp timestamp,sp_id bigint,carinfo_id bigint,"
+            		+ "car_no varchar(50),driver varchar(50),phone varchar(50),turnout_time date,return_time date,remark varchar(500));");
+            
+            //配送调车单-从表
+            stmt.execute("create table if not exists delivery_plan_order_detail(id bigint auto_increment primary key,order_id varchar(50),delivery_id bigint);");
+            
+            //配送调车单-里程碑
+            stmt.execute("create table if not exists delivery_plan_order_milestone(id bigint auto_increment primary key,order_id varchar(50),status varchar(50),address varchar(50),create_id bigint,create_stamp timestamp);");
             
             stmt.close();
             // conn.commit();
