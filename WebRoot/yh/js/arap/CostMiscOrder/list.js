@@ -4,7 +4,7 @@ $(document).ready(function() {
     $('#menu_finance').addClass('active').find('ul').addClass('in');
 
 	//datatable, 动态处理
-    var datatable=$('#chargeMiscOrderList-table').dataTable({
+    var datatable=$('#costMiscOrderList-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
@@ -12,11 +12,11 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargeMiscOrder/list",
+        "sAjaxSource": "/costMiscOrder/list",
         "aoColumns": [   
             {"mDataProp":"ORDER_NO","sWidth": "80px",
             	"fnRender": function(obj) {
-        			return "<a href='/chargeMiscOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/costMiscOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"TYPE","sWidth": "100px",
             	"fnRender": function(obj) {
@@ -45,7 +45,7 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"CREATE_STAMP","sWidth": "150px"},
-            {"mDataProp":"CHARGE_ORDER_NO","sWidth": "150px"},
+            {"mDataProp":"COST_ORDER_NO","sWidth": "150px"},
             {"mDataProp":"REMARK","sWidth": "150px"}                       
         ]      
     });	 
