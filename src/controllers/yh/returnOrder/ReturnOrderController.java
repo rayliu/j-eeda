@@ -73,7 +73,12 @@ public class ReturnOrderController extends Controller {
 				&& time_two == null && customer == null) {
 			// 获取总条数
 			String totalWhere = "";
-			String sql = "select count(1) total from return_order ro ";
+			String sql = "select count(1) total from return_order r_o "
+					+ " left join transfer_order tor on tor.id = r_o.transfer_order_id "
+					+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
+					+ " left join warehouse w on d_o.from_warehouse_id = w.id "
+					+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
 			Record rec = Db.findFirst(sql + totalWhere);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -81,9 +86,18 @@ public class ReturnOrderController extends Controller {
 			List<Record> orders = Db
 					.find("select distinct r_o.*, usl.c_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 							+ " from return_order r_o "
-							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
-							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
-							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator "
+							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id "
+							+ " left join party p on p.id = tor.customer_id "
+							+ " left join contact c on c.id = p.contact_id  "
+							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
+							+ " left join delivery_order_item doi on doi.delivery_id = d_o.id "
+							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id "
+							+ " left join party p2 on p2.id = tor2.customer_id "
+							+ " left join contact c2 on c2.id = p2.contact_id  "
+							+ " left join user_login  usl on usl.id=r_o.creator "
+							+ " left join warehouse w on d_o.from_warehouse_id = w.id "
+							+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+							+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 							+ " order by r_o.create_date desc " + sLimit);
 
 			orderMap.put("sEcho", pageIndex);
@@ -102,9 +116,16 @@ public class ReturnOrderController extends Controller {
 			// 获取总条数
 			String totalWhere = "";
 			String sql = "select count(distinct r_o.id) total from return_order r_o "
-					+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
-					+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
-					+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator "
+					+ " left join transfer_order tor on tor.id = r_o.transfer_order_id "
+					+ " left join party p on p.id = tor.customer_id "
+					+ " left join contact c on c.id = p.contact_id  "
+					+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
+					+ " left join delivery_order_item doi on doi.delivery_id = d_o.id "
+					+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id "
+					+ " left join party p2 on p2.id = tor2.customer_id "
+					+ " left join contact c2 on c2.id = p2.contact_id  "
+					+ " left join user_login  usl on usl.id=r_o.creator "
+					+ " left join warehouse w on d_o.from_warehouse_id = w.id "
 					+ " where ifnull(r_o.order_no,'')  like'%"
 					+ order_no
 					+ "%' and  "
@@ -124,7 +145,9 @@ public class ReturnOrderController extends Controller {
 					+ customer
 					+ "%' and "
 					+ "r_o.create_date between '"
-					+ time_one + "' and '" + time_two + "'";
+					+ time_one + "' and '" + time_two + "' "
+					+ " and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
 			Record rec = Db.findFirst(sql + totalWhere);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -132,9 +155,16 @@ public class ReturnOrderController extends Controller {
 			List<Record> orders = Db
 					.find("select distinct r_o.*, usl.c_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 							+ " from return_order r_o "
-							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
-							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
-							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id  left join user_login  usl on usl.id=r_o.creator "
+							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id "
+							+ " left join party p on p.id = tor.customer_id "
+							+ " left join contact c on c.id = p.contact_id  "
+							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
+							+ " left join delivery_order_item doi on doi.delivery_id = d_o.id "
+							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id "
+							+ " left join party p2 on p2.id = tor2.customer_id "
+							+ " left join contact c2 on c2.id = p2.contact_id  "
+							+ " left join user_login  usl on usl.id=r_o.creator "
+							+ " left join warehouse w on d_o.from_warehouse_id = w.id "
 							+ " where ifnull(r_o.order_no,'')  like'%"
 							+ order_no
 							+ "%' and  "
@@ -156,7 +186,9 @@ public class ReturnOrderController extends Controller {
 							+ time_one
 							+ "' and '"
 							+ time_two
-							+ "' order by r_o.create_date desc " + sLimit);
+							+ "' and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+							+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+							+ " order by r_o.create_date desc " + sLimit);
 
 			orderMap.put("sEcho", pageIndex);
 			orderMap.put("iTotalRecords", rec.getLong("total"));
