@@ -331,6 +331,7 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
+        "bLengthChange":false,
         "sAjaxSource":"/returnOrder/accountReceivable/"+order_id,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"

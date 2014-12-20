@@ -1283,12 +1283,11 @@ public class DeliveryController extends Controller {
     	}*/
     	
     	if(inputStr != null && rdc != null && !"".equals(inputStr) && !"".equals(rdc)){
-    		sql = "select * from warehouse w left join office o on o.id = w.office_id where o.type = '配送中心RDC' "
-    				+ "and w.warehouse_name LIKE '%"+inputStr+"%' and o.id = "+rdc;
+    		sql = "select * from warehouse w left join office o on o.id = w.office_id where w.warehouse_name LIKE '%"+inputStr+"%' and o.id = "+rdc;
     	}else if(inputStr != null && !"".equals(inputStr)){
     		sql = "select * from warehouse where warehouse_name like '%"+inputStr+"%'";
     	}else if(rdc != null && !"".equals(rdc)){
-    		sql = "select * from warehouse w left join office o on o.id = w.office_id where o.type = '配送中心RDC' and o.id = "+rdc;
+    		sql = "select * from warehouse w left join office o on o.id = w.office_id where o.id = "+rdc;
     	}else{
     		sql= "select * from warehouse";
     	}

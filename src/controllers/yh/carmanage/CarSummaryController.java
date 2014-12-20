@@ -95,7 +95,7 @@ public class CarSummaryController extends Controller {
                     + " left join transfer_order t_o on t_o.id = dtf.order_id "
                     + " left join office o on o.id = t_o.office_id "
                     + " where dor.status!='取消' and dor.car_summary_type = 'untreated' and combine_type = '"
-	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id order by dor.car_no,dor.create_stamp desc " + sLimit;
+	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id,dor.car_no order by dor.create_stamp desc " + sLimit;
 	        
 		}else{
 			
@@ -114,7 +114,7 @@ public class CarSummaryController extends Controller {
 					+ " and ifnull(dor.car_no, '') like '%"+car_no+"%'"
 					+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'"
 					+ " and ifnull(dtf.transfer_order_no, '') like '%"+transferOrderNo+"%'"
-					+ " order by dor.car_no,dor.create_stamp desc " + sLimit;
+					+ " order by dor.create_stamp desc " + sLimit;
 
 	        // 获取当前页的数据
 	        sql = "select dor.*,"
@@ -140,7 +140,7 @@ public class CarSummaryController extends Controller {
 					+ " and ifnull(dor.car_no, '') like '%"+car_no+"%'"
 					+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'"
 					+ " and ifnull(dtf.transfer_order_no, '') like '%"+transferOrderNo+"%'"
-                    + " order by dor.car_no,dor.create_stamp desc " + sLimit;
+                    + " group by dor.id,dor.car_no order by dor.create_stamp desc " + sLimit;
 		}
 		//Record rec = Db.findFirst(sqlTotal);
         //logger.debug("total records:" + rec.getLong("total"));
@@ -850,7 +850,7 @@ public class CarSummaryController extends Controller {
 			
 			setAttr("carSummaryOrder", carSummaryOrder);
 			
-			Record rec = Db.findFirst("select group_concat(csd.pickup_order_id separator ',') pickupids  from car_summary_detail csd where csd.car_summary_id in("+carSummaryId+") ;");
+			Record rec = Db.findFirst("select group_concat(cast(csd.pickup_order_id as char) separator ',') pickupids  from car_summary_detail csd where csd.car_summary_id in("+carSummaryId+") ;");
 			//拼车单号
 			setAttr("pickupIds", rec.get("pickupids"));
     	}

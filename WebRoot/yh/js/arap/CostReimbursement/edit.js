@@ -359,7 +359,14 @@ $(document).ready(function() {
     	},
         "aoColumns": [
             { "mDataProp": "STATUS"},
-            { "mDataProp": "USER_NAME"},      
+            { "mDataProp": "USER_NAME",
+            	"fnRender": function(obj) {
+            		if(obj.aData.C_NAME != "" && obj.aData.C_NAME != null)
+            			return obj.aData.C_NAME;
+            		else
+            			return obj.aData.USER_NAME;
+            		
+            }},      
             { "mDataProp": "CREATE_STAMP"}
         ]        
     });

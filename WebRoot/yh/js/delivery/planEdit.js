@@ -258,7 +258,15 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": "STATUS"},
             { "mDataProp": "ADDRESS"},      
-            { "mDataProp": "USER_NAME"},
+            { "mDataProp": null,
+            	"fnRender": function(obj) {
+            		if(obj.aData.C_NAME != "" && obj.aData.C_NAME != null)
+            			return obj.aData.C_NAME;
+            		else
+            			return obj.aData.USER_NAME;
+            		
+            	}
+            },
             { "mDataProp": "CREATE_STAMP"}
             /*{ 
                 "mDataProp": null, 

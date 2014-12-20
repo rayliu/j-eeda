@@ -324,7 +324,7 @@ public class CostReimbursementOrder extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*,u.user_name from delivery_order_milestone d left join user_login u on u.id = d.create_by where d.reimbursement_id = " + id);
+        List<Record> orders = Db.find("select d.*,u.user_name,u.c_name from delivery_order_milestone d left join user_login u on u.id = d.create_by where d.reimbursement_id = " + id);
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);

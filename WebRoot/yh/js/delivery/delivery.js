@@ -868,7 +868,6 @@ $(document).ready(function() {
 					$('#deliveryOrderMilestone').modal('hide');
 				});
 				
-				
 				// 回单签收
 				$("#receiptBtn").click(function(){
 					var delivery_id = $("#delivery_id").val();
@@ -966,6 +965,7 @@ $(document).ready(function() {
 			        // "sPaginationType": "bootstrap",
 			        "iDisplayLength": 10,
 			        "bServerSide": true,
+			        "bLengthChange":false,
 			        "sAjaxSource": "/deliveryOrderMilestone/accountPayable/"+deliveryid,
 			    	"oLanguage": {
 			            "sUrl": "/eeda/dataTables.ch.txt"

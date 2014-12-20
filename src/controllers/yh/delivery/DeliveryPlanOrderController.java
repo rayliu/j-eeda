@@ -226,23 +226,9 @@ public class DeliveryPlanOrderController extends Controller {
 		UserLogin user = UserLogin.dao.findFirst("select * from user_login where id='" + deliveryPlanOrder.getLong("create_id") + "'");
 		setAttr("user", user);
 		//获取配送单id并拼接成字符串
-		//1
-		/*String sql2="select concat(group_concat(delivery_id separator ',')) deliveryOrders from delivery_plan_order_detail where order_id = " + id;
+		String sql2="select concat(group_concat(cast(delivery_id as char) separator ',')) deliveryOrders from delivery_plan_order_detail where order_id = " + id;
 		Record rec2 = Db.findFirst(sql2);
-		setAttr("deliveryOrderIds", rec2.get("deliveryOrders").toString());*/
-		//2
-		String deliveryOrderIds = "";
-		int num = 1;
-		String sql2="select delivery_id from delivery_plan_order_detail where order_id = " + id;
-		List<Record> rec2 = Db.find(sql2);
-		for (int i = 0; i < rec2.size() ; i++) {
-			if(num == rec2.size())
-				deliveryOrderIds += rec2.get(i).get("delivery_id");
-			else
-				deliveryOrderIds += rec2.get(i).get("delivery_id") + ",";
-			++num;
-		}
-		setAttr("deliveryOrderIds", deliveryOrderIds);
+		setAttr("deliveryOrderIds", rec2.get("deliveryOrders").toString());
 		render("/yh/delivery/deliveryPlanOrderEdit.html");
 	}
 	
@@ -288,6 +274,15 @@ public class DeliveryPlanOrderController extends Controller {
             	deliveryPlanOrder.set("return_time", returnTime);
             }
             deliveryPlanOrder.save();
+            
+            java.util.Date utilDate = new java.util.Date();
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+            
+            DeliveryPlanOrderMilestone milestone = new DeliveryPlanOrderMilestone();
+    		milestone.set("create_id", users.get("id")).set("status", "新建")
+    		.set("create_stamp", sqlDate).set("order_id", deliveryPlanOrder.get("id"))
+    		.save();
+            
             //记录所选配送单
             for (int i = 0; i < deliveryOrderId.length; i++) {
     			//插入从表数据
@@ -406,8 +401,8 @@ public class DeliveryPlanOrderController extends Controller {
 
 		String sqlTotal = "select count(0) total from delivery_plan_order_milestone where order_id = " + deliveryPlanOrderId;
 		
-		String sql = "select d.*,u.user_name from delivery_plan_order_milestone d left join user_login u on u.id = d.create_id "
-				+ " where d.order_id = " + deliveryPlanOrderId + " order by d.id desc " + sLimit;
+		String sql = "select d.*,u.user_name,u.c_name from delivery_plan_order_milestone d left join user_login u on u.id = d.create_id "
+				+ " where d.order_id = " + deliveryPlanOrderId + " order by d.id asc " + sLimit;
 		Record rec = Db.findFirst(sqlTotal);
 		List<Record> departOrderitem = Db.find(sql);
 
