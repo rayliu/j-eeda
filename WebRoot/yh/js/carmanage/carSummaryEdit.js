@@ -273,7 +273,14 @@ $(document).ready(function() {
 		    		}
 				}
              },
-             { "mDataProp": "USER_NAME"},
+             { "mDataProp": "USER_NAME",
+            	"fnRender": function(obj) {
+            		if(obj.aData.C_NAME != "" && obj.aData.C_NAME != null)
+            			return obj.aData.C_NAME;
+            		else
+            			return obj.aData.USER_NAME;
+            	}
+             },
              { "mDataProp": "CREATE_STAMP"}
          ]
 	});
@@ -283,9 +290,9 @@ $(document).ready(function() {
 			saveCarSummaryData();
 		}
 		clickTabId = e.target.getAttribute("id");
-		var pickupIds = $("#pickupIds").val();
+		var car_summary_id = $("#car_summary_id").val();
 		pickupMilestoneTbody.fnSettings().oFeatures.bServerSide = true;
-		pickupMilestoneTbody.fnSettings().sAjaxSource = "/carsummary/transferOrderMilestoneList?pickupIds="+pickupIds;   
+		pickupMilestoneTbody.fnSettings().sAjaxSource = "/carsummary/transferOrderMilestoneList?car_summary_id="+car_summary_id;   
 		pickupMilestoneTbody.fnDraw();
 	});
 	
@@ -297,6 +304,7 @@ $(document).ready(function() {
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 20,
     	"bServerSide": false,
+    	"bLengthChange":false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
@@ -465,6 +473,7 @@ $(document).ready(function() {
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 20,
     	"bServerSide": false,
+    	"bLengthChange":false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
@@ -767,6 +776,7 @@ $(document).ready(function() {
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 20,
     	"bServerSide": false,
+    	"bLengthChange":false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
@@ -934,6 +944,7 @@ $(document).ready(function() {
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 12,
     	"bServerSide": false,
+    	"bLengthChange":false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
@@ -1102,6 +1113,7 @@ $(document).ready(function() {
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 20,
     	"bServerSide": false,
+    	"bLengthChange":false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},

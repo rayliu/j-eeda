@@ -510,8 +510,7 @@ public class CarSummaryController extends Controller {
     }
     // 里程碑
     public void transferOrderMilestoneList() {
-    	String pickupIds = getPara("pickupIds");// 调车单id
-
+    	String carSummaryId = getPara("car_summary_id");
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -520,15 +519,15 @@ public class CarSummaryController extends Controller {
         String sqlTotal = "select count(0) total from transfer_order_milestone tom"
         		+ " left join user_login u on u.id = tom.create_by"
         		+ " where tom.type = '"
-                            + TransferOrderMilestone.TYPE_CAR_SUMMARY_MILESTONE + "' and tom.car_summary_id in(" + pickupIds+");";
+                            + TransferOrderMilestone.TYPE_CAR_SUMMARY_MILESTONE + "' and tom.car_summary_id = "+ carSummaryId;
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select tom.*,u.user_name from transfer_order_milestone tom"
+        String sql = "select tom.*,u.user_name,u.c_name from transfer_order_milestone tom"
         		+ " left join user_login u on u.id = tom.create_by"
         		+ " where tom.type = '"
-                            + TransferOrderMilestone.TYPE_CAR_SUMMARY_MILESTONE + "' and tom.car_summary_id in(" + pickupIds+");";
+                            + TransferOrderMilestone.TYPE_CAR_SUMMARY_MILESTONE + "' and tom.car_summary_id = "+ carSummaryId;
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);

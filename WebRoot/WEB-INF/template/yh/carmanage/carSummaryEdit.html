@@ -240,37 +240,33 @@
 							<!-- 路桥费明细 -->
 							<div class="tab-pane fade" id="roadBridge">  
                             	<div class="panel-body">
-                            	<div class="controls">
-                                	<button class="btn btn-primary" data-toggle="modal" id="addCarSummaryRouteFee">
-									  增加明细
-									</button>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="panel-body">
-		                                    <div class="table-responsive"> 
-		                                    	<form id="pickupAddressForm" action="">
-			                                        <table id="carSummaryDetailRouteFeeTbody" class="table table-striped table-bordered table-hover" style="width: 1050px;">
-			                                            <thead>
-			                                                <tr>
-			                                                    <th>项次</th>
-			                                                    <th>收费时间</th>
-			                                                    <th>收费站</th>
-			                                                    <th>通行费</th>
-			                                                    <th>备注</th>
-			                                                    <th></th>
-			                                                </tr>
-			                                            </thead>
-			                                            <tbody>
-			                                            	
-			                                            </tbody>
-			                                        </table>
-		                                        </form>
-		                                    </div>
-	                                    	<!-- /.table-responsive -->
-                                    	</div>
-                                    </div>
-                                </div>
+	                            	<div class="controls">
+	                                	<button class="btn btn-primary" data-toggle="modal" id="addCarSummaryRouteFee">
+										  增加明细
+										</button>
+	                                
+	                                	<div class="form-group"></div>
+	                                    <div class="table-responsive"> 
+	                                    	<form id="pickupAddressForm" action="">
+		                                        <table id="carSummaryDetailRouteFeeTbody" class="table table-striped table-bordered table-hover" style="width: 1050px;">
+		                                            <thead>
+		                                                <tr>
+		                                                    <th>项次</th>
+		                                                    <th>收费时间</th>
+		                                                    <th>收费站</th>
+		                                                    <th>通行费</th>
+		                                                    <th>备注</th>
+		                                                    <th></th>
+		                                                </tr>
+		                                            </thead>
+		                                            <tbody>
+		                                            	
+		                                            </tbody>
+		                                        </table>
+	                                        </form>
+	                                    </div>
+	                                   	<!-- /.table-responsive -->
+                                   	</div>
                                 </div>
                             </div>
 							<!-- 加油记录 -->
@@ -280,43 +276,40 @@
 	                                	<button class="btn btn-primary" data-toggle="modal" id="addCarSummaryDetailOilFee">
 										  增加明细
 										</button>
-	                                </div>
-	                            </div> 
-	                            <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="panel-body">
-		                                    <div class="table-responsive">  
-		                                        <table id="carSummaryDetailOilFeeTbody" class="table table-striped table-bordered table-hover" style="width: 2300px;">
-		                                            <thead>
-		                                                <tr>
-		                                                    <th>项次</th>
-		                                                    <th>加油时间</th>
-		                                                    <th>里程表读数</th>
-		                                                    <th>油站</th>
-		                                                    <th>油品</th>
-		                                                    <th>油价</th>
-		                                                    <th>加油量</th>
-		                                                    <th>油费</th>
-		                                                    <th>付款方式</th>
-		                                                    <th>载重</th>
-		                                                    <th>平均油耗</th>
-		                                                    <th>备注</th>
-		                                                    <th></th>
-		                                                </tr>
-		                                            </thead>
-		                                            <tbody>
-		                                            	
-		                                            </tbody>
-		                                        </table>
-		                                        <div id="paymentTypeList" style="display:none;">
-                      								<option value="油卡">油卡</option>
-                      								<option value="现金">现金</option>
-                                            	</div>
-                                    		</div>
-                           					<!-- /.table-responsive -->
-                           				</div>
-                                    </div>
-                                </div>
+			                            <div class="form-group"></div>
+			                            <div class="table-responsive"> 
+			                                <div class="table-responsive">  
+			                                    <table id="carSummaryDetailOilFeeTbody" class="table table-striped table-bordered table-hover" style="width: 2300px;">
+			                                        <thead>
+			                                            <tr>
+			                                                <th>项次</th>
+			                                                <th>加油时间</th>
+			                                                <th>里程表读数</th>
+			                                                <th>油站</th>
+			                                                <th>油品</th>
+			                                                <th>油价</th>
+			                                                <th>加油量</th>
+			                                                <th>油费</th>
+			                                                <th>付款方式</th>
+			                                                <th>载重</th>
+			                                                <th>平均油耗</th>
+			                                                <th>备注</th>
+			                                                <th></th>
+			                                            </tr>
+			                                        </thead>
+			                                        <tbody>
+			                                        	
+			                                        </tbody>
+			                                    </table>
+			                                    <div id="paymentTypeList" style="display:none;">
+			           								<option value="油卡">油卡</option>
+			           								<option value="现金">现金</option>
+			                                   	</div>
+			                           		</div>
+			                  				<!-- /.table-responsive -->
+			                  			</div>
+	                  				</div>
+                  				</div>
                             </div>
 							<!-- 送货员工资明细 -->
 							<div class="tab-pane fade" id="salary">  
@@ -326,71 +319,60 @@
 										  增加明细
 										</button>
 	                                </div>
-	                                <div class="row">
-                                        <div class="col-lg-12">
-                                            <div class="panel-body">
-				                                <div class="table-responsive"> 
-				                                	<form id="pickupAddressForm" action="">
-				                                		<input type="hidden" id="addressPickupOrderId" value="" name="pickupOrderId">
-					                                    <table  id="carSummaryDetailSalaryTbody" class="table table-striped table-bordered table-hover">
-					                                       <thead>
-					                                            <tr>
-					                                                <th>项次</th>
-					                                                <th>员工姓名</th>
-					                                                <th>工资条编号</th>
-					                                                <th>工作分类</th>
-					                                                <th>应得金额</th>
-					                                                <th>备注</th>
-					                                                <th></th>
-					                                            </tr>
-					                                        </thead>
-					                                        <tbody>
-					                                         	
-					                                        </tbody>
-					                                    </table>
-				                                    </form>
-				                                </div>
-                                				<!-- /.table-responsive -->
-                                			</div>
-                                		</div>
-                                	</div>
-                                	
+	                                <div class="form-group"></div>
+	                                <div class="table-responsive"> 
+	                                	<form id="pickupAddressForm" action="">
+	                                		<input type="hidden" id="addressPickupOrderId" value="" name="pickupOrderId">
+		                                    <table  id="carSummaryDetailSalaryTbody" class="table table-striped table-bordered table-hover">
+		                                       <thead>
+		                                            <tr>
+		                                                <th>项次</th>
+		                                                <th>员工姓名</th>
+		                                                <th>工资条编号</th>
+		                                                <th>工作分类</th>
+		                                                <th>应得金额</th>
+		                                                <th>备注</th>
+		                                                <th></th>
+		                                            </tr>
+		                                        </thead>
+		                                        <tbody>
+		                                         	
+		                                        </tbody>
+		                                    </table>
+	                                    </form>
+	                                </div>
+                             			<!-- /.table-responsive -->
                                 </div>
                             </div>
 							<!-- 费用合计 -->
 							<div class="tab-pane fade" id="costSummation">  
                             	<div class="panel-body">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="panel-body">
-			                                    <div class="table-responsive"> 
-			                                    	<form id="carSummaryDetailOtherFeeForm" action="">
-			                                    		<input type="hidden" id="addressPickupOrderId" value="" name="pickupOrderId">
-				                                        <table  id="carSummaryDetailOtherFeeTbody" class="table table-striped table-bordered table-hover">
-				                                            <thead>
-				                                                <tr>
-				                                                    <th>序号</th>
-				                                                    <th>费用项目</th>
-				                                                    <th>金额</th>
-				                                                    <th>是否扣除</th>
-				                                                    <th>备注</th>
-				                                                </tr>
-				                                            </thead>
-				                                            <tbody>
-				                                            
-				                                            </tbody>
-				                                        </table>
-				                                        <div id="selectList" style="display:none;">
-				                                        	<option value=""></option>
-		                      								<option value="是">是</option>
-		                      								<option value="否">否</option>
-		                                            	</div>
-			                                        </form>
-			                                    </div>
-			                                    <!-- /.table-responsive -->
-                                    		</div>
-                                    	</div>
+                            		<div class="form-group">
+                                    <div class="table-responsive"> 
+                                    	<form id="carSummaryDetailOtherFeeForm" action="">
+                                    		<input type="hidden" id="addressPickupOrderId" value="" name="pickupOrderId">
+	                                        <table  id="carSummaryDetailOtherFeeTbody" class="table table-striped table-bordered table-hover">
+	                                            <thead>
+	                                                <tr>
+	                                                    <th>序号</th>
+	                                                    <th>费用项目</th>
+	                                                    <th>金额</th>
+	                                                    <th>是否扣除</th>
+	                                                    <th>备注</th>
+	                                                </tr>
+	                                            </thead>
+	                                            <tbody>
+	                                            
+	                                            </tbody>
+	                                        </table>
+	                                        <div id="selectList" style="display:none;">
+	                                        	<option value=""></option>
+                     								<option value="是">是</option>
+                     								<option value="否">否</option>
+                                           	</div>
+                                        </form>
                                     </div>
+                                    <!-- /.table-responsive -->
                                 </div>
                             </div>
 
