@@ -36,6 +36,7 @@ $(document).ready(function() {
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
 		$.post('/costPreInvoiceOrder/approvalCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
 		},'json');
+		$("#printBtn").show();
 	});
 	
 	/*--------------------------------------------------------------------*/
@@ -320,4 +321,11 @@ $(document).ready(function() {
     		$("#accountTypeDiv").show();    		
     	}
     }); 
+    $("#printBtn").on('click',function(){
+    	var order_no = $("#order_no").text();
+    	$.post('/report/printPayMent', {order_no:order_no}, function(data){
+    		window.open(data);
+    	});
+
+    });
 } );

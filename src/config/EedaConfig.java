@@ -119,17 +119,18 @@ public class EedaConfig extends JFinalConfig {
     C3p0Plugin cp;
     ActiveRecordPlugin arp;
 
-    public void configConstant(Constants me) {
+    @Override
+	public void configConstant(Constants me) {
 
         me.setDevMode(true);
 
         BeetlRenderFactory templateFactory = new BeetlRenderFactory();
         me.setMainRenderFactory(templateFactory);
 
-        templateFactory.groupTemplate.setCharset("utf-8");// 没有这句，html上的汉字会乱码
+        BeetlRenderFactory.groupTemplate.setCharset("utf-8");// 没有这句，html上的汉字会乱码
 
         // 注册后，可以使beetl html中使用shiro tag
-        templateFactory.groupTemplate.registerFunctionPackage("shiro", new ShiroExt());
+        BeetlRenderFactory.groupTemplate.registerFunctionPackage("shiro", new ShiroExt());
 
         //没有权限时跳转到login
         me.setErrorView(401, "/yh/login.html");//401 authenticate err
@@ -148,7 +149,8 @@ public class EedaConfig extends JFinalConfig {
         logger.info("Pid is: " + pid);
     }
 
-    public void configRoute(Routes me) {
+    @Override
+	public void configRoute(Routes me) {
         this.routes = me;
 
         //TODO: 为之后去掉 yh做准备
@@ -244,12 +246,14 @@ public class EedaConfig extends JFinalConfig {
         me.add("/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, contentPath);
         //insuranceOrder
         me.add("/insuranceOrder", controllers.yh.insurance.InsuranceOrderController.class, contentPath);
+        me.add("/report", controllers.yh.report.ReportController.class, contentPath);
         
         
         
     }
 
-    public void configPlugin(Plugins me) {
+    @Override
+	public void configPlugin(Plugins me) {
         // 加载Shiro插件, for backend notation, not for UI
     	me.add(new ShiroPlugin(routes));
     	
@@ -395,7 +399,8 @@ public class EedaConfig extends JFinalConfig {
         DataInitUtil.initH2Tables(cp);
     }
 
-    public void configInterceptor(Interceptors me) {
+    @Override
+	public void configInterceptor(Interceptors me) {
     	if("Y".equals(getProperty("is_check_permission"))){
     		logger.debug("is_check_permission = Y");
          	me.add(new ShiroInterceptor());
@@ -403,7 +408,8 @@ public class EedaConfig extends JFinalConfig {
         //me.add(new SetAttrLoginUserInterceptor());
     }
 
-    public void configHandler(Handlers me) {
+    @Override
+	public void configHandler(Handlers me) {
         if (H2.equals(getProperty("dbType"))) {
             DataInitUtil.initData(cp);
         }

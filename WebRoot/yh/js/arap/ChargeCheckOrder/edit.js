@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	$('#menu_charge').addClass('active').find('ul').addClass('in');
-	
+	 
 	var saveChargeCheckOrder = function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
@@ -84,7 +84,7 @@ $(document).ready(function() {
     if($("#chargeCheckOrderStatus").text() == 'new'){
     	$("#chargeCheckOrderStatus").text('新建');
 	}
-
+   
     var chargeConfiremTable = $('#chargeConfirem-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "bSort": false, 
@@ -291,4 +291,8 @@ $(document).ready(function() {
 			}
 		},'json');
 	});
+	
+	
+	
+	
 } );

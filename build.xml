@@ -3,11 +3,11 @@
 	<property environment="env" />
 	
 	<path id="project.classpath">
-	    <fileset dir="WebRoot/WEB-INF/lib" includes="*.jar"/>
+	    <fileset dir="WebRoot/WEB-INF/lib" includes="**/*.jar"/>
 	</path>
 	
    <path id="project.lib.path">
-        <fileset dir="WebRoot/WEB-INF/lib" includes="*.jar"/>
+        <fileset dir="WebRoot/WEB-INF/lib" includes="**/*.jar"/>
     </path>
 
 	

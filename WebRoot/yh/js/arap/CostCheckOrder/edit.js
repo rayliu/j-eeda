@@ -21,6 +21,8 @@ $(document).ready(function() {
 	
     if($("#costCheckOrderStatus").text() == 'new'){
     	$("#costCheckOrderStatus").text('新建');
+	}else{
+		$("#printBtn").show();
 	}
     
 	// 审核
@@ -31,6 +33,7 @@ $(document).ready(function() {
 		var costCheckOrderId = $("#costCheckOrderId").val();
 		$.post('/costCheckOrder/auditCostCheckOrder', {costCheckOrderId:costCheckOrderId}, function(data){
 		},'json');
+		$("#printBtn").show();
 	});
 	
 	/*--------------------------------------------------------------------*/
@@ -107,6 +110,16 @@ $(document).ready(function() {
     	costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
     	costConfiremTable.fnDraw(); 
     });
+    
+    $("#printBtn").on('click',function(){
+    	var order_no = $("#order_no").text();
+    	$.post('/report/printCheckOrder', {order_no:order_no}, function(data){
+    		window.open(data);
+    	});
+    	//window.location.href="/download/供应商对账单.pdf";
+    });
+    
+    
 
     var costMiscListTable = $('#costMiscList-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
