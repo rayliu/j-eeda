@@ -153,7 +153,12 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists pickup_order_item(id bigint auto_increment primary key,order_id bigint,customer_id bigint,serial_no varchar(50),item_no bigint,item_name varchar(50),item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
             // 配送单货品表
             stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment primary key,transfer_no varchar(50),delivery_id bigint,transfer_order_id bigint, transfer_item_id bigint, amount double, transfer_item_detail_id bigint);");
-
+            //配送调车单
+            stmt.executeUpdate("create table if not exists delivery_plan_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),office_id bigint,create_id bigint,create_stamp timestamp,sp_id bigint,carinfo_id bigint,car_no varchar(50),driver varchar(50),phone varchar(50),turnout_time date,return_time date,remark varchar(500));");
+            stmt.executeUpdate("create table if not exists delivery_plan_order_detail(id bigint auto_increment primary key,order_id varchar(50),delivery_id bigint);");
+            stmt.executeUpdate("create table if not exists delivery_plan_order_milestone(id bigint auto_increment primary key,order_id varchar(50),idstatus varchar(50),address varchar(50),create_id bigint,create_stamp timestamp);");
+            
+            
             // 发车单运输单中间表
             stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,pickup_id bigint,depart_id bigint,order_id bigint,transfer_order_no varchar(255),foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id),foreign key(pickup_id) references depart_order(id));");
 
@@ -677,6 +682,12 @@ public class DataInitUtil {
             for (int i = 0; i < title.length; i++) {
             	stmt.executeUpdate("insert into execl_title(execl_type, execl_title) values('transferOrder','"+title[i]+"');");
 			}
+            
+           /* 基础数据——用户网点用户客户*/
+            stmt.executeUpdate("insert into user_office(user_name,office_id) select 'demo', id from office;");
+            stmt.executeUpdate("update user_office set is_main=true where user_name='demo' and  office_id =1");
+            
+            stmt.executeUpdate("insert into user_customer(user_name,customer_id) select 'demo', id from party;");
             stmt.close();
             // conn.commit();
             conn.close();

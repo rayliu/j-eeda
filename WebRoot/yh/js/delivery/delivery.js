@@ -1333,7 +1333,7 @@ $(document).ready(function() {
 	        autoclose: true,
 	        pickerPosition: "bottom-left"
 	    }).on('changeDate', function(ev){
-	        $(".bootstrap-datetimepicker-widget").hide();
+	    	$(".bootstrap-datetimepicker-widget").hide();
 	        $('#client_order_stamp').trigger('keyup');
 	    });	
 		
@@ -1343,7 +1343,7 @@ $(document).ready(function() {
 	        autoclose: true,
 	        pickerPosition: "bottom-left"
 	    }).on('changeDate', function(ev){
-	        $(".bootstrap-datetimepicker-widget").hide();
+	    	$(".bootstrap-datetimepicker-widget").hide();
 	        $('#business_stamp').trigger('keyup');
 	    });	
 		

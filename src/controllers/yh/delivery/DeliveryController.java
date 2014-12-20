@@ -85,7 +85,10 @@ public class DeliveryController extends Controller {
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
 					+ " left join party p2 on d.sp_id = p2.id "
-					+ " left join contact c2 on p2.contact_id = c2.id";
+					+ " left join contact c2 on p2.contact_id = c2.id "
+					+ " left join warehouse w on d.from_warehouse_id = w.id "
+					+ " where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -95,7 +98,10 @@ public class DeliveryController extends Controller {
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
 					+ " left join party p2 on d.sp_id = p2.id "
-					+ " left join contact c2 on p2.contact_id = c2.id order by d.create_stamp desc "
+					+ " left join warehouse w on d.from_warehouse_id = w.id "
+					+ " left join contact c2 on p2.contact_id = c2.id where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+					+ " order by d.create_stamp desc "
 					+ sLimit;
 			List<Record> transferOrders = Db.find(sql);
 
@@ -118,6 +124,7 @@ public class DeliveryController extends Controller {
 					+ " left join party p2 on d.sp_id = p2.id "
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
+					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
 					+ " where ifnull(d.order_no,'') like '%"
 					+ orderNo_filter
@@ -133,7 +140,8 @@ public class DeliveryController extends Controller {
 					+ serial_no
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
-					+ "' and '" + endTime_filter + "'" ;
+					+ "' and '" + endTime_filter + "' and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')" ;
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -146,6 +154,7 @@ public class DeliveryController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
 					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
+					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ " where ifnull(d.order_no,'') like '%"
 					+ orderNo_filter
 					+ "%' and ifnull(d.status,'') like '%"
@@ -160,7 +169,9 @@ public class DeliveryController extends Controller {
 					+ serial_no
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
-					+ "' and '" + endTime_filter + "' group by d.id " + sLimit;
+					+ "' and '" + endTime_filter + "' and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+				    + " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+				    + " group by d.id " + sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
 
@@ -208,12 +219,16 @@ public class DeliveryController extends Controller {
 				+ "left join contact c on p.contact_id = c.id "
 				+ "left join party p2 on d.sp_id = p2.id "
 				+ "left join contact c2 on p2.contact_id = c2.id "
+				+ " left join warehouse w on d.from_warehouse_id = w.id "
+				+ "where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 				+ "order by d.create_stamp desc" + sLimit;
 
 		List<Record> depart = null;
 		if (transferorderNo == null && deliveryNo == null && customer == null
 				&& sp == null && beginTime == null && endTime == null) {
-			sqlTotal ="select count(1) total from delivery_order";
+			sqlTotal ="select count(1) total from delivery_order d left join warehouse w on d.from_warehouse_id = w.id  where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			depart = Db.find(sql);
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
@@ -233,6 +248,7 @@ public class DeliveryController extends Controller {
 					+ "left join party p2 on d.sp_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
+					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ "where ifnull(d.order_no,'') like '%"
 					+ deliveryNo
 					+ "%' and ifnull(c.abbr,'') like '%"
@@ -244,7 +260,9 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"
-					+ endTime + "') as delivery_view";
+					+ endTime + "' "
+					+ " and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
 			String sql_seach = "select distinct d.*,"
 					+ "c.abbr as customer,"
 					+ "c2.company_name as c2,"
@@ -256,6 +274,7 @@ public class DeliveryController extends Controller {
 					+ "left join party p2 on d.sp_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join delivery_order_item dt2 on dt2.delivery_id = d.id "
+					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ "where ifnull(d.order_no,'') like '%"
 					+ deliveryNo
 					+ "%' and ifnull(c.abbr,'') like '%"
@@ -267,7 +286,8 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"
-					+ endTime + "' " + sLimit;
+					+ endTime + "'  and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')" + sLimit;
 			depart = Db.find(sql_seach);
 		}
 		Record rec = Db.findFirst(sqlTotal);
@@ -664,7 +684,8 @@ public class DeliveryController extends Controller {
 					+ "left join party p2 on t1.notify_party_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join contact c on p.contact_id = c.id "
-					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE) and t1.delivery_id is null";
+					+ "left join office o on o.id = t2 .office_id "
+					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE) and t1.delivery_id is null  ";
 		
 		String sql="";
 		if (deliveryOrderNo == null && customerName == null
@@ -676,6 +697,7 @@ public class DeliveryController extends Controller {
 					+ "left join party p2 on t1.notify_party_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join contact c on p.contact_id = c.id "
+					+ "left join office o on o.id = t2 .office_id "
 					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) and t1.delivery_id is null order by t1.id desc "
 					+ sLimit;
 			
@@ -687,7 +709,8 @@ public class DeliveryController extends Controller {
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join party p2 on t1.notify_party_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
-					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) and t1.delivery_id is null ";
+					+ "left join office o on o.id = t2 .office_id "
+					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) and t1.delivery_id is null  ";
 			if(code!=""&&code!=null){
 				sqlTotal =sqlTotal+" and serial_no like '%"+code+"%'";
 				sql =sql +" and serial_no like '%"+code+"%'";
@@ -1264,9 +1287,9 @@ public class DeliveryController extends Controller {
     	String inputStr = getPara("rdc");
     	String sql ="";
     	if(inputStr!=null){
-    		sql = "select * from office where  office_name like '%"+inputStr+"%'";
+    		sql = "select * from office where  office_name like '%"+inputStr+"%' and id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
     	}else{
-    		sql= "select * from office ";
+    		sql= "select * from office where id in in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
     	}
         List<Office> office = Office.dao.find(sql);
         renderJson(office);
