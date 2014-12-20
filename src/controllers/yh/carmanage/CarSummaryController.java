@@ -81,7 +81,8 @@ public class CarSummaryController extends Controller {
                     + " where dor.status!='取消' and dor.car_summary_type = 'untreated' and combine_type = '"
 	                + DepartOrder.COMBINE_TYPE_PICKUP + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 	                + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-	                + " and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id order by dor.car_no,dor.create_stamp desc " + sLimit;
+	                + " and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' "
+	                + " group by dor.id,dor.car_no order by dor.create_stamp ";
 
 	        // 获取当前页的数据
 	        sql = "select dor.*,"
@@ -103,7 +104,8 @@ public class CarSummaryController extends Controller {
                     + " where dor.status!='取消' and dor.car_summary_type = 'untreated' and combine_type = '"
 	                + DepartOrder.COMBINE_TYPE_PICKUP + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 	                + " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-	                + " and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' group by dor.id order by dor.car_no,dor.create_stamp desc " + sLimit;
+	                + " and (dor.status = '已入货场' or dor.status = '已入库' ) and dor.pickup_mode = 'own' "
+	                + " group by dor.id,dor.car_no order by dor.create_stamp desc " + sLimit;
 	        
 		}else{
 			
@@ -122,8 +124,9 @@ public class CarSummaryController extends Controller {
 					+ " and ifnull(dor.car_no, '') like '%"+car_no+"%'"
 					+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'"
 					+ " and ifnull(dtf.transfer_order_no, '') like '%"+transferOrderNo+"%'"
-					+ "  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+					+ " group by dor.id,dor.car_no order by dor.create_stamp";
 
 	        // 获取当前页的数据
 	        sql = "select dor.*,"
@@ -149,9 +152,9 @@ public class CarSummaryController extends Controller {
 					+ " and ifnull(dor.car_no, '') like '%"+car_no+"%'"
 					+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'"
 					+ " and ifnull(dtf.transfer_order_no, '') like '%"+transferOrderNo+"%'"
-                    + "  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + "order by dor.car_no,dor.create_stamp desc " + sLimit;
+                    + " group by dor.id,dor.car_no order by dor.create_stamp desc " + sLimit;
 		}
 		//Record rec = Db.findFirst(sqlTotal);
         //logger.debug("total records:" + rec.getLong("total"));
@@ -196,7 +199,8 @@ public class CarSummaryController extends Controller {
 					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
 					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
 					+ " left join transfer_order tor on tor.id = dt.order_id where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+					+ " group by cso.id";
 			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
 					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
@@ -227,7 +231,7 @@ public class CarSummaryController extends Controller {
 					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
 					+ " left join transfer_order tor on tor.id = dt.order_id where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-					+ " order by cso.create_data desc " + sLimit;
+					+ " group by cso.id order by cso.create_data desc " + sLimit;
 	        
 		}else{
 			
@@ -240,7 +244,8 @@ public class CarSummaryController extends Controller {
 					+ " and ifnull(cso.car_no, '') like '%"+car_no+"%'"
 					+ " and ifnull(cso.main_driver_name, '') like '%"+driver+"%'"
 					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+					+ " group by cso.id";
 			
 			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
@@ -278,7 +283,7 @@ public class CarSummaryController extends Controller {
 					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					//+ " and ifnull(dor.start_data, '') like '%"+transferOrderNo+"%'"
-					+ " order by cso.create_data desc " + sLimit;
+					+ " group by cso.id order by cso.create_data desc " + sLimit;
 		}
 		Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
