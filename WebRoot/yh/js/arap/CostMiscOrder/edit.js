@@ -246,7 +246,6 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/costMiscOrder/costCheckorderListById",
         "aoColumns": [   
-            {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
         			return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
@@ -268,20 +267,21 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":null},
+            {"mDataProp":null},
             {"mDataProp":"CNAME"},
             {"mDataProp":null},
             {"mDataProp":null},
+            {"mDataProp":"TOTAL_AMOUNT"},
+            {"mDataProp":null},
+            {"mDataProp":"DEBIT_AMOUNT"},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
+            {"mDataProp":"COST_AMOUNT"},
             {"mDataProp":"REMARK"},
-            {"mDataProp":"CREATOR_NAME"},        	
-            {"mDataProp":"CREATE_STAMP"}                        
+            {"mDataProp":null},        	
+            {"mDataProp":"CREATE_STAMP"}                       
         ]      
     });	
 

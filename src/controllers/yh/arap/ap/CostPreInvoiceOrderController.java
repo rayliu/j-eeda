@@ -3,7 +3,6 @@ package controllers.yh.arap.ap;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,12 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import models.Account;
-import models.ArapChargeInvoiceApplication;
 import models.ArapCostInvoiceApplication;
 import models.ArapCostInvoiceItemInvoiceNo;
 import models.ArapCostOrder;
 import models.ArapCostOrderInvoiceNo;
-import models.DepartOrder;
 import models.Party;
 import models.UserLogin;
 import models.yh.profile.Contact;
@@ -95,39 +92,31 @@ public class CostPreInvoiceOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
-		String[] idArray = ids.split(",");
-		logger.debug(String.valueOf(idArray.length));
-
 		setAttr("costCheckOrderIds", ids);
-		/*String beginTime = getPara("beginTime");
-		if (beginTime != null && !"".equals(beginTime)) {
-			setAttr("beginTime", beginTime);
+		Double totalAmount = 0.0;
+		if(ids != null && !"".equals(ids)){
+			String[] idArray = ids.split(",");
+			ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(idArray[0]);
+			Long spId = arapCostOrder.getLong("payee_id");
+			if (!"".equals(spId) && spId != null) {
+				Party party = Party.dao.findById(spId);
+				setAttr("party", party);
+				Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+				setAttr("customer", contact);
+			}
+			for(int i=0;i<idArray.length;i++){
+				arapCostOrder = ArapCostOrder.dao.findById(idArray[i]);
+				totalAmount = totalAmount + arapCostOrder.getDouble("cost_amount");
+			}
 		}
-		String endTime = getPara("endTime");
-		if (endTime != null && !"".equals(endTime)) {
-			setAttr("endTime", endTime);
-		}
-		String customerId = getPara("customerId");
-		if (!"".equals(customerId) && customerId != null) {
-			Party party = Party.dao.findById(customerId);
-			setAttr("party", party);
-			Contact contact = Contact.dao.findById(party.get("contact_id")
-					.toString());
-			setAttr("customer", contact);
-			setAttr("type", "CUSTOMER");
-			setAttr("classify", "");
-		}*/
 
-		String order_no = null;
 		setAttr("saveOK", false);
+		setAttr("totalAmount", totalAmount);
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
 		setAttr("create_by", users.get(0).get("id"));
-
-		String sql = "select * from arap_charge_invoice_application_order order by id desc limit 0,1";
-		setAttr("order_no", OrderNoUtil.getOrderNo(sql, "YFSQ"));
-		
+	
 		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
 		setAttr("userLogin", userLogin);
 
@@ -141,10 +130,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		String paymentMethod = getPara("paymentMethod");
 		if (!"".equals(costPreInvoiceOrderId) && costPreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findById(costPreInvoiceOrderId);
-			arapAuditInvoiceApplication.set("order_no", getPara("order_no"));
-			// arapAuditOrder.set("order_type", );
 			arapAuditInvoiceApplication.set("status", "new");
-			//arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
@@ -161,13 +147,17 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.update();
 		} else {
 			arapAuditInvoiceApplication = new ArapCostInvoiceApplication();
-			arapAuditInvoiceApplication.set("order_no", getPara("order_no"));
+			String sql = "select * from arap_cost_invoice_application_order order by id desc limit 0,1";
+			arapAuditInvoiceApplication.set("order_no", OrderNoUtil.getOrderNo(sql, "YFSQ"));
 			arapAuditInvoiceApplication.set("status", "新建");
-			//arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
+			arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
 			arapAuditInvoiceApplication.set("payment_method", getPara("paymentMethod"));
+			if(getPara("total_amount") != null && !"".equals(getPara("total_amount"))){
+				arapAuditInvoiceApplication.set("total_amount", getPara("total_amount"));				
+			}
 			if("transfers".equals(paymentMethod)){
 				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
 					arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
@@ -182,6 +172,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			for (int i = 0; i < costCheckOrderIdsArr.length; i++) {
 				ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findById(costCheckOrderIdsArr[i]);
 				arapAuditOrder.set("application_order_id", arapAuditInvoiceApplication.get("id"));
+				arapAuditOrder.set("status", "付款申请中");
 				arapAuditOrder.update();
 			}
 		}
@@ -364,6 +355,37 @@ public class CostPreInvoiceOrderController extends Controller {
         BillingOrderListMap.put("aaData", BillingOrders);
 
         renderJson(BillingOrderListMap);
+    }
+    
+    public void costCheckOrderListById(){
+    	String costCheckOrderIds = getPara("costCheckOrderIds");
+    	if(costCheckOrderIds == null || "".equals(costCheckOrderIds)){
+    		costCheckOrderIds = "-1";
+    	}
+    	String sLimit = "";
+    	String pageIndex = getPara("sEcho");
+    	if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+    		sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+    	}
+    	
+    	String sqlTotal = "select count(1) total from arap_cost_order where id in("+costCheckOrderIds+")";
+    	Record rec = Db.findFirst(sqlTotal);
+    	logger.debug("total records:" + rec.getLong("total"));
+    	
+    	String sql = "select aco.*,(select group_concat(acai.invoice_no) from arap_cost_order aaia"
+    			+ " left join arap_cost_order_invoice_no acai on acai.cost_order_id = aaia.id where aaia.id = aco.id) invoice_no from arap_cost_order aco where aco.id in("+costCheckOrderIds+") order by aco.create_stamp desc " + sLimit;
+    	
+    	logger.debug("sql:" + sql);
+    	List<Record> BillingOrders = Db.find(sql);
+    	
+    	Map BillingOrderListMap = new HashMap();
+    	BillingOrderListMap.put("sEcho", pageIndex);
+    	BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+    	BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+    	
+    	BillingOrderListMap.put("aaData", BillingOrders);
+    	
+    	renderJson(BillingOrderListMap);
     }
 
 	public void searchAllAccount(){

@@ -18,7 +18,6 @@ $(document).ready(function() {
                   return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
                 }
             }, 
-            {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
         			return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
@@ -41,16 +40,17 @@ $(document).ready(function() {
             },
             {"mDataProp":null},
             {"mDataProp":null},
+            {"mDataProp":"CNAME"},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":"TOTAL_AMOUNT"},
+            {"mDataProp":null},
+            {"mDataProp":"DEBIT_AMOUNT"},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
+            {"mDataProp":"COST_AMOUNT"},
             {"mDataProp":"REMARK"},
             {"mDataProp":null},        	
             {"mDataProp":"CREATE_STAMP"}                        
@@ -69,7 +69,6 @@ $(document).ready(function() {
     	"sAjaxSource": "/costPreInvoiceOrder/costCheckOrderList2",
     	"aoColumns": [ 
 	          {"mDataProp": null},  
-	          {"mDataProp":null, "bVisible": false},
 	          {"mDataProp":null},
 	          {"mDataProp":null, "sWidth":"120px"},
 			  {"mDataProp":null, "sWidth":"200px"},

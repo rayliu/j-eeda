@@ -10,6 +10,7 @@ import java.util.Map;
 import models.ArapCostItem;
 import models.ArapCostOrder;
 import models.DepartOrder;
+import models.InsuranceOrder;
 import models.Party;
 import models.UserLogin;
 import models.yh.arap.ArapMiscCostOrder;
@@ -176,7 +177,10 @@ public class CostCheckOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no  from arap_cost_order aco left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id group by aco.id";
+        String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no,c.abbr cname from arap_cost_order aco "
+        		+ " left join party p on p.id = aco.payee_id"
+        		+ " left join contact c on c.id = p.contact_id"
+        		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id group by aco.id order by aco.create_stamp desc "+sLimit;
 
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
@@ -216,15 +220,6 @@ public class CostCheckOrderController extends Controller {
             	arapAuditOrder.set("cost_amount", Double.parseDouble(total_amount) - Double.parseDouble(debit_amount));
             }
 	    	arapAuditOrder.update();
-	    	
-	    	/*List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find("select * from arap_audit_item where audit_order_id = ?", arapAuditOrder.get("id"));
-	    	for(ArapChargeItem arapAuditItem : arapAuditItems){
-		    	//arapAuditItem.set("ref_order_type", );
-		    	//arapAuditItem.set("item_status", "");
-		    	arapAuditItem.set("create_by", getPara("create_by"));
-		    	arapAuditItem.set("create_stamp", new Date());
-		    	arapAuditItem.update();
-	    	}*/
     	}else{
 	    	arapAuditOrder = new ArapCostOrder();
 	    	arapAuditOrder.set("order_no", getPara("order_no"));
@@ -249,17 +244,36 @@ public class CostCheckOrderController extends Controller {
 	    	String orderIds = getPara("orderIds");
 	    	String orderNos = getPara("orderNos");
 	    	String[] orderIdsArr = orderIds.split(",");
-	    	String[] orderNosArr = orderNos.split(",");
+	    	String[] orderNoArr = orderNos.split(",");
 	    	for(int i=0;i<orderIdsArr.length;i++){
 		    	ArapCostItem arapAuditItem = new ArapCostItem();
 		    	//arapAuditItem.set("ref_order_type", );
 		    	arapAuditItem.set("ref_order_id", orderIdsArr[i]);
-		    	arapAuditItem.set("ref_order_no", orderNosArr[i]);
+		    	arapAuditItem.set("ref_order_no", orderNoArr[i]);
 		    	arapAuditItem.set("cost_order_id", arapAuditOrder.get("id"));
 		    	//arapAuditItem.set("item_status", "");
 		    	arapAuditItem.set("create_by", getPara("create_by"));
 		    	arapAuditItem.set("create_stamp", new Date());
 		    	arapAuditItem.save();
+	    	}
+	    	for(int i=0;i<orderIdsArr.length;i++){
+	            if("提货".equals(orderNoArr[i])){
+	            	DepartOrder departOrder = DepartOrder.dao.findById(orderIdsArr[i]);
+	            	departOrder.set("audit_status", "对账中");
+	            	departOrder.update();
+	            }else if("零担".equals(orderNoArr[i])){
+	            	DepartOrder departOrder = DepartOrder.dao.findById(orderIdsArr[i]);
+	            	departOrder.set("audit_status", "对账中");
+	            	departOrder.update();
+	            }else if("配送".equals(orderNoArr[i])){
+	            	DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(orderIdsArr[i]);
+	            	deliveryOrder.set("audit_status", "对账中");
+	            	deliveryOrder.update();
+	            }else{
+	            	InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(orderIdsArr[i]);
+	            	insuranceOrder.set("audit_status", "对账中");
+	            	insuranceOrder.update();
+	            }
 	    	}
     	}
         renderJson(arapAuditOrder);;

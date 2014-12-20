@@ -177,29 +177,35 @@ $(document).ready(function() {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
-        "sAjaxSource": "/costCheckOrder/list",
+        "sAjaxSource": "/costPreInvoiceOrder/costCheckOrderListById",
         "aoColumns": [     
           { "mDataProp": "INVOICE_NO",
           	"fnRender": function(obj) {
-                  var str="";
-                  if(obj.aData.INVOICE_NO!='' && obj.aData.INVOICE_NO != null){
-                  	$("#itemInvoiceNoList").children().each(function(){
-                  		if(obj.aData.INVOICE_NO.indexOf($(this).text()) > -1 && $(this).text() != ''){
-                  			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
-                  		}else{
-                  			if($(this).text != null){
-                  				str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-                  			}
-                  		}
-                  	});
+          		  var str="";
+          		  if(obj.aData.INVOICE_NO != null && obj.aData.INVOICE_NO != ''){
+          			  str="<option value='"+obj.aData.INVOICE_NO+"' selected = 'selected'>"+obj.aData.INVOICE_NO+"</option>";
+          		  }else{
+          			  str="<option value='"+obj.aData.INVOICE_NO+"'>"+obj.aData.INVOICE_NO+"</option>";          			  
+          		  }
+                  
+/*                  if(obj.aData.INVOICE_NO!='' && obj.aData.INVOICE_NO != null){
+                	  $("#itemInvoiceNoList").children().each(function(){
+                		  if(obj.aData.INVOICE_NO.indexOf($(this).text()) > -1 && $(this).text() != ''){
+                			  str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
+                		  }else{
+                			  if($(this).text != null){
+                				  str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+                			  }
+                		  }
+                	  });
                   }else{
-                  	$("#itemInvoiceNoList").children().each(function(){
-                  		if($(this).text != null){
-              				str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-              			}
-                  	});
+                	  $("#itemInvoiceNoList").children().each(function(){
+                		  if($(this).text != null){
+                			  str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+                		  }
+                	  });
                   }
-                  return "<select name='invoice_no' multiple=''>"+str+"</select>";
+*/                  return "<select name='invoice_no' multiple=''>"+str+"</select>";
           	   }
 	        },  
             {"mDataProp":"ORDER_NO",
@@ -262,15 +268,16 @@ $(document).ready(function() {
 				}
 				itemInvoiceNoList.append(option);	
 			    var costCheckOrderIds = $("#costCheckOrderIds").val();	
-				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
+				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderListById?costCheckOrderIds="+costCheckOrderIds;   
 				costPreInvoiceOrderTable.fnDraw();
 			}
     	},'json');
 			
 	    invoiceItemTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
 	    invoiceItemTable.fnDraw();		
+	    
 	    var costCheckOrderIds = $("#costCheckOrderIds").val();	
-		costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;    
+		costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderListById?costCheckOrderIds="+costCheckOrderIds;    
 		costPreInvoiceOrderTable.fnDraw();
 	});	
 
