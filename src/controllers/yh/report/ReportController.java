@@ -29,7 +29,7 @@ public class ReportController extends Controller {
          Date date = new Date();
          SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss");
          
-    	 if(name.equals("checkOrder2.jasper")){
+    	 if(name.equals("checkOrder.jasper")){
     		 outFileName +="供应商对账单_"+format.format(date)+".pdf";
     	 }else{
          	outFileName +="付款申请单_"+format.format(date)+".pdf";
@@ -49,7 +49,7 @@ public class ReportController extends Controller {
     }
     public void printCheckOrder(){
     	String order_no = getPara("order_no");
-    	String file = print(order_no,"checkOrder2.jasper");
+    	String file = print(order_no,"checkOrder.jasper");
     	renderText(file.substring(7));
     }
    public void printPayMent(){
