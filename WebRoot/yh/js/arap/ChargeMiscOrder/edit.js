@@ -203,7 +203,7 @@ $(document).ready(function() {
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		var chargeCheckOrderIds = $("#chargeCheckOrderIds").val()
+		var chargeCheckOrderIds = $("#chargeCheckOrderIds").val();
 		$.post('/chargeMiscOrder/updateChargeMiscOrderItem', {paymentId:paymentId, name:name, value:value, chargeMiscOrderId: chargeMiscOrderId, chargeCheckOrderIds: chargeCheckOrderIds}, function(data){
 			if(data.ID > 0){
 				$("#totalAmountSpan")[0].innerHTML = data.TOTAL_AMOUNT;

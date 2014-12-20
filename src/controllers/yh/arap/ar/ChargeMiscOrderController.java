@@ -96,7 +96,7 @@ public class ChargeMiscOrderController extends Controller {
 	
 			setAttr("chargeCheckOrderIds", ids);
 			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
-			String customerId = arapChargeOrder.get("payee_id");
+			Long customerId = arapChargeOrder.get("payee_id");
 			if (!"".equals(customerId) && customerId != null) {
 				Party party = Party.dao.findById(customerId);
 				setAttr("party", party);
@@ -148,6 +148,9 @@ public class ChargeMiscOrderController extends Controller {
 			arapMiscChargeOrder.set("create_by", getPara("create_by"));
 			arapMiscChargeOrder.set("create_stamp", new Date());
 			arapMiscChargeOrder.set("remark", getPara("remark"));
+			if(getPara("sp_id") != null && !"".equals(getPara("sp_id"))){
+				arapMiscChargeOrder.set("payee_id", getPara("sp_id"));
+			}
 			String sql = "select * from arap_misc_charge_order order by id desc limit 0,1";
 			arapMiscChargeOrder.set("order_no", OrderNoUtil.getOrderNo(sql,"SGSK"));
 			if(getPara("chargeCheckOrderIds") != null && !"".equals(getPara("chargeCheckOrderIds"))){

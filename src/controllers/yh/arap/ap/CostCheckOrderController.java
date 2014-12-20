@@ -12,6 +12,7 @@ import models.ArapCostOrder;
 import models.DepartOrder;
 import models.Party;
 import models.UserLogin;
+import models.yh.arap.ArapMiscCostOrder;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
@@ -193,6 +194,8 @@ public class CostCheckOrderController extends Controller {
     public void save(){
     	ArapCostOrder arapAuditOrder = null;
     	String costCheckOrderId = getPara("costCheckOrderId");
+		String total_amount = getPara("total_amount");
+		String debit_amount = getPara("debit_amount")==""?"0":getPara("debit_amount");
     	if(!"".equals(costCheckOrderId) && costCheckOrderId != null){
     		arapAuditOrder = ArapCostOrder.dao.findById(costCheckOrderId);
 	    	arapAuditOrder.set("order_no", getPara("order_no"));
@@ -202,6 +205,16 @@ public class CostCheckOrderController extends Controller {
 	    	arapAuditOrder.set("create_by", getPara("create_by"));
 	    	arapAuditOrder.set("create_stamp", new Date());
 	    	arapAuditOrder.set("remark", getPara("remark"));
+			if(getParaToDate("begin_time") != null){
+				arapAuditOrder.set("begin_time", getPara("begin_time")); 
+			}
+            if(getParaToDate("end_time") != null){
+            	arapAuditOrder.set("end_time", getPara("end_time")); 
+            }
+            arapAuditOrder.set("total_amount", total_amount);
+            if(total_amount != null && !"".equals(total_amount) && debit_amount != null && !"".equals(debit_amount)){
+            	arapAuditOrder.set("cost_amount", Double.parseDouble(total_amount) - Double.parseDouble(debit_amount));
+            }
 	    	arapAuditOrder.update();
 	    	
 	    	/*List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find("select * from arap_audit_item where audit_order_id = ?", arapAuditOrder.get("id"));
@@ -217,12 +230,20 @@ public class CostCheckOrderController extends Controller {
 	    	arapAuditOrder.set("order_no", getPara("order_no"));
 	    	//arapAuditOrder.set("order_type", );
 	    	arapAuditOrder.set("status", "new");
-	    	//arapAuditOrder.set("payee_id", getPara("customer_id"));
+	    	arapAuditOrder.set("payee_id", getPara("sp_id"));
 	    	arapAuditOrder.set("create_by", getPara("create_by"));
 	    	arapAuditOrder.set("create_stamp", new Date());
-	    	//arapAuditOrder.set("begin_time", getPara("beginTime"));
-	    	//arapAuditOrder.set("end_time", getPara("endTime"));
 	    	arapAuditOrder.set("remark", getPara("remark"));
+	    	if(getParaToDate("begin_time") != null){
+				arapAuditOrder.set("begin_time", getPara("begin_time")); 
+			}
+            if(getParaToDate("end_time") != null){
+            	arapAuditOrder.set("end_time", getPara("end_time")); 
+            }
+            arapAuditOrder.set("total_amount", total_amount);
+            if(total_amount != null && !"".equals(total_amount) && debit_amount != null && !"".equals(debit_amount)){
+            	arapAuditOrder.set("cost_amount", Double.parseDouble(total_amount) - Double.parseDouble(debit_amount));
+            }
 	    	arapAuditOrder.save();
 	    	
 	    	String orderIds = getPara("orderIds");
@@ -247,13 +268,13 @@ public class CostCheckOrderController extends Controller {
 @RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_UPDATE})
     public void edit(){
     	ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findById(getPara("id"));
-    	/*String customerId = arapAuditOrder.get("payee_id");
-    	if(!"".equals(customerId) && customerId != null){
-	    	Party party = Party.dao.findById(customerId);
+    	Long spId = arapAuditOrder.get("payee_id");
+    	if(!"".equals(spId) && spId != null){
+	    	Party party = Party.dao.findById(spId);
 	        setAttr("party", party);	        
 	        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-	        setAttr("customer", contact);
-    	} */   	
+	        setAttr("sp", contact);
+    	}    	
     	UserLogin userLogin = UserLogin.dao.findById(arapAuditOrder.get("create_by"));
     	setAttr("userLogin", userLogin);
     	setAttr("arapAuditOrder", arapAuditOrder);
@@ -712,5 +733,98 @@ public class CostCheckOrderController extends Controller {
 		BillingOrderListMap.put("aaData", BillingOrders);
 		
 		renderJson(BillingOrderListMap);
+	}
+
+	public void checkCostMiscList(){
+		String costCheckOrderId = getPara("costCheckOrderId");
+		if(costCheckOrderId == null || "".equals(costCheckOrderId)){
+			costCheckOrderId = "-1";
+		}
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+		Map orderMap = new HashMap();
+		// 获取总条数
+		String totalWhere = "";
+		String sql = "select count(amco.id) total from arap_misc_cost_order amco"
+					+ " left join arap_cost_order aco on amco.cost_order_id = aco.id"
+					+ " left join arap_misc_cost_order_item amcoi on amcoi.misc_order_id = amco.id where aco.id = "+costCheckOrderId;
+		Record rec = Db.findFirst(sql + totalWhere);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		// 获取当前页的数据
+		List<Record> orders = Db
+				.find("select amcoi.*,amco.order_no misc_order_no,c.abbr cname,fi.name name from arap_misc_cost_order amco"
+					+ " left join arap_cost_order aco on aco.id = amco.cost_order_id "
+					+ " left join arap_misc_cost_order_item amcoi on amcoi.misc_order_id = amco.id "
+					+ " left join party p on p.id = aco.payee_id left join contact c on c.id = p.contact_id "
+					+ " left join fin_item fi on amcoi.fin_item_id = fi.id where aco.id =  "+ costCheckOrderId +" " + sLimit);
+
+		orderMap.put("sEcho", pageIndex);
+		orderMap.put("iTotalRecords", rec.getLong("total"));
+		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		orderMap.put("aaData", orders);
+
+		orderMap.put("sEcho", pageIndex);
+		orderMap.put("iTotalRecords", rec.getLong("total"));
+		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		orderMap.put("aaData", orders);
+
+		renderJson(orderMap);
+	}
+
+	public void externalMiscOrderList(){
+		String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+
+        String sqlTotal = "select count(1) total from arap_misc_cost_order where ifnull(cost_order_id, 0) = 0";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String sql = "select amco.*,aco.order_no cost_order_no from arap_misc_cost_order amco"
+					+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
+					+ " where ifnull(cost_order_id, 0) = 0 order by amco.create_stamp desc " + sLimit;
+
+        logger.debug("sql:" + sql);
+        List<Record> BillingOrders = Db.find(sql);
+
+        Map BillingOrderListMap = new HashMap();
+        BillingOrderListMap.put("sEcho", pageIndex);
+        BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        BillingOrderListMap.put("aaData", BillingOrders);
+
+        renderJson(BillingOrderListMap);
+	}
+	
+	public void updateCostMiscOrder(){
+		String micsOrderIds = getPara("micsOrderIds");
+		String costCheckOrderId = getPara("costCheckOrderId");
+		ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(costCheckOrderId);
+		if(micsOrderIds != null && !"".equals(micsOrderIds)){
+			String[] micsOrderIdArr = micsOrderIds.split(",");
+			for(int i=0;i<micsOrderIdArr.length;i++){
+				ArapMiscCostOrder arapMisccostOrder = ArapMiscCostOrder.dao.findById(micsOrderIdArr[i]);
+				arapMisccostOrder.set("cost_order_id", costCheckOrderId);
+				arapMisccostOrder.update();
+			}
+			
+			Record record = Db.findFirst("select sum(amount) sum_amount from arap_misc_cost_order mco"
+								+ " left join arap_misc_cost_order_item mcoi on mcoi.misc_order_id = mco.id where mco.cost_order_id = ?", costCheckOrderId);
+			Double total_amount = arapCostOrder.getDouble("total_amount");
+			Double debit_amount = record.getDouble("sum_amount");
+			arapCostOrder.set("debit_amount", debit_amount);
+			arapCostOrder.set("cost_amount", total_amount - debit_amount);
+			arapCostOrder.update();
+		}
+        renderJson(arapCostOrder);
 	}
 }

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import models.Account;
-import models.ArapChargeInvoiceApplication;
 import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
 import models.Party;
@@ -94,9 +93,9 @@ public class CostMiscOrderController extends Controller {
 			String[] idArray = ids.split(",");
 			logger.debug(String.valueOf(idArray.length));
 	
-			setAttr("CostCheckOrderIds", ids); 
+			setAttr("costCheckOrderIds", ids); 
 			ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(idArray[0]);
-			String spId = arapCostOrder.get("payee_id");
+			Long spId = arapCostOrder.get("payee_id");
 			if (!"".equals(spId) && spId != null) {
 				Party party = Party.dao.findById(spId);
 				setAttr("party", party);
@@ -146,6 +145,9 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("create_by", getPara("create_by"));
 			arapMiscCostOrder.set("create_stamp", new Date());
 			arapMiscCostOrder.set("remark", getPara("remark"));
+			if(getPara("sp_id") != null && !"".equals(getPara("sp_id"))){
+				arapMiscCostOrder.set("payee_id", getPara("sp_id"));
+			}
 			String sql = "select * from arap_misc_cost_order order by id desc limit 0,1";
 			arapMiscCostOrder.set("order_no", OrderNoUtil.getOrderNo(sql,"SGFK"));
 			if(getPara("costCheckOrderIds") != null && !"".equals(getPara("costCheckOrderIds"))){
@@ -179,31 +181,22 @@ public class CostMiscOrderController extends Controller {
 		}
         renderJson("{\"success\":true}");
 	}
-	
-	// 审批
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CONFIRMATION})
-	public void approvalCostPreInvoiceOrder(){
-		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
-		if(costPreInvoiceOrderId != null && !"".equals(costPreInvoiceOrderId)){
-			ArapChargeInvoiceApplication arapAuditOrder = ArapChargeInvoiceApplication.dao.findById(costPreInvoiceOrderId);
-			arapAuditOrder.set("status", "已审批");
-            String name = (String) currentUser.getPrincipal();
-			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-			arapAuditOrder.set("approver_by", users.get(0).get("id"));
-			arapAuditOrder.set("approval_stamp", new Date());
-			arapAuditOrder.update();
-		}
-		renderJson("{\"success\":true}");
-	}
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_UPDATE})
 	public void edit() {
 		String id = getPara("id");
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
-		receivableItemList = Db.find("select * from fin_item where type='应收'");
+		receivableItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("receivableItemList", receivableItemList);
 		
 		ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
+		Long spId = arapMiscCostOrder.get("payee_id");
+		if (!"".equals(spId) && spId != null) {
+			Party party = Party.dao.findById(spId);
+			setAttr("party", party);
+			Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+			setAttr("sp", contact); 
+		}
 		UserLogin userLogin = UserLogin.dao.findById(arapMiscCostOrder.get("create_by"));
 		setAttr("userLogin", userLogin);
 		setAttr("arapMiscCostOrder", arapMiscCostOrder);
@@ -266,24 +259,42 @@ public class CostMiscOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 		arapMiscCostOrderItem.set("creator", users.get(0).get("id"));
 		arapMiscCostOrderItem.set("create_date", new Date());
-		arapMiscCostOrderItem.set("misc_order_id", getPara("chargeMiscOrderId"));
+		arapMiscCostOrderItem.set("misc_order_id", getPara("costMiscOrderId"));
 		arapMiscCostOrderItem.save();
 		renderJson(arapMiscCostOrderItem);
 	}
 	
 	public void updateCostMiscOrderItem(){
 		String paymentId = getPara("paymentId");
+		String costMiscOrderId = getPara("costMiscOrderId");
+		String costCheckOrderIds = getPara("costCheckOrderIds");
 		String name = getPara("name");
 		String value = getPara("value");
 		if ("amount".equals(name) && "".equals(value)) {
 			value = "0";
 		}
 		if (paymentId != null && !"".equals(paymentId)) {
-			ArapMiscCostOrderItem arapMiscChargeOrderItem = ArapMiscCostOrderItem.dao.findById(paymentId);
-			arapMiscChargeOrderItem.set(name, value);
-			arapMiscChargeOrderItem.update();
+			ArapMiscCostOrderItem arapMiscCostOrderItem = ArapMiscCostOrderItem.dao.findById(paymentId);
+			arapMiscCostOrderItem.set(name, value);
+			arapMiscCostOrderItem.update();
 		}
-		renderJson("{\"success\":true}");
+		ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(costMiscOrderId);
+		Record record = Db.findFirst("select sum(amount) sum_amount from arap_misc_cost_order_item where misc_order_id = ?", costMiscOrderId);
+		arapMiscCostOrder.set("total_amount", record.get("sum_amount"));
+		arapMiscCostOrder.update();
+		
+		if(costCheckOrderIds != null && !"".equals(costCheckOrderIds)){
+			if("amount".equals(name) && value != null && !"".equals(value)){
+				ArapCostOrder arapChargeOrder = ArapCostOrder.dao.findById(costCheckOrderIds);
+				Double debit_amount = arapChargeOrder.getDouble("debit_amount");  
+				Double misc_total_amount = Double.parseDouble(value);
+				Double total_amount = arapChargeOrder.getDouble("total_amount");
+				arapChargeOrder.set("debit_amount", debit_amount + misc_total_amount);
+				arapChargeOrder.set("cost_amount", total_amount - (debit_amount + misc_total_amount));
+				arapChargeOrder.update();
+			}
+		}
+		renderJson(arapMiscCostOrder);
 	}
 	
 	public void finItemdel(){
@@ -303,7 +314,7 @@ public class CostMiscOrderController extends Controller {
 		if(costCheckOrderIds == null || "".equals(costCheckOrderIds)){
 			costCheckOrderIds = "-1";
 		}
-		String sqlTotal = "select count(1) total from arap_charge_order";
+		String sqlTotal = "select count(1) total from arap_cost_order";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 

@@ -33,7 +33,7 @@
                                     <div class="col-lg-6">
                                         <form role="form" id="costMiscOrderForm">
                                         	<input id="costMiscOrderId" type="hidden" name="costMiscOrderId" value="${arapMiscCostOrder.id!''}"/>
-                                        	<input id="customer_id" type="hidden" name="customer_id" value="${party.id!''}"/>
+                                        	<input id="sp_id" type="hidden" name="sp_id" value="${party.id!''}"/>
                                         	<input type="hidden" id="costCheckOrderIds" name="costCheckOrderIds" value="${costCheckOrderIds!''}${arapMiscCostOrder.cost_order_id!''}"/>
                                         	<input type="hidden" name="order_no" value="${order_no!''}${arapMiscCostOrder.order_no!''}"/>
                                         	<input type="hidden" name="status" value="${status!''}${arapMiscCostOrder.status!''}"/>
@@ -74,8 +74,8 @@
                                             <label class="radio-inline" id="company">${sp.company_name!''}</label>
                                         </div>
                                         <div class="form-group">
-                                            <label>应收总金额</label>
-                                            <label class="radio-inline" id=""></label>
+                                            <label>扣款金额</label>
+                                            <label class="radio-inline" id="totalAmountSpan">${arapMiscCostOrder.total_amount!''}</label>
                                         </div>
                                         <div class="form-group" id="paymentMethods">
                                             <label class="label-margin">付款方式</label>
@@ -176,12 +176,12 @@
 			                                    <thead>
 			                                        <tr>
 			                                            <th>对账单号</th>
-			                                            <th>客户</th>
+			                                            <th>供应商</th>
 			                                            <th>费用条目</th>
 			                                            <th>金额</th>
 			                                            <th>备注</th>
 			                                            <th>状态</th>
-			                                            <th></th>
+			                                            <!-- <th></th> -->
 			                                        </tr>
 			                                    </thead>
 			                                    <tbody>

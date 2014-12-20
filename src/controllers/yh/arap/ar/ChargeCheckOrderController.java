@@ -370,7 +370,7 @@ public class ChargeCheckOrderController extends Controller {
 	public void edit() throws ParseException {
 		String id = getPara("id");
 		ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(id);
-		String customerId = arapAuditOrder.get("payee_id");
+		Long customerId = arapAuditOrder.get("payee_id");
 		if (!"".equals(customerId) && customerId != null) {
 			Party party = Party.dao.findById(customerId);
 			setAttr("party", party);
@@ -599,7 +599,7 @@ public class ChargeCheckOrderController extends Controller {
 			}
 			
 			Record record = Db.findFirst("select sum(amount) sum_amount from arap_misc_charge_order mco"
-								+ " left join arap_misc_charge_order_item mcoi on mcoi.misc_order_id = mco.id where mco.id in("+micsOrderIds+")");
+								+ " left join arap_misc_charge_order_item mcoi on mcoi.misc_order_id = mco.id where mco.charge_order_id = ?", chargeCheckOrderId);
 			Double total_amount = arapChargeOrder.getDouble("total_amount");
 			Double debit_amount = record.getDouble("sum_amount");
 			arapChargeOrder.set("debit_amount", debit_amount);

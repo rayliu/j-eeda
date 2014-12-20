@@ -135,7 +135,7 @@ $(document).ready(function() {
 			        	 return "<input type='text' name='remark'>";
 			        }
 			}}, 
-			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},                    
+			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"}/*,                    
 			{
 				"mDataProp": null, 
                 "sWidth": "60px",  
@@ -146,7 +146,7 @@ $(document).ready(function() {
               		"删除"+
               		"</a>";
                 }
-			}                    
+			}   */                 
         ]      
     });
     
@@ -198,11 +198,14 @@ $(document).ready(function() {
 	//应收修改
 	$("#feeItemList-table").on('blur', 'input,select', function(e){
 		e.preventDefault();
+		var costMiscOrderId = $("#costMiscOrderId").val();
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$.post('/costMiscOrder/updateCostMiscOrderItem', {paymentId:paymentId, name:name, value:value}, function(data){
-			if(data.success){
+		var costCheckOrderIds = $("#costCheckOrderIds").val();
+		$.post('/costMiscOrder/updateCostMiscOrderItem', {paymentId:paymentId, name:name, value:value, costMiscOrderId: costMiscOrderId, costCheckOrderIds: costCheckOrderIds}, function(data){
+			if(data.ID > 0){
+				$("#totalAmountSpan")[0].innerHTML = data.TOTAL_AMOUNT;
 			}else{
 				alert("修改失败!");
 			}

@@ -107,4 +107,142 @@ $(document).ready(function() {
     	costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
     	costConfiremTable.fnDraw(); 
     });
+
+    var costMiscListTable = $('#costMiscList-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+          "oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "sAjaxSource": "/costCheckOrder/checkCostMiscList",
+        "aoColumns": [   
+            {"mDataProp":"MISC_ORDER_NO", "sWidth":"80px",
+                "fnRender": function(obj) {
+                    return "<a href='/costMiscOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.MISC_ORDER_NO+"</a>";
+                }},
+            {"mDataProp":"CNAME", "sWidth":"200px"},
+            {"mDataProp":"NAME", "sWidth":"200px"},
+            {"mDataProp":"AMOUNT", "sWidth":"100px"},
+            {"mDataProp":"REMARK", "sWidth":"200px"}                        
+        ]      
+    });
+    
+    $("#costMiscList").click(function(){
+    	costMiscListTable.fnSettings().sAjaxSource = "/costCheckOrder/checkCostMiscList?costCheckOrderId="+$("#costCheckOrderId").val();
+    	costMiscListTable.fnDraw();  
+    });
+
+    $('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#departure_time').trigger('keyup');
+    });	 
+    
+    $('#datetimepicker2').datetimepicker({  
+    	format: 'yyyy-MM-dd',  
+    	language: 'zh-CN', 
+    	autoclose: true,
+    	pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+    	$(".bootstrap-datetimepicker-widget").hide();
+    	$('#arrival_time').trigger('keyup');
+    });	
+    
+    var externalTab = $('#external-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+    	  "oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "sAjaxSource": "/costCheckOrder/externalMiscOrderList",
+        "aoColumns": [      
+	        { "mDataProp": null,
+	            "fnRender": function(obj) {
+	              return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	            }
+	        }, 
+            {"mDataProp":"ORDER_NO","sWidth": "80px",
+            	"fnRender": function(obj) {
+        			return "<a href='/costMiscOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        		}},
+            {"mDataProp":"TYPE","sWidth": "100px",
+            	"fnRender": function(obj) {
+                    if(obj.aData.TYPE=='ordinary_receivables'){
+                        return '普通收款';
+                    }else if(obj.aData.TYPE=='offset_payment'){
+                        return '抵销货款';
+                    }
+                    return obj.aData.TYPE;
+                }
+            },
+            {"mDataProp":"STATUS","sWidth": "100px",
+                "fnRender": function(obj) {
+                    if(obj.aData.STATUS=='new'){
+                        return '新建';
+                    }else if(obj.aData.STATUS=='checking'){
+                        return '已发送对帐';
+                    }else if(obj.aData.STATUS=='confirmed'){
+                        return '已审核';
+                    }else if(obj.aData.STATUS=='completed'){
+                        return '已结算';
+                    }else if(obj.aData.STATUS=='cancel'){
+                        return '取消';
+                    }
+                    return obj.aData.STATUS;
+                }
+            },
+            {"mDataProp":"CREATE_STAMP","sWidth": "150px"},
+            {"mDataProp":"COST_ORDER_NO","sWidth": "150px"},
+            {"mDataProp":"REMARK","sWidth": "150px"}                       
+        ]      
+    });	
+
+    $("#addExternalMiscOrderBtn").click(function(){
+    	externalTab.fnSettings().sAjaxSource = "/costCheckOrder/externalMiscOrderList";
+    	externalTab.fnDraw();  
+    });    
+
+    var ids = [];
+    // 未选中列表
+	$("#external-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == true){
+			ids.push($(this).val());
+			$("#micsOrderIds").val(ids);
+		}			
+	});
+	
+	// 已选中列表
+	$("#external-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == false){
+			if(ids.length != 0){
+				ids.splice($.inArray($(this).val(),ids),1);
+				$("#micsOrderIds").val(ids);
+			}
+		}			
+	});
+	
+	$("#addExternalFormBtn").click(function(){
+		var micsOrderIds = $("#micsOrderIds").val();
+		var costCheckOrderId = $("#costCheckOrderId").val();
+		$.post('/costCheckOrder/updateCostMiscOrder', {micsOrderIds: micsOrderIds, costCheckOrderId: costCheckOrderId}, function(data){
+			if(data.ID > 0){
+				$("#debitAmountSpan")[0].innerHTML = data.DEBIT_AMOUNT;
+				$("#debitAmount")[0].innerHTML = data.DEBIT_AMOUNT;
+				$("#costAmount")[0].innerHTML = data.COST_AMOUNT;
+				$("#hiddenDebitAmount").val(data.DEBIT_AMOUNT);
+				
+				$('#addExternalMiscOrder').modal('hide');
+		    	costMiscListTable.fnSettings().sAjaxSource = "/costCheckOrder/checkCostMiscList?costCheckOrderId="+$("#costCheckOrderId").val();
+		    	costMiscListTable.fnDraw();  
+			}
+		},'json');
+	});
 } );
