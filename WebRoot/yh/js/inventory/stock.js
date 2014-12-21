@@ -20,10 +20,7 @@ $(document).ready(function() {
 	            {"mDataProp":"TOTAL_QUANTITY", "sWidth":"40px"},
 	            {"mDataProp":"UNIT", "sWidth":"30px"},
 	            {"mDataProp":"WAREHOUSE_NAME", "sWidth":"120px"},
-	            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},
-	            {"mDataProp":"EXPIRE_DATE", "bVisible":false},
-	            {"mDataProp":"LOT_NO", "bVisible":false},
-	            {"mDataProp":"CATON_NO", "bVisible":false}
+	            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"}
 	           ]
 	} );
 	

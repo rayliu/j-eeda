@@ -120,9 +120,9 @@ public class InventoryController extends Controller {
     public void stocklist() {
         String customerId = getPara("customerId");
         String warehouseId = getPara("warehouseId");
-        String offeceId = getPara("offeceId");
+        String officeId = getPara("offeceId");
         logger.debug("customerId:"+customerId+",warehouseId:"+warehouseId);
-        if ((customerId == null && warehouseId == null && offeceId == null) || ( "".equals(customerId) && "".equals(warehouseId) && "".equals(offeceId))) {
+        if ((customerId == null && warehouseId == null && officeId == null) || ( "".equals(customerId) && "".equals(warehouseId) && "".equals(officeId))) {
             Map orderMap = new HashMap();
             orderMap.put("sEcho", 0);
             orderMap.put("iTotalRecords", 0);
@@ -134,42 +134,35 @@ public class InventoryController extends Controller {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+            sLimit = " limit " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        // 获取总条数
-        String totalWhere = "";
-        String sqlTotal = "select count(1) total from inventory_item i_t"
-        		+ " left join product p on  p.id =i_t.product_id " 
-        		+ " left join party p2 on i_t.party_id =p2.id "
-                + " left join contact c on p2.contact_id = c.id "
-		        + " left join warehouse w on w.id = i_t.warehouse_id"
-		        + " left join office o on o.id = w.office_id";
-        String sql = "select i_t.*,c.company_name,p.*, "
-        		+ " (select warehouse_name from warehouse where id = i_t.warehouse_id) warehouse_name,"
-        		+ " (select office_name from office o left join warehouse w on o.id = w.office_id where w.id = i_t.warehouse_id) office_name "
-        		+ " from inventory_item i_t "
-                + " left join product p on  p.id =i_t.product_id " 
-        		+ " left join party p2 on i_t.party_id =p2.id "
-                + " left join contact c on p2.contact_id = c.id "
-                + " left join warehouse w on w.id = i_t.warehouse_id"
-                + " left join office o on o.id = w.office_id "
-                + " where i_t.id != '' ";
+        
+        String sql = "select sum(total_quantity) total_quantity, company_name, item_name, item_no, unit, warehouse_name, office_name  from ("
+        		+ "select i_t.total_quantity, c.company_name, p.item_name, p.item_no, p.unit,  "
+        		+ "(select warehouse_name from warehouse where id = i_t.warehouse_id) warehouse_name, "
+        		+ "(select office_name from office o left join warehouse w on o.id = w.office_id where w.id = i_t.warehouse_id) office_name "
+        		+ " from inventory_item i_t  left join product p on  p.id =i_t.product_id  left join party p2 on i_t.party_id =p2.id  "
+        		+ "left join contact c on p2.contact_id = c.id  left join warehouse w on w.id = i_t.warehouse_id "
+        		+ "left join office o on o.id = w.office_id  where 1=1 ";
+        
+        if((customerId != null) && !"".equals(customerId)){
+        	sql = sql + " and p2.id =" + customerId ;
+        }
         
         if(warehouseId != null && !"".equals(warehouseId)){
-        	sqlTotal = sqlTotal + " and w.id =" + warehouseId;
         	sql = sql + " and w.id =" + warehouseId ;
         }
-        if((customerId != null) && !"".equals(customerId)){
-        	sqlTotal = sqlTotal +  " and p2.id =" + customerId;
-        	sql = sql + " and .p2.id =" + customerId ;
+        
+        if((officeId != null) && !"".equals(officeId)){
+        	sql = sql + " and o.id =" + officeId ;
         }
-        if((offeceId != null) && !"".equals(offeceId)){
-        	sqlTotal = sqlTotal +  " and o.id =" + offeceId;
-        	sql = sql + " and o.id =" + offeceId ;
-        }
-        sqlTotal = sqlTotal + " group by p.item_no";
-        sql = sql + " group by p.item_no " + sLimit;
-        Record rec = Db.findFirst(sqlTotal + totalWhere);
+        
+        String groupSql = ") group by company_name, item_name, item_no, unit, warehouse_name, office_name ";
+        
+        String sqlTotal = "select count(1) total from (" + sql + groupSql + ")";// 获取总条数
+        
+        sql = sql + groupSql + sLimit;
+        Record rec = Db.findFirst(sqlTotal);
         // 获取当前页的数据
         List<Record> orders = Db.find(sql);
         Map orderMap = new HashMap();
