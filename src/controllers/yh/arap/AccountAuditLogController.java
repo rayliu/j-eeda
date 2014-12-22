@@ -37,7 +37,7 @@ public class AccountAuditLogController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from arap_charge_invoice aci";
+        String sqlTotal = "select count(1) total from arap_account_audit_log aaal";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
@@ -56,5 +56,31 @@ public class AccountAuditLogController extends Controller {
         BillingOrderListMap.put("aaData", BillingOrders);
 
         renderJson(BillingOrderListMap);
+    }
+    
+    public void accountList() {
+    	String sLimit = "";
+    	String pageIndex = getPara("sEcho");
+    	if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+    		sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+    	}
+    	
+    	String sqlTotal = "select count(1) total from fin_account";
+    	Record rec = Db.findFirst(sqlTotal);
+    	logger.debug("total records:" + rec.getLong("total"));
+    	
+    	String sql = "select * from fin_account order by id desc " + sLimit;
+    	
+    	logger.debug("sql:" + sql);
+    	List<Record> BillingOrders = Db.find(sql);
+    	
+    	Map BillingOrderListMap = new HashMap();
+    	BillingOrderListMap.put("sEcho", pageIndex);
+    	BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+    	BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+    	
+    	BillingOrderListMap.put("aaData", BillingOrders);
+    	
+    	renderJson(BillingOrderListMap);
     }
 }
