@@ -157,9 +157,9 @@ public class InventoryController extends Controller {
         	sql = sql + " and o.id =" + officeId ;
         }
         
-        String groupSql = ") group by company_name, item_name, item_no, unit, warehouse_name, office_name ";
+        String groupSql = ") as A group by company_name, item_name, item_no, unit, warehouse_name, office_name ";
         
-        String sqlTotal = "select count(1) total from (" + sql + groupSql + ")";// 获取总条数
+        String sqlTotal = "select count(1) total from (" + sql + groupSql + ") as B";// 获取总条数
         
         sql = sql + groupSql + sLimit;
         Record rec = Db.findFirst(sqlTotal);
