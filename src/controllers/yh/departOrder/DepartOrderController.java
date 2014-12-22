@@ -105,7 +105,6 @@ public class DepartOrderController extends Controller {
         String sp = getPara("sp");
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
-       
         String office = getPara("office");
         String start = getPara("start");
         String destination = getPara("destination");
@@ -125,7 +124,7 @@ public class DepartOrderController extends Controller {
                     + " left join depart_transfer dtf on dtf.depart_id = deo.id"
 					+ " left join transfer_order tor on tor .id = dtf.order_id"
 					+ " left join user_login u on u.id = tor .create_by"
-					+ " left join office o on o.id = tor .office_id"
+					+ " left join office o on o.id = tor.office_id"
             		+ " where combine_type = '"
                     + DepartOrder.COMBINE_TYPE_DEPART + "'and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
@@ -141,11 +140,11 @@ public class DepartOrderController extends Controller {
 					+ " left join depart_transfer dtf on dtf.depart_id = deo.id"
 					+ " left join transfer_order tor on tor .id = dtf.order_id"
 					+ " left join user_login u on u.id = tor .create_by"
-					+ " left join office o on o.id = tor .office_id"
+					+ " left join office o on o.id = tor.office_id"
 					+ " where ifnull(deo.status, '') != ''"
 					+ " and combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
-					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') group by deo.id,o.office_name "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') group by deo.id,o.office_name "
 					+ " order by deo.create_stamp desc " + sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
