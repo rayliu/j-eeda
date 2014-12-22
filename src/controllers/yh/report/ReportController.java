@@ -1,5 +1,6 @@
 package controllers.yh.report;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,6 +10,8 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.apache.log4j.Logger;
 
@@ -36,7 +39,12 @@ public class ReportController extends Controller {
     	 }
     	HashMap<String, Object> hm = new HashMap<String, Object>();
         hm.put("order_no", order_no);
+        
+        //hm.put("SUBREPORT_DIR", fileName+"checkOrder_subreport_item.jasper");
+        
+        //File file = new File(fileName);
 		try {
+			//JasperReport jr = (JasperReport)JRLoader.loadObject(file);
 			JasperPrint print = JasperFillManager.fillReport(fileName, hm, DbKit.getConnection());
 			JasperExportManager.exportReportToPdfFile(print, outFileName);
 		} catch (JRException e) {
