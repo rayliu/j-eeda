@@ -108,13 +108,13 @@
                                    </div> 
                                    <div class="form-group" style="display: none;" id="accountTypeDiv">
                                        <label>银行账户</label>
-                                       <input id="hideAccountId" type="hidden" value="${arapMiscChargeOrder.account_id!''}" />   
+                                       <input id="hideAccountId" name='accountId' type="hidden" value="${arapMiscChargeOrder.account_id!''}" />   
                                        <select id="accountTypeSelect" class="form-control" name="accountTypeSelect"></select> 
                                    </div>   
 						      </div>
 						      <div class="modal-footer">
 						        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-						        <button type="submit" class="btn btn-primary">保存</button>
+						        <button type="submit" class="btn btn-primary">付款确认</button>
 						        <!-- <button type="button" class="btn btn-primary">保存</button> -->
 						      </div>
 						      </form>

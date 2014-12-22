@@ -249,8 +249,10 @@ public class DataInitUtil {
             stmt.execute("create table if not exists arap_misc_cost_order(id bigint auto_increment primary key,order_no varchar(255),type varchar(50),status varchar(50),remark varchar(255),payment_method varchar(255),create_by bigint,create_stamp timestamp,total_amount double,payee_id bigint,cost_order_id bigint,foreign key(cost_order_id) references arap_cost_order(id),account_id bigint,foreign key(account_id) references fin_account(id));");
             stmt.execute("create table if not exists arap_misc_cost_order_item(id bigint auto_increment primary key,fin_item_id bigint,fin_item_code varchar(20),amount double,status varchar(50),creator varchar(50),create_date timestamp,last_updator varchar(50),last_update_date timestamp,remark varchar(5120),misc_order_id bigint,foreign key(misc_order_id) references arap_misc_cost_order(id));");
             
-            // 出纳日记账
-            stmt.execute("create table if not exists arap_account_audit_log(id bigint auto_increment primary key,payment_method varchar(255),amount double,creator varchar(50),create_date timestamp,remark varchar(5120),misc_order_id bigint,foreign key(misc_order_id) references arap_misc_charge_order(id),invoice_order_id bigint,foreign key(invoice_order_id) references arap_charge_invoice(id),account_id bigint,foreign key(account_id) references fin_account(id));");
+            // 出纳日记账:
+            //payment_method: cash(现金)， transfer (转账)
+            //payment_type  : charge(收款)，cost(付款)
+            stmt.execute("create table if not exists arap_account_audit_log(id bigint auto_increment primary key, payment_method varchar(255), payment_type varchar(50), amount double,creator varchar(50),create_date timestamp,remark varchar(5120), misc_order_id bigint,foreign key(misc_order_id) references arap_misc_charge_order(id),invoice_order_id bigint,foreign key(invoice_order_id) references arap_charge_invoice(id),account_id bigint,foreign key(account_id) references fin_account(id));");
             // 基础信息——单位表
             //stmt.execute("create table if not exists tally(id bigint auto_increment primary key,code varchar(20),name varchar(20));");
             stmt.execute("create table if not exists user_office(id bigint auto_increment primary key,user_name varchar(20),office_id bigint,is_main boolean);");

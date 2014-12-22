@@ -72,7 +72,7 @@ $(document).ready(function() {
 			 accountTypeSelect.empty();
 			 var hideAccountId = $("#hideAccountId").val();
 			 accountTypeSelect.append("<option ></option>");
-			 for(var i=0; i<data.length+1; i++){
+			 for(var i=0; i<data.length; i++){
 				 if(data[i].ID == hideAccountId){
 					 accountTypeSelect.append("<option value='"+data[i].ID+"' selected='selected'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");
 				 }else{

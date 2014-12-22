@@ -24,6 +24,8 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
+
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class ChargeAcceptOrderController extends Controller {
@@ -80,6 +82,7 @@ public class ChargeAcceptOrderController extends Controller {
     public void save(){
     	String chargeIds = getPara("chargeIds");
     	String paymentMethod = getPara("paymentMethod");
+    	String accountId = getPara("accountTypeSelect");
     	String[] chargeIdArr = null; 
     	if(chargeIds != null && !"".equals(chargeIds)){
     		chargeIdArr = chargeIds.split(",");
@@ -93,7 +96,7 @@ public class ChargeAcceptOrderController extends Controller {
     			arapMiscChargeOrder.set("status", "已收款确认");
     			arapMiscChargeOrder.update();
     			
-    			//TODO: 现金 或 银行  金额处理
+    			//现金 或 银行  金额处理
     			if("cash".equals(paymentMethod)){
     				Account account = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
     				if(account!=null){
@@ -101,23 +104,28 @@ public class ChargeAcceptOrderController extends Controller {
     							+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
     					if(rec!=null){
     						double total = rec.getDouble("total");
+    						//现金账户 金额处理
     						account.set("amount", account.getDouble("amount")==null?0.0:account.getDouble("amount") + total).update();
-    						ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
-    						auditLog.set("PAYMENT_METHOD", "cash");
-    						auditLog.set("AMOUNT", total);
-    						auditLog.set("CREATOR", currentUser.getPrincipal());
-    						auditLog.set("CREATE_DATE", new Date());
-    						auditLog.set("MISC_ORDER_ID", orderId);
-    						auditLog.set("INVOICE_ORDER_ID", null);
-    						auditLog.set("ACCOUNT_ID", account.get("id"));
-    						auditLog.save();
+    						//日记账
+    						createAuditLog(orderId, account, total, paymentMethod);
     					}
     				}
-    			}else{
-    				
+    			}else{//银行账户  金额处理
+    			    Account account = Account.dao.findFirst("select * from fin_account where id ="+accountId);
+                    if(account!=null){
+                        Record rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_charge_order amco, arap_misc_charge_order_item amcoi "
+                                + "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
+                        if(rec!=null){
+                            double total = rec.getDouble("total");
+                            //银行账户 金额处理
+                            account.set("amount", account.getDouble("amount")==null?0.0:account.getDouble("amount") + total).update();
+                            //日记账
+                            createAuditLog(orderId, account, total, paymentMethod);
+                        }
+                    }
     			}
     			
-    			//TODO: 日记账
+    			//TODO: 
     		}else{
 	    		ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(chargeIdArr[i]);
 	    		arapChargeInvoice.set("status", "已收款确认");
@@ -138,5 +146,18 @@ public class ChargeAcceptOrderController extends Controller {
     		}
     	}
     	redirect("/chargeAcceptOrder");
+    }
+
+    private void createAuditLog(String orderId, Account account, double total, String paymentMethod) {
+        ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
+        auditLog.set("payment_method", paymentMethod);
+        auditLog.set("payment_type", ArapAccountAuditLog.TYPE_CHARGE);
+        auditLog.set("amount", total);
+        auditLog.set("creator", LoginUserController.getLoginUserId(this));
+        auditLog.set("create_date", new Date());
+        auditLog.set("misc_order_id", orderId);
+        auditLog.set("invoice_order_id", null);
+        auditLog.set("account_id", account.get("id"));
+        auditLog.save();
     }
 }
