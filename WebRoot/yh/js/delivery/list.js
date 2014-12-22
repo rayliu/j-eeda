@@ -75,9 +75,8 @@ $(document).ready(function() {
         $('#endTime_filter').trigger('keyup');
     });
 	
-  //条件筛选
-	$("#orderNo_filter ,#transfer_filter ,#status_filter,#customer_filter,#sp_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no").on('keyup click', function () {    	 	
-      	var orderNo_filter = $("#orderNo_filter").val();
+    var refreshData=function(){
+    	var orderNo_filter = $("#orderNo_filter").val();
       	var transfer_filter = $("#transfer_filter").val();
     	var status_filter = $("#status_filter").val();
       	var customer_filter = $("#customer_filter").val();    	
@@ -88,9 +87,17 @@ $(document).ready(function() {
       	var serial_no = $("#serial_no").val();
       	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no;
       	dataTable.fnDraw();
+    };
+    
+    
+  //条件筛选
+	$("#orderNo_filter ,#transfer_filter ,#status_filter,#customer_filter,#sp_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no").on('keyup', function () {    	 	
+		refreshData();
       });
-	
-	/*===========================================================*/
+	$("#status_filter").on('change',function(){
+		refreshData();
+	});
+	/*===================获取客户================================*/
 	 //获取所有客户
 	 $('#customer_filter').on('keyup click', function(){
 	        var inputStr = $('#customer_filter').val();
@@ -119,22 +126,9 @@ $(document).ready(function() {
 	   $('#companyList').on('click', '.fromLocationItem', function(e){        
 	        $('#customer_filter').val($(this).text());
 	        $("#companyList").hide();
-	       /* var companyId = $(this).attr('partyId');
-	        $('#customerId').val(companyId);*/
-	        //过滤回单列表
-	        //chargeCheckTable.fnFilter(companyId, 2);
 	        var inputStr = $('#customer_filter').val();
 	        if(inputStr!=null){
-	        	var orderNo_filter = $("#orderNo_filter").val();
-	          	var transfer_filter = $("#transfer_filter").val();
-	        	var status_filter = $("#status_filter").val();
-	          	var customer_filter = $("#customer_filter").val();    	
-	          	var sp_filter = $("#sp_filter").val();
-	          	var beginTime_filter = $("#beginTime_filter").val();
-	          	var endTime_filter = $("#endTime_filter").val();
-	          	var warehouse = $("#warehouse").val();
-	          	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse;
-	          	dataTable.fnDraw();
+	        	refreshData();
 	        }
 	    });
 	 // 没选中客户，焦点离开，隐藏列表
@@ -154,7 +148,9 @@ $(document).ready(function() {
 	    
 	  //获取供应商的list，选中信息在下方展示其他信息
 	    $('#sp_filter').on('keyup click', function(){
+	    	
 	    		var inputStr = $('#sp_filter').val();
+	    		console.log("157 sp_filter:"+inputStr);
 	    		if(inputStr == ""){
 	    			var pageSpName = $("#pageSpName");
 	    			pageSpName.empty();
@@ -162,8 +158,9 @@ $(document).ready(function() {
 	    			pageSpAddress.empty();
 	    			$('#sp_id').val($(this).attr(''));
 	    		}
+	    		//console.log(inputStr);
 	    		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
-	    			console.log(data);
+	    			//console.log(data);
 	    			var spList =$("#spList");
 	    			spList.empty();
 	    			for(var i = 0; i < data.length; i++)
@@ -211,7 +208,7 @@ $(document).ready(function() {
 
 	    	// 选中供应商
 	    	$('#spList').on('mousedown', '.fromLocationItem', function(e){
-	    		console.log($('#spList').is(":focus"))
+	    		console.log($('#spList').is(":focus"));
 	    		var message = $(this).text();
 	    		$('#sp_filter').val(message.substring(0, message.indexOf(" ")));
 	    		$('#sp_id').val($(this).attr('partyId'));
@@ -238,15 +235,6 @@ $(document).ready(function() {
 	    		pageSpAddress.append(address);
 	            $('#spList').hide();
 	            
-	            var orderNo_filter = $("#orderNo_filter").val();
-	          	var transfer_filter = $("#transfer_filter").val();
-	        	var status_filter = $("#status_filter").val();
-	          	var customer_filter = $("#customer_filter").val();    	
-	          	var sp_filter = $("#sp_filter").val();
-	          	var beginTime_filter = $("#beginTime_filter").val();
-	          	var endTime_filter = $("#endTime_filter").val();
-	          	var warehouse = $("#warehouse").val();
-	          	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse;
-	          	dataTable.fnDraw();
+	            refreshData();
 	        });
 });

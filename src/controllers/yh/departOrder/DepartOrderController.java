@@ -353,6 +353,7 @@ public class DepartOrderController extends Controller {
     				+ "%' and ifnull(o.office_name,'') like '%" + office 
     				+ "%' and ifnull(l1.name,'') like '%" + start 
     				+ "%' and ifnull(l2.name,'') like '%" + end 
+    				+ "%' and ifnull(c2.abbr,'') like '%" +sp
     				+ "%' and ifnull(c1.abbr,'') like '%" + customer 
     				+ "%' and deo.create_stamp between '"+ beginTime+ "' and '"+ endTime
     				+ "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "

@@ -80,7 +80,7 @@ public class DeliveryController extends Controller {
 		if (orderNo_filter == null && transfer_filter == null
 				&& status_filter == null && customer_filter == null
 				&& sp_filter == null && beginTime_filter == null
-				&& endTime_filter == null) {
+				&& endTime_filter == null ) {
 			String sqlTotal = "select count(1) total from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "

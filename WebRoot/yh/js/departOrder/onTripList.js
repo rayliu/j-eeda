@@ -162,8 +162,8 @@ $(document).ready(function() {
 	}); 
 	
  
-	//供应商暂时去除:#sp_filter ,
-    $('#customer_filter,#endTime_filter ,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup click', function () {
+
+    $('#customer_filter,#endTime_filter ,#sp_filter,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup', function () {
     	
     	var office =$("#officeSelect").val();
     	var start =$("#start_filter").val();
@@ -237,13 +237,13 @@ $(document).ready(function() {
   //获取供应商的list，选中信息在下方展示其他信息
     $('#sp_filter').on('keyup click', function(){
 		var inputStr = $('#sp_filter').val();
-		$.get('/departOrder/companyNameList',{input:inputStr}, function(data){
-			console.log(data);
+		$.get('/transferOrder/searchSp',{input:inputStr}, function(data){
+			//console.log(data);
 			var cpnameList =$("#cpnameList");
 			cpnameList.empty();
 			for(var i = 0; i < data.length; i++)
 			{
-				cpnameList.append("<li><a tabindex='-1' class='fromLocationItem' >"+data[i].COMPANY+"</a></li>");
+				cpnameList.append("<li><a tabindex='-1' class='fromLocationItem' >"+data[i].COMPANY_NAME+"</a></li>");
 			}
 		},'json');
 
