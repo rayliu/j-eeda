@@ -40,7 +40,7 @@ public class ReportController extends Controller {
     	HashMap<String, Object> hm = new HashMap<String, Object>();
         hm.put("order_no", order_no);
         
-        //hm.put("SUBREPORT_DIR", fileName+"checkOrder_subreport_item.jasper");
+        //hm.put("SUBREPORT_DIR", "report/");
         
         //File file = new File(fileName);
 		try {
