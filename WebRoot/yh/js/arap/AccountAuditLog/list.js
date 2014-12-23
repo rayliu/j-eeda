@@ -46,11 +46,15 @@ $(document).ready(function() {
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
+    	"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
     	"sAjaxSource": "/accountAuditLog/accountList",
     	"aoColumns": [   
 	        { "mDataProp": null, "sWidth":"30px",
               "fnRender": function(obj) {
-                return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+                return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'" checked="">';
               }
             },
 	        {"mDataProp":"BANK_PERSON"},
@@ -59,5 +63,39 @@ $(document).ready(function() {
 	        {"mDataProp":null},
 	        {"mDataProp":"REMARK"}           
 	     ]      
-    });    
+    });
+    
+    $('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#beginTime_filter').trigger('keyup');
+    });
+
+
+    $('#datetimepicker2').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#endTime_filter').trigger('keyup');
+    });
+    
+    $("#searchBtn").click(function(e){
+    	e.preventDefault();
+		var idArr=[];
+	    $("input[name='order_check_box']").each(function(){
+	    	if($(this).prop('checked') == true){
+	    		idArr.push($(this).val());
+	    	}
+	    });
+	    var ids = idArr.toString();
+    	var beginTime = $("#beginTime_filter").val();
+    	var endTime = $("#endTime_filter").val();
+    	accountAuditLogTable.fnSettings().sAjaxSource = "/accountAuditLog/list?ids="+ids+"&beginTime="+beginTime+"&endTime="+endTime;
+    	accountAuditLogTable.fnDraw();
+    });
 } );

@@ -100,12 +100,13 @@ public class ChargePreInvoiceOrderController extends Controller {
 			Double totalAmount = 0.0;
 			for(int i=0;i<idArray.length;i++){
 				ArapChargeOrder rOrder = ArapChargeOrder.dao.findById(idArray[i]);
-				totalAmount = totalAmount + rOrder.getDouble("charge_amount");
+				Double chargeTotalAmount = rOrder.getDouble("charge_amount")==null?0.0:rOrder.getDouble("charge_amount");
+				totalAmount = totalAmount + chargeTotalAmount;
 			}
 			setAttr("totalAmount", totalAmount);
 			
 			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
-			String customerId = arapChargeOrder.get("payee_id");
+			Long customerId = arapChargeOrder.get("payee_id");
 			if (!"".equals(customerId) && customerId != null) {
 				Party party = Party.dao.findById(customerId);
 				setAttr("party", party);

@@ -31,20 +31,41 @@ public class AccountAuditLogController extends Controller {
     }
 
     public void list() {
+    	String ids = getPara("ids");
+    	String beginTime = getPara("beginTime");
+    	String endTime = getPara("endTime");
+    	if(ids == null || "".equals(ids)){
+    		ids = "-1";
+    	}
+    	if(beginTime == null || "".equals(beginTime)){
+    		beginTime = "1-1-1";
+    	}
+    	if(endTime == null || "".equals(endTime)){
+    		endTime = "9999-12-31";
+    	}
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from arap_account_audit_log aaal";
+        String sqlTotal = "";
+        String sql = "";
+        if(!"-1".equals(ids)){
+        	sqlTotal = "select count(1) total from arap_account_audit_log aaal where aaal.account_id in("+ids+") and aaal.create_date between  '" + beginTime + "' and '" + endTime + "'";
+        	sql = "select aaal.*,aci.order_no invoice_order_no,ul.user_name user_name from arap_account_audit_log aaal"
+        			+ " left join user_login ul on ul.id = aaal.creator"
+        			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id "
+        			+ " where aaal.account_id in("+ids+") and aaal.create_date between  '" + beginTime + "' and '" + endTime + "' order by aaal.create_date desc " + sLimit;        	
+        }else{
+        	sqlTotal = "select count(1) total from arap_account_audit_log aaal where aaal.create_date between  '" + beginTime + "' and '" + endTime + "'";
+        	sql = "select aaal.*,aci.order_no invoice_order_no,ul.user_name user_name from arap_account_audit_log aaal"
+        			+ " left join user_login ul on ul.id = aaal.creator"
+        			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id "
+        			+ " where aaal.create_date between  '" + beginTime + "' and '" + endTime + "' order by aaal.create_date desc " + sLimit;  
+        }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-
-        String sql = "select aaal.*,aci.order_no invoice_order_no,ul.user_name user_name from arap_account_audit_log aaal"
-        				+ " left join user_login ul on ul.id = aaal.creator"
-        				+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id order by aaal.create_date desc " + sLimit;
-
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
 
