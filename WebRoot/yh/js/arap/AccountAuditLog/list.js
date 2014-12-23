@@ -31,7 +31,7 @@ $(document).ready(function() {
 	            	return str;
 	            }
             },
-            {"mDataProp":null},
+            {"mDataProp":"AMOUNT"},
             {"mDataProp":"REMARK"},           
             {"mDataProp":"USER_NAME"},        	
             {"mDataProp":"CREATE_DATE"}

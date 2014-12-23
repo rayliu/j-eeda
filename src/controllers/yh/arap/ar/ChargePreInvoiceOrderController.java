@@ -110,7 +110,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			if (!"".equals(customerId) && customerId != null) {
 				Party party = Party.dao.findById(customerId);
 				setAttr("party", party);
-				Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+				Contact contact = Contact.dao.findById(party.get("contact_id"));
 				setAttr("customer", contact);
 				setAttr("type", "CUSTOMER");
 				setAttr("classify", "");

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import models.Account;
 import models.ArapAccountAuditLog;
+import models.ArapChargeInvoice;
 import models.ArapChargeOrder;
 import models.ArapMiscChargeOrder;
 
@@ -51,11 +52,16 @@ public class ChargeAcceptOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark "
-        		+ "from arap_charge_invoice aci left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id group by aci.id "
-				+ "union all "
-				+ "select id, order_no, status, '' invoice_no, create_stamp create_time, remark  from arap_misc_charge_order where status='新建' "
-				+ "order by create_time desc " + sLimit;
+        String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        		+ " from arap_charge_invoice aci "
+        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
+        		+ " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id group by aci.id "
+				+ " union all "
+				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
+				+ " from arap_misc_charge_order amco"
+				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
+				+ " where amco.status='新建' "
+				+ " order by create_time desc " + sLimit;
 
         List<Record> BillingOrders = Db.find(sql);
 
@@ -89,18 +95,29 @@ public class ChargeAcceptOrderController extends Controller {
     		String[] arr = chargeIdArr[i].split(":");
     		String orderId = arr[0];
     		String orderNo = arr[1];
-			ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(orderId);
-			arapMiscChargeOrder.set("status", "已收款确认");
-			arapMiscChargeOrder.update();
+            if(orderNo.startsWith("SGSK")){
+				ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(orderId);
+				arapMiscChargeOrder.set("status", "已收款确认");
+				arapMiscChargeOrder.update();
+            }else{
+                ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(chargeIdArr[i]);
+                arapChargeInvoice.set("status", "已收款确认");
+                arapChargeInvoice.update();
+            }
 			
 			//现金 或 银行  金额处理
 			if("cash".equals(paymentMethod)){
 				Account account = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
 				if(account!=null){
-					Record rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_charge_order amco, arap_misc_charge_order_item amcoi "
-							+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
+					Record rec = null;
+					if(orderNo.startsWith("SGSK")){
+						rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_charge_order amco, arap_misc_charge_order_item amcoi "
+								+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
+					}else{
+						rec = Db.findFirst("select aci.total_amount total from arap_charge_invoice aci where aci.order_no='"+orderNo+"'");
+					}
 					if(rec!=null){
-						double total = rec.getDouble("total");
+						double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
 						//现金账户 金额处理
 						account.set("amount", account.getDouble("amount")==null?0.0:account.getDouble("amount") + total).update();
 						//日记账
@@ -110,8 +127,13 @@ public class ChargeAcceptOrderController extends Controller {
 			}else{//银行账户  金额处理
 			    Account account = Account.dao.findFirst("select * from fin_account where id ="+accountId);
                 if(account!=null){
-                    Record rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_charge_order amco, arap_misc_charge_order_item amcoi "
-                            + "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
+                	Record rec = null;
+					if(orderNo.startsWith("SGSK")){
+						rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_charge_order amco, arap_misc_charge_order_item amcoi "
+								+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
+					}else{
+						rec = Db.findFirst("select aci.total_amount total from arap_charge_invoice aci where aci.order_no='"+orderNo+"'");
+					}
                     if(rec!=null){
                         double total = rec.getDouble("total");
                         //银行账户 金额处理

@@ -49,6 +49,7 @@ $(document).ready(function() {
             {"mDataProp":"CNAME"},*/            
             {"mDataProp":null},     
             {"mDataProp":null},     
+            {"mDataProp":"CNAME"},     
             {"mDataProp":null},     
             {"mDataProp":null},     
             {"mDataProp":null},     
@@ -58,8 +59,7 @@ $(document).ready(function() {
             {"mDataProp":null},     
             {"mDataProp":null},     
             {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
+            {"mDataProp":"TOTAL_AMOUNT"},     
             {"mDataProp":"REMARK"},
             {"mDataProp":null},     
             {"mDataProp":null}                        
@@ -96,7 +96,7 @@ $(document).ready(function() {
 		if($(this).prop("checked") == true){
             var orderNo = $(this).parent().parent().find('a').text();
             var orderObj=$(this).val()+":"+orderNo;
-            var order = ids.pop();
+            //var order = ids.pop();
 			ids.push(orderObj);
 
 			$("#chargeIds").val(ids);
@@ -104,17 +104,6 @@ $(document).ready(function() {
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).val(),ids),1);
 				$("#chargeIds").val(ids);
-			}
-		}			
-	});
-	
-	// 已选中列表
-	$("#checkedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
-		if($(this).prop("checked") == false){
-			$(this).parent().parent().appendTo($("#uncheckedChargeCheckList"));
-			if(ids.length != 0){
-				ids.splice($.inArray($(this).val(),ids),1);
-				$("#checkedReturnOrder").val(ids);
 			}
 		}			
 	});	
