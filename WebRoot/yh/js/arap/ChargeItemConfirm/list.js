@@ -54,7 +54,8 @@ $(document).ready(function() {
             /*{"mDataProp":null, "sWidth":"150px"},                         
             {"mDataProp":null, "sWidth":"100px"},*/                        
             {"mDataProp":"CONTRACT_AMOUNT", "sWidth":"150px"},                        
-            {"mDataProp":"PICKUP_AMOUNT", "sWidth":"100px"},                        
+            //{"mDataProp":"PICKUP_AMOUNT", "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px"},                        
             {"mDataProp":"SEND_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":"INSURANCE_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":"SUPER_MILEAGE_AMOUNT", "sWidth":"100px"},                        
