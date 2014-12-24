@@ -577,6 +577,7 @@ public class PickupOrderController extends Controller {
             pickupOrder.set("address", getPara("address"));
             pickupOrder.set("turnout_time", getPara("turnout_time"));
             pickupOrder.set("audit_status", "新建");
+            pickupOrder.set("sign_status", "未回单");
             if(returnTime != null && !"".equals(returnTime)){
             	pickupOrder.set("return_time", returnTime);
             }

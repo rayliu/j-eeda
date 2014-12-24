@@ -1,5 +1,14 @@
 $(document).ready(function() {
 	$('#menu_cost').addClass('active').find('ul').addClass('in');
+
+	//设置一个变量值，用来保存当前的ID
+	var parentId = "costCheckOrderbasic";
+	$("#transferOrderMilestoneList").click(function(e){
+		parentId = e.target.getAttribute("id");
+	});
+	$("#costCheckOrderbasic").click(function(e){
+		parentId = e.target.getAttribute("id");
+	});
     
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
@@ -11,12 +20,16 @@ $(document).ready(function() {
 		$.post('/costCheckOrder/save', $("#costCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#costCheckOrderId").val(data.ID);
-			  	$("#style").show();
+			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
+			  	if("costCheckOrderbasic" == parentId){
+			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			  	}
 			}else{
 				alert('数据保存失败。');
 			}
 		},'json');
+ 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	
     if($("#costCheckOrderStatus").text() == 'new'){

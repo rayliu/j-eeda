@@ -855,6 +855,7 @@ public class DepartOrderController extends Controller {
             	dp.set("departure_time", getPara("departure_time")); 
             }
             dp.set("audit_status", "新建");
+            dp.set("sign_status", "未回单");
             dp.save();
             saveDepartTransfer(dp, getPara("orderid"), checkedDetail, uncheckedDetailIds);
             saveDepartOrderMilestone(dp);

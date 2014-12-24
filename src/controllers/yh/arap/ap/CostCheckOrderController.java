@@ -102,9 +102,6 @@ public class CostCheckOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
         
-        String sql = "select * from arap_cost_order order by id desc limit 0,1";
-        setAttr("order_no", OrderNoUtil.getOrderNo(sql, "YFDZ"));
-
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
 
@@ -202,10 +199,8 @@ public class CostCheckOrderController extends Controller {
 		String debit_amount = getPara("debit_amount")==""?"0":getPara("debit_amount");
     	if(!"".equals(costCheckOrderId) && costCheckOrderId != null){
     		arapAuditOrder = ArapCostOrder.dao.findById(costCheckOrderId);
-	    	arapAuditOrder.set("order_no", getPara("order_no"));
 	    	//arapAuditOrder.set("order_type", );
 	    	arapAuditOrder.set("status", "new");
-	    	arapAuditOrder.set("payee_id", getPara("customer_id"));
 	    	arapAuditOrder.set("create_by", getPara("create_by"));
 	    	arapAuditOrder.set("create_stamp", new Date());
 	    	arapAuditOrder.set("remark", getPara("remark"));
@@ -222,7 +217,8 @@ public class CostCheckOrderController extends Controller {
 	    	arapAuditOrder.update();
     	}else{
 	    	arapAuditOrder = new ArapCostOrder();
-	    	arapAuditOrder.set("order_no", getPara("order_no"));
+	        String sql = "select * from arap_cost_order order by id desc limit 0,1";
+	    	arapAuditOrder.set("order_no", OrderNoUtil.getOrderNo(sql, "YFDZ"));
 	    	//arapAuditOrder.set("order_type", );
 	    	arapAuditOrder.set("status", "new");
 	    	arapAuditOrder.set("payee_id", getPara("sp_id"));
@@ -360,7 +356,7 @@ public class CostCheckOrderController extends Controller {
         	pickupOrderSql = " union select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, "
     			+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
     			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-    			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
+    			+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name"
     			+ " from return_order ror "
     			+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
     			+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
@@ -382,7 +378,7 @@ public class CostCheckOrderController extends Controller {
         	departOrderSql = " union select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
 				+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
 				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-				+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
+				+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name"
 				+ " from return_order ror "
 				+ " left join delivery_order dor on dor.id = ror.delivery_order_id  "
 				+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
@@ -404,7 +400,7 @@ public class CostCheckOrderController extends Controller {
         	deliveryOrderSql = "select distinct dor.id,dor.order_no,dor.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, "
 				+ " (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount, "
 				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n')"
-				+ " transfer_order_no,'有回单' return_order_collection,dor.remark,oe.office_name office_name"
+				+ " transfer_order_no,dor.sign_status return_order_collection,dor.remark,oe.office_name office_name"
 				+ " from return_order ror "
 				+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
 				+ " left join party p on p.id = dor.sp_id "
@@ -451,7 +447,7 @@ public class CostCheckOrderController extends Controller {
         String sqlTotal = "select count(1) total from (select distinct dor.id,dor.order_no,dor.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, "
 			+ " (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n')"
-			+ " transfer_order_no,'有回单' return_order_collection,dor.remark"
+			+ " transfer_order_no,dor.sign_status return_order_collection,dor.remark"
 			+ " from return_order ror "
 			+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
 			+ " left join party p on p.id = dor.sp_id "
@@ -466,7 +462,7 @@ public class CostCheckOrderController extends Controller {
 			+ " select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
 			+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark"
+			+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark"
 			+ " from return_order ror "
 			+ " left join delivery_order dor on dor.id = ror.delivery_order_id  "
 			+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
@@ -485,7 +481,7 @@ public class CostCheckOrderController extends Controller {
 			+ " select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
 			+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark"
+			+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark"
 			+ " from return_order ror "
 			+ " left join depart_transfer dtr on dtr.order_id = ror.transfer_order_id"
 			+ " left join depart_order dpr on dpr.id = dtr.depart_id"
@@ -502,7 +498,7 @@ public class CostCheckOrderController extends Controller {
 			+ " select distinct dpr.id,dpr.depart_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, "
 			+ " (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark"
+			+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark"
 			+ " from return_order ror "
 			+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
 			+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
@@ -523,7 +519,7 @@ public class CostCheckOrderController extends Controller {
         String sql = "select distinct dor.id,dor.order_no order_no,dor.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, "
 			+ " (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n')"
-			+ " transfer_order_no,'有回单' return_order_collection,dor.remark,oe.office_name office_name"
+			+ " transfer_order_no,dor.sign_status return_order_collection,dor.remark,oe.office_name office_name"
 			+ " from return_order ror "
 			+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
 			+ " left join party p on p.id = dor.sp_id "
@@ -540,7 +536,7 @@ public class CostCheckOrderController extends Controller {
 			+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
 			+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
+			+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name"
 			+ " from return_order ror "
 			+ " left join delivery_order dor on dor.id = ror.delivery_order_id  "
 			+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
@@ -560,7 +556,7 @@ public class CostCheckOrderController extends Controller {
 			+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
 			+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
+			+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name"
 			+ " from return_order ror "
 			+ " left join depart_transfer dtr on dtr.order_id = ror.transfer_order_id"
 			+ " left join depart_order dpr on dpr.id = dtr.depart_id"
@@ -578,7 +574,7 @@ public class CostCheckOrderController extends Controller {
 			+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, "
 			+ " (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, "
 			+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-			+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
+			+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name"
 			+ " from return_order ror "
 			+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
 			+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
@@ -652,7 +648,7 @@ public class CostCheckOrderController extends Controller {
     	String searchSql = "select distinct dor.id,dor.order_no order_no,dor.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, "
 				+ " (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount, "
 				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n')"
-				+ " transfer_order_no,'有回单' return_order_collection,dor.remark,oe.office_name office_name"
+				+ " transfer_order_no,dor.sign_status return_order_collection,dor.remark,oe.office_name office_name"
 				+ " from return_order ror "
 				+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
 				+ " left join party p on p.id = dor.sp_id "
@@ -669,7 +665,7 @@ public class CostCheckOrderController extends Controller {
 				+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
 				+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
 				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-				+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
+				+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name"
 				+ " from return_order ror "
 				+ " left join delivery_order dor on dor.id = ror.delivery_order_id  "
 				+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
@@ -689,7 +685,7 @@ public class CostCheckOrderController extends Controller {
 				+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, "
 				+ " (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
 				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-				+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
+				+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name"
 				+ " from return_order ror "
 				+ " left join depart_transfer dtr on dtr.order_id = ror.transfer_order_id"
 				+ " left join depart_order dpr on dpr.id = dtr.depart_id"
@@ -707,7 +703,7 @@ public class CostCheckOrderController extends Controller {
 				+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, "
 				+ " (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, "
 				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
-				+ " transfer_order_no,'没回单' return_order_collection,dpr.remark,oe.office_name office_name"
+				+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name"
 				+ " from return_order ror "
 				+ " left join delivery_order dor on dor.id = ror.delivery_order_id "
 				+ " left join delivery_order_item doi on doi.delivery_id = dor.id"

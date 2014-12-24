@@ -978,6 +978,7 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);
 
 			deliveryOrder.set("audit_status", "新建");
+			deliveryOrder.set("sign_status", "未回单");
 			deliveryOrder.save();
 
 			String string = getPara("tranferid");

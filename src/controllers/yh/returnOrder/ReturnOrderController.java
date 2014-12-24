@@ -11,6 +11,8 @@ import java.util.Map;
 
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
+import models.DepartOrder;
+import models.DepartTransferOrder;
 import models.Fin_item;
 import models.Location;
 import models.Party;
@@ -451,9 +453,9 @@ public class ReturnOrderController extends Controller {
 		returnOrder.set("transaction_status", "已签收").set("receipt_date", sqlDate).set("total_amount", returnOrder.get("total_amount")).update();
 		Long deliveryId = returnOrder.get("delivery_order_id");
 		if (deliveryId != null && !"".equals(deliveryId)) {
-			DeliveryOrder deliveryOrder = DeliveryOrder.dao
-					.findById(returnOrder.get("delivery_order_id"));
+			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(returnOrder.get("delivery_order_id"));
 			deliveryOrder.set("status", "已签收");
+			deliveryOrder.set("sign_status", "已回单");
 			deliveryOrder.update();
 
 			DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
@@ -473,26 +475,27 @@ public class ReturnOrderController extends Controller {
 			transferOrderMilestone.save();
 
 		} else {
-			TransferOrder transferOrder = TransferOrder.dao
-					.findById(returnOrder.get("transfer_order_id"));
+			TransferOrder transferOrder = TransferOrder.dao.findById(returnOrder.get("transfer_order_id"));
 			transferOrder.set("status", "已签收");
 			transferOrder.update();
 
 			TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
 			transferOrderMilestone.set("status", "已签收");
 			String name = (String) currentUser.getPrincipal();
-			List<UserLogin> users = UserLogin.dao
-					.find("select * from user_login where user_name='" + name
-							+ "'");
+			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 			transferOrderMilestone.set("create_by", users.get(0).get("id"));
 			transferOrderMilestone.set("location", "");
 			utilDate = new java.util.Date();
 			sqlDate = new java.sql.Timestamp(utilDate.getTime());
 			transferOrderMilestone.set("create_stamp", sqlDate);
 			transferOrderMilestone.set("order_id", transferOrder.get("id"));
-			transferOrderMilestone.set("type",
-					TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+			transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
 			transferOrderMilestone.save();
+			
+			DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer dor where dor.order_id = ? order by id desc limit 0,1", returnOrder.get("transfer_order_id"));
+			DepartOrder departOrder = DepartOrder.dao.findById(departTransferOrder.get("depart_id"));
+			departOrder.set("sign_status", "已回单");
+			departOrder.update();
 		}
 		renderJson("{\"success\":true}");
 	}

@@ -453,6 +453,7 @@ public class InsuranceOrderController extends Controller {
     			insuranceOrder.set("office_id", officeSelect);    			
     		}
 			insuranceOrder.set("audit_status", "新建");
+			insuranceOrder.set("sign_status", "未回单");
     		insuranceOrder.save();
     		
     		String orderId = getPara("orderid");
