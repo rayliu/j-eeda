@@ -2,14 +2,20 @@ package controllers.yh.arap.ap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import models.Account;
+import models.ArapAccountAuditLog;
+import models.ArapCostInvoice;
+import models.ArapCostOrder;
+import models.yh.arap.ArapMiscCostOrder;
 
-import models.Party;
-import models.yh.profile.Contact;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -23,84 +29,12 @@ import controllers.yh.LoginUserController;
 @Before(SetAttrLoginUserInterceptor.class)
 public class CostAcceptOrderController extends Controller {
     private Logger logger = Logger.getLogger(CostAcceptOrderController.class);
+    Subject currentUser = SecurityUtils.getSubject();
 
     public void index() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
-        render("/yh/arap/CostAcceptOrder/CostAcceptOrderList.html");
-    }
-
-    public void add() {
-    	setAttr("type", "CUSTOMER");
-    	setAttr("classify", "receivable");
-        render("/yh/arap/CostAcceptOrder/CostCheckOrderCreateSearchList.html");
-    }
-
-    public void create() {
-        String ids = getPara("ids");
-        String[] idArray = ids.split(",");
-        logger.debug(String.valueOf(idArray.length));
-
-        String customerId = getPara("customerId");
-        Party party = Party.dao.findById(customerId);
-
-        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-        setAttr("customer", contact);
-    	setAttr("type", "CUSTOMER");
-    	setAttr("classify", "receivable");
-        render("/yh/arap/CostAcceptOrder/ChargeCheckOrderEdit.html");
-    }
-
-    // 创建应收结帐单时，先选取合适的对账单，条件：客户，时间段
-    public void createList() {
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-        }
-
-        // 根据company_id 过滤
-        String colsLength = getPara("iColumns");
-        String fieldsWhere = "AND (";
-        for (int i = 0; i < Integer.parseInt(colsLength); i++) {
-            String mDataProp = getPara("mDataProp_" + i);
-            String searchValue = getPara("sSearch_" + i);
-            logger.debug(mDataProp + "[" + searchValue + "]");
-            if (searchValue != null && !"".equals(searchValue)) {
-                if (mDataProp.equals("COMPANY_ID")) {
-                    fieldsWhere += "p.id" + " = " + searchValue + " AND ";
-                } else {
-                    fieldsWhere += mDataProp + " like '%" + searchValue + "%' AND ";
-                }
-            }
-        }
-        logger.debug("2nd filter:" + fieldsWhere);
-        if (fieldsWhere.length() > 8) {
-            fieldsWhere = fieldsWhere.substring(0, fieldsWhere.length() - 4);
-            fieldsWhere += ')';
-        } else {
-            fieldsWhere = "";
-        }
-        // 获取总条数
-        String totalWhere = "";
-        String sql = "select count(1) total FROM RETURN_ORDER ro left join party p on ro.customer_id = p.id "
-                + "where ro.TRANSACTION_STATUS = 'confirmed' ";
-        Record rec = Db.findFirst(sql + fieldsWhere);
-        logger.debug("total records:" + rec.getLong("total"));
-
-        // 获取当前页的数据
-        List<Record> orders = Db
-                .find("SELECT ro.*, to.order_no as transfer_order_no, do.order_no as delivery_order_no, p.id as company_id, c.company_name FROM RETURN_ORDER ro "
-                        + "left join transfer_order to on ro.transfer_order_id = to.id "
-                        + "left join delivery_order do on ro.delivery_order_id = do.id "
-                        + "left join party p on ro.customer_id = p.id "
-                        + "left join contact c on p.contact_id = c.id where ro.TRANSACTION_STATUS = 'confirmed' " + fieldsWhere);
-        Map orderMap = new HashMap();
-        orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", rec.getLong("total"));
-        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-        orderMap.put("aaData", orders);
-        renderJson(orderMap);
+    	    render("/yh/arap/CostAcceptOrder/CostAcceptOrderList.html");
     }
 
     // billing order 列表
@@ -111,21 +45,29 @@ public class CostAcceptOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from billing_order where order_type='charge_audit_order'";
+        String sqlTotal = "select count(1) total from (select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        		+ " from arap_cost_invoice_application_order aci "
+        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id group by aci.id "
+				+ " union all "
+				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
+				+ " from arap_misc_cost_order amco"
+				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
+				+ " where amco.status='新建') tab";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        // 左连接party, contact取到company_name
-        // 左连接transfer_order取到运输单号
-        // 左连接delivery_order取到配送单号
-        String sql = "select bo.*,  p.id, p.party_type, t.company_name, to.order_no as transfer_order_no, "
-                + "do.order_no as delivery_order_no, u.user_name as creator_name from billing_order bo "
-                + " left join party p on bo.customer_id =p.id and bo.customer_type =p.party_type "
-                + " left join contact t on p.contact_id = t.id left join transfer_order to on bo.transfer_order_id = to.id "
-                + "left join user_login u on bo.creator = u.id"
-                + " left join delivery_order do on bo.delivery_order_id = do.id where bo.order_type='charge_audit_order'";
+        String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        		+ " from arap_cost_invoice_application_order aci "
+        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id group by aci.id "
+				+ " union all "
+				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
+				+ " from arap_misc_cost_order amco"
+				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
+				+ " where amco.status='新建' "
+				+ " order by create_time desc " + sLimit;
 
-        logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
 
         Map BillingOrderListMap = new HashMap();
@@ -136,5 +78,90 @@ public class CostAcceptOrderController extends Controller {
         BillingOrderListMap.put("aaData", BillingOrders);
 
         renderJson(BillingOrderListMap);
+    }
+    
+    // 收款
+    public void costAccept(){
+    	ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findById(getPara("costCheckOrderId"));
+    	arapAuditOrder.set("status", "completed");
+    	arapAuditOrder.update();
+        renderJson("{\"success\":true}");
+    }
+    
+    public void save(){
+    	String costIds = getPara("costIds");
+    	String paymentMethod = getPara("paymentMethod");
+    	String accountId = getPara("accountTypeSelect");
+    	String[] costIdArr = null; 
+    	if(costIds != null && !"".equals(costIds)){
+    		costIdArr = costIds.split(",");
+    	}
+    	for(int i=0;i<costIdArr.length;i++){
+    		String[] arr = costIdArr[i].split(":");
+    		String orderId = arr[0];
+    		String orderNo = arr[1];
+            if(orderNo.startsWith("SGFK")){
+				ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(orderId);
+				arapMiscCostOrder.set("status", "已收款确认");
+				arapMiscCostOrder.update();
+            }else{
+                ArapCostInvoice arapcostInvoice = ArapCostInvoice.dao.findById(costIdArr[i]);
+                arapcostInvoice.set("status", "已收款确认");
+                arapcostInvoice.update();
+            }
+			
+			//现金 或 银行  金额处理
+			if("cash".equals(paymentMethod)){
+				Account account = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
+				if(account!=null){
+					Record rec = null;
+					if(orderNo.startsWith("SGFK")){
+						rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_cost_order amco, arap_misc_cost_order_item amcoi "
+								+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
+					}else{
+						rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice aci where aci.order_no='"+orderNo+"'");
+					}
+					if(rec!=null){
+						double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
+						//现金账户 金额处理
+						account.set("amount", account.getDouble("amount")==null?0.0:account.getDouble("amount") - total).update();
+						//日记账
+						createAuditLog(orderId, account, total, paymentMethod);
+					}
+				}
+			}else{//银行账户  金额处理
+			    Account account = Account.dao.findFirst("select * from fin_account where id ="+accountId);
+                if(account!=null){
+                	Record rec = null;
+					if(orderNo.startsWith("SGFK")){
+						rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_cost_order amco, arap_misc_cost_order_item amcoi "
+								+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
+					}else{
+						rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice aci where aci.order_no='"+orderNo+"'");
+					}
+                    if(rec!=null){
+                        double total = rec.getDouble("total");
+                        //银行账户 金额处理
+                        account.set("amount", account.getDouble("amount")==null?0.0:account.getDouble("amount") - total).update();
+                        //日记账
+                        createAuditLog(orderId, account, total, paymentMethod);
+                    }
+                }
+			}
+    	}
+    	redirect("/costAcceptOrder");
+    }
+
+    private void createAuditLog(String orderId, Account account, double total, String paymentMethod) {
+        ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
+        auditLog.set("payment_method", paymentMethod);
+        auditLog.set("payment_type", ArapAccountAuditLog.TYPE_COST);
+        auditLog.set("amount", total);
+        auditLog.set("creator", LoginUserController.getLoginUserId(this));
+        auditLog.set("create_date", new Date());
+        auditLog.set("misc_order_id", orderId);
+        auditLog.set("invoice_order_id", null);
+        auditLog.set("account_id", account.get("id"));
+        auditLog.save();
     }
 }

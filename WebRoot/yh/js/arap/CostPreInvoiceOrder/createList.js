@@ -11,7 +11,7 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/costCheckOrder/list",
+        "sAjaxSource": "/costPreInvoiceOrder/costCheckOrderList",
         "aoColumns": [   
             { "mDataProp": null, "sWidth":"20px",
                 "fnRender": function(obj) {
@@ -37,7 +37,7 @@ $(document).ready(function() {
             },
             {"mDataProp":null},
             {"mDataProp":null},
-            {"mDataProp":"CNAME"},
+            {"mDataProp":"CNAME", "sWidth":"150px"},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
@@ -49,7 +49,7 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":"COST_AMOUNT"},
             {"mDataProp":"REMARK"},
-            {"mDataProp":null},        	
+            {"mDataProp":"CREATOR_NAME"},        	
             {"mDataProp":"CREATE_STAMP"}                        
         ]      
     });		
@@ -68,18 +68,18 @@ $(document).ready(function() {
 			  {"mDataProp":null, "sWidth":"20px"},                        
 			  {"mDataProp":null, "sWidth":"100px"},                        
 			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"100px"},                        
 			  {"mDataProp":null, "sWidth":"150px"},                        
 			  {"mDataProp":null, "sWidth":"100px"},                        
 			  {"mDataProp":null, "sWidth":"100px"},                        
 			  {"mDataProp":null, "sWidth":"100px"},                        
-			  {"mDataProp":null, "sWidth":"100px"},                        
-			  {"mDataProp":null, "sWidth":"100px"},                        
 			  {"mDataProp":null, "sWidth":"150px"},                        
 			  {"mDataProp":null, "sWidth":"150px"},                        
 			  {"mDataProp":null, "sWidth":"150px"},                        
 			  {"mDataProp":null, "sWidth":"150px"},                        
 			  {"mDataProp":null, "sWidth":"150px"},                        
-			  {"mDataProp":null, "sWidth":"200px"}                      
+			  {"mDataProp":null, "sWidth":"150px"}                      
 		]          
     });
     

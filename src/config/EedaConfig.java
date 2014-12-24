@@ -228,15 +228,15 @@ public class EedaConfig extends JFinalConfig {
         me.add("/chargeCheckOrder", controllers.yh.arap.ar.ChargeCheckOrderController.class, contentPath);
         me.add("/chargePreInvoiceOrder", controllers.yh.arap.ar.ChargePreInvoiceOrderController.class, contentPath);
         me.add("/chargeInvoiceOrder", controllers.yh.arap.ar.ChargeInvoiceOrderController.class, contentPath);
-        me.add("/chargeAcceptOrder", controllers.yh.arap.ar.ChargeAcceptOrderController.class, contentPath);
         me.add("/chargeAdjustOrder", controllers.yh.arap.ar.ChargeAdjustOrderController.class, contentPath);
         me.add("/chargeMiscOrder", controllers.yh.arap.ar.ChargeMiscOrderController.class, contentPath);
-        me.add("/chargeAccept", controllers.yh.arap.ar.ChargeAcceptOrderController.class, contentPath);
+        me.add("/chargeAcceptOrder", controllers.yh.arap.ar.ChargeAcceptOrderController.class, contentPath);
         //ap 应付条目处理
         me.add("/costConfirmList", controllers.yh.arap.ap.CostItemConfirmController.class, contentPath);
         me.add("/costCheckOrder", controllers.yh.arap.ap.CostCheckOrderController.class, contentPath);
         me.add("/costPreInvoiceOrder", controllers.yh.arap.ap.CostPreInvoiceOrderController.class, contentPath);
         me.add("/costAdjustOrder", controllers.yh.arap.ap.CostAdjustOrderController.class, contentPath);
+        me.add("/costAcceptOrder", controllers.yh.arap.ap.CostAcceptOrderController.class, contentPath);
         //应付报销单
         me.add("/costReimbursement", controllers.yh.arap.ap.CostReimbursementOrder.class, contentPath);
         

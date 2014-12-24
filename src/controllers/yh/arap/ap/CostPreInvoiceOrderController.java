@@ -337,19 +337,22 @@ public class CostPreInvoiceOrderController extends Controller {
     }
     
     public void costCheckOrderList(){
-    	String costCheckOrderIds = getPara("costCheckOrderIds");
     	String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from arap_cost_order where id in("+costCheckOrderIds+")";
+        String sqlTotal = "select count(1) total from arap_cost_order aco where aco.status = '已确认'";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aco.*,(select group_concat(acai.invoice_no) from arap_cost_order aaia"
-				+ " left join arap_cost_order_invoice_no acai on acai.cost_order_id = aaia.id) invoice_no from arap_cost_order aco where aco.id in("+costCheckOrderIds+") order by aco.create_stamp desc " + sLimit;
+        String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no,c.abbr cname,ul.user_name creator_name from arap_cost_order aco "
+        		+ " left join party p on p.id = aco.payee_id"
+        		+ " left join contact c on c.id = p.contact_id"
+        		+ " left join user_login ul on ul.id = aco.create_by"
+        		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id"
+        		+ " where aco.status = '已确认' group by aco.id order by aco.create_stamp desc "+sLimit;
 
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
@@ -379,11 +382,12 @@ public class CostPreInvoiceOrderController extends Controller {
     	Record rec = Db.findFirst(sqlTotal);
     	logger.debug("total records:" + rec.getLong("total"));
     	
-    	String sql = "select aco.*,c.abbr cname, (select group_concat(acai.invoice_no) from arap_cost_order aaia	left join arap_cost_order_invoice_no acai on acai.cost_order_id = aaia.id where	aaia.id = aco.id) invoice_no,"
-    			+ " (select group_concat(cost_invoice_no.invoice_no separator ',') from arap_cost_invoice_item_invoice_no cost_invoice_no where cost_invoice_no.invoice_id = appl_order.id) all_invoice_no"
+    	String sql = "select aco.*,c.abbr cname, (select group_concat(acai.invoice_no) from arap_cost_order aaia left join arap_cost_order_invoice_no acai on acai.cost_order_id = aaia.id where aaia.id = aco.id) invoice_no,"
+    			+ " (select group_concat(cost_invoice_no.invoice_no separator ',') from arap_cost_invoice_item_invoice_no cost_invoice_no where cost_invoice_no.invoice_id = appl_order.id) all_invoice_no,ul.user_name creator_name"
     			+ " from arap_cost_invoice_application_order appl_order"
 				+ " left join arap_cost_order aco on aco.application_order_id = appl_order.id"
 				+ " left join party p on p.id = aco.payee_id left join contact c on c.id = p.contact_id"
+        		+ " left join user_login ul on ul.id = aco.create_by"
 				+ " where appl_order.id = "+costPreInvoiceOrderId
 				+ " order by aco.create_stamp desc " + sLimit;
     	

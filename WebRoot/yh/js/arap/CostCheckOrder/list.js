@@ -46,7 +46,7 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":"COST_AMOUNT"},
             {"mDataProp":"REMARK"},
-            {"mDataProp":null},        	
+            {"mDataProp":"CREATOR_NAME"},        	
             {"mDataProp":"CREATE_STAMP"}, 
             { 
                 "mDataProp": null, 

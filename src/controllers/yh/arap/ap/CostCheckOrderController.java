@@ -174,9 +174,10 @@ public class CostCheckOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no,c.abbr cname from arap_cost_order aco "
+        String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no,c.abbr cname,ul.user_name creator_name from arap_cost_order aco "
         		+ " left join party p on p.id = aco.payee_id"
         		+ " left join contact c on c.id = p.contact_id"
+        		+ " left join user_login ul on ul.id = aco.create_by"
         		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id group by aco.id order by aco.create_stamp desc "+sLimit;
 
         logger.debug("sql:" + sql);
@@ -681,6 +682,12 @@ public class CostCheckOrderController extends Controller {
 				deliveryId = "-1";
 			}
     	}
+
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+		}		
     	String searchSql = "select distinct dor.id,dor.order_no order_no,dor.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, "
 				+ " (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount, "
 				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n')"
@@ -754,14 +761,26 @@ public class CostCheckOrderController extends Controller {
 				+ " left join contact c on c.id = p.contact_id"
 				+ " left join office oe on oe.id = tor.office_id"
 				+ " where dor.id = ror.delivery_order_id and (ifnull(dpr.id, 0) > 0) and dpr.id in("+pickupId+")"
+				+ " group by dpr.id "
+				+ " union"
+				+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,ror.transaction_status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, "
+				+ " (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, "
+				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n')"
+				+ " transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name"
+				+ " from return_order ror "
+				+ " left join depart_transfer dtr on dtr.order_id = ror.transfer_order_id"
+				+ " left join depart_order dpr on dpr.id = dtr.pickup_id"
+				+ " left join transfer_order tor on tor.id = dtr.order_id "
+				+ " left join transfer_order_item toi on toi.order_id = tor.id "
+				+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id"
+				+ " left join product prod on toi.product_id = prod.id "
+				+ " left join user_login ul on ul.id = dpr.create_by "
+				+ " left join party p on p.id = dpr.sp_id "
+				+ " left join contact c on c.id = p.contact_id"
+				+ " left join office oe on oe.id = tor.office_id"
+				+ " where (ifnull(dpr.id, 0) > 0) and dpr.id in("+pickupId+")"
 				+ " group by dpr.id ";
     	
-		String sLimit = "";
-		String pageIndex = getPara("sEcho");
-		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-		}
-		
 		String sqlTotal = "select count(1) total from ("+searchSql+") a";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
