@@ -40,7 +40,6 @@
 	<target name="prod">
 		<copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-prod" overwrite="true"/>
 		<copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-prod" overwrite="true"/>
-		<copy tofile="WebRoot/WEB-INF/SimHei.ttf" file="WebRoot/WEB-INF/config/SimHei.ttf" overwrite="false"/>
         <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
             <arg value="WebRoot"/>
             <arg value="8080"/>
@@ -53,7 +52,6 @@
 	<target name="yh-prod">
 			<copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-yh-prod" overwrite="true"/>
 			<copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-yh-prod" overwrite="true"/>
-			<copy tofile="WebRoot/WEB-INF/SimHei.ttf" file="WebRoot/WEB-INF/config/SimHei.ttf" overwrite="false"/>
 	        <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
 	            <arg value="WebRoot"/>
 	            <arg value="8000"/>
@@ -66,7 +64,6 @@
 	<target name="uat">
         <copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-uat" overwrite="true"/>
         <copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-uat" overwrite="true"/>
-		<copy tofile="WebRoot/WEB-INF/SimHei.ttf" file="WebRoot/WEB-INF/config/SimHei.ttf" overwrite="false"/>
         <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
             <arg value="WebRoot"/>
             <arg value="8000"/>
