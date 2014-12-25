@@ -341,7 +341,7 @@ public class ReturnOrderController extends Controller {
 			}
 			// 如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
 			if (isLocationChanged) {
-				deleteContractFinItemByTransfer(transferOrder);
+				deleteContractFinItemByTransfer(transferOrder, returnOrder.getLong("id"));
 				// 计算配送单的触发的应收
 				calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
 			}
@@ -364,7 +364,7 @@ public class ReturnOrderController extends Controller {
 			}
 			// 如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
 			if (isLocationChanged) {
-				deleteContractFinItem(deliveryOrder);
+				deleteContractFinItem(deliveryOrder, returnOrder.getLong("id"));
 				// 计算配送单的触发的应收
 				List<Record> transferOrderItemDetailList = Db.
 						find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", deliveryOrder.get("id"));
@@ -377,7 +377,7 @@ public class ReturnOrderController extends Controller {
 
 	}
 
-	private void deleteContractFinItem(DeliveryOrder deliveryOrder) {
+	private void deleteContractFinItem(DeliveryOrder deliveryOrder, Long returnOrderId) {
 		Long customerId = deliveryOrder.getLong("customer_id");
 		// 先获取有效期内的客户合同, 如有多个，默认取第一个
 		Contract customerContract = Contract.dao
@@ -387,11 +387,10 @@ public class ReturnOrderController extends Controller {
 		if (customerContract == null)
 			return;
 
-		Db.update("delete from return_order_fin_item where contract_id="
-				+ customerContract.getLong("id"));
+		Db.update("delete from return_order_fin_item where contract_id="+ customerContract.getLong("id")+" and return_order_id = "+returnOrderId);
 	}
 	
-	private void deleteContractFinItemByTransfer(TransferOrder deliveryOrder) {
+	private void deleteContractFinItemByTransfer(TransferOrder deliveryOrder, Long returnOrderId) {
 		Long customerId = deliveryOrder.getLong("customer_id");
 		// 先获取有效期内的客户合同, 如有多个，默认取第一个
 		Contract customerContract = Contract.dao
@@ -401,8 +400,7 @@ public class ReturnOrderController extends Controller {
 		if (customerContract == null)
 			return;
 		
-		Db.update("delete from return_order_fin_item where contract_id="
-				+ customerContract.getLong("id"));
+		Db.update("delete from return_order_fin_item where contract_id="+ customerContract.getLong("id")+" and return_order_id = "+returnOrderId);
 	}
 
 	// 更新收货人信息
