@@ -241,7 +241,7 @@ public class DepartOrderController extends Controller {
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
     				+ " where combine_type = '"+ DepartOrder.COMBINE_TYPE_DEPART 
-    				+ "' and deo.status in('已发车','在途')  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+    				+ "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
     		
     		sql = "select deo.id,"
@@ -280,7 +280,7 @@ public class DepartOrderController extends Controller {
     				+ " where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
     				+ DepartOrder.COMBINE_TYPE_DEPART + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-    				+ " and deo.status in('已发车','在途') group by deo.id order by deo.create_stamp desc " + sLimit;
+    				+ " group by deo.id order by deo.create_stamp desc " + sLimit;
     	} else {
     		if (beginTime == null || "".equals(beginTime)) {
     			beginTime = "1-1-1";
@@ -301,7 +301,7 @@ public class DepartOrderController extends Controller {
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
     				+ " left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )"
-    				+ "  where deo.combine_type = 'DEPART' and deo.status in('已发车','在途') and "
+    				+ "  where deo.combine_type = 'DEPART' and "
     				+ "ifnull(deo.status,'') like '%" + status + "%' and "
     				+ "ifnull(deo.depart_no,'') like '%" + departNo 
     				+ "%' and ifnull(c2.abbr,'')  like '%"+ sp 
@@ -346,7 +346,7 @@ public class DepartOrderController extends Controller {
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
     				+ " left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )"
-    				+ "  where deo.combine_type = 'DEPART' and deo.status in('已发车','在途') "
+    				+ "  where deo.combine_type = 'DEPART' "
     				+ " and ifnull(deo.status,'') like '%"+ status
     				+ "%' and ifnull(deo.depart_no,'') like '%"+ departNo
     				+ "%' and ifnull(tr.order_no,'') like '%"+ orderNo
