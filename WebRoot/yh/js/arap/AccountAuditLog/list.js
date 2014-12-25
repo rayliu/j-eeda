@@ -14,11 +14,7 @@ $(document).ready(function() {
         "sAjaxSource": "/accountAuditLog/list",
         "aoColumns": [   
             {"mDataProp":"CREATE_DATE"},
-            {"mDataProp":null,
-	            "fnRender": function(obj) {
-	            	return '开票记录单';
-	            }
-            },
+            {"mDataProp":"SOURCE_ORDER"},
             {"mDataProp":"INVOICE_ORDER_NO"},
             {"mDataProp":null,
 	            "fnRender": function(obj) {

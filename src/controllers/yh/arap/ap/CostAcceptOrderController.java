@@ -118,15 +118,22 @@ public class CostAcceptOrderController extends Controller {
 					if(orderNo.startsWith("SGFK")){
 						rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_cost_order amco, arap_misc_cost_order_item amcoi "
 								+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
+	                    if(rec!=null){
+	                    	double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
+	                        //银行账户 金额处理
+	                        account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
+	                        //日记账
+	                        createAuditLog(orderId, account, total, paymentMethod, "手工付款单");
+	                    }
 					}else{
 						rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
-					}
-					if(rec!=null){
-						double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
-						//现金账户 金额处理
-						account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
-						//日记账
-						createAuditLog(orderId, account, total, paymentMethod);
+						if(rec!=null){
+	                    	double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
+	                        //银行账户 金额处理
+	                        account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
+	                        //日记账
+	                        createAuditLog(orderId, account, total, paymentMethod, "应付开票申请单");
+	                    }
 					}
 				}
 			}else{//银行账户  金额处理
@@ -136,23 +143,30 @@ public class CostAcceptOrderController extends Controller {
 					if(orderNo.startsWith("SGFK")){
 						rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_cost_order amco, arap_misc_cost_order_item amcoi "
 								+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
+	                    if(rec!=null){
+	                    	double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
+	                        //银行账户 金额处理
+	                        account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
+	                        //日记账
+	                        createAuditLog(orderId, account, total, paymentMethod, "手工付款单");
+	                    }
 					}else{
 						rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
+	                    if(rec!=null){
+	                    	double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
+	                        //银行账户 金额处理
+	                        account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
+	                        //日记账
+	                        createAuditLog(orderId, account, total, paymentMethod, "应付开票申请单");
+	                    }
 					}
-                    if(rec!=null){
-                        double total = rec.getDouble("total");
-                        //银行账户 金额处理
-                        account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
-                        //日记账
-                        createAuditLog(orderId, account, total, paymentMethod);
-                    }
                 }
 			}
     	}
     	redirect("/costAcceptOrder");
     }
 
-    private void createAuditLog(String orderId, Account account, double total, String paymentMethod) {
+    private void createAuditLog(String orderId, Account account, double total, String paymentMethod, String sourceOrder) {
         ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
         auditLog.set("payment_method", paymentMethod);
         auditLog.set("payment_type", ArapAccountAuditLog.TYPE_COST);
@@ -162,6 +176,7 @@ public class CostAcceptOrderController extends Controller {
         auditLog.set("misc_order_id", orderId);
         auditLog.set("invoice_order_id", null);
         auditLog.set("account_id", account.get("id"));
+        auditLog.set("source_order", sourceOrder);
         auditLog.save();
     }
 }
