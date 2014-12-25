@@ -100,7 +100,7 @@ public class ChargeAcceptOrderController extends Controller {
 				arapMiscChargeOrder.set("status", "已收款确认");
 				arapMiscChargeOrder.update();
             }else{
-                ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(chargeIdArr[i]);
+                ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(orderId);
                 arapChargeInvoice.set("status", "已收款确认");
                 arapChargeInvoice.update();
             }
@@ -119,7 +119,7 @@ public class ChargeAcceptOrderController extends Controller {
 					if(rec!=null){
 						double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
 						//现金账户 金额处理
-						account.set("amount", account.getDouble("amount")==null?0.0:account.getDouble("amount") + total).update();
+						account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) + total).update();
 						//日记账
 						createAuditLog(orderId, account, total, paymentMethod);
 					}
@@ -135,9 +135,9 @@ public class ChargeAcceptOrderController extends Controller {
 						rec = Db.findFirst("select aci.total_amount total from arap_charge_invoice aci where aci.order_no='"+orderNo+"'");
 					}
                     if(rec!=null){
-                        double total = rec.getDouble("total");
+                        double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
                         //银行账户 金额处理
-                        account.set("amount", account.getDouble("amount")==null?0.0:account.getDouble("amount") + total).update();
+                        account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) + total).update();
                         //日记账
                         createAuditLog(orderId, account, total, paymentMethod);
                     }

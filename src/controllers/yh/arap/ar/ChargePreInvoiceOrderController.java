@@ -122,9 +122,6 @@ public class ChargePreInvoiceOrderController extends Controller {
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
 		setAttr("create_by", users.get(0).get("id"));
-
-		String sql = "select * from arap_charge_invoice_application_order order by id desc limit 0,1";
-		setAttr("order_no", OrderNoUtil.getOrderNo(sql,"YSSQ"));
 		
 		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
 		setAttr("userLogin", userLogin);
@@ -139,10 +136,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		String paymentMethod = getPara("paymentMethod");
 		if (!"".equals(chargePreInvoiceOrderId) && chargePreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
-			arapAuditInvoiceApplication.set("order_no", getPara("order_no"));
-			// arapAuditOrder.set("order_type", );
 			arapAuditInvoiceApplication.set("status", "new");
-			//arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
@@ -159,7 +153,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.update();
 		} else {
 			arapAuditInvoiceApplication = new ArapChargeInvoiceApplication();
-			arapAuditInvoiceApplication.set("order_no", getPara("order_no"));
+			String sql = "select * from arap_charge_invoice_application_order order by id desc limit 0,1";
+			arapAuditInvoiceApplication.set("order_no", OrderNoUtil.getOrderNo(sql,"YSSQ"));
 			arapAuditInvoiceApplication.set("status", "新建");
 			arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));

@@ -9,7 +9,7 @@ import java.util.Map;
 
 import models.Account;
 import models.ArapAccountAuditLog;
-import models.ArapCostInvoice;
+import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
 import models.yh.arap.ArapMiscCostOrder;
 
@@ -102,11 +102,11 @@ public class CostAcceptOrderController extends Controller {
     		String orderNo = arr[1];
             if(orderNo.startsWith("SGFK")){
 				ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(orderId);
-				arapMiscCostOrder.set("status", "已收款确认");
+				arapMiscCostOrder.set("status", "已付款确认");
 				arapMiscCostOrder.update();
             }else{
-                ArapCostInvoice arapcostInvoice = ArapCostInvoice.dao.findById(costIdArr[i]);
-                arapcostInvoice.set("status", "已收款确认");
+                ArapCostInvoiceApplication arapcostInvoice = ArapCostInvoiceApplication.dao.findById(orderId);
+                arapcostInvoice.set("status", "已付款确认");
                 arapcostInvoice.update();
             }
 			
@@ -119,12 +119,12 @@ public class CostAcceptOrderController extends Controller {
 						rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_cost_order amco, arap_misc_cost_order_item amcoi "
 								+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
 					}else{
-						rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice aci where aci.order_no='"+orderNo+"'");
+						rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
 					}
 					if(rec!=null){
 						double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
 						//现金账户 金额处理
-						account.set("amount", account.getDouble("amount")==null?0.0:account.getDouble("amount") - total).update();
+						account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
 						//日记账
 						createAuditLog(orderId, account, total, paymentMethod);
 					}
@@ -137,12 +137,12 @@ public class CostAcceptOrderController extends Controller {
 						rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_cost_order amco, arap_misc_cost_order_item amcoi "
 								+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
 					}else{
-						rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice aci where aci.order_no='"+orderNo+"'");
+						rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
 					}
                     if(rec!=null){
                         double total = rec.getDouble("total");
                         //银行账户 金额处理
-                        account.set("amount", account.getDouble("amount")==null?0.0:account.getDouble("amount") - total).update();
+                        account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
                         //日记账
                         createAuditLog(orderId, account, total, paymentMethod);
                     }

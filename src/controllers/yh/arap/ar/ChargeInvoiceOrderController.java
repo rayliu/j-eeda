@@ -58,7 +58,8 @@ public class ChargeInvoiceOrderController extends Controller {
 			Double totalAmount = 0.0;
 			for(int i=0;i<idArray.length;i++){
 				ArapChargeInvoiceApplication rOrder = ArapChargeInvoiceApplication.dao.findById(idArray[i]);
-				totalAmount = totalAmount + rOrder.getDouble("total_amount");
+				Double amount = rOrder.getDouble("total_amount")==null?0.0:rOrder.getDouble("total_amount");
+				totalAmount = totalAmount + amount;
 			}
 			setAttr("totalAmount", totalAmount);
 			
@@ -78,9 +79,6 @@ public class ChargeInvoiceOrderController extends Controller {
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
-
-        String sql = "select * from arap_charge_invoice order by id desc limit 0,1";
-        setAttr("order_no", OrderNoUtil.getOrderNo(sql,"YSFP"));
 
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);
@@ -137,7 +135,7 @@ public class ChargeInvoiceOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aci.*,group_concat(acai.invoice_no separator '\r\n') invoice_item_no,ul.user_name creator_name,c.abbr cname from arap_charge_invoice aci"
+        String sql = "select aci.*,group_concat(distinct acai.invoice_no separator '\r\n') invoice_item_no,ul.user_name creator_name,c.abbr cname from arap_charge_invoice aci"
 				+ " left join arap_charge_invoice_item_invoice_no acio on acio.invoice_id = aci.id "
 				+ " left join arap_charge_application_invoice_no acai on acai.invoice_no = acio.invoice_no"
 				+ " left join arap_charge_invoice_application_order acao on acao.id = acai.application_order_id"
@@ -171,25 +169,30 @@ public class ChargeInvoiceOrderController extends Controller {
 	    	arapAuditInvoice.update();
     	}else{
     		arapAuditInvoice = new ArapChargeInvoice();
-    		arapAuditInvoice.set("order_no", getPara("order_no"));
+            String sql = "select * from arap_charge_invoice order by id desc limit 0,1";
+            arapAuditInvoice.set("order_no", OrderNoUtil.getOrderNo(sql,"YSFP"));
     		arapAuditInvoice.set("create_by", getPara("create_by"));
     		arapAuditInvoice.set("status", getPara("status"));
 	    	arapAuditInvoice.set("create_stamp", new Date());
-	    	arapAuditInvoice.set("total_amount", getPara("total_amount"));
+	    	if(getPara("total_amount") != null && !"".equals(getPara("total_amount"))){
+	    		arapAuditInvoice.set("total_amount", getPara("total_amount"));
+	    	}
 	    	arapAuditInvoice.set("remark", getPara("remark"));
-	    	arapAuditInvoice.set("payee_id", getPara("customer_id"));
+	    	if(getPara("customer_id") != null && !"".equals(getPara("customer_id"))){
+	    		arapAuditInvoice.set("payee_id", getPara("customer_id"));
+	    	}
 	    	arapAuditInvoice.save();
 	    	
 	    	String ids = getPara("chargePreInvoiceOrderIds");
 	    	String[] idArr = null;
 	    	if(ids != null && !"".equals(ids)){
 	    		idArr = ids.split(",");
-	    	}
-	    	for(int i=0;i<idArr.length;i++){
-	    		ArapChargeInvoiceApplication application = ArapChargeInvoiceApplication.dao.findById(idArr[i]);
-	    		application.set("status", "已开票");
-	    		application.set("invoice_order_id", arapAuditInvoice.get("id"));
-	    		application.update();
+	    		for(int i=0;i<idArr.length;i++){
+	    			ArapChargeInvoiceApplication application = ArapChargeInvoiceApplication.dao.findById(idArr[i]);
+	    			application.set("status", "已开票");
+	    			application.set("invoice_order_id", arapAuditInvoice.get("id"));
+	    			application.update();
+	    		}
 	    	}
     	}
         renderJson(arapAuditInvoice);;
@@ -274,6 +277,9 @@ public class ChargeInvoiceOrderController extends Controller {
     // 发票号列表
     public void chargeInvoiceItemList(){
     	String chargeInvoiceOrderId = getPara("chargeInvoiceOrderId");
+    	if(chargeInvoiceOrderId == null || "".equals(chargeInvoiceOrderId)){
+    		chargeInvoiceOrderId = "-1";
+    	}
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -304,7 +310,7 @@ public class ChargeInvoiceOrderController extends Controller {
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
         orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-            orderMap.put("aaData", orders);
+        orderMap.put("aaData", orders);
 
         renderJson(orderMap);
     }

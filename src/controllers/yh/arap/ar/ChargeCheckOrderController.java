@@ -296,7 +296,6 @@ public class ChargeCheckOrderController extends Controller {
 		if (!"".equals(chargeCheckOrderId) && chargeCheckOrderId != null) {
 			arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
 			arapAuditOrder.set("status", "new");
-			arapAuditOrder.set("payee_id", getPara("customer_id"));
 			arapAuditOrder.set("create_by", getPara("create_by"));
 			arapAuditOrder.set("create_stamp", new Date());
 			arapAuditOrder.set("remark", getPara("remark"));
