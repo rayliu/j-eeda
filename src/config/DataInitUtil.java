@@ -152,7 +152,7 @@ public class DataInitUtil {
             // stmt.executeUpdate(
             stmt.executeUpdate("create table if not exists pickup_order_item(id bigint auto_increment primary key,order_id bigint,customer_id bigint,serial_no varchar(50),item_no bigint,item_name varchar(50),item_desc varchar(50),amount double,unit varchar(50),volume double,weight double,remark varchar(255));");
             // 配送单货品表
-            stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment primary key,transfer_no varchar(50),delivery_id bigint,transfer_order_id bigint, transfer_item_id bigint, amount double, transfer_item_detail_id bigint);");
+            stmt.executeUpdate("create table if not exists delivery_order_item(id bigint auto_increment primary key,transfer_no varchar(50),delivery_id bigint,transfer_order_id bigint, transfer_item_id bigint, amount double, transfer_item_detail_id bigint,product_id bigint,product_number double);");
             //配送调车单
             stmt.executeUpdate("create table if not exists delivery_plan_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),office_id bigint,create_id bigint,create_stamp timestamp,sp_id bigint,carinfo_id bigint,car_no varchar(50),driver varchar(50),phone varchar(50),turnout_time date,return_time date,remark varchar(500));");
             stmt.executeUpdate("create table if not exists delivery_plan_order_detail(id bigint auto_increment primary key,order_id varchar(50),delivery_id bigint);");
@@ -176,7 +176,7 @@ public class DataInitUtil {
                     + "lot_no varchar(50),uom varchar(20),caton_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
 
             stmt.executeUpdate("create table if not exists inventory_item(id bigint auto_increment primary key,party_id bigint,warehouse_id bigint,product_id bigint,item_no varchar(50),item_name varchar(50),status varchar(50),expire_date datetime,"
-                    + "lot_no varchar(50),uom varchar(20),caton_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime);");
+                    + "lot_no varchar(50),uom varchar(20),caton_no varchar(50),total_quantity double,unit_price double,unit_cost double,serial_no varchar(50),remark varchar(255),creator bigint,create_date datetime,last_updater bigint,last_update_date datetime,available_quantity double);");
 
             // 应收对账单
             stmt.executeUpdate("create table if not exists arap_charge_order(id bigint auto_increment primary key,order_no varchar(255),order_type varchar(255),status varchar(255),payee_id bigint,create_by bigint,create_stamp timestamp,"

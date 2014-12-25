@@ -19,29 +19,28 @@
 	            	<div id="basic"  style='display:none'>
 		            	<div class="panel-body">
 			            	<div class="row ">
-				            	<div class="col-lg-6">
+				            	<div class="col-lg-4">
 									<div class="form-group">
 										<label class="search-label">客户：</label>
-										<input id="customerName1" class="form-control search-control status_filter" type="text">
-										<ul id='companyList1' tabindex="-1" class="pull-right dropdown-menu default" style="top: 60%; left: 20%;"></ul>
+										<input id="customerName1" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择客户">
+										<ul id='companyList1' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 62%; left: 33%;"></ul>
 									</div>
 								</div>
-								<div class="col-lg-6">
+								<div class="col-lg-4">
 									<div class="form-group">
 										<label class="search-label">仓库：</label>
-										<input id="warehouse1" class="form-control search-control status_filter" type="text">
+										<input id="warehouse1" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择仓库">
 										<ul id='warehouseList1' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
 										</ul>
 									</div>
 								</div>
 							</div>
 						</div>
-                         <form id='createCargoForm' action="/delivery/creatDeliveryOrder" method="post">
+                         <form id='createCargoForm' action="/delivery/creat2" method="post">
                             <input id='customerId' name='customerId' type="hidden">
-                            <input id='createId' name='createId' type="hidden">
                             <input id='warehouseId' name='warehouseId' type="hidden">
-                            <input id='itemIdArr' name='itemIdArr' type="hidden">
-                            <input id='itemAmoutArr' name='itemAmoutArr' type="hidden">
+                            <input id='productIds' name='productIds' type="hidden">
+                            <input id='shippingNumbers' name='shippingNumbers' type="hidden">
                             <input id="cargoNature" type="hidden" name="cargoNature" value="cargo">
                             <a class="btn btn-primary" id="saveDeliveryCargo" disabled="true">创建</a>
                         </form>
@@ -58,7 +57,9 @@
                                             <th>仓库ID</th>
                                             <th>客户</th>
                                             <th>客户ID</th>
-                                            <th>库存数量</th>
+                                            <th>实际库存</th>
+                                            <th>计划出库</th>
+                                            <th>可用库存</th>
                                             <th>配送数量</th>                                            
                                         </tr>
                                     </thead>
@@ -77,7 +78,7 @@
                                     <div class="form-group">
                                         <label class="search-label">客户：</label>
                                         <input id="customerName2" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择客户">
-                                    	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 45%; left: 32%;"></ul>
+                                    	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 45%; left: 32%;"></ul>
                                     </div>
 									<div class="form-group">
 										<label class="search-label">运输单：</label>
@@ -156,4 +157,4 @@
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
-<script src="/yh/js/delivery/delivery.js"></script>
+<script src="/yh/js/delivery/searchTransfer.js"></script>
