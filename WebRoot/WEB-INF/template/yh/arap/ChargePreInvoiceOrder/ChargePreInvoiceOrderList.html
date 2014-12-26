@@ -1,5 +1,4 @@
 
-
 <%layout("/yh/layout.html"){%>
 <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
 <link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
@@ -54,9 +53,9 @@
                                                                 <!-- end of col-lg-6-->
                                                                 <div class="col-lg-4">
                                                                      <div class="form-group">
-                                                                        <label class="search-label">网点</label>
-                                                                        <input type="text" class="form-control search-control address_filter" id="address_filter">
-                                                                    </div>
+							                                            <label class="search-label">网点</label>
+							                                            <select id="officeSelect" class="form-control search-control officeName_filter" name="officeSelect"></select>
+							                                        </div>
                                                                    	<div class="form-group">                                                    
                                                                         <span id="datetimepicker2" class="input-append date search-control "> 
                                                                             <label class="search-label">结束时间</label> 
@@ -71,7 +70,10 @@
                                                                 <div class="col-lg-4">
                                                                 	 <div class="form-group">
                                                                         <label class="search-label">对账单状态</label>
-                                                                        <input type="text" class="form-control search-control officeName_filter" id="officeName_filter">
+                                                                        <select id="status_filter" class="form-control search-control status_filter" name="status_filter">
+                                                                        	<option></option>
+                                                                        	<option value="已确认">已确认</option>
+                                                                        </select>  
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label class="search-label">对账单号</label>
@@ -186,14 +188,14 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label class="search-label">客户</label>
-                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter" placeholder="请输入或者选择客户">
-                                            <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 21.5%;"></ul>
+                                            <input type="text" class="form-control search-control customer_filter" id="select_customer_filter" placeholder="请输入或者选择客户">
+                                            <ul id='select_companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 42%; left: 32%;"></ul>
                                         </div>
                                         
                                         <div class="form-group">                                        
-                                            <div id="datetimepicker3" class="input-append date "> 
+                                            <div id="datetimepickerK" class="input-append date "> 
                                                 <label class="search-label">开始时间</label> 
-                                                <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
+                                                <input id="kaishi_filter" class="form-control search-control  beginTime_filter" type="text">
                                                 <span class="add-on">  
                                                     <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
                                                 </span>  
@@ -204,12 +206,12 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label class="search-label">申请单号</label>
-                                            <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value="">
+                                            <input type="text" class="form-control search-control orderNo_filter" id="shenqinghao_filter" value="">
                                         </div>
                                         <div class="form-group">                                                    
-                                            <span id="datetimepicker4" class="input-append date search-control "> 
+                                            <span id="datetimepickerJ" class="input-append date search-control "> 
                                                 <label class="search-label">结束时间</label> 
-                                                <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
+                                                <input id="jieshu_filter" class="form-control search-control endTime_filter" type="text">
                                                 <span class="add-on">  
                                                     <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
                                                 </span>  
@@ -219,14 +221,12 @@
                                     <div class="col-lg-4">
                                     	<div class="form-group">
                                             <label class="search-label">状态</label>
-                                            <select id="status_filter" class="form-control search-control status_filter">
+                                            <select id="select_status_filter" class="form-control search-control status_filter">
                                                 <option value=""></option>
                                                 <option value="新建">新建</option>
-                                                <option value="已发车">已发车</option>
-                                                <option value="在途">在途</option>                                                
-                                                <option value="已入货场">已入货场</option>                                                
-                                                <option value="已入库">已入库</option>                                                
-                                                <option value="已签收">已签收</option>                                                
+                                                <option value="已审核">已审核</option>
+                                                <option value="已审批">已审批</option>                                                
+                                                <option value="已开票">已开票</option>                                            
                                             </select>
                                             <!-- <input type="text" class="form-control search-control status_filter" id="status_filter"> -->
                                         </div>

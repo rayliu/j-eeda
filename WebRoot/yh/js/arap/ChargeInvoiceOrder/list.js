@@ -39,14 +39,39 @@ $(document).ready(function() {
             {"mDataProp":"REMARK"}                        
         ]      
     });	
-    /*--------------------------------------------------------------------*/
-    //获取所有客户
-    $('#customer_filter').on('keyup click', function(){
-           var inputStr = $('#customer_filter').val();
+    
+    var refreshList = function (){
+    	var companyName = $('#select_customer_filter').val();
+		var beginTime = $("#kaishi_filter").val();
+		var endTime = $("#jieshu_filter").val();
+		var orderNo = $("#select_orderNo_filter").val();
+		var status = $("#select_status_filter").val();
+		var office = $("#select_office_filter").val();
+		var sp = $("#sp_filter").val();
+		var address = $("#address_filter").val();
+		chargeInvoiceOrderListTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/list?companyName="+companyName
+																		+"&beginTime="+beginTime
+																		+"&endTime="+endTime
+																		+"&orderNo="+orderNo
+																		+"&status="+status
+																		+"&office="+office
+																		+"&sp="+sp
+																		+"&address="+address;
+		chargeInvoiceOrderListTable.fnDraw();
+    };
+    $('#select_orderNo_filter,#select_customer_filter,#sp_filter,#address_filter,#kaishi_filter,#jieshu_filter').on( 'keyup', function () {    	
+    	refreshList();
+	} );
+    $("#select_status_filter,#select_office_filter").on('change',function(){    	
+    	refreshList();
+    });
+    /*-------------------------获取所有客户-----------------------------------*/
+ 
+    $('#select_customer_filter').on('keyup click', function(){
+           var inputStr = $('#select_customer_filter').val();
            
            $.get("/customerContract/search", {locationName:inputStr}, function(data){
-               console.log(data);
-               var companyList =$("#companyList");
+               var companyList =$("#select_companyList");
                companyList.empty();
                for(var i = 0; i < data.length; i++)
                {
@@ -57,52 +82,41 @@ $(document).ready(function() {
                
            },'json');
 
-           if(inputStr==''){
-        	   datatable.fnFilter('', 2);
-           }
-           
+         
        });
-
-
 
    //选中某个客户时候
-      $('#companyList').on('click', '.fromLocationItem', function(e){        
-           $('#customer_filter').val($(this).text());
-           $("#companyList").hide();
+      $('#select_companyList').on('click', '.fromLocationItem', function(e){        
+           $('#select_customer_filter').val($(this).text());
+           $("#select_companyList").hide();
            var companyId = $(this).attr('partyId');
            $('#customerId').val(companyId);
-           //过滤回单列表
-           //chargeCheckTable.fnFilter(companyId, 2);
-           
-           
-           
-           //获取所有的条件
-           var inputStr = $('#customer_filter').val();
-           
-           
-           if(inputStr!=null){
-           	 /*
-                * 
-                * 
-                * datatable.fnSettings().sAjaxSource = "/chargeCheckOrder/edit";
-              	* datatable.fnDraw(); 
-                * */
-           }
+           refreshList();
        });
     // 没选中客户，焦点离开，隐藏列表
-       $('#customer_filter').on('blur', function(){
-           $('#companyList').hide();
+       $('#select_customer_filter').on('blur', function(){
+           $('#select_companyList').hide();
        });
 
        //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
-       $('#companyList').on('blur', function(){
-           $('#companyList').hide();
+       $('#select_companyList').on('blur', function(){
+           $('#select_companyList').hide();
        });
 
-       $('#companyList').on('mousedown', function(){
+       $('#select_companyList').on('mousedown', function(){
            return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
        });
-       
+       $.post('/transferOrder/searchAllOffice',function(data){
+   		if(data.length > 0){
+   			 var officeSelect = $("#select_office_filter");
+   			 officeSelect.empty();
+   			 officeSelect.append("<option ></option>");
+   			 for(var i=0; i<data.length; i++){
+   				 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");					 
+   			 }
+   		
+   	 	}
+   	},'json');
      //获取供应商的list，选中信息在下方展示其他信息
        $('#sp_filter').on('keyup click', function(){
        		var inputStr = $('#sp_filter').val();
@@ -114,7 +128,7 @@ $(document).ready(function() {
        			$('#sp_id').val($(this).attr(''));
        		}
        		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
-       			console.log(data);
+       			//console.log(data);
        			var spList =$("#spList");
        			spList.empty();
        			for(var i = 0; i < data.length; i++)
@@ -188,13 +202,28 @@ $(document).ready(function() {
        		}
        		pageSpAddress.append(address);
                $('#spList').hide();
-               //获取到所有的条件，   
-               
-               /*
-                * 
-                * 
-                * datatable.fnSettings().sAjaxSource = "/chargeCheckOrder/edit";
-              	* datatable.fnDraw(); 
-                * */ 
+               refreshList();
            });
+       	
+       	$('#datetimepickerK').datetimepicker({  
+            format: 'yyyy-MM-dd',  
+            language: 'zh-CN', 
+            autoclose: true,
+            pickerPosition: "bottom-left"
+        }).on('changeDate', function(ev){
+            $(".bootstrap-datetimepicker-widget").hide();
+            $('#kaishi_filter').trigger('keyup');
+        });
+
+
+        $('#datetimepickerJ').datetimepicker({  
+            format: 'yyyy-MM-dd',  
+            language: 'zh-CN', 
+            autoclose: true,
+            pickerPosition: "bottom-left"
+        }).on('changeDate', function(ev){
+            $(".bootstrap-datetimepicker-widget").hide();
+            $('#jieshu_filter').trigger('keyup');
+        });
+
 } );

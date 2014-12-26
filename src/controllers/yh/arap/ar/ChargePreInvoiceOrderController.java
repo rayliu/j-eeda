@@ -66,19 +66,53 @@ public class ChargePreInvoiceOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from arap_charge_invoice_application_order";
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
-
-        String sql = "select aaia.*,c.abbr cname,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_charge_invoice_application_order aaia "
+        String customer = getPara("customer");
+        String beginTime = getPara("beginTime");
+        String endTime = getPara("endTime");
+        String status = getPara("status");
+        String orderNo = getPara("orderNo");
+        
+        String sqlTotal = "";
+        String sql = "select aaia.*,c.abbr cname,ul.user_name as create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_charge_invoice_application_order aaia "
 				+ " left join party p on p.id = aaia.payee_id"
 				+ " left join contact c on c.id = p.contact_id"
 				+ " left join user_login ul on ul.id = aaia.create_by"
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
-				+ " left join user_login ul3 on ul3.id = aaia.approver_by order by aaia.create_stamp desc " + sLimit;
+				+ " left join user_login ul3 on ul3.id = aaia.approver_by ";
+         String condition = "";
+        if(customer == null && beginTime == null && endTime == null 
+        		&& status == null && orderNo ==null ){
+        	condition = " ";
+        }else{
+        	if (beginTime == null || "".equals(beginTime)) {
+				beginTime = "1-1-1";
+			}
+			if (endTime == null || "".equals(endTime)) {
+				endTime = "9999-12-31";
+			}
+			
+			condition = " where ifnull(c.abbr,'') like '%" + customer + "%' "
+					+ " and ifnull(aaia.order_no,'') like '%" + orderNo + "%' "
+					+ " and aaia.create_stamp between '" + beginTime + "' and '" + endTime + "' ";
+			if(status != null && !"".equals(status)){
+				condition = condition + " and aaia.status = '" + status +"' ";
+			}
+        }
+        
+       sqlTotal = "select count(1) total from arap_charge_invoice_application_order aaia "
+				+ " left join party p on p.id = aaia.payee_id"
+				+ " left join contact c on c.id = p.contact_id"
+				+ " left join user_login ul on ul.id = aaia.create_by"
+				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
+				+ " left join user_login ul3 on ul3.id = aaia.approver_by ";
+        
+       
+        
 
-        logger.debug("sql:" + sql);
-        List<Record> BillingOrders = Db.find(sql);
+        Record rec = Db.findFirst(sqlTotal + condition);
+        logger.debug("total records:" + rec.getLong("total"));
+        
+        List<Record> BillingOrders = Db.find(sql + condition + " order by aaia.create_stamp desc "+ sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
@@ -254,21 +288,48 @@ public class ChargePreInvoiceOrderController extends Controller {
 					+ getPara("iDisplayLength");
 		}
 		Map orderMap = new HashMap();
-		// 获取总条数
-		String totalWhere = "";
-		String sql = "select count(1) total from arap_charge_order where status = '已确认'";
-		Record rec = Db.findFirst(sql + totalWhere);
+		
+		
+		String customer = getPara("customer");
+		String beginTime = getPara("beginTime");
+		String endTime = getPara("endTime");
+		String office = getPara("office");
+		String status = getPara("status");
+		String orderNo = getPara("orderNo");
+		String sql ="select distinct aao.*, usl.user_name as creator_name,c.abbr cname"
+					+ " from arap_charge_order aao "
+					+ " left join party p on p.id = aao.payee_id "
+					+ " left join contact c on c.id = p.contact_id"
+					+ " left join user_login usl on usl.id=aao.create_by"
+					+ " where aao.status = '已确认' ";
+		String sqlTotal ="";
+		String condition = "";
+		//TODO 网点与对账单状态未做
+		
+		sqlTotal = "select count(1) total from arap_charge_order where status = '已确认'";
+		if(customer == null && beginTime == null && endTime == null 
+				&& office == null && status == null && orderNo == null ){
+			condition = " order by aao.create_stamp desc ";
+		}else{
+			if (beginTime == null || "".equals(beginTime)) {
+				beginTime = "1-1-1";
+			}
+			if (endTime == null || "".equals(endTime)) {
+				endTime = "9999-12-31";
+			}
+			
+			condition = " and ifnull(c.abbr,'') like '%" + customer + "%' "
+					+ " and ifnull(aao.order_no,'') like '%" + orderNo + "%' "
+					+ " and aao.create_stamp between '" + beginTime + "' and '" + endTime +"' "
+					+ " order by aao.create_stamp desc ";
+			
+		}
+
+		sqlTotal = "select count(1) total from (" + sql + condition + ") as A";
+		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
-
-		// 获取当前页的数据
-		List<Record> orders = Db
-				.find("select distinct aao.*, usl.user_name as creator_name,c.abbr cname"
-						+ " from arap_charge_order aao "
-						+ " left join party p on p.id = aao.payee_id "
-						+ " left join contact c on c.id = p.contact_id"
-						+ " left join user_login usl on usl.id=aao.create_by"
-						+ " where aao.status = '已确认' order by aao.create_stamp desc " + sLimit);
-
+		List<Record> orders = Db.find(sql + condition + sLimit);
+		
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
 		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));

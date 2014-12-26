@@ -108,6 +108,25 @@ $(document).ready(function() {
            },'json');
            
        });
+    
+    var refreshCreateList = function(){
+    	  //获取所有的条件
+        var customer = $('#customer_filter').val();
+		var beginTime = $("#beginTime_filter").val();
+		var endTime = $("#endTime_filter").val();
+		var orderNo = $("#orderNo_filter").val();
+		var customerNo = $("#customerNo_filter").val();
+		var start = $("#start_filter").val();
+		var status = $("#shouru_filter").val();
+	    chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list?customer="+customer
+	   												+"&beginTime="+beginTime
+	   												+"&endTime="+endTime
+	   												+"&orderNo="+orderNo
+	   												+"&customerNo="+customerNo
+	   												+"&start="+start
+	   												+"&status="+status;
+		   chargeConfiremTable.fnDraw(); 
+    };
    //选中某个客户时候
       $('#companyList').on('click', '.fromLocationItem', function(e){        
            $('#customer_filter').val($(this).text());
@@ -115,20 +134,7 @@ $(document).ready(function() {
            var companyId = $(this).attr('partyId');
            $('#customerId').val(companyId);
 
-           //获取所有的条件
-            var customer = $('#customer_filter').val();
-    		var beginTime = $("#beginTime_filter").val();
-    		var endTime = $("#endTime_filter").val();
-    		var orderNo = $("#orderNo_filter").val();
-    		var customerNO = $("#customerNO_filter").val();
-    		var start =$("#start_filter").val();
-    	   chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list?customer="+customer
-    	   												+"&beginTime="+beginTime
-    	   												+"&endTime="+endTime
-    	   												+"&orderNo="+orderNo
-    	   												+"&customerNO="+customerNO
-    	   												+"&start="+start;
-   		   chargeConfiremTable.fnDraw(); 
+           refreshCreateList();
            
        });
       // 没选中客户，焦点离开，隐藏列表
@@ -146,21 +152,12 @@ $(document).ready(function() {
        });
        
        //过滤客户
-       $('#customer_filter,#beginTime_filter,#endTime_filter,#orderNo_filter,#customerNo_filter,#start_filter').on( 'keyup click', function () {
-    	   var customer = $('#customer_filter').val();
-	   		var beginTime = $("#beginTime_filter").val();
-	   		var endTime = $("#endTime_filter").val();
-	   		var orderNo = $("#orderNo_filter").val();
-	   		var customerNO = $("#customerNo_filter").val();
-	   		var start =$("#start_filter").val();
-	   	   chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list?customer="+customer
-	   	   												+"&beginTime="+beginTime
-	   	   												+"&endTime="+endTime
-	   	   												+"&orderNo="+orderNo
-	   	   												+"&customerNO="+customerNO
-	   	   												+"&start="+start;
-  		   chargeConfiremTable.fnDraw(); 
-     	} );
+       $('#customer_filter,#beginTime_filter,#endTime_filter,#orderNo_filter,#customerNo_filter,#start_filter').on( 'keyup ',function(){
+    	   refreshCreateList();  
+       });
+       $("#shouru_filter").on('change',function(){
+    	   refreshCreateList();
+       });
        
        $('#datetimepicker').datetimepicker({  
            format: 'yyyy-MM-dd',  

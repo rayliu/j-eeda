@@ -57,14 +57,31 @@ $(document).ready(function() {
         ]      
     });	
     
-    /*--------------------------------------------------------------------*/
-    //获取所有客户
-    $('#customer_filter').on('keyup click', function(){
-           var inputStr = $('#customer_filter').val();
-           
+    var refreshList = function(){
+    	var customer = $('#select_customer_filter').val();
+		var beginTime = $("#kaishi_filter").val();
+		var endTime = $("#jieshu_filter").val();
+		var status = $("#select_status_filter").val();
+		var orderNo = $("#shenqinghao_filter").val();
+		datatable.fnSettings().sAjaxSource = "/chargePreInvoiceOrder/list?customer="+customer
+															+"&beginTime="+beginTime
+															+"&endTime="+endTime
+															+"&status="+status
+															+"&orderNo="+orderNo;
+		datatable.fnDraw();
+    };
+    $('#select_customer_filter,#kaishi_filter,#shenqinghao_filter,#jieshu_filter').on( 'keyup', function () {
+    	refreshList();
+	} );
+    $('#select_status_filter').on( 'change', function () {
+    	refreshList();
+	} );
+    /*------------------------------获取所有客户-------------------------------*/
+    $('#select_customer_filter').on('keyup click', function(){
+           var inputStr = $('#select_customer_filter').val();
            $.get("/customerContract/search", {locationName:inputStr}, function(data){
-               console.log(data);
-               var companyList =$("#companyList");
+               
+               var companyList =$("#select_companyList");
                companyList.empty();
                for(var i = 0; i < data.length; i++)
                {
@@ -74,50 +91,29 @@ $(document).ready(function() {
                    companyList.show();
                
            },'json');
-
-           if(inputStr==''){
-        	   datatable.fnFilter('', 2);
-           }
-           
        });
 
-
-
-   //选中某个客户时候
-      $('#companyList').on('click', '.fromLocationItem', function(e){        
-           $('#customer_filter').val($(this).text());
-           $("#companyList").hide();
+    	//选中某个客户时候
+      $('#select_companyList').on('click', '.fromLocationItem', function(e){        
+           $('#select_customer_filter').val($(this).text());
+           $("#select_companyList").hide();
            var companyId = $(this).attr('partyId');
            $('#customerId').val(companyId);
-           //过滤回单列表
-           //chargeCheckTable.fnFilter(companyId, 2);
+       
+       	refreshList();
            
-           
-           
-           //获取所有的条件
-           var inputStr = $('#customer_filter').val();
-           
-           
-           if(inputStr!=null){
-        	   /*
-                * 
-                * 
-                * datatable.fnSettings().sAjaxSource = "/chargeCheckOrder/edit";
-              	* datatable.fnDraw(); 
-                * */
-           }
        });
-    // 没选中客户，焦点离开，隐藏列表
-       $('#customer_filter').on('blur', function(){
-           $('#companyList').hide();
+      // 没选中客户，焦点离开，隐藏列表
+       $('#select_customer_filter').on('blur', function(){
+           $('#select_companyList').hide();
        });
 
        //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
-       $('#companyList').on('blur', function(){
-           $('#companyList').hide();
+       $('#select_companyList').on('blur', function(){
+           $('#select_companyList').hide();
        });
 
-       $('#companyList').on('mousedown', function(){
+       $('#select_companyList').on('mousedown', function(){
            return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
        });
        
@@ -206,15 +202,27 @@ $(document).ready(function() {
        		}
        		pageSpAddress.append(address);
                $('#spList').hide();
-               //获取到所有的条件，
-               /*
-                * 
-                * 
-                * datatable.fnSettings().sAjaxSource = "/chargeCheckOrder/edit";
-              	* datatable.fnDraw(); 
-                * */
-               
+              
+           	refreshList();
                
            });
+       	$('#datetimepickerK').datetimepicker({  
+            format: 'yyyy-MM-dd',  
+            language: 'zh-CN'
+        }).on('changeDate', function(ev){
+            $(".bootstrap-datetimepicker-widget").hide();
+            $('#kaishi_filter').trigger('keyup');
+        });
+
+
+        $('#datetimepickerJ').datetimepicker({  
+            format: 'yyyy-MM-dd',  
+            language: 'zh-CN', 
+            autoclose: true,
+            pickerPosition: "bottom-left"
+        }).on('changeDate', function(ev){
+            $(".bootstrap-datetimepicker-widget").hide();
+            $('#jieshu_filter').trigger('keyup');
+        });
        
 } );

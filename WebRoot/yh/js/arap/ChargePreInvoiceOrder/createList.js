@@ -87,13 +87,45 @@ $(document).ready(function() {
 	$("#checkedChargeCheckOrder").click(function(){
 		$("#checked").show();
 	});
+    var refreshCreate = function(){
+    	var customer = $('#customer_filter').val();
+		var beginTime = $("#beginTime_filter").val();
+		var endTime = $("#endTime_filter").val();
+		var office = $("#office_filter").val();
+		var status = $("#status_filter").val();
+		var orderNo = $("#orderNo_filter").val();
+		uncheckedChargeCheckTable.fnSettings().sAjaxSource = "/chargePreInvoiceOrder/chargeCheckOrderList?customer="+customer
+															+"&beginTime="+beginTime
+															+"&endTime="+endTime
+															+"&office="+office
+															+"&status="+status
+															+"&orderNo="+orderNo;
+		uncheckedChargeCheckTable.fnDraw();
+    };
     
+    
+    $('#customer_filter,#beginTime_filter,#endTime_filter,#orderNo_filter').on( 'keyup', function () {
+    	refreshCreate();
+	} );
+    $('#office_filter,#status_filter').on( 'change', function () {
+    	refreshCreate();
+	} );
+    
+    $.post('/transferOrder/searchAllOffice',function(data){
+	   	 if(data.length > 0){
+	   		 var officeSelect = $("#officeSelect");
+	   		 officeSelect.empty();
+	   		 officeSelect.append("<option ></option>");
+	   		 for(var i=0; i<data.length; i++){
+	   			 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");					    		
+	   		 }
+   		
+   		 }
+   	 },'json');
     //获取客户的list，选中信息自动填写其他信息
-    $('#companyName').on('keyup click', function(){
-        var inputStr = $('#companyName').val();
-        
+    $('#customer_filter').on('keyup click', function(){
+        var inputStr = $('#customer_filter').val();
         $.get("/customerContract/search", {locationName:inputStr}, function(data){
-            console.log(data);
             var companyList =$("#companyList");
             companyList.empty();
             for(var i = 0; i < data.length; i++)
@@ -104,41 +136,17 @@ $(document).ready(function() {
                 companyList.show();
             
         },'json');
-
-        if(inputStr==''){
-        	chargeCheckTable.fnFilter('', 2);
-        }
-        
     });    
-    
-    $('#companyName,#beginTime_filter,#endTime_filter,#beginTime,#endTime').on( 'keyup', function () {
-    	
-    	var companyName = $('#companyName').val();
-		var beginTime = $("#beginTime_filter").val();
-		var endTime = $("#endTime_filter").val();
-		var receiptBegin = $("#beginTime").val();
-		var receiptEnd = $("#endTime").val();
-		uncheckedChargeCheckTable.fnSettings().sAjaxSource = "/chargeCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
-		uncheckedChargeCheckTable.fnDraw();
-	} );
-
     $('#companyList').on('click', '.fromLocationItem', function(e){        
-        $('#companyName').val($(this).text());
+        $('#customer_filter').val($(this).text());
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
-        $('#customerId').val(companyId);
-        //过滤回单列表
-        //chargeCheckTable.fnFilter(companyId, 2);
-        var inputStr = $('#companyName').val();
-        if(inputStr!=null){
-        	console.log(inputStr);
-        	uncheckedChargeCheckTable.fnSettings().sAjaxSource = "/chargeCheckOrder/createList?companyName="+inputStr;
-        	
-    		uncheckedChargeCheckTable.fnDraw();
-        }
+        $('#customerId').val(companyId); 
+        
+        refreshCreate();
     });
     // 没选中客户，焦点离开，隐藏列表
-    $('#companyName').on('blur', function(){
+    $('#customer_filter').on('blur', function(){
         $('#companyList').hide();
     });
 
@@ -182,69 +190,16 @@ $(document).ready(function() {
         $('#createForm').submit();
     });
 
-    $('#beginTime_filter').on('keyup', function () {
-        var orderNo = $("#orderNo_filter").val();
-        var status = $("#status_filter").val();
-        var address = $("#address_filter").val();
-        var customer = $("#customer_filter").val();
-        var sp = $("#sp_filter").val();
-        var beginTime = $("#beginTime_filter").val();
-        $("#beginTime_filter").val(beginTime);
-        var endTime = $("#endTime_filter").val();
-        var officeName = $("#officeName_filter").val();
-        // transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-        // transferOrder.fnDraw();
-    } );    
-    
-    $('#endTime_filter').on( 'keyup click', function () {
-        var orderNo = $("#orderNo_filter").val();
-        var status = $("#status_filter").val();
-        var address = $("#address_filter").val();
-        var customer = $("#customer_filter").val();
-        var sp = $("#sp_filter").val();
-        var beginTime = $("#beginTime_filter").val();
-        var endTime = $("#endTime_filter").val();
-        $("#endTime_filter").val(endTime);
-        var officeName = $("#officeName_filter").val();
-        // transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-        // transferOrder.fnDraw();
-    } );
-    $('#beginTime').on('keyup', function () {
-        var orderNo = $("#orderNo_filter").val();
-        var status = $("#status_filter").val();
-        var address = $("#address_filter").val();
-        var customer = $("#customer_filter").val();
-        var sp = $("#sp_filter").val();
-        var beginTime = $("#beginTime").val();
-        $("#beginTime").val(beginTime);
-        var endTime = $("#endTime").val();
-        var officeName = $("#officeName_filter").val();
-        // transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-        // transferOrder.fnDraw();
-    } );    
-    
-    $('#endTime').on( 'keyup click', function () {
-        var orderNo = $("#orderNo_filter").val();
-        var status = $("#status_filter").val();
-        var address = $("#address_filter").val();
-        var customer = $("#customer_filter").val();
-        var sp = $("#sp_filter").val();
-        var beginTime = $("#beginTime").val();
-        var endTime = $("#endTime").val();
-        $("#endTime").val(endTime);
-        var officeName = $("#officeName_filter").val();
-        // transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
-        // transferOrder.fnDraw();
-    } );
 
     $('#datetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  
-        language: 'zh-CN'
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
     }).on('changeDate', function(ev){
         $(".bootstrap-datetimepicker-widget").hide();
         $('#beginTime_filter').trigger('keyup');
     });
-
 
     $('#datetimepicker2').datetimepicker({  
         format: 'yyyy-MM-dd',  
@@ -255,43 +210,5 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
     });
-    $('#datetimepicker3').datetimepicker({  
-        format: 'yyyy-MM-dd',  
-        language: 'zh-CN'
-    }).on('changeDate', function(ev){
-        $(".bootstrap-datetimepicker-widget").hide();
-        $('#beginTime').trigger('keyup');
-    });
-
-
-    $('#datetimepicker4').datetimepicker({  
-        format: 'yyyy-MM-dd',  
-        language: 'zh-CN', 
-        autoclose: true,
-        pickerPosition: "bottom-left"
-    }).on('changeDate', function(ev){
-        $(".bootstrap-datetimepicker-widget").hide();
-        $('#endTime').trigger('keyup');
-    });
-
-    //from表单验证
-    var validate = $('#returnOrderSearchForm').validate({
-        rules: {
-            companyName: {
-            required: true
-          }
-        },
-        messages : {                 
-            companyName : {required:  "请选择一个客户"}
-        }
-    });
-    
-    formatData();
-    
-    var formatData = function(){
-    	
-    	$("#beginTime").val();
-    };
-  
     
 } );

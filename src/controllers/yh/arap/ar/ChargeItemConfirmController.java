@@ -48,12 +48,13 @@ public class ChargeItemConfirmController extends Controller {
 
     // 
     public void list() {
-    	String customer=getPara("customer");
-    	String beginTime=getPara("beginTime");
-    	String endTime=getPara("endTime");
-    	String orderNo=getPara("orderNo");
-    	String customerNO=getPara("customerNO");
-    	String start=getPara("start");
+    	String customer = getPara("customer");
+    	String beginTime = getPara("beginTime");
+    	String endTime = getPara("endTime");
+    	String orderNo = getPara("orderNo");
+    	String customerNo = getPara("customerNo");
+    	String start = getPara("start");
+    	String status = getPara("status");
     	
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -62,8 +63,10 @@ public class ChargeItemConfirmController extends Controller {
         }
         String sqlTotal ="";
         String sql="";
+        //收入状态条件没有过滤
+        
         if(customer==null&&beginTime==null&&endTime==null&&orderNo==null
-        		&&customerNO==null&&start==null){
+        		&&customerNo==null&&start==null){
         	sqlTotal= "select count(1) total from return_order ror where ror.transaction_status = '已签收'";
 	        sql= "select distinct ror.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,"
 					+ " ifnull(tor.customer_order_no,tor2.customer_order_no) customer_order_no,"
@@ -101,7 +104,7 @@ public class ChargeItemConfirmController extends Controller {
 					+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
 					+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator "
 					+ " where ror.transaction_status = '已签收' "
-					//+ " and ifnull(tor.customer_order_no,tor2.customer_order_no) like '%" + customerNO +"%' "
+					+ " and (ifnull(tor.customer_order_no,'') like '%" + customerNo+"%' or ifnull(tor2.customer_order_no,'') like '%" + customerNo+"%') "
 					+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) like '%"+start
 					+ "%' and ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) like '%"+orderNo
 					+ "%' and ifnull(c.abbr,c2.abbr) like '%"+customer
@@ -129,7 +132,7 @@ public class ChargeItemConfirmController extends Controller {
 					+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
 					+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator "
 					+ " where ror.transaction_status = '已签收' "
-					//+ " and ifnull(tor.customer_order_no,tor2.customer_order_no) like '%" + customerNO +"%' "
+					+ " and (ifnull(tor.customer_order_no,'') like '%" + customerNo+"%' or ifnull(tor2.customer_order_no,'') like '%" + customerNo+"%') "
 					+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) like '%"+start
 					+ "%' and ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) like '%"+orderNo
 					+ "%' and ifnull(c.abbr,c2.abbr) like '%"+customer
@@ -140,7 +143,7 @@ public class ChargeItemConfirmController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total")); 
         
-        //logger.debug("sql:" + sql);
+        
         List<Record> BillingOrders = Db.find(sql);
 
         Map BillingOrderListMap = new HashMap();
