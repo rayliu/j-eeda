@@ -131,7 +131,7 @@ public class DepartOrderController extends Controller {
 
             sql = "select deo.id,deo.depart_no,deo.create_stamp,deo.status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,"
             		+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,o.office_name office_name,deo.departure_time departure_time,ct.abbr abbr,"
-            		+ " (select name from location where code = tor .route_from) route_from,(select name from location where code = tor .route_to) route_to,"
+            		+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (select order_id from depart_transfer dt where dt.depart_id = deo.id)) as transfer_order_no"
             		+ " from depart_order deo"
 					+ " left join carinfo c on deo.carinfo_id = c.id"
@@ -177,7 +177,7 @@ public class DepartOrderController extends Controller {
 
             sql = "select deo.id,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,ifnull(nullif(u.c_name,''),u.user_name) user_name,"
             		+ " o.office_name office_name,deo.departure_time departure_time ,ct.abbr abbr,"
-            		+ " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,"
+            		+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (dtf.order_id)) as transfer_order_no"
             		+ " from depart_order deo"
 					+ " left join carinfo c on deo.carinfo_id = c.id"
@@ -1198,8 +1198,8 @@ public class DepartOrderController extends Controller {
             Record contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
                             +" and product_id = " + tOrderItemRecord.get("product_id")
-                            +" and from_id = '" + tOrderItemRecord.get("route_from")
-                            +"' and to_id = '" + tOrderItemRecord.get("route_to")
+                            +" and from_id = '" + departOrder.get("route_from")
+                            +"' and to_id = '" + departOrder.get("route_to")
                             + "' and priceType='"+chargeType+"'");
             if (contractFinItem != null) {
                 genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
@@ -1207,22 +1207,22 @@ public class DepartOrderController extends Controller {
                 contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
                                 +" and product_id = " + tOrderItemRecord.get("product_id")
-                                +" and to_id = '" + tOrderItemRecord.get("route_to")
+                                +" and to_id = '" + departOrder.get("route_to")
                                 + "' and priceType='"+chargeType+"'");
                 if (contractFinItem != null) {
                     genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
                 }else{
                     contractFinItem = Db
                             .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                    +" and from_id = '" + tOrderItemRecord.get("route_from")
-                                    +"' and to_id = '" + tOrderItemRecord.get("route_to")
+                                    +" and from_id = '" + departOrder.get("route_from")
+                                    +"' and to_id = '" + departOrder.get("route_to")
                                     + "' and priceType='"+chargeType+"'");
                     if (contractFinItem != null) {
                         genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
                     }else{
                         contractFinItem = Db
                                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                        +" and to_id = '" + tOrderItemRecord.get("route_to")
+                                        +" and to_id = '" + departOrder.get("route_to")
                                         + "' and priceType='"+chargeType+"'");
                         if (contractFinItem != null) {
                             genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
@@ -1257,6 +1257,8 @@ public class DepartOrderController extends Controller {
         departOrderFinItem.set("creator", users.get(0).get("id"));
         departOrderFinItem.set("create_date", now);
         departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
+        departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
+        departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
         departOrderFinItem.save();
     }
 
@@ -1829,15 +1831,20 @@ public class DepartOrderController extends Controller {
 
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(0) total from depart_order_fin_item d "
+        String sql = "select count(1) total from depart_order_fin_item d "
                 + "left join fin_item f on d.fin_item_id = f.id " + "where d.depart_order_id ='" + id
                 + "' and f.type='应付'";
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*,f.name from depart_order_fin_item d "
-                + "left join fin_item f on d.fin_item_id = f.id " + "where d.depart_order_id ='" + id
+        List<Record> orders = Db.find("select d.*,f.name,tor.order_no transfer_order_no,ifnull(tori.item_name, p.item_name) item_name,tori.amount item_amount"
+        		+ " from depart_order_fin_item d "
+                + " left join fin_item f on d.fin_item_id = f.id "
+        		+ " left join transfer_order tor on tor.id = d.transfer_order_id"
+				+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
+				+ " left join product p on p.id = tori.product_id"
+        		+ " where d.depart_order_id ='" + id
                 + "' and f.type='应付'");
 
         Map orderMap = new HashMap();

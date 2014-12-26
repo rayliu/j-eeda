@@ -118,7 +118,7 @@ public class DataInitUtil {
                     + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id),car_summary_type varchar(50),turnout_time date,return_time date);");
 
             // Depart_Order_fin_item 提货单/发车单应付明细
-            stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, fin_item_id bigint, "
+            stmt.executeUpdate("create table if not exists depart_order_fin_item (id bigint auto_increment primary key, depart_order_id bigint, transfer_order_id bigint, transfer_order_item_id bigint, fin_item_id bigint, "
                     + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120),create_name varchar(50));");
             
             stmt.executeUpdate("create table if not exists pickup_order_fin_item (id bigint auto_increment primary key, pickup_order_id bigint, fin_item_id bigint, "

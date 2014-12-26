@@ -978,6 +978,9 @@
     				return nRow;
     			},
     	        "aoColumns": [
+    	            {"mDataProp":"TRANSFER_ORDER_NO"},
+    	            {"mDataProp":"ITEM_NAME"},
+    	            {"mDataProp":"ITEM_AMOUNT"},
 					{"mDataProp":"NAME",
 					    "fnRender": function(obj) {
 					        if(obj.aData.NAME!='' && obj.aData.NAME != null){
