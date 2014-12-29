@@ -133,7 +133,7 @@ public class DepartOrderController extends Controller {
             		+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,o.office_name office_name,deo.departure_time departure_time,ct.abbr abbr,"
             		+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (select order_id from depart_transfer dt where dt.depart_id = deo.id)) as transfer_order_no, "
-            		+ " (select dt.pickup_id from depart_transfer dt where dt.order_id in (select order_id from depart_transfer where depart_id = deo.id)  LIMIT 0,1) as trip_type"
+            		+ " deo.transfer_type as trip_type"
             		+ " from depart_order deo"
 					+ " left join carinfo c on deo.carinfo_id = c.id"
 					+ " left join party p on deo.sp_id = p.id"
@@ -180,7 +180,7 @@ public class DepartOrderController extends Controller {
             		+ " o.office_name office_name,deo.departure_time departure_time ,ct.abbr abbr,"
             		+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (dtf.order_id)) as transfer_order_no , "
-            		+ " (select dt.pickup_id from depart_transfer dt where dt.order_id in (select order_id from depart_transfer where depart_id = deo.id)  LIMIT 0,1) as trip_type"
+            		+ " deo.transfer_type as trip_type"
             		+ " from depart_order deo"
 					+ " left join carinfo c on deo.carinfo_id = c.id"
 					+ " left join party p on deo.sp_id = p.id"
@@ -268,7 +268,7 @@ public class DepartOrderController extends Controller {
     				+ "(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location, "
     				+ "(select ifnull(exception_record,'') from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) exception_record, "
     				+ " (select dt.order_id from depart_transfer dt where dt.depart_id = deo.id limit 0,1) order_id,  "
-    				+ " (select dt.pickup_id from depart_transfer dt where dt.order_id in (select order_id from depart_transfer where depart_id = deo.id)  LIMIT 0,1) as trip_type "
+    				+ " deo.transfer_type as trip_type"
     				+ " from depart_order deo "
     				+ " left join carinfo c on deo.carinfo_id = c.id "
     				+ " left join depart_transfer dt on dt.depart_id = deo.id "
@@ -337,7 +337,7 @@ public class DepartOrderController extends Controller {
     				+ "(select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no, "		
     				+ "(select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location, "
     				+ "(select ifnull(exception_record,'') from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) exception_record, "
-    				+ " (select dt.pickup_id from depart_transfer dt where dt.order_id in (select order_id from depart_transfer where depart_id = deo.id)  LIMIT 0,1) as trip_type "
+    				+ " deo.transfer_type as trip_type"
     				+ " from depart_order deo "
     				+ " left join carinfo c on deo.carinfo_id = c.id "
     				+ " left join depart_transfer dt on dt.depart_id = deo.id "
@@ -694,7 +694,7 @@ public class DepartOrderController extends Controller {
         String list = this.getPara("localArr");
         setAttr("localArr", list);
         setAttr("routeSp", getPara("routeSp"));
-
+        setAttr("transfer_type",getPara("transfer_type"));
         String[] orderIds = list.split(",");
         int numone=0;
         for (int i = 0; i < orderIds.length; i++) {
@@ -804,6 +804,7 @@ public class DepartOrderController extends Controller {
 
     // 保存发车单
     public void saveDepartOrder() {
+    	
         String depart_id = getPara("depart_id");// 发车单id
         String charge_type = getPara("chargeType");// 供应商计费类型
         String car_type = getPara("car_type");// 供应商计费类型, 如果是整车，需要知道整车类型
@@ -819,6 +820,9 @@ public class DepartOrderController extends Controller {
         Date createDate = Calendar.getInstance().getTime();
         String checkedDetail = getPara("checkedDetail");
         String uncheckedDetailIds = getPara("uncheckedDetail");
+        
+        String transfer_type = getPara("transfer_type");//运输方式
+        
         DepartOrder dp = null;
         if ("".equals(depart_id)) {
         	 String sql = "select * from depart_order where combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by id desc limit 0,1";
@@ -829,7 +833,8 @@ public class DepartOrderController extends Controller {
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
                     .set("route_to", getPara("route_to")).set("status", getPara("status"))
                     .set("ltl_price_type", ltlPriceType).set("car_type", car_type)
-                    .set("driver", getPara("driver_name")).set("phone", getPara("driver_phone")).set("car_no", getPara("car_no"));
+                    .set("driver", getPara("driver_name")).set("phone", getPara("driver_phone")).set("car_no", getPara("car_no"))
+                    .set("transfer_type",transfer_type);
             if (!"".equals(driver_id) && driver_id != null) {
                 dp.set("driver_id", driver_id);
             }else{
