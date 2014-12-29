@@ -1898,7 +1898,7 @@ $(document).ready(function() {
 		 if($(this).val() != ""){
 			 // 获取所有仓库
 			// console.log($('#deliveryOfficeSelect').val());
-			 $("#officeSelect").val($('#deliveryOfficeSelect').val());
+			 //$("#officeSelect").val($('#deliveryOfficeSelect').val());
 			 findWarehouseForOffice($(this).val());
 		 }else{
 			 $("#gateInSelect").empty();
