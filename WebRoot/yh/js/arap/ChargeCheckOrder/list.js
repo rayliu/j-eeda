@@ -81,16 +81,13 @@ $(document).ready(function() {
 															+"&office="+office;
 		datatable.fnDraw();
     };
-    $('#select_orderNo_filter,#status_filter,#select_customer_filter,#sp_filter,#tihuo_filter,#officeName_filter,#kaishi_filter,#jieshu_filter').on( 'keyup', function () {
+    $('#select_orderNo_filter,#status_filter,#select_customer_filter,#sp_filter,#tihuo_filter,#kaishi_filter,#jieshu_filter').on( 'keyup', function () {
     	//alert("OK");
     	refreshList();
 	} );
-    $('#status_filter').on( 'change', function () { 	
+    $('#status_filter,#officeName_filter').on( 'change', function () { 	
     	refreshList();
 	} );
-   /* $('#kaishi_filter,#jieshu_filter').on('keyup click',function(){
-    	refreshList();
-    });*/
     /*--------------------------------------------------------------------*/
     //获取客户的list，选中信息自动填写其他信息
     $('#select_customer_filter').on('keyup click', function(){
@@ -238,5 +235,18 @@ $(document).ready(function() {
             $('#jieshu_filter').trigger('keyup');
            
         });
+        //获取所有的网点
 
+    	$.post('/transferOrder/searchAllOffice',function(data){
+    		if(data.length > 0){
+	    		 var officeSelect = $("#officeName_filter");
+	    		 officeSelect.empty();
+	    		 officeSelect.append("<option ></option>");
+	    		 for(var i=0; i<data.length; i++){
+	    			 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");					 
+	    		
+	    		 }
+    		
+	    	 }
+	     },'json');
 } );
