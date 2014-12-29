@@ -23,7 +23,15 @@ var dataTable =$('#dataTables-example').dataTable({
                 }
             } ,
             {"mDataProp":"OFFICE_NAME"},
-            {"mDataProp":null},
+            {"mDataProp":null,
+            	"fnRender":function(obj){
+            		if(obj.aData.TRIP_TYPE == null || obj.aData.TRIP_TYPE == ''){
+            			return '整车';
+            		}else{
+            			return '零担';
+            		}
+            			
+            	}},
             {"mDataProp":"DEPART_STATUS"},
             {"mDataProp":"ABBR", "sWidth":"200px"},
             {"mDataProp":"CONTACT_PERSON"},

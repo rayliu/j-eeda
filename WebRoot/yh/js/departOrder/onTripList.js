@@ -46,7 +46,14 @@ $(document).ready(function() {
             {"mDataProp":null,
             	"sWidth": "80px",
             	"fnRender": function(obj) {
-            		return "";
+            		if(obj.aData.TRIP_TYPE == "" || obj.aData.TRIP_TYPE == null ){
+            			return "整车";
+            		}else{
+            			return "零担";
+            		}
+            		
+            		
+            		
             	}},
             {"mDataProp":null,
             	"sWidth": "90px",
