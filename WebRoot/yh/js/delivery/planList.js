@@ -4,10 +4,9 @@ $(document).ready(function() {
 	
 	var pickupOrder = $('#dataTables-example').dataTable({
 		"bFilter": false, //不需要默认的搜索框
-    	"bSort": false, // 不要排序
+        "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
-        "bAutoWidth":false,
         "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
@@ -21,12 +20,12 @@ $(document).ready(function() {
             {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},
 		    {"mDataProp":"DELIVER_NO", "sWidth":"100px"},
             {"mDataProp":"CAR_NO", "sWidth":"80px"},	 
-		    {"mDataProp":"DRIVER", "sWidth":"70px"},
+		    {"mDataProp":"DRIVER", "sWidth":"65px"},
 		    {"mDataProp":"PHONE", "sWidth":"100px"},
-		    {"mDataProp":"CREATE_STAMP", "sWidth":"100px",
+		    {"mDataProp":"TURNOUT_TIME", "sWidth":"100px",
 		    	"fnRender":function(obj){
-    				var create_stamp=obj.aData.CREATE_STAMP;
-    				var str=create_stamp.substr(0,10);
+    				var turnoutTime=obj.aData.TURNOUT_TIME;
+    				var str=turnoutTime.substr(0,10);
     				return str;
     			}}, 
 		    {"mDataProp":"VOLUME", "sWidth":"70px"},

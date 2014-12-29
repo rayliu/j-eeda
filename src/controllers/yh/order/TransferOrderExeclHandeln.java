@@ -54,11 +54,16 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     		int causeRow = 0;
     		String title = "";
     		String because = "数据不能为空";
+    		String existOrderNo = "";
     		List<Integer> executeNum = new ArrayList<Integer>();
     		for (int j = 0; j < content.size(); j++) {
     			Record tansferOrder = Db.findFirst("select * from transfer_order where customer_order_no = '" + content.get(j).get("运输单号").trim() + "';");
     			if(tansferOrder == null){
     				executeNum.add(j);
+    			}else{
+    				if(existOrderNo.indexOf(content.get(j).get("运输单号").trim()) == -1){
+    					existOrderNo+="[" + content.get(j).get("运输单号").trim() + "]";
+    				}
     			}
     		}
         	for (int j = 0; j < content.size(); j++) {
@@ -169,8 +174,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					
 		    					TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where order_id = '" + tansferOrder.get("id") +"' and item_id = '" + tansferOrderItem.get("id") +"' and serial_no = '" + content.get(j).get("单品序列号") + "';");
 		    					if(transferOrderItemDetail != null){
-		    						int num = transferOrderItemDetail.getInt("pieces") + Integer.parseInt(content.get(j).get("单品件数"));
-		    						transferOrderItemDetail.set("pieces", num).update();
+		    						if(!"".equals(content.get(j).get("单品件数"))){
+		    							int num = transferOrderItemDetail.getInt("pieces") + Integer.parseInt(content.get(j).get("单品件数"));
+			    						transferOrderItemDetail.set("pieces", num).update();
+		    						}
 		    					}else{
 		    						//创建保存单品货品明细
 		    						TransferOrderItemDetail itemDatail = new TransferOrderItemDetail();
@@ -181,7 +188,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    						.set("item_name", product.get("item_name"))
 		    						.set("volume", product.get("volume"))
 		    						.set("weight", product.get("weight"))
-		    						.set("pieces", content.get(j).get("单品件数")) 
+		    						//.set("pieces", content.get(j).get("单品件数")) 
 		    						.set("notify_party_company", content.get(j).get("单品收货地址"))//收货地址
 			    					.set("notify_party_name", content.get(j).get("单品收货人"))//收货人
 			    					.set("notify_party_phone", content.get(j).get("单品收货人联系电话"))//收货人电话
@@ -189,8 +196,13 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 			    					.set("responsible_person", content.get(j).get("责任人"))//责任人
 			    					.set("business_manager", content.get(j).get("业务经理"))//业务经理
 			    					.set("station_name", content.get(j).get("服务站名称"))//服务站名称
-			    					.set("service_telephone", content.get(j).get("服务站电话"))//服务站电话
-		    						.save();
+			    					.set("service_telephone", content.get(j).get("服务站电话"));//服务站电话
+			    					
+			    					if(!"".equals(content.get(j).get("单品件数"))){
+			    						itemDatail.set("pieces", content.get(j).get("单品件数"));
+			    					}
+			    					
+			    					itemDatail.save();
 		    					}
 		    				}else{
 		    					//创建保存货品明细
@@ -219,11 +231,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					itemDatail.set("order_id", tansferOrder.get("id"))
 		    					.set("item_id", item.get("id"))
 		    					.set("item_no", product.get("item_no"))
-		    					.set("serial_no", content.get(j).get("单品序列号"))
 		    					.set("item_name", product.get("item_name"))
 		    					.set("volume", product.get("volume"))
 		    					.set("weight", product.get("weight"))
-		    					.set("pieces", content.get(j).get("单品件数")) 
+		    					.set("serial_no", content.get(j).get("单品序列号"))
 		    					.set("notify_party_company", content.get(j).get("单品收货地址"))//收货地址
 		    					.set("notify_party_name", content.get(j).get("单品收货人"))//收货人
 		    					.set("notify_party_phone", content.get(j).get("单品收货人联系电话"))//收货人电话
@@ -231,8 +242,13 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					.set("responsible_person", content.get(j).get("责任人"))//责任人
 		    					.set("business_manager", content.get(j).get("业务经理"))//业务经理
 		    					.set("station_name", content.get(j).get("服务站名称"))//服务站名称
-		    					.set("service_telephone", content.get(j).get("服务站电话"))//服务站电话
-		    					.save();
+		    					.set("service_telephone", content.get(j).get("服务站电话"));//服务站电话
+		    					
+		    					if(!"".equals(content.get(j).get("单品件数"))){
+		    						itemDatail.set("pieces", content.get(j).get("单品件数"));
+		    					}
+		    					
+		    					itemDatail.save();
 		    				}
 		    			}else{
 		    				String sql = "select * from transfer_order order by id desc limit 0,1";
@@ -355,7 +371,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					.set("volume", product.get("volume"))
 		    					.set("weight", product.get("weight"))
 		    					//.set("notify_party_id", customer.get("id"))
-		    					.set("pieces", content.get(j).get("单品件数"))
+		    					//.set("pieces", content.get(j).get("单品件数"))
 		    					.set("notify_party_company", content.get(j).get("单品收货地址"))//收货地址
 		    					.set("notify_party_name", content.get(j).get("单品收货人"))//收货人
 		    					.set("notify_party_phone", content.get(j).get("单品收货人联系电话"))//收货人电话
@@ -363,8 +379,13 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					.set("responsible_person", content.get(j).get("责任人"))//责任人
 		    					.set("business_manager", content.get(j).get("业务经理"))//业务经理
 		    					.set("station_name", content.get(j).get("服务站名称"))//服务站名称
-		    					.set("service_telephone", content.get(j).get("服务站电话"))//服务站电话
-		    					.save();
+		    					.set("service_telephone", content.get(j).get("服务站电话"));//服务站电话
+		    					
+		    					if(!"".equals(content.get(j).get("单品件数"))){
+		    						itemDatail.set("pieces", content.get(j).get("单品件数"));
+		    					}
+		    					
+		    					itemDatail.save();
 		    				}
 		    			}
 		        	}
@@ -378,11 +399,19 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
         		if(resultNum == 0){
         			importResult.put("cause", "不能导入重复运输单");
         		}else{
-        			importResult.put("cause", "成功导入" + resultNum + "张运输单");
+        			if(existOrderNo != ""){
+        				importResult.put("cause", "成功导入" + resultNum + "张运输单" + ",运输单号重复不导入的有：" + existOrderNo);
+        			}else{
+        				importResult.put("cause", "成功导入" + resultNum + "张运输单");
+        			}
         		}
         	}else{ 
         		importResult.put("result","false");
-        		importResult.put("cause", "成功导入至第" + (causeRow-1) + "行,因第【" + causeRow + "】行【" + title + "】列" + because);
+        		if(existOrderNo != ""){
+        			importResult.put("cause", "成功导入至第" + (causeRow-1) + "行,因第【" + causeRow + "】行【" + title + "】列" + because + ",运输单号重复不导入的有：" + existOrderNo);
+        		}else{
+        			importResult.put("cause", "成功导入至第" + (causeRow-1) + "行,因第【" + causeRow + "】行【" + title + "】列" + because);
+        		}
         	}
         	
     	} catch (ParseException e) {

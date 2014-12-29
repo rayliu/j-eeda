@@ -335,16 +335,20 @@ $(document).ready(function() {
 	$('#toFileUpload').fileupload({
         dataType: 'json',
         done: function (e, data) {
-        	$('#myModal').modal('hide');
-        	if(data.result.result = "true"){
+        	//$('#myModal').modal('hide');
+        	/*if(data.result.result = "true"){
         		$.scojs_message(data.result.cause, $.scojs_message.TYPE_OK);
         	}else{
         		$.scojs_message(data.result.cause, $.scojs_message.TYPE_ERROR);
-        	}
+        	}*/
+        	$("#footer").show();
+        	$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
+        	
         	transferOrder.fnDraw();
         },  
         progressall: function (e, data) {//设置上传进度事件的回调函数  
         	$('#myModal').modal('show');
+        	$("#footer").hide();
         } 
     });
 

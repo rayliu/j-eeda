@@ -1065,6 +1065,9 @@ public class DeliveryController extends Controller {
 
 			deliveryOrder.set("audit_status", "新建");
 			deliveryOrder.set("sign_status", "未回单");
+			if("cargo".equals(cargoNature)){
+				deliveryOrder.set("delivery_plan_type", "untreated");
+			}
 			deliveryOrder.save();
 
 			if("cargo".equals(cargoNature)){

@@ -75,6 +75,7 @@ import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.delivery.DeliveryPlanOrder;
+import models.yh.delivery.DeliveryPlanOrderCarinfo;
 import models.yh.delivery.DeliveryPlanOrderDetail;
 import models.yh.delivery.DeliveryPlanOrderMilestone;
 import models.yh.profile.Carinfo;
@@ -318,6 +319,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("delivery_plan_order", DeliveryPlanOrder.class);
         arp.addMapping("delivery_plan_order_detail", DeliveryPlanOrderDetail.class);
         arp.addMapping("delivery_plan_order_milestone", DeliveryPlanOrderMilestone.class);
+        arp.addMapping("delivery_plan_order_carinfo", DeliveryPlanOrderCarinfo.class);
         //arp.addMapping("fin_account_item", AccountItem.class);
         arp.addMapping("delivery_order_item", DeliveryOrderItem.class);
         arp.addMapping("depart_order", DepartOrder.class);

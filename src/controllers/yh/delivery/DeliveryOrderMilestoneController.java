@@ -20,6 +20,7 @@ import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.contract.Contract;
 import models.yh.delivery.DeliveryOrder;
+import models.yh.delivery.DeliveryPlanOrderDetail;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -620,4 +621,55 @@ public class DeliveryOrderMilestoneController extends Controller {
         DeliveryOrderFinItem.dao.deleteById(id);
         renderJson("{\"success\":true}");
     }
+    
+    // 配送排车应付list
+    public void accountPayablePlan() {
+    	String id = getPara();
+    	String sqlOne = "select delivery_plan_order_id from delivery_id = " + id;
+    	DeliveryPlanOrderDetail detailList = DeliveryPlanOrderDetail.dao.findFirst(sqlOne);
+    	 Map orderMap = new HashMap();
+        if (id == null || id.equals("")) {
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+            renderJson(orderMap);
+            return;
+        }else if(detailList == null ){
+             orderMap.put("sEcho", 0);
+             orderMap.put("iTotalRecords", 0);
+             orderMap.put("iTotalDisplayRecords", 0);
+             orderMap.put("aaData", null);
+             renderJson(orderMap);
+             return;
+    	}else{
+    		String sLimit = "";
+            String pageIndex = getPara("sEcho");
+            if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+                sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+            }
+
+            // 获取总条数
+            String sql = "select count(1) total from  delivery_order_fin_item d left join  fin_item f ON d.fin_item_id = f.id WHERE d.delivery_order_fin_item = "+detailList.get("delivery_plan_order_id")+"  and f.type='应付'";
+            Record rec = Db.findFirst(sql);
+            logger.debug("total records:" + rec.getLong("total"));
+
+            // 获取当前页的数据
+            List<Record> orders = Db
+                    .find("select d.*, f.name as fin_item_name, "+
+                    	  "(select group_concat(distinct transfer_no separator ' ') from delivery_order_item where delivery_id=d.order_id) as transferorderno "+
+                    	  "from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id "+
+                    	  "where d.delivery_order_fin_item = "+detailList.get("delivery_plan_order_id")+"  and f.type='应付'");
+
+            
+            orderMap.put("sEcho", pageIndex);
+            orderMap.put("iTotalRecords", rec.getLong("total"));
+            orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+            orderMap.put("aaData", orders);
+    	}
+        
+        renderJson(orderMap);
+    }
+    
 }

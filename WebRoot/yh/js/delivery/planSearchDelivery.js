@@ -20,9 +20,9 @@ $(document).ready(function() {
             {"mDataProp":"CUSTOMER","sClass": "customer"},
             {"mDataProp":"C2","sClass": "c2","sClass": "c2"},
             {"mDataProp":"CREATE_STAMP","sWidth": "15%","sClass": "create_stamp"},
-            {"mDataProp":"STATUS","sWidth": "8%","sClass": "status"},
-            {"mDataProp":"TRANSFER_ORDER_NO","sWidth": "13%","sClass": "transfer_order_no"},
-            {"mDataProp":"SERIAL_NO","sWidth": "10%","sClass": "serial_no"}
+            {"mDataProp":"STATUS","sWidth": "8%","sClass": "status"}
+            //{"mDataProp":"TRANSFER_ORDER_NO","sWidth": "13%","sClass": "transfer_order_no"},
+            //{"mDataProp":"SERIAL_NO","sWidth": "10%","sClass": "serial_no"}
         ]      
     });	
     
@@ -52,9 +52,8 @@ $(document).ready(function() {
             {"mDataProp":"CUSTOMER","sClass": "customer"},
             {"mDataProp":"C2","sClass": "c2","sClass": "c2"},
             {"mDataProp":"CREATE_STAMP","sWidth": "15%","sClass": "create_stamp"},
-            {"mDataProp":"STATUS","sWidth": "8%","sClass": "status"},
-            {"mDataProp":"TRANSFER_ORDER_NO","sWidth": "13%","sClass": "transfer_order_no"},
-            {"mDataProp":"SERIAL_NO","sWidth": "10%","sClass": "serial_no"}
+            {"mDataProp":"STATUS","sWidth": "8%","sClass": "status"}
+            //{"mDataProp":"TRANSFER_ORDER_NO","sWidth": "13%","sClass": "transfer_order_no", "bVisable":false}
         ]      
     });	
     
@@ -230,21 +229,16 @@ $(document).ready(function() {
 		var c2 = $(this).parent().siblings('.c2')[0].textContent;	
 		var create_stamp = $(this).parent().siblings('.create_stamp')[0].textContent;	
 		var status = $(this).parent().siblings('.status')[0].textContent;	
-		var transfer_order_no = $(this).parent().siblings('.transfer_order_no')[0].textContent;	
-		var serial_no = $(this).parent().siblings('.serial_no')[0].textContent;	
+		//var transfer_order_no = $(this).parent().siblings('.transfer_order_no')[0].textContent;	
+		//var serial_no = $(this).parent().siblings('.serial_no')[0].textContent;	
 		if($(this).prop('checked') == true){
-			if(spName.length != 0){
-				if(spName[0] != $(this).parent().siblings('.c2')[0].innerHTML){
-					alert("请选择相同的供应商!");
-					return false;
-				}else{
-					spName.push($(this).parent().siblings('.c2')[0].innerHTML);
-					ckeckedDeliveryList.append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+customer+"</td><td>"+c2+"</td><td>"+create_stamp+"</td><td>"+status+"</td><td>"+transfer_order_no+"</td><td>"+serial_no+"</td></tr>");
-				}
+			if(spName.length == 1){
+				$.scojs_message('只能选取一张单据', $.scojs_message.TYPE_OK);
+				return false;
 			}else{
 				$("#spId").val($(this).parent().parent().attr("id"));
 				spName.push($(this).parent().siblings('.c2')[0].innerHTML);
-				ckeckedDeliveryList.empty().append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+customer+"</td><td>"+c2+"</td><td>"+create_stamp+"</td><td>"+status+"</td><td>"+transfer_order_no+"</td><td>"+serial_no+"</td></tr>");
+				ckeckedDeliveryList.empty().append("<tr value='"+$(this).val()+"'><td>"+order_no+"</td><td>"+customer+"</td><td>"+c2+"</td><td>"+create_stamp+"</td><td>"+status+"</td></tr>");
 			}
 			$("#addBtn").prop("disabled",false);
 		}else{
