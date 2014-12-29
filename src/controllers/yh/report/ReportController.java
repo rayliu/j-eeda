@@ -28,6 +28,10 @@ public class ReportController extends Controller {
     private String print(String order_no,String name){
     	 String fileName = "report/";
          String outFileName="WebRoot/download/";
+       /*  File file = new File(outFileName);
+         if(!file.exists()){
+        	 file.mkdir();
+         }*/
          fileName +=name;
          Date date = new Date();
          SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss");

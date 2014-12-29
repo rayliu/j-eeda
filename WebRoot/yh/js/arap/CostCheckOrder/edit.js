@@ -129,7 +129,6 @@ $(document).ready(function() {
     	$.post('/report/printCheckOrder', {order_no:order_no}, function(data){
     		window.open(data);
     	});
-    	//window.location.href="/download/供应商对账单.pdf";
     });
     
     

@@ -94,7 +94,7 @@ $(document).ready(function() {
            var inputStr = $('#customer_filter').val();
            
            $.get("/customerContract/search", {locationName:inputStr}, function(data){
-               console.log(data);
+               //console.log(data);
                var companyList =$("#companyList");
                companyList.empty();
                for(var i = 0; i < data.length; i++)
@@ -106,10 +106,7 @@ $(document).ready(function() {
                
            },'json');
 
-           if(inputStr==''){
-        	   datatable.fnFilter('', 2);
-           }
-           
+          
        });
 
 
@@ -120,23 +117,7 @@ $(document).ready(function() {
            $("#companyList").hide();
            var companyId = $(this).attr('partyId');
            $('#customerId').val(companyId);
-           //过滤回单列表
-           //costCheckTable.fnFilter(companyId, 2);
-           
-           
-           
-           //获取所有的条件
-           var inputStr = $('#customer_filter').val();
-           
-           
-           if(inputStr!=null){
-        	   /*
-                * 
-                * 
-                * datatable.fnSettings().sAjaxSource = "/costCheckOrder/edit";
-              	* datatable.fnDraw(); 
-                * */
-           }
+           refreshData();
        });
     // 没选中客户，焦点离开，隐藏列表
        $('#customer_filter').on('blur', function(){
@@ -163,7 +144,7 @@ $(document).ready(function() {
        			$('#sp_id').val($(this).attr(''));
        		}
        		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
-       			console.log(data);
+       			//console.log(data);
        			var spList =$("#spList");
        			spList.empty();
        			for(var i = 0; i < data.length; i++)
@@ -211,7 +192,6 @@ $(document).ready(function() {
 
        	// 选中供应商
        	$('#spList').on('mousedown', '.fromLocationItem', function(e){
-       		console.log($('#spList').is(":focus"))
        		var message = $(this).text();
        		$('#sp_filter').val(message.substring(0, message.indexOf(" ")));
        		$('#sp_id').val($(this).attr('partyId'));
@@ -237,15 +217,7 @@ $(document).ready(function() {
        		}
        		pageSpAddress.append(address);
                $('#spList').hide();
-               //获取到所有的条件，
-               /*
-                * 
-                * 
-                * datatable.fnSettings().sAjaxSource = "/costCheckOrder/edit";
-              	* datatable.fnDraw(); 
-                * */
-               
-               
+               refreshData();
            });
        
        	$('#datetimepicker').datetimepicker({  
@@ -266,20 +238,31 @@ $(document).ready(function() {
             $(".bootstrap-datetimepicker-widget").hide();
             $('#endTime_filter').trigger('keyup');
         });
-       
-       /*=========================================================*/
-       //过滤客户
-       /*   $('#companyName,#beginTime_filter,#endTime_filter,#beginTime,#endTime').on( 'keyup', function () {
-         	
-         	var companyName = $('#companyName').val();
-     		var beginTime = $("#beginTime_filter").val();
-     		var endTime = $("#endTime_filter").val();
-     		var receiptBegin = $("#beginTime").val();
-     		var receiptEnd = $("#endTime").val();
-     		console.log("rr"+companyName);
-     		costCheckTable.fnSettings().sAjaxSource = "/costCheckOrder/createList?companyName="+companyName+"&beginTime="+beginTime+"&endTime="+endTime+"&receiptBegin="+receiptBegin+"&receiptEnd="+receiptEnd;
-     	
-     		costCheckTable.fnDraw();
+       var refreshData = function(){
+        	var orderNo = $('#orderNo_filter').val();
+    		var sp = $("#sp_filter").val();
+    		var no = $("#customer_filter").val();
+    		var beginTime = $("#beginTime_filter").val();
+    		var endTime = $("#endTime_filter").val();
+    		var status = $("#order_status_filter").val();
+    		var type = $("#order_type_filter").val();
+    		
+    		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list?orderNo="+orderNo
+											    		+"&sp="+sp
+											    		+"&no="+no
+											    		+"&beginTime="+beginTime
+											    		+"&endTime="+endTime
+											    		+"&status="+status
+											    		+"&type="+type;
+    	
+    		costConfiremTable.fnDraw();
+       };
+       /*=====================条件过滤=======================*/
+        //过滤客户
+        $('#orderNo_filter,#sp_filter,#customer_filter,#beginTime_filter,#endTime_filter').on( 'keyup', function () {
+        	refreshData();
      	} );
-  */
+        $('#order_type_filter,#order_status_filter').on( 'change', function () {
+        	refreshData();
+     	} );
 } );

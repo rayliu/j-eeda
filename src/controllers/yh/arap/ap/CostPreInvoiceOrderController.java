@@ -67,17 +67,44 @@ public class CostPreInvoiceOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-
-        String sqlTotal = "select count(1) total from arap_charge_invoice_application_order";
-        Record rec = Db.findFirst(sqlTotal);
+        String sp = getPara("sp");
+        String customer = getPara("customer");
+        String orderNo = getPara("orderNo");
+        String beginTime = getPara("beginTime");
+        String endTime = getPara("endTime");
+        
+        String sqlTotal = "";
+        String sql = "select aaia.*,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_cost_invoice_application_order aaia "
+	    			+ " left join user_login ul on ul.id = aaia.create_by"
+	    			+ " left join user_login ul2 on ul2.id = aaia.audit_by"
+	    			+ " left join user_login ul3 on ul3.id = aaia.approver_by ";
+        String condition = "";
+        
+        if(sp != null || customer != null || orderNo != null 
+        		|| beginTime != null || endTime != null){
+        	if (beginTime == null || "".equals(beginTime)) {
+				beginTime = "1-1-1";
+			}
+			if (endTime == null || "".equals(endTime)) {
+				endTime = "9999-12-31";
+			}
+			condition = " where ifnull(aaia.order_no,'') like '%" + orderNo + "%' "
+					+ " and aaia.create_stamp between '" + beginTime + "' and '" + endTime + "' "; 
+			
+			
+        }
+        
+        sqlTotal = "select count(1) total from arap_cost_invoice_application_order aaia "
+        		+ " left join user_login ul on ul.id = aaia.create_by"
+    			+ " left join user_login ul2 on ul2.id = aaia.audit_by"
+    			+ " left join user_login ul3 on ul3.id = aaia.approver_by ";
+       
+        sql =  sql + condition + " order by aaia.create_stamp desc " + sLimit;
+       
+        Record rec = Db.findFirst(sqlTotal + condition );
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aaia.*,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_cost_invoice_application_order aaia "
-				+ " left join user_login ul on ul.id = aaia.create_by"
-				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
-				+ " left join user_login ul3 on ul3.id = aaia.approver_by order by aaia.create_stamp desc " + sLimit;
 
-        logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
 
         Map BillingOrderListMap = new HashMap();
@@ -342,19 +369,46 @@ public class CostPreInvoiceOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-
-        String sqlTotal = "select count(1) total from arap_cost_order aco where aco.status = '已确认'";
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
-
+        String sp = getPara("sp");
+        String customer = getPara("customer");
+        String orderNo = getPara("orderNo");
+        String beginTime = getPara("beginTime");
+        String endTime = getPara("endTime");
+        
+        String sqlTotal = "";
         String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no,c.abbr cname,ul.user_name creator_name from arap_cost_order aco "
-        		+ " left join party p on p.id = aco.payee_id"
-        		+ " left join contact c on c.id = p.contact_id"
-        		+ " left join user_login ul on ul.id = aco.create_by"
-        		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id"
-        		+ " where aco.status = '已确认' group by aco.id order by aco.create_stamp desc "+sLimit;
+	        		+ " left join party p on p.id = aco.payee_id"
+	        		+ " left join contact c on c.id = p.contact_id"
+	        		+ " left join user_login ul on ul.id = aco.create_by"
+	        		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id"
+	        		+ " where aco.status = '已确认' ";
+        String condition = "";
+        //TODO 供应商条件过滤没有做
+        if(sp != null || customer != null || orderNo != null
+        		|| beginTime != null || endTime != null){
+        	if (beginTime == null || "".equals(beginTime)) {
+				beginTime = "1-1-1";
+			}
+			if (endTime == null || "".equals(endTime)) {
+				endTime = "9999-12-31";
+			}
+			condition = " and ifnull(aco.order_no,'') like '%" + orderNo + "%' "
+						+ " and ifnull(c.abbr,'') like '%" + customer + "%' "
+						+ " and aco.create_stamp between '" + beginTime + "' and '" + endTime + "' ";
+			
+        }
+        
+        sqlTotal = "select count(1) total from arap_cost_order aco " 
+        			+ " left join party p on p.id = aco.payee_id"
+	        		+ " left join contact c on c.id = p.contact_id"
+	        		+ " left join user_login ul on ul.id = aco.create_by"
+	        		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id"
+	        		+ " where aco.status = '已确认' ";
+        sql = sql + condition + "group by aco.id order by aco.create_stamp desc "+sLimit;
 
-        logger.debug("sql:" + sql);
+        Record rec = Db.findFirst(sqlTotal + condition);
+        logger.debug("total records:" + rec.getLong("total"));
+        
         List<Record> BillingOrders = Db.find(sql);
 
         Map BillingOrderListMap = new HashMap();
