@@ -88,7 +88,8 @@
          ]       
      });
  	 
- 	 $("#insuranceOrderItemList").click(function(){
+ 	 $("#insuranceOrderItemList").click(function(e){
+  		 saveInsuranceOrder(e);
  		 var message=$("#message").val();
  	     var tr_item=$("#tr_itemid_list").val();
  	     var item_detail=$("#item_detail").val();
@@ -111,7 +112,7 @@
  		}else if(name == 'rate'){
  			var amount = $(this).parent().siblings(".fin_amount")[0].children[0].value;
  			if(amount != null && amount != '' && value != null && value != ''){
- 				$(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML = value * amount;
+ 				$(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML = (value * amount).toFixed(2);
  			}
  		}
  		var insuranceAmount = $(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML;
@@ -183,10 +184,8 @@
 	});
 	/*--------------------------------------------------------------------*/
 	
-	//transferOrderForm 不需要提交
-	var parentId = "chargeCheckOrderbasic";
- 	$("#saveInsuranceOrderBtn").click(function(e){
- 		e.preventDefault();
+	var saveInsuranceOrder = function(e){
+		e.preventDefault();
  		var bool = false;
 		if("chargeCheckOrderbasic" == parentId){
 			bool = true;
@@ -203,6 +202,12 @@
 			}
 		},'json');
         parentId = e.target.getAttribute("id");
+	};
+	
+	//transferOrderForm 不需要提交
+	var parentId = "chargeCheckOrderbasic";
+ 	$("#saveInsuranceOrderBtn").click(function(e){
+ 		saveInsuranceOrder(e);
 	});
    
  	/*var pickupOrderMilestone = function(){
@@ -456,7 +461,7 @@
  		var value = $(this).val();
 		if(value != null && value != ''){
 			var income_rate = $(this).parent().siblings(".sum_insurance")[0].innerHTML;
-			$(this).parent().siblings(".income_insurance_amount")[0].children[0].innerHTML = value * income_rate;
+			$(this).parent().siblings(".income_insurance_amount")[0].children[0].innerHTML = (value * income_rate).toFixed(2);
 		}
  		$.post('/insuranceOrder/incomeFinItem', {orderId:order_id, name:name, value:value}, function(data){
  			if(data.success){

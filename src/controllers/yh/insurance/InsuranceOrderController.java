@@ -258,11 +258,11 @@ public class InsuranceOrderController extends Controller {
         String sqlTotal="";
         String sql = "";
         
-        sqlTotal = "select count(1) total from insurance_order ior "
+        sqlTotal = "select count(distinct ior.id) total from insurance_order ior "
         		+ " left join transfer_order tor on tor.insurance_id = ior.id "
         		+ " left join office o on o.id = tor .office_id where  o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
         		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-        sql = "select ior.*,(select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id) transfer_order_no from insurance_order ior "
+        sql = "select distinct ior.*,(select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id) transfer_order_no from insurance_order ior "
         		+ " left join transfer_order tor on tor.insurance_id = ior.id "
         		+ " left join office o on o.id = tor .office_id where  o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
         		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
@@ -515,7 +515,7 @@ public class InsuranceOrderController extends Controller {
 	        logger.debug("total records:" + rec.getLong("total"));*/
 
 	        // 获取当前页的数据
-	        List<Record> orders = Db.find("select sum(insurance_amount) sum_amount from insurance_fin_item where insurance_order_id = "+insuranceOrderId);
+	        List<Record> orders = Db.find("select round(sum(insurance_amount),2) sum_amount from insurance_fin_item where insurance_order_id = "+insuranceOrderId);
 	
 	        orderMap.put("sEcho", pageIndex);
 	        orderMap.put("iTotalRecords", 1);
@@ -543,7 +543,7 @@ public class InsuranceOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
-		String sql = "select c.abbr cname,tor.id order_id,tor.order_no transfer_order_no,sum(ifi.amount*ifi.rate) sum_amount,ifi.income_rate,sum(ifi.amount) sum_insurance,sum(ifi.amount)*income_rate income_insurance_amount from transfer_order tor"
+		String sql = "select c.abbr cname,tor.id order_id,tor.order_no transfer_order_no,round(sum(ifi.amount*ifi.rate),2) sum_amount,ifi.income_rate,sum(ifi.amount) sum_insurance,round(sum(ifi.amount)*income_rate,2) income_insurance_amount from transfer_order tor"
 						+ " left join insurance_order ior on ior.id = tor.insurance_id"
 						+ " left join transfer_order_item toi on toi.order_id = tor.id"
 						+ " left join insurance_fin_item ifi on ifi.transfer_order_item_id = toi.id"
