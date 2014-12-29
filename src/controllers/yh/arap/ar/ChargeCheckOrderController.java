@@ -307,7 +307,7 @@ public class ChargeCheckOrderController extends Controller {
 		String id = getPara("id");
 		ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(id);
 		Long customerId = arapAuditOrder.get("payee_id");
-		if (!"".equals(customerId) && customerId != null) {
+		if (!"".equals(customerId) && customerId != null && customerId != 0) {
 			Party party = Party.dao.findById(customerId);
 			setAttr("party", party);
 			Contact contact = Contact.dao.findById(party.get("contact_id")
