@@ -85,20 +85,20 @@ $(document).ready(function() {
             {"mDataProp":"SPNAME", "sWidth":"200px"},
             {"mDataProp":null, "sWidth": "120px", 
                 "fnRender": function(obj) {
-                    if(obj.aData.TRANSACTION_STATUS=='new'){
+                    if(obj.aData.STATUS=='new'){
                         return '新建';
-                    }else if(obj.aData.TRANSACTION_STATUS=='checking'){
+                    }else if(obj.aData.STATUS=='checking'){
                         return '已发送对帐';
-                    }else if(obj.aData.TRANSACTION_STATUS=='confirmed'){
+                    }else if(obj.aData.STATUS=='confirmed'){
                         return '已审核';
-                    }else if(obj.aData.TRANSACTION_STATUS=='completed'){
+                    }else if(obj.aData.STATUS=='completed'){
                         return '已结算';
-                    }else if(obj.aData.TRANSACTION_STATUS=='cancel'){
+                    }else if(obj.aData.STATUS=='cancel'){
                         return '取消';
                     }
-                    return obj.aData.TRANSACTION_STATUS;
+                    return obj.aData.STATUS;
                 }
-            },                         
+            },                           
             {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"100px"},  
 		    {"mDataProp":null, "sWidth":"120px",
                 "fnRender": function(obj) {
