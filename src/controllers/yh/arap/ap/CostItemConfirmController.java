@@ -97,7 +97,16 @@ public class CostItemConfirmController extends Controller {
 						+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
 						+ " left join product prod on toi.product_id = prod.id "
 						+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
-						+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='新建' group by dpr.id ) as A";
+						+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='新建' group by dpr.id"
+						+ " union "
+						+ " select distinct ior.id,ior.order_no order_no,ior.status,'保险公司' spname,sum(toi.amount) amount,sum(ifnull(prod.volume,toi.volume)) volume,sum(ifnull(prod.weight,toi.weight)) weight,ior.create_stamp create_stamp,ul.user_name creator,'保险' business_type, (select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = ior.id and fi.type = '应付') pay_amount, group_concat(distinct tor.order_no separator '\r\n') transfer_order_no,ior.sign_status return_order_collection,ior.remark,oe.office_name office_name "
+						+ " from insurance_order ior "
+						+ " left join transfer_order tor on ior.id = tor.insurance_id "
+						+ " left join transfer_order_item toi on toi.order_id = tor.id "
+						+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
+						+ " left join product prod on toi.product_id = prod.id "
+						+ " left join user_login ul on ul.id = ior.create_by"
+						+ " left join office oe on oe.id = tor.office_id where ior.audit_status='新建' group by ior.id  ) as A";
         String condition = "";
       
         if(orderNo != null || sp != null || no != null || beginTime != null
@@ -111,7 +120,7 @@ public class CostItemConfirmController extends Controller {
 			 
         	condition =  " where ifnull(order_no,'') like '%" + no + "%' "
         			+ " and ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
-        			+ " and ifnull(transaction_status,'') like '%" + status + "%' "
+        			+ " and ifnull(status,'') like '%" + status + "%' "
         			+ " and ifnull(spname,'') like '%" + sp + "%' "
         			+ " and create_stamp between '" + beginTime + "' and '" + endTime + "' "
         			+ " and ifnull(business_type,'') like '%" + type + "%'";

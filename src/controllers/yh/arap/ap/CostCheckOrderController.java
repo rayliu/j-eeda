@@ -486,36 +486,45 @@ public class CostCheckOrderController extends Controller {
     	
     	String sqlTotal = "";
     	String sql = " select * from (select distinct dor.id,dor.order_no order_no,dor.status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n') transfer_order_no,dor.sign_status return_order_collection,dor.remark,oe.office_name office_name "
-						+ " from delivery_order dor"
-						+ " left join party p on p.id = dor.sp_id "
-						+ " left join contact c on c.id = p.contact_id "
-						+ " left join delivery_order_item doi on doi.delivery_id = dor.id "
-						+ " left join transfer_order_item_detail toid on toid.id = doi.transfer_item_detail_id "
-						+ " left join transfer_order_item toi on toi.id = toid.item_id "
-						+ " left join product prod on toi.product_id = prod.id "
-						+ " left join user_login ul on ul.id = dor.create_by "
-						+ " left join warehouse w on w.id = dor.from_warehouse_id "
-						+ " left join office oe on oe.id = w.office_id where dor.audit_status='已确认' group by dor.id "
-						+ " union"
-						+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name "
-						+ " from depart_order dpr "
-						+ " left join depart_transfer dtr on dtr.depart_id = dpr.id"
-						+ " left join transfer_order tor on tor.id = dtr.order_id "
-						+ " left join transfer_order_item toi on toi.order_id = tor.id "
-						+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
-						+ " left join product prod on toi.product_id = prod.id "
-						+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
-						+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.depart_id, 0) > 0) and dpr.audit_status='已确认' group by dpr.id"
-						+ " union "
-						+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name "
-						+ " from depart_order dpr "
-						+ " left join depart_transfer dtr on dtr.pickup_id = dpr.id"
-						+ " left join transfer_order tor on tor.id = dtr.order_id "
-						+ " left join transfer_order_item toi on toi.order_id = tor.id "
-						+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
-						+ " left join product prod on toi.product_id = prod.id "
-						+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
-						+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' group by dpr.id ) as newView" ;
+							+ " from delivery_order dor"
+							+ " left join party p on p.id = dor.sp_id "
+							+ " left join contact c on c.id = p.contact_id "
+							+ " left join delivery_order_item doi on doi.delivery_id = dor.id "
+							+ " left join transfer_order_item_detail toid on toid.id = doi.transfer_item_detail_id "
+							+ " left join transfer_order_item toi on toi.id = toid.item_id "
+							+ " left join product prod on toi.product_id = prod.id "
+							+ " left join user_login ul on ul.id = dor.create_by "
+							+ " left join warehouse w on w.id = dor.from_warehouse_id "
+							+ " left join office oe on oe.id = w.office_id where dor.audit_status='已确认' group by dor.id "
+							+ " union"
+							+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name "
+							+ " from depart_order dpr "
+							+ " left join depart_transfer dtr on dtr.depart_id = dpr.id"
+							+ " left join transfer_order tor on tor.id = dtr.order_id "
+							+ " left join transfer_order_item toi on toi.order_id = tor.id "
+							+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
+							+ " left join product prod on toi.product_id = prod.id "
+							+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
+							+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.depart_id, 0) > 0) and dpr.audit_status='已确认' group by dpr.id"
+							+ " union "
+							+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name "
+							+ " from depart_order dpr "
+							+ " left join depart_transfer dtr on dtr.pickup_id = dpr.id"
+							+ " left join transfer_order tor on tor.id = dtr.order_id "
+							+ " left join transfer_order_item toi on toi.order_id = tor.id "
+							+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
+							+ " left join product prod on toi.product_id = prod.id "
+							+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
+							+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' group by dpr.id"
+							+ " union "
+							+ " select distinct ior.id,ior.order_no order_no,ior.status,'保险公司' spname,sum(toi.amount) amount,sum(ifnull(prod.volume,toi.volume)) volume,sum(ifnull(prod.weight,toi.weight)) weight,ior.create_stamp create_stamp,ul.user_name creator,'保险' business_type, (select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = ior.id and fi.type = '应付') pay_amount, group_concat(distinct tor.order_no separator '\r\n') transfer_order_no,ior.sign_status return_order_collection,ior.remark,oe.office_name office_name "
+							+ " from insurance_order ior "
+							+ " left join transfer_order tor on ior.id = tor.insurance_id "
+							+ " left join transfer_order_item toi on toi.order_id = tor.id "
+							+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
+							+ " left join product prod on toi.product_id = prod.id "
+							+ " left join user_login ul on ul.id = ior.create_by"
+							+ " left join office oe on oe.id = tor.office_id where ior.audit_status='已确认' group by ior.id) as newView" ;
     	String condition = "";
     	
     	
@@ -560,10 +569,12 @@ public class CostCheckOrderController extends Controller {
     	String pickupId = "";
     	String departId = "";
     	String deliveryId = "";
+    	String insuranceId = "";
     	if(orderIds == null || orderIds == ""){
     		pickupId = "-1";
         	departId = "-1";
         	deliveryId = "-1";
+        	insuranceId = "-1";
     	}else{
 	    	String[] orderIdsArr = orderIds.split(",");
 	    	String[] orderNoArr = orderNos.split(",");
@@ -576,7 +587,7 @@ public class CostCheckOrderController extends Controller {
 	            }else if("配送".equals(orderNoArr[i])){
 	            	deliveryId += orderIdsArr[i] + ",";
 	            }else{
-	            	//rec = Db.findFirst("", orderIdsArr[i]);
+	            	insuranceId += orderIdsArr[i] + ",";
 	            }
 	    	}
 	    	if(pickupId != null && !"".equals(pickupId)){
@@ -594,6 +605,11 @@ public class CostCheckOrderController extends Controller {
 			} else{
 				deliveryId = "-1";
 			}
+	    	if(insuranceId != null && !"".equals(insuranceId)){
+	    		insuranceId = insuranceId.substring(0, insuranceId.length() - 1);
+	    	} else{
+	    		insuranceId = "-1";
+	    	}
     	}
 
 		String sLimit = "";
@@ -602,36 +618,45 @@ public class CostCheckOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}		
     	String searchSql = "select distinct dor.id,dor.order_no order_no,dor.status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n') transfer_order_no,dor.sign_status return_order_collection,dor.remark,oe.office_name office_name "
-						+ " from delivery_order dor"
-						+ " left join party p on p.id = dor.sp_id "
-						+ " left join contact c on c.id = p.contact_id "
-						+ " left join delivery_order_item doi on doi.delivery_id = dor.id "
-						+ " left join transfer_order_item_detail toid on toid.id = doi.transfer_item_detail_id "
-						+ " left join transfer_order_item toi on toi.id = toid.item_id "
-						+ " left join product prod on toi.product_id = prod.id "
-						+ " left join user_login ul on ul.id = dor.create_by "
-						+ " left join warehouse w on w.id = dor.from_warehouse_id "
-						+ " left join office oe on oe.id = w.office_id where dor.id in("+deliveryId+") group by dor.id "
-						+ " union"
-						+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name "
-						+ " from depart_order dpr "
-						+ " left join depart_transfer dtr on dtr.depart_id = dpr.id"
-						+ " left join transfer_order tor on tor.id = dtr.order_id "
-						+ " left join transfer_order_item toi on toi.order_id = tor.id "
-						+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
-						+ " left join product prod on toi.product_id = prod.id "
-						+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
-						+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.depart_id, 0) > 0) and dpr.id in("+departId+") group by dpr.id"
-						+ " union "
-						+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name "
-						+ " from depart_order dpr "
-						+ " left join depart_transfer dtr on dtr.pickup_id = dpr.id"
-						+ " left join transfer_order tor on tor.id = dtr.order_id "
-						+ " left join transfer_order_item toi on toi.order_id = tor.id "
-						+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
-						+ " left join product prod on toi.product_id = prod.id "
-						+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
-						+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.id in("+pickupId+") group by dpr.id ";
+							+ " from delivery_order dor"
+							+ " left join party p on p.id = dor.sp_id "
+							+ " left join contact c on c.id = p.contact_id "
+							+ " left join delivery_order_item doi on doi.delivery_id = dor.id "
+							+ " left join transfer_order_item_detail toid on toid.id = doi.transfer_item_detail_id "
+							+ " left join transfer_order_item toi on toi.id = toid.item_id "
+							+ " left join product prod on toi.product_id = prod.id "
+							+ " left join user_login ul on ul.id = dor.create_by "
+							+ " left join warehouse w on w.id = dor.from_warehouse_id "
+							+ " left join office oe on oe.id = w.office_id where dor.id in("+deliveryId+") group by dor.id "
+							+ " union"
+							+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name "
+							+ " from depart_order dpr "
+							+ " left join depart_transfer dtr on dtr.depart_id = dpr.id"
+							+ " left join transfer_order tor on tor.id = dtr.order_id "
+							+ " left join transfer_order_item toi on toi.order_id = tor.id "
+							+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
+							+ " left join product prod on toi.product_id = prod.id "
+							+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
+							+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.depart_id, 0) > 0) and dpr.id in("+departId+") group by dpr.id"
+							+ " union "
+							+ " select distinct dpr.id,dpr.depart_no order_no,dpr.status,c.abbr spname,toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name "
+							+ " from depart_order dpr "
+							+ " left join depart_transfer dtr on dtr.pickup_id = dpr.id"
+							+ " left join transfer_order tor on tor.id = dtr.order_id "
+							+ " left join transfer_order_item toi on toi.order_id = tor.id "
+							+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
+							+ " left join product prod on toi.product_id = prod.id "
+							+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
+							+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.id in("+pickupId+") group by dpr.id"
+							+ " union "
+							+ " select distinct ior.id,ior.order_no order_no,ior.status,'保险公司' spname,sum(toi.amount) amount,sum(ifnull(prod.volume,toi.volume)) volume,sum(ifnull(prod.weight,toi.weight)) weight,ior.create_stamp create_stamp,ul.user_name creator,'保险' business_type, (select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = ior.id and fi.type = '应付') pay_amount, group_concat(distinct tor.order_no separator '\r\n') transfer_order_no,ior.sign_status return_order_collection,ior.remark,oe.office_name office_name "
+							+ " from insurance_order ior "
+							+ " left join transfer_order tor on ior.id = tor.insurance_id "
+							+ " left join transfer_order_item toi on toi.order_id = tor.id "
+							+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
+							+ " left join product prod on toi.product_id = prod.id "
+							+ " left join user_login ul on ul.id = ior.create_by"
+							+ " left join office oe on oe.id = tor.office_id where ior.id in("+insuranceId+") group by ior.id ";
     	
 		String sqlTotal = "select count(1) total from ("+searchSql+") a";
 		Record rec = Db.findFirst(sqlTotal);
