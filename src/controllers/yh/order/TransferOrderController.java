@@ -1196,8 +1196,8 @@ public class TransferOrderController extends Controller {
 		Contact contact = Contact.dao
 				.findById(warehouse.get("notify_party_id"));
 		Location location = new Location();
-		if (contact != null) {
-			String code = contact.get("location");
+		if (warehouse != null) {
+			String code = warehouse.get("location");
 			if (code != null || !"".equals(code)) {
 				List<Location> provinces = Location.dao
 						.find("select * from location where pcode ='1'");

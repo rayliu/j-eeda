@@ -1913,11 +1913,16 @@ $(document).ready(function() {
 				 var hideWarehouseId = $("#hideWarehouseId").val();
 				 for(var i=0; i<data.length; i++){
 					 if(data[i].ID == hideWarehouseId){
-						 gateInSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");					 
+						 gateInSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");
+						 //$("#gateInSelect").val(data[i].ID);
 					 }else{
 						 gateInSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
 					 }
 				 }
+				 
+				 if($("#gateInSelect").val() != "" && $("#gateInSelect").val() != null)
+					 $("#gateInSelect").change();
+				 
 			 }else{
 				 $("#gateInSelect").empty();
 			 }
@@ -2482,7 +2487,7 @@ $(document).ready(function() {
 			var hideProvince = data.location.PROVINCE;
 			var hideCity = data.location.CITY;
 			var hideDistrict = data.location.DISTRICT;
-			if(hideProvince != undefined){
+			/*if(hideProvince != undefined){
 				if(hideCity != undefined){
 					if(hideDistrict != undefined){
 	    				$("#locationTo").val(data.DISTRICTCODE);
@@ -2492,7 +2497,8 @@ $(document).ready(function() {
     			}else{
     				$("#locationTo").val(data.PROVINCECODE);        				
     			}    				
-			}
+			}*/
+			$("#locationTo").val(data.warehouse.LOCATION);
 		    //获取全国省份
 		    $(function(){
 		     	var province = $("#mbProvinceTo");
