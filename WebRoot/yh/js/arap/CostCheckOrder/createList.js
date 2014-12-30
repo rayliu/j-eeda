@@ -300,6 +300,7 @@ $(document).ready(function() {
     	refreshCreateList();
     });
     $("#order_type_filter,#order_status_filter").on('change',function(){
+    	
     	refreshCreateList();
     });
 } );

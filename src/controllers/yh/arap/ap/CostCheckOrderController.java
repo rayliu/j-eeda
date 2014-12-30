@@ -184,7 +184,7 @@ public class CostCheckOrderController extends Controller {
         		+ " left join user_login ul on ul.id = aco.create_by"
         		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id ";
         String condition = "";
-        
+        //TODO 始发地和目的地 客户没有做
         if(sp != null || shifadi != null || customer != null
         		|| mudidi != null || beginTime != null || endTime != null){
         	if (beginTime == null || "".equals(beginTime)) {
@@ -542,7 +542,7 @@ public class CostCheckOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
         
         logger.debug("sql:" + sql);
-        List<Record> BillingOrders = Db.find(sql + sLimit);
+        List<Record> BillingOrders = Db.find(sql + condition + sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);

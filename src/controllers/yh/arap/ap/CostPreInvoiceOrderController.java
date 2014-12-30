@@ -79,7 +79,7 @@ public class CostPreInvoiceOrderController extends Controller {
 	    			+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 	    			+ " left join user_login ul3 on ul3.id = aaia.approver_by ";
         String condition = "";
-        
+        //TODO 客户和供应商没做
         if(sp != null || customer != null || orderNo != null 
         		|| beginTime != null || endTime != null){
         	if (beginTime == null || "".equals(beginTime)) {
@@ -383,7 +383,7 @@ public class CostPreInvoiceOrderController extends Controller {
 	        		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id"
 	        		+ " where aco.status = '已确认' ";
         String condition = "";
-        //TODO 供应商条件过滤没有做
+        //TODO 客户条件过滤没有做
         if(sp != null || customer != null || orderNo != null
         		|| beginTime != null || endTime != null){
         	if (beginTime == null || "".equals(beginTime)) {
@@ -393,7 +393,7 @@ public class CostPreInvoiceOrderController extends Controller {
 				endTime = "9999-12-31";
 			}
 			condition = " and ifnull(aco.order_no,'') like '%" + orderNo + "%' "
-						+ " and ifnull(c.abbr,'') like '%" + customer + "%' "
+						+ " and ifnull(c.abbr,'') like '%" + sp + "%' "
 						+ " and aco.create_stamp between '" + beginTime + "' and '" + endTime + "' ";
 			
         }
