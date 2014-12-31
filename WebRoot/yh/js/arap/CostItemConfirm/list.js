@@ -18,9 +18,9 @@ $(document).ready(function() {
                   return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" order_no="'+obj.aData.BUSINESS_TYPE+'">';
                 }
             },
-            {"mDataProp":"BUSINESS_TYPE", "sWidth":"100px"},            	
-            {"mDataProp":"SPNAME", "sWidth":"200px"},
-            {"mDataProp":null, "sWidth": "120px", 
+            {"mDataProp":"BUSINESS_TYPE", "sWidth":"75px"},            	
+            {"mDataProp":"SPNAME", "sWidth":"160px"},
+            {"mDataProp":null, "sWidth": "70px", 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -36,12 +36,12 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },                         
-            {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"100px"},  
-		    {"mDataProp":null, "sWidth":"120px",
+            {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"75px"},  
+		    {"mDataProp":null, "sWidth":"75px",
                 "fnRender": function(obj) {
                     return "未确认";
             }},
-            {"mDataProp":"ORDER_NO", "sWidth":"200px", 
+            {"mDataProp":"ORDER_NO", "sWidth":"140px", 
                 "fnRender": function(obj) {
                 	var str = "";
                     if(obj.aData.ORDER_NO.indexOf("PS") > -1){
@@ -55,14 +55,14 @@ $(document).ready(function() {
                     }
                     return str;
                 }
-            },
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"CREATE_STAMP", "sWidth":"200px"},                 	
-            {"mDataProp":"AMOUNT", "sWidth":"150px"},                        
-            {"mDataProp":"VOLUME", "sWidth":"150px"},                        
-            {"mDataProp":"WEIGHT", "sWidth":"100px"},                        
-            {"mDataProp":"PAY_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},                       
+            },            	
+            {"mDataProp":"AMOUNT", "sWidth":"35px"},                        
+            {"mDataProp":"VOLUME", "sWidth":"35px"},                        
+            {"mDataProp":"WEIGHT", "sWidth":"40px"},                        
+            {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
+            {"mDataProp":"CREATE_STAMP", "sWidth":"100px"}, 
+            {"mDataProp":"OFFICE_NAME", "sWidth":"80px"},                       
             {"mDataProp":"REMARK", "sWidth":"150px"}                         
         ]      
     });	
