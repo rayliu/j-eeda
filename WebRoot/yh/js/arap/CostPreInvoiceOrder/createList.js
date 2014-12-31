@@ -18,7 +18,10 @@ $(document).ready(function() {
                   return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.ORDER_NO+'">';
                 }
             },
-            {"mDataProp":"ORDER_NO"},
+            {"mDataProp":null,
+            	"fnRender":function(obj){
+            		return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            	}},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){

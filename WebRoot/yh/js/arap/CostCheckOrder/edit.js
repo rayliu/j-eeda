@@ -81,9 +81,9 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/costCheckOrder/costConfirmListById",
         "aoColumns": [ 
-            {"mDataProp":"BUSINESS_TYPE", "sWidth":"100px"},            	
-            {"mDataProp":"SPNAME", "sWidth":"200px"},
-            {"mDataProp":null, "sWidth": "120px", 
+            {"mDataProp":"BUSINESS_TYPE"},            	
+            {"mDataProp":"SPNAME","sWidth":"150px"},
+            {"mDataProp":null, 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -99,20 +99,20 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },                           
-            {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"100px"},  
-		    {"mDataProp":null, "sWidth":"120px",
+            {"mDataProp":"RETURN_ORDER_COLLECTION"},  
+		    {"mDataProp":null, 
                 "fnRender": function(obj) {
                     return "未收款";
             }},
-            {"mDataProp":"ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"CREATE_STAMP", "sWidth":"200px"},                 	
-            {"mDataProp":"AMOUNT", "sWidth":"150px"},                        
-            {"mDataProp":"VOLUME", "sWidth":"150px"},                        
-            {"mDataProp":"WEIGHT", "sWidth":"100px"},                        
-            {"mDataProp":"PAY_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},                       
-            {"mDataProp":"REMARK", "sWidth":"150px"}                         
+            {"mDataProp":"ORDER_NO"},
+            {"mDataProp":"TRANSFER_ORDER_NO"},
+            {"mDataProp":"CREATE_STAMP"},                 	
+            {"mDataProp":"AMOUNT"},                        
+            {"mDataProp":"VOLUME"},                        
+            {"mDataProp":"WEIGHT"},                        
+            {"mDataProp":"PAY_AMOUNT"},                        
+            {"mDataProp":"OFFICE_NAME"},                       
+            {"mDataProp":"REMARK", }                         
         ]      
     });	
     
