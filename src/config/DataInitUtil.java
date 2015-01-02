@@ -90,7 +90,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists order_status(id bigint auto_increment primary key,status_code varchar(20),status_name varchar(20),order_type varchar(20),remark varchar(255));");
 
             // return_order 回单
-            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,receipt_date timestamp,transaction_status varchar(20),order_type varchar(20),creator bigint,remark varchar(255), _id bigint, delivery_order_id bigint,transfer_order_id bigint, notity_party_id bigint,customer_id bigint,total_amount double);");
+            stmt.executeUpdate("create table if not exists return_order(id bigint auto_increment primary key, order_no varchar(50), status_code varchar(20),create_date timestamp,receipt_date timestamp,transaction_status varchar(20),order_type varchar(20),creator bigint,remark varchar(5120),import_ref_num varchar(255), _id bigint, delivery_order_id bigint,transfer_order_id bigint, notity_party_id bigint,customer_id bigint,total_amount double);");
             // Depart_Order_fin_item 回单应收明细
             stmt.executeUpdate("create table if not exists return_order_fin_item (id bigint auto_increment primary key, return_order_id bigint, fin_item_id bigint, "
                     + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120),transfer_order_id bigint,delivery_order_id bigint, contract_id bigint, fin_type varchar(20),create_name varchar(50));");
@@ -114,7 +114,7 @@ public class DataInitUtil {
 
             // 提货单/发车单
             stmt.executeUpdate("create table if not exists depart_order(id bigint auto_increment primary key,depart_no varchar(255),status varchar(255),audit_status varchar(255),sign_status varchar(255),create_by bigint,create_stamp timestamp,combine_type varchar(255),pickup_mode varchar(255),address varchar(255),"
-                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),driver varchar(255),phone varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,payment double,arrival_time date,departure_time date,remark varchar(255), charge_type varchar(50), driver_id bigint,transfer_type varchar(50),"
+                    + "car_size varchar(255),car_no varchar(255),car_type varchar(255),driver varchar(255),phone varchar(255),car_follow_name varchar(255),car_follow_phone varchar(255),route_from varchar(255),route_to varchar(255),kilometres double,road_bridge double,income double,payment double,arrival_time date,departure_time date,remark varchar(5120),import_ref_num varchar(255), charge_type varchar(50), driver_id bigint,transfer_type varchar(50),"
                     + "ltl_price_type varchar(20), foreign key(driver_id) references party(id),sp_id bigint,foreign key(sp_id) references party(id),warehouse_id bigint,foreign key(warehouse_id) references warehouse(id),carinfo_id bigint,foreign key(carinfo_id) references carinfo(id),car_summary_type varchar(50),turnout_time date,return_time date);");
 
             // Depart_Order_fin_item 提货单/发车单应付明细
@@ -478,6 +478,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('ZXF','装卸费','应收','这是装卸费');");
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('CZF','仓租费','应收','这是仓租费');");
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('DDF','等待费','应收','这是等待费');");
+            stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('YSF','运输费','应收','这是运输费');");
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('QTF','其它费用','应收','这是其它费用');");
             stmt.executeUpdate("insert into fin_item(code,name,type,remark) values('BXF','保险费','应付','这是保险费');");
             

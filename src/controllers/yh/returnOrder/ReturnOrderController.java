@@ -80,7 +80,7 @@ public class ReturnOrderController extends Controller {
 					+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
 					+ " left join warehouse w on d_o.from_warehouse_id = w.id "
 					+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
-					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
+					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
 			Record rec = Db.findFirst(sql + totalWhere);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -100,7 +100,7 @@ public class ReturnOrderController extends Controller {
 							+ " left join warehouse w on d_o.from_warehouse_id = w.id "
 							+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 							+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-							+ " order by r_o.create_date desc " + sLimit);
+							+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc " + sLimit);
 
 			orderMap.put("sEcho", pageIndex);
 			orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -149,7 +149,7 @@ public class ReturnOrderController extends Controller {
 					+ "r_o.create_date between '"
 					+ time_one + "' and '" + time_two + "' "
 					+ " and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
-					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
+					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
 			Record rec = Db.findFirst(sql + totalWhere);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -190,7 +190,7 @@ public class ReturnOrderController extends Controller {
 							+ time_two
 							+ "' and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 							+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-							+ " order by r_o.create_date desc " + sLimit);
+							+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc " + sLimit);
 
 			orderMap.put("sEcho", pageIndex);
 			orderMap.put("iTotalRecords", rec.getLong("total"));

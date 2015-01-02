@@ -39,7 +39,7 @@ $(document).ready(function() {
             {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"100px"},  
 		    {"mDataProp":null, "sWidth":"120px",
                 "fnRender": function(obj) {
-                    return "未收款";
+                    return "未确认";
             }},
             {"mDataProp":"ORDER_NO", "sWidth":"200px", 
                 "fnRender": function(obj) {
