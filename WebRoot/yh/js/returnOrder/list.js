@@ -22,7 +22,7 @@
             { "mDataProp": "CREATOR_NAME","sWidth":"120px" },
             { "mDataProp": "CREATE_DATE","sWidth":"100px" },
             { "mDataProp": "RECEIPT_DATE","sWidth":"120px" },
-            { "mDataProp": "TRANSACTION_STATUS",
+            { "mDataProp": "TRANSACTION_STATUS","sWidth":"150px",
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new')
                         return '新建';
@@ -34,7 +34,7 @@
                     return obj.aData.TRANSACTION_STATUS;
                  }
             },
-            { "mDataProp": "REMARK" }
+            { "mDataProp": "REMARK","sWidth":"380px"}
          ]
 	});
 

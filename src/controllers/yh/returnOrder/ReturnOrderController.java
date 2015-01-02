@@ -208,46 +208,49 @@ public class ReturnOrderController extends Controller {
 		TransferOrder transferOrder = null;
 		Long deliveryId = returnOrder.get("delivery_order_id");
 		Long transferOrderId = returnOrder.get("transfer_order_id");
-		Long notify_party_id;
+		Long notify_party_id = null;
 		String code = "";
 		String routeTo = "";
 
 		if (deliveryId == null) {
 			transferOrder = TransferOrder.dao.findById(transferOrderId);
-			notify_party_id = transferOrder.get("notify_party_id");
-			routeTo = transferOrder.get("route_to");
-		} else {
-			DeliveryOrder deliveryOrder = DeliveryOrder.dao
-					.findById(deliveryId);
-			// TODO 一张配送单对应多张运输单时回单怎样取出信息
-			routeTo = deliveryOrder.get("route_to");
-			List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao
-					.find("select * from delivery_order_item where delivery_id = ?",
-							deliveryId);
-			for (DeliveryOrderItem deliveryOrderItem : deliveryOrderItems) {
-				transferOrder = TransferOrder.dao.findById(deliveryOrderItem
-						.get("transfer_order_id"));
-				break;
+			if(transferOrder != null){
+				notify_party_id = transferOrder.get("notify_party_id");
+				routeTo = transferOrder.get("route_to");
 			}
-			setAttr("deliveryOrder", deliveryOrder);
-			notify_party_id = deliveryOrder.get("notify_party_id");
+		} else {
+			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryId);
+			// TODO 一张配送单对应多张运输单时回单怎样取出信息
+			if(deliveryOrder != null){
+				routeTo = deliveryOrder.get("route_to");
+				List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao
+						.find("select * from delivery_order_item where delivery_id = ?", deliveryId);
+				for (DeliveryOrderItem deliveryOrderItem : deliveryOrderItems) {
+					transferOrder = TransferOrder.dao.findById(deliveryOrderItem.get("transfer_order_id"));
+					break;
+				}
+				setAttr("deliveryOrder", deliveryOrder);
+				notify_party_id = deliveryOrder.get("notify_party_id");
+			}
 		}
 		setAttr("transferOrder", transferOrder);
 
-		Long customer_id = transferOrder.get("customer_id");
-		if (customer_id != null) {
-			Party customer = Party.dao.findById(customer_id);
-			Contact customerContact = Contact.dao.findById(customer
-					.get("contact_id"));
-			setAttr("customerContact", customerContact);
-		}
-		if (notify_party_id != null) {
-			Party notify = Party.dao.findById(notify_party_id);
-			Contact contact = Contact.dao.findById(notify.get("contact_id"));
-			setAttr("contact", contact);
-			Contact locationCode = Contact.dao.findById(notify
-					.get("contact_id"));
-			code = locationCode.get("location");
+		if(transferOrder != null){
+			Long customer_id = transferOrder.get("customer_id");
+			if (customer_id != null) {
+				Party customer = Party.dao.findById(customer_id);
+				Contact customerContact = Contact.dao.findById(customer
+						.get("contact_id"));
+				setAttr("customerContact", customerContact);
+			}
+			if (notify_party_id != null) {
+				Party notify = Party.dao.findById(notify_party_id);
+				Contact contact = Contact.dao.findById(notify.get("contact_id"));
+				setAttr("contact", contact);
+				Contact locationCode = Contact.dao.findById(notify
+						.get("contact_id"));
+				code = locationCode.get("location");
+			}
 		}
 
 		List<Location> provinces2 = Location.dao
@@ -267,24 +270,26 @@ public class ReturnOrderController extends Controller {
 		}
 		setAttr("location", location);
 
-		String routeFrom = transferOrder.get("route_from");
-		Location locationFrom = null;
-		if (routeFrom != null || !"".equals(routeFrom)) {
-			List<Location> provinces = Location.dao
-					.find("select * from location where pcode ='1'");
-			Location l = Location.dao
-					.findFirst("select * from location where code = (select pcode from location where code = '"
-							+ routeFrom + "')");
-			if (provinces.contains(l)) {
-				locationFrom = Location.dao
-						.findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-								+ routeFrom + "'");
-			} else {
-				locationFrom = Location.dao
-						.findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-								+ routeFrom + "'");
+		if(transferOrder != null){
+			String routeFrom = transferOrder.get("route_from");
+			Location locationFrom = null;
+			if (routeFrom != null || !"".equals(routeFrom)) {
+				List<Location> provinces = Location.dao
+						.find("select * from location where pcode ='1'");
+				Location l = Location.dao
+						.findFirst("select * from location where code = (select pcode from location where code = '"
+								+ routeFrom + "')");
+				if (provinces.contains(l)) {
+					locationFrom = Location.dao
+							.findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+									+ routeFrom + "'");
+				} else {
+					locationFrom = Location.dao
+							.findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+									+ routeFrom + "'");
+				}
+				setAttr("locationFrom", locationFrom);
 			}
-			setAttr("locationFrom", locationFrom);
 		}
 
 		Location locationTo = null;
@@ -310,9 +315,10 @@ public class ReturnOrderController extends Controller {
 		UserLogin userLogin = UserLogin.dao
 				.findById(returnOrder.get("creator"));
 		setAttr("userLogin", userLogin);
-		UserLogin userLoginTo = UserLogin.dao.findById(transferOrder
-				.get("create_by"));
-		setAttr("userLoginTo", userLoginTo);
+		if(transferOrder != null){
+			UserLogin userLoginTo = UserLogin.dao.findById(transferOrder.get("create_by"));
+			setAttr("userLoginTo", userLoginTo);
+		}
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
