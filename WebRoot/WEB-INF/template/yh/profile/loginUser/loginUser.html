@@ -75,25 +75,36 @@ $(document).ready(function() {
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "15%",
-	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-info editbutton' href='/loginUser/edit/"+obj.aData.ID+"'>"+
-	                                "<i class='fa fa-edit'> </i> "+
-	                                "编辑"+
-	                            "</a>"+
-	                            "<a class='btn btn-danger' href='/loginUser/del/"+obj.aData.ID+"'>"+
-	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-	                                "删除"+
-	                            "</a>";
+	                "fnRender": function(obj) {  
+	                	if(obj.aData.IS_STOP != true){
+	                		 return "<a class='btn btn-info editbutton' href='/loginUser/edit/"+obj.aData.ID+"'>"+
+                             "<i class='fa fa-edit'> </i> "+
+                             "编辑"+
+                         "</a>"+
+                         "<a class='btn btn-success dropdown-toggle' href='/loginUser/del/"+obj.aData.ID+"'>"+
+                             "<i class='fa fa-trash-o fa-edit'></i>"+ 
+                             "停用"+
+                         "</a>";
+	                	}else{
+	                		 return "<a class='btn btn-info editbutton' href='/loginUser/edit/"+obj.aData.ID+"'>"+
+                             "<i class='fa fa-edit'> </i> "+
+                             "编辑"+
+                         "</a>"+
+                         "<a class='btn btn-danger' href='/loginUser/del/"+obj.aData.ID+"'>"+
+                             "<i class='fa fa-trash-o fa-edit'></i>"+ 
+                             "启用"+
+                         "</a>";
+	                	}
+	                    
 	                }
 	            } 
 	            ]
 	} );
 	 
-	 $("#example").on('click', '.editbutton', function(){
-		    console.log(this);
+	/* $("#example").on('click', '.editbutton', function(){
+		    //console.log(this);
 		  // alert(123);
-		    
-		  });
+	}); */
 		
 
 });
