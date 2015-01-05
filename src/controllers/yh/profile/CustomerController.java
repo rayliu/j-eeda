@@ -153,9 +153,15 @@ public class CustomerController extends Controller {
     public void delete() {
         long id = getParaToLong();
         Party party = Party.dao.findById(id);
-        Db.update("delete from contact where id = "+ party.get("contact_id"));
-        party.delete();
-            redirect("/customer");
+        Object obj = party.get("is_stop");
+   
+        if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
+        	party.set("is_stop", true);
+        }else{
+        	party.set("is_stop", false);
+        }
+        party.update();
+        redirect("/customer");
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_C_CREATE, PermissionConstant.PERMSSION_C_UPDATE}, logical=Logical.OR)
     public void save() {

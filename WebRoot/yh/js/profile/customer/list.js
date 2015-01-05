@@ -21,7 +21,7 @@ $(document).ready(function() {
             {"mDataProp":"ABBR"},
             {"mDataProp":"CONTACT_PERSON"},        	
             {"mDataProp":"PHONE"},
-            {"mDataProp":"ADDRESS"},
+            {"mDataProp":"ADDRESS","sWidth": "15%"},
             {"mDataProp":"RECEIPT"},
             {"mDataProp":"PAYMENT",
             	"fnRender": function(obj) {
@@ -42,16 +42,29 @@ $(document).ready(function() {
             },
             { 
                 "mDataProp": null, 
-                "sWidth": "8%",                
-                "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' href='/customer/edit/"+obj.aData.PID+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                                "编辑"+
-                            "</a>"+
-                            "<a class='btn btn-danger' href='/customer/delete/"+obj.aData.PID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "删除"+
-                            "</a>";
+                "sWidth": "15%",                
+                "fnRender": function(obj) {  
+                	console.log(obj.aData.IS_STOP );
+                	if(obj.aData.IS_STOP != true){
+                		 return "<a class='btn btn-info' href='/customer/edit/"+obj.aData.PID+"'>"+
+                         "<i class='fa fa-edit fa-fw'></i>"+
+                         "编辑"+
+	                     "</a>"+
+	                     "<a class='btn btn-danger' href='/customer/delete/"+obj.aData.PID+"'>"+
+	                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
+	                         "停用"+
+	                     "</a>";
+                	}else{
+                		return "<a class='btn btn-info' href='/customer/edit/"+obj.aData.PID+"'>"+
+                        "<i class='fa fa-edit fa-fw'></i>"+
+                        "编辑"+
+	                     "</a>"+
+	                     "<a class='btn btn-success' href='/customer/delete/"+obj.aData.PID+"'>"+
+	                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
+	                         "启用"+
+	                     "</a>";
+                	}
+                   
                 }
             }                         
         ]    

@@ -738,11 +738,11 @@ public class TransferOrderController extends Controller {
 							+ input
 							+ "%' or postal_code like '%"
 							+ input
-							+ "%') and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') limit 0,10");
+							+ "%') and (p.is_stop is null or p.is_stop = 0) and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') limit 0,10");
 		} else {
 			locationList = Db
 					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_CUSTOMER + "' and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
+							+ Party.PARTY_TYPE_CUSTOMER + "' and (p.is_stop is null or p.is_stop = 0) and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
 		}
 		renderJson(locationList);
 	}
