@@ -920,10 +920,14 @@ public class TransferOrderController extends Controller {
 
 	// 查出所有的office
 	public void searchAllOffice() {
+		List<Record> offices = Db.find("select o.id,o.office_name from office o");
+		renderJson(offices);
+	}
+	//根据用户是否拥有这个网点查询
+	public void searchPartOffice() {
 		List<Record> offices = Db.find("select o.id,o.office_name from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')");
 		renderJson(offices);
 	}
-
 	// 查出所有的driver
 	public void searchAllDriver() {
 		String input = getPara("input");

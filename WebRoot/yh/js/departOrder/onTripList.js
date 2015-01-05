@@ -366,7 +366,7 @@ $(document).ready(function() {
     });
   //获取所有的网点
 
-	$.post('/transferOrder/searchAllOffice',function(data){
+	$.post('/transferOrder/searchPartOffice',function(data){
 	 if(data.length > 0){
 		 var officeSelect = $("#officeSelect");
 		 officeSelect.empty();

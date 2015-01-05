@@ -472,7 +472,7 @@
  	});
 
 	// 获取所有城市
-	$.post('/transferOrder/searchAllOffice',function(data){
+	$.post('/transferOrder/searchPartOffice',function(data){
 	 if(data.length > 0){
 		 var officeSelect = $("#officeSelect");
 		 officeSelect.empty();

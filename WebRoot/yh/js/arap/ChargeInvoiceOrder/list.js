@@ -106,7 +106,7 @@ $(document).ready(function() {
        $('#select_companyList').on('mousedown', function(){
            return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
        });
-       $.post('/transferOrder/searchAllOffice',function(data){
+       $.post('/transferOrder/searchPartOffice',function(data){
    		if(data.length > 0){
    			 var officeSelect = $("#select_office_filter");
    			 officeSelect.empty();

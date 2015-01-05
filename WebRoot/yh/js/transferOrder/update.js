@@ -1895,10 +1895,10 @@ $(document).ready(function() {
 		},'json');
     
 	 $('#deliveryOfficeSelect').on('change', function(){ 
+		 console.log($(this).val());
+		 console.log($("#officeSelect").val());
 		 if($(this).val() != ""){
 			 // 获取所有仓库
-			// console.log($('#deliveryOfficeSelect').val());
-			 //$("#officeSelect").val($('#deliveryOfficeSelect').val());
 			 findWarehouseForOffice($(this).val());
 		 }else{
 			 $("#gateInSelect").empty();
@@ -1940,18 +1940,24 @@ $(document).ready(function() {
 			 var deliveryOfficeSelect = $("#deliveryOfficeSelect");
 			 deliveryOfficeSelect.empty();
 			 var hideDeliveryOfficeSelect = $("#hideDeliveryOfficeSelect").val();
-			 deliveryOfficeSelect.append("<option ></option>");			 
-
-			 var officeSelect = $("#officeSelect");
-			 officeSelect.empty();
-			 var hideOfficeId = $("#hideOfficeId").val();
+			 deliveryOfficeSelect.append("<option ></option>");	
 			 for(var i=0; i<data.length; i++){
 				 if(data[i].ID == hideDeliveryOfficeSelect){
 					 deliveryOfficeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
 				 }else{
 					 deliveryOfficeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
 				 }
-				 
+			 }
+		 }
+	 },'json');
+	 // 获取用户拥有的网点
+	 $.post('/transferOrder/searchPartOffice',function(data){
+		 if(data.length > 0){
+			 var officeSelect = $("#officeSelect");
+			 officeSelect.empty();
+			 var hideOfficeId = $("#hideOfficeId").val();
+			 
+			 for(var i=0; i<data.length; i++){
 				 if(data[i].ID == hideOfficeId){
 					 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");					 
 				 }else{
@@ -1960,7 +1966,6 @@ $(document).ready(function() {
 			 }
 		 }
 	 },'json');
-	 
 	 // 回显订单类型
 	 $("input[name='orderType']").each(function(){
 		if($("#orderTypeRadio").val() == $(this).val()){
@@ -2475,14 +2480,14 @@ $(document).ready(function() {
 	// 选中仓库触发事件
 	$("#gateInSelect").change(function(){
     	$.post('/transferOrder/selectWarehouse', {warehouseId:$(this).val()}, function(data){  
-		    var officeOption=$("#officeSelect>option");
+		   /* var officeOption=$("#deliveryOfficeSelect>option");
 		    var officeVal=data.warehouse.OFFICE_ID;
 		    for(var i=0;i<officeOption.length;i++){
 		    	var svalue=officeOption[i].value;
 		    	if(officeVal==svalue){
-		    		$("#officeSelect option[value='"+svalue+"']").attr("selected","selected");
+		    		$("#deliveryOfficeSelect option[value='"+svalue+"']").attr("selected","selected");
 		    	}
-		    }
+		    }*/
 			
 			var hideProvince = data.location.PROVINCE;
 			var hideCity = data.location.CITY;

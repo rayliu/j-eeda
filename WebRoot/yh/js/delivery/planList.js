@@ -36,16 +36,13 @@ $(document).ready(function() {
     });	
 	
 	//获取所有的网点
-    $.post('/transferOrder/searchAllOffice',function(data){
+    $.post('/transferOrder/searchPartOffice',function(data){
    	 if(data.length > 0){
    		 var officeSelect = $("#office_id");
    		 officeSelect.empty();
+   		 officeSelect.append("<option value=''></option>");
    		 for(var i=0; i<data.length; i++){
-   			 if(i == 0){
-   				 officeSelect.append("<option value=''></option>");
-   			 }else{
-   				 officeSelect.append("<option value='"+data[i].id+"'>"+data[i].OFFICE_NAME+"</option>");					 
-   			 }
+   			 officeSelect.append("<option value='"+data[i].id+"'>"+data[i].OFFICE_NAME+"</option>");					 
    		 }
    	 }
     },'json');
