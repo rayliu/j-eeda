@@ -139,6 +139,7 @@ $(document).ready(function() {
 		$("#cargos").show();
 		var warehouseId = $("#warehouse_id").val();
 		var customerId = $("#customer_id").val();
+		var transferItemIds = $("#transferItemIds").val();
 		var productIds = $("#productIds").val();
 		var shippingNumbers = $("#shippingNumbers").val();
 		
@@ -154,7 +155,7 @@ $(document).ready(function() {
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "/delivery/orderListCargo?warehouseId="+warehouseId+"&productIds="+productIds+"&customerId="+customerId,
+	        "sAjaxSource": "/delivery/orderListCargo?transferItemIds="+transferItemIds,
 	        "aoColumns": [
 	            {"mDataProp":"ITEM_NO"},  
 	            {"mDataProp":"ITEM_NAME"},
@@ -165,7 +166,8 @@ $(document).ready(function() {
 	            		return numbers[num++];
 	            	}
 	            },   
-	            {"mDataProp":"ABBR"}
+	            {"mDataProp":"ABBR"},
+	            {"mDataProp":"ORDER_NO"}
 	        ]      
 	    });	
 	}else{
@@ -256,7 +258,18 @@ $(document).ready(function() {
 		var locationTo = $("#locationTo").val();
 		var delivery_id = $("#delivery_id").val();
 		var priceType = $("input[name='priceType']:checked").val();
-		$.post('/deliveryOrderMilestone/departureConfirmation',{delivery_id:delivery_id,code:code,locationTo:locationTo,priceType:priceType},function(data){
+		
+		var warehouseId = $("#warehouse_id").val();
+		var customerId = $("#customer_id").val();
+		var transferItemIds = $("#transferItemIds").val();
+		var productIds = $("#productIds").val();
+		var shippingNumbers = $("#shippingNumbers").val();
+		var cargoNature =$("#cargoNature").val();
+		
+		
+		$.post('/deliveryOrderMilestone/departureConfirmation',{delivery_id:delivery_id,code:code,locationTo:locationTo,priceType:priceType,
+			warehouseId:warehouseId,customerId:customerId,transferItemIds:transferItemIds,
+			productIds:productIds,shippingNumbers:shippingNumbers,cargoNature:cargoNature},function(data){
 			var MilestoneTbody = $("#transferOrderMilestoneTbody");
 			MilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 
@@ -266,7 +279,6 @@ $(document).ready(function() {
 		$("#ConfirmationBtn").attr("disabled", true);
 		//$("#receiptBtn").attr("disabled", false);
 		$("#saveBtn").attr("disabled", true);
-		paymenttable().fnDraw();
 		
 	});
 	//应付
@@ -938,7 +950,7 @@ $(document).ready(function() {
 		}
 	},'json');
     
-    // 应付datatable
+    /*// 配送排车单应付datatable
 	var paymenttable=$('#table_fin3').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "bFilter": false, // 不需要默认的搜索框
@@ -1016,12 +1028,7 @@ $(document).ready(function() {
                 }
             }     
         ]      
-    });
-    
-    
-    
-    
-    
+    });*/
     
 });
 

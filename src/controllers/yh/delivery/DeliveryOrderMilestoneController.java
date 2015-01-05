@@ -15,6 +15,7 @@ import models.InventoryItem;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
+import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -68,6 +69,14 @@ public class DeliveryOrderMilestoneController extends Controller {
     // 发车确认
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_COMPLETED})
     public void departureConfirmation() {
+    	
+    	String warehouseId = getPara("warehouseId");
+		String customerId = getPara("customerId");
+		String cargoNature = getPara("cargoNature");
+		String[] transferItemId =  getPara("transferItemIds").split(",");
+		String[] productId =  getPara("productIds").split(",");
+		String[] shippingNumber =  getPara("shippingNumbers").split(",");
+    	
         Long delivery_id = Long.parseLong(getPara("delivery_id"));
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
         deliveryOrder.set("status", "已发车");
@@ -78,6 +87,20 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.set("status", "已发车");
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        
+        //货品属性：一站式普通货品，还有普通货品配送没做
+  		if("cargo".equals(cargoNature)){
+  			for (int i = 0; i < productId.length; i++) {
+  				//修改实际库存
+  				InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item ii where ii.warehouse_id = '" + warehouseId + "' and ii.product_id = '" + productId[i] + "' and ii.party_id = '" + customerId + "';");
+  				item.set("total_quantity", item.getDouble("total_quantity") - Double.parseDouble(shippingNumber[i])).update();
+  				//修改运输单已完成数量
+  				TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(transferItemId[i]);
+  				double outCompleteAmount = transferOrderItem.getDouble("complete_amount")==null?0:transferOrderItem.getDouble("complete_amount");
+  				double newCompleteAmount = outCompleteAmount + Double.parseDouble(shippingNumber[i]);
+  				transferOrderItem.set("complete_amount", newCompleteAmount).update();
+  			}
+  		}
         
         transferOrderMilestone.set("create_by", users.get(0).get("id"));
         transferOrderMilestone.set("location", "");
@@ -622,7 +645,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         renderJson("{\"success\":true}");
     }
     
-    // 配送排车应付list
+    /*// 配送排车应付list
     public void accountPayablePlan() {
     	String id = getPara();
     	String sqlOne = "select delivery_plan_order_id from delivery_id = " + id;
@@ -670,6 +693,6 @@ public class DeliveryOrderMilestoneController extends Controller {
     	}
         
         renderJson(orderMap);
-    }
+    }*/
     
 }

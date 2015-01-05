@@ -18,6 +18,7 @@ import models.Location;
 import models.Office;
 import models.Party;
 import models.TransferOrder;
+import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -320,12 +321,15 @@ public class DeliveryController extends Controller {
 						+ id);
 
 		if("cargo".equals(tOrder.get("cargo_nature"))){
-			Record rec = Db.findFirst("select concat(group_concat(cast(product_id as char) separator ',')) productIds,"
-					+ " concat(group_concat(cast(product_number as char) separator ',')) productNumbers"
+			Record rec = Db.findFirst("select transfer_no ,concat(group_concat(cast(product_id as char) separator ',')) productIds,"
+					+ " concat(group_concat(cast(product_number as char) separator ',')) productNumbers,"
+					+ " concat(group_concat(cast(transfer_item_id as char) separator ',')) transferItemIds"
 					+ " from delivery_order_item where delivery_id = "+ id);
 			
 			setAttr("productIds", rec.get("productIds"));
 			setAttr("shippingNumbers", rec.get("productNumbers"));
+			setAttr("transferItemIds", rec.get("transferItemIds"));
+			setAttr("transferOrderNo", rec.get("transfer_no"));
 		}else{
 			// 运输单信息
 			if (serIdList.size() > 0) {
@@ -385,10 +389,12 @@ public class DeliveryController extends Controller {
 		
 
 		// 客户信息
-		Party customerContact = Party.dao
+		/*Party customerContact = Party.dao
 				.findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
 						+ tOrder.get("customer_id")
-						+ "'and p.contact_id = c.id");
+						+ "'and p.contact_id = c.id");*/
+		String sql = "select p.id as customerId,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+tOrder.get("customer_id");
+		Record customerContact = Db.findFirst(sql);
 
 		// 供应商信息
 		Party spContact = Party.dao
@@ -533,15 +539,19 @@ public class DeliveryController extends Controller {
 		
 		String customerId = getPara("customerId");
 		String warehouseId = getPara("warehouseId");
+		String transferOrderNo = getPara("transferOrderNo1");
+		String transferItemIds = getPara("transferItemIds");
 		String productIds = getPara("productIds");
 		String shippingNumbers = getPara("shippingNumbers");
 		String cargoNature = getPara("cargoNature");
 		//客户
 		if (customerId != null) {
-			List<Contact> customers = Contact.dao
+			/*List<Contact> customers = Contact.dao
 					.find("select *,p.id as customerId from contact c,party p,transfer_order t where p.contact_id=c.id and t.customer_id = p.id and t.id ="
 							+ customerId + "");
-			Contact customer = customers.get(0);
+			Contact customer = customers.get(0);*/
+			String sql = "select p.id as customerId,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+customerId;
+			Record customer = Db.findFirst(sql);
 			setAttr("customer", customer);
 		}
 		
@@ -572,9 +582,10 @@ public class DeliveryController extends Controller {
 				setAttr("locationFrom", locationFrom);
 			}
 		}
-		
+		setAttr("transferItemIds", transferItemIds);
 		setAttr("productIds", productIds);
 		setAttr("shippingNumbers", shippingNumbers);
+		setAttr("transferOrderNo", transferOrderNo);
 		setAttr("warehouse", warehouse);
 		setAttr("cargoNature", cargoNature);//货品属性
 		//setAttr("cargoNaturName", "普通货品");
@@ -997,10 +1008,12 @@ public class DeliveryController extends Controller {
 		String businessStamp = getPara("business_stamp");
 		String clientOrderStamp = getPara("client_order_stamp");
 		String orderDeliveryStamp  = getPara("order_delivery_stamp");
+		String transferOrderNo  = getPara("transferOrderNo").trim();
 
 		String[] idlist = getPara("localArr").split(",");
 		String[] idlist2 = getPara("localArr2").split(",");
 		String[] idlist4 = getPara("localArr3").split(",");
+		String[] transferItemId =  getPara("transferItemIds").split(",");
 		String[] productId =  getPara("productIds").split(",");
 		String[] shippingNumber =  getPara("shippingNumbers").split(",");
 
@@ -1071,6 +1084,7 @@ public class DeliveryController extends Controller {
 			deliveryOrder.save();
 
 			if("cargo".equals(cargoNature)){
+				TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where order_no = '"+ transferOrderNo + "';");
 				for (int i = 0; i < productId.length; i++) {
 					//修改可用库存
 					InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item ii where ii.warehouse_id = '" + warehouseId + "' and ii.product_id = '" + productId[i] + "' and ii.party_id = '" + customerId + "';");
@@ -1080,8 +1094,11 @@ public class DeliveryController extends Controller {
 					deliveryOrderItem.set("delivery_id", deliveryOrder.get("id"))
 					.set("product_id", productId[i])
 					.set("product_number", shippingNumber[i])
+					.set("transfer_item_id", transferItemId[i])
+					.set("transfer_no", transferOrderNo)
+					.set("transfer_order_id",order.get("id"))
 					.save();
-				}
+				} 
 			}else{
 				String string = getPara("tranferid");
 				// 改变运输单状态
@@ -1178,12 +1195,33 @@ public class DeliveryController extends Controller {
 
 	// 发车确认
 	public void departureConfirmation() {
+		/*
+		String warehouseId = getPara("warehouseId");
+		String customerId = getPara("customerId");
+		String cargoNature = getPara("cargoNature");
+		String[] transferItemId =  getPara("transferItemIds").split(",");
+		String[] productId =  getPara("productIds").split(",");
+		String[] shippingNumber =  getPara("shippingNumbers").split(",");
+		*/
 		Long delivery_id = Long.parseLong(getPara("deliveryid"));
 		System.out.println(delivery_id);
 		DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
 		deliveryOrder.set("status", "配送在途");
 		deliveryOrder.update();
-
+		
+		/*//货品属性：一站式普通货品，还有普通货品配送没做
+		if("cargo".equals(cargoNature)){
+			for (int i = 0; i < productId.length; i++) {
+				//修改实际库存
+				InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item ii where ii.warehouse_id = '" + warehouseId + "' and ii.product_id = '" + productId[i] + "' and ii.party_id = '" + customerId + "';");
+				item.set("total_quantity", item.getDouble("total_quantity") - Double.parseDouble(shippingNumber[i])).update();
+				//修改运输单已完成数量
+				TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(transferItemId[i]);
+				double outCompleteAmount = transferOrderItem.getDouble("complete_amount")==null?0:transferOrderItem.getDouble("complete_amount");
+				double newCompleteAmount = transferOrderItem.getDouble("amount") - (outCompleteAmount + Double.parseDouble(shippingNumber[i]));
+				transferOrderItem.set("complete_amount", newCompleteAmount).save();
+			}
+		}*/
 		Map<String, Object> map = new HashMap<String, Object>();
 		DeliveryOrderMilestone deliveryOrderMilestone = new DeliveryOrderMilestone();
 		deliveryOrderMilestone.set("status", "已发车");
@@ -1426,29 +1464,84 @@ public class DeliveryController extends Controller {
     
     public void orderListCargo(){
     	
-    	String warehouseId = getPara("warehouseId");
-    	String productIds = getPara("productIds");
-    	String customerId = getPara("customerId");
+    	//String warehouseId = getPara("warehouseId");
+    	String transferItemIds = getPara("transferItemIds");
+    	//String productIds = getPara("productIds");
+    	//String customerId = getPara("customerId");
     	String pageIndex = getPara("sEcho");
     	
-    	String[] productId =  productIds.split(",");
-    	//String sqlTotal = "select count(0) total from delivery_order";
-        String sql = "select pro.id pid, pro.item_name, pro.item_no, pro.volume, pro.weight, c.abbr from inventory_item ii"
+    	//String[] productId =  productIds.split(",");
+    	String sqlTotal = "select count(0) total from transfer_order_item where id in (" + transferItemIds + ");";
+        /*String sql = "select pro.id pid, pro.item_name, pro.item_no, pro.volume, pro.weight, c.abbr from inventory_item ii"
         		+ " left join product pro on ii.product_id = pro.id"
         		+ " left join warehouse w on ii.warehouse_id = w.id"
         		+ " left join party p on ii.party_id = p.id"
         		+ " left join contact c on p.contact_id = c.id"
-        		+ " where w.id = '" + warehouseId + "' and p.id = '" + customerId + "' and pro.id in (" + productIds + ");";
-        
-        //Record rec = Db.findFirst(sqlTotal);
+        		+ " where w.id = '" + warehouseId + "' and p.id = '" + customerId + "' and pro.id in (" + productIds + ");";*/
+        String sql = "select pro.item_no,pro.item_name,pro.volume,pro.weight,c.abbr,tor.order_no from transfer_order_item toi "
+        		+ " left join transfer_order tor on tor.id = toi.order_id"
+        		+ " left join product pro on pro.id = toi.product_id"
+        		+ " left join party p on p.id = tor.customer_id"
+        		+ " left join contact c on c.id = p.contact_id"
+        		+ " where toi.id in (" + transferItemIds + ");";
+        Record rec = Db.findFirst(sqlTotal);
         List<Record> products = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
-        Map.put("iTotalRecords", productId.length);
-        Map.put("iTotalDisplayRecords", productId.length);
+        Map.put("iTotalRecords", rec.getLong("total"));
+        Map.put("iTotalDisplayRecords", rec.getLong("total"));
         Map.put("aaData", products);
         renderJson(Map);
     	
     }
+    
+    //获取一站式货品
+    public void findTransferOrderItems(){
+    	String warehouse1 = getPara("warehouse1");
+    	String transferOrderNo = getPara("transferOrderNo");
+    	String customerName1 = getPara("customerName1");
+    	
+    	String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+    	String sqlTotal = "select count(0) total from transfer_order_item t1"
+        		+ " left join transfer_order t2 on t1.order_id = t2.id"
+        		+ " left join product pro on pro.id = t1.product_id"
+        		+ " left join warehouse w on t2.warehouse_id = w.id"
+        		+ " left join party p on t2.customer_id = p.id"
+        		+ " left join contact c on p.contact_id = c.id"
+        		+ " where t2.status = '已入库' and t2.cargo_nature = 'cargo'"
+        		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
+        		+ " and c.abbr LIKE '%" + customerName1 + "%'"
+        		+ " and t2.order_no = '" + transferOrderNo + "'"
+        		+ " order by t1.id desc";
+    	
+        String sql = "select t1.id as tid,w.id as wid,p.id as pid,pro.id as productId,pro.item_no,pro.item_name,t1.amount,t1.complete_amount,t2.order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
+        		+ " (select sum(product_number) from delivery_order_item  toi left join delivery_order dor on dor.id = toi.delivery_id "
+        		+ " where toi.transfer_no = '" + transferOrderNo + "' and toi.product_id = t1.product_id and dor.status = '新建') quantity "
+        		+ " from transfer_order_item t1"
+        		+ " left join transfer_order t2 on t1.order_id = t2.id"
+        		+ " left join product pro on pro.id = t1.product_id"
+        		+ " left join warehouse w on t2.warehouse_id = w.id"
+        		+ " left join party p on t2.customer_id = p.id"
+        		+ " left join contact c on p.contact_id = c.id"
+        		+ " where t2.status = '已入库' and t2.cargo_nature = 'cargo'"
+        		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
+        		+ " and c.abbr LIKE '%" + customerName1 + "%'"
+        		+ " and t2.order_no = '" + transferOrderNo + "'"
+        		+ " order by t1.id desc " + sLimit;
+        
+        Record rec = Db.findFirst(sqlTotal);
+        List<Record> transferOrderItems = Db.find(sql);
+        Map Map = new HashMap();
+        Map.put("sEcho", pageIndex);
+        Map.put("iTotalRecords", rec.getLong("total"));
+        Map.put("iTotalDisplayRecords", rec.getLong("total"));
+        Map.put("aaData", transferOrderItems);
+        renderJson(Map); 
+    }
+    
 
 }

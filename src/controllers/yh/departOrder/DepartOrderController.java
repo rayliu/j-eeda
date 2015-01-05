@@ -1801,10 +1801,18 @@ public class DepartOrderController extends Controller {
                                 inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
                                 inventoryItem.set("product_id", transferOrderItem.get("product_id"));
                                 inventoryItem.set("total_quantity", amount);
+                                inventoryItem.set("available_quantity", amount);
                                 inventoryItem.save();
                             } else {
                                 inventoryItem.set("total_quantity",
                                         Double.parseDouble(inventoryItem.get("total_quantity").toString()) + amount);
+                                if(inventoryItem.get("available_quantity") == null || "".equals(inventoryItem.get("total_quantity"))){
+                                	inventoryItem.set("available_quantity", amount);
+                                }else{
+                                	inventoryItem.set("available_quantity",
+                                            Double.parseDouble(inventoryItem.get("available_quantity").toString()) + amount);
+                                }
+                                
                                 inventoryItem.update();
                             }
                         }

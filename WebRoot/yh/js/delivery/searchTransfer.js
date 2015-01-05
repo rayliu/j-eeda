@@ -18,65 +18,110 @@ $(document).ready(function() {
 	$("#saveDeliveryCargo").click(function(e){
 		e.preventDefault();
     	var productIds=[];
+    	var transferItemIds=[];
     	var shippingNumbers = [];
     	$("#eeda-table2 tr:not(:first)").each(function(){
         	$("input:checked",this).each(function(){
         		productIds.push($(this).val()); //货品id
         		shippingNumbers.push($(this).parent().parent().find("td>input[name='amount']").val());
+        		transferItemIds.push($(this).parent().parent().attr("id"));
         	});
     	}); 
-    	console.log("货品id:" + productIds + ",发货数量: " + shippingNumbers);
+    	console.log("运输明细id:"+transferItemIds+",货品id:" + productIds + ",发货数量: " + shippingNumbers);
     	$("#productIds").val(productIds);
     	$("#shippingNumbers").val(shippingNumbers);
+    	$("#transferItemIds").val(transferItemIds);
+    	$("#transferOrderNo1").val($("#transferOrderNo").val());
         $('#createCargoForm').submit();
 	});
 	
 	var dab2= $('#eeda-table2').dataTable({
-		"bFilter": false, // 不需要默认的搜索框
-        // "sDom":
-		// "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12
-		// center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        // "sPaginationType": "bootstrap",
+		"bFilter": false, //不需要默认的搜索框
+    	"bSort": false, // 不要排序
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
+        "bAutoWidth":false,
         "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.TID);
+			return nRow;
+		},
         "sAjaxSource": "/delivery/searchTransfer",
         "aoColumns": [ 
         			{ "mDataProp": null,
 					    "fnRender": function(obj) {
-					       return '<input type="checkbox" class="checkedOrUnchecked" inventoryId='+obj.aData.INVERTORYID+' code3='+obj.aData.CUSTOMER_ID+' name="order_check_box" value="'+obj.aData.ID+'">';
+					    	if(obj.aData.COMPLETE_AMOUNT == obj.aData.AMOUNT){
+					    		return "";
+					    	}else if((obj.aData.COMPLETE_AMOUNT + obj.aData.QUANTITY) == obj.aData.AMOUNT){
+					    		return "";
+					    	}else{
+					    		return '<input type="checkbox" class="checkedOrUnchecked" inventoryId='+obj.aData.INVERTORYID+' code3='+obj.aData.CUSTOMER_ID+' name="order_check_box" value="'+obj.aData.PRODUCTID+'">';
+					    	}
 					    }
 					},   
+					{"mDataProp":"TID","bVisible": false},
   		            {"mDataProp":"ITEM_NO"},
   		            {"mDataProp":"ITEM_NAME"},
-  		            {"mDataProp":"WAREHOUSE_NAME","sClass": "warehouse"},
-  		            {"mDataProp":"WAREHOUSE_ID", "bVisible": false},
-  		            {"mDataProp":"ABBR","sClass": "cname"},
-  		            {"mDataProp":"CUSTOMER_ID", "bVisible": false},
-  		            {"mDataProp":"TOTAL_QUANTITY"},
-  		            {"mDataProp":null,
+  		            {"mDataProp":"ORDER_NO", "sWidth":"100px"},
+  		            {"mDataProp":"STATUS","bVisible": false},
+  		            {"mDataProp":"CARGO_NATURE","bVisible": false,
+  		            	"sClass": "cargo_nature", "sWidth":"70px",
   		            	"fnRender": function(obj) {
-  		            		if(obj.aData.AVAILABLE_QUANTITY != null && obj.aData.AVAILABLE_QUANTITY != "")
-  		            			return obj.aData.TOTAL_QUANTITY - obj.aData.AVAILABLE_QUANTITY;
+  		            		if(obj.aData.CARGO_NATURE == "cargo"){
+  		            			return "普通货品";
+  		            		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
+  		            			return "损坏货品";
+  		            		}else if(obj.aData.CARGO_NATURE == "ATM"){
+  		            			return "ATM";
+  		            		}else{
+  		            			return "";
+  		            		}
+  		            }}, 
+  		            {"mDataProp":"WAREHOUSE_NAME","sClass": "warehouse", "sWidth":"100px"},
+  		            {"mDataProp":"WID", "bVisible": false},
+  		            {"mDataProp":"ABBR","sClass": "cname", "sWidth":"120px"},
+  		            {"mDataProp":"PID", "bVisible": false},
+  		            {"mDataProp":"AMOUNT","sWidth":"30px"},
+  		            {"mDataProp":null,"sWidth":"80px",
+  		            	"fnRender": function(obj) {
+  		            		if(obj.aData.COMPLETE_AMOUNT != null && obj.aData.COMPLETE_AMOUNT != "")
+  		            			return obj.aData.COMPLETE_AMOUNT;
   		            		else
   		            			return "0";
 					    }
   		            },
-  		            {"mDataProp":null,
+  		            {"mDataProp":null,"sWidth":"90px",
   		            	"fnRender": function(obj) {
-  		            		if(obj.aData.AVAILABLE_QUANTITY != null && obj.aData.AVAILABLE_QUANTITY != "")
-  		            			return obj.aData.AVAILABLE_QUANTITY;
+  		            		if(obj.aData.QUANTITY != null && obj.aData.QUANTITY != "")
+  		            			return obj.aData.QUANTITY;
   		            		else
-  		            			return obj.aData.TOTAL_QUANTITY;
+  		            			return "0";
+					    }
+  		            },
+  		            {"mDataProp":null,"sWidth":"90px","sClass": "availableAmount",
+  		            	"fnRender": function(obj) {
+  		            		var amount = obj.aData.AMOUNT;
+  		            		var qunantity = obj.aData.QUANTITY;
+  		            		var complete = obj.aData.COMPLETE_AMOUNT;
+  		            		
+  		            		if(qunantity != null && complete != null){
+  		            			return amount - qunantity - complete;
+  		            		}else if(qunantity != null){
+  		            			return amount - qunantity;
+  		            		}else if(complete != null){
+  		            			return amount - complete;
+  		            		}else{
+  		            			return amount;
+  		            		}
 					    }
   		            },
   		            { 
-  		                "mDataProp": null, 
+  		                "mDataProp": null, "sWidth":"70px",
   		                "fnRender": function(obj) {                    
-  		                    return "<input type='text' name='amount' toal="+obj.aData.TOTAL_QUANTITY +" available="+obj.aData.AVAILABLE_QUANTITY+" disabled value='0'>";
+  		                    return "<input type='text' size='7' name='amount' toal="+obj.aData.TOTAL_QUANTITY +" available="+obj.aData.AVAILABLE_QUANTITY+" disabled value='0'>";
   		                }
   		            }
   		        ]     
@@ -140,7 +185,7 @@ $(document).ready(function() {
 						    }
 	            		},
 	            {"mDataProp":"STATUS"},        	
-	            {"mDataProp":"CARGO_NATURE"},
+	            {"mDataProp":"CARGO_NATURE","sClass": "cargo_nature"},
 	            {"mDataProp":"PICKUP_MODE",
 	            	"fnRender": function(obj) {
 	            		if(obj.aData.PICKUP_MODE == "routeSP"){
@@ -173,7 +218,6 @@ $(document).ready(function() {
 			if(cargoNature==="cargo")
 				$("#saveDeliveryCargo").attr('disabled', false);
 
-			
 			$inputAmount.attr('disabled', false).val('1');// 允许输入配送数量
 
 			
@@ -223,6 +267,13 @@ $(document).ready(function() {
 			}
 			if(warehouseArr.length != 0){
 				warehouseArr.splice($checkBox.parent().siblings('.warehouse')[0].innerHTML, 1);
+			}
+			if(cname.length == 0){
+				if($("input[name='cargoType']:checked").val() == 'ATM'){
+					$("#saveDelivery").attr('disabled', true);
+				}else{
+					$("#saveDeliveryCargo").attr('disabled', true);
+				}
 			}
 		}
 	};
@@ -353,8 +404,9 @@ $(document).ready(function() {
          $('#customerId').val(companyId);
          	var customerName1 = $("#customerName1").val();
 	      	var warehouse1 = $("#warehouse1").val();
-	      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
-	      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
+	      	var transferOrderNo = $("#transferOrderNo").val();
+	      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+	      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 		      	dab2.fnDraw();
 	      	}/*else{
 	      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer";
@@ -414,14 +466,15 @@ $(document).ready(function() {
  		$('#warehouse1').val($(this).text());
  		
  		var customerName1 = $("#customerName1").val();
-     	var warehouse1 = $("#warehouse1").val();
-     	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
-     		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
+      	var warehouse1 = $("#warehouse1").val();
+      	var transferOrderNo = $("#transferOrderNo").val();
+      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 	      	dab2.fnDraw();
-     	}else{
+      	}/*else{
      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer";
 	      	dab2.fnDraw();
-     	}
+     	}*/
      	$('#warehouseList1').hide();
  	});
  	
@@ -532,14 +585,22 @@ $(document).ready(function() {
 		           
     });
   	
-  	$("#deliveryOrderNo1,#customerName1,#orderStatue1,#warehouse1").on('keyup click', function () {
-      	var customerName1 = $("#customerName1").val();
+  	$("#deliveryOrderNo1,#customerName1,#orderStatue1,#warehouse1,#transferOrderNo").on('keyup click', function () {
+  		var customerName1 = $("#customerName1").val();
       	var warehouse1 = $("#warehouse1").val();
-      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
-      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer?customerName1="+customerName1+"&warehouse1="+warehouse1;
+      	var transferOrderNo = $("#transferOrderNo").val();
+      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 	      	dab2.fnDraw();
-      	}else{
-      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer";
+      	}
+  	});
+  	
+  	$("#transferOrderNo").on('keyup click', function () {
+  		var customerName1 = $("#customerName1").val();
+      	var warehouse1 = $("#warehouse1").val();
+      	var transferOrderNo = $("#transferOrderNo").val();
+      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 	      	dab2.fnDraw();
       	}
   	});
@@ -560,7 +621,7 @@ $(document).ready(function() {
 	});
     
 	//输入普货配送数量
-	$("#eeda-table2").on('blur', 'input', function(e){
+	$("#eeda-table2").on('blur', 'input[name="amount"]', function(e){
 		var value = $(this).val();
 		var toal = $(this).attr("toal");
 		var available = $(this).attr("available");

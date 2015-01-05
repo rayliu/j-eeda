@@ -48,9 +48,13 @@
 		                                    <input id = "localArr3" type="hidden" name="localArr3" value="${localArr3!''}"/>
 		                                    <!-- <input id = "item_id" name="item_id" type="hidden" value="${itemsIds.id!''}"/> -->
                                     		<input id="delivery_id" type="hidden" name="delivery_id" value="${deliveryId.id!''}"/>
-		                                 	<!-- 普货 配送数量集 -->
+                                    		<!-- 一站式普货 运输单号 -->
+		                                 	<input id='transferOrderNo' name='transferOrderNo' type="hidden" value="${transferOrderNo!''}">
+                                    		<!-- 一站式普货 运输单货品明细集 -->
+		                                 	<input id='transferItemIds' name='transferItemIds' type="hidden" value="${transferItemIds!''}">
+		                                 	<!-- 一站式普货 配送数量集 -->
 		                                 	<input id='shippingNumbers' name='shippingNumbers' type="hidden" value="${shippingNumbers!''}">
-		                                 	<!-- 普货 配送产品集 -->
+		                                 	<!-- 一站式普货 配送产品集 -->
 	                  						<input id='productIds' name='productIds' type="hidden" value="${productIds!''}">
 		                                 <div class="form-group">
 		                                    <h3> <label>客户信息</label></h3>
@@ -344,6 +348,7 @@
 		                                            <th>重量(KG)</th>
 		                                            <th>件数</th>
 		                                        	<th>客户</th>
+		                                        	<th>运输单</th>
 			                                   </tr>
 			                               </thead> 
 			                               <tbody>
@@ -497,7 +502,7 @@
 	                                    </div>
 	                                    <!-- /.panel-body -->
 	                                    
-	                                    <div class="panel panel-default">
+	                                    <!-- <div class="panel panel-default">
 					                        <div class="panel-heading">
 					                            <i class="fa fa-bar-chart-o fa-fw"></i> 配送排车单应付                            
 					                        </div>
@@ -519,9 +524,9 @@
 		                                                </tbody>
 		                                            </table>
 		                                        </div>
-	                                        	<!-- /.table-responsive -->
+	                                        	/.table-responsive
 	                                        </div>
-	                                    </div>
+	                                    </div> -->
 	                                    
 	                                    
 	                                    

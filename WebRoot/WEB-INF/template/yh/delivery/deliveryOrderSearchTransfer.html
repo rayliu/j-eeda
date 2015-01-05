@@ -34,11 +34,21 @@
 										</ul>
 									</div>
 								</div>
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="search-label">运输单号：</label>
+										<input id="transferOrderNo" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择仓库">
+										<ul id='transferOrderList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+										</ul>
+									</div>
+								</div>
 							</div>
 						</div>
                          <form id='createCargoForm' action="/delivery/creat2" method="post">
                             <input id='customerId' name='customerId' type="hidden">
                             <input id='warehouseId' name='warehouseId' type="hidden">
+                            <input id='transferOrderNo1' name='transferOrderNo1' type="hidden">
+                            <input id='transferItemIds' name='transferItemIds' type="hidden">
                             <input id='productIds' name='productIds' type="hidden">
                             <input id='shippingNumbers' name='shippingNumbers' type="hidden">
                             <input id="cargoNature" type="hidden" name="cargoNature" value="cargo">
@@ -51,15 +61,20 @@
                                     <thead>
                                         <tr>
                                         	<th></th>
+                                        	<th>单据明细ID</th>
                                             <th>货品型号</th>
                                             <th>货品名称</th>
+                                            <th>运输单号</th>
+                                            <th>状态</th>
+                                            <th>货品属性</th>
                                             <th>仓库</th>
                                             <th>仓库ID</th>
                                             <th>客户</th>
                                             <th>客户ID</th>
-                                            <th>实际库存</th>
-                                            <th>计划出库</th>
-                                            <th>可用库存</th>
+                                            <th>数量</th>
+                                            <th>已完成数量</th>
+                                            <th>计划配送数量</th>
+                                            <th>可用配送数量</th>
                                             <th>配送数量</th>                                            
                                         </tr>
                                     </thead>
