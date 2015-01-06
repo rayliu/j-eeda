@@ -981,6 +981,8 @@
     	            {"mDataProp":"TRANSFER_ORDER_NO"},
     	            {"mDataProp":"ITEM_NAME"},
     	            {"mDataProp":"ITEM_AMOUNT"},
+    	            {"mDataProp":"VOLUME"},
+    	            {"mDataProp":"WEIGHT"},
 					{"mDataProp":"NAME",
 					    "fnRender": function(obj) {
 					        if(obj.aData.NAME!='' && obj.aData.NAME != null){
@@ -1007,23 +1009,11 @@
 					 }},
 					{"mDataProp":"AMOUNT",
 					     "fnRender": function(obj) {
-					    	 
-					    	 if(obj.aData.CREATE_NAME == 'system'){
-					    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-						             return obj.aData.AMOUNT;
-						         }else{
-						         	 return "";
-						         }
-					    	 }else{
-					    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-						             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
-						         }else{
-						         	 return "<input type='text' name='amount'>";
-						         }
-					    	 }
-					    	 
-					    	 
-					        
+				    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+					             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+					         }else{
+					         	 return "<input type='text' name='amount'>";
+					         }
 					 }},
 					 {"mDataProp":"REMARK",
 						 "fnRender": function(obj) {

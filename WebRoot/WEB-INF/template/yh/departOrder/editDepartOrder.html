@@ -231,10 +231,17 @@
 		                                            <input class="form-control" id="car_follow_phone" value="${departOrder.car_follow_phone!''}" name="car_follow_phone">
 	                                            </div>
                                             </div>
-                                       </div>                                       
-                                       
-	                                    <div class="row">			                                    
-	                                    	<div class="col-lg-10">
+                                       </div>       
+                                       <div class="row">			                                    
+	                                    	<div class="col-lg-10">                                
+		                                       <div class="form-group">
+		                                           <label class="search-label">供应商托运单号</label>
+					                               <input type="text" class="form-control search-control orderNo_filter" id="booking_note_number" name="booking_note_number" value="${departOrder.booking_note_number!''}">
+		                                       </div> 
+                                       		</div>
+                                       </div>
+	                                   <div class="row">			                                    
+	                                   		<div class="col-lg-10">
 		                                        <div class="form-group">                                                    
 		                                            <span id="datetimepicker" class="input-append date search-control "> 
 		                                                <label class="search-label">实际发车时间*</label> 
@@ -437,6 +444,8 @@
                                                         <th>运输单号</th>
                                                         <th>货品名称</th>
                                                         <th>货品总数</th>
+                                                        <th>总体积</th>
+                                                        <th>总重量</th>
                                                         <th>费用条目</th>
                                                         <th>金额</th>
                                                         <th>备注</th>

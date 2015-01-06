@@ -820,6 +820,7 @@ public class DepartOrderController extends Controller {
         Date createDate = Calendar.getInstance().getTime();
         String checkedDetail = getPara("checkedDetail");
         String uncheckedDetailIds = getPara("uncheckedDetail");
+        String bookingNoteNumber = getPara("booking_note_number");
         
         String transfer_type = getPara("transfer_type");//运输方式
         
@@ -834,7 +835,7 @@ public class DepartOrderController extends Controller {
                     .set("route_to", getPara("route_to")).set("status", getPara("status"))
                     .set("ltl_price_type", ltlPriceType).set("car_type", car_type)
                     .set("driver", getPara("driver_name")).set("phone", getPara("driver_phone")).set("car_no", getPara("car_no"))
-                    .set("transfer_type",transfer_type);
+                    .set("transfer_type",transfer_type).set("booking_note_number",bookingNoteNumber);
             if (!"".equals(driver_id) && driver_id != null) {
                 dp.set("driver_id", driver_id);
             }else{
@@ -884,7 +885,8 @@ public class DepartOrderController extends Controller {
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
                     .set("route_to", getPara("route_to")).set("status", getPara("status"))
                     .set("ltl_price_type", ltlPriceType).set("car_type", car_type)
-                    .set("driver", getPara("driver_name")).set("phone", getPara("driver_phone")).set("car_no", getPara("car_no"));
+                    .set("driver", getPara("driver_name")).set("phone", getPara("driver_phone"))
+                    .set("car_no", getPara("car_no")).set("booking_note_number",bookingNoteNumber);
             if (!"".equals(driver_id) && driver_id != null) {
                 dp.set("driver_id", driver_id);
             }else{
@@ -1855,7 +1857,9 @@ public class DepartOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*,f.name,tor.order_no transfer_order_no,ifnull(tori.item_name, p.item_name) item_name,tori.amount item_amount"
+        List<Record> orders = Db.find("select d.*,f.name,tor.order_no transfer_order_no,ifnull(tori.item_name, p.item_name) item_name,tori.amount item_amount,"
+        		+ " round((select sum(ifnull(toi.volume, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) volume,"
+        		+ " round((select sum(ifnull(toi.sum_weight, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) weight"
         		+ " from depart_order_fin_item d "
                 + " left join fin_item f on d.fin_item_id = f.id "
         		+ " left join transfer_order tor on tor.id = d.transfer_order_id"
