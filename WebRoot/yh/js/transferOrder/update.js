@@ -2571,4 +2571,38 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#arrival_time').trigger('keyup');
     });
+    $("#printBtn").on('click',function(){
+    	var customer = $("#customerMessage").val();
+    	if(customer=="江苏国光信息产业股份有限公司"){
+    		$("#muban").show();
+    	}else{
+    		$("#printBtn").removeAttr('data-target');
+    		$.scojs_message('对不起，当前客户没有定义单据格式', $.scojs_message.TYPE_ERROR);
+    	}
+    });
+    $("#btnOK").on('click',function(){
+    	var signNO = $("input[name='sign']:checked").val();
+    	/*var shzm = $("input[name='shmb']:checked").val();*/
+    	//打印签收单
+    	var customer = $("#customerMessage").val();
+    	var order_no = $("#showOrderNo").text();
+    	if(customer=="江苏国光信息产业股份有限公司"){
+    		$.post('/report/printSign', {order_no:order_no,sign:signNO}, function(data){
+    			var file = data.substr(0,data.length-1);
+    			var str = file.split(",");
+    			for(var i = 0 ;i<str.length;i++){
+    				window.open(str[i]);
+    			}
+        	});
+    		/*$.post('/report/printShzm', {order_no:order_no,shzm:shzm}, function(data){
+        			var file = data.substr(0,data.length-1);
+        			var str = file.split(",");
+        			for(var i = 0 ;i<str.length;i++){
+        				window.open(str[i]);
+        			}
+            });*/
+        	$("#close").click();
+    	}
+    	
+    });
 });

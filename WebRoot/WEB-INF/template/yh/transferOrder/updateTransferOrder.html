@@ -723,11 +723,43 @@
                                     </div>
                                     /.panel-body -->
                                 </div>
-                                
+								<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+								  <div class="modal-dialog modal-sm">
+								    <div class="modal-content">
+								      	<div id ="muban" style="display:none">
+								      		<div class="modal-header">
+										        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="close">&times;</button>
+										        <h4 class="modal-title" id="myModalLabel">请选择你要打印的格式</h4>
+									      	</div>
+									      	<div class="modal-body">
+									      		 <div class="form-group">
+	                                                <label class="label-margin">签收单格式</label><br/>
+                                                	<label class="radio-inline">
+                                                        <input type="radio" name="sign" value="signGuoguang" checked="">国光标准签收单
+                                                    </label><br/>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="sign" value="signNonghang">农行签收单
+                                                    </label><br/>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="sign" value="post">邮政签收单
+                                                    </label><br/>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="sign" value="postal">邮储签收单
+                                                    </label>
+	                                            </div>
+	                                            <br/>
+	                                            <button id="btnOK" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">确认</button> 
+									      	</div>
+									      	
+								      	</div>
+								    </div>
+								  </div>
+								</div>
                                 <div class=".tooltip-demo">
                                     <hr/>
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                                     <button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
+                                     <button id="printBtn" type="button" class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-sm">打印</button>
                                     <!-- <button id="receiptBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button>                                   
                                     <button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
                                     <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
