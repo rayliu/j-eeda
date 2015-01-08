@@ -177,6 +177,9 @@ public class CustomerController extends Controller {
             party.set("payment", getPara("payment"));
             party.set("receipt", getPara("receipt"));
             party.set("charge_type", getPara("chargeType"));
+            if(getPara("insurance_rates") != ""){
+            	party.set("insurance_rates", getPara("insurance_rates"));
+            }
             party.update();
 
             contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id=" + id);
@@ -196,6 +199,9 @@ public class CustomerController extends Controller {
             party.set("receipt", getPara("receipt"));
             party.set("payment", getPara("payment"));
             party.set("charge_type", getPara("chargeType"));
+            if(getPara("insurance_rates") != ""){
+            	party.set("insurance_rates", getPara("insurance_rates"));
+            }
             party.save();
 
         }

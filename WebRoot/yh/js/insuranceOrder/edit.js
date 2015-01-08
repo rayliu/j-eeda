@@ -3,11 +3,13 @@
 	
  	 //显示货品table
  	 var pickupItemTable = $('#pickupItem-table').dataTable({
-         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-         //"sPaginationType": "bootstrap",
-         "iDisplayLength": 10,
-         "bServerSide": true,
-         "bDestroy": true,
+ 		"bFilter": false, //不需要默认的搜索框
+        "bSort": false, 
+        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
+        "bServerSide": true,
      	 "oLanguage": {
              "sUrl": "/eeda/dataTables.ch.txt"
          },
@@ -17,13 +19,13 @@
  		 },
          "sAjaxSource": "/insuranceOrder/getInitPickupOrderItems",
          "aoColumns": [
-             { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
-             { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
-             { "mDataProp": "ITEM_NO"},
-             { "mDataProp": "ITEM_NAME"},
-             { "mDataProp": "AMOUNT"},
-             { "mDataProp": "REMARK"},
-             {"mDataProp":null,
+             { "mDataProp": "CUSTOMER" ,"sWidth": "150px"},
+             { "mDataProp": "ORDER_NO" ,"sWidth": "80px"},      
+             { "mDataProp": "ITEM_NO","sWidth": "60px"},
+             { "mDataProp": "ITEM_NAME","sWidth": "150px"},
+             { "mDataProp": "AMOUNT","sWidth": "50px"},
+             { "mDataProp": "REMARK","sWidth": "100px"},
+             {"mDataProp":null,"sWidth": "150px",
             	 "sClass": "insurance_category", 
                  "fnRender": function(obj) {
              	 /*var str = "<option value='综合险,附加险' selected = 'selected'>综合险,附加险</option>";                    			
@@ -31,29 +33,32 @@
                  return "<span>综合险,附加险</span>";
              }},
              {"mDataProp": "FIN_AMOUNT",
+            	 "sWidth": "100px",
             	 "sClass": "fin_amount", 
                  "fnRender": function(obj) {
                 	 var str = "";
                      if(obj.aData.FIN_AMOUNT!='' && obj.aData.FIN_AMOUNT != null){
                          str = "<input type='text' name='amount' value='"+obj.aData.FIN_AMOUNT+"'>";
                      }else{
-                     	 str = "<input type='text' name='amount'>";
+                     	 str = "<input type='text' name='amount' value='"+obj.aData.AMOUNTS+"'>";
                      }
                 	 return str;
              }},
              {"mDataProp": "RATE",
+            	 "sWidth": "100px",
             	 "sClass": "rate", 
                  "fnRender": function(obj) {
                 	 var str = "";
                      if(obj.aData.RATE!='' && obj.aData.RATE != null){
                          str = "<input type='text' name='rate' value='"+obj.aData.RATE+"'>";
                      }else{
-                     	 str = "<input type='text' name='rate'>";
+                     	 str = "<input type='text' name='rate' value='"+obj.aData.RATES+"'>";
                      }
                 	 return str;
              }},
-             { "mDataProp": "START_CREATE_STAMP"},
+             { "mDataProp": "START_CREATE_STAMP","sWidth": "150px"},
              { "mDataProp": "ROUTE_FROM",
+            	 "sWidth": "150px",
             	 "fnRender": function(obj) {
             		 var route_from = obj.aData.ROUTE_FROM;
             		 if(obj.aData.ROUTE_FROM == null){
@@ -66,6 +71,7 @@
                 	 return route_from +" - "+ route_to;
              }},
              { "mDataProp": "INSURANCE_AMOUNT",
+            	 "sWidth": "60px",
             	 "sClass": "insurance_amount", 
                  "fnRender": function(obj) {
                 	var str = obj.aData.INSURANCE_AMOUNT;
@@ -75,6 +81,7 @@
                  	return "<span>"+str+"</span>";
              }},
              {"mDataProp": "INSURANCE_NO",
+            	 "sWidth": "100px",
             	 "sClass": "insurance_no", 
                  "fnRender": function(obj) {
                 	 var str = "";

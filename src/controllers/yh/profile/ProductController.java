@@ -351,6 +351,7 @@ public class ProductController extends Controller {
         String width = getPara("width");
         String height = getPara("height");
         String weight = getPara("weight");
+        String insuranceAmount = getPara("insurance_amount");
         if (!"".equals(item_no) && item_no != null) {
         	Category category = Category.dao.findById(item.get("category_id"));
         	Product product = Product.dao.findFirst("select * from product p left join category c on c.id = p.category_id where p.item_no = '"+item_no+"' and c.customer_id = "+category.get("customer_id"));
@@ -385,6 +386,9 @@ public class ProductController extends Controller {
         } else if (!"".equals(serial_no) && serial_no != null) {
 	    	item.set("serial_no", serial_no).update();
 	    	returnValue = serial_no;
+	    } else if (!"".equals(insuranceAmount) && insuranceAmount != null) {
+	    	item.set("insurance_amount", insuranceAmount).update();
+	    	returnValue = insuranceAmount;
 	    }
         if (item.get("size") != null && item.get("width") != null && item.get("height") != null) {
 	        Double volume = Double.parseDouble(item.get("size")+"")/1000 * Double.parseDouble(item.get("width")+"")/1000 * Double.parseDouble(item.get("height")+"")/1000;

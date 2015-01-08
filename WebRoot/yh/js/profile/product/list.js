@@ -79,6 +79,11 @@ $(document).ready(function() {
             	"sWidth": "50px",
             	"sClass": "height"
         	},
+        	{
+            	"mDataProp":"INSURANCE_AMOUNT",            	
+            	"sWidth": "50px",
+            	"sClass": "insurance_amount"
+        	},
             {
             	"mDataProp":"CATEGORY_NAME",            	
             	"sWidth": "50px",
@@ -196,6 +201,17 @@ $(document).ready(function() {
             	callback: function () {
             		sumVolume(this);
             		refreshProductTable();
+            	} 
+            },
+            {
+            	indicator: '正在保存...',
+            	onblur: 'submit',
+            	tooltip: '点击可以编辑',
+            	name:"insurance_amount",
+            	placeholder: "",
+            	callback: function () {
+            		/*sumVolume(this);
+            		refreshProductTable();*/
             	} 
             },
             null,
@@ -370,7 +386,8 @@ $(document).ready(function() {
   	    	$("#height").val(data.HEIGHT);	    	
   	    	$("#unit").val(data.UNIT);	    	
   	    	$("#volume").val(data.VOLUME);	    	
-  	    	$("#weight").val(data.WEIGHT);	    	
+  	    	$("#weight").val(data.WEIGHT);	  
+  	    	$("#insurance_amount").val(data.INSURANCE_AMOUNT);	
   	    	$("#categorySelect").val(data.CNAME);	    	
   	    	$("#item_desc").val(data.ITEM_DESC);    	
 		},'json');

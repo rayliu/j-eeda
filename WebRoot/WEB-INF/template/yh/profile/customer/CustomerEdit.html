@@ -18,7 +18,7 @@
     </div>
 
     <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-13">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             客户基本信息
@@ -28,23 +28,32 @@
                                 <form id="customerForm" role="form" action="/customer/save" method="post">
                                     <input id="partyId" name="party_id" type="hidden" value="${party.id!''}">
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
-                                    <div class="col-lg-7">
+                                    <div class="col-lg-6">
+                                       	<label>客户所在地</label>
+                                        <input id="location" type="hidden" name="location" value="${contact.location!''}">
+                                        <div class="form-group">
+                                            <label>省</label>
+                                            <input id="hideProvince" type="hidden" value="${location.province!''}" />
+                                            <select id="mbProvince" style="width:150px" name="mbProvince" value=""></select>
+                                            <label>市</label>
+                                            <input id="hideCity" type="hidden" value="${location.city!''}"/>
+                                            <select  id="cmbCity" style="width:150px" name="cmbCity" value=""></select>
+                                            <label>区(县)</label>
+                                            <input id="hideDistrict" type="hidden" value="${location.district!''}"/>
+                                            <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- /.col-lg-6 (even) 偶数列 -->
+                                    <div class="col-lg-6">
                                         <fieldset>
-                                        	<label>客户所在地</label>
-                                                <input id="location" type="hidden" name="location" value="${contact.location!''}">
-		                                            <div class="form-group">
-		                                                <label>省</label>
-		                                                <input id="hideProvince" type="hidden" value="${location.province!''}"/>
-		                                                <select id="mbProvince" style="width:150px" name="mbProvince" value=""></select>
-		                                                <label>市</label>
-		                                                <input id="hideCity" type="hidden" value="${location.city!''}"/>
-		                                                <select  id="cmbCity" style="width:150px" name="cmbCity" value=""></select>
-		                                                <label>区(县)</label>
-		                                                <input id="hideDistrict" type="hidden" value="${location.district!''}"/>
-		                                                <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
-		                                            </div>
+                                            <div class="form-group">
+                                                <label>邮政编码</label>
+                                                <input class="form-control" id="postal_code" type="text" name="postal_code" value="${contact.postal_code!''}">
+                                            </div>
                                         </fieldset>
                                     </div>
+                                    
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
@@ -104,16 +113,6 @@
                                         </fieldset>
                                     </div>
 
-                                    <!-- /.col-lg-6 (even) 偶数列 -->
-                                    <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>邮政编码</label>
-                                                <input class="form-control" id="postal_code" type="text" name="postal_code" value="${contact.postal_code!''}">
-                                            </div>
-                                        </fieldset>
-                                    </div>
-									
 									<div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
@@ -147,6 +146,16 @@
                                             </div>
                                         </fieldset>
                                     </div>
+                                    
+                                    <div class="col-lg-6">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <label>保险费率</label>
+                                                <input class="form-control" id="insurance_rates" name="insurance_rates" type="text" value="${party.insurance_rates!''}">
+                                            </div>                                     
+                                        </fieldset>
+                                    </div>
+                                    
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
@@ -155,6 +164,7 @@
                                             </div>
                                         </fieldset>
                                     </div>
+                                    
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
@@ -266,6 +276,9 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
               location:{
                 required: true
               },
+              insurance_rates:{
+            	number:true 
+              },
            	  email:{
                 email: true
               }
@@ -282,6 +295,9 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
 	           	},
 	           	cmbCity: {
 	           		digits: "请选择城市"
+	           	},
+	           	insurance_rates: {
+	           		remote: "请输入数字"
 	           	}
             },
             highlight: function(element) {

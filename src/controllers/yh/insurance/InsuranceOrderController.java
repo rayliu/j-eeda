@@ -14,6 +14,7 @@ import models.Fin_item;
 import models.InsuranceFinItem;
 import models.InsuranceOrder;
 import models.Party;
+import models.Product;
 import models.TransferOrder;
 import models.TransferOrderItem;
 import models.UserLogin;
@@ -365,7 +366,7 @@ public class InsuranceOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         String sql = "";
-       	sql = "select distinct toi.id item_id,ifi.id fin_id,ifi.amount fin_amount,ifi.*,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume)*toi.amount volume, "
+       	sql = "select distinct toi.id item_id,ifi.id fin_id,ifi.amount fin_amount,p.insurance_rates as rates,pd.insurance_amount as amounts,ifi.*,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume)*toi.amount volume, "
                 + " ifnull(case toi.weight when 0.0 then null else toi.weight end, pd.weight)*toi.amount weight"
                 + " ,c.abbr customer,tor.order_no,toi.amount,toi.remark,"
                 + " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
