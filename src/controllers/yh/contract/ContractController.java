@@ -471,7 +471,20 @@ public class ContractController extends Controller {
             renderJson(locationList);
         }
     }
-
+    public void searchPart() {
+        String locationName = getPara("locationName");
+        // 不能查所有
+        if (locationName.trim().length() > 0) {
+            List<Record> locationList = Db
+                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id  and (p.is_stop is null or p.is_stop = 0) and p.party_type = 'SERVICE_PROVIDER' and c.company_name like ?",
+                            "%" + locationName + "%");
+            renderJson(locationList);
+        } else {
+            List<Record> locationList = Db
+                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER'  and (p.is_stop is null or p.is_stop = 0)");
+            renderJson(locationList);
+        }
+    }
     // 合同运价（计件）
     public void routeEdit() {
         String contractId = getPara("routId");

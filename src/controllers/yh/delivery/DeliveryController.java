@@ -18,7 +18,6 @@ import models.Location;
 import models.Office;
 import models.Party;
 import models.TransferOrder;
-import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -869,7 +868,19 @@ public class DeliveryController extends Controller {
 		locationList = Db.find(sql);
 		renderJson(locationList);
 	}
-
+	public void searchPartSp() {
+		String input = getPara("input");
+		List<Record> locationList = Collections.EMPTY_LIST;
+		String sql = "";
+		if(input!=null&&input!=""){
+			sql= "select p.id pid,p.*, c.*,c.id cid from	party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and c.abbr like '%"+input+"%'";
+		}else{
+			sql= "select p.id pid,p.*, c.*,c.id cid from	party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) ";
+		}
+		
+		locationList = Db.find(sql);
+		renderJson(locationList);
+	}
 	// 配送单货品list
 	public void orderList() {
 		String idlist = getPara("localArr");

@@ -748,7 +748,7 @@ $(document).ready(function() {
 			if(type=='CUSTOMER'||type2=='CUSTOMER'){
 				urlSource ="/customerContract/searchCustomer";
 			}else{
-				urlSource ="/spContract/search2";
+				urlSource ="/spContract/searchPart";
 			}
 			$.get(urlSource, {locationName:inputStr}, function(data){
 				console.log(data);

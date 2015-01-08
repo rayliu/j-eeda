@@ -68,8 +68,7 @@ $(document).ready(function() {
 			pageSpAddress.empty();
 			$('#sp_id').val($(this).attr(''));
 		}
-		$.get('/delivery/searchSp', {input:inputStr}, function(data){
-			console.log(data);
+		$.get('/delivery/searchPartSp', {input:inputStr}, function(data){			
 			var spList =$("#spList");
 			spList.empty();
 			for(var i = 0; i < data.length; i++)

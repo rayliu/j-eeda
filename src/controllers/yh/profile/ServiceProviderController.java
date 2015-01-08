@@ -3,6 +3,7 @@ package controllers.yh.profile;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -158,32 +159,19 @@ public class ServiceProviderController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_DELETE})
     public void delete() {
-        // long id = getParaToLong();
+       
         String id = getPara();
-        // Db.deleteById("contract", id);
+        
         Party party = Party.dao.findById(id);
-
-        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where sp_id="
-                + party.get("id"));
-        for (TransferOrder transferOrder : transferOrders) {
-            transferOrder.set("sp_id", null);
-            transferOrder.set("customer_id", null);
-            transferOrder.update();
+        
+        Object obj = party.get("is_stop");
+        if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
+        	party.set("is_stop", true);
+        }else{
+        	party.set("is_stop", false);
         }
-        List<DeliveryOrder> deliveryOrders = DeliveryOrder.dao.find("select * from delivery_order where sp_id="
-                + party.get("id"));
-        for (DeliveryOrder deliveryOrder : deliveryOrders) {
-            deliveryOrder.set("sp_id", null);
-            deliveryOrder.set("customer_id", null);
-            deliveryOrder.update();
-        }
-
-        Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
-                + id);
-
-        contact.delete();
-        party.delete();
-            redirect("/serviceProvider");
+        party.update();
+        redirect("/serviceProvider");
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_CREATE, PermissionConstant.PERMSSION_P_UPDATE}, logical=Logical.OR)
     public void save() {
@@ -292,4 +280,35 @@ public class ServiceProviderController extends Controller {
         map.put("districtLocations", districtLocations);
     	renderJson(map);
     }
+    public void searchSp() {
+		String input = getPara("input");
+		List<Record> locationList = Collections.EMPTY_LIST;
+		if (input.trim().length() > 0) {
+			locationList = Db
+					.find("select *,p.id as pid, p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"
+							+ Party.PARTY_TYPE_SERVICE_PROVIDER
+							+ "' and (company_name like '%"
+							+ input
+							+ "%' or abbr like '%"
+							+ input
+							+ "%' or contact_person like '%"
+							+ input
+							+ "%' or email like '%"
+							+ input
+							+ "%' or mobile like '%"
+							+ input
+							+ "%' or phone like '%"
+							+ input
+							+ "%' or address like '%"
+							+ input
+							+ "%' or postal_code like '%"
+							+ input
+							+ "%')  and (p.is_stop is null or p.is_stop = 0) limit 0,10");
+		} else {
+			locationList = Db
+					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
+							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "'  and (p.is_stop is null or p.is_stop = 0)");
+		}
+		renderJson(locationList);
+	}
 }

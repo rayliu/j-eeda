@@ -59,15 +59,28 @@ $(document).ready(function() {
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
-                "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' href='/serviceProvider/edit/"+obj.aData.PID+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                                "编辑"+
-                            "</a>"+
-                            "<a class='btn btn-danger' href='/serviceProvider/delete/"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "删除"+
-                            "</a>";
+                "fnRender": function(obj) {   
+                	if(obj.aData.IS_STOP != true){
+                		 return "<a class='btn btn-info' href='/serviceProvider/edit/"+obj.aData.PID+"'>"+
+	                         "<i class='fa fa-edit fa-fw'></i>"+
+	                         "编辑"+
+		                     "</a>"+
+		                     "<a class='btn btn-danger' href='/serviceProvider/delete/"+obj.aData.PID+"'>"+
+		                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
+		                         "停用"+
+		                     "</a>";
+                	}else{
+                		 return "<a class='btn btn-info' href='/serviceProvider/edit/"+obj.aData.PID+"'>"+
+	                         "<i class='fa fa-edit fa-fw'></i>"+
+	                         "编辑"+
+		                     "</a>"+
+		                     "<a class='btn btn-success' href='/serviceProvider/delete/"+obj.aData.PID+"'>"+
+		                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
+		                         "启用"+
+		                     "</a>";
+                	}
+                	
+                   
                 }
             }                         
         ]    

@@ -297,7 +297,7 @@ $(document).ready(function() {
 			pageSpAddress.empty();
 			$('#sp_id').val($(this).attr(''));
 		}
-		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
+		$.get('/serviceProvider/searchSp', {input:inputStr}, function(data){
 			console.log(data);
 			var spList =$("#spList");
 			spList.empty();
