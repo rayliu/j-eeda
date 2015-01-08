@@ -240,7 +240,7 @@ public class InventoryController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
             locationList = Db
-                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and (company_name like '%"
+                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and (p.is_stop is null or p.is_stop = 0) and (company_name like '%"
                             + input
                             + "%' or contact_person like '%"
                             + input
@@ -251,11 +251,11 @@ public class InventoryController extends Controller {
                             + "%' or phone like '%"
                             + input
                             + "%' or address like '%"
-                            + input + "%' or postal_code like '%" + input + "%') limit 0,10");
+                            + input + "%' or postal_code like '%" + input + "%')  limit 0,10");
         } else {
             locationList = Db
                     .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-                            + Party.PARTY_TYPE_CUSTOMER + "'");
+                            + Party.PARTY_TYPE_CUSTOMER + "' and (p.is_stop is null or p.is_stop = 0)");
         }
         renderJson(locationList);
     }

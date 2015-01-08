@@ -746,7 +746,7 @@ $(document).ready(function() {
 			var type2 = $("#type3").val();
 			 var urlSource;
 			if(type=='CUSTOMER'||type2=='CUSTOMER'){
-				urlSource ="/customerContract/search";
+				urlSource ="/customerContract/searchCustomer";
 			}else{
 				urlSource ="/spContract/search2";
 			}

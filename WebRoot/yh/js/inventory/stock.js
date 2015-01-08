@@ -126,7 +126,7 @@ $(document).ready(function() {
 	$('#customerMessage').on('keyup click', function(){
 		if($('#customerMessage').val() == "")
 			$("#hiddenCustomerId").val("");
-		$.get('/transferOrder/searchCustomer', {input:$('#customerMessage').val()}, function(data){
+		$.get('/customerContract/search', {locationName:$('#customerMessage').val()}, function(data){
 			console.log(data);
 			var customerList =$("#customerList");
 			customerList.empty();
