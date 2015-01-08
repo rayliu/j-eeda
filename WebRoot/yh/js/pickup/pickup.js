@@ -39,6 +39,11 @@ $(document).ready(function() {
         ]      
     });	
     
+    //因为Btn动态生成，需要在这里做特殊响应处理
+    $("#eeda-table").on('click', 'button.popover_btn', function(e){
+        $(e.target).popover('show');
+    });
+
 	//datatable, 动态处理
     var pickupOrder = $('#eeda-table').dataTable({
     	"bSort": false, // 不要排序
@@ -62,8 +67,8 @@ $(document).ready(function() {
             	"sClass": "order_no",
             	"fnRender": function(obj) {
             		if(obj.aData.CARGO_NATURE == "ATM"){
-            			return obj.aData.ORDER_NO + '<button type="button" class="btn btn-default popopvers" data-container="body" data-toggle="popover" data-placement="right" '
-            			+' data-content="哈哈">选择单品</button>';
+            			
+            			return obj.aData.ORDER_NO + '<button type="button" class="btn btn-default popover_btn" data-toggle="popover" title="Popover title" data-content="And some amazing content. Itvery engaging. Right?">单品选择</button>';
             		}else{
             			return obj.aData.ORDER_NO;
             		}
