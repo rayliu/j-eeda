@@ -2588,19 +2588,17 @@ $(document).ready(function() {
     	var order_no = $("#showOrderNo").text();
     	if(customer=="江苏国光信息产业股份有限公司"){
     		$.post('/report/printSign', {order_no:order_no,sign:signNO}, function(data){
-    			var file = data.substr(0,data.length-1);
-    			var str = file.split(",");
-    			for(var i = 0 ;i<str.length;i++){
-    				window.open(str[i]);
-    			}
-        	});
-    		/*$.post('/report/printShzm', {order_no:order_no,shzm:shzm}, function(data){
-        			var file = data.substr(0,data.length-1);
+    			if(data.indexOf(",")>=0){
+    				var file = data.substr(0,data.length-1);
         			var str = file.split(",");
         			for(var i = 0 ;i<str.length;i++){
         				window.open(str[i]);
         			}
-            });*/
+    			}else{
+    				window.open(data);
+    			}
+    			
+        	});   		
         	$("#close").click();
     	}
     	

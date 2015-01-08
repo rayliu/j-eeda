@@ -28,7 +28,7 @@ public class ReportController extends Controller {
     public void index() {
         
     }
-    private String print(String order_no,String name,Object id){
+    private String print(String order_no,String name,Object id,Object serial_no){
     	
     	 String fileName = "report/";
          String outFileName="WebRoot/download/";
@@ -45,13 +45,13 @@ public class ReportController extends Controller {
     	 }else if(name.equals("payment.jasper")){
          	outFileName +="付款申请单_"+format.format(date)+".pdf";
     	 }else if(name.equals("guoguang.jasper")){
-    		 outFileName +="国光标准单"+format.format(date)+".pdf";
+    		 outFileName +="国光标准单-" + serial_no + "-" +format.format(date)+".pdf";
     	 }else if(name.equals("nonghang.jasper")){
-    		 outFileName +="农行"+format.format(date)+".pdf";
+    		 outFileName +="农行-" + serial_no + "-" +format.format(date)+".pdf";
     	 }else if(name.equals("china_post.jaspe")){
-    		 outFileName +="中国邮政"+format.format(date)+".pdf";
+    		 outFileName +="中国邮政-" + serial_no + "-" +format.format(date)+".pdf";
     	 }else{
-    		 outFileName +="中国邮储"+format.format(date)+".pdf";
+    		 outFileName +="中国邮储-" + serial_no + "-" +format.format(date)+".pdf";
     	 }
     	HashMap<String, Object> hm = new HashMap<String, Object>();
     	hm.put("order_no", order_no);
@@ -71,12 +71,12 @@ public class ReportController extends Controller {
     }
     public void printCheckOrder(){
     	String order_no = getPara("order_no");
-    	String file = print(order_no,"checkOrder.jasper","0");
+    	String file = print(order_no,"checkOrder.jasper","0","");
     	renderText(file.substring(7));
     }
    public void printPayMent(){
 	   String order_no = getPara("order_no");
-	   String file = print(order_no,"payment.jasper","0");
+	   String file = print(order_no,"payment.jasper","0","");
 	   renderText(file.substring(7));
    }
    public void printSign(){
@@ -93,13 +93,13 @@ public class ReportController extends Controller {
 		   muban = "china_postal.jasper";
 	   }
 	   TransferOrder to = TransferOrder.dao.findFirst("select id from transfer_order where order_no = ?",order_no);
-	   List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao.find("select id from transfer_order_item_detail where order_id =?",to.get("id"));
+	   List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao.find("select id,serial_no from transfer_order_item_detail where order_id =?",to.get("id"));
 	   if(list.size()>0){
 		   StringBuffer buffer = new StringBuffer();
 		   for(int i=0;i<list.size();i++){
-			   String file = print(order_no,muban,list.get(i).get("id"));
+			   String file = print(order_no,muban,list.get(i).get("id"),list.get(i).get("serial_no"));
 				try {
-					   Thread.sleep(1000);
+					   Thread.sleep(200);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -109,7 +109,7 @@ public class ReportController extends Controller {
 		   }
 		   renderText(buffer.toString());
 	   }else{
-		   String file = print(order_no,muban,"0");
+		   String file = print(order_no,muban,"0","1");
 		   renderText(file.substring(7)); 
 	   }
 	    
