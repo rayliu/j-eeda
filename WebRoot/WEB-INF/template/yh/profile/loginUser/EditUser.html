@@ -15,17 +15,17 @@
             		
             	 <div class="panel-body">
             			<div class="row-fluid">
-            				<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/loginUser/saveUser" method="post">
-						<input id="userId" name="userId" type="hidden" value="${ul.id!''}">
-						<input id="oldPwd" name="oldPwd" type="hidden" value="${ul.password!''}">
-						<input  name="username" type="hidden" value="${ul.user_name!''}">
+            		<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/loginUser/savePerson" method="post">
+						<input id="userId" name="userId" type="hidden" value="${lu.id!''}">
+						<input id="oldPwd" name="oldPwd" type="hidden" value="${lu.password!''}">
+						<input  name="username" type="hidden" value="${lu.user_name!''}">
 						<div class="form-group ">
 			                 <label class="control-label">登陆名</label>
-			                 <span  class="form-control"  >${ul.user_name!''}</span >
+			                 <span  class="form-control"  >${lu.user_name!''}</span >
 			             </div>
 			             <div class="form-group ">
 			                 <label class="control-label">中文名(必填)</label>
-			                 <input id="chineseName" name="chineseName" type="text" class="form-control" value="${lu.chinese_name!''}" placeholder="请输入中文名">
+			                 <input id="chineseName" name="chineseName" type="text" class="form-control" value="${lu.c_name!''}" placeholder="请输入中文名">
 			             </div>
 			            <div class="form-group">
 			                 <label class="control-label">旧密码</label>
