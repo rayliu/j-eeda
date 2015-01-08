@@ -478,4 +478,29 @@ public class TransferOrderItemController extends Controller {
         new TransferOrderItem().set("order_id", orderId).set("size", 0).set("width", 0).set("height", 0).set("weight", 0).save();
         renderJson("{\"success\":true}");
     }
+    
+    public void updateProductNumber() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        String id = getPara("itemId");
+        String name = getPara("fieldName");
+        String value = getPara("value");
+        double weight = 0;
+        double volume = 0;
+        Record rec = Db.findFirst("select sum(amount),product_id from transfer_order_item where order_id = " + id);
+        Product pro = Product.dao.findById(rec.get("product_id"));
+        if("total_amount".equals(name)){
+        	weight = Double.parseDouble(value) * pro.getDouble("weight");
+        	volume = Double.parseDouble(value) * pro.getDouble("volume");
+        }else if("total_weight".equals(name)){
+        	
+        }else{//普货体积
+        	
+        }
+        TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(id);
+        Product product = Product.dao.findById(transferOrderItem.get("product_id"));
+        map.put("weight", weight);
+        map.put("volume", volume);
+        renderJson(map);
+    }
+    
 }
