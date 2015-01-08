@@ -67,15 +67,27 @@ $(document).ready(function() {
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "15%",
-	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-info editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"'>"+
-	                                "<i class='fa fa-edit'> </i> "+
-	                                "编辑"+
-	                            "</a>"+
-	                            "<a class='btn btn-info editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
-	                                "<i class='fa fa-edit'> </i> "+
-	                                "删除"+
-	                            "</a>";
+	                "fnRender": function(obj) { 
+	                	if(obj.aData.IS_STOP != true){
+	                		return "<a class='btn btn-info editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"'>"+
+		                            "<i class='fa fa-edit'> </i> "+
+		                            "编辑"+
+			                        "</a>"+
+			                        "<a class='btn btn-danger editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
+			                            "<i class='fa fa-edit'> </i> "+
+			                            "停用"+
+			                        "</a>";
+	                	}else{
+	                		return "<a class='btn btn-info editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"'>"+
+			                            "<i class='fa fa-edit'> </i> "+
+			                            "编辑"+
+				                        "</a>"+
+			                        "<a class='btn btn-success editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
+			                            "<i class='fa fa-edit'> </i> "+
+			                            "启用"+
+			                        "</a>";
+	                	}
+	                    
 	                }
 	            } 
 	            ]

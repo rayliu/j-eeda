@@ -78,15 +78,27 @@ $(document).ready(function() {
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "15%",
-	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-info editbutton' href='/carinfo/edit/"+obj.aData.ID+"'>"+
-	                                "<i class='fa fa-edit'> </i> "+
-	                                "编辑"+
-	                            "</a>"+
-	                            "<a class='btn btn-danger delete' code='"+obj.aData.ID+"'>"+
-	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-	                                "删除"+
-	                            "</a>";
+	                "fnRender": function(obj) {  
+	                	if(obj.aData.IS_STOP != true){
+	                		 return "<a class='btn btn-info editbutton' href='/carinfo/edit/"+obj.aData.ID+"'>"+
+		                             "<i class='fa fa-edit'> </i> "+
+		                             "编辑"+
+			                         "</a>"+
+			                         "<a class='btn btn-danger delete' code='"+obj.aData.ID+"'>"+
+			                             "<i class='fa fa-trash-o fa-fw'></i>"+ 
+			                             "停用"+
+			                         "</a>";
+	                	}else{
+	                		return "<a class='btn btn-info editbutton' href='/carinfo/edit/"+obj.aData.ID+"'>"+
+		                            "<i class='fa fa-edit'> </i> "+
+		                            "编辑"+
+			                         "</a>"+
+			                         "<a class='btn btn-success delete' code='"+obj.aData.ID+"'>"+
+			                             "<i class='fa fa-trash-o fa-fw'></i>"+ 
+			                             "启用"+
+			                         "</a>";
+	                	}
+	                   
 	                }
 	            } 
 	            ]

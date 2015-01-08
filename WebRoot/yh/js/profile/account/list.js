@@ -36,15 +36,25 @@ $(document).ready(function() {
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "15%",
-	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-info' href='/account/edit/"+obj.aData.ID+"'>"+
-	                                
-	                                "编辑"+
-	                            "</a>"+
-	                            "<a class='btn btn-danger' href='/account/del/"+obj.aData.ID+"'>"+
-	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-	                                "删除"+
-	                            "</a>";
+	                "fnRender": function(obj) { 
+	                	if(obj.aData.IS_STOP != true){
+	                		return "<a class='btn btn-info' href='/account/edit/"+obj.aData.ID+"'>"+
+		                            "编辑"+
+			                        "</a>"+
+			                        "<a class='btn btn-danger' href='/account/del/"+obj.aData.ID+"'>"+
+			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
+			                            "停用"+
+			                        "</a>";
+	                	}else{
+	                		return "<a class='btn btn-info' href='/account/edit/"+obj.aData.ID+"'>"+
+		                            "编辑"+
+			                        "</a>"+
+			                        "<a class='btn btn-success' href='/account/del/"+obj.aData.ID+"'>"+
+			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
+			                            "启用"+
+			                        "</a>";
+	                	}
+	                    
 	                }
 	            } 
 	            ]

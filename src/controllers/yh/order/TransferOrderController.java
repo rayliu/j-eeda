@@ -923,9 +923,19 @@ public class TransferOrderController extends Controller {
 		List<Record> offices = Db.find("select o.id,o.office_name from office o");
 		renderJson(offices);
 	}
+	//查询所有没有停用的网点
+	public void searchAllNoStopOffice() {
+		List<Record> offices = Db.find("select o.id,o.office_name from office o where (is_stop is null or is_stop = 0)");
+		renderJson(offices);
+	}
 	//根据用户是否拥有这个网点查询
 	public void searchPartOffice() {
-		List<Record> offices = Db.find("select o.id,o.office_name from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')");
+		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')");
+		renderJson(offices);
+	}
+	//查询部分没有停用的网点
+	public void searchPartNoStopOffice() {
+		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') and (o.is_stop is null or o.is_stop = 0)");
 		renderJson(offices);
 	}
 	// 查出所有的driver
@@ -936,20 +946,20 @@ public class TransferOrderController extends Controller {
 		String sql= "";
 		if (input.trim().length() > 0) {
 			if(party_type!=null){
-				sql = "select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where c.contact_person like '%"
+				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id where c.contact_person like '%"
 						+ input
 						+ "%' or c.phone like '%"
 						+ input
 						+ "%' and p.party_type = '"
 						+ party_type
-						+ "'";
+						+ "' and (p.is_stop is null or p.is_stop = 0) ";
 				
 			}else{
-				sql = "select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where c.contact_person like '%"
+				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id where c.contact_person like '%"
 						+ input
 						+ "%' or c.phone like '%"
 						+ input
-						+ "%' and p.party_type = 'SP_DRIVER'";
+						+ "%' and p.party_type = 'SP_DRIVER' and (p.is_stop is null or p.is_stop = 0) ";
 			}
 			
 		} else {
@@ -957,10 +967,10 @@ public class TransferOrderController extends Controller {
 					.find("select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where p.party_type = '"
 						+ Party.PARTY_TYPE_DRIVER + "'");*/
 			if(party_type!=null){
-				sql= "select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where p.party_type = '"
-						+ party_type + "'";
+				sql= "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id where p.party_type = '"
+						+ party_type + "'  and (p.is_stop is null or p.is_stop = 0)";
 			}else{
-				sql= "select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where p.party_type = 'SP_DRIVER'";
+				sql= "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id where p.party_type = 'SP_DRIVER'  and (p.is_stop is null or p.is_stop = 0) ";
 			}
 			
 		}
@@ -977,23 +987,20 @@ public class TransferOrderController extends Controller {
 		
 		if (input.trim().length() > 0) {
 			if(type!=null){
-				/*sql="select * from carinfo where "
-						+ "car_no like '%" + input + "%' or phone like '%"
-						+ input + "%'and type = '"+ type+"'";*/
 				sql = "select * from ("
 						+ "select * from carinfo where type ='"+type+"') "
-						+ "where car_no like '%"+input+"%' or phone like '%"+input+"%'";
+						+ "where car_no like '%"+input+"%' or phone like '%"+input+"%'  and (is_stop is null or is_stop = 0)";
 						
 			}else{
 				sql="select * from carinfo where car_no like '%" + input + "%' or phone like '%"
-							+ input + "%' and type = 'SP'";
+							+ input + "%' and type = 'SP'  and (is_stop is null or is_stop = 0) ";
 			}
 				
 		} else {
 			if(type!=null){
-				sql = "select * from carinfo where type = '" + type + "'";
+				sql = "select * from carinfo where type = '" + type + "'  and (is_stop is null or is_stop = 0) ";
 			}else{
-				sql ="select * from carinfo where type = 'SP'";
+				sql ="select * from carinfo where type = 'SP'  and (is_stop is null or is_stop = 0) ";
 			}
 			
 		}

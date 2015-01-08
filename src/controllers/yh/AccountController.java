@@ -80,7 +80,15 @@ public class AccountController extends Controller {
     public void del() {
         String id = getPara();
         if (id != null) {
-            Db.deleteById("fin_account", id);
+            /*Db.deleteById("fin_account", id);*/
+        	Account account = Account.dao.findById(id);
+        	 Object obj = account.get("is_stop");
+             if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
+            	 account.set("is_stop", true);
+             }else{
+            	 account.set("is_stop", false);
+             }
+             account.update();
         }
         render("/yh/profile/account/account.html");
     }

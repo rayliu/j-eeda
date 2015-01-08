@@ -122,12 +122,21 @@ public class OfficeController extends Controller {
          */
         String id = getPara();
         if (id != null) {
-        	List<TransferOrder> orders = TransferOrder.dao.find("select * from transfer_order where office_id = "+id);
+        	/*List<TransferOrder> orders = TransferOrder.dao.find("select * from transfer_order where office_id = "+id);
         	for(TransferOrder order : orders){
         		order.set("office_id", null);
         		order.update();
         	}
-            Db.deleteById("office", id);
+            Db.deleteById("office", id);*/
+        	Office office = Office.dao.findById(id);
+        	Object obj = office.get("is_stop");
+            if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
+            	office.set("is_stop", true);
+            }else{
+            	office.set("is_stop", false);
+            }
+            office.update();
+        	
         }
         
         render("/yh/profile/office/office.html");

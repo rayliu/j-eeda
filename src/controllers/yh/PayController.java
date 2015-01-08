@@ -100,7 +100,13 @@ public class PayController extends Controller {
         String id = getPara();
         if (id != null) {
             Toll l = Toll.dao.findById(id);
-            l.delete();
+            Object obj = l.get("is_stop");
+            if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
+            	l.set("is_stop", true);
+            }else{
+            	l.set("is_stop", false);
+            }
+            l.update();
         }
         redirect("/pay");
     }

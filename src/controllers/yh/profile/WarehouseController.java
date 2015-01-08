@@ -140,17 +140,18 @@ public class WarehouseController extends Controller{
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_DELETE})
 	public void delete() {
-		long id = getParaToLong();
-		List<TransferOrder> orders = TransferOrder.dao.find("select * from transfer_order where warehouse_id = "+id);
-    	for(TransferOrder order : orders){
-    		order.set("warehouse_id", null);
-    		order.update();
-    	}
+		
+		String id = getPara();
 		Warehouse warehouse = Warehouse.dao.findById(id);
-		warehouse.set("office_id", null);
-		warehouse.set("sp_id", null);
+		/*warehouse.set("office_id", null);
+		warehouse.set("sp_id", null);*/
+		if("active".equals(warehouse.get("status"))){
+			warehouse.set("status", "inactive");
+		}else{
+			warehouse.set("status", "active");
+		}
 		warehouse.update();
-		warehouse.delete();
+		//warehouse.delete();
 		redirect("/warehouse");
 	}
 
