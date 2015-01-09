@@ -22,16 +22,20 @@ $(document).ready(function() {
 					{
 						"mDataProp" : null,
 						"sWidth" : "8%",
-						"fnRender" : function(
-								obj) {
-							return "<a class='btn btn-success' href='/role/ClickRole?id="+obj.aData.ID+"'>"
-									+ "<i class='fa fa-edit fa-fw'></i> "
-									+ "编辑"
-									+ "</a>"
-									+ "<a class='btn btn-danger' href='/role/deleteRole/"+obj.aData.ID+"'>"
-									+ "<i class='fa fa-trash-o fa-fw'></i> "
-									+ "删除"
-									+ "</a>";
+						"fnRender" : function(obj) {
+							if(obj.aData.CODE != "admin"){
+								return "<a class='btn btn-success' href='/role/ClickRole?id="+obj.aData.ID+"'>"
+										+ "<i class='fa fa-edit fa-fw'></i> "
+										+ "编辑"
+										+ "</a>"
+										+ "<a class='btn btn-danger' href='/role/deleteRole/"+obj.aData.ID+"'>"
+										+ "<i class='fa fa-trash-o fa-fw'></i> "
+										+ "删除"
+										+ "</a>";
+							}else{
+								return "";
+							}
+							
 						}
 					}
 

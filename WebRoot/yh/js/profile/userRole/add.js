@@ -14,7 +14,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/role/list",
+        "sAjaxSource": "/role/listPart",
         "aoColumns": [
             { "mDataProp": null, "sWidth": "7%"	,
             	 "fnRender": function(obj) {

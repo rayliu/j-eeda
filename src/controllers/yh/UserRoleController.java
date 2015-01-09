@@ -47,7 +47,7 @@ public class UserRoleController extends Controller {
 		// 获取总条数
 		String totalWhere ="select count(1) total from user_role";
 		
-		String sql = "select ur.user_name,group_concat(r.name separator '<br>') name,ur.remark from user_role ur left join role r on r.code=ur.role_code group by ur.user_name" + sLimit;
+		String sql = "select ur.user_name,group_concat(r.name separator '<br>') name,ur.remark,ur.role_code from user_role ur left join role r on r.code=ur.role_code group by ur.user_name" + sLimit;
 
 		Record rec = Db.findFirst(totalWhere);	
 		logger.debug("total records:" + rec.getLong("total"));
@@ -149,11 +149,11 @@ public class UserRoleController extends Controller {
 
 		// 获取总条数
 
-		Record rec = Db.findFirst("select count(1) total from role r left join  (select u.user_name,u.role_code from user_role u where u.user_name =?) ur on ur.role_code = r.code",username);
+		Record rec = Db.findFirst("select count(1) total from role r left join  (select u.user_name,u.role_code from user_role u where u.user_name =?) ur on ur.role_code = r.code where r.code != 'admin'",username);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
-		List<Record> orders = Db.find("select r.id , r.code,r.name,ur.user_name ,ur.role_code from role r left join  (select u.user_name,u.role_code from user_role u where u.user_name =?) ur on ur.role_code = r.code",username);
+		List<Record> orders = Db.find("select r.id , r.code,r.name,ur.user_name ,ur.role_code from role r left join  (select u.user_name,u.role_code from user_role u where u.user_name =?) ur on ur.role_code = r.code where r.code != 'admin'",username);
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));

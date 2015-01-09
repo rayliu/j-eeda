@@ -27,25 +27,48 @@ $(document).ready(function() {
 							checkAllLength+=1;
 			       		} 
 					}
-					if(parentCheck==obj.aData.CHILDRENS.length){
-						
-						return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" checked="true" name="checkmodel" >本模块全选</div>';
+					var is_disabled = rolename.indexOf("管理员");
+					console.log(is_disabled);
+					if(is_disabled<0){
+						if(parentCheck==obj.aData.CHILDRENS.length){
+							return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" checked="true" name="checkmodel" >本模块全选</div>';
+						}else{
+							return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" name="checkmodel" >本模块全选</div>';
+						}
 					}else{
-						return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" name="checkmodel" >本模块全选</div>';
+						if(parentCheck==obj.aData.CHILDRENS.length){
+							return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" style="cursor: default;" disabled="true" checked="true" name="checkmodel" >本模块全选</div>';
+						}else{
+							return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" style="cursor: default;" disabled="true" name="checkmodel" >本模块全选</div>';
+						}
 					}
+					
 					
             }},
 			{ "mDataProp": null,
 				"fnRender":function(obj){
 					var str = "";
+					var is_disabled = rolename.indexOf("管理员");
+					console.log(is_disabled);
 					for(var i=0;i<obj.aData.CHILDRENS.length;i++){
 						allLength+=1;
-						if(obj.aData.CHILDRENS[i].PERMISSION_CODE==null){
-							str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
-			   			 	 
-			       		}else{
-			       		    str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" checked="true" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';		
-			       		}  
+						
+						if(is_disabled<0){
+							if(obj.aData.CHILDRENS[i].PERMISSION_CODE==null){
+								str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
+				   			 	 
+				       		}else{
+				       		    str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" checked="true" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';		
+				       		}  
+						}else{
+							if(obj.aData.CHILDRENS[i].PERMISSION_CODE==null){
+								str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" disabled="true" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
+				   			 	 
+				       		}else{
+				       		    str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" disabled="true" checked="true" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';		
+				       		}  
+						}
+						
 						
 					}
 					
