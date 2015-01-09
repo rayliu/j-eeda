@@ -3,7 +3,6 @@ package controllers.yh.profile;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +10,8 @@ import java.util.Map;
 
 import models.Location;
 import models.Party;
-import models.UserLogin;
+import models.UserCustomer;
+import models.UserRole;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -204,7 +204,17 @@ public class CustomerController extends Controller {
             	party.set("insurance_rates", getPara("insurance_rates"));
             }
             party.save();
-
+            
+            List<UserRole> urList = UserRole.dao.find("select * from user_role where role_code = 'admin'");
+            if(urList.size()>0){
+            	for (UserRole userRole : urList) {
+                	UserCustomer uc = new UserCustomer();
+                	uc.set("user_name", userRole.get("user_name"));
+                	uc.set("customer_id",party.get("id"));
+                	uc.save();
+    			}
+            }
+            
         }
 
         setAttr("saveOK", true);
