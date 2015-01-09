@@ -1440,9 +1440,9 @@ public class DeliveryController extends Controller {
     	String inputStr = getPara("rdc");
     	String sql ="";
     	if(inputStr!=null){
-    		sql = "select * from office where  office_name like '%"+inputStr+"%' and id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+    		sql = "select * from office where  office_name like '%"+inputStr+"%'";
     	}else{
-    		sql= "select * from office where id in in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+    		sql= "select * from office ";
     	}
         List<Office> office = Office.dao.find(sql);
         renderJson(office);
