@@ -8,8 +8,9 @@ import java.util.Map;
 
 import models.Location;
 import models.Office;
-import models.TransferOrder;
 import models.UserLogin;
+import models.UserOffice;
+import models.UserRole;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -107,6 +108,15 @@ public class OfficeController extends Controller {
 	 		//user.set("office_id", rec.get("belong_office"));
             
             Db.save("office", user);
+            List<UserRole> urList = UserRole.dao.find("select * from user_role where role_code = 'admin'");
+            if(urList.size()>0){
+            	for (UserRole userRole : urList) {
+                	UserOffice uo = new UserOffice();
+                	uo.set("user_name", userRole.get("user_name"));
+                	uo.set("office_id",user.get("id"));
+                	uo.save();
+    			}
+            }
         }
         
         render("/yh/profile/office/office.html");
