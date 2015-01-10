@@ -41,7 +41,15 @@ $(document).ready(function() {
     
     //因为Btn动态生成，需要在这里做特殊响应处理
     $("#eeda-table").on('click', 'button.popover_btn', function(e){
-        $(e.target).popover('show');
+        var btn = $(e.target);
+        var popup = btn.parent().find('.popover');
+        if(popup.length>0){
+            btn.popover('toggle');
+        }else{
+            btn.popover('destroy');
+            btn.popover('show');
+        }
+    	
     });
 
 	//datatable, 动态处理
