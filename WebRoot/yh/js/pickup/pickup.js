@@ -76,7 +76,19 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		if(obj.aData.CARGO_NATURE == "ATM"){
             			
-            			return obj.aData.ORDER_NO + '<button type="button" class="btn btn-default popover_btn" data-toggle="popover" title="Popover title" data-content="And some amazing content. Itvery engaging. Right?">单品选择</button>';
+                        var str1 ='<div class="pull-right">'+
+                                '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="1"> ATM001 <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="收货人：123, 送货地址：北京丰台区平安路12号"></i><br>'+
+                                '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="1"> ATM002 <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="收货人：123, 送货地址：北京丰台区平安路12号"></i><br>'+
+                                '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="1"> ATM003 <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="收货人：123, 送货地址：北京丰台区平安路12号"></i><br>'+
+                                '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="1"> ATM004 <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="收货人：123, 送货地址：北京丰台区平安路12号"></i><br>'+
+                                '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="1"> ATM005 <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="收货人：123, 送货地址：北京丰台区平安路12号"></i><br>'+
+                                '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="1"> ATM006 <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="收货人：123, 送货地址：北京丰台区平安路12号"></i><br>'+
+                                '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="1"> ATM007 <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="收货人：123, 送货地址：北京丰台区平安路12号"></i><br>'+
+                                '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="1"> ATM008 <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="收货人：123, 送货地址：北京丰台区平安路12号"></i><br>'+
+                                '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="1"> ATM009 <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="收货人：123, 送货地址：北京丰台区平安路12号"></i><br>'+
+                                '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="1"> ATM010 <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="收货人：123, 送货地址：北京丰台区平安路12号"></i><br>'+
+                            '</div>';
+            			return obj.aData.ORDER_NO + str1;
             		}else{
             			return obj.aData.ORDER_NO;
             		}
