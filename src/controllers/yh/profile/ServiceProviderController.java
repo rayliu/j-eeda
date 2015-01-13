@@ -92,7 +92,21 @@ public class ServiceProviderController extends Controller {
             if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
                 sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
-            String sqlTotal = "select count(1) total from party where party_type='SERVICE_PROVIDER'";
+            String sqlTotal = "select count(*) total from party p "
+                    + "left join contact c on p.contact_id=c.id "
+                    + "left join location l on l.code=c.location "
+                    + "left join location  l1 on l.pcode =l1.code "
+                    + "left join location l2 on l1.pcode = l2.code "
+                    + "where p.party_type='SERVICE_PROVIDER' "
+                    + "and ifnull(c.company_name,'') like '%"
+                    + company_name
+                    + "%' and ifnull(c.contact_person,'') like '%"
+                    + contact_person
+                    + "%' and ifnull(p.receipt,'') like '%"
+                    + receipt
+                    + "%' and ifnull(c.address,'') like '%"
+                    + address
+                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%'  " ;
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
