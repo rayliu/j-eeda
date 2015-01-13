@@ -260,7 +260,7 @@ public class ChargeMiscOrderController extends Controller {
 	}
 	
 	public void searchAllAccount(){
-		List<Account> accounts = Account.dao.find("select * from fin_account where type != 'PAY'");
+		List<Account> accounts = Account.dao.find("select * from fin_account where type != 'PAY' and bank_name != '现金'");
 		renderJson(accounts);
 	}
 	

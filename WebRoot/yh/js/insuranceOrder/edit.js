@@ -45,7 +45,7 @@
                 	 return str;
              }},
              {"mDataProp": "RATE",
-            	 "sWidth": "100px",
+            	 "sWidth": "100px", 
             	 "sClass": "rate", 
                  "fnRender": function(obj) {
                 	 var str = "";
