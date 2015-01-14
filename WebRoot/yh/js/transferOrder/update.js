@@ -605,7 +605,10 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		var inputBox = "";
             		if(obj.aData.PROD_ID != null){
-            			inputBox = obj.aData.ITEM_NAME;
+            			if(obj.aData.ITEM_NAME != null)
+            				inputBox = obj.aData.ITEM_NAME;
+            			else
+            				inputBox = '';
             		}else{
 	            		if(obj.aData.ITEM_NAME==null)
 	            			obj.aData.ITEM_NAME='';
@@ -621,7 +624,10 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		var inputBox = "";
             		if(obj.aData.PROD_ID != null){
-            			inputBox = obj.aData.SIZE + '';
+            			if(obj.aData.SIZE != null)
+            				inputBox = obj.aData.SIZE + '';
+            			else
+            				inputBox = '';
             		}else{
 	            		if(obj.aData.SIZE==null)
 	            			obj.aData.SIZE='';
@@ -637,7 +643,10 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		var inputBox = "";
             		if(obj.aData.PROD_ID != null){
-            			inputBox = obj.aData.WIDTH + '';
+            			if(obj.aData.WIDTH != null)
+            				inputBox = obj.aData.WIDTH + '';
+            			else
+            				inputBox = '';
             		}else{
 	            		if(obj.aData.WIDTH==null)
 	            			obj.aData.WIDTH='';
@@ -653,7 +662,10 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		var inputBox = "";
             		if(obj.aData.PROD_ID != null){
-            			inputBox = obj.aData.HEIGHT + '';
+            			if(obj.aData.HEIGHT != null)
+            				inputBox = obj.aData.HEIGHT + '';
+            			else
+            				inputBox = '';
             		}else{
 	            		if(obj.aData.HEIGHT==null)
 	            			obj.aData.HEIGHT='';
@@ -669,7 +681,10 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		var inputBox = "";
             		if(obj.aData.PROD_ID != null){
-            			inputBox = obj.aData.WEIGHT + '';
+            			if(obj.aData.WEIGHT != null)
+            				inputBox = obj.aData.WEIGHT + '';
+            			else
+            				inputBox = '';
             		}else{
 	            		if(obj.aData.WEIGHT==null)
 	            			obj.aData.WEIGHT='';
@@ -704,7 +719,10 @@ $(document).ready(function() {
 	            		inputBox = "<select name='unit'><option></option><option>台</option><option>件</option><option>套</option></select>";
             		}*/
             		if(obj.aData.PROD_ID !='' && obj.aData.PROD_ID != null){
-            			inputBox = obj.aData.UNIT + '';
+            			if(obj.aData.UNIT != null)
+            				inputBox = obj.aData.UNIT + '';
+            			else
+            				inputBox = '';
 			        }else{
 			        	var str="";
 			        	$("#unitOptions").children().each(function(){
