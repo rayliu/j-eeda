@@ -1267,7 +1267,8 @@ public class TransferOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select count(0) total from transfer_order t where t.status != '取消'";
+        String sqlTotal = "select count(0) total from transfer_order t where t.status != '取消' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
+				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -1277,7 +1278,8 @@ public class TransferOrderController extends Controller {
         		+ " ifnull((select name from location where code = t.route_to ), '' ) route_to,"
         		+ " (select status from transfer_order_milestone where order_id = t.id order by id desc limit 0,1) status,"
         		+ " (select create_stamp from transfer_order_milestone where order_id = t.id order by id desc limit 0,1) create_stamp"
-        		+ " from transfer_order t where t.status != '取消' group by t.id order by t.create_stamp desc " + sLimit;
+        		+ " from transfer_order t where t.status != '取消' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
+				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') group by t.id order by t.create_stamp desc " + sLimit;
         List<Record> transferOrderItems = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);

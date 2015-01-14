@@ -691,7 +691,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into user_office(user_name,office_id) select 'demo', id from office;");
             stmt.executeUpdate("update user_office set is_main=true where user_name='demo' and  office_id =1");
             
-            stmt.executeUpdate("insert into user_customer(user_name,customer_id) select 'demo', id from party;");
+            stmt.executeUpdate("insert into user_customer(user_name,customer_id) select 'demo', id from party where party_type = 'CUSTOMER';");
             stmt.close();
             // conn.commit();
             conn.close();

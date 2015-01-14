@@ -1416,7 +1416,8 @@ public class DeliveryController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select count(0) total from delivery_order";
+        String sqlTotal = "select count(0) total from delivery_order d left join warehouse w on w.id = d.from_warehouse_id where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -1426,7 +1427,8 @@ public class DeliveryController extends Controller {
         		+ " ifnull((select name from location where code = d.route_to ), '' ) route_to,"
         		+ " (select status from delivery_order_milestone where delivery_id = d.id order by id desc limit 0,1) status,"
         		+ " (select create_stamp from delivery_order_milestone where delivery_id = d.id order by id desc limit 0,1) create_stamp"
-        		+ " from delivery_order d order by d.id desc " + sLimit;
+        		+ " from delivery_order d left join warehouse w on w.id = d.from_warehouse_id  where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by d.id desc " + sLimit;
         List<Record> deliveryOrderItems = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
