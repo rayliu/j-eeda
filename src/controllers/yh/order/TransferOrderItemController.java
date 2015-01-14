@@ -286,8 +286,10 @@ public class TransferOrderItemController extends Controller {
     private void updateTransferOrderItemDetail(TransferOrderItem item, Product product) {
     	Double volume = item.get("volume");
     	if(item.getDouble("amount") != null && !"".equals(item.getDouble("amount"))){
-    		volume = item.getDouble("volume") / item.getDouble("amount");
-    		volume = Double.parseDouble(String.format("%.2f", volume));
+    		if(item.get("volume") != null && !"".equals(item.get("volume"))){
+    			volume = item.getDouble("volume") / item.getDouble("amount");
+        		volume = Double.parseDouble(String.format("%.2f", volume));
+    		}
     	}
         if (item.get("product_id") == null || "".equals(item.get("product_id"))) {
             List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
@@ -295,7 +297,9 @@ public class TransferOrderItemController extends Controller {
             for (TransferOrderItemDetail detail : transferOrderItemDetails) {
                 detail.set("item_name", item.get("item_name"));
                 detail.set("volume", volume);
-                detail.set("weight", item.get("weight"));
+                if(item.get("weight") != null || !"".equals(item.get("weight"))){
+                	detail.set("weight", item.get("weight"));
+                }
                 detail.update();
             }
         } else {
@@ -304,7 +308,9 @@ public class TransferOrderItemController extends Controller {
             for (TransferOrderItemDetail detail : transferOrderItemDetails) {
                 detail.set("item_name", product.get("item_name"));
                 detail.set("volume", volume);
-                detail.set("weight", product.get("weight"));
+                if(item.get("weight") != null || !"".equals(item.get("weight"))){
+                	detail.set("weight", product.get("weight"));
+                }
                 detail.update();
             }
         }
