@@ -428,7 +428,7 @@ public class ContractController extends Controller {
     // 列出客户公司名称
     public void search() {
         String locationName = getPara("locationName");
-        // 不能查所有
+        
         List<Record> locationList = Collections.EMPTY_LIST;
         if (locationName.trim().length() > 0) {
             locationList = Db
@@ -441,8 +441,9 @@ public class ContractController extends Controller {
         renderJson(locationList);
     }
     public void searcCustomer() {
+    	
         String locationName = getPara("locationName");
-        // 不能查所有
+        
         List<Record> locationList = Collections.EMPTY_LIST;
         if (locationName.trim().length() > 0) {
             locationList = Db
@@ -453,6 +454,7 @@ public class ContractController extends Controller {
 
         }
         renderJson(locationList);
+       
     }
 
 
@@ -493,7 +495,7 @@ public class ContractController extends Controller {
             orderMap.put("sEcho", 0);
             orderMap.put("iTotalRecords", 0);
             orderMap.put("iTotalDisplayRecords", 0);
-            orderMap.put("aaData", null);
+            orderMap.put("aaData", 0);
             renderJson(orderMap);
             return;
         }
@@ -589,7 +591,7 @@ public class ContractController extends Controller {
             orderMap.put("sEcho", 0);
             orderMap.put("iTotalRecords", 0);
             orderMap.put("iTotalDisplayRecords", 0);
-            orderMap.put("aaData", null);
+            orderMap.put("aaData", 0);
             renderJson(orderMap);
             return;
         }
@@ -639,7 +641,7 @@ public class ContractController extends Controller {
             orderMap.put("sEcho", 0);
             orderMap.put("iTotalRecords", 0);
             orderMap.put("iTotalDisplayRecords", 0);
-            orderMap.put("aaData", null);
+            orderMap.put("aaData", 0);
             renderJson(orderMap);
             return;
         }

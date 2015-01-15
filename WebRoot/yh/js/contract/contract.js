@@ -746,12 +746,13 @@ $(document).ready(function() {
 			var type2 = $("#type3").val();
 			 var urlSource;
 			if(type=='CUSTOMER'||type2=='CUSTOMER'){
-				urlSource ="/customerContract/searchCustomer";
+				urlSource ="/customerContract/searcCustomer";
 			}else{
 				urlSource ="/spContract/searchPart";
 			}
+			
 			$.get(urlSource, {locationName:inputStr}, function(data){
-				console.log(data);
+				
 				var companyList =$("#companyList");
 				companyList.empty();
 				for(var i = 0; i < data.length; i++)
