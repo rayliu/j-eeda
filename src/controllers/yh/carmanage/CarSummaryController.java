@@ -199,8 +199,7 @@ public class CarSummaryController extends Controller {
 					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
 					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
 					+ " left join transfer_order tor on tor.id = dt.order_id where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
-					+ " group by cso.id";
+					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
 					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
@@ -231,7 +230,7 @@ public class CarSummaryController extends Controller {
 					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
 					+ " left join transfer_order tor on tor.id = dt.order_id where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-					+ " group by cso.id order by cso.create_data desc " + sLimit;
+					+ " order by cso.create_data desc " + sLimit;
 	        
 		}else{
 			
@@ -244,8 +243,7 @@ public class CarSummaryController extends Controller {
 					+ " and ifnull(cso.car_no, '') like '%"+car_no+"%'"
 					+ " and ifnull(cso.main_driver_name, '') like '%"+driver+"%'"
 					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
-					+ " group by cso.id";
+					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			
 			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
@@ -283,7 +281,7 @@ public class CarSummaryController extends Controller {
 					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					//+ " and ifnull(dor.start_data, '') like '%"+transferOrderNo+"%'"
-					+ " group by cso.id order by cso.create_data desc " + sLimit;
+					+ " order by cso.create_data desc " + sLimit;
 		}
 		Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));

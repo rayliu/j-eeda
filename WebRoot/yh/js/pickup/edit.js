@@ -805,6 +805,7 @@
 		$("#warehouseDiv").show();
 		$("#checkbox2").prop('checked', true);
 	}else{
+		$("#warehouseDiv").hide();
 		$("#checkbox2").prop('checked', false);		
 	}
 	
@@ -913,15 +914,16 @@
     
     // 判断订单类型是否是补货
     if($("#transferOrderType").val() == 'replenishmentOrder'){
-    	$("#checkbox2").prop('checked', true);
-    	$("#warehouseDiv").show();
-    	//仓库不可变
-    	$("#gateInSelect").css({"cursor":"not-allowed",
-    		  "background-color":"#eee",
-    		  "opacity":1
-    		});
-    	$("#gateInSelect").attr("disabled","disabled");
-    	
+    	if($("#hideWarehouseId").val() != null && $("#hideWarehouseId").val() != ''){
+    		$("#checkbox2").prop('checked', true);
+        	$("#warehouseDiv").show();
+        	//仓库不可变
+        	$("#gateInSelect").css({"cursor":"not-allowed",
+        		  "background-color":"#eee",
+        		  "opacity":1
+        		});
+        	$("#gateInSelect").attr("disabled","disabled");
+    	}
     }if($("#transferOrderType").val() == 'salesOrder'){
     	$("#checkbox1").prop('checked', true);
     	$("#addressDiv").show();
