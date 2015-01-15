@@ -184,8 +184,8 @@ $(document).ready(function() {
     $('#customer_filter').on('keyup click', function(){
         var inputStr = $('#customer_filter').val();
         
-        $.get("/customerContract/search", {locationName:inputStr}, function(data){
-            console.log(data);
+        $.get("/transferOrder/searchCustomer", {input:inputStr}, function(data){
+            //console.log(data);
             var companyList =$("#companyList");
             companyList.empty();
             for(var i = 0; i < data.length; i++)

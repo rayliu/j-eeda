@@ -107,7 +107,7 @@ $(document).ready(function() {
 			pageCustomerAddress.empty();
 			$('#customer_id').val($(this).attr(''));
 		}
-		$.get('/transferOrder/searchCustomer', {input:inputStr}, function(data){
+		$.get('/transferOrder/searchPartCustomer', {input:inputStr}, function(data){
 			console.log(data);
 			var customerList =$("#customerList");
 			customerList.empty();
