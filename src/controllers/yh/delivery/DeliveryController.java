@@ -860,9 +860,9 @@ public class DeliveryController extends Controller {
 		List<Record> locationList = Collections.EMPTY_LIST;
 		String sql = "";
 		if(input!=null&&input!=""){
-			sql= "select p.id pid,p.*, c.*,c.id cid from	party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and c.abbr like '%"+input+"%'";
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and c.abbr like '%"+input+"%'";
 		}else{
-			sql= "select p.id pid,p.*, c.*,c.id cid from	party p left join contact c on c.id = p.contact_id where sp_type = 'delivery'";
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id where sp_type = 'delivery'";
 		}
 		
 		locationList = Db.find(sql);
@@ -873,9 +873,9 @@ public class DeliveryController extends Controller {
 		List<Record> locationList = Collections.EMPTY_LIST;
 		String sql = "";
 		if(input!=null&&input!=""){
-			sql= "select p.id pid,p.*, c.*,c.id cid from	party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and c.abbr like '%"+input+"%'";
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and c.abbr like '%"+input+"%'";
 		}else{
-			sql= "select p.id pid,p.*, c.*,c.id cid from	party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) ";
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) ";
 		}
 		
 		locationList = Db.find(sql);
