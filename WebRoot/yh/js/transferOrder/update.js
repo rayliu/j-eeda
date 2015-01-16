@@ -415,7 +415,7 @@ $(document).ready(function() {
         $("#saveTransferOrderBtn").attr("disabled", true);
 		//异步向后台提交数据
         if($("#order_id").val() == ""){
-        	console.log($("#transferOrderUpdateForm").serialize());
+        	//console.log($("#transferOrderUpdateForm").serialize());
 	    	$.post('/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
@@ -1955,6 +1955,7 @@ $(document).ready(function() {
 	 // 获取所有网点
 	 $.post('/transferOrder/searchAllOffice',function(data){
 		 if(data.length > 0){
+			 console.log(data);
 			 var deliveryOfficeSelect = $("#deliveryOfficeSelect");
 			 deliveryOfficeSelect.empty();
 			 var hideDeliveryOfficeSelect = $("#hideDeliveryOfficeSelect").val();
@@ -1963,10 +1964,13 @@ $(document).ready(function() {
 				 if(data[i].ID == hideDeliveryOfficeSelect){
 					 deliveryOfficeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
 				 }else{
-					 deliveryOfficeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
-				 }
-			 }
-		 }
+					 if(data[i].IS_STOP != true){
+						 deliveryOfficeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+					 };
+					
+				 };
+			 };
+		 };
 	 },'json');
 	 // 获取用户拥有的网点
 	 $.post('/transferOrder/searchPartOffice',function(data){
@@ -1974,15 +1978,19 @@ $(document).ready(function() {
 			 var officeSelect = $("#officeSelect");
 			 officeSelect.empty();
 			 var hideOfficeId = $("#hideOfficeId").val();
-			 
+			 officeSelect.append("<option ></option>");	
 			 for(var i=0; i<data.length; i++){
+				 /*data[i].IS_STOP != true*/
 				 if(data[i].ID == hideOfficeId){
 					 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");					 
 				 }else{
-					 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");
-				 }
-			 }
-		 }
+					 if(data[i].IS_STOP != true){
+						 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");
+					 };
+					 
+				 };
+			 };
+		 };
 	 },'json');
 	 // 回显订单类型
 	 $("input[name='orderType']").each(function(){

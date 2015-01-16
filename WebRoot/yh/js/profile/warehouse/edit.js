@@ -124,11 +124,15 @@ $(document).ready(function() {
 			 var officeSelect = $("#officeSelect");
 			 officeSelect.empty();
 			 var hideOfficeId = $("#hideOfficeId").val();
+			 officeSelect.append("<option class='form-control'></option>");
 			 for(var i=0; i<data.length; i++){
 				 if(data[i].ID == hideOfficeId){
 					 officeSelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
 				 }else{
-					 officeSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+					 if(data[i].IS_STOP != true){
+						 officeSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");
+					 }
+					 					 
 				 }
 			 }
 		 }

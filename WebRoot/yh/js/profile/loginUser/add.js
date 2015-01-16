@@ -25,7 +25,10 @@ var queryOffice=function(){
    					}
    				}
 		 		if(data[i].ID!=n){
-					officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");		 		
+		 			if(data[i].IS_STOP != true){
+		 				officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");
+		 			}
+							 		
 				}
    				
    			}
@@ -64,7 +67,7 @@ var queryCustomer=function(){
    					
    				}else{
    					$(this).empty();
-   					$(this).append("<option ></option>");
+   					$(this).append("<option > </option>");
    				}
 	   		});
    			for(var i=0; i<data.length; i++){
@@ -75,7 +78,10 @@ var queryCustomer=function(){
    					}
    				}
 		 		if(data[i].PID!=n){
-		 			customerSelect.append("<option value='"+data[i].PID+"'>"+data[i].COMPANY_NAME+"</option>");		 		
+		 			if(data[i].IS_STOP != true){
+		 				customerSelect.append("<option value='"+data[i].PID+"'>"+data[i].COMPANY_NAME+"</option>");
+		 			}
+		 					 		
 				}
    				
    			}

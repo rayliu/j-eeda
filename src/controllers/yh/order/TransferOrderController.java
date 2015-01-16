@@ -949,24 +949,16 @@ public class TransferOrderController extends Controller {
 
 	// 查出所有的office
 	public void searchAllOffice() {
-		List<Record> offices = Db.find("select o.id,o.office_name from office o");
+		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o");
 		renderJson(offices);
 	}
-	//查询所有没有停用的网点
-	public void searchAllNoStopOffice() {
-		List<Record> offices = Db.find("select o.id,o.office_name from office o where (is_stop is null or is_stop = 0)");
-		renderJson(offices);
-	}
+	
 	//根据用户是否拥有这个网点查询
 	public void searchPartOffice() {
 		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')");
 		renderJson(offices);
 	}
-	//查询部分没有停用的网点
-	public void searchPartNoStopOffice() {
-		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') and (o.is_stop is null or o.is_stop = 0)");
-		renderJson(offices);
-	}
+	
 	// 查出所有的driver
 	public void searchAllDriver() {
 		String input = getPara("input");

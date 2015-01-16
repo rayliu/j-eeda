@@ -489,8 +489,10 @@
 			 if(data[i].ID == hideOfficeId){
 				 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
 			 }else{
-				 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
-			 }
+				 if(data[i].IS_STOP != true){
+				 	officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+				 }
+			}
 		 }
 	 }
 	},'json');
