@@ -520,7 +520,8 @@ public class InventoryController extends Controller {
         String input = getPara("input");
         String warehouseId = getPara("warehouseId");
         if (warehouseId.equals("")) {
-            return;
+        	renderJson();
+            //return;
         }
         List<Record> locationList = Collections.EMPTY_LIST;
         locationList = Db.find("SELECT w_o.party_id as pid,c.company_name FROM `warehouse_order` w_o "
