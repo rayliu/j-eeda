@@ -64,6 +64,9 @@ public class ContractController extends Controller {
     public void companyNameList() {
         String input = getPara("input");
         String type = getPara("type");
+    	if("DELIVERY_SERVICE_PROVIDER".equals(type)){
+    		type = "SERVICE_PROVIDER";
+    	}
         List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
