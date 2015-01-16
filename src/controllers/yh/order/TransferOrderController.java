@@ -23,7 +23,6 @@ import models.TransferOrderFinItem;
 import models.TransferOrderItem;
 import models.TransferOrderMilestone;
 import models.UserLogin;
-import models.UserOffice;
 import models.Warehouse;
 import models.yh.profile.Contact;
 
@@ -40,6 +39,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import controllers.yh.util.IsExistenceCheckHandeln;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.ReaderXLS;
@@ -887,8 +887,6 @@ public class TransferOrderController extends Controller {
  			if(fileName.endsWith(".xls")){
  				title = ReaderXLS.getXlsTitle(file);
  				content = ReaderXLS.getXlsContent(file);
- 				/*ReaderXLS.xlsTitle = null;
- 				ReaderXLS.xlsContent = null;*/
  			}else if(fileName.endsWith(".xlsx")){
  				title = ReaderXlSX.getXlsTitle(file);
  				content = ReaderXlSX.getXlsContent(file);
