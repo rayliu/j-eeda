@@ -17,7 +17,9 @@ import models.yh.arap.ReimbursementOrder;
 import models.yh.arap.ReimbursementOrderFinItem;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
@@ -27,6 +29,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoUtil;
+import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -34,11 +37,11 @@ public class CostReimbursementOrder extends Controller {
 
 	private Logger logger = Logger.getLogger(CostCheckOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-
+	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_LIST})
 	public void index() {
 		render("/yh/arap/CostReimbursement/CostReimbursementList.html");
 	}
-
+	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
 	public void create() {
 		List<Record> paymentItemList  = Db.find("select * from fin_item where type='报销'");
         setAttr("paymentItemList", paymentItemList);
@@ -46,7 +49,7 @@ public class CostReimbursementOrder extends Controller {
         setAttr("attributionItemList", attributionItemList);
 		render("/yh/arap/CostReimbursement/CostReimbursementEdit.html");
 	}
-	
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
 	public void saveReimbursementOrder() {
 		String id = getPara("reimbursementId");
 		//String status = getPara("status");
@@ -98,7 +101,7 @@ public class CostReimbursementOrder extends Controller {
 		
 		renderJson(rei);
 	}
-	
+	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_LIST})
 	public void reimbursementList(){
 		String orderNo = getPara("orderNo");
 		String status = getPara("status");
@@ -185,7 +188,7 @@ public class CostReimbursementOrder extends Controller {
 				.findFirst("select * from user_login where id='" + userId + "'");
 		renderJson(approval);
 	}
-	
+	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CONFIRM})
 	public void updateReimbursement(){
 		String reimbursementId = getPara("reimbursementId");
 		String btntTxt = getPara("btntTxt");

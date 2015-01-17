@@ -88,13 +88,7 @@ public class PermissionConstant {
 	public static final String PERMSSION_CIO_UPDATE = "ChargeInvoiceOrder.update";
 	public static final String PERMSSION_CIO_APPROVAL = "ChargeInvoiceOrder.approval";
 	
-	/*应收收款核销处理权限 ChargeAcceptOrder*/
-	public static final String PERMSSION_CAO_LIST = "ChargeAcceptOrder.list";
-	public static final String PERMSSION_CAO_AFFIRM = "ChargeAcceptOrder.affirm";
-	
-	/*应收结账调整单*/
-	
-	
+
 	/*应付明细确认权限 CostItemConfirm*/
 	/*public static final String PERMSSION_CTC_LIST = "CostItemConfirm.list";*/
 	public static final String PERMSSION_CTC_AFFIRM = "CostItemConfirm.affirm";
@@ -112,12 +106,6 @@ public class PermissionConstant {
 	public static final String PERMSSION_CPO_APPROVAL = "CostPreInvoiceOrder.approval";
 	public static final String PERMSSION_CPO_CONFIRMATION = "CostPreInvoiceOrder.confirmation";
 	
-	/*付款结算处理 */
-	/*public static final String PERMSSION_CACO_LIST = "CostAcceptOrder.list";*/
-	/*public static final String PERMSSION_CACO_AFFIRM = "CostAcceptOrder.affirm";*/
-	
-	/*应付结账调整单CostAdjustOrder*/
-	/*public static final String PERMSSION_CADO_LIST = "CostAdjustOrder.list";*/
 	
 	/*出纳日记账权限*/
 	public static final String PERMSSION_PCO_LIST = "PaymentCheckOrder.list";
@@ -255,5 +243,15 @@ public class PermissionConstant {
 	public static final String PERMSSION_IO_LIST = "InsuranceOrder.list";
 	public static final String PERMSSION_IO_CREATE = "InsuranceOrder.create";
 	public static final String PERMSSION_IO_UPDATE = "InsuranceOrder.update";
-	
+	/*收款确认*/
+	public static final String PERMSSION_COLLECTIONCONFIRM_LIST = "chargeAcceptOrder_list"; 
+	public static final String PERMSSION_COLLECTIONCONFIRM_CONFIRM = "chargeAcceptOrder_confirm"; 
+	/*付款确认*/
+	public static final String PERMSSION_COSTCONFIRM_LIST = "costAcceptOrder_list"; 
+	public static final String PERMSSION_COSTCONFIRM_CONFIRM = "costAcceptOrder_confirm";
+	/*报销单*/
+	public static final String PERMSSION_COSTREIMBURSEMENT_LIST = "costReimbureement_list";
+	public static final String PERMSSION_COSTREIMBURSEMENT_CREATE = "costReimbureement_create";
+	public static final String PERMSSION_COSTREIMBURSEMENT_UPDATE = "costReimbureement_update";
+	public static final String PERMSSION_COSTREIMBURSEMENT_CONFIRM = "costReimbureement_confirm";
 }

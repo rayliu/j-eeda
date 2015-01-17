@@ -15,6 +15,7 @@ import models.ArapMiscChargeOrder;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
@@ -24,13 +25,14 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class ChargeAcceptOrderController extends Controller {
     private Logger logger = Logger.getLogger(ChargeAcceptOrderController.class);
     Subject currentUser = SecurityUtils.getSubject();
-
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_COLLECTIONCONFIRM_LIST})
     public void index() {
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
@@ -76,13 +78,14 @@ public class ChargeAcceptOrderController extends Controller {
     }
     
     // 收款
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_COLLECTIONCONFIRM_CONFIRM})
     public void chargeAccept(){
     	ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(getPara("chargeCheckOrderId"));
     	arapAuditOrder.set("status", "completed");
     	arapAuditOrder.update();
         renderJson("{\"success\":true}");
     }
-    
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_COLLECTIONCONFIRM_CONFIRM})
     public void save(){
     	String chargeIds = getPara("chargeIds");
     	String paymentMethod = getPara("paymentMethod");
