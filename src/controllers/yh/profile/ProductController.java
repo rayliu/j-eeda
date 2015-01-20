@@ -80,8 +80,15 @@ public class ProductController extends Controller {
 
     public void delete() {
         Product product = Product.dao.findById(getPara("productId"));
-        product.set("category_id", null);
-        product.delete();
+        /*product.set("category_id", null);
+        product.delete();*/
+        Object obj = product.get("is_stop");
+        if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
+        	product.set("is_stop", true);
+        }else{
+        	product.set("is_stop", false);
+        }
+        product.update();
         renderJson("{\"success\":true}");
     }
 

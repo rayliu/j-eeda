@@ -822,11 +822,11 @@ public class TransferOrderController extends Controller {
 							+ input
 							+ "%' or upper(item_name) like '%"
 							+ input
-							+ "%') limit 0,10");
+							+ "%') and (is_stop is null or is_stop =0) limit 0,10");
 		} else {
 			locationList = Db
 					.find("select * from product where category_id in (select id from category where customer_id = "
-							+ customerId + ")");
+							+ customerId + ") and (is_stop is null or is_stop =0)");
 		}
 		renderJson(locationList);
 	}

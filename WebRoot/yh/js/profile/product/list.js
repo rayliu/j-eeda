@@ -3,7 +3,7 @@ $(document).ready(function() {
     
     // 显示所有的客户
     $.get('/product/searchAllCustomer', function(data){
-        console.log(data);
+       // console.log(data);
         var zNodes =[];
         for(var i=0;i<data.length && data.length>0;i++){
 	        var node={};
@@ -13,7 +13,7 @@ $(document).ready(function() {
 	        node.categoryId=data[i].CAT_ID;
 	        node.click=nodePlusClickHandler;
 	        zNodes.push(node);
-	        console.log(node);
+	        //console.log(node);
         }
         $.fn.zTree.init($("#categoryTree"), setting, zNodes);
     },'json');
@@ -110,9 +110,17 @@ $(document).ready(function() {
                 "sWidth": "60px",  
             	"sClass": "item_desc",              
                 "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger btn-xs deleteProduct' id="+obj.aData.ID+" title='删除'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+
-                            "</a>";
+                	//console.log(obj.aData.IS_STOP);
+                	if(obj.aData.IS_STOP != true){
+                		return	"<a class='btn btn-danger btn-xs deleteProduct' id="+obj.aData.ID+" title='删除'>"+
+			                    "<i class='fa fa-trash-o fa-fw'></i>"+
+			                    "</a>";
+                	}else{
+                		return	"<a class='btn btn-success btn-xs deleteProduct' id="+obj.aData.ID+" title='删除'>"+
+			                    "<i class='fa fa-trash-o fa-fw'></i>"+
+			                    "</a>";
+                	}
+                    
                 }
             }                         
         ],      
@@ -271,7 +279,7 @@ $(document).ready(function() {
     	var nodeElement = $(this);
     	nodeElement.unbind('click');
     	$.get('/product/searchNodeCategory', {categoryId: categoryId, customerId: customerId}, function(data){
-    		console.log(data);
+    		//console.log(data);
     		if(data.length > 0){		
 	    		addNode(data, nodeElement);
     		}else{
@@ -399,6 +407,7 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.deleteProduct', function(e){
     	var productId = $(this).attr('id');	
     	$.post('/product/delete', {productId:productId}, function(data){ 	
+    		
 		},'json');
     	refreshProductTable();
     });
@@ -671,7 +680,7 @@ $(document).ready(function() {
         	
         }
         function showLog(str) {
-            console.log(str);
+            //console.log(str);
         }
         function getTime() {
             var now= new Date(),
