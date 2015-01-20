@@ -84,10 +84,12 @@ $(document).ready(function() {
         rules: {
         	customerMessage: {required: true},
         	planning_time: {required: true},
-        	arrival_time: {required: true}
+        	arrival_time: {required: true},
+        	officeSelect: {required:true}
         },
         messages : {	             
-        	customerMessage : {required:  "请选择一个客户"}
+        	customerMessage : {required:  "请选择一个客户"},
+        	officeSelect: {required: "运作网点不能为空"}
         }
     });
 		
@@ -108,7 +110,7 @@ $(document).ready(function() {
 			$('#customer_id').val($(this).attr(''));
 		}
 		$.get('/transferOrder/searchPartCustomer', {input:inputStr}, function(data){
-			console.log(data);
+			//console.log(data);
 			var customerList =$("#customerList");
 			customerList.empty();
 			for(var i = 0; i < data.length; i++)

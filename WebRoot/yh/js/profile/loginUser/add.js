@@ -113,7 +113,7 @@ var officeList = function(){
 			if(data.userOffice.length>0){
 				for(var i =0;i<data.userOffice.length;i++){
 					//console.log(data.userOffice[i].IS_MAIN);
-					if(data.userOffice[i].IS_MAIN!=null){
+					if(data.userOffice[i].IS_MAIN !=null && data.userOffice[i].IS_MAIN != false){
 						tobdy.append('<tr><td><select class="form-control sOffice" name="officeSelect"></select>'
 			                    +' </td><td><input type="radio" checked class="is_main" name="isMain_radio" value="'+data.userOffice[i].OFFICE_ID+'"></td>'
 			                    +' <td><a class="btn removeOffice" title="删除"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');

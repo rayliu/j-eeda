@@ -23,6 +23,7 @@ import models.TransferOrderFinItem;
 import models.TransferOrderItem;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.UserOffice;
 import models.Warehouse;
 import models.yh.profile.Contact;
 
@@ -231,7 +232,16 @@ public class TransferOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "新建");
-			render("/yh/transferOrder/updateTransferOrder.html");
+		//根据用户的默认网点确定默认的运作网点
+		UserOffice uo = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = 1",userLogin.get("user_name"));
+		if(uo != null){
+			transferOrder.set("office_id", uo.get("office_id"));
+		}/*else{
+			transferOrder.set("office_id", null);
+		}*/
+		
+		setAttr("transferOrder",transferOrder);
+		render("/yh/transferOrder/updateTransferOrder.html");
 	}
 
 	public void edit() {
