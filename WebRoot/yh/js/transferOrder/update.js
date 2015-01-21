@@ -820,7 +820,7 @@ $(document).ready(function() {
 
 	//item_no
 	$('#itemTable').on('click', 'input[name=item_no]', function(){
-		console.log(this);
+		//console.log(this);
 		var inputBox=$(this);
 		inputBox.autocomplete({
 	        source: function( request, response ) {
@@ -835,7 +835,7 @@ $(document).ready(function() {
 	                    input: request.term
 	                },
 	                success: function( data ) {
-	                	console.log(data);
+	                	//console.log(data);
 						var columnName = inputBox.parent().parent()[0].className;
 		        		
 	                    response($.map( data, function( data ) {
@@ -1957,7 +1957,7 @@ $(document).ready(function() {
 	 // 获取所有网点
 	 $.post('/transferOrder/searchAllOffice',function(data){
 		 if(data.length > 0){
-			 console.log(data);
+			 //console.log(data);
 			 var deliveryOfficeSelect = $("#deliveryOfficeSelect");
 			 deliveryOfficeSelect.empty();
 			 var hideDeliveryOfficeSelect = $("#hideDeliveryOfficeSelect").val();
@@ -2415,7 +2415,7 @@ $(document).ready(function() {
 		  e.preventDefault();
 		$.post('/transferOrder/finItemdel/'+id,function(data){
                //保存成功后，刷新列表
-               console.log(data);
+               //console.log(data);
                paymenttable.fnDraw();
            },'text');
 	});
@@ -2424,7 +2424,7 @@ $(document).ready(function() {
 	$("#item_fin_save").click(function(){
 	    var order_id =$("#order_id").val();
 		$.post('/transferOrder/receiptSave/'+order_id, $("#fin_form").serialize(), function(data){
-			console.log(data);
+			//console.log(data);
 			if(data.success){
 				receipttable.fnDraw();
 				$('#fin_item').modal('hide');
@@ -2439,7 +2439,6 @@ $(document).ready(function() {
 	$("#addrow").click(function(){	
 	    var order_id =$("#order_id").val();
 		$.post('/transferOrder/addNewRow/'+order_id,function(data){
-			console.log(data);
 			if(data[0] != null){
 				paymenttable.fnSettings().sAjaxSource = "/transferOrder/accountPayable/"+order_id;
 				paymenttable.fnDraw(); 
@@ -2451,25 +2450,40 @@ $(document).ready(function() {
 			}
 		});		
 	});	
-	//应付修改
-	$("#table_fin2").on('blur', 'input,select', function(e){
+	//应付修改 TODO 
+	$("#table_fin2").on('blur', 'input', function(e){
 		e.preventDefault();
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		$.post('/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
-			if(data.success){
+			if(data != null){
+				paymenttable.fnSettings().sAjaxSource = "/transferOrder/accountPayable/"+order_id;
+				paymenttable.fnDraw(); 
 			}else{
 				alert("修改失败!");
 			}
     	},'json');
 	});
-	
+	$("#table_fin2").on('change', 'select', function(e){
+		e.preventDefault();
+		var paymentId = $(this).parent().parent().attr("id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		$.post('/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+			if(data != null){
+				paymenttable.fnSettings().sAjaxSource = "/transferOrder/accountPayable/"+order_id;
+				paymenttable.fnDraw(); 
+			}else{
+				alert("修改失败!");
+			}
+    	},'json');
+	});
 	//应收
 	$("#addrow2").click(function(){	
 	    var order_id =$("#order_id").val();
 		$.post('/transferOrder/addNewRow2/'+order_id,function(data){
-			console.log(data);
+			//console.log(data);
 			if(data[0] != null){
 				receipttable.fnSettings().sAjaxSource = "/transferOrder/accountReceivable/"+order_id;
             	receipttable.fnDraw();  
@@ -2481,7 +2495,19 @@ $(document).ready(function() {
 		});		
 	});	
 	//应收修改
-	$("#table_fin").on('blur', 'input,select', function(e){
+	$("#table_fin").on('blur', 'input', function(e){
+		e.preventDefault();
+		var paymentId = $(this).parent().parent().attr("id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		$.post('/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
+			if(data.ID > 0){
+			}else{
+				alert("修改失败!");
+			}
+    	},'json');
+	});
+	$("#table_fin").on('change', 'select', function(e){
 		e.preventDefault();
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");

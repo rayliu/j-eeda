@@ -1061,7 +1061,7 @@ public class TransferOrderController extends Controller {
 		// 获取总条数
 		String totalWhere = "";
 		String sql = "select count(0) total from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id ='"
-				+ id + "' "; //and f.type='应收' TODO： 有问题
+				+ id + "' and f.type='应收'"; //and f.type='应收' TODO： 有问题
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
@@ -1069,12 +1069,12 @@ public class TransferOrderController extends Controller {
 		/*List<Record> orders = Db
 				.find("select d.*,f.name,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id ='"
 						+ id + "' and f.type='应收'");*/
-		List<Record> orders =Db.find("SELECT d.*, f. NAME, t.order_no AS transferOrderNo FROM "
+		List<Record> orders =Db.find("select d.*, f.name, t.order_no as transferOrderNo from "
 				+ "transfer_order_fin_item d "
-				+ "LEFT JOIN fin_item f ON d.fin_item_id = f.id "
+				+ "left join fin_item f on d.fin_item_id = f.id "
 				//+ "LEFT JOIN return_order r ON d.order_id = r.id "
-				+ "LEFT JOIN transfer_order t ON t.id = d.order_id "
-				+ "WHERE d.order_id = "+id); //+" AND f.type = '应收'"
+				+ "left join transfer_order t on t.id = d.order_id "
+				+ "where d.order_id = " + id + " and f.type = '应收'");
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -1085,7 +1085,7 @@ public class TransferOrderController extends Controller {
 		renderJson(orderMap);
 	}
 
-	// 应付list
+	//TODO  应付list
 	public void accountPayable() {
 		String id = getPara();
 		if (id == null || id.equals("")) {
@@ -1149,7 +1149,19 @@ public class TransferOrderController extends Controller {
         items.add(item);
         renderJson(items);
     }
-	
+    public void addNewRow() {
+        List<Fin_item> items = new ArrayList<Fin_item>();
+        String orderId = getPara();
+        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
+        if (item != null) {
+            TransferOrderFinItem dFinItem = new TransferOrderFinItem();
+            dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
+                    .set("order_id", orderId).set("create_name", dFinItem.CREATE_NAME_USER)
+                    .save();
+        }
+        items.add(item);
+        renderJson(items);
+    }
 	// 保存应收应付
 	public void paymentSave() {
 		String returnValue = "";
