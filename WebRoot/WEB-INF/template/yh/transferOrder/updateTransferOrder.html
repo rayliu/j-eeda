@@ -35,7 +35,7 @@
                                 </li>
                                 <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">运输里程碑</a>
                                 </li>
-                                <li class=""><a href="#arap" data-toggle="tab" id="transferOrderArap">应收</a>
+                                <li class=""><a href="#arap" data-toggle="tab" id="transferOrderArap">应收应付</a>
                                 </li>
                             </ul>
 
@@ -653,9 +653,8 @@
                                 <div class="tab-pane fade" id="arap">
                                       <!-- <h2>应收</h2> -->
                                       <div class="panel-body">
-									 	<button class="btn btn-primary" id="addrow2">
-										添加应收
-										</button>
+									 	<button class="btn btn-primary" id="addrow2">添加应收</button>
+                                        <input type="checkbox" name="revenueCheckBox" id="revenueCheckBox">不需要从合同计算应收费用
                                     	<div class="form-group"></div>
                                         <div class="table-responsive">
                                             <table class="table table-striped table-bordered table-hover" id ="table_fin">
@@ -691,10 +690,11 @@
                                         <!-- /.table-responsive -->
                                     </div>
                                     <!-- /.panel-body -->
-                                    <!-- 
+                                    
                                     <hr>
                                     <h2>应付</h2>
 									 <button class="btn btn-primary" id="addrow"> 添加应付</button>
+                                     <input type="checkbox" name="costCheckBox" id="costCheckBox">不需要从合同计算应付费用
                                     <div class="panel-body">
                                         <div class="table-responsive">
                                             <table class="table table-striped table-bordered table-hover"  id ="table_fin2">
@@ -718,10 +718,9 @@
 	   												%>
                                             	</div>
                                             </table>
-                                        </div>
-                                        /.table-responsive
-                                    </div>
-                                    /.panel-body -->
+                                        </div>                                       
+                                    </div> <!-- /.panel-body -->
+                                    
                                 </div>
 								<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
 								  <div class="modal-dialog modal-sm">
