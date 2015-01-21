@@ -7,53 +7,45 @@
     <!-- Core CSS - Include with every page -->
     <link href="/yh/css/bootstrap.min.css" rel="stylesheet">
     <link href="/yh/font-awesome/css/font-awesome.css" rel="stylesheet">
-    <!-- SB Admin CSS - Include with every page -->
     <link href="/yh/css/sb-admin.css" rel="stylesheet">
 
 </head>
 <body>
 	<div class="container">
 		<div class="row">
-			<div class=" col-md-offset-4 col-lg-6">
+			<div class="col-md-4 col-md-offset-4">
 				<div class="login-panel panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">新用户登陆</h3>
+						<h3 class="panel-title">新用户注册</h3>
 					</div>
 					<div class="panel-body">
 						 <form action="/register/saveRegistrant" method="post" id="registerForm" class="form-horizontal"  style="margin: 0 15px;">
 							<fieldset>
 								<div class="row">
-									<div class="form-group" id="registerNatures">
-										<span  class="col-md-2"></span>
-										<label class="radio-inline col-md-3">
-											<input type="radio" name ="officeRegister" value="register" id="exit" checked>公司已注册 
-										</label>
-										<label class="radio-inline">
-											<input type="radio" name ="officeRegister" id="unexit" value="unregister">公司未注册 
-										</label>
-
-									</div>
+									
 									<div class=" form-group form-group-lg">
 										<label class="col-md-3 control-label">登&nbsp;&nbsp;陆&nbsp;&nbsp;名</label>
-										<div class=" col-md-6">
+										<div class="col-md-8">
 											<input class="form-control" type="text" id = "username" name="username" placeholder="请输入你的登陆名(邮箱地址)">
 										</div>
 									</div>
 									<div class=" form-group form-group-lg">
 										<label class="col-md-3 control-label">登陆密码</label>
-										<div class=" col-md-6">
+										<div class=" col-md-8">
 											<input class="form-control" type="password" id="password" name="password"  placeholder="请输入你的登陆密码">
 										</div>
 										
 									</div>
 									<div class=" form-group form-group-lg">
 										<label class="col-md-3 control-label">确认密码</label>
-										<div class=" col-md-6">
+										<div class=" col-md-8">
 											<input class="form-control" type="password" id="affirmPass" name="affirmPass" placeholder="请再次输入你的登陆密码">
 										</div>
-										
 									</div>
-									
+									<div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label"></label>
+                                        <label class="control-label  col-md-8">注册后，您将默认是系统管理员</label>
+                                    </div>
 								</div>
 								<div class="row" id="officeInformation" style="display:none">
 										<div class=" form-group form-group-lg">
@@ -81,14 +73,11 @@
 												<input class="form-control" type="text" id="email" name="email">
 											</div>
 										</div>
-										<div class="form-group form-group-sm">
-										    <label class="col-md-3 control-label">系统管理员</label>
-											<label class="control-label col-md-5">首次注册，默认是管理员</label>
-										</div>
+										
 								</div>
 								<div class="form-group form-group-sm">
 								   <span  class="col-md-1"></span>
-									<button type="submit" class="btn btn-default btn-success col-sm-4">OK</button>
+									<button type="submit" class="btn btn-default btn-success col-sm-4">提交</button>
 								</div>
 								
 						 	</fieldset>
