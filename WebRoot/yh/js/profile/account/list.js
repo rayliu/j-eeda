@@ -10,10 +10,15 @@ $(document).ready(function() {
 	        "sAjaxSource": "/account/listAccount",
 			"aoColumns": [
 				{ "mDataProp": "BANK_NAME","sWidth": "12%",
-					"fnRender": function(obj) {                    
-	                    return "<a href='/account/edit/"+obj.aData.ID+"'>"+
-	                                obj.aData.BANK_NAME+
-	                            "</a>";
+					"fnRender": function(obj) {  
+						if(Account.isUpdate){
+							return "<a href='/account/edit/"+obj.aData.ID+"'>"+
+			                            obj.aData.BANK_NAME+
+			                        "</a>";
+						}else{
+							return obj.aData.BANK_NAME;
+						}
+	                    
 	                }
 	            },
 	            { "mDataProp": "TYPE","sWidth": "10%",
@@ -36,25 +41,29 @@ $(document).ready(function() {
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "15%",
+	                "bVisible":(Account.isUpdate || Account.isDel),
 	                "fnRender": function(obj) { 
-	                	if(obj.aData.IS_STOP != true){
-	                		return "<a class='btn btn-info' href='/account/edit/"+obj.aData.ID+"'>"+
+	                	var str = "";
+	                	if(Account.isUpdate){
+	                		str += "<a class='btn btn-info' href='/account/edit/"+obj.aData.ID+"'>"+
 		                            "编辑"+
-			                        "</a>"+
-			                        "<a class='btn btn-danger' href='/account/del/"+obj.aData.ID+"'>"+
-			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
-			                            "停用"+
-			                        "</a>";
-	                	}else{
-	                		return "<a class='btn btn-info' href='/account/edit/"+obj.aData.ID+"'>"+
-		                            "编辑"+
-			                        "</a>"+
-			                        "<a class='btn btn-success' href='/account/del/"+obj.aData.ID+"'>"+
-			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
-			                            "启用"+
 			                        "</a>";
 	                	}
-	                    
+	                	if(Account.isDel){
+	                		if(obj.aData.IS_STOP != true){
+		                		str +="<a class='btn btn-danger' href='/account/del/"+obj.aData.ID+"'>"+
+				                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
+				                            "停用"+
+				                        "</a>";
+		                	}else{
+		                		str += "<a class='btn btn-success' href='/account/del/"+obj.aData.ID+"'>"+
+				                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
+				                            "启用"+
+				                        "</a>";
+		                	}
+		                    
+	                	}
+	                	return str;
 	                }
 	            } 
 	            ]
