@@ -117,30 +117,57 @@
 		$("#driver_phone").val($("#carInfoDriverPhone").val());
 	}
 
-	 var message=$("#message").val();
+	 //var message=$("#message").val();
      var type=$("#type").val();
      var depart_id=$("#depart_id").val();
-     var tr_item=$("#tr_itemid_list").val();
-     var item_detail=$("#item_detail").val();
+     //var tr_item=$("#tr_itemid_list").val();
+     //var item_detail=$("#item_detail").val();
  	 //显示货品table
  	 var datatable = $('#pickupItem-table').dataTable({
          "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
          //"sPaginationType": "bootstrap",
          "iDisplayLength": 10,
-         "bServerSide": true,
+         "bServerSide": false,
          "bDestroy": true,
      	 "oLanguage": {
              "sUrl": "/eeda/dataTables.ch.txt"
          },
-         "sAjaxSource": "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
+         //"sAjaxSource": "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&pickupId="+$("#pickupOrderId").val(),
          "aoColumns": [
              { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
              { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
              { "mDataProp": "ITEM_NO"},
              { "mDataProp": "ITEM_NAME"},
-             { "mDataProp": "AMOUNT"},
-             { "mDataProp": "VOLUME"},
-             { "mDataProp": "WEIGHT"},
+             { "mDataProp": null,
+            	 "fnRender": function(obj) {   
+            		 if(obj.aData.ATMAMOUNT != "" && obj.aData.ATMAMOUNT != null){
+            			 return obj.aData.ATMAMOUNT;
+            		 }else{
+            			 return obj.aData.CARGOAMOUNT;
+            		 }
+                      
+                 }
+             },
+             { "mDataProp": null,
+            	 "fnRender": function(obj) {   
+            		 if(obj.aData.ATMAMOUNT != "" && obj.aData.ATMAMOUNT != null){
+            			 return obj.aData.ATMAMOUNT * obj.aData.VOLUME;
+            		 }else{
+            			 return obj.aData.CARGOAMOUNT * obj.aData.VOLUME;
+            		 }
+                      
+                 }
+             },
+             { "mDataProp": null,
+            	 "fnRender": function(obj) {   
+            		 if(obj.aData.ATMAMOUNT != "" && obj.aData.ATMAMOUNT != null){
+            			 return obj.aData.ATMAMOUNT * obj.aData.WEIGHT;
+            		 }else{
+            			 return obj.aData.CARGOAMOUNT * obj.aData.WEIGHT;
+            		 }
+                      
+                 }
+             },
              { "mDataProp": "REMARK"},
              { 
                  "mDataProp": null, 
@@ -643,6 +670,15 @@
         if("chargeCheckOrderbasic" == parentId){
         	clickSavePickupOrder(e);
         }
+        var message=$("#message").val();
+		var type=$("#type").val();
+		var depart_id=$("#depart_id").val();
+		var tr_item=$("#tr_itemid_list").val();
+		var item_detail=$("#item_detail").val();
+ 	    var pickupId = $("#pickupOrderId").val();
+ 		datatable.fnSettings().oFeatures.bServerSide = true; 
+ 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&pickupId="+pickupId;
+ 		datatable.fnDraw();
 	});
 
 	//获取供应商的list，选中信息在下方展示其他信息

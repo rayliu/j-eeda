@@ -61,6 +61,9 @@ public class PickupOrderController extends Controller {
         String list = this.getPara("localArr");
         setAttr("localArr", list);
         String[] transferOrderIds = list.split(",");
+        String detailIds = getPara("detailIds");
+        String cargoIds = getPara("cargoIds");
+        String cargoNumbers = getPara("cargoNumbers");
 
         if (transferOrderIds.length == 1) {
             TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
@@ -92,6 +95,10 @@ public class PickupOrderController extends Controller {
 
         setAttr("status", "新建");
         setAttr("saveOK", false);
+        setAttr("detailIds", detailIds);
+        setAttr("cargoIds", cargoIds);
+        setAttr("cargoNumbers", cargoNumbers);
+        
         List<Record> paymentItemList = Collections.EMPTY_LIST;
         paymentItemList = Db.find("select * from fin_item where type='应付'");
         setAttr("paymentItemList", paymentItemList);
@@ -517,7 +524,8 @@ public class PickupOrderController extends Controller {
         String order_id = getPara("localArr");// 运输单id
         String tr_item = getPara("tr_item");// 货品id
         String item_detail = getPara("item_detail");// 单品id
-
+        String pickId = getPara("pickupId");
+        
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -529,9 +537,10 @@ public class PickupOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         String sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,"
-        		+ " round(ifnull(toi.volume, 0),2) volume,"
-                + " round(ifnull(toi.sum_weight, 0),2) weight,"
-                + " c.abbr customer,tor.order_no,toi.amount,toi.remark  from transfer_order_item toi "
+        		+ " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,"
+        		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and pickup_id = "+pickId+") atmamount,"
+        		+ " (select amount from depart_transfer where order_id = tor.id and pickup_id = "+pickId+") cargoamount, "
+                + " c.abbr customer,tor.order_no,toi.remark  from transfer_order_item toi "
                 + " left join transfer_order tor on tor.id = toi.order_id"
                 + " left join party p on p.id = tor.customer_id"
                 + " left join contact c on c.id = p.contact_id"
@@ -559,6 +568,10 @@ public class PickupOrderController extends Controller {
         String replenishmentOrderId = getPara("replenishmentOrderId");
         String gateInSelect = getPara("gateInSelect");
         String returnTime = getPara("return_time");
+        String datailIdsStr = getPara("detailIds");
+        String[] detailIds = getPara("detailIds").split(",");
+        String[] cargoIds = getPara("cargoIds").split(",");
+        String[] cargoNumbers = getPara("cargoNumbers").split("&");
         if (pickId == null || "".equals(pickId)) {
         	String sql = "select * from depart_order where combine_type = '"+DepartOrder.COMBINE_TYPE_PICKUP+"' order by id desc limit 0,1";
             pickupOrder = new DepartOrder();
@@ -638,8 +651,77 @@ public class PickupOrderController extends Controller {
             }
             pickupOrder.set("car_summary_type", "untreated");
             pickupOrder.save();
-            saveDepartTransfer(pickupOrder, getPara("orderid"), checkedDetail, uncheckedDetailIds);
+            //saveDepartTransfer(pickupOrder, getPara("orderid"), checkedDetail, uncheckedDetailIds);
             savePickupOrderMilestone(pickupOrder);
+            
+            //ATM单品
+            if(detailIds[0].trim() != ""){
+	            for (int i = 0; i < detailIds.length; i++) {
+					TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailIds[i]);
+					detail.set("pickup_id",pickupOrder.get("id")).update();
+				}
+	            System.out.println("单品id:"+ datailIdsStr);
+	            String findOrderIdSql = "select group_concat(distinct cast(order_id as char) separator ',') id from transfer_order_item_detail where id in ("+datailIdsStr+");";
+	            Record rec = Db.findFirst(findOrderIdSql);
+	            String[] TransferIds = rec.getStr("id").split(",");
+	            for (int i = 0; i < TransferIds.length; i++) {
+	            	Record total = Db.findFirst("select count(0) total from transfer_order_item_detail where order_id = " + TransferIds[i]);
+	            	//运输单
+					TransferOrder transferOrderATM = TransferOrder.dao.findById(TransferIds[i]);
+					if(detailIds.length == total.getLong("total")){
+						transferOrderATM.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+					}else{
+						transferOrderATM.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+					}
+					transferOrderATM.set("pickup_mode", pickupOrder.get("pickup_mode"));
+					transferOrderATM.update();
+					//从表
+					DepartTransferOrder departTransferOrder = new DepartTransferOrder();
+		            departTransferOrder.set("pickup_id", pickupOrder.get("id"));
+		            departTransferOrder.set("order_id", TransferIds[i]);
+		            departTransferOrder.set("amount", detailIds.length);
+		            departTransferOrder.set("transfer_order_no", transferOrderATM.get("order_no"));
+		            departTransferOrder.save();
+	            }
+            }
+            //普货
+            if(cargoIds[0].trim() != ""){
+	            for (int i = 0; i < cargoIds.length; i++) {
+	            	double sumPickAmount = 0;
+	            	double sumTransferOrderItemAmount = 0;
+	            	String[] cargoNumber = cargoNumbers[i].split(",");
+	            	String findItemSql = "select * from transfer_order_item where order = " + cargoIds[i];
+					List<TransferOrderItem> detailList = TransferOrderItem.dao.find(findItemSql);
+					for (int j = 0; j < detailList.size(); j++) {
+						double amount = 0;
+						if(detailList.get(j).get("pickup_number") != null || !"".equals(detailList.get(j).get("pickup_number"))){
+							amount = detailList.get(j).get("pickup_number");
+						}
+						detailList.get(j).set("pickup_number",amount + Double.parseDouble(cargoNumber[j])).update();
+						sumPickAmount+=Double.parseDouble(cargoNumber[j]);
+						if(detailList.get(j).get("amount") != null && "".equals(detailList.get(j).get("amount"))){
+							sumTransferOrderItemAmount += detailList.get(j).getDouble("amount");
+						}
+					}
+					//运输单
+					TransferOrder transferOrderCargo = TransferOrder.dao.findById(cargoIds[i]);
+					if(sumPickAmount == sumTransferOrderItemAmount){
+						transferOrderCargo.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+					}else{
+						transferOrderCargo.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+					}
+					transferOrderCargo.set("pickup_mode", pickupOrder.get("pickup_mode"));
+					transferOrderCargo.update();
+					//从表
+					DepartTransferOrder departTransferOrder = new DepartTransferOrder();
+		            departTransferOrder.set("pickup_id", pickupOrder.get("id"));
+		            departTransferOrder.set("order_id", cargoIds[i]);
+		            departTransferOrder.set("amount", sumPickAmount);
+		            departTransferOrder.set("transfer_order_no", transferOrderCargo.get("order_no"));
+		            departTransferOrder.save();
+				}
+            }
+            
         } else {
             pickupOrder = DepartOrder.dao.findById(pickId);
             pickupOrder.set("charge_type", getPara("chargeType"));
@@ -809,14 +891,14 @@ public class PickupOrderController extends Controller {
                 departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
                 departTransferOrder.save();
 
-                List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
+                /*List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
                         "select * from transfer_order_item_detail where order_id = ?", params[i]);
                 for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
                     if (transferOrderItemDetail.get("pickup_id") == null) {
                         transferOrderItemDetail.set("pickup_id", pickupOrder.get("id"));
                         transferOrderItemDetail.update();
                     }
-                }
+                }*/
             }
         } else {
             for (int i = 0; i < params.length; i++) {
@@ -829,7 +911,7 @@ public class PickupOrderController extends Controller {
                 departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
                 departTransferOrder.save();
             }
-            String[] checkedDetailIds = checkedDetail.split(",");
+            /*String[] checkedDetailIds = checkedDetail.split(",");
             for (int j = 0; j < checkedDetailIds.length; j++) {
                 TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(checkedDetailIds[j]);
                 transferOrderItemDetail.set("pickup_id", pickupOrder.get("id"));
@@ -841,7 +923,7 @@ public class PickupOrderController extends Controller {
                 TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(uncheckedDetailIds[j]);
                 transferOrderItemDetail.set("pickup_id", "");
                 transferOrderItemDetail.update();
-            }
+            }*/
         }
     }
 
@@ -1870,7 +1952,96 @@ public class PickupOrderController extends Controller {
 		}
         renderJson("{\"success\":true}");
     }*/
-
+    //查找货品
+    public void findTransferOrderItem(){
+    	Map orderMap = new HashMap();
+    	String transferOrderId = getPara("order_id");
+    	if (transferOrderId == null || transferOrderId.equals("")) {
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+        }else{
+    		String sLimit = "";
+    		String pageIndex = getPara("sEcho");
+    		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+    			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+    		}
+    		String totalWhere = "select distinct count(0) total from transfer_order_item toi"
+            		+ " left join transfer_order tor on tor.id = toi.order_id"
+            		+ " left join product p on p.id = toi.product_id"
+            		+ " where toi.order_id = " + transferOrderId;
+            
+            String sql = "select distinct toi.id, toi.product_id prod_id, tor.order_no, ifnull(p.item_no, toi.item_no) item_no, ifnull(p.item_name, toi.item_name) item_name,"
+            		+ " (select count(0) total from transfer_order_item_detail where item_id = toi.id  and pickup_id is null) amount,toi.pickup_number, "
+    				+ "ifnull(p.unit, toi.unit) unit, toi.volume sum_volume, toi.sum_weight sum_weight, toi.remark from transfer_order_item toi"
+            		+ " left join transfer_order tor on tor.id = toi.order_id"
+            		+ " left join product p on p.id = toi.product_id"
+            		+ " where toi.order_id = " +transferOrderId + " order by toi.id ";
+            
+            Record rec = Db.findFirst(totalWhere);
+            logger.debug("total records:" + rec.getLong("total"));
+    		
+            List<Record> orders = Db.find(sql);
+            
+            orderMap.put("sEcho", pageIndex);
+            orderMap.put("iTotalRecords", rec.getLong("total"));
+            orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+    		orderMap.put("aaData", orders);
+    	}
+    	renderJson(orderMap);
+    }
     
-    
+    //查找单品
+    public void findTransferOrderItemDetail(){
+    	Map orderMap = new HashMap();
+    	String transferOrderItemId = getPara("item_id");
+    	if (transferOrderItemId == null || transferOrderItemId.equals("")) {
+            orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+        }else{
+    		String sLimit = "";
+    		String pageIndex = getPara("sEcho");
+    		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+    			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+    		}
+    		String totalWhere = "select count(0) total from transfer_order_item_detail where item_id = '" + transferOrderItemId + "'  and pickup_id is null";
+            String sql = "select id,serial_no,pieces from transfer_order_item_detail where item_id = '" + transferOrderItemId + "'  and pickup_id is null";
+            
+            Record rec = Db.findFirst(totalWhere);
+            logger.debug("total records:" + rec.getLong("total"));
+    		
+            List<Record> orders = Db.find(sql);
+            
+            orderMap.put("sEcho", pageIndex);
+            orderMap.put("iTotalRecords", rec.getLong("total"));
+            orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+    		orderMap.put("aaData", orders);
+    	}
+    	renderJson(orderMap);
+    }
+    //按运输单查找所有单品序列号
+    public void findSerialNoByOrderId(){
+    	String orderId = getPara("order_id");
+    	Record serialNoList = null;
+    	if(orderId != ""){
+    		String sql = "select group_concat(cast(id as char) separator ',') id,group_concat(serial_no separator '\r\n') serial_no from transfer_order_item_detail where order_id = '" + orderId + "';";
+    		serialNoList = Db.findFirst(sql);
+    		logger.debug("serialNoList:" + serialNoList);
+    	}
+    	renderJson(serialNoList);
+    }
+    //按运输单查找所有普货货品数量
+    public void findNumberByOrderId(){
+    	String orderId = getPara("order_id");
+    	Record serialNoList = null;
+    	if(orderId != ""){
+    		String sql = "select group_concat(cast(id as char) separator ',') id,group_concat(cast(amount as char) separator ',') amounts from transfer_order_item where order_id = '" + orderId + "';";
+    		serialNoList = Db.findFirst(sql);
+    		logger.debug("serialNoList:" + serialNoList);
+    	}
+    	renderJson(serialNoList);
+    }
 }
