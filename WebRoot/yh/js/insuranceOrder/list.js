@@ -15,19 +15,31 @@
 	        "aoColumns": [   
 			    {"mDataProp":"ORDER_NO",
 	            	"fnRender": function(obj) {
+	            		if(Insurance.isUpdate){
 	            			return "<a href='/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
-	            		}},
+	            		}else{
+	            			return obj.aData.ORDER_NO;
+	            		}
+	            			
+	            }},
 			    {"mDataProp":"STATUS"},    
 			    {"mDataProp":"CREATE_STAMP"},     
 			    {"mDataProp":"TRANSFER_ORDER_NO"},
 	            { 
 	                "mDataProp": null, 
-	                "sWidth": "8%",                
-	                "fnRender": function(obj) {                    
-	                    return "<a class='btn btn-danger cancelbutton' code='"+obj.aData.ID+"'>"+
-			                        "<i class='fa fa-trash-o fa-fw'></i>"+ 
-			                        "取消"+
+	                "sWidth": "8%",   
+	                "bVisible":false,
+	                "fnRender": function(obj) {    
+	                	if(false){
+	                		return "<a class='btn btn-danger cancelbutton' code='"+obj.aData.ID+"'>"+
+		                        "<i class='fa fa-trash-o fa-fw'></i>"+ 
+		                        "取消"+
 		                        "</a>";
+	                	}else{
+	                		return "";
+	                	}
+	                	
+	                    
 	                }
 	            } 
 	        ]      
