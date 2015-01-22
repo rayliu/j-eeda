@@ -379,7 +379,7 @@ public class DepartOrderController extends Controller {
     public void add() {
             render("/yh/departOrder/allTransferOrderList.html");
     }
-    
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
     public void addForRouteSp() {
     		render("/yh/departOrder/allTransferOrderListForRouteSp.html");
     }
@@ -584,7 +584,7 @@ public class DepartOrderController extends Controller {
         transferOrderListMap.put("aaData", transferOrders);
         renderJson(transferOrderListMap);
     }
-    
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
     // 创建发车单的运输单列表(干线供应商+整车)
     public void createTransferOrderListForRouteSp() {
     	String orderNo = getPara("orderNo");

@@ -18,8 +18,13 @@ var dataTable =$('#dataTables-example').dataTable({
             { 
                 "mDataProp": null, "sWidth":"70px",
                 "sWidth": "8%",                
-                "fnRender": function(obj) {                    
-                	return "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+                "fnRender": function(obj) {  
+                	if(DepartOrder.isUpdate || DepartOrder.isComplete){
+                		return "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+                	}else{
+                		return obj.aData.DEPART_NO;
+                	}
+                	
                 }
             } ,
             {"mDataProp":"OFFICE_NAME"},
