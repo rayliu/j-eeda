@@ -37,7 +37,12 @@ $(document).ready(function() {
 			}, 
 			{"mDataProp":null,"sWidth":"120px",
 					"fnRender": function(obj) {
-					return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+						if(Pickup.isUpdate || Pickup.isCompleted){
+							return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+						}else{
+							return obj.aData.DEPART_NO;
+						}
+					
 				}
 			},
 			{"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
@@ -79,7 +84,12 @@ $(document).ready(function() {
 			  },
 	          {"mDataProp": null,
 				  "fnRender": function(obj) {
-          			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+					  if(CarSummary.isUpdate || CarSummary.isApproval){
+						  return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+					  }else{
+						  return obj.aData.ORDER_NO;
+					  }
+          			
           	  }},  
 	          {"mDataProp":"PICKUP_NO", "sWidth":"120px"},
 	          {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"120px"},

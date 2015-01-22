@@ -16,13 +16,18 @@
                         
                             <!-- Nav tabs -->
                             <ul id="orderTabs" class="nav nav-tabs">
-                                <li class="active"><a href="#create" data-toggle="tab" data-src="create" id ="chargeCheckOrderbasic" >未处理行车单</a>
-                                </li>
-                                <li class=""><a href="#search" data-toggle="tab" id="carSummaryOrderList">行车单查询</a>
-                                </li>                               
+                            	<% if(shiro.hasPermission("CarSummary.create")){%>
+                                	<li class="active"><a href="#create" data-toggle="tab" data-src="create" id ="chargeCheckOrderbasic" >未处理行车单</a>
+                                	</li>
+                                <%}%>
+                                <% if(shiro.hasPermission("CarSummary.list")){%>
+	                                <li class=""><a href="#search" data-toggle="tab" id="carSummaryOrderList">行车单查询</a>
+	                                </li> 
+                                <%}%>                              
                             </ul>
                             <!-- Tab panes -->
                             <div class="tab-content">
+                            <% if(shiro.hasPermission("CarSummary.create")){%>
                                 <div class="tab-pane fade active in" id="create">
                                     
                                     <div class="row">
@@ -78,7 +83,9 @@
 									                            <div class="col-lg-6">
 									                                <div class="form-group">
 									                                    <div class="controls">
-									                                      <button id="saveBtn" type="button" class="btn btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建行车单</button>
+									                                    	
+									                                      	<button id="saveBtn" type="button" class="btn btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建行车单</button>
+									                                    	
 									                                    </div>
 									                                </div>
 									                            </div>    
@@ -121,6 +128,8 @@
                                         <!-- /.col-lg-12 -->
                                     </div>
                                 </div>
+                                <%}%>
+                                <% if(shiro.hasPermission("CarSummary.list")){%>
                             <div class="tab-pane fade" id="search">
                             	<div class="panel-body">
                             	
@@ -219,6 +228,7 @@
 		                            </div>
 		                            
                         	</div>
+                        	<%}%>
                         <!-- /.panel-body -->
                 	</div>
                 	<!-- /.col-lg-12 -->
@@ -233,6 +243,21 @@
 
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script>
+	<%
+		var carSummaryUpdate = shiro.hasPermission("CarSummary.update");
+		var carSummaryApproval = shiro.hasPermission("CarSummary.approval"); 
+		var pickupUpdatePermission = shiro.hasPermission("PickupOrder.update");
+		var pickupCompletedPermission = shiro.hasPermission("PickupOrder.completed");
+	%>
+	var CarSummary ={};
+	CarSummary.isUpdate = ${carSummaryUpdate};
+	CarSummary.isApproval = ${carSummaryApproval};
+	
+	var Pickup = {};
+	Pickup.isUpdate = ${pickupUpdatePermission};
+	Pickup.isCompleted = ${pickupCompletedPermission};
+</script>
 
 <script src="/yh/js/carmanage/carSummaryList.js"></script>
 
