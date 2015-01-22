@@ -171,6 +171,15 @@
 <!-- Page-Level Plugin Scripts - Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+
+<script>
+       <%
+       		var productDel = shiro.hasPermission("Product.delete");
+       %>
+       var Product={};
+       Product.isDel = ${productDel};
+</script>
+
 <script src="/yh/js/profile/product/list.js"></script>
 <link href="/yh/css/productTree.css" rel="stylesheet" />
 <style type="text/css">
@@ -184,16 +193,3 @@
 
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.editable.js" type="text/javascript"></script>
 <script src="/yh/js/plugins/dataTables/jquery.jeditable.js" type="text/javascript"></script>
-<SCRIPT type="text/javascript">
-       
-        
-        
-        $(document).ready(function(){
-            
-            // $("#refreshNode").bind("click", {type:"refresh", silent:false}, refreshNode);
-            // $("#refreshNodeSilent").bind("click", {type:"refresh", silent:true}, refreshNode);
-            // $("#addNode").bind("click", {type:"add", silent:false}, refreshNode);
-            // $("#addNodeSilent").bind("click", {type:"add", silent:true}, refreshNode);
-        });
-        
-    </SCRIPT>

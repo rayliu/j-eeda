@@ -107,19 +107,22 @@ $(document).ready(function() {
             {"mDataProp":"ITEM_DESC"},
             { 
                 "mDataProp": null, 
-                "sWidth": "60px",  
+                "sWidth": "60px", 
+                "bVisible":Product.isDel,
             	"sClass": "item_desc",              
                 "fnRender": function(obj) {
-                	//console.log(obj.aData.IS_STOP);
-                	if(obj.aData.IS_STOP != true){
-                		return	"<a class='btn btn-danger btn-xs deleteProduct' id="+obj.aData.ID+" title='删除'>"+
-			                    "<i class='fa fa-trash-o fa-fw'></i>"+
-			                    "</a>";
-                	}else{
-                		return	"<a class='btn btn-success btn-xs deleteProduct' id="+obj.aData.ID+" title='删除'>"+
-			                    "<i class='fa fa-trash-o fa-fw'></i>"+
-			                    "</a>";
+                	if(Product.isDel){
+                		if(obj.aData.IS_STOP != true){
+                    		return	"<a class='btn btn-danger btn-xs deleteProduct' id="+obj.aData.ID+" title='删除'>"+
+    			                    "<i class='fa fa-trash-o fa-fw'></i>"+
+    			                    "</a>";
+                    	}else{
+                    		return	"<a class='btn btn-success btn-xs deleteProduct' id="+obj.aData.ID+" title='删除'>"+
+    			                    "<i class='fa fa-trash-o fa-fw'></i>"+
+    			                    "</a>";
+                    	}
                 	}
+                	
                     
                 }
             }                         
