@@ -8,7 +8,9 @@
             </div>
             
             <div class="panel-heading">
-            	<a  class="btn btn-outline btn-primary" href="/userRole/add">分配新用户角色</a>
+            	<% if(shiro.hasPermission("UserRole.create")){%>
+            		<a  class="btn btn-outline btn-primary" href="/userRole/add">分配新用户角色</a>
+            	<%}%>
             </div>
             <div class="row">
                 <div class="col-lg-12">
@@ -22,8 +24,14 @@
                                         <tr>
                                             <th>用户名称</th>
                                             <th>用户角色</th>
-                                            <th>备注</th>                                           
-                                            <th></th>
+                                            <th>备注</th>  
+                                            <% 
+                                            	var ur_isUpdate = shiro.hasPermission("UserRole.update");
+                                            	var ur_isSelect = shiro.hasPermission("UserRole.permission_list");
+                                            	if(ur_isUpdate || ur_isSelect){
+                                            %>                                         
+                                            	<th></th>
+                                            <%}%>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -69,27 +77,31 @@
    			"aoColumns": [
    	            { "mDataProp":"USER_NAME"},
    	            { "mDataProp":"NAME"},
-   	            { "mDataProp":"REMARK"},
-   	            { "mDataProp":null,
+   	            { "mDataProp":"REMARK"}
+   	            <% 
+   	            	var updatePermission = shiro.hasPermission("UserRole.update");
+   	            	var selectPermission = shiro.hasPermission("UserRole.permission_list");
+   	            	if(updatePermission || selectPermission){
+   	            %>
+   	            ,{ "mDataProp":null,
    	         		"sWidth": "8%", 
 		   	         "fnRender": function(obj) {  
 		   	        	
 		   	        	  if(obj.aData.ROLE_CODE != "admin"){
-		   	        	  return "<a class='btn btn-success btn-xs' href='/userRole/edit?username="+obj.aData.USER_NAME+"'>"+
-		                          "<i class='fa fa-edit fa-fw'></i> "+"编辑"+ "</a>"+
-		                      		"<a class='btn btn-primary btn-xs' href='/userRole/userPermissionRender?username="+obj.aData.USER_NAME+"'>"+
-		                          "<i class='fa fa-search fa-fw'></i> "+ "查看"+ "</a>";
+		   	        	  return "<% if(updatePermission){%><a class='btn btn-success btn-xs' href='/userRole/edit?username="+obj.aData.USER_NAME+"'>"+
+		                          "<i class='fa fa-edit fa-fw'></i> "+"编辑"+ "</a><%}%>"+
+		                      		"<% if(selectPermission){%><a class='btn btn-primary btn-xs' href='/userRole/userPermissionRender?username="+obj.aData.USER_NAME+"'>"+
+		                          "<i class='fa fa-search fa-fw'></i> "+ "查看"+ "</a><%}%>";
 		   	        	 }else{
-		   	        		return "<a class='btn btn-primary btn-xs' href='/userRole/userPermissionRender?username="+obj.aData.USER_NAME+"'>"+
-		                            "<i class='fa fa-search fa-fw'></i> "+ "查看"+ "</a>";
+		   	        		return "<% if(selectPermission){%><a class='btn btn-primary btn-xs' href='/userRole/userPermissionRender?username="+obj.aData.USER_NAME+"'>"+
+		                            "<i class='fa fa-search fa-fw'></i> "+ "查看"+ "</a><%}%>";
 		   	        	 } 
 		                 
 		   	         }
 		   	 	}
-             
+             <%}%>
    	      	]
    		});
    		
-
    });
 </script>
