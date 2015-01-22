@@ -1,5 +1,7 @@
 $(document).ready(function() {
 	$('#menu_contract').addClass('active').find('ul').addClass('in');
+	var isUpdate = false;
+	var isDel = false;
 	
     var type = $("#type").val();//注意这里
     var urlSource;
@@ -9,16 +11,22 @@ $(document).ready(function() {
 		urlSource="/customerContract/customerList";
 		urlSource2="/customerContract/edit/";
 		urlSource3="/customerContract/delete/";
+		isUpdate = ContractCustomer.isUpdate;
+		isDel = ContractCustomer.isDel;
 	}if(type=='SERVICE_PROVIDER'){
 		$("#btn2").show();
 		urlSource="/spContract/spList";
 		urlSource2="/spContract/edit/";
 		urlSource3="/spContract/delete2/";
+		isUpdate = ContractProvider.isUpdate;
+		isDel = ContractProvider.isDel;
 	}if(type=='DELIVERY_SERVICE_PROVIDER'){
 		$("#btn3").show();
 		urlSource="/deliverySpContract/deliveryspList";
 		urlSource2="/deliverySpContract/edit/";
 		urlSource3="/deliverySpContract/delete3/";
+		isUpdate = ContranctDelivey.isUpdate;
+		isDel = ContranctDelivey.isDel;
 	}
     
 	//datatable, 动态处理
@@ -37,9 +45,14 @@ $(document).ready(function() {
         "sAjaxSource": urlSource,
         "aoColumns": [   
             {"mDataProp":"NAME",
-              "fnRender": function(obj) {                    
-                return "<a title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+obj.aData.NAME+
-                  "</a>";
+              "fnRender": function(obj) { 
+            	if(isUpdate){
+            		 return "<a title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+obj.aData.NAME+
+                     "</a>";
+            	}else{
+            		return obj.aData.NAME;
+            	}
+               
               }
             },
             {"mDataProp":"COMPANY_NAME",
@@ -51,14 +64,22 @@ $(document).ready(function() {
             {"mDataProp":"PERIOD_TO"},
             { 
                 "mDataProp": null, 
-                "sWidth": "11%",                
-                "fnRender": function(obj) {                    
-                    return "<a class='btn btn-success' title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+
-                                "<i class='fa fa-edit fa-fw'></i>"+
-                            "</a>"+
-                            "<a class='btn btn-danger' title='删除' href='"+urlSource3+""+obj.aData.CID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                            "</a>";
+                "sWidth": "11%",  
+                "bVisible":(isUpdate || isDel),
+                "fnRender": function(obj) {     
+                	var str ="";
+                	
+                	if(isUpdate){
+                		str +=  "<a class='btn btn-success' title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+
+		                            "<i class='fa fa-edit fa-fw'></i>"+
+		                        "</a>";
+                	}
+                	if(isDel){
+                		str += "<a class='btn btn-danger' title='删除' href='"+urlSource3+""+obj.aData.CID+"'>"+
+	                        "<i class='fa fa-trash-o fa-fw'></i>"+ 
+	                        "</a>";
+                	}
+                    return str;       
                 }
             }                         
         ],
