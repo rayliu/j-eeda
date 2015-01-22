@@ -20,7 +20,12 @@ $(document).ready(function() {
   	        },    
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		if(ChargePreInvoice.isUpdate || ChargePreInvoice.isApproval || ChargePreInvoice.isConfirm){
+            			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		}else{
+            			return obj.aData.ORDER_NO;
+            		}
+        			
         		}},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {

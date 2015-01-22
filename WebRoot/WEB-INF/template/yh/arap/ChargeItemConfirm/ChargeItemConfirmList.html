@@ -88,7 +88,9 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">                                                    
                                             <span id="datetimepicker2" class="input-append date search-control "> 
-                                                <button id="chargeConfiremBtn" class="btn btn-primary">确认</button>
+                                            	<% if(shiro.hasPermission("ChargeItem.affirm")){%>
+                                                	<button id="chargeConfiremBtn" class="btn btn-primary">确认</button>
+                                            	<%}%>
                                             </span>
                                         </div>
                                     </div>
@@ -157,8 +159,18 @@
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 
-<script src="/yh/js/arap/ChargeItemConfirm/list.js"></script>
+
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script>
+	<%
+		var returnOrderUpdate = shiro.hasPermission("ReturnOrder.update");
+		var returnOrderComplete = shiro.hasPermission("ReturnOrder.completed");
+	%>
+	var Return = {};
+	Return.isUpdate = ${returnOrderUpdate};
+	Return.isComplete = ${returnOrderComplete};
+</script>
 
+<script src="/yh/js/arap/ChargeItemConfirm/list.js"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>

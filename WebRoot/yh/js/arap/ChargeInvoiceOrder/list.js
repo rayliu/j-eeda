@@ -14,7 +14,12 @@ $(document).ready(function() {
         "aoColumns": [   
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		if(ChargeInvoice.isUpdate || ChargeInvoice.isApproval){
+            			return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		}else{
+            			return obj.aData.ORDER_NO;
+            		}
+        			
         	}},
             {"mDataProp":"CNAME"},
             {"mDataProp":"STATUS",

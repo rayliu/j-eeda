@@ -281,7 +281,26 @@
 
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
-
+<script>
+	<%
+		var chargePreInvoiceUpdate = shiro.hasPermission("ChargePreInvoiceOrder.update");
+		var chargePreInvoiceApproval = shiro.hasPermission("ChargePreInvoiceOrder.approval");
+		var chargePreInvoiceConfirm = shiro.hasPermission("ChargePreInvoiceOrder.confirmation");
+		var chargeInvoiceUpdate = shiro.hasPermission("ChargeInvoiceOrder.update");
+		var chargeInvoiceApproval = shiro.hasPermission("ChargeInvoiceOrder.approval");
+	%>
+	
+	
+	var ChargePreInvoice={};
+	var ChargeInvoice = {};
+	ChargePreInvoice.isUpdate = ${chargePreInvoiceUpdate};
+	ChargePreInvoice.isApproval = ${chargePreInvoiceApproval};
+	ChargePreInvoice.isConfirm = ${chargePreInvoiceConfirm};
+	
+	ChargeInvoice.isUpdate = ${chargeInvoiceUpdate};
+	ChargeInvoice.isApproval = ${chargeInvoiceApproval};
+	
+</script>
 <script src="/yh/js/arap/ChargeInvoiceOrder/list.js"></script>
 <script src="/yh/js/arap/ChargeInvoiceOrder/createList.js"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
