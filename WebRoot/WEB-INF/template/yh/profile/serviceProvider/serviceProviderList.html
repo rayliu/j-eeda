@@ -7,7 +7,9 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        <a class="btn btn-primary" href="/serviceProvider/add">新增供应商</a>
+	                    <% if(shiro.hasPermission("Provider.create")){%>
+	                        <a class="btn btn-primary" href="/serviceProvider/add">新增供应商</a>
+	                    <%}%>
                     </h1>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -68,7 +70,7 @@
                                             <th>地址</th>
                                             <th>收款单位</th>
                                             <th>付款方式</th>
-                                            <th>所在地</th>
+                                            <th>所在地</th>                                        
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -90,7 +92,17 @@
        
 
 <%}%>
- <!-- Page-Level Plugin Scripts - Tables -->
+
+
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script>
+	<%
+		var providerUpdatePermission = shiro.hasPermission("Provider.update");
+		var providerDelPermission = shiro.hasPermission("Provider.delete");
+	%>
+	var Provider={};
+	Provider.isUpdate=${providerUpdatePermission};
+	Provider.isDel=${providerDelPermission};
+</script>
 <script src="/yh/js/profile/serviceProvider/list.js"></script>

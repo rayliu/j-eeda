@@ -58,28 +58,31 @@ $(document).ready(function() {
             },
             { 
                 "mDataProp": null, 
-                "sWidth": "8%",                
-                "fnRender": function(obj) {   
-                	if(obj.aData.IS_STOP != true){
-                		 return "<a class='btn btn-info' href='/serviceProvider/edit/"+obj.aData.PID+"'>"+
-	                         "<i class='fa fa-edit fa-fw'></i>"+
-	                         "编辑"+
-		                     "</a>"+
-		                     "<a class='btn btn-danger' href='/serviceProvider/delete/"+obj.aData.PID+"'>"+
-		                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
-		                         "停用"+
-		                     "</a>";
-                	}else{
-                		 return "<a class='btn btn-info' href='/serviceProvider/edit/"+obj.aData.PID+"'>"+
-	                         "<i class='fa fa-edit fa-fw'></i>"+
-	                         "编辑"+
-		                     "</a>"+
-		                     "<a class='btn btn-success' href='/serviceProvider/delete/"+obj.aData.PID+"'>"+
-		                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
-		                         "启用"+
-		                     "</a>";
+                "sWidth": "8%",  
+                "bVisible":(Provider.isUpdate || Provider.isDel),
+                "fnRender": function(obj) {  
+                	var str ="";
+                	if(Provider.isUpdate){
+                		str += "<a class='btn btn-info' href='/serviceProvider/edit/"+obj.aData.PID+"'>"+
+                        "<i class='fa fa-edit fa-fw'></i>"+
+                        "编辑"+"</a>";
+                	}
+                	if(Provider.isDel){
+                		if(obj.aData.IS_STOP != true){
+			                    str += "<a class='btn btn-danger' href='/serviceProvider/delete/"+obj.aData.PID+"'>"+
+			                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
+			                         "停用"+
+			                         "</a>";
+	                		
+		               	}else{
+		               		str +="<a class='btn btn-success' href='/serviceProvider/delete/"+obj.aData.PID+"'>"+
+				                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
+				                         "启用"+
+				                     "</a>";
+		               	}
                 	}
                 	
+                	return str;
                    
                 }
             }                         
