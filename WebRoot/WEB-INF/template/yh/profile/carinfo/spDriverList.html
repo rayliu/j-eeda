@@ -5,8 +5,10 @@
 <div class="row">
       <div class="col-lg-12">
             <h1 class="page-header">
-				<a class="btn btn-primary" href="/driverinfo/addSpDriver"><i class="fa fa-plus-square-o"></i>
-				<span class="hidden-tablet">添加司机</span></a>
+            	<% if(shiro.hasPermission("ProviderDriver.create")){%>
+					<a class="btn btn-primary" href="/driverinfo/addSpDriver"><i class="fa fa-plus-square-o"></i>
+					<span class="hidden-tablet">添加司机</span></a>
+				<%}%>
 			</h1>
 		<div class="panel panel-default">
 				<div class="panel-heading">
@@ -21,7 +23,13 @@
 								<th>联系电话</th>
 								<th>驾驶证类型</th>
 								<th>身份证</th>
+								<% 
+					            	var updatePermission = shiro.hasPermission('ProviderDriver.update');
+					            	var delPermission = shiro.hasPermission('ProviderDriver.delete');
+					            	if(updatePermission || delPermission){
+					            %>
 								<th></th>
+								<%}%>
 							</tr>
 						</thead>
 						<tbody>
@@ -63,33 +71,39 @@ $(document).ready(function() {
 				{ "mDataProp": "CONTACT_PERSON" },
 				{ "mDataProp": "PHONE" },
 				{ "mDataProp": "LICENSE" },
-				{ "mDataProp": "IDENTIFICATION"},
-	            { 
+				{ "mDataProp": "IDENTIFICATION"}
+	            <% 
+	            	var updatePermission = shiro.hasPermission('ProviderDriver.update');
+	            	var delPermission = shiro.hasPermission('ProviderDriver.delete');
+	            	if(updatePermission || delPermission){
+	            %>
+				,{ 
 	                "mDataProp": null, 
 	                "sWidth": "15%",
 	                "fnRender": function(obj) { 
 	                	if(obj.aData.IS_STOP != true){
-	                		return "<a class='btn btn-info editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"'>"+
+	                		return "<% if(shiro.hasPermission('ProviderDriver.update')){%><a class='btn btn-info editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
-			                        "</a>"+
-			                        "<a class='btn btn-danger editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
+			                        "</a><%}%>"+
+			                        "<% if(shiro.hasPermission('ProviderDriver.delete')){%><a class='btn btn-danger editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
 			                            "<i class='fa fa-edit'> </i> "+
 			                            "停用"+
-			                        "</a>";
+			                        "</a><%}%>";
 	                	}else{
-	                		return "<a class='btn btn-info editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"'>"+
+	                		return "<% if(shiro.hasPermission('ProviderDriver.update')){%><a class='btn btn-info editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"'>"+
 			                            "<i class='fa fa-edit'> </i> "+
 			                            "编辑"+
-				                        "</a>"+
-			                        "<a class='btn btn-success editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
+				                        "</a><%}%>"+
+			                        "<% if(shiro.hasPermission('ProviderDriver.delete')){%><a class='btn btn-success editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
 			                            "<i class='fa fa-edit'> </i> "+
 			                            "启用"+
-			                        "</a>";
+			                        "</a><%}%>";
 	                	}
 	                    
 	                }
 	            } 
+				<%}%>
 	            ]
 	} );
 });

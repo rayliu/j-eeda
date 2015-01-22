@@ -5,8 +5,10 @@
 <div class="row">
       <div class="col-lg-12">
             <h1 class="page-header">
-				<a class="btn btn-primary" href="/carinfo/addSpCarInfo"><i class="fa fa-plus-square-o"></i>
-				<span class="hidden-tablet">添加车辆</span></a>
+            	<% if(shiro.hasPermission("ProviderCar.create")){%>
+					<a class="btn btn-primary" href="/carinfo/addSpCarInfo"><i class="fa fa-plus-square-o"></i>
+					<span class="hidden-tablet">添加车辆</span></a>
+				<%}%>
 			</h1>
 			<div class="panel panel-default">
 					<div class="panel-heading">
@@ -22,7 +24,13 @@
 									<th>司机电话</th>
 									<th>车型</th>
 									<th>长度</th>
+									<%
+						            	var updatePermission = shiro.hasPermission("ProviderCar.update");
+						            	var delPermission= shiro.hasPermission("ProviderCar.delete");
+						            	if(updatePermission || delPermission){
+						            %>
 									<th></th>
+									<%}%>
 								</tr>
 							</thead>
 							<tbody>
@@ -66,36 +74,42 @@ $(document).ready(function() {
 				{ "mDataProp": "DRIVER" },
 				{ "mDataProp": "PHONE" },
 				{ "mDataProp": "CARTYPE" },
-				{ "mDataProp": "LENGTH" },
+				{ "mDataProp": "LENGTH" }
 				/* { "mDataProp": "DRIVER" },
 	            { "mDataProp": "PHONE" }, */
-	            { 
+	            <%
+	            	var updatePermission = shiro.hasPermission("ProviderCar.update");
+	            	var delPermission= shiro.hasPermission("ProviderCar.delete");
+	            	if(updatePermission || delPermission){
+	            %>
+	            ,{ 
 	                "mDataProp": null, 
 	                "sWidth": "15%",
 	                "fnRender": function(obj) { 
 	                	
 	                	if(obj.aData.IS_STOP != true){
-	                		return "<a class='btn btn-info editbutton' href='/carinfo/editSpCarInfo/"+obj.aData.ID+"'>"+
+	                		return "<% if(shiro.hasPermission('ProviderCar.update')){%><a class='btn btn-info editbutton' href='/carinfo/editSpCarInfo/"+obj.aData.ID+"'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            	"编辑"+
-			                        "</a>"+
-			                        "<a class='btn btn-danger delete' code='"+obj.aData.ID+"'>"+
+			                        "</a><%}%>"+
+			                        "<% if(shiro.hasPermission('ProviderCar.delete')){%><a class='btn btn-danger delete' code='"+obj.aData.ID+"'>"+
 			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
 			                            "停用"+
-			                        "</a>";
+			                        "</a><%}%>";
 	                	}else{
-	                		return "<a class='btn btn-info editbutton' href='/carinfo/editSpCarInfo/"+obj.aData.ID+"'>"+
+	                		return "<% if(shiro.hasPermission('ProviderCar.update')){%><a class='btn btn-info editbutton' href='/carinfo/editSpCarInfo/"+obj.aData.ID+"'>"+
 			                            "<i class='fa fa-edit'> </i> "+
 			                            "编辑"+
-			                        "</a>"+
-			                        "<a class='btn btn-success delete' code='"+obj.aData.ID+"'>"+
+			                        "</a><%}%>"+
+			                        "<% if(shiro.hasPermission('ProviderCar.delete')){%><a class='btn btn-success delete' code='"+obj.aData.ID+"'>"+
 			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
 			                            "启用"+
-			                        "</a>";
+			                        "</a><%}%>";
 	                	}
 	                    
 	                }
 	            } 
+	            <%}%>
 	            ]
 	} );
 	//gateInProduct删除
