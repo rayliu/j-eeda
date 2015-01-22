@@ -8,7 +8,11 @@
             <div class="row">
                  <div class="col-lg-12">
                     <h1 class="page-header">
-                        <a class="btn btn-primary" href="/transferOrder/add">新增运输单</a>
+                    	<% 
+                    		if(shiro.hasPermission("TransferOrder.create")){
+                    	%>
+                        	<a class="btn btn-primary" href="/transferOrder/add">新增运输单</a>
+                        <%}%>
                         <input id="fileUploadBtn" type="button" class="btn btn-primary" value="导入运输单" size="30" />
                         <form id="toFileUploadForm" method="post" action="/transferOrder/intoTransferOrder" enctype="multipart/form-data">
 						     <input type="file" id="toFileUpload" name="files[]" 
@@ -211,10 +215,19 @@
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 
+<script>
+	<%
+		var transferOrderUpdate = shiro.hasPermission("TransferOrder.update");
+	%>
+	var TransferOrder = {};
+	TransferOrder.isUpdate = ${transferOrderUpdate};
+</script>
+
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+
 
 <script src="/yh/js/transferOrder/list.js"></script>
 

@@ -23,7 +23,12 @@ $(document).ready(function() {
         "aoColumns": [   
             {"mDataProp":"ORDER_NO", "sWidth":"70px",
             	"fnRender": function(obj) {
-            			return "<a href='/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            			if(TransferOrder.isUpdate){
+            				return "<a href='/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            			}else{
+            				return obj.aData.ORDER_NO;
+            			}
+            			
             		}},
             {"mDataProp":"STATUS", "sWidth":"100px"},
             {"mDataProp":"CNAME", "sWidth":"200px"},
