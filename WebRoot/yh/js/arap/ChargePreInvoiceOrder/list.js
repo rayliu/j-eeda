@@ -16,7 +16,12 @@ $(document).ready(function() {
         "aoColumns": [   
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		if(ChargePreInvoice.isUpdate || ChargePreInvoice.isApproval || ChargePreInvoice.isConfirm){
+            			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		}else{
+            			return obj.aData.ORDER_NO;
+            		}
+        			
         		}},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
@@ -46,12 +51,18 @@ $(document).ready(function() {
             {"mDataProp":"APPROVAL_STAMP"},
             { 
                 "mDataProp": null, 
-                "sWidth": "8%",                
+                "sWidth": "8%", 
+                "bVisible":false,
                 "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger' href='#'"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                                "取消"+
-                            "</a>";
+                	if(false){
+                		return	"<a class='btn btn-danger' href='#'"+obj.aData.ID+"'>"+
+		                        "<i class='fa fa-trash-o fa-fw'></i>"+ 
+		                        "取消"+
+		                        "</a>";
+                	}else{
+                		return "";
+                	}
+                    
                 }
             }                         
         ]      
