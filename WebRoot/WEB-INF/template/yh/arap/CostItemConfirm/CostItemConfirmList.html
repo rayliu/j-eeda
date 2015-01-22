@@ -11,7 +11,6 @@
                 <!-- /.col-lg-12 -->
             </div>
 
-           <!-- /.row -->
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
@@ -151,6 +150,14 @@
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script>
+	//有配送，保险，提货，零担
+	<%
+		var driverUpdate = shiro.hasPermission("DeliveryOder.update");
+		var driverCompleted = shiro.hasPermission("DeliveryOder.completed");
+		var pickupUpdate = shiro.hasPermission("PickupOrder.update");
+	%>
+</script>
 <script src="/yh/js/arap/CostItemConfirm/list.js"></script>
 
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
