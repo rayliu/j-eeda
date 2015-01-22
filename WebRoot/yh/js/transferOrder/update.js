@@ -2633,7 +2633,7 @@ $(document).ready(function() {
     		$("#muban").show();
     	}else{
     		$("#printBtn").removeAttr('data-target');
-    		$.scojs_message('对不起，当前客户没有定义单据格式', $.scojs_message.TYPE_ERROR);
+    		$.scojs_message('对不起，当前客户没有定义单据打印格式', $.scojs_message.TYPE_ERROR);
     	}
     });
     $("#btnOK").on('click',function(){
