@@ -2,6 +2,7 @@ $(document).ready(function() {
 	$('#menu_warehouse').addClass('active').find('ul').addClass('in');
 	$('#reset').hide();
 	$('#warehouseSelect').val();
+	var is_true=false;
 	var inventory=$("#inventory").val();
 	var source = "";
 	var source2 = "";
@@ -9,10 +10,12 @@ $(document).ready(function() {
 		$("#btn1").show();
 		source = "/gateIn/gateInlist";
 		source2 = "/gateIn/gateInEdit/";
+		is_true = gateIn.isUpdate || gateIn.isComplete;
 	}if(inventory=='gateOut'){
 		$("#btn2").show();
 		source = "/gateOut/gateOutlist";
 		source2 = "/gateOut/gateOutEdit/";
+		is_true = gateOut.isUpdate || gateOut.isComplete;
 	}
 	//入库单list
 	 $('#example').dataTable( {
@@ -28,7 +31,12 @@ $(document).ready(function() {
 			"aoColumns": [
 				{ "mDataProp": "ORDER_NO",
 					"fnRender": function(obj) {
-            			return "<a href='"+source2+""+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+						if(is_true){
+							return "<a href='"+source2+""+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+						}else{
+							return obj.aData.ORDER_NO;
+						}
+            			
             		}},
 				{ "mDataProp": "COMPANY_NAME" },
 				{ "mDataProp": "WAREHOUSE_NAME" },
@@ -37,6 +45,7 @@ $(document).ready(function() {
 	            { "mDataProp": "QUALIFIER" },
 	            { 
 	                "mDataProp": null,
+	                "bVisible":false,
 	                "fnRender": function(obj) {                    
 	                    return "<a class='btn btn-danger' href='/gateIn/gateInDelect/"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 

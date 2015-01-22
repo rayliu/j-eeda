@@ -362,7 +362,7 @@ $("#gateOutConfirmBtn").click(function(){
 		console.log(data)
 		 if(data>0){
 			 window.location.href="/transferOrder/edit?id="+data;
-			}
+		}
 		if(data.success){
 			 $("#gateOutConfirmBtn").attr("disabled", true);
 			 alert("出库成功！");
