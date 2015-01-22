@@ -79,8 +79,7 @@ public class PermissionConstant {
 	public static final String PERMSSION_CPIO_CREATE = "ChargePreInvoiceOrder.create";
 	public static final String PERMSSION_CPIO_UPDATE = "ChargePreInvoiceOrder.update";
 	public static final String PERMSSION_CPIO_APPROVAL = "ChargePreInvoiceOrder.approval";//审核
-	//审批
-	public static final String PERMSSION_CPIO_CONFIRMATION = "ChargePreInvoiceOrder.confirmation";
+	public static final String PERMSSION_CPIO_CONFIRMATION = "ChargePreInvoiceOrder.confirmation";//审批
 	
 	/*应收开票记录*/
 	public static final String PERMSSION_CIO_LIST = "ChargeInvoiceOrder.list";

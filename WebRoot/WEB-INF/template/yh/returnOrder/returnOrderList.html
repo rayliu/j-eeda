@@ -158,4 +158,13 @@
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script>
+	<%
+		var returnOrderUpdate = shiro.hasPermission("ReturnOrder.update");
+		var returnOrderComplete = shiro.hasPermission("ReturnOrder.completed");
+	%>
+	var Return = {};
+	Return.isUpdate = ${returnOrderUpdate};
+	Return.isComplete = ${returnOrderComplete};
+</script>
 <script src="/yh/js/returnOrder/list.js"></script>
