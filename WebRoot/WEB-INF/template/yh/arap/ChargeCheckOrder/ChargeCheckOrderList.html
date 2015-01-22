@@ -108,7 +108,9 @@
 									                            <div class="col-lg-6">
 									                                <div class="form-group">
 									                                    <div class="controls">
-									                                      <button id="saveBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建对账单</button>
+									                                      <% if(shiro.hasPermission("ChargeCheckOrder.create")){%>
+									                                      	<button id="saveBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建对账单</button>
+									                                      <%}%>
 									                                    </div>
 									                                </div>
 									                            </div>    
@@ -344,7 +346,20 @@
 
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
-
+<script>
+	<%
+		var returnOrderUpdate = shiro.hasPermission("ReturnOrder.update");
+		var returnOrderComplete = shiro.hasPermission("ReturnOrder.completed");
+		var chargeOrderUpdate = shiro.hasPermission("ChargeCheckOrder.update");
+		var chargeOrderAffirm = shiro.hasPermission("ChargeCheckOrder.affirm");
+	%>
+	var Return = {};
+	var ChargeCheck={};
+	Return.isUpdate = ${returnOrderUpdate};
+	Return.isComplete = ${returnOrderComplete};
+	ChargeCheck.isUpdate = ${chargeOrderUpdate};
+	ChargeCheck.isAffirm = ${chargeOrderAffirm};
+</script>
 <script src="/yh/js/arap/ChargeCheckOrder/list.js"></script>
 <script src="/yh/js/arap/ChargeCheckOrder/createList.js"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>

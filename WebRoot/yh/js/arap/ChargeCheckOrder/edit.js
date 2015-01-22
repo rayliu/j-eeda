@@ -99,7 +99,12 @@ $(document).ready(function() {
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		if(Return.isUpdate || Return.isComplete){
+            			return "<a href='/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		}else{
+            			return obj.aData.ORDER_NO;
+            		}
+        			
         		}},
 		    {"mDataProp":null, "sWidth":"120px",
                 "fnRender": function(obj) {
