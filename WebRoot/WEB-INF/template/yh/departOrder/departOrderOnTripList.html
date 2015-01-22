@@ -198,6 +198,17 @@
 
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
-
+<script >
+	<%
+		 var departOrderUpdate = shiro.hasPermission("DepartOrder.update");
+		 var departOrderComplete = shiro.hasPermission("DepartOrder.completed");
+		 var departOnTrip = shiro.hasPermission("Ontrip.update");
+	%>
+	var DepartOrder={};
+	var DepartOnTrip ={};
+	DepartOrder.isUpdate = ${departOrderUpdate};
+	DepartOrder.isComplete = ${departOrderComplete};
+	DepartOnTrip.isUpdate = ${departOnTrip};
+</script>
 <script src="/yh/js/departOrder/onTripList.js"></script>
 

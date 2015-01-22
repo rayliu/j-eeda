@@ -19,6 +19,7 @@ $(document).ready(function() {
 			{ 
 			    "mDataProp": null,
 			    "sWidth": "60px",
+			    "bVisible":DepartOnTrip.isUpdate,
 			    "fnRender": function(obj) {
 			    	console.log(obj.aData.ARRIVAL_MODE);
 			    	if(obj.aData.DEPART_STATUS != '已入库' && obj.aData.DEPART_STATUS != '已收货'){
@@ -36,7 +37,12 @@ $(document).ready(function() {
             {"mDataProp":null,
             	"sWidth": "100px",
             	"fnRender": function(obj) {
-            		 return "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+            		if(DepartOrder.isUpdate || DepartOrder.isComplete){
+            			return "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+            		}else{
+            			return obj.aData.DEPART_NO;
+            		}
+            		 
             	}
             },
             {"mDataProp":"TRANSFER_ORDER_NO",
@@ -53,12 +59,22 @@ $(document).ready(function() {
             	"sWidth": "90px",
                 "fnRender": function(obj) {
                 	if(obj.aData.LOCATION!=null && obj.aData.LOCATION!=''){
-                		return obj.aData.LOCATION+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                		if(DepartOrder.isUpdate){
+                			return obj.aData.LOCATION+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                		}else{
+                			return obj.aData.LOCATION;
+                		}
+                		
                 	}else{
                     	if(obj.aData.DEPART_STATUS==null){
                     		obj.aData.DEPART_STATUS="";
                     	}
-                    	return obj.aData.DEPART_STATUS+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                    	if(DepartOrder.isUpdate){
+                    		return obj.aData.DEPART_STATUS+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                    	}else{
+                    		return obj.aData.DEPART_STATUS;
+                    	}
+                    	
                 	}                	
                 }
             },
