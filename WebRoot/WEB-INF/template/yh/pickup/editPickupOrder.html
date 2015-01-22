@@ -539,9 +539,17 @@
                         <!-- /.panel-body --> 
                         <div class=".tooltip-demo">
                             <hr/>
-                        	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
-		               		<button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
-		               		<button id="finishBtn" disabled="disabled" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">已完成</button>
+                        	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>   
+                        	<%
+                        		if(shiro.hasPermission("PickupOrder.create") || shiro.hasPermission("PickupOrder.update")){
+                        	%>                         
+		               			<button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
+		               		<%}%>
+		               		<% 
+		               			if(shiro.hasPermission("PickupOrder.completed")){
+		               		%>
+		               			<button id="finishBtn" disabled="disabled" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">已完成</button>
+		               		<%}%>
 		               		<a class="btn btn-default" href="/pickupOrder">返回</a>
                         </div>                       
                     </div>

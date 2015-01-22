@@ -16,8 +16,13 @@
 	        "aoColumns": [   
 			    {"mDataProp":"DEPART_NO", "sWidth":"70px",
 	            	"fnRender": function(obj) {
+	            		if(Pickup.isUpdate || Pickup.isCompleted){
 	            			return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
-	            		}},
+	            		}else{
+	            			return obj.aData.DEPART_NO;
+	            		}
+	            			
+	             }},
 	            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},
 			    {"mDataProp":"STATUS", "sWidth":"80px"},
 			    {"mDataProp":"PICKUP_MODE", "sWidth":"120px",

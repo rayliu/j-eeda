@@ -9,8 +9,12 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-	                    <a class="btn btn-primary" href="/pickupOrder/add">新建提货调车单</a>
-	                    <a class="btn btn-primary" href="/departOrder/addForRouteSp">新建整车发车单</a>
+                    	<% if(shiro.hasPermission("PickupOrder.create")){%>
+	                    	<a class="btn btn-primary" href="/pickupOrder/add">新建提货调车单</a>
+	                    <%}%>
+	                    <% if(shiro.hasPermission("DepartOrder.create")){%>
+	                    	<a class="btn btn-primary" href="/departOrder/addForRouteSp">新建整车发车单</a>
+                		<%}%>
                 	</h1>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -140,10 +144,21 @@
  <!-- 引入dataTables的js 文件- Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script>
+	<%
+		var pickupUpdatePermission = shiro.hasPermission("PickupOrder.update");
+		var pickupCompletedPermission = shiro.hasPermission("PickupOrder.completed");
+	%>
+	var Pickup = {};
+	Pickup.isUpdate = ${pickupUpdatePermission};
+	Pickup.isCompleted = ${pickupCompletedPermission};
+</script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+
+
 <script src="/yh/js/pickup/list.js"></script>
-    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+  
 
 </body>
 
