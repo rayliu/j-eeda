@@ -4,17 +4,18 @@
  <div id="wrapper">
 
         <div id="page-wrapper">
-           
-                <div class="col-lg-12">
-                    <h1 class="page-header">收费条目定义</h1>
-                </div>
+           		
+              <div class="col-lg-12">
+                  <h3 class="page-header">收费条目定义</h3>
+              </div>
                 
                
                 <!-- /.col-lg-12 -->
-            
-            <div class="panel-heading">
-            <a  class="btn btn-outline btn-primary" href="/toll/Edit">添加条目</a>
-            </div>
+            <% if(shiro.hasPermission("Toll.create")){%>
+	            <div class="panel-heading">
+	            	<a  class="btn btn-outline btn-primary" href="/toll/Edit">添加条目</a>
+	            </div>
+            <%}%>
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-12">
@@ -63,13 +64,21 @@
 
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>
+    <%
+    	var tollUpdate = shiro.hasPermission("Toll.update");
+    	var tollDel = shiro.hasPermission("Toll.delete");
+    %>
+    var Toll={};
+    Toll.isUpdate = ${tollUpdate};
+    Toll.isDel = ${tollDel};
+    
     $(document).ready(function() {
       $('#menu_profile').addClass('active').find('ul').addClass('in');
    	 $("#del").click(function(){
-       	alert("waerwerwee");
+       		//alert("waerwerwee");
        });
-   	 $("#query").click(function(){
-   	    	alert("123");
+    	 $("#query").click(function(){
+   	    	//alert("123");
    	    });
    	 $('#toll_example').dataTable( {
    		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -86,31 +95,35 @@
    	            { "mDataProp": "REMARK" },
    	            { "mDataProp": null,
    	         		"sWidth": "8%", 
+   	         		"bVisible":(Toll.isUpdate || Toll.isDel),
    	        	 "fnRender": function(obj) { 
-   	        	 if(obj.aData.IS_STOP != true ){
-   	        		return "<a class='btn btn-info' href='/toll/Edit/"+obj.aData.ID+"'>"+
-		                    "<i class='fa fa-edit fa-fw'></i> "+
-		                    "编辑"+
-			                "</a>"+
-			                "<a class='btn btn-danger' href='/toll/delete/"+obj.aData.ID+"'>"+
-			                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
-			                    "停用"+
-			                "</a>";
-   	        	 }else{
-   	        		return "<a class='btn btn-info' href='/toll/Edit/"+obj.aData.ID+"'>"+
-		                    "<i class='fa fa-edit fa-fw'></i> "+
-		                    "编辑"+
-			                "</a>"+
-			                "<a class='btn btn-success' href='/toll/delete/"+obj.aData.ID+"'>"+
-			                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
-			                    "启用"+
-			                "</a>";
-   	        	 }
-                 
-   	         								}
-   	 			}
+   	        		 var str = "";
+   	        		 if(Toll.isUpdate){
+   	        			 str += "<a class='btn btn-info' href='/toll/Edit/"+obj.aData.ID+"'>"+
+			                    "<i class='fa fa-edit fa-fw'></i> "+
+			                    "编辑"+
+				                "</a>";
+   	        		 }
+   	        		 if(Toll.isDel){
+   	        			if(obj.aData.IS_STOP != true ){
+   		   	        		str += "<a class='btn btn-danger' href='/toll/delete/"+obj.aData.ID+"'>"+
+   					                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
+   					                    "停用"+
+   					                "</a>";
+   		   	        	 }else{
+   		   	        		str += "<a class='btn btn-success' href='/toll/delete/"+obj.aData.ID+"'>"+
+   					                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
+   					                    "启用"+
+   					                "</a>";
+   		   	        	 } 
+   	        		 }
+	   	        	 
+                 return str;
+   	         	
+   	        	}
+   	 		}
              
-   	            ]
+   	     ]
    	});
    		
 
