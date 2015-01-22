@@ -704,7 +704,7 @@ public class DataInitUtil {
 		// 运输单权限定义 
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('运输单','TransferOrder.list', '运输单查询权限');");
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('运输单','TransferOrder.create', '运输单创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('运输单','TransferOrder.update', '运输单保存权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('运输单','TransferOrder.update', '运输单更新权限');");
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('运输单','TransferOrder.delete', '运输单删除权限');");
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('运输单','TransferOrder.add_revenue', '运输单添加/删除应收条目权限');");
 		/*-----------------------------------------red---------------------------------*/
@@ -835,9 +835,9 @@ public class DataInitUtil {
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色','Role.delete', '角色删除权限');");
 		/*用户角色权限*/
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.list', '用户角色查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.create', '角色创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.update', '角色更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.permission_list', '角色权限查询权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.create', '用户角色创建权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.update', '用户角色更新权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.permission_list', '用户角色权限查询权限');");
 		/*角色权限*/
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色操作','RolePermission.list', '角色操作查询权限');");
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色操作','RolePermission.create', '角色操作创建权限');");
