@@ -42,29 +42,31 @@ $(document).ready(function() {
             },
             { 
                 "mDataProp": null, 
-                "sWidth": "15%",                
+                "sWidth": "15%",  
+                "bVisible":(Customer.updatePermission || Customer.delPermission),
                 "fnRender": function(obj) {  
-                	console.log(obj.aData.IS_STOP );
+                	var str="";
+                	if(Customer.updatePermission){
+            			str +="<a class='btn btn-info' href='/customer/edit/"+obj.aData.PID+"'>"+
+	                            "<i class='fa fa-edit fa-fw'></i>"+
+	                            "编辑"+"</a>";
+            		}
                 	if(obj.aData.IS_STOP != true){
-                		 return "<a class='btn btn-info' href='/customer/edit/"+obj.aData.PID+"'>"+
-                         "<i class='fa fa-edit fa-fw'></i>"+
-                         "编辑"+
-	                     "</a>"+
-	                     "<a class='btn btn-danger' href='/customer/delete/"+obj.aData.PID+"'>"+
-	                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
-	                         "停用"+
-	                     "</a>";
+                		if(Customer.delPermission){
+                			str += "<a class='btn btn-danger' href='/customer/delete/"+obj.aData.PID+"'>"+
+		                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
+		                         "停用"+
+		                         "</a>";
+                		}
                 	}else{
-                		return "<a class='btn btn-info' href='/customer/edit/"+obj.aData.PID+"'>"+
-                        "<i class='fa fa-edit fa-fw'></i>"+
-                        "编辑"+
-	                     "</a>"+
-	                     "<a class='btn btn-success' href='/customer/delete/"+obj.aData.PID+"'>"+
+                		if(Customer.delPermission){
+                			str +="<a class='btn btn-success' href='/customer/delete/"+obj.aData.PID+"'>"+
 	                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
 	                         "启用"+
 	                     "</a>";
+                		}
                 	}
-                   
+                   return str;
                 }
             }                         
         ]    
