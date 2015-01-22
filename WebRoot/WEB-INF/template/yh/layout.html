@@ -126,100 +126,148 @@
                             <!-- /.nav-second-level -->
                         </li>
                     <%}%>
-                    <li id="menu_carmanage">
-                        <a href="#"><i class="fa fa-truck fa-fw"></i>自营车辆管理<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a  href="/carinfo">车辆信息</a>
-                            </li>
-                            <li>
-                                <a  href="/driverinfo/driverinfoIndex">司机信息</a>
-                            </li>
-                            <li>
-                                <a href="/carsummary">行车单</a>
-                            </li>
-                            <li>
-                                <a href="/carreimbursement">行车报销单</a>
-                            </li>
-                             <li>
-                                <a href="/ownCarPay/ownCarPayIndex">自营车辆付费条目</a>
-                            </li>
-                        </ul>
-                        <!-- /.nav-second-level -->
-                    </li>
-                    <li id="menu_damage">
-                        <a href="#"><i class="fa fa-truck fa-fw"></i> 保险购买<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="/insuranceOrder">保险单</a>
-                            </li>
-                        </ul>
-                        <!-- /.nav-second-level -->
-                    </li>
-                    <li id="menu_damage">
-                        <a href="#"><i class="fa fa-truck fa-fw"></i> 质量管理(货损/退货)<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="/accountReload">理赔单</a>
-                            </li>
-                            <li>
-                                <a href="">运输单</a>
-                            </li>
-                            <li>
-                                <a href="/pickupOrder">提货调车单</a>
-                            </li>
-                             <li>
-                                <a href="/departOrder">干线发车</a>
-                            </li>
-                        </ul>
-                        <!-- /.nav-second-level -->
-                    </li>
-                    <li id="menu_status">
-                        <a href="#"><i class="fa fa-truck fa-fw"></i> 运输在途管理<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="/departOrder/onTrip">运输在途更新</a>
-                            </li>
-                             <!-- <li>
-                                <a href="/departOrder/transferonTrip">运输单外包在途更新</a>
-                            </li>
-                            <li>
-                                <a href="/departOrder/transferMilestoneIndex">在途运输单</a>
-                            </li> -->
-                        </ul>
-                        <!-- /.nav-second-level -->
-                    </li>
-                    <li id="menu_deliver">
-                        <a href="#"><i class="fa fa-truck fa-fw"></i> 配送管理<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="/delivery">配送单</a>
-                            </li>
-                            <li>
-                                <a href="/deliveryPlanOrder">配送排车单</a>
-                            </li>
-                            <li>
-                                <a href="/deliveryMilestone/deliverOnTrip">配送在途管理</a>
-                            </li>
-                            
-                        </ul>
-                        <!-- /.nav-second-level -->
-                    </li>
+                    <%
+                    	var carInfoPermission = shiro.hasPermission("CarInfo.list");
+                    	var driverInfoPermission = shiro.hasPermission("Driver.list");
+                    	var carSummaryPermission = shiro.hasPermission("CarSummary.list");
+                    	if(carInfoPermission || driverInfoPermission || carSummaryPermission){
+                    %>
+	                    <li id="menu_carmanage">
+	                        <a href="#"><i class="fa fa-truck fa-fw"></i>自营车辆管理<span class="fa arrow"></span></a>
+	                        <ul class="nav nav-second-level">
+	                            <% if(carInfoPermission){ %>
+		                            <li>
+		                                <a  href="/carinfo">车辆信息</a>
+		                            </li>
+	                            <%}%>
+	                            <% if(driverInfoPermission){%>
+		                            <li>
+		                                <a  href="/driverinfo/driverinfoIndex">司机信息</a>
+		                            </li>
+	                            <%}%>
+	                            <% if(carSummaryPermission){%>
+		                            <li>
+		                                <a href="/carsummary">行车单</a>
+		                            </li>
+	                            <%}%>
+	                            <% if(false){%>
+		                            <li>
+		                                <a href="/carreimbursement">行车报销单</a>
+		                            </li>
+	                            <%}%>
+	                            <% if(false){%>
+		                             <li>
+		                                <a href="/ownCarPay/ownCarPayIndex">自营车辆付费条目</a>
+		                            </li>
+	                            <%}%>
+	                        </ul>
+	                        <!-- /.nav-second-level -->
+	                    </li>
+                    <%}%>
+                    <% if(shiro.hasPermission("InsuranceOrder.list")){%>
+	                    <li id="menu_damage">
+	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 保险购买<span class="fa arrow"></span></a>
+	                        <ul class="nav nav-second-level">
+	                            <li>
+	                                <a href="/insuranceOrder">保险单</a>
+	                            </li>
+	                        </ul>
+	                        <!-- /.nav-second-level -->
+	                    </li>
+                    <%}%>
+                    <% if(false){%>
+	                    <li id="menu_damage">
+	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 质量管理(货损/退货)<span class="fa arrow"></span></a>
+	                        <ul class="nav nav-second-level">
+	                            <li>
+	                                <a href="/accountReload">理赔单</a>
+	                            </li>
+	                            <li>
+	                                <a href="">运输单</a>
+	                            </li>
+	                            <li>
+	                                <a href="/pickupOrder">提货调车单</a>
+	                            </li>
+	                             <li>
+	                                <a href="/departOrder">干线发车</a>
+	                            </li>
+	                        </ul>
+	                        <!-- /.nav-second-level -->
+	                    </li>
+	                 <%}%>
+	                 <% if(shiro.hasPermission("Ontrip.list")){%>
+	                    <li id="menu_status">
+	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 运输在途管理<span class="fa arrow"></span></a>
+	                        <ul class="nav nav-second-level">
+	                            <li>
+	                                <a href="/departOrder/onTrip">运输在途更新</a>
+	                            </li>
+	                             <!-- <li>
+	                                <a href="/departOrder/transferonTrip">运输单外包在途更新</a>
+	                            </li>
+	                            <li>
+	                                <a href="/departOrder/transferMilestoneIndex">在途运输单</a>
+	                            </li> -->
+	                        </ul>
+	                        <!-- /.nav-second-level -->
+	                    </li>
+                    <%}%>
+                    <%
+                    	var deliveryListPermission = shiro.hasPermission("DeliveryOder.list");
+                    	var deliveryOnTripPermission = shiro.hasPermission("DeliveryOderMilestone.list");
+                    	if(deliveryListPermission || deliveryOnTripPermission){
+                    %>
+	                    <li id="menu_deliver">
+	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 配送管理<span class="fa arrow"></span></a>
+	                        <ul class="nav nav-second-level">
+	                        	<% if(deliveryListPermission){%>
+		                            <li>
+		                                <a href="/delivery">配送单</a>
+		                            </li>
+	                           <%}%>
+	                           <% if(false){%>
+		                            <li>
+		                                <a href="/deliveryPlanOrder">配送排车单</a>
+		                            </li>
+	                            <%}%>
+	                            <% if(deliveryOnTripPermission){%>
+		                            <li>
+		                                <a href="/deliveryMilestone/deliverOnTrip">配送在途管理</a>
+		                            </li>
+	                            <%}%>
+	                        </ul>
+	                        <!-- /.nav-second-level -->
+	                    </li>
+                 <%}%>
+                  <%
+                  	var gateInPermission = shiro.hasPermission("WarehouseOrder.inList");
+                  	var gateOutPermission = shiro.hasPermission("WarehouseOrder.outList");
+                  	var InventoryListPermission = shiro.hasPermission("InventoryItem.list");
+                  	if(gateInPermission || gateOutPermission || InventoryListPermission){
+                  %>
                     <li id="menu_warehouse">
                         <a href="#"><i class="fa fa-th-large fa-fw"></i> 仓储管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li>
-                                <a href="/gateIn">入库单</a>
-                            </li>
-                            <li>
-                                <a href="/gateOut/outIndex">出库单</a>
-                            </li>
-                            <li>
-                                <a href="/stock/stockIndex">库存</a>
-                            </li>
+                        	<% if(gateInPermission){%>
+	                            <li>
+	                                <a href="/gateIn">入库单</a>
+	                            </li>
+                            <%}%>
+                            <% if(gateOutPermission){%>
+	                            <li>
+	                                <a href="/gateOut/outIndex">出库单</a>
+	                            </li>
+	                        <%}%>
+	                        <% if(InventoryListPermission){%>
+	                            <li>
+	                                <a href="/stock/stockIndex">库存</a>
+	                            </li>
+                            <%}%>
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
+                 <%}%>
+                 <% if(shiro.hasPermission("ReturnOrder.list")){%>
                     <li id="menu_return">
                         <a href="#"><i class="fa fa-file-text fa-fw"></i> 回单管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
@@ -229,98 +277,161 @@
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
+                 <%}%>
+                 <%
+                 	var chargeItemPermission = shiro.hasPermission("ChargeItem.affirm");
+                 	var chargeCheckOrderList = shiro.hasPermission("ChargeCheckOrder.list");
+                 	var chargePreInvoiceOrder = shiro.hasPermission("ChargePreInvoiceOrder.list");
+                 	var ChargeInvoiceOrderPermission = shiro.hasPermission("ChargeInvoiceOrder.list");
+                 	if(chargeItemPermission || chargeCheckOrderList || chargePreInvoiceOrder || ChargeInvoiceOrderPermission){
+                 %>
                     <li id="menu_charge">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 应收管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li>
-                                <a href="/chargeConfiremList">应收明细确认</a>
-                            </li>
-                            <li>
-                                <a href="/chargeCheckOrder">应收对账单</a>
-                            </li>
-                            <li>
-                                <a href="/chargePreInvoiceOrder">应收开票申请</a>
-                            </li>
-                            <li>
-                                <a href="/chargeInvoiceOrder">应收开票记录</a>
-                            </li>
-                            <li>
-                                <a href="/chargeAdjustOrder">应收结帐调整单</a>
-                            </li>
+                        	<% if(chargeItemPermission){%>
+	                            <li>
+	                                <a href="/chargeConfiremList">应收明细确认</a>
+	                            </li>
+                            <%}%>
+                            <% if(chargeCheckOrderList){%>
+	                            <li>
+	                                <a href="/chargeCheckOrder">应收对账单</a>
+	                            </li>
+                            <%}%>
+                            <% if(chargePreInvoiceOrder){%>
+	                            <li>
+	                                <a href="/chargePreInvoiceOrder">应收开票申请</a>
+	                            </li>
+                            <%}%>
+                            <% if(ChargeInvoiceOrderPermission){%>
+	                            <li>
+	                                <a href="/chargeInvoiceOrder">应收开票记录</a>
+	                            </li>
+                            <%}%>
+                            <% if(false){%>
+	                            <li>
+	                                <a href="/chargeAdjustOrder">应收结帐调整单</a>
+	                            </li>
+                            <%}%>
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
+                <%}%>
+                <%
+                	var costConfirmListPermission = shiro.hasPermission("CostItemConfirm.affirm");
+                	var costCheckListPermission = shiro.hasPermission("CostCheckOrder.list");
+                	var costPreInvoiceListPermission = shiro.hasPermission("CostPreInvoiceOrder.list");
+               		if(costConfirmListPermission || costCheckListPermission || costPreInvoiceListPermission){
+                %>
                     <li id="menu_cost">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 应付管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li>
-                                <a href="/costConfirmList">应付明细确认</a>
-                            </li>
-                            <li>
-                                <a href="/costCheckOrder">应付对账单</a>
-                            </li>
-                            <li>
-                                <a href="/costPreInvoiceOrder">付款申请</a>
-                            </li>
-                            <li>
-                                <a href="/costAdjustOrder">应付结账调整单</a>
-                            </li>
+                            <% if(costConfirmListPermission){%>
+	                            <li>
+	                                <a href="/costConfirmList">应付明细确认</a>
+	                            </li>
+                            <%}%>
+                            <% if(costCheckListPermission){%>
+	                            <li>
+	                                <a href="/costCheckOrder">应付对账单</a>
+	                            </li>
+	                        <%}%>
+                            <% if(costPreInvoiceListPermission){%>
+	                            <li>
+	                                <a href="/costPreInvoiceOrder">付款申请</a>
+	                            </li>
+							<%}%>
+                            <% if(false){%>
+	                            <li>
+	                                <a href="/costAdjustOrder">应付结账调整单</a>
+	                            </li>
+	                        <%}%>
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
+               	<%}%>
+               	<%
+               		var payListPermission = shiro.hasPermission("ChargeItem.affirm");
+               		var costListPermission = shiro.hasPermission("CostItemConfirm.affirm");
+               		var chargePermission = shiro.hasPermission("chargeAcceptOrder_list");
+               		var costConfirmPermission = shiro.hasPermission("costAcceptOrder_list");
+               		var reimbureementPermission = shiro.hasPermission("costReimbureement_list");
+               		var chunarijiPermission = shiro.hasPermission("PaymentCheckOrder.list");
+               		if(payListPermission || costListPermission || chargePermission || costConfirmPermission
+               			|| reimbureementPermission || chunarijiPermission) {
+               		
+               	%>
                     <li id="menu_finance">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 财务管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li>
-                                <a href="/chargeAcceptOrder">收款确认</a>
-                            </li>
-                            <li>
-                                <a href="/costAcceptOrder">付款确认</a>
-                            </li>
-                        	<li>
-                                <a href="/accountAuditLog">出纳日记帐</a>
-                            </li>
-                            <!--li>
-                                <a href="/accountReload">期初账目</a>
-                            </li>
-                            <li>
-                                <a href="/accountOrder">账户期初结转</a>
-                            </li>
-                            <li>
-                                <a href="/accountOrder">预付单</a>
-                            </li>
-                            <li>
-                                <a href="/accountTransferOrder">工资结算单</a>
-                            </li>   -->
-                            <li>
-                                <a href="/accountTransferOrder">账户转账单</a>
-                            </li>
-                            <li>
-                                <a href="/chargeMiscOrder">手工收款单</a>
-                            </li>
-                            <li>
-                                <a href="/costMiscOrder">手工付款单</a>
-                            </li>
-                            <li>
-                                <a href="/costReimbursement">报销单</a>
-                            </li>
+                        	<% if(chargePermission){%>
+	                            <li>
+	                                <a href="/chargeAcceptOrder">收款确认</a>
+	                            </li>
+	                        <%}%>
+	                        <% if(costConfirmPermission){%>
+	                            <li>
+	                                <a href="/costAcceptOrder">付款确认</a>
+	                            </li>
+                            <%}%>
+                            <% if(chunarijiPermission){%>
+	                        	<li>
+	                                <a href="/accountAuditLog">出纳日记帐</a>
+	                            </li>
+                            <%}%>
+                            <% if(false){%>
+	                            <li>
+	                                <a href="/accountTransferOrder">账户转账单</a>
+	                            </li>
+                            <%}%>
+                            <% if(payListPermission){%>
+	                            <li>
+	                                <a href="/chargeMiscOrder">手工收款单</a>
+	                            </li>
+                            <%}%>
+                            <% if(costListPermission){%>
+	                            <li>
+	                                <a href="/costMiscOrder">手工付款单</a>
+	                            </li>
+                            <%}%>
+                            <% if(reimbureementPermission){%>
+	                            <li>
+	                                <a href="/costReimbursement">报销单</a>
+	                            </li>
+                            <%}%>
                         </ul>
+                     </li>
                         <!-- /.nav-second-level --> 
+                    <%}%>
+                    <%
+                    	var customerContractListPermission = shiro.hasPermission("ContractCustomer.list");
+                    	var providerContractListPermission = shiro.hasPermission("ContractProvider.list");
+                    	var deliveryContractListPermission = shiro.hasPermission("ContractDelivery.list");
+                   		if(customerContractListPermission || providerContractListPermission || deliveryContractListPermission){
+                    %>
                     <li id="menu_contract">
                         <a href="#"><i class="fa fa-book fa-fw"></i> 合同管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li>
-                                <a href="/customerContract">客户合同</a>
-                            </li>
-                            <li>
-                                <a href="/spContract/spIndex">干线供应商合同</a>
-                            </li>
-                            <li>
-                                <a href="/deliverySpContract/deliverySpIndex">提货/配送供应商合同</a>
-                            </li>
+                            <% if(customerContractListPermission){%>
+	                            <li>
+	                                <a href="/customerContract">客户合同</a>
+	                            </li>
+	                         <%}%>
+	                         <% if(providerContractListPermission){%>
+	                            <li>
+	                                <a href="/spContract/spIndex">干线供应商合同</a>
+	                            </li>
+                            <%}%>
+                            <% if(deliveryContractListPermission){%>
+	                            <li>
+	                                <a href="/deliverySpContract/deliverySpIndex">提货/配送供应商合同</a>
+	                            </li>
+                            <%}%>
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
+                   <%}%>
+                   <% if(false){%>
                     <li id="menu_report">
                         <a href="#"><i class="fa fa-table fa-fw"></i> 报表查询<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
@@ -351,67 +462,117 @@
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
-                    <li id="menu_profile">
-                        <a href="#"><i class="fa fa-cog fa-fw"></i> 基础数据设置<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="/loginUser">登录用户</a>
-                            </li>
-                            <li>
-                                <a href="/role">角色</a>
-                            </li>
-                            <li>
-                                <a href="/userRole">用户角色</a>
-                            </li>
-                            <li>
-                                <a href="/privilege">角色权限</a>
-                            </li>
-                            <li>
-                                <a href="/customer">客户</a>
-                            </li>
-                            <li>
-                                <a href="/serviceProvider">供应商</a>
-                            </li>
-                            <li>
-                                <a href="/spcarinfo/spcarinfoIndex">供应商车辆信息</a>
-                            </li>
-                            <li>
-                                <a href="/spdriverinfo/spdriverinfoIndex">供应商司机信息</a>
-                            </li>
-                            <li>
-                                <a href="/office">网点[分公司]</a>
-                            </li>
-                            <li>
-                                <a href="/product">产品</a>
-                            </li>
-                            <li>
-                                <a href="/warehouse">仓库</a>
-                            </li>
-                            <li>
-                                <a href="/location">城市</a>
-                            </li>
-                            <li>
-                                <a href="/route">干线定义</a>
-                            </li>
-                            <li>
-                                <a href="/orderStatus">里程碑</a>
-                            </li>
-                            <li>
-                                <a  href="/toll?page=收费">收费条目定义</a>
-                            </li>
-                            <li>
-                                <a  href="/pay?page=付款">付费条目定义</a>
-                            </li>
-                            <li>
-                                <a  href="/account">金融账户</a>
-                            </li>
-                            <li>
-                                <a  href="/account">应收应付条目管理</a>
-                            </li>
-                           
-                        </ul>
-                        <!-- /.nav-second-level -->
-                    </li>
+                    <%}%>
+                    <%
+                    	var userLoginListPermission = shiro.hasPermission("User.list");
+                    	var roleListPermission = shiro.hasPermission("Role.list");
+                    	var userRoleListPermission = shiro.hasPermission("UserRole.list");
+                    	var rolePrivilegeListPermission = shiro.hasPermission("RolePermission.list");
+                    	var customerPermission = shiro.hasPermission("Customer.list");
+                    	var spListPermission = shiro.hasPermission("Provider.list");
+                    	var spCarListPermission = shiro.hasPermission("ProviderCar.list");
+                    	var spDriverListPermission = shiro.hasPermission("ProviderDriver.list");
+                    	var officeListPermission = shiro.hasPermission("Office.list");
+                    	var productListPermission = shiro.hasPermission("Product.list");
+                    	var warehouseListPermission = shiro.hasPermission("Warehouse.list");
+                    	var tollpayListPermission = shiro.hasPermission("Toll.list");
+                    	var tollcostListPermission = shiro.hasPermission("Pay.list");
+                    	var accountListPermission = shiro.hasPermission("Account.list");
+                    	if(true){
+                    %>
+                    
+	                    <li id="menu_profile">
+	                        <a href="#"><i class="fa fa-cog fa-fw"></i> 基础数据设置<span class="fa arrow"></span></a>
+	                        <ul class="nav nav-second-level">
+	                            <% if(userLoginListPermission){%>
+		                            <li>
+		                                <a href="/loginUser">登录用户</a>
+		                            </li>
+		                         <%}%>
+		                         <% if(roleListPermission){%>
+		                            <li>
+		                                <a href="/role">角色</a>
+		                            </li>
+		                         <%}%>
+		                         <% if(userRoleListPermission){%>
+		                            <li>
+		                                <a href="/userRole">用户角色</a>
+		                            </li>
+	                             <%}%>
+		                         <% if(rolePrivilegeListPermission){%>
+		                            <li>
+		                                <a href="/privilege">角色权限</a>
+		                            </li>
+	                             <%}%>
+		                         <% if(customerPermission){%>
+		                            <li>
+		                                <a href="/customer">客户</a>
+		                            </li>
+	                             <%}%>
+		                         <% if(spListPermission){%>
+		                            <li>
+		                                <a href="/serviceProvider">供应商</a>
+		                            </li>
+	                             <%}%>
+		                         <% if(spCarListPermission){%>
+		                            <li>
+		                                <a href="/spcarinfo/spcarinfoIndex">供应商车辆信息</a>
+		                            </li>
+	                             <%}%>
+		                         <% if(spDriverListPermission){%>
+		                            <li>
+		                                <a href="/spdriverinfo/spdriverinfoIndex">供应商司机信息</a>
+		                            </li>
+	                             <%}%>
+		                         <% if(officeListPermission){%>
+		                            <li>
+		                                <a href="/office">网点[分公司]</a>
+		                            </li>
+	                             <%}%>
+		                         <% if(productListPermission){%>
+		                            <li>
+		                                <a href="/product">产品</a>
+		                            </li>
+	                             <%}%>
+		                         <% if(warehouseListPermission){%>
+		                            <li>
+		                                <a href="/warehouse">仓库</a>
+		                            </li>
+	                             <%}%>
+	                            <li>
+	                                <a href="/location">城市</a>
+	                            </li>
+	                            <!-- <li>
+	                                <a href="/route">干线定义</a>
+	                            </li>
+	                            <li>
+	                                <a href="/orderStatus">里程碑</a>
+	                            </li> -->
+		                         <% if(tollpayListPermission){%>
+		                            <li>
+		                                <a  href="/toll?page=收费">收费条目定义</a>
+		                            </li>
+	                             <%}%>
+		                         <% if(tollcostListPermission){%>
+		                            <li>
+		                                <a  href="/pay?page=付款">付费条目定义</a>
+		                            </li>
+	                             <%}%>
+		                         <% if(accountListPermission){%>
+		                            <li>
+		                                <a  href="/account">金融账户</a>
+		                            </li>
+	                             <%}%>
+		                         <% if(false){%>
+		                            <li>
+		                                <a  href="/account">应收应付条目管理</a>
+		                            </li>
+	                             <%}%>
+	                           
+	                        </ul>
+	                        <!-- /.nav-second-level -->
+	                    </li>
+                    <%}%>
                     <li>
                         <a href="#"><i class="fa fa-question fa-fw"></i> 需要帮助<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
