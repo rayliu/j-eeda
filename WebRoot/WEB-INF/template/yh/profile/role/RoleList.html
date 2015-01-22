@@ -10,7 +10,9 @@
 			<!-- /.col-lg-12 -->
 
 			<div class="panel-heading">
-				<a id = "createBtn" class="btn btn-outline btn-primary">角色创建</a>
+				<% if(shiro.hasPermission("Role.create")){%>
+					<a id = "createBtn" class="btn btn-outline btn-primary">角色创建</a>
+				<%}%>
 			</div>
 			<!-- /.row -->
 			<div class="row">
@@ -28,6 +30,7 @@
 											<th>角色名称</th>
 											<th>角色备注</th>
 											<th></th>
+											
 										</tr>
 									</thead>
 									<tbody>
@@ -95,16 +98,26 @@
 		
 			</div>
 		</div>
+		
 </div>
 
 
 <%}%>
-<!-- /#wrapper -->
-<!-- Page-Level Plugin Scripts - Tables -->
+
+
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
+<script>
+	    <% var roleUpdatePermission=shiro.hasPermission("Role.update");
+	       var roleDelPermission = shiro.hasPermission("Role.delete");
+	    %>
+		var Role={};
+		Role.UpdatePermission=${roleUpdatePermission};
+		Role.DelPermission = ${roleDelPermission};
+</script>
+
 <script src="/yh/js/profile/role/list.js"></script>
 
 

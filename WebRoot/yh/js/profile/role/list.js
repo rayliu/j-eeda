@@ -18,27 +18,37 @@ $(document).ready(function() {
 					},
 					{
 						"mDataProp" : "REMARK"
-					},
-					{
+					}
+					,{
 						"mDataProp" : null,
 						"sWidth" : "8%",
+						"bVisible":(Role.UpdatePermission || Role.DelPermission),
 						"fnRender" : function(obj) {
 							if(obj.aData.CODE != "admin"){
-								return "<a class='btn btn-success' href='/role/ClickRole?id="+obj.aData.ID+"'>"
+								var role_update_permission = Role.UpdatePermission;
+								var role_del_permission = Role.DelPermission;
+								var str="";
+											
+								if(role_update_permission){
+									str += "<a class='btn btn-success' href='/role/ClickRole?id="+obj.aData.ID+"'>"
 										+ "<i class='fa fa-edit fa-fw'></i> "
 										+ "编辑"
-										+ "</a>"
-										+ "<a class='btn btn-danger' href='/role/deleteRole/"+obj.aData.ID+"'>"
+										+ "</a>";
+								}
+								if(role_del_permission){
+									str += "<a class='btn btn-danger' href='/role/deleteRole/"+obj.aData.ID+"'>"
 										+ "<i class='fa fa-trash-o fa-fw'></i> "
 										+ "删除"
 										+ "</a>";
+								}
+								return str;
 							}else{
 								return "";
 							}
 							
 						}
 					}
-
+				
 			]
 		});
 	$("#createBtn").click(function(){
