@@ -623,7 +623,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     
     //修改应付
 
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_LIST})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_ADD_COST})
     public void updateDeliveryOrderFinItem(){
     	String paymentId = getPara("paymentId");
     	String name = getPara("name");

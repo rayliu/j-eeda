@@ -6,7 +6,9 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        <a class="btn btn-primary" href="/delivery/add">新增配送单</a>
+                    	<% if(shiro.hasPermission("DeliveryOder.create")){%>
+                        	<a class="btn btn-primary" href="/delivery/add">新增配送单</a>
+                    	<%}%>
                     </h1>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -121,6 +123,15 @@
 
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script>
+	<%
+		var deliverUpdate = shiro.hasPermission("DeliveryOder.update");
+		var deliverComplete = shiro.hasPermission("DeliveryOder.completed");
+	%>
+	var Delivery={};
+	Delivery.isUpdate = ${deliverUpdate};
+	Delivery.isComplete = ${deliverComplete};
+</script>
 <script src="/yh/js/delivery/list.js"></script>
 
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>

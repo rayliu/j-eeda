@@ -15,7 +15,12 @@ $(document).ready(function() {
 	            
 	            {"mDataProp":"ORDER_NO",
 	            	"fnRender": function(obj) {
-         			return "<a href='/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+	            		if(Delivery.isUpdate || Delivery.isComplete){
+	            			return "<a href='/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+	            		}else{
+	            			return obj.aData.ORDER_NO;
+	            		}
+         			
          		}
 	            },
 	            {"mDataProp":"CUSTOMER"},
@@ -26,7 +31,8 @@ $(document).ready(function() {
 	            {"mDataProp":"SERIAL_NO","sWidth": "10%"},
 	            { 
 	                "mDataProp": null, 
-	                "sWidth": "5%",                
+	                "sWidth": "5%", 
+	                "bVisible":false,
 	                "fnRender": function(obj) {                    
 	                    return "<a class='btn btn-danger cancelbutton' title='取消单据' code='"+obj.aData.ID+"'>"+
 	                                "<i class='fa fa-trash-o fa-fw'></i>"+ 

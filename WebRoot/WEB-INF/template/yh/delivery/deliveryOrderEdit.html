@@ -535,8 +535,12 @@
            			<div class=".tooltip-demo">
                     <hr/>
                     <a style="display:none" id ="style"><i class='fa fa-check'></i></a>
-                    <button id="saveBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
+                    <% if(shiro.hasPermission("DeliveryOder.create") || shiro.hasPermission("DeliveryOder.update")){%>
+                    	<button id="saveBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
+                    <%}%>
+                    <% if(shiro.hasPermission("DeliveryOder.completed")){%>
                     <button id="ConfirmationBtn" type="button" disabled="true" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">配送发车</button>
+                    <%}%>
                     <!-- <button id="receiptBtn" type="button" disabled="true"  class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">签收完成</button> -->
                     <a class="btn btn-default" href="/delivery">返回</a>
                 </div>

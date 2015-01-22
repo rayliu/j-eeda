@@ -189,7 +189,7 @@ public class DeliveryController extends Controller {
 
 	// 在途配送单list
 
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_ADD_COST})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_LIST})
 	public void deliveryMilestone() {
 
 		String transferorderNo = getPara("transferorderNo");

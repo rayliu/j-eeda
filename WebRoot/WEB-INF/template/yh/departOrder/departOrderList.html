@@ -10,7 +10,9 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-	                    <a class="btn btn-primary" href="/departOrder/add">新建发车单</a>
+                    	<% if(shiro.hasPermission("DepartOrder.create")){%>
+	                    	<a class="btn btn-primary" href="/departOrder/add">新建发车单</a>
+               			<%}%>
                		</h1>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -141,8 +143,19 @@
  <!-- 引入dataTables的js 文件- Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script >
+	<%
+		 var departOrderUpdate = shiro.hasPermission("DepartOrder.update");
+		 var departOrderComplete = shiro.hasPermission("DepartOrder.completed");
+	%>
+	var DepartOrder={};
+	DepartOrder.isUpdate = ${departOrderUpdate};
+	DepartOrder.isComplete = ${departOrderComplete};
+</script>
+
 <script src="/yh/js/departOrder/list.js"></script>
 <!-- <script src="/js/plugins/sco/js/sco.message.js"></script> -->
 

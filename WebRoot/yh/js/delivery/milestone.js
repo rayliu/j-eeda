@@ -18,13 +18,23 @@ $(document).ready(function() {
         "aoColumns": [   
             {"mDataProp":null,
             	"fnRender": function(obj) {
-                    	return "<a href='/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		if(Delivery.isUpdate || Delivery.isComplete){
+            			return "<a href='/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            		}else{
+            			return obj.aData.ORDER_NO;
             		}
+                    	
+            	}
             },
             {"mDataProp":null,"sWidth":"90px",
                 "fnRender": function(obj) {
                 	if(obj.aData.LOCATION!=null && obj.aData.LOCATION!=''){
-                		return obj.aData.LOCATION+"<a id='edit_status' del_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                		if(Delivery.isUpdate){
+                			return obj.aData.LOCATION+"<a id='edit_status' del_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                		}else{
+                			return obj.aData.LOCATION;
+                		}
+                		
                 	}else{
                 		if(obj.aData.STATUS==null){
                     		obj.aData.STATUS="";
@@ -33,7 +43,12 @@ $(document).ready(function() {
                     		//return obj.aData.STATUS;
                     		return "已送达";
                     	}else{
-                    		return obj.aData.STATUS+"<a id='edit_status' del_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                    		if(Delivery.isUpdate){
+                    			return obj.aData.STATUS+"<a id='edit_status' del_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                    		}else{
+                    			return obj.aData.STATUS;
+                    		}
+                    		
                     	
                     	}
                 	}
@@ -46,6 +61,7 @@ $(document).ready(function() {
             {"mDataProp":"TRANSFER_ORDER_NO"},          
             { 
                 "mDataProp": null, 
+                "bVisible":DeliveryOnTrip.isComplete,
                 "fnRender": function(obj) {   
                 	if(obj.aData.STATUS=="已签收"){
                 		return "已送达";
