@@ -22,16 +22,21 @@
 											</ul>
 	                              </div>                                        
 	                         </div>
-	                         <div class="col-lg-3">
-	                             <div class="form-group">
-					            	<a id="fenBtn" class="btn btn-outline btn-primary" href="/privilege/add">分配新角色权限</a>
-					             </div>
-					         </div>
+	                         <% if(shiro.hasPermission("RolePermission.create")){%>
+		                         <div class="col-lg-3">
+		                             <div class="form-group">
+		                             
+						            	<a id="fenBtn" class="btn btn-outline btn-primary" href="/privilege/add">分配新角色权限</a>
+						             </div>
+						         </div>
+						     <%}%>
+						     <% if(shiro.hasPermission("RolePermission.update")){%>
 					         <div class="col-lg-3">
 					             <div class="form-group">
 					             	<button type="submit" class="btn btn-outline btn-primary">编辑权限</button> 
 					             </div>                                     
 	                         </div>
+	                         <%}%>
                        </form>  
                     </div>
                     <div class="panel panel-default">                              
