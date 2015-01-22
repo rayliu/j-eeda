@@ -5,7 +5,9 @@
 <div class="row">
       <div class="col-lg-12">
             <h1 class="page-header">
-				<a class="btn btn-primary" href="/office/editOffice">添加分公司</a>
+            	<% if(shiro.hasPermission("Office.create")){%>
+					<a class="btn btn-primary" href="/office/editOffice">添加分公司</a>
+				<%}%>
 			</h1>
 		<div class="panel panel-default">
 				<div class="panel-heading">
@@ -57,7 +59,13 @@
 								<th>邮箱</th>
 								<th>类型</th>
 								<th>公司简介</th>
-								<th></th>
+								 <%
+					            	var updatePermission = shiro.hasPermission("Office.update");
+					            	var delPermission = shiro.hasPermission("Office.delete");
+					            	if(updatePermission || delPermission){
+					            %>
+									<th></th>
+								<%}%>
 							</tr>
 						</thead>
 						<tbody>
@@ -105,33 +113,39 @@ var datatable=$('#example').dataTable( {
 	            { "mDataProp": "ADDRESS","sWidth": "15%"},
 	            { "mDataProp": "EMAIL" },
 	            { "mDataProp": "TYPE" },
-	            { "mDataProp": "COMPANY_INTRO" },
-	            { 
+	            { "mDataProp": "COMPANY_INTRO" }
+	            <%
+	            	var updatePermission = shiro.hasPermission("Office.update");
+	            	var delPermission = shiro.hasPermission("Office.delete");
+	            	if(updatePermission || delPermission){
+	            %>
+	            ,{ 
 	                "mDataProp": null, 
 	                "sWidth": "18%",
 	                "fnRender": function(obj) { 
 	                	if(obj.aData.IS_STOP != true){
-	                		return "<a class='btn btn-info' href='/office/edit/"+obj.aData.ID+"'>"+
+	                		return "<% if(shiro.hasPermission('Office.update')){%><a class='btn btn-info' href='/office/edit/"+obj.aData.ID+"'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
-			                        "</a>"+
-			                        "<a class='btn btn-danger' href='/office/del/"+obj.aData.ID+"'>"+
+			                        "</a><%}%>"+
+			                        "<% if(shiro.hasPermission('Office.delete')){%><a class='btn btn-danger' href='/office/del/"+obj.aData.ID+"'>"+
 			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
 			                            "停用"+
-			                        "</a>";
+			                        "</a><%}%>";
 	                	}else{
-	                		return "<a class='btn btn-info' href='/office/edit/"+obj.aData.ID+"'>"+
+	                		return "<% if(shiro.hasPermission('Office.update')){%><a class='btn btn-info' href='/office/edit/"+obj.aData.ID+"'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
-			                        "</a>"+
-			                        "<a class='btn btn-success' href='/office/del/"+obj.aData.ID+"'>"+
+			                        "</a><%}%>"+
+			                        "<% if(shiro.hasPermission('Office.delete')){%><a class='btn btn-success' href='/office/del/"+obj.aData.ID+"'>"+
 			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
 			                            "启用"+
-			                        "</a>";
+			                        "</a><%}%>";
 	                	}
 	                    
 	                }
 	            } 
+	            <%}%>
 	            ]
 	} );
 		
