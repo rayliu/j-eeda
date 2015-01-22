@@ -22,7 +22,12 @@ $(document).ready(function() {
 	        {"mDataProp":"ID", "bVisible": false},
 	        {"mDataProp":"ORDER_NO", "sWidth":"100px",
 	        	"fnRender": function(obj) {
-	      		return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+	        		if(ChargeCheck.isUpdate || ChargeCheck.isAffirm){
+	        			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+	        		}else{
+	        			return obj.aData.ORDER_NO;
+	        		}
+	      		
 	      	}},
 	        {"mDataProp":"STATUS","sWidth":"50px",
 	            "fnRender": function(obj) {

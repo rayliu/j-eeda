@@ -238,6 +238,17 @@
 <script src="/yh/css/ui/jquery-ui.js"></script>
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script>
+	<%
+		var chargeOrderUpdate = shiro.hasPermission("ChargeCheckOrder.update");
+		var chargeOrderAffirm = shiro.hasPermission("ChargeCheckOrder.affirm");
+	%>
+	
+	var ChargeCheck={};
+	ChargeCheck.isUpdate = ${chargeOrderUpdate};
+	ChargeCheck.isAffirm = ${chargeOrderAffirm};
+</script>
+
 <script src="/yh/js/arap/ChargePreInvoiceOrder/edit.js"></script>
 
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
