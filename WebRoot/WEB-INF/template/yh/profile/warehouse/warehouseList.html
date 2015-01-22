@@ -7,7 +7,9 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        <a class="btn btn-primary" href="/warehouse/add">新增仓库</a>
+                    	<% if(shiro.hasPermission("Warehouse.create")){%>
+                        	<a class="btn btn-primary" href="/warehouse/add">新增仓库</a>
+                        <%}%>
                     </h1>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -76,5 +78,14 @@
  <!-- Page-Level Plugin Scripts - Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
-
+<script>
+	<%
+		var WarehouserUpdate = shiro.hasPermission("Warehouse.update");
+		var WarehouserDel = shiro.hasPermission("Warehouse.delete");
+	%>
+	var Warehouser={};
+	Warehouser.isUpdate = ${WarehouserUpdate};
+	Warehouser.isDel = ${WarehouserDel};
+	
+</script>
 <script src="/yh/js/profile/warehouse/list.js"></script>

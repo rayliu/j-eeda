@@ -145,7 +145,7 @@ public class WarehouseController extends Controller{
 		Warehouse warehouse = Warehouse.dao.findById(id);
 		/*warehouse.set("office_id", null);
 		warehouse.set("sp_id", null);*/
-		if("active".equals(warehouse.get("status"))){
+		if(!"inactive".equals(warehouse.get("status"))){
 			warehouse.set("status", "inactive");
 		}else{
 			warehouse.set("status", "active");
