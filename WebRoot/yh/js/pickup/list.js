@@ -38,7 +38,7 @@
 	            		}}},
 	            {"mDataProp":"CAR_NO", "sWidth":"100px"},	 
 			    {"mDataProp":"CONTACT_PERSON", "sWidth":"70px"},
-			    {"mDataProp":"PHONE", "sWidth":"50px"},
+			    {"mDataProp":"PHONE", "sWidth":"80px"},
 			    {"mDataProp":"CARTYPE", "sWidth":"80px"},     
 			    {"mDataProp":"CREATE_STAMP", "sWidth":"100px",
 			    	"fnRender":function(obj){

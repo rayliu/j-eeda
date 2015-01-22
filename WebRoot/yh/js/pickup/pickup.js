@@ -15,7 +15,7 @@ $(document).ready(function() {
     var detailSerialTestOld = [];
     //普货选取数量-正式
     var amounts = [];
-    //记录选取前货品数量-临时
+    //普货选取前货品数量-临时
     var amountsTest = [];
     //判断全选box是否选中
     var number = 0;
@@ -239,14 +239,15 @@ $(document).ready(function() {
     		{"mDataProp": null,
     			"fnRender": function(obj) {
     				var cargoNature = $("#transferCrgoNature").val();
-    				amountsTest.push(obj.aData.AMOUNT);
     				if(cargoNature == "ATM"){
-    					return obj.aData.AMOUNT;
+    					return obj.aData.ATMAMOUNT;
     				}else{
     					if(obj.aData.PICKUP_NUMBER != null && obj.aData.PICKUP_NUMBER != ''){
     						var number = obj.aData.AMOUNT - obj.aData.PICKUP_NUMBER ;
+    						amountsTest.push(number);
     						return "<input type='text' name='amount' size='3' value='"+number+"' oldValue='"+number+"'>";
     					}else{
+    						amountsTest.push(obj.aData.AMOUNT);
     						return "<input type='text' name='amount' size='3' value='"+obj.aData.AMOUNT+"' oldValue='"+obj.aData.AMOUNT+"'>";
     					}
     				}
@@ -459,9 +460,27 @@ $(document).ready(function() {
 				},'json');
 			}else{
 				$.get("/pickupOrder/findNumberByOrderId", {order_id:value}, function(data){
-					console.log("普货选取数量-正式:"+amounts);
-					ckeckedTransferOrderList.append("<tr value='"+value+"'serial='' amount='"+data.AMOUNTS+"'><td>"+order_no+"</td><td></td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
+					var amount = data.AMOUNTS;
+					var amountArray = amount.split(",");
+					var pickup_numbers = data.PICKUP_NUMBERS;
+					var pickup_numbers_array = [];
+					if(pickup_numbers != null && pickup_numbers != ""){
+						pickup_numbers_array = pickup_numbers.split(",");
+						for ( var i = 0; i < pickup_numbers_array.length; i++) {
+							if(pickup_numbers_array[i] != null && amountArray[i]  != null && pickup_numbers_array[i]  != "" && amountArray[i]  != ""){
+								amounts.push(amountArray[i] - pickup_numbers_array[i]);
+							}
+						}
+					}else{
+						for ( var i = 0; i < amountArray.length; i++) {
+							amounts.push(amountArray[i]);
+						}
+					}
+					console.log("amount:"+amount+"<>pickup_numbers:"+pickup_numbers);
+					ckeckedTransferOrderList.append("<tr value='"+value+"'serial='' amount='"+amounts+"'><td>"+order_no+"</td><td></td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
 							+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
+					console.log("普货选取数量-正式:"+amounts);
+					
 				},'json');
 				//ckeckedTransferOrderList.append("<tr value='"+value+"'serial='' amount='"++"'><td>"+order_no+"</td><td></td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
 						//+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
@@ -488,6 +507,24 @@ $(document).ready(function() {
 					}
 					console.log("删除后-单品id集合-正式:"+detailIds);
 				},'json');
+			}else{
+				//删除普货数量
+				/*var ids = attrAmount.split(",");
+				for ( var i = 0; i < ids.length; i++) {
+					amounts.splice(amounts.indexOf(ids[i]), 1); 
+				}*/
+				$("#ckeckedTransferOrderList tr").each(function (){
+                    if($(this).attr("value") == value){
+                    	var attrAmount = $(this).attr("amount");
+                    	var ids = attrAmount.split(",");
+        				for ( var i = 0; i < ids.length; i++) {
+        					amounts.splice(amounts.indexOf(ids[i]), 1); 
+        				}
+        				
+                    }
+                    console.log("删除["+attrAmount+"]后-单品id集合-正式:"+amounts);
+        		});
+				console.log("删除后-单品id集合-正式:"+amounts);
 			}
 		}
 	});
@@ -801,6 +838,12 @@ $(document).ready(function() {
 	$("#itemTbody").on('blur', 'input', function(e){
 		var oldValue = $(this).attr("oldValue");
 		var value = $(this).val();
+		if(value == ""){
+			$.scojs_message('【数量】不能为空,请重新输入', $.scojs_message.TYPE_OK);
+			$(this).val(oldValue);
+			$(this).focus();
+			return false;
+		}
 		if(isNaN(value)){
 			$.scojs_message('【数量】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val(oldValue);

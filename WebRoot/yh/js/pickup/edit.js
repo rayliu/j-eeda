@@ -151,9 +151,9 @@
              { "mDataProp": null,
             	 "fnRender": function(obj) {   
             		 if(obj.aData.ATMAMOUNT != "" && obj.aData.ATMAMOUNT != null){
-            			 return obj.aData.ATMAMOUNT * obj.aData.VOLUME;
+            			 return (obj.aData.ATMAMOUNT * obj.aData.VOLUME).toFixed(2);
             		 }else{
-            			 return obj.aData.CARGOAMOUNT * obj.aData.VOLUME;
+            			 return (obj.aData.CARGOAMOUNT * obj.aData.VOLUME).toFixed(2);
             		 }
                       
                  }
@@ -161,9 +161,9 @@
              { "mDataProp": null,
             	 "fnRender": function(obj) {   
             		 if(obj.aData.ATMAMOUNT != "" && obj.aData.ATMAMOUNT != null){
-            			 return obj.aData.ATMAMOUNT * obj.aData.WEIGHT;
+            			 return (obj.aData.ATMAMOUNT * obj.aData.WEIGHT).toFixed(2);
             		 }else{
-            			 return obj.aData.CARGOAMOUNT * obj.aData.WEIGHT;
+            			 return (obj.aData.CARGOAMOUNT * obj.aData.WEIGHT).toFixed(2);
             		 }
                       
                  }
