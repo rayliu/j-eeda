@@ -1068,7 +1068,7 @@ public class DepartOrderController extends Controller {
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
         String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
 
         DepartOrder departOrder = DepartOrder.dao.findById(Integer.parseInt(depart_id));
         departOrder.set("status", order_state).update();
@@ -1097,11 +1097,9 @@ public class DepartOrderController extends Controller {
             List<Record> transferOrderItemList = Db
                     .find("select toi.*, t_o.route_from, t_o.route_to from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
                             + transferIds + ") order by pickup_seq desc");
-            // 生成应付
-            calcCost(users, departOrder, transferOrderItemList);
-
-       
-        
+            // TODO:生成应付
+            
+            calcCost(departOrder, transferOrderItemList);
         if ("已签收".equals(order_state)) {
             // 生成回单
             Date createDate = Calendar.getInstance().getTime();
@@ -1116,7 +1114,7 @@ public class DepartOrderController extends Controller {
             // deliveryOrder.get("notity_party_id"));
             returnOrder.set("order_type", "应收");
             returnOrder.set("transaction_status", "新建");
-            returnOrder.set("creator", users.get(0).get("id"));
+            returnOrder.set("creator", users.get("id"));
             returnOrder.set("create_date", createDate);
             returnOrder.save();
 
@@ -1135,7 +1133,7 @@ public class DepartOrderController extends Controller {
     // 级别4：计费类别 + 目的地
     
     // priceType 不分大小写在mysql会有问题
-    private void calcCost(List<UserLogin> users, DepartOrder departOrder, List<Record> transferOrderItemList) {
+    private void calcCost(DepartOrder departOrder, List<Record> transferOrderItemList) {
         Long spId=departOrder.getLong("sp_id");
         if ( spId== null)
             return;
@@ -1150,106 +1148,125 @@ public class DepartOrderController extends Controller {
         
         if ( spId!= null) {
             if ("perUnit".equals(chargeType)) {
-                genFinPerUnit(users, departOrder, transferOrderItemList, spContract, chargeType);
+                genFinPerUnit(departOrder, transferOrderItemList, spContract, chargeType);
             } else if ("perCar".equals(chargeType)) {
-                genFinPerCar(users, departOrder, spContract, chargeType);
+                genFinPerCar(departOrder,transferOrderItemList,spContract, chargeType);
             } else if ("perCargo".equals(chargeType)) {
                 //每次都新生成一个helper来处理计算，防止并发问题。
-                DepartOrderPaymentHelper.getInstance().genFinPerCargo(users, departOrder, transferOrderItemList, spContract, chargeType);
+                DepartOrderPaymentHelper.getInstance().genFinPerCargo(departOrder, transferOrderItemList, spContract, chargeType);
             }            
         }
     }
 
     
-    private void genFinPerCar(List<UserLogin> users, DepartOrder departOrder, Contract spContract, String chargeType) {
+    private void genFinPerCar(DepartOrder departOrder, List<Record> transferOrderItemList,Contract spContract, String chargeType) {
         // 根据发车单整车的车型，始发地，目的地，计算合同价
-        Record contractFinItem = Db
-                .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                        +" and carType = '" + departOrder.get("car_type")//对应发车单的 car_type
-                        +"' and from_id = '" + departOrder.get("route_from")
-                        +"' and to_id = '" + departOrder.get("route_to")
-                        + "' and priceType='"+chargeType+"'");
-        if (contractFinItem != null) {
-            genFinItem(users, departOrder, null, contractFinItem, chargeType);
-        }else{
-            contractFinItem = Db
+    	boolean isFinContract = true;
+    	for (Record record : transferOrderItemList) {
+    		TransferOrder transferOrder = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",record.get("order_id"));
+    		boolean isTrue = transferOrder.get("no_contract_cost");
+    		if(isTrue){
+    			isFinContract=false;
+    		}
+    		getFinNoContractCost(departOrder,transferOrder);
+    		
+		}
+    	if(isFinContract){
+    		Record contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
                             +" and carType = '" + departOrder.get("car_type")//对应发车单的 car_type
                             +"' and from_id = '" + departOrder.get("route_from")
                             +"' and to_id = '" + departOrder.get("route_to")
                             + "' and priceType='"+chargeType+"'");
             if (contractFinItem != null) {
-                genFinItem(users, departOrder, null, contractFinItem, chargeType);
-            }/*else{
-                contractFinItem = Db
-                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                +" and from_id = '" + departOrder.get("route_from")
-                                +"' and to_id = '" + departOrder.get("route_to")
-                                + "' and priceType='"+chargeType+"'");
-                if (contractFinItem != null) {
-                    genFinItem(users, departOrder, null, contractFinItem, chargeType);
-                }*/
-            else{
-                contractFinItem = Db
-                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                +" and carType = '" + departOrder.get("car_type")//对应发车单的 car_type
-                                +"' and to_id = '" + departOrder.get("route_to")
-                                + "' and priceType='"+chargeType+"'");
-                if (contractFinItem != null) {
-                    genFinItem(users, departOrder, null, contractFinItem, chargeType);
-                }
-            }
-        }
-    }
-
-    private void genFinPerUnit(List<UserLogin> users, DepartOrder departOrder, List<Record> transferOrderItemList, Contract spContract,
-            String chargeType) {
-        for (Record tOrderItemRecord : transferOrderItemList) {
-            
-            Record contractFinItem = Db
-                    .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            +" and product_id = " + tOrderItemRecord.get("product_id")
-                            +" and from_id = '" + departOrder.get("route_from")
-                            +"' and to_id = '" + departOrder.get("route_to")
-                            + "' and priceType='"+chargeType+"'");
-            if (contractFinItem != null) {
-                genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
+                genFinItem(departOrder, null, contractFinItem, chargeType);
             }else{
                 contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                +" and product_id = " + tOrderItemRecord.get("product_id")
-                                +" and to_id = '" + departOrder.get("route_to")
+                                +" and carType = '" + departOrder.get("car_type")//对应发车单的 car_type
+                                +"' and from_id = '" + departOrder.get("route_from")
+                                +"' and to_id = '" + departOrder.get("route_to")
                                 + "' and priceType='"+chargeType+"'");
                 if (contractFinItem != null) {
-                    genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
-                }else{
+                    genFinItem(departOrder, null, contractFinItem, chargeType);
+                }/*else{
                     contractFinItem = Db
                             .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
                                     +" and from_id = '" + departOrder.get("route_from")
                                     +"' and to_id = '" + departOrder.get("route_to")
                                     + "' and priceType='"+chargeType+"'");
                     if (contractFinItem != null) {
-                        genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
-                    }else{
-                        contractFinItem = Db
-                                .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                        +" and to_id = '" + departOrder.get("route_to")
-                                        + "' and priceType='"+chargeType+"'");
-                        if (contractFinItem != null) {
-                            genFinItem(users, departOrder, tOrderItemRecord, contractFinItem, chargeType);
-                        }
+                        genFinItem(users, departOrder, null, contractFinItem, chargeType);
+                    }*/
+                else{
+                    contractFinItem = Db
+                            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                    +" and carType = '" + departOrder.get("car_type")//对应发车单的 car_type
+                                    +"' and to_id = '" + departOrder.get("route_to")
+                                    + "' and priceType='"+chargeType+"'");
+                    if (contractFinItem != null) {
+                        genFinItem(departOrder, null, contractFinItem, chargeType);
                     }
                 }
             }
-        }
+    	}
     }
 
-    private void genFinItem( List<UserLogin> users, DepartOrder departOrder, Record tOrderItemRecord, Record contractFinItem, String chargeType) {
+    private void genFinPerUnit(DepartOrder departOrder, List<Record> transferOrderItemList, Contract spContract,
+            String chargeType) {
+        for (Record tOrderItemRecord : transferOrderItemList) {
+        	//TODO:获取到运输单，并且判断是否要计算合同
+        	TransferOrder transferOrder = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",tOrderItemRecord.get("order_id"));
+        	boolean isTrue = transferOrder.get("no_contract_cost");
+        	getFinNoContractCost(departOrder,transferOrder);
+        	if(!isTrue){
+        		Record contractFinItem = Db
+                        .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                +" and product_id = " + tOrderItemRecord.get("product_id")
+                                +" and from_id = '" + departOrder.get("route_from")
+                                +"' and to_id = '" + departOrder.get("route_to")
+                                + "' and priceType='"+chargeType+"'");
+                if (contractFinItem != null) {
+                    genFinItem(departOrder, tOrderItemRecord, contractFinItem, chargeType);
+                }else{
+                    contractFinItem = Db
+                            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                    +" and product_id = " + tOrderItemRecord.get("product_id")
+                                    +" and to_id = '" + departOrder.get("route_to")
+                                    + "' and priceType='"+chargeType+"'");
+                    if (contractFinItem != null) {
+                        genFinItem(departOrder, tOrderItemRecord, contractFinItem, chargeType);
+                    }else{
+                        contractFinItem = Db
+                                .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                        +" and from_id = '" + departOrder.get("route_from")
+                                        +"' and to_id = '" + departOrder.get("route_to")
+                                        + "' and priceType='"+chargeType+"'");
+                        if (contractFinItem != null) {
+                            genFinItem(departOrder, tOrderItemRecord, contractFinItem, chargeType);
+                        }else{
+                            contractFinItem = Db
+                                    .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+                                            +" and to_id = '" + departOrder.get("route_to")
+                                            + "' and priceType='"+chargeType+"'");
+                            if (contractFinItem != null) {
+                                genFinItem(departOrder, tOrderItemRecord, contractFinItem, chargeType);
+                            }
+                        }
+                    }
+                }
+        	}
+        }
+    }
+  
+    private void genFinItem(DepartOrder departOrder, Record tOrderItemRecord, Record contractFinItem, String chargeType) {
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
         DepartOrderFinItem departOrderFinItem = new DepartOrderFinItem();
-        departOrderFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
         
+        departOrderFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
+        String name = (String) currentUser.getPrincipal();
+        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
     	if("perCar".equals(chargeType)){
     		double money=contractFinItem.getDouble("amount");
     		BigDecimal bg = new BigDecimal(money);
@@ -1261,15 +1278,16 @@ public class DepartOrderController extends Controller {
         		BigDecimal bg = new BigDecimal(money);
                 double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     			departOrderFinItem.set("amount", amountDouble);
+    			departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
+    		    departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
     		}
     	}
         departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
         departOrderFinItem.set("status", "未完成");
-        departOrderFinItem.set("creator", users.get(0).get("id"));
+        departOrderFinItem.set("creator", users.get("id"));
         departOrderFinItem.set("create_date", now);
         departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
-        departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
-        departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
+        departOrderFinItem.set("cost_source", "合同费用");
         departOrderFinItem.save();
     }
 
@@ -1830,7 +1848,7 @@ public class DepartOrderController extends Controller {
      * getPara("depart_id").toString()); renderJson(check); }
      */
 
-    // 应付list
+    // TODO:应付list,查询条件（一张运输单，三张运输单，多种产品）
     public void accountPayable() {
         String id = getPara();
         if (id == null || id.equals("")) {
@@ -1984,6 +2002,7 @@ public class DepartOrderController extends Controller {
     	if(paymentId != null && !"".equals(paymentId)){
     		DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao.findById(paymentId);
     		departOrderFinItem.set(name, value);
+    		
     		departOrderFinItem.update();
     	}
         renderJson("{\"success\":true}");
@@ -1993,6 +2012,33 @@ public class DepartOrderController extends Controller {
         String id = getPara();
         DepartOrderFinItem.dao.deleteById(id);
         renderJson("{\"success\":true}");
+    }
+    //TODO：不按合同计费
+    public void getFinNoContractCost(DepartOrder departOrder,TransferOrder transfer){
+    	List<TransferOrderFinItem> tofiList 
+    			= TransferOrderFinItem.dao.find("select * from transfer_order_fin_item where order_id =?",transfer.get("id"));
+    	String name = (String) currentUser.getPrincipal();
+        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
+        if(tofiList.size()>0){
+        	for (TransferOrderFinItem transferOrderFinItem : tofiList) {
+        		TransferOrderItem toi = TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = ?",transfer.get("id"));
+        		DepartOrderFinItem departOrderFinItem = new DepartOrderFinItem();
+            	departOrderFinItem.set("fin_item_id", transferOrderFinItem.get("fin_item_id"));
+            	departOrderFinItem.set("amount", transferOrderFinItem.get("amount"));
+                departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
+                departOrderFinItem.set("status", "未完成");
+                departOrderFinItem.set("creator", users.get("id"));
+                departOrderFinItem.set("create_date", now);
+                departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
+                departOrderFinItem.set("transfer_order_id", transfer.get("id"));
+                departOrderFinItem.set("transfer_order_item_id", toi.get("id"));
+                departOrderFinItem.set("cost_source", "运输单应付费用");
+                departOrderFinItem.save();
+    		}
+        }
+    	
     }
 
 }

@@ -1061,6 +1061,15 @@
 		                    }
 			         }}, 
     				{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
+    				{"mDataProp":"COST_SOURCE",
+    					"sWidth": "80px",
+    					"fnRender":function(obj) {
+    						if(obj.aData.CREATE_NAME == 'system'){
+				        		return obj.aData.COST_SOURCE;
+				        	}else{
+				        		return "手工录入费用";
+				        	}
+    				}},
     				{  
 		                "mDataProp": null, 
 		                "sWidth": "60px",  
@@ -1094,7 +1103,7 @@
     		$("#addrow").click(function(){	
     			var departId=$("#depart_id").val();
     			$.post('/departOrder/addNewRow/'+departId,function(data){
-    				console.log(data);
+    			
     				if(data[0] != null){
     					paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+departId;
     					paymenttable.fnDraw();
