@@ -63,7 +63,7 @@ public class PickupOrderController extends Controller {
         String[] transferOrderIds = list.split(",");
         String detailIds = getPara("detailIds");
         String cargoIds = getPara("cargoIds");
-        String cargoNumbers = getPara("cargoNumbers");
+        /*String cargoNumbers = getPara("cargoNumbers");*/
 
         if (transferOrderIds.length == 1) {
             TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
@@ -97,7 +97,7 @@ public class PickupOrderController extends Controller {
         setAttr("saveOK", false);
         setAttr("detailIds", detailIds);
         setAttr("cargoIds", cargoIds);
-        setAttr("cargoNumbers", cargoNumbers);
+        /*setAttr("cargoNumbers", cargoNumbers);*/
         
         List<Record> paymentItemList = Collections.EMPTY_LIST;
         paymentItemList = Db.find("select * from fin_item where type='应付'");
@@ -525,6 +525,7 @@ public class PickupOrderController extends Controller {
         String tr_item = getPara("tr_item");// 货品id
         String item_detail = getPara("item_detail");// 单品id
         String pickId = getPara("pickupId");
+        String departOrderId = getPara("departOrderId");
         
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -535,17 +536,30 @@ public class PickupOrderController extends Controller {
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-
-        String sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,"
-        		+ " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,"
-        		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and pickup_id = "+pickId+") atmamount,"
-        		+ " (select amount from depart_transfer where order_id = tor.id and pickup_id = "+pickId+" and order_item_id = toi.id) cargoamount, "
-                + " c.abbr customer,tor.order_no,toi.remark  from transfer_order_item toi "
-                + " left join transfer_order tor on tor.id = toi.order_id"
-                + " left join party p on p.id = tor.customer_id"
-                + " left join contact c on c.id = p.contact_id"
-                + " left join product pd on pd.id = toi.product_id"
-                + " where toi.order_id in(" + order_id + ")  order by c.id" + sLimit;
+        
+        String sql = "";
+        if(!"".equals(pickId) && pickId != null){
+        	 sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,"
+             		+ " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,"
+             		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and pickup_id = "+pickId+") atmamount,"
+                     + " toi.amount cargoamount,toi.volume cargovolume,	toi.sum_weight cargoweight,c.abbr customer,tor.order_no,toi.remark  from transfer_order_item toi "
+                     + " left join transfer_order tor on tor.id = toi.order_id"
+                     + " left join party p on p.id = tor.customer_id"
+                     + " left join contact c on c.id = p.contact_id"
+                     + " left join product pd on pd.id = toi.product_id"
+                     + " where toi.order_id in(" + order_id + ")  order by c.id" + sLimit;
+        }else{
+        	 sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,"
+             		+ " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,"
+             		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and depart_id = "+departOrderId+") atmamount,"
+                     + " toi.amount cargoamount,toi.volume cargovolume,	toi.sum_weight cargoweight,c.abbr customer,tor.order_no,toi.remark  from transfer_order_item toi "
+                     + " left join transfer_order tor on tor.id = toi.order_id"
+                     + " left join party p on p.id = tor.customer_id"
+                     + " left join contact c on c.id = p.contact_id"
+                     + " left join product pd on pd.id = toi.product_id"
+                     + " where toi.order_id in(" + order_id + ")  order by c.id" + sLimit;
+        }
+      
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
@@ -570,8 +584,9 @@ public class PickupOrderController extends Controller {
         String returnTime = getPara("return_time");
         String datailIdsStr = getPara("detailIds");
         String[] detailIds = getPara("detailIds").split(",");
+        String[] orderids = getPara("orderid").split(",");
         String[] cargoIds = getPara("cargoIds").split(",");
-        String[] cargoNumbers = getPara("cargoNumbers").split("&");
+        /*String[] cargoNumbers = getPara("cargoNumbers").split("&");*/
         if (pickId == null || "".equals(pickId)) {
         	String sql = "select * from depart_order where combine_type = '"+DepartOrder.COMBINE_TYPE_PICKUP+"' order by id desc limit 0,1";
             pickupOrder = new DepartOrder();
@@ -654,7 +669,7 @@ public class PickupOrderController extends Controller {
             //saveDepartTransfer(pickupOrder, getPara("orderid"), checkedDetail, uncheckedDetailIds);
             savePickupOrderMilestone(pickupOrder);
             
-            //ATM单品
+             //ATM单品
             if(detailIds[0].trim() != ""){
 	            for (int i = 0; i < detailIds.length; i++) {
 					TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailIds[i]);
@@ -687,11 +702,20 @@ public class PickupOrderController extends Controller {
 		            departTransferOrder.save();
 	            }
             }
-            //普货
+            //普货 - 改为只能提一次货
             if(cargoIds[0].trim() != ""){
 	            for (int i = 0; i < cargoIds.length; i++) {
 	            	TransferOrder transferOrderCargo = TransferOrder.dao.findById(cargoIds[i]);
-	            	//总提货数量（之前+现在）
+	            	transferOrderCargo.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+	            	transferOrderCargo.set("pickup_mode", pickupOrder.get("pickup_mode"));
+					transferOrderCargo.update();
+					//从表
+					DepartTransferOrder departTransferOrder = new DepartTransferOrder();
+		            departTransferOrder.set("pickup_id", pickupOrder.get("id"));
+		            departTransferOrder.set("order_id", cargoIds[i]);
+		            departTransferOrder.set("transfer_order_no", transferOrderCargo.get("order_no"));
+		            departTransferOrder.save();
+	            	/*//总提货数量（之前+现在）
 	            	double sumPickAmount = 0;
 	            	//运输单货品总数（sum）
 	            	double sumTransferOrderItemAmount = 0;
@@ -725,6 +749,7 @@ public class PickupOrderController extends Controller {
 					}
 					transferOrderCargo.set("pickup_mode", pickupOrder.get("pickup_mode"));
 					transferOrderCargo.update();
+					*/
 				}
             }
             

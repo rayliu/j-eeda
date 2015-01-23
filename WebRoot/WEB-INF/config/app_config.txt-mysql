@@ -1,0 +1,1 @@
+dbType=MysqldbUrl=jdbc:mysql://localhost/eeda_yh?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNullusername=rootpwd=rootis_check_permission=Y

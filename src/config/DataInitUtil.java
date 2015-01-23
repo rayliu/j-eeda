@@ -106,7 +106,7 @@ public class DataInitUtil {
                     + "customer_id bigint,sp_id bigint,notify_party_id bigint,driver_id bigint,warehouse_id bigint,office_id bigint,insurance_id bigint,foreign key(customer_id) references party(id),foreign key(sp_id) references party(id),car_summary_order_share_ratio double,"
                     + "foreign key(notify_party_id) references party(id),foreign key(driver_id) references party(id),foreign key(warehouse_id) references warehouse(id),foreign key(office_id) references office(id),foreign key(insurance_id) references insurance_order(id));");
             // transfer_order_item 货品明细
-            stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment primary key,item_no varchar(255),item_name varchar(255),item_desc varchar(255),"
+            stmt.executeUpdate("create table if not exists transfer_order_item(id bigint auto_increment primary key,item_no varchar(255),item_name varchar(255),item_desc varchar(255),pickup_number double,"
                     + "amount double,complete_amount double,size double,width double,height double,unit varchar(255),volume double,weight double,sum_weight double,remark varchar(5120),order_id bigint,foreign key(order_id) references transfer_order(id),product_id bigint,foreign key(product_id) references product(id));");
 
             // carinfo 车辆信息表
@@ -161,7 +161,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists delivery_plan_order_carinfo(id bigint auto_increment primary key,order_id bigint,carinfo_id bigint,car_no varchar(50),driver varchar(50),phone varchar(50));");
             
             // 发车单运输单中间表
-            stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,pickup_id bigint,depart_id bigint,order_id bigint,transfer_order_no varchar(255),foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id),foreign key(pickup_id) references depart_order(id));");
+            stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,pickup_id bigint,depart_id bigint,order_id bigint,transfer_order_no varchar(255),amount double,order_item_id bigint,foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id),foreign key(pickup_id) references depart_order(id));");
 
             // transfer_order_milestone 运输单里程碑
 

@@ -90,8 +90,12 @@ $(document).ready(function() {
             	"sWidth": "100px",
             	"sClass": "order_no",
             	"fnRender": function(obj) {
+            		if(obj.aData.CARGO_NATURE == "ATM"){
             			var str1 = '<button type="button" name="selectDetailBtn" class="btn btn-default sm selectDetailBtn" data-toggle="modal" data-target="#myModal" value="'+obj.aData.ID+'">选择单品</button>';
             			return obj.aData.ORDER_NO + str1;
+            		}else{
+            			return obj.aData.ORDER_NO;
+            		}
                  }
             },
             { 
@@ -331,19 +335,19 @@ $(document).ready(function() {
         $('#pickupOrder_message').val(tableArr);
         $("#detailIds").val(detailIds);
         
-        //传普货信息
+        //普货信息(id)
         var cargoIds = [];
-        var cargoNumbers = [];
+        //var cargoNumbers = [];
         $("#ckeckedTransferOrderList tr").each(function (){
         	var cargo_nature = $(this).find("td").eq(6).text();
         	if(cargo_nature != 'ATM'){
         		cargoIds.push($(this).attr("value"));
-        		cargoNumbers.push($(this).attr("amount")+"&");
+        		//cargoNumbers.push($(this).attr("amount")+"&");
         	}
 		});
         $("#cargoIds").val(cargoIds);
-        $("#cargoNumbers").val(cargoNumbers);
-        console.log("单品id:"+$("#detailIds").val()+"普货运输单id:"+cargoIds+",货品数量："+cargoNumbers);
+        //$("#cargoNumbers").val(cargoNumbers);*/
+        // console.log("单品id:"+$("#detailIds").val()+",货品数量："+cargoNumbers);
         $('#createForm').submit();
     });
     
@@ -455,11 +459,11 @@ $(document).ready(function() {
 						detailIds.push(ids[i]);
 					}
 					console.log("单品id集合-正式:"+detailIds);
-					ckeckedTransferOrderList.append("<tr value='"+value+"' serial='"+data.ID+"' amount=''><td>"+order_no+"</td><td>"+data.SERIAL_NO+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
+					ckeckedTransferOrderList.append("<tr value='"+value+"' serial='"+data.ID+"'><td>"+order_no+"</td><td>"+data.SERIAL_NO+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
 							+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
 				},'json');
 			}else{
-				$.get("/pickupOrder/findNumberByOrderId", {order_id:value}, function(data){
+				/*$.get("/pickupOrder/findNumberByOrderId", {order_id:value}, function(data){
 					var amount = data.AMOUNTS;
 					var amountArray = amount.split(",");
 					var pickup_numbers = data.PICKUP_NUMBERS;
@@ -481,22 +485,12 @@ $(document).ready(function() {
 							+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
 					console.log("普货选取数量-正式:"+amounts);
 					
-				},'json');
-				//ckeckedTransferOrderList.append("<tr value='"+value+"'serial='' amount='"++"'><td>"+order_no+"</td><td></td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
-						//+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
+				},'json');*/
+				ckeckedTransferOrderList.append("<tr value='"+value+"'serial=''><td>"+order_no+"</td><td></td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
+						+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
 			}
 		}else{
-			sumValue();
-			var allTrs = ckeckedTransferOrderList.children();
-			for(var i=0;i<allTrs.length;i++){
-				if(allTrs[i].attributes[0].value == $(this).val()){
-					allTrs[i].remove();
-				}
-			}
-			if(orderType.length != 0){
-				orderType.splice($(this).parent().siblings('.order_type')[0].innerHTML, 1);
-				officeType.splice($(this).parent().siblings('.office_name')[0].innerHTML,1);
-			}
+			
 			if(cargo_nature == 'ATM'){
 				$.get("/pickupOrder/findSerialNoByOrderId", {order_id:value}, function(data){
 					console.log("单品id集合-正式:"+detailIds);
@@ -508,23 +502,26 @@ $(document).ready(function() {
 					console.log("删除后-单品id集合-正式:"+detailIds);
 				},'json');
 			}else{
-				//删除普货数量
-				/*var ids = attrAmount.split(",");
+				//删除取消的普货数量
+				var attrAmount = $("#ckeckedTransferOrderList").find("tr").attr("amount");
+				console.log("attrAmount:"+attrAmount);
+				var ids = attrAmount.split(",");
 				for ( var i = 0; i < ids.length; i++) {
 					amounts.splice(amounts.indexOf(ids[i]), 1); 
-				}*/
-				$("#ckeckedTransferOrderList tr").each(function (){
-                    if($(this).attr("value") == value){
-                    	var attrAmount = $(this).attr("amount");
-                    	var ids = attrAmount.split(",");
-        				for ( var i = 0; i < ids.length; i++) {
-        					amounts.splice(amounts.indexOf(ids[i]), 1); 
-        				}
-        				
-                    }
-                    console.log("删除["+attrAmount+"]后-单品id集合-正式:"+amounts);
-        		});
-				console.log("删除后-单品id集合-正式:"+amounts);
+				}
+				console.log("删除后-普货数量集合-正式:"+amounts);
+			}
+			
+			sumValue();
+			var allTrs = ckeckedTransferOrderList.children();
+			for(var i=0;i<allTrs.length;i++){
+				if(allTrs[i].attributes[0].value == $(this).val()){
+					allTrs[i].remove();
+				}
+			}
+			if(orderType.length != 0){
+				orderType.splice($(this).parent().siblings('.order_type')[0].innerHTML, 1);
+				officeType.splice($(this).parent().siblings('.office_name')[0].innerHTML,1);
 			}
 		}
 	});
@@ -700,16 +697,16 @@ $(document).ready(function() {
     				for ( var i = 0; i < detailIdsTest.length; i++) {
     					serialArray += detailSerialTest[i] + " ";
     				}
-    				ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"' serial='"+detailIdsTest+"' amount=''><td>"+order_no+"</td><td>"+serialArray+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
+    				ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"' serial='"+detailIdsTest+"'><td>"+order_no+"</td><td>"+serialArray+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
     					+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
     			}else{
-    				//获取普货的全部数量
+    				/*//获取普货的全部数量
     				var sumAmount = 0;
     				$("#itemTbody tr").each(function (){
     					amounts.push($(this).find("td").eq(1).find("input[name='amount']").val());
     					sumAmount += $(this).find("td").eq(1).find("input[name='amount']").val() * 1;
-    				});
-    				ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"' serial='' amount='"+amounts+"'><td>"+order_no+"</td><td></td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
+    				});*/
+    				ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"' serial=''><td>"+order_no+"</td><td></td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
     						+sumAmount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
     			}
     			//保存选中的单品ID
@@ -795,17 +792,21 @@ $(document).ready(function() {
 	    
 	//全选
 	$("#checkboxAll").click(function(e){
-		$("input[type='checkbox'][class='detailCheckbox']").each(function(){
-			if($(this).prop('checked') == true){
-				$(this).prop('checked',false);
-				detailIdsTest.splice(detailIdsTest.indexOf($(this).val()), 1);
-				detailSerialTest.splice(detailSerialTest.indexOf($(this).parent().siblings('.serial_no')[0].innerHTML), 1);
-			}else{
+		
+		if($(this).prop('checked') == true){
+			$("input[type='checkbox'][class='detailCheckbox']").each(function(){
 				$(this).prop('checked',true);
 				detailIdsTest.push($(this).val());
 				detailSerialTest.push($(this).parent().siblings('.serial_no')[0].textContent);
-			}
-		});
+			});
+		}else{
+			$("input[type='checkbox'][class='detailCheckbox']").each(function(){
+				$(this).prop('checked',false);
+				detailIdsTest.splice(detailIdsTest.indexOf($(this).val()), 1);
+				detailSerialTest.splice(detailSerialTest.indexOf($(this).parent().siblings('.serial_no')[0].innerHTML), 1);
+			});
+		}
+		
 		if(detailIdsTest.length == 0){
 			$('#sureBtn').attr('disabled', true);
 		}else{

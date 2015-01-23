@@ -222,20 +222,46 @@
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
-        "bServerSide": true,
+        "bServerSide": false,
         "bDestroy": true,
     	 "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
+        //"sAjaxSource": "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
         "aoColumns": [
             { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
             { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
             { "mDataProp": "ITEM_NO"},
             { "mDataProp": "ITEM_NAME"},
-            { "mDataProp": "AMOUNT"},
-            { "mDataProp": "VOLUME"},
-            { "mDataProp": "WEIGHT"},
+            { "mDataProp": null,
+           	 	"fnRender": function(obj) {   
+	        		 if(obj.aData.ATMAMOUNT != "" && obj.aData.ATMAMOUNT != null){
+	        			 return obj.aData.ATMAMOUNT;
+	        		 }else{
+	        			 return obj.aData.CARGOAMOUNT;
+	        		 }
+           	 	}
+            },
+            { "mDataProp": null,
+	           	 "fnRender": function(obj) {   
+	        		 if(obj.aData.ATMAMOUNT != "" && obj.aData.ATMAMOUNT != null){
+	        			 return (obj.aData.ATMAMOUNT * obj.aData.VOLUME).toFixed(2);
+	        		 }else{
+	        			 return (obj.aData.CARGOAMOUNT * obj.aData.VOLUME).toFixed(2);
+	        		 }
+	                  
+	             }
+            },
+            { "mDataProp": null,
+	           	 "fnRender": function(obj) {   
+	        		 if(obj.aData.ATMAMOUNT != "" && obj.aData.ATMAMOUNT != null){
+	        			 return (obj.aData.ATMAMOUNT * obj.aData.WEIGHT).toFixed(2);
+	        		 }else{
+	        			 return (obj.aData.CARGOAMOUNT * obj.aData.WEIGHT).toFixed(2);
+	        		 }
+	                  
+	             }
+            },
             { "mDataProp": "REMARK"},
             { 
                 "mDataProp": null, 
@@ -748,6 +774,17 @@
     	    		
     	    	} 
     	    	parentId = e.target.getAttribute("id");
+    	    	
+    	    	var message=$("#message").val();
+    	        var type=$("#type").val();
+    	        var depart_id=$("#depart_id").val();
+    	        var tr_item=$("#tr_itemid_list").val();
+    	        var item_detail=$("#item_detail").val();
+    	 	    var departOrderId = $("#departOrderId").val();
+    	 	    datatable.fnSettings().oFeatures.bServerSide = true; 
+    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+departOrderId;
+    	 		datatable.fnDraw();
+    	    	
     	    });
     	    
     	    $("#departureConfirmationBtn").click(function(e){
