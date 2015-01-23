@@ -6,9 +6,9 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">运输单   
-                    	<% if(shiro.hasPermission("TransferOrder.create")){%>
+                    	<!-- <% if(shiro.hasPermission("TransferOrder.create")){%>
                         	<a class="btn btn-primary" href="/transferOrder/add">新增运输单</a>
-                        <%}%>
+                        <%}%> -->
                         <a class="btn btn-default" href="/transferOrder">返回</a>
                     </h1>
                     
@@ -631,7 +631,7 @@
 									</div><!-- /.modal -->
                                 <div class="tab-pane fade" id="milestone">
                                 	<div class="panel-body">
-                                		<% if(shiro.hasPermission("TransferOrder.update")){%>
+                                		<% if(false){%>
 			                            <button class="btn btn-primary" data-toggle="modal" data-target="#transferOrderMilestone">
 										  新里程碑
 										</button>

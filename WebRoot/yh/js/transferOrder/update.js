@@ -2169,7 +2169,8 @@ $(document).ready(function() {
   	});
  	
  	// 清除上一次留下的ID
- 	$("#editTransferOrderItem").click(function(){
+ 	$("#editTransferOrderItem").click(function(e){
+ 		e.preventDefault();
  		var orderId = $("#order_id").val();
  		$.post('/transferOrderItem/addNewRow', {orderId:orderId}, function(data){
  			itemDataTable.fnDraw(); 
@@ -2444,7 +2445,8 @@ $(document).ready(function() {
 	});	
 	
 	//应付
-	$("#addrow").click(function(){	
+	$("#addrow").click(function(e){	
+		e.preventDefault();
 	    var order_id =$("#order_id").val();
 		$.post('/transferOrder/addNewRow/'+order_id,function(data){
 			if(data[0] != null){
@@ -2488,7 +2490,8 @@ $(document).ready(function() {
     	},'json');
 	});
 	//应收
-	$("#addrow2").click(function(){	
+	$("#addrow2").click(function(e){	
+		e.preventDefault();
 	    var order_id =$("#order_id").val();
 		$.post('/transferOrder/addNewRow2/'+order_id,function(data){
 			//console.log(data);
