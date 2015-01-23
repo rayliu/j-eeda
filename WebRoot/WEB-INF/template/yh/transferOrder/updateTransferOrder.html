@@ -336,7 +336,7 @@
 	                                                <select  id="cmbAreaFrom" name="cmbAreaFrom" value=""></select>
 	                                            </div>                                            
                                             
-                                           <h2>供应商信息1111</h2>
+                                           <h2>供应商信息</h2>
                                            <div class="form-group">
                                                <!--label>供应商名称</label-->
                                                 <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage"  value="${spContact.company_name!''}"/>
@@ -662,7 +662,7 @@
                                             <div id='addRevenueDiv' style="display:none;">
 									 	        <button class="btn btn-primary" id="addrow2">添加应收</button>
                                                 <input type="checkbox" name="revenueCheckBox" id="revenueCheckBox"
-                                                <% if(transferOrder.no_contract_revenue){ %>checked<%}%>
+                                                <% if(transferOrder.no_contract_revenue!false){ %>checked<%}%>
                                                 >不需要从合同计算应收费用
                                             </div>
                                     	    <div class="form-group"></div>
@@ -707,7 +707,7 @@
                                         <div id='addCostDiv' style="display:none;">
 									        <button class="btn btn-primary" id="addrow"> 添加应付</button>
                                             <input type="checkbox" name="costCheckBox" id="costCheckBox"
-                                            <% if(transferOrder.no_contract_cost){ %>checked<%}%>
+                                            <% if(transferOrder.no_contract_cost!false){ %>checked<%}%>
                                             >不需要从合同计算应付费用
                                         </div>
                                         <div class="form-group"></div>
