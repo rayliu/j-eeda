@@ -1,16 +1,18 @@
 package controllers.yh.carmanage;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import models.DepartOrder;
-
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
@@ -18,6 +20,8 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.profile.CarinfoController;
 
+@RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class CarReimbursementController extends Controller {
 	private Logger logger = Logger.getLogger(CarinfoController.class);
 	Subject currentUser = SecurityUtils.getSubject();
@@ -38,7 +42,7 @@ public class CarReimbursementController extends Controller {
 		String driver = getPara("driver");
 		String car_no = getPara("car_no");
 		String transferOrderNo = getPara("transferOrderNo");
-		String order_no = getPara("order_no");
+		String order_no = getPara("carSummaryOrderNo");
 		String start_data = getPara("start_data");
 		 
 		String sLimit = "";
@@ -104,16 +108,16 @@ public class CarReimbursementController extends Controller {
 					+ " (select sum( ifnull(nullif(toi.weight, 0),p.weight) * toi.amount) from transfer_order_item toi left join product p on p.id = toi.product_id where toi.order_id IN "
 					+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as weight,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 2) refuel_consume,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 3) amount3,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 4) amount4,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 5) amount5,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 6) amount6,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 7) amount7,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 8) amount8,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 9) amount9,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 10) amount10,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 11) amount11,"
-					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 12) amount12"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 3) subsidy,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 4) driver_salary,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 5) toll_charge,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 6) handling_charges,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 7) fine,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 8) deliveryman_salary,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 9) parking_charge,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 10) quarterage,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 11) weighing_charge,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 12) other_charges"
 					+ " from car_summary_order cso"
 					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
 					+ " left join depart_order dod on dod.id = csd.pickup_order_id "

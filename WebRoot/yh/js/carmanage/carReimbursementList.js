@@ -3,30 +3,29 @@ $(document).ready(function() {
 	
 	var num1 = 1;
 	
+	var unDisposePickuoIds=[];
 	//行车单查询，dataTable
     var carSummaryTbody = $('#carSummaryTbody').dataTable({
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 20,
-    	"bServerSide": false,
+    	"bServerSide": true,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
+    	"sAjaxSource": "/carreimbursement/carSummaryOrderList",
     	"aoColumns": [ 
-			  {"mDataProp": null,"sWidth":"10px",
+			    {"mDataProp":null, "sWidth":"10px", 
 				  "fnRender": function(obj) {
-					  unDisposePickuoIds.push("S"+obj.aData.ID);
+					  //unDisposePickuoIds.push("S"+obj.aData.ID);
 					  return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
-			  }}, 
-			  {"mDataProp": null,"sWidth":"40px",
-			  	  "fnRender": function(obj) {
-			  		  return num1++;
-			  }},
-	          {"mDataProp": null,
-				  "fnRender": function(obj) {
-					  return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
-          	  }},  
+			    }}, 
+	          {"mDataProp":null, "sWidth":"120px",
+				    "fnRender": function(obj) {
+					  return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+          	  		}
+          	  },  
 	          {"mDataProp":"PICKUP_NO", "sWidth":"120px"},
 	          {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"120px"},
 	          {"mDataProp":"STATUS", "sWidth":"60px",
@@ -50,7 +49,7 @@ $(document).ready(function() {
 			  {"mDataProp":"RETURN_TIME", "sWidth":"80px"},
 			  {"mDataProp":null, "sWidth":"70px",
 				  "fnRender": function(obj) {
-						return DateDiff(obj.aData.RETURN_TIME,obj.aData.TURNOUT_TIME);
+						return "dfa";//DateDiff(obj.aData.RETURN_TIME,obj.aData.TURNOUT_TIME);
 					}
 			  },        	
 			  {"mDataProp":"VOLUME", "sWidth":"70px"},           
@@ -101,9 +100,10 @@ $(document).ready(function() {
 		var carSummaryOrderNo = $("#carSummaryOrderNo").val();
 		num1 = 1;
 		carSummaryTbody.fnSettings().oFeatures.bServerSide = true; 
-		carSummaryTbody.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&create_stamp="+create_stamp+"&carSummaryOrderNo="+carSummaryOrderNo;
+		carSummaryTbody.fnSettings().sAjaxSource = "/carreimbursement/carSummaryOrderList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&create_stamp="+create_stamp+"&carSummaryOrderNo="+carSummaryOrderNo;
 		carSummaryTbody.fnDraw();
 	});
+
     //创建报销单
     $('#createBtn').click(function(e){
         e.preventDefault();
