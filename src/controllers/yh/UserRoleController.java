@@ -118,22 +118,26 @@ public class UserRoleController extends Controller {
         
         ids = (List<Object>) returnList.get(0);
         List<String> saveList = (List<String>) returnList.get(1);
-        
-        for (Object id : ids) {
-            UserRole.dao.findFirst("select * from user_role where id=?", id).delete();
-        }
-        
-        for (Object object : saveList) {
-            UserRole ur = new UserRole();
-            ur.set("user_name", name);
-            /*根据id找到Role*/
-            Role role = Role.dao.findFirst("select * from role where id=?",object);
-            if(role != null){
-            	ur.set("role_code", role.get("code"));
-                ur.save();
+        if(ids.size()>0){
+        	for (Object id : ids) {
+                UserRole.dao.findFirst("select * from user_role where id=?", id).delete();
             }
-            
         }
+        
+        if(saveList.size()>0){
+        	for (Object object : saveList) {
+                UserRole ur = new UserRole();
+                ur.set("user_name", name);
+                /*根据id找到Role*/
+                Role role = Role.dao.findFirst("select * from role where id=?",object);
+                if(role != null){
+                	ur.set("role_code", role.get("code"));
+                    ur.save();
+                }
+                
+            }
+        }
+        
 		renderJson();
 	}
 	public void roleList() {
