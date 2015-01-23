@@ -128,12 +128,12 @@ public class UserRoleController extends Controller {
             ur.set("user_name", name);
             /*根据id找到Role*/
             Role role = Role.dao.findFirst("select * from role where id=?",object);
-            ur.set("role_code", role.get("code"));
-            ur.save();
+            if(role != null){
+            	ur.set("role_code", role.get("code"));
+                ur.save();
+            }
+            
         }
-
-	
-		
 		renderJson();
 	}
 	public void roleList() {
