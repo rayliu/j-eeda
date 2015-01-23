@@ -37,7 +37,7 @@
 	            			return "";
 	            		}}},
 	            {"mDataProp":"CAR_NO", "sWidth":"100px"},	 
-			    {"mDataProp":"CONTACT_PERSON", "sWidth":"70px"},
+			    {"mDataProp":"CONTACT_PERSON", "sWidth":"80px"},
 			    {"mDataProp":"PHONE", "sWidth":"80px"},
 			    {"mDataProp":"CARTYPE", "sWidth":"80px"},     
 			    {"mDataProp":"CREATE_STAMP", "sWidth":"100px",
@@ -46,10 +46,16 @@
         				var str=create_stamp.substr(0,10);
         				return str;
         			}}, 
-			    {"mDataProp":"VOLUME", "sWidth":"100px"},
-			    {"mDataProp":"WEIGHT", "sWidth":"100px"},
-			    {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"70px"},
-			    {"mDataProp":"USER_NAME", "sWidth":"70px"},
+			    {"mDataProp":null, "sWidth":"70px",
+    				"fnRender":function(obj){
+        				return obj.aData.ATMVOLUME + obj.aData.CARGOVOLUME;
+        			}},
+			    {"mDataProp":null, "sWidth":"70px",
+    				"fnRender":function(obj){
+        				return obj.aData.ATMWEIGHT + obj.aData.CARGOWEIGHT;
+        			}},
+			    {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"80px"},
+			    {"mDataProp":"USER_NAME", "sWidth":"90px"},
 			    {"mDataProp":"REMARK"}
 	        ]      
 	    });	
