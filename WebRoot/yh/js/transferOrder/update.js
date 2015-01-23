@@ -440,7 +440,7 @@ $(document).ready(function() {
 			        
 			        //location.href = "/transferOrder";               
 				}else{
-					alert('数据保存失败。');
+					$.scojs_message('数据保存失败', $.scojs_message.TYPE_ERROR);
 				}
 			},'json');
         }else{
@@ -468,7 +468,7 @@ $(document).ready(function() {
 			        
 			        //location.href = "/transferOrder";                
 				}else{
-					alert('数据保存失败。');
+					$.scojs_message('数据保存失败', $.scojs_message.TYPE_ERROR);
 				}
 			},'json');
         }

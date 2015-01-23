@@ -261,7 +261,7 @@ public class DataInitUtil {
             
             //报销单
             stmt.execute("create table if not exists reimbursement_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),account_name varchar(50),account_no varchar(50),payment_type varchar(30),invoice_payment varchar(30),"
-            		+ "amount double,create_id bigint,create_stamp timestamp,audit_id bigint,audit_stamp timestamp,approval_id bigint,approval_stamp timestamp,remark varchar(500));");
+            		+ "amount double,create_id bigint,create_stamp timestamp,audit_id bigint,audit_stamp timestamp,approval_id bigint,approval_stamp timestamp,remark varchar(500), car_summery_order_ids varchar(100));");
             
             //报销单明细
             stmt.execute("create table if not exists reimbursement_order_fin_item(id bigint auto_increment primary key,order_id varchar(50),fin_item_id bigint,invoice_amount double, revocation_amount double,fin_attribution_id bigint, remark varchar(500));");

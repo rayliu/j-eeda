@@ -18,7 +18,7 @@ $(document).ready(function() {
     	"aoColumns": [ 
 			    {"mDataProp":null, "sWidth":"10px", 
 				  "fnRender": function(obj) {
-					  //unDisposePickuoIds.push("S"+obj.aData.ID);
+					  unDisposePickuoIds.push(obj.aData.ID);
 					  return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
 			    }}, 
 	          {"mDataProp":null, "sWidth":"120px",
@@ -107,8 +107,15 @@ $(document).ready(function() {
     //创建报销单
     $('#createBtn').click(function(e){
         e.preventDefault();
+        var trArr=[];
+        $("input[name='order_check_box']").each(function(){
+        	if($(this).prop('checked') == true){        		
+        		trArr.push($(this).val());
+        	}
+        });
+        console.log(trArr);
         //if(pickupIds.length > 0){
-        	$("#pickupIds").val(pickupIds);
+        	$("#carSummeryIds").val(trArr);
             $('#createForm').submit();
         //}else{
         	//alert("请选择要创建的调车单");
