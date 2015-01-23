@@ -1,4 +1,4 @@
-﻿<%layout("/yh/layout.html"){%>
+<%layout("/yh/layout.html"){%>
 	<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/yh/css/ui/jquery-ui.css">
     <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">    
@@ -41,10 +41,11 @@
                             </ul>
 
                             <!-- Tab panes -->
+                            <form role="form" id="transferOrderUpdateForm">
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="basic">
                                     <div class="row">
-                                        <form role="form" id="transferOrderUpdateForm">
+                                        
                                         <div class="col-lg-6">
                                             	<input id="id" type="hidden" name="id" value="${transferOrder.id!''}"/>
                                             	<input id="customer_id" type="hidden" name="customer_id" value="${transferOrder.customer_id!''}"/>
@@ -335,7 +336,7 @@
 	                                                <select  id="cmbAreaFrom" name="cmbAreaFrom" value=""></select>
 	                                            </div>                                            
                                             
-                                           <h2>供应商信息</h2>
+                                           <h2>供应商信息1111</h2>
                                            <div class="form-group">
                                                <!--label>供应商名称</label-->
                                                 <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage"  value="${spContact.company_name!''}"/>
@@ -377,7 +378,7 @@
                                            </div><!-- -->
                                         </div>
                                         <!-- /.col-lg-6 (nested) -->
-                                        </form>
+                                        
                                     </div>
                                 </div>
                                 
@@ -566,7 +567,7 @@
                                                         <div class="form-group ">
                                                             <label class="control-label" for="inputSuccess">货品备注</label> <input
                                                             id="detail_remark" class="form-control" type="text"
-                                                            name="detail_remark">
+                                                             name="detail_remark">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-6">
@@ -657,10 +658,14 @@
 
                                 <div class="tab-pane fade" id="arap">
                                       <!-- <h2>应收</h2> -->
-                                      <div class="panel-body">
-									 	<button class="btn btn-primary" id="addrow2">添加应收</button>
-                                        <input type="checkbox" name="revenueCheckBox" id="revenueCheckBox">不需要从合同计算应收费用
-                                    	<div class="form-group"></div>
+                                        <div class="panel-body">
+                                            <div id='addRevenueDiv' style="display:none;">
+									 	        <button class="btn btn-primary" id="addrow2">添加应收</button>
+                                                <input type="checkbox" name="revenueCheckBox" id="revenueCheckBox"
+                                                <% if(transferOrder.no_contract_revenue){ %>checked<%}%>
+                                                >不需要从合同计算应收费用
+                                            </div>
+                                    	    <div class="form-group"></div>
                                         <div class="table-responsive">
                                             <table class="table table-striped table-bordered table-hover" id ="table_fin">
                                                 <thead>
@@ -698,9 +703,14 @@
                                     
                                     <hr>
                                     <h2>应付</h2>
-									 <button class="btn btn-primary" id="addrow"> 添加应付</button>
-                                     <input type="checkbox" name="costCheckBox" id="costCheckBox">不需要从合同计算应付费用
                                     <div class="panel-body">
+                                        <div id='addCostDiv' style="display:none;">
+									        <button class="btn btn-primary" id="addrow"> 添加应付</button>
+                                            <input type="checkbox" name="costCheckBox" id="costCheckBox"
+                                            <% if(transferOrder.no_contract_cost){ %>checked<%}%>
+                                            >不需要从合同计算应付费用
+                                        </div>
+                                        <div class="form-group"></div>
                                         <div class="table-responsive">
                                             <table class="table table-striped table-bordered table-hover"  id ="table_fin2">
                                                 <thead>
@@ -727,6 +737,7 @@
                                     </div> <!-- /.panel-body -->
                                     
                                 </div>
+                                </form>
 								<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
 								  <div class="modal-dialog modal-sm">
 								    <div class="modal-content">

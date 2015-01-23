@@ -430,6 +430,9 @@ public class TransferOrderController extends Controller {
 		String officeId = getPara("officeSelect");
 		String customerId = getPara("customer_id");
 		String spId = getPara("sp_id");
+		boolean costCheckBox ="on".equals(getPara("costCheckBox"));
+		boolean revenueCheckBox ="on".equals(getPara("revenueCheckBox"));
+		
 		TransferOrder transferOrder = null;
 		String cargoNature = getPara("cargoNature");
 		if (order_id == null || "".equals(order_id)) {
@@ -467,6 +470,9 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("charge_type2", getPara("chargeType2"));
 			transferOrder.set("customer_order_no", getPara("customerOrderNo")); 
 			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
+			transferOrder.set("no_contract_revenue", revenueCheckBox); 
+			transferOrder.set("no_contract_cost", costCheckBox); 
+			
 			if(getParaToDate("planning_time") != null){
 				transferOrder.set("planning_time", getPara("planning_time")); 
 			}
@@ -533,6 +539,9 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("charge_type2", getPara("chargeType2"));
 			transferOrder.set("customer_order_no", getPara("customerOrderNo"));
 			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
+			transferOrder.set("no_contract_revenue", revenueCheckBox); 
+			transferOrder.set("no_contract_cost", costCheckBox); 			
+			
 			if(getParaToDate("planning_time") != null){
 				transferOrder.set("planning_time", getPara("planning_time")); 
 			}

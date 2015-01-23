@@ -1071,6 +1071,8 @@ $(document).ready(function() {
   	  var inputId  = $(this).attr('id');
 	  if(inputId=='cargoNature2'){
 		 $("#cargoNatureDetailSpan").show();
+		 $("#addRevenueDiv").show();
+		 $("#addCostDiv").show();
 		 $("input[name='cargoNatureDetail']").each(function(){
 			if($(this).val() == "cargoNatureDetailNo" && $(this).prop('checked')){
 				$("#transferOrderItemDateil").hide(); 
@@ -1078,8 +1080,10 @@ $(document).ready(function() {
 		 });
 	  }else{
 		  if(inputId=='cargoNature1'){
-			  $("#cargoNatureDetailSpan").hide(); 
-			  $("#transferOrderItemDateil").show(); 
+			   $("#cargoNatureDetailSpan").hide(); 
+			   $("#addRevenueDiv").hide();
+			   $("#addCostDiv").hide();
+			   $("#transferOrderItemDateil").show(); 
 		  }		  
 	  }	  
   	}); 
@@ -1088,7 +1092,7 @@ $(document).ready(function() {
     	console.log(this);
     	var inputId  = $(this).attr('id');
     	if(inputId=='cargoNatureDetail2'){
-    		$("#transferOrderItemDateil").show(); 
+    		$("#transferOrderItemDateil").show();
     	}else{
     		$("#transferOrderItemDateil").hide(); 
     	}	  
@@ -1290,6 +1294,8 @@ $(document).ready(function() {
 				$(this).attr('checked', true);
 				if($("#cargoNatureRadio").val() == 'cargo'){
 					$("#cargoNatureDetailSpan").show();
+					$("#addCostDiv").show();
+					$("#addRevenueDiv").show();
 					$("input[name='cargoNatureDetail']").each(function(){
 						if($(this).val() == $("#cargoNatureDetailRadio").val()){
 							$(this).attr('checked', true);
