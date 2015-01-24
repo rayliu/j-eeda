@@ -1880,7 +1880,9 @@ public class DepartOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*,f.name,tor.order_no transfer_order_no,ifnull(tori.item_name, p.item_name) item_name,tori.amount item_amount,"
+        List<Record> orders = Db.find("select d.*,"
+        		+ " f.name,"
+        		+ " tor.order_no transfer_order_no,ifnull(tori.item_name, p.item_name) item_name,tori.amount item_amount,"
         		+ " round((select sum(ifnull(toi.volume, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) volume,"
         		+ " round((select sum(ifnull(toi.sum_weight, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) weight"
         		+ " from depart_order_fin_item d "
@@ -2037,8 +2039,8 @@ public class DepartOrderController extends Controller {
                 departOrderFinItem.set("creator", users.get("id"));
                 departOrderFinItem.set("create_date", now);
                 departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
-                departOrderFinItem.set("transfer_order_id", transfer.get("id"));
-                departOrderFinItem.set("transfer_order_item_id", toi.get("id"));
+                //departOrderFinItem.set("transfer_order_id", transfer.get("id"));
+                //departOrderFinItem.set("transfer_order_item_id", toi.get("id"));
                 departOrderFinItem.set("cost_source", "运输单应付费用");
                 departOrderFinItem.save();
     		}
