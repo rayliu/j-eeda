@@ -1100,6 +1100,7 @@ public class DepartOrderController extends Controller {
             // TODO:生成应付
             
             calcCost(departOrder, transferOrderItemList);
+            
         if ("已签收".equals(order_state)) {
             // 生成回单
             Date createDate = Calendar.getInstance().getTime();
@@ -1168,9 +1169,11 @@ public class DepartOrderController extends Controller {
     		if(isTrue){
     			isFinContract=false;
     		}
-    		getFinNoContractCost(departOrder,transferOrder);
+    		
     		
 		}
+    	TransferOrder transfer= TransferOrder.dao.findFirst("select * from transfer_order where id = ?",transferOrderItemList.get(0).get("order_id"));
+    	getFinNoContractCost(departOrder,transfer);
     	if(isFinContract){
     		Record contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -1214,11 +1217,13 @@ public class DepartOrderController extends Controller {
 
     private void genFinPerUnit(DepartOrder departOrder, List<Record> transferOrderItemList, Contract spContract,
             String chargeType) {
-        for (Record tOrderItemRecord : transferOrderItemList) {
+    	
+    	TransferOrder transfer = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",transferOrderItemList.get(0).get("order_id"));
+    	getFinNoContractCost(departOrder,transfer);
+    	for (Record tOrderItemRecord : transferOrderItemList) {
         	//TODO:获取到运输单，并且判断是否要计算合同
         	TransferOrder transferOrder = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",tOrderItemRecord.get("order_id"));
         	boolean isTrue = transferOrder.get("no_contract_cost");
-        	getFinNoContractCost(departOrder,transferOrder);
         	if(!isTrue){
         		Record contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
