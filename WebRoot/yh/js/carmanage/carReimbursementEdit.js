@@ -1,6 +1,26 @@
 $(document).ready(function() {
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
 
+	var DateDiff = function(d1,d2){ 
+	    var day = 24 * 60 * 60 *1000; 
+		try{     
+		   var dateArr = d1.split("-"); 
+		   var checkDate = new Date(); 
+		   checkDate.setFullYear(dateArr[0], dateArr[1]-1, dateArr[2]); 
+		   var checkTime = checkDate.getTime(); 
+		   
+		   var dateArr2 = d2.split("-"); 
+		   var checkDate2 = new Date(); 
+		   checkDate2.setFullYear(dateArr2[0], dateArr2[1]-1, dateArr2[2]); 
+		   var checkTime2 = checkDate2.getTime(); 
+		     
+		   var cha = (checkTime - checkTime2)/day;   
+		        return cha; 
+	    }catch(e){ 
+	    	return false; 
+	    }
+	};
+
     var num1 = 1;
 	//行车单查询，dataTable
     var carSummaryTbody = $('#table_fin').dataTable({
@@ -46,7 +66,7 @@ $(document).ready(function() {
 			  {"mDataProp":"RETURN_TIME", "sWidth":"80px"},
 			  {"mDataProp":null, "sWidth":"70px",
 				  "fnRender": function(obj) {
-						return "dfa";//DateDiff(obj.aData.RETURN_TIME,obj.aData.TURNOUT_TIME);
+						return DateDiff(obj.aData.RETURN_TIME,obj.aData.TURNOUT_TIME);
 					}
 			  },        	
 			  {"mDataProp":"VOLUME", "sWidth":"70px"},           
@@ -83,7 +103,7 @@ $(document).ready(function() {
    
     	$("#carSummeryIds").val(trArr);
         $.post('/carreimbursement/saveCarReimbursement', $("#orderForm").serialize(), function(order){
-	    	if(order){
+	    	if(order.ORDER_NO){
 	    		$("#order_no").text(order.ORDER_NO);
 	    		$("#status").text(order.STATUS);
 	    		//$("#creator").val(order.ORDER_NO);
@@ -91,6 +111,24 @@ $(document).ready(function() {
 	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	    	}else{
 	    		$.scojs_message('数据保存失败', $.scojs_message.TYPE_ERROR);
+	    	}
+    	});
+        
+    });
+
+    //报销单审核
+    $('#accomplishBtn').click(function(e){
+        e.preventDefault();
+        $.post('/carreimbursement/audit', {orderId:$("#orderId").val()}, function(data){
+        	console.log(data);
+	    	if(data.audit_name){
+	    		$("#audit_name").text(data.audit_name);
+	    		$("#audit_stamp").text(data.audit_stamp);
+	    		$.scojs_message('审核成功', $.scojs_message.TYPE_OK);
+	    		$('#accomplishBtn').attr('disabled', 'disabled');
+	    		$('#createBtn').attr('disabled', 'disabled');
+	    	}else{
+	    		$.scojs_message('审核失败', $.scojs_message.TYPE_ERROR);
 	    	}
     	});
         

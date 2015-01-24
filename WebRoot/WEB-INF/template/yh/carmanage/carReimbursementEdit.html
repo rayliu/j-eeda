@@ -36,27 +36,46 @@
                                         
                                         <form role="form" method="post" action="" id="orderForm">
 
-                                       		  <h2>报销单信息</h2>  
+                                       		  <h2>报销单信息</h2>
+                                              <input id="orderId" name="orderId" type="hidden" value="${order.id!''}">
                                               <input id="car_summary_order_ids" name="car_summary_order_ids" type="hidden" value="${car_summary_order_ids}">
                                        		  <div class="form-group">
-                                                 <label>报销单号</label>
-                                                 <label class="radio-inline">
-                                                     <strong id="order_no"></strong>
-                                                 </label>
-
+                                                   <label class="label-margin">报销单号</label>
+                                                   <strong id="order_no">${order.ORDER_NO!''}</strong>
                                               </div>
                                               <div class="form-group" >
-                                                 <label>状态</label>
-                                                 <label class="radio-inline" id="status"></label>
-                                                 
+                                                   <%
+                                                        var status = order.STATUS!'';
+                                                        var statusName =  "新建";
+                                                        if(status== "new"){
+                                                            statusName =  "新建";
+                                                        }else if(status == "audit"){
+                                                            statusName =  "已审核";
+                                                        }
+                                                   %>
+                                                   <label class="label-margin">状态</label>${statusName!''}
                                               </div>  
                                               <div class="form-group">
-                                                  <label>创建人</label>
-                                                  <label class="radio-inline" id="creator"></label>
+                                                  <label class="label-margin">创建人</label>${create_by!''}
                                               </div>                                                                               
                                               <div class="form-group">
-                                                  <label>创建时间</label>
-                                                  <label class="radio-inline" id="create_time"></label>
+                                                  <label class="label-margin">创建时间</label>
+                                                  <% var create_date = order.CREATE_STAMP!'';
+                                                   if(create_date != ''){%>
+                                                    ${create_date, dateFormat="yyyy-MM-dd HH:mm:ss"}
+                                                  <%}%>
+                                              </div>
+                                              <div class="form-group">
+                                                  <label class="label-margin">审核人</label><span id='audit_name'>${audit_name!''}</span>
+                                              </div>                                                                               
+                                              <div class="form-group">
+                                                  <label class="label-margin">审核时间</label><span id='audit_stamp'>
+                                                  <%
+                                                    var audit_date = order.AUDIT_STAMP!'';
+                                                    if(audit_date != ''){%>
+                                                        ${audit_date, dateFormat="yyyy-MM-dd HH:mm:ss"}
+                                                  <%}%>
+                                                  </span>
                                               </div>
                                     </div><!-- /.col-lg-6 (nested) -->
                                 
@@ -64,7 +83,7 @@
                                         <div class="form-group"></div>
 	                                    <div class="form-group">
                                             <label>备注</label>
-                                            <textarea class="form-control" rows="6" name="remark">${returnOrder.remark!''}</textarea>
+                                            <textarea class="form-control" rows="6" name="remark">${order.remark!''}</textarea>
 	                                    </div> 
 	                                      
 	                                </div> <!-- /.col-lg-6 (nested) -->
@@ -142,7 +161,7 @@
 	                                                <thead>
 	                                                    <tr>	                                                        
 	                                                        <th>序列号</th>
-	                                                        <th>型号</th>
+	                                                        <th>型号 </th>
 	                                                        <th>名称</th>
 	                                                        <th>体积</th>
 	                                                        <th>重量</th>
@@ -164,8 +183,12 @@
                                                          
                                 <div class="form-group"><hr/>
                         			<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
-                                	<button id="createBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
-                                	<button id="accomplishBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">审核</button> 
+                                	<button id="createBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip" 
+                                    <% if(order.STATUS!'' == "audit"){%>disabled='disabled'<%}%>
+                                    >保存</button> 
+                                	<button id="accomplishBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip" 
+                                     <% if(order.STATUS!'' == "audit"){%>disabled='disabled'<%}%>
+                                    >审核</button> 
                                 </div>
                         </div>
                         <!-- /.panel-body -->

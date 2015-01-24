@@ -1,5 +1,25 @@
 $(document).ready(function() {
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
+
+	function DateDiff(d1,d2){ 
+	    var day = 24 * 60 * 60 *1000; 
+		try{     
+		   var dateArr = d1.split("-"); 
+		   var checkDate = new Date(); 
+		   checkDate.setFullYear(dateArr[0], dateArr[1]-1, dateArr[2]); 
+		   var checkTime = checkDate.getTime(); 
+		   
+		   var dateArr2 = d2.split("-"); 
+		   var checkDate2 = new Date(); 
+		   checkDate2.setFullYear(dateArr2[0], dateArr2[1]-1, dateArr2[2]); 
+		   var checkTime2 = checkDate2.getTime(); 
+		     
+		   var cha = (checkTime - checkTime2)/day;   
+		        return cha; 
+	    }catch(e){ 
+	    	return false; 
+	    }
+	};
 	
 	var num1 = 1;
 	
@@ -32,7 +52,7 @@ $(document).ready(function() {
 					"fnRender": function(obj) {
 						if("new" == obj.aData.STATUS){
 			    			return "新建";
-			    		}else if("checked" == obj.aData.STATUS){
+			    		}else if("audit" == obj.aData.STATUS){
 			    			return "已审核";
 			    		}else if("revocation" == obj.aData.STATUS){
 			    			return "已撤销";
@@ -49,7 +69,7 @@ $(document).ready(function() {
 			  {"mDataProp":"RETURN_TIME", "sWidth":"80px"},
 			  {"mDataProp":null, "sWidth":"70px",
 				  "fnRender": function(obj) {
-						return "dfa";//DateDiff(obj.aData.RETURN_TIME,obj.aData.TURNOUT_TIME);
+						return DateDiff(obj.aData.RETURN_TIME,obj.aData.TURNOUT_TIME);
 					}
 			  },        	
 			  {"mDataProp":"VOLUME", "sWidth":"70px"},           
@@ -127,23 +147,45 @@ $(document).ready(function() {
 		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 20,
+    	"iDisplayLength": 10,
     	"bServerSide": false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
         "aoColumns": [
-            { "mDataProp": "DEPART_NO"},
-            { "mDataProp": "ORDER_NO"},
-            { "mDataProp": "CUSTOMER"},
-            { "mDataProp": "ITEM_NO"},
-            { "mDataProp": "ITEM_NAME"},
-            { "mDataProp": "AMOUNT"},
-            { "mDataProp": "VOLUME"},
-            { "mDataProp": "WEIGHT"},
-            { "mDataProp": "REMARK"},
+            { "mDataProp": "ORDER_NO", "sWidth":"120px",
+            	"fnRender": function(obj) {
+					return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+          	  	}
+        	},
+            { "mDataProp": "STATUS", "sWidth":"50px",
+            	"fnRender": function(obj) {
+					if("new" == obj.aData.STATUS){
+		    			return "新建";
+		    		}else if("audit" == obj.aData.STATUS){
+		    			return "已审核";
+		    		}else if("revocation" == obj.aData.STATUS){
+		    			return "已撤销";
+		    		}else if("reimbursement" == obj.aData.STATUS){
+		    			return "已报销";
+		    		}else{
+		    			return "";
+		    		}
+				}},
+            { "mDataProp": "CSO_ORDER_NO", "sWidth":"120px"},
+            { "mDataProp": "CREATOR"},
+            { "mDataProp": "CREATE_STAMP"},
+            { "mDataProp": "AUDITOR"},
+            { "mDataProp": "AUDIT_STAMP"},
+            { "mDataProp": "TOTAL_COST"},
+            { "mDataProp": "DEDUCT_COST"},
+            { "mDataProp": "ACTUAL_COST"}
         ]
     });
 	
-	
+	$('#carReimbursementList').click(function(e){
+		carReimbursementTbody.fnSettings().oFeatures.bServerSide = true; 
+		carReimbursementTbody.fnSettings().sAjaxSource = "/carreimbursement/list?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&create_stamp="+create_stamp+"&carSummaryOrderNo="+carSummaryOrderNo;
+		carReimbursementTbody.fnDraw();
+	});
 });
