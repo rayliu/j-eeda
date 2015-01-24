@@ -781,9 +781,11 @@
     	        var tr_item=$("#tr_itemid_list").val();
     	        var item_detail=$("#item_detail").val();
     	 	    var departOrderId = $("#departOrderId").val();
-    	 	    datatable.fnSettings().oFeatures.bServerSide = true; 
-    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+departOrderId;
-    	 		datatable.fnDraw();
+    	 	    if(departOrderId != "" && departOrderId != null){
+	    	 	    datatable.fnSettings().oFeatures.bServerSide = true; 
+	    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+departOrderId;
+	    	 		datatable.fnDraw();
+    	 	    }
     	    	
     	    });
     	    

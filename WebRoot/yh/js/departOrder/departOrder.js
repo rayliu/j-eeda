@@ -7,6 +7,7 @@ $(document).ready(function() {
     var chargeType2 = [];
     var officeName = [];
     var model=[];
+    var pickupIds = [];
 	//datatable, 动态处理
     var datatable = $('#eeda-table').dataTable({
     	"bSort": false, // 不要排序
@@ -23,10 +24,11 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
-                	 return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+                	 return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'" pickupid="'+obj.aData.PICKUP_ID+'"">';
                  }
             },
             { "mDataProp": "ORDER_NO"},
+            { "mDataProp": "PICKUP_NO"},
             { "mDataProp": "CNAME", "sWidth": "100px"},
             { "mDataProp":"OPERATION_TYPE",
             	"sClass": "operation_type",
@@ -111,11 +113,13 @@ $(document).ready(function() {
         	if($(this).prop('checked') == true){
         		console.log($(this).val());
         		trArr.push($(this).val());
+        		pickupIds.push($(this).attr("pickupid")+"&");
         	}
         });
         tableArr.push(trArr);        
         console.log(tableArr);
         $('#pickupOrder_message').val(tableArr);
+        $('#pickupIds').val(pickupIds);
         $('#createForm').submit();
     });
     

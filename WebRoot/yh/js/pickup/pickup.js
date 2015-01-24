@@ -90,7 +90,7 @@ $(document).ready(function() {
             	"sWidth": "100px",
             	"sClass": "order_no",
             	"fnRender": function(obj) {
-            		if(obj.aData.CARGO_NATURE == "ATM"){
+            		if(obj.aData.CARGO_NATURE == "ATM" || obj.aData.ORDER_TYPE == "replenishmentOrder"){
             			var str1 = '<button type="button" name="selectDetailBtn" class="btn btn-default sm selectDetailBtn" data-toggle="modal" data-target="#myModal" value="'+obj.aData.ID+'">选择单品</button>';
             			return obj.aData.ORDER_NO + str1;
             		}else{
@@ -455,11 +455,15 @@ $(document).ready(function() {
 			if(cargo_nature == 'ATM'){
 				$.get("/pickupOrder/findSerialNoByOrderId", {order_id:value}, function(data){
 					var ids = data.ID.split(",");
+					var serial_no = data.SERIAL_NO;
 					for ( var i = 0; i < ids.length; i++) {
 						detailIds.push(ids[i]);
 					}
+					if(serial_no == null){
+						serial_no = "";
+					}
 					console.log("单品id集合-正式:"+detailIds);
-					ckeckedTransferOrderList.append("<tr value='"+value+"' serial='"+data.ID+"'><td>"+order_no+"</td><td>"+data.SERIAL_NO+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
+					ckeckedTransferOrderList.append("<tr value='"+value+"' serial='"+data.ID+"'><td>"+order_no+"</td><td>"+serial_no+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
 							+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
 				},'json');
 			}else{

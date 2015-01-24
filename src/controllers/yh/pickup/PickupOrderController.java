@@ -550,7 +550,7 @@ public class PickupOrderController extends Controller {
         	 sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,"
              		+ " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,"
              		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and pickup_id = "+pickId+") atmamount,"
-                     + " toi.amount cargoamount,toi.volume cargovolume,	toi.sum_weight cargoweight,c.abbr customer,tor.order_no,toi.remark  from transfer_order_item toi "
+                     + " ifnull(toi.amount, 0) cargoamount,ifnull(toi.volume, 0) cargovolume,ifnull(toi.sum_weight, 0) cargoweight,c.abbr customer,tor.order_no,toi.remark  from transfer_order_item toi "
                      + " left join transfer_order tor on tor.id = toi.order_id"
                      + " left join party p on p.id = tor.customer_id"
                      + " left join contact c on c.id = p.contact_id"
@@ -560,7 +560,7 @@ public class PickupOrderController extends Controller {
         	 sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,"
              		+ " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,"
              		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and depart_id = "+departOrderId+") atmamount,"
-                     + " toi.amount cargoamount,toi.volume cargovolume,	toi.sum_weight cargoweight,c.abbr customer,tor.order_no,toi.remark  from transfer_order_item toi "
+                     + " ifnull(toi.amount, 0) cargoamount,ifnull(toi.volume, 0) cargovolume,ifnull(toi.sum_weight, 0) cargoweight,c.abbr customer,tor.order_no,toi.remark  from transfer_order_item toi "
                      + " left join transfer_order tor on tor.id = toi.order_id"
                      + " left join party p on p.id = tor.customer_id"
                      + " left join contact c on c.id = p.contact_id"
@@ -1102,31 +1102,33 @@ public class PickupOrderController extends Controller {
         DepartOrder pickupOrder = DepartOrder.dao.findById(pickupOrderId);
         List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where pickup_id = ?",
                 pickupOrder.get("id"));
-        //相关运输单业务处理
+        //相关运输单业务处理:提货发车之后，运输单中除了补货订单状态为已入库外，其他都是默认为正在处理状态
         for (DepartTransferOrder departTransferOrder : departTransferOrders) {
             TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
             TransferOrderMilestone milestone = new TransferOrderMilestone();
             if ("新建".equals(transferOrder.get("status")) || "部分已入货场".equals(transferOrder.get("status")) || "部分已入库".equals(transferOrder.get("status"))) {
                 if ("salesOrder".equals(transferOrder.get("order_type"))) {//销售订单
                     if (transferOrder.get("pickup_assign_status").equals(TransferOrder.ASSIGN_STATUS_PARTIAL)) {
-                        transferOrder.set("status", "部分已入货场");
-                        milestone.set("status", "部分已入货场");
+                        //transferOrder.set("status", "部分已入货场");
+                        //milestone.set("status", "部分已入货场");
                         transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
                     } else {
-                        transferOrder.set("status", "已入货场");
-                        milestone.set("status", "已入货场");
+                        //transferOrder.set("status", "已入货场");
+                        //milestone.set("status", "已入货场");
                         transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
                     }
+                    transferOrder.set("status", "正在处理");
+                    milestone.set("status", "正在处理");
                 } else if ("replenishmentOrder".equals(transferOrder.get("order_type"))) {//补货订单
-                    if (transferOrder.get("pickup_assign_status").equals(TransferOrder.ASSIGN_STATUS_PARTIAL)) {
+                    /*if (transferOrder.get("pickup_assign_status").equals(TransferOrder.ASSIGN_STATUS_PARTIAL)) {
                         transferOrder.set("status", "部分已入库");
                         milestone.set("status", "部分已入库");
                         transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
-                    } else {
+                    } else {*/
                         transferOrder.set("status", "已入库");
                         milestone.set("status", "已入库");
                         transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-                    }
+                    //}
                 }
             }
             transferOrder.update();

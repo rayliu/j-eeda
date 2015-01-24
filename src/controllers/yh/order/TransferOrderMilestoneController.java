@@ -248,8 +248,8 @@ public class TransferOrderMilestoneController extends Controller {
                 .find("select toid.pickup_id from transfer_order_item_detail toid where order_id = ? group by toid.pickup_id",
                         transferOrder.get("id"));
         if (transferOrderItemDetails.size() > 1) {
-            transferOrder.set("status", "部分已收货");
-            transferOrder.update();
+            /*transferOrder.set("status", "部分已收货");
+            transferOrder.update();*/
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
             transferOrderMilestone.set("status", "部分已收货");
             String name = (String) currentUser.getPrincipal();
@@ -276,8 +276,8 @@ public class TransferOrderMilestoneController extends Controller {
             transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
             transferOrderMilestone.save();
         } else {
-            transferOrder.set("status", "已收货");
-            transferOrder.update();
+            /*transferOrder.set("status", "已收货");
+            transferOrder.update();*/
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
             transferOrderMilestone.set("status", "已收货");
             String name = (String) currentUser.getPrincipal();
@@ -391,8 +391,8 @@ public class TransferOrderMilestoneController extends Controller {
         	if(total == departTotal){
 		        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in (" + departTransferOrder.get("order_id") + ")");
 		        for(TransferOrder transferOrder : transferOrders){
-		        	transferOrder.set("status", "已发车");
-		        	transferOrder.update();
+		        	/*transferOrder.set("status", "已发车");
+		        	transferOrder.update();*/
 		        	
 		        	TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
 			        transferOrderMilestone = milestoneMessages(transferOrderMilestone);
@@ -404,8 +404,8 @@ public class TransferOrderMilestoneController extends Controller {
         	}else{
 		        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in (" + departTransferOrder.get("order_id") + ")");
 		        for(TransferOrder transferOrder : transferOrders){
-		        	transferOrder.set("status", "部分已发车");
-		        	transferOrder.update();
+		        	/*transferOrder.set("status", "部分已发车");
+		        	transferOrder.update();*/
 		        	
 		        	TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
 			        transferOrderMilestone = milestoneMessages(transferOrderMilestone);
@@ -459,8 +459,8 @@ public class TransferOrderMilestoneController extends Controller {
     		if(total == departTotal){
     			List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in (" + departTransferOrder.get("order_id") + ")");
     			for(TransferOrder transferOrder : transferOrders){
-    				transferOrder.set("status", "已入库");
-    				transferOrder.update();
+    				/*transferOrder.set("status", "已入库");
+    				transferOrder.update();*/
     				
     				TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
     				transferOrderMilestone = milestoneMessages(transferOrderMilestone);
@@ -472,8 +472,8 @@ public class TransferOrderMilestoneController extends Controller {
     		}else{
     			List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in (" + departTransferOrder.get("order_id") + ")");
     			for(TransferOrder transferOrder : transferOrders){
-    				transferOrder.set("status", "部分已入库");
-    				transferOrder.update();
+    				/*transferOrder.set("status", "部分已入库");
+    				transferOrder.update();*/
     				
     				TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
     				transferOrderMilestone = milestoneMessages(transferOrderMilestone);

@@ -12,6 +12,7 @@
                         <form id='createForm' action="/departOrder/createDepartOrder" method="post">
                             <input id='pickupOrder_message' name='localArr' type="hidden">
                             <input name='transfer_type' type ="hidden" value="零担">
+                            <input name='pickupIds'  id="pickupIds" type ="hidden">
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <div class="controls">
@@ -101,6 +102,7 @@
                                         <tr>
                                             <th></th>
                                             <th>运输单号</th>
+                                            <th>调车单号</th>
                                             <th>客户</th>
                                     		<th>运营方式</th>
                                             <th>货品</th>
