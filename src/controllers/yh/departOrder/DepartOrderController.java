@@ -2120,7 +2120,7 @@ public class DepartOrderController extends Controller {
                 departOrderFinItem.set("creator", users.get("id"));
                 departOrderFinItem.set("create_date", now);
                 departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
-                departOrderFinItem.set("transfer_order_id", transfer.get("id"));
+                //departOrderFinItem.set("transfer_order_id", transfer.get("id"));
                 //departOrderFinItem.set("transfer_order_item_id", toi.get("id"));
                 departOrderFinItem.set("cost_source", "运输单应付费用");
                 departOrderFinItem.save();
