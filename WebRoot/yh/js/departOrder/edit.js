@@ -235,7 +235,7 @@
             { "mDataProp": "ITEM_NAME"},
             { "mDataProp": null,
            	 	"fnRender": function(obj) {   
-	        		 if(obj.aData.ATMAMOUNT != "" && obj.aData.ATMAMOUNT != null){
+           	 	if(obj.aData.CARGO_NATURE == "ATM"){
 	        			 return obj.aData.ATMAMOUNT;
 	        		 }else{
 	        			 return obj.aData.CARGOAMOUNT;
@@ -244,7 +244,7 @@
             },
             { "mDataProp": null,
 	           	 "fnRender": function(obj) {   
-	        		 if(obj.aData.ATMAMOUNT != "" && obj.aData.ATMAMOUNT != null){
+	           		if(obj.aData.CARGO_NATURE == "ATM"){
 	        			 return (obj.aData.ATMAMOUNT * obj.aData.VOLUME).toFixed(2);
 	        		 }else{
 	        			 return (obj.aData.CARGOAMOUNT * obj.aData.VOLUME).toFixed(2);
@@ -254,7 +254,7 @@
             },
             { "mDataProp": null,
 	           	 "fnRender": function(obj) {   
-	        		 if(obj.aData.ATMAMOUNT != "" && obj.aData.ATMAMOUNT != null){
+	           		if(obj.aData.CARGO_NATURE == "ATM"){
 	        			 return (obj.aData.ATMAMOUNT * obj.aData.WEIGHT).toFixed(2);
 	        		 }else{
 	        			 return (obj.aData.CARGOAMOUNT * obj.aData.WEIGHT).toFixed(2);
