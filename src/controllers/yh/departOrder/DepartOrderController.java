@@ -1247,7 +1247,7 @@ public class DepartOrderController extends Controller {
     	for (Record record : transferOrderItemList) {
     		TransferOrder transferOrder = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",record.get("order_id"));
     		Object isTrue = transferOrder.get("no_contract_cost");
-    		if(isTrue.equals(true)){
+    		if(!isTrue.equals(true)){
     			isFinContract=false;
     		}
     		
@@ -1305,7 +1305,7 @@ public class DepartOrderController extends Controller {
         	//TODO:获取到运输单，并且判断是否要计算合同
         	TransferOrder transferOrder = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",tOrderItemRecord.get("order_id"));
         	Object isTrue = transferOrder.get("no_contract_cost");
-        	if(isTrue.equals(true)){
+        	if(!isTrue.equals(true)){
         		Record contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
                                 +" and product_id = " + tOrderItemRecord.get("product_id")
