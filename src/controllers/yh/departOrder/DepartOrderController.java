@@ -1247,7 +1247,7 @@ public class DepartOrderController extends Controller {
     	for (Record record : transferOrderItemList) {
     		TransferOrder transferOrder = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",record.get("order_id"));
     		Object isTrue = transferOrder.get("no_contract_cost");
-    		if(!isTrue.equals(true)){
+    		if(isTrue.equals(true)){
     			isFinContract=false;
     		}
     		
