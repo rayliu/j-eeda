@@ -39,8 +39,10 @@
                 	 var str = "";
                      if(obj.aData.FIN_AMOUNT!='' && obj.aData.FIN_AMOUNT != null){
                          str = "<input type='text' name='amount' value='"+obj.aData.FIN_AMOUNT+"'>";
-                     }else{
+                     }else if(obj.aData.AMOUNTS!='' && obj.aData.AMOUNTS != null){
                      	 str = "<input type='text' name='amount' value='"+obj.aData.AMOUNTS+"'>";
+                     }else{
+                    	 str="<input type='text' name='amount' value=''>";
                      }
                 	 return str;
              }},
@@ -51,8 +53,10 @@
                 	 var str = "";
                      if(obj.aData.RATE!='' && obj.aData.RATE != null){
                          str = "<input type='text' name='rate' value='"+obj.aData.RATE+"'>";
-                     }else{
+                     }else if(obj.aData.RATES!='' && obj.aData.RATES!= null){
                      	 str = "<input type='text' name='rate' value='"+obj.aData.RATES+"'>";
+                     }else{
+                    	 str="<input type='text' name='rate' value=''>";
                      }
                 	 return str;
              }},
