@@ -1109,16 +1109,16 @@ public class PickupOrderController extends Controller {
             if ("新建".equals(transferOrder.get("status")) || "部分已入货场".equals(transferOrder.get("status")) || "部分已入库".equals(transferOrder.get("status"))) {
                 if ("salesOrder".equals(transferOrder.get("order_type"))) {//销售订单
                     if (transferOrder.get("pickup_assign_status").equals(TransferOrder.ASSIGN_STATUS_PARTIAL)) {
-                        //transferOrder.set("status", "部分已入货场");
-                        //milestone.set("status", "部分已入货场");
+                        transferOrder.set("status", "部分已入货场");
+                        milestone.set("status", "部分已入货场");
                         transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
                     } else {
-                        //transferOrder.set("status", "已入货场");
-                        //milestone.set("status", "已入货场");
+                        transferOrder.set("status", "已入货场");
+                        milestone.set("status", "已入货场");
                         transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
                     }
-                    transferOrder.set("status", "正在处理");
-                    milestone.set("status", "正在处理");
+                    /*transferOrder.set("status", "正在处理");
+                    milestone.set("status", "正在处理");*/
                 } else if ("replenishmentOrder".equals(transferOrder.get("order_type"))) {//补货订单
                     /*if (transferOrder.get("pickup_assign_status").equals(TransferOrder.ASSIGN_STATUS_PARTIAL)) {
                         transferOrder.set("status", "部分已入库");

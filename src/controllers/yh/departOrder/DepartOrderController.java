@@ -506,7 +506,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
                     + " left join office o on o.id = tor.office_id "
-                    + " where ((tor.status = '正在处理') or (tor.operation_type = 'out_source' and tor.status = '新建')) and ifnull(tor.depart_assign_status, '') !='"
+                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建')) and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
           
@@ -530,7 +530,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on o.id=tor.office_id "
-                    + " where ((tor.status = '正在处理') or (tor.operation_type = 'out_source' and tor.status = '新建') )"
+                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') )"
                     + " and (select group_concat(cast(pickup_id as char) separator ',') pickup_id from depart_pickup where order_id = tor.id) is null and ifnull(tor.depart_assign_status, '') !='" + TransferOrder.ASSIGN_STATUS_ALL
                     + "' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
@@ -548,7 +548,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " left join office o on o.id = tor.office_id "
-                    + " where ((tor.status = '正在处理') or (tor.operation_type = 'out_source' and tor.status = '新建')) and ifnull(tor.depart_assign_status, '') !='"
+                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建')) and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.abbr like '%" + customer + "%' and create_stamp between '" + beginTime
@@ -575,7 +575,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " left join office o on o.id = tor.office_id "
-                    + " where ((tor.status ='正在处理') or (tor.operation_type = 'out_source' and tor.status = '新建')) and (select group_concat(cast(pickup_id as char) separator ',') pickup_id from depart_pickup where order_id = tor.id) is null and ifnull(tor.depart_assign_status, '') !='"
+                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建')) and (select group_concat(cast(pickup_id as char) separator ',') pickup_id from depart_pickup where order_id = tor.id) is null and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.abbr like '%" + customer + "%' and tor.create_stamp between '" + beginTime
