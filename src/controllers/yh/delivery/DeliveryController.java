@@ -777,7 +777,7 @@ public class DeliveryController extends Controller {
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join office o on o.id = t2 .office_id "
-					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE) and t1.delivery_id is null  ";
+					+ "where t2.status='正在处理' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE) and t1.delivery_id is null  ";
 		
 		String sql="";
 		if (deliveryOrderNo == null && customerName == null
@@ -790,7 +790,7 @@ public class DeliveryController extends Controller {
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join office o on o.id = t2 .office_id "
-					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) and t1.delivery_id is null order by t1.id desc "
+					+ "where t2.status='正在处理' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) and t1.delivery_id is null order by t1.id desc "
 					+ sLimit;
 			
 		} else {
@@ -802,7 +802,7 @@ public class DeliveryController extends Controller {
 					+ "left join party p2 on t1.notify_party_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join office o on o.id = t2 .office_id "
-					+ "where t2.status='已入库' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) and t1.delivery_id is null  ";
+					+ "where t2.status='正在处理' and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) and t1.delivery_id is null  ";
 			if(code!=""&&code!=null){
 				sqlTotal =sqlTotal+" and serial_no like '%"+code+"%'";
 				sql =sql +" and serial_no like '%"+code+"%'";
