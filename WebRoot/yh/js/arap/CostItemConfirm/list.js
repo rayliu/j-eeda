@@ -13,7 +13,7 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/costConfirmList/list",
         "aoColumns": [ 
-            { "mDataProp": null, "sWidth":"20px",
+            { "mDataProp": null, "sWidth":"10px",
                 "fnRender": function(obj) {
                   return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" order_no="'+obj.aData.BUSINESS_TYPE+'">';
                 }
@@ -58,7 +58,18 @@ $(document).ready(function() {
             },            	
             {"mDataProp":"AMOUNT", "sWidth":"35px"},                        
             {"mDataProp":"VOLUME", "sWidth":"35px"},                        
-            {"mDataProp":"WEIGHT", "sWidth":"40px"},                        
+            {"mDataProp":"WEIGHT", "sWidth":"40px"}, 
+            {"mDataProp":null, "sWidth":"50px",
+            	"fnRender":function(obj){
+            		if(obj.aData.TRANSPORT_COST == null){
+            			return "";
+            		}else{
+            			return obj.aData.TRANSPORT_COST;
+            		}
+            	}}, 
+            {"mDataProp":"CARRY_COST", "sWidth":"50px"},
+            {"mDataProp":"CLIMB_COST", "sWidth":"50px"}, 
+            {"mDataProp":"INSURANCE_COST", "sWidth":"50px"}, 
             {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
             {"mDataProp":"CREATE_STAMP", "sWidth":"100px"}, 
