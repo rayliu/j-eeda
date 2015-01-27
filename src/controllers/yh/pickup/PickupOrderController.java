@@ -303,6 +303,9 @@ public class PickupOrderController extends Controller {
             		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
+                    + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmamount,"
+                    + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmvolume,"
+                    + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmweight,"
                     + " tor.address,"
                     + "tor.pickup_mode,"
                     + "tor.arrival_mode,"
@@ -363,6 +366,9 @@ public class PickupOrderController extends Controller {
             		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
+                    + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmamount,"
+                    + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmvolume,"
+                    + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmweight,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
                     + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status, "
                     + " o.office_name office_name "
@@ -2070,7 +2076,7 @@ public class PickupOrderController extends Controller {
     	String orderId = getPara("order_id");
     	Record serialNoList = null;
     	if(orderId != ""){
-    		String sql = "select group_concat(cast(id as char) separator ',') id,group_concat(serial_no separator '\r\n') serial_no from transfer_order_item_detail where pickup_id is null and order_id = '" + orderId + "';";
+    		String sql = "select group_concat(cast(id as char) separator ',') id,group_concat(serial_no separator ' ') serial_no from transfer_order_item_detail where pickup_id is null and order_id = '" + orderId + "';";
     		serialNoList = Db.findFirst(sql);
     		logger.debug("serialNoList:" + serialNoList);
     	}
