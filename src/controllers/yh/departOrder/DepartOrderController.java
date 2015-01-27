@@ -905,7 +905,7 @@ public class DepartOrderController extends Controller {
                 departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
                 departTransferOrder.save();
                 //记录调车单中单品的发车单ID，//发车单从表记录所选的调车单
-                if("整车".equals(transfer_type)){
+                if("整车".equals(transfer_type) || pickupIds[0].trim() == "" || pickupIds[0].trim() == null || "null".equals(pickupIds[0].trim())){
                 	 List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
 		                        "select * from transfer_order_item_detail where order_id = '"+orderids[i]+"';");
 	                for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
@@ -921,26 +921,24 @@ public class DepartOrderController extends Controller {
             		transferOrder.set("depart_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
                     transferOrder.update();
                 }else{
-                	if(pickupIds[0].trim() != ""){
-        	            for (int K = 0; K < pickupIds.length; K++) {
-        	            	String[] pickupId = pickupIds[K].split(",");
-        	            	for (int j = 0; j < pickupId.length; j++) {
-        	            		
-    			                List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
-    			                        "select * from transfer_order_item_detail where order_id = '"+orderids[i]+"' and pickup_id = ?", pickupId[j]);
-    			                for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
-    			                    transferOrderItemDetail.set("depart_id", dp.get("id"));
-    			                    transferOrderItemDetail.update();
-    			                }
-    			                
-    			                DepartPickupOrder departPickup = new DepartPickupOrder();
-    		            		departPickup.set("depart_id", dp.get("id"))
-    		            		.set("pickup_id", pickupId[j])
-    		            		.set("order_id", orderids[i])
-    		            		.save();
-        	            	}
-        	            }
-                    }
+    	            for (int K = 0; K < pickupIds.length; K++) {
+    	            	String[] pickupId = pickupIds[K].split(",");
+    	            	for (int j = 0; j < pickupId.length; j++) {
+    	            		
+			                List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
+			                        "select * from transfer_order_item_detail where order_id = '"+orderids[i]+"' and pickup_id = ?", pickupId[j]);
+			                for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
+			                    transferOrderItemDetail.set("depart_id", dp.get("id"));
+			                    transferOrderItemDetail.update();
+			                }
+			                
+			                DepartPickupOrder departPickup = new DepartPickupOrder();
+		            		departPickup.set("depart_id", dp.get("id"))
+		            		.set("pickup_id", pickupId[j])
+		            		.set("order_id", orderids[i])
+		            		.save();
+    	            	}
+    	            }
                     //验证是否已全部发车完成，调车单全部提货完成的情况下进行判断
                 	if(TransferOrder.ASSIGN_STATUS_ALL.equals(transferOrder.get("pickup_assign_status"))){
                 		if(transferOrder.get("cargo_nature").equals("ATM")){

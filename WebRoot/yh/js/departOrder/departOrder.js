@@ -24,6 +24,10 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
+             		var pickupid = obj.aData.PICKUP_ID;
+            		if(pickupid == "" || pickupid == null){
+            			pickupid = "";
+            		}
                 	 return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'" pickupid="'+obj.aData.PICKUP_ID+'"">';
                  }
             },
