@@ -1265,15 +1265,15 @@ public class DepartOrderController extends Controller {
     	boolean isFinContract = true;
     	for (Record record : transferOrderItemList) {
     		TransferOrder transferOrder = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",record.get("order_id"));
-    		Object isTrue = transferOrder.get("no_contract_cost");
-    		if(isTrue.equals(true)){
+    		Boolean isTrue = transferOrder.get("no_contract_cost");
+    		if(isTrue){
     			isFinContract=false;
     		}
     		
     		
 		}
-    	TransferOrder transfer= TransferOrder.dao.findFirst("select * from transfer_order where id = ?",transferOrderItemList.get(0).get("order_id"));
-    	getFinNoContractCost(departOrder,transfer);
+    	//TransferOrder transfer= TransferOrder.dao.findFirst("select * from transfer_order where id = ?",transferOrderItemList.get(0).get("order_id"));
+    	getFinNoContractCost(departOrder);
     	if(isFinContract){
     		Record contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -1318,13 +1318,13 @@ public class DepartOrderController extends Controller {
     private void genFinPerUnit(DepartOrder departOrder, List<Record> transferOrderItemList, Contract spContract,
             String chargeType) {
     	
-    	TransferOrder transfer = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",transferOrderItemList.get(0).get("order_id"));
-    	getFinNoContractCost(departOrder,transfer);
+    	//TransferOrder transfer = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",transferOrderItemList.get(0).get("order_id"));
+    	getFinNoContractCost(departOrder);
     	for (Record tOrderItemRecord : transferOrderItemList) {
         	//TODO:获取到运输单，并且判断是否要计算合同
         	TransferOrder transferOrder = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",tOrderItemRecord.get("order_id"));
-        	Object isTrue = transferOrder.get("no_contract_cost");
-        	if(!isTrue.equals(true)){
+        	Boolean isTrue = transferOrder.get("no_contract_cost");
+        	if(!isTrue){
         		Record contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
                                 +" and product_id = " + tOrderItemRecord.get("product_id")
@@ -2121,31 +2121,37 @@ public class DepartOrderController extends Controller {
         renderJson("{\"success\":true}");
     }
     //TODO：不按合同计费
-    public void getFinNoContractCost(DepartOrder departOrder,TransferOrder transfer){
-    	List<TransferOrderFinItem> tofiList 
-    			= TransferOrderFinItem.dao.find("select * from transfer_order_fin_item where order_id =?",transfer.get("id"));
-    	String name = (String) currentUser.getPrincipal();
-        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
-        java.util.Date utilDate = new java.util.Date();
-        java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
-        if(tofiList.size()>0){
-        	for (TransferOrderFinItem transferOrderFinItem : tofiList) {
-        		TransferOrderItem toi = TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = ?",transfer.get("id"));
-        		DepartOrderFinItem departOrderFinItem = new DepartOrderFinItem();
-            	departOrderFinItem.set("fin_item_id", transferOrderFinItem.get("fin_item_id"));
-            	departOrderFinItem.set("amount", transferOrderFinItem.get("amount"));
-                departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
-                departOrderFinItem.set("status", "未完成");
-                departOrderFinItem.set("creator", users.get("id"));
-                departOrderFinItem.set("create_date", now);
-                departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
-                //departOrderFinItem.set("transfer_order_id", transfer.get("id"));
-                //departOrderFinItem.set("transfer_order_item_id", toi.get("id"));
-                departOrderFinItem.set("cost_source", "运输单应付费用");
-                departOrderFinItem.save();
-    		}
-        }
+    public void getFinNoContractCost(DepartOrder departOrder){
+    	List<TransferOrder> tran 
+    			= TransferOrder.dao.find("select tor.* from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id  where dt.depart_id = ?",departOrder.get("id"));
     	
+    	List<TransferOrderFinItem> tofiList ;
+    	if(tran.size()>0){
+    		for (TransferOrder transferOrder : tran) {
+	    			tofiList= TransferOrderFinItem.dao.find("select * from transfer_order_fin_item where order_id =?",transferOrder.get("id"));
+					String name = (String) currentUser.getPrincipal();
+				    UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
+				    java.util.Date utilDate = new java.util.Date();
+				    java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
+				    if(tofiList.size()>0){
+				    	for (TransferOrderFinItem transferOrderFinItem : tofiList) {
+				    		DepartOrderFinItem departOrderFinItem = new DepartOrderFinItem();
+				        	departOrderFinItem.set("fin_item_id", transferOrderFinItem.get("fin_item_id"));
+				        	departOrderFinItem.set("amount", transferOrderFinItem.get("amount"));
+				            departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
+				            departOrderFinItem.set("status", "未完成");
+				            departOrderFinItem.set("creator", users.get("id"));
+				            departOrderFinItem.set("create_date", now);
+				            departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
+				            departOrderFinItem.set("transfer_order_id", transferOrder.get("id"));
+				            //departOrderFinItem.set("transfer_order_item_id", toi.get("id"));
+				            departOrderFinItem.set("cost_source", "运输单应付费用");
+				            departOrderFinItem.save();
+					}
+				}
+					
+			}
+    	}
+        	
     }
-
 }
