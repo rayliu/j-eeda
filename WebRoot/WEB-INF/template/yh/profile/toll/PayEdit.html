@@ -80,6 +80,12 @@
 <script>
     $(document).ready(function() {
         $('#menu_profile').addClass('active').find('ul').addClass('in');
+       
+        if($("#partyId").val() == null || $("#partyId").val() == ""){
+        	$("#code").attr("disabled",false);
+        }else{
+        	$("#code").attr("disabled",true);
+        }
         $('#addTollForm').validate({
             rules: {
             name: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
