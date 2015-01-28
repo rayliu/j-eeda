@@ -2093,4 +2093,16 @@ public class PickupOrderController extends Controller {
     	}
     	renderJson(serialNoList);
     }
+    //计算单品体积、重量
+    public void findDetailItems(){
+    	String detailIds = getPara("detailIds");
+    	logger.debug("detailIds:" + detailIds);
+    	Record serialNoList = null;
+    	if(detailIds != ""){
+    		String sql = "select round(sum(ifnull(volume,0)),2) volume,round(sum(ifnull(weight,0)),2) weight from transfer_order_item_detail where id in(" + detailIds.toString() + ");";
+    		serialNoList = Db.findFirst(sql);
+    		logger.debug("serialNoList:" + serialNoList);
+    	}
+    	renderJson(serialNoList);
+    }
 }

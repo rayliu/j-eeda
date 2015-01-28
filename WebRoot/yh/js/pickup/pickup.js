@@ -20,6 +20,7 @@ $(document).ready(function() {
     var amountsTest = [];
     //判断全选box是否选中
     var number = 0;
+    var datailNumber = 0;
   //datatable, 动态处理
     var pickupOrder1 = $('#eeda-table1').dataTable({
     	"bSort": false, // 不要排序
@@ -44,11 +45,11 @@ $(document).ready(function() {
             {"mDataProp":"CARGO_NATURE","sWidth": "70px","sClass": "cargo_nature"},
             {"mDataProp": "TOTAL_WEIGHT","sWidth": "60px","sClass": "total_weight"},
             {"mDataProp": "TOTAL_VOLUME","sWidth": "60px","sClass": "total_volume"},
-            {"mDataProp": "TOTAL_AMOUNT","sWidth": "60px","sClass": "total_amount"},
+            {"mDataProp": "TOTAL_AMOUNT","sWidth": "70px","sClass": "total_amount"},
             {"mDataProp": "ADDRESS","sWidth": "100px","sClass": "address"},
             {"mDataProp":"PICKUP_MODE","sWidth": "80px","sClass": "pickup_mode"},
     		{"mDataProp":"ARRIVAL_MODE","sWidth": "80px","sClass": "arrival_mode"},
-            {"mDataProp": "STATUS","sWidth": "60px","sClass": "status"},
+            {"mDataProp": "STATUS","sWidth": "80px","sClass": "status"},
             {"mDataProp": "CNAME","sWidth": "100px","sClass": "cname"},
             {"mDataProp": "OFFICE_NAME","sWidth": "120px","sClass": "office_name"},  
     		{"mDataProp": "CREATE_STAMP","sWidth": "150px","sClass": "create_stamp"},                                      
@@ -321,23 +322,23 @@ $(document).ready(function() {
 				    	$.each(detailIdsTest,function(n,value) {  
 				    		if(obj.aData.ID == value){
 				    			number+=1;
-				    			if(number == detailIdsTest.length){
-				    				$("#checkboxAll").prop('checked',true);
-				    				$('#sureBtn').attr('disabled', false);
-				    			}
 				    			result = checked;
+				    			if(number == datailNumber){
+				    				$("#checkboxAll").prop('checked',true);
+				    			}
+				    			$('#sureBtn').attr('disabled', false);
 				    		}
 				        }); 
 				    	return result;
 			    	}else if(detailIds.length != 0){
 			    		$.each(detailIds,function(n,value) {  
-				    		if(obj.aData.ID == value){
+			    			if(obj.aData.ID == value){
 				    			number+=1;
-				    			if(number == detailIds.length){
-				    				$("#checkboxAll").prop('checked',true);
-				    				$('#sureBtn').attr('disabled', false);
-				    			}
 				    			result = checked;
+				    			if(number == datailNumber){
+				    				$("#checkboxAll").prop('checked',true);
+				    			}
+				    			$('#sureBtn').attr('disabled', false);
 				    		}
 				        }); 
 			    		return result;
@@ -688,6 +689,7 @@ $(document).ready(function() {
     
 	//关闭模态窗
     $('#closeBtn').click(function(e){
+    	datailNumber = 0;
     	amountsTest = [];
     	detailIdsTest = [];
     	detailSerialTest = [];
@@ -763,16 +765,19 @@ $(document).ready(function() {
         		//当运输单已选中时，已选列表存在此数据
         		var cargo_nature = $(this).parent().siblings('.cargo_nature')[0].textContent;
         		var total_amount = $(this).parent().siblings('.total_amount')[0].textContent;
+        		var total_weight = $(this).parent().siblings('.total_weight')[0].textContent;		
+    			var total_volume = $(this).parent().siblings('.total_volume')[0].textContent;		
+    			var total_amount = $(this).parent().siblings('.total_amount')[0].textContent;		
         		$("#ckeckedTransferOrderList tr").each(function (){
                     if($(this).attr("value") == transferId){
                     	if(cargo_nature == 'ATM'){
+                    		console.log("单品id集合-临时:"+detailIdsTest);
                     		console.log("单品序列号集合-临时:"+detailSerialTest);
                         	//修改后需新增的数据
                         	for ( var i = 0; i < detailIdsTest.length; i++) {
                         		if(detailIdsTestOld.indexOf(detailIdsTest[i]) == -1){
                         			//直接添加
                         			detailIds.push(detailIdsTest[i]);
-                        			console.log("新增后（"+detailIdsTest[i]+"）单品id集合-正式:"+detailIds);
                         		}
                     		}
                         	//修改后需删除的数据
@@ -780,25 +785,34 @@ $(document).ready(function() {
                         		if(detailIdsTest.indexOf(detailIdsTestOld[i]) == -1){
                         			//直接删除
                         			detailIds.splice(detailIds.indexOf(detailIdsTestOld[i]), 1);
-                        			console.log("删除后（"+detailIdsTestOld[i]+"）单品id集合-正式:"+detailIds);
                         		}
                     		}
                         	$("#ckeckedTransferOrderList tr").each(function (){
                                 if($(this).attr("value") == transferId){
+                                	var detailTR = $(this);
                                 	//更新单品id
-                                	$(this).attr("serial",detailIds);
+                                	detailTR.attr("serial",detailIdsTest);
                                 	//更新单品序列号
-                                	console.log("单品序列号集合-临时:"+detailSerialTest);
                                 	var serialArray = "";
                     				for ( var i = 0; i < detailSerialTest.length; i++) {
                     					serialArray += detailSerialTest[i] + " ";
                     				}
-                                	$(this).find("td").eq(1).empty().text(serialArray);
-                                	//体积、重量
-                					var volume = (total_volume * (ids.length / total_amount)).toFixed(2);
-                					var weight = (total_weight * (ids.length / total_amount)).toFixed(2);
-                					$(this).find("td").eq(8).empty().text(serialArray);
-                					$(this).find("td").eq(7).empty().text(serialArray);
+                    				//序列号
+                    				detailTR.find("td").eq(1).text("").text(serialArray);
+                    				//实发数量
+                    				detailTR.find("td").eq(9).text("").text(detailIdsTest.length);
+                                	//序列号、体积、重量、实发数量
+                                	$.get("/pickupOrder/findDetailItems", {detailIds:detailIdsTest.toString()}, function(data){
+                                		
+                                		detailTR.find("td").eq(8).text("").text(data.VOLUME);
+                    					detailTR.find("td").eq(7).text("").text(data.WEIGHT);
+                    					
+                    				},'json');
+                                	
+                					/*var volume = (total_volume * (detailSerialTest.length / total_amount)).toFixed(2);
+                					var weight = (total_weight * (detailSerialTest.length / total_amount)).toFixed(2);
+                					detailTR.find("td").eq(8).text("").text(volume);
+                					detailTR.find("td").eq(7).text("").text(weight);*/
                                 }
                     		});
                     	}else{
@@ -833,6 +847,7 @@ $(document).ready(function() {
 	$("#itemTable").on('click', 'tr', function(e){   
 		console.log("item_id:"+$(this).attr("id"));
 		var item_id = $(this).attr("id");
+		datailNumber = $(this).find("td").eq(1).text();
 		/*$(this).css({color:"green", fontWeight:"bold"}); */
 		if($("#transferCrgoNature").val() == "ATM"){
 			number = 0;
@@ -841,16 +856,18 @@ $(document).ready(function() {
 			detailTable.fnSettings().sAjaxSource = "/pickupOrder/findTransferOrderItemDetail?item_id="+item_id,
 			detailTable.fnDraw();
 		}
+		console.log("单品数量:"+datailNumber);
 	});
 	    
 	//全选
 	$("#checkboxAll").click(function(e){
-		
 		if($(this).prop('checked') == true){
 			$("input[type='checkbox'][class='detailCheckbox']").each(function(){
 				$(this).prop('checked',true);
-				detailIdsTest.push($(this).val());
-				detailSerialTest.push($(this).parent().siblings('.serial_no')[0].textContent);
+				if(detailIdsTest.indexOf($(this).val()) == -1){
+					detailIdsTest.push($(this).val());
+					detailSerialTest.push($(this).parent().siblings('.serial_no')[0].textContent);
+				}
 			});
 		}else{
 			$("input[type='checkbox'][class='detailCheckbox']").each(function(){
@@ -859,7 +876,6 @@ $(document).ready(function() {
 				detailSerialTest.splice(detailSerialTest.indexOf($(this).parent().siblings('.serial_no')[0].innerHTML), 1);
 			});
 		}
-		
 		if(detailIdsTest.length == 0){
 			$('#sureBtn').attr('disabled', true);
 		}else{
@@ -874,6 +890,9 @@ $(document).ready(function() {
 		if($(this).prop('checked') == true){
 			detailIdsTest.push($(this).val());
 			detailSerialTest.push($(this).parent().siblings('.serial_no')[0].textContent);
+			if(detailIdsTest.length == (datailNumber * 1)){
+				$("#checkboxAll").prop('checked',true);
+			}
 		}else{
 			detailIdsTest.splice(detailIdsTest.indexOf($(this).val()), 1);
 			detailSerialTest.splice(detailSerialTest.indexOf($(this).parent().siblings('.serial_no')[0].innerHTML), 1);
