@@ -676,12 +676,13 @@ public class CarSummaryController extends Controller {
     		//修改费用合计中的本次加油
     		if("payment_type".equals(name) || "refuel_amount".equals(name) && !"0".equals(value)){
     			try {
-    				Record rec = Db.findFirst("select ifnull(sum(refuel_amount),0) amount from car_summary_detail_oil_fee where payment_type = '油卡' and car_summary_id ="+carSummaryId);
-        			String isDelete = "是";
+    				Record rec = Db.findFirst("select ifnull(sum(refuel_amount),0) amount from car_summary_detail_oil_fee where payment_type = '现金' and car_summary_id ="+carSummaryId);
+        			/*String isDelete = "是";
         			if(rec.get("amount").equals(0)){
         				isDelete = "否";
         			}
-        			String sql="update car_summary_detail_other_fee set amount = "+rec.get("amount")+",is_delete = '"+isDelete+"'  where amount_item  = '本次加油' and car_summary_id = "+carSummaryId;
+        			String sql="update car_summary_detail_other_fee set amount = "+rec.get("amount")+",is_delete = '"+isDelete+"'  where amount_item  = '本次加油' and car_summary_id = "+carSummaryId;*/
+    				String sql="update car_summary_detail_other_fee set amount = "+rec.get("amount")+"  where amount_item  = '本次加油' and car_summary_id = "+carSummaryId;
         			Db.update(sql);
 				} catch (Exception e) {
 					e.printStackTrace();

@@ -971,7 +971,8 @@ $(document).ready(function() {
              { "mDataProp": "IS_DELETE", "sWidth":"60px",
             	 "fnRender": function(obj) {
             		 if(obj.aData.IS_DELETE == "是"){
-            			 if(obj.aData.ITEM == '1' || obj.aData.ITEM == '2' || obj.aData.ITEM =='4' || obj.aData.ITEM =='8' ){
+            			 //if(obj.aData.ITEM == '1' || obj.aData.ITEM == '2' || obj.aData.ITEM =='4' || obj.aData.ITEM =='8' ){
+            			 if(obj.aData.ITEM == '2' || obj.aData.ITEM =='4' || obj.aData.ITEM =='8' ){
             				 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' checked='true' disabled='true'>";
                 		 }else{
                 			 if($("#saveCarSummaryBtn").prop("disabled"))
@@ -980,9 +981,9 @@ $(document).ready(function() {
             					 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' checked='true'>";
                 		 }
             		 }else{
-            			 if(obj.aData.ITEM == '1'){
+            			/* if(obj.aData.ITEM == '1'){
             				 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' disabled='true'>";
-            			 }
+            			 }*/
             			 
         				 if($("#saveCarSummaryBtn").prop("disabled"))
         					 return "<input type='checkbox' name='is_delete' class='checkedOrUnchecked' value='"+obj.aData.ITEM+"' disabled='true'>";
