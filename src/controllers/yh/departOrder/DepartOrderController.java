@@ -1979,19 +1979,61 @@ public class DepartOrderController extends Controller {
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
+       /* String querySql = "select d.*,"
+		        		+ " f.name,"
+		        		+ " tor.order_no transfer_order_no,"
+		        		+ " ifnull(tori.item_name, p.item_name) item_name,"
+		        		+ " tori.amount item_amount,"
+		        		+ " round((select sum(ifnull(toi.volume, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) volume,"
+		        		+ " round((select sum(ifnull(toi.sum_weight, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) weight"
+		        		+ " from depart_order_fin_item d "
+		                + " left join fin_item f on d.fin_item_id = f.id "
+		        		+ " left join transfer_order tor on tor.id = d.transfer_order_id"
+						+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
+						+ " left join product p on p.id = tori.product_id"
+		        		+ " where d.depart_order_id =" + id
+		                + " and f.type='应付'";*/
+        String querySql ="select d.*,"
+						+ " f.name,"
+						+ " tor.order_no transfer_order_no,"
+						+ " ifnull(tori.item_name, p.item_name) item_name,"
+						+ " tori.amount item_amount,"
+						+ " round((select sum(ifnull(toi.volume, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) volume,"
+						+ " round((select sum(ifnull(toi.sum_weight, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) weight"
+						+ " from depart_order_fin_item d "
+						+ " left join fin_item f on d.fin_item_id = f.id "
+						+ " left join transfer_order tor on tor.id = d.transfer_order_id"
+						+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
+						+ " left join product p on p.id = tori.product_id"
+						+ " where d.depart_order_id =" + id
+						+ " and f.type='应付' and d.transfer_order_id is not null"
+						+ " union"
+						+ " select d.*,"
+						+ " f.name,"
+						+ " (select group_concat(tor.order_no separator '<br/>') from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id where dt.depart_id =d.depart_order_id ) transfer_order_no,"
+						+ " (select group_concat(distinct ifnull(toi.item_name,p.item_name) separator '<br/>') from transfer_order_item toi left join depart_transfer dt on dt.order_id = toi.order_id left join product p on toi.product_id = p.id where dt.depart_id = d.depart_order_id ) item_name,"
+						+ " (select sum(toi.amount) from transfer_order_item toi left join depart_transfer dt on dt.order_id = toi.order_id where dt.depart_id = d.depart_order_id) item_amount,"
+						+ " round((select sum(ifnull(toi.volume, 0)*toi.amount) from transfer_order_item toi left join depart_transfer dt on dt.order_id = toi.order_id where dt.depart_id = d.depart_order_id), 2 ) volume,"
+						+ " round((select sum(ifnull(toi.sum_weight, 0)*toi.amount) from transfer_order_item toi left join depart_transfer dt on dt.order_id = toi.order_id where dt.depart_id = d.depart_order_id ), 2 ) weight"
+						+ " from depart_order_fin_item d "
+						+ " left join fin_item f on d.fin_item_id = f.id "
+						+ " left join transfer_order tor on tor.id = d.transfer_order_id"
+						+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
+						+ " left join product p on p.id = tori.product_id"
+						+ " where d.depart_order_id ="+ id +" and f.type='应付' and d.transfer_order_id is null and d.cost_source is not null"
+						+ " union"
+						+ " select d.*,"
+						+ " f.name,"
+						+ " null transfer_order_no,"
+						+ " null item_name,"
+						+ " null item_amount,"
+						+ " null volume,"
+						+ " null weight"
+						+ " from depart_order_fin_item d "
+						+ " left join fin_item f on d.fin_item_id = f.id "
+						+ " where d.depart_order_id ="+ id +" and f.type='应付' and d.transfer_order_id is null and d.cost_source is null";
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*,"
-        		+ " f.name,"
-        		+ " tor.order_no transfer_order_no,ifnull(tori.item_name, p.item_name) item_name,tori.amount item_amount,"
-        		+ " round((select sum(ifnull(toi.volume, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) volume,"
-        		+ " round((select sum(ifnull(toi.sum_weight, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) weight"
-        		+ " from depart_order_fin_item d "
-                + " left join fin_item f on d.fin_item_id = f.id "
-        		+ " left join transfer_order tor on tor.id = d.transfer_order_id"
-				+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
-				+ " left join product p on p.id = tori.product_id"
-        		+ " where d.depart_order_id ='" + id
-                + "' and f.type='应付'");
+        List<Record> orders = Db.find(querySql);
 
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
