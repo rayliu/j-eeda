@@ -150,7 +150,7 @@ public class CostItemConfirmController extends Controller {
         		+ " ul.user_name creator,"
         		+ " '配送' business_type, "
         		+ " (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount,"
-        		+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n') transfer_order_no,"
+        		+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '<br/>') transfer_order_no,"
         		+ " dor.sign_status return_order_collection,"
         		+ " dor.remark,"
         		+ " oe.office_name office_name,"
