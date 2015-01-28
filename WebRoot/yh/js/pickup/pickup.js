@@ -358,26 +358,27 @@ $(document).ready(function() {
         e.preventDefault();
     	var trArr=[];
         var tableArr=[];
-        $("input[name='order_check_box']").each(function(){
+        /*$("input[name='order_check_box']").each(function(){
         	if($(this).prop('checked') == true){
         		trArr.push($(this).val());
         	}
-        });
-        tableArr.push(trArr);        
-        console.log(tableArr);
-        $('#pickupOrder_message').val(tableArr);
-        $("#detailIds").val(detailIds);
-        
-        //普货信息(id)
+        });*/
         var cargoIds = [];
         //var cargoNumbers = [];
         $("#ckeckedTransferOrderList tr").each(function (){
         	var cargo_nature = $(this).find("td").eq(6).text();
         	if(cargo_nature != 'ATM'){
         		cargoIds.push($(this).attr("value"));
-        		//cargoNumbers.push($(this).attr("amount")+"&");
         	}
+        	trArr.push($(this).attr("value"));
 		});
+        //全部选中运输单id
+        tableArr.push(trArr);
+        $('#pickupOrder_message').val(tableArr);
+        console.log(tableArr);
+        //所有单品id
+        $("#detailIds").val(detailIds);
+        //普货运输单(id)
         $("#cargoIds").val(cargoIds);
         //$("#cargoNumbers").val(cargoNumbers);*/
         // console.log("单品id:"+$("#detailIds").val()+",货品数量："+cargoNumbers);
@@ -793,6 +794,11 @@ $(document).ready(function() {
                     					serialArray += detailSerialTest[i] + " ";
                     				}
                                 	$(this).find("td").eq(1).empty().text(serialArray);
+                                	//体积、重量
+                					var volume = (total_volume * (ids.length / total_amount)).toFixed(2);
+                					var weight = (total_weight * (ids.length / total_amount)).toFixed(2);
+                					$(this).find("td").eq(8).empty().text(serialArray);
+                					$(this).find("td").eq(7).empty().text(serialArray);
                                 }
                     		});
                     	}else{

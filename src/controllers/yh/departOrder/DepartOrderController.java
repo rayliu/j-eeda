@@ -507,7 +507,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l2 on tor.route_to = l2.code"
                     + " left join office o on o.id = tor.office_id "
                     + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or (tor.STATUS = '部分已发车' and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt "
-                    + " left join depart_pickup dp on dp.order_id = dt.order_id where dt.order_id = tor.id and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null)) and ifnull(tor.depart_assign_status, '') !='"
+                    + " left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null)) and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
           
@@ -532,7 +532,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on o.id=tor.office_id "
                     + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or (tor.STATUS = '部分已发车' and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt"
-                    + " left join depart_pickup dp on dp.order_id = dt.order_id where dt.order_id = tor.id and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null))"
+                    + " left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null))"
                     + " and ifnull(tor.depart_assign_status, '') !='" + TransferOrder.ASSIGN_STATUS_ALL
                     + "' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
@@ -551,7 +551,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " left join office o on o.id = tor.office_id "
                     + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or (tor.STATUS = '部分已发车' and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt"
-                    + " left join depart_pickup dp on dp.order_id = dt.order_id where dt.order_id = tor.id and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null)) and ifnull(tor.depart_assign_status, '') !='"
+                    + " left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null)) and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.abbr like '%" + customer + "%' and create_stamp between '" + beginTime
@@ -579,7 +579,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " left join office o on o.id = tor.office_id "
                     + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or (tor.STATUS = '部分已发车' and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt"
-                    + "	left join depart_pickup dp on dp.order_id = dt.order_id where dt.order_id = tor.id and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null)) and ifnull(tor.depart_assign_status, '') !='"
+                    + "	left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null)) and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
                     + "%' and c.abbr like '%" + customer + "%' and tor.create_stamp between '" + beginTime
@@ -924,19 +924,20 @@ public class DepartOrderController extends Controller {
     	            for (int K = 0; K < pickupIds.length; K++) {
     	            	String[] pickupId = pickupIds[K].split(",");
     	            	for (int j = 0; j < pickupId.length; j++) {
-    	            		
-			                List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
-			                        "select * from transfer_order_item_detail where order_id = '"+orderids[i]+"' and pickup_id = ?", pickupId[j]);
-			                for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
-			                    transferOrderItemDetail.set("depart_id", dp.get("id"));
-			                    transferOrderItemDetail.update();
-			                }
+    	            		if(!"".equals(pickupId[j])){
+				                List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
+				                        "select * from transfer_order_item_detail where order_id = '"+orderids[i]+"' and pickup_id = ?", pickupId[j]);
+				                for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
+				                    transferOrderItemDetail.set("depart_id", dp.get("id"));
+				                    transferOrderItemDetail.update();
+				                }
 			                
-			                DepartPickupOrder departPickup = new DepartPickupOrder();
-		            		departPickup.set("depart_id", dp.get("id"))
-		            		.set("pickup_id", pickupId[j])
-		            		.set("order_id", orderids[i])
-		            		.save();
+				                DepartPickupOrder departPickup = new DepartPickupOrder();
+			            		departPickup.set("depart_id", dp.get("id"))
+			            		.set("pickup_id", pickupId[j].trim())
+			            		.set("order_id", orderids[i])
+			            		.save();
+			                }
     	            	}
     	            }
                     //验证是否已全部发车完成，调车单全部提货完成的情况下进行判断
