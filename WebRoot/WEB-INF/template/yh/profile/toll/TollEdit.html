@@ -57,9 +57,6 @@
                                     </div>
         
                                 </form>
-                                
-                                
-
                              </div>
                             <!-- /.row (nested) -->
                         </div>
@@ -78,6 +75,10 @@
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script>
     $(document).ready(function() {
+    	if($("#partyId").val() != null && $("#partyId").val() != "" ){
+    		$("#code").attr("disabled",true);
+    	}
+    	
         $('#menu_profile').addClass('active').find('ul').addClass('in');
         $('#addTollForm').validate({
             rules: {
