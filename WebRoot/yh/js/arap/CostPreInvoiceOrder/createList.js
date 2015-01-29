@@ -93,6 +93,9 @@ $(document).ready(function() {
 			$(this).parent().parent().appendTo($("#checkedCostCheckList"));
 			ids.push($(this).attr('id'));
 			$("#costCheckedOrderIds").val(ids);
+			if(ids.length>0){
+				$("#saveBtn").attr("disabled",false);
+			}
 		}			
 	});
 	
@@ -103,6 +106,9 @@ $(document).ready(function() {
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).attr('id'),ids),1);
 				$("#costCheckedOrderIds").val(ids);
+				if(ids.length<=0){
+					$("#saveBtn").attr("disabled",true);
+				}
 			}
 		}			
 	});
