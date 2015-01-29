@@ -1380,7 +1380,8 @@ public class DepartOrderController extends Controller {
     		departOrderFinItem.set("amount", amountDouble);        		
     	}else{
     		if(tOrderItemRecord != null){
-    			double money=contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString());
+    			Record record = Db.findFirst("select count(*) as amount from transfer_order_item_detail toid where item_id = " + tOrderItemRecord.get("id") +" and depart_id = " +departOrder.get("id"));
+    			double money=contractFinItem.getDouble("amount") * Double.parseDouble(record.get("amount").toString());
         		BigDecimal bg = new BigDecimal(money);
                 double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     			departOrderFinItem.set("amount", amountDouble);
@@ -1980,21 +1981,21 @@ public class DepartOrderController extends Controller {
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
-       /* String querySql = "select d.*,"
+        String querySql = "select d.*,"
 		        		+ " f.name,"
 		        		+ " tor.order_no transfer_order_no,"
 		        		+ " ifnull(tori.item_name, p.item_name) item_name,"
-		        		+ " tori.amount item_amount,"
-		        		+ " round((select sum(ifnull(toi.volume, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) volume,"
-		        		+ " round((select sum(ifnull(toi.sum_weight, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) weight"
+		        		+ " null item_amount,"
+		        		+ " null volume,"
+		        		+ " null weight"
 		        		+ " from depart_order_fin_item d "
 		                + " left join fin_item f on d.fin_item_id = f.id "
 		        		+ " left join transfer_order tor on tor.id = d.transfer_order_id"
 						+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
 						+ " left join product p on p.id = tori.product_id"
 		        		+ " where d.depart_order_id =" + id
-		                + " and f.type='应付'";*/
-        String querySql ="select d.*,"
+		                + " and f.type='应付'";
+        /*String querySql ="select d.*,"
 						+ " f.name,"
 						+ " tor.order_no transfer_order_no,"
 						+ " ifnull(tori.item_name, p.item_name) item_name,"
@@ -2032,7 +2033,8 @@ public class DepartOrderController extends Controller {
 						+ " null weight"
 						+ " from depart_order_fin_item d "
 						+ " left join fin_item f on d.fin_item_id = f.id "
-						+ " where d.depart_order_id ="+ id +" and f.type='应付' and d.transfer_order_id is null and d.cost_source is null";
+						+ " where d.depart_order_id ="+ id +" and f.type='应付' and d.transfer_order_id is null and d.cost_source is null";*/
+        
         // 获取当前页的数据
         List<Record> orders = Db.find(querySql);
 
