@@ -44,12 +44,12 @@ $(document).ready(function() {
 		
 	});
 	if($("#costPreInvoiceOrderStatus").text()=="已确认"){
+		
 		$("#auditBtn").show();
 		$("#approvalBtn").show();
-	}else if($("#costPreInvoiceOrderStatus").text()=="新建"){
+	}else if($("#costPreInvoiceOrderStatus").text()=="新建" || $("#costPreInvoiceOrderStatus").text()=="new"){
 		$("#auditBtn").show();
 	}else{
-		
 		$("#auditBtn").show();
 		$("#approvalBtn").show();
 		$("#printBtn").show();
