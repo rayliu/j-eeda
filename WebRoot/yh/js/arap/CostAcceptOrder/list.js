@@ -116,4 +116,10 @@ $(document).ready(function() {
 			}
 		}			
 	});	
+	$("#status_filter").on('change',function(){
+		var status = $("#status_filter").val();
+		costAcceptOrderTab.fnSettings().sAjaxSource = "/costAcceptOrder/list?status="+status;
+					
+		costAcceptOrderTab.fnDraw(); 
+	});
 } );

@@ -46,29 +46,37 @@ public class CostAcceptOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-
+        String status ="已审批";
+        String select_status = getPara("status");
+        if(select_status != null && !"".equals(select_status)){
+        	status = select_status;
+        }
         String sqlTotal = "select count(1) total from (select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
-        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where (aci.status='已付款确认' or aci.status='已审批')  group by aci.id "
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "'  group by aci.id "
 				+ " union all "
 				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
 				+ " from arap_misc_cost_order amco"
 				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
 				+ " where amco.status='新建') tab";
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
-
+        
         String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
-        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where (aci.status='已付款确认' or aci.status='已审批') group by aci.id "
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "' group by aci.id "
 				+ " union all "
 				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
 				+ " from arap_misc_cost_order amco"
 				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
 				+ " where amco.status='新建' "
 				+ " order by create_time desc " + sLimit;
+
+        
+        
+        
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
 
         List<Record> BillingOrders = Db.find(sql);
 
