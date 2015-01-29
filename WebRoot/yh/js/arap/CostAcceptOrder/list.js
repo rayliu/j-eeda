@@ -20,7 +20,12 @@ $(document).ready(function() {
         "aoColumns": [   
 	        { "mDataProp": null, "sWidth":"20px",
 	            "fnRender": function(obj) {
-	              return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	            	if(obj.aData.STATUS == "已付款确认"){
+	            		return "";
+	            	}else{
+	            		return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	            	}
+	              
 	            }
             }, 
             {"mDataProp":"ORDER_NO",
