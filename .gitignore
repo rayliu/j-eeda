@@ -49,3 +49,4 @@ WebRoot/WEB-INF/config/shiro.ini-yh-prod
 WebRoot/WEB-INF/config/app_config.txt-yh-prod
 WebRoot/WEB-INF/config/app_config.txt-mysql
 WebRoot/WEB-INF/config/shiro.ini-mysql
+logs/eeda.2015-01-28.log

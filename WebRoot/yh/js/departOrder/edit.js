@@ -1018,10 +1018,38 @@
     			},
     	        "aoColumns": [
     	            {"mDataProp":"TRANSFER_ORDER_NO"},
-    	            {"mDataProp":"ITEM_NAME"},
-    	            {"mDataProp":"ITEM_AMOUNT"},
-    	            {"mDataProp":"VOLUME"},
-    	            {"mDataProp":"WEIGHT"},
+    	            {"mDataProp":"ITEM_NAME",
+    	            	"fnRender":function(obj){
+    	            		if(obj.aData.COST_SOURCE =="运输单应付费用"){
+    	            			return "";
+    	            		}else{
+    	            			return obj.aData.ITEM_NAME;
+    	            		}
+    	            	}},
+    	            {"mDataProp":"ITEM_AMOUNT",
+        	            	"fnRender":function(obj){
+        	            		if(obj.aData.COST_SOURCE =="运输单应付费用"){
+        	            			return "";
+        	            		}else{
+        	            			return obj.aData.ITEM_AMOUNT;
+        	            		}
+        	          }},
+    	            {"mDataProp":"VOLUME",
+    	            	"fnRender":function(obj){
+    	            		if(obj.aData.COST_SOURCE =="运输单应付费用"){
+    	            			return "";
+    	            		}else{
+    	            			return obj.aData.VOLUME;
+    	            		}
+    	            	}},
+    	            {"mDataProp":"WEIGHT",
+        	            	"fnRender":function(obj){
+        	            		if(obj.aData.COST_SOURCE =="运输单应付费用"){
+        	            			return "";
+        	            		}else{
+        	            			return obj.aData.WEIGHT;
+        	            		}
+        	            	}},
 					{"mDataProp":"NAME",
 					    "fnRender": function(obj) {
 					        if(obj.aData.NAME!='' && obj.aData.NAME != null){
