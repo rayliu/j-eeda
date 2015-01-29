@@ -12,6 +12,7 @@ $(document).ready(function() {
 		$.post('/costPreInvoiceOrder/save', $("#costPreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#costPreInvoiceOrderId").val(data.ID);
+				$("#auditBtn").show();
 			}else{
 				alert('数据保存失败。');
 			}
@@ -25,6 +26,8 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
 		$.post('/costPreInvoiceOrder/auditCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
+			$("#approvalBtn").show();
+			$("#costPreInvoiceOrderStatus").text("已确认");
 		},'json');
 	});
 	
@@ -35,10 +38,21 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
 		$.post('/costPreInvoiceOrder/approvalCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
+			$("#printBtn").show();
+			$("#costPreInvoiceOrderStatus").text("已审批");
 		},'json');
-		$("#printBtn").show();
+		
 	});
-	
+	if($("#costPreInvoiceOrderStatus").text()=="已确认"){
+		$("#auditBtn").show();
+		$("#approvalBtn").show();
+	}else if($("#costPreInvoiceOrderStatus").text()=="新建"){
+		$("#auditBtn").show();
+	}else{
+		$("#auditBtn").show();
+		$("#approvalBtn").show();
+		$("#printBtn").show();
+	}
 	/*--------------------------------------------------------------------*/
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
 	    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
@@ -62,7 +76,6 @@ $(document).ready(function() {
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
  	$("#saveCostPreInvoiceOrderBtn").click(function(e){
- 		
  		saveCostPreInvoiceOrder(e);
 
  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
