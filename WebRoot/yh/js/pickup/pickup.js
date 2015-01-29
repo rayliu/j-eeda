@@ -484,7 +484,9 @@ $(document).ready(function() {
 					orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
 					officeType.push($(this).parent().siblings('.office_name')[0].innerHTML);
 				}
-				ckeckedTransferOrderList.empty();
+				if(ckeckedTransferOrderList.find("tr").find("td").eq(0).text() == "表中数据为空"){
+					ckeckedTransferOrderList.empty();
+				}
 			}
 			sumValue();
 			transferOrderIds.push(value);
