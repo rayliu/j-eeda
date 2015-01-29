@@ -49,9 +49,18 @@ $(document).ready(function() {
 	}else if($("#costPreInvoiceOrderStatus").text()=="新建"){
 		$("#auditBtn").show();
 	}else{
+		
 		$("#auditBtn").show();
 		$("#approvalBtn").show();
 		$("#printBtn").show();
+		if($("#costPreInvoiceOrderStatus").text()=="已付款确认"){
+			$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
+			$("#auditBtn").attr("disabled",true);
+			
+			$("#approvalBtn").attr("disabled",true);
+			
+			
+		}
 	}
 	/*--------------------------------------------------------------------*/
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
