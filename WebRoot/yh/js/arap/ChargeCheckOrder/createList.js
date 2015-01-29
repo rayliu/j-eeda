@@ -145,7 +145,12 @@ $(document).ready(function() {
 	
 	$('#saveBtn').click(function(e){
         e.preventDefault();
-        $('#createForm').submit();
+        if(ids.length>0){
+        	$('#createForm').submit();
+        }else{
+        	$.scojs_message('对不起，当前你没有选择需要对账的单据', $.scojs_message.TYPE_ERROR);
+        }
+        
     });
 	
 	$("#checkedChargeCheckOrder").click(function(){

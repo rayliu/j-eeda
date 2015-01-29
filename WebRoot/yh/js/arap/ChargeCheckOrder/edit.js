@@ -13,12 +13,20 @@ $(document).ready(function() {
 			if(data.ID>0){
 				$("#chargeCheckOrderId").val(data.ID);
 				$("#chargeAmount")[0].innerHTML = data.CHARGE_AMOUNT;
+				$("#auditBtn").show();
 			}else{
 				alert('数据保存失败。');
 			}
 		},'json');
 	};
-    
+    if($("#chargeCheckOrderStatus").text() == "已确认"){
+    	$("#auditBtn").show();
+    }else if($("#chargeCheckOrderStatus").text() != "已确认" && $("#chargeCheckOrderStatus").text() != "新建"){
+    	console.log();
+    	$("#auditBtn").show();
+    	$("#saveChargeCheckOrderBtn").attr("disabled",true);
+    	$("#auditBtn").attr("disabled",true);
+    }
 	// 审核
 	$("#auditBtn").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
@@ -26,6 +34,7 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var chargeCheckOrderId = $("#chargeCheckOrderId").val();
 		$.post('/chargeCheckOrder/auditChargeCheckOrder', {chargeCheckOrderId:chargeCheckOrderId}, function(data){
+			$("#chargeCheckOrderStatus").text("已确认");
 		},'json');
 	});
 	

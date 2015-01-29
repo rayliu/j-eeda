@@ -55,7 +55,6 @@ $(document).ready(function() {
 		
 	});
 	if($("#costCheckOrderStatus").text()!="新建"){
-		
 		$("#auditBtn").show();
 		$("#printBtn").show();
 		if($("#costCheckOrderStatus").text()!="已确认"){
