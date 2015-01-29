@@ -506,7 +506,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
                     + " left join office o on o.id = tor.office_id "
-                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or (tor.STATUS = '部分已发车' and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt "
+                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or ((tor.status = '部分已发车' or tor.status = '已投保') and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt "
                     + " left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null)) and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
@@ -531,7 +531,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on o.id=tor.office_id "
-                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or (tor.STATUS = '部分已发车' and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt"
+                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or ((tor.status = '部分已发车' or tor.status = '已投保') and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt"
                     + " left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null))"
                     + " and ifnull(tor.depart_assign_status, '') !='" + TransferOrder.ASSIGN_STATUS_ALL
                     + "' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
@@ -550,7 +550,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " left join office o on o.id = tor.office_id "
-                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or (tor.STATUS = '部分已发车' and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt"
+                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or ((tor.status = '部分已发车' or tor.status = '已投保') and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt"
                     + " left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null)) and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
@@ -578,7 +578,7 @@ public class DepartOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " left join office o on o.id = tor.office_id "
-                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or (tor.STATUS = '部分已发车' and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt"
+                    + " where ((tor.status = '已入货场' or tor.status = '部分已入货场') or (tor.operation_type = 'out_source' and tor.status = '新建') or ((tor.status = '部分已发车' or tor.status = '已投保') and (select group_concat(cast(dt.pickup_id AS CHAR) SEPARATOR ',') pickup_id from depart_transfer dt"
                     + "	left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id) ) is not null)) and ifnull(tor.depart_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
                     + "%' and tor.status like '%" + status + "%' and tor.address like '%" + address

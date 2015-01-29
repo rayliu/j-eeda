@@ -58,25 +58,21 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     	String title = "";
 		String because = "数据不能为空";
     	for (int j = 0; j < content.size(); j++) {
-    		String customerOrderNo = content.get(j).get("运输单号").trim();
     		causeRow = j+2;
     		System.out.println("数据验证至第【"+causeRow+"】行");
-    		if("".equals(customerOrderNo)){
+    		if("".equals(content.get(j).get("运输单号").trim())){
     			title = "运输单号";
     			break;
     		}
-    		String planning = content.get(j).get("计划日期");
-    		if("".equals(planning)){
+    		if("".equals(content.get(j).get("计划日期"))){
     			title = "计划日期";
     			break;
     		}
-    		String arrivl = content.get(j).get("预计到货日期");
-    		if("".equals(arrivl)){
+    		if("".equals(content.get(j).get("预计到货日期"))){
     			title = "预计到货日期";
     			break;
     		}
-    		String operationType = content.get(j).get("运营方式");
-    		if("".equals(operationType)){
+    		if("".equals(content.get(j).get("运营方式"))){
     			title = "运营方式";
     			break;
     		}
@@ -84,18 +80,30 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     		if("".equals(arrivalMode)){
     			title = "到达方式";
     			break;
+    		}else{
+    			if("入中转仓".equals(arrivalMode)){
+    				if("".equals(content.get(j).get("中转仓"))){
+    					title = "中转仓";
+    	    			break;
+    				}
+    			}
+    		}
+    		//货品型号
+    		if("".equals(content.get(j).get("货品型号"))){
+    			title = "货品型号";
+    			break;
     		}
     		because = "数据有误";
-    		//货品型号
-    		Record product = null;
-    		if(!"".equals(content.get(j).get("货品型号"))){
-        		product = Db.findFirst("select * from product where item_no = '"+content.get(j).get("货品型号")+"';");
-    			if(product == null){
-    				title = "货品型号";
+    		//客户名称
+    		Record customer = null;
+    		if(!"".equals(content.get(j).get("客户名称(简称)"))){
+    			customer = Db.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称(简称)") + "';");
+    			if(customer == null){
+    				title = "客户名称(简称)";
     				break;
     			}
     		}else{
-    			title = "货品型号";
+    			title = "客户名称";
     			because = "数据不能为空";
     			break;
     		}
@@ -125,19 +133,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 				because = "数据不能为空";
 				break;
     		}
-			//客户名称
-    		Record customer = null;
-    		if(!"".equals(content.get(j).get("客户名称(简称)"))){
-    			customer = Db.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称(简称)") + "';");
-    			if(customer == null){
-    				title = "客户名称(简称)";
-    				break;
-    			}
-    		}else{
-    			title = "客户名称";
-    			because = "数据不能为空";
-    			break;
-    		}
+			
     		//网点
     		Record office = null;
     		if(!"".equals(content.get(j).get("网点"))){
@@ -313,49 +309,55 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      * @param content
      * @return 
      */
-    public TransferOrderItem saveTransferOrderItem(double itemNumber,TransferOrder tansferOrder,Product product){
-		//体积相加
-		double size = 0;
-		if(product.get("size") != null && !"".equals(product.get("size"))){
-			size = product.getDouble("size")/1000;
-		}
-		double width = 0;
-		if(product.get("width") != null && !"".equals(product.get("width"))){
-			size = product.getDouble("width")/1000;
-		}
-		double height = 0;
-		if(product.get("height") != null && !"".equals(product.get("height"))){
-			size = product.getDouble("height")/1000;
-		}
-		double weight = 0;
-		if(product.get("weight") != null && !"".equals(product.get("weight"))){
-			weight = product.getDouble("weight");
-		}
-		//总体积
-		double sumVolume = 0;
-		if(product.get("volume") != null && !"".equals(product.get("volume"))){
-			sumVolume = product.getDouble("volume") * itemNumber;
+    public TransferOrderItem saveTransferOrderItem(Map<String,String> content,double itemNumber,TransferOrder tansferOrder,Product product){
+    	TransferOrderItem item =new TransferOrderItem();
+    	if(product != null){
+			//体积相加
+			double size = 0;
+			if(product.get("size") != null && !"".equals(product.get("size"))){
+				size = product.getDouble("size")/1000;
+			}
+			double width = 0;
+			if(product.get("width") != null && !"".equals(product.get("width"))){
+				size = product.getDouble("width")/1000;
+			}
+			double height = 0;
+			if(product.get("height") != null && !"".equals(product.get("height"))){
+				size = product.getDouble("height")/1000;
+			}
+			double weight = 0;
+			if(product.get("weight") != null && !"".equals(product.get("weight"))){
+				weight = product.getDouble("weight");
+			}
+			//总体积
+			double sumVolume = 0;
+			if(product.get("volume") != null && !"".equals(product.get("volume"))){
+				sumVolume = product.getDouble("volume") * itemNumber;
+			}else{
+				sumVolume = size * width * height * itemNumber;
+			}
+			//总重量
+			double num = weight * itemNumber;
+			//创建保存货品明细
+			item.set("order_id", tansferOrder.get("id"))
+			.set("amount", itemNumber)
+			.set("item_no", product.get("item_no"))
+			.set("item_name", product.get("item_name"))
+			.set("size", product.get("size"))
+			.set("unit", product.get("unit"))
+			.set("width", product.get("width"))
+			.set("height", product.get("height"))
+			.set("volume", sumVolume)
+			.set("weight", product.get("weight"))
+			.set("sum_weight", num)
+			.set("product_id", product.get("id"))
+			.save();
 		}else{
-			sumVolume = size * width * height * itemNumber;
+			item.set("order_id", tansferOrder.get("id"))
+			.set("amount", itemNumber)
+			.set("item_no", content.get("货品型号"))
+			.save();
 		}
-		//总重量
-		double num = weight * itemNumber;
-		//创建保存货品明细
-		TransferOrderItem item =new TransferOrderItem();
-		item.set("order_id", tansferOrder.get("id"))
-		.set("amount", itemNumber)
-		.set("item_no", product.get("item_no"))
-		.set("item_name", product.get("item_name"))
-		.set("size", product.get("size"))
-		.set("unit", product.get("unit"))
-		.set("width", product.get("width"))
-		.set("height", product.get("height"))
-		.set("volume", sumVolume)
-		.set("weight", product.get("weight"))
-		.set("sum_weight", num)
-		.set("product_id", product.get("id"))
-		.save();
-		
 		return item;
     }
     /**
@@ -365,14 +367,21 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      */
     public void saveTransferOrderItemDetail(Map<String,String> content,TransferOrder tansferOrder,TransferOrderItem tansferOrderItem,Product product){
     	TransferOrderItemDetail itemDatail = new TransferOrderItemDetail();
-		itemDatail.set("order_id", tansferOrder.get("id"))
-		.set("item_id", tansferOrderItem.get("id"))
-		.set("item_no", product.get("item_no"))
-		.set("serial_no", content.get("单品序列号"))
-		.set("item_name", product.get("item_name"))
-		.set("volume", product.get("volume"))
-		.set("weight", product.get("weight"))
-		.set("notify_party_company", content.get("单品收货地址"))//收货地址
+    	if(product != null){
+    		itemDatail.set("order_id", tansferOrder.get("id"))
+    		.set("item_id", tansferOrderItem.get("id"))
+    		.set("item_no", product.get("item_no"))
+    		.set("serial_no", content.get("单品序列号"))
+    		.set("item_name", product.get("item_name"))
+    		.set("volume", product.get("volume"))
+    		.set("weight", product.get("weight"));
+    	}else{
+    		itemDatail.set("order_id", tansferOrder.get("id"))
+    		.set("item_id", tansferOrderItem.get("id"))
+    		.set("item_no", content.get("货品型号"))
+    		.set("serial_no", content.get("单品序列号"));
+    	}
+    	itemDatail.set("notify_party_company", content.get("单品收货地址"))//收货地址
 		.set("notify_party_name", content.get("单品收货人"))//收货人
 		.set("notify_party_phone", content.get("单品收货人联系电话"))//收货人电话
 		.set("sales_order_no", content.get("单品销售单号"))//销售单号
@@ -422,16 +431,16 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 					for (int j = 0; j < content.size(); j++) {
 						causeRow = j+2;
 						System.out.println("导入至第【"+causeRow+"】行");
+						//客户名称
+		        		Party customer = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称(简称)") + "';");
 		        		//货品型号
-		        		Product product = Product.dao.findFirst("select * from product where item_no = '"+content.get(j).get("货品型号")+"';");
+		        		Product product = Product.dao.findFirst("select p.* from product p left join category c on c.id = p.category_id where c.customer_id = '" + customer.get("pid") + "' and item_no =  '"+content.get(j).get("货品型号")+"';");
 		    			//仓库
 		        		Warehouse warehouse = Warehouse.dao.findFirst("select id from warehouse where warehouse_name = '" + content.get(j).get("中转仓") + "';");
 		    			//始发城市
 		        		Location location1 = Location.dao.findFirst("select code from location where name = '" +content.get(j).get("始发城市") +"';");
 		    			//目的地城市
 		        		Location location2 = Location.dao.findFirst("select code from location where name = '" +content.get(j).get("到达城市") +"';");
-		    			//客户名称
-		        		Party customer = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称(简称)") + "';");
 		    			//供应商名称
 		        		Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称(简称)") + "';");
 		    			//网点
@@ -457,7 +466,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					}
 		    				}else{
 		    					//创建保存货品明细
-			    				TransferOrderItem item = saveTransferOrderItem(itemNumber,order,product);
+			    				TransferOrderItem item = saveTransferOrderItem(content.get(j),itemNumber,order,product);
 								//创建保存单品货品明细
 								if("cargoNatureDetailYes".equals(order.get("cargo_nature_detail"))){
 									//创建单品货品明细
@@ -472,7 +481,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				//保存运输里程碑
 		    				saveTransferOrderMilestone(transferOrder);
 		    				//创建保存货品明细
-		    				TransferOrderItem item = saveTransferOrderItem(itemNumber,transferOrder,product);
+		    				TransferOrderItem item = saveTransferOrderItem(content.get(j),itemNumber,transferOrder,product);
 							//创建保存单品货品明细
 							if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
 								//创建单品货品明细
