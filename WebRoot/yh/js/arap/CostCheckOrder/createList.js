@@ -107,6 +107,9 @@ $(document).ready(function() {
 			orderNos.push($(this).attr('order_no'));
 			$("#checkedOrderId").val(ids);
 			$("#checkedOrderNo").val(orderNos);
+			if(ids.length>0){
+				$("#saveBtn").attr("disabled",false);
+			}
 		}			
 	});
 	
@@ -117,6 +120,9 @@ $(document).ready(function() {
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).attr('id'),ids),1);
 				$("#checkedOrderId").val(ids);
+				if(ids.length<=0){
+					$("#saveBtn").attr("disabled",true);
+				}
 			}
 			if(orderNos.length != 0){
 				orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
