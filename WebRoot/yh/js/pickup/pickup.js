@@ -795,7 +795,9 @@ $(document).ready(function() {
                                 	//更新单品序列号
                                 	var serialArray = "";
                     				for ( var i = 0; i < detailSerialTest.length; i++) {
-                    					serialArray += detailSerialTest[i] + " ";
+                    					if(detailSerialTest[i] != "" && detailSerialTest[i] != null){
+                    						serialArray += detailSerialTest[i] + " ";
+                    					}
                     				}
                     				//序列号
                     				detailTR.find("td").eq(1).text("").text(serialArray);
