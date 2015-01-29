@@ -55,8 +55,14 @@ $(document).ready(function() {
 		
 	});
 	if($("#costCheckOrderStatus").text()!="新建"){
+		
 		$("#auditBtn").show();
 		$("#printBtn").show();
+		if($("#costCheckOrderStatus").text()!="已确认"){
+			$("#auditBtn").attr("disabled",true);
+			$("#saveCostCheckOrderBtn").attr("disabled",true);
+		}
+		
 	}
 	/*--------------------------------------------------------------------*/
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+

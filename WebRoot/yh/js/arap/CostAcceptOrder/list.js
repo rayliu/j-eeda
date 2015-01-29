@@ -105,10 +105,14 @@ $(document).ready(function() {
 			ids.push(orderObj);
 
 			$("#costIds").val(ids);
+			$("#auditBtn").attr("disabled",false);
 		}else{
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).val(),ids),1);
 				$("#costIds").val(ids);
+			}
+			if(ids.length <= 0){
+				$("#auditBtn").attr("disabled",true);
 			}
 		}			
 	});	
