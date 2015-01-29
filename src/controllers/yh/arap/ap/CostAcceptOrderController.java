@@ -47,9 +47,11 @@ public class CostAcceptOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         String status ="已审批";
+        String fk_status ="新建";
         String select_status = getPara("status");
         if(select_status != null && !"".equals(select_status)){
         	status = select_status;
+        	fk_status = select_status;
         }
         String sqlTotal = "select count(1) total from (select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
@@ -59,7 +61,7 @@ public class CostAcceptOrderController extends Controller {
 				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
 				+ " from arap_misc_cost_order amco"
 				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
-				+ " where amco.status='新建') tab";
+				+ " where amco.status='" + fk_status + "') tab";
         
         String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
@@ -69,7 +71,7 @@ public class CostAcceptOrderController extends Controller {
 				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
 				+ " from arap_misc_cost_order amco"
 				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
-				+ " where amco.status='新建' "
+				+ " where amco.status='" + fk_status + "' "
 				+ " order by create_time desc " + sLimit;
 
         
