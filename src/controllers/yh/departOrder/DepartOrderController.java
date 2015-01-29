@@ -1381,12 +1381,14 @@ public class DepartOrderController extends Controller {
     	}else{
     		if(tOrderItemRecord != null){
     			Record record = Db.findFirst("select count(*) as amount from transfer_order_item_detail toid where item_id = " + tOrderItemRecord.get("id") +" and depart_id = " +departOrder.get("id"));
-    			double money=contractFinItem.getDouble("amount") * Double.parseDouble(record.get("amount").toString());
-        		BigDecimal bg = new BigDecimal(money);
-                double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-    			departOrderFinItem.set("amount", amountDouble);
-    			departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
-    		    departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
+				if(!"0".equals(record.get("amount").toString())){
+					double money=contractFinItem.getDouble("amount") * Double.parseDouble(record.get("amount").toString());
+	        		BigDecimal bg = new BigDecimal(money);
+	                double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+	    			departOrderFinItem.set("amount", amountDouble);
+	    			departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
+	    		    departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
+				}
     		}
     	}
         departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
