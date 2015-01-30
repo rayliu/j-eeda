@@ -31,14 +31,7 @@ $(document).ready(function() {
 			}
 		},'json');
 	};
-    if($("#chargeCheckOrderStatus").text() == "已确认"){
-    	$("#auditBtn").show();
-    }else if($("#chargeCheckOrderStatus").text() != "已确认" && $("#chargeCheckOrderStatus").text() != "新建"){
-    	console.log();
-    	$("#auditBtn").show();
-    	$("#saveChargeCheckOrderBtn").attr("disabled",true);
-    	$("#auditBtn").attr("disabled",true);
-    }
+    
 	// 审核
 	$("#auditBtn").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
