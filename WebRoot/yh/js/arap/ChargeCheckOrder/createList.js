@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
     $('#menu_charge').addClass('active').find('ul').addClass('in');
-    
+    $('#saveBtn').attr('disabled', true);
 	//datatable, 动态处理
     var uncheckedChargeCheckTable = $('#uncheckedChargeCheck-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -129,6 +129,7 @@ $(document).ready(function() {
 			$(this).parent().parent().appendTo($("#checkedChargeCheckList"));
 			ids.push($(this).val());
 			$("#checkedReturnOrder").val(ids);
+			$('#saveBtn').attr('disabled', false);
 		}			
 	});
 	
@@ -139,6 +140,9 @@ $(document).ready(function() {
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).val(),ids),1);
 				$("#checkedReturnOrder").val(ids);
+				if(ids.length == 0){
+					$('#saveBtn').attr('disabled', true);
+				}
 			}
 		}			
 	});
@@ -271,5 +275,6 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
     });
+    
    
 } );

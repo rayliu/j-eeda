@@ -2023,7 +2023,7 @@ public class PickupOrderController extends Controller {
             
             String sql = "select distinct toi.id, toi.product_id prod_id, tor.order_no, ifnull(p.item_no, toi.item_no) item_no, ifnull(p.item_name, toi.item_name) item_name,"
             		+ " (select count(0) total from transfer_order_item_detail where item_id = toi.id  and pickup_id is null) atmamount,toi.pickup_number,toi.amount,"
-    				+ " ifnull(p.unit, toi.unit) unit, toi.volume sum_volume, toi.sum_weight sum_weight, toi.remark from transfer_order_item toi"
+    				+ " ifnull(p.unit, toi.unit) unit, round(toi.volume ,2) sum_volume, round(toi.sum_weight ,2) sum_weight, toi.remark from transfer_order_item toi"
             		+ " left join transfer_order tor on tor.id = toi.order_id"
             		+ " left join product p on p.id = toi.product_id"
             		+ " where toi.order_id = " +transferOrderId + " order by toi.id ";

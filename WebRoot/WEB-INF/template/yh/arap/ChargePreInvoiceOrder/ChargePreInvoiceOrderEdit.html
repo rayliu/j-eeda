@@ -52,19 +52,19 @@
 		                                        <label>创建人</label>  <%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>                                      
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>创建时间</label>                                        
+		                                        <label>创建时间</label> <span  id="createData">${arapAuditInvoiceApplication.create_stamp!''}</span>                                       
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审核人</label>                                         
+		                                        <label>审核人</label>  <span  id="auditName">${auditName.c_name!''}</span>                                       
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审核时间</label>                                          
+		                                        <label>审核时间</label> <span  id="auditData">${auditData!''}</span>                                         
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审批人</label>                                       
+		                                        <label>审批人</label>  <span  id="approvalName">${auditName.c_name!''}</span>                                     
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审批时间</label>                                          
+		                                        <label>审批时间</label> <span  id="approvalData">${approvalData!''}</span>                                         
 		                                    </div> 
                                             <div class="form-group">
                                                 <label>备注</label>

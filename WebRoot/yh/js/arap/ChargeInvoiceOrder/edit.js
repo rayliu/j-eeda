@@ -1,6 +1,17 @@
 $(document).ready(function() {
 	$('#menu_charge').addClass('active').find('ul').addClass('in');
 	
+	if($("#chargeInvoiceOrderId").val() == ""){
+		$('#departureConfirmationBtn').attr('disabled', true);
+	}else{
+		if($("#chargeInvoiceOrderStatus").text() == "新建"){
+			$('#departureConfirmationBtn').attr('disabled', false);
+		}else if($("#chargeInvoiceOrderStatus").text() == "已审核"){
+			$('#departureConfirmationBtn').attr('disabled', true);
+			$('#saveChargeInvoiceOrderBtn').attr('disabled', true);
+		}
+	}
+	
 	var saveChargeCheckOrder = function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();

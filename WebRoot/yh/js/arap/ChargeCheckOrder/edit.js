@@ -1,5 +1,17 @@
 $(document).ready(function() {
 	$('#menu_charge').addClass('active').find('ul').addClass('in');
+	
+	
+	if($("#chargeCheckOrderId").val() == ""){
+		$('#auditBtn').attr('disabled', true);
+	}else{
+		if($("#chargeCheckOrderStatus").text() == "已确认"){
+			$('#auditBtn').attr('disabled', true);
+			$('#saveChargeCheckOrderBtn').attr('disabled', true);
+		}else{
+			$('#auditBtn').attr('disabled', false);
+		}
+	}
 	 
 	var saveChargeCheckOrder = function(e){
 		//阻止a 的默认响应行为，不需要跳转
@@ -13,7 +25,7 @@ $(document).ready(function() {
 			if(data.ID>0){
 				$("#chargeCheckOrderId").val(data.ID);
 				$("#chargeAmount")[0].innerHTML = data.CHARGE_AMOUNT;
-				$("#auditBtn").show();
+				$('#auditBtn').attr('disabled', false);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -34,7 +46,8 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var chargeCheckOrderId = $("#chargeCheckOrderId").val();
 		$.post('/chargeCheckOrder/auditChargeCheckOrder', {chargeCheckOrderId:chargeCheckOrderId}, function(data){
-			$("#chargeCheckOrderStatus").text("已确认");
+			$('#auditBtn').attr('disabled', true);
+			$('#saveChargeCheckOrderBtn').attr('disabled', true);
 		},'json');
 	});
 	

@@ -170,7 +170,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		String paymentMethod = getPara("paymentMethod");
 		if (!"".equals(chargePreInvoiceOrderId) && chargePreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
-			arapAuditInvoiceApplication.set("status", "new");
+            arapAuditInvoiceApplication.set("status", "new");
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
@@ -225,8 +225,9 @@ public class ChargePreInvoiceOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_APPROVAL})
 	public void auditChargePreInvoiceOrder(){
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
+		ArapChargeInvoiceApplication arapAuditOrder = null;
 		if(chargePreInvoiceOrderId != null && !"".equals(chargePreInvoiceOrderId)){
-			ArapChargeInvoiceApplication arapAuditOrder = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
+			arapAuditOrder = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
 			arapAuditOrder.set("status", "已审核");
             String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
@@ -234,7 +235,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditOrder.set("audit_stamp", new Date());
 			arapAuditOrder.update();
 		}
-        renderJson("{\"success\":true}");
+        renderJson(arapAuditOrder);
 	}
 	
 	// 审批
@@ -273,6 +274,16 @@ public class ChargePreInvoiceOrderController extends Controller {
 		setAttr("chargeCheckOrderIds", chargeCheckOrderIds);
 		UserLogin userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication.get("create_by"));
 		setAttr("userLogin", userLogin);
+		if(!"".equals(arapAuditInvoiceApplication.get("audit_by")) && arapAuditInvoiceApplication.get("audit_by") != null){
+			UserLogin auditName = UserLogin.dao.findById(arapAuditInvoiceApplication.get("audit_by"));
+			setAttr("auditName", auditName);
+			setAttr("auditData", arapAuditInvoiceApplication.get("audit_stamp"));
+		}
+		if(!"".equals(arapAuditInvoiceApplication.get("approver_by")) && arapAuditInvoiceApplication.get("approver_by") != null){
+			UserLogin approvalName = UserLogin.dao.findById(arapAuditInvoiceApplication.get("approver_by"));
+			setAttr("approvalName", approvalName);
+			setAttr("approvalData", arapAuditInvoiceApplication.get("approval_stamp"));
+		}
 		setAttr("arapAuditInvoiceApplication", arapAuditInvoiceApplication);
 			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
 	}

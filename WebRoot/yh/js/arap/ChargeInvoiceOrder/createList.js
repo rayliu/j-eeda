@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
     $('#menu_charge').addClass('active').find('ul').addClass('in');
-    
+    $('#saveBtn').attr('disabled', true);
 	//datatable, 动态处理
 	var uncheckedChargePreInvoiceOrderTable=$('#uncheckedChargePreInvoiceOrder-table').dataTable({
 		"bFilter": false, //不需要默认的搜索框
@@ -63,6 +63,7 @@ $(document).ready(function() {
 			$(this).parent().parent().appendTo($("#checkedChargePreInvoiceOrderList"));
 			ids.push($(this).val());
 			$("#checkedPreInvoiceOrder").val(ids);
+			$('#saveBtn').attr('disabled', false);
 		}			
 	});
 	
@@ -73,6 +74,9 @@ $(document).ready(function() {
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).val(),ids),1);
 				$("#checkedPreInvoiceOrder").val(ids);
+				if(ids.length == 0){
+					$('#saveBtn').attr('disabled', true);
+				}
 			}
 		}			
 	});

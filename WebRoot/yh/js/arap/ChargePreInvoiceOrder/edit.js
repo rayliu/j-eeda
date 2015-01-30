@@ -1,6 +1,24 @@
 $(document).ready(function() {
 	$('#menu_charge').addClass('active').find('ul').addClass('in');
 	
+	if($("#chargePreInvoiceOrderId").val() == ""){
+		$('#auditBtn').attr('disabled', true);
+		$('#approvalBtn').attr('disabled', true);
+	}else{
+		if($("#chargePreInvoiceOrderStatus").text() == "新建"){
+			$('#auditBtn').attr('disabled', false);
+			$('#approvalBtn').attr('disabled', true);
+		}else if($("#chargePreInvoiceOrderStatus").text() == "已审核"){
+			$('#savechargePreInvoiceOrderBtn').attr('disabled', true);
+			$('#auditBtn').attr('disabled', true);
+			$('#approvalBtn').attr('disabled', false);
+		}else if($("#chargePreInvoiceOrderStatus").text() == "已审批"){
+			$('#savechargePreInvoiceOrderBtn').attr('disabled', true);
+			$('#auditBtn').attr('disabled', true);
+			$('#approvalBtn').attr('disabled', true);
+		}
+	}
+	
 	var savechargePreInvoiceOrder = function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
@@ -12,6 +30,7 @@ $(document).ready(function() {
 		$.post('/chargePreInvoiceOrder/save', $("#chargePreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargePreInvoiceOrderId").val(data.ID);
+				$('#auditBtn').attr('disabled', false);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -25,6 +44,12 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var chargePreInvoiceOrderId = $("#chargePreInvoiceOrderId").val();
 		$.post('/chargePreInvoiceOrder/auditChargePreInvoiceOrder', {chargePreInvoiceOrderId:chargePreInvoiceOrderId}, function(data){
+			if(data.ID != null){
+				$('#savechargePreInvoiceOrderBtn').attr('disabled', true);
+				$('#auditBtn').attr('disabled', true);
+				$('#approvalBtn').attr('disabled', false);
+			}
+			
 		},'json');
 	});
 	
@@ -35,6 +60,9 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var chargePreInvoiceOrderId = $("#chargePreInvoiceOrderId").val();
 		$.post('/chargePreInvoiceOrder/approvalChargePreInvoiceOrder', {chargePreInvoiceOrderId:chargePreInvoiceOrderId}, function(data){
+			$('#savechargePreInvoiceOrderBtn').attr('disabled', true);
+			$('#auditBtn').attr('disabled', true);
+			$('#approvalBtn').attr('disabled', true);
 		},'json');
 	});
 	
@@ -157,7 +185,7 @@ $(document).ready(function() {
 			 accountTypeSelect.empty();
 			 var hideAccountId = $("#hideAccountId").val();
 			 accountTypeSelect.append("<option ></option>");
-			 for(var i=0; i<data.length+1; i++){
+			 for(var i=0; i<data.length; i++){
 				 if(data[i].ID == hideAccountId){
 					 accountTypeSelect.append("<option value='"+data[i].ID+"' selected='selected'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");
 				 }else{
