@@ -443,6 +443,20 @@ $(document).ready(function() {
 		$("#sumVolume").text(sumVolumnVal);
 	};
 	
+	var sumValue1 = function(){
+		
+		var sumWeightVal = 0;
+		var sumVolumnVal = 0;
+		$("#ckeckedTransferOrderList tr").each(function (){
+			sumWeightVal = sumWeightVal + parseFloat($(this).find("td").eq(7).text() == "" ? 0 : $(this).find("td").eq(7).text());
+			sumVolumnVal = sumVolumnVal + parseFloat($(this).find("td").eq(8).text() == "" ? 0 : $(this).find("td").eq(8).text());
+		});
+    	//总重量、总体积
+    	$("#sumWeight").text(sumWeightVal.toFixed(2));	
+		$("#sumVolume").text(sumVolumnVal.toFixed(2));
+	};
+	
+	
 	// 选中或取消事件
 	$("#transferOrderList").on('click', '.checkedOrUnchecked', function(){
 		var ckeckedTransferOrderList = $("#ckeckedTransferOrderList");
@@ -488,7 +502,7 @@ $(document).ready(function() {
 					ckeckedTransferOrderList.empty();
 				}
 			}
-			sumValue();
+			//sumValue();
 			transferOrderIds.push(value);
 			if(cargo_nature == 'ATM'){
 				$.get("/pickupOrder/findSerialNoByOrderId", {order_id:value}, function(data){
@@ -503,6 +517,9 @@ $(document).ready(function() {
 					//体积、重量
 					var volume = (total_volume * (ids.length / total_amount)).toFixed(2);
 					var weight = (total_weight * (ids.length / total_amount)).toFixed(2);
+					//总重量、总体积
+			    	$("#sumWeight").text((parseFloat($("#sumWeight").text() == "" ? 0 :$("#sumWeight").text()) + weight * 1).toFixed(2));	
+					$("#sumVolume").text((parseFloat($("#sumVolume").text() == "" ? 0 :$("#sumVolume").text()) + volume * 1).toFixed(2));
 					console.log("单品id集合-正式:"+detailIds);
 					ckeckedTransferOrderList.append("<tr value='"+value+"' serial='"+data.ID+"'><td>"+order_no+"</td><td>"+serial_no+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+weight+"</td><td>"+volume+"</td><td>"
 							+ids.length+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
@@ -533,6 +550,9 @@ $(document).ready(function() {
 				},'json');*/
 				ckeckedTransferOrderList.append("<tr value='"+value+"'serial=''><td>"+order_no+"</td><td></td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
 						+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
+				//总重量、总体积
+		    	$("#sumWeight").text((parseFloat($("#sumWeight").text() == "" ? 0 :$("#sumWeight").text()) + total_weight * 1).toFixed(2));	
+				$("#sumVolume").text((parseFloat($("#sumVolume").text() == "" ? 0 :$("#sumVolume").text()) + total_volume * 1).toFixed(2));
 			}
 		}else{
 			
@@ -562,6 +582,9 @@ $(document).ready(function() {
 			for(var i=0;i<allTrs.length;i++){
 				if(allTrs[i].attributes[0].value == $(this).val()){
 					allTrs[i].remove();
+					//总重量、总体积
+			    	$("#sumWeight").text((parseFloat(allTrs[i].find("td").eq(7).text("").text()== "" ? 0 :allTrs[i].find("td").eq(7).text("").text()) - total_weight * 1).toFixed(2));	
+					$("#sumVolume").text((parseFloat(allTrs[i].find("td").eq(8).text("").text()== "" ? 0 :allTrs[i].find("td").eq(7).text("").text()) - total_volume * 1).toFixed(2));
 				}
 			}
 			if(orderType.length != 0){
@@ -839,8 +862,9 @@ $(document).ready(function() {
         		});
         	}
         	$("#saveBtn").attr('disabled', false);
-        });                              
+        });                
     	
+    	sumValue1();
     	$("#closeBtn").click();
     	console.log("单品序列号集合-临时:"+detailSerialTest);
     	console.log("单品id集合-临时:"+detailIdsTest);
