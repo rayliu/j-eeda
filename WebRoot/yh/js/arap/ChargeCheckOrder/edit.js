@@ -8,6 +8,9 @@ $(document).ready(function() {
 		if($("#chargeCheckOrderStatus").text() == "已确认"){
 			$('#auditBtn').attr('disabled', true);
 			$('#saveChargeCheckOrderBtn').attr('disabled', true);
+		}else if($("#chargeCheckOrderStatus").text() == "开票申请中"){
+			$('#auditBtn').attr('disabled', true);
+			$('#saveChargeCheckOrderBtn').attr('disabled', true);
 		}else{
 			$('#auditBtn').attr('disabled', false);
 		}
