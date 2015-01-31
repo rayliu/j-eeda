@@ -393,7 +393,7 @@ public class DeliveryController extends Controller {
 						+ tOrder.get("customer_id")
 						+ "'and p.contact_id = c.id");*/
 		String sql = "select p.id as customerId,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+tOrder.get("customer_id");
-		Record customerContact = Db.findFirst(sql);
+		Party customerContact = Party.dao.findFirst(sql);
 
 		// 供应商信息
 		Party spContact = Party.dao
