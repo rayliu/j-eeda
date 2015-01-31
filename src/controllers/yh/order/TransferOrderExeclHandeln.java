@@ -57,6 +57,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		int causeRow = 0;
     	String title = "";
 		String because = "数据不能为空";
+		SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");
     	for (int j = 0; j < content.size(); j++) {
     		causeRow = j+2;
     		System.out.println("数据验证至第【"+causeRow+"】行");
@@ -64,14 +65,33 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     			title = "运输单号";
     			break;
     		}
-    		if("".equals(content.get(j).get("计划日期"))){
-    			title = "计划日期";
-    			break;
-    		}
-    		if("".equals(content.get(j).get("预计到货日期"))){
-    			title = "预计到货日期";
-    			break;
-    		}
+    		
+    		try {
+    			if("".equals(content.get(j).get("计划日期"))){
+        			title = "计划日期";
+        			break;
+        		}else{
+        			dbDataFormat.parse(content.get(j).get("计划日期"));
+        		}
+			} catch (ParseException e) {
+				title = "计划日期";
+				because = "数据有误";
+				break;
+			}
+    		
+    		try {
+        		if("".equals(content.get(j).get("预计到货日期"))){
+        			title = "预计到货日期";
+        			break;
+        		}else{
+        			dbDataFormat.parse(content.get(j).get("预计到货日期"));
+        		}
+			} catch (ParseException e) {
+				title = "预计到货日期";
+				because = "数据有误";
+				break;
+			}
+    		
     		if("".equals(content.get(j).get("运营方式"))){
     			title = "运营方式";
     			break;
@@ -165,7 +185,6 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     				break;
     			}
     		}
-			
     	}
     	if("".equals(title)){
     		importResult.put("result","true");

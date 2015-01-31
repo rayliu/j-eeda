@@ -161,7 +161,7 @@ public class DataInitUtil {
             stmt.executeUpdate("create table if not exists delivery_plan_order_carinfo(id bigint auto_increment primary key,order_id bigint,carinfo_id bigint,car_no varchar(50),driver varchar(50),phone varchar(50));");
             
             // 发车单运输单中间表
-            stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,pickup_id bigint,depart_id bigint,order_id bigint,transfer_order_no varchar(255),amount double,order_item_id bigint,foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id),foreign key(pickup_id) references depart_order(id));");
+            stmt.executeUpdate("create table if not exists depart_transfer(id bigint auto_increment primary key,pickup_id bigint,depart_id bigint,order_id bigint,transfer_order_no varchar(255),amount double,order_item_id bigint,belong_depart_id bigint,foreign key(depart_id) references depart_order(id),foreign key(order_id) references transfer_order(id),foreign key(pickup_id) references depart_order(id));");
 
             // transfer_order_milestone 运输单里程碑
 
@@ -275,6 +275,9 @@ public class DataInitUtil {
             
             //配送调车单-里程碑
             stmt.execute("create table if not exists delivery_plan_order_milestone(id bigint auto_increment primary key,order_id varchar(50),status varchar(50),address varchar(50),create_id bigint,create_stamp timestamp);");
+            
+            //发车单从表，记录此次发车的调车单
+            stmt.execute("create table if not exists depart_pickup(id bigint auto_increment primary key,depart_id bigint,pickup_id bigint,order_id bigint);");
             
             stmt.close();
             // conn.commit();

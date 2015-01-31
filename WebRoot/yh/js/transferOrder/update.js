@@ -2668,4 +2668,22 @@ $(document).ready(function() {
     	}
     	
     });
+    
+    //应收,应付checkbox
+    $("#revenueCheckBox,#costCheckBox").click(function(e){
+    	var order_id = $("#order_id").val();
+    	var name = $(this).attr("name");
+    	var revenue = $(this).prop('checked');
+		if(order_id != ""){
+			$.post('/transferOrder/updateTransferOrderRevenue', {order_id:order_id,name:name,revenue:revenue}, function(data){
+				if(!data.success){
+					alert("操作失败!");
+				}
+	    	}); 
+		}
+	});
+    
+    
+    
+    
 });

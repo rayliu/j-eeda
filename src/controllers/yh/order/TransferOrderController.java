@@ -1330,5 +1330,15 @@ public class TransferOrderController extends Controller {
         Map.put("aaData", transferOrderItems);
         renderJson(Map); 
     }
+    
+    //运输单状态
+    public void updateTransferOrderRevenue(){
+    	String orderId = getPara("order_id");
+    	String name = getPara("name");
+    	boolean revenue = getParaToBoolean("revenue");
+    	TransferOrder trans = TransferOrder.dao.findById(orderId);
+    	trans.set(name, revenue).update();
+		renderJson("{\"success\":true}");
+    }
 	
 }

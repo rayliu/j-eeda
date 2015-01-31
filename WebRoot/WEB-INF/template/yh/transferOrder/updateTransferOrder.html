@@ -661,7 +661,7 @@
                                         <div class="panel-body">
                                             <div id='addRevenueDiv' style="display:none;">
 									 	        <button class="btn btn-primary" id="addrow2">添加应收</button>
-                                                <input type="checkbox" name="revenueCheckBox" id="revenueCheckBox"
+                                                <input type="checkbox" name="no_contract_revenue" id="revenueCheckBox"
                                                 <% if(transferOrder.no_contract_revenue!false){ %>checked<%}%>
                                                 >不需要从合同计算应收费用
                                             </div>
@@ -706,7 +706,7 @@
                                     <div class="panel-body">
                                         <div id='addCostDiv' style="display:none;">
 									        <button class="btn btn-primary" id="addrow"> 添加应付</button>
-                                            <input type="checkbox" name="costCheckBox" id="costCheckBox"
+                                            <input type="checkbox" name="no_contract_cost" id="costCheckBox"
                                             <% if(transferOrder.no_contract_cost!false){ %>checked<%}%>
                                             >不需要从合同计算应付费用
                                         </div>
