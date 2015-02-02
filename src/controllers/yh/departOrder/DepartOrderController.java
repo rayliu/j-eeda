@@ -1196,7 +1196,7 @@ public class DepartOrderController extends Controller {
                 transferIds = transferIds.substring(0, transferIds.length() - 1);
 
             List<Record> transferOrderItemList = Db
-                    .find("select toi.*, t_o.route_from, t_o.route_to from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
+                    .find("select toi.*, t_o.route_from, t_o.route_to,t_o.cargo_nature from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
                             + transferIds + ") order by pickup_seq desc");
             // TODO:生成应付
             
@@ -1380,15 +1380,22 @@ public class DepartOrderController extends Controller {
     		departOrderFinItem.set("amount", amountDouble);        		
     	}else{
     		if(tOrderItemRecord != null){
-    			Record record = Db.findFirst("select count(*) as amount from transfer_order_item_detail toid where item_id = " + tOrderItemRecord.get("id") +" and depart_id = " +departOrder.get("id"));
-				if(!"0".equals(record.get("amount").toString())){
-					double money=contractFinItem.getDouble("amount") * Double.parseDouble(record.get("amount").toString());
-	        		BigDecimal bg = new BigDecimal(money);
-	                double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-	    			departOrderFinItem.set("amount", amountDouble);
-	    			departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
-	    		    departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
-				}
+    			String cargo_nature = tOrderItemRecord.get("cargo_nature");
+    			double money=0;
+    			if(cargo_nature.equals("cargo")){
+    				money=contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString());
+    			}else{
+    				Record record = Db.findFirst("select count(toid.id) as amount from transfer_order_item_detail toid where item_id = " + tOrderItemRecord.get("id") +" and depart_id = " +departOrder.get("id"));
+    				if(record.getLong("amount")>0){
+    					money=contractFinItem.getDouble("amount") * Double.parseDouble(record.get("amount").toString());
+    				}
+    					
+    			}
+        		BigDecimal bg = new BigDecimal(money);
+                double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    			departOrderFinItem.set("amount", amountDouble);
+    			departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
+    		    departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
     		}
     	}
         departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
@@ -2167,7 +2174,7 @@ public class DepartOrderController extends Controller {
         DepartOrderFinItem.dao.deleteById(id);
         renderJson("{\"success\":true}");
     }
-    //TODO：不按合同计费
+    //TODO：运输单带过来的费用
     public void getFinNoContractCost(DepartOrder departOrder){
     	List<TransferOrder> tran 
     			= TransferOrder.dao.find("select tor.* from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id  where dt.depart_id = ?",departOrder.get("id"));
@@ -2175,8 +2182,8 @@ public class DepartOrderController extends Controller {
     	List<TransferOrderFinItem> tofiList ;
     	if(tran.size()>0){
     		for (TransferOrder transferOrder : tran) {
-	    			tofiList= TransferOrderFinItem.dao.find("select * from transfer_order_fin_item where order_id =?",transferOrder.get("id"));
-					String name = (String) currentUser.getPrincipal();
+					tofiList = TransferOrderFinItem.dao.find("select sum(amount) as total_cost,fin_item_id from transfer_order_fin_item where order_id = ? group by  fin_item_id",transferOrder.get("id"));
+    				String name = (String) currentUser.getPrincipal();
 				    UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
 				    java.util.Date utilDate = new java.util.Date();
 				    java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
@@ -2184,7 +2191,7 @@ public class DepartOrderController extends Controller {
 				    	for (TransferOrderFinItem transferOrderFinItem : tofiList) {
 				    		DepartOrderFinItem departOrderFinItem = new DepartOrderFinItem();
 				        	departOrderFinItem.set("fin_item_id", transferOrderFinItem.get("fin_item_id"));
-				        	departOrderFinItem.set("amount", transferOrderFinItem.get("amount"));
+				        	departOrderFinItem.set("amount", transferOrderFinItem.get("total_cost"));
 				            departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
 				            departOrderFinItem.set("status", "未完成");
 				            departOrderFinItem.set("creator", users.get("id"));
