@@ -64,7 +64,7 @@ $(document).ready(function() {
 		$("#affirmBtn").prop("disabled",true);
 	}else{
 		//加载时隐藏"审核"
-		$("#auditBtn").hide();
+		//$("#auditBtn").hide();
 		//不启用“保存”
 		$("#saveCarSummaryBtn").prop("disabled",true);
 		$("#addCarSummaryRouteFee").prop("disabled",true);
@@ -72,6 +72,7 @@ $(document).ready(function() {
 		$("#addCarSummaryDetailSalary").prop("disabled",true);
 		$("#editProportionBtn").prop("disabled",true);
 		$("#affirmBtn").prop("disabled",true);
+		$("#auditBtn").prop("disabled",true);
 	}
 	
  	//列出所有的副司机 - 自营
@@ -533,7 +534,7 @@ $(document).ready(function() {
              },
              { "mDataProp": "REFUEL_TYPE","sWidth":"120px",
             	 "fnRender": function(obj) {
-                     if(obj.aData.REFUEL_TYPE!='' && obj.aData.REFUEL_TYPE != null){
+                     /*if(obj.aData.REFUEL_TYPE!='' && obj.aData.REFUEL_TYPE != null){
                     	 if($("#saveCarSummaryBtn").prop("disabled"))
                     		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_type' value='"+obj.aData.REFUEL_TYPE+"' disabled='true'>";
                     	 else
@@ -543,7 +544,19 @@ $(document).ready(function() {
                     		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_type' disabled='true'>";
                     	 else
                     		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_type'>";
-                     }
+                     }*/
+                     var str="";
+                     $("#refuelTypeList").children().each(function(){
+                 		if(obj.aData.REFUEL_TYPE == $(this).text()){
+                 			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
+                 		}else{
+                 			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+                 		}
+                 	 });
+                     if($("#saveCarSummaryBtn").prop("disabled"))
+                    	 return "<select name='refuel_type' disabled='true'>"+str+"</select>";
+                     else
+                    	 return "<select name='refuel_type'>"+str+"</select>";
                  }
              },
              { "mDataProp": "REFUEL_UNIT_COST","sWidth":"120px",
@@ -1062,7 +1075,8 @@ $(document).ready(function() {
 			$.post('/carsummary/updateCarSummaryOrderStatus', {carSummaryId:car_summary_id,value:value}, function(data){
 				if(data.success){
 					$("#isAudit").val("yes");
-					$("#auditBtn").hide();
+					//$("#auditBtn").hide();
+					$("#auditBtn").prop("disabled",true);
 					$("#delAuditBtn").show();
 					$("#saveCarSummaryBtn").prop("disabled",true);
 					$("#addCarSummaryRouteFee").prop("disabled",true);

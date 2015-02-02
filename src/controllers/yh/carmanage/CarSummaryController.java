@@ -644,7 +644,7 @@ public class CarSummaryController extends Controller {
         		item += oilFeeList.get(0).getLong("item");
         	}
         	CarSummaryDetailOilFee oilFee = new CarSummaryDetailOilFee();
-        	oilFee.set("item", item).set("car_summary_id", carSummaryId)
+        	oilFee.set("item", item).set("car_summary_id", carSummaryId).set("refuel_type", "0#柴油")
         	.set("refuel_data", sqlDate).set("payment_type", "油卡").save();
         }
         renderJson("{\"success\":true}");
