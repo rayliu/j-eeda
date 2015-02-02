@@ -726,10 +726,10 @@
     	    //编辑保存
     	    $("#saveDepartOrderBtn").click(function(e){
     	    	e.preventDefault();
-    			//提交前，校验数据
+    			/*//提交前，校验数据
     	        if(!$("#orderForm").valid()){
     		       	return false;
-    	        }
+    	        }*/
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
     	    		$("#saveDepartOrderBtn").attr("disabled", true);
 				   	clickSaveDepartOrder(e);
@@ -762,17 +762,17 @@
     	    // 点击货品信息
     	    $("#departOrderItemList").click(function(e){
     			e.preventDefault();
-    			//提交前，校验数据
+    			/*//提交前，校验数据
     	        if(!$("#orderForm").valid()){
     		       	return false;
-    	        }
+    	        }*/
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
     	    		clickSaveDepartOrder(e);
     	    		if("chargeCheckOrderbasic" == parentId){
     	    			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
     	    		}
-    	    		
     	    	} 
+    			
     	    	parentId = e.target.getAttribute("id");
     	    	
     	    	var message=$("#message").val();
@@ -785,11 +785,38 @@
 	    	 	    datatable.fnSettings().oFeatures.bServerSide = true; 
 	    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+departOrderId;
 	    	 		datatable.fnDraw();
+    	 	    }else{
+    	 	    	// 保存单品
+        	    	$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
+        				$("#departOrderId").val(data.ID);
+        				if(data.ID>0){
+        					$("#departOrderId").val(data.ID);
+        					$("#depart_id").val(data.ID);
+        					$("#saveDepartOrderBtn").prop('disabled',false);
+        					$("#showDepartNo").text(data.DEPART_NO);
+        					$("#milestoneDepartId").val(data.ID);
+        				  	//$("#style").show();	
+        		    	    $("#departureConfirmationBtn").attr("disabled", false);
+        		    	    $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+        				}else{
+        					alert('数据保存失败。');
+        				}
+        				
+        				datatable.fnSettings().oFeatures.bServerSide = true; 
+    	    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+data.ID;
+    	    	 		datatable.fnDraw();
+        				
+        			},'json');
+    	 	    	
     	 	    }
     	    	
     	    });
     	    
     	    $("#departureConfirmationBtn").click(function(e){
+    	    	//提交前，校验数据
+    	    	if(!$("#orderForm").valid()){
+     		       return false;
+     	        }
     	    	
     	    	var priceType = $("input[name='priceType']:checked").val();
     	    	$(this).attr("disabled",true);
