@@ -1003,7 +1003,7 @@
     	    
     	  //应付datatable
     		var paymenttable=$('#table_fin2').dataTable({
-    			"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    			"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	        "bFilter": false, //不需要默认的搜索框
     	        //"sPaginationType": "bootstrap",
     	        "iDisplayLength": 10,
@@ -1017,15 +1017,7 @@
     				return nRow;
     			},
     	        "aoColumns": [
-    	            {"mDataProp":"TRANSFER_ORDER_NO"},
-    	            {"mDataProp":"ITEM_NAME",
-    	            	"fnRender":function(obj){
-    	            		if(obj.aData.COST_SOURCE =="运输单应付费用"){
-    	            			return "";
-    	            		}else{
-    	            			return obj.aData.ITEM_NAME;
-    	            		}
-    	            	}},
+    	            {"mDataProp":"TRANSFER_ORDER_NO"}, 
     	            {"mDataProp":"ITEM_AMOUNT",
         	            	"fnRender":function(obj){
         	            		if(obj.aData.COST_SOURCE =="运输单应付费用"){
@@ -1074,6 +1066,7 @@
 					        	return "<select name='fin_item_id'>"+str+"</select>";
 					        }
 					 }},
+					{"mDataProp":null},
 					{"mDataProp":"AMOUNT",
 					     "fnRender": function(obj) {
 				    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
@@ -1082,6 +1075,9 @@
 					         	 return "<input type='text' name='amount'>";
 					         }
 					 }},
+					 {"mDataProp":null},
+    				 {"mDataProp":null},
+    				 {"mDataProp":null},
 					 {"mDataProp":"REMARK",
 						 "fnRender": function(obj) {
 		                    if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
@@ -1100,6 +1096,7 @@
 				        		return "手工录入费用";
 				        	}
     				}},
+    				
     				{  
 		                "mDataProp": null, 
 		                "sWidth": "60px",  
