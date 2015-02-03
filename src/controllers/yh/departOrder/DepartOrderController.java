@@ -1377,34 +1377,56 @@ public class DepartOrderController extends Controller {
     		double money=contractFinItem.getDouble("amount");
     		BigDecimal bg = new BigDecimal(money);
             double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-    		departOrderFinItem.set("amount", amountDouble);        		
+    		departOrderFinItem.set("amount", amountDouble);  
+    		
+    		departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
+	        departOrderFinItem.set("status", "未完成");
+	        departOrderFinItem.set("creator", users.get("id"));
+	        departOrderFinItem.set("create_date", now);
+	        departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
+	        departOrderFinItem.set("cost_source", "合同费用");
+	        departOrderFinItem.save();
     	}else{
     		if(tOrderItemRecord != null){
     			String cargo_nature = tOrderItemRecord.get("cargo_nature");
     			double money=0;
     			if(cargo_nature.equals("cargo")){
     				money=contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString());
+    				BigDecimal bg = new BigDecimal(money);
+                    double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        			departOrderFinItem.set("amount", amountDouble);
+        			departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
+        		    departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
+    			
+        		    departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
+        	        departOrderFinItem.set("status", "未完成");
+        	        departOrderFinItem.set("creator", users.get("id"));
+        	        departOrderFinItem.set("create_date", now);
+        	        departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
+        	        departOrderFinItem.set("cost_source", "合同费用");
+        	        departOrderFinItem.save();
     			}else{
     				Record record = Db.findFirst("select count(toid.id) as amount from transfer_order_item_detail toid where item_id = " + tOrderItemRecord.get("id") +" and depart_id = " +departOrder.get("id"));
-    				if(record.getLong("amount")>0){
+    				if(record.getLong("amount") != 0){
     					money=contractFinItem.getDouble("amount") * Double.parseDouble(record.get("amount").toString());
-    				}
-    					
+    					BigDecimal bg = new BigDecimal(money);
+    	                double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    	    			departOrderFinItem.set("amount", amountDouble);
+    	    			departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
+    	    		    departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
+    				
+    	    		    departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
+    	    	        departOrderFinItem.set("status", "未完成");
+    	    	        departOrderFinItem.set("creator", users.get("id"));
+    	    	        departOrderFinItem.set("create_date", now);
+    	    	        departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
+    	    	        departOrderFinItem.set("cost_source", "合同费用");
+    	    	        departOrderFinItem.save();
+    				}	
     			}
-        		BigDecimal bg = new BigDecimal(money);
-                double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-    			departOrderFinItem.set("amount", amountDouble);
-    			departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
-    		    departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
+        		
     		}
     	}
-        departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
-        departOrderFinItem.set("status", "未完成");
-        departOrderFinItem.set("creator", users.get("id"));
-        departOrderFinItem.set("create_date", now);
-        departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
-        departOrderFinItem.set("cost_source", "合同费用");
-        departOrderFinItem.save();
     }
 
     // 点击货品table的查看 ，显示对应货品的单品
@@ -1990,7 +2012,102 @@ public class DepartOrderController extends Controller {
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
+        DepartOrder depart =  DepartOrder.dao.findById(id);
+        String charge_type = depart.get("charge_type");
+        List<Record> record = Db.find("select tor.cargo_nature from transfer_order tor left join depart_transfer dt on tor.id = dt.order_id where dt.depart_id =?",id);
+        String cargo_nature = record.get(0).get("cargo_nature");
+        String conditionSql ="";
+        if("ATM".equals(cargo_nature)){
+        	if("perUnit".equals(charge_type)){
+        		conditionSql =  " select d.*,"
+    					+ " f.name,"
+    					+ "  tor.order_no transfer_order_no,"
+    					+ " (select count(id) as item_amount from transfer_order_item_detail where depart_id =d.depart_order_id and item_id = d.transfer_order_item_id) item_amount,"
+    					+ " (select count(id) * p.volume as volume from transfer_order_item_detail where depart_id =d.depart_order_id and item_id = d.transfer_order_item_id) volume,"
+    					+ " (select count(id) * p.weight as weight from transfer_order_item_detail where depart_id =d.depart_order_id and item_id = d.transfer_order_item_id) weight,"
+    					+ " (select ci.amount from depart_order dor left join contract c on c.party_id = dor.sp_id left join contract_item ci on ci.contract_id = c.id where dor.id = d.depart_order_id and dor.charge_type = ci.pricetype) price,"
+    					+ " (select charge_type from depart_order where id = d.depart_order_id) fin_charge_type,"
+    					+ " (select l.name from depart_order dor left join location l on dor.route_from = l.code where dor.id = d.depart_order_id) route_from,"
+    					+ " (select lt.name from depart_order dor left join location lt on dor.route_to = lt.code where dor.id = d.depart_order_id) route_to"
+    					+ " from depart_order_fin_item d "
+    					+ " left join fin_item f on d.fin_item_id = f.id "
+    					+ " left join transfer_order tor on tor.id = d.transfer_order_id"
+    					+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
+    					+ " left join product p on p.id = tori.product_id"
+    					+ " where d.depart_order_id ="+ id +" and f.type='应付' and cost_source ='合同费用'";	
+        	}else{
+        		//整车和零担情况
+        		conditionSql =  " select d.*,"
+    					+ " f.name,"
+    					+ " (select group_concat(tor.order_no separator '<br/>') from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id where dt.depart_id =d.depart_order_id ) transfer_order_no,"
+    					+ " (select count(id) as item_amount from transfer_order_item_detail where depart_id =d.depart_order_id) item_amount,"
+    					+ " round((select sum(volume) from transfer_order_item_detail toid where toid.depart_id=d.depart_order_id),2)volume,"
+    					+ " round((select sum(weight) from transfer_order_item_detail toid where toid.depart_id=d.depart_order_id),2) weight,"
+    					+ " (select ci.amount from depart_order dor left join contract c on c.party_id = dor.sp_id left join contract_item ci on ci.contract_id = c.id where dor.id = d.depart_order_id and dor.charge_type = ci.pricetype) price,"
+    					+ " (select charge_type from depart_order where id = d.depart_order_id) fin_charge_type,"
+    					+ " (select l.name from depart_order dor left join location l on dor.route_from = l.code where dor.id = d.depart_order_id) route_from,"
+    					+ " (select lt.name from depart_order dor left join location lt on dor.route_to = lt.code where dor.id = d.depart_order_id) route_to"
+    					+ " from depart_order_fin_item d "
+    					+ " left join fin_item f on d.fin_item_id = f.id "
+    					+ " left join transfer_order tor on tor.id = d.transfer_order_id"
+    					+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
+    					+ " left join product p on p.id = tori.product_id"
+    					+ " where d.depart_order_id ="+ id +" and f.type='应付' and cost_source ='合同费用'";	
+        	}
+        }else{
+        	conditionSql =  " select d.*,"
+					+ " f.name,"
+					+ " (select group_concat(tor.order_no separator '<br/>') from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id where dt.depart_id =d.depart_order_id ) transfer_order_no,"
+					+ " (select sum(toi.amount) from transfer_order_item toi left join depart_transfer dt on dt.order_id = toi.order_id where dt.depart_id = d.depart_order_id) item_amount,"
+					+ " ifnull(nullif(tori.volume,0),p.volume) volume,"
+					+ " ifnull(nullif(tori.weight,0),p.weight) weight,"
+					+ " (select ci.amount from depart_order dor left join contract c on c.party_id = dor.sp_id left join contract_item ci on ci.contract_id = c.id where dor.id = d.depart_order_id and dor.charge_type = ci.pricetype) price,"
+					+ " (select charge_type from depart_order where id = d.depart_order_id) fin_charge_type,"
+					+ " (select l.name from depart_order dor left join location l on dor.route_from = l.code where dor.id = d.depart_order_id) route_from,"
+					+ " (select lt.name from depart_order dor left join location lt on dor.route_to = lt.code where dor.id = d.depart_order_id) route_to"
+					+ " from depart_order_fin_item d "
+					+ " left join fin_item f on d.fin_item_id = f.id "
+					+ " left join transfer_order tor on tor.id = d.transfer_order_id"
+					+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
+					+ " left join product p on p.id = tori.product_id"
+					+ " where d.depart_order_id ="+ id +" and f.type='应付' and cost_source ='合同费用'";	
+        }
+        
+        
         String querySql = "select d.*,"
+						+ " f.name,"
+						+ " tor.order_no transfer_order_no,"
+						+ " null item_amount,"
+						+ " null volume,"
+						+ " null weight,"
+						+ " null price,"
+						+ " null fin_charge_type,"
+						+ " null route_from,"
+						+ " null route_to"
+						+ " from depart_order_fin_item d "
+						+ " left join fin_item f on d.fin_item_id = f.id "
+						+ " left join transfer_order tor on tor.id = d.transfer_order_id"
+						+ " where d.depart_order_id =" + id
+						+ " and f.type='应付' and cost_source ='运输单应付费用'"
+						+ " union"
+						+ conditionSql
+						+ " union"
+						+ " select d.*,"
+						+ " f.name,"
+						+ " null transfer_order_no,"
+						+ " null item_amount,"
+						+ " null volume,"
+						+ " null weight,"
+						+ " null price,"
+						+ " null fin_charge_type,"
+						+ " null route_from,"
+						+ " null route_to"
+						+ " from depart_order_fin_item d "
+						+ " left join fin_item f on d.fin_item_id = f.id "
+						+ " where d.depart_order_id ="+ id +" and f.type='应付' and cost_source is null";
+       
+        
+        /*String querySql = "select d.*,"
 		        		+ " f.name,"
 		        		+ " tor.order_no transfer_order_no,"
 		        		+ " ifnull(tori.item_name, p.item_name) item_name,"
@@ -2003,47 +2120,7 @@ public class DepartOrderController extends Controller {
 						+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
 						+ " left join product p on p.id = tori.product_id"
 		        		+ " where d.depart_order_id =" + id
-		                + " and f.type='应付'";
-        /*String querySql ="select d.*,"
-						+ " f.name,"
-						+ " tor.order_no transfer_order_no,"
-						+ " ifnull(tori.item_name, p.item_name) item_name,"
-						+ " tori.amount item_amount,"
-						+ " round((select sum(ifnull(toi.volume, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) volume,"
-						+ " round((select sum(ifnull(toi.sum_weight, 0)) from transfer_order_item toi where toi.order_id = tor.id ), 2 ) weight"
-						+ " from depart_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id "
-						+ " left join transfer_order tor on tor.id = d.transfer_order_id"
-						+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
-						+ " left join product p on p.id = tori.product_id"
-						+ " where d.depart_order_id =" + id
-						+ " and f.type='应付' and d.transfer_order_id is not null"
-						+ " union"
-						+ " select d.*,"
-						+ " f.name,"
-						+ " (select group_concat(tor.order_no separator '<br/>') from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id where dt.depart_id =d.depart_order_id ) transfer_order_no,"
-						+ " (select group_concat(distinct ifnull(toi.item_name,p.item_name) separator '<br/>') from transfer_order_item toi left join depart_transfer dt on dt.order_id = toi.order_id left join product p on toi.product_id = p.id where dt.depart_id = d.depart_order_id ) item_name,"
-						+ " (select sum(toi.amount) from transfer_order_item toi left join depart_transfer dt on dt.order_id = toi.order_id where dt.depart_id = d.depart_order_id) item_amount,"
-						+ " round((select sum(ifnull(toi.volume, 0)*toi.amount) from transfer_order_item toi left join depart_transfer dt on dt.order_id = toi.order_id where dt.depart_id = d.depart_order_id), 2 ) volume,"
-						+ " round((select sum(ifnull(toi.sum_weight, 0)*toi.amount) from transfer_order_item toi left join depart_transfer dt on dt.order_id = toi.order_id where dt.depart_id = d.depart_order_id ), 2 ) weight"
-						+ " from depart_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id "
-						+ " left join transfer_order tor on tor.id = d.transfer_order_id"
-						+ " left join transfer_order_item tori on tori.id = d.transfer_order_item_id"
-						+ " left join product p on p.id = tori.product_id"
-						+ " where d.depart_order_id ="+ id +" and f.type='应付' and d.transfer_order_id is null and d.cost_source is not null"
-						+ " union"
-						+ " select d.*,"
-						+ " f.name,"
-						+ " null transfer_order_no,"
-						+ " null item_name,"
-						+ " null item_amount,"
-						+ " null volume,"
-						+ " null weight"
-						+ " from depart_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id "
-						+ " where d.depart_order_id ="+ id +" and f.type='应付' and d.transfer_order_id is null and d.cost_source is null";*/
-        
+		                + " and f.type='应付'";*/
         // 获取当前页的数据
         List<Record> orders = Db.find(querySql);
 

@@ -1045,30 +1045,9 @@
     			},
     	        "aoColumns": [
     	            {"mDataProp":"TRANSFER_ORDER_NO"}, 
-    	            {"mDataProp":"ITEM_AMOUNT",
-        	            	"fnRender":function(obj){
-        	            		if(obj.aData.COST_SOURCE =="运输单应付费用"){
-        	            			return "";
-        	            		}else{
-        	            			return obj.aData.ITEM_AMOUNT;
-        	            		}
-        	          }},
-    	            {"mDataProp":"VOLUME",
-    	            	"fnRender":function(obj){
-    	            		if(obj.aData.COST_SOURCE =="运输单应付费用"){
-    	            			return "";
-    	            		}else{
-    	            			return obj.aData.VOLUME;
-    	            		}
-    	            	}},
-    	            {"mDataProp":"WEIGHT",
-        	            	"fnRender":function(obj){
-        	            		if(obj.aData.COST_SOURCE =="运输单应付费用"){
-        	            			return "";
-        	            		}else{
-        	            			return obj.aData.WEIGHT;
-        	            		}
-        	            	}},
+    	            {"mDataProp":"ITEM_AMOUNT"},
+    	            {"mDataProp":"VOLUME"},
+    	            {"mDataProp":"WEIGHT"},
 					{"mDataProp":"NAME",
 					    "fnRender": function(obj) {
 					        if(obj.aData.NAME!='' && obj.aData.NAME != null){
@@ -1093,7 +1072,7 @@
 					        	return "<select name='fin_item_id'>"+str+"</select>";
 					        }
 					 }},
-					{"mDataProp":null},
+					{"mDataProp":"PRICE"},
 					{"mDataProp":"AMOUNT",
 					     "fnRender": function(obj) {
 				    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
@@ -1102,9 +1081,22 @@
 					         	 return "<input type='text' name='amount'>";
 					         }
 					 }},
-					 {"mDataProp":null},
-    				 {"mDataProp":null},
-    				 {"mDataProp":null},
+					 {"mDataProp":null,
+						 "fnRender":function(obj){
+							 if(obj.aData.FIN_CHARGE_TYPE != null){
+								 if(obj.aData.FIN_CHARGE_TYPE = "perUnit"){
+									 return "计件";
+								 }else if(obj.aData.FIN_CHARGE_TYPE = "perCar"){
+									 return "整车";
+								 }else{
+									return "零担";
+								 }
+							 }else{
+								 return "";
+							 }
+						 }},
+    				 {"mDataProp":"ROUTE_FROM"},
+    				 {"mDataProp":"ROUTE_TO"},
 					 {"mDataProp":"REMARK",
 						 "fnRender": function(obj) {
 		                    if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
