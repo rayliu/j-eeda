@@ -392,8 +392,9 @@ public class DeliveryController extends Controller {
 				.findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
 						+ tOrder.get("customer_id")
 						+ "'and p.contact_id = c.id");*/
-		String sql = "select p.id as customerId,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+tOrder.get("customer_id");
-		Party customerContact = Party.dao.findFirst(sql);
+		String sql = "select p.id,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+tOrder.get("customer_id");
+		Record customerContact = Db.findFirst(sql);
+		//Party customerContact = Party.dao.findFirst(sql);
 
 		// 供应商信息
 		Party spContact = Party.dao
@@ -549,7 +550,7 @@ public class DeliveryController extends Controller {
 					.find("select *,p.id as customerId from contact c,party p,transfer_order t where p.contact_id=c.id and t.customer_id = p.id and t.id ="
 							+ customerId + "");
 			Contact customer = customers.get(0);*/
-			String sql = "select p.id as customerId,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+customerId;
+			String sql = "select p.id,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+customerId;
 			Record customer = Db.findFirst(sql);
 			setAttr("customer", customer);
 		}
@@ -1233,6 +1234,7 @@ public class DeliveryController extends Controller {
 				transferOrderItem.set("complete_amount", newCompleteAmount).save();
 			}
 		}*/
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		DeliveryOrderMilestone deliveryOrderMilestone = new DeliveryOrderMilestone();
 		deliveryOrderMilestone.set("status", "已发车");

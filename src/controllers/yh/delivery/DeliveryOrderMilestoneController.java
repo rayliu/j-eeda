@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.DeliveryOrderFinItem;
+import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.Fin_item;
 import models.InventoryItem;
@@ -22,6 +23,7 @@ import models.UserLogin;
 import models.yh.contract.Contract;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.delivery.DeliveryPlanOrderDetail;
+import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -356,7 +358,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
         deliveryOrder.set("status", "已签收");
         deliveryOrder.update();
-        String transferId = deliveryOrder.get("transfer_order_id");
+        //String transferId = deliveryOrder.get("transfer_order_id");
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
         transferOrderMilestone.set("status", "已签收");
@@ -379,29 +381,76 @@ public class DeliveryOrderMilestoneController extends Controller {
         String sql = "select * from return_order order by id desc limit 0,1";
         String orderNo = OrderNoUtil.getOrderNo(sql, "HD");
         
-        //如果是配送单生成回单：一张配送单只生成一张回单
         ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.set("order_no", orderNo);
-        returnOrder.set("delivery_order_id", delivery_id);
-        returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
-        returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
-        returnOrder.set("order_type", "应收");
-        returnOrder.set("transaction_status", "新建");
-        returnOrder.set("creator", users.get(0).get("id"));
-        returnOrder.set("create_date", createDate);
-        returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
-        returnOrder.save();
-
-        // 生成应收
-        //ATM
-        if("ATM".equals(deliveryOrder.get("cargo_nature"))){
-	        ReturnOrderController roController= new ReturnOrderController();
-	        List<Record> transferOrderItemDetailList = Db.
-					find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
-	        roController.calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
-        }
-        //TODO:  普通货品的先不算
         
+        //查询配送单中的运输单,如果是普货配送就验证是否以配送完成
+        if(!"ATM".equals(deliveryOrder.get("cargo_nature"))){
+        	//因为现在普货的话只能是一站式配送，所以只有一张运输单的数据
+        	DeliveryOrderItem item = DeliveryOrderItem.dao.findFirst("select * from delivery_order_item where delivery_id = '" + delivery_id + "';");
+        	//运输单货品总数
+			Record tranferTotal = Db.findFirst("select sum(ifnull(toi.amount,0)) amount from transfer_order_item toi where toi.order_id = '" + item.get("transfer_order_id") + "';");
+			double SumTranferItem = tranferTotal.getDouble("amount");
+			//已配送总数
+			Record deliveryTotal = Db.findFirst("select sum(ifnull(doi.product_number,0)) product_number from delivery_order_item doi where doi.transfer_order_id = '" + item.get("transfer_order_id") + "';");
+			double SumDelivery = deliveryTotal.getDouble("product_number");
+			if(SumTranferItem == SumDelivery){
+				Record rec = Db.findFirst("select count(0) total from delivery_order dor left join delivery_order_item doi on doi.delivery_id = dor.id where dor.status = '已发车' and doi.transfer_order_id = '" + item.get("transfer_order_id") + "';");
+				double deliveryNumber = rec.getLong("total");
+				if(deliveryNumber == 0){
+					//当云手段配送完成时生成回单
+					returnOrder.set("order_no", orderNo);
+		            returnOrder.set("delivery_order_id", delivery_id);
+		            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
+		            returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
+		            returnOrder.set("transfer_order_id", item.get("transfer_order_id"));
+		            returnOrder.set("order_type", "应收");
+		            returnOrder.set("transaction_status", "新建");
+		            returnOrder.set("creator", users.get(0).get("id"));
+		            returnOrder.set("create_date", createDate);
+		            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
+		            returnOrder.save();
+		            //把运输单的应收带到回单中
+		            List<TransferOrderFinItem> finTiems = TransferOrderFinItem.dao.find("select d.* from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = '" + item.get("transfer_order_id") + "' and f.type = '应收'");
+		            for (TransferOrderFinItem transferOrderFinItem : finTiems) {
+		            	ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
+			    		returnOrderFinItem.set("fin_item_id", transferOrderFinItem.get("fin_item_id"));
+	        			returnOrderFinItem.set("amount", transferOrderFinItem.get("amount"));
+			    		returnOrderFinItem.set("delivery_order_id", delivery_id);
+			    		returnOrderFinItem.set("return_order_id", returnOrder.get("id"));
+			    		returnOrderFinItem.set("status", "新建");
+			    		returnOrderFinItem.set("fin_type", "charge");// 类型是应收
+			    		//returnOrderFinItem.set("contract_id", contractFinItem.get("contract_id"));// 类型是应收
+			    		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
+			    		returnOrderFinItem.set("create_date", transferOrderFinItem.get("create_date"));
+			    		returnOrderFinItem.set("create_name", transferOrderFinItem.get("create_name"));
+			    		//returnOrderFinItem.set("contract_id", contract.get("id"));
+			    		returnOrderFinItem.set("remark", transferOrderFinItem.get("remark"));
+			    		returnOrderFinItem.save();
+					}
+				}
+			}
+        }else{
+        	//如果是配送单生成回单：一张配送单只生成一张回单
+            returnOrder.set("order_no", orderNo);
+            returnOrder.set("delivery_order_id", delivery_id);
+            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
+            returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
+            returnOrder.set("order_type", "应收");
+            returnOrder.set("transaction_status", "新建");
+            returnOrder.set("creator", users.get(0).get("id"));
+            returnOrder.set("create_date", createDate);
+            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
+            returnOrder.save();
+            
+            // 生成应收
+            //ATM
+            //if("ATM".equals(deliveryOrder.get("cargo_nature"))){
+    	        ReturnOrderController roController= new ReturnOrderController();
+    	        List<Record> transferOrderItemDetailList = Db.
+    					find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
+    	        roController.calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
+            //}
+        }
         /*// TODO 减库存,以下是针对单品处理,普通货品的配送暂未处理
         productOutWarehouse(delivery_id.toString());*/
     }

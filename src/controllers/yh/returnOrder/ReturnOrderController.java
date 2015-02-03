@@ -953,7 +953,7 @@ public class ReturnOrderController extends Controller {
 					+ " from transfer_order_item toi "
 					+ " left join return_order r on r.transfer_order_id = toi.order_id "
 					+ " left join product p on toi.product_id = p.id "
-					+ " where r.id = " + returnOrderId + " group by toi.id ";
+					+ " where r.id = '" + returnOrderId + "'";
 			if (transferOrder.get("cargo_nature_detail").equals("cargoNatureDetailYes")) {
 				sqlTotal = "select distinct count(1) total "
 						+ "from transfer_order_item_detail toid "
@@ -981,7 +981,7 @@ public class ReturnOrderController extends Controller {
 						+ "left join transfer_order_item toi on toid.item_id = toi.id "
 						+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
 						+ "left join product p on toi.product_id = p.id where r.id ="
-						+ returnOrderId + ") toid group by tid" + sLimit;						
+						+ returnOrderId + ") toid " + sLimit;						
 			} else {
 				sql = "select toi.id,"
 						+ " ifnull(p.item_no, toi.item_no) item_no, "
@@ -998,8 +998,7 @@ public class ReturnOrderController extends Controller {
 						+ " from transfer_order_item toi "
 						+ " left join return_order r on r.transfer_order_id = toi.order_id "
 						+ " left join product p on toi.product_id = p.id "
-						+ " where r.id = " + returnOrderId
-						+ " group by toi.id " + sLimit;
+						+ " where r.id = '" + returnOrderId + "' " + sLimit;
 			}
 		}
 
