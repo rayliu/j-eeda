@@ -1374,60 +1374,75 @@ public class DepartOrderController extends Controller {
         String name = (String) currentUser.getPrincipal();
         UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
     	if("perCar".equals(chargeType)){
-    		double money=contractFinItem.getDouble("amount");
-    		BigDecimal bg = new BigDecimal(money);
-            double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-    		departOrderFinItem.set("amount", amountDouble);  
-    		
-    		departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
-	        departOrderFinItem.set("status", "未完成");
-	        departOrderFinItem.set("creator", users.get("id"));
-	        departOrderFinItem.set("create_date", now);
-	        departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
-	        departOrderFinItem.set("cost_source", "合同费用");
-	        departOrderFinItem.save();
+    		//整车生成应付条目
+    		genFinItemPerCar(departOrder, contractFinItem, now,
+					departOrderFinItem, users);
     	}else{
     		if(tOrderItemRecord != null){
     			String cargo_nature = tOrderItemRecord.get("cargo_nature");
     			double money=0;
-    			if(cargo_nature.equals("cargo")){
-    				money=contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString());
-    				BigDecimal bg = new BigDecimal(money);
-                    double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        			departOrderFinItem.set("amount", amountDouble);
-        			departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
-        		    departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
-    			
-        		    departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
-        	        departOrderFinItem.set("status", "未完成");
-        	        departOrderFinItem.set("creator", users.get("id"));
-        	        departOrderFinItem.set("create_date", now);
-        	        departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
-        	        departOrderFinItem.set("cost_source", "合同费用");
-        	        departOrderFinItem.save();
-    			}else{
-    				Record record = Db.findFirst("select count(toid.id) as amount from transfer_order_item_detail toid where item_id = " + tOrderItemRecord.get("id") +" and depart_id = " +departOrder.get("id"));
-    				if(record.getLong("amount") != 0){
-    					money=contractFinItem.getDouble("amount") * Double.parseDouble(record.get("amount").toString());
-    					BigDecimal bg = new BigDecimal(money);
-    	                double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-    	    			departOrderFinItem.set("amount", amountDouble);
-    	    			departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
-    	    		    departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
-    				
-    	    		    departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
-    	    	        departOrderFinItem.set("status", "未完成");
-    	    	        departOrderFinItem.set("creator", users.get("id"));
-    	    	        departOrderFinItem.set("create_date", now);
-    	    	        departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
-    	    	        departOrderFinItem.set("cost_source", "合同费用");
-    	    	        departOrderFinItem.save();
-    				}	
+    			if(cargo_nature.equals("cargo")){//普货计件
+    				genFinItemNormalCargo(departOrder, tOrderItemRecord,
+							contractFinItem, now, departOrderFinItem, users);
+    			}else{//ATM 计件
+    				genFinItemPerATM(departOrder, tOrderItemRecord,
+							contractFinItem, now, departOrderFinItem, users);	
     			}
-        		
     		}
     	}
     }
+    
+	private void genFinItemPerATM(DepartOrder departOrder,
+			Record tOrderItemRecord, Record contractFinItem,
+			java.sql.Timestamp now, DepartOrderFinItem departOrderFinItem,
+			UserLogin users) {
+		double money;
+		Record record = Db.findFirst("select count(toid.id) as amount from transfer_order_item_detail toid where item_id = " + tOrderItemRecord.get("id") +" and depart_id = " +departOrder.get("id"));
+		if(record.getLong("amount") != 0){
+			money=contractFinItem.getDouble("amount") * Double.parseDouble(record.get("amount").toString());
+			BigDecimal bg = new BigDecimal(money);
+		    double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+			departOrderFinItem.set("amount", amountDouble);
+			departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
+		    departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
+		
+		    saveFinItem(departOrder, now, departOrderFinItem, users);
+		}
+	}
+	private void genFinItemNormalCargo(DepartOrder departOrder,
+			Record tOrderItemRecord, Record contractFinItem,
+			java.sql.Timestamp now, DepartOrderFinItem departOrderFinItem,
+			UserLogin users) {
+		double money;
+		money=contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString());
+		BigDecimal bg = new BigDecimal(money);
+		double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+		departOrderFinItem.set("amount", amountDouble);
+		departOrderFinItem.set("transfer_order_id", tOrderItemRecord.get("order_id"));
+		departOrderFinItem.set("transfer_order_item_id", tOrderItemRecord.get("id"));
+			
+		saveFinItem(departOrder, now, departOrderFinItem, users);
+	}
+	private void genFinItemPerCar(DepartOrder departOrder,
+			Record contractFinItem, java.sql.Timestamp now,
+			DepartOrderFinItem departOrderFinItem, UserLogin users) {
+		double money=contractFinItem.getDouble("amount");
+		BigDecimal bg = new BigDecimal(money);
+		double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+		departOrderFinItem.set("amount", amountDouble);  
+		
+		saveFinItem(departOrder, now, departOrderFinItem, users);
+	}
+	private void saveFinItem(DepartOrder departOrder, java.sql.Timestamp now,
+			DepartOrderFinItem departOrderFinItem, UserLogin users) {
+		departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
+		departOrderFinItem.set("status", "未完成");
+		departOrderFinItem.set("creator", users.get("id"));
+		departOrderFinItem.set("create_date", now);
+		departOrderFinItem.set("create_name", departOrderFinItem.CREATE_NAME_SYSTEM);
+		departOrderFinItem.set("cost_source", "合同费用");
+		departOrderFinItem.save();
+	}
 
     // 点击货品table的查看 ，显示对应货品的单品
     public void itemDetailList() {
