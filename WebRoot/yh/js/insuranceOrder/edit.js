@@ -75,7 +75,7 @@
                 	 return route_from +" - "+ route_to;
              }},
              { "mDataProp": "INSURANCE_AMOUNT",
-            	 "sWidth": "60px",
+            	 "sWidth": "80px",
             	 "sClass": "insurance_amount", 
                  "fnRender": function(obj) {
                 	var str = obj.aData.INSURANCE_AMOUNT;
@@ -433,7 +433,7 @@
 		      	}
 	        },   
 		  	{"mDataProp":"SUM_INSURANCE","sClass": "sum_insurance"},   
-		  	{"mDataProp":"SUM_AMOUNT","sClass": "income_rate"},   
+		  	/*{"mDataProp":"SUM_AMOUNT","sClass": "income_rate"},  */ 
 		  	{"mDataProp":"INCOME_RATE",
 		      	"fnRender": function(obj) {
 		      		var str = "";
