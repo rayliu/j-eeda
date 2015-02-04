@@ -177,12 +177,12 @@ public class CostItemConfirmController extends Controller {
 				+ "dpr.depart_no order_no,"
 				+ "dpr.status,"
 				+ "c.abbr spname,"
-				+ "(select sum(toi.amount) from depart_transfer dt left join transfer_order_item toi on toi.order_id = dt.order_id where depart_id = dpr.id) as amount,"
-				+ "(select round(sum(toi.amount * ifnull(prod.volume,toi.volume)),2)from depart_transfer dt left join transfer_order_item toi on toi.order_id = dt.order_id where depart_id = dpr.id) volume,"
-				+ "(select round(sum(toi.amount * ifnull(prod.weight,toi.weight)),2) from depart_transfer dt left join transfer_order_item toi on toi.order_id = dt.order_id where depart_id = dpr.id) weight,"
+				+ "(select count(*) from transfer_order_item_detail where depart_id =dpr.id ) as amount,"
+				+ "round((select count(id) * volume as volume from transfer_order_item_detail where depart_id =dpr.id),2) volume,"
+				+ "round((select count(id) * weight as weight from transfer_order_item_detail where depart_id =dpr.id),2) weight,"
 				+ "dpr.create_stamp create_stamp,"
 				+ "ul.user_name creator,"
-				+ "'零担' business_type, "
+				+ "dpr.transfer_type business_type, "
 				+ "(select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount, "
 				+ "group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') transfer_order_no,"
 				+ "dpr.sign_status return_order_collection,"
@@ -208,9 +208,9 @@ public class CostItemConfirmController extends Controller {
 				+ " select distinct dpr.id,"
 				+ " dpr.depart_no order_no,"
 				+ " dpr.status,c.abbr spname,"
-				+ " toi.amount,"
-				+ " round(ifnull(prod.volume,toi.volume)*toi.amount,2) volume,"
-				+ " round(ifnull(prod.weight,toi.weight)*toi.amount,2) weight,"
+				+ " (select count(id) from transfer_order_item_detail where pickup_id = pofi.pickup_order_id)as amount,"
+				+ " round((select sum(volume) as volume from transfer_order_item_detail where pickup_id = pofi.pickup_order_id),2) volume,"
+				+ " round((select sum(weight) from transfer_order_item_detail where pickup_id = pofi.pickup_order_id),2) weight,"
 				+ " dpr.create_stamp create_stamp,ul.user_name creator,"
 				+ " '提货' business_type, "
 				+ " (select sum(amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, "
@@ -232,8 +232,9 @@ public class CostItemConfirmController extends Controller {
 				+ " left join transfer_order_item toi on toi.order_id = tor.id "
 				+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
 				+ " left join product prod on toi.product_id = prod.id "
+				+ " left join pickup_order_fin_item pofi on pofi.pickup_order_id = dtr.pickup_id"
 				+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
-				+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='新建' and c.abbr is not null  group by dpr.id"
+				+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='新建' and pofi.id is not null  group by dpr.id"
 				+ " union "
 				+ " select distinct ior.id,"
 				+ " ior.order_no order_no,"
@@ -262,7 +263,7 @@ public class CostItemConfirmController extends Controller {
 				+ " left join transfer_order tor on ior.id = tor.insurance_id "
 				+ " left join transfer_order_item toi on toi.order_id = tor.id "
 				+ " left join user_login ul on ul.id = ior.create_by"
-				+ " left join office oe on oe.id = tor.office_id where ior.audit_status='新建' group by ior.id  ) as A";
+				+ " left join office oe on oe.id = tor.office_id where ior.audit_status='新建' group by ior.id  ) as A ";
         String condition = "";
       
         if(orderNo != null || sp != null || no != null || beginTime != null
@@ -286,7 +287,7 @@ public class CostItemConfirmController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
        
-        List<Record> BillingOrders = Db.find(sql + condition + sLimit);
+        List<Record> BillingOrders = Db.find(sql + condition + " order by create_stamp desc" + sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
