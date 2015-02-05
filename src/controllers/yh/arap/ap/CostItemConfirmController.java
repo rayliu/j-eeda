@@ -309,7 +309,7 @@ public class CostItemConfirmController extends Controller {
     			DepartOrder pickupOrder = DepartOrder.dao.findById(idArr[i]);
     			pickupOrder.set("audit_status", "已确认");
     			pickupOrder.update();
-    		}else if("零担".equals(orderNoArr[i])){
+    		}else if("零担".equals(orderNoArr[i]) || "整车".equals(orderNoArr[i])){
     			DepartOrder departOrder = DepartOrder.dao.findById(idArr[i]);
     			departOrder.set("audit_status", "已确认");
     			departOrder.update();
