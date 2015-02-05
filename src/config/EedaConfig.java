@@ -81,6 +81,7 @@ import models.yh.delivery.DeliveryPlanOrderDetail;
 import models.yh.delivery.DeliveryPlanOrderMilestone;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
+import models.yh.profile.CustomizeField;
 import models.yh.profile.Route;
 import models.yh.returnOrder.ReturnOrderFinItem;
 
@@ -371,6 +372,8 @@ public class EedaConfig extends JFinalConfig {
         //基本数据用户网点
         arp.addMapping("user_office", UserOffice.class);
         arp.addMapping("user_customer", UserCustomer.class);
+        
+        arp.addMapping("customize_field", CustomizeField.class);
     }
 
     private void initDBconnector() {

@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
 
+import test.data.CustomizeFieldDataInit;
 import models.Category;
 import models.Party;
 import models.PartyAttribute;
@@ -268,7 +269,7 @@ public class DataInitUtil {
             
             //配送调车单-主表
             stmt.execute("create table if not exists delivery_plan_order(id bigint auto_increment primary key,order_no varchar(50),status varchar(50),office_id bigint,create_id bigint,create_stamp timestamp,sp_id bigint,carinfo_id bigint,"
-            		+ "car_no varchar(50),driver varchar(50),phone varchar(50),turnout_time date,return_time date,remark varchar(500));");
+            		+ "car_no varchar(50),driver varchar(50), phone varchar(50), turnout_time date,return_time date,remark varchar(500));");
             
             //配送调车单-从表
             stmt.execute("create table if not exists delivery_plan_order_detail(id bigint auto_increment primary key,order_id varchar(50),delivery_id bigint);");
@@ -278,6 +279,9 @@ public class DataInitUtil {
             
             //发车单从表，记录此次发车的调车单
             stmt.execute("create table if not exists depart_pickup(id bigint auto_increment primary key,depart_id bigint,pickup_id bigint,order_id bigint);");
+            
+            //自定义字段表，记录不同公司的单据的显示名称
+            stmt.execute("create table if not exists customize_field(id bigint auto_increment primary key, order_type varchar(50), office_id bigint, field_code varchar(50), field_name varchar(50), field_desc varchar(500), is_hidden tinyint(1),customize_name varchar(50), remark varchar(500));");
             
             stmt.close();
             // conn.commit();
@@ -312,7 +316,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into inventory_item(party_id, warehouse_id, product_id,total_quantity) values(1, 30, 4, 100);");//广电，源鸿分仓
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('d_user1', '123456', '1-6',1);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint) values('d_user2', '123456', '1-6');");
-            stmt.executeUpdate("insert into user_login(user_name,c_name, password, password_hint, office_id) values('demo','管理员','123456', '1-6', 3);");
+            stmt.executeUpdate("insert into user_login(user_name,c_name, password, password_hint, office_id) values('demo','管理员','123456', '1-6', 1);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('jason', '123456', '1-6',3);");
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('ray.liu@eeda123.com', '123456', '1-6',3);");
            
@@ -696,6 +700,10 @@ public class DataInitUtil {
             stmt.executeUpdate("update user_office set is_main=true where user_name='demo' and  office_id =1");
             
             stmt.executeUpdate("insert into user_customer(user_name,customer_id) select 'demo', id from party where party_type = 'CUSTOMER';");
+            
+            //cutomized field init
+            //CustomizeFieldDataInit.initCustomizeField(stmt);
+            
             stmt.close();
             // conn.commit();
             conn.close();

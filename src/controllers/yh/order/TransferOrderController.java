@@ -26,6 +26,7 @@ import models.UserLogin;
 import models.UserOffice;
 import models.Warehouse;
 import models.yh.profile.Contact;
+import models.yh.profile.CustomizeField;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -33,6 +34,7 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.StringUtils;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -40,6 +42,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.ReaderXLS;
@@ -328,7 +331,23 @@ public class TransferOrderController extends Controller {
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
-			render("/yh/transferOrder/updateTransferOrder.html");
+		
+		List<CustomizeField> customizeFieldList = CustomizeField.dao
+				.find("select * from customize_field where office_id ="+LoginUserController.getLoginUser(this).getLong("office_id"));
+		Map<String, String> customizeField = new HashMap<String, String>();
+		for (int i = 0; i < customizeFieldList.size(); i++) {
+			CustomizeField field = customizeFieldList.get(i);
+			String fieldCode = field.getStr("field_code");
+			String fieldName = field.getStr("field_name");
+			String customizeName = field.getStr("customize_name");
+			if(StringUtils.hasText(customizeName))
+				fieldName = customizeName;
+			customizeField.put(fieldCode, fieldName);
+		}
+		
+		setAttr("customizeField", customizeField);
+		
+		render("/yh/transferOrder/updateTransferOrder.html");
 	}
 
 	public void save() {
