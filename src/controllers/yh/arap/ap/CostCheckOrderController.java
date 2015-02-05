@@ -73,7 +73,7 @@ public class CostCheckOrderController extends Controller {
             	totalAmount = totalAmount + rec.getDouble("sum_amount");
             	DepartOrder departOrder = DepartOrder.dao.findById(orderIdsArr[i]);
             	spId = departOrder.getLong("sp_id");
-            }else if("零担".equals(orderNoArr[i])){
+            }else if("零担".equals(orderNoArr[i]) || "整车".equals(orderNoArr[i])){
             	rec = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
             	totalAmount = totalAmount + rec.getDouble("sum_amount");
             	DepartOrder departOrder = DepartOrder.dao.findById(orderIdsArr[i]);
@@ -84,13 +84,22 @@ public class CostCheckOrderController extends Controller {
             	DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(orderIdsArr[i]);
             	spId = deliveryOrder.getLong("sp_id");
             }else{
-            	//rec = Db.findFirst("", orderIdsArr[i]);
+            	//这是保险单的应付
+            	rec = Db.findFirst("select sum(insurance_amount) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
+            	totalAmount = totalAmount + rec.getDouble("sum_amount");
+            	/*InsuranceOrder insuraceOrder = InsuranceOrder.dao.findById(orderIdsArr[i]);
+            	spId = insuraceOrder.get("sp_id");*/
             }
     	}
     	if(!"".equals(spId) && spId != null){
     		Party party = Party.dao.findById(spId);
     		setAttr("party", party);	        
     		Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+    		setAttr("sp", contact);
+    	}else{
+    		//由于没有保险公司的维护，暂时实例化一个虚拟的
+    		Contact contact = new Contact();
+    		contact.set("company_name", "保险公司");
     		setAttr("sp", contact);
     	}
     	setAttr("orderIds", orderIds);	 
@@ -251,8 +260,12 @@ public class CostCheckOrderController extends Controller {
 	        String sql = "select * from arap_cost_order order by id desc limit 0,1";
 	    	arapAuditOrder.set("order_no", OrderNoUtil.getOrderNo(sql, "YFDZ"));
 	    	//arapAuditOrder.set("order_type", );
+	    	String sp_id = getPara("sp_id");
+	    	if(sp_id == null || "".equals(sp_id)){
+	    		sp_id = null;
+	    	}
 	    	arapAuditOrder.set("status", "new");
-	    	arapAuditOrder.set("payee_id", getPara("sp_id"));
+	    	arapAuditOrder.set("payee_id", sp_id);
 	    	arapAuditOrder.set("create_by", getPara("create_by"));
 	    	arapAuditOrder.set("create_stamp", new Date());
 	    	arapAuditOrder.set("remark", getPara("remark"));
@@ -517,7 +530,7 @@ public class CostCheckOrderController extends Controller {
 							+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
 							+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' group by dpr.id"
 							+ " union "
-							+ " select distinct ior.id,ior.order_no order_no,ior.status,'保险公司' spname,sum(toi.amount) amount,sum(ifnull(prod.volume,toi.volume)) volume,sum(ifnull(prod.weight,toi.weight)) weight,ior.create_stamp create_stamp,ul.user_name creator,'保险' business_type, (select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = ior.id and fi.type = '应付') pay_amount, group_concat(distinct tor.order_no separator '\r\n') transfer_order_no,ior.sign_status return_order_collection,ior.remark,oe.office_name office_name "
+							+ " select distinct ior.id,ior.order_no order_no,ior.status,'保险公司' spname,sum(toi.amount) amount,round(sum(ifnull(prod.volume,toi.volume)),2) volume,round(sum(ifnull(prod.weight,toi.weight)),2) weight,ior.create_stamp create_stamp,ul.user_name creator,'保险' business_type, round((select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = ior.id and fi.type = '应付'),2) pay_amount, group_concat(distinct tor.order_no separator '\r\n') transfer_order_no,ior.sign_status return_order_collection,ior.remark,oe.office_name office_name "
 							+ " from insurance_order ior "
 							+ " left join transfer_order tor on ior.id = tor.insurance_id "
 							+ " left join transfer_order_item toi on toi.order_id = tor.id "
