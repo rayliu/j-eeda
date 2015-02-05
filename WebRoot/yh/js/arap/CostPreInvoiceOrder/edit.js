@@ -12,7 +12,7 @@ $(document).ready(function() {
 		$.post('/costPreInvoiceOrder/save', $("#costPreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#costPreInvoiceOrderId").val(data.ID);
-				$("#auditBtn").show();
+				$("#auditBtn").attr("disabled",false);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -26,7 +26,7 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
 		$.post('/costPreInvoiceOrder/auditCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
-			$("#approvalBtn").show();
+			$("#approvalBtn").attr("disabled",false);
 			$("#costPreInvoiceOrderStatus").text("已确认");
 		},'json');
 	});
@@ -38,28 +38,28 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
 		$.post('/costPreInvoiceOrder/approvalCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
-			$("#printBtn").show();
+			/*$("#printBtn").show();*/
 			$("#costPreInvoiceOrderStatus").text("已审批");
 		},'json');
 		
 	});
 	if($("#costPreInvoiceOrderStatus").text()=="已确认"){
-		
-		$("#auditBtn").show();
-		$("#approvalBtn").show();
+		$("#auditBtn").attr("disabled",false);
+		$("#approvalBtn").attr("disabled",false);
 	}else if($("#costPreInvoiceOrderStatus").text()=="新建" || $("#costPreInvoiceOrderStatus").text()=="new"){
-		$("#auditBtn").show();
+		var str=$("#costPreInvoiceOrderId").val();
+		if(str !=null && str !=""){
+			$("#auditBtn").attr("disabled",false);
+		}
 	}else{
-		$("#auditBtn").show();
-		$("#approvalBtn").show();
-		$("#printBtn").show();
+		$("#auditBtn").attr("disabled",false);
+		$("#approvalBtn").attr("disabled",false);
+		/*$("#printBtn").show();*/
 		if($("#costPreInvoiceOrderStatus").text()=="已付款确认"){
 			$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
 			$("#auditBtn").attr("disabled",true);
 			
 			$("#approvalBtn").attr("disabled",true);
-			
-			
 		}
 	}
 	/*--------------------------------------------------------------------*/

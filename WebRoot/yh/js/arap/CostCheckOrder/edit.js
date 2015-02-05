@@ -24,7 +24,7 @@ $(document).ready(function() {
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 			  	//if("costCheckOrderbasic" == parentId){
 			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-			  		$("#auditBtn").show();
+			  		$("#auditBtn").attr("disabled",false);
 			  	//}
 			}else{
 				alert('数据保存失败。');
@@ -48,20 +48,26 @@ $(document).ready(function() {
 		$.post('/costCheckOrder/auditCostCheckOrder', {costCheckOrderId:costCheckOrderId}, function(data){
 			/*console.log(data.success);*/
 			if(data.success){
-				$("#printBtn").show();
+				$("#printBtn").attr("disabled",false);
 				$("#costCheckOrderStatus").text("已确认");
 			}
 		},'json');
 		
 	});
 	if($("#costCheckOrderStatus").text()!="新建"){
-		$("#auditBtn").show();
-		$("#printBtn").show();
+		
+		$("#auditBtn").attr("disabled",false);
+		$("#printBtn").attr("disabled",false);
 		if($("#costCheckOrderStatus").text()!="已确认"){
 			$("#auditBtn").attr("disabled",true);
 			$("#saveCostCheckOrderBtn").attr("disabled",true);
 		}
 		
+	}else{
+		if($("#costCheckOrderId").val() !="" && $("#costCheckOrderId").val()!=null){
+			$("#auditBtn").attr("disabled",false);
+			$("#printBtn").attr("disabled",true);
+		}
 	}
 	/*--------------------------------------------------------------------*/
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
