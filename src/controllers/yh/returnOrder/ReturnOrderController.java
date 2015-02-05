@@ -503,7 +503,7 @@ public class ReturnOrderController extends Controller {
 		}
 		renderJson("{\"success\":true}");
 	}
-
+	//计算ATM合同费用
 	public void calculateCharge(List<UserLogin> users, DeliveryOrder deliveryOrder, Long returnOrderId, List<Record> transferOrderItemDetailList) {
 		// TODO 运输单的计费类型,当一张配送单对应多张运输单时chargeType如何处理?
 		//String chargeType = "perUnit";
@@ -523,12 +523,41 @@ public class ReturnOrderController extends Controller {
 			return;
 
 		if ("perUnit".equals(chargeType)) {
-            genFinPerUnit(customerContract, chargeType, deliveryOrder.getLong("id"), transferOrder, returnOrderId);
+            genFinPerUnit(customerContract, chargeType, deliveryOrder, transferOrder, returnOrderId);
         } else if ("perCar".equals(chargeType)) {
         	genFinPerCar(customerContract, chargeType, deliveryOrder, transferOrder, returnOrderId);
         } else if ("perCargo".equals(chargeType)) {
         	//每次都新生成一个helper来处理计算，防止并发问题。
             ReturnOrderPaymentHelper.getInstance().genFinPerCargo(users, deliveryOrder, transferOrderItemDetailList, customerContract, chargeType, returnOrderId, transferOrder);
+        } 
+	}
+	
+	//计算普货合同费用
+	public void calculateChargeGeneral(List<UserLogin> users, DeliveryOrder deliveryOrder, Long returnOrderId, List<Record> transferOrderItemList) {
+		// TODO 运输单的计费类型,当一张配送单对应多张运输单时chargeType如何处理?
+		//String chargeType = "perUnit";
+		List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryOrder.get("id"));
+		TransferOrder transferOrder = TransferOrder.dao.findById(deliveryOrderItems.get(0).get("transfer_order_id"));
+		String chargeType = transferOrder.get("charge_type");
+
+		Long deliveryOrderId = deliveryOrder.getLong("id");
+		// 找到该回单对应的配送单中的ATM
+		Long customerId = deliveryOrder.getLong("customer_id");
+		// 先获取有效期内的客户合同, 如有多个，默认取第一个
+		Contract customerContract = Contract.dao
+				.findFirst("select * from contract where type='CUSTOMER' "
+						+ "and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="
+						+ customerId);
+		if (customerContract == null)
+			return;
+
+		if ("perUnit".equals(chargeType)) {
+            genFinPerUnit(customerContract, chargeType, deliveryOrder, transferOrder, returnOrderId);
+        } else if ("perCar".equals(chargeType)) {
+        	genFinPerCar(customerContract, chargeType, deliveryOrder, transferOrder, returnOrderId);
+        } else if ("perCargo".equals(chargeType)) {
+        	//每次都新生成一个helper来处理计算，防止并发问题。
+            ReturnOrderPaymentHelper.getInstance().genFinPerCargo(users, deliveryOrder, transferOrderItemList, customerContract, chargeType, returnOrderId, transferOrder);
         } 
 	}
 
@@ -568,13 +597,22 @@ public class ReturnOrderController extends Controller {
         }        
     } 
     
-    private void genFinPerUnit(Contract spContract, String chargeType, Long deliverOrderId, TransferOrder transferOrder, Long returnOrderId) {
-        List<Record> deliveryOrderItemList = Db
-                .find("SELECT count(1) amount, toi.product_id, d_o.route_from, d_o.route_to FROM "+
-					    "delivery_order_item doi LEFT JOIN transfer_order_item_detail toid ON doi.transfer_item_detail_id = toid.id "+
-					        "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "+
-					        "LEFT JOIN delivery_order d_o ON doi.delivery_id = d_o.id "+
-                		"WHERE  doi.delivery_id = "+ deliverOrderId+" group by toi.product_id, d_o.route_from, d_o.route_to" );
+    private void genFinPerUnit(Contract spContract, String chargeType, DeliveryOrder deliveryOrder, TransferOrder transferOrder, Long returnOrderId) {
+    	String sql = "";
+    	long  deliverOrderId = deliveryOrder.getLong("id");
+        if("ATM".equals(deliveryOrder.get("cargo_nature"))){
+        	 sql = "SELECT count(1) amount, toi.product_id, d_o.route_from, d_o.route_to FROM "+
+			    "delivery_order_item doi LEFT JOIN transfer_order_item_detail toid ON doi.transfer_item_detail_id = toid.id "+
+			        "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "+
+			        "LEFT JOIN delivery_order d_o ON doi.delivery_id = d_o.id "+
+         		"WHERE  doi.delivery_id = "+ deliverOrderId+" group by toi.product_id, d_o.route_from, d_o.route_to";
+        }else{
+    	   sql = "select toi.amount, toi.product_id, d_o.route_from, d_o.route_to from delivery_order_item doi "
+           		+ " left join transfer_order_item toi on toi.order_id = doi.transfer_order_id"
+           		+ " left join delivery_order d_o on doi.delivery_id = d_o.id"
+           		+ " where doi.delivery_id = 309 group by toi.product_id,d_o.route_from,	d_o.route_to";
+        }
+        List<Record> deliveryOrderItemList = Db.find(sql);
         for (Record dOrderItemRecord : deliveryOrderItemList) {
             Record contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")

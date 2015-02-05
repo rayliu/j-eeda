@@ -412,21 +412,31 @@ public class DeliveryOrderMilestoneController extends Controller {
 		            //把运输单的应收带到回单中
 		            List<TransferOrderFinItem> finTiems = TransferOrderFinItem.dao.find("select d.* from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = '" + item.get("transfer_order_id") + "' and f.type = '应收'");
 		            for (TransferOrderFinItem transferOrderFinItem : finTiems) {
-		            	ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
-			    		returnOrderFinItem.set("fin_item_id", transferOrderFinItem.get("fin_item_id"));
-	        			returnOrderFinItem.set("amount", transferOrderFinItem.get("amount"));
-			    		returnOrderFinItem.set("delivery_order_id", delivery_id);
-			    		returnOrderFinItem.set("return_order_id", returnOrder.get("id"));
-			    		returnOrderFinItem.set("status", "新建");
-			    		returnOrderFinItem.set("fin_type", "charge");// 类型是应收
-			    		//returnOrderFinItem.set("contract_id", contractFinItem.get("contract_id"));// 类型是应收
-			    		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
-			    		returnOrderFinItem.set("create_date", transferOrderFinItem.get("create_date"));
-			    		returnOrderFinItem.set("create_name", transferOrderFinItem.get("create_name"));
-			    		//returnOrderFinItem.set("contract_id", contract.get("id"));
-			    		returnOrderFinItem.set("remark", transferOrderFinItem.get("remark"));
-			    		returnOrderFinItem.save();
+		            	ReturnOrderFinItem returnOrderFinItems = ReturnOrderFinItem.dao.findFirst("select * from return_order_fin_item where return_order_id = '" + returnOrder.get("id") + "' and fin_item_id = '" + transferOrderFinItem.get("fin_item_id") + "'");
+		            	if(returnOrderFinItems == null){
+		            		ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
+				    		returnOrderFinItem.set("fin_item_id", transferOrderFinItem.get("fin_item_id"));
+		        			returnOrderFinItem.set("amount", transferOrderFinItem.get("amount"));
+				    		returnOrderFinItem.set("delivery_order_id", delivery_id);
+				    		returnOrderFinItem.set("return_order_id", returnOrder.get("id"));
+				    		returnOrderFinItem.set("status", transferOrderFinItem.get("status"));
+				    		returnOrderFinItem.set("fin_type", "charge");// 类型是应收
+				    		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
+				    		returnOrderFinItem.set("create_date", transferOrderFinItem.get("create_date"));
+				    		returnOrderFinItem.set("create_name", transferOrderFinItem.get("create_name"));
+				    		returnOrderFinItem.set("remark", transferOrderFinItem.get("remark"));
+				    		returnOrderFinItem.save();
+		            	}else{
+		            		returnOrderFinItems.set("amount", transferOrderFinItem.getDouble("amount") + returnOrderFinItems.getDouble("amount")).update();
+		            	}
 					}
+		            //计算普货合同应收，算没单品的，有单品暂时没做
+		            TransferOrder order = TransferOrder.dao.findById(item.get("transfer_order_id"));
+		            if(!order.getBoolean("no_contract_revenue")){
+		            	List<Record> transferOrderItemList = Db.
+		    					find("select toid.* from transfer_order_item toid left join delivery_order_item doi on toid.id = doi.transfer_item_id where doi.delivery_id = ?", delivery_id);
+		            	new ReturnOrderController().calculateChargeGeneral(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
+		            }
 				}
 			}
         }else{
