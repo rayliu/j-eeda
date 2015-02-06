@@ -384,7 +384,7 @@ public class TransferOrderMilestoneController extends Controller {
         	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and depart_id = " + departOrderId;
         	rec = Db.findFirst(sqlTotal);
         	Long departTotal1 = rec.getLong("total");
-        	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and status = '已发车'";
+        	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and (status = '已发车' or status = '已入库')";
         	rec = Db.findFirst(sqlTotal);
         	Long departTotal2 = rec.getLong("total");
         	Long departTotal = departTotal1 + departTotal2;
@@ -400,7 +400,7 @@ public class TransferOrderMilestoneController extends Controller {
 			        transferOrderMilestone.set("order_id", transferOrder.get("id"));
 			        transferOrderMilestone.set("status", "已发车");
 			        transferOrderMilestone.save();
-		        }    
+		        }   
         	}else{
 		        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in (" + departTransferOrder.get("order_id") + ")");
 		        for(TransferOrder transferOrder : transferOrders){

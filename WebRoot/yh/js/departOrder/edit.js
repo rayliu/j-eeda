@@ -729,12 +729,18 @@
     			/*//提交前，校验数据
     	        if(!$("#orderForm").valid()){
     		       	return false;
-    	        }*/
+    	        }
     	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
     	    		$("#saveDepartOrderBtn").attr("disabled", true);
 				   	clickSaveDepartOrder(e);
 				   	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	 
+    	    	} */
+    	    	var departOrderId = $("#departOrderId").val();
+    	    	if(departOrderId == "" || departOrderId == null){
+    	    		$("#saveDepartOrderBtn").attr("disabled", true);
+				   	clickSaveDepartOrder(e);
+				   	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
     	    	} 
     	    });
     	    
@@ -766,12 +772,12 @@
     	        if(!$("#orderForm").valid()){
     		       	return false;
     	        }*/
-    	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
+    	    	/*if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
     	    		clickSaveDepartOrder(e);
     	    		if("chargeCheckOrderbasic" == parentId){
     	    			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
     	    		}
-    	    	} 
+    	    	} */
     			
     	    	parentId = e.target.getAttribute("id");
     	    	
@@ -787,7 +793,7 @@
 	    	 		datatable.fnDraw();
     	 	    }else{
     	 	    	// 保存单品
-        	    	$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
+	 	    		$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
         				$("#departOrderId").val(data.ID);
         				if(data.ID>0){
         					$("#departOrderId").val(data.ID);
@@ -807,9 +813,7 @@
     	    	 		datatable.fnDraw();
         				
         			},'json');
-    	 	    	
     	 	    }
-    	    	
     	    });
     	    
     	    $("#departureConfirmationBtn").click(function(e){
