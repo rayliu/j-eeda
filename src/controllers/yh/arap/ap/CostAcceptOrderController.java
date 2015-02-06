@@ -53,7 +53,7 @@ public class CostAcceptOrderController extends Controller {
         	status = select_status;
         	fk_status = select_status;
         }
-        String sqlTotal = "select count(1) total from (select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+       /* String sqlTotal = "select count(1) total from (select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
         		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "'  group by aci.id "
@@ -72,9 +72,16 @@ public class CostAcceptOrderController extends Controller {
 				+ " from arap_misc_cost_order amco"
 				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
 				+ " where amco.status='" + fk_status + "' "
-				+ " order by create_time desc " + sLimit;
-
+				+ " order by create_time desc " + sLimit;*/
+        String sqlTotal = "select count(1) total"
+		        		+ " from arap_cost_invoice_application_order aci "
+		        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
+		        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "'";
         
+        String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        		+ " from arap_cost_invoice_application_order aci "
+        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "' group by aci.id order by aci.create_stamp desc " + sLimit;;
         
         
         Record rec = Db.findFirst(sqlTotal);
@@ -121,9 +128,18 @@ public class CostAcceptOrderController extends Controller {
                 ArapCostInvoiceApplication arapcostInvoice = ArapCostInvoiceApplication.dao.findById(orderId);
                 arapcostInvoice.set("status", "已付款确认");
                 arapcostInvoice.update();
+                //应收对账单的状态改变
                 ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findFirst("select * from arap_cost_order where application_order_id = ?",orderId);
                 arapAuditOrder.set("status", "已付款确认");
                 arapAuditOrder.update();
+                //手工付款单的状态改变：注意有的对账单没有手工付款单
+                Long arapMiscId = arapAuditOrder.get("id");
+                if(arapMiscId != null && !"".equals(arapMiscId)){
+                	ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findFirst("select * from arap_misc_cost_order where cost_order_id = ?",arapMiscId);
+                    arapMiscCostOrder.set("status", "对账已完成");
+                    arapMiscCostOrder.update();
+                }
+                
             }
 			
 			//现金 或 银行  金额处理
