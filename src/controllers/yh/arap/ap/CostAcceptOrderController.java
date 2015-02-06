@@ -22,7 +22,9 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.DbKit;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.PermissionConstant;
@@ -101,6 +103,7 @@ public class CostAcceptOrderController extends Controller {
     
     // 收款
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTCONFIRM_CONFIRM})
+    @Before(Tx.class)
     public void costAccept(){
     	ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findById(getPara("costCheckOrderId"));
     	arapAuditOrder.set("status", "completed");
@@ -135,9 +138,14 @@ public class CostAcceptOrderController extends Controller {
                 //手工付款单的状态改变：注意有的对账单没有手工付款单
                 Long arapMiscId = arapAuditOrder.get("id");
                 if(arapMiscId != null && !"".equals(arapMiscId)){
-                	ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findFirst("select * from arap_misc_cost_order where cost_order_id = ?",arapMiscId);
-                    arapMiscCostOrder.set("status", "对账已完成");
-                    arapMiscCostOrder.update();
+                	List<ArapMiscCostOrder> list = ArapMiscCostOrder.dao.find("select * from arap_misc_cost_order where cost_order_id = ?",arapMiscId);
+                	if(list.size()>0){
+                		for (ArapMiscCostOrder model : list) {
+                			model.set("status", "对账已完成");
+                			model.update();
+						}
+                	}
+                    
                 }
                 
             }
