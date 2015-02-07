@@ -431,10 +431,11 @@
                         <!-- /.nav-second-level -->
                     </li>
                    <%}%>
-                   <% if(false){%>
+                   <% if(true){%>
                     <li id="menu_report">
                         <a href="#"><i class="fa fa-table fa-fw"></i> 报表查询<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
+                           <% if(false){%>
                             <li>
                                 <a href="#">中转仓库存报表</a>
                             </li>
@@ -458,6 +459,10 @@
                             </li>
                             <li>
                                 <a href="#">盈利分析表</a>
+                            </li>
+                            <%}%>
+                            <li>
+                                <a href="/statusReport">单品查询报表</a>
                             </li>
                         </ul>
                         <!-- /.nav-second-level -->

@@ -446,11 +446,11 @@ public class TransferOrderMilestoneController extends Controller {
     	for(DepartTransferOrder departTransferOrder : departTransferOrders){
     		TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
     		if("ATM".equals(transferOrder.get("cargo_nature"))){
-    			//这里只能算单品的总数
+    			//这里只能算单品的总数,缺失判断不同货品的情况
         		//运输单中所有单品
         		String sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id");
         		Record rec = Db.findFirst(sqlTotal);
-        		Long total = rec.getLong("total");
+        		Long detailTotal = rec.getLong("total");
         		//运输单中此次发车单品数量
         		sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and depart_id = " + departOrderId;
         		rec = Db.findFirst(sqlTotal);
@@ -460,7 +460,7 @@ public class TransferOrderMilestoneController extends Controller {
         		rec = Db.findFirst(sqlTotal);
         		Long departTotal2 = rec.getLong("total");
         		Long departTotal = departTotal1 + departTotal2;
-        		if(total == departTotal){
+        		if(detailTotal == departTotal){
     				transferOrder.set("status", "已入库");
     				transferOrder.update();
     				

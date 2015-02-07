@@ -1957,15 +1957,18 @@ public class DepartOrderController extends Controller {
                 for (TransferOrderItem transferOrderItem : transferOrderItems) {
                     if (transferOrderItem != null) {
                         if (transferOrderItem.get("product_id") != null) {
+                        	//判断是否有库存
                             String inventoryItemSql = "select * from inventory_item where product_id = "
                                     + transferOrderItem.get("product_id") + " and warehouse_id = "
                                     + transferOrder.get("warehouse_id");
                             inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
+                            //判断发车单中的运输单是否有单品,
                             String sqlTotal = "select count(1) total from transfer_order_item_detail where depart_id = "
-                                    + departId + " and order_id = " + transferOrder.get("id");
+                                    + departId + " and order_id = " + transferOrder.get("id") + " and item_id = " + transferOrderItem.get("id");
                             Record rec = Db.findFirst(sqlTotal);
                             Long amount = rec.getLong("total");
                             if(amount == 0){
+                            	//当运输单没有单品时取货品信息中的数量
                             	amount = Math.round(transferOrderItem.getDouble("amount"));
                             }
                             if (inventoryItem == null) {

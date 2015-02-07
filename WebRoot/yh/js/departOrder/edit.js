@@ -818,8 +818,9 @@
     	    
     	    $("#departureConfirmationBtn").click(function(e){
     	    	//提交前，校验数据
-    	    	if(!$("#orderForm").valid()){
-     		       return false;
+    	    	if($("#departure_time").val() == "" || $("#arrival_time").val() == ""){
+    	    		$.scojs_message('操作失败，请确认基本信息是否输入完整', $.scojs_message.TYPE_ERROR);
+     		        return false;
      	        }
     	    	
     	    	var priceType = $("input[name='priceType']:checked").val();
