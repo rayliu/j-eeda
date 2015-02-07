@@ -178,7 +178,8 @@
 	
 	//已签收/取消  按钮不可用
 	var result = $("#returnStatus").val();
-	if(result=='new')
+	
+	if(result=='new' || result=='新建')
 		$("#status span").append("新建"); 
 	else if(result=='confirmed')
     	$("#status span").append("已确认"); 
@@ -188,8 +189,12 @@
     }else if(result=='已签收'){
 		$("#status span").append("已签收"); 
 		$("#returnOrderAccomplish").attr("disabled", true);
+		/*$("#addrow2").attr("disabled",true);*/
 	}else{
 		$("#status span").append(result); 
+		$("#saveReturnOrderBtn").attr("disabled",true);
+		$("#addrow2").attr("disabled",true);
+		$("#returnOrderAccomplish").attr("disabled", true);
 	}
 	
 	// 回单签收
@@ -201,7 +206,6 @@
 			var id = $("#returnId").val();
 			$.post('/returnOrder/returnOrderReceipt/'+id,function(data){
 	           //保存成功后，刷新列表
-	           console.log(data);
 	           if(data.success){
 	        	   //alert('签收成功！');
 	        	   $("#status span").html("已签收");
