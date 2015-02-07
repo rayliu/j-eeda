@@ -342,7 +342,7 @@ public class ContractController extends Controller {
         if (url.equals("/customerContract/add")) {
             setAttr("contractType", "CUSTOMER");
             setAttr("saveOK", false);
-            List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
+            List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应收'");
             setAttr("finItemList", finItemList);
                 render("/yh/contract/ContractEdit.html");
         }
@@ -370,11 +370,16 @@ public class ContractController extends Controller {
             Contract contract = Contract.dao.findById(id);
             Contact contact = Contact.dao.findFirst("select * from party p left join contact c on p.contact_id =c.id where p.id ='"
                     + contract.get("party_id") + "'");
-            System.out.println(contact);
+            
             setAttr("c", contact);
             setAttr("ul", contract);
-
-            List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
+            String contract_type = contract.get("type");
+            List<Fin_item> finItemList = null;
+            String fin_type="应付";
+            if("CUSTOMER".equals(contract_type)){
+            	fin_type = "应收";
+            }
+            finItemList = Fin_item.dao.find("select * from fin_item where type='" + fin_type + "'");
             setAttr("finItemList", finItemList);
         }
             render("/yh/contract/ContractEdit.html");
