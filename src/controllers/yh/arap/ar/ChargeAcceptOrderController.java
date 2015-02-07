@@ -64,12 +64,18 @@ public class ChargeAcceptOrderController extends Controller {
 				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
 				+ " where amco.status='新建' "
 				+ " order by create_time desc " + sLimit;*/
+        String status = "已审批";
+        String status_filter = getPara("status");
+        if(status_filter != null && !"".equals(status_filter)){
+        	status = status_filter;
+        }
         String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_charge_invoice aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
-        		+ " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id group by aci.id order by create_time desc " + sLimit;
-
-        List<Record> BillingOrders = Db.find(sql);
+        		+ " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status = '" + status + "' ";
+        
+       
+        List<Record> BillingOrders = Db.find(sql + " group by aci.id order by create_time desc " + sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);

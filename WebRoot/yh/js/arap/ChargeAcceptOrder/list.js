@@ -20,7 +20,12 @@ $(document).ready(function() {
         "aoColumns": [   
 	        { "mDataProp": null, "sWidth":"20px",
 	            "fnRender": function(obj) {
-	              return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	            	if(obj.aData.STATUS =="已收款确认"){
+	            		return "";
+	            	}else{
+	            		return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	            	}
+	              
 	            }
             }, 
             {"mDataProp":"ORDER_NO",
@@ -107,4 +112,12 @@ $(document).ready(function() {
 			}
 		}			
 	});	
+	
+	$("#status_filter").on('change',function(){
+		var status = $("#status_filter").val();
+		
+		chargeAcceptOrderTab.fnSettings().sAjaxSource = "/chargeAcceptOrder/list?status="+status;
+		
+		chargeAcceptOrderTab.fnDraw(); 
+	});
 } );
