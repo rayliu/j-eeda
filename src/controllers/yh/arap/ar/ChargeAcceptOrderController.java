@@ -54,7 +54,7 @@ public class ChargeAcceptOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        /*String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_charge_invoice aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
         		+ " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id group by aci.id "
@@ -63,7 +63,11 @@ public class ChargeAcceptOrderController extends Controller {
 				+ " from arap_misc_charge_order amco"
 				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
 				+ " where amco.status='新建' "
-				+ " order by create_time desc " + sLimit;
+				+ " order by create_time desc " + sLimit;*/
+        String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        		+ " from arap_charge_invoice aci "
+        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
+        		+ " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id group by aci.id order by create_time desc " + sLimit;
 
         List<Record> BillingOrders = Db.find(sql);
 
