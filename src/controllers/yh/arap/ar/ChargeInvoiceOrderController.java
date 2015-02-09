@@ -31,6 +31,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
@@ -474,6 +475,7 @@ public class ChargeInvoiceOrderController extends Controller {
         renderJson(BillingOrderListMap);
     }
     //审核
+    @Before(Tx.class)
     public void confirm(){
     	String chargeInvoiceOrderId = getPara("chargeInvoiceOrderId");
     	ArapChargeInvoice arapAuditInvoice = null;
@@ -501,7 +503,6 @@ public class ChargeInvoiceOrderController extends Controller {
 					}
 				}
             }
-    	
     	}
     	renderJson(arapAuditInvoice);
     }
