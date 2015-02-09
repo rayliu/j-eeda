@@ -12,7 +12,10 @@ import java.util.Map;
 import models.ArapChargeApplicationInvoiceNo;
 import models.ArapChargeInvoice;
 import models.ArapChargeInvoiceApplication;
+import models.ArapChargeInvoiceApplicationItem;
 import models.ArapChargeInvoiceItemInvoiceNo;
+import models.ArapChargeOrder;
+import models.ArapMiscChargeOrder;
 import models.Party;
 import models.UserLogin;
 import models.yh.profile.Contact;
@@ -260,7 +263,7 @@ public class ChargeInvoiceOrderController extends Controller {
 	    		}
 	    	}
     	}
-        renderJson(arapAuditInvoice);;
+        renderJson(arapAuditInvoice);
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CIO_UPDATE})
     public void edit() throws ParseException{
@@ -470,4 +473,37 @@ public class ChargeInvoiceOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
+    //审核
+    public void confirm(){
+    	String chargeInvoiceOrderId = getPara("chargeInvoiceOrderId");
+    	ArapChargeInvoice arapAuditInvoice = null;
+    	if(!"".equals(chargeInvoiceOrderId) && chargeInvoiceOrderId != null){
+    		arapAuditInvoice = ArapChargeInvoice.dao.findById(chargeInvoiceOrderId);
+	    	arapAuditInvoice.set("status", "已审批");
+	    	arapAuditInvoice.update();
+	    	
+	    	List<ArapChargeInvoiceApplication> list = ArapChargeInvoiceApplication.dao.find("select * from arap_charge_invoice_application_order where invoice_order_id = ?",chargeInvoiceOrderId);
+            for (ArapChargeInvoiceApplication application : list) {
+            	application.set("status", "审批已通过");
+            	application.update();
+				List<ArapChargeInvoiceApplicationItem> inList = ArapChargeInvoiceApplicationItem.dao.find("select * from arap_charge_invoice_application_item where invoice_application_id = ?",application.get("id"));
+				for (ArapChargeInvoiceApplicationItem arapChargeInvoiceApplicationItem : inList) {
+					ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(arapChargeInvoiceApplicationItem.get("charge_order_id"));
+					arapAuditOrder.set("status", "审批已通过");
+					arapAuditOrder.update();
+					
+					List<ArapMiscChargeOrder> arapMiscChargeOrderList = ArapMiscChargeOrder.dao.find("select * from arap_misc_charge_order where charge_order_id = ?",arapAuditOrder.get("id"));
+					if(arapMiscChargeOrderList.size()>0){
+						for (ArapMiscChargeOrder arapMiscChargeOrder : arapMiscChargeOrderList) {
+							arapMiscChargeOrder.set("status", "审批已通过");
+							arapMiscChargeOrder.update();
+						}
+					}
+				}
+            }
+    	
+    	}
+    	renderJson(arapAuditInvoice);
+    }
+    
 }
