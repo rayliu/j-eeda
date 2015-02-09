@@ -15,6 +15,7 @@ import models.ArapMiscChargeOrder;
 import models.Party;
 import models.ReturnOrder;
 import models.UserLogin;
+import models.yh.arap.ArapMiscCostOrder;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -28,6 +29,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
@@ -395,13 +397,20 @@ public class ChargeCheckOrderController extends Controller {
 	
 	// 审核
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCO_AFFIRM})
+	@Before(Tx.class)
 	public void auditChargeCheckOrder(){
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
 		if(chargeCheckOrderId != null && !"".equals(chargeCheckOrderId)){
 			ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
 			arapAuditOrder.set("status", "已确认");
 			arapAuditOrder.update();
-			
+			List<ArapMiscCostOrder> list = ArapMiscCostOrder.dao.find("select * from arap_misc_charge_order where charge_order_id = ?",arapAuditOrder.get("id"));
+			if(list.size()>0){
+				for (ArapMiscCostOrder arapMiscCostOrder : list) {
+					arapMiscCostOrder.set("status", "对账已确认");
+					arapMiscCostOrder.update();
+				}
+			}
 			updateReturnOrderStatus(arapAuditOrder, "对账已确认");
 		}
         renderJson("{\"success\":true}");
@@ -561,6 +570,7 @@ public class ChargeCheckOrderController extends Controller {
 			for(int i=0;i<micsOrderIdArr.length;i++){
 				ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(micsOrderIdArr[i]);
 				arapMiscChargeOrder.set("charge_order_id", chargeCheckOrderId);
+				arapMiscChargeOrder.set("status", "已入对账单");
 				arapMiscChargeOrder.update();
 			}
 			
