@@ -28,6 +28,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
@@ -348,7 +349,8 @@ public class CostCheckOrderController extends Controller {
 
 	// 审核
 
-@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_AFFIRM})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_AFFIRM})
+	@Before(Tx.class)
 	public void auditCostCheckOrder(){
 		String costCheckOrderId = getPara("costCheckOrderId");
 		if(costCheckOrderId != null && !"".equals(costCheckOrderId)){
@@ -359,6 +361,14 @@ public class CostCheckOrderController extends Controller {
 	        arapAuditOrder.set("confirm_by", users.get(0).get("id"));
 	        arapAuditOrder.set("confirm_stamp", new Date());
 			arapAuditOrder.update();
+			List<ArapMiscCostOrder> list = ArapMiscCostOrder.dao.find("select * from arap_misc_cost_order where cost_order_id = ?",arapAuditOrder.get("id"));
+			if(list.size()>0){
+				for (ArapMiscCostOrder arapMiscCostOrder : list) {
+					arapMiscCostOrder.set("status", "对账已确认");
+					arapMiscCostOrder.update();
+				}
+			}
+			
 			
 			//updateReturnOrderStatus(arapAuditOrder, "对账已确认");
 		}
@@ -759,7 +769,7 @@ public class CostCheckOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
 	}
-	//TODO:
+	//保存后，手工单状态转为“已入对账单”。
 	public void updateCostMiscOrder(){
 		String micsOrderIds = getPara("micsOrderIds");
 		String costCheckOrderId = getPara("costCheckOrderId");
@@ -769,6 +779,7 @@ public class CostCheckOrderController extends Controller {
 			for(int i=0;i<micsOrderIdArr.length;i++){
 				ArapMiscCostOrder arapMisccostOrder = ArapMiscCostOrder.dao.findById(micsOrderIdArr[i]);
 				arapMisccostOrder.set("cost_order_id", costCheckOrderId);
+				arapMisccostOrder.set("status", "已入对账单");
 				arapMisccostOrder.update();
 			}
 			
