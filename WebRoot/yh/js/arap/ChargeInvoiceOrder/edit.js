@@ -38,6 +38,22 @@ $(document).ready(function() {
 
  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
+	$("#departureConfirmationBtn").click(function(){
+		var id = $("#chargeInvoiceOrderId").val();
+		if(id != null && id != ""){
+			$.post('/chargeInvoiceOrder/confirm', {chargeInvoiceOrderId:id}, function(data){
+				if(data.ID>0){
+					$("#chargeInvoiceOrderId").val(data.ID);
+				  	
+					/*$("#departureConfirmationBtn").attr("disabled", false);*/
+				}else{
+					alert('数据保存失败。');
+				}
+			},'json');
+		}
+		
+	});
+	
 	
 	if($("#chargeCheckOrderStatus").text() == 'new'){
     	$("#chargeCheckOrderStatus").text('新建');
@@ -225,5 +241,6 @@ $(document).ready(function() {
 			    invoiceItemTable.fnDraw();
 			}
     	},'json');
-	});	
+	});
+	
 } );
