@@ -52,3 +52,5 @@ WebRoot/WEB-INF/config/shiro.ini-mysql
 logs/eeda.2015-01-28.log
 logs/eeda.2015-01-29.log
 logs/eeda.2015-01-31.log
+logs/eeda.2015-02-05.log
+*.log

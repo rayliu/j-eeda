@@ -10,6 +10,8 @@ import java.util.Map;
 import models.Account;
 import models.ArapAccountAuditLog;
 import models.ArapChargeInvoice;
+import models.ArapChargeInvoiceApplication;
+import models.ArapChargeInvoiceApplicationItem;
 import models.ArapChargeOrder;
 import models.ArapMiscChargeOrder;
 
@@ -23,6 +25,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.PermissionConstant;
@@ -96,6 +99,7 @@ public class ChargeAcceptOrderController extends Controller {
         renderJson("{\"success\":true}");
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_COLLECTIONCONFIRM_CONFIRM})
+    @Before(Tx.class)
     public void save(){
     	String chargeIds = getPara("chargeIds");
     	String paymentMethod = getPara("paymentMethod");
@@ -116,6 +120,26 @@ public class ChargeAcceptOrderController extends Controller {
                 ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(orderId);
                 arapChargeInvoice.set("status", "已收款确认");
                 arapChargeInvoice.update();
+                //收款确认后，改变应收开票申请和应收对账单以及手工收款单的状态
+                List<ArapChargeInvoiceApplication> list = ArapChargeInvoiceApplication.dao.find("select * from arap_charge_invoice_application_order where invoice_order_id = ?",orderId);
+                for (ArapChargeInvoiceApplication application : list) {
+                	application.set("status", "已收款确认");
+                	application.update();
+					List<ArapChargeInvoiceApplicationItem> inList = ArapChargeInvoiceApplicationItem.dao.find("select * from arap_charge_invoice_application_item where invoice_application_id = ?",application.get("id"));
+					for (ArapChargeInvoiceApplicationItem arapChargeInvoiceApplicationItem : inList) {
+						ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(arapChargeInvoiceApplicationItem.get("charge_order_id"));
+						arapAuditOrder.set("status", "已收款确认");
+						arapAuditOrder.update();
+						List<ArapMiscChargeOrder> arapMiscChargeOrderList = ArapMiscChargeOrder.dao.find("select * from arap_misc_charge_order where charge_order_id = ?",arapAuditOrder.get("id"));
+						if(arapMiscChargeOrderList.size()>0){
+							for (ArapMiscChargeOrder arapMiscChargeOrder : arapMiscChargeOrderList) {
+								arapMiscChargeOrder.set("status", "已收款确认");
+								arapMiscChargeOrder.update();
+							}
+						}
+					}
+                }
+                
             }
 			
 			//现金 或 银行  金额处理
