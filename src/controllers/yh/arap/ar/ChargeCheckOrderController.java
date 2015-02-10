@@ -234,7 +234,7 @@ public class ChargeCheckOrderController extends Controller {
 		String debit_amount = getPara("debit_amount")==""?"0":getPara("debit_amount");
 		if (!"".equals(chargeCheckOrderId) && chargeCheckOrderId != null) {
 			arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
-			arapAuditOrder.set("status", "new");
+			//arapAuditOrder.set("status", "new");
 			arapAuditOrder.set("create_by", getPara("create_by"));
 			arapAuditOrder.set("create_stamp", new Date());
 			arapAuditOrder.set("remark", getPara("remark"));
@@ -404,11 +404,11 @@ public class ChargeCheckOrderController extends Controller {
 			ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
 			arapAuditOrder.set("status", "已确认");
 			arapAuditOrder.update();
-			List<ArapMiscCostOrder> list = ArapMiscCostOrder.dao.find("select * from arap_misc_charge_order where charge_order_id = ?",arapAuditOrder.get("id"));
+			List<ArapMiscChargeOrder> list = ArapMiscChargeOrder.dao.find("select * from arap_misc_charge_order where charge_order_id = ?",arapAuditOrder.get("id"));
 			if(list.size()>0){
-				for (ArapMiscCostOrder arapMiscCostOrder : list) {
-					arapMiscCostOrder.set("status", "对账已确认");
-					arapMiscCostOrder.update();
+				for (ArapMiscChargeOrder arapMiscChargeOrder : list) {
+					arapMiscChargeOrder.set("status", "对账已确认");
+					arapMiscChargeOrder.update();
 				}
 			}
 			updateReturnOrderStatus(arapAuditOrder, "对账已确认");
