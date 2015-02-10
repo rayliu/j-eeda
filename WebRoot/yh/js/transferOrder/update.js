@@ -33,7 +33,13 @@ $(document).ready(function() {
 			$(this).prop('checked', true);
 		}
 	});
-
+	//新建状态去除出库运输单选项
+	
+	if($("#order_id").val() == "" || $("#order_id").val() == null){
+		$("#gateOute").hide();
+	}else{
+		$("#gateOute").show();
+	}
 	//客户计费方式回显
 	var transferOrderId = $("#order_id").val();
 	if(transferOrderId != '' && transferOrderId != null){
