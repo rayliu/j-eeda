@@ -155,7 +155,7 @@ $(document).ready(function() {
          	}
          	
          }else{
-             alert('数据保存失败。');
+             $.scojs_message('数据保存失败', $.scojs_message.TYPE_ERROR);
          }
          },'json');
     });
@@ -329,7 +329,7 @@ $("#warehouseOrderItemFormBtn").click(function(){
 	var warehouseorderid = $("#warehouseorderId").val();
 	$.post('/gateIn/savewareOrderItem/'+warehouseorderid,$("#warehouseOrderItemForm").serialize(), function(id){
 			//保存成功后，刷新列表
-            console.log(id);
+            //console.log(id);
             if(id>0){
             	$('#myModal').modal('hide');
             	var warehouseorderid = $("#warehouseorderId").val();
@@ -359,16 +359,18 @@ $("#gateOutConfirmBtn").click(function(){
 	
 	var warehouseorderid = $("#warehouseorderId").val();
 	$.post('/gateIn/gateOutConfirm/'+warehouseorderid,{orderType:orderType},function(data){
-		console.log(data)
-		 if(data>0){
+		console.log(data);
+		 /*if(data>0){
 			 window.location.href="/transferOrder/edit?id="+data;
-		}
-		if(data.success){
+		 }
+		 if(data.success){*/
+		if(data>0){
 			 $("#gateOutConfirmBtn").attr("disabled", true);
-			 alert("出库成功！");
-            }else{
-                alert('失败！。');
-            }
+			 //$.scojs_message('出库成功', $.scojs_message.TYPE_ERROR);
+			 window.location.href="/transferOrder/edit?id="+data;
+         }else{
+             $.scojs_message('出库失败', $.scojs_message.TYPE_ERROR);
+         }
 	},'json');
 	
 });

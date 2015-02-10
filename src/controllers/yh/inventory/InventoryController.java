@@ -517,6 +517,8 @@ public class InventoryController extends Controller {
 
     // 查找客户
     public void searchgateOutCustomer() {
+    	
+    	
         String input = getPara("input");
         String warehouseId = getPara("warehouseId");
         if (warehouseId.equals("")) {
@@ -524,10 +526,14 @@ public class InventoryController extends Controller {
             //return;
         }
         List<Record> locationList = Collections.EMPTY_LIST;
-        locationList = Db.find("SELECT w_o.party_id as pid,c.company_name FROM `warehouse_order` w_o "
+        /*locationList = Db.find("select w_o.party_id as pid,c.company_name from `warehouse_order` w_o "
                 + "left join party p on p.id = w_o.party_id "
-                + "left join contact c on p.contact_id = c.id where w_o.warehouse_id ='" + warehouseId
-                + "' and w_o.order_type='入库' and c.company_name like '%" + input + "%' group by c.company_name");
+                + "left join contact c on p.contact_id = c.id where w_o.warehouse_id ='" + warehouseId*/
+        locationList = Db.find("select distinct invi.party_id as pid,c.company_name from inventory_item invi "
+        		+ "left join party p on invi.party_id = p.id "
+        		+ "left join contact c on c.id = p.contact_id  "
+        		+ "where invi.party_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+                + " and c.company_name like '%" + input + "%' group by c.company_name");
         renderJson(locationList);
     }
 
