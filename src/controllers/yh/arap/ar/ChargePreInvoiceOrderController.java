@@ -170,7 +170,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		String paymentMethod = getPara("paymentMethod");
 		if (!"".equals(chargePreInvoiceOrderId) && chargePreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
-            arapAuditInvoiceApplication.set("status", "new");
+            //arapAuditInvoiceApplication.set("status", "new");
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
