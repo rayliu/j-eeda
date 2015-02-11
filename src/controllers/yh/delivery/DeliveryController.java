@@ -1153,7 +1153,7 @@ public class DeliveryController extends Controller {
 							.findById(detailIdArr[i]);
 					transferOrderItemDetail.set("delivery_id",
 							deliveryOrder.get("id"));
-					//transferOrderItemDetail.set("is_delivered", "已创建");
+					transferOrderItemDetail.set("is_delivered", true);
 					transferOrderItemDetail.update();
 				}
 			}
