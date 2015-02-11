@@ -131,7 +131,7 @@ public class CostAcceptOrderController extends Controller {
                 ArapCostInvoiceApplication arapcostInvoice = ArapCostInvoiceApplication.dao.findById(orderId);
                 arapcostInvoice.set("status", "已付款确认");
                 arapcostInvoice.update();
-                //应收对账单的状态改变
+               /* //应收对账单的状态改变
                 ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findFirst("select * from arap_cost_order where application_order_id = ?",orderId);
                 arapAuditOrder.set("status", "已付款确认");
                 arapAuditOrder.update();
@@ -146,7 +146,7 @@ public class CostAcceptOrderController extends Controller {
 						}
                 	}
                     
-                }
+                }*/
                 
             }
 			

@@ -484,7 +484,7 @@ public class ChargeInvoiceOrderController extends Controller {
 	    	arapAuditInvoice.set("status", "已审批");
 	    	arapAuditInvoice.update();
 	    	
-	    	List<ArapChargeInvoiceApplication> list = ArapChargeInvoiceApplication.dao.find("select * from arap_charge_invoice_application_order where invoice_order_id = ?",chargeInvoiceOrderId);
+	    /*	List<ArapChargeInvoiceApplication> list = ArapChargeInvoiceApplication.dao.find("select * from arap_charge_invoice_application_order where invoice_order_id = ?",chargeInvoiceOrderId);
             for (ArapChargeInvoiceApplication application : list) {
             	application.set("status", "审批已通过");
             	application.update();
@@ -502,7 +502,7 @@ public class ChargeInvoiceOrderController extends Controller {
 						}
 					}
 				}
-            }
+            }*/
     	}
     	renderJson(arapAuditInvoice);
     }

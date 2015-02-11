@@ -120,7 +120,7 @@ public class ChargeAcceptOrderController extends Controller {
                 ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(orderId);
                 arapChargeInvoice.set("status", "已收款确认");
                 arapChargeInvoice.update();
-                //收款确认后，改变应收开票申请和应收对账单以及手工收款单的状态
+                /*//收款确认后，改变应收开票申请和应收对账单以及手工收款单的状态
                 List<ArapChargeInvoiceApplication> list = ArapChargeInvoiceApplication.dao.find("select * from arap_charge_invoice_application_order where invoice_order_id = ?",orderId);
                 for (ArapChargeInvoiceApplication application : list) {
                 	application.set("status", "已收款确认");
@@ -138,7 +138,7 @@ public class ChargeAcceptOrderController extends Controller {
 							}
 						}
 					}
-                }
+                }*/
                 
             }
 			
