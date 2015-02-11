@@ -37,6 +37,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.PermissionConstant;
@@ -1243,5 +1244,22 @@ public class ReturnOrderController extends Controller {
         renderJson(Map); 
     }
     
+    
+    public void saveFile(){
+    	String id = getPara("return_id");
+    	UploadFile uploadFile = getFile("fileupload");
+    	Map<String,String> resultMap = new HashMap<String,String>();
+    	resultMap.put("result", "false");
+    	resultMap.put("cause", "上传失败，请选择正确的execl文件");
+    	if(!"".equals(id) && id != null){
+    		ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
+    		if(returnOrder != null && uploadFile != null){
+    			returnOrder.set("path", uploadFile.getFileName()).update();
+    			resultMap.put("result", "true");
+    			resultMap.put("cause", uploadFile.getFileName());
+			}
+    	}
+    	renderJson(resultMap);
+    }
     
 }

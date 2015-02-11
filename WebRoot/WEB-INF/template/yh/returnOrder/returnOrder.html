@@ -35,12 +35,15 @@
                                 </li>
                                 <li class=""><a href="#arap" data-toggle="tab" id = "returnOrderPayment">应收</a>
                                 </li>
+                                <li class=""><a href="#sign" data-toggle="tab" id = "signPicture">签收图片</a>
+                                </li>
                             </ul>
 
                             <!-- Tab panes -->
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="basic">
                                 <div class="row">
+                                <img alt="" src="">
                                <div class="col-lg-6">
                                 <input class="form-control" id="snature" type="hidden" >
                                     <form role="form" method="post" action="" id="returnOrderForm">
@@ -247,7 +250,32 @@
                                     </div>
                                     <!-- /.panel-body -->
                                     
-                                </div>                             
+                                </div>     
+                                
+                                <div class="tab-pane fade" id="sign">
+                                    <div class="panel-body">             
+                                        <div class="row">
+									  		<div class="col-lg-6" style="clear:both;">
+									  			<div class="form-group"> 
+										  			<input id="savefile" type="button" class="btn btn-primary" value="上传图片">
+		                                        	<form method="post" id="fileForm" action="/returnOrder/saveFile" enctype="multipart/form-data">
+		                                            	<input type="hidden" id="return_id" name="return_id" value="${returnOrder.id!''}">
+		                                                <input type="file" id="fileupload" name="fileupload" 
+													     style="position:absolute; filter:alpha(opacity=0); opacity:0; width:30px; " size="1" multiple>
+		                                            </form >
+	                                            </div>
+	                                    	</div>
+		                                    <div class="col-lg-6" style="clear:both;">
+		                                        <fieldset>
+		                                            <div class="form-group">                                                
+		                                         		<img id="showImg" src="/upload/${returnOrder.path}" height="300" width="500" alt="图片展示区域"> 
+		                                            </div>
+		                                        </fieldset>
+		                                    </div>
+										</div>
+                                    </div>                              
+                            	</div>
+                            
                                 <div class="form-group"><hr/>
                         			<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                         			<% if(shiro.hasPermission("ReturnOrder.update")){%>
@@ -269,6 +297,9 @@
         <!-- /#page-wrapper -->
 
 <%}%>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.ui.widget.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.iframe-transport.js"></script> 
+<script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.fileupload.js"></script>
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/jquery.validate.min.js"></script>

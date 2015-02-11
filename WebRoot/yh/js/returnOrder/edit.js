@@ -547,4 +547,48 @@
 			}
 		}
 	},'json');
+    
+    //保存图片
+    $("#savefile").click(function(e){
+    	/*var fileName = $("#fileupload").val();
+    	if(fileName == ""){
+    		alert("请选择文件!");
+	       	return false; 
+    	}else{
+    		var extname = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length);
+    		extname.toLowerCase();//处理了大小写
+    		if(extname!= "bmp"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png"){
+    		     alert("只能上传bmp,jpg,gif格式的图片！");
+    		     return false;
+		    }
+    	}
+    	console.log(fileName);
+		var id = $("#returnId").val();
+		$("#return_id").val(id);
+		$.post('/returnOrder/saveFile',$("#fileForm").serialize(),function(data){
+			if(data.success){
+        		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+        	}else{
+        		$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+        	}
+		},'json');*/
+    	$("#fileupload").click();
+	 });
+
+	 $('#fileupload').fileupload({
+        dataType: 'json',
+        url: '/returnOrder/saveFile?return_id='+$("#returnId").val(),//上传地址
+        done: function (e, data) {
+        	if(data.result.result = "true"){
+        		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+        		$("#showImg").attr("src","/upload/"+data.result.cause);
+        	}else{
+        		$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+        	}
+        },  
+        progressall: function (e, data) {//设置上传进度事件的回调函数  
+        	$.scojs_message('上传中', $.scojs_message.TYPE_OK);
+        } 
+    });
+    
 });
