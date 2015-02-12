@@ -46,6 +46,7 @@
                      }
                 	 return str;
              }},
+             {"mDataProp": "TOTAL_AMOUNT","sWidth": "50px",},
              {"mDataProp": "RATE",
             	 "sWidth": "100px", 
             	 "sClass": "rate", 
@@ -78,7 +79,7 @@
             	 "sWidth": "80px",
             	 "sClass": "insurance_amount", 
                  "fnRender": function(obj) {
-                	var str = obj.aData.INSURANCE_AMOUNT;
+                	var str = obj.aData.INSURANCE_AMOUNT.toFixed(2);
                  	if(obj.aData.INSURANCE_AMOUNT == null){
                  		str = "";
                  	}
@@ -118,13 +119,14 @@
  		if(name == 'amount'){
  			var rate = $(this).parent().siblings(".rate")[0].children[0].value;
  			if(rate != null && rate != '' && value != null && value != ''){
- 				$(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML = value * rate;
+ 				$(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML = (value * rate).toFixed(2);
  			}
+ 			
  		}else if(name == 'rate'){
  			var amount = $(this).parent().siblings(".fin_amount")[0].children[0].value;
  			if(amount != null && amount != '' && value != null && value != ''){
  				$(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML = (value * amount).toFixed(2);
- 			}
+ 			}		
  		}
  		var insuranceAmount = $(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML;
  		var insuranceOrderId = $("#insuranceOrderId").val();
