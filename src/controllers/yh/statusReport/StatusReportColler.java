@@ -53,10 +53,12 @@ public class StatusReportColler extends Controller{
 			renderJson(orderMap);
 			return;
 		}else{*/
-			if(order_no != null || !"".equals(order_no)){
+			if(order_no != null && !"".equals(order_no)){
 				order = TransferOrder.dao.findFirst("select * from transfer_order where order_no = '" + order_no + "';");
-			}else if(customer_order_no != null || !"".equals(customer_order_no)){
+			}else if(customer_order_no != null &&!"".equals(customer_order_no)){
 				order = TransferOrder.dao.findFirst("select * from transfer_order where customer_order_no = '" + customer_order_no + "';");
+			}else if(serial_no != null &&!"".equals(serial_no)){
+				order = TransferOrder.dao.findFirst("select tor.* from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.serial_no = '" + serial_no + "';");
 			}
 		//}
 		if(order != null){

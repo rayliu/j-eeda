@@ -64,17 +64,21 @@ $(document).ready(function() {
         ]  
     });	
     
-    $("#order_no,#item_no,#customer_id,#serial_no,#customer_order_no").on( 'keyup click', function () {
+    var execResult = function(){
     	var order_no=$("#order_no").val();
     	var item_no=$("#item_no").val();
     	var customer_id=$("#customer_id").val();
     	var serial_no = $("#serial_no").val();
     	var customer_order_no = $("#customer_order_no").val();
-    	if(order_no != "" || customer_order_no != ""){
+    	if(order_no != "" || customer_order_no != "" || serial_no != ""){
 	    	statusTable.fnSettings().sAjaxSource = "/statusReport/findTransferOrdertatus?order_no="+order_no +"&customer_id="+customer_id
 	    											+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&serial_no="+serial_no;
 	    	statusTable.fnDraw(); 
     	}
+    };
+    
+    $("#order_no,#item_no,#customer_id,#serial_no,#customer_order_no").on('keyup click', function () {
+    	execResult();
     });
     
     /*// 获取所有运输单号
@@ -150,12 +154,7 @@ $(document).ready(function() {
         	top:$(this).position().top+32+"px" 
         }); 
         $('#customerList').show();
-        
-        /*var customerId = $("#hiddenCustomerId").val();
-		var warehouseId = $("#warehouseId").val();
-		var offeceId = $("#hiddenOfficeId").val();
-	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
-		tab.fnDraw();*/
+        execResult();
 	});
 
  	// 没选中客户，焦点离开，隐藏列表
@@ -178,11 +177,10 @@ $(document).ready(function() {
 		var warehouseId = $("#warehouseId").val();
 		var offeceId = $("#hiddenOfficeId").val();
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
-		$("#hiddenCustomerId").val($(this).attr('partyId'));
+		$('#customerMessage').focus();
+		$("#customer_id").val($(this).attr('partyId'));
 		$('#customerList').hide();
-		
-		/*tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
-		tab.fnDraw();*/
+		execResult();
     }); 
     
     
