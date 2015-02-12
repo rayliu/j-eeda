@@ -626,8 +626,10 @@ public class DepartOrderController extends Controller {
     				+ " left join location l1 on tor.route_from = l1.code "
     				+ " left join location l2 on tor.route_to = l2.code"
     				+ " left join office o on tor.office_id = o.id "
-    				+ " where tor.status = '新建' and ifnull(tor.depart_assign_status, '') !='"
-    				+ TransferOrder.ASSIGN_STATUS_ALL + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+    				+ " where tor.status = '新建' "
+    				+ " and ifnull(tor.pickup_assign_status, '') = '" + TransferOrder.ASSIGN_STATUS_NEW + "' "
+					+ " and ifnull(tor.depart_assign_status, '') = '" + TransferOrder.ASSIGN_STATUS_NEW + "' "
+					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
     		rec = Db.findFirst(sqlTotal);
     		logger.debug("total records:" + rec.getLong("total"));
@@ -646,8 +648,9 @@ public class DepartOrderController extends Controller {
     				+ " left join location l2 on tor.route_to = l2.code "
     				+ " left join office o on o.id = tor.office_id "
     				+ " where tor.status = '新建' "
-    				+ "  and ifnull(tor.depart_assign_status, '') !='" + TransferOrder.ASSIGN_STATUS_ALL
-    				+ "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+    				+ " and ifnull(tor.pickup_assign_status, '') = '" + TransferOrder.ASSIGN_STATUS_NEW + "' "
+					+ " and ifnull(tor.depart_assign_status, '') = '" + TransferOrder.ASSIGN_STATUS_NEW + "' "
+					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
     				+ " order by tor.create_stamp desc " + sLimit;
     	} else {
@@ -663,12 +666,17 @@ public class DepartOrderController extends Controller {
     				+ " left join location l1 on tor.route_from = l1.code "
     				+ " left join location l2 on tor.route_to = l2.code  "
     				+ " left join office o on o.id = tor.office_id "
-    				+ " where tor.status = '新建' and ifnull(tor.depart_assign_status, '') !='"
-    				+ TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
-    				+ "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
-    				+ "%' and c.abbr like '%" + customer + "%' and create_stamp between '" + beginTime
-    				+ "' and '" + endTime + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-    				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+    				+ " where tor.status = '新建' "
+    				+ " and ifnull(tor.pickup_assign_status, '') = '" + TransferOrder.ASSIGN_STATUS_NEW + "' "
+					+ " and ifnull(tor.depart_assign_status, '') = '" + TransferOrder.ASSIGN_STATUS_NEW + "' "
+					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+    				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+    				+ " and tor.order_no like '%" + orderNo + "%' "
+					+ " and tor.status like '%" + status + "%' "
+					+ " and tor.address like '%" + address + "%' "
+					+ " and c.abbr like '%" + customer + "%' "
+					+ " and tor.create_stamp between '" + beginTime + "' "
+					+ " and '" + endTime + "' ";
     		
     		sql = "select distinct tor.id,tor.order_no,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
     				+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
@@ -684,12 +692,17 @@ public class DepartOrderController extends Controller {
     				+ " left join location l1 on tor.route_from = l1.code "
     				+ " left join location l2 on tor.route_to = l2.code "
     				+ " left join office o on o.id = tor.office_id "
-    				+ " where tor.status = '新建' and ifnull(tor.depart_assign_status, '') !='"
-    				+ TransferOrder.ASSIGN_STATUS_ALL + "'" + " and tor.order_no like '%" + orderNo
-    				+ "%' and tor.status like '%" + status + "%' and tor.address like '%" + address
-    				+ "%' and c.abbr like '%" + customer + "%' and tor.create_stamp between '" + beginTime
-    				+ "' and '" + endTime + "'" + " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+    				+ " where tor.status = '新建' "
+    				+ " and ifnull(tor.pickup_assign_status, '') = '" + TransferOrder.ASSIGN_STATUS_NEW + "' "
+					+ " and ifnull(tor.depart_assign_status, '') = '" + TransferOrder.ASSIGN_STATUS_NEW + "' "
+					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+    				+ " and tor.order_no like '%" + orderNo + "%' "
+					+ " and tor.status like '%" + status + "%' "
+					+ " and tor.address like '%" + address + "%' "
+					+ " and c.abbr like '%" + customer + "%' "
+					+ " and tor.create_stamp between '" + beginTime + "' "
+					+ " and '" + endTime + "' "
     				+ " order by tor.create_stamp desc " + sLimit;
     	}
     	rec = Db.findFirst(sqlTotal);

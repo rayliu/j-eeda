@@ -580,10 +580,10 @@
         url: '/returnOrder/saveFile?return_id='+$("#returnId").val(),//上传地址
         done: function (e, data) {
         	if(data.result.result = "true"){
-        		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+        		$.scojs_message('图片上传成功', $.scojs_message.TYPE_OK);
         		$("#showImg").attr("src","/upload/"+data.result.cause);
         	}else{
-        		$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+        		$.scojs_message('图片上传失败', $.scojs_message.TYPE_ERROR);
         	}
         },  
         progressall: function (e, data) {//设置上传进度事件的回调函数  
