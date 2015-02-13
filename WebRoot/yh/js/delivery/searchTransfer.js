@@ -20,19 +20,27 @@ $(document).ready(function() {
     	var productIds=[];
     	var transferItemIds=[];
     	var shippingNumbers = [];
+    	var result = true;
     	$("#eeda-table2 tr:not(:first)").each(function(){
         	$("input:checked",this).each(function(){
+        		if($(this).parent().parent().find("td>input[name='amount']").val() == ""){
+        			$.scojs_message('配送数量不能为空,请重新输入', $.scojs_message.TYPE_ERROR);
+        			$(this).parent().parent().find("td>input[name='amount']").focus();
+        			result = false;
+        		}
         		productIds.push($(this).val()); //货品id
         		shippingNumbers.push($(this).parent().parent().find("td>input[name='amount']").val());
         		transferItemIds.push($(this).parent().parent().attr("id"));
         	});
     	}); 
-    	console.log("运输明细id:"+transferItemIds+",货品id:" + productIds + ",发货数量: " + shippingNumbers);
-    	$("#productIds").val(productIds);
-    	$("#shippingNumbers").val(shippingNumbers);
-    	$("#transferItemIds").val(transferItemIds);
-    	$("#transferOrderNo1").val($("#transferOrderNo").val());
-        $('#createCargoForm').submit();
+    	if(result){
+    		console.log("运输明细id:"+transferItemIds+",货品id:" + productIds + ",发货数量: " + shippingNumbers);
+        	$("#productIds").val(productIds);
+        	$("#shippingNumbers").val(shippingNumbers);
+        	$("#transferItemIds").val(transferItemIds);
+        	$("#transferOrderNo1").val($("#transferOrderNo").val());
+            $('#createCargoForm').submit();
+    	}
 	});
 	
 	var dab2= $('#eeda-table2').dataTable({
@@ -121,7 +129,7 @@ $(document).ready(function() {
   		            { 
   		                "mDataProp": null, "sWidth":"70px",
   		                "fnRender": function(obj) {                    
-  		                    return "<input type='text' size='7' name='amount' toal="+obj.aData.TOTAL_QUANTITY +" available="+obj.aData.AVAILABLE_QUANTITY+" disabled value='0'>";
+  		                    return "<input type='text' size='7' class='selectAmount' name='amount'  toal="+obj.aData.TOTAL_QUANTITY +" available="+obj.aData.AVAILABLE_QUANTITY+" disabled value='0'>";
   		                }
   		            }
   		        ]     
@@ -213,13 +221,15 @@ $(document).ready(function() {
 		var row=$(objCheckBox).parent().parent();
 		var $inputAmount=row.find('input[name=amount]');
 		if($(objCheckBox).prop("checked") == true){					
-			if(cargoNature==="ATM")
+			if(cargoNature==="ATM"){
 				$("#saveDelivery").attr('disabled', false);
-			if(cargoNature==="cargo")
+			}
+			if(cargoNature==="cargo"){
 				$("#saveDeliveryCargo").attr('disabled', false);
-
-			$inputAmount.attr('disabled', false).val('1');// 允许输入配送数量
-
+				
+			}
+			console.log("可用数量："+$(objCheckBox).parent().parent().find("td").eq(9).text());
+			$inputAmount.attr('disabled', false).val($(objCheckBox).parent().parent().find("td").eq(9).text());// 允许输入配送数量
 			
 		}else{
 			$inputAmount.attr('disabled', true);// 不允许输入配送数量
@@ -621,22 +631,18 @@ $(document).ready(function() {
 	});
     
 	//输入普货配送数量
-	$("#eeda-table2").on('blur', 'input[name="amount"]', function(e){
+	$("#eeda-table2").on('keyup click', 'input[name="amount"]', function(e){
 		var value = $(this).val();
-		var toal = $(this).attr("toal");
-		var available = $(this).attr("available");
-		console.log("value:"+value+",total:"+toal+",available:"+available);
+		var available = $(this).parent().parent().find("td").eq(9).text();
+		console.log("value:"+value+",available:"+available);
 		if(isNaN(value)){
-			$.scojs_message('只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
+			$.scojs_message('只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val("");
 			$(this).focus();
 			return false;
 		}else{
-			if(available == "null" || available == "" || available == null){
-				available = toal;
-			}
-			if(value > available){
-				$.scojs_message('配送数量不能大于可用库存,请重新输入', $.scojs_message.TYPE_OK);
+			if(value * 1 > available * 1){
+				$.scojs_message('配送数量不能大于可用库存,请重新输入', $.scojs_message.TYPE_ERROR);
 				$(this).val("");
 				$(this).focus();
 				return false;
