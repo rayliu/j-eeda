@@ -821,18 +821,18 @@
     	    	if($("#departure_time").val() == "" || $("#arrival_time").val() == ""){
     	    		$.scojs_message('操作失败，请确认基本信息是否输入完整', $.scojs_message.TYPE_ERROR);
      		        return false;
+     	        }else{
+     	        	//发车之前保存发车单
+        	    	clickSaveDepartOrder(e);
      	        }
-    	    	
     	    	var priceType = $("input[name='priceType']:checked").val();
-    	    	$(this).attr("disabled",true);
-    	    	$("#order_edit").attr("disabled",true);
-    	    	
-
     	    	var departOrderId = $("#departOrderId").val();
     	    	$.post('/transferOrderMilestone/departureConfirmation?departOrderId='+departOrderId, function(){
     	    		paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
     	    		paymenttable.fnDraw(); 
     	    		$("#departOrderStatus").val('已发车');
+    	    		$("#departureConfirmationBtn").attr("disabled",true);
+        	    	$("#saveDepartOrderBtn").attr("disabled",true);
     	    	});
     	    	
     	    	$("#saveDepartOrderBtn").attr("disabled", true);
@@ -841,9 +841,10 @@
                 $.post('/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
                       //$("#warehousingConfirmBtn").attr("disabled",false);
                       paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
-                      
                       paymenttable.fnDraw(); 
                       $("#departOrderStatus").val('已发车');
+                      $("#departureConfirmationBtn").attr("disabled",true);
+          	    	  $("#saveDepartOrderBtn").attr("disabled",true);
                 });
     	    });
 
