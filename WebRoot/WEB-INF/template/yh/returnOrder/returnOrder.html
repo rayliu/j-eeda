@@ -255,9 +255,10 @@
                                 <div class="tab-pane fade" id="sign">
                                     <div class="panel-body">             
                                         <div class="row">
-									  		<div class="col-lg-6" style="clear:both;">
+                                        	<input type="hidden" id="files" name="files" value="${files!''}">
+									  		<div class="col-lg-12" style="clear:both;">
 									  			<div class="form-group"> 
-										  			<input id="savefile" type="button" class="btn btn-primary" value="上传图片">
+										  			<input id="savefile" type="button" class="btn btn-primary" value="上传图片"><p>(图片格式为：gif,jpeg,png,jpg)</p>
 		                                        	<form method="post" id="fileForm" action="/returnOrder/saveFile" enctype="multipart/form-data">
 		                                            	<input type="hidden" id="return_id" name="return_id" value="${returnOrder.id!''}">
 		                                                <input type="file" id="fileupload" name="fileupload" 
@@ -265,16 +266,34 @@
 		                                            </form >
 	                                            </div>
 	                                    	</div>
-		                                    <div class="col-lg-6" style="clear:both;">
-		                                        <fieldset>
-		                                            <div class="form-group">                                                
-		                                         		<img id="showImg" src="/upload/${returnOrder.path}" height="300" width="500" alt="图片展示区域"> 
-		                                            </div>
-		                                        </fieldset>
+		                                    <div class="col-lg-12" style="clear:both;" id="showPictures">
+		                                    	<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
+		                                    		<div class="form-group"><img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail"><p><a class="picturedel" picture_id="${orderAttachmentFile.ID!''}" >删除</a></p></div>
+   												<%		
+   													}
+   												%>
 		                                    </div>
 										</div>
                                     </div>                              
                             	</div>
+                            	
+                            	<div class="panel-heading">
+	                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" data-backdrop="static">
+	                                  <div class="modal-dialog">
+	                                    <div class="modal-content">
+	                                        <div class="modal-body" align="center">
+	                                        	<center id="centerBody">
+	                                            	<img src="/yh/image/loading5.gif" width="20%">
+	                                            	<h4>上传过程可能需要一点时间，请勿退出页面！</h4>
+	                                            </center>
+	                                        </div>
+	                                        <div class="modal-footer" id="footer" aria-hidden="true">
+									        	<button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">关闭</button>
+									      	</div>
+	                                    </div>
+	                                  </div>
+	                                </div>
+	                            </div>
                             
                                 <div class="form-group"><hr/>
                         			<a style="display:none" id ="style"><i class='fa fa-check'></i></a>

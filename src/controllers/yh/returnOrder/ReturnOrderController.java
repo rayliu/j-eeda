@@ -2,6 +2,7 @@ package controllers.yh.returnOrder;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -15,6 +16,7 @@ import models.DepartOrder;
 import models.DepartTransferOrder;
 import models.Fin_item;
 import models.Location;
+import models.OrderAttachmentFile;
 import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
@@ -311,7 +313,9 @@ public class ReturnOrderController extends Controller {
 			}
 			setAttr("locationTo", locationTo);
 		}
-
+		
+		List<OrderAttachmentFile> OrderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("id") + "';");
+		setAttr("OrderAttachmentFileList", OrderAttachmentFileList);
 		setAttr("returnOrder", returnOrder);
 		UserLogin userLogin = UserLogin.dao
 				.findById(returnOrder.get("creator"));
@@ -1283,19 +1287,40 @@ public class ReturnOrderController extends Controller {
     
     public void saveFile(){
     	String id = getPara("return_id");
-    	UploadFile uploadFile = getFile("fileupload");
-    	Map<String,String> resultMap = new HashMap<String,String>();
-    	resultMap.put("result", "false");
-    	resultMap.put("cause", "上传失败，请选择正确的execl文件");
-    	if(!"".equals(id) && id != null){
-    		ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
-    		if(returnOrder != null && uploadFile != null){
-    			returnOrder.set("path", uploadFile.getFileName()).update();
-    			resultMap.put("result", "true");
-    			resultMap.put("cause", uploadFile.getFileName());
+    	List<UploadFile> uploadFiles = getFiles("fileupload");
+    	Map<String,Object> resultMap = new HashMap<String,Object>();
+    	ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
+    	boolean result = true;
+		if(returnOrder != null){
+	    	for (int i = 0; i < uploadFiles.size(); i++) {
+	    		File file = uploadFiles.get(i).getFile();
+	    		String fileName = file.getName();
+	    		String suffix = fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase();
+	    		if("gif".equals(suffix) || "jpeg".equals(suffix) || "png".equals(suffix) || "jpg".equals(suffix)){
+        			OrderAttachmentFile orderAttachmentFile = new OrderAttachmentFile();
+        			orderAttachmentFile.set("order_id", id).set("order_type", orderAttachmentFile.OTFRT_TYPE_RETURN).set("file_path", uploadFiles.get(0).getFileName()).save();
+	    		}else{
+	    			result = false;
+	    			break;
+	    		}
 			}
-    	}
+		}
+		if(result){
+			resultMap.put("result", "true");
+			List<OrderAttachmentFile> OrderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + id + "';");
+	    	resultMap.put("cause", OrderAttachmentFileList);
+		}else{
+			resultMap.put("result", "false");
+	    	resultMap.put("cause", "上传失败，请选择正确的图片文件");
+		}
     	renderJson(resultMap);
     }
+    //删除图片
+    public void delPictureById(){
+    	OrderAttachmentFile.dao.deleteById(getPara("picture_id"));
+    	List<OrderAttachmentFile> orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("return_id") + "';");
+    	renderJson(orderAttachmentFileList);
+    }
+    
     
 }

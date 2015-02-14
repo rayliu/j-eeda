@@ -36,6 +36,7 @@ import models.InsuranceOrder;
 import models.InventoryItem;
 import models.Location;
 import models.Office;
+import models.OrderAttachmentFile;
 import models.OrderStatus;
 import models.Party;
 import models.PartyAttribute;
@@ -379,7 +380,8 @@ public class EedaConfig extends JFinalConfig {
         
         arp.addMapping("customize_field", CustomizeField.class);
         arp.addMapping("office_config", OfficeCofig.class);
-        
+        //单据附件上传
+        arp.addMapping("order_attachment_file", OrderAttachmentFile.class);
     }
 
     private void initDBconnector() {

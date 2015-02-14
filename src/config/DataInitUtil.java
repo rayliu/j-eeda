@@ -284,7 +284,10 @@ public class DataInitUtil {
             
             //自定义系统名字，logo, 登陆背景
             stmt.execute("create table if not exists office_config(id bigint auto_increment primary key, office_id bigint, system_title varchar(50), logo varchar(250), login_bg varchar(250), domain varchar(250));");
-            
+           
+            //单据附件表，记录上传文件信息
+            stmt.execute("create table if not exists order_attachment_file(id bigint auto_increment primary key,order_id bigint ,order_type varchar(50),file_path  varchar(255));");
+            		
             stmt.close();
             // conn.commit();
             conn.close();

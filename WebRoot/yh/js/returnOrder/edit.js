@@ -3,7 +3,6 @@
 		
 	var returnOrderId = $("#returnId").val();
 	var transferOrderId =$("#transferOrderId").val();
-	console.log(transferOrderId);
 	//datatable, 动态处理
 	var transferOrder = $('#transferOrderTable').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -550,28 +549,6 @@
     
     //保存图片
     $("#savefile").click(function(e){
-    	/*var fileName = $("#fileupload").val();
-    	if(fileName == ""){
-    		alert("请选择文件!");
-	       	return false; 
-    	}else{
-    		var extname = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length);
-    		extname.toLowerCase();//处理了大小写
-    		if(extname!= "bmp"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png"){
-    		     alert("只能上传bmp,jpg,gif格式的图片！");
-    		     return false;
-		    }
-    	}
-    	console.log(fileName);
-		var id = $("#returnId").val();
-		$("#return_id").val(id);
-		$.post('/returnOrder/saveFile',$("#fileForm").serialize(),function(data){
-			if(data.success){
-        		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-        	}else{
-        		$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-        	}
-		},'json');*/
     	$("#fileupload").click();
 	 });
 
@@ -580,15 +557,38 @@
         url: '/returnOrder/saveFile?return_id='+$("#returnId").val(),//上传地址
         done: function (e, data) {
         	if(data.result.result = "true"){
-        		$.scojs_message('图片上传成功', $.scojs_message.TYPE_OK);
-        		$("#showImg").attr("src","/upload/"+data.result.cause);
+        		$("#centerBody").empty().append("<h4>上传成功！</h4>");
+        		console.log("data.result.cause:"+data.result.cause);
+        		//console.log("data.result.cause:"+data.result.cause+",parseJSON:"+$.parseJSON(data.result.cause));
+        		//var files = $.parseJSON(data.result.cause);
+        		var showPictures = $("#showPictures");
+        		showPictures.empty();
+        		$.each(data.result.cause,function(name,value) {
+        			showPictures.append('<img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="img-thumbnail">');
+                });
         	}else{
-        		$.scojs_message('图片上传失败', $.scojs_message.TYPE_ERROR);
+        		$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
         	}
+        	$("#footer").show();
         },  
         progressall: function (e, data) {//设置上传进度事件的回调函数  
-        	$.scojs_message('上传中', $.scojs_message.TYPE_OK);
+        	//$.scojs_message('上传中', $.scojs_message.TYPE_OK);
+        	$('#myModal').modal('show');
+        	$("#footer").hide();
         } 
-    });
+     });
+	 
+	// 删除图片
+	$("#showPictures").on('click', '.picturedel', function(e){
+		var return_id = $("#returnId").val();
+		var picture_id = $(this).attr("picture_id");
+		$.post('/returnOrder/delPictureById', {picture_id:picture_id,return_id:return_id}, function(data){
+			var showPictures = $("#showPictures");
+    		showPictures.empty();
+			$.each(data,function(name,value) {
+    			showPictures.append('<img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="img-thumbnail">');
+            });
+		},'json');
+	});	
     
 });
