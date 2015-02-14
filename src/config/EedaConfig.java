@@ -1,5 +1,7 @@
 package config;
 
+import handler.UrlHanlder;
+
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
@@ -82,6 +84,7 @@ import models.yh.delivery.DeliveryPlanOrderMilestone;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 import models.yh.profile.CustomizeField;
+import models.yh.profile.OfficeCofig;
 import models.yh.profile.Route;
 import models.yh.returnOrder.ReturnOrderFinItem;
 
@@ -375,6 +378,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("user_customer", UserCustomer.class);
         
         arp.addMapping("customize_field", CustomizeField.class);
+        arp.addMapping("office_config", OfficeCofig.class);
+        
     }
 
     private void initDBconnector() {
@@ -422,5 +427,9 @@ public class EedaConfig extends JFinalConfig {
             DataInitUtil.initData(cp);
         }
         //DataInitUtil.initData(cp);
+        
+        
+        me.add(new UrlHanlder());
+        
     }
 }

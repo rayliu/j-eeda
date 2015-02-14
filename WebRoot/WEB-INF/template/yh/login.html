@@ -12,7 +12,7 @@
 
     
 
-    <title>源鸿物流信息平台</title>
+    <title>物流信息平台</title>
 
     <!-- Core CSS - Include with every page -->
     <link href="/yh/css/bootstrap.min.css" rel="stylesheet">
@@ -22,9 +22,9 @@
 
 </head>
 
-<body>
+<body style="background-image: url(${SYS_CONFIG.login_bg!'/upload/bg-1.jpg'})">
 
-    <div class="container">
+    <div class="container" >
         <div class="row">
         	<% var msg=errMsg!'';
         	  if(msg!='') {%>
@@ -37,7 +37,7 @@
             	
                 <div class="login-panel panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">源鸿物流</h3>                      
+                        <h3 class="panel-title">${SYS_CONFIG.system_title!'易达物流'}</h3>                      
                     </div>
                     <div class="panel-body">
                         <form role="form" action="/login" id="login" method="post">

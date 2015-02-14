@@ -282,6 +282,9 @@ public class DataInitUtil {
             //自定义字段表，记录不同公司的单据的显示名称
             stmt.execute("create table if not exists customize_field(id bigint auto_increment primary key, order_type varchar(50), office_id bigint, field_code varchar(50), field_name varchar(50), field_desc varchar(500), is_hidden tinyint(1),customize_name varchar(50), remark varchar(500));");
             
+            //自定义系统名字，logo, 登陆背景
+            stmt.execute("create table if not exists office_config(id bigint auto_increment primary key, office_id bigint, system_title varchar(50), logo varchar(250), login_bg varchar(250), domain varchar(250));");
+            
             stmt.close();
             // conn.commit();
             conn.close();
@@ -303,6 +306,7 @@ public class DataInitUtil {
             initPermission(stmt);
             ProfileDataInit.initProfile(stmt);
             
+            
             stmt.executeUpdate("insert into office(office_name, office_person, phone, address,type) values('广州源鸿物流有限公司','侯晓辉','66343695','广州市萝岗区宏明路严田商业街11号','总公司');");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro,belong_office) values('1201', '广州分公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','分公司','这是一家分公司',1);");
             stmt.executeUpdate("insert into office(office_code, office_name, office_person,phone,address,email,type,company_intro,belong_office) values('121', '珠公司', '张三','020-12312322','香洲珠海市香洲区老香洲为农街为农市场','123@qq.com','配送中心RDC','这是一家配送中心RDC',1);");
@@ -310,7 +314,10 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into office(office_name, office_person, phone, address,type,belong_office) values('源鸿物流珠海分公司','陈秋明','13925642153','广东省珠海市','分公司',1);");
             stmt.executeUpdate("insert into office(office_name, office_person, phone, address,type,belong_office) values('上海源鸿物流有限公司','刘涛','18688696863','上海市','分公司',1);");
             stmt.executeUpdate("insert into office(office_name, office_person, phone, address,type,belong_office) values('贵阳源鸿物流有限公司','林伟军','13358215635','贵阳市','分公司',1);");
+            stmt.executeUpdate("insert into office(office_name, office_person, phone, address,type) values('珠海易达信息科技有限公司','Jason Hu','66343695','广州市萝岗区宏明路严田商业街11号','总公司');");
 
+            stmt.executeUpdate("insert into office_config (office_id, system_title, logo, login_bg, domain) values(0, '易达物流', null, '/upload/bg-1.jpg', 'localhost');");
+            
             stmt.executeUpdate("insert into inventory_item(party_id, warehouse_id, product_id,total_quantity) values(1, 1, 4, 100);");
             stmt.executeUpdate("insert into inventory_item(party_id, warehouse_id, product_id,total_quantity) values(1, 30, 4, 100);");//广电，源鸿分仓
             stmt.executeUpdate("insert into user_login(user_name, password, password_hint, office_id) values('d_user1', '123456', '1-6',1);");
