@@ -352,7 +352,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     // 配送单  到达确认
 
-@RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_COMPLETED})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_COMPLETED})
     public void receipt() {
         Long delivery_id = Long.parseLong(getPara("delivery_id"));
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
@@ -430,6 +430,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 		            		returnOrderFinItems.set("amount", transferOrderFinItem.getDouble("amount") + returnOrderFinItems.getDouble("amount")).update();
 		            	}
 					}
+		            
 		            //计算普货合同应收，算没单品的，有单品暂时没做
 		            TransferOrder order = TransferOrder.dao.findById(item.get("transfer_order_id"));
 		            if(!order.getBoolean("no_contract_revenue")){
@@ -459,6 +460,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     	        List<Record> transferOrderItemDetailList = Db.
     					find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
     	        roController.calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
+    	        
             //}
         }
         /*// TODO 减库存,以下是针对单品处理,普通货品的配送暂未处理

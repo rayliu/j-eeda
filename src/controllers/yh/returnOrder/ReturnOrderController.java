@@ -511,7 +511,8 @@ public class ReturnOrderController extends Controller {
 		List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryOrder.get("id"));
 		TransferOrder transferOrder = TransferOrder.dao.findById(deliveryOrderItems.get(0).get("transfer_order_id"));
 		String chargeType = transferOrder.get("charge_type");
-
+		//将保险单的应收费用显示在回单应收里面
+		InsertinsuranceFin(deliveryOrder);
 		Long deliveryOrderId = deliveryOrder.getLong("id");
 		// 找到该回单对应的配送单中的ATM
 		Long customerId = deliveryOrder.getLong("customer_id");
@@ -732,6 +733,8 @@ public class ReturnOrderController extends Controller {
 		
 		// 运输单的始发地, 配送单的目的地
 		// 算最长的路程的应收
+		//直送增加保险费用
+		
 		if("perUnit".equals(chargeType)){//计件
 			calcRevenuePerUnit(returnOrderId, chargeType, transferOrderId, customerContract);
 		}else if ("perCar".equals(chargeType)){//整车
@@ -827,7 +830,7 @@ public class ReturnOrderController extends Controller {
 		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
 		returnOrderFinItem.set("create_date", now);
 		returnOrderFinItem.set("create_name", "system");
-		returnOrderFinItem.set("contract_id", contract.get("id"));
+		//returnOrderFinItem.set("contract_id", contract.get("id"));
 		
 		returnOrderFinItem.save();
 	}
@@ -1244,6 +1247,39 @@ public class ReturnOrderController extends Controller {
         renderJson(Map); 
     }
     
+    /**
+     * ATM配送时将保险费用带到回单
+     */
+    public void InsertinsuranceFin(DeliveryOrder deliveryOrder){
+    	java.util.Date utilDate = new java.util.Date();
+		java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
+		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select * from return_order where delivery_order_id = ?",deliveryOrder.get("id"));
+		ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
+		Fin_item fi =  Fin_item.dao.findFirst("select * from fin_item where name = '保险费' and type = '应收'");
+		returnOrderFinItem.set("fin_item_id", fi.get("id"));
+		Record record = Db.findFirst("select sum(amount * income_rate) as total_amount from delivery_order dor "
+									+ " left join transfer_order_item_detail toid on  dor.id = toid.delivery_id "
+									+ " left join insurance_fin_item ifi on ifi.transfer_order_item_id = toid.item_id where dor.id = ?",deliveryOrder.get("id"));
+		returnOrderFinItem.set("amount", record.get("total_amount"));        		
+    	
+		//returnOrderFinItem.set("transfer_order_id", transferOrderId);
+		returnOrderFinItem.set("return_order_id", returnOrder.get("id"));
+		returnOrderFinItem.set("status", "未完成");
+		returnOrderFinItem.set("fin_type", "charge");// 类型是应收
+		//returnOrderFinItem.set("contract_id", null);// 类型是应收
+		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
+		returnOrderFinItem.set("create_date", now);
+		returnOrderFinItem.set("create_name", "system");
+		//returnOrderFinItem.set("contract_id", contract.get("id"));
+		
+		returnOrderFinItem.save();
+    }
+    /**
+     * TODO:ATM直送时将保险费用带到回单
+     */
+    public void addInsuranceFin(DepartOrder derpartOrder,ReturnOrder returnOrder){
+    	
+    }
     
     public void saveFile(){
     	String id = getPara("return_id");

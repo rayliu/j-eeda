@@ -79,9 +79,11 @@
             	 "sWidth": "80px",
             	 "sClass": "insurance_amount", 
                  "fnRender": function(obj) {
-                	var str = obj.aData.INSURANCE_AMOUNT.toFixed(2);
+                	var str = obj.aData.INSURANCE_AMOUNT;
                  	if(obj.aData.INSURANCE_AMOUNT == null){
                  		str = "";
+                 	}else{
+                 		str = str.toFixed(2);
                  	}
                  	return "<span>"+str+"</span>";
              }},

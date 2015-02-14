@@ -363,8 +363,11 @@ public class TransferOrderMilestoneController extends Controller {
                 }
             }*/
             
-            // 生成应收
-	        ReturnOrderController roController= new ReturnOrderController();
+            
+	        ReturnOrderController roController= new ReturnOrderController(); 
+	        //报保险单费用带到回单没做
+	        roController.addInsuranceFin(departOrder, returnOrder);
+	        //根据合同生成费用
 	        roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
         }
         renderJson("{\"success\":true}");
