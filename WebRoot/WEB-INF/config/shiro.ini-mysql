@@ -11,8 +11,8 @@ ds = com.mysql.jdbc.jdbc2.optional.MysqlDataSource
 ds.serverName = localhost
 ds.user = root
 ds.password =root
-ds.databaseName = eeda
-ds.url = jdbc:mysql://localhost:3306/eeda
+ds.databaseName = eeda_yh
+ds.url = jdbc:mysql://localhost:3306/eeda_yh
 jdbcRealm = org.apache.shiro.realm.jdbc.JdbcRealm
 jdbcRealm.permissionsLookupEnabled = true
 jdbcRealm.authenticationQuery = SELECT password FROM user_login WHERE user_name = ?

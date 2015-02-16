@@ -268,7 +268,7 @@
 	                                    	</div>
 		                                    <div class="col-lg-12" style="clear:both;" id="showPictures">
 		                                    	<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
-		                                    		<div class="form-group"><img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail"><p><a class="picturedel" picture_id="${orderAttachmentFile.ID!''}" >删除</a></p></div>
+		                                    		<div style="width:220px;height:220px;float:left;" ><img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" style="width:200px;height:200px;"><p><a class="picturedel" picture_id="${orderAttachmentFile.ID!''}" >删除</a></p></div>
    												<%		
    													}
    												%>

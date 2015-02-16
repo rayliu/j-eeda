@@ -564,7 +564,7 @@
         		var showPictures = $("#showPictures");
         		showPictures.empty();
         		$.each(data.result.cause,function(name,value) {
-        			showPictures.append('<img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="img-thumbnail">');
+        			showPictures.append('<div style="width:220px;height:220px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" style="width:200px;height:200px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
                 });
         	}else{
         		$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
@@ -586,7 +586,7 @@
 			var showPictures = $("#showPictures");
     		showPictures.empty();
 			$.each(data,function(name,value) {
-    			showPictures.append('<img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="img-thumbnail">');
+    			showPictures.append('<div style="width:220px;height:220px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" style="width:200px;height:200px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
             });
 		},'json');
 	});	
