@@ -418,16 +418,21 @@ public class InsuranceOrderController extends Controller {
     	if(insuranceFinItem != null){
     		if(value != null && !"".equals(value)){
 	    		insuranceFinItem.set(name, value);
-	    		insuranceFinItem.set("insurance_amount", insuranceAmount);
+	    		//保存 应付保费
+	    		if("rate".equals(name)){
+	    			insuranceFinItem.set("insurance_amount", insuranceAmount);
+	    		}/*else if("rate".equals(name)){//总保额，表中无字段，暂不进行保存
+	    			insuranceFinItem.set("insurance_amount", insuranceAmount);
+	    		}*/
 	    		insuranceFinItem.update();
     		}
     		
     		if("amount".equals(name) && !"".equals(value)){
-	    		Long transferItemId = insuranceFinItem.get("transfer_order_item_id");
-	    		insuranceFinItem = InsuranceFinItem.dao.findFirst("select ifi.* from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where ifi.transfer_order_item_id = ? and type = ? and name = ?", transferItemId, "应收", "保险费");
-	
-	    		insuranceFinItem.set(name, value);
-	    		insuranceFinItem.update();
+	    		insuranceFinItem = InsuranceFinItem.dao.findFirst("select ifi.* from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where ifi.transfer_order_item_id = ? and type = ? and name = ?", insuranceFinItem.get("transfer_order_item_id"), "应收", "保险费");
+	    		if(insuranceFinItem != null){
+	    			insuranceFinItem.set(name, value);
+		    		insuranceFinItem.update();
+	    		}
     		}
     	}else{
     		insuranceFinItem = new InsuranceFinItem();

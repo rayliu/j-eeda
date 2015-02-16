@@ -9,7 +9,7 @@
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
-        "bServerSide": true,
+        "bServerSide": false,
      	 "oLanguage": {
              "sUrl": "/eeda/dataTables.ch.txt"
          },
@@ -17,7 +17,7 @@
  			$(nRow).attr({item_id: aData.ITEM_ID, fin_id: aData.FIN_ID});
  			return nRow;
  		 },
-         "sAjaxSource": "/insuranceOrder/getInitPickupOrderItems",
+         //"sAjaxSource": "/insuranceOrder/getInitPickupOrderItems",
          "aoColumns": [
              { "mDataProp": "CUSTOMER" ,"sWidth": "150px"},
              { "mDataProp": "ORDER_NO" ,"sWidth": "80px"},      
@@ -79,13 +79,11 @@
             	 "sWidth": "80px",
             	 "sClass": "insurance_amount", 
                  "fnRender": function(obj) {
-                	var str = obj.aData.INSURANCE_AMOUNT;
                  	if(obj.aData.INSURANCE_AMOUNT == null){
-                 		str = "";
+                 		return "";
                  	}else{
-                 		str = str.toFixed(2);
+                 		return obj.aData.INSURANCE_AMOUNT.toFixed(2);
                  	}
-                 	return "<span>"+str+"</span>";
              }},
              {"mDataProp": "INSURANCE_NO",
             	 "sWidth": "100px",
@@ -108,6 +106,7 @@
  	     var tr_item=$("#tr_itemid_list").val();
  	     var item_detail=$("#item_detail").val();
  	     var insuranceOrderId=$("#insuranceOrderId").val();
+ 	     pickupItemTable.fnSettings().oFeatures.bServerSide = true; 
  	     pickupItemTable.fnSettings().sAjaxSource = "/insuranceOrder/getInitPickupOrderItems?insuranceOrderId="+insuranceOrderId+"&localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail,
  	     pickupItemTable.fnDraw();
  	 });
@@ -118,26 +117,30 @@
  		var itemId = $(this).parent().parent().attr("item_id");
  		var name = $(this).attr("name");
  		var value = $(this).val();
- 		if(name == 'amount'){
- 			var rate = $(this).parent().siblings(".rate")[0].children[0].value;
- 			if(rate != null && rate != '' && value != null && value != ''){
- 				$(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML = (value * rate).toFixed(2);
- 			}
- 			
- 		}else if(name == 'rate'){
- 			var amount = $(this).parent().siblings(".fin_amount")[0].children[0].value;
- 			if(amount != null && amount != '' && value != null && value != ''){
- 				$(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML = (value * amount).toFixed(2);
- 			}		
+ 		if(value != ""){
+ 			var insuranceAmount = 0;
+	 		if(name == 'amount' && !isNaN(value)){
+	 			var amount = $(this).parent().parent().find("td").eq(4).text();
+	 			if(amount != null && amount != ''){
+	 				insuranceAmount = (value * amount).toFixed(2);
+	 		 		$(this).parent().parent().find("td").eq(8).text(insuranceAmount);
+	 			}
+	 		}else if(name == 'rate' && !isNaN(value)){
+	 			var totalAmount = $(this).parent().parent().find("td").eq(8).text();
+	 			if(totalAmount != null && totalAmount != ''){
+	 				insuranceAmount = (value * totalAmount).toFixed(2);
+	 				$(this).parent().parent().find("td").eq(12).text(insuranceAmount);
+	 			}		
+	 		}else{
+	 			
+	 		}
+ 			var insuranceOrderId = $("#insuranceOrderId").val();
+			$.post('/insuranceOrder/updateInsuranceOrderFinItem', {itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value, insuranceAmount:insuranceAmount}, function(data){
+	 			if(!data.success){
+	 				alert("修改失败!");
+	 			}
+	     	},'json');
  		}
- 		var insuranceAmount = $(this).parent().siblings(".insurance_amount")[0].children[0].innerHTML;
- 		var insuranceOrderId = $("#insuranceOrderId").val();
- 		$.post('/insuranceOrder/updateInsuranceOrderFinItem', {itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value, insuranceAmount:insuranceAmount}, function(data){
- 			if(data.success){
- 			}else{
- 				alert("修改失败!");
- 			}
-     	},'json');
  	});
  	
  	var tr_itemid_list=[];
