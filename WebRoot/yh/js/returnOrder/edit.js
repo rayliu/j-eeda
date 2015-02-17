@@ -398,6 +398,17 @@
                     }
             }}, 
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
+			{"mDataProp":"CREATE_NAME",
+				"sWidth": "130px",
+				"fnRender":function(obj) {
+					if(obj.aData.CREATE_NAME == 'system'){
+		        		return "系统计算费用";
+		        	}else if(obj.aData.CREATE_NAME == 'user'){
+		        		return "手工录入费用";
+		        	}else if(obj.aData.CREATE_NAME == 'insurance'){
+		        		return "保险费用";
+		        	}
+			}},
 			{  
                 "mDataProp": null, 
                 "sWidth": "60px",  
@@ -580,15 +591,17 @@
 	 
 	// 删除图片
 	$("#showPictures").on('click', '.picturedel', function(e){
-		var return_id = $("#returnId").val();
-		var picture_id = $(this).attr("picture_id");
-		$.post('/returnOrder/delPictureById', {picture_id:picture_id,return_id:return_id}, function(data){
-			var showPictures = $("#showPictures");
-    		showPictures.empty();
-			$.each(data,function(name,value) {
-    			showPictures.append('<div style="width:220px;height:220px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" style="width:200px;height:200px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
-            });
-		},'json');
+		if(confirm("确定删除吗？")){
+			var return_id = $("#returnId").val();
+			var picture_id = $(this).attr("picture_id");
+			$.post('/returnOrder/delPictureById', {picture_id:picture_id,return_id:return_id}, function(data){
+				var showPictures = $("#showPictures");
+	    		showPictures.empty();
+				$.each(data,function(name,value) {
+	    			showPictures.append('<div style="width:220px;height:220px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" style="width:200px;height:200px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
+	            });
+			},'json');
+		}
 	});	
     
 });
