@@ -22,26 +22,25 @@ public class OrderNoGenerator {
 	//TODO：如果需要按每张单的前缀来生成序列号，可以多加一个Map来记录
 	
 	public synchronized static String getNextOrderNo(String orderPrefix) {
-		if("00000".equals(count)){
+		//if("00000".equals(count)){
 			initCountFromDB();
-		}
-		long No = 0;
+		//}
+//		long No = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String nowdate = sdf.format(new Date());
-		No = Long.parseLong(nowdate);
-		if (!(String.valueOf(No)).equals(dateValue)) {
-			count = "00000";
-			dateValue = String.valueOf(No);
-		}
-		String num = String.valueOf(No);
-		num += getNo(count);
-		num = orderPrefix + num;
+//		No = Long.parseLong(nowdate);
+//		if (!(String.valueOf(No)).equals(dateValue)) {
+//			count = "00000";
+//			dateValue = String.valueOf(No);
+//		}
+		
+		String orderNo = orderPrefix +nowdate+ getNo(count);
 		
 		CustomizeField cf = CustomizeField.dao.findFirst("select * from customize_field where order_type='latestOrderNo'");
 		if(cf!=null){
-			cf.set("field_code", num).update();
+			cf.set("field_code", orderNo).update();
 		}
-		return num;
+		return orderNo;
 	}
 
 	public synchronized static void initCountFromDB() {
@@ -50,7 +49,7 @@ public class OrderNoGenerator {
 		if(cf!=null){
 			previousNo = cf.get("field_code");
 			//不管前缀长度，后面的数字长度是 13， 2011010100001
-			String ymd = StringUtils.right(previousNo, 13).substring(0, 7); // 获取年月日字符串
+			String ymd = StringUtils.right(previousNo, 13).substring(0, 8); // 获取年月日字符串
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			String nowdate = sdf.format(new Date());
