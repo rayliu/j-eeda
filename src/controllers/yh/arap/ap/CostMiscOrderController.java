@@ -29,6 +29,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -148,8 +149,7 @@ public class CostMiscOrderController extends Controller {
 			if(getPara("sp_id") != null && !"".equals(getPara("sp_id"))){
 				arapMiscCostOrder.set("payee_id", getPara("sp_id"));
 			}
-			String sql = "select * from arap_misc_cost_order order by id desc limit 0,1";
-			arapMiscCostOrder.set("order_no", OrderNoUtil.getOrderNo(sql,"SGFK"));
+			arapMiscCostOrder.set("order_no", OrderNoGenerator.getNextOrderNo("SGFK"));
 			if(getPara("costCheckOrderIds") != null && !"".equals(getPara("costCheckOrderIds"))){
 				arapMiscCostOrder.set("cost_order_id", getPara("costCheckOrderIds"));
 			}

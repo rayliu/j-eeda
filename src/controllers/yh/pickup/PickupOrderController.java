@@ -39,6 +39,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -602,9 +603,8 @@ public class PickupOrderController extends Controller {
         String[] cargoIds = getPara("cargoIds").split(",");
         /*String[] cargoNumbers = getPara("cargoNumbers").split("&");*/
         if (pickId == null || "".equals(pickId)) {
-        	String sql = "select * from depart_order where combine_type = '"+DepartOrder.COMBINE_TYPE_PICKUP+"' order by id desc limit 0,1";
             pickupOrder = new DepartOrder();
-            pickupOrder.set("depart_no", OrderNoUtil.getOrderNo(sql, "PC"));
+            pickupOrder.set("depart_no", OrderNoGenerator.getNextOrderNo("PC"));
             pickupOrder.set("status", getPara("status"));
             pickupOrder.set("charge_type", getPara("chargeType"));
             pickupOrder.set("create_by", getPara("create_by"));

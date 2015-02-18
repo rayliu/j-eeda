@@ -23,6 +23,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.profile.CarinfoController;
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 
 @RequiresAuthentication
@@ -284,8 +285,7 @@ public class CarReimbursementController extends Controller {
 			if(orderId==null || "".equals(orderId)){
 				order = new ReimbursementOrder();
 				//行车报销单号
-				String sql = "select * from reimbursement_order order by id desc limit 0,1";
-				String orderNo = OrderNoUtil.getOrderNo(sql,"XCBX");
+				String orderNo = OrderNoGenerator.getNextOrderNo("XCBX");
 				order.set("order_no", orderNo);
 				order.set("car_summary_order_ids", car_summary_order_ids);				
 				order.set("create_id", LoginUserController.getLoginUserId(this));

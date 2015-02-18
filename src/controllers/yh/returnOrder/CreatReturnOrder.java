@@ -12,6 +12,7 @@ import models.yh.delivery.DeliveryOrder;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 
 
@@ -24,8 +25,7 @@ public class CreatReturnOrder{
 	    UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
 	    Date createDate = Calendar.getInstance().getTime();//当前时间
 	    
-	    String sql = "select * from return_order order by id desc limit 0,1";
-	    String orderNo = OrderNoUtil.getOrderNo(sql, "HD");
+	    String orderNo = OrderNoGenerator.getNextOrderNo("HD");
 	    ReturnOrder re = new ReturnOrder();
 		re.set("order_no", orderNo);
 		re.set("create_date", createDate);

@@ -30,6 +30,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -258,8 +259,7 @@ public class CostCheckOrderController extends Controller {
 	    	arapAuditOrder.update();
     	}else{
 	    	arapAuditOrder = new ArapCostOrder();
-	        String sql = "select * from arap_cost_order order by id desc limit 0,1";
-	    	arapAuditOrder.set("order_no", OrderNoUtil.getOrderNo(sql, "YFDZ"));
+	    	arapAuditOrder.set("order_no", OrderNoGenerator.getNextOrderNo("YFDZ"));
 	    	//arapAuditOrder.set("order_type", );
 	    	String sp_id = getPara("sp_id");
 	    	if(sp_id == null || "".equals(sp_id)){

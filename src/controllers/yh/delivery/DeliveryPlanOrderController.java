@@ -24,6 +24,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.profile.CarinfoController;
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 
 @RequiresAuthentication
@@ -261,12 +262,11 @@ public class DeliveryPlanOrderController extends Controller {
 		String deliveryOrderId[] = deliveryOrderIds.split(",");
 		DeliveryPlanOrder deliveryPlanOrder = null;
 		if (deliveryPlanOrderId == null || "".equals(deliveryPlanOrderId)) {
-			String sql = "select * from delivery_plan_order order by id desc limit 0,1";
 			String name = (String) currentUser.getPrincipal();
 	        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
 	        System.out.println(",.,.,.,.,.,.,.,.,.,.,..,.,,.,.,.,.:"+users.get("office_id"));
 			deliveryPlanOrder = new DeliveryPlanOrder();
-            deliveryPlanOrder.set("order_no", OrderNoUtil.getOrderNo(sql, "PSPC"))
+            deliveryPlanOrder.set("order_no", OrderNoGenerator.getNextOrderNo("PSPC"))//配送排车单
             .set("status", "新建").set("create_id", users.get("id")).set("create_stamp", new Date())
             .set("sp_id", spId).set("turnout_time", turnoutIime).set("car_no", carNo)
             .set("driver", driver).set("phone", phone).set("carinfo_id", carInfoId)

@@ -30,6 +30,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -152,7 +153,7 @@ public class ChargeMiscOrderController extends Controller {
 				arapMiscChargeOrder.set("payee_id", getPara("sp_id"));
 			}
 			String sql = "select * from arap_misc_charge_order order by id desc limit 0,1";
-			arapMiscChargeOrder.set("order_no", OrderNoUtil.getOrderNo(sql,"SGSK"));
+			arapMiscChargeOrder.set("order_no", OrderNoGenerator.getNextOrderNo("SGSK") );
 			if(getPara("chargeCheckOrderIds") != null && !"".equals(getPara("chargeCheckOrderIds"))){
 				arapMiscChargeOrder.set("charge_order_id", getPara("chargeCheckOrderIds"));
 			}

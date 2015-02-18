@@ -31,6 +31,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -271,8 +272,7 @@ public class ChargeCheckOrderController extends Controller {
 			arapAuditOrder.set("create_by", getPara("create_by"));
 			arapAuditOrder.set("create_stamp", new Date());
 			arapAuditOrder.set("remark", getPara("remark"));
-			String sql = "select * from arap_charge_order order by id desc limit 0,1";
-			arapAuditOrder.set("order_no", OrderNoUtil.getOrderNo(sql, "YSDZ"));
+			arapAuditOrder.set("order_no", OrderNoGenerator.getNextOrderNo("YSDZ"));
 			if(getParaToDate("begin_time") != null){
 				arapAuditOrder.set("begin_time", getPara("begin_time")); 
 			}

@@ -33,6 +33,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -239,7 +240,7 @@ public class ChargeInvoiceOrderController extends Controller {
     	}else{
     		arapAuditInvoice = new ArapChargeInvoice();
             String sql = "select * from arap_charge_invoice order by id desc limit 0,1";
-            arapAuditInvoice.set("order_no", OrderNoUtil.getOrderNo(sql,"YSFP"));
+            arapAuditInvoice.set("order_no", OrderNoGenerator.getNextOrderNo("YSFP") );
     		arapAuditInvoice.set("create_by", getPara("create_by"));
     		arapAuditInvoice.set("status", getPara("status"));
 	    	arapAuditInvoice.set("create_stamp", new Date());

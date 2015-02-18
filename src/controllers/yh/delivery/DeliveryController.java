@@ -37,6 +37,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -1006,8 +1007,7 @@ public class DeliveryController extends Controller {
 	public void deliverySave() {
         String car_type = getPara("car_type");// 供应商计费类型, 如果是整车，需要知道整车类型
         String ltlPriceType = getPara("ltlUnitType");//如果是零担，需要知道零担计费类型：按体积，按重量
-		String sql = "select * from delivery_order order by id desc limit 0,1";
-		String orderNo = OrderNoUtil.getOrderNo(sql,"PS");
+		String orderNo = OrderNoGenerator.getNextOrderNo("PS");
 		String deliveryid = getPara("delivery_id");
 		DeliveryOrder deliveryOrder = null;
 		String notifyId = getPara("notify_id");

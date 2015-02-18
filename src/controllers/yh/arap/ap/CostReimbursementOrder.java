@@ -28,6 +28,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -71,8 +72,7 @@ public class CostReimbursementOrder extends Controller {
 		ReimbursementOrder rei = null;
 		if (id == null || "".equals(id)) {
 			// 单号
-			String sql = "select * from reimbursement_order order by id desc limit 0,1";
-			orderNo = OrderNoUtil.getOrderNo(sql, "YFBX");
+			orderNo = OrderNoGenerator.getNextOrderNo("YFBX");
 			
 			String name = (String) currentUser.getPrincipal();
 			UserLogin users = UserLogin.dao

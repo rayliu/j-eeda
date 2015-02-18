@@ -22,6 +22,7 @@ import models.yh.profile.Contact;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 public class TransferOrderExeclHandeln extends TransferOrderController{
 	
@@ -238,8 +239,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 	    	String name = (String) currentUser.getPrincipal();
 			UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
 	    	SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");
-	    	String sql = "select * from transfer_order order by id desc limit 0,1";
-			String orderNo = OrderNoUtil.getOrderNo(sql, "YS");
+			String orderNo = OrderNoGenerator.getNextOrderNo("YS");
 			Date planningTime = dbDataFormat.parse(content.get("计划日期"));
 			Date arrivalTime = dbDataFormat.parse(content.get("预计到货日期"));
 			

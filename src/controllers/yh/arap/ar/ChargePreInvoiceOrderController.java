@@ -28,6 +28,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -187,8 +188,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.update();
 		} else {
 			arapAuditInvoiceApplication = new ArapChargeInvoiceApplication();
-			String sql = "select * from arap_charge_invoice_application_order order by id desc limit 0,1";
-			arapAuditInvoiceApplication.set("order_no", OrderNoUtil.getOrderNo(sql,"YSSQ"));
+			arapAuditInvoiceApplication.set("order_no", OrderNoGenerator.getNextOrderNo("YSSQ"));
 			arapAuditInvoiceApplication.set("status", "新建");
 			arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));

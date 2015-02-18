@@ -41,6 +41,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -856,10 +857,9 @@ public class DepartOrderController extends Controller {
         
         DepartOrder dp = null;
         if ("".equals(depart_id)) {
-        	 String sql = "select * from depart_order where combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by id desc limit 0,1";
             dp = new DepartOrder();
             dp.set("charge_type", charge_type).set("create_by", users.get(0).get("id")).set("create_stamp", createDate)
-                    .set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", OrderNoUtil.getOrderNo(sql, "FC"))
+                    .set("combine_type", DepartOrder.COMBINE_TYPE_DEPART).set("depart_no", OrderNoGenerator.getNextOrderNo("FC"))
                     .set("remark", getPara("remark")).set("car_follow_name", getPara("car_follow_name"))
                     .set("car_follow_phone", getPara("car_follow_phone")).set("route_from", getPara("route_from"))
                     .set("route_to", getPara("route_to")).set("status", getPara("status"))
@@ -1218,8 +1218,7 @@ public class DepartOrderController extends Controller {
         if ("已签收".equals(order_state)) {
             // 生成回单
             Date createDate = Calendar.getInstance().getTime();
-            String sql = "select * from return_order order by id desc limit 0,1";
-            String orderNo = OrderNoUtil.getOrderNo(sql,"HD");
+            String orderNo = OrderNoGenerator.getNextOrderNo("HD");
             
             ReturnOrder returnOrder = new ReturnOrder();
             returnOrder.set("order_no", orderNo);

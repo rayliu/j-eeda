@@ -37,6 +37,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.returnOrder.ReturnOrderController;
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -378,8 +379,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         renderJson(map);
 
         Date createDate = Calendar.getInstance().getTime();
-        String sql = "select * from return_order order by id desc limit 0,1";
-        String orderNo = OrderNoUtil.getOrderNo(sql, "HD");
+        String orderNo = OrderNoGenerator.getNextOrderNo("HD");
         
         ReturnOrder returnOrder = new ReturnOrder();
         

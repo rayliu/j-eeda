@@ -32,6 +32,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -334,8 +335,7 @@ public class InsuranceOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
 
-        String sql = "select * from insurance_order order by id desc limit 0,1";
-        setAttr("order_no", OrderNoUtil.getOrderNo(sql, "BX"));
+        setAttr("order_no", OrderNoGenerator.getNextOrderNo("BX"));
 
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);

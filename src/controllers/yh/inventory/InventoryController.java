@@ -32,6 +32,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -340,8 +341,7 @@ public class InventoryController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCREATE,PermissionConstant.PERMISSION_WO_INUPDATE},logical=Logical.OR)
     public void gateInSave() {
         
-    	String sql = "select * from warehouse_order where order_type ='入库' order by id desc limit 0,1";
-        String orderNo = OrderNoUtil.getOrderNo(sql, "RK");
+        String orderNo = OrderNoGenerator.getNextOrderNo("RK");
         
         WarehouseOrder warehouseOrder = new WarehouseOrder();
         String gateInId = getPara("warehouseorderId");
@@ -369,8 +369,7 @@ public class InventoryController extends Controller {
     // 保存出库单
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTCREATE,PermissionConstant.PERMISSION_WO_OUTUPDATE},logical=Logical.OR)
     public void gateOutSave() {
-    	String sql = "select * from warehouse_order where order_type ='出库' order by id desc limit 0,1";
-        String orderNo = OrderNoUtil.getOrderNo(sql, "CK");
+        String orderNo = OrderNoGenerator.getNextOrderNo("CK");
         
         WarehouseOrder warehouseOrder = new WarehouseOrder();
         String gateOutId = getPara("warehouseorderId");
@@ -657,8 +656,7 @@ public class InventoryController extends Controller {
     public void creatTransferOrder(String id, List<UserLogin> users, Date createDate, List<Record> warehouseItem,
             List<Record> inventory) {
         if (inventory.size() > 0) {
-        	String sql = "select * from transfer_order order by id desc limit 0,1";
-            String orderNo = OrderNoUtil.getOrderNo(sql, "YS");
+            String orderNo = OrderNoGenerator.getNextOrderNo("YS");
             
             TransferOrder transferOrder = new TransferOrder();
             Party party = Party.dao

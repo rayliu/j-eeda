@@ -43,6 +43,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.ReaderXLS;
@@ -455,14 +456,13 @@ public class TransferOrderController extends Controller {
 		TransferOrder transferOrder = null;
 		String cargoNature = getPara("cargoNature");
 		if (order_id == null || "".equals(order_id)) {
-			String sql = "select * from transfer_order order by id desc limit 0,1";
 			transferOrder = new TransferOrder();
 			if (!"".equals(spId) && spId != null) {
 				transferOrder.set("sp_id", spId);
 			}
 			transferOrder.set("customer_id", customerId);
 			transferOrder.set("status", getPara("status"));
-			transferOrder.set("order_no", OrderNoUtil.getOrderNo(sql, "YS"));
+			transferOrder.set("order_no", OrderNoGenerator.getNextOrderNo("YS"));
 			transferOrder.set("create_by", getPara("create_by"));
 			if ("cargo".equals(cargoNature)) {
 				transferOrder.set("cargo_nature_detail",
@@ -623,8 +623,7 @@ public class TransferOrderController extends Controller {
 
 	// 创建发车单
 	private void createDepartOrder(TransferOrder transferOrder) {
-		String sql = "select * from depart_order where combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by id desc limit 0,1";
-		String orderNo = OrderNoUtil.getOrderNo(sql, "FC");
+		String orderNo = OrderNoGenerator.getNextOrderNo("FC"); 
 		
 		String name = (String) currentUser.getPrincipal();
 		UserLogin users = UserLogin.dao
@@ -654,8 +653,7 @@ public class TransferOrderController extends Controller {
 	private void updateDepartOrder(TransferOrder transferOrder,
 			DepartTransferOrder departTransferOrder) {
 		
-		String sql = "select * from depart_order where combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by id desc limit 0,1";
-		String orderNo = OrderNoUtil.getOrderNo(sql, "FC");
+		String orderNo = OrderNoGenerator.getNextOrderNo("FC");
 		
 		String name = (String) currentUser.getPrincipal();
 		UserLogin users = UserLogin.dao

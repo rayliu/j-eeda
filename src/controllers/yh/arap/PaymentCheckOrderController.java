@@ -25,6 +25,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -76,7 +77,7 @@ public class PaymentCheckOrderController extends Controller {
         setAttr("create_by", users.get(0).get("id"));
 
         String sql = "select * from arap_audit_order order by id desc limit 0,1";
-        setAttr("order_no", OrderNoUtil.getOrderNo(sql, "DZ"));
+        setAttr("order_no", OrderNoGenerator.getNextOrderNo("DZ"));
 
         UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("userLogin", userLogin);

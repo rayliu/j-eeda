@@ -36,6 +36,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.profile.CarinfoController;
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
@@ -357,8 +358,7 @@ public class CarSummaryController extends Controller {
         	java.util.Date utilDate = new java.util.Date();
         	java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
         	//调车单号
-        	String sql = "select * from car_summary_order order by id desc limit 0,1";
-        	orderNo = OrderNoUtil.getOrderNo(sql,"XC");
+        	orderNo = OrderNoGenerator.getNextOrderNo("XC");
         	
         	result = carSummaryOrder.set("order_no", orderNo).set("car_no", carNo).set("main_driver_name", mainDriverName)
             		.set("main_driver_amount", mainDriverAmount).set("minor_driver_name", minorDriverName)
