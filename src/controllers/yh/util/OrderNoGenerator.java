@@ -3,18 +3,28 @@ package controllers.yh.util;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
+import models.DepartOrder;
+import models.yh.profile.CustomizeField;
+
 /**
  * generate Order number
  * 
+ * All use one counter
  */
 public class OrderNoGenerator {
 	
 	
 	private static String count = "00000";
 	private static String dateValue = "20110101";
+	//如果服务器重启了，当前的序列号就从数据库找到最后的号码，然后接着计数
 	//TODO：如果需要按每张单的前缀来生成序列号，可以多加一个Map来记录
 	
 	public synchronized static String getNextOrderNo(String orderPrefix) {
+		if("00000".equals(count)){
+			initCountFromDB();
+		}
 		long No = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String nowdate = sdf.format(new Date());
@@ -26,9 +36,35 @@ public class OrderNoGenerator {
 		String num = String.valueOf(No);
 		num += getNo(count);
 		num = orderPrefix + num;
+		
+		CustomizeField cf = CustomizeField.dao.findFirst("select * from customize_field where order_type='latestOrderNo'");
+		if(cf!=null){
+			cf.set("field_code", num).update();
+		}
 		return num;
 	}
 
+	public synchronized static void initCountFromDB() {
+		String previousNo="";
+		CustomizeField cf = CustomizeField.dao.findFirst("select * from customize_field where order_type='latestOrderNo'");
+		if(cf!=null){
+			previousNo = cf.get("field_code");
+			//不管前缀长度，后面的数字长度是 13， 2011010100001
+			String ymd = StringUtils.right(previousNo, 13).substring(0, 7); // 获取年月日字符串
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			String nowdate = sdf.format(new Date());
+			if(ymd.equals(nowdate)){//如果年月日 =今天， 获取流水号
+				count = StringUtils.right(previousNo, 5); // 获取流水号
+			}
+		}else{
+			cf = new CustomizeField();
+			cf.set("order_type", "latestOrderNo");
+			cf.set("field_code", "2011010100001");
+			cf.save();
+		}
+        
+	}
 
 	/**
 	 * 返回当天的订单数+1
