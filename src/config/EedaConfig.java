@@ -140,7 +140,7 @@ public class EedaConfig extends JFinalConfig {
         BeetlRenderFactory.groupTemplate.registerFunctionPackage("shiro", new ShiroExt());
 
         //没有权限时跳转到login
-        me.setErrorView(401, "/yh/login.html");//401 authenticate err
+        me.setErrorView(401, "/yh/noLogin.html");//401 authenticate err
         me.setErrorView(403, "/yh/noPermission.html");// authorization err
         
         //内部出错跳转到对应的提示页面，需要考虑提供更详细的信息。
