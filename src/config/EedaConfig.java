@@ -106,6 +106,9 @@ import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.SqlReporter;
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import com.jfinal.plugin.c3p0.C3p0Plugin;
+import com.jfinal.weixin.demo.WeixinApiController;
+import com.jfinal.weixin.demo.WeixinMsgController;
+import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
 public class EedaConfig extends JFinalConfig {
     private Logger logger = Logger.getLogger(EedaConfig.class);
@@ -128,8 +131,13 @@ public class EedaConfig extends JFinalConfig {
 
     @Override
 	public void configConstant(Constants me) {
-
-        me.setDevMode(true);
+        //加载配置文件    	
+        loadPropertyFile("app_config.txt");
+    	
+    	// ApiConfigKit 设为开发模式可以在开发阶段输出请求交互的 xml 与 json 数据
+    	ApiConfigKit.setDevMode(me.getDevMode());
+        
+    	me.setDevMode(true);
 
         BeetlRenderFactory templateFactory = new BeetlRenderFactory();
         me.setMainRenderFactory(templateFactory);
@@ -256,7 +264,9 @@ public class EedaConfig extends JFinalConfig {
         me.add("/report", controllers.yh.report.ReportController.class, contentPath);
         me.add("/statusReport", controllers.yh.statusReport.StatusReportColler.class, contentPath);
         
-        
+        //微信路由
+        me.add("/msg", WeixinMsgController.class);
+		me.add("/api", WeixinApiController.class, "/api");
         
     }
 
@@ -265,9 +275,6 @@ public class EedaConfig extends JFinalConfig {
         // 加载Shiro插件, for backend notation, not for UI
     	me.add(new ShiroPlugin(routes));
     	
-    	
-        loadPropertyFile("app_config.txt");
-
         mailUser = getProperty("mail_user_name");
         mailPwd = getProperty("mail_pwd");
         // H2 or mysql
