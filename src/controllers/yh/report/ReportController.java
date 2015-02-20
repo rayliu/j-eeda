@@ -59,7 +59,7 @@ public class ReportController extends Controller {
         	hm.put("id", id);
     	}
 		try {
-			JasperPrint print = JasperFillManager.fillReport(fileName, hm, DbKit.getConnection());
+			JasperPrint print = JasperFillManager.fillReport(fileName, hm, DbKit.getConfig().getConnection());
 			JasperExportManager.exportReportToPdfFile(print, outFileName);
 		} catch (JRException e) {
 			e.printStackTrace();

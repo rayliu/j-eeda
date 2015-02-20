@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Jfinal Project" default="h2">
+<project name="Jfinal Project-1.9" basedir="." default="h2">
 	<property environment="env" />
 	
-	<path id="project.classpath">
-	    <fileset dir="WebRoot/WEB-INF/lib" includes="**/*.jar"/>
-	</path>
+	<!-- 定义一些变量，其值是基于其他的变量值 -->
+	<property name="project.classpath" value="WebRoot/WEB-INF/classes"></property>
+	
+	<!--path id="project.classpath">
+	    <fileset dir="WebRoot/WEB-INF/classes" />
+	</path-->
 	
    <path id="project.lib.path">
         <fileset dir="WebRoot/WEB-INF/lib" includes="**/*.jar"/>
@@ -12,107 +15,107 @@
 
 	
 	<target name="h2">
-		<copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-h2-new" overwrite="true"/>
-		<copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-h2" overwrite="true"/>
+		<copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-h2-new" overwrite="true"/>
+		<copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-h2" overwrite="true"/>
 		<property name="db" value="H2" />
-		<java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
+		<java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
 			<arg value="WebRoot"/>
 			<arg value="8080"/>
 			<arg value="/"/>
 			<arg value="5"/>
 			<arg value="${db}"/>
-			<classpath path="WebRoot/WEB-INF/classes"></classpath>
+			<classpath path="${project.classpath}"></classpath>
 		</java>
 	</target>
 	
 	<target name="mysql">
-		<copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-mysql" overwrite="true"/>
-		<copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-mysql" overwrite="true"/>
-        <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
+		<copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-mysql" overwrite="true"/>
+		<copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-mysql" overwrite="true"/>
+        <java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
             <arg value="WebRoot"/>
             <arg value="8080"/>
             <arg value="/"/>
             <arg value="5"/>
-            <classpath path="WebRoot/WEB-INF/classes"></classpath>
+            <classpath path="${project.classpath}"></classpath>
         </java>
     </target>
 	
 	<target name="prod">
-		<copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-prod" overwrite="true"/>
-		<copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-prod" overwrite="true"/>
-        <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
+		<copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-prod" overwrite="true"/>
+		<copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-prod" overwrite="true"/>
+        <java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
             <arg value="WebRoot"/>
             <arg value="8080"/>
             <arg value="/"/>
             <arg value="0"/>
-            <classpath path="WebRoot/WEB-INF/classes"></classpath>
+            <classpath path="${project.classpath}"></classpath>
         </java>
     </target>
 	
 	<target name="yh-prod">
-			<copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-yh-prod" overwrite="true"/>
-			<copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-yh-prod" overwrite="true"/>
-	        <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
+			<copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-yh-prod" overwrite="true"/>
+			<copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-yh-prod" overwrite="true"/>
+	        <java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
 	            <arg value="WebRoot"/>
 	            <arg value="8000"/>
 	            <arg value="/"/>
 	            <arg value="0"/>
-	            <classpath path="WebRoot/WEB-INF/classes"></classpath>
+	            <classpath path="${project.classpath}"></classpath>
 	        </java>
 	    </target>
 	
 	<target name="uat">
-        <copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-uat" overwrite="true"/>
-        <copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-uat" overwrite="true"/>
-        <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
+        <copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-uat" overwrite="true"/>
+        <copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-uat" overwrite="true"/>
+        <java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
             <arg value="WebRoot"/>
             <arg value="8000"/>
             <arg value="/"/>
             <arg value="0"/>
-            <classpath path="WebRoot/WEB-INF/classes"></classpath>
+            <classpath path="${project.classpath}"></classpath>
         </java>	
     </target>
 	
    <target name="clean"> 
        <delete includeEmptyDirs="true" failonerror="false"> 
-           <fileset dir="WebRoot/WEB-INF/classes" /> 
+           <fileset dir="${project.classpath}" /> 
        </delete>
     </target>
     
     <target name="compile" >
-        <mkdir dir="WebRoot/WEB-INF/classes" />
+        <mkdir dir="${project.classpath}" />
         <javac srcdir="src"
-                 destdir="WebRoot/WEB-INF/classes"
+                 destdir="${project.classpath}"
                  fork="true"
                  classpathref="project.lib.path">
             <compilerarg line="-encoding UTF-8"/>
         </javac>
-    	<copy todir="WebRoot/WEB-INF/classes">
+    	<copy todir="${project.classpath}">
     	    <fileset dir="src"
     	             includes="**/*.properties" />
     	</copy>	
     </target>
 	
 	<target name="h2ci">
-        <copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-h2" overwrite="true"/>
-        <copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-h2" overwrite="true"/>
+        <copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-h2" overwrite="true"/>
+        <copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-h2" overwrite="true"/>
         <property name="db" value="H2" />
-        <java classname="com.jfinal.core.JFinal" classpathref="project.classpath">
+        <java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
             <arg value="WebRoot"/>
             <arg value="8000"/>
             <arg value="/"/>
             <arg value="0"/>
             <arg value="${db}"/>
-            <classpath path="WebRoot/WEB-INF/classes"></classpath>
+            <classpath path="${project.classpath}"></classpath>
         </java>
     </target>
 	
 	<target name="stop_h2ci">
-        <copy tofile="WebRoot/WEB-INF/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-h2" overwrite="true"/>
-        <copy tofile="WebRoot/WEB-INF/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-h2" overwrite="true"/>
+        <copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-h2" overwrite="true"/>
+        <copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-h2" overwrite="true"/>
         <property name="db" value="H2" />
-        <java classname="config.ServerHelper" classpathref="project.classpath">
-            <classpath path="WebRoot/WEB-INF/classes"></classpath>
+        <java classname="config.ServerHelper" classpathref="project.lib.path">
+            <classpath path="${project.classpath}"></classpath>
         </java>
     </target>
 
