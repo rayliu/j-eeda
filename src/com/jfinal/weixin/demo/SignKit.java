@@ -8,8 +8,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.io.UnsupportedEncodingException;  
 
+import com.jfinal.log.Logger;
+
+import controllers.yh.arap.AccountAuditLogController;
+
 
 public class SignKit {
+	private static Logger logger = Logger.getLogger(SignKit.class);
     public static void main(String[] args) {
         String jsapi_ticket = "jsapi_ticket";
 
@@ -33,7 +38,7 @@ public class SignKit {
                   "&noncestr=" + nonce_str +
                   "&timestamp=" + timestamp +
                   "&url=" + url;
-        System.out.println("string1:"+string1);
+        logger.debug("string1:"+string1);
 
         try
         {
@@ -41,6 +46,7 @@ public class SignKit {
             crypt.reset();
             crypt.update(string1.getBytes("UTF-8"));
             signature = byteToHex(crypt.digest());
+            logger.debug("signature:"+signature);
         }
         catch (NoSuchAlgorithmException e)
         {

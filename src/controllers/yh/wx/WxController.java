@@ -8,6 +8,7 @@ import com.jfinal.kit.PropKit;
 import com.jfinal.weixin.demo.SignKit;
 import com.jfinal.weixin.sdk.api.AccessTokenApi;
 import com.jfinal.weixin.sdk.api.ApiConfig;
+import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.JsTicketApi;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
@@ -39,8 +40,12 @@ public class WxController extends ApiController {
 	//微信JS demo页面，方便参考
 	public void demo() {
 		String jsapi_ticket = JsTicketApi.getJsTicket().getJsTicket();
-	
+		
 		Map<String, String> m = SignKit.sign(jsapi_ticket, "http://56.eeda123.com/wx/demo");//这里需要动态处理
+		
+		String appId = ApiConfigKit.getApiConfig().getAppId();
+		
+		setAttr("appId", appId);
 		setAttr("timestamp", m.get("timestamp"));
 		setAttr("nonceStr", m.get("nonceStr"));
 		setAttr("signature", m.get("signature"));
