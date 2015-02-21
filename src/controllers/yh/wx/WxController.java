@@ -41,7 +41,7 @@ public class WxController extends ApiController {
 	public void demo() {
 		String jsapi_ticket = JsTicketApi.getJsTicket().getJsTicket();
 		
-		Map<String, String> m = SignKit.sign(jsapi_ticket, "http://56.eeda123.com/wx/demo");//这里需要动态处理
+		Map<String, String> m = SignKit.sign(jsapi_ticket, "http://tms.eeda123.com/wx/demo");//这里需要动态处理
 		
 		String appId = ApiConfigKit.getApiConfig().getAppId();
 		
