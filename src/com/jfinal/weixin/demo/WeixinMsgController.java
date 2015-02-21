@@ -33,8 +33,8 @@ import com.jfinal.weixin.sdk.msg.out.OutVoiceMsg;
  * 方法即可直接运行看效果，在此基础之上修改相关的方法即可进行实际项目开发
  */
 public class WeixinMsgController extends MsgController {
-	
-	private static final String helpStr = "\t发送 help 可获得帮助，发送 \"美女\" 可看美女，发送 news 可看新闻，发送 music 可听音乐，你还可以试试发送图片、语音、位置、收藏等信息，看会有什么 。公众号持续更新中，想要更多惊喜欢迎每天关注 ^_^";
+	//"\t发送 help 可获得帮助，发送 \"美女\" 可看美女，发送 news 可看新闻，发送 music 可听音乐，你还可以试试发送图片、语音、位置、收藏等信息，看会有什么 。公众号持续更新中，想要更多惊喜欢迎每天关注 ^_^";
+	private static final String helpStr = "\t发送 help 可获得帮助，发送 \"回单\" 可发送图片、语音、位置等信息。";
 	
 	/**
 	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的  ApiConfig 对象即可
@@ -70,6 +70,11 @@ public class WeixinMsgController extends MsgController {
 		if ("help".equalsIgnoreCase(msgContent)) {
 			OutTextMsg outMsg = new OutTextMsg(inTextMsg);
 			outMsg.setContent(helpStr);
+			render(outMsg);
+		}
+		else if ("回单".equalsIgnoreCase(msgContent)) {
+			OutTextMsg outMsg = new OutTextMsg(inTextMsg);
+			outMsg.setContent("\t文本消息已成功接收，内容为： " + inTextMsg.getContent() + "\n\n" + "<a href='http://56.eeda123.com/wx/demo'>请点我跳转到回单签收页面</a>");
 			render(outMsg);
 		}
 		// 图文消息测试
