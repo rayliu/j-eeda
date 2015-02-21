@@ -74,7 +74,7 @@ public class WeixinMsgController extends MsgController {
 		}
 		else if ("回单".equalsIgnoreCase(msgContent)) {
 			OutTextMsg outMsg = new OutTextMsg(inTextMsg);
-			outMsg.setContent("\t文本消息已成功接收，内容为： " + inTextMsg.getContent() + "\n\n" + "<a href='http://56.eeda123.com/wx/demo'>请点我跳转到回单签收页面</a>");
+			outMsg.setContent("\t文本消息已成功接收，内容为： " + inTextMsg.getContent() + "\n\n" + "<a href='http://tms.eeda123.com/wx/demo'>请点我跳转到回单签收页面</a>");
 			render(outMsg);
 		}
 		// 图文消息测试
