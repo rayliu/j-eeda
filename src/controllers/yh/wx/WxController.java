@@ -2,6 +2,8 @@ package controllers.yh.wx;
 
 import java.util.Map;
 
+import models.ReturnOrder;
+
 import com.jfinal.core.Controller;
 import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.PropKit;
@@ -37,11 +39,10 @@ public class WxController extends ApiController {
 		return ac;
 	}
 	
-	//微信JS demo页面，方便参考
-	public void demo() {
+	private void setPageAttr(String url) {
 		String jsapi_ticket = JsTicketApi.getJsTicket().getJsTicket();
 		
-		Map<String, String> m = SignKit.sign(jsapi_ticket, "http://tms.eeda123.com/wx/demo");//这里需要动态处理
+		Map<String, String> m = SignKit.sign(jsapi_ticket, url);//这里需要动态处理
 		
 		String appId = ApiConfigKit.getApiConfig().getAppId();
 		
@@ -49,11 +50,25 @@ public class WxController extends ApiController {
 		setAttr("timestamp", m.get("timestamp"));
 		setAttr("nonceStr", m.get("nonceStr"));
 		setAttr("signature", m.get("signature"));
-		
+	}
+	
+	//微信JS demo页面，方便参考
+	public void demo() {
+		setPageAttr("http://tms.eeda123.com/wx/demo");		
 		render("/yh/wx/demo.html");
 	}
+
+	//获取回单数据
+	public void getRo() {
+		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select * from return_order where order_no=?",getPara());
+		if(returnOrder==null)
+			returnOrder = new ReturnOrder();
+		renderJson(returnOrder);
+	}
+	
 	//回单上传附件
 	public void ro_filing() {
+		setPageAttr("http://tms.eeda123.com/wx/ro_filing");
 		render("/yh/returnOrder/returnOrderFiling.html");
 	}
 	

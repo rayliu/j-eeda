@@ -508,6 +508,8 @@ wx.ready(function () {
   };
   wx.onMenuShareAppMessage(shareData);
   wx.onMenuShareTimeline(shareData);
+
+  
 });
 
 wx.error(function (res) {
