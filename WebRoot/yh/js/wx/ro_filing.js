@@ -8,6 +8,7 @@ $(document).ready(function() {
            if(data.ORDER_NO){
               $('#orderDesc').text('回单号码确认存在，请从相册中选择照片上传。');
               $('#returnId').val(data.ID);
+              initFileupload();
            }else{
               $('#orderDesc').text('回单号码不存在，请重新查询。');
            }
@@ -25,7 +26,9 @@ $(document).ready(function() {
       $("#fileupload").click();
    });
 
-   $('#fileupload').fileupload({
+   var initFileupload= function(){
+     $('#fileupload').fileupload({
+       
         dataType: 'json',
         url: '/wx/saveFile?return_id='+$("#returnId").val(),//上传地址
         done: function (e, data) {
@@ -33,7 +36,7 @@ $(document).ready(function() {
             alert("上传成功！");
             console.log("data.result.cause:"+data.result.cause);
             //console.log("data.result.cause:"+data.result.cause+",parseJSON:"+$.parseJSON(data.result.cause));
-            //var files = $.parseJSON(data.result.cause);
+            var files = $.parseJSON(data.result.cause);
             var showPictures = $("#showPictures");
             showPictures.empty();
             $.each(data.result.cause,function(name,value) {
@@ -50,6 +53,9 @@ $(document).ready(function() {
           //$("#footer").hide();
         } 
      });
+
+   }
+   
 
 });
 
