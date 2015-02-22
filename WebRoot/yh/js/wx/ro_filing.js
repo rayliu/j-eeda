@@ -1,126 +1,51 @@
 $(document).ready(function() {
+ 
   $("#searchNo").click(function(){  
     var orderNo = $("#orderNo").val();
     
     $.post('/wx/getRo/'+orderNo,function(data){
-           console.log(data);
+           
            if(data.ORDER_NO){
               $('#orderDesc').text('回单号码确认存在，请从相册中选择照片上传。');
+              $('#returnId').val(data.ID);
            }else{
               $('#orderDesc').text('回单号码不存在，请重新查询。');
            }
            $('#orderDesc').show();
         },'json');
-  });    
-});
+  });
 
 
+  //保存图片
+    $("#uploadImage1").click(function(e){
+      $("#fileupload").click();
+   });
 
-
-wx.ready(function () {
-  wx.hideOptionMenu();
-  
-  // 5 图片接口
-  // 5.1 拍照、本地选图
-  var images = {
-    localId: [],
-    serverId: []
-  };
-  document.querySelector('#chooseImage').onclick = function () {
-    wx.chooseImage({
-      success: function (res) {
-        images.localId = res.localIds;
-        alert('已选择 ' + res.localIds.length + ' 张图片');
-      }
-    });
-  };
-
-  // 5.2 图片预览
-  document.querySelector('#previewImage').onclick = function () {
-    wx.previewImage({
-      current: 'http://img5.douban.com/view/photo/photo/public/p1353993776.jpg',
-      urls: [
-        'http://img3.douban.com/view/photo/photo/public/p2152117150.jpg',
-        'http://img5.douban.com/view/photo/photo/public/p1353993776.jpg',
-        'http://img3.douban.com/view/photo/photo/public/p2152134700.jpg'
-      ]
-    });
-  };
-
-  // 5.3 上传图片
-  document.querySelector('#uploadImage').onclick = function () {
-    if (images.localId.length == 0) {
-      alert('请先使用 chooseImage 接口选择图片');
-      return;
-    }
-    var i = 0, length = images.localId.length;
-    images.serverId = [];
-    function upload() {
-      wx.uploadImage({
-        localId: images.localId[i],
-        success: function (res) {
-          i++;
-          alert('已上传：' + i + '/' + length);
-          images.serverId.push(res.serverId);
-          if (i < length) {
-            upload();
+   $('#fileupload').fileupload({
+        dataType: 'json',
+        url: '/wx/saveFile?return_id='+$("#returnId").val(),//上传地址
+        done: function (e, data) {
+          if(data.result.result = "true"){
+            alert("上传成功！");
+            console.log("data.result.cause:"+data.result.cause);
+            //console.log("data.result.cause:"+data.result.cause+",parseJSON:"+$.parseJSON(data.result.cause));
+            //var files = $.parseJSON(data.result.cause);
+            var showPictures = $("#showPictures");
+            showPictures.empty();
+            $.each(data.result.cause,function(name,value) {
+              showPictures.append('<div style="width:220px;height:220px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" style="width:200px;height:200px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
+                });
+          }else{
+            $("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
           }
-        },
-        fail: function (res) {
-          alert(JSON.stringify(res));
-        }
-      });
-    }
-    upload();
-  };
+          $("#footer").show();
+        },  
+        progressall: function (e, data) {//设置上传进度事件的回调函数  
+          //$.scojs_message('上传中', $.scojs_message.TYPE_OK);
+          //$('#myModal').modal('show');
+          //$("#footer").hide();
+        } 
+     });
 
-  // 5.4 下载图片
-  document.querySelector('#downloadImage').onclick = function () {
-    if (images.serverId.length === 0) {
-      alert('请先使用 uploadImage 上传图片');
-      return;
-    }
-    var i = 0, length = images.serverId.length;
-    images.localId = [];
-    function download() {
-      wx.downloadImage({
-        serverId: images.serverId[i],
-        success: function (res) {
-          i++;
-          alert('已下载：' + i + '/' + length);
-          images.localId.push(res.localId);
-          if (i < length) {
-            download();
-          }
-        }
-      });
-    }
-    download();
-  };
-
-  
-  
- 
-  // 9 微信原生接口
-  // 9.1.1 扫描二维码并返回结果
-  document.querySelector('#scanQRCode0').onclick = function () {
-    wx.scanQRCode();
-  };
-  // 9.1.2 扫描二维码并返回结果
-  document.querySelector('#scanQRCode1').onclick = function () {
-    wx.scanQRCode({
-      needResult: 1,
-      desc: 'scanQRCode desc',
-      success: function (res) {
-        alert(JSON.stringify(res));
-      }
-    });
-  };
-
-  
-  
 });
 
-wx.error(function (res) {
-  alert(res.errMsg);
-});

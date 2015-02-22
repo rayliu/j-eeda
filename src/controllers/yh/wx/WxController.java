@@ -1,12 +1,17 @@
 package controllers.yh.wx;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import models.OrderAttachmentFile;
 import models.ReturnOrder;
 
 import com.jfinal.core.Controller;
 import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.PropKit;
+import com.jfinal.upload.UploadFile;
 import com.jfinal.weixin.demo.SignKit;
 import com.jfinal.weixin.sdk.api.AccessTokenApi;
 import com.jfinal.weixin.sdk.api.ApiConfig;
@@ -57,7 +62,11 @@ public class WxController extends ApiController {
 		setPageAttr("http://tms.eeda123.com/wx/demo");		
 		render("/yh/wx/demo.html");
 	}
-
+	//回单上传附件页面
+	public void ro_filing() {
+		setPageAttr("http://tms.eeda123.com/wx/ro_filing");
+		render("/yh/returnOrder/returnOrderFiling.html");
+	}
 	//获取回单数据
 	public void getRo() {
 		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select * from return_order where order_no=?",getPara());
@@ -66,11 +75,38 @@ public class WxController extends ApiController {
 		renderJson(returnOrder);
 	}
 	
-	//回单上传附件
-	public void ro_filing() {
-		setPageAttr("http://tms.eeda123.com/wx/ro_filing");
-		render("/yh/returnOrder/returnOrderFiling.html");
-	}
+	public void saveFile(){
+    	String id = getPara("return_id");
+    	List<UploadFile> uploadFiles = getFiles("fileupload");
+    	Map<String,Object> resultMap = new HashMap<String,Object>();
+    	ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
+    	boolean result = true;
+		if(returnOrder != null){
+	    	for (int i = 0; i < uploadFiles.size(); i++) {
+	    		File file = uploadFiles.get(i).getFile();
+	    		String fileName = file.getName();
+	    		String suffix = fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase();
+	    		if("gif".equals(suffix) || "jpeg".equals(suffix) || "png".equals(suffix) || "jpg".equals(suffix)){
+        			OrderAttachmentFile orderAttachmentFile = new OrderAttachmentFile();
+        			orderAttachmentFile.set("order_id", id).set("order_type", orderAttachmentFile.OTFRT_TYPE_RETURN).set("file_path", uploadFiles.get(0).getFileName()).save();
+	    		}else{
+	    			result = false;
+	    			break;
+	    		}
+			}
+		}
+		if(result){
+			resultMap.put("result", "true");
+			List<OrderAttachmentFile> OrderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + id + "';");
+	    	resultMap.put("cause", OrderAttachmentFileList);
+		}else{
+			resultMap.put("result", "false");
+	    	resultMap.put("cause", "上传失败，请选择正确的图片文件");
+		}
+    	renderJson(resultMap);
+    }
+	
+	
 	
 	
 }
