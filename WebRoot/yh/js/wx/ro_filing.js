@@ -17,7 +17,11 @@ $(document).ready(function() {
 
 
   //保存图片
-    $("#uploadImage1").click(function(e){
+    $("#uploadBtn").click(function(e){
+      if($("#returnId").val().length==0){
+        alert('回单号码不存在，请重新查询.');
+        return;
+      }
       $("#fileupload").click();
    });
 
