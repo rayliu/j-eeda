@@ -40,7 +40,7 @@
                         <h3 class="panel-title">${SYS_CONFIG.system_title!'易达物流'}</h3>                      
                     </div>
                     <div class="panel-body">
-                        <form role="form" action="/login" id="login" method="post">
+                        <form role="form" action="/login" id="login" method="post" style="margin-bottom: 10px;">
                             <fieldset>
                                 <div class="form-group" >
                                     <input class="form-control" placeholder="用户名" id="username" name="username" type="text" autofocus value="">
@@ -59,7 +59,11 @@
                                
                             </fieldset>
                         </form>
-                        	<a href = "/register" style="float:right;display:none" >新用户注册</a>
+                            <% var title=SYS_CONFIG.system_title!'';
+                                if(title=='易达物流'){ %>
+                                    <a href = "/register" style="float:left;" >新用户注册</a>
+                            <%  }%>
+                        	
                         	<a href ="/reset" style = "float:right">忘记密码?</a>
                     </div>
                 </div>
