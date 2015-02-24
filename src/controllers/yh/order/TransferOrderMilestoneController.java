@@ -239,7 +239,7 @@ public class TransferOrderMilestoneController extends Controller {
         renderJson(map);
     }
 
-    // 收货确认
+    // 收货确认（TODO把保险单带到回单中）
     public void receipt() {
         Long order_id = Long.parseLong(getPara("orderId"));
         Long departOrderId = Long.parseLong(getPara("departOrderId"));
@@ -365,8 +365,8 @@ public class TransferOrderMilestoneController extends Controller {
             
             
 	        ReturnOrderController roController= new ReturnOrderController(); 
-	        //报保险单费用带到回单没做
-	        roController.addInsuranceFin(departOrder, returnOrder);
+	        //直送时把保险单费用带到回单
+	        roController.addInsuranceFin(transferOrder, departOrder, returnOrder);
 	        //根据合同生成费用
 	        roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
         }

@@ -15,6 +15,8 @@ import models.DeliveryOrderMilestone;
 import models.DepartOrder;
 import models.DepartTransferOrder;
 import models.Fin_item;
+import models.InsuranceFinItem;
+import models.InsuranceOrder;
 import models.Location;
 import models.OrderAttachmentFile;
 import models.Party;
@@ -1281,8 +1283,26 @@ public class ReturnOrderController extends Controller {
     /**
      * TODO:ATM直送时将保险费用带到回单
      */
-    public void addInsuranceFin(DepartOrder derpartOrder,ReturnOrder returnOrder){
-    	
+    public void addInsuranceFin(TransferOrder transferOrder,DepartOrder derpartOrder,ReturnOrder returnOrder){
+    	List<TransferOrderItem> transferOrderItemList = TransferOrderItem.dao.find("select id from transfer_order_item where order_id = " + transferOrder.get("id"));
+    	//查询应收条目中的保险费
+    	Fin_item finItem = Fin_item.dao.findFirst("select id from fin_item where type = '应收' and `name` = '保险费';");
+    	for (int i = 0; i < transferOrderItemList.size(); i++) {
+    		List<InsuranceFinItem> InsuranceFinItemList = InsuranceFinItem.dao.find("select * from insurance_fin_item where transfer_order_item_id = " + transferOrderItemList.get(i).get("id"));
+    		for (int j = 0; j < InsuranceFinItemList.size(); j++) {
+    			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(InsuranceFinItemList.get(j).get("insurance_order_id"));
+    			ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
+	    		returnOrderFinItem.set("fin_item_id", finItem.get("fin_item_id"))
+    			.set("amount", InsuranceFinItemList.get(j).get("amount"))
+	    		.set("return_order_id", returnOrder.get("id"))
+	    		.set("status", insuranceOrder.get("status"))
+	    		.set("fin_type", "charge")// 类型是应收
+	    		.set("creator", InsuranceFinItemList.get(j).get("create_by"))
+	    		.set("create_date", InsuranceFinItemList.get(j).get("create_date"))
+	    		.set("create_name", "insurance")
+	    		.save();
+			}
+		}
     }
     
     public void saveFile(){
