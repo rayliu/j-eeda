@@ -98,7 +98,6 @@ $(document).ready(function() {
         }
  		//判断行车单是否审核
  		if(!$("#saveCarSummaryBtn").prop("disabled")){
- 			$("#saveCarSummaryBtn").prop("disabled",true);
  			$.post('/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
  	 			if(data != null){
  	 				$("#car_summary_id").val(data);
@@ -114,14 +113,14 @@ $(document).ready(function() {
  	//点击保存
 	$("#saveCarSummaryBtn").click(function(e){
 		$("#saveCarSummaryBtn").prop("disabled",true);
-			$.post('/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
-	 			if(data != null){
-	 				$("#car_summary_id").val(data);
-	 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-	 			}else{
-	 				$.scojs_message('保存失败', $.scojs_message.TYPE_OK);
-	 			}
-	 			$("#saveCarSummaryBtn").prop("disabled",false);
+		$.post('/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
+ 			if(data != null){
+ 				$("#car_summary_id").val(data);
+ 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 			}else{
+ 				$.scojs_message('保存失败', $.scojs_message.TYPE_OK);
+ 			}
+ 			$("#saveCarSummaryBtn").prop("disabled",false);
 	 	},'json');
 	});
 	
@@ -315,7 +314,7 @@ $(document).ready(function() {
  		 },
          "aoColumns": [
              { "mDataProp": "ITEM","sWidth":"40px"},
-             { "mDataProp": "CHARGE_DATA", "sWidth":"180px",
+             { "mDataProp": "CHARGE_DATA", "sWidth":"220px",
             	 "fnRender": function(obj) {
                      if(obj.aData.CHARGE_DATA!='' && obj.aData.CHARGE_DATA != null){
                     	 var str = obj.aData.CHARGE_DATA;
@@ -484,7 +483,7 @@ $(document).ready(function() {
  		 },
          "aoColumns": [
              { "mDataProp": "ITEM", "sWidth":"50px"},
-             { "mDataProp": "REFUEL_DATA", "sWidth":"200px",
+             { "mDataProp": "REFUEL_DATA", "sWidth":"220px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REFUEL_DATA!='' && obj.aData.REFUEL_DATA != null){
                     	 var str = obj.aData.REFUEL_DATA;
@@ -532,7 +531,7 @@ $(document).ready(function() {
                      }
                  }
              },
-             { "mDataProp": "REFUEL_TYPE","sWidth":"120px",
+             { "mDataProp": "REFUEL_TYPE","sWidth":"80px",
             	 "fnRender": function(obj) {
                      /*if(obj.aData.REFUEL_TYPE!='' && obj.aData.REFUEL_TYPE != null){
                     	 if($("#saveCarSummaryBtn").prop("disabled"))
@@ -563,48 +562,49 @@ $(document).ready(function() {
             	 "fnRender": function(obj) {
                      if(obj.aData.REFUEL_UNIT_COST!='' && obj.aData.REFUEL_UNIT_COST != null){
                     	 if($("#saveCarSummaryBtn").prop("disabled"))
-                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_unit_cost' value='"+obj.aData.REFUEL_UNIT_COST+"' disabled='true'>";
+                    		 return "<input type='text' class='form-control search-control refuel_unit_cost' name='refuel_unit_cost' value='"+obj.aData.REFUEL_UNIT_COST+"' disabled='true'>";
                     	 else
-                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_unit_cost' value='"+obj.aData.REFUEL_UNIT_COST+"'>";
+                    		 return "<input type='text' class='form-control search-control refuel_unit_cost' name='refuel_unit_cost' value='"+obj.aData.REFUEL_UNIT_COST+"'>";
                      }else{
                     	 if($("#saveCarSummaryBtn").prop("disabled"))
-                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_unit_cost' disabled='true'>";
+                    		 return "<input type='text' class='form-control search-control refuel_unit_cost' name='refuel_unit_cost' disabled='true'>";
                     	 else
-                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_unit_cost'>";
+                    		 return "<input type='text' class='form-control search-control refuel_unit_cost' name='refuel_unit_cost'>";
                      }
                  }
              },
-             { "mDataProp": "REFUEL_NUMBER","sWidth":"120px",
+             { "mDataProp": "REFUEL_NUMBER","sWidth":"100px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REFUEL_NUMBER !='' && obj.aData.REFUEL_NUMBER != null){
-                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    	 /*if($("#saveCarSummaryBtn").prop("disabled"))*/
                     		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number' value='"+obj.aData.REFUEL_NUMBER+"'  disabled='true'>";
-                    	 else
-                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number' value='"+obj.aData.REFUEL_NUMBER+"'>";
+                		 /*else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number' value='"+obj.aData.REFUEL_NUMBER+"'>";*/
                      }else{
-                    	 if($("#saveCarSummaryBtn").prop("disabled"))
-                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number' disabled='true'>";
-                    	 else
-                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number'>";
+                    	 /*if($("#saveCarSummaryBtn").prop("disabled"))*/
+                    		 return "<input type='text' class='form-control search-control refuel_number' name='refuel_number' disabled='true'>";
+                		 /*else
+                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_number'>";*/
                      }
+            		 //return obj.aData.REFUEL_NUMBER;
                  }
              },
              { "mDataProp": "REFUEL_AMOUNT","sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.REFUEL_AMOUNT!='' && obj.aData.REFUEL_AMOUNT != null){
                     	 if($("#saveCarSummaryBtn").prop("disabled"))
-                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_amount' value='"+obj.aData.REFUEL_AMOUNT+"' disabled='true'>";
+                    		 return "<input type='text' class='form-control search-control refuel_amount' name='refuel_amount' value='"+obj.aData.REFUEL_AMOUNT+"' disabled='true'>";
                     	 else
-                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_amount' value='"+obj.aData.REFUEL_AMOUNT+"'>";
+                    		 return "<input type='text' class='form-control search-control refuel_amount' name='refuel_amount' value='"+obj.aData.REFUEL_AMOUNT+"'>";
                      }else{
                     	 if($("#saveCarSummaryBtn").prop("disabled"))
-                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_amount' disabled='true'>";
+                    		 return "<input type='text' class='form-control search-control refuel_amount' name='refuel_amount' disabled='true'>";
                     	 else
-                    		 return "<input type='text' class='form-control search-control orderNo_filter' name='refuel_amount'>";
+                    		 return "<input type='text' class='form-control search-control refuel_amount' name='refuel_amount'>";
                      }
                  }
              },
-             { "mDataProp": "PAYMENT_TYPE","sWidth":"80px",
+             { "mDataProp": "PAYMENT_TYPE","sWidth":"60px",
             	 "fnRender": function(obj) {
             		 var str="";
                      $("#paymentTypeList").children().each(function(){
@@ -734,6 +734,11 @@ $(document).ready(function() {
 		var routeFeeId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
+		//加油量
+		var refuel_number = "";
+		//平均油耗
+		var avg_econ = "";
+		
 		if(name == "refuel_data"){
 			routeFeeId = $(this).parent().parent().parent().attr("id");
 		}
@@ -748,18 +753,34 @@ $(document).ready(function() {
 			$(this).val("");
 			$(this).focus();
 			result = false;
+		}else if(name == "refuel_unit_cost" && value != ""){
+			var refuel_amount = $(this).parent().parent().find("td").find(".refuel_amount").val();
+			console.log("邮费:"+refuel_amount);
+			if(refuel_amount != "" && value != ""){
+				refuel_number =  ((refuel_amount * 1) / (value * 1)).toFixed(2) ;
+				$(this).parent().parent().find("td").find(".refuel_number").val(refuel_number);
+			}
+			console.log("加油量:"+refuel_number);
 		}
-		if(name == "refuel_number" && isNaN(value)){
+		/*if(name == "refuel_number" && isNaN(value)){
 			$.scojs_message('【加油量】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
-		}
+		}*/
 		if(name == "refuel_amount" && isNaN(value)){
 			$.scojs_message('【油费】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
+		}else if(name == "refuel_amount" && value != ""){
+			var refuel_unit_cost = $(this).parent().parent().find("td").find(".refuel_unit_cost").val();
+			console.log("油价:"+refuel_unit_cost);
+			if(refuel_unit_cost != "" && value != ""){
+				refuel_number =  ((value * 1) / (refuel_unit_cost * 1)).toFixed(2) ;
+				$(this).parent().parent().find("td").find(".refuel_number").val(refuel_number);
+			}
+			console.log("加油量:"+refuel_number);
 		}
 		if(name == "load_amount" && isNaN(value)){
 			$.scojs_message('【载重】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
@@ -767,15 +788,15 @@ $(document).ready(function() {
 			$(this).focus();
 			result = false;
 		}
-		if(name == "avg_econ" && isNaN(value)){
+		/*if(name == "avg_econ" && isNaN(value)){
 			$.scojs_message('【平均油耗】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
 			$(this).val("");
 			$(this).focus();
 			result = false;
-		}
+		}*/
 		console.log("routeFeeId:"+routeFeeId+",name:"+name+",value:"+value);
 		if(result && value != ""){
-			$.post('/carsummary/updateCarSummaryDetailOilFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
+			$.post('/carsummary/updateCarSummaryDetailOilFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value, refuel_number:refuel_number, avg_econ:avg_econ}, function(data){
 				if(!data.success){
 					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
 				}

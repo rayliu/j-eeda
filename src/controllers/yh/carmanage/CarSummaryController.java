@@ -661,27 +661,35 @@ public class CarSummaryController extends Controller {
     	String routeFeeId = getPara("routeFeeId");
     	String name = getPara("name");
     	String value = getPara("value");
+    	String refuel_number = getPara("refuel_number");
+    	String avg_econ = getPara("avg_econ");
     	if(!"".equals(routeFeeId) && routeFeeId != null){
     		if("odometer_mileage".equals(name) || "refuel_unit_cost".equals(name)
-    			|| "refuel_number".equals(name) || "refuel_amount".equals(name) 
-    			|| "avg_econ".equals(name) || "load_amount".equals(name)){
+    			||  "refuel_amount".equals(name) || "load_amount".equals(name)){
     			if("".equals(value)){
     				value = "0";
     			}
     		}
     		CarSummaryDetailOilFee carSummaryDetailOilFee = CarSummaryDetailOilFee.dao.findById(routeFeeId);
     		carSummaryDetailOilFee.set(name, value);
+    		if(refuel_number != null && !"".equals(refuel_number)){
+    			carSummaryDetailOilFee.set("refuel_number", refuel_number);
+    			//修改费用合计中的本次加油
+    			Record rec = Db.findFirst("select ifnull(sum(refuel_amount),0) amount from car_summary_detail_oil_fee where payment_type = '现金' and car_summary_id ="+carSummaryId);
+				String sql="update car_summary_detail_other_fee set amount = "+rec.get("amount")+"  where amount_item  = '本次加油' and car_summary_id = "+carSummaryId;
+    			Db.update(sql);
+    			//修改费用合计中的本次油耗
+    			updateNextFuelStandard(carSummaryId);
+    		}
+    		if(avg_econ != null && !"".equals(avg_econ)){
+    			carSummaryDetailOilFee.set("avg_econ", avg_econ);
+    		}
     		carSummaryDetailOilFee.update();
-    		
+    		/*
     		//修改费用合计中的本次加油
     		if("payment_type".equals(name) || "refuel_amount".equals(name) && !"0".equals(value)){
     			try {
     				Record rec = Db.findFirst("select ifnull(sum(refuel_amount),0) amount from car_summary_detail_oil_fee where payment_type = '现金' and car_summary_id ="+carSummaryId);
-        			/*String isDelete = "是";
-        			if(rec.get("amount").equals(0)){
-        				isDelete = "否";
-        			}
-        			String sql="update car_summary_detail_other_fee set amount = "+rec.get("amount")+",is_delete = '"+isDelete+"'  where amount_item  = '本次加油' and car_summary_id = "+carSummaryId;*/
     				String sql="update car_summary_detail_other_fee set amount = "+rec.get("amount")+"  where amount_item  = '本次加油' and car_summary_id = "+carSummaryId;
         			Db.update(sql);
 				} catch (Exception e) {
@@ -691,7 +699,7 @@ public class CarSummaryController extends Controller {
     		//修改费用合计中的本次油耗
     		if("refuel_unit_cost".equals(name) && !"0".equals(value)){
     			updateNextFuelStandard(carSummaryId);
-    		}
+    		}*/
     	}
     	renderJson("{\"success\":true}");
     }
