@@ -174,7 +174,7 @@
             }                         
         ]      
     });
-	
+    
 	//已签收/取消  按钮不可用
 	var result = $("#returnStatus").val();
 	
@@ -407,6 +407,8 @@
 		        		return "手工录入费用";
 		        	}else if(obj.aData.CREATE_NAME == 'insurance'){
 		        		return "保险费用";
+		        	}else if(obj.aData.CREATE_NAME == 'insurance'){
+		        		return "合同费用";
 		        	}
 			}},
 			{  
@@ -575,7 +577,7 @@
         		var showPictures = $("#showPictures");
         		showPictures.empty();
         		$.each(data.result.cause,function(name,value) {
-        			showPictures.append('<div style="width:220px;height:220px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" style="width:200px;height:200px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
+        			showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
                 });
         	}else{
         		$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
@@ -598,10 +600,23 @@
 				var showPictures = $("#showPictures");
 	    		showPictures.empty();
 				$.each(data,function(name,value) {
-	    			showPictures.append('<div style="width:220px;height:220px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" style="width:200px;height:200px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
+	    			showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
 	            });
 			},'json');
 		}
 	});	
+	
+	$("#showPictures").on('click', '.imgSign', function(e){
+		var imgAdd = $(this).attr("src");
+		$("#focusphoto").attr("src",imgAdd);
+		$('#myModal_img').modal('show');
+	});	
+	
     
 });
+
+//图片放大
+function photoSize(imgAdd){
+	$("#focusphoto").attr("src",imgAdd);
+	$("#myModal_img").show();
+};

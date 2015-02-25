@@ -1292,7 +1292,7 @@ public class ReturnOrderController extends Controller {
     		for (int j = 0; j < InsuranceFinItemList.size(); j++) {
     			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(InsuranceFinItemList.get(j).get("insurance_order_id"));
     			ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
-	    		returnOrderFinItem.set("fin_item_id", finItem.get("fin_item_id"))
+	    		returnOrderFinItem.set("fin_item_id", finItem.get("id"))
     			.set("amount", InsuranceFinItemList.get(j).get("amount"))
 	    		.set("return_order_id", returnOrder.get("id"))
 	    		.set("status", insuranceOrder.get("status"))
