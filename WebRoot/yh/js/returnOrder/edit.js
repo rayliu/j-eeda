@@ -569,7 +569,7 @@
         dataType: 'json',
         url: '/returnOrder/saveFile?return_id='+$("#returnId").val(),//上传地址
         done: function (e, data) {
-        	if(data.result.result = "true"){
+        	if(data.result.result == "true"){
         		$("#centerBody").empty().append("<h4>上传成功！</h4>");
         		console.log("data.result.cause:"+data.result.cause);
         		//console.log("data.result.cause:"+data.result.cause+",parseJSON:"+$.parseJSON(data.result.cause));
@@ -606,6 +606,7 @@
 		}
 	});	
 	
+	//图片放大
 	$("#showPictures").on('click', '.imgSign', function(e){
 		var imgAdd = $(this).attr("src");
 		$("#focusphoto").attr("src",imgAdd);
@@ -614,9 +615,3 @@
 	
     
 });
-
-//图片放大
-function photoSize(imgAdd){
-	$("#focusphoto").attr("src",imgAdd);
-	$("#myModal_img").show();
-};
