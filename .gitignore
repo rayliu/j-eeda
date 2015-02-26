@@ -25,8 +25,6 @@ WebRoot/WEB-INF/app_config.txt
 
 sql/populate.sql
 
-doc
-
 misc
 php-version
 .externalToolBuilders/org.eclipse.wst.common.project.facet.core.builder.launch
