@@ -1259,15 +1259,25 @@ public class ReturnOrderController extends Controller {
     public void InsertinsuranceFin(DeliveryOrder deliveryOrder){
     	java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
-		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select * from return_order where delivery_order_id = ?",deliveryOrder.get("id"));
-		ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
+		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select id from return_order where delivery_order_id = ?",deliveryOrder.get("id"));
 		Fin_item fi =  Fin_item.dao.findFirst("select * from fin_item where name = '保险费' and type = '应收'");
+		/*Record record = Db.findFirst("select sum(amount * income_rate) as total_amount,(select sum(amount) from delivery_order_item where delivery_id = dor.id) delivery_number from delivery_order dor "
+				+ " left join transfer_order_item_detail toid on  dor.id = toid.delivery_id "
+				+ " left join insurance_fin_item ifi on ifi.transfer_order_item_id = toid.item_id where dor.id = ?",deliveryOrder.get("id"));
+		*/
+		//计算总保险费，根据配送单中的货品型号与保险单中的货品型号相匹配，一次性算出单种货品型号的总保险费，再把配送单中所有货品型号的总保险费进行叠加得出此次配送的保险费
+		//注意，这里的要求是：一张运输单只能做一次保险，否则默认取第一次做得保险信息
+		double sum_insurance = 0;
+		List<Record> detailList = Db.find("select count(0) delivery_number,item_id from transfer_order_item_detail where delivery_id = ? group by item_id;",deliveryOrder.get("id"));
+		for (int i = 0; i < detailList.size(); i++) {
+			Record insuranceItem = Db.findFirst("select amount * income_rate detail_insurance from insurance_fin_item where transfer_order_item_id = ?",detailList.get(i).get("item_id"));
+			if(insuranceItem != null){
+				sum_insurance += detailList.get(i).getLong("delivery_number") * insuranceItem.getDouble("detail_insurance");
+			}
+		}
+		ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
 		returnOrderFinItem.set("fin_item_id", fi.get("id"));
-		Record record = Db.findFirst("select sum(amount * income_rate) as total_amount from delivery_order dor "
-									+ " left join transfer_order_item_detail toid on  dor.id = toid.delivery_id "
-									+ " left join insurance_fin_item ifi on ifi.transfer_order_item_id = toid.item_id where dor.id = ?",deliveryOrder.get("id"));
-		returnOrderFinItem.set("amount", record.get("total_amount"));        		
-    	
+		returnOrderFinItem.set("amount",sum_insurance);        		
 		//returnOrderFinItem.set("transfer_order_id", transferOrderId);
 		returnOrderFinItem.set("return_order_id", returnOrder.get("id"));
 		returnOrderFinItem.set("status", "未完成");
@@ -1284,7 +1294,7 @@ public class ReturnOrderController extends Controller {
      * TODO:ATM直送时将保险费用带到回单
      */
     public void addInsuranceFin(TransferOrder transferOrder,DepartOrder derpartOrder,ReturnOrder returnOrder){
-    	List<TransferOrderItem> transferOrderItemList = TransferOrderItem.dao.find("select id from transfer_order_item where order_id = " + transferOrder.get("id"));
+    	List<TransferOrderItem> transferOrderItemList = TransferOrderItem.dao.find("select id,amount from transfer_order_item where order_id = " + transferOrder.get("id"));
     	//查询应收条目中的保险费
     	Fin_item finItem = Fin_item.dao.findFirst("select id from fin_item where type = '应收' and `name` = '保险费';");
     	for (int i = 0; i < transferOrderItemList.size(); i++) {
@@ -1292,8 +1302,9 @@ public class ReturnOrderController extends Controller {
     		for (int j = 0; j < InsuranceFinItemList.size(); j++) {
     			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(InsuranceFinItemList.get(j).get("insurance_order_id"));
     			ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
+    			double amount = InsuranceFinItemList.get(j).getDouble("amount") * InsuranceFinItemList.get(j).getDouble("income_rate") *  transferOrderItemList.get(i).getDouble("amount");
 	    		returnOrderFinItem.set("fin_item_id", finItem.get("id"))
-    			.set("amount", InsuranceFinItemList.get(j).get("amount"))
+    			.set("amount", amount)
 	    		.set("return_order_id", returnOrder.get("id"))
 	    		.set("status", insuranceOrder.get("status"))
 	    		.set("fin_type", "charge")// 类型是应收
