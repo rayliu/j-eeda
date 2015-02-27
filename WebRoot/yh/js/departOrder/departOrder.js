@@ -1,13 +1,55 @@
 
 $(document).ready(function() {
     $('#menu_assign').addClass('active').find('ul').addClass('in'); 
-    var spName = [];
+    /*var spName = [];
     var routeArr = [];
-    var spNameUnchecked = [];
     var chargeType2 = [];
     var officeName = [];
     var model=[];
     var pickupIds = [];
+    */
+    
+    //选取方法二
+    //供应商、计费方式、网点、到达方式、始发地、目的地
+    var spName = "";
+    var chargeType2 = "";
+    var officeName = "";
+    var arrivalModel = "";
+    var routeFrom = "";
+    var routeTo = "";
+    var transferOrderIds = [];
+    
+    //datatable, 动态处理
+    $('#eeda-table1').dataTable({
+    	"bSort": false, // 不要排序
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 25,
+        "bServerSide": false,
+        "bProcessing":false,
+        "bInfo":false,
+        "bPaginate":false,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "aoColumns": [
+            { "mDataProp": "ORDER_NO","sClass": "order_no"},
+            { "mDataProp": "PICKUP_NO","sClass": "pickup_no"},
+            { "mDataProp": "CNAME", "sWidth": "100px","sClass": "cname"},
+            { "mDataProp":"OPERATION_TYPE","sClass": "operation_type"}, 
+            { "mDataProp":"CARGO_NATURE","sClass": "cargo_nature"},
+            { "mDataProp": "DOADDRESS","sClass": "doaddress"},
+            { "mDataProp": "ARRIVAL_MODE","sClass": "arrival_model"},
+            { "mDataProp":"PICKUP_MODE","sClass": "pickup_mode"},
+            { "mDataProp": "SPNAME","sWidth": "100px","sClass": "spname"},
+            { "mDataProp": "ROUTE_FROM","sClass": "route_from"},
+            { "mDataProp": "ROUTE_TO","sClass": "route_to"},
+            { "mDataProp":"CHARGE_TYPE2","sClass": "chargeType2"},
+            { "mDataProp": "OFFICE_NAME","sClass": "office_name"}
+        ]      
+    });	
+    
 	//datatable, 动态处理
     var datatable = $('#eeda-table').dataTable({
     	"bSort": false, // 不要排序
@@ -24,16 +66,23 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
-             		var pickupid = obj.aData.PICKUP_ID;
-            		if(pickupid == "" || pickupid == null){
-            			pickupid = "";
-            		}
-                	 return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'" pickupid="'+obj.aData.PICKUP_ID+'"">';
+                	 var result = false;
+					 for ( var i = 0; i < transferOrderIds.length; i++) {
+						 if(obj.aData.ID == transferOrderIds[i]){
+							 result = true;
+							 break;
+						 }
+					 }
+					 if(result){
+						 return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'" pickupid="'+obj.aData.PICKUP_ID+'" checked="checked">';
+					 }else{
+						 return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'" pickupid="'+obj.aData.PICKUP_ID+'"">';
+					 }
                  }
             },
-            { "mDataProp": "ORDER_NO"},
-            { "mDataProp": "PICKUP_NO"},
-            { "mDataProp": "CNAME", "sWidth": "100px"},
+            { "mDataProp": "ORDER_NO","sClass": "order_no"},
+            { "mDataProp": "PICKUP_NO","sClass": "pickup_no"},
+            { "mDataProp": "CNAME", "sWidth": "100px","sClass": "cname"},
             { "mDataProp":"OPERATION_TYPE",
             	"sClass": "operation_type",
     			"fnRender": function(obj) {
@@ -45,6 +94,7 @@ $(document).ready(function() {
     					return "";
     				}}}, 
             { "mDataProp":"CARGO_NATURE",
+    			"sClass": "cargo_nature",
             	"fnRender": function(obj) {
             		if(obj.aData.CARGO_NATURE == "cargo"){
             			return "普通货品";
@@ -53,7 +103,7 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
-            { "mDataProp": "DOADDRESS"},
+            { "mDataProp": "DOADDRESS","sClass": "doaddress"},
             { "mDataProp": "ARRIVAL_MODE",
             	"sClass": "arrival_model",
             	"fnRender": function(obj) {
@@ -65,6 +115,7 @@ $(document).ready(function() {
             	},
             },
             {"mDataProp":"PICKUP_MODE",
+            	"sClass": "pickup_mode",
             	"fnRender": function(obj) {
             		if(obj.aData.PICKUP_MODE == "routeSP"){
             			return "干线供应商自提";
@@ -77,7 +128,7 @@ $(document).ready(function() {
             		}}},
             { 
             	"mDataProp": "SPNAME",
-              "sWidth": "100px",
+            	"sWidth": "100px",
             	"sClass": "spname"
             },
             { 
@@ -111,17 +162,20 @@ $(document).ready(function() {
    
     $('#saveBtn').click(function(e){
         e.preventDefault();
-    	var trArr=[];
         var tableArr=[];
-        $("input[name='order_check_box']").each(function(){
+        var pickupIds=[];
+        /*$("input[name='order_check_box']").each(function(){
         	if($(this).prop('checked') == true){
         		console.log($(this).val());
         		trArr.push($(this).val());
         		pickupIds.push($(this).attr("pickupid")+"&");
         	}
-        });
-        tableArr.push(trArr);        
-        console.log(tableArr);
+        });*/
+		$("#ckeckedTransferOrderList tr").each(function (){
+			tableArr.push($(this).attr("value"));
+			pickupIds.push($(this).attr("pickupid")+"&");
+		});
+        console.log("单号："+tableArr+",拼车单号："+pickupIds);
         $('#pickupOrder_message').val(tableArr);
         $('#pickupIds').val(pickupIds);
         $('#createForm').submit();
@@ -159,7 +213,85 @@ $(document).ready(function() {
     	
       });
     
+    //选取运输单
     $("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
+    	var value = $(this).val();
+		var pickupid = $(this).attr("pickupid");
+    	var ckeckedTransferOrderList = $("#ckeckedTransferOrderList");
+		var order_no = $(this).parent().siblings('.order_no')[0].textContent;		
+		var pickup_no = $(this).parent().siblings('.pickup_no')[0].textContent;	
+		var cname = $(this).parent().siblings('.cname')[0].textContent;
+		var operation_type = $(this).parent().siblings('.operation_type')[0].textContent;		
+		var cargo_nature = $(this).parent().siblings('.cargo_nature')[0].textContent;		
+		var doaddress = $(this).parent().siblings('.doaddress')[0].textContent;		
+		var arrival_model = $(this).parent().siblings('.arrival_model')[0].textContent;		
+		var pickup_mode = $(this).parent().siblings('.pickup_mode')[0].textContent;		
+		var spname = $(this).parent().siblings('.spname')[0].textContent;		
+		var route_from = $(this).parent().siblings('.route_from')[0].textContent;		
+		var route_to = $(this).parent().siblings('.route_to')[0].textContent;		
+		var charge_type = $(this).parent().siblings('.chargeType2')[0].textContent;		
+		var office_name = $(this).parent().siblings('.office_name')[0].textContent;		
+    	if($(this).prop("checked") == true){
+    		$("#saveBtn").attr('disabled', false);
+    		if(transferOrderIds.length == 0){
+    			spName = spname;
+    			chargeType2 = charge_type;
+    			officeName = office_name;
+    			arrivalModel = arrival_model;
+    			routeFrom = route_from;
+    			routeTo = route_to;
+    			transferOrderIds.push($(this).val());
+    			ckeckedTransferOrderList.empty();
+    		}else{
+    			if(spName != spname && spname != ''){
+    				alert("请选择同一供应商!");
+    				return false;
+    			}else if(chargeType2 != charge_type){
+    				alert("请选择同一计费方式!");
+    				return false;
+    			}else if(routeFrom != route_from && route_from != ''){
+					alert("请选择同一线路的运输单!");
+					return false;
+    			}else if(routeTo != route_to && route_to != ''){
+					alert("请选择同一线路的运输单!");
+					return false;
+				}else if(officeName != office_name){
+					alert("请选择同一网点的运输单！");
+					return false;
+				}else if(arrivalModel != arrival_model){
+					alert("请选择同一到达方式的运输单");
+					return false;
+				}else{
+					transferOrderIds.push($(this).val());
+				}
+    		}
+    		ckeckedTransferOrderList.append("<tr value='"+value+"' pickupid='"+pickupid+"'><td>"+order_no+"</td><td>"+pickup_no+"</td><td>"+cname+"</td><td>"+operation_type+"</td><td>"+cargo_nature
+    				+"</td><td>"+doaddress+"</td><td>"+arrival_model+"</td><td>"+pickup_mode+"</td><td>"+spname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+charge_type+"</td><td>"+office_name+"</td></tr>");
+    	}else{
+    		if(transferOrderIds.length != 0){
+    			transferOrderIds.splice(transferOrderIds.indexOf(value), 1); 
+    			var allTrs = ckeckedTransferOrderList.children();
+    			for(var i=0;i<allTrs.length;i++){
+    				if(allTrs[i].attributes[0].value == value){
+    					allTrs[i].remove();
+    				}
+    			}
+    		}
+    		if(transferOrderIds.length == 0){
+    			$("#saveBtn").attr('disabled', true);
+    			spName = "";
+    			chargeType2 = "";
+    			officeName = "";
+    			arrivalModel = "";
+    			routeFrom = "";
+    			routeTo = "";
+    		}
+    	}
+    	console.log("单号："+transferOrderIds);
+    });
+    
+    
+    /*$("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
     	if(spName.length == 0){
     		$("#saveBtn").attr('disabled', true);
     	}
@@ -236,7 +368,7 @@ $(document).ready(function() {
 			}
 			
 		}
-	});
+	});*/
     
     //获取所有客户
     $('#customer_filter').on('keyup click', function(){

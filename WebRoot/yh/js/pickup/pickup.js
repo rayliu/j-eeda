@@ -36,24 +36,23 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "aoColumns": [
-            {"mDataProp": "ORDER_NO","sWidth": "80px","sClass": "order_no"},
-            {"mDataProp": "AMOUNT","sWidth": "120px","sClass": "serial_no"},
-            {"mDataProp":"OPERATION_TYPE","sWidth": "70px","sClass": "operation_type"},
-    		{"mDataProp": "ROUTE_FROM","sWidth": "70px","sClass": "route_from"},
-    		{"mDataProp": "ROUTE_TO","sWidth": "80px","sClass": "route_to"}, 
-		    {"mDataProp":"ORDER_TYPE","sWidth": "70px","sClass": "order_type"},
-            {"mDataProp":"CARGO_NATURE","sWidth": "70px","sClass": "cargo_nature"},
-            {"mDataProp": "TOTAL_WEIGHT","sWidth": "60px","sClass": "total_weight"},
-            {"mDataProp": "TOTAL_VOLUME","sWidth": "60px","sClass": "total_volume"},
-            {"mDataProp": "TOTAL_AMOUNT","sWidth": "70px","sClass": "total_amount"},
-            {"mDataProp": "ADDRESS","sWidth": "100px","sClass": "address"},
-            {"mDataProp":"PICKUP_MODE","sWidth": "80px","sClass": "pickup_mode"},
-    		{"mDataProp":"ARRIVAL_MODE","sWidth": "80px","sClass": "arrival_mode"},
-            {"mDataProp": "STATUS","sWidth": "80px","sClass": "status"},
-            {"mDataProp": "CNAME","sWidth": "100px","sClass": "cname"},
-            {"mDataProp": "OFFICE_NAME","sWidth": "120px","sClass": "office_name"},  
-    		{"mDataProp": "CREATE_STAMP","sWidth": "150px","sClass": "create_stamp"},                                      
-    		{ "mDataProp": "PICKUP_ASSIGN_STATUS","sWidth": "80px","sClass": "assign_status"}                                  
+				{"mDataProp": "ORDER_NO","sWidth": "100px","sClass": "order_no"},
+				{"mDataProp": "CNAME","sWidth": "100px","sClass": "cname"},
+				{"mDataProp":"OPERATION_TYPE","sWidth": "80px","sClass": "operation_type"},
+				{"mDataProp": "ROUTE_FROM","sWidth": "80px","sClass": "route_from"},
+				{"mDataProp": "ROUTE_TO","sWidth": "80px","sClass": "route_to"}, 
+				{"mDataProp":"ORDER_TYPE","sClass": "order_type"},
+				{"mDataProp":"CARGO_NATURE","sClass": "cargo_nature"},
+				{"mDataProp": null,"sClass": "total_weight"},
+				{"mDataProp": null,"sClass": "total_volume"},
+				{"mDataProp": null,"sClass": "total_amount"},
+				{"mDataProp": "ADDRESS","sClass": "address"},
+				{"mDataProp":"PICKUP_MODE","sClass": "pickup_mode"},
+				{"mDataProp":"ARRIVAL_MODE","sClass": "arrival_mode"},
+				{"mDataProp": "STATUS","sClass": "status"},
+				{"mDataProp": "OFFICE_NAME","sWidth": "120px","sClass": "office_name"},  
+				{"mDataProp": "CREATE_STAMP","sWidth": "150px","sClass": "create_stamp"},                                      
+				{ "mDataProp": "PICKUP_ASSIGN_STATUS","sClass": "assign_status"}                                                               
         ]      
     });	
     //因为Btn动态生成，需要在这里做特殊响应处理
@@ -86,7 +85,7 @@ $(document).ready(function() {
 				 "fnRender": function(obj) {
 					 var result = false;
 					 for ( var i = 0; i < transferOrderIds.length; i++) {
-						 if(obj.aData.ID == transferOrderIds[0]){
+						 if(obj.aData.ID == transferOrderIds[i]){
 							 result = true;
 							 break;
 						 }
@@ -492,7 +491,6 @@ $(document).ready(function() {
 					orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
 					officeType.push($(this).parent().siblings('.office_name')[0].innerHTML);
 				}
-				
 			}else{
 				if($(this).parent().siblings('.order_type')[0].innerHTML != ''){
 					orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);

@@ -252,7 +252,7 @@ public class DepartOrderController extends Controller {
     				+ " c1.abbr cname,c2.abbr spname,o.office_name office_name, l1.name route_from,l2.name route_to, t.arrival_mode arrival_mode,"
     				+ " deo.arrival_time plan_time, t.arrival_time arrival_time, deo.remark, "
                     + " ((select ifnull(sum(amount),0) from transfer_order_item where order_id in (select order_id from depart_transfer dtp left join transfer_order tor on tor.id = dtp.order_id where dtp.depart_id = deo.id and tor.cargo_nature = 'cargo')) "
-                    + " +(select count(0) from transfer_order_item_detail where order_id in (select order_id from depart_transfer dtp left join transfer_order tor on tor.id = dtp.order_id where dtp.depart_id = deo.id and tor.cargo_nature = 'ATM'))) amount, "
+                    + " +(select count(0) from transfer_order_item_detail where order_id in (select order_id from depart_transfer dtp left join transfer_order tor on tor.id = dtp.order_id where dtp.depart_id = deo.id and tor.cargo_nature = 'ATM') and depart_id = deo.id)) amount, "
     				+ " (select tr.arrival_mode from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id) group by tr.arrival_mode) arrival_mode, "
     				+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id ))  as transfer_order_no, "		
     				+ " (select location from transfer_order_milestone tom where depart_id = deo.id order by id desc limit 0,1) location, "
