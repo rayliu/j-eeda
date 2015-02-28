@@ -569,23 +569,23 @@
         dataType: 'json',
         url: '/returnOrder/saveFile?return_id='+$("#returnId").val(),//上传地址
         done: function (e, data) {
+        	$('#myModal').modal('hide');
         	if(data.result.result == "true"){
-        		$("#centerBody").empty().append("<h4>上传成功！</h4>");
+        		//$("#centerBody").empty().append("<h4>上传成功！</h4>");
+        		$.scojs_message('上传成功', $.scojs_message.TYPE_OK);
         		console.log("data.result.cause:"+data.result.cause);
-        		//console.log("data.result.cause:"+data.result.cause+",parseJSON:"+$.parseJSON(data.result.cause));
-        		//var files = $.parseJSON(data.result.cause);
         		var showPictures = $("#showPictures");
         		showPictures.empty();
         		$.each(data.result.cause,function(name,value) {
         			showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
                 });
         	}else{
-        		$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
+        		$.scojs_message('上传失败，'+data.result.cause, $.scojs_message.TYPE_ERROR);
+        		//$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
         	}
-        	$("#footer").show();
+        	//$("#footer").show();
         },  
         progressall: function (e, data) {//设置上传进度事件的回调函数  
-        	//$.scojs_message('上传中', $.scojs_message.TYPE_OK);
         	$('#myModal').modal('show');
         	$("#footer").hide();
         } 
@@ -609,9 +609,21 @@
 	//图片放大
 	$("#showPictures").on('click', '.imgSign', function(e){
 		var imgAdd = $(this).attr("src");
-		$("#focusphoto").attr("src",imgAdd);
+		$("#lgImgDiv").empty().append("<img id='focusphoto' src='"+imgAdd+"' />"); 
+		var temp = new Image();
+		temp.src = imgAdd;
+		var divWidth = $('#imgContent').width() - 40;
+		var imgWidth = temp.width;
+		console.log("弹出框宽度:"+divWidth+",图片宽度："+imgWidth);
+		if(imgWidth > divWidth){
+			var imgHeight = temp.height;
+			var width = divWidth;
+			var height = imgHeight * (divWidth / imgWidth);
+			$("#lgImgDiv").empty().append("<img id='focusphoto' src='"+imgAdd+"' style='width:"+width+"px;height:"+height+"px;'/>"); 
+		}else{
+			$("#lgImgDiv").empty().append("<img id='focusphoto' src='"+imgAdd+"' />"); 
+		}
 		$('#myModal_img').modal('show');
 	});	
-	
     
 });
