@@ -8,15 +8,11 @@ import java.util.Map;
 import models.OrderAttachmentFile;
 import models.ReturnOrder;
 
-import com.jfinal.core.Controller;
-import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.upload.UploadFile;
 import com.jfinal.weixin.demo.SignKit;
-import com.jfinal.weixin.sdk.api.AccessTokenApi;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
-import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.JsTicketApi;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
 
@@ -69,7 +65,10 @@ public class WxController extends ApiController {
 	}
 	//获取回单数据
 	public void getRo() {
-		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select * from return_order where order_no=?",getPara());
+		String orderNo=getPara();
+		if(orderNo!=null)
+			orderNo=orderNo.toUpperCase();
+		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select * from return_order where order_no=?",orderNo);
 		if(returnOrder==null)
 			returnOrder = new ReturnOrder();
 		renderJson(returnOrder);
