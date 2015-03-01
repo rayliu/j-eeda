@@ -37,7 +37,7 @@ public class SetAttrLoginUserInterceptor implements Interceptor{
 		String serverName = request.getServerName();
         String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/";
         
-        logger.debug(basePath);;
+        logger.debug("Current host path:"+basePath);
         OfficeCofig of = OfficeCofig.dao.findFirst("select * from office_config where domain like '"+serverName +"%' or domain like '%"+serverName +"%'");
         controller.setAttr("SYS_CONFIG", of);
 	}
