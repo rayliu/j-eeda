@@ -173,17 +173,26 @@ public class EedaConfig extends JFinalConfig {
         String contentPath="/";//"yh";
         
         // eeda project controller
-//        me.add("/", AppController.class);
-//        me.add("/case", CaseController.class);
-//        me.add("/user", UserProfileController.class);
-//        me.add("/salesOrder", SalesOrderController.class);
-//        me.add("/loan", LoanController.class);
-//        me.add("/propertyClient", PropertyClientController.class);
-//        me.add("/sp", controllers.eeda.ServiceProviderController.class);
-        // me.add("/au", AdminUserController.class);
+        //setErpRoute(me);
 
         // me.add("/fileUpload", HelloController.class);
-        // yh project controller
+        setYhRoute(me, contentPath);
+        
+    }
+
+	private void setErpRoute(Routes me) {
+		me.add("/", controllers.eeda.AppController.class);
+        me.add("/case", controllers.eeda.CaseController.class);
+        me.add("/user", controllers.eeda.UserProfileController.class);
+        me.add("/salesOrder", controllers.eeda.SalesOrderController.class);
+        me.add("/loan", controllers.eeda.LoanController.class);
+        me.add("/propertyClient", controllers.eeda.PropertyClientController.class);
+        me.add("/sp", controllers.eeda.ServiceProviderController.class);
+        //me.add("/au", AdminUserController.class);
+	}
+
+	private void setYhRoute(Routes me, String contentPath) {
+		// yh project controller
         me.add("/", controllers.yh.AppController.class, contentPath);
         me.add("/debug", controllers.yh.LogController.class, contentPath);
         
@@ -271,8 +280,7 @@ public class EedaConfig extends JFinalConfig {
         //微信API路由
         me.add("/msg", WeixinMsgController.class);
 		me.add("/api", WeixinApiController.class, "/api");
-        
-    }
+	}
 
     @Override
 	public void configPlugin(Plugins me) {
