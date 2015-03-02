@@ -398,14 +398,15 @@
                     }
             }}, 
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
-			{"mDataProp":"CREATE_NAME",
+			{"mDataProp":null,
 				"sWidth": "130px",
 				"fnRender":function(obj) {
-					if(obj.aData.CREATE_NAME == 'system'){
+					var create_name = obj.aData.CREATE_NAME;
+					if(create_name == 'system'){
 		        		return "合同费用";
-		        	}else if(obj.aData.CREATE_NAME == 'user'){
+		        	}else if(create_name == 'user'){
 		        		return "手工录入费用";
-		        	}else if(obj.aData.CREATE_NAME == 'insurance'){
+		        	}else if(create_name == 'insurance'){
 		        		return "保险费用";
 		        	}else{
 		        		return "";

@@ -1137,8 +1137,9 @@ public class ReturnOrderController extends Controller {
 			ReturnOrderFinItem dFinItem = new ReturnOrderFinItem();
 			dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
 					.set("return_order_id", returnOrderId)
-					.set("create_date", new Date());
-			dFinItem.save();
+					.set("create_date", new Date())
+					.set("create_name", "user")
+					.save();
 		}
 		items.add(item);
 		renderJson(items);
@@ -1198,7 +1199,7 @@ public class ReturnOrderController extends Controller {
 				+ " left join transfer_order tor on tor.id = r_o.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id  "
 				+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id left join delivery_order_item doi on doi.delivery_id = d_o.id "
 				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id where r_o.id = "
-				+ id + " and f.type='应收' order by create_date";
+				+ id + " and f.type='应收' order by create_date " + sLimit;
 		List<Record> orders = Db.find(sql);
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);

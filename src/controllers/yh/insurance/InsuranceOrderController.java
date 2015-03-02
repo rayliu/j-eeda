@@ -560,7 +560,8 @@ public class InsuranceOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
-		String sql = "select c.abbr cname,tor.id order_id,tor.order_no transfer_order_no,round(sum(ifi.amount*ifi.rate),2) sum_amount,ifi.income_rate,sum(ifi.amount) sum_insurance,round(sum(ifi.amount)*income_rate,2) income_insurance_amount from transfer_order tor"
+		String sql = "select c.abbr cname,tor.id order_id,tor.order_no transfer_order_no,round(sum(ifi.amount*ifi.rate),2) sum_amount,ifi.income_rate,"
+						+ " sum(ifi.amount * toi.amount) sum_insurance,round(sum(ifi.amount  * toi.amount) * income_rate,2) income_insurance_amount from transfer_order tor"
 						+ " left join insurance_order ior on ior.id = tor.insurance_id"
 						+ " left join transfer_order_item toi on toi.order_id = tor.id"
 						+ " left join insurance_fin_item ifi on ifi.transfer_order_item_id = toi.id"
