@@ -402,13 +402,13 @@
 				"sWidth": "130px",
 				"fnRender":function(obj) {
 					if(obj.aData.CREATE_NAME == 'system'){
-		        		return "系统计算费用";
+		        		return "合同费用";
 		        	}else if(obj.aData.CREATE_NAME == 'user'){
 		        		return "手工录入费用";
 		        	}else if(obj.aData.CREATE_NAME == 'insurance'){
 		        		return "保险费用";
-		        	}else if(obj.aData.CREATE_NAME == 'insurance'){
-		        		return "合同费用";
+		        	}else{
+		        		return "";
 		        	}
 			}},
 			{  
@@ -416,10 +416,15 @@
                 "sWidth": "60px",  
             	"sClass": "remark",              
                 "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
-              		"<i class='fa fa-trash-o fa-fw'> </i> "+
-              		"删除"+
-              		"</a>";
+                	if(obj.aData.CREATE_NAME == 'user'){
+                		return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
+                  		"<i class='fa fa-trash-o fa-fw'> </i> "+
+                  		"删除"+
+                  		"</a>";
+                	}else{
+                		return "";
+                	}
+                    
                 }
             }   
         ]      

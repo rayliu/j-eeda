@@ -93,7 +93,7 @@ public class InsuranceOrderController extends Controller {
             		+ " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on o.id = tor .office_id"
-                    + " where (tor.status = '已发车' or tor.status='部分已发车') and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " where (tor.status = '已发车' or tor.status='部分已发车') and tor.insurance_id is null and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
             sql = "select distinct tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
             		+ "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to, "
@@ -109,7 +109,7 @@ public class InsuranceOrderController extends Controller {
                     + " left join user_login ul on ul.id = tor.create_by "  
                     + " left join depart_transfer dt on dt.order_id = tor.id "  
                     + " left join office o on o.id = tor .office_id"
-                    + " left join depart_order dor on dor.id = dt.depart_id where (tor.status = '已发车' or tor.status='部分已发车') and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " left join depart_order dor on dor.id = dt.depart_id where (tor.status = '已发车' or tor.status='部分已发车') and tor.insurance_id is null and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
                     + " order by tor.create_stamp desc" + sLimit;
         } else if ("".equals(routeFrom) && "".equals(routeTo)) {

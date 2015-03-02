@@ -36,6 +36,7 @@ $(document).ready(function() {
           if(data.result.result = "true"){
         	$("#uploadBtn").text("上传图片");
         	$('#uploadDesc').text('上传成功！').show();
+        	$("#uploadBtn").prop("disabled",false);
             //alert("上传成功！");
             console.log("data.result.cause:"+data.result.cause);
             //console.log("data.result.cause:"+data.result.cause+",parseJSON:"+$.parseJSON(data.result.cause));
@@ -49,7 +50,8 @@ $(document).ready(function() {
             $("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
           }
         },  
-        progressall: function (e, data) {//设置上传进度事件的回调函数  
+        progressall: function (e, data) {//设置上传进度事件的回调函数
+        	$("#uploadBtn").prop("disabled",true);
         	$("#uploadBtn").text("上传中.....");
           //$.scojs_message('上传中', $.scojs_message.TYPE_OK);
           //$('#myModal').modal('show');
