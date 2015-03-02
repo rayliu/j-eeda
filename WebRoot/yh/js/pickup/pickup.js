@@ -102,7 +102,7 @@ $(document).ready(function() {
             	"sWidth": "100px",
             	"sClass": "order_no",
             	"fnRender": function(obj) {
-            		if(obj.aData.CARGO_NATURE == "ATM" || obj.aData.ORDER_TYPE == "replenishmentOrder"){
+            		if((obj.aData.CARGO_NATURE == "ATM" || obj.aData.ORDER_TYPE == "replenishmentOrder") && obj.aData.ARRIVAL_MODE != "delivery"){
             			var str1 = '<button type="button" name="selectDetailBtn" class="btn btn-default sm selectDetailBtn" data-toggle="modal" data-target="#myModal" value="'+obj.aData.ID+'">选择单品</button>';
             			return obj.aData.ORDER_NO + str1;
             		}else{
