@@ -80,40 +80,40 @@ public class OfficeController extends Controller {
         if (id != "") {
             UserLogin user = UserLogin.dao.findById(id);
         }
-        Record user = new Record();
-        user.set("office_code", getPara("office_code"));
-        user.set("office_name", getPara("office_name"));
-        user.set("office_person", getPara("office_person"));
-        user.set("phone", getPara("phone"));
-        user.set("address", getPara("address"));
-        user.set("email", getPara("email"));
-        user.set("type", getPara("type"));
-        user.set("company_intro", getPara("company_intro"));
-        user.set("location", getPara("location"));
-        user.set("abbr", getPara("abbr"));
+        Record office = new Record();
+        office.set("office_code", getPara("office_code"));
+        office.set("office_name", getPara("office_name"));
+        office.set("office_person", getPara("office_person"));
+        office.set("phone", getPara("phone"));
+        office.set("address", getPara("address"));
+        office.set("email", getPara("email"));
+        office.set("type", getPara("type"));
+        office.set("company_intro", getPara("company_intro"));
+        office.set("location", getPara("location"));
+        office.set("abbr", getPara("abbr"));
+        //判断当前是更新还是新建
         if (id != "") {
-            logger.debug("update....");
-            user.set("id", id);
-            Db.update("office", user);
+            Db.update("office", office);
         } else {
-            logger.debug("insert....");
-            //记录总公司
+            //记录分公司的总公司
 			String name = (String) currentUser.getPrincipal();
-	 		List<UserLogin> users = UserLogin.dao
-	 				.find("select * from user_login where user_name='" + name + "'");
-	 		//创建用户是总公司用户
-	 		user.set("belong_office", users.get(0).get("office_id"));
+			//根据登陆用户获取公司的的父公司的ID
+			UserOffice user_office = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",name,true);
+			Office parentOffice = Office.dao.findFirst("select * from office where id = ?",user_office.get("office_id"));
+			office.set("belong_office",parentOffice.get("belong_office"));
+			
 	 		//创建用户是网点用户
 	 		//Record rec = Db.findFirst("select belong_office  from office  where id = " + users.get(0).get("office_id"));
 	 		//user.set("office_id", rec.get("belong_office"));
             
-            Db.save("office", user);
+            Db.save("office", office);
+            //自动将新的公司给是管理员的用户
             List<UserRole> urList = UserRole.dao.find("select * from user_role where role_code = 'admin'");
             if(urList.size()>0){
             	for (UserRole userRole : urList) {
                 	UserOffice uo = new UserOffice();
                 	uo.set("user_name", userRole.get("user_name"));
-                	uo.set("office_id",user.get("id"));
+                	uo.set("office_id",office.get("id"));
                 	uo.save();
     			}
             }
@@ -179,11 +179,11 @@ public class OfficeController extends Controller {
  		+ " where office_name  like '%"+name+"%'  and "
  		+ "office_person like '%"+person+"%' "
  		+ "and type  like '%"+type+"%' "
- 		+ "and address  like '%"+address+"%' " + sLimit;
+ 		+ "and address  like '%"+address+"%' order by id desc " + sLimit;
         // 获取当前页的数据
         List<Record> orders = null;
         if(type==null&&name==null&&address==null&&person==null){
-        	orders = Db.find("select o.*,lc.name dname from office o left join location lc on o.location = lc.code " + sLimit);
+        	orders = Db.find("select o.*,lc.name dname from office o left join location lc on o.location = lc.code order by o.id desc" + sLimit);
         }else{
         	 orders = Db.find(list_sql);
         }
