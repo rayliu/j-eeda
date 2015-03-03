@@ -11,6 +11,7 @@ $(document).ready(function() {
     
     //选取方法二
     //供应商、计费方式、网点、到达方式、始发地、目的地
+    var customer = "";
     var spName = "";
     var chargeType2 = "";
     var officeName = "";
@@ -234,6 +235,7 @@ $(document).ready(function() {
     	if($(this).prop("checked") == true){
     		$("#saveBtn").attr('disabled', false);
     		if(transferOrderIds.length == 0){
+    			customer = cname;
     			spName = spname;
     			chargeType2 = charge_type;
     			officeName = office_name;
@@ -262,7 +264,16 @@ $(document).ready(function() {
 					alert("请选择同一到达方式的运输单");
 					return false;
 				}else{
-					transferOrderIds.push($(this).val());
+					if(arrivalModel == "直送"){
+						if(customer != cname){
+		    				alert("请选择同一客户!");
+		    				return false;
+		    			}else{
+		    				transferOrderIds.push($(this).val());
+		    			}
+					}else{
+						transferOrderIds.push($(this).val());
+					}
 				}
     		}
     		ckeckedTransferOrderList.append("<tr value='"+value+"' pickupid='"+pickupid+"'><td>"+order_no+"</td><td>"+pickup_no+"</td><td>"+cname+"</td><td>"+operation_type+"</td><td>"+cargo_nature
@@ -279,6 +290,7 @@ $(document).ready(function() {
     		}
     		if(transferOrderIds.length == 0){
     			$("#saveBtn").attr('disabled', true);
+    			customer = "";
     			spName = "";
     			chargeType2 = "";
     			officeName = "";

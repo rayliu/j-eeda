@@ -239,13 +239,64 @@ public class TransferOrderMilestoneController extends Controller {
         renderJson(map);
     }
 
-    // 收货确认（TODO把保险单带到回单中）
+    // 直送运输单-收货确认：不可以多次提货，整单发车
     public void receipt() {
         Long order_id = Long.parseLong(getPara("orderId"));
         Long departOrderId = Long.parseLong(getPara("departOrderId"));
-        TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
+        //TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        
+        //修改发车单信息
         DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
-        List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
+        departOrder.set("status", "已收货").update();
+        //直接生成回单，在把合同等费用带到回单中
+        String orderNo = OrderNoGenerator.getNextOrderNo("HD");
+        ReturnOrder returnOrder = new ReturnOrder();
+        returnOrder.set("order_no", orderNo)
+        .set("transaction_status", "新建")
+        .set("creator", users.get(0).get("id"))
+        .set("create_date", sqlDate)
+        //回单中"transfer_order_id"字段修改为“depart_id”
+        //.set("depart_id", departOrderId)
+        .set("transfer_order_id", order_id).save();
+        //修改运输单信息
+        List<Record> departOrderIds = Db.find("select order_id from depart_transfer where depart_id = ? ;",departOrderId);
+        for (Record record : departOrderIds) {
+        	TransferOrder transferOrder = TransferOrder.dao.findById(record.get("order_id"));
+			transferOrder.set("status", "已收货").update();
+			//设置回单客户信息，必须是同一个客户
+            returnOrder.set("customer_id", transferOrder.get("customer_id")).update();
+            
+            TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+            transferOrderMilestone.set("status", "已收货")
+            .set("create_by", users.get(0).get("id"))
+            .set("location", "")
+            .set("create_stamp", sqlDate)
+            .set("order_id", order_id)
+            .set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE)
+            .save();
+
+            transferOrderMilestone = new TransferOrderMilestone();
+            transferOrderMilestone.set("status", "已收货")
+            .set("create_by", users.get(0).get("id"))
+            .set("location", "")
+            .set("create_stamp", sqlDate)
+            .set("depart_id", departOrderId)
+            .set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE)
+            .save();
+            
+            ReturnOrderController roController= new ReturnOrderController(); 
+            //直送时把保险单费用带到回单
+            roController.addInsuranceFin(transferOrder, departOrder, returnOrder);
+            //根据合同生成费用
+            roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
+		}
+        
+        //查询单品有没有经过调车？经过调车的就是部分收货？这什么逻辑？
+        /*List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
                 .find("select toid.pickup_id from transfer_order_item_detail toid where order_id = ? group by toid.pickup_id",
                         transferOrder.get("id"));
         if (transferOrderItemDetails.size() > 1) {
@@ -315,7 +366,7 @@ public class TransferOrderMilestoneController extends Controller {
             returnOrder.set("customer_id", transferOrder.get("customer_id"));
             returnOrder.save();
 
-            /*TransferOrderFinItem tFinItem = new TransferOrderFinItem();
+            TransferOrderFinItem tFinItem = new TransferOrderFinItem();
             if (transferOrder.get("coustomer_id") != null) {
                 // ATM计件算
                 List<Record> list = Db.find("select * from transfer_order_item where order_id ='"
@@ -361,7 +412,7 @@ public class TransferOrderMilestoneController extends Controller {
                         tFinItem.save();
                     }
                 }
-            }*/
+            }
             
             
 	        ReturnOrderController roController= new ReturnOrderController(); 
@@ -369,7 +420,7 @@ public class TransferOrderMilestoneController extends Controller {
 	        roController.addInsuranceFin(transferOrder, departOrder, returnOrder);
 	        //根据合同生成费用
 	        roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
-        }
+        }*/
         renderJson("{\"success\":true}");
     }
 
