@@ -133,12 +133,13 @@ public class EedaConfig extends JFinalConfig {
 	public void configConstant(Constants me) {
         //加载配置文件    	
         loadPropertyFile("app_config.txt");
-        getPropertyToBoolean("devMode", false);
+        
+        me.setDevMode(getPropertyToBoolean("devMode", false));
         
     	// ApiConfigKit 设为开发模式可以在开发阶段输出请求交互的 xml 与 json 数据
     	ApiConfigKit.setDevMode(me.getDevMode());
         
-    	me.setDevMode(me.getDevMode());
+    	
 
         BeetlRenderFactory templateFactory = new BeetlRenderFactory();
         me.setMainRenderFactory(templateFactory);
