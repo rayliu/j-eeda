@@ -58,6 +58,15 @@ $(document).ready(function() {
             {"mDataProp":"COMPANY_NAME",
             	"sWidth": "15%"
             },
+            {"mDataProp":"ABBR",
+            	"fnRender":function(obj){
+            		var str = "";
+            		str = obj.aData.ABBR;
+            		if(str == null){
+            			str = "";
+            		}
+            		return str;
+            	}},
             {"mDataProp":"CONTACT_PERSON"},
             {"mDataProp":"PHONE"},
             {"mDataProp":"PERIOD_FROM"},

@@ -308,7 +308,7 @@ public class ContractController extends Controller {
                     + "%' and c.period_from like '%"
                     + periodFrom_filter
                     + "%' and c.period_to like '%" + periodTo_filter + "%'";
-            System.out.println(sql);
+            
             Record rec = Db.findFirst(sql + totalWhere);
             logger.debug("total records:" + rec.getLong("total"));
 
