@@ -16,22 +16,7 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
         			return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
         		}},
-            {"mDataProp":"STATUS",
-                "fnRender": function(obj) {
-                    if(obj.aData.STATUS=='new'){
-                        return '新建';
-                    }else if(obj.aData.STATUS=='checking'){
-                        return '已发送对帐';
-                    }else if(obj.aData.STATUS=='confirmed'){
-                        return '已审核';
-                    }else if(obj.aData.STATUS=='completed'){
-                        return '已结算';
-                    }else if(obj.aData.STATUS=='cancel'){
-                        return '取消';
-                    }
-                    return obj.aData.STATUS;
-                }
-            },
+            {"mDataProp":"ORDER_STATUS"},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":"CNAME"},

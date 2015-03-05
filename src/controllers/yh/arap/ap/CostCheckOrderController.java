@@ -189,7 +189,12 @@ public class CostCheckOrderController extends Controller {
         String endTime = getPara("endTime");
         
         String sqlTotal = "";
-        String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no,c.abbr cname,ul.user_name creator_name from arap_cost_order aco "
+        String sql = "select aco.*,"
+        		+ " group_concat(acoo.invoice_no separator ',') invoice_no,"
+        		+ " c.abbr cname,"
+        		+ " ul.user_name creator_name,"
+        		+ " (select case when aciao. status = '已付款确认' then aciao.status else acor.status end as status from arap_cost_order acor left join arap_cost_invoice_application_order aciao on acor.application_order_id = aciao.id where acor.id = aco.id) as order_status"
+        		+ " from arap_cost_order aco "
         		+ " left join party p on p.id = aco.payee_id"
         		+ " left join contact c on c.id = p.contact_id"
         		+ " left join user_login ul on ul.id = aco.create_by"
