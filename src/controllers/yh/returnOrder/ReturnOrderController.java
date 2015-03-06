@@ -3,6 +3,7 @@ package controllers.yh.returnOrder;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -1276,10 +1277,12 @@ public class ReturnOrderController extends Controller {
 				sum_insurance += detailList.get(i).getLong("delivery_number") * insuranceItem.getDouble("detail_insurance");
 			}
 		}
+		BigDecimal bg = new BigDecimal(sum_insurance);
+        double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 		if(sum_insurance != 0){
 			ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
 			returnOrderFinItem.set("fin_item_id", fi.get("id"));
-			returnOrderFinItem.set("amount",sum_insurance);        		
+			returnOrderFinItem.set("amount",f1);        		
 			//returnOrderFinItem.set("transfer_order_id", transferOrderId);
 			returnOrderFinItem.set("return_order_id", returnOrder.get("id"));
 			returnOrderFinItem.set("status", "未完成");
@@ -1308,9 +1311,11 @@ public class ReturnOrderController extends Controller {
     			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(InsuranceFinItemList.get(j).get("insurance_order_id"));
     			ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
     			double amount = InsuranceFinItemList.get(j).getDouble("amount") * InsuranceFinItemList.get(j).getDouble("income_rate") *  transferOrderItemList.get(i).getDouble("amount");
-	    		if(amount != 0){
+    			BigDecimal bg = new BigDecimal(amount);
+    	        double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    			if(f1 != 0){
 	    			returnOrderFinItem.set("fin_item_id", finItem.get("id"))
-	    			.set("amount", amount)
+	    			.set("amount", f1)
 		    		.set("return_order_id", returnOrder.get("id"))
 		    		.set("status", insuranceOrder.get("status"))
 		    		.set("fin_type", "charge")// 类型是应收
