@@ -29,6 +29,9 @@ $(document).ready(function() {
 				$("#chargeCheckOrderId").val(data.ID);
 				$("#chargeAmount")[0].innerHTML = data.CHARGE_AMOUNT;
 				$('#auditBtn').attr('disabled', false);
+				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+				
+				$("#arap_order_no").text(data.ORDER_NO);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -73,7 +76,7 @@ $(document).ready(function() {
  		
  		saveChargeCheckOrder(e);
 
- 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 		//$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	
 	$("#chargeCheckOrderItem").click(function(e){
