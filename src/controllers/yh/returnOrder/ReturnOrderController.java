@@ -1276,23 +1276,27 @@ public class ReturnOrderController extends Controller {
 				sum_insurance += detailList.get(i).getLong("delivery_number") * insuranceItem.getDouble("detail_insurance");
 			}
 		}
-		ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
-		returnOrderFinItem.set("fin_item_id", fi.get("id"));
-		returnOrderFinItem.set("amount",sum_insurance);        		
-		//returnOrderFinItem.set("transfer_order_id", transferOrderId);
-		returnOrderFinItem.set("return_order_id", returnOrder.get("id"));
-		returnOrderFinItem.set("status", "未完成");
-		returnOrderFinItem.set("fin_type", "charge");// 类型是应收
-		//returnOrderFinItem.set("contract_id", null);// 类型是应收
-		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
-		returnOrderFinItem.set("create_date", now);
-		returnOrderFinItem.set("create_name", "system");
-		//returnOrderFinItem.set("contract_id", contract.get("id"));
+		if(sum_insurance != 0){
+			ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
+			returnOrderFinItem.set("fin_item_id", fi.get("id"));
+			returnOrderFinItem.set("amount",sum_insurance);        		
+			//returnOrderFinItem.set("transfer_order_id", transferOrderId);
+			returnOrderFinItem.set("return_order_id", returnOrder.get("id"));
+			returnOrderFinItem.set("status", "未完成");
+			returnOrderFinItem.set("fin_type", "charge");// 类型是应收
+			//returnOrderFinItem.set("contract_id", null);// 类型是应收
+			returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
+			returnOrderFinItem.set("create_date", now);
+			returnOrderFinItem.set("create_name", "system");
+			//returnOrderFinItem.set("contract_id", contract.get("id"));
+			
+			returnOrderFinItem.save();
+		}
 		
-		returnOrderFinItem.save();
     }
     /**
      * TODO:ATM直送时将保险费用带到回单
+     * 用循环出现的问题是：运输单货品信息多少个条目，回单里面就有多少个保险费用
      */
     public void addInsuranceFin(TransferOrder transferOrder,DepartOrder derpartOrder,ReturnOrder returnOrder){
     	List<TransferOrderItem> transferOrderItemList = TransferOrderItem.dao.find("select id,amount from transfer_order_item where order_id = " + transferOrder.get("id"));
@@ -1304,15 +1308,18 @@ public class ReturnOrderController extends Controller {
     			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(InsuranceFinItemList.get(j).get("insurance_order_id"));
     			ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
     			double amount = InsuranceFinItemList.get(j).getDouble("amount") * InsuranceFinItemList.get(j).getDouble("income_rate") *  transferOrderItemList.get(i).getDouble("amount");
-	    		returnOrderFinItem.set("fin_item_id", finItem.get("id"))
-    			.set("amount", amount)
-	    		.set("return_order_id", returnOrder.get("id"))
-	    		.set("status", insuranceOrder.get("status"))
-	    		.set("fin_type", "charge")// 类型是应收
-	    		.set("creator", InsuranceFinItemList.get(j).get("create_by"))
-	    		.set("create_date", InsuranceFinItemList.get(j).get("create_date"))
-	    		.set("create_name", "insurance")
-	    		.save();
+	    		if(amount != 0){
+	    			returnOrderFinItem.set("fin_item_id", finItem.get("id"))
+	    			.set("amount", amount)
+		    		.set("return_order_id", returnOrder.get("id"))
+		    		.set("status", insuranceOrder.get("status"))
+		    		.set("fin_type", "charge")// 类型是应收
+		    		.set("creator", InsuranceFinItemList.get(j).get("create_by"))
+		    		.set("create_date", InsuranceFinItemList.get(j).get("create_date"))
+		    		.set("create_name", "insurance")
+		    		.save();
+	    		}
+    			
 			}
 		}
     }
