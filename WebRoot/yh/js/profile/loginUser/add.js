@@ -236,6 +236,7 @@ $(document).ready(function(){
    		});
 		$("#officeIds").val(officeIds.toString());
 		$("#customerIds").val(customerIds.toString());
+		
 		$("#leadsForm").submit();
 	});
 	
