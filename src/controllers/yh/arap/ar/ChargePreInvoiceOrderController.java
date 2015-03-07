@@ -74,7 +74,22 @@ public class ChargePreInvoiceOrderController extends Controller {
         String orderNo = getPara("orderNo");
         
         String sqlTotal = "";
-        String sql = "select aaia.*,c.abbr cname,ul.user_name as create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_charge_invoice_application_order aaia "
+        String sql = "select aaia.*,"
+        		+ " c.abbr cname,"
+        		+ " ul.user_name as create_by,"
+        		+ " ul2.user_name audit_by,"
+        		+ " ul3.user_name approval_by ,"
+        		+ " (select case "
+        		+ "	when aci.status = '已收款确认' then aci.status "
+        		+ " when aci.status ='已审批' then '已记录'"
+				+ "	when aci.status != '已收款确认' and aci.status != '' then '开票记录中'"
+				+ " when aciao.status = '已审批' then '已开票'"
+				+ "	else aciao.status"
+				+ "	end "
+				+ "	from arap_charge_invoice_application_order aciao"
+				+ "	left join arap_charge_invoice aci on aciao.invoice_order_id = aci.id"
+				+ "	where aciao.id = aaia.id) as order_status "
+        		+ " from arap_charge_invoice_application_order aaia "
 				+ " left join party p on p.id = aaia.payee_id"
 				+ " left join contact c on c.id = p.contact_id"
 				+ " left join user_login ul on ul.id = aaia.create_by"

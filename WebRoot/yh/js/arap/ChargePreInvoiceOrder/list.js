@@ -23,7 +23,7 @@ $(document).ready(function() {
             		}
         			
         		}},
-            {"mDataProp":"STATUS",
+           /* {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -38,7 +38,8 @@ $(document).ready(function() {
                     }
                     return obj.aData.STATUS;
                 }
-            },
+            },*/
+        	{"mDataProp":"ORDER_STATUS"},
             {"mDataProp":null},
             {"mDataProp":"CNAME"},
             {"mDataProp":null},
