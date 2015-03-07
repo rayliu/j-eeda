@@ -199,8 +199,6 @@ public class ChargeCheckOrderController extends Controller {
 						+ " and ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id))  like '%"+ orderNo +"%' "
 						+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from))  like '%"+ address +"%' "
 						+ " group by ror.id,tor2.id order by ror.create_date desc ";
-			
-
 		}
 		sqlTotal = "select count(1) total from ("+ sql + condition +") as A";
 		rec = Db.findFirst(sqlTotal + fieldsWhere);
@@ -394,10 +392,10 @@ public class ChargeCheckOrderController extends Controller {
 		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 		orderMap.put("aaData", orders);
 
-		orderMap.put("sEcho", pageIndex);
+		/*orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
 		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-		orderMap.put("aaData", orders);
+		orderMap.put("aaData", orders);*/
 
 		renderJson(orderMap);
 	}
@@ -453,7 +451,20 @@ public class ChargeCheckOrderController extends Controller {
 		String tihuo = getPara("tihuo");
 		String office = getPara("office");
 		String sqlTotal = "";
-		String sql = "select distinct aao.*, usl.user_name as creator_name,c.abbr cname"
+		String sql = "select distinct aao.*, "
+				+ " usl.user_name as creator_name,"
+				+ " c.abbr cname,"
+				+ " (select case "
+				+ "	when aci.status = '已收款确认' then aci.status "
+				+ "	when aci.status != '已收款确认' and aci.status != '' then '开票记录中'"
+				+ "	when aciao.status != '已审批' and aciao.status !='' then '开票申请中'"
+				+ "else aco.status"
+				+ "	end "
+				+ "	from arap_charge_order aco"
+				+ "	left join arap_charge_invoice_application_item aciai on aco.id = aciai.charge_order_id"
+				+ "	left join arap_charge_invoice_application_order aciao on aciai.invoice_application_id = aciao.id"
+				+ "	left join arap_charge_invoice aci on aciao.invoice_order_id = aci.id"
+				+ " where aco.id = aao.id) as order_status"
 				+ " from arap_charge_order aao "
 				+ " left join party p on p.id = aao.payee_id "
 				+ " left join contact c on c.id = p.contact_id"
