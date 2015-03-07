@@ -14,45 +14,45 @@
 <body>
 	<div class="container">
 		<div class="row">
-			<div class=" col-md-offset-4 col-lg-6">
+			<div class=" col-md-offset-3 col-lg-6">
 				<div class="login-panel panel panel-default">
 					<div class="panel-heading">
 						<h3 class="panel-title">新用户注册</h3>
 					</div>
 					<div class="panel-body">
 						<p>您好，易达物流信息平台 处于邀请试用阶段。</p>
-						<p>如果您对我们的系统有兴趣，请返回 <a href='http://www.eeda123.com/#footer'>首页</a> 并发送留言给我们，谢谢！</p>
-						 <form action="/register/saveRegistrant" method="post" id="registerForm" class="form-horizontal"  style="margin: 0 15px;display:none;" >
+						<p>业务实施流程</p>
+						<p>如果您对我们的系统有兴趣，请先返回 <a href='http://www.eeda123.com/#footer'>首页</a> 并发送留言给我们，谢谢！</p>
+						 <form action="/register/saveRegistrant" method="post" id="registerForm" class="form-horizontal"  style="margin: 0 15px; display:none;" >
 							<fieldset>
-								您好，易达物流信息平台 处于邀请试用阶段，如果您对我们的系统有兴趣，请返回首页，发送留言给我们，谢谢！
 								<div class="row">
-									<div class="form-group" id="registerNatures">
+									<div class="form-group" id="registerNatures" style="display:none;">
 										<span  class="col-md-2"></span>
 										<label class="radio-inline col-md-3">
-											<input type="radio" name ="officeRegister" value="register" id="exit" checked>公司已注册 
+											<input type="radio" name ="officeRegister" value="register" id="exit">公司已注册 
 										</label>
 										<label class="radio-inline">
-											<input type="radio" name ="officeRegister" id="unexit" value="unregister">公司未注册 
+											<input type="radio" name ="officeRegister" id="unexit" value="unregister"  checked>公司未注册 
 										</label>
 
 									</div>
 									<div class=" form-group form-group-lg">
-										<label class="col-md-3 control-label">登&nbsp;&nbsp;陆&nbsp;&nbsp;名</label>
+										<label class="col-md-3 control-label">登&nbsp;&nbsp;录&nbsp;&nbsp;名</label>
 										<div class=" col-md-6">
-											<input class="form-control" type="text" id = "username" name="username" placeholder="请输入你的登陆名(邮箱地址)">
+											<input class="form-control" type="text" id = "username" name="username" placeholder="请输入你的登录名(邮箱地址)">
 										</div>
 									</div>
 									<div class=" form-group form-group-lg">
-										<label class="col-md-3 control-label">登陆密码</label>
+										<label class="col-md-3 control-label">登录密码</label>
 										<div class=" col-md-6">
-											<input class="form-control" type="password" id="password" name="password"  placeholder="请输入你的登陆密码">
+											<input class="form-control" type="password" id="password" name="password"  placeholder="请输入你的登录密码">
 										</div>
 										
 									</div>
 									<div class=" form-group form-group-lg">
 										<label class="col-md-3 control-label">确认密码</label>
 										<div class=" col-md-6">
-											<input class="form-control" type="password" id="affirmPass" name="affirmPass" placeholder="请再次输入你的登陆密码">
+											<input class="form-control" type="password" id="affirmPass" name="affirmPass" placeholder="请再次输入你的登录密码">
 										</div>
 										
 									</div>
@@ -91,7 +91,7 @@
 								</div>
 								<div class="form-group form-group-sm">
 								   <span  class="col-md-1"></span>
-									<button type="submit" class="btn btn-default btn-success col-sm-4">OK</button>
+									<button type="submit" class="btn btn-default btn-success col-sm-3">提   交</button>
 								</div>
 								
 						 	</fieldset>
