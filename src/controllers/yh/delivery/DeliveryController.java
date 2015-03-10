@@ -393,9 +393,9 @@ public class DeliveryController extends Controller {
 				.findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
 						+ tOrder.get("customer_id")
 						+ "'and p.contact_id = c.id");*/
-		String sql = "select p.id,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+tOrder.get("customer_id");
-		Record customerContact = Db.findFirst(sql);
-		//Party customerContact = Party.dao.findFirst(sql);
+		String sql = "select p.id as cid,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+tOrder.get("customer_id");
+		//Record customerContact = Db.findFirst(sql);
+		Party customerContact = Party.dao.findFirst(sql);
 
 		// 供应商信息
 		Party spContact = Party.dao
@@ -615,7 +615,7 @@ public class DeliveryController extends Controller {
 		String rdc = getPara("hiddenRdc");
 		String cargoNature = getPara("cargoNature");
 		Party party = Party.dao
-				.findFirst("select *,p.id as customerId from party p left join contact c on p.contact_id=c.id where p.id ='"
+				.findFirst("select p.id as cid,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = '"
 						+ cusId + "'");
 		setAttr("localArr", list);
 		setAttr("localArr2", list2);
