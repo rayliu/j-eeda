@@ -16,8 +16,14 @@ $(document).ready(function() {
 			"aoColumns": [
 				{"mDataProp":"ITEM_NAME", "sWidth":"100px"},
 	            {"mDataProp":"ITEM_NO", "sWidth":"80px"}, 
-	            {"mDataProp":"COMPANY_NAME", "sWidth":"150px"},
-	            {"mDataProp":"TOTAL_QUANTITY", "sWidth":"40px"},
+	            {"mDataProp":"COMPANY_NAME", "sWidth":"130px"},
+	            {"mDataProp":"PREDICT_AMOUNT","sWidth":"40px"},
+	            {"mDataProp":"VALID_AMOUNT","sWidth":"40px"},
+	            {"mDataProp":"LOCK_AMOUNT","sWidth":"40px"},
+	            {"mDataProp":null, "sWidth":"80px",
+	            	"fnRender":function(obj){
+	            		return obj.aData.VALID_AMOUNT + obj.aData.LOCK_AMOUNT;
+	            	}},
 	            {"mDataProp":"UNIT", "sWidth":"30px"},
 	            {"mDataProp":"WAREHOUSE_NAME", "sWidth":"120px"},
 	            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"}
