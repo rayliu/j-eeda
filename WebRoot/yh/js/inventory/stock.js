@@ -89,7 +89,7 @@ $(document).ready(function() {
 	$('#officeSelect').on('keyup click', function(){
 		if($("#officeSelect").val() == "")
 	    	$("#hiddenOfficeId").val("");
-		$.get('/gateIn/searchOfficeByPermission',{"officeName":$(this).val()}, function(data){
+		$.get('/gateIn/searchAllOffice',{"officeName":$(this).val()}, function(data){
 			console.log(data);
 			var officeList =$("#officeList");
 			officeList.empty();

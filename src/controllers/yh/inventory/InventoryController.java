@@ -191,10 +191,14 @@ public class InventoryController extends Controller {
 					+ " left join office o on o.id = w.office_id where toid.status = '已发车'  "
 					+ " group by c.abbr, pro.item_name, pro.item_no, pro.unit, w.warehouse_name, o.office_name ) as A where 1=1 ";
         
-        if((customerId != null) && !"".equals(customerId)){
-        	//sql = sql + " and p2.id =" + customerId ;
-        	sql = sql + " and pid =" + customerId ;
-        }
+		    if((customerId != null) && !"".equals(customerId)){
+		    	//sql = sql + " and p2.id =" + customerId ;
+		    	sql = sql + " and pid =" + customerId ;
+		    }else{
+		    	if(currentUser.hasRole("outuser")){
+		    		sql = sql + " and pid in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+		    	}
+		    }
         
         if(warehouseId != null && !"".equals(warehouseId)){
         	//sql = sql + " and w.id =" + warehouseId ;
@@ -789,11 +793,11 @@ public class InventoryController extends Controller {
     	String officeId = getPara("officeId");
     	String sql ="";
     	if(officeId != null && !"".equals(officeId)){
-    		sql = "select * from warehouse where office_id = " + officeId + " and office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+    		sql = "select * from warehouse where office_id = " + officeId;
     	}else if(warehouseName != null && !"".equals(warehouseName)){
-    		sql = "select * from warehouse where warehouse_name like '%"+warehouseName+"%' and office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+    		sql = "select * from warehouse where warehouse_name like '%"+warehouseName+"%'";
     	}else{
-    		sql = "select * from warehouse where office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+    		sql = "select * from warehouse";
     	}
         List<Warehouse> warehouses = Warehouse.dao.find(sql);
         renderJson(warehouses);
