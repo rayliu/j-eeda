@@ -102,7 +102,7 @@
                                            	   <h5 id="pageSpName">${spContact.contact_person!''} ${spContact.phone!''}</h5><h5 id="pageSpAddress">${spContact.address!''}</h5>     
                                            </div>
                                         </div>    
-                                          
+                                          <div></div>
                                  		<h3>车辆信息</h3>                                         
                                         <div class="form-group">
                                             <label>车牌</label>
@@ -127,7 +127,17 @@
                                         <input type="text" class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
                                         </div>
                                     </div>
-                                                                               
+                                    <div id = 'show_follow_name'>
+	                                     <div class="form-group">
+	                                     <label>跟车人</label>
+	                                     <input class="form-control" id="car_follow_name" name="car_follow_name" value="${pickupOrder.car_follow_name!''}">
+	                                     </div>
+	                                                                        
+	                                     <div class="form-group">
+	                                     <label>跟车人电话</label>
+	                                     <input class="form-control" id="car_follow_phone" name="car_follow_phone" value="${pickupOrder.car_follow_phone!''}">
+	                                     </div>
+                                     </div>                              
                                             <!-- <div class="form-group" id="paymentDiv" style="display: none;">
                                             <label>应付费用</label>
                                             <input class="form-control" id="payment" name="payment" value="${pickupOrder.payment!''}">

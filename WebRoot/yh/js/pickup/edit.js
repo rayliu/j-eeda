@@ -535,67 +535,7 @@
 		var targetNewVal = targetNode.attr("value");
 		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
 	});
-/*	
-	// 上移
-	$("#pickupAddressTbody").on('click', '.moveUp', function(e){
-		var currentNode = $(this).parent().parent();
-		var currentVal = currentNode.attr("value");
-		var targetNode = currentNode.prev();
-		var targetVal = targetNode.attr("value");
-		currentNode.attr("value", targetVal);
-		targetNode.attr("value", currentVal);
-		var currentId = currentNode.attr("id");
-		var targetId = targetNode.attr("id");
-		var currentNewVal = currentNode.attr("value");
-		var targetNewVal = targetNode.attr("value");
-		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
-	});
-	
-	// 下移
-	$("#pickupAddressTbody").on('click', '.moveDown', function(e){
-		var currentNode = $(this).parent().parent();
-		var currentVal = currentNode.attr("value");
-		var targetNode = currentNode.next();
-		var targetVal = targetNode.attr("value");
-		currentNode.attr("value", targetVal);
-		targetNode.attr("value", currentVal);
-		var currentId = currentNode.attr("id");
-		var targetId = targetNode.attr("id");
-		var currentNewVal = currentNode.attr("value");
-		var targetNewVal = targetNode.attr("value");
-		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
-	});
-	
-	// 移至顶部
-	$("#pickupAddressTbody").on('click', '.moveTop', function(e){
-		var currentNode = $(this).parent().parent();
-		var currentVal = currentNode.attr("value");
-		var targetNode = currentNode.siblings().first();
-		var targetVal = targetNode.attr("value");
-		currentNode.attr("value", targetVal);
-		targetNode.attr("value", currentVal);
-		var currentId = currentNode.attr("id");
-		var targetId = targetNode.attr("id");
-		var currentNewVal = currentNode.attr("value");
-		var targetNewVal = targetNode.attr("value");
-		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
-	});
-	
-	// 移至底部
-	$("#pickupAddressTbody").on('click', '.moveButtom', function(e){
-		var currentNode = $(this).parent().parent();
-		var currentVal = currentNode.attr("value");
-		var targetNode = currentNode.siblings().last();
-		var targetVal = targetNode.attr("value");
-		currentNode.attr("value", targetVal);
-		targetNode.attr("value", currentVal);
-		var currentId = currentNode.attr("id");
-		var targetId = targetNode.attr("id");
-		var currentNewVal = currentNode.attr("value");
-		var targetNewVal = targetNode.attr("value");
-		swapPosition(currentId,targetId,currentNewVal,targetNewVal);
-	});
-*/
+
 	// 回显提货方式
 	$("input[name='pickupMode']").each(function(){
 		if($("#pickupModeRadio").val() == $(this).val()){
@@ -629,16 +569,18 @@
     	$("#driverMessage").val("");
     	$("#driver_phone").val("");
     	
-  	  console.log(this);
+  	  //console.log(this);
   	  inputId  = $(this).attr('id');
 	  if(inputId=='pickupMode1'){
 		  $("#spDiv").hide();
 		  $("#paymentDiv").hide();
 		  $("#pickupOrderPayment").hide();
+		  $("#show_follow_name").show();
 	  }else{
 		  $("#spDiv").show();
 		  $("#paymentDiv").show();
 		  $("#pickupOrderPayment").show();
+		  $("#show_follow_name").hide();
 	  } 
   	});  
 	
