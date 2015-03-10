@@ -89,7 +89,7 @@ $(document).ready(function() {
 	$('#officeSelect').on('keyup click', function(){
 		if($("#officeSelect").val() == "")
 	    	$("#hiddenOfficeId").val("");
-		$.get('/gateIn/searchAllOffice',{"officeName":$(this).val()}, function(data){
+		$.get('/gateIn/searchOfficeByPermission',{"officeName":$(this).val()}, function(data){
 			console.log(data);
 			var officeList =$("#officeList");
 			officeList.empty();
@@ -132,7 +132,7 @@ $(document).ready(function() {
 	$('#customerMessage').on('keyup click', function(){
 		if($('#customerMessage').val() == "")
 			$("#hiddenCustomerId").val("");
-		$.get('/customerContract/search', {locationName:$('#customerMessage').val()}, function(data){
+		$.get('/customerContract/searcCustomer', {locationName:$('#customerMessage').val()}, function(data){
 			console.log(data);
 			var customerList =$("#customerList");
 			customerList.empty();

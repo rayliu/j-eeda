@@ -772,17 +772,28 @@ public class InventoryController extends Controller {
         List<Office> office = Office.dao.find(sql);
         renderJson(office);
     }
+    public void searchOfficeByPermission() {
+    	String officeName = getPara("officeName");
+    	String sql ="";
+    	if(officeName != null && !"".equals(officeName)){
+    		sql = "select * from office where office_name like '%"+officeName+"%' and id in where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+    	}else{
+    		sql = "select * from office where id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+    	}
+        List<Office> office = Office.dao.find(sql);
+        renderJson(office);
+    }
     // 按网点查找仓库
     public void findWarehouseById() {
     	String warehouseName = getPara("warehouseName");
     	String officeId = getPara("officeId");
     	String sql ="";
     	if(officeId != null && !"".equals(officeId)){
-    		sql = "select * from warehouse where office_id = " + officeId;
+    		sql = "select * from warehouse where office_id = " + officeId + " and office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
     	}else if(warehouseName != null && !"".equals(warehouseName)){
-    		sql = "select * from warehouse where warehouse_name like '%"+warehouseName+"%'";
+    		sql = "select * from warehouse where warehouse_name like '%"+warehouseName+"%' and office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
     	}else{
-    		sql = "select * from warehouse";
+    		sql = "select * from warehouse where office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
     	}
         List<Warehouse> warehouses = Warehouse.dao.find(sql);
         renderJson(warehouses);
