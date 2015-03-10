@@ -24,7 +24,7 @@ $(document).ready(function() {
 						"sWidth" : "8%",
 						"bVisible":(Role.UpdatePermission || Role.DelPermission),
 						"fnRender" : function(obj) {
-							if(obj.aData.CODE != "admin"){
+							if(obj.aData.CODE != "admin" && obj.aData.CODE != "outuser"){
 								var role_update_permission = Role.UpdatePermission;
 								var role_del_permission = Role.DelPermission;
 								var str="";
