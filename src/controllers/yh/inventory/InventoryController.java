@@ -189,7 +189,7 @@ public class InventoryController extends Controller {
 					+ " left join product pro on pro.id = toi.product_id"
 					+ " left join warehouse w on w.id = tor.warehouse_id"
 					+ " left join office o on o.id = w.office_id where toid.status = '已发车'  "
-					+ " group by c.abbr, pro.item_name, pro.item_no, pro.unit, w.warehouse_name, o.office_name ) as A where 1=1 ";
+					+ " group by c.abbr, pro.item_name, pro.item_no, pro.unit, w.warehouse_name, o.office_name ) as A where 1=1 and (predict_amount + lock_amount + valid_amount) != 0 ";
         
 		    if((customerId != null) && !"".equals(customerId)){
 		    	//sql = sql + " and p2.id =" + customerId ;
