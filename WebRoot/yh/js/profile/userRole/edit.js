@@ -47,7 +47,7 @@ $(document).ready(function() {
         var roles = role.toString();
     	$.post('/userRole/updateRole?name='+username+'&roles='+roles,function(data){
     		$.scojs_message('更新成功', $.scojs_message.TYPE_OK);
-    		$("#saveBtn").attr("disabled",true);
+    		//$("#saveBtn").attr("disabled",true);
     	},'json');
         
     });
