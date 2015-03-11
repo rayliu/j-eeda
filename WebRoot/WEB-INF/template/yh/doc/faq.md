@@ -1,4 +1,3 @@
-format: complete
 title: 常见问题
 
 客户常见问题
