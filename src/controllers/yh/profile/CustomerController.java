@@ -268,7 +268,11 @@ public class CustomerController extends Controller {
     public void checkCustomerNameExist(){
  		String company_name= getPara("company_name");
  		boolean checkObjectExist;
- 		Contact contact = Contact.dao.findFirst("select * from contact where company_name =?",company_name);
+ 		Long parentID = parentOffice.get("belong_office");
+ 		if(parentID == null || "".equals(parentID)){
+ 			parentID = parentOffice.getLong("id");
+ 		}
+ 		Contact contact = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where company_name =? and p.party_type='CUSTOMER' and p.office_id = ?",company_name,parentID);
  		
  		if(contact == null){
  			checkObjectExist=true;
@@ -280,8 +284,11 @@ public class CustomerController extends Controller {
     public void checkCustomerAbbrExist(){
     	String abbr= getPara("abbr");
  		boolean checkObjectExist;
-
- 		Contact contact = Contact.dao.findFirst("select * from contact where abbr =?",abbr);
+ 		Long parentID = parentOffice.get("belong_office");
+ 		if(parentID == null || "".equals(parentID)){
+ 			parentID = parentOffice.getLong("id");
+ 		}
+ 		Contact contact = Contact.dao.findFirst("select * from contact left join party p on c.id = p.contact_id where abbr =? and p.party_type='CUSTOMER' and p.office_id = ?",abbr,parentID);
  		if(contact == null){
  			checkObjectExist=true;
  		}else{
