@@ -87,12 +87,12 @@ public class CarReimbursementController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         
-		String sqlTotal = "select count(0) total from car_summary_order cso"
+		String sqlTotal = "select count(distinct cso.id) total from car_summary_order cso"
 				+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
 				+ " left join depart_order dod on dod.id = csd.pickup_order_id "
 				+ "	where cso.id in ("+carSummaryOrderIds+")";
 		
-		String sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+		String sql = "select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 				+ " cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
 				+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
 				+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"

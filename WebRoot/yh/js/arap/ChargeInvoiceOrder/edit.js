@@ -6,7 +6,7 @@ $(document).ready(function() {
 	}else{
 		if($("#chargeInvoiceOrderStatus").text() == "新建"){
 			$('#departureConfirmationBtn').attr('disabled', false);
-		}else if($("#chargeInvoiceOrderStatus").text() == "已审核"){
+		}else if($("#chargeInvoiceOrderStatus").text() == "已审批"){
 			$('#departureConfirmationBtn').attr('disabled', true);
 			$('#saveChargeInvoiceOrderBtn').attr('disabled', true);
 		}
@@ -39,14 +39,15 @@ $(document).ready(function() {
  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	$("#departureConfirmationBtn").click(function(){
+		$(this).attr("disabled", true);
 		var id = $("#chargeInvoiceOrderId").val();
 		if(id != null && id != ""){
 			$.post('/chargeInvoiceOrder/confirm', {chargeInvoiceOrderId:id}, function(data){
 				if(data.ID>0){
 					$("#chargeInvoiceOrderId").val(data.ID);
-				  	
-					/*$("#departureConfirmationBtn").attr("disabled", false);*/
+					$("#saveChargeInvoiceOrderBtn").attr("disabled", true);
 				}else{
+					$("#departureConfirmationBtn").attr("disabled", false);
 					alert('数据保存失败。');
 				}
 			},'json');

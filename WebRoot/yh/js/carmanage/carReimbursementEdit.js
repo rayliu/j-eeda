@@ -104,6 +104,7 @@ $(document).ready(function() {
     	$("#carSummeryIds").val(trArr);
         $.post('/carreimbursement/saveCarReimbursement', $("#orderForm").serialize(), function(order){
 	    	if(order.ORDER_NO){
+	    		$("#orderId").val(order.ID);
 	    		$("#order_no").text(order.ORDER_NO);
 	    		$("#status").text(order.STATUS);
 	    		//$("#creator").val(order.ORDER_NO);
@@ -119,18 +120,22 @@ $(document).ready(function() {
     //报销单审核
     $('#accomplishBtn').click(function(e){
         e.preventDefault();
-        $.post('/carreimbursement/audit', {orderId:$("#orderId").val()}, function(data){
-        	console.log(data);
-	    	if(data.audit_name){
-	    		$("#audit_name").text(data.audit_name);
-	    		$("#audit_stamp").text(data.audit_stamp);
-	    		$.scojs_message('审核成功', $.scojs_message.TYPE_OK);
-	    		$('#accomplishBtn').attr('disabled', 'disabled');
-	    		$('#createBtn').attr('disabled', 'disabled');
-	    	}else{
-	    		$.scojs_message('审核失败', $.scojs_message.TYPE_ERROR);
-	    	}
-    	});
-        
+        var id = $("#orderId").val();
+        if(id == ""){
+        	$.post('/carreimbursement/audit', {orderId:id}, function(data){
+            	console.log(data);
+    	    	if(data.audit_name){
+    	    		$.scojs_message('审核成功', $.scojs_message.TYPE_OK);
+    	    		$("#audit_name").text(data.audit_name);
+    	    		$("#audit_stamp").text(data.audit_stamp);
+    	    		$('#accomplishBtn').attr('disabled', 'disabled');
+    	    		$('#createBtn').attr('disabled', 'disabled');
+    	    	}else{
+    	    		$.scojs_message('审核失败', $.scojs_message.TYPE_ERROR);
+    	    	}
+        	});
+        }else{
+        	$.scojs_message('请先保存单据', $.scojs_message.TYPE_ERROR);
+        }
     });
 });

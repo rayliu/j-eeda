@@ -349,10 +349,7 @@
 			{"mDataProp":"DELIVERY_ORDER_NO","sWidth": "80px"},
 			{"mDataProp":"NAME",
 			    "fnRender": function(obj) {
-			    	if(obj.aData.CREATE_NAME == 'system'){
-			    		$("#receivableTotal").val(obj.aData.NAME);
-		        		return obj.aData.NAME;
-		        	}else{
+			    	if(obj.aData.CREATE_NAME == 'user'){
 				        if(obj.aData.NAME!='' && obj.aData.NAME != null){
 				        	var str="";
 				        	$("#receivableItemList").children().each(function(){
@@ -371,21 +368,24 @@
 				        	});
 				        	return "<select name='fin_item_id'>"+str+"</select>";
 				        }
+		        	}else{
+		        		$("#receivableTotal").val(obj.aData.NAME);
+		        		return obj.aData.NAME;
 		        	}
 			 }},
 			{"mDataProp":"AMOUNT",
 			     "fnRender": function(obj) {
-			    	 if(obj.aData.CREATE_NAME == 'system'){
-			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-				             return obj.aData.AMOUNT;
-				         }else{
-				         	 return "";
-				         }
-			    	 }else{
+			    	 if(obj.aData.CREATE_NAME == 'user'){
 			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
 				             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
 				         }else{
 				         	 return "<input type='text' name='amount'>";
+				         }
+			    	 }else{
+			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+				             return obj.aData.AMOUNT;
+				         }else{
+				         	 return "";
 				         }
 			    	 }
 			 }},  
@@ -431,7 +431,7 @@
         ]      
     });
 	
-	//应收
+	//应收   
 	$("#addrow2").click(function(){	
 		 var order_id =$("#returnOrderid").val();
 		 $.post('/returnOrder/addNewRow/'+order_id,function(data){
