@@ -14,4 +14,7 @@ public class DocController  extends Controller{
 		render("/yh/doc/index.html");
 	}
 	
+	public void faq(){
+		render("/yh/doc/faq.html");
+	}
 }
