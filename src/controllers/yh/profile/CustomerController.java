@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import models.Location;
+import models.Office;
 import models.Party;
 import models.UserCustomer;
+import models.UserOffice;
 import models.UserRole;
 import models.yh.profile.Contact;
 
@@ -34,7 +36,11 @@ public class CustomerController extends Controller {
 
     private Logger logger = Logger.getLogger(CustomerController.class);
     Subject currentUser = SecurityUtils.getSubject();
-
+    String userName = currentUser.getPrincipal().toString();
+    UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+    Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    
+    
     // in config route已经将路径默认设置为/yh
     // me.add("/yh", controllers.yh.AppController.class, "/yh");
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_C_LIST})
@@ -49,6 +55,12 @@ public class CustomerController extends Controller {
         String abbr = getPara("ABBR");
         String address = getPara("ADDRESS");
         String location = getPara("LOCATION");
+        
+        Long parentID = parentOffice.get("belong_office");
+        if(parentID == null || "".equals(parentID)){
+        	parentID = parentOffice.getLong("id");
+        }
+        
         if (company_name == null && contact_person == null && receipt == null && abbr == null && address == null
                 && location == null) {
             String sLimit = "";
@@ -57,16 +69,19 @@ public class CustomerController extends Controller {
                 sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
 
-            String sqlTotal = "select count(1) total from party where party_type='CUSTOMER'";
-            Record rec = Db.findFirst(sqlTotal);
-            logger.debug("total records:" + rec.getLong("total"));
+            String sqlTotal = "select count(1) total from party where party_type='CUSTOMER'and office_id = " + parentID;
+            
 
             String sql = "select p.*,c.*,p.id as pid,l.name,trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname from party p "
                     + "left join contact c on p.contact_id=c.id "
                     + "left join location l on l.code=c.location "
                     + "left join location  l1 on l.pcode =l1.code "
                     + "left join location l2 on l1.pcode = l2.code "
-                    + "where p.party_type='CUSTOMER' order by p.create_date desc " + sLimit;
+                    + "where p.party_type='CUSTOMER' and p.office_id = " + parentID + " order by p.create_date desc " + sLimit;
+            
+            Record rec = Db.findFirst(sqlTotal);
+            logger.debug("total records:" + rec.getLong("total"));
+            
             List<Record> customers = Db.find(sql);
 
             Map customerListMap = new HashMap();
@@ -200,12 +215,18 @@ public class CustomerController extends Controller {
             party.set("receipt", getPara("receipt"));
             party.set("payment", getPara("payment"));
             party.set("charge_type", getPara("chargeType"));
+            party.set("office_id", currentoffice.get("office_id"));
             if(getPara("insurance_rates") != ""){
             	party.set("insurance_rates", getPara("insurance_rates"));
             }
             party.save();
             
-            List<UserRole> urList = UserRole.dao.find("select * from user_role where role_code = 'admin'");
+            Long parentID = parentOffice.get("belong_office");
+            if(parentID == null || "".equals(parentID)){
+            	parentID = parentOffice.getLong("id");
+            }
+            //判断当前是否是系统管理员，是的话将当前的客户默认给
+            List<UserRole> urList = UserRole.dao.find("select * from user_role ur left join user_login ul on ur.user_name = ul.user_name where role_code = 'admin' and ul.office_id = ?",parentID);
             if(urList.size()>0){
             	for (UserRole userRole : urList) {
                 	UserCustomer uc = new UserCustomer();
