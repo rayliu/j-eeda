@@ -7,13 +7,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Office;
 import models.Permission;
 import models.Role;
 import models.RolePermission;
+import models.UserOffice;
 import models.UserRole;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -27,6 +31,13 @@ import controllers.yh.util.PermissionConstant;
 @Before(SetAttrLoginUserInterceptor.class)
 public class UserRoleController extends Controller {
 	private Logger logger = Logger.getLogger(PrivilegeController.class);
+	Subject currentUser = SecurityUtils.getSubject();
+	
+	String userName = currentUser.getPrincipal().toString();
+	UserOffice user_office = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",user_office.get("office_id"));
+	
+	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_UR_LIST})
 	public void index(){
 		render("/yh/profile/userRole/userRoleList.html");
@@ -43,11 +54,21 @@ public class UserRoleController extends Controller {
 			        + getPara("iDisplayLength");
 		}
 		
+		String totalWhere ="";
+		String sql = "";
 		
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+			
+			totalWhere ="select count(1) total from user_role ur left join role r on r.code = ur.role_code where r.office_id = " + parentID;
+			sql = "select ur.user_name,group_concat(r.name separator '<br>') name,ur.remark,ur.role_code from user_role ur left join role r on r.code=ur.role_code left join user_login ul on ur.user_name = ul.user_name where ul.office_id = " + parentID + " and r.office_id = " + parentID + " group by ur.user_name" + sLimit;
+		}else{
+			totalWhere ="select count(1) total from user_role ur left join user_login ul on ur.user_name = ul.user_name where ul.office_id = " + user_office.get("office_id");
+			sql = "select ur.user_name,group_concat(r.name separator '<br>') name,ur.remark,ur.role_code from user_role ur left join role r on r.code=ur.role_code left join user_login ul on ur.user_name = ul.user_name where ul.office_id = " + user_office.get("office_id") + " and r.office_id = " + parentID + " group by ur.user_name" + sLimit;
+		}
 		// 获取总条数
-		String totalWhere ="select count(1) total from user_role";
-		
-		String sql = "select ur.user_name,group_concat(r.name separator '<br>') name,ur.remark,ur.role_code from user_role ur left join role r on r.code=ur.role_code group by ur.user_name" + sLimit;
+       /* String sql = "select ur.user_name,group_concat(r.name separator '<br>') name,ur.remark,ur.role_code from user_role ur left join role r on r.code=ur.role_code group by ur.user_name" + sLimit;*/
 
 		Record rec = Db.findFirst(totalWhere);	
 		logger.debug("total records:" + rec.getLong("total"));
@@ -79,7 +100,16 @@ public class UserRoleController extends Controller {
 	/*列出没有角色的用户*/
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_UR_CREATE})
 	public void userList(){
-        List<Record> orders = Db.find("select u.*, ur.role_code from user_login u left join user_role ur on u.user_name = ur.user_name where ur.role_code is null");
+		String sql = "";
+		Long parentID = parentOffice.get("belong_office");
+		//系统管理员
+		if(parentID == null || "".equals(parentID)){
+			sql = "select u.*, ur.role_code from user_login u left join office o on u.office_id = o.id left join user_role ur on u.user_name = ur.user_name where ur.role_code is null and (o.id = " + parentOffice.get("id") +" or o.belong_office= "+ parentOffice.get("id") +")";
+		}else{
+			sql = "select u.*, ur.role_code from user_login u left join office o on u.office_id = o.id left join user_role ur on u.user_name = ur.user_name where ur.role_code is null and o.id = " + user_office.get("office_id");
+		}
+		
+		List<Record> orders = Db.find(sql);
         renderJson(orders);
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_UR_CREATE})
@@ -151,13 +181,18 @@ public class UserRoleController extends Controller {
 			        + getPara("iDisplayLength");
 		}
 
-		// 获取总条数
-
-		Record rec = Db.findFirst("select count(1) total from role r left join  (select u.user_name,u.role_code from user_role u where u.user_name =?) ur on ur.role_code = r.code where r.code != 'admin'",username);
+		String sql = "";
+		
+		
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
+		Record rec = Db.findFirst("select count(1) total from role r left join  (select u.user_name,u.role_code from user_role u where u.user_name =?) ur on ur.role_code = r.code where r.code != 'admin' and(r.office_id is null or r.office_id = ?)" ,username,parentID);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
-		List<Record> orders = Db.find("select r.id , r.code,r.name,ur.user_name ,ur.role_code from role r left join  (select u.user_name,u.role_code from user_role u where u.user_name =?) ur on ur.role_code = r.code where r.code != 'admin'",username);
+		List<Record> orders = Db.find("select r.id , r.code,r.name,ur.user_name ,ur.role_code from role r left join  (select u.user_name,u.role_code from user_role u where u.user_name =?) ur on ur.role_code = r.code where r.code != 'admin' and (r.office_id is null or r.office_id = ?)",username,parentID);
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
