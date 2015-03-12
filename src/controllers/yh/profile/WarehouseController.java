@@ -10,7 +10,7 @@ import java.util.Map;
 
 import models.Location;
 import models.Office;
-import models.TransferOrder;
+import models.UserOffice;
 import models.Warehouse;
 import models.yh.profile.Contact;
 
@@ -35,6 +35,12 @@ public class WarehouseController extends Controller{
     private Logger logger = Logger.getLogger(WarehouseController.class);
     Subject currentUser = SecurityUtils.getSubject();
     
+    String userName = currentUser.getPrincipal().toString();
+    UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+    Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    Long parentID = parentOffice.get("belong_office");
+    
+    
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_W_LIST})
 	public void index() {
 		render("/yh/profile/warehouse/warehouseList.html");
@@ -44,6 +50,9 @@ public class WarehouseController extends Controller{
 		Map warehouseListMap = null;
 		String warehouseName = getPara("warehouseName");
 		String warehouseAddress = getPara("warehouseAddress");
+		if(parentID == null || "".equals(parentID)){
+	    	parentID = parentOffice.getLong("id");
+	    }
 		if(warehouseName == null && warehouseAddress == null){
 			String sLimit = "";
 			String pageIndex = getPara("sEcho");
@@ -52,12 +61,14 @@ public class WarehouseController extends Controller{
 				sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 						+ getPara("iDisplayLength");
 			}			
-			String sqlTotal = "select count(1) total from warehouse";
+			String sqlTotal = "select count(1) total from warehouse w left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID +")";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 	
 			String sql = "select w.*, lc.name dname from warehouse w"
-							+ " left join location lc on w.location = lc.code order by w.id desc "
+							+ " left join location lc on w.location = lc.code "
+							+ " left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID +")"
+							+ " order by w.id desc "
 							+ sLimit;
 	
 			List<Record> warehouses = Db.find(sql);
@@ -76,13 +87,16 @@ public class WarehouseController extends Controller{
 				sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 						+ getPara("iDisplayLength");
 			}
-			String sqlTotal = "select count(1) total from warehouse where warehouse_name like '%"+warehouseName+"%' and warehouse_address like '%"+warehouseAddress+"%'";
+			String sqlTotal = "select count(1) total from warehouse w left join office o on o.id = w.office_id where w.warehouse_name like '%"+warehouseName+"%' and w.warehouse_address like '%"+warehouseAddress+"%' and (o.id = " + parentID + " or o.belong_office = " + parentID +")";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 	
 			String sql = "select w.*,(select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=w.location) dname,lc.name from warehouse w"
 							+ " left join location lc on w.location = lc.code"
-							+ "  where warehouse_name like '%"+warehouseName+"%' and warehouse_address like '%"+warehouseAddress+"%' order by w.id desc "
+							+ "  left join office o on o.id = w.office_id"
+							+ "  where w.warehouse_name like '%"+warehouseName+"%' and w.warehouse_address like '%"+warehouseAddress+"%' "
+							+ "  and (o.id = " + parentID + " or o.belong_office = " + parentID +")"
+							+ "order by w.id desc "
 							+ sLimit;
 	
 			List<Record> warehouses = Db.find(sql);
