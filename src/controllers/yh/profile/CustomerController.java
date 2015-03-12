@@ -98,7 +98,7 @@ public class CustomerController extends Controller {
                 sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
 
-            String sqlTotal = "select count(1) total from party where party_type='CUSTOMER'";
+            String sqlTotal = "select count(1) total from party where party_type='CUSTOMER' and office_id = " + parentID;
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
@@ -116,7 +116,7 @@ public class CustomerController extends Controller {
                     + receipt
                     + "%' and ifnull(c.address,'') like '%"
                     + address
-                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%' order by p.create_date desc " + sLimit;
+                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%'  and p.office_id = " + parentID + " order by p.create_date desc " + sLimit;
 
             List<Record> customers = Db.find(sql);
 
@@ -288,7 +288,7 @@ public class CustomerController extends Controller {
  		if(parentID == null || "".equals(parentID)){
  			parentID = parentOffice.getLong("id");
  		}
- 		Contact contact = Contact.dao.findFirst("select * from contact left join party p on c.id = p.contact_id where abbr =? and p.party_type='CUSTOMER' and p.office_id = ?",abbr,parentID);
+ 		Contact contact = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where abbr =? and p.party_type='CUSTOMER' and p.office_id = ?",abbr,parentID);
  		if(contact == null){
  			checkObjectExist=true;
  		}else{
