@@ -22,7 +22,8 @@
 	            			return obj.aData.DEPART_NO;
 	            		}
 	            			
-	             }},
+	            }},
+	            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"80px"},
 	            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},
 			    {"mDataProp":"STATUS", "sWidth":"80px"},
 			    {"mDataProp":"PICKUP_MODE", "sWidth":"120px",
@@ -54,7 +55,6 @@
     				"fnRender":function(obj){
         				return obj.aData.ATMWEIGHT + obj.aData.CARGOWEIGHT;
         			}},
-			    {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"80px"},
 			    {"mDataProp":"USER_NAME", "sWidth":"90px"},
 			    {"mDataProp":"REMARK"}
 	        ]      

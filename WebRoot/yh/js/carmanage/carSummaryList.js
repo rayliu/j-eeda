@@ -36,19 +36,19 @@ $(document).ready(function() {
 				}
 			}, 
 			{"mDataProp":null,"sWidth":"120px",
-					"fnRender": function(obj) {
-						if(Pickup.isUpdate || Pickup.isCompleted){
-							return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
-						}else{
-							return obj.aData.DEPART_NO;
-						}
-					
+				"fnRender": function(obj) {
+					if(Pickup.isUpdate || Pickup.isCompleted){
+						return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+					}else{
+						return obj.aData.DEPART_NO;
+					}
 				}
 			},
 			{"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
 			{"mDataProp":"STATUS","sWidth":"60px"},
 			{"mDataProp":"CAR_NO","sClass": "CAR_NO","sWidth":"60px"},
 			{"mDataProp":"CONTACT_PERSON","sWidth":"60px"},
+			{"mDataProp":"PHONE","sWidth":"100px"},
 			{"mDataProp":null,"sClass": "CREATE_STAMP","sWidth":"80px",
 				"fnRender": function(obj) {
 					if(obj.aData.TURNOUT_TIME != "" && obj.aData.TURNOUT_TIME != null){
@@ -59,9 +59,17 @@ $(document).ready(function() {
 						return "";
 					}
 				}}, 
-			{"mDataProp":"OFFICE_NAME","sWidth":"100px"}, 
-			{"mDataProp":"VOLUME", "sWidth":"60px"},                        
-			{"mDataProp":"WEIGHT", "sWidth":"60px"},                        
+			{"mDataProp":"OFFICE_NAME","sWidth":"120px"}, 
+			{"mDataProp":null, "sWidth":"60px",
+				"fnRender":function(obj){
+    				return obj.aData.ATMVOLUME + obj.aData.CARGOVOLUME;
+				}
+			},
+		    {"mDataProp":null, "sWidth":"76px",
+				"fnRender":function(obj){
+    				return obj.aData.ATMWEIGHT + obj.aData.CARGOWEIGHT;
+				}
+			},                      
 			{"mDataProp":"USER_NAME", "sWidth":"60px"},                        
 			{"mDataProp":"REMARK", "sWidth":"150px"}                       
 	      ]          

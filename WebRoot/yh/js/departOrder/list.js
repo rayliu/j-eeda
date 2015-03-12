@@ -14,7 +14,6 @@ var dataTable =$('#dataTables-example').dataTable({
         },
         "sAjaxSource": "/departOrder/list",
         "aoColumns": [   
-           
             { 
                 "mDataProp": null, "sWidth":"70px",
                 "sWidth": "8%",                
@@ -26,7 +25,8 @@ var dataTable =$('#dataTables-example').dataTable({
                 	}
                 	
                 }
-            } ,
+            },
+            {"mDataProp":"TRANSFER_ORDER_NO"},
             {"mDataProp":"OFFICE_NAME"},
             {"mDataProp":null,
             	"fnRender":function(obj){
@@ -40,7 +40,6 @@ var dataTable =$('#dataTables-example').dataTable({
             {"mDataProp":"ROUTE_TO"},
             {"mDataProp":"DEPARTURE_TIME"},
             {"mDataProp":"ARRIVAL_TIME"},
-            {"mDataProp":"TRANSFER_ORDER_NO"},
             {"mDataProp":"USER_NAME"},
             {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"REMARK", "sWidth":"200px"} 
