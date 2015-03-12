@@ -60,9 +60,8 @@ public class UserRoleController extends Controller {
 		Long parentID = parentOffice.get("belong_office");
 		if(parentID == null || "".equals(parentID)){
 			parentID = parentOffice.getLong("id");
-			
 			totalWhere ="select count(1) total from user_role ur left join role r on r.code = ur.role_code where r.office_id = " + parentID;
-			sql = "select ur.user_name,group_concat(r.name separator '<br>') name,ur.remark,ur.role_code from user_role ur left join role r on r.code=ur.role_code left join user_login ul on ur.user_name = ul.user_name where ul.office_id = " + parentID + " and r.office_id = " + parentID + " group by ur.user_name" + sLimit;
+			sql = "select ur.user_name,group_concat(r.name separator '<br>') name,ur.remark,ur.role_code from user_role ur left join role r on r.code=ur.role_code left join user_login ul on ur.user_name = ul.user_name left join office o on ul.office_id = o.id where (o.id = " + parentID + " or o.belong_office = " + parentID + ") and r.office_id = " + parentID + " group by ur.user_name" + sLimit;
 		}else{
 			totalWhere ="select count(1) total from user_role ur left join user_login ul on ur.user_name = ul.user_name where ul.office_id = " + user_office.get("office_id");
 			sql = "select ur.user_name,group_concat(r.name separator '<br>') name,ur.remark,ur.role_code from user_role ur left join role r on r.code=ur.role_code left join user_login ul on ur.user_name = ul.user_name where ul.office_id = " + user_office.get("office_id") + " and r.office_id = " + parentID + " group by ur.user_name" + sLimit;
