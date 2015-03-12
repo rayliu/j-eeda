@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import models.Office;
 import models.Toll;
+import models.UserOffice;
 import models.yh.profile.Carinfo;
 
 import org.apache.shiro.SecurityUtils;
@@ -29,6 +29,10 @@ import controllers.yh.util.PermissionConstant;
 public class PayController extends Controller {
     private Logger logger = Logger.getLogger(PayController.class);
     Subject currentUser = SecurityUtils.getSubject();
+    String userName = currentUser.getPrincipal().toString();
+    UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+    Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_LIST})
     public void index() {
         /**
@@ -60,16 +64,20 @@ public class PayController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
                     + getPara("iDisplayLength");
         }
-
+        
+        Long parentID = parentOffice.get("belong_office");
+        if(parentID == null || "".equals(parentID)){
+        	parentID = parentOffice.getLong("id");
+        }
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from fin_item  where type ='应付'";
+        String sql = "select count(1) total from fin_item  where type ='应付' and office_id = " +parentID;
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
         List<Record> orders = Db
-                .find("select * from fin_item  where type ='应付'" + sLimit);
+                .find("select * from fin_item  where type ='应付' and office_id = " + parentID + sLimit);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -121,11 +129,16 @@ public class PayController extends Controller {
         String type = "应付";
         String code = getPara("code");
         String remark = getPara("remark");
-
+        
+        Long parentID = parentOffice.get("belong_office");
+        if(parentID == null || "".equals(parentID)){
+        	parentID = parentOffice.getLong("id");
+        }
+        
         if (id == "") {
             Toll r = new Toll();
 
-            boolean s = r.set("name", name).set("code", code).set("type", type)
+            boolean s = r.set("name", name).set("code", code).set("type", type).set("office_id", parentID)
                     .set("Remark", remark).save();
             if (s == true) {
                 render("/yh/profile/toll/PayList.html");

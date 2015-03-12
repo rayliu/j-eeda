@@ -6,11 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Office;
 import models.Toll;
+import models.UserOffice;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -24,6 +28,12 @@ import controllers.yh.util.PermissionConstant;
 @Before(SetAttrLoginUserInterceptor.class)
 public class TollController extends Controller {
 	private Logger logger = Logger.getLogger(TollController.class);
+	Subject currentUser = SecurityUtils.getSubject();
+	String userName = currentUser.getPrincipal().toString();
+	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+	
+	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_LIST})
 	public void index() {
 		/**
@@ -45,16 +55,19 @@ public class TollController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
 		// 获取总条数
 		String totalWhere = "";
-		String sql = "select count(1) total from fin_item  where type ='应收' ";
+		String sql = "select count(1) total from fin_item  where type ='应收' and office_id = " + parentID;
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
 		List<Record> orders = Db
-				.find("select * from fin_item  where type ='应收'");
+				.find("select * from fin_item  where type ='应收' and office_id = ?",parentID);
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -99,18 +112,23 @@ public class TollController extends Controller {
 	// 添加编辑保存
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_CREATE, PermissionConstant.PERMSSION_T_UPDATE}, logical=Logical.OR)
 	public void SaveEdit() {
-
+		
 		String id = getPara("id");
 
 		String name = getPara("name");
 		String type = "应收";
 		String code = getPara("code");
 		String remark = getPara("remark");
-
+		
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
+		
 		if (id == "") {
 			Toll r = new Toll();
 
-			boolean s = r.set("name", name).set("code", code).set("type", type)
+			boolean s = r.set("name", name).set("code", code).set("type", type).set("office_id",parentID)
 					.set("remark", remark).save();
 			if (s == true) {
 				render("/yh/profile/toll/TollList.html");
