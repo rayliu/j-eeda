@@ -179,24 +179,44 @@ public class OfficeController extends Controller {
         UserOffice user_office = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
 		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",user_office.get("office_id"));
         Long parentID = parentOffice.get("belong_office");
+        Long parent_id = parentID;
         if(parentID == null || "".equals(parentID)){
         	parentID = parentOffice.getLong("id");
         }
+        String sql ="";
+        String list_sql= "";
 		// 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from office where belong_office = " + parentID + "";
+        
+        if(parent_id == null || "".equals(parent_id)){
+        	
+        	sql = "select count(1) total from office where belong_office = " + parentID + " or id = " + parentID;
+        	list_sql= "select * from office"
+        	 		+ " where office_name  like '%"+name+"%'  and "
+        	 		+ "office_person like '%"+person+"%' "
+        	 		+ "and type  like '%"+type+"%' "
+        	 		+ "and address  like '%"+address+"%' and (belong_office = " + parentID + " or id = " + parentID +") order by id desc " + sLimit;
+        }else{
+        	
+        	sql = "select count(1) total from office where belong_office = " + parentID + "";
+        	list_sql= "select * from office"
+        	 		+ " where office_name  like '%"+name+"%'  and "
+        	 		+ "office_person like '%"+person+"%' "
+        	 		+ "and type  like '%"+type+"%' "
+        	 		+ "and address  like '%"+address+"%' and belong_office = " + parentID + " order by id desc " + sLimit;
+        }
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
-        
-        String list_sql= "select * from office"
- 		+ " where office_name  like '%"+name+"%'  and "
- 		+ "office_person like '%"+person+"%' "
- 		+ "and type  like '%"+type+"%' "
- 		+ "and address  like '%"+address+"%' and belong_office = " + parentID + " order by id desc " + sLimit;
         // 获取当前页的数据
+       
         List<Record> orders = null;
         if(type==null&&name==null&&address==null&&person==null){
-        	orders = Db.find("select o.*,lc.name dname from office o left join location lc on o.location = lc.code where o.belong_office = " + parentID + " order by o.id desc" + sLimit);
+        	if(parent_id == null || "".equals(parent_id)){
+        		orders = Db.find("select o.*,lc.name dname from office o left join location lc on o.location = lc.code where (o.belong_office = " + parentID + " or o.id = " + parentID + ") order by o.id desc" + sLimit);
+        	}else{
+        		orders = Db.find("select o.*,lc.name dname from office o left join location lc on o.location = lc.code where o.belong_office = " + parentID + " order by o.id desc" + sLimit);
+        	}
+        	
         }else{
         	 orders = Db.find(list_sql);
         }
