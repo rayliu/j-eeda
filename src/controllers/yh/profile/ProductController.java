@@ -10,14 +10,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import models.Category;
+import models.Office;
 import models.Party;
 import models.Product;
+import models.UserOffice;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -31,6 +35,10 @@ import controllers.yh.util.PermissionConstant;
 public class ProductController extends Controller {
 
     private Logger logger = Logger.getLogger(ProductController.class);
+    Subject currentUser = SecurityUtils.getSubject();
+    String userName = currentUser.getPrincipal().toString();
+    UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+    Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_LIST})
     public void index() {
         render("/yh/profile/product/productList.html");
@@ -49,7 +57,7 @@ public class ProductController extends Controller {
         String sqlTotal = "";
         if (categoryId == null || "".equals(categoryId)) {
             sqlTotal = "select count(1) total from product";
-            sql = "select *,(select name from category where id = "+categoryId+") category_name from product "+sLimit;
+            sql = "select *,(select name from category  where id = "+categoryId+") category_name from product "+sLimit;
         } else {
             sqlTotal = "select count(1) total from product where category_id = " + categoryId;
             sql = "select *,(select name from category where id = "+categoryId+") category_name from product where category_id = " + categoryId + " "+sLimit;
@@ -158,7 +166,11 @@ public class ProductController extends Controller {
     // 查出客户的根类别
     public void searchCustomerCategory() {
         String customerId = getPara("customerId");
-        Category category = Category.dao.findFirst("select * from category where customer_id =? and parent_id is null", customerId);
+        Long parentID = parentOffice.get("belong_office");
+        if(parentID == null || "".equals(parentID)){
+        	parentID = parentOffice.getLong("id");
+        }
+        Category category = Category.dao.findFirst("select * from category c left join party p on c.customer_id = p.id where c.customer_id =? and c.parent_id is null and p.office_id = ?", customerId,parentID);
         if (category == null) {
             category = new Category();
             category.set("name", "root");
@@ -172,11 +184,15 @@ public class ProductController extends Controller {
     // 查出客户的根类别
     public void searchCustomerCategory2() {
         // String customerId = getPara("customerId");
-        List<Category> categories = new ArrayList<Category>();
+    	Long parentID = parentOffice.get("belong_office");
+    	if(parentID == null || "".equals(parentID)){
+    		parentID = parentOffice.getLong("id");
+    	}
+    	List<Category> categories = new ArrayList<Category>();
         List<Product> list = Product.dao.find("select * from product");
         for (Product product : list) {
-            Category category = Category.dao.findFirst("select * from category where customer_id =? and parent_id is null",
-                    product.get("customer_id"));
+            Category category = Category.dao.findFirst("select * from category c left join party p on c.customer_id = p.id where c.customer_id =? and c.parent_id is null and p.office_id = ?",
+                    product.get("customer_id"),parentID);
             if (category == null) {
                 category = new Category();
                 category.set("name", "root");
@@ -192,9 +208,13 @@ public class ProductController extends Controller {
     public void searchNodeCategory() {
         Long categoryId = getParaToLong("categoryId");
         Long customerId = getParaToLong("customerId");
+        Long parentID = parentOffice.get("belong_office");
+        if(parentID == null || "".equals(parentID)){
+        	parentID = parentOffice.getLong("id");
+        }
         logger.debug("categoryId=" + categoryId + ", customerId=" + customerId);
         List<Category> categories = Category.dao
-                .find("select * from category where parent_id=? and customer_id =?", categoryId, customerId);
+                .find("select * from category  c left join party p on c.customer_id = p.id where c.parent_id=? and c.customer_id =? and p.office_id = ?", categoryId, customerId,parentID);
         renderJson(categories);
 
     }
@@ -310,14 +330,18 @@ public class ProductController extends Controller {
     
     // 查找客户
     public void searchAllCustomer() {
+    	Long parentID = parentOffice.get("belong_office");
+    	if(parentID == null || "".equals(parentID)){
+    		parentID = parentOffice.getLong("id");
+    	}
         List<Party> parties = Party.dao
-                .find("select p.id party_id, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null",
-                        Party.PARTY_TYPE_CUSTOMER);
+                .find("select p.id party_id, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null and p.office_id = ?",
+                        Party.PARTY_TYPE_CUSTOMER,parentID);
         createRootForParty(parties);
 
         List<Party> rootParties = Party.dao
-                .find("select p.id pid, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null",
-                        Party.PARTY_TYPE_CUSTOMER);
+                .find("select p.id pid, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null and p.office_id =?",
+                        Party.PARTY_TYPE_CUSTOMER,parentID);
         renderJson(rootParties);
     }
 
