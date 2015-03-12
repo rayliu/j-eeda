@@ -16,6 +16,7 @@ import models.Product;
 import models.TransferOrder;
 import models.TransferOrderItem;
 import models.UserLogin;
+import models.UserOffice;
 import models.Warehouse;
 import models.WarehouseOrder;
 import models.WarehouseOrderItem;
@@ -33,7 +34,6 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -768,10 +768,18 @@ public class InventoryController extends Controller {
     public void searchAllOffice() {
     	String officeName = getPara("officeName");
     	String sql ="";
+    	String userName = currentUser.getPrincipal().toString();
+    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    	Long parentID = parentOffice.get("belong_office");
+    	if(parentID == null || "".equals(parentID)){
+    		parentID = parentOffice.getLong("id");
+    	}
+    	
     	if(officeName != null && !"".equals(officeName)){
-    		sql = "select * from office where office_name like '%"+officeName+"%'";
+    		sql = "select * from office where office_name like '%"+officeName+"%'and (id = " + parentID + " or belong_office = " + parentID +")";
     	}else{
-    		sql = "select * from office";
+    		sql = "select * from office where (id = " + parentID + " or belong_office = " + parentID +")";
     	}
         List<Office> office = Office.dao.find(sql);
         renderJson(office);
@@ -789,15 +797,23 @@ public class InventoryController extends Controller {
     }
     // 按网点查找仓库
     public void findWarehouseById() {
+    	
+    	String userName = currentUser.getPrincipal().toString();
+    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    	Long parentID = parentOffice.get("belong_office");
+    	if(parentID == null || "".equals(parentID)){
+    		parentID = parentOffice.getLong("id");
+    	}
     	String warehouseName = getPara("warehouseName");
     	String officeId = getPara("officeId");
     	String sql ="";
     	if(officeId != null && !"".equals(officeId)){
     		sql = "select * from warehouse where office_id = " + officeId;
     	}else if(warehouseName != null && !"".equals(warehouseName)){
-    		sql = "select * from warehouse where warehouse_name like '%"+warehouseName+"%'";
+    		sql = "select * from warehouse w left join office o on o.id = w.office_id where w.warehouse_name like '%"+warehouseName+"%' and (o.id = " + parentID + " or o.belong_office = " + parentID +")";
     	}else{
-    		sql = "select * from warehouse";
+    		sql = "select * from warehouse w left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID +")";
     	}
         List<Warehouse> warehouses = Warehouse.dao.find(sql);
         renderJson(warehouses);
