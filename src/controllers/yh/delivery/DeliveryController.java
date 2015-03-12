@@ -21,6 +21,7 @@ import models.TransferOrder;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.UserOffice;
 import models.Warehouse;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
@@ -38,7 +39,6 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -1443,10 +1443,17 @@ public class DeliveryController extends Controller {
     public void searchAllRDC() {
     	String inputStr = getPara("rdc");
     	String sql ="";
+    	String userName = currentUser.getPrincipal().toString();
+    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    	Long parentID = parentOffice.get("belong_office");
+    	if(parentID == null || "".equals(parentID)){
+    		parentID = parentOffice.getLong("id");
+    	}
     	if(inputStr!=null){
-    		sql = "select * from office where  office_name like '%"+inputStr+"%'";
+    		sql = "select * from office where  office_name like '%"+inputStr+"%' and id = " + parentID + " or belong_office = " + parentID;
     	}else{
-    		sql= "select * from office ";
+    		sql= "select * from office where id = " + parentID + " or belong_office = " + parentID ;
     	}
         List<Office> office = Office.dao.find(sql);
         renderJson(office);
