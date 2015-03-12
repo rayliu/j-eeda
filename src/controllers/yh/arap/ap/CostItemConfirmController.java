@@ -166,12 +166,13 @@ public class CostItemConfirmController extends Controller {
 				+ " left join party p on p.id = dor.sp_id "
 				+ " left join contact c on c.id = p.contact_id "
 				+ " left join delivery_order_item doi on doi.delivery_id = dor.id "
+				+ " left join delivery_order_fin_item dofi on dofi.order_id = dor.id "
 				+ " left join transfer_order_item_detail toid on toid.id = doi.transfer_item_detail_id "
 				+ " left join transfer_order_item toi on toi.id = toid.item_id "
 				+ " left join product prod on toi.product_id = prod.id "
 				+ " left join user_login ul on ul.id = dor.create_by "
 				+ " left join warehouse w on w.id = dor.from_warehouse_id "
-				+ " left join office oe on oe.id = w.office_id where dor.audit_status='新建' group by dor.id "
+				+ " left join office oe on oe.id = w.office_id where dor.audit_status='新建' and dofi.id is not null group by dor.id "
 				+ " union"
 				+ " select distinct dpr.id,"
 				+ "dpr.depart_no order_no,"
@@ -261,10 +262,11 @@ public class CostItemConfirmController extends Controller {
         		+ " (select sum(amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where ifi.insurance_order_id = ior.id and fi.name='仓储费') as cangchu_cost,"
         		+ " (select sum(amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where ifi.insurance_order_id = ior.id and fi.name='其他费用') as other_cost"
 				+ " from insurance_order ior "
+				+ " left join insurance_fin_item ifit on ifit.insurance_order_id = ior.id"
 				+ " left join transfer_order tor on ior.id = tor.insurance_id "
 				+ " left join transfer_order_item toi on toi.order_id = tor.id "
 				+ " left join user_login ul on ul.id = ior.create_by"
-				+ " left join office oe on oe.id = tor.office_id where ior.audit_status='新建' group by ior.id  ) as A ";
+				+ " left join office oe on oe.id = tor.office_id where ior.audit_status='新建' and ifit.id is not null group by ior.id  ) as A ";
         String condition = "";
       
         if(orderNo != null || sp != null || no != null || beginTime != null
