@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 import models.Location;
+import models.Office;
 import models.Party;
-import models.TransferOrder;
-import models.yh.delivery.DeliveryOrder;
+import models.UserOffice;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
@@ -35,6 +35,11 @@ public class ServiceProviderController extends Controller {
 
     private Logger logger = Logger.getLogger(ServiceProviderController.class);
     Subject currentUser = SecurityUtils.getSubject();
+    
+    String userName = currentUser.getPrincipal().toString();
+    UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+    Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_LIST})
     public void index() {
         render("/yh/profile/serviceProvider/serviceProviderList.html");
@@ -47,7 +52,13 @@ public class ServiceProviderController extends Controller {
         String abbr = getPara("ABBR");
         String address = getPara("ADDRESS");
         String location = getPara("LOCATION");
-
+        
+        
+        Long parentID = parentOffice.get("belong_office");
+        if(parentID == null || "".equals(parentID)){
+        	parentID = parentOffice.getLong("id");
+        }
+        
         if (company_name == null && contact_person == null && receipt == null && abbr == null && address == null
                 && location == null) {
             String sLimit = "";
@@ -55,8 +66,8 @@ public class ServiceProviderController extends Controller {
             if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
                 sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
-            String sqlTotal = "select count(1) total from party where party_type='SERVICE_PROVIDER'";
-            Record rec = Db.findFirst(sqlTotal);
+            String sqlTotal = "select count(1) total from party where party_type='SERVICE_PROVIDER' and office_id = " + parentID;
+            Record rec = Db.findFirst(sqlTotal); 
             logger.debug("total records:" + rec.getLong("total"));
 
             String sql = "select p.*,c.*,p.id as pid,l.name,trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname from party p "
@@ -64,21 +75,9 @@ public class ServiceProviderController extends Controller {
                     + "left join location l on l.code=c.location "
                     + "left join location  l1 on l.pcode =l1.code "
                     + "left join location l2 on l1.pcode = l2.code "
-                    + "where p.party_type='SERVICE_PROVIDER' order by p.create_date desc " + sLimit;
+                    + "where p.party_type='SERVICE_PROVIDER' and p.office_id = " + parentID + " order by p.create_date desc " + sLimit;
             List<Record> customers = Db.find(sql);
-            /*
-             * String code = ""; for (int i = 0; i < customers.size(); i++) {
-             * code = customers.get(i).get("location"); String sql2 =
-             * "select trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname,l.code,l.name from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code='"
-             * + code + "'" + sLimit; List<Record> customers2 = Db.find(sql2);
-             * String id = ""; String id2 = ""; try { id =
-             * customers2.get(0).get("dname"); id2 =
-             * customers2.get(0).get("name"); } catch (Exception e) { // TODO:
-             * handle exception customers.get(i).set("dname", null);
-             * 
-             * } customers.get(i).set("name", id2);
-             * customers.get(i).set("dname", id); }
-             */
+            
             Map customerListMap = new HashMap();
             customerListMap.put("sEcho", pageIndex);
             customerListMap.put("iTotalRecords", rec.getLong("total"));
@@ -106,7 +105,7 @@ public class ServiceProviderController extends Controller {
                     + receipt
                     + "%' and ifnull(c.address,'') like '%"
                     + address
-                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%'  " ;
+                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%' and p.office_id = " + parentID ;
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
@@ -124,7 +123,7 @@ public class ServiceProviderController extends Controller {
                     + receipt
                     + "%' and ifnull(c.address,'') like '%"
                     + address
-                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%' order by p.create_date desc " + sLimit;
+                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%' and p.office_id = " + parentID + " order by p.create_date desc " + sLimit;
             List<Record> customers = Db.find(sql);
 
             Map customerListMap = new HashMap();
