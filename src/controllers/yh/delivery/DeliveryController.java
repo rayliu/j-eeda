@@ -859,12 +859,21 @@ public class DeliveryController extends Controller {
 	// 查找供应商
 	public void searchSp() {
 		String input = getPara("input");
+		
+		String userName = currentUser.getPrincipal().toString();
+		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
+		
 		List<Record> locationList = Collections.EMPTY_LIST;
 		String sql = "";
 		if(input!=null&&input!=""){
-			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and c.abbr like '%"+input+"%'";
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and c.abbr like '%"+input+"%' and p.office_id = "+parentID;
 		}else{
-			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id where sp_type = 'delivery'";
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and p.office_id = "+parentID;
 		}
 		
 		locationList = Db.find(sql);
@@ -1451,9 +1460,9 @@ public class DeliveryController extends Controller {
     		parentID = parentOffice.getLong("id");
     	}
     	if(inputStr!=null){
-    		sql = "select * from office where  office_name like '%"+inputStr+"%' and id = " + parentID + " or belong_office = " + parentID;
+    		sql = "select * from office where  office_name like '%"+inputStr+"%' and (id = " + parentID + " or belong_office = " + parentID +")";
     	}else{
-    		sql= "select * from office where id = " + parentID + " or belong_office = " + parentID ;
+    		sql= "select * from office where (id = " + parentID + " or belong_office = " + parentID +")";
     	}
         List<Office> office = Office.dao.find(sql);
         renderJson(office);
