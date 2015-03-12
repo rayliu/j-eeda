@@ -206,6 +206,10 @@ public class ServiceProviderController extends Controller {
             setContact(contact);
             contact.update();
         } else {
+        	Long parentID = parentOffice.get("belong_office");
+        	if(parentID == null || "".equals(parentID)){
+        		parentID = parentOffice.getLong("id");
+        	}
             contact = new Contact();
             setContact(contact);
             contact.save();
@@ -218,6 +222,7 @@ public class ServiceProviderController extends Controller {
             party.set("remark", getPara("remark"));
             party.set("payment", getPara("payment"));
             party.set("charge_type", getPara("chargeType"));
+            party.set("office_id", parentID);
             party.save();
 
         }
