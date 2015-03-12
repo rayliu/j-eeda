@@ -1,10 +1,10 @@
 package controllers.yh;
 
 
-import models.Office;
 import models.UserLogin;
 import models.UserOffice;
 import models.UserRole;
+
 
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -27,39 +27,31 @@ public class RegisterUserController  extends Controller{
 		String phone_name=getPara("contact_name");
 		String phone=getPara("contact_phone");
 		String againPassword=getPara("password");
-		String office_register=getPara("officeRegister");
 		//判断登陆名字步能为空
-		Record user = new Record();
-        user.set("user_name", userName);
-        user.set("password", againPassword);
-  
+		
 		//第一步，将公司的信息填入到office表中，判断公司名不为空和公司名不能重复
-        if(office_register.equals("unregister")){
-        	//保存注册公司
+        	//保存网点（公司）
         	Record office = new Record();
         	office.set("OFFICE_NAME", officeName);
         	office.set("office_person",phone_name);
         	office.set("phone", phone);
         	office.set("email", email);
         	office.set("type", "总公司");
-        	
         	Db.save("office", office);
-        	//根据名称查询到刚才保存的注册公司
-        	Office user_office = Office.dao.findFirst("select * from office where office_name=?",officeName);
+        	//将当前公司名称注册
+        	Record office_config = new Record();
+        	office_config.set("office_id", office.get("id"));
+        	office_config.set("system_title", officeName);
+        	Db.save("office_config", office_config);
+        	
         	//将新注册公司的ID设值到注册用户中
-        	user.set("office_id", user_office.get("id"));
-        	
+        	Record user = new Record();
+            user.set("user_name", userName);
+            user.set("password", againPassword);
+        	user.set("office_id", office.get("id"));
         	Db.save("user_login", user);
-        	/*UserOffice uo = new UserOffice();
-        	 uo.set("user_name",userName);
-        	 uo.set("office_id",user_office.get("id"));
-        	 uo.set("is_main",true);
-        	 uo.save();
-        	 * 
-        	 * */
         	
-        	//查询新注册用户
-        	//UserLogin newUser = UserLogin.dao.findFirst("select * from user_login where user_name=?",userName);
+        	//给当前默认系统管理员系统管理员角色
         	UserRole userRole = new UserRole();
         	userRole.set("user_name", userName);
         	userRole.set("role_code", "admin");
@@ -67,16 +59,13 @@ public class RegisterUserController  extends Controller{
         	
         	UserOffice uo = new  UserOffice();
         	uo.set("user_name",userName);
-        	uo.set("office_id", user_office.get("id"));
+        	uo.set("office_id", office.get("id"));
         	uo.set("is_main", true);
         	uo.save();
+        	
         	//保存成功后登录
         	forwardAction("/login");
 
-        }else{
-        	Db.save("user_login", user);
-        	render("/yh/profile/registerUser/registerSuccess.html");
-        }
 		
 	}
 	

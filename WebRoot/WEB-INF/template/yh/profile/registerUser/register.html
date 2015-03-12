@@ -17,27 +17,16 @@
 			<div class=" col-md-offset-3 col-lg-6">
 				<div class="login-panel panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">新用户注册</h3>
+						<h3 class="panel-title">新公司注册</h3>
 					</div>
-					<div class="panel-body">
-						<p>您好，易达物流信息平台 处于邀请试用阶段。</p>
+					<div class="panel-body" >
+						<!-- p>您好，易达物流信息平台 处于邀请试用阶段。</p>
 						<p>业务实施流程</p>
-						<p>如果您对我们的系统有兴趣，请先返回 <a href='http://www.eeda123.com/#footer'>首页</a> 并发送留言给我们，谢谢！</p>
-						 <form action="/register/saveRegistrant" method="post" id="registerForm" class="form-horizontal"  style="margin: 0 15px; display:none;" >
-							<fieldset>
-								<div class="row">
-									<div class="form-group" id="registerNatures" style="display:none;">
-										<span  class="col-md-2"></span>
-										<label class="radio-inline col-md-3">
-											<input type="radio" name ="officeRegister" value="register" id="exit">公司已注册 
-										</label>
-										<label class="radio-inline">
-											<input type="radio" name ="officeRegister" id="unexit" value="unregister"  checked>公司未注册 
-										</label>
-
-									</div>
+						<p>如果您对我们的系统有兴趣，请先返回 <a href='http://www.eeda123.com/#footer'>首页</a> 并发送留言给我们，谢谢！</p> -->
+						 <form action="/register/saveRegistrant" method="post" id="registerForm" class="form-horizontal" >
+								<div class="row col-md-offset-1">
 									<div class=" form-group form-group-lg">
-										<label class="col-md-3 control-label">登&nbsp;&nbsp;录&nbsp;&nbsp;名</label>
+										<label class="col-md-3 control-label">管理员账号</label>
 										<div class=" col-md-6">
 											<input class="form-control" type="text" id = "username" name="username" placeholder="请输入你的登录名(邮箱地址)">
 										</div>
@@ -58,46 +47,44 @@
 									</div>
 									
 								</div>
-								<div class="row" id="officeInformation" style="display:none">
+								<div class="row col-md-offset-1" id="officeInformation" >
 										<div class=" form-group form-group-lg">
-											<label class="col-md-3 control-label">公&nbsp;&nbsp;司&nbsp;&nbsp;名</label>
+											<label class="col-md-3 control-label">公司名称</label>
 											<div class=" col-md-6">
 												<input class="form-control" type="text" id="officeName" name ="officeName"placeholder="请输入公司名称">
 											</div>
 											
 										</div>
 										<div class=" form-group form-group-lg">
-											<label class="col-md-3 control-label">联&nbsp;&nbsp;系&nbsp;&nbsp;人</label>
+											<label class="col-md-3 control-label">公司联系人</label>
 											<div class=" col-md-6">
 												<input class="form-control" type="text" id="contact_name" name="contact_name"placeholder="请输入公司联系人">
 											</div>
 										</div>
 										<div class=" form-group form-group-lg">
-											<label class="col-md-3 control-label">电&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;话</label>
+											<label class="col-md-3 control-label">公司电话</label>
 											<div class=" col-md-6">
 												<input class="form-control" type="text" id="contact_phone" name="contact_phone"placeholder="请输入联系人的联系方式">
 											</div>
 										</div>
 										<div class=" form-group form-group-lg">
-											<label class="col-md-3 control-label">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件</label>
+											<label class="col-md-3 control-label">公司邮件</label>
 											<div class=" col-md-6">
 												<input class="form-control" type="text" id="email" name="email">
 											</div>
 										</div>
-										<div class="form-group form-group-sm">
-										    <label class="col-md-3 control-label">系统管理员</label>
-											<label class="control-label col-md-5">首次注册，默认是管理员</label>
+										<div class=" form-group form-group-lg" >
+											<label class="col-md-3 control-label"></label>
+											<div class=" col-md-6">
+												<button type="submit" class="btn btn-default btn-success col-md-8">提   交</button>
+											</div>
 										</div>
 								</div>
-								<div class="form-group form-group-sm">
-								   <span  class="col-md-1"></span>
-									<button type="submit" class="btn btn-default btn-success col-sm-3">提   交</button>
-								</div>
 								
-						 	</fieldset>
-						 	
 						 </form>
+						 
 					</div>
+					
 				</div>
 			</div>
 		</div>
@@ -116,27 +103,11 @@
 <script type="text/javascript">
 $(document).ready(function() {
 		var checkBoolean = false;
-		$("#exit").on("click", function() {
-			$("#officeInformation").hide();
-			checkBoolean = false;
-		});
-		$("#unexit").on("click", function() {
-			$("#officeInformation").show();
-			checkBoolean = true;
-		});
-		if(checkBoolean){
-			$("#officeInformation").show();
-		}else{
-			$("#officeInformation").hide();
-		}
-		
 		$("#username").on('blur',function(){
 			if(checkBoolean){
 				$("#email").val($("#username").val());
 			}
 		});
-		
-		
 		if(checkBoolean != false){
 			 $('#registerForm').validate({
 		         rules: {

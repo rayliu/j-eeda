@@ -1,1 +1,1 @@
-package models.yh.profile;import com.jfinal.plugin.activerecord.Model;public class OfficeCofig extends Model<OfficeCofig> {    public static final OfficeCofig dao = new OfficeCofig();}
+package models.yh.profile;import com.jfinal.plugin.activerecord.Model;public class OfficeCofig extends Model<OfficeCofig> {    public static final OfficeCofig dao = new OfficeCofig();    }
