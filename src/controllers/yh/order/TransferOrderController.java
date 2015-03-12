@@ -813,6 +813,15 @@ public class TransferOrderController extends Controller {
 
 	// 查找供应商
 	public void searchSp() {
+		
+		String userName = currentUser.getPrincipal().toString();
+		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
+		
 		String input = getPara("input");
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
@@ -835,11 +844,11 @@ public class TransferOrderController extends Controller {
 							+ input
 							+ "%' or postal_code like '%"
 							+ input
-							+ "%') limit 0,10");
+							+ "%') and p.office_id =? limit 0,10",parentID);
 		} else {
 			locationList = Db
 					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "'");
+							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "' and p.office_id = ?",parentID);
 		}
 		renderJson(locationList);
 	}
@@ -982,8 +991,16 @@ public class TransferOrderController extends Controller {
 
 	// 查出所有的office
 	public void searchAllOffice() {
-		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o");
-		renderJson(offices);
+		String userName = currentUser.getPrincipal().toString();
+		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
+		
+		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id = " + parentID +" or o.belong_office = " + parentID);
+		renderJson(offices); 
 	}
 	
 	//根据用户是否拥有这个网点查询

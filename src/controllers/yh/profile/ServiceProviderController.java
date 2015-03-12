@@ -299,7 +299,13 @@ public class ServiceProviderController extends Controller {
     	renderJson(map);
     }
     public void searchSp() {
+    	
 		String input = getPara("input");
+		
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
@@ -321,11 +327,11 @@ public class ServiceProviderController extends Controller {
 							+ input
 							+ "%' or postal_code like '%"
 							+ input
-							+ "%')  and (p.is_stop is null or p.is_stop = 0) limit 0,10");
+							+ "%')  and (p.is_stop is null or p.is_stop = 0) and p.office_id = ? limit 0,10",parentID);
 		} else {
 			locationList = Db
 					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "'  and (p.is_stop is null or p.is_stop = 0)");
+							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "'  and (p.is_stop is null or p.is_stop = 0) and p.office_id = ?",parentID);
 		}
 		renderJson(locationList);
 	}
