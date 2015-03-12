@@ -7,11 +7,15 @@ import java.util.List;
 import java.util.Map;
 
 import models.Account;
+import models.Office;
+import models.UserOffice;
 import models.yh.profile.AccountItem;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -24,6 +28,10 @@ import controllers.yh.util.PermissionConstant;
 @Before(SetAttrLoginUserInterceptor.class)
 public class AccountController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);
+    Subject currentUser = SecurityUtils.getSubject();
+    String userName = currentUser.getPrincipal().toString();
+	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_LIST})
     public void index() {
         render("/yh/profile/account/account.html");
@@ -49,6 +57,10 @@ public class AccountController extends Controller {
     // 添加金融账户
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_CREATE, PermissionConstant.PERMSSION_A_UPDATE}, logical=Logical.OR)
     public void save() {
+    	Long parentID = parentOffice.get("belong_office");
+    	if(parentID == null || "".equals(parentID)){
+    		parentID = parentOffice.getLong("id");
+    	}
         /*
          * if (!isAuthenticated()) return;
          */
@@ -70,6 +82,7 @@ public class AccountController extends Controller {
             Db.update("fin_account", account);
         } else {
             logger.debug("insert....");
+            account.set("office_id", currentoffice.get("office_id"));
             Db.save("fin_account", account);
         }
         renderJson(account);
@@ -106,16 +119,27 @@ public class AccountController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
                     + getPara("iDisplayLength");
         }
-
+        
+       
         // 获取总条数
         String totalWhere = "";
-        String sql = "select count(1) total from fin_account";
+        String sql = "";
+        String querySql ="";
+        Long parentID = parentOffice.get("belong_office");
+        if(parentID == null || "".equals(parentID)){
+        	sql = "select count(1) total from fin_account f left join office o on f.office_id = o.id where o.id = "+parentOffice.get("id") +" or o.belong_office = "+parentOffice.get("id") ;
+        	querySql= "select * from fin_account f left join office o on f.office_id = o.id where o.id = "+parentOffice.get("id") +" or o.belong_office = "+parentOffice.get("id") ;
+        }else{
+        	sql = "select count(1) total from fin_account where office_id = "+parentOffice.get("id");
+        	querySql= "select * from fin_account where office_id = "+parentOffice.get("id");
+        }
+        
         
         Record rec = Db.findFirst(sql + totalWhere);
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select * from fin_account" + sLimit);
+        List<Record> orders = Db.find(querySql + sLimit);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
