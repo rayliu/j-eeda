@@ -229,9 +229,33 @@ $(document).ready(function() {
             { "mDataProp": "CUSTOMER"},
             { "mDataProp": "ITEM_NO"},
             { "mDataProp": "ITEM_NAME"},
-            { "mDataProp": "AMOUNT"},
-            { "mDataProp": "VOLUME"},
-            { "mDataProp": "WEIGHT"},
+            { "mDataProp": null,
+				"fnRender": function(obj) {   
+				if(obj.aData.CARGO_NATURE == "ATM"){
+						return obj.aData.ATMAMOUNT;
+					}else{
+						return obj.aData.CARGOAMOUNT;
+					}
+				}
+            },
+            { "mDataProp": null,
+			"fnRender": function(obj) {   
+				if(obj.aData.CARGO_NATURE == "ATM"){
+						return obj.aData.ATMVOLUME;
+					}else{
+						return obj.aData.CARGOVOLUME;
+					}
+				}
+            },
+            { "mDataProp": null,
+			"fnRender": function(obj) {   
+				if(obj.aData.CARGO_NATURE == "ATM"){
+						return obj.aData.ATMWEIGHT;
+					}else{
+						return obj.aData.CARGOWEIGHT;
+					}
+				}
+            },
             { "mDataProp": "REMARK"},
         ]
     });
@@ -1165,9 +1189,33 @@ $(document).ready(function() {
 			}, 
             { "mDataProp": "TRANSFER_ORDER_NO"},
             { "mDataProp": "ABBR"},
-            { "mDataProp": "AMOUNT"},
-            { "mDataProp": "VOLUME"},
-            { "mDataProp": "WEIGHT"},
+            { "mDataProp": null,
+				"fnRender": function(obj) {   
+				if(obj.aData.CARGO_NATURE == "ATM"){
+						return obj.aData.ATMAMOUNT;
+					}else{
+						return obj.aData.CARGOAMOUNT;
+					}
+				}
+            },
+            { "mDataProp": null,
+			"fnRender": function(obj) {   
+				if(obj.aData.CARGO_NATURE == "ATM"){
+						return obj.aData.ATMVOLUME;
+					}else{
+						return obj.aData.CARGOVOLUME;
+					}
+				}
+            },
+            { "mDataProp": null,
+			"fnRender": function(obj) {   
+				if(obj.aData.CARGO_NATURE == "ATM"){
+						return obj.aData.ATMWEIGHT;
+					}else{
+						return obj.aData.CARGOWEIGHT;
+					}
+				}
+            },
             { "mDataProp": null,
 				"fnRender": function(obj) {
 					return "<input type='text' size='3' name='car_summary_order_share_ratio' id='car_summary_order_share_ratio' value='"+obj.aData.CAR_SUMMARY_ORDER_SHARE_RATIO*100+"' disabled='true'>%";

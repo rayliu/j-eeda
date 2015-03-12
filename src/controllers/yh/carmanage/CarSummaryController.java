@@ -485,10 +485,9 @@ public class CarSummaryController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select dor.depart_no,toi.id,ifnull(toi.item_name, pd.item_name) item_name,"
-        		+ "ifnull(toi.item_no, pd.item_no) item_no,ifnull(toi.volume, pd.volume) * toi.amount volume,"
-        		+ "ifnull(case toi.weight when 0.0 then null else toi.weight end,pd.weight ) * toi.amount weight,"
-        		+ "c.abbr customer,tor.order_no,toi.amount,toi.remark"
+        String sql = "select toi.id,dor.depart_no,tor.order_no,c.abbr customer,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,toi.remark,tor.cargo_nature,"
+        		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and pickup_id in (37)) atmamount,"
+        		+ " round(ifnull(pd.volume, 0), 2) atmvolume,round(ifnull(pd.weight, 0), 2) atmweight,ifnull(toi.amount, 0) cargoamount,ifnull(toi.volume, 0) cargovolume,ifnull(toi.sum_weight, 0) cargoweight "
         		+ " from depart_transfer dt"
         		+ " left join depart_order dor on dor.id = dt.pickup_id  "
         		+ " left join transfer_order tor on tor.id = dt.order_id"
@@ -910,18 +909,18 @@ public class CarSummaryController extends Controller {
 	        Record rec = Db.findFirst(sqlTotal);
 	        logger.debug("total records:" + rec.getLong("total"));
 	
-	        String sql = "select dt.*, tr.order_no,c.abbr,tr.car_summary_order_share_ratio,tr.remark,"
-	        		+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = dt.order_id ) amount,"
-	        		+ " (select sum( ifnull(toi.volume, p.volume) * toi.amount ) from transfer_order_item toi "
-	        		+ " left join product p on p.id = toi.product_id where toi.order_id = dt.order_id ) volume,"
-	        		+ " (select sum( ifnull( nullif(toi.weight, 0), p.weight ) * toi.amount ) from transfer_order_item toi"
-	        		+ " left join product p on p.id = toi.product_id where toi.order_id = dt.order_id ) weight"
+	        String sql = "select dt.*, tr.order_no,c.abbr,tr.car_summary_order_share_ratio,tr.remark,tr.cargo_nature,"
+	        		+ " (select count(0) total from transfer_order_item_detail where order_id = tr.id  and pickup_id in(" + pickupIds+")) atmamount,"
+	        		+ " round((select sum(ifnull(volume, 0)) from transfer_order_item_detail where pickup_id in(" + pickupIds+")), 2) atmvolume,"
+	        		+ " round((select sum(ifnull(weight, 0)) from transfer_order_item_detail where pickup_id in(" + pickupIds+")), 2) atmweight,"
+	        		+ " round(ifnull(sum(toi.amount), 0)) cargoamount,round(ifnull(sum(toi.volume), 0)) cargovolume,round(ifnull(sum(toi.sum_weight), 0)) cargoweight"
 	        		+ " from depart_transfer dt"
 	        		+ " left join transfer_order tr on tr.id = dt.order_id"
+	        		+ " left join transfer_order_item toi on toi.order_id = tr.id"
 	        		+ " left join party p on p.id = tr.customer_id"
 	        		+ " left join contact c on c.id = p.contact_id"
-	        		+ " where dt.pickup_id in(" + pickupIds+")"
-	        		+ " order by dt.pickup_id asc "+ sLimit;
+	        		+ " left join product pd on pd.id = toi.product_id"
+	        		+ " where dt.pickup_id in(" + pickupIds+") order by dt.pickup_id asc "+ sLimit;
 	        List<Record> departOrderitem = Db.find(sql);
 	        Map Map = new HashMap();
 	        Map.put("sEcho", pageIndex);
