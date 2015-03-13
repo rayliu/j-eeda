@@ -28,7 +28,7 @@
 									<div class=" form-group form-group-lg">
 										<label class="col-md-3 control-label">管理员账号</label>
 										<div class=" col-md-6">
-											<input class="form-control" type="text" id = "username" name="username" placeholder="请输入你的管理员账号(邮箱地址)">
+											<input class="form-control" type="text" id = "username" name="username" placeholder="请输入您的管理员账号(邮箱地址)">
 										</div>
 									</div>
 									<div class=" form-group form-group-lg">
@@ -67,7 +67,7 @@
 												<input class="form-control" type="text" id="contact_phone" name="contact_phone"placeholder="请输入联系人的电话">
 											</div>
 										</div>
-										<div class=" form-group form-group-lg">
+										<div class=" form-group form-group-lg" style ="display:none">
 											<label class="col-md-3 control-label">公司邮件</label>
 											<div class=" col-md-6">
 												<input class="form-control" type="text" id="email" name="email">
@@ -105,50 +105,7 @@ $(document).ready(function() {
 		$("#username").on('blur',function(){
 			$("#email").val($("#username").val());
 		});
-		if(checkBoolean != false){
-			 $('#registerForm').validate({
-		         rules: {
-		        	 username: {
-		                required: true,
-		                email:true,
-		                remote:{
-		                	url: "/register/checkUserNameExist", //后台处理程序    
-                            type: "post",  //数据发送方式  
-                            data:  {                     //要传递的数据   
-                            	username: function() {   
-                                    return $("#username").val();   
-                                  }   
-  
-                            }   
-            
-                        } 
-					},
-		              password:{
-		                required: true,
-		                minlength: 6
-		              },
-		              affirmPass: { 
-		            	  required: true, 
-		            	  minlength: 6, 
-		            	  equalTo: "#password" 
-		            	  } 
-		             },
-		             messages:{
-		            	 username:{
-		            		 remote:"用户名已存在"
-		            	 }
-		             },
-		             highlight: function(element) {
-		            	$(element).parent().parent().closest('.form-group').removeClass('has-success').addClass('has-error');
-		            	
-		            },
-		            success: function(element) {
-		            	element.parent().parent().addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
-		            	element.detach();
-		            }
-		        });
-		}else{
-			 $('#registerForm').validate({
+		 $('#registerForm').validate({
 		            rules: {
 		            	username: {
 			                required: true,
@@ -204,13 +161,13 @@ $(document).ready(function() {
 	            		 remote:"管理员账号已注册"
 	            	 },
 	            	 password:{
-	            		 required:"密码不能为空",
-	            		 minlength:"密码至少为6位"
+	            		 required:"登录密码不能为空",
+	            		 minlength:"登录密码至少为6位"
 	            	 },
 	            	 affirmPass:{
-	            		 required:"再次确认密码不能为空",
+	            		 required:"确认密码不能为空",
 	            		 equalTo:"密码不一致",
-	            		minlength:"再次确认密码至少为6位"
+	            		minlength:"确认密码至少为6位"
 	            	 },
 	            	 officeName:{
 	            		 required:"公司名不能为空",
@@ -232,7 +189,6 @@ $(document).ready(function() {
 	            	
 	            }
 	        });
-		}
 		window.history.forward(1);
 	});
 		
