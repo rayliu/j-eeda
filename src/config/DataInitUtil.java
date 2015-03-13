@@ -1210,18 +1210,8 @@ public class DataInitUtil {
        Contact contact6 = new Contact();
        contact6.set("company_name", "天津某某运输有限限公司").set("contact_person", "何生").set("email", "test@test.com");
        contact6.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
-               .set("location", "440402").save();
-       Contact contact8 = new Contact();
-       
-       contact8.set("contact_person", "张三").set("phone", "15512345678").save();
-       Contact contact9 = new Contact();
-       
-       contact9.set("contact_person", "李四").set("phone", "15812345678").save();
-       Contact contact10 = new Contact();
-       
-       contact10.set("contact_person", "张三三").set("phone", "13112345678").save();
-       Contact contact11 = new Contact();
-       contact11.set("contact_person", "李四四").set("phone", "13312345678").save();
+               .set("location", "440402").set("sptype", "delivery").save();
+      
 
        Party p1 = new Party();
        Party p2 = new Party();
@@ -1230,10 +1220,7 @@ public class DataInitUtil {
        Party p5 = new Party();
        Party p6 = new Party();
        Party p7 = new Party();
-       Party p8 = new Party();
-       Party p9 = new Party();
-       Party p10 = new Party();
-       Party p11 = new Party();
+    
       
        p1.set("contact_id", contact.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
                .set("payment", "monthlyStatement").set("office_id", office.get("id")).save();
@@ -1249,14 +1236,7 @@ public class DataInitUtil {
                .set("creator", "demo").set("office_id", office.get("id")).save();
        p6.set("contact_id", contact6.getLong("id")).set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
                .set("creator", "demo").set("office_id", office.get("id")).save();
-       p8.set("contact_id", contact8.getLong("id")).set("party_type", Party.PARTY_TYPE_DRIVER).set("create_date", createDate)
-               .set("creator", "demo").set("office_id", office.get("id")).save();
-       p9.set("contact_id", contact9.getLong("id")).set("party_type", Party.PARTY_TYPE_DRIVER).set("create_date", createDate)
-               .set("creator", "demo").set("office_id", office.get("id")).save();
-       p10.set("contact_id", contact10.getLong("id")).set("party_type", Party.PARTY_TYPE_SP_DRIVER).set("create_date", createDate)
-       		.set("creator", "demo").set("office_id", office.get("id")).save();
-       p11.set("contact_id", contact11.getLong("id")).set("party_type", Party.PARTY_TYPE_SP_DRIVER).set("create_date", createDate)
-       		.set("creator", "demo").set("office_id", office.get("id")).save();
+
        UserCustomer uc = new UserCustomer();
        uc.set("user_name", user.get("user_name")).set("customer_id", p1.get("id")).save();
        UserCustomer uc1 = new UserCustomer();
@@ -1298,11 +1278,6 @@ public class DataInitUtil {
        
        Warehouse w1 = new Warehouse();
        w1.set("warehouse_name","珠海仓库").set("warehouse_address", "珠海").set("warehouse_area", 450).set("warehouse_type", "ownWarehouse").set("status","active").set("office_id",of.get("id")).set("sp_name","珠海分公司").set("location", "440100").save();
-    
-    
-    
-    
-    
     
     
     }
