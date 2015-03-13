@@ -5,11 +5,12 @@ import models.UserLogin;
 import models.UserOffice;
 import models.UserRole;
 
-
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+
+import config.DataInitUtil;
 
 public class RegisterUserController  extends Controller{
 	//这个是记录操作日志的类
@@ -63,6 +64,8 @@ public class RegisterUserController  extends Controller{
         	uo.set("is_main", true);
         	uo.save();
         	
+        	//初始化数据
+        	DataInitUtil.initBaseData(office,user);  
         	//保存成功后登录
         	forwardAction("/login");
 

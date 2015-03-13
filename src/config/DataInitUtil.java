@@ -5,13 +5,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
 import models.Category;
+import models.Office;
 import models.Party;
 import models.PartyAttribute;
+import models.Product;
+import models.Role;
+import models.UserCustomer;
+import models.UserLogin;
+import models.UserOffice;
+import models.Warehouse;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.c3p0.C3p0Plugin;
 
 public class DataInitUtil {
@@ -1157,5 +1166,144 @@ public class DataInitUtil {
         p11.set("contact_id", contact11.getLong("id")).set("party_type", Party.PARTY_TYPE_SP_DRIVER).set("create_date", createDate)
         		.set("creator", "demo").save();
     }
+    public static void initBaseData(Record office,Record user) {
+    	//角色
+       Role r = new Role();
+       Role r1 = new Role();
+       r.set("code", "Manager").set("office_id", office.get("id")).set("name","经理").save();
+       r1.set("code", "clerk").set("office_id", office.get("id")).set("name","客服").save();
+       //登录用户一个
+       UserLogin  ul = new UserLogin();
+       ul.set("user_name", "test@eeda123.com").set("office_id", office.get("id")).set("password","123456").set("password_hint","123456").set("c_name", "测试用户").save();
+       //客户，供应商，
+       Date createDate = Calendar.getInstance().getTime();
+       Contact contact = new Contact();
+       contact.set("company_name", "珠海创诚易达信息科技有限公司").set("contact_person", "温生").set("email", "test@test.com").set("abbr", "珠海创诚易达");
+       contact.set("mobile", "12345671").set("phone", "113527229313").set("address", "珠海市香洲区").set("postal_code", "5190001")
+               .set("location", "440116").save();
+       
+       Contact contact7 = new Contact();
+       contact7.set("company_name", "珠海博兆计算机科技有限公司").set("contact_person", "温生").set("email", "test@test.com").set("abbr", "珠海博兆");
+       contact7.set("mobile", "12345671").set("phone", "113527229313").set("address", "珠海市斗门区").set("postal_code", "5190001")
+               .set("location", "441900").save();
+       
+       Contact contact2 = new Contact();
+       contact2.set("company_name", "北京制药珠海分公司").set("contact_person", "黄生").set("email", "test@test.com").set("abbr", "北京制药珠分");
+       contact2.set("mobile", "12345672").set("phone", "213527229313").set("address", "珠海市金湾区").set("postal_code", "5190002")
+               .set("location", "110102").save();
+       
+       Contact contact3 = new Contact();
+       contact3.set("company_name", "广州某某运输公司").set("contact_person", "李生").set("email", "test@test.com").set("abbr", "广某运输");;
+       contact3.set("mobile", "12345673").set("phone", "313527229313").set("address", "广州罗岗区为农街为农市场").set("postal_code", "5190003")
+               .set("location", "440116").save();// 440116
+                                                 // 广州罗岗区
+       Contact contact4 = new Contact();
+       contact4.set("company_name", "天津某某运输有限公司").set("contact_person", "何生").set("email", "test@test.com");
+       contact4.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
+               .save();
+      
+       Contact contact5 = new Contact();
+       contact5.set("company_name", "天津某某有限公司").set("contact_person", "何生").set("email", "test@test.com");
+       contact5.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
+               .set("location", "442000").save();
+       
+       Contact contact6 = new Contact();
+       contact6.set("company_name", "天津某某运输有限限公司").set("contact_person", "何生").set("email", "test@test.com");
+       contact6.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
+               .set("location", "440402").save();
+       Contact contact8 = new Contact();
+       
+       contact8.set("contact_person", "张三").set("phone", "15512345678").save();
+       Contact contact9 = new Contact();
+       
+       contact9.set("contact_person", "李四").set("phone", "15812345678").save();
+       Contact contact10 = new Contact();
+       
+       contact10.set("contact_person", "张三三").set("phone", "13112345678").save();
+       Contact contact11 = new Contact();
+       contact11.set("contact_person", "李四四").set("phone", "13312345678").save();
+
+       Party p1 = new Party();
+       Party p2 = new Party();
+       Party p3 = new Party();
+       Party p4 = new Party();
+       Party p5 = new Party();
+       Party p6 = new Party();
+       Party p7 = new Party();
+       Party p8 = new Party();
+       Party p9 = new Party();
+       Party p10 = new Party();
+       Party p11 = new Party();
+      
+       p1.set("contact_id", contact.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
+               .set("payment", "monthlyStatement").set("office_id", office.get("id")).save();
+       p7.set("contact_id", contact7.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
+               .set("payment", "freightCollect").set("office_id", office.get("id")).save();
+       p2.set("contact_id", contact2.getLong("id")).set("party_type", "CUSTOMER").set("create_date", createDate).set("creator", "demo")
+               .set("payment", "cashPayment").set("office_id", office.get("id")).save();
+       p3.set("contact_id", contact3.getLong("id")).set("office_id", office.get("id")).set("party_type", "SERVICE_PROVIDER").set("create_date", createDate)
+               .set("payment", "demo").set("office_id", office.get("id")).save();
+       p4.set("contact_id", contact4.getLong("id")).set("party_type", "SERVICE_PROVIDER").set("create_date", createDate)
+               .set("creator", "demo").set("office_id", office.get("id")).save();
+       p5.set("contact_id", contact5.getLong("id")).set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
+               .set("creator", "demo").set("office_id", office.get("id")).save();
+       p6.set("contact_id", contact6.getLong("id")).set("party_type", "NOTIFY_PARTY").set("create_date", createDate)
+               .set("creator", "demo").set("office_id", office.get("id")).save();
+       p8.set("contact_id", contact8.getLong("id")).set("party_type", Party.PARTY_TYPE_DRIVER).set("create_date", createDate)
+               .set("creator", "demo").set("office_id", office.get("id")).save();
+       p9.set("contact_id", contact9.getLong("id")).set("party_type", Party.PARTY_TYPE_DRIVER).set("create_date", createDate)
+               .set("creator", "demo").set("office_id", office.get("id")).save();
+       p10.set("contact_id", contact10.getLong("id")).set("party_type", Party.PARTY_TYPE_SP_DRIVER).set("create_date", createDate)
+       		.set("creator", "demo").set("office_id", office.get("id")).save();
+       p11.set("contact_id", contact11.getLong("id")).set("party_type", Party.PARTY_TYPE_SP_DRIVER).set("create_date", createDate)
+       		.set("creator", "demo").set("office_id", office.get("id")).save();
+       UserCustomer uc = new UserCustomer();
+       uc.set("user_name", user.get("user_name")).set("customer_id", p1.get("id")).save();
+       UserCustomer uc1 = new UserCustomer();
+       uc1.set("user_name", user.get("user_name")).set("customer_id", p2.get("id")).save();
+       UserCustomer uc2 = new UserCustomer();
+       uc2.set("user_name", user.get("user_name")).set("customer_id", p7.get("id")).save();
+       //生成随机代码
+       Random rand= new Random();
+       int tmp = Math.abs(rand.nextInt());
+       
+       Office of = new Office();
+       of.set("office_code", tmp%(100000 - 1000 + 1) + 1000).set("office_name", "珠海分公司")
+       .set("office_person", "李生").set("phone", "13175892125").set("address","珠海").set("email", "test@eeda123.com")
+       .set("type", "分公司").set("belong_office", office.get("id")).set("location", "310100").set("abbr", "珠海分公司").save();
+
+       Office o = new Office();
+       o.set("office_code", tmp%(100000 - 1000 + 1) + 1000).set("office_name", "深圳分公司")
+       .set("office_person", "李生").set("phone", "13175892125").set("address","深圳").set("email", "test@eeda123.com")
+       .set("type", "分公司").set("belong_office", office.get("id")).set("location", "310100").set("abbr", "深圳分公司").save();
     
+       UserOffice uo = new UserOffice();
+       uo.set("user_name", user.get("user_name")).set("office_id", of.get("id")).save();
+       UserOffice uo1 = new UserOffice();
+       uo1.set("user_name", user.get("user_name")).set("office_id", o.get("id")).save();
+       
+       Category c = new Category();
+       c.set("name", "珠海分公司").set("customer_id",p1.get("id")).save();
+       Category c1 = new Category();
+       c1.set("name", "电脑").set("customer_id",p1.get("id")).set("parent_id", c.get("id")).save();
+       
+       Product p = new 	Product();
+       p.set("item_name","ACER").set("item_no","acer").set("size","1000").set("width","1000").set("height","1000").set("unit","台").set("category_id",c1.get("id")).save();
+    
+       Product pro = new Product();
+       pro.set("item_name","THINKPAD").set("item_no","thinkpad").set("size","1000").set("width","1000").set("height","1000").set("unit","台").set("category_id",c1.get("id")).save();
+    
+       Warehouse w = new Warehouse();
+       w.set("warehouse_name","深圳仓库").set("warehouse_address", "深圳").set("warehouse_area", 450).set("warehouse_type", "ownWarehouse").set("status","active").set("office_id",o.get("id")).set("sp_name","深圳分公司").set("location", "440100").save();
+       
+       Warehouse w1 = new Warehouse();
+       w1.set("warehouse_name","珠海仓库").set("warehouse_address", "珠海").set("warehouse_area", 450).set("warehouse_type", "ownWarehouse").set("status","active").set("office_id",of.get("id")).set("sp_name","珠海分公司").set("location", "440100").save();
+    
+    
+    
+    
+    
+    
+    
+    }
 }
