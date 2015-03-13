@@ -1173,8 +1173,7 @@ public class DataInitUtil {
        r.set("code", "Manager").set("office_id", office.get("id")).set("name","经理").save();
        r1.set("code", "clerk").set("office_id", office.get("id")).set("name","客服").save();
        //登录用户一个
-       UserLogin  ul = new UserLogin();
-       ul.set("user_name", "test@eeda123.com").set("office_id", office.get("id")).set("password","123456").set("password_hint","123456").set("c_name", "测试用户").save();
+       
        //客户，供应商，
        Date createDate = Calendar.getInstance().getTime();
        Contact contact = new Contact();
@@ -1210,7 +1209,7 @@ public class DataInitUtil {
        Contact contact6 = new Contact();
        contact6.set("company_name", "天津某某运输有限限公司").set("contact_person", "何生").set("email", "test@test.com");
        contact6.set("mobile", "12345674").set("phone", "413527229313").set("address", "香洲珠海市香洲区老香洲为农街为农市场4").set("postal_code", "5190004")
-               .set("location", "440402").set("sptype", "delivery").save();
+               .set("location", "440402").set("sp_type", "delivery").save();
       
 
        Party p1 = new Party();
@@ -1256,7 +1255,14 @@ public class DataInitUtil {
        o.set("office_code", tmp%(100000 - 1000 + 1) + 1000).set("office_name", "深圳分公司")
        .set("office_person", "李生").set("phone", "13175892125").set("address","深圳").set("email", "test@eeda123.com")
        .set("type", "分公司").set("belong_office", office.get("id")).set("location", "310100").set("abbr", "深圳分公司").save();
-    
+       
+       UserLogin  ul = new UserLogin();
+       ul.set("user_name", "test"+tmp%(100000 - 1000 + 1) + 1000+"@eeda123.com").set("office_id", office.get("id")).set("password","123456").set("password_hint","123456").set("c_name", "测试用户").save();
+       
+       
+       UserOffice uf = new UserOffice();
+       uf.set("user_name", ul.get("user_name")).set("office_id", of.get("id")).set("is_main", true).save();
+       
        UserOffice uo = new UserOffice();
        uo.set("user_name", user.get("user_name")).set("office_id", of.get("id")).save();
        UserOffice uo1 = new UserOffice();
