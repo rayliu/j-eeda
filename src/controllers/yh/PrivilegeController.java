@@ -108,7 +108,7 @@ public class PrivilegeController extends Controller {
 		if(parentID == null || "".equals(parentID)){
 			parentID = parentOffice.getLong("id");
 		}
-		String sql_m = "select r.code,r.name from role r left join role_permission rp on r.code = rp.role_code where rp.role_code is null and rp.office_id is null and r.office_id = " + parentID;
+		String sql_m = "select r.code,r.name from role r left join (select * from role_permission where office_id = " + parentID +" ) rp on r.code = rp.role_code where rp.role_code is null and r.office_id = " + parentID;
 		List<Record> orders = Db.find(sql_m);
 		renderJson(orders);
 	}
