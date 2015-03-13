@@ -489,26 +489,28 @@
 	                    <li id="menu_profile">
 	                        <a href="#"><i class="fa fa-cog fa-fw"></i> 基础数据设置<span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level">
+	                            <% if(roleListPermission){%>
+		                            <li>
+		                                <a href="/role">角色</a>
+		                            </li>
+		                        <%}%>
+	                            <% if(rolePrivilegeListPermission){%>
+		                            <li>
+		                                <a href="/privilege">角色权限</a>
+		                            </li>
+	                             <%}%>
 	                            <% if(userLoginListPermission){%>
 		                            <li>
 		                                <a href="/loginUser">登录用户</a>
 		                            </li>
 		                         <%}%>
-		                         <% if(roleListPermission){%>
-		                            <li>
-		                                <a href="/role">角色</a>
-		                            </li>
-		                         <%}%>
+		                         
 		                         <% if(userRoleListPermission){%>
 		                            <li>
 		                                <a href="/userRole">用户角色</a>
 		                            </li>
 	                             <%}%>
-		                         <% if(rolePrivilegeListPermission){%>
-		                            <li>
-		                                <a href="/privilege">角色权限</a>
-		                            </li>
-	                             <%}%>
+		                         
 		                         <% if(customerPermission){%>
 		                            <li>
 		                                <a href="/customer">客户</a>
