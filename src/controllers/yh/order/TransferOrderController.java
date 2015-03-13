@@ -949,6 +949,9 @@ public class TransferOrderController extends Controller {
  			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			resultMap.put("result", "false");
+			resultMap.put("cause", "导入失败，请选择正确的execl文件<br/>（建议使用Microsoft Office Execl软件操作数据）");
+			renderJson(resultMap);
 		}
  		logger.debug("result:" + resultMap.get("result") +",cause:"+resultMap.get("cause"));
  		
