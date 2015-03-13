@@ -166,11 +166,9 @@ public class ProductController extends Controller {
     // 查出客户的根类别
     public void searchCustomerCategory() {
         String customerId = getPara("customerId");
-        Long parentID = parentOffice.get("belong_office");
-        if(parentID == null || "".equals(parentID)){
-        	parentID = parentOffice.getLong("id");
-        }
-        Category category = Category.dao.findFirst("select * from category c left join party p on c.customer_id = p.id where c.customer_id =? and c.parent_id is null and p.office_id = ?", customerId,parentID);
+       
+        Category category = Category.dao.findFirst("select * from category where customer_id =? and parent_id is null", customerId);
+
         if (category == null) {
             category = new Category();
             category.set("name", "root");
@@ -184,15 +182,12 @@ public class ProductController extends Controller {
     // 查出客户的根类别
     public void searchCustomerCategory2() {
         // String customerId = getPara("customerId");
-    	Long parentID = parentOffice.get("belong_office");
-    	if(parentID == null || "".equals(parentID)){
-    		parentID = parentOffice.getLong("id");
-    	}
+    	
     	List<Category> categories = new ArrayList<Category>();
         List<Product> list = Product.dao.find("select * from product");
         for (Product product : list) {
-            Category category = Category.dao.findFirst("select * from category c left join party p on c.customer_id = p.id where c.customer_id =? and c.parent_id is null and p.office_id = ?",
-                    product.get("customer_id"),parentID);
+            Category category = Category.dao.findFirst("select * from category where customer_id =? and parent_id is null",
+                    product.get("customer_id"));
             if (category == null) {
                 category = new Category();
                 category.set("name", "root");
@@ -208,13 +203,11 @@ public class ProductController extends Controller {
     public void searchNodeCategory() {
         Long categoryId = getParaToLong("categoryId");
         Long customerId = getParaToLong("customerId");
-        Long parentID = parentOffice.get("belong_office");
-        if(parentID == null || "".equals(parentID)){
-        	parentID = parentOffice.getLong("id");
-        }
+        
         logger.debug("categoryId=" + categoryId + ", customerId=" + customerId);
         List<Category> categories = Category.dao
-                .find("select * from category  c left join party p on c.customer_id = p.id where c.parent_id=? and c.customer_id =? and p.office_id = ?", categoryId, customerId,parentID);
+                .find("select * from category where parent_id=? and customer_id =?", categoryId, customerId);
+
         renderJson(categories);
 
     }
@@ -334,6 +327,7 @@ public class ProductController extends Controller {
     	if(parentID == null || "".equals(parentID)){
     		parentID = parentOffice.getLong("id");
     	}
+    	
         List<Party> parties = Party.dao
                 .find("select p.id party_id, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null and p.office_id = ?",
                         Party.PARTY_TYPE_CUSTOMER,parentID);
@@ -363,7 +357,8 @@ public class ProductController extends Controller {
     // 添加一行新数据
     public void addNewRow() {
         String categoryId = getPara("categoryId");
-        new Product().set("category_id", categoryId).set("size", 0).set("width", 0).set("height", 0).set("weight", 0).save();
+        Product p = new Product();
+        p.set("category_id", categoryId).set("size", 0).set("width", 0).set("height", 0).set("weight", 0).save();
         renderJson("{\"success\":true}");
     }
 
