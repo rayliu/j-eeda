@@ -17,7 +17,7 @@
 			<div class=" col-md-offset-3 col-lg-6">
 				<div class="login-panel panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">新公司注册</h3>
+						<h3 class="panel-title">新用户注册</h3>
 					</div>
 					<div class="panel-body" >
 						<!-- p>您好，易达物流信息平台 处于邀请试用阶段。</p>
@@ -28,20 +28,20 @@
 									<div class=" form-group form-group-lg">
 										<label class="col-md-3 control-label">管理员账号</label>
 										<div class=" col-md-6">
-											<input class="form-control" type="text" id = "username" name="username" placeholder="请输入你的登录名(邮箱地址)">
+											<input class="form-control" type="text" id = "username" name="username" placeholder="请输入你的管理员账号(邮箱地址)">
 										</div>
 									</div>
 									<div class=" form-group form-group-lg">
 										<label class="col-md-3 control-label">登录密码</label>
 										<div class=" col-md-6">
-											<input class="form-control" type="password" id="password" name="password"  placeholder="请输入你的登录密码">
+											<input class="form-control" type="password" id="password" name="password"  placeholder="请输入您的登录密码">
 										</div>
 										
 									</div>
 									<div class=" form-group form-group-lg">
 										<label class="col-md-3 control-label">确认密码</label>
 										<div class=" col-md-6">
-											<input class="form-control" type="password" id="affirmPass" name="affirmPass" placeholder="请再次输入你的登录密码">
+											<input class="form-control" type="password" id="affirmPass" name="affirmPass" placeholder="请再次输入您的登录密码">
 										</div>
 										
 									</div>
@@ -62,9 +62,9 @@
 											</div>
 										</div>
 										<div class=" form-group form-group-lg">
-											<label class="col-md-3 control-label">公司电话</label>
+											<label class="col-md-3 control-label">联系人电话</label>
 											<div class=" col-md-6">
-												<input class="form-control" type="text" id="contact_phone" name="contact_phone"placeholder="请输入联系人的联系方式">
+												<input class="form-control" type="text" id="contact_phone" name="contact_phone"placeholder="请输入联系人的电话">
 											</div>
 										</div>
 										<div class=" form-group form-group-lg">
@@ -102,11 +102,8 @@
     
 <script type="text/javascript">
 $(document).ready(function() {
-		var checkBoolean = false;
 		$("#username").on('blur',function(){
-			if(checkBoolean){
-				$("#email").val($("#username").val());
-			}
+			$("#email").val($("#username").val());
 		});
 		if(checkBoolean != false){
 			 $('#registerForm').validate({
@@ -198,38 +195,32 @@ $(document).ready(function() {
 	           		},
 	           		contact_phone:{
 	           			required:true
-	           		},
-	           		email:{
-	           			required: true,
-	           			email:true
 	           		}
-		           		
 		         },
 	             messages:{
 	            	 username:{
-	            		 required:"登陆名不能为空",
-	            		 email:"登陆名格式不正确",
-	            		 remote:"登陆名已注册"
+	            		 required:"管理员账号不能为空",
+	            		 email:"管理员账号格式不正确",
+	            		 remote:"管理员账号已注册"
 	            	 },
 	            	 password:{
-	            		 required:"密码至少为6位"
+	            		 required:"密码不能为空",
+	            		 minlength:"密码至少为6位"
 	            	 },
 	            	 affirmPass:{
-	            		 equalTo:"两次密码不同"
+	            		 required:"再次确认密码不能为空",
+	            		 equalTo:"密码不一致",
+	            		minlength:"再次确认密码至少为6位"
 	            	 },
 	            	 officeName:{
 	            		 required:"公司名不能为空",
 	            		 remote:"公司名已注册"
 	            	 },
 	            	 contact_name:{
-		           			required:"联系人不能空"
+		           			required:"联系人不能为空"
 	           		},
 	           		contact_phone:{
 	           			required:"联系人电话不能为空"
-	           		},
-	           		email:{
-	           			required: "公司邮箱不能为空",
-	           			email:"邮箱格式不正确"
 	           		}
 	           	},
 	            highlight: function(element) {
