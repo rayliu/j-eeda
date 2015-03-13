@@ -15,6 +15,7 @@ import models.Party;
 import models.Product;
 import models.TransferOrder;
 import models.TransferOrderItem;
+import models.UserCustomer;
 import models.UserLogin;
 import models.UserOffice;
 import models.Warehouse;
@@ -191,15 +192,10 @@ public class InventoryController extends Controller {
 					+ " left join office o on o.id = w.office_id where toid.status = '已发车'  "
 					+ " group by c.abbr, pro.item_name, pro.item_no, pro.unit, w.warehouse_name, o.office_name ) as A where 1=1 and (predict_amount + lock_amount + valid_amount) != 0 ";
         
-		    if((customerId != null) && !"".equals(customerId)){
-		    	//sql = sql + " and p2.id =" + customerId ;
-		    	sql = sql + " and pid =" + customerId ;
-		    }else{
-		    	if(currentUser.hasRole("outuser")){
-		    		sql = sql + " and pid in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-		    	}
-		    }
-        
+	    if((customerId != null) && !"".equals(customerId)){
+	    	//sql = sql + " and p2.id =" + customerId ;
+	    	sql = sql + " and pid =" + customerId ;
+	    }
         if(warehouseId != null && !"".equals(warehouseId)){
         	//sql = sql + " and w.id =" + warehouseId ;
         	sql = sql + " and wid =" + warehouseId ;
@@ -236,7 +232,7 @@ public class InventoryController extends Controller {
     // 入库单添加
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCREATE})
     public void gateIn_add() {
-            render("/yh/inventory/gateInEdit.html");
+       render("/yh/inventory/gateInEdit.html");
     }
 
     // 入库单产品删除
@@ -826,5 +822,17 @@ public class InventoryController extends Controller {
         List<Warehouse> warehouses = Warehouse.dao.find(sql);
         renderJson(warehouses);
     }
-
+    public void outUserQuery(){
+    	String userName = currentUser.getPrincipal().toString();
+    	
+    	List<UserCustomer> list = UserCustomer.dao.find("select * from user_customer where user_name = ?",userName);
+    	
+    	if(list.size()==1){
+    		Record record = Db.findFirst("select *,p.id as pid,c.id as cid from party p left join contact c on p.contact_id = c.id where p.id = ?",list.get(0).get("customer_id"));
+    		setAttr("customer", record);
+    	}
+    	
+    	render("/yh/inventory/stock.html");
+    	
+    }
 }
