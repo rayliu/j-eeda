@@ -91,7 +91,7 @@ public class PrivilegeController extends Controller {
 			parentID = parentOffice.getLong("id");
 		}
 		
-		String sql_m = "select distinct r.name,r.code from role_permission  rp left join role r on r.code =rp.role_code  where r.office_id = " + parentID + " group by r.name,r.code";
+		String sql_m = "select distinct r.name,r.code from role_permission  rp left join role r on r.code =rp.role_code  where (r.office_id = " + parentID + " and rp.office_id =  " + parentID + ") or rp.office_id is null group by r.name,r.code";
 
 		// 获取当前页的数据
 		List<Record> orders = Db.find(sql_m);
@@ -108,7 +108,7 @@ public class PrivilegeController extends Controller {
 		if(parentID == null || "".equals(parentID)){
 			parentID = parentOffice.getLong("id");
 		}
-		String sql_m = "select r.code,r.name from role r left join role_permission rp on r.code = rp.role_code where rp.role_code is null and r.office_id = " + parentID;
+		String sql_m = "select r.code,r.name from role r left join role_permission rp on r.code = rp.role_code where rp.role_code is null and rp.office_id is null and r.office_id = " + parentID;
 		List<Record> orders = Db.find(sql_m);
 		renderJson(orders);
 	}
@@ -118,11 +118,16 @@ public class PrivilegeController extends Controller {
 		String permissions = getPara("permissions");
 		String[] ps = permissions.split(",");
 		//根据角色名称找到角色代码
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
 		Role role = Role.dao.findFirst("select * from role where name=?",rolename);
 		for (String str : ps) {
 			RolePermission r = new RolePermission();
 			r.set("role_code", role.get("code"));
 			r.set("permission_code", str);
+			r.set("office_id",parentID);
 			r.save();
 		}
 		renderJson();
