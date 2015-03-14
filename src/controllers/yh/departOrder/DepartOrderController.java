@@ -1239,10 +1239,10 @@ public class DepartOrderController extends Controller {
         Long spId=departOrder.getLong("sp_id");
         if ( spId== null)
             return;
-        
+        logger.debug("当前时间格式------------"+"CURRENT_TIMESTAMP()");
         //先获取有效期内的sp合同, 如有多个，默认取第一个
-        Contract spContract= Contract.dao.findFirst("select * from contract where type='SERVICE_PROVIDER' " +
-        		"and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="+spId);
+        Contract spContract= Contract.dao.findFirst("select c.* from contract c left join contract_item ci on ci.contract_id = c.id where c.type='SERVICE_PROVIDER' " +
+        		"and (CURRENT_TIMESTAMP() between c.period_from and c.period_to) and c.party_id = "+ spId +" and ci.from_id = '" +departOrder.get("route_from") + "' and ci.to_id = '" + departOrder.get("route_to") +"'");
         if(spContract==null)
             return;
         
@@ -2149,12 +2149,12 @@ public class DepartOrderController extends Controller {
 
         orderMap.put("aaData", orders);
 
-        List<Record> list = Db.find("select * from fin_item");
+        /*List<Record> list = Db.find("select * from fin_item");
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
                 Fin_item.dao.deleteById(list.get(i).get("id"));
             }
-        }
+        }*/
         renderJson(orderMap);
     }
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_ADD_COST})
