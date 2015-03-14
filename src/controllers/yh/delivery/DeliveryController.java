@@ -89,7 +89,7 @@ public class DeliveryController extends Controller {
 					+ " left join party p2 on d.sp_id = p2.id "
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " where d.status != '初始化' and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
@@ -101,7 +101,8 @@ public class DeliveryController extends Controller {
 					+ " left join contact c on p.contact_id = c.id "
 					+ " left join party p2 on d.sp_id = p2.id "
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " left join contact c2 on p2.contact_id = c2.id where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " left join contact c2 on p2.contact_id = c2.id "
+					+ " where d.status != '初始化' and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " order by d.create_stamp desc "
 					+ sLimit;
