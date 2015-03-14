@@ -53,7 +53,7 @@ $(document).ready(function() {
                 return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'" checked="">';
               }
             },
-	        {"mDataProp":"BANK_PERSON"},
+	        {"mDataProp":"BANK_NAME"},
 	        {"mDataProp":null},
 	        {"mDataProp":"AMOUNT"},        	
 	        {"mDataProp":null},
