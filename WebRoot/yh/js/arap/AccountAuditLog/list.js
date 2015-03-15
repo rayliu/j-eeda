@@ -16,6 +16,7 @@ $(document).ready(function() {
             {"mDataProp":"CREATE_DATE"},
             {"mDataProp":"SOURCE_ORDER"},
             {"mDataProp":"INVOICE_ORDER_NO"},
+            {"mDataProp":null},
             {"mDataProp":null,
 	            "fnRender": function(obj) {
 	            	var str = "";
@@ -27,7 +28,19 @@ $(document).ready(function() {
 	            	return str;
 	            }
             },
-            {"mDataProp":"AMOUNT"},
+            {"mDataProp":null,
+                "fnRender": function(obj) {
+                    var paymentType='';
+                    console.log()
+                    if(obj.aData.PAYMENT_TYPE == "CHARGE"){
+                        paymentType='<span style="color:green;">+ ';
+                    }else{
+                        paymentType='<span style="color:red;">- ';
+                    }
+                    return paymentType + obj.aData.AMOUNT+'</span>';
+                }
+                 
+            },
             {"mDataProp":"REMARK"},           
             {"mDataProp":"USER_NAME"},        	
             {"mDataProp":"CREATE_DATE"}
