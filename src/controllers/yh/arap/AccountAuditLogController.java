@@ -59,9 +59,14 @@ public class AccountAuditLogController extends Controller {
         			+ " where aaal.account_id in("+ids+") and aaal.create_date between  '" + beginTime + "' and '" + endTime + "' order by aaal.create_date desc " + sLimit;        	
         }else{
         	sqlTotal = "select count(1) total from arap_account_audit_log aaal where aaal.create_date between  '" + beginTime + "' and '" + endTime + "'";
-        	sql = "select aaal.*,aci.order_no invoice_order_no,ul.user_name user_name from arap_account_audit_log aaal"
+        	sql = "select aaal.*,aci.order_no invoice_order_no,ul.user_name user_name, fa.bank_name,"
+        			+ " if(aaal.payment_type='CHARGE', "
+        			+ "	   (select order_no from arap_charge_invoice where id = aaal.misc_order_id),"
+        			+ "    (select order_no from arap_cost_invoice_application_order where id = aaal.misc_order_id) "
+					+ ") order_no from arap_account_audit_log aaal"
         			+ " left join user_login ul on ul.id = aaal.creator"
         			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id "
+        			+ " left join fin_account fa on aaal.account_id = fa.id "
         			+ " where aaal.create_date between  '" + beginTime + "' and '" + endTime + "' order by aaal.create_date desc " + sLimit;  
         }
         Record rec = Db.findFirst(sqlTotal);

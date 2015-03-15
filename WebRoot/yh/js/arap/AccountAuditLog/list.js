@@ -15,9 +15,9 @@ $(document).ready(function() {
         "aoColumns": [   
             {"mDataProp":"CREATE_DATE"},
             {"mDataProp":"SOURCE_ORDER"},
-            {"mDataProp":"INVOICE_ORDER_NO"},
-            {"mDataProp":null},
-            {"mDataProp":null,
+            {"mDataProp":"ORDER_NO"},
+            {"mDataProp":"BANK_NAME"},
+            {"mDataProp":null, "sWidth":"80px", 
 	            "fnRender": function(obj) {
 	            	var str = "";
 	            	if(obj.aData.PAYMENT_METHOD == "transfers"){
