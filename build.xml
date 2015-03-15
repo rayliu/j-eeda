@@ -15,6 +15,7 @@
 
 	
 	<target name="h2">
+		<copy tofile="${project.classpath}/job.properties" file="WebRoot/WEB-INF/config/job.properties" overwrite="true"/>
 		<copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-h2-new" overwrite="true"/>
 		<copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-h2" overwrite="true"/>
 		<property name="db" value="H2" />
@@ -29,6 +30,7 @@
 	</target>
 	
 	<target name="mysql">
+		<copy tofile="${project.classpath}/job.properties" file="WebRoot/WEB-INF/config/job.properties" overwrite="true"/>
 		<copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-mysql" overwrite="true"/>
 		<copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-mysql" overwrite="true"/>
         <java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
@@ -38,6 +40,32 @@
             <arg value="5"/>
             <classpath path="${project.classpath}"></classpath>
         </java>
+    </target>
+	
+	<target name="yh-prod">
+		<copy tofile="${project.classpath}/job.properties" file="WebRoot/WEB-INF/config/job.properties" overwrite="true"/>
+		<copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-yh-prod" overwrite="true"/>
+		<copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-yh-prod" overwrite="true"/>
+        <java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
+            <arg value="WebRoot"/>
+            <arg value="8000"/>
+            <arg value="/"/>
+            <arg value="0"/>
+            <classpath path="${project.classpath}"></classpath>
+        </java>
+    </target>
+	
+	<target name="uat">
+		<copy tofile="${project.classpath}/job.properties" file="WebRoot/WEB-INF/config/job.properties" overwrite="true"/>
+        <copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-uat" overwrite="true"/>
+        <copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-uat" overwrite="true"/>
+        <java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
+            <arg value="WebRoot"/>
+            <arg value="8000"/>
+            <arg value="/"/>
+            <arg value="0"/>
+            <classpath path="${project.classpath}"></classpath>
+        </java>	
     </target>
 	
 	<target name="prod">
@@ -50,30 +78,6 @@
             <arg value="0"/>
             <classpath path="${project.classpath}"></classpath>
         </java>
-    </target>
-	
-	<target name="yh-prod">
-			<copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-yh-prod" overwrite="true"/>
-			<copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-yh-prod" overwrite="true"/>
-	        <java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
-	            <arg value="WebRoot"/>
-	            <arg value="8000"/>
-	            <arg value="/"/>
-	            <arg value="0"/>
-	            <classpath path="${project.classpath}"></classpath>
-	        </java>
-	    </target>
-	
-	<target name="uat">
-        <copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-uat" overwrite="true"/>
-        <copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-uat" overwrite="true"/>
-        <java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
-            <arg value="WebRoot"/>
-            <arg value="8000"/>
-            <arg value="/"/>
-            <arg value="0"/>
-            <classpath path="${project.classpath}"></classpath>
-        </java>	
     </target>
 	
    <target name="clean"> 
@@ -96,27 +100,5 @@
     	</copy>	
     </target>
 	
-	<target name="h2ci">
-        <copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-h2" overwrite="true"/>
-        <copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-h2" overwrite="true"/>
-        <property name="db" value="H2" />
-        <java classname="com.jfinal.core.JFinal" classpathref="project.lib.path">
-            <arg value="WebRoot"/>
-            <arg value="8000"/>
-            <arg value="/"/>
-            <arg value="0"/>
-            <arg value="${db}"/>
-            <classpath path="${project.classpath}"></classpath>
-        </java>
-    </target>
-	
-	<target name="stop_h2ci">
-        <copy tofile="${project.classpath}/shiro.ini" file="WebRoot/WEB-INF/config/shiro.ini-h2" overwrite="true"/>
-        <copy tofile="${project.classpath}/app_config.txt" file="WebRoot/WEB-INF/config/app_config.txt-h2" overwrite="true"/>
-        <property name="db" value="H2" />
-        <java classname="config.ServerHelper" classpathref="project.lib.path">
-            <classpath path="${project.classpath}"></classpath>
-        </java>
-    </target>
 
 </project>

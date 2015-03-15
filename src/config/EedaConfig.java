@@ -99,6 +99,7 @@ import com.jfinal.config.Interceptors;
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
+import com.jfinal.ext.plugin.quartz.QuartzPlugin;
 import com.jfinal.ext.plugin.shiro.ShiroInterceptor;
 import com.jfinal.ext.plugin.shiro.ShiroPlugin;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
@@ -288,6 +289,15 @@ public class EedaConfig extends JFinalConfig {
         // 加载Shiro插件, for backend notation, not for UI
     	me.add(new ShiroPlugin(routes));
     	
+    	//job启动
+        //QuartzPlugin quartzPlugin = new QuartzPlugin("job.properties");
+    	//me.add(quartzPlugin);
+    	
+    	
+    	//quartzPlugin.add("*/5 * * * * ?", new YourJob());//通过API增加任务
+    	//quartzPlugin.version(QuartzPlugin);//指定Quartz版本
+    	
+    	
         mailUser = getProperty("mail_user_name");
         mailPwd = getProperty("mail_pwd");
         // H2 or mysql
@@ -402,6 +412,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("office_config", OfficeCofig.class);
         //单据附件上传
         arp.addMapping("order_attachment_file", OrderAttachmentFile.class);
+        
+        
     }
 
     private void initDBconnector() {
