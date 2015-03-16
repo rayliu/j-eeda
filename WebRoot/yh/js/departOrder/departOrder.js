@@ -56,7 +56,7 @@ $(document).ready(function() {
     	"bSort": false, // 不要排序
     	"bFilter": false, //不需要默认的搜索框
     	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 25,
         "bServerSide": true,
@@ -83,6 +83,7 @@ $(document).ready(function() {
             },
             { "mDataProp": "ORDER_NO","sClass": "order_no"},
             { "mDataProp": "PICKUP_NO","sClass": "pickup_no"},
+            { "mDataProp": "PLANNING_TIME"},
             { "mDataProp": "CNAME", "sWidth": "100px","sClass": "cname"},
             { "mDataProp":"OPERATION_TYPE",
             	"sClass": "operation_type",

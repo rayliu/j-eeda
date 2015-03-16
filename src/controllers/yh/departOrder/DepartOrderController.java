@@ -500,7 +500,7 @@ public class DepartOrderController extends Controller {
                     + TransferOrder.ASSIGN_STATUS_ALL + "' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
           
-            sql = "select distinct tor.id,tor.order_no,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
+            sql = "select distinct tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
             		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
                     + " (select group_concat( distinct cast(dt.pickup_id as char) separator ',' ) from depart_transfer dt left join depart_pickup dp on dp.pickup_id = dt.pickup_id "
@@ -552,7 +552,7 @@ public class DepartOrderController extends Controller {
 					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
 
-            sql = "select distinct tor.id,tor.order_no,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
+            sql = "select distinct tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
             		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
                     + " (select group_concat( distinct cast(dt.pickup_id as char) separator ',' ) from depart_transfer dt left join depart_pickup dp on dp.pickup_id = dt.pickup_id "
