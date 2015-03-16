@@ -397,7 +397,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 				Record rec = Db.findFirst("select count(0) total from delivery_order dor left join delivery_order_item doi on doi.delivery_id = dor.id where dor.status = '已发车' and doi.transfer_order_id = '" + item.get("transfer_order_id") + "';");
 				double deliveryNumber = rec.getLong("total");
 				if(deliveryNumber == 0){
-					//当云手段配送完成时生成回单
+					//当运输单配送完成时生成回单
 					returnOrder.set("order_no", orderNo);
 		            returnOrder.set("delivery_order_id", delivery_id);
 		            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));

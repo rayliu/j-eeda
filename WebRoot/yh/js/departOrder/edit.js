@@ -1081,11 +1081,15 @@
 					{"mDataProp":"PRICE"},
 					{"mDataProp":"AMOUNT",
 					     "fnRender": function(obj) {
-				    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-					             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
-					         }else{
-					         	 return "<input type='text' name='amount'>";
-					         }
+					    	 if(obj.aData.CREATE_NAME == 'system'){
+				        	 	 return obj.aData.AMOUNT;
+				        	 }else{
+				        		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+						             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+						         }else{
+						         	 return "<input type='text' name='amount'>";
+						         }
+				        	 }
 					 }},
 					 {"mDataProp":null,
 						 "fnRender":function(obj){

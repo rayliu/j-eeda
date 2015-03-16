@@ -23,7 +23,7 @@
              { "mDataProp": "ORDER_NO" ,"sWidth": "80px"},      
              { "mDataProp": "ITEM_NO","sWidth": "60px"},
              { "mDataProp": "ITEM_NAME","sWidth": "150px"},
-             { "mDataProp": "AMOUNT","sWidth": "50px"},
+             { "mDataProp": "AMOUNT","sWidth": "50px","sClass": "amount"},
              { "mDataProp": "REMARK","sWidth": "100px"},
              {"mDataProp":null,"sWidth": "150px",
             	 "sClass": "insurance_category", 
@@ -46,7 +46,7 @@
                      }
                 	 return str;
              }},
-             {"mDataProp": "TOTAL_AMOUNT","sWidth": "50px",},
+             {"mDataProp": "TOTAL_AMOUNT","sWidth": "50px","sClass": "total_amount"},
              {"mDataProp": "RATE",
             	 "sWidth": "100px", 
             	 "sClass": "rate", 
@@ -101,7 +101,6 @@
      });
  	 
  	 $("#insuranceOrderItemList").click(function(e){
-  		 saveInsuranceOrder(e);
  		 var message=$("#message").val();
  	     var tr_item=$("#tr_itemid_list").val();
  	     var item_detail=$("#item_detail").val();
@@ -119,23 +118,45 @@
  		var value = $(this).val();
  		if(value != ""){
  			var insuranceAmount = 0;
-	 		if(name == 'amount' && !isNaN(value)){
-	 			var amount = $(this).parent().parent().find("td").eq(4).text();
-	 			if(amount != null && amount != ''){
-	 				insuranceAmount = (value * amount).toFixed(2);
-	 		 		$(this).parent().parent().find("td").eq(8).text(insuranceAmount);
+ 			//var initAmount = 0;
+	 		if(name == 'amount'){
+	 			if(isNaN(value)){
+ 					$.scojs_message('【保额】只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
+ 					$(this).val("");
+ 					$(this).focus();
+ 					return false;
+	 			}else{
+	 				var amount = $(this).parent().siblings('.amount')[0].textContent;	
+		 			if(amount != null && amount != ''){
+		 				var totalAmount = (value * amount).toFixed(2);
+		 				var rate = $(this).parent().parent().find("td").find("input[name='rate']").val();
+		 		 		$(this).parent().parent().find("td").eq(8).text(totalAmount);
+		 		 		if(rate != "" && !isNaN(rate)){
+			 				insuranceAmount = (totalAmount * rate).toFixed(2);
+			 				$(this).parent().parent().find("td").eq(12).text(insuranceAmount);
+			 			}
+		 			}
 	 			}
 	 		}else if(name == 'rate' && !isNaN(value)){
-	 			var totalAmount = $(this).parent().parent().find("td").eq(8).text();
-	 			if(totalAmount != null && totalAmount != ''){
-	 				insuranceAmount = (value * totalAmount).toFixed(2);
-	 				$(this).parent().parent().find("td").eq(12).text(insuranceAmount);
-	 			}		
-	 		}else{
-	 			
+	 			if(isNaN(value)){
+ 					$.scojs_message('【应付费率】只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
+ 					$(this).val("");
+ 					$(this).focus();
+ 					return false;
+	 			}else{
+	 				var totalAmount = $(this).parent().siblings('.total_amount')[0].textContent;	
+		 			if(totalAmount != null && totalAmount != ''){
+		 				insuranceAmount = (value * totalAmount).toFixed(2);
+		 				$(this).parent().parent().find("td").eq(12).text(insuranceAmount);
+		 			}	
+	 			}
 	 		}
+	 		/*var amountTest = $(this).parent().parent().find("td").find("input[name='amount']").val();
+ 			if(amountTest != '' && !isNaN(amountTest)){
+ 				initAmount = amountTest;
+ 			}*/
  			var insuranceOrderId = $("#insuranceOrderId").val();
-			$.post('/insuranceOrder/updateInsuranceOrderFinItem', {itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value, insuranceAmount:insuranceAmount}, function(data){
+			$.post('/insuranceOrder/updateInsuranceOrderFinItem', {itemId:itemId, insuranceOrderId:insuranceOrderId, name:name, value:value,insuranceAmount:insuranceAmount}, function(data){
 	 			if(!data.success){
 	 				alert("修改失败!");
 	 			}

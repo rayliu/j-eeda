@@ -1290,7 +1290,7 @@ public class ReturnOrderController extends Controller {
 			//returnOrderFinItem.set("contract_id", null);// 类型是应收
 			returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
 			returnOrderFinItem.set("create_date", now);
-			returnOrderFinItem.set("create_name", "system");
+			returnOrderFinItem.set("create_name", "insurance");
 			//returnOrderFinItem.set("contract_id", contract.get("id"));
 			
 			returnOrderFinItem.save();
