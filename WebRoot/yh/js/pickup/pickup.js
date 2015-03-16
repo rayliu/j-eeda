@@ -49,7 +49,7 @@ $(document).ready(function() {
 				{"mDataProp": "ADDRESS","sClass": "address"},
 				{"mDataProp":"PICKUP_MODE","sClass": "pickup_mode"},
 				{"mDataProp":"ARRIVAL_MODE","sClass": "arrival_mode"},
-				{"mDataProp": "STATUS","sClass": "status"},
+				{"mDataProp": "STATUS","sWidth": "60px","sClass": "status"},
 				{"mDataProp": "OFFICE_NAME","sWidth": "120px","sClass": "office_name"},  
 				{"mDataProp": "CREATE_STAMP","sWidth": "150px","sClass": "create_stamp"},                                      
 				{ "mDataProp": "PICKUP_ASSIGN_STATUS","sClass": "assign_status"}                                                               
@@ -109,6 +109,11 @@ $(document).ready(function() {
             			return obj.aData.ORDER_NO;
             		}
                  }
+            },
+            { 
+            	"mDataProp": "PLANNING_TIME",
+                "sWidth": "100px",
+            	"sClass": "planning_time"
             },
             { 
             	"mDataProp": "CNAME",
@@ -460,6 +465,7 @@ $(document).ready(function() {
 	$("#transferOrderList").on('click', '.checkedOrUnchecked', function(){
 		var ckeckedTransferOrderList = $("#ckeckedTransferOrderList");
 		var order_no = $(this).parent().siblings('.order_no')[0].textContent.substr(0, 15);		
+		var planning_time = $(this).parent().siblings('.planning_time')[0].textContent;		
 		var operation_type = $(this).parent().siblings('.operation_type')[0].textContent;		
 		var route_from = $(this).parent().siblings('.route_from')[0].textContent;		
 		var route_to = $(this).parent().siblings('.route_to')[0].textContent;		
@@ -519,6 +525,7 @@ $(document).ready(function() {
 			    	$("#sumWeight").text((parseFloat($("#sumWeight").text() == "" ? 0 :$("#sumWeight").text()) + weight * 1).toFixed(2));	
 					$("#sumVolume").text((parseFloat($("#sumVolume").text() == "" ? 0 :$("#sumVolume").text()) + volume * 1).toFixed(2));
 					console.log("单品id集合-正式:"+detailIds);
+					//<td>"+planning_time+"</td>
 					ckeckedTransferOrderList.append("<tr value='"+value+"' serial='"+data.ID+"'><td>"+order_no+"</td><td>"+serial_no+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+weight+"</td><td>"+volume+"</td><td>"
 							+ids.length+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
 				},'json');
@@ -546,6 +553,7 @@ $(document).ready(function() {
 					console.log("普货选取数量-正式:"+amounts);
 					
 				},'json');*/
+				//<td>"+planning_time+"</td>
 				ckeckedTransferOrderList.append("<tr value='"+value+"'serial=''><td>"+order_no+"</td><td></td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
 						+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
 				//总重量、总体积
@@ -575,6 +583,10 @@ $(document).ready(function() {
 				console.log("删除后-普货数量集合-正式:"+amounts);*/
 			}
 			transferOrderIds.splice(transferOrderIds.indexOf(value), 1); 
+			if(orderType.length != 0){
+				orderType.splice($(this).parent().siblings('.order_type')[0].innerHTML, 1);
+				officeType.splice($(this).parent().siblings('.office_name')[0].innerHTML,1);
+			}
 			sumValue();
 			var allTrs = ckeckedTransferOrderList.children();
 			for(var i=0;i<allTrs.length;i++){
@@ -582,13 +594,11 @@ $(document).ready(function() {
 					allTrs[i].remove();
 					//总重量、总体积
 			    	$("#sumWeight").text((parseFloat(allTrs[i].find("td").eq(7).text("").text()== "" ? 0 :allTrs[i].find("td").eq(7).text("").text()) - total_weight * 1).toFixed(2));	
-					$("#sumVolume").text((parseFloat(allTrs[i].find("td").eq(8).text("").text()== "" ? 0 :allTrs[i].find("td").eq(7).text("").text()) - total_volume * 1).toFixed(2));
+					$("#sumVolume").text((parseFloat(allTrs[i].find("td").eq(8).text("").text()== "" ? 0 :allTrs[i].find("td").eq(8).text("").text()) - total_volume * 1).toFixed(2));
+					
 				}
 			}
-			if(orderType.length != 0){
-				orderType.splice($(this).parent().siblings('.order_type')[0].innerHTML, 1);
-				officeType.splice($(this).parent().siblings('.office_name')[0].innerHTML,1);
-			}
+			
 		}
 	});
 	
@@ -741,7 +751,8 @@ $(document).ready(function() {
         	if($(this).val() == transferId && $(this).prop('checked') == false){
         		$(this).prop('checked',true);
         		var ckeckedTransferOrderList = $("#ckeckedTransferOrderList");
-        		var order_no = $(this).parent().siblings('.order_no')[0].textContent.substr(0, 15);			
+        		var order_no = $(this).parent().siblings('.order_no')[0].textContent.substr(0, 15);		
+        		var planning_time = $(this).parent().siblings('.planning_time')[0].textContent;
     			var operation_type = $(this).parent().siblings('.operation_type')[0].textContent;		
     			var route_from = $(this).parent().siblings('.route_from')[0].textContent;		
     			var route_to = $(this).parent().siblings('.route_to')[0].textContent;		
