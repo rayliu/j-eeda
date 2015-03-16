@@ -201,20 +201,13 @@
 		e.preventDefault();
 	});
 	/*--------------------------------------------------------------------*/
-	
+	//保存保险单的方法
 	var saveInsuranceOrder = function(e){
-		e.preventDefault();
- 		var bool = false;
-		if("chargeCheckOrderbasic" == parentId){
-			bool = true;
-		}
  		$.post('/insuranceOrder/save', $("#insuranceOrderForm").serialize(), function(data){
 			$("#insuranceOrderId").val(data.ID);
 			if(data.ID>0){
 				$("#insuranceId").val(data.ID);
-				if(bool){
-					$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-				}
+				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -222,8 +215,7 @@
         parentId = e.target.getAttribute("id");
 	};
 	
-	//transferOrderForm 不需要提交
-	var parentId = "chargeCheckOrderbasic";
+	//点击“保存”按钮
  	$("#saveInsuranceOrderBtn").click(function(e){
  		saveInsuranceOrder(e);
 	});
