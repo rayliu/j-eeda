@@ -98,10 +98,8 @@ public class TransferOrderController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql ="select t.*,"
-					+ "c1.abbr cname,"
-					+ "c2.abbr spname,"
-					+ "o.office_name oname, "
+			String sql = "select t.id,t.order_no,t.customer_order_no,t.status,t.cargo_nature,t.operation_type,t.arrival_mode,t.pickup_mode,t.create_stamp,"
+					+ " t.planning_time,t.arrival_time, t.address,t.order_type, c1.abbr cname,c2.abbr spname,o.office_name oname,t.remark,"
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id=t.id) amount,"
                     + " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = t.id),2) volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = t.id),2) weight, "
@@ -170,10 +168,8 @@ public class TransferOrderController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select t.*,"
-					+ "c1.abbr cname,"
-					+ "c2.abbr spname,"
-					+ "o.office_name oname, "
+			String sql = "select t.id,t.order_no,t.customer_order_no,t.status,t.cargo_nature,t.operation_type,t.arrival_mode,t.pickup_mode,t.create_stamp,"
+					+ " t.planning_time,t.arrival_time, t.address,t.order_type, c1.abbr cname,c2.abbr spname,o.office_name oname,t.remark,"
                     + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id=t.id) amount,"
                     + " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = t.id),2) volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = t.id),2) weight, "
