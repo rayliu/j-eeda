@@ -20,10 +20,12 @@ $(document).ready(function() {
                     return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
                  }
             },
+            
             { 
             	"mDataProp": "ORDER_NO",
             	"sClass": "order_no"
-            },  		    
+            },  
+            {"mDataProp": "PLANNING_TIME","sClass": "planning_time"},
             { 
             	"mDataProp": "TOTAL_AMOUNT",
             	"sClass": "total_amount"
@@ -167,7 +169,8 @@ $(document).ready(function() {
 		var spname = $(this).parent().siblings('.spname')[0].textContent;		
 		var create_by = $(this).parent().siblings('.create_by')[0].textContent;		
 		var create_stamp = $(this).parent().siblings('.create_stamp')[0].textContent;		
-		var customer_order_no = $(this).parent().siblings('.customer_order_no')[0].textContent;		
+		var customer_order_no = $(this).parent().siblings('.customer_order_no')[0].textContent;	
+		var planning_time = $(this).parent().siblings('.planning_time')[0].textContent;
 		if($(this).prop('checked') == true){
 			if(names.length != 0){
 				if(names[0] != $(this).parent().siblings('.cname')[0].innerHTML){
