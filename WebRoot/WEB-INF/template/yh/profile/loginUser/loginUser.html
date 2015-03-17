@@ -6,7 +6,7 @@
       <div class="col-lg-12">
             <h1 class="page-header">
             	<% if(shiro.hasPermission("User.create")){%>
-					<a class="btn btn-info" href="/loginUser/addUser"><i class="fa fa-plus-square-o"></i>
+					<a class="btn btn-outline btn-primary" href="/loginUser/addUser">
 					<span class="hidden-tablet">添加用户</span></a>
 				<%}%>
 			</h1>
@@ -62,12 +62,12 @@
 $(document).ready(function() {
 	$('#menu_profile').addClass('active').find('ul').addClass('in');
 
-	$("#del").click(function(){
+	/* $("#del").click(function(){
     	alert("waerwerwee");
     });
 	 $("#query").click(function(){
 	    	alert("123");
-	    });
+	    }); */
 	 $('#example').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	        //"sPaginationType": "bootstrap",
@@ -83,31 +83,31 @@ $(document).ready(function() {
 	            <% if(shiro.hasPermission("User.update") || shiro.hasPermission("User.delete")){%>
 	            ,{ 
 	                "mDataProp": null, 
-	                "sWidth": "15%",
-	                "fnRender": function(obj) {  
-	                	if(obj.aData.IS_STOP != true){
-	                		
-	                		 return "<% if(shiro.hasPermission('User.update')){%><a class='btn btn-info editbutton' href='/loginUser/edit/"+obj.aData.ID+"'>"+
-		                             "<i class='fa fa-edit'> </i> "+
-		                             "编辑"+
-			                         "</a><%}%>"+
-			                         "<% if(shiro.hasPermission('User.delete')){%><a class='btn btn-danger ' href='/loginUser/del/"+obj.aData.ID+"'>"+
-			                             "<i class='fa fa-trash-o fa-edit'></i>"+ 
-			                             "停用"+
-			                         "</a><%}%>";
-	                	}else{
-	                		 return "<% if(shiro.hasPermission('User.update')){%><a class='btn btn-info editbutton' href='/loginUser/edit/"+obj.aData.ID+"'>"+
-		                             "<i class='fa fa-edit'> </i> "+
-		                             "编辑"+
-			                         "</a><%}%>"+
-			                         "<% if(shiro.hasPermission('User.delete')){%><a class='btn btn-success dropdown-toggle' href='/loginUser/del/"+obj.aData.ID+"'>"+
-			                             "<i class='fa fa-trash-o fa-edit'></i>"+ 
-			                             "启用"+
-			                         "</a><%}%>";
+	                "sWidth": "8%",
+	                "fnRender": function(obj) {
+	                		if(obj.aData.IS_STOP != true){
+		                		
+		                		 return "<% if(shiro.hasPermission('User.update')){%><nobr><a class='btn btn-outline btn-primary btn-sm editbutton' href='/loginUser/edit/"+obj.aData.ID+"'>"+
+			                             "<i class='fa fa-edit'> </i> "+
+			                             "编辑"+
+				                         "</a> <%}%>"+
+				                         "<% if(shiro.hasPermission('User.delete')){%><a class='btn btn-outline btn-danger btn-sm ' href='/loginUser/del/"+obj.aData.ID+"'>"+
+				                             "<i class='fa fa-trash-o fa-edit'></i>"+ 
+				                             "停用"+
+				                         "</a></nobr><%}%>";
+		                	}else{
+		                		 return "<% if(shiro.hasPermission('User.update')){%><nobr><a class='btn btn-outline btn-primary btn-sm editbutton' href='/loginUser/edit/"+obj.aData.ID+"'>"+
+			                             "<i class='fa fa-edit'> </i> "+
+			                             "编辑"+
+				                         "</a> <%}%>"+
+				                         "<% if(shiro.hasPermission('User.delete')){%><a class='btn btn-outline btn-success btn-sm dropdown-toggle' href='/loginUser/del/"+obj.aData.ID+"'>"+
+				                             "<i class='fa fa-trash-o fa-edit'></i>"+ 
+				                             "启用"+
+				                         "</a></nobr><%}%>";
+		                	}
 	                	}
-	                    
 	                }
-	            } 
+	             
 	            <%}%>
 	            ]
 	} );
