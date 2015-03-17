@@ -16,7 +16,7 @@
             	</div>
             <div class="panel-body">
             	<div class="row-fluid">
-		 			<table class="table table-striped table-bordered table-hover datatable" id="example">
+		 			<table class="table table-striped table-bordered table-hover datatable" id="example" style="width: 1237px;">
 						<thead>
 							<tr>
 								<th><nobr>司机</nobr></th>
@@ -62,7 +62,7 @@
 $(document).ready(function() {
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
 	var dataTable= $('#example').dataTable( {
-		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
 	        //"sPaginationType": "bootstrap",
 	        "iDisplayLength": 10,
 	    	"oLanguage": {
