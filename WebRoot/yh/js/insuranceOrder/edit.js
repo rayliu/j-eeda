@@ -203,37 +203,6 @@
 		detailTable.fnDraw();  			
 	});
 		
-	var the_id="";
-	var item_id = $("#item_id").val();
-	var detailTable= $('#pickupDetail-table').dataTable({           
-         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",  
-         "iDisplayLength": 10,
-         "bServerSide": true, 
-     	 "oLanguage": {
-             "sUrl": "/eeda/dataTables.ch.txt"
-         },
-         "sAjaxSource": "/departOrder/itemDetailList?item_id="+item_id+"",
-       
-         "aoColumns": [
-              { "mDataProp": null,
-                "fnRender": function(obj) {
-             	   the_id=obj.aData.ID;
-                    return '<input checked="" type="checkbox" name="detailCheckBox" value="'+obj.aData.ID+'">';
-                }
-              },
-             { "mDataProp": "ITEM_NAME"},      
-             { "mDataProp": "ITEM_NO"},
-             { "mDataProp": "SERIAL_NO"},
-             { "mDataProp": "VOLUME"},
-             { "mDataProp": "WEIGHT"},
-             { "mDataProp": "REMARK"},           
-         ]        
-     });
-	
-    $("#continueCreateBtn").click(function(){
-    	$("#detailCheckBoxForm").submit();
-    });
-	
  	// 应付datatable
     var insuranceOrderId = $("#insuranceOrderId").val();
 	var accountTab = $('#accountTab').dataTable({
@@ -241,8 +210,7 @@
         "bFilter": false, //不需要默认的搜索框
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
-        "bServerSide": true,
-        "sAjaxSource": "/insuranceOrder/accountPayable?insuranceOrderId="+insuranceOrderId,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -266,8 +234,7 @@
 		"bFilter": false, //不需要默认的搜索框
 		//"sPaginationType": "bootstrap",
 		"iDisplayLength": 10,
-		"bServerSide": true,
-		"sAjaxSource": "/insuranceOrder/incomePayable",
+		"bServerSide": false,
 		"oLanguage": {
 			"sUrl": "/eeda/dataTables.ch.txt"
 		},
@@ -309,8 +276,10 @@
 	
 	var findInsurancePayment =  function(){
 		var insuranceOrderId = $("#insuranceOrderId").val();
+		accountTab.fnSettings().oFeatures.bServerSide = true; 
 		accountTab.fnSettings().sAjaxSource = "/insuranceOrder/accountPayable?insuranceOrderId="+insuranceOrderId;
 		accountTab.fnDraw();
+		incomeTab.fnSettings().oFeatures.bServerSide = true; 
 		incomeTab.fnSettings().sAjaxSource = "/insuranceOrder/incomePayable?insuranceOrderId="+insuranceOrderId;
 		incomeTab.fnDraw();
  	};
