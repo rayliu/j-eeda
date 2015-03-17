@@ -3,7 +3,7 @@ $(document).ready(function() {
 	var username =$("#user_filter").val();
   $('#eeda-table').dataTable({
     	"bFilter" : false,
-    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
     	"bPaginate": false,
     	"bLengthChange": false,
