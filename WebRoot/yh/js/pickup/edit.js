@@ -652,7 +652,7 @@
 				if(phone == null){
 					phone = '';
 				}
-				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+abbr+" "+contact_person+" "+phone+"</a></li>");
 			}
 		},'json');
 
@@ -666,6 +666,7 @@
 	// 选中供应商
 	$('#spList').on('mousedown', '.fromLocationItem', function(e){
 		var message = $(this).text();
+		
 		$('#spMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#sp_id').val($(this).attr('partyId'));
 		var pageSpName = $("#pageSpName");
