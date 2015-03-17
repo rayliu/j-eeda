@@ -69,7 +69,7 @@ public class CustomerController extends Controller {
                 sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
 
-            String sqlTotal = "select count(1) total from party where party_type='CUSTOMER'and office_id = " + parentID;
+            String sqlTotal = "select count(1) total from party p left join office o on p.office_id = o.id where p.party_type='CUSTOMER'and (o.id = " + parentID + " or o.belong_office = "+ parentID +")";
             
 
             String sql = "select p.*,c.*,p.id as pid,l.name,trim(concat(l2.name, ' ', l1.name,' ',l.name)) as dname from party p "
@@ -77,7 +77,8 @@ public class CustomerController extends Controller {
                     + "left join location l on l.code=c.location "
                     + "left join location  l1 on l.pcode =l1.code "
                     + "left join location l2 on l1.pcode = l2.code "
-                    + "where p.party_type='CUSTOMER' and p.office_id = " + parentID + " order by p.create_date desc " + sLimit;
+                    + " left join office o on o.id = p.office_id  "
+                    + "where p.party_type='CUSTOMER' and (o.id = " + parentID + " or o.belong_office = " + parentID + ") order by p.create_date desc " + sLimit;
             
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
@@ -98,7 +99,7 @@ public class CustomerController extends Controller {
                 sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
 
-            String sqlTotal = "select count(1) total from party where party_type='CUSTOMER' and office_id = " + parentID;
+            String sqlTotal = "select count(1) total from party p left join office o on o.id = p.office_id where p.party_type='CUSTOMER' and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
@@ -107,6 +108,7 @@ public class CustomerController extends Controller {
                     + "left join location l on l.code=c.location "
                     + "left join location  l1 on l.pcode =l1.code "
                     + "left join location l2 on l1.pcode = l2.code "
+                    + "left join office o on o.id = p.office_id "
                     + "where p.party_type='CUSTOMER' "
                     + "and ifnull(c.company_name,'') like '%"
                     + company_name
@@ -116,7 +118,7 @@ public class CustomerController extends Controller {
                     + receipt
                     + "%' and ifnull(c.address,'') like '%"
                     + address
-                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%'  and p.office_id = " + parentID + " order by p.create_date desc " + sLimit;
+                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%'  and (o.id = " + parentID + " or o.belong_office = " + parentID + ") order by p.create_date desc " + sLimit;
 
             List<Record> customers = Db.find(sql);
 
