@@ -37,7 +37,7 @@ $(document).ready(function() {
             }, 
             {"mDataProp":"CONTACT_PERSON"},        	
             {"mDataProp":"PHONE"},
-            {"mDataProp":"ADDRESS"},
+            {"mDataProp":"ADDRESS","sWidth":"20%"},
             {"mDataProp":"RECEIPT"},
             {"mDataProp":"PAYMENT",
             	"fnRender": function(obj) {
@@ -61,15 +61,15 @@ $(document).ready(function() {
                 "sWidth": "8%",  
                 "bVisible":(Provider.isUpdate || Provider.isDel),
                 "fnRender": function(obj) {  
-                	var str ="";
+                	var str ="<nobr>";
                 	if(Provider.isUpdate){
-                		str += "<a class='btn btn-info' href='/serviceProvider/edit/"+obj.aData.PID+"'>"+
+                		str += "<a class='btn btn-outline btn-primary btn-sm' href='/serviceProvider/edit/"+obj.aData.PID+"'>"+
                         "<i class='fa fa-edit fa-fw'></i>"+
-                        "编辑"+"</a>";
+                        "编辑"+"</a> ";
                 	}
                 	if(Provider.isDel){
                 		if(obj.aData.IS_STOP != true){
-			                    str += "<a class='btn btn-danger' href='/serviceProvider/delete/"+obj.aData.PID+"'>"+
+			                    str += "<a class='btn btn-danger btn-outline btn-sm' href='/serviceProvider/delete/"+obj.aData.PID+"'>"+
 			                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
 			                         "停用"+
 			                         "</a>";
@@ -82,7 +82,7 @@ $(document).ready(function() {
 		               	}
                 	}
                 	
-                	return str;
+                	return str +="</nobr>";
                    
                 }
             }                         
