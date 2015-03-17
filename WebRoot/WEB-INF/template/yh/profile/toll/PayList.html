@@ -96,26 +96,27 @@
    	         		"sWidth": "8%", 
    	         		"bVisible":(Pay.isUpdate || Pay.isDel),
 	   	         	"fnRender": function(obj) { 
-		   	        	 var str = "";
+		   	        	 var str = "<nobr>";
 		   	        	 if(Pay.isUpdate){
-		   	        		 str += "<a class='btn btn-info' href='/pay/Edit/"+obj.aData.ID+"'>"+
+		   	        		 str += "<a class='btn btn-outline btn-primary btn-sm' href='/pay/Edit/"+obj.aData.ID+"'>"+
 				                     "<i class='fa fa-edit fa-fw'></i> "+
 				                     "编辑"+
-					                 "</a>";
+					                 "</a> ";
 		   	        	 }
 		   	        	 if(Pay.isDel){
 		   	        		 if(obj.aData.IS_STOP != true){
-			   	        		str += "<a class='btn btn-danger' href='/pay/delete/"+obj.aData.ID+"'>"+
+			   	        		str += "<a class='btn btn-danger btn-outline btn-sm' href='/pay/delete/"+obj.aData.ID+"'>"+
 						                     "<i class='fa fa-trash-o fa-fw'></i> "+ 
 						                     "停用"+
 						                 "</a>";
 			   	        	 }else{
-			   	        		str += "<a class='btn btn-success' href='/pay/delete/"+obj.aData.ID+"'>"+
+			   	        		str += "<a class='btn btn-success btn-outline btn-sm' href='/pay/delete/"+obj.aData.ID+"'>"+
 						                     "<i class='fa fa-trash-o fa-fw'></i> "+ 
 						                     "启用"+
 						                 "</a>"; 
 			   	        	} 
 		   	        	 }
+		   	        	str += "</nobr>";
 		   	        	return str;
 	                
 	   	         }

@@ -97,27 +97,27 @@
    	         		"sWidth": "8%", 
    	         		"bVisible":(Toll.isUpdate || Toll.isDel),
    	        	 "fnRender": function(obj) { 
-   	        		 var str = "";
+   	        		 var str = "<nobr>";
    	        		 if(Toll.isUpdate){
-   	        			 str += "<a class='btn btn-info' href='/toll/Edit/"+obj.aData.ID+"'>"+
+   	        			 str += "<a class='btn btn-outline btn-primary btn-sm' href='/toll/Edit/"+obj.aData.ID+"'>"+
 			                    "<i class='fa fa-edit fa-fw'></i> "+
 			                    "编辑"+
-				                "</a>";
+				                " </a> ";
    	        		 }
    	        		 if(Toll.isDel){
    	        			if(obj.aData.IS_STOP != true ){
-   		   	        		str += "<a class='btn btn-danger' href='/toll/delete/"+obj.aData.ID+"'>"+
+   		   	        		str += "<a class='btn btn-danger btn-outline btn-sm' href='/toll/delete/"+obj.aData.ID+"'>"+
    					                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
    					                    "停用"+
    					                "</a>";
    		   	        	 }else{
-   		   	        		str += "<a class='btn btn-success' href='/toll/delete/"+obj.aData.ID+"'>"+
+   		   	        		str += "<a class='btn btn-success btn-outline btn-sm' href='/toll/delete/"+obj.aData.ID+"'>"+
    					                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
    					                    "启用"+
    					                "</a>";
    		   	        	 } 
    	        		 }
-	   	        	 
+   	        		str += "</nobr>"
                  return str;
    	         	
    	        	}
