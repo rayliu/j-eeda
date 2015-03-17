@@ -26,26 +26,27 @@ $(document).ready(function() {
                 "sWidth": "8%",
                 "bVisible":(Warehouser.isUpdate || Warehouser.isDel),
                 "fnRender": function(obj) {  
-                	var str="";
+                	var str="<nobr>";
                 	if(Warehouser.isUpdate){
-                		str += "<a class='btn btn-info' href='/warehouse/edit/"+obj.aData.ID+"'>"+
+                		str += "<a class='btn btn-outline btn-primary btn-sm' href='/warehouse/edit/"+obj.aData.ID+"'>"+
 	                        "<i class='fa fa-edit fa-fw'></i>"+
 	                        "编辑"+
-	                        "</a>";
+	                        "</a> ";
                 	}
                 	if(Warehouser.isDel){
                 		if(obj.aData.STATUS != "inactive"){
-                    		str += "<a class='btn btn-danger' href='/warehouse/delete/"+obj.aData.ID+"'>"+
+                    		str += "<a class='btn btn-danger btn-outline btn-sm' href='/warehouse/delete/"+obj.aData.ID+"'>"+
     	                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
     	                            "停用"+
     	                        "</a>";
                     	}else{
-                    		str += "<a class='btn btn-success' href='/warehouse/delete/"+obj.aData.ID+"'>"+
+                    		str += "<a class='btn btn-success btn-outline btn-sm' href='/warehouse/delete/"+obj.aData.ID+"'>"+
     	                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
     	                            "启用"+
     	                        "</a>";
     	                }
                 	}
+                	str+="</nobr>";
                 	return str;
 	                    
 	             }
