@@ -40,29 +40,30 @@ $(document).ready(function() {
 	           	{ "mDataProp": "REMARK" },
 	            { 
 	                "mDataProp": null, 
-	                "sWidth": "15%",
+	                "sWidth": "11%",
 	                "bVisible":(Account.isUpdate || Account.isDel),
 	                "fnRender": function(obj) { 
-	                	var str = "";
+	                	var str = "<nobr>";
 	                	if(Account.isUpdate){
-	                		str += "<a class='btn btn-info' href='/account/edit/"+obj.aData.ID+"'>"+
+	                		str += "<a class='btn btn-outline btn-primary btn-sm' href='/account/edit/"+obj.aData.ID+"'><i class='fa fa-edit fa-fw'></i>"+
 		                            "编辑"+
-			                        "</a>";
+			                        "</a> ";
 	                	}
 	                	if(Account.isDel){
 	                		if(obj.aData.IS_STOP != true){
-		                		str +="<a class='btn btn-danger' href='/account/del/"+obj.aData.ID+"'>"+
+		                		str +="<a class='btn btn-danger btn-outline btn-sm' href='/account/del/"+obj.aData.ID+"'>"+
 				                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
 				                            "停用"+
 				                        "</a>";
 		                	}else{
-		                		str += "<a class='btn btn-success' href='/account/del/"+obj.aData.ID+"'>"+
+		                		str += "<a class='btn btn-success btn-outline btn-sm' href='/account/del/"+obj.aData.ID+"'>"+
 				                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
 				                            "启用"+
 				                        "</a>";
 		                	}
 		                    
 	                	}
+	                	str += "<nobr>";
 	                	return str;
 	                }
 	            } 
