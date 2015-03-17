@@ -21,7 +21,7 @@ $(document).ready(function() {
 					}
 					,{
 						"mDataProp" : null,
-						"sWidth" : "8%",
+						"sWidth" : "10%",
 						"bVisible":(Role.UpdatePermission || Role.DelPermission),
 						"fnRender" : function(obj) {
 							if(obj.aData.CODE != "admin" && obj.aData.CODE != "outuser"){
@@ -30,25 +30,24 @@ $(document).ready(function() {
 								var str="";
 											
 								if(role_update_permission){
-									str += "<a class='btn btn-success' href='/role/ClickRole?id="+obj.aData.ID+"'>"
+									str += "<nobr><a class='btn btn-outline btn-primary btn-sm' href='/role/ClickRole?id="+obj.aData.ID+"'>"
 										+ "<i class='fa fa-edit fa-fw'></i> "
 										+ "编辑"
-										+ "</a>";
+										+ "</a> ";
 								}
 								if(role_del_permission){
-									str += "<a class='btn btn-danger' href='/role/deleteRole/"+obj.aData.ID+"'>"
+									str += "<a class='btn btn-outline btn-sm btn-danger' href='/role/deleteRole/"+obj.aData.ID+"'>"
 										+ "<i class='fa fa-trash-o fa-fw'></i> "
 										+ "删除"
 										+ "</a>";
 								}
-								return str;
+								return str +="</nobr>";
 							}else{
 								return "";
 							}
 							
 						}
 					}
-				
 			]
 		});
 	$("#createBtn").click(function(){
