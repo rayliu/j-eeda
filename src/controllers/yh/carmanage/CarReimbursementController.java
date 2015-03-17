@@ -156,7 +156,7 @@ public class CarReimbursementController extends Controller {
         String sql = "";
 		if (driver == null && car_no == null
 				&& transferOrderNo == null && start_data == null ) {
-			sqlTotal = "select count(0) total from car_summary_order";
+			sqlTotal = "select count(0) total from car_summary_order where status='checked' and reimbursement_order_id is null";
 			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ " cso.month_refuel_amount, cso.deduct_apportion_amount, cso.actual_payment_amount,"
 					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"

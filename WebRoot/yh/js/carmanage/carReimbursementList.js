@@ -21,8 +21,6 @@ $(document).ready(function() {
 	    }
 	};
 	
-	var num1 = 1;
-	
 	var unDisposePickuoIds=[];
 	//行车单查询，dataTable
     var carSummaryTbody = $('#carSummaryTbody').dataTable({
@@ -134,12 +132,12 @@ $(document).ready(function() {
         	}
         });
         console.log(trArr);
-        //if(pickupIds.length > 0){
+        if(trArr.length > 0){
         	$("#carSummeryIds").val(trArr);
             $('#createForm').submit();
-        //}else{
-        	//alert("请选择要创建的调车单");
-        //}
+        }else{
+        	alert("请选择要创建的行车单");
+        }
     });
 	
     //刷新行车报销单
@@ -155,7 +153,7 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": "ORDER_NO", "sWidth":"120px",
             	"fnRender": function(obj) {
-					return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+					return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
           	  	}
         	},
             { "mDataProp": "STATUS", "sWidth":"50px",

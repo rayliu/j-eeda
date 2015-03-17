@@ -121,7 +121,7 @@ $(document).ready(function() {
     $('#accomplishBtn').click(function(e){
         e.preventDefault();
         var id = $("#orderId").val();
-        if(id == ""){
+        if(id != "" && id != null){
         	$.post('/carreimbursement/audit', {orderId:id}, function(data){
             	console.log(data);
     	    	if(data.audit_name){

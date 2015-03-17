@@ -4,9 +4,7 @@
             <div class="row">
            
                 <div class="col-lg-12">
-                    <h3 class="page-header">行车报销单
-                        <a class="btn btn-default" href="/carreimbursement">返回</a>
-                    </h3>
+                    <h1 class="page-header">行车报销单</h1>
                     
                 </div>
                 <!-- /.col-lg-12 -->
@@ -19,14 +17,14 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body" id="total">
                             <!-- Nav tabs -->
-                            <ul class="nav nav-tabs">
+                            <!--<ul class="nav nav-tabs">
                                 <li class="active"><a href="#basic" data-toggle="tab" id = "chargeCheckOrderbasic">基本信息</a>
                                 </li>
-                                <!--<li class=""><a href="#cargos" data-toggle="tab" id = "returnOrderItemList">应付明细</a>
+                                <li class=""><a href="#cargos" data-toggle="tab" id = "returnOrderItemList">应付明细</a>
                                 </li>
                                 li class=""><a href="#arap" data-toggle="tab" id = "returnOrderPayment">应付</a>
-                                </li-->
-                            </ul>
+                                </li>
+                            </ul>-->
 
                             <!-- Tab panes -->
                             <div class="tab-content">
@@ -36,7 +34,7 @@
                                         
                                         <form role="form" method="post" action="" id="orderForm">
 
-                                       		  <h2>报销单信息</h2>
+                                       		  <h3><label >报销单信息</label></h3>
                                               <input id="orderId" name="orderId" type="hidden" value="${order.id!''}">
                                               <input id="car_summary_order_ids" name="car_summary_order_ids" type="hidden" value="${car_summary_order_ids}">
                                        		  <div class="form-group">
@@ -90,10 +88,10 @@
                                 </div>
                              </form>
 
-                            <h2>应付</h2>
+                            <h3><label >应付</label></h3>
                             <!--button class="btn btn-primary" id="addrow2">添加应收</button-->
                             <input type="hidden" id="receivableTotal" value="${receivableTotal!''}">
-                            <div class="panel-body">
+                            <!-- <div class="panel-body"> -->
                                 <div class="table-responsive">
                                     <table class="table table-striped table-bordered table-hover" id ="table_fin" style="width: 2700px;">
                                         <thead>
@@ -133,10 +131,10 @@
                                     </table>
                                 </div>
                                 <!-- /.table-responsive -->
-                            </div>
+                            <!-- </div> -->
                             <!-- /.panel-body -->
                          </div>
-                                <div class="tab-pane fade" id="cargos">
+                                <div class="tab-pane fade" id="cargos" style="display: none;">
                                     <div class="panel-body">             
                                         <div class="table-responsive">
 			                                <br/>   
@@ -180,7 +178,6 @@
                                     </div>                              
                             </div>
                             
-                                                         
                                 <div class="form-group"><hr/>
                         			<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                                 	<button id="createBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip" 
@@ -189,6 +186,7 @@
                                 	<button id="accomplishBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip" 
                                      <% if(order.STATUS!'' == "audit"){%>disabled='disabled'<%}%>
                                     >审核</button> 
+                                    <a class="btn btn-default" href="/carreimbursement">返回</a>
                                 </div>
                         </div>
                         <!-- /.panel-body -->
