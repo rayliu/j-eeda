@@ -43,7 +43,7 @@ $(document).ready(function() {
 				if(finish > start){
 					$("#month_car_run_mileage").val(finish-start);
 				}else{
-					$.scojs_message('请输入正确的收车里程读数', $.scojs_message.TYPE_OK);
+					$.scojs_message('请输入正确的收车里程读数', $.scojs_message.TYPE_ERROR);
 					$(this).focus();
 				}
 			}
@@ -90,8 +90,33 @@ $(document).ready(function() {
 		}
 	});
 	
+	//table数据显示地址URL控制 TODO
+ 	var findTableDataService = function(tableName){
+ 		var car_summary_id = $("#car_summary_id").val();
+ 		var pickupIds = $("#pickupIds").val();
+ 		tableName.fnSettings().oFeatures.bServerSide = true;
+ 		if(clickTabId == "carmanageLine"){//线路
+ 			tableName.fnSettings().sAjaxSource = "/carsummary/findAllAddress?pickupIds="+pickupIds;   
+		}else if(clickTabId == "transferOrderList"){//运输单
+			tableName.fnSettings().sAjaxSource = "/carsummary/findTransferOrder?pickupIds="+pickupIds;   
+		}else if(clickTabId == "carmanageItemList"){//货品信息
+			tableName.fnSettings().sAjaxSource = "/carsummary/findPickupOrderItems?pickupIds="+pickupIds; 
+		}else if(clickTabId == "carmanageMilestoneList"){//里程碑
+ 			tableName.fnSettings().sAjaxSource = "/carsummary/transferOrderMilestoneList?car_summary_id="+car_summary_id;
+		}else if(clickTabId == "carmanageRoadBridge"){//路桥费明细
+			tableName.fnSettings().sAjaxSource = "/carsummary/findCarSummaryRouteFee?car_summary_id="+car_summary_id;
+		}else if(clickTabId == "carmanageRefuel"){//加油记录
+			tableName.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;
+		}else if(clickTabId == "carmanageSalary"){//送货员工资明细
+			tableName.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailSalary?car_summary_id="+car_summary_id;
+		}else if(clickTabId == "carmanageCostSummation"){//费用合计
+			tableName.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOtherFee?car_summary_id="+car_summary_id;
+		}
+ 		tableName.fnDraw();
+ 	};
+	
  	//保存、修改数据
- 	var saveCarSummaryData = function(){
+ 	var saveCarSummaryData = function(tableName){
  		//提交前，校验数据
         if(!$("#carSummaryForm").valid()){
 	       	return false;
@@ -102,8 +127,9 @@ $(document).ready(function() {
  	 			if(data != null){
  	 				$("#car_summary_id").val(data);
  	 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 	 				findTableDataService(tableName);
  	 			}else{
- 	 				$.scojs_message('保存失败', $.scojs_message.TYPE_OK);
+ 	 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
  	 			}
  	 			$("#saveCarSummaryBtn").prop("disabled",false);
  	 		},'json');
@@ -118,7 +144,7 @@ $(document).ready(function() {
  				$("#car_summary_id").val(data);
  				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  			}else{
- 				$.scojs_message('保存失败', $.scojs_message.TYPE_OK);
+ 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
  			}
  			$("#saveCarSummaryBtn").prop("disabled",false);
 	 	},'json');
@@ -134,7 +160,7 @@ $(document).ready(function() {
 					//当用户不是从基本信息tab返回时，自动统计行车单相关数据
 					$.post('/carsummary/calculateCost',{carSummaryId:car_summary_id},function(data){
 						if(data =="" && data == null){
-							$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_OK);
+							$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_ERROR);
 						}
 					},'json');	
 				}
@@ -147,7 +173,7 @@ $(document).ready(function() {
 		}
 		window.location.href="/carsummary"; 
 	});
-	// 选项卡-基本信息
+	// 选项卡-基本信息 TODO
 	$("#carmanagebasic").click(function(e){
 		if(clickTabId != "carmanagebasic"){
 			var car_summary_id = $("#car_summary_id").val();
@@ -159,10 +185,10 @@ $(document).ready(function() {
 							$("#"+name+"").val(value);
 						});
 					}else
-						$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_OK);
+						$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_ERROR);
 				},'json');	
 			}else{
-				$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_OK);
+				$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_ERROR);
 			}
 		}
 		clickTabId = e.target.getAttribute("id");
@@ -201,16 +227,16 @@ $(document).ready(function() {
         ]        
     });
 	
-	// 选显卡-线路
+	// 选显卡-线路 TODO
 	$("#carmanageLine").click(function(e){
 		if(clickTabId == "carmanagebasic"){
-			saveCarSummaryData();
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(pickupAddressTbody);
+		}else{
+			clickTabId = e.target.getAttribute("id");
+			findTableDataService(pickupAddressTbody);
 		}
-		clickTabId = e.target.getAttribute("id");
-		var pickupIds = $("#pickupIds").val();
-		pickupAddressTbody.fnSettings().oFeatures.bServerSide = true; 
-		pickupAddressTbody.fnSettings().sAjaxSource = "/carsummary/findAllAddress?pickupIds="+pickupIds;   
-		pickupAddressTbody.fnDraw();
+		
 	});
 	
 	//刷新货品信息
@@ -260,16 +286,16 @@ $(document).ready(function() {
         ]
     });
 	
-	// 选显卡-货品信息
+	// 选显卡-货品信息 TODO
 	$("#carmanageItemList").click(function(e){
 		if(clickTabId == "carmanagebasic"){
-			saveCarSummaryData();
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(pickupItemTbody);
+		}else{
+			clickTabId = e.target.getAttribute("id");
+			findTableDataService(pickupItemTbody);
 		}
-		clickTabId = e.target.getAttribute("id");
-		var pickupIds = $("#pickupIds").val();
-		pickupItemTbody.fnSettings().oFeatures.bServerSide = true;
-		pickupItemTbody.fnSettings().sAjaxSource = "/carsummary/findPickupOrderItems?pickupIds="+pickupIds;   
-		pickupItemTbody.fnDraw();
+		
 	});
 	//刷新里程碑
 	var pickupMilestoneTbody = $('#pickupMilestoneTbody').dataTable({
@@ -308,16 +334,16 @@ $(document).ready(function() {
              { "mDataProp": "CREATE_STAMP"}
          ]
 	});
-	// 选项卡-里程碑
+	
+	// 选项卡-里程碑 TODO
 	$("#carmanageMilestoneList").click(function(e){
 		if(clickTabId == "carmanagebasic"){
-			saveCarSummaryData();
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(pickupMilestoneTbody);
+		}else{
+			clickTabId = e.target.getAttribute("id");
+			findTableDataService(pickupMilestoneTbody);
 		}
-		clickTabId = e.target.getAttribute("id");
-		var car_summary_id = $("#car_summary_id").val();
-		pickupMilestoneTbody.fnSettings().oFeatures.bServerSide = true;
-		pickupMilestoneTbody.fnSettings().sAjaxSource = "/carsummary/transferOrderMilestoneList?car_summary_id="+car_summary_id;   
-		pickupMilestoneTbody.fnDraw();
 	});
 	
 	
@@ -420,17 +446,14 @@ $(document).ready(function() {
          ]
 	});
 	
-	// 选项卡-路桥费明细
+	// 选项卡-路桥费明细 TODO
 	$("#carmanageRoadBridge").click(function(e){
 		if(clickTabId == "carmanagebasic"){
-			saveCarSummaryData();
-		}
-		clickTabId = e.target.getAttribute("id");
-		var car_summary_id = $("#car_summary_id").val();
-		if(car_summary_id != "" && car_summary_id != null){
-			carSummaryDetailRouteFeeTbody.fnSettings().oFeatures.bServerSide = true;
-			carSummaryDetailRouteFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryRouteFee?car_summary_id="+car_summary_id;   
-			carSummaryDetailRouteFeeTbody.fnDraw();
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(carSummaryDetailRouteFeeTbody);
+		}else{
+			clickTabId = e.target.getAttribute("id");
+			findTableDataService(carSummaryDetailRouteFeeTbody);
 		}
 	});
 	
@@ -441,14 +464,13 @@ $(document).ready(function() {
 			$.post('/carsummary/addCarSummaryRouteFee/'+car_summary_id,function(data){
 				console.log(data);
 				if(data.success){
-					carSummaryDetailRouteFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryRouteFee?car_summary_id="+car_summary_id;   
-					carSummaryDetailRouteFeeTbody.fnDraw();
+					findTableDataService(carSummaryDetailRouteFeeTbody);
 				}else{
-					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+					$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 				}
 			});	
 		}else{
-			$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+			$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 		}
 		
 	});
@@ -456,12 +478,9 @@ $(document).ready(function() {
 	//异步删除路桥费明细
 	$("#carSummaryDetailRouteFeeTbody").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
-		var car_summary_id = $("#car_summary_id").val();
 		$.post('/carsummary/delCarSummaryRouteFee/'+id,function(data){
 			console.log(data);
-			carSummaryDetailRouteFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryRouteFee?car_summary_id="+car_summary_id;   
-			carSummaryDetailRouteFeeTbody.fnDraw();
-			
+			findTableDataService(carSummaryDetailRouteFeeTbody);
         });
 	});
 	//修改路桥费明细
@@ -476,7 +495,7 @@ $(document).ready(function() {
 			routeFeeId = $(this).parent().parent().parent().attr("id");
 		}
 		if(name == "travel_amount" && isNaN(value)){
-			$.scojs_message('【通行费】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
+			$.scojs_message('【通行费】只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val("");
 			$(this).focus();
 			result = false;
@@ -485,7 +504,7 @@ $(document).ready(function() {
 		if(result && value != ""){
 			$.post('/carsummary/updateCarSummaryDetailRouteFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
 				if(!data.success){
-					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+					$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 				}
 	    	},'json');
 		}
@@ -708,17 +727,14 @@ $(document).ready(function() {
          ]
 	});
 	
-	// 选项卡-加油记录
+	// 选项卡-加油记录 TODO
 	$("#carmanageRefuel").click(function(e){
 		if(clickTabId == "carmanagebasic"){
-			saveCarSummaryData();
-		}
-		clickTabId = e.target.getAttribute("id");
-		var car_summary_id = $("#car_summary_id").val();
-		if(car_summary_id != "" && car_summary_id != null){
-			carSummaryDetailOilFeeTbody.fnSettings().oFeatures.bServerSide = true;
-			carSummaryDetailOilFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;   
-			carSummaryDetailOilFeeTbody.fnDraw();
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(carSummaryDetailOilFeeTbody);
+		}else{
+			clickTabId = e.target.getAttribute("id");
+			findTableDataService(carSummaryDetailOilFeeTbody);
 		}
 	});
 	// 新增加油记录
@@ -728,26 +744,22 @@ $(document).ready(function() {
 			$.post('/carsummary/addCarSummaryDetailOilFee/'+car_summary_id,function(data){
 				console.log(data);
 				if(data.success){
-					carSummaryDetailOilFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;   
-					carSummaryDetailOilFeeTbody.fnDraw();
+					findTableDataService(carSummaryDetailOilFeeTbody);
 				}else{
-					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+					$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 				}
 			});	
 		}else{
-			$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+			$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 		}
 	});
 	
 	//异步删除加油记录
 	$("#carSummaryDetailOilFeeTbody").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
-		var car_summary_id = $("#car_summary_id").val();
 		$.post('/carsummary/delCarSummaryDetailOilFee/'+id,function(data){
 			console.log(data);
-			carSummaryDetailOilFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;   
-			carSummaryDetailOilFeeTbody.fnDraw();
-			
+			findTableDataService(carSummaryDetailOilFeeTbody);
         });
 	});
 	//修改加油记录
@@ -767,13 +779,13 @@ $(document).ready(function() {
 			routeFeeId = $(this).parent().parent().parent().attr("id");
 		}
 		if(name == "odometer_mileage" && isNaN(value)){
-			$.scojs_message('【里程表读数】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
+			$.scojs_message('【里程表读数】只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val("");
 			$(this).focus();
 			result = false;
 		}
 		if(name == "refuel_unit_cost" && isNaN(value)){
-			$.scojs_message('【油价】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
+			$.scojs_message('【油价】只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val("");
 			$(this).focus();
 			result = false;
@@ -793,7 +805,7 @@ $(document).ready(function() {
 			result = false;
 		}*/
 		if(name == "refuel_amount" && isNaN(value)){
-			$.scojs_message('【油费】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
+			$.scojs_message('【油费】只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val("");
 			$(this).focus();
 			result = false;
@@ -807,7 +819,7 @@ $(document).ready(function() {
 			console.log("加油量:"+refuel_number);
 		}
 		if(name == "load_amount" && isNaN(value)){
-			$.scojs_message('【载重】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
+			$.scojs_message('【载重】只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val("");
 			$(this).focus();
 			result = false;
@@ -822,7 +834,7 @@ $(document).ready(function() {
 		if(result && value != ""){
 			$.post('/carsummary/updateCarSummaryDetailOilFee', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value, refuel_number:refuel_number, avg_econ:avg_econ}, function(data){
 				if(!data.success){
-					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+					$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 				}
 	    	},'json');
 		}
@@ -938,17 +950,14 @@ $(document).ready(function() {
          ]
 	});
 	
-	// 选项卡-送货员工资明细
+	// 选项卡-送货员工资明细 TODO
 	$("#carmanageSalary").click(function(e){
 		if(clickTabId == "carmanagebasic"){
-			saveCarSummaryData();
-		}
-		clickTabId = e.target.getAttribute("id");
-		var car_summary_id = $("#car_summary_id").val();
-		if(car_summary_id != "" && car_summary_id != null){
-			carSummaryDetailSalaryTbody.fnSettings().oFeatures.bServerSide = true;
-			carSummaryDetailSalaryTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailSalary?car_summary_id="+car_summary_id;   
-			carSummaryDetailSalaryTbody.fnDraw();
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(carSummaryDetailSalaryTbody);
+		}else{
+			clickTabId = e.target.getAttribute("id");
+			findTableDataService(carSummaryDetailSalaryTbody);
 		}
 	});
 	// 新增送货员工资明细
@@ -957,19 +966,16 @@ $(document).ready(function() {
 		if(car_summary_id != ""){
 			$.post('/carsummary/addCarSummaryDetailSalary/'+car_summary_id,function(data){
 				console.log(data);
-				carSummaryDetailSalaryTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailSalary?car_summary_id="+car_summary_id;   
-				carSummaryDetailSalaryTbody.fnDraw();
+				findTableDataService(carSummaryDetailSalaryTbody);
 			});	
 		}
 	});
 	//异步删除送货员工资明细
 	$("#carSummaryDetailSalaryTbody").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
-		var car_summary_id = $("#car_summary_id").val();
 		$.post('/carsummary/delCarSummaryDatailSalary/'+id,function(data){
 			console.log(data);
-			carSummaryDetailSalaryTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailSalary?car_summary_id="+car_summary_id;   
-			carSummaryDetailSalaryTbody.fnDraw();
+			findTableDataService(carSummaryDetailSalaryTbody);
         });
 	});
 	//修改送货员工资明细
@@ -981,7 +987,7 @@ $(document).ready(function() {
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		if(name == "deserved_amount" && isNaN(value)){
-			$.scojs_message('【应得金额】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
+			$.scojs_message('【应得金额】只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val("");
 			$(this).focus();
 			result = false;
@@ -990,7 +996,7 @@ $(document).ready(function() {
 		if(result && value != ""){
 			$.post('/carsummary/updateCarSummaryDetailSalary', {car_summary_id:car_summary_id,routeFeeId:routeFeeId, name:name, value:value}, function(data){
 				if(!data.success){
-					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+					$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 				}
 	    	},'json');
 		}
@@ -1069,17 +1075,14 @@ $(document).ready(function() {
          ]
 	});
 	
-	// 选项卡-费用合计
+	// 选项卡-费用合计 TODO
 	$("#carmanageCostSummation").click(function(e){
 		if(clickTabId == "carmanagebasic"){
-			saveCarSummaryData();
-		}
-		clickTabId = e.target.getAttribute("id");
-		var car_summary_id = $("#car_summary_id").val();
-		if(car_summary_id != "" && car_summary_id != null){
-			carSummaryDetailOtherFeeTbody.fnSettings().oFeatures.bServerSide = true;
-			carSummaryDetailOtherFeeTbody.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOtherFee?car_summary_id="+car_summary_id;   
-			carSummaryDetailOtherFeeTbody.fnDraw();
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(carSummaryDetailOtherFeeTbody);
+		}else{
+			clickTabId = e.target.getAttribute("id");
+			findTableDataService(carSummaryDetailOtherFeeTbody);
 		}
 	});
 	//修改费用合计
@@ -1097,7 +1100,7 @@ $(document).ready(function() {
 			}
 		}
 		if(name == "amount" && isNaN(value)){
-			$.scojs_message('【金额】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
+			$.scojs_message('【金额】只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val("");
 			$(this).focus();
 			result = false;
@@ -1106,7 +1109,7 @@ $(document).ready(function() {
 		if(result && value != ""){
 			$.post('/carsummary/updateCarSummaryDetailOtherFee', {routeFeeId:routeFeeId, name:name, value:value}, function(data){
 				if(!data.success){
-					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+					$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 				}
 	    	},'json');
 		}
@@ -1133,11 +1136,11 @@ $(document).ready(function() {
 					$("#"+clickTabId+"").click();
 					
 				}else{
-					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+					$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 				}
 	    	},'json');
 		}else{
-			$.scojs_message('操作失败,请先保存行车单', $.scojs_message.TYPE_OK);
+			$.scojs_message('操作失败,请先保存行车单', $.scojs_message.TYPE_ERROR);
 		}
 	});	
 	
@@ -1160,7 +1163,7 @@ $(document).ready(function() {
 					//刷新当前选项卡
 					$("#"+clickTabId+"").click();
 				}else{
-					$.scojs_message('操作失败', $.scojs_message.TYPE_OK);
+					$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 				}
 	    	},'json');
 		}
@@ -1225,17 +1228,14 @@ $(document).ready(function() {
         ]
     });
 	
-	// 选项卡-运输单
+	// 选项卡-运输单 TODO
 	$("#transferOrderList").click(function(e){
 		if(clickTabId == "carmanagebasic"){
-			saveCarSummaryData();
-		}
-		clickTabId = e.target.getAttribute("id");
-		var pickupIds = $("#pickupIds").val();
-		if(pickupIds != "" && pickupIds != null){
-			transferOrderTbody.fnSettings().oFeatures.bServerSide = true; 
-			transferOrderTbody.fnSettings().sAjaxSource = "/carsummary/findTransferOrder?pickupIds="+pickupIds;   
-			transferOrderTbody.fnDraw();
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(transferOrderTbody);
+		}else{
+			clickTabId = e.target.getAttribute("id");
+			findTableDataService(transferOrderTbody);
 		}
 	});
 	// 编辑比例
@@ -1257,7 +1257,7 @@ $(document).ready(function() {
         });
         for ( var i = 0; i < rates.length; i++) {
         	if(isNaN(Number(rates[i]))){
-        		$.scojs_message('【分摊比例】只能输入数字,请重新输入', $.scojs_message.TYPE_OK);
+        		$.scojs_message('【分摊比例】只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
     			result = false;
     			break;
     		}else{
@@ -1267,12 +1267,12 @@ $(document).ready(function() {
         if(result && orderIds.length == rates.length){
         	 if(orderIds.length % 3 == 0 ){
              	if(!(checkTates >=99 && checkTates <=100)){
-             		$.scojs_message('所有分摊比例相加为99%-100%,请重新输入', $.scojs_message.TYPE_OK);
+             		$.scojs_message('所有分摊比例相加为99%-100%,请重新输入', $.scojs_message.TYPE_ERROR);
              		result = false;
              	}
              }else{
              	if(checkTates != 100){
-             		$.scojs_message('所有分摊比例相加为100%,请重新输入', $.scojs_message.TYPE_OK);
+             		$.scojs_message('所有分摊比例相加为100%,请重新输入', $.scojs_message.TYPE_ERROR);
      	        	result = false;
              	}
              }
