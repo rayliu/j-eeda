@@ -113,12 +113,12 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                 	if(Product.isDel){
                 		if(obj.aData.IS_STOP != true){
-                    		return	"<a class='btn btn-danger btn-xs deleteProduct' id="+obj.aData.ID+" title='删除'>"+
-    			                    "<i class='fa fa-trash-o fa-fw'></i>"+
+                    		return	"<a class='btn btn-danger btn-outline btn-sm deleteProduct' id="+obj.aData.ID+" title='删除'>"+
+    			                    "<i class='fa fa-trash-o fa-fw'></i> 停用"+
     			                    "</a>";
                     	}else{
-                    		return	"<a class='btn btn-success btn-xs deleteProduct' id="+obj.aData.ID+" title='删除'>"+
-    			                    "<i class='fa fa-trash-o fa-fw'></i>"+
+                    		return	"<a class='btn btn-success btn-outline btn-sm deleteProduct' id="+obj.aData.ID+" title='删除'>"+
+    			                    "<i class='fa fa-trash-o fa-fw'></i> 启用"+
     			                    "</a>";
                     	}
                 	}
