@@ -30,6 +30,7 @@ $(document).ready(function() {
             			}
             			
             		}},
+            {"mDataProp":"PLANNING_TIME", "sWidth":"100px"},
             {"mDataProp":"STATUS", "sWidth":"100px"},
             {"mDataProp":"CNAME", "sWidth":"200px"},
             {"mDataProp":"CARGO_NATURE", "sWidth":"70px",
@@ -67,7 +68,6 @@ $(document).ready(function() {
             {"mDataProp":"PIECES", "sWidth":"70px"},
             {"mDataProp":"VOLUME", "sWidth":"100px"},
             {"mDataProp":"WEIGHT", "sWidth":"100px"},
-            {"mDataProp":"PLANNING_TIME", "sWidth":"100px"},
             {"mDataProp":"ARRIVAL_TIME", "sWidth":"100px"},
             {"mDataProp":"ADDRESS", "sWidth":"100px",},
             {"mDataProp":"ORDER_TYPE", "sWidth":"70px",
