@@ -85,7 +85,32 @@ $(document).ready(function() {
     		},'json');
         }
     });
-    
+    $('#milestone_table').dataTable({
+    	"bSort": false, // 不要排序
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 25,
+        "bServerSide": false,
+        "bProcessing":false,
+        "bInfo":false,
+        "bPaginate":false,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "aoColumns": [
+            { "mDataProp":null},
+            { "mDataProp":null},
+            { "mDataProp":null},
+            { "mDataProp":null}, 
+            { "mDataProp":null},
+            { "mDataProp":null},
+            { "mDataProp":null},
+            { "mDataProp":null},
+            { "mDataProp":null},
+            { "mDataProp":null}
+        ]      
+    });	
     $("#eeda-table").on('click', '#edit_status', function(e){
     	e.preventDefault();	
     	var depart_id=$(this).attr("del_id");
@@ -101,6 +126,10 @@ $(document).ready(function() {
 				var fs=data.transferOrderMilestones[i].FINISHED_SERAL;
 				var ur=data.transferOrderMilestones[i].UNSERAL_REASON;
 				var uh=data.transferOrderMilestones[i].UNUSUAL_HANDLE;
+				var location = data.transferOrderMilestones[i].LOCATION;
+				if(location == null){
+					location = "";
+				}
 				if(arrival_time==null){
 					arrival_time="";
 				}
@@ -120,7 +149,7 @@ $(document).ready(function() {
 					uh="";
 				}
 				transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS
-													+"</th><th>"+data.transferOrderMilestones[i].LOCATION
+													+"</th><th>"+location
 													+"</th><th>"+data.usernames[j]
 													+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP
 													+"</th><th>"+arrival_time
