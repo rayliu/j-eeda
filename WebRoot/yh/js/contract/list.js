@@ -33,7 +33,7 @@ $(document).ready(function() {
    var tab2= $('#eeda-table').dataTable({
 	   "bFilter": false, 
 	   //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
     	
@@ -76,18 +76,19 @@ $(document).ready(function() {
                 "sWidth": "11%",  
                 "bVisible":(isUpdate || isDel),
                 "fnRender": function(obj) {     
-                	var str ="";
+                	var str ="<nobr>";
                 	
                 	if(isUpdate){
-                		str +=  "<a class='btn btn-success' title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+
-		                            "<i class='fa fa-edit fa-fw'></i>"+
-		                        "</a>";
+                		str +=  "<a class='btn btn-outline  btn-primary btn-sm' title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+
+		                            "<i class='fa fa-edit fa-fw'></i>编辑"+
+		                        "</a> ";
                 	}
                 	if(isDel){
-                		str += "<a class='btn btn-danger' title='删除' href='"+urlSource3+""+obj.aData.CID+"'>"+
-	                        "<i class='fa fa-trash-o fa-fw'></i>"+ 
+                		str += "<a class='btn btn-outline  btn-danger btn-sm' title='删除' href='"+urlSource3+""+obj.aData.CID+"'>"+
+	                        "<i class='fa fa-trash-o fa-fw'></i>删除"+ 
 	                        "</a>";
                 	}
+                	str +="</nobr>";
                     return str;       
                 }
             }                         
