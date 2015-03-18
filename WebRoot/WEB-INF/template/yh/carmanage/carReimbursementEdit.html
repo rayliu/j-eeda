@@ -31,9 +31,7 @@
                                 <div class="tab-pane fade active in" id="basic">
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        
                                         <form role="form" method="post" action="" id="orderForm">
-
                                        		  <h3><label >报销单信息</label></h3>
                                               <input id="orderId" name="orderId" type="hidden" value="${order.id!''}">
                                               <input id="car_summary_order_ids" name="car_summary_order_ids" type="hidden" value="${car_summary_order_ids}">
@@ -78,10 +76,10 @@
                                     </div><!-- /.col-lg-6 (nested) -->
                                 
                                     <div class="col-lg-6">
-                                        <div class="form-group"></div>
+                                    	<h3><label ></label></h3>
 	                                    <div class="form-group">
                                             <label>备注</label>
-                                            <textarea class="form-control" rows="6" name="remark">${order.remark!''}</textarea>
+                                            <textarea class="form-control" rows="7" name="remark">${order.remark!''}</textarea>
 	                                    </div> 
 	                                      
 	                                </div> <!-- /.col-lg-6 (nested) -->

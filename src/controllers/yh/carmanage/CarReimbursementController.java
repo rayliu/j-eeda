@@ -42,29 +42,60 @@ public class CarReimbursementController extends Controller {
 	
 	public void list(){
 		Map orderMap = null;
-				
+		String carReimbursementNo = getPara("carReimbursementNo");
+		String carNo = getPara("carNo");
+		String departOrderNo = getPara("departOrderNo");
+		String turnoutTime = getPara("turnoutTime");
+		String carReimbursementStatus = getPara("carReimbursementStatus");
+		String driver = getPara("driver");
+		String acditorName = getPara("acditorName");
+		
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         
-		String sqlTotal = "select count(0) total from reimbursement_order ro";
-		
-		String sql = "select ro.*,"
-				+ " (select group_concat(order_no SEPARATOR '<br>' ) from car_summary_order cso where cso.reimbursement_order_id = ro.id) cso_order_no,"
-				+ " (select c_name from user_login where id = ro.create_id) creator,"
-				+ " (select c_name from user_login where id = ro.audit_id) auditor, "
-				+ " ( select sum(cso.next_start_car_amount + cso.month_refuel_amount) from car_summary_order cso where cso.id in (  "
-				+ " 		SELECT id FROM	car_summary_order cso WHERE	cso.reimbursement_order_id = ro.id) ) total_cost,   "
-				+ "   ( select sum(cso.deduct_apportion_amount) from car_summary_order cso where cso.id in (  "
-				+ " 		SELECT id FROM	car_summary_order cso WHERE	cso.reimbursement_order_id = ro.id) ) deduct_cost, "
-				+ "   ( select sum(cso.next_start_car_amount + cso.month_refuel_amount)- sum(cso.deduct_apportion_amount) from car_summary_order cso  "
-				+ "     where cso.id in ( "
-				+ " 			SELECT id FROM	car_summary_order cso WHERE	cso.reimbursement_order_id = ro.id) "
-				+ "    ) actual_cost "
-				+ " from reimbursement_order ro"
-				+ " order by ro.create_stamp desc " + sLimit;
+        String sqlTotal = "";
+        String sql = "";
+        if(carReimbursementNo == null && carReimbursementStatus == null && acditorName == null){
+        	sqlTotal = "select count(0) total from reimbursement_order ro";
+        	sql = "select ro.id, ro.order_no,ro.status,ro.create_stamp,ro.audit_stamp,l1.c_name creator, l2.c_name auditor, "
+        			+ " (select group_concat(order_no SEPARATOR '<br>' ) from car_summary_order cso where cso.reimbursement_order_id = ro.id) cso_order_no,"
+        			+ " (select sum(cso.next_start_car_amount + cso.month_refuel_amount) from car_summary_order cso where cso.id in "
+        			+ " (select id FROM	car_summary_order cso WHERE	cso.reimbursement_order_id = ro.id) ) total_cost,     "
+        			+ " (select sum(cso.deduct_apportion_amount) from car_summary_order cso where cso.id in "
+        			+ " (select id FROM	car_summary_order cso WHERE	cso.reimbursement_order_id = ro.id) ) deduct_cost,    "
+        			+ " (select sum(cso.next_start_car_amount + cso.month_refuel_amount)- sum(cso.deduct_apportion_amount) from car_summary_order cso   where cso.id in "
+        			+ " (select id FROM	car_summary_order cso WHERE	cso.reimbursement_order_id = ro.id)) actual_cost "
+        			+ " from reimbursement_order ro "
+        			+ " left join user_login l1 on l1.id = ro.create_id"
+        			+ " left join user_login l2 on l2.id = ro.audit_id"
+        			+ " order by ro.create_stamp desc " + sLimit;
+        }else{
+        	sqlTotal = "select count(0) total from reimbursement_order ro"
+        			+ " left join user_login l1 on l1.id = ro.create_id"
+        			+ " left join user_login l2 on l2.id = ro.audit_id"
+        			+ " where ifnull(ro.order_no, '') like '%" + carReimbursementNo + "%'"
+        			+ " and ifnull(ro.status, '') like '%" + carReimbursementStatus + "%'"
+        			+ " and ifnull(l2.c_name, '') like '%" + acditorName + "%'";
+        	sql = "select ro.id, ro.order_no,ro.status,ro.create_stamp,ro.audit_stamp,l1.c_name creator, l2.c_name auditor, "
+        			+ " (select group_concat(order_no SEPARATOR '<br>' ) from car_summary_order cso where cso.reimbursement_order_id = ro.id) cso_order_no,"
+        			+ " (select sum(cso.next_start_car_amount + cso.month_refuel_amount) from car_summary_order cso where cso.id in "
+        			+ " (select id FROM	car_summary_order cso WHERE	cso.reimbursement_order_id = ro.id) ) total_cost,     "
+        			+ " (select sum(cso.deduct_apportion_amount) from car_summary_order cso where cso.id in "
+        			+ " (select id FROM	car_summary_order cso WHERE	cso.reimbursement_order_id = ro.id) ) deduct_cost,    "
+        			+ " (select sum(cso.next_start_car_amount + cso.month_refuel_amount)- sum(cso.deduct_apportion_amount) from car_summary_order cso   where cso.id in "
+        			+ " (select id FROM	car_summary_order cso WHERE	cso.reimbursement_order_id = ro.id)) actual_cost "
+        			+ " from reimbursement_order ro "
+        			+ " left join user_login l1 on l1.id = ro.create_id"
+        			+ " left join user_login l2 on l2.id = ro.audit_id"
+        			+ " where ifnull(ro.order_no, '') like '%" + carReimbursementNo + "%'"
+        			+ " and ifnull(ro.status, '') like '%" + carReimbursementStatus + "%'"
+        			+ " and ifnull(l2.c_name, '') like '%" + acditorName + "%'"
+        			+ " order by ro.create_stamp desc " + sLimit;
+        }
+        
 		Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 		List<Record> orders = Db.find(sql);
@@ -136,14 +167,13 @@ public class CarReimbursementController extends Controller {
 	
 	//行车单查询
 	public void carSummaryOrderList(){
-		
 		Map orderMap = null;
-		//String status = getPara("status");
 		String driver = getPara("driver");
-		String car_no = getPara("car_no");
+		String carNo = getPara("car_no");
 		String transferOrderNo = getPara("transferOrderNo");
-		String order_no = getPara("carSummaryOrderNo");
-		String start_data = getPara("start_data");
+		String orderNo = getPara("carSummaryOrderNo");
+		String departOrderNo = getPara("departOrderNo");
+		String turnoutTime = getPara("turnout_time");
 		
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -154,8 +184,7 @@ public class CarReimbursementController extends Controller {
         // 获取总条数
         String sqlTotal = "";
         String sql = "";
-		if (driver == null && car_no == null
-				&& transferOrderNo == null && start_data == null ) {
+		if (driver == null && carNo == null && transferOrderNo == null && orderNo == null && turnoutTime == null && departOrderNo == null) {
 			sqlTotal = "select count(0) total from car_summary_order where status='checked' and reimbursement_order_id is null";
 			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ " cso.month_refuel_amount, cso.deduct_apportion_amount, cso.actual_payment_amount,"
@@ -185,16 +214,20 @@ public class CarReimbursementController extends Controller {
 					+ " order by cso.create_data desc " + sLimit;
 	        
 		}else{
-			sqlTotal = "select count(0) total from car_summary_order cso"
+			sqlTotal = "select distinct count(0) total from car_summary_order cso"
 					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
 					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
+					+ " left join depart_transfer dt on dt.pickup_id = dod.id"
+					+ " left join transfer_order tor on tor.id = dt.order_id"
 					+ "	where cso.status='checked' and cso.reimbursement_order_id is null"
-					//+ " and ifnull(cso.status, '') like '%"+status+"%'"
-					+ " and ifnull(cso.car_no, '') like '%"+car_no+"%'"
+					+ " and ifnull(cso.car_no, '') like '%"+carNo+"%'"
 					+ " and ifnull(cso.main_driver_name, '') like '%"+driver+"%'"
-					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%'";
+					+ " and ifnull(cso.order_no, '') like '%"+orderNo+"%'"
+					+ " and ifnull(tor.order_no, '') like '%"+transferOrderNo+"%'"
+					+ " and ifnull(dod.turnout_time, '') like '%"+turnoutTime+"%'"
+					+ " and ifnull(dod.depart_no, '') like '%"+departOrderNo+"%'";
 			
-			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+			sql = "select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
 					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
 					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
@@ -221,12 +254,15 @@ public class CarReimbursementController extends Controller {
 					+ " from car_summary_order cso"
 					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
 					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
+					+ " left join depart_transfer dt on dt.pickup_id = dod.id"
+					+ " left join transfer_order tor on tor.id = dt.order_id"
 					+ "	where cso.status='checked' and cso.reimbursement_order_id is null"
-					//+ " and ifnull(cso.status, '') like '%"+status+"%'"
-					+ " and ifnull(cso.car_no, '') like '%"+car_no+"%'"
+					+ " and ifnull(cso.car_no, '') like '%"+carNo+"%'"
 					+ " and ifnull(cso.main_driver_name, '') like '%"+driver+"%'"
-					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%'"
-					//+ " and ifnull(dor.start_data, '') like '%"+transferOrderNo+"%'"
+					+ " and ifnull(cso.order_no, '') like '%"+orderNo+"%'"
+					+ " and ifnull(tor.order_no, '') like '%"+transferOrderNo+"%'"
+					+ " and ifnull(dod.turnout_time, '') like '%"+turnoutTime+"%'"
+					+ " and ifnull(dod.depart_no, '') like '%"+departOrderNo+"%'"
 					+ " order by cso.create_data desc " + sLimit;
 		}
 		Record rec = Db.findFirst(sqlTotal);

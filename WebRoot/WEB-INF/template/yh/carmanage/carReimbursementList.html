@@ -28,46 +28,43 @@
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="panel-body">
-                                                    <div class="row">
-                                                        <form role="form" style="margin: 0 15px;" id='returnOrderSearchForm'>
-                                                            <div class="row search_panel">
-	                                                             <div class="col-lg-4">
-	                                                                <div class="form-group"> 
-	                                                                    <label class="search-label">行车单号</label>
-	                                                                    <input type="text" class="form-control search-control orderNo_filter" id="carSummaryOrderNo" value="">
-	                                                                </div>
-	                                                                <div class="form-group">
-	                                                                    <label class="search-label">司机</label>
-	                                                                    <input type="text" class="form-control search-control orderNo_filter" id="driver" value="">
-	                                                                </div>
-	                                                             </div><!-- end of col-lg-6-->
-	                                                             <div class="col-lg-4">
-	                                                             	<div class="form-group">
-	                                                                    <label class="search-label">车牌号</label>
-	                                                                    <input type="text" class="form-control search-control orderNo_filter" id="car_no" value="">
-	                                                                </div>
-	                                                            	
-	                                                            	<div class="form-group">
-	                                                                    <label class="search-label">运输单号</label>
-	                                                                    <input type="text" class="form-control search-control orderNo_filter" id="transferOrderNo" value="">
-	                                                                </div>
-	                                                            </div>
-		                                                            <div class="col-lg-4">
-			                                                            	
-		                                                                     <div id="datetimepicker" class="input-append date "> 
-		                                                                         <label class="search-label">出车日期</label> 
-		                                                                         <input id="create_stamp" class="form-control search-control  beginTime_filter" type="text">
-		                                                                         <span class="add-on">  
-		                                                                             <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-		                                                                         </span>  
-		                                                                     </div>
-	                                                                </div>  
-	                                                         
-	                                                            </div><!-- end of row-->
-                                                        </form>                                                        
-
-														<div class="row">
-														<br/>
+                                                       <div class="row search_panel">
+                                                          <div class="col-lg-4">
+                                                             <div class="form-group"> 
+                                                                 <label class="search-label">行车单号</label>
+                                                                 <input type="text" class="form-control search-control orderNo_filter" id="carSummaryOrderNo" value="">
+                                                             </div>
+                                                             <div class="form-group">
+                                                                 <label class="search-label">司机</label>
+                                                                 <input type="text" class="form-control search-control orderNo_filter" id="driver" value="">
+                                                             </div>
+                                                          </div><!-- end of col-lg-6-->
+                                                          <div class="col-lg-4">
+                                                          	  <div class="form-group">
+                                                                 <label class="search-label">运输单号</label>
+                                                                 <input type="text" class="form-control search-control orderNo_filter" id="transferOrderNo" value="">
+                                                              </div>
+                                                       		  <div class="form-group">
+                                                                 <label class="search-label">车牌号</label>
+                                                                 <input type="text" class="form-control search-control orderNo_filter" id="car_no" value="">
+                                                              </div>
+                                                         </div>
+                                                          <div class="col-lg-4">
+                                                          	  <div class="form-group">
+                                                                 <label class="search-label">调车单号</label>
+                                                                 <input type="text" class="form-control search-control orderNo_filter" id="departOrderNo" value="">
+                                                              </div>
+                                                              <div id="datetimepicker" class="input-append date "> 
+                                                                  <label class="search-label">出车日期</label> 
+                                                                  <input id="turnout_time" class="form-control search-control  beginTime_filter" type="text" value="">
+                                                                  <span class="add-on">  
+                                                                      <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                                                  </span>  
+                                                              </div>
+                                                          </div>  
+                                                        </div><!-- end of row-->
+                                                        
+                                                        <div class="row search_panel">
 									                        <form id="createForm" action="/carreimbursement/createCarReimbursement" method="post">
 									                            <input id='carSummeryIds' name='carSummeryIds' type="hidden">
 									                            <div class="col-lg-6">
@@ -79,17 +76,18 @@
 									                            </div>    
 									                        </form> 
 									                    </div>
-                                                    </div>
+                                                    
                                                     <div class="tab-content">
                                                        
 	                               					 <div class="tab-pane fade active in" id="unchecked">
+	                               					 	<div class="form-group"></div>
 	                                                    <div class="table-responsive">
 	                                                        <table class="table table-striped table-bordered table-hover" id="carSummaryTbody" style="width: 2700px;">
 	                                                            <thead>
 	                                                                <tr>
 	                                                                	<th></th>
 							                                            <th>行车单号</th>
-							                                            <th>提货调车单号</th>
+							                                            <th>调车单号</th>
 							                                            <th>运输单号</th>
 							                                            <th>行车单状态</th>
 							                                            <th>车牌号</th>
@@ -133,54 +131,55 @@
                                 </div>
                             <div class="tab-pane fade" id="search">
                             	<div class="panel-body">
-                            	
-		                            <form role="form" style="margin: 0 15px;">
-		                                <div class="row search_panel">
-		                                    <div class="col-lg-4">
-		                                        <div class="form-group">
-		                                            <label class="search-label">状态</label>
-		                                            <select id="carSummary_status" class="form-control search-control status_filter">
-		                                            	<option value=""></option>
-		                                            	<option value="new">新建</option>
-		                                                <option value="audit">已审核</option>
-		                                                <option value="pay">已报销</option>                                                
-		                                            </select>
-		                                            <!-- <input type="text" class="form-control search-control status_filter" id="status_filter"> -->
-		                                        </div>
-		                                        <div class="form-group">
-		                                            <label class="search-label">车牌号</label>
-		                                            <input type="text" class="form-control search-control address_filter" id="carSummary_car_no">
-		                                        </div>
-		                                       
-		                                        
-		                                    </div>
-		                                    <!-- end of col-lg-6-->
-		                                    <div class="col-lg-4">
-		                                        <div class="form-group">
-		                                            <label class="search-label">行车单号</label>
-		                                            <input type="text" class="form-control search-control sp_filter" id="carSummary_pickup_order">
-		                                            <ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;"></ul>
-		                                        </div>
-		                                       
-		                                        <div class="form-group">
-		                                            <div id="datetimepicker2" class="input-append date "> 
-		                                                <label class="search-label">出车日期</label> 
-		                                                <input id="carSummary_start_data" class="form-control search-control  beginTime_filter" type="text">
-		                                                <span class="add-on">  
-		                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-		                                                </span>  
-		                                            </div>
-		                                        </div>
-		                                    </div>
-		                                    <div class="col-lg-4">
-		                                    	 <div class="form-group">
-		                                            <label class="search-label">司机</label>
-		                                            <input type="text" class="form-control search-control orderNo_filter" id="carSummary_driver" value="">
-		                                        </div>
-		                                    </div>
-		                                    <!-- end of col-lg-6-->
-		                                </div><!-- end of row-->
-		                            </form>
+	                                <div class="row search_panel">
+	                                    <div class="col-lg-4">
+	                                        <div class="form-group">
+	                                            <label class="search-label">报销单号</label>
+	                                            <input type="text" class="form-control search-control address_filter" id="carReimbursement_no">
+	                                        </div>
+                                            <!-- <div class="form-group">
+	                                            <label class="search-label">车牌号</label>
+	                                            <input type="text" class="form-control search-control address_filter" id="car_no1">
+	                                        </div> -->
+	                                    </div>
+	                                    <!-- end of col-lg-6-->
+	                                    <div class="col-lg-4">
+	                                        <!-- <div class="form-group">
+	                                            <label class="search-label">行车单号</label>
+	                                            <input type="text" class="form-control search-control sp_filter" id="departOrderNo1">
+	                                            <ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;"></ul>
+	                                        </div>
+                                            <div class="form-group">
+	                                            <div id="datetimepicker2" class="input-append date "> 
+	                                                <label class="search-label">出车日期</label> 
+	                                                <input id="turnout_time1" class="form-control search-control  beginTime_filter" type="text">
+	                                                <span class="add-on">  
+	                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+	                                                </span>  
+	                                            </div>
+	                                        </div> -->
+	                                        <div class="form-group">
+	                                            <label class="search-label">审核人</label>
+	                                            <input type="text" class="form-control search-control orderNo_filter" id="acditorName" value="">
+	                                        </div>
+	                                    </div>
+	                                    <div class="col-lg-4">
+	                                    	<div class="form-group">
+		                                    	<label class="search-label">状态</label>
+	                                            <select id="carReimbursement_status" class="form-control search-control status_filter">
+	                                            	<option value=""></option>
+	                                            	<option value="new">新建</option>
+	                                                <option value="audit">已审核</option>
+	                                                <option value="pay">已报销</option>                                                
+	                                            </select>
+                                            </div>
+	                                    	<!-- <div class="form-group">
+	                                            <label class="search-label">司机</label>
+	                                            <input type="text" class="form-control search-control orderNo_filter" id="driver1" value="">
+	                                        </div> -->
+	                                    </div>
+	                                    <!-- end of col-lg-6-->
+	                                </div><!-- end of row-->
 		                            
 		                            <div class="table-responsive">
 		                            <br/>

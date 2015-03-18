@@ -46,11 +46,11 @@ $(document).ready(function() {
           	  },  
 	          {"mDataProp":"PICKUP_NO", "sWidth":"120px"},
 	          {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"120px"},
-	          {"mDataProp":"STATUS", "sWidth":"60px",
+	          {"mDataProp":"STATUS", "sWidth":"80px",
 					"fnRender": function(obj) {
 						if("new" == obj.aData.STATUS){
 			    			return "新建";
-			    		}else if("audit" == obj.aData.STATUS){
+			    		}else if("checked" == obj.aData.STATUS){
 			    			return "已审核";
 			    		}else if("revocation" == obj.aData.STATUS){
 			    			return "已撤销";
@@ -67,8 +67,12 @@ $(document).ready(function() {
 			  {"mDataProp":"RETURN_TIME", "sWidth":"80px"},
 			  {"mDataProp":null, "sWidth":"70px",
 				  "fnRender": function(obj) {
-						return DateDiff(obj.aData.RETURN_TIME,obj.aData.TURNOUT_TIME);
-					}
+					  var dayNumber = DateDiff(obj.aData.RETURN_TIME,obj.aData.TURNOUT_TIME);
+					  if(dayNumber >= 0)
+						  return dayNumber;
+					  else
+						  return 0;
+				  }
 			  },        	
 			  {"mDataProp":"VOLUME", "sWidth":"70px"},           
 			  {"mDataProp":"WEIGHT", "sWidth":"70px"},        	
@@ -98,7 +102,7 @@ $(document).ready(function() {
 	    pickerPosition: "bottom-left"
 	}).on('changeDate', function(ev){
 		$(".bootstrap-datetimepicker-widget").hide();
-	    $('#create_stamp').trigger('keyup');
+	    $('#turnout_time').trigger('keyup');
 	});
 	
     // 选显卡-未报销行车单
@@ -109,16 +113,16 @@ $(document).ready(function() {
 		carSummaryTbody.fnDraw();
 	});
 	//未报销行车单各种搜索
-    $('#status ,#driver ,#car_no ,#transferOrderNo ,#create_stamp ,#carSummaryOrderNo').on( 'keyup click', function () {
-		var status = $("#status").val();
+    $('#status ,#driver ,#car_no ,#transferOrderNo ,#turnout_time ,#carSummaryOrderNo ,#departOrderNo').on( 'keyup click', function () {
 		var driver = $("#driver").val();
 		var car_no = $("#car_no").val();
 		var transferOrderNo = $("#transferOrderNo").val();
-		var create_stamp = $("#create_stamp").val();
+		var turnout_time = $("#turnout_time").val();
+		var departOrderNo = $("#departOrderNo").val();
 		var carSummaryOrderNo = $("#carSummaryOrderNo").val();
 		num1 = 1;
 		carSummaryTbody.fnSettings().oFeatures.bServerSide = true; 
-		carSummaryTbody.fnSettings().sAjaxSource = "/carreimbursement/carSummaryOrderList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&create_stamp="+create_stamp+"&carSummaryOrderNo="+carSummaryOrderNo;
+		carSummaryTbody.fnSettings().sAjaxSource = "/carreimbursement/carSummaryOrderList?driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&turnout_time="+turnout_time+"&carSummaryOrderNo="+carSummaryOrderNo+"&departOrderNo="+departOrderNo;
 		carSummaryTbody.fnDraw();
 	});
 
@@ -181,9 +185,24 @@ $(document).ready(function() {
         ]
     });
 	
+	//tab - 行车报销单
 	$('#carReimbursementList').click(function(e){
 		carReimbursementTbody.fnSettings().oFeatures.bServerSide = true; 
-		carReimbursementTbody.fnSettings().sAjaxSource = "/carreimbursement/list?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&create_stamp="+create_stamp+"&carSummaryOrderNo="+carSummaryOrderNo;
+		carReimbursementTbody.fnSettings().sAjaxSource = "/carreimbursement/list?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&create_stamp="+turnout_time+"&carSummaryOrderNo="+carSummaryOrderNo;
+		carReimbursementTbody.fnDraw();
+	});
+	
+	//行车保险单各种搜索
+    $('#carReimbursement_no ,#car_no1 ,#departOrderNo1 ,#turnout_time1 ,#carReimbursement_status ,#driver1 ,#acditorName').on( 'keyup click', function () {
+		var carReimbursementNo = $("#carReimbursement_no").val();
+		var carNo = $("#car_no1").val();
+		var departOrderNo = $("#departOrderNo1").val();
+		var turnoutTime = $("#turnout_time1").val();
+		var carReimbursementStatus = $("#carReimbursement_status").val();
+		var driver = $("#driver1").val();
+		var acditorName = $("#acditorName").val();
+		carReimbursementTbody.fnSettings().oFeatures.bServerSide = true; 
+		carReimbursementTbody.fnSettings().sAjaxSource = "/carreimbursement/list?carReimbursementNo="+carReimbursementNo+"&carNo="+carNo+"&departOrderNo="+departOrderNo+"&turnoutTime="+turnoutTime+"&carReimbursementStatus="+carReimbursementStatus+"&driver="+driver+"&acditorName="+acditorName;
 		carReimbursementTbody.fnDraw();
 	});
 });
