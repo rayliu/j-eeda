@@ -135,7 +135,8 @@
          //"sAjaxSource": "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&pickupId="+$("#pickupOrderId").val(),
          "aoColumns": [
              { "mDataProp": "CUSTOMER" ,"sWidth": "100%"},
-             { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},      
+             { "mDataProp": "ORDER_NO" ,"sWidth": "30%"},  
+             { "mDataProp": "PLANNING_TIME"}, 
              { "mDataProp": "ITEM_NO"},
              { "mDataProp": "ITEM_NAME"},
              { "mDataProp": null,
