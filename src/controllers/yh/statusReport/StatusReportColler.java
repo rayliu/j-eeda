@@ -1,5 +1,7 @@
 package controllers.yh.statusReport;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -9,14 +11,17 @@ import models.TransferOrder;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.order.TransferOrderController;
-
+@RequiresAuthentication
+@Before(SetAttrLoginUserInterceptor.class)
 public class StatusReportColler extends Controller{
 	
 	private Logger logger = Logger.getLogger(TransferOrderController.class);
