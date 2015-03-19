@@ -552,9 +552,9 @@ public class DeliveryController extends Controller {
 					.find("select *,p.id as customerId from contact c,party p,transfer_order t where p.contact_id=c.id and t.customer_id = p.id and t.id ="
 							+ customerId + "");
 			Contact customer = customers.get(0);*/
-			String sql = "select p.id,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+customerId;
-			Record customer = Db.findFirst(sql);
-			setAttr("customer", customer);
+			Party party = Party.dao
+					.findFirst("select p.id as cid,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = '"+ customerId + "'");
+			setAttr("customer", party);
 		}
 		
 		Warehouse warehouse = Warehouse.dao.findById(warehouseId);

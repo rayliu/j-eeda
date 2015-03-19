@@ -560,9 +560,9 @@ public class InventoryController extends Controller {
     		parentID = parentOffice.getLong("id");
     	}
     	if(inputStr!=null){
-    		sql = "select * from warehouse w left join office o on o.id = w.office_id where w.warehouse_name like '%"+inputStr+"%' and (o.id = " + parentID + " or o.belong_office = " + parentID +")";
+    		sql = "select w.* from warehouse w left join office o on o.id = w.office_id where w.warehouse_name like '%"+inputStr+"%' and (o.id = " + parentID + " or o.belong_office = " + parentID +")";
     	}else{
-    		sql= "select * from warehouse w left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID +")";
+    		sql= "select w.* from warehouse w left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID +")";
     	}
         List<Warehouse> warehouses = Warehouse.dao.find(sql);
         renderJson(warehouses);

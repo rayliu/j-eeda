@@ -92,7 +92,7 @@ public class CarSummaryController extends Controller {
 
 	        // 获取当前页的数据
 	        sql = "select dor.id,dor.depart_no,ifnull(u.c_name, u.user_name) user_name,dor.remark,"
-	        	+ " (select group_concat(dt.transfer_order_no separator '') from depart_transfer dt where pickup_id = dor.id) as transfer_order_no,"
+	        	+ " (select group_concat(dt.transfer_order_no separator '<br>') from depart_transfer dt where pickup_id = dor.id) as transfer_order_no,"
 	        	+ " dor. status,dor.car_no,dor.driver contact_person,dor.phone phone,dor.car_type cartype,dor.turnout_time,o.office_name office_name,"
 	        	+ " ifnull((select round(sum(ifnull(toi.volume, 0)),2) from transfer_order_item toi left join transfer_order t on t.id = toi.order_id "
 	        	+ " where t.cargo_nature = 'cargo' and toi.order_id in (select dt.order_id from depart_transfer dt where dt.pickup_id = dor.id)),0) cargovolume,"
@@ -140,7 +140,7 @@ public class CarSummaryController extends Controller {
 
 	        // 获取当前页的数据
 	        sql = "select dor.id,dor.depart_no,ifnull(u.c_name, u.user_name) user_name,dor.remark,"
-		        	+ " (select group_concat(dt.transfer_order_no separator '') from depart_transfer dt where pickup_id = dor.id) as transfer_order_no,"
+		        	+ " (select group_concat(dt.transfer_order_no separator '<br>') from depart_transfer dt where pickup_id = dor.id) as transfer_order_no,"
 		        	+ " dor. status,dor.car_no,dor.driver contact_person,dor.phone phone,dor.car_type cartype,dor.turnout_time,o.office_name office_name,"
 		        	+ " ifnull((select round(sum(ifnull(toi.volume, 0)),2) from transfer_order_item toi left join transfer_order t on t.id = toi.order_id "
 		        	+ " where t.cargo_nature = 'cargo' and toi.order_id in (select dt.order_id from depart_transfer dt where dt.pickup_id = dor.id)),0) cargovolume,"
@@ -212,8 +212,8 @@ public class CarSummaryController extends Controller {
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
 					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
 					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
-					+ " (select group_concat(pickup_order_no SEPARATOR '\r\n' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
-					+ " (select group_concat( dt.transfer_order_no SEPARATOR '\r\n' ) from depart_transfer dt"
+					+ " (select group_concat(pickup_order_no separator '<br>' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
+					+ " (select group_concat( dt.transfer_order_no separator '<br>' ) from depart_transfer dt"
 					+ " where dt.pickup_id in(select pickup_order_id from car_summary_detail where car_summary_id = cso.id )) as transfer_order_no,"
 					+ " (select turnout_time from depart_order where id = ( select min(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as turnout_time,"
 					+ " (select return_time from depart_order where id = ( select max(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as return_time,"
@@ -257,8 +257,8 @@ public class CarSummaryController extends Controller {
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
 					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
 					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
-					+ " (select group_concat(pickup_order_no SEPARATOR '\r\n' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
-					+ " (select group_concat( dt.transfer_order_no SEPARATOR '\r\n' ) from depart_transfer dt"
+					+ " (select group_concat(pickup_order_no separator '<br>' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
+					+ " (select group_concat( dt.transfer_order_no separator '<br>' ) from depart_transfer dt"
 					+ " where dt.pickup_id in(select pickup_order_id from car_summary_detail where car_summary_id = cso.id )) as transfer_order_no,"
 					+ " (select turnout_time from depart_order where id = ( select min(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as turnout_time,"
 					+ " (select return_time from depart_order where id = ( select max(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as return_time,"

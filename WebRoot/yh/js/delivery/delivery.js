@@ -511,6 +511,8 @@ $(document).ready(function() {
 				paymenttable.fnSettings().sAjaxSource = "/deliveryOrderMilestone/accountPayable/"+deliveryid;
 				paymenttable.fnDraw();
 			});		
+		}else{
+			$.scojs_message('请先保存配送单', $.scojs_message.TYPE_ERROR);
 		}
 	});	
 	// 应付修改
@@ -521,9 +523,8 @@ $(document).ready(function() {
 		var value = $(this).val();
 		if(value != "" && value != null){
 			$.post('/deliveryOrderMilestone/updateDeliveryOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
-				if(data.success){
-				}else{
-					alert("修改失败!");
+				if(!data.success){
+					$.scojs_message('修改失败', $.scojs_message.TYPE_ERROR);
 				}
 	    	},'json');
 		}

@@ -45,7 +45,7 @@ $(document).ready(function() {
           	  },  
 	          {"mDataProp":"PICKUP_NO", "sWidth":"120px"},
 	          {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"120px"},
-	          {"mDataProp":"STATUS", "sWidth":"60px",
+	          {"mDataProp":"STATUS", "sWidth":"80px",
 					"fnRender": function(obj) {
 						if("new" == obj.aData.STATUS){
 			    			return "新建";
@@ -72,14 +72,14 @@ $(document).ready(function() {
 			  {"mDataProp":"VOLUME", "sWidth":"70px"},           
 			  {"mDataProp":"WEIGHT", "sWidth":"70px"},        	
 			  {"mDataProp":"CARSUMMARYMILEAGE", "sWidth":"80px"},                        
-			  {"mDataProp":"MONTH_REFUEL_AMOUNT", "sWidth":"90px"},                        
+			  {"mDataProp":"MONTH_REFUEL_AMOUNT", "sWidth":"110px"},                        
 			  {"mDataProp":"REFUEL_CONSUME", "sWidth":"90px"},                        
 			  {"mDataProp":"SUBSIDY", "sWidth":"70px"},                        
-			  {"mDataProp":"DRIVER_SALARY", "sWidth":"70px"},                        
-			  {"mDataProp":"TOLL_CHARGE", "sWidth":"60px"},                        
+			  {"mDataProp":"DRIVER_SALARY", "sWidth":"90px"},                        
+			  {"mDataProp":"TOLL_CHARGE", "sWidth":"90px"},                        
 			  {"mDataProp":"HANDLING_CHARGES", "sWidth":"60px"},                        
 			  {"mDataProp":"FINE", "sWidth":"60px"},                        
-			  {"mDataProp":"DELIVERYMAN_SALARY", "sWidth":"80px"},                        
+			  {"mDataProp":"DELIVERYMAN_SALARY", "sWidth":"100px"},                        
 			  {"mDataProp":"PARKING_CHARGE", "sWidth":"60px"},                        
 			  {"mDataProp":"QUARTERAGE", "sWidth":"60px"},                        
 			  {"mDataProp":"WEIGHING_CHARGE", "sWidth":"60px"},                        

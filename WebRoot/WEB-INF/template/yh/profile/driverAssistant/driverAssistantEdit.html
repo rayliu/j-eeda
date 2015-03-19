@@ -1,0 +1,109 @@
+<%layout("/yh/layout.html"){%>
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+	<div id="page-wrapper">
+		<div class="row">
+             <div class="col-lg-12">
+              	<h1 class="page-header">
+              		<h1 class="page-header">跟车人员信息</h1>
+				</h1>
+                 <div class="panel panel-default">
+                   <div class="panel-heading">跟车人员信息</div>
+            		<div class="panel-body">
+            			<form lass="form-horizontal" id='driverAssistantForm' name="driverAssistantForm" action="/driverAssistant/savaDriverAssistant" method="post">
+            				<input type="hidden" id="driver_assistant_id" name="driver_assistant_id"  value="${driverAssistant.id!''}">
+            				<div class="row-fluid">
+								<div class="col-lg-6">
+									 <div class="form-group ">
+						                 <label class="control-label">姓名(必填)</label>
+						                 <input id="name" name="name" type="text" class="form-control" value="${driverAssistant.name!''}">
+						             </div>
+						             <div class="form-group ">
+						                 <label class="control-label">联系电话(必填)</label>
+						                 <input type="text" class="form-control" id="phone" name="phone" value="${driverAssistant.phone!''}">
+						             </div>
+						             <div class="form-group ">
+						                 <label class="control-label">所属公司</label>
+						                 <input type="hidden" id="office_id" name="office_id" value="${driverAssistant.office_id!''}">
+						                 <select id="officeSelect" class="form-control" name="officeSelect"></select>
+						             </div>
+						             <div class="form-group ">
+						                 <label class="control-label">司机日工资</label>
+						                 <input type="text" class="form-control" id="daily_wage" name="daily_wage" value="${driverAssistant.daily_wage!''}">
+						             </div>
+						         </div>
+					           	 <div class="col-lg-6">
+					           	 	 <div class="form-group ">
+						                 <label class="control-label">身份证(必填)</label>
+						                 <input type="text" class="form-control" id="identity_number" name="identity_number" value="${driverAssistant.identity_number!''}">
+						             </div>
+						             <div class="form-group">
+						                 <label class="control-label">学历</label>
+						                 <input type="hidden" id="hid_academic_qualifications" name="hid_academic_qualifications"  value="${driverAssistant.academic_qualifications!''}">
+						                 <select class="form-control" id="academic_qualifications" name="academic_qualifications">
+			                                  <option value=""></option>
+			                                  <option value="小学">小学</option>
+			                                  <option value="初中">初中</option>
+			                                  <option value="中专/高中">中专/高中</option>
+			                                  <option value="专科">专科</option>
+			                                  <option value="本科">本科</option>
+			                                  <option value="硕士研究生">硕士研究生</option>
+			                                  <option value="博士研究生">博士研究生</option>
+			                              </select>
+						             </div>
+						             <div class="row">
+	                                    <div class="col-lg-9">
+	                                    	<label class="control-label">入职日期(必填)</label>
+	                                        <div>  
+	                                            <span id="datetimepicker" class="input-append date search-control "> 
+	                                                <input id="date_of_entry" class="form-control search-control endTime_filter" type="text" name="date_of_entry" value="${driverAssistant.date_of_entry!''}">
+	                                                <span class="add-on">  
+	                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+	                                                </span>  
+	                                            </span>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                                <div class="row">
+	                                    <div class="col-lg-12">
+	                                    	<div class="form-group"></div>
+	                                    	<label class="control-label">起止日期（开始日期 - 结束日期）</label><br>
+	                                        <div  style="float:left;">  
+	                                            <span id="datetimepicker2" class="input-append date search-control "> 
+	                                                <input id="beging_stamp" class="form-control search-control endTime_filter" type="text" name="beging_stamp" value="${driverAssistant.beging_stamp!''}">
+	                                                <span class="add-on">  
+	                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+	                                                </span> 
+	                                            </span>
+	                                            
+	                                        </div>
+	                                        <div  style="float:left;">  
+	                                            <span id="datetimepicker3" class="input-append date search-control "> 
+	                                                <input id="end_stamp" class="form-control search-control endTime_filter" type="text" name="end_stamp" value="${driverAssistant.end_stamp!''}">
+	                                                <span class="add-on">  
+	                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+	                                                </span>   
+	                                            </span>
+	                                        </div>
+	                                    </div>
+	                                </div>
+					            </div>
+				            </div>
+				         	<div class="col-lg-12">
+				         		<hr>
+				             	<button type="submit" class="btn btn-default">保存</button>
+					            <a class="btn btn-default" href="/driverAssistant">返回</a>
+					        </div>
+				        </form>
+            			</div>
+            		</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<%}%>
+<!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/yh/js/jquery.validate.min.js"></script>
+<script src="/yh/js/jvalidate.messages_cn.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/yh/js/profile/driverAssistant/driverAssistantEdit.js"></script>

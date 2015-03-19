@@ -1038,7 +1038,15 @@
         "aoColumns": [
 			{"mDataProp":"CNAME","sClass": "name"},
 			{"mDataProp":"TRANSFERNO","sClass": "amount"},  
-			{"mDataProp":"AMOUNT","sClass": "remark"}
+			{"mDataProp":"AMOUNT","sClass": "remark",
+				"fnRender": function(obj) {
+					if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+	                    return obj.aData.AMOUNT.toFixed(2);
+	                }else{
+	                	return "";
+	                }
+				}
+			}
         ]      
     });
 	

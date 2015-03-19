@@ -85,6 +85,7 @@ import models.yh.delivery.DeliveryPlanOrderMilestone;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 import models.yh.profile.CustomizeField;
+import models.yh.profile.DriverAssistant;
 import models.yh.profile.OfficeCofig;
 import models.yh.profile.Route;
 import models.yh.returnOrder.ReturnOrderFinItem;
@@ -110,6 +111,8 @@ import com.jfinal.plugin.c3p0.C3p0Plugin;
 import com.jfinal.weixin.demo.WeixinApiController;
 import com.jfinal.weixin.demo.WeixinMsgController;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
+
+import controllers.yh.profile.DriverAssistantController;
 
 public class EedaConfig extends JFinalConfig {
     private Logger logger = Logger.getLogger(EedaConfig.class);
@@ -282,6 +285,8 @@ public class EedaConfig extends JFinalConfig {
         //微信API路由
         me.add("/msg", WeixinMsgController.class);
 		me.add("/api", WeixinApiController.class, "/api");
+		//跟车人员
+		me.add("/driverAssistant", DriverAssistantController.class, contentPath);
 	}
 
     @Override
@@ -412,7 +417,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("office_config", OfficeCofig.class);
         //单据附件上传
         arp.addMapping("order_attachment_file", OrderAttachmentFile.class);
-        
+        //跟车人员 
+        arp.addMapping("driver_assistant", DriverAssistant.class);
         
     }
 
