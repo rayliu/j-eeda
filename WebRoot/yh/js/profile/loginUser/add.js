@@ -239,5 +239,7 @@ $(document).ready(function(){
 		
 		$("#leadsForm").submit();
 	});
-	
+	if($("#userId").val() != "" && $("#userId").val() != null){
+		$("#assigning_role").show();
+	}
 });

@@ -11,6 +11,7 @@ import models.Office;
 import models.Permission;
 import models.Role;
 import models.RolePermission;
+import models.UserLogin;
 import models.UserOffice;
 import models.UserRole;
 
@@ -18,6 +19,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
+import org.eclipse.jetty.server.Authentication.User;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -96,6 +98,18 @@ public class UserRoleController extends Controller {
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_UR_CREATE})
 	public void add(){
 		render("/yh/profile/userRole/addRole.html");
+	}
+	public void addOrUpdate(){
+		String id = getPara("id");
+		UserLogin user = UserLogin.dao.findFirst("select * from user_login where id = ?",id);
+		List<UserRole> list = UserRole.dao.find("select * from user_role where user_name = ?",user.get("user_name"));
+		if(list.size()>0){
+			setAttr("user_name", user.get("user_name"));		
+			render("/yh/profile/userRole/assigning_roles.html");
+		}else{
+			render("/yh/profile/userRole/addRole.html");
+		}
+		
 	}
 	/*列出没有角色的用户*/
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_UR_CREATE})
