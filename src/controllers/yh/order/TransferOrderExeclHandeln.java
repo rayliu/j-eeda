@@ -512,7 +512,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 					e.printStackTrace();
 					System.out.println("未知错误！");
 					importResult.put("result","true");
-					importResult.put("cause", "未知错误，已成功导入至" + (causeRow-1) + "行！");
+					importResult.put("cause", "未知错误，已成功导入至第" + (causeRow-1) + "行！");
 					return importResult;
 				}
 				importResult.put("result","true");

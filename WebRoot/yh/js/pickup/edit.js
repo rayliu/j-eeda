@@ -322,7 +322,7 @@
     	$("#detailCheckBoxForm").submit();
     });
 
-    //点击保存的事件，保存拼车单信息
+    //点击保存的事件，保存拼车单信息 TODO
     var clickSavePickupOrder = function(e){
     	//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();		
@@ -330,6 +330,20 @@
         if(!$("#pickupOrderForm").valid()){
 	       	return false;
         }
+        
+        /*$("driverAssistantList[name='officeSelect']").each(function(){
+			if($(this).val()!=null&&$(this).val()!=""){
+				officeIds.push($(this).val());
+			}		
+   		});
+		$("driverAssistantList[name='customerSelect']").each(function(){
+			if($(this).val()!=null&&$(this).val()!=""){
+				customerIds.push($(this).val());
+			}
+   		});
+		$("#officeIds").val(officeIds.toString());
+		$("#customerIds").val(customerIds.toString());*/
+		
 		//异步向后台提交数据
         savePickupOrderFunction();
     };
@@ -1270,4 +1284,50 @@
 			}
 		}
 	});
+    
+    //新增跟车人员
+    $("#addAssistant").on('keyup click',function(){
+		$("#driverAssistantList").append('<tr><td><input class="form-control name_filter" name="name"></td>'
+				+'<td><input class="form-control" name="phone"></td>'
+                +'<td><a class="btn removeOffice" title="删除"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
+	});
+    
+    //移除跟车人员
+	$("#driverAssistantTable").on('click','.removeOffice',function(){
+		$(this).parent().parent().remove();
+	});
+    
+	//点击文本框显示跟车人员列表
+	$('#driverAssistantTable').on('keyup click', 'input[name=name]', function(){
+		
+		var name = $(this);
+		var inputStr = $(this).val();
+		$(this).next().remove();
+		$.get("/pickupOrder/findDriverAssistant", {input:inputStr}, function(data){
+			var str = "";
+            for(var i = 0; i < data.length; i++)
+            	str += "<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' name='"+data[i].NAME+"' phone='"+data[i].PHONE+"' >"+data[i].NAME+"</a></li>";
+            name.after('<ul class="pull-right dropdown-menu default dropdown-scroll driverAssistantList" tabindex="-1" style="top: 35%; left: 2%;">'+str+'</ul>');
+            name.next().css({left:name.position().left+"px", top:name.position().top+32+"px"}).show();
+        },'json');
+	});
+	  	
+	// 选中列表跟车人员
+	$('#driverAssistantTable').on('mousedown', '.fromLocationItem', function(e){	
+		$(this).parent().parent().parent().find("input[name='name']").val($(this).attr('name'));
+		$(this).parent().parent().parent().next().find("input[name='phone']").val($(this).attr('phone'));
+	    $(this).parent().parent().hide();   
+    });
+	
+    // 没选中客户，焦点离开，隐藏列表
+	$('#driverAssistantTable').on('blur', '.name_filter', function(e){	
+    	$(this).next().eq(0).css({left:$(this).position().left+"px", top:$(this).position().top+32+"px"}).hide();
+    });
+
+    //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+    $('#customer_filter').on('blur', function(){
+        $('#companyList').hide();
+    });
+    
+    
 });

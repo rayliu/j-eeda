@@ -61,6 +61,8 @@
 		                                <input id="uncheckedDetail" type="hidden" name="uncheckedDetail"/>   
 		                                <input id="detailIds" name="detailIds" type="hidden" value="${detailIds!''}">
 					                    <input id="cargoIds" name="cargoIds" type="hidden" value="${cargoIds!''}">
+					                    <input id="driverAssistantNames" name="driverAssistantNames" type="hidden" value="">
+					                    <input id="driverAssistantPhones" name="driverAssistantPhones" type="hidden" value="">
 					                    <!-- <input id="cargoNumbers" name="cargoNumbers" type="hidden" value="${cargoNumbers!''}"> -->                                 	
                                         
                                         	
@@ -127,7 +129,7 @@
                                         <input type="text" class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
                                         </div>
                                     </div>
-                                    <div id = 'show_follow_name'>
+                                    <!-- <div id = 'show_follow_name'>
 	                                     <div class="form-group">
 	                                     <label>跟车人</label>
 	                                     <input class="form-control" id="car_follow_name" name="car_follow_name" value="${pickupOrder.car_follow_name!''}">
@@ -137,7 +139,7 @@
 	                                     <label>跟车人电话</label>
 	                                     <input class="form-control" id="car_follow_phone" name="car_follow_phone" value="${pickupOrder.car_follow_phone!''}">
 	                                     </div>
-                                     </div>                              
+                                     </div> -->                              
                                             <!-- <div class="form-group" id="paymentDiv" style="display: none;">
                                             <label>应付费用</label>
                                             <input class="form-control" id="payment" name="payment" value="${pickupOrder.payment!''}">
@@ -192,21 +194,43 @@
                                   
 	                                   <div class="col-lg-6">
 	                                  		<h3>拼车信息</h3>                                           
-	                                            <div class="form-group">
+                                            <div class="form-group">
 	                                                <label>拼车单号</label> <strong 	id="showOrderNo">${order_no!''} ${pickupOrder.depart_no!''}</strong>
-	                                            </div>
-	                                            <div class="form-group">
+                                            </div>
+                                            <div class="form-group">
 	                                                <label>单据状态</label>   ${status!''} ${pickupOrder.status!''}
-	                                            </div>
-	                                            <div class="form-group">
+                                            </div>
+                                            <div class="form-group">
 	                                            <label>创建人</label>  <%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>
 	                                            <%if(userLogin2.c_name!''==''){ %>${userLogin2.user_name!''}<%}else{%>${userLogin2.c_name!''}<%}%>                                       
 	                                        </div>
 		                                                                                                                         
 											<div class="form-group">
 	                                            <label>备注</label>
-	                                            <textarea class="form-control" rows="8" id="remark" name="remark">${pickupOrder.remark!''}</textarea>
+	                                            <textarea class="form-control" rows="1" id="remark" name="remark">${pickupOrder.remark!''}</textarea>
 	                                        </div> 
+	                                        <h3>跟车人员信息 <button id ="addAssistant" type="button" class="btn btn-default btn-sm">添加</button></h3> 
+	                                        <div class="form-group">
+					                          	<table class="table table-striped table-bordered table-hover" id="driverAssistantTable" >
+					                              <thead>
+					                                  <tr>
+					                                      <th>跟车人</th>
+					                                      <th>联系电话</th>
+					                                      <th></th>
+					                                  </tr>
+					                              </thead>
+					                              <tbody id="driverAssistantList">
+					                              </tbody>
+					                              <div id="abc" style="display:none;">
+	                                            	<%
+       													for(paymentItem in paymentItemList){ %>
+       														<option value='${paymentItem.ID!''}'>${paymentItem.NAME!''}</option>
+       												<%		
+       													}
+       												%>
+	                                            </div>
+					                          </table>
+					                        </div>
 	                                   </div>
                                     </div>   
                                 </form>

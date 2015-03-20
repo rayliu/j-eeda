@@ -26,6 +26,7 @@ import models.UserLogin;
 import models.yh.contract.Contract;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
+import models.yh.profile.DriverAssistant;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -40,7 +41,6 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -2109,4 +2109,18 @@ public class PickupOrderController extends Controller {
     	}
     	renderJson(serialNoList);
     }
+    
+    //查询所有跟车人员
+    public void findDriverAssistant() {
+		String input = getPara("input");
+		List<DriverAssistant> driverAssistantList = Collections.EMPTY_LIST;
+		if (input.trim().length() > 0) {
+			driverAssistantList = DriverAssistant.dao.find("select id,name,phone from driver_assistant where (is_stop is null or is_stop = 0) and name like '%" + input + "%'");
+		} else {
+			driverAssistantList = DriverAssistant.dao.find("select id,name,phone from driver_assistant where (is_stop is null or is_stop = 0)");
+		}
+		renderJson(driverAssistantList);
+	}
+    
+    
 }
