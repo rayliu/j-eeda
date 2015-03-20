@@ -101,6 +101,19 @@ public class PrivilegeController extends Controller {
 	public void add(){
 		render("/yh/profile/privilege/RolePrivilege.html");
 	}
+	public void addOrUpdate(){
+		String id = getPara("id");
+		String userName = currentUser.getPrincipal().toString();
+		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+		Role role = Role.dao.findById(id);
+		List<RolePermission> list = RolePermission.dao.find("select * from role_permission where role_code = ? and office_id = ?",role.get("code"),currentoffice.get("office_id"));
+		if(list.size()>0){
+			setAttr("rolename", role.get("name"));
+			render("/yh/profile/privilege/RolePrivilegeEdit.html");
+		}else{
+			render("/yh/profile/privilege/RolePrivilege.html");
+		}
+	}
 	/*查找没有权限的角色*/
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_CREATE})
 	public void seachNewRole(){
