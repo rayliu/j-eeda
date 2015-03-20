@@ -1,44 +1,23 @@
+var queryRole = function(){
+	$.post('/privilege/seachNewRole', function(data){
+		var roleList =$("#role_filter");
+		roleList.empty();
+		roleList.append("<option value='' checked>请选择角色</option>");
+		for(var i = 0; i < data.length; i++)
+		{
+			var name = data[i].NAME;
+			if(name == null){
+				name = '';
+			}
+			
+			roleList.append("<option value='"+data[i].NAME+"'>"+name+"</option>");
+		}
+	},'json');
+};
+
 $(document).ready(function() {
   $('#menu_profile').addClass('active').find('ul').addClass('in');
-
-  $('#role_filter').on('click', function(){
-	    /*var inputStr = $('#role_filter').val();*/
-		$.post('/privilege/seachNewRole', function(data){
-			var roleList =$("#roleList");
-			roleList.empty();
-			for(var i = 0; i < data.length; i++)
-			{
-				var name = data[i].NAME;
-				if(name == null){
-					name = '';
-				}
-				
-				roleList.append("<li><a tabindex='-1' class='fromLocationItem''name='"+data[i].NAME+"' >"+name+" "+"</a></li>");
-			}
-		},'json');
-
-		$("#roleList").css({ 
-      	left:$(this).position().left+"px", 
-      	top:$(this).position().top+32+"px" 
-      }); 
-      $('#roleList').show();
-  	});
-  
-
-	$('#role_filter').on('blur', function(){
-		$('#roleList').hide();
-	});
-
-
-	$('#roleList').on('blur', function(){
-		$('#roleList').hide();
-	});
-
-	$('#roleList').on('mousedown', function(){
-		return false;
-	});
-
-	
+  queryRole();
 
 	var numberName="";
 	var privilege_table = $('#eeda-table').dataTable({
@@ -72,11 +51,11 @@ $(document).ready(function() {
         ] 
     });
 	
-	$('#roleList').on('mousedown', '.fromLocationItem', function(e){
+/*	$('#roleList').on('mousedown', '.fromLocationItem', function(e){
 		var message = $(this).text();
 		$('#role_filter').val(message.substring(0, message.indexOf(" ")));
 		$('#roleList').hide();
-	});
+	});*/
 	
 	/*点击下一页没有保存上页的数据*/
 	var permission=[];
@@ -93,13 +72,16 @@ $(document).ready(function() {
         if(rolename != ""&&permission!=0){
         	$.get('/privilege/save?name='+rolename+'&permissions='+permissions, function(data){
         		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+        		$("#role_filter").empty();
         		
-        		$("#role_filter").val("");
+        		queryRole();
         		$("input[name='permissionCheck']").each(function(){
                 	$(this).prop('checked',false);	
                 });
         		permission.splice(0,permission.length);
     		},'json');
+        }else{
+        	$.scojs_message('保存失败,当前没有选择角色或者权限', $.scojs_message.TYPE_ERROR);
         }
        
     });

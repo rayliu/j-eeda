@@ -1,46 +1,24 @@
+var queryRole = function(){
+	$.get('/privilege/roleList', function(data){
+		var roleList =$("#role_filter");
+		roleList.empty();
+		roleList.append("<option value='' checked>请选择角色</option>");
+		for(var i = 0; i < data.length; i++)
+		{
+			var name = data[i].NAME;
+			if(name == null){
+				name = '';
+			}
+			
+			roleList.append("<option value='"+data[i].NAME+"'>"+name+"</option>");
+		}
+	},'json');
+};
+
+
 $(document).ready(function() {
   $('#menu_profile').addClass('active').find('ul').addClass('in');
-  
-  $('#role_filter').on('keyup click', function(){
-		//var inputStr = $('#role_filter').val();
-		$.get('/privilege/roleList', function(data){
-			var roleList =$("#roleList");
-			roleList.empty();
-			for(var i = 0; i < data.length; i++)
-			{
-				var name = data[i].NAME;
-				if(name == null){
-					name = '';
-				}
-				
-				roleList.append("<li><a tabindex='-1' class='fromLocationItem''name='"+data[i].NAME+"' >"+name+" "+"</a></li>");
-			}
-		},'json');
-
-		$("#roleList").css({ 
-      	left:$(this).position().left+"px", 
-      	top:$(this).position().top+32+"px" 
-      }); 
-      $('#roleList').show();
-  });
-  
-
-	$('#role_filter').on('blur', function(){
-		$('#roleList').hide();
-	});
-
-
-	$('#roleList').on('blur', function(){
-		$('#roleList').hide();
-	});
-
-	$('#roleList').on('mousedown', function(){
-		return false;
-	});
-
-	
-
-	
+  queryRole();
 	var privilege_table = $('#eeda-table').dataTable({
     	"bFilter" : false,
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -75,10 +53,7 @@ $(document).ready(function() {
         ] 
     });
 	
-	$('#roleList').on('mousedown', '.fromLocationItem', function(e){
-		var message = $(this).text();
-		$('#role_filter').val(message.substring(0, message.indexOf(" ")));
-		$('#roleList').hide();
+	$('#role_filter').on('change',function(e){
 		
 		var rolename = $('#role_filter').val();
 		
@@ -103,7 +78,6 @@ $(document).ready(function() {
       },
       success: function(element) {
       	//element.parent().removeClass('has-error').addClass('has-success');
-      	
       }
         
  });	

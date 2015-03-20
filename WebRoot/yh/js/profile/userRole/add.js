@@ -1,3 +1,19 @@
+var queryUser = function(){ 
+	$.post('/userRole/userList', function(data){
+		var userList =$("#user_filter");
+		userList.empty();
+		userList.append("<option value='' checked>请选择用户</option>");
+		for(var i = 0; i < data.length; i++)
+		{
+			var user_name = data[i].USER_NAME;
+			if(user_name == null){
+				user_name = '';
+			}
+			
+			userList.append("<option value='"+user_name+"'>"+user_name+"</option>");
+		}
+	},'json');
+};
 $(document).ready(function() {
 	
 	$('#menu_profile').addClass('active').find('ul').addClass('in');
@@ -26,53 +42,7 @@ $(document).ready(function() {
           
         ] 
     });
- 
-    $('#user_filter').on('click', function(){
-		/*var inputStr = $('#user_filter').val();*/
-		$.get('/userRole/userList', function(data){
-			var userList =$("#userList");
-			userList.empty();
-			for(var i = 0; i < data.length; i++)
-			{
-				var user_name = data[i].USER_NAME;
-				if(user_name == null){
-					user_name = '';
-				}
-				
-				userList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].ID+"'user_name='"+data[i].USER_NAME+"' >"+user_name+" "+"</a></li>");
-			}
-		},'json');
-
-		$("#userList").css({ 
-        	left:$(this).position().left+"px", 
-        	top:$(this).position().top+32+"px" 
-        }); 
-        $('#userList').show();
-    });
-    
-    // 没选中供应商，焦点离开，隐藏列表
-	$('#user_filter').on('blur', function(){
- 		$('#userList').hide();
- 	});
-
-	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
-	$('#userList').on('blur', function(){
- 		$('#userList').hide();
- 	});
-
-	$('#userList').on('mousedown', function(){
-		return false;
-	});
-
-	
-	$('#userList').on('mousedown', '.fromLocationItem', function(e){
-		var message = $(this).text();
-		$('#user_filter').val(message.substring(0, message.indexOf(" ")));
-		$('#user_id').val($(this).attr('partyId'));
-		var userName = $("#user_name");
-		userName.empty();
-        $('#userList').hide();
-    });
+    queryUser();
     
 	var role=[];
 	 $("#eeda-table").on('click','.unChecked',function(){
@@ -82,25 +52,27 @@ $(document).ready(function() {
 	        		role.push($(this).val());
 	        	}
 	     });
-		 console.log(role);
+		 
 	  });
     $('#saveBtn').click(function(e){
         e.preventDefault();
-       
-        
         var username = $("#user_filter").val();
         var roles = role.toString();
         
         if(username != ""&&role.length!=0){
         	$.post('/userRole/saveUserRole?name='+username+'&roles='+roles, function(data){
         		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-        		
-        		$("#user_filter").val("");
+        		$("#user_filter").empty();
+        		queryUser();
+        		/*$("#user_filter").empty();;*/
         		$("input[name='roleCheck']").each(function(){
                 	$(this).prop('checked',false);	
                 });
+        		
         		role.splice(0,role.length);	
     		},'json');
+        }else{
+        	$.scojs_message('保存失败，当前没有选择用户或者角色', $.scojs_message.TYPE_ERROR);
         }
        
     });
