@@ -24,6 +24,7 @@ import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.contract.Contract;
+import models.yh.pickup.PickupDriverAssistant;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 import models.yh.profile.DriverAssistant;
@@ -606,6 +607,9 @@ public class PickupOrderController extends Controller {
         String[] orderids = getPara("orderid").split(",");
         String[] cargoIds = getPara("cargoIds").split(",");
         /*String[] cargoNumbers = getPara("cargoNumbers").split("&");*/
+        String[] driverAssistantNames = getPara("driverAssistantNames").split(",");
+        String[] driverAssistantPhones = getPara("driverAssistantPhones").split(",");
+        
         if (pickId == null || "".equals(pickId)) {
             pickupOrder = new DepartOrder();
             pickupOrder.set("depart_no", OrderNoGenerator.getNextOrderNo("PC"));
@@ -849,6 +853,17 @@ public class PickupOrderController extends Controller {
             pickupOrder.update();
             updateDepartTransfer(pickupOrder, getPara("orderid"), checkedDetail, uncheckedDetailIds);
         }
+        
+        //跟车人员
+        List<PickupDriverAssistant> assistantList = PickupDriverAssistant.dao.find("select id from pickup_driver_assistant where pickup_id = ?",pickupOrder.get("id"));
+        for (PickupDriverAssistant pickupDriverAssistant : assistantList) {
+        	PickupDriverAssistant.dao.deleteById(pickupDriverAssistant.get("id"));
+		}
+        for (int i = 0; i < driverAssistantNames.length; i++) {
+        	PickupDriverAssistant assistant = new PickupDriverAssistant();
+        	assistant.set("pickup_id",pickupOrder.get("id")).set("name",driverAssistantNames[i]).set("phone",driverAssistantPhones[i]).save();
+		}
+        
         renderJson(pickupOrder);
     }
     
@@ -2120,6 +2135,21 @@ public class PickupOrderController extends Controller {
 			driverAssistantList = DriverAssistant.dao.find("select id,name,phone from driver_assistant where (is_stop is null or is_stop = 0)");
 		}
 		renderJson(driverAssistantList);
+	}
+    
+    //查询调车单跟车人员
+    public void findPickupDriverAssistant() {
+    	String pickId = getPara("pickupId");
+    	List<PickupDriverAssistant> assistantList = PickupDriverAssistant.dao.find("select id,name,phone from pickup_driver_assistant where pickup_id = ?",pickId);
+		renderJson(assistantList);
+	}
+    
+    //查询调车单跟车人员
+    public void deletePickupDriverAssistant() {
+    	String id = getPara("id");
+    	if(!"".equals(id) && id != null)
+    		PickupDriverAssistant.dao.deleteById(id);
+    	renderJson("{\"success\":true}");
 	}
     
     

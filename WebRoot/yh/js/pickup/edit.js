@@ -306,6 +306,15 @@
 		    });
 	    	$("#checkedDetail").val(detailIds);
 	    	$("#uncheckedDetail").val(uncheckedDetailIds);
+	    	//跟车人员
+	        var names = [];
+	        var phones = [];
+	        $("#driverAssistantList tr").each(function (){
+	        	names.push($(this).find("td").find("input[name='name']").val());
+	        	phones.push($(this).find("td").find("input[name='phone']").val());
+			});
+			$("#driverAssistantNames").val(names.toString());
+			$("#driverAssistantPhones").val(phones.toString());
 	    	if(uncheckedDetailIds.length > 0){
 	    		handlePickkupOrderDetail();
 	    		// 对一张单进行多次提货,把选中的和没选中的单品区分开来,然后在进行判断s
@@ -330,19 +339,6 @@
         if(!$("#pickupOrderForm").valid()){
 	       	return false;
         }
-        
-        /*$("driverAssistantList[name='officeSelect']").each(function(){
-			if($(this).val()!=null&&$(this).val()!=""){
-				officeIds.push($(this).val());
-			}		
-   		});
-		$("driverAssistantList[name='customerSelect']").each(function(){
-			if($(this).val()!=null&&$(this).val()!=""){
-				customerIds.push($(this).val());
-			}
-   		});
-		$("#officeIds").val(officeIds.toString());
-		$("#customerIds").val(customerIds.toString());*/
 		
 		//异步向后台提交数据
         savePickupOrderFunction();
@@ -1285,16 +1281,40 @@
 		}
 	});
     
+    
+    //查询跟车人员
+    var pickupOrderId = $("#pickupOrderId").val();
+    $.post('/pickupOrder/findPickupDriverAssistant',{pickupId:pickupOrderId},function(data){
+  		 if(data.length > 0){
+  			var driverAssistantList = $("#driverAssistantList");
+  			//driverAssistantList.remove();
+  			for(var i=0; i<data.length; i++){
+  				driverAssistantList.append('<tr><td><input class="form-control name_filter" name="name" value="'+data[i].NAME+'"></td>'
+  						+'<td><input class="form-control" name="phone" value="'+data[i].PHONE+'"></td>'
+  		                +'<td><a class="btn removeOffice" title="删除" assistant="'+data[i].ID+'"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
+  			}
+  		 }
+	 },'json');
+    
+    
     //新增跟车人员
     $("#addAssistant").on('keyup click',function(){
 		$("#driverAssistantList").append('<tr><td><input class="form-control name_filter" name="name"></td>'
 				+'<td><input class="form-control" name="phone"></td>'
-                +'<td><a class="btn removeOffice" title="删除"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
+                +'<td><a class="btn removeOffice" title="删除" assistant=""><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
 	});
     
     //移除跟车人员
 	$("#driverAssistantTable").on('click','.removeOffice',function(){
-		$(this).parent().parent().remove();
+		var id = $(this).attr("assistant");
+		var tagA = $(this);
+		if(id != "" && id != null){
+			$.post('/pickupOrder/deletePickupDriverAssistant',{id:id},function(data){
+				tagA.parent().parent().remove();
+			 },'json');
+		}else{
+			tagA.parent().parent().remove();
+		}
 	});
     
 	//点击文本框显示跟车人员列表

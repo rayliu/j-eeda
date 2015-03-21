@@ -82,6 +82,7 @@ import models.yh.delivery.DeliveryPlanOrder;
 import models.yh.delivery.DeliveryPlanOrderCarinfo;
 import models.yh.delivery.DeliveryPlanOrderDetail;
 import models.yh.delivery.DeliveryPlanOrderMilestone;
+import models.yh.pickup.PickupDriverAssistant;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 import models.yh.profile.CustomizeField;
@@ -100,7 +101,6 @@ import com.jfinal.config.Interceptors;
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
-import com.jfinal.ext.plugin.quartz.QuartzPlugin;
 import com.jfinal.ext.plugin.shiro.ShiroInterceptor;
 import com.jfinal.ext.plugin.shiro.ShiroPlugin;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
@@ -419,6 +419,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("order_attachment_file", OrderAttachmentFile.class);
         //跟车人员 
         arp.addMapping("driver_assistant", DriverAssistant.class);
+        arp.addMapping("pickup_driver_assistant", PickupDriverAssistant.class);
         
     }
 
