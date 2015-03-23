@@ -607,6 +607,7 @@ public class PickupOrderController extends Controller {
         String[] orderids = getPara("orderid").split(",");
         String[] cargoIds = getPara("cargoIds").split(",");
         /*String[] cargoNumbers = getPara("cargoNumbers").split("&");*/
+        String[] driverAssistantIds = getPara("driverAssistantIds").split(",");
         String[] driverAssistantNames = getPara("driverAssistantNames").split(",");
         String[] driverAssistantPhones = getPara("driverAssistantPhones").split(",");
         
@@ -861,9 +862,12 @@ public class PickupOrderController extends Controller {
 		}
         for (int i = 0; i < driverAssistantNames.length; i++) {
         	PickupDriverAssistant assistant = new PickupDriverAssistant();
-        	assistant.set("pickup_id",pickupOrder.get("id")).set("name",driverAssistantNames[i]).set("phone",driverAssistantPhones[i]).save();
+        	assistant.set("pickup_id",pickupOrder.get("id"))
+        	.set("driver_assistant_id",driverAssistantIds[i])
+        	.set("name",driverAssistantNames[i])
+        	.set("phone",driverAssistantPhones[i])
+        	.save();
 		}
-        
         renderJson(pickupOrder);
     }
     

@@ -307,14 +307,18 @@
 	    	$("#checkedDetail").val(detailIds);
 	    	$("#uncheckedDetail").val(uncheckedDetailIds);
 	    	//跟车人员
+	    	var AssistantIds = [];
 	        var names = [];
 	        var phones = [];
 	        $("#driverAssistantList tr").each(function (){
+	        	AssistantIds.push($(this).attr("assistantid"));
 	        	names.push($(this).find("td").find("input[name='name']").val());
 	        	phones.push($(this).find("td").find("input[name='phone']").val());
 			});
+	        $("#driverAssistantIds").val(AssistantIds.toString());
 			$("#driverAssistantNames").val(names.toString());
 			$("#driverAssistantPhones").val(phones.toString());
+			console.log("ids:"+AssistantIds);
 	    	if(uncheckedDetailIds.length > 0){
 	    		handlePickkupOrderDetail();
 	    		// 对一张单进行多次提货,把选中的和没选中的单品区分开来,然后在进行判断s
@@ -339,7 +343,6 @@
         if(!$("#pickupOrderForm").valid()){
 	       	return false;
         }
-		
 		//异步向后台提交数据
         savePickupOrderFunction();
     };
@@ -1289,7 +1292,7 @@
   			var driverAssistantList = $("#driverAssistantList");
   			//driverAssistantList.remove();
   			for(var i=0; i<data.length; i++){
-  				driverAssistantList.append('<tr><td><input class="form-control name_filter" name="name" value="'+data[i].NAME+'"></td>'
+  				driverAssistantList.append('<tr assistantid="'+data[i].DRIVER_ASSISTANT_ID+'"><td><input class="form-control name_filter" name="name" value="'+data[i].NAME+'"></td>'
   						+'<td><input class="form-control" name="phone" value="'+data[i].PHONE+'"></td>'
   		                +'<td><a class="btn removeOffice" title="删除" assistant="'+data[i].ID+'"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
   			}
@@ -1299,7 +1302,7 @@
     
     //新增跟车人员
     $("#addAssistant").on('keyup click',function(){
-		$("#driverAssistantList").append('<tr><td><input class="form-control name_filter" name="name"></td>'
+		$("#driverAssistantList").append('<tr assistantid=""><td><input class="form-control name_filter" name="name"></td>'
 				+'<td><input class="form-control" name="phone"></td>'
                 +'<td><a class="btn removeOffice" title="删除" assistant=""><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
 	});
@@ -1326,7 +1329,7 @@
 		$.get("/pickupOrder/findDriverAssistant", {input:inputStr}, function(data){
 			var str = "";
             for(var i = 0; i < data.length; i++)
-            	str += "<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' name='"+data[i].NAME+"' phone='"+data[i].PHONE+"' >"+data[i].NAME+"</a></li>";
+            	str += "<li><a tabindex='-1' class='fromLocationItem' name='"+data[i].NAME+"' phone='"+data[i].PHONE+"' assistantid='"+data[i].ID+"'>"+data[i].NAME+"</a></li>";
             name.after('<ul class="pull-right dropdown-menu default dropdown-scroll driverAssistantList" tabindex="-1" style="top: 35%; left: 2%;">'+str+'</ul>');
             name.next().css({left:name.position().left+"px", top:name.position().top+32+"px"}).show();
         },'json');
@@ -1334,6 +1337,7 @@
 	  	
 	// 选中列表跟车人员
 	$('#driverAssistantTable').on('mousedown', '.fromLocationItem', function(e){	
+		$(this).parent().parent().parent().parent().attr("assistantid",$(this).attr('assistantid'));
 		$(this).parent().parent().parent().find("input[name='name']").val($(this).attr('name'));
 		$(this).parent().parent().parent().next().find("input[name='phone']").val($(this).attr('phone'));
 	    $(this).parent().parent().hide();   

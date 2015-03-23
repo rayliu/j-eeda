@@ -855,7 +855,7 @@ $(document).ready(function() {
  			return nRow;
  		 },
          "aoColumns": [
-             { "mDataProp": "ITEM", "sWidth":"80px"},
+             /*{ "mDataProp": "ITEM", "sWidth":"80px"},*/
              { "mDataProp": "USERNAME", "sWidth":"120px",
             	 "fnRender": function(obj) {
                      if(obj.aData.USERNAME!='' && obj.aData.USERNAME != null){

@@ -3,14 +3,11 @@ package controllers.yh.carmanage;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import models.DepartOrder;
 import models.TransferOrder;
@@ -22,12 +19,15 @@ import models.yh.carmanage.CarSummaryDetailOtherFee;
 import models.yh.carmanage.CarSummaryDetailRouteFee;
 import models.yh.carmanage.CarSummaryDetailSalary;
 import models.yh.carmanage.CarSummaryOrder;
+import models.yh.pickup.PickupDriverAssistant;
+import models.yh.profile.DriverAssistant;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
+import org.h2.store.Data;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -37,7 +37,6 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.profile.CarinfoController;
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -367,7 +366,7 @@ public class CarSummaryController extends Controller {
         	//调车单号
         	orderNo = OrderNoGenerator.getNextOrderNo("XC");
         	
-        	result = carSummaryOrder.set("order_no", orderNo).set("car_no", carNo).set("main_driver_name", mainDriverName)
+        	carSummaryOrder.set("order_no", orderNo).set("car_no", carNo).set("main_driver_name", mainDriverName)
             		.set("main_driver_amount", mainDriverAmount).set("minor_driver_name", minorDriverName)
             		.set("minor_driver_amount", minorDriverAmount).set("start_car_mileage", startCarMileage)
             		.set("finish_car_mileage", finishCarMileage).set("month_start_car_next", monthStartCarNext)
@@ -376,43 +375,65 @@ public class CarSummaryController extends Controller {
             		.set("actual_payment_amount", actualPaymentAmount).set("create_data", sqlDate)
             		.set("status", carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW).save();
         	
-        	if(result){
-        		long id = carSummaryOrder.getLong("id");
-        		List<Long> orderIds = new ArrayList<Long>();
-        		
-        		for (int i = 0; i < pickupIds.length; i++) {
-        			//修改调车单状态为：已处理
-        			DepartOrder departOrder = DepartOrder.dao.findById(pickupIds[i]);
-        			departOrder.set("car_summary_type", "processed");
-        			departOrder.update();
-        			//插入从表数据
-        			CarSummaryDetail carSummaryDetail = new CarSummaryDetail();
-        			carSummaryDetail.set("car_summary_id", id);
-        			carSummaryDetail.set("pickup_order_id", departOrder.get("id"));
-        			carSummaryDetail.set("pickup_order_no", departOrder.get("depart_no"));
-        			carSummaryDetail.save();
-        			//记录运输单id
-        			List<Record> recList = Db.find("select * from depart_transfer where pickup_id = "+departOrder.get("id"));
-        			for (Record record : recList) {
-        				orderIds.add(record.getLong("order_id"));
-					}
+    		long id = carSummaryOrder.getLong("id");
+    		List<Long> orderIds = new ArrayList<Long>();
+    		
+    		for (int i = 0; i < pickupIds.length; i++) {
+    			//修改调车单状态为：已处理
+    			DepartOrder departOrder = DepartOrder.dao.findById(pickupIds[i]);
+    			departOrder.set("car_summary_type", "processed");
+    			departOrder.update();
+    			//插入从表数据
+    			CarSummaryDetail carSummaryDetail = new CarSummaryDetail();
+    			carSummaryDetail.set("car_summary_id", id);
+    			carSummaryDetail.set("pickup_order_id", departOrder.get("id"));
+    			carSummaryDetail.set("pickup_order_no", departOrder.get("depart_no"));
+    			carSummaryDetail.save();
+    			//记录运输单id
+    			List<Record> recList = Db.find("select * from depart_transfer where pickup_id = "+departOrder.get("id"));
+    			for (Record record : recList) {
+    				orderIds.add(record.getLong("order_id"));
 				}
-        		//创建费用合计表初始数据
-        		initCarSummaryDetailOtherFeeData(id);
-        		//创建行车里程碑
-        		saveCarSummaryOrderMilestone(id,carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW);
-        		//设置默认运输单分摊比例
-        		double number = 1.0D/orderIds.size();
-        		BigDecimal b = new BigDecimal(number); 
-        		double rate = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
-        		for (Long orderId : orderIds) {
-        			TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
-    				transferOrder.set("car_summary_order_share_ratio", rate);
-    				transferOrder.update();
+    			//送货员工资明细
+    			List<PickupDriverAssistant> assistantList = PickupDriverAssistant.dao.find("select * from pickup_driver_assistant where pickup_id = ?",pickupIds[i]);
+    			for (PickupDriverAssistant pickupDriverAssistant : assistantList) {
+    				if(!"".equals(pickupDriverAssistant.get("driver_assistant_id")) && pickupDriverAssistant.get("driver_assistant_id") != null){
+        				DriverAssistant driver = DriverAssistant.dao.findById(pickupDriverAssistant.get("driver_assistant_id"));
+        				CarSummaryDetailSalary salary = new CarSummaryDetailSalary();
+        				salary.set("car_summary_id", id)
+        				.set("username", pickupDriverAssistant.get("name"))
+						.set("work_type", "跟车人员")
+						.set("create_data", new Date());
+        				if(driver != null){
+							salary.set("deserved_amount", driver.get("daily_wage"));
+						}
+        				salary.save();
+    				}else{
+    					CarSummaryDetailSalary salary = new CarSummaryDetailSalary();
+        				salary.set("car_summary_id", id)
+        				.set("username", pickupDriverAssistant.get("name"))
+						.set("work_type", "跟车人员")
+						.set("create_data", new Date())
+						.save();
+    				}
 				}
-        		
-        		carSummaryId = Long.toString(id);
-        	}
+			}
+    		//创建费用合计表初始数据
+    		initCarSummaryDetailOtherFeeData(id);
+    		//创建行车里程碑
+    		saveCarSummaryOrderMilestone(id,carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW);
+    		//设置默认运输单分摊比例
+    		double number = 1.0D/orderIds.size();
+    		BigDecimal b = new BigDecimal(number); 
+    		double rate = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
+    		for (Long orderId : orderIds) {
+    			TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
+				transferOrder.set("car_summary_order_share_ratio", rate);
+				transferOrder.update();
+			}
+    		
+    		carSummaryId = Long.toString(id);
+    		
         }else{//修改时
         	CarSummaryOrder carSummary = CarSummaryOrder.dao.findById(carSummaryId);
         	if(carSummary != null){
