@@ -37,13 +37,25 @@ $(document).ready(function() {
         "aoColumns": [           
             { "mDataProp": null,"sWidth":"15%",
             	"fnRender":function(obj){
-					return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" name="checkmodel" >本模块全选</div>';
+            		console.log(obj.aData.IS_AUTHORIZE);
+            		if(obj.aData.IS_AUTHORIZE !=null && obj.aData.IS_AUTHORIZE !=0){
+            			
+            			return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" name="checkmodel" >本模块全选</div>';
+            		}else{
+            			return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" disabled="true" class="model_checkAll" name="checkmodel" >本模块全选</div>';
+            		}
+					
             }},
 			{ "mDataProp": null,
 				"fnRender":function(obj){
 					var str = "";
 					for(var i=0;i<obj.aData.CHILDRENS.length;i++){
-						str +='<div class="col-md-6"><input type="checkbox" class="unChecked" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
+						if(obj.aData.IS_AUTHORIZE !=null && obj.aData.IS_AUTHORIZE !=0){
+							str +='<div class="col-md-6"><input type="checkbox" class="unChecked" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
+						}else{
+							str +='<div class="col-md-6"><input type="checkbox" class="unChecked"  disabled="true" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
+						}
+						
 					}
 				
 				return str;
@@ -87,10 +99,15 @@ $(document).ready(function() {
     });
     $("#allCheck").on('click',function(){
     	$("input[name='permissionCheck']").each(function(){
-        	$(this).prop('checked',$("#allCheck").prop('checked'));	
+    		if($(this).prop('disabled')!=true){
+    			$(this).prop('checked',$("#allCheck").prop('checked'));	
+    		}
+        	
         });
     	$("input[name='checkmodel']").each(function(){
-        	$(this).prop('checked',$("#allCheck").prop('checked'));	
+    		if($(this).prop('disabled')!=true){
+    			$(this).prop('checked',$("#allCheck").prop('checked'));
+    		}
         });
     });
     $("#eeda-table").on('click','.unChecked',function(){    	

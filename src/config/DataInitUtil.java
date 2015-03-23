@@ -5,16 +5,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import models.Category;
 import models.Office;
 import models.Party;
 import models.PartyAttribute;
+import models.Permission;
 import models.Product;
 import models.Role;
+import models.RolePermission;
 import models.UserCustomer;
-import models.UserLogin;
 import models.UserOffice;
 import models.Warehouse;
 import models.yh.profile.Carinfo;
@@ -1171,9 +1173,12 @@ public class DataInitUtil {
     	//角色
        Role r = new Role();
        Role r1 = new Role();
+       Role r2 = new Role();
        r.set("code", "Manager").set("office_id", office.get("id")).set("name","经理").save();
        r1.set("code", "clerk").set("office_id", office.get("id")).set("name","客服").save();
-       //登录用户一个
+       r2.set("code", "admin").set("office_id", office.get("id")).set("name","系统管理员").save();
+      //给系统管理设置权限
+       initPermission(office,r2);
        
        //客户，供应商，
        Date createDate = Calendar.getInstance().getTime();
@@ -1257,13 +1262,6 @@ public class DataInitUtil {
        .set("office_person", "李生").set("phone", "13175892125").set("address","深圳").set("email", "test@eeda123.com")
        .set("type", "分公司").set("belong_office", office.get("id")).set("location", "310100").set("abbr", "深圳分公司").save();
        
-       UserLogin  ul = new UserLogin();
-       ul.set("user_name", "test"+tmp%(100000 - 1000 + 1) + 1000+"@eeda123.com").set("office_id", office.get("id")).set("password","123456").set("password_hint","123456").set("c_name", "测试用户").save();
-       
-       
-       UserOffice uf = new UserOffice();
-       uf.set("user_name", ul.get("user_name")).set("office_id", of.get("id")).set("is_main", true).save();
-       
        UserOffice uo = new UserOffice();
        uo.set("user_name", user.get("user_name")).set("office_id", of.get("id")).save();
        UserOffice uo1 = new UserOffice();
@@ -1286,6 +1284,19 @@ public class DataInitUtil {
        Warehouse w1 = new Warehouse();
        w1.set("warehouse_name","珠海仓库").set("warehouse_address", "珠海").set("warehouse_area", 450).set("warehouse_type", "ownWarehouse").set("status","active").set("office_id",of.get("id")).set("sp_name","珠海分公司").set("location", "440100").save();
     
-    
+    }
+    public static void initPermission(Record office, Role r){
+    	//将权限添加给默认用户
+    	List<Permission> plist = Permission.dao.find("select * from permission");
+    	if(plist.size()>0){
+    		for (Permission permission : plist) {
+				RolePermission rp = new RolePermission();
+				rp.set("role_code", r.get("code"));
+				rp.set("permission_code", permission.get("code"));
+				rp.set("office_id", office.get("id"));
+				rp.set("is_authorize", permission.get("is_authorize"));
+				rp.save();
+			}
+    	}
     }
 }

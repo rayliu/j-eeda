@@ -5,10 +5,12 @@ import models.UserLogin;
 import models.UserOffice;
 import models.UserRole;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import config.DataInitUtil;
 
@@ -19,7 +21,7 @@ public class RegisterUserController  extends Controller{
 	public void index(){
 		render("/yh/profile/registerUser/register.html");
 	}
-	
+	@Before(Tx.class)
 	public void saveRegistrant(){
 		
 		String userName = getPara("username");
@@ -51,6 +53,8 @@ public class RegisterUserController  extends Controller{
             user.set("password", againPassword);
         	user.set("office_id", office.get("id"));
         	Db.save("user_login", user);
+        	//初始化数据
+        	DataInitUtil.initBaseData(office,user);   
         	
         	//给当前默认系统管理员系统管理员角色
         	UserRole userRole = new UserRole();
@@ -64,8 +68,7 @@ public class RegisterUserController  extends Controller{
         	uo.set("is_main", true);
         	uo.save();
         	
-        	//初始化数据
-        	DataInitUtil.initBaseData(office,user);  
+        	
         	//保存成功后登录
         	forwardAction("/login");
 

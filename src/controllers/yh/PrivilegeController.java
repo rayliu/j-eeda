@@ -45,17 +45,25 @@ public class PrivilegeController extends Controller {
 	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_LIST})
 	//编辑和分配都是用这个list
 	public void list() {
+		//查询当前用户的父类公司的id
+		String userName = currentUser.getPrincipal().toString();
+		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
 		
 		String rolename = getPara("rolename");
 		String code = null;
 		if(rolename!=null){
-			Role role = Role.dao.findFirst("select * from role where name=?",rolename);
+			Role role = Role.dao.findFirst("select * from role where name=? and office_id=?",rolename,parentID);
 			code = role.get("code");
 		}
 		
 		List<Record> orders = new ArrayList<Record>();
 		//List<Permission> parentOrders =Permission.dao.find("select module_name from permission group by module_name");
-		List<Permission> parentOrders = Permission.dao.find("select module_name from permission");
+		List<Permission> parentOrders = Permission.dao.find("select p.module_name,rp.is_authorize from permission p left join role_permission rp on rp.permission_code = p.code where rp.role_code ='admin' and rp.office_id = ?",parentID);
 		List<Permission> po = new ArrayList<Permission>();
 		for (int i = 0; i < parentOrders.size(); i++) {
 			if(i!=0){
@@ -70,10 +78,12 @@ public class PrivilegeController extends Controller {
 		
 		for (Permission rp : po) {
 			String key = rp.get("module_name");
-			List<RolePermission> childOrders = RolePermission.dao.find("select p.code, p.name,p.module_name ,r.permission_code from permission p left join  (select * from role_permission rp where rp.role_code =?) r on r.permission_code = p.code where p.module_name=?",code,key);
+			List<RolePermission> childOrders = RolePermission.dao.find("select p.code, p.name,p.module_name ,r.permission_code,r.is_authorize from permission p left join  (select * from role_permission rp where rp.role_code =? and rp.office_id =?) r on r.permission_code = p.code"
+					+ "  where p.module_name=?",code,parentID,key);
 			Record r = new Record();
 			r.set("module_name", key);
 			r.set("childrens", childOrders);
+			r.set("is_authorize", rp.get("is_authorize"));
 			orders.add(r);
 			
 		}
@@ -151,7 +161,17 @@ public class PrivilegeController extends Controller {
 		String permissions = getPara("permissions");
 		String[] ps = permissions.split(",");
 		//根据角色名称找到角色代码
-		Role role = Role.dao.findFirst("select * from role where name=?",rolename);
+		//查询当前用户的父类公司的id
+		String userName = currentUser.getPrincipal().toString();
+		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
+		
+		
+		Role role = Role.dao.findFirst("select * from role where name=? and office_id = ?",rolename,parentID);
 		List<RolePermission> rp = RolePermission.dao.find("select * from role_permission where role_code =?",role.get("code"));
 		
 		 List<Object> ids = new ArrayList<Object>();
@@ -166,7 +186,7 @@ public class PrivilegeController extends Controller {
 	     ids = (List<Object>) returnList.get(0);
 	     List<String> saveList = (List<String>) returnList.get(1);
 	     for (Object pc : ids) {
-	    	 RolePermission.dao.findFirst("select * from role_permission where role_code=? and permission_code=?", role.get("code"),pc).delete();
+	    	 RolePermission.dao.findFirst("select * from role_permission where role_code=? and permission_code=? and office_id = ?", role.get("code"),pc,parentID).delete();
         }
         
         for (Object object : saveList) {
