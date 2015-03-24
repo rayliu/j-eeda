@@ -226,10 +226,17 @@ public class UserRoleController extends Controller {
 	public void permissionList(){
 		/*获取到用户的名称*/
 		String username = getPara("username");
+		//查询当前用户的父类公司的id
+		Office parentOffice = getCurrentUserOffice();
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
+		
 		
 		List<Record> orders = new ArrayList<Record>();
 		//List<Permission> parentOrders =Permission.dao.find("select module_name from permission group by module_name");
-		List<Permission> parentOrders = Permission.dao.find("select module_name from permission");
+		List<Permission> parentOrders = Permission.dao.find("select p.module_name,rp.is_authorize from permission p left join role_permission rp on rp.permission_code = p.code where rp.role_code ='admin' and rp.office_id = ?",parentID);
 		List<Permission> po = new ArrayList<Permission>();
 		for (int i = 0; i < parentOrders.size(); i++) {
 			if(i!=0){
@@ -246,10 +253,11 @@ public class UserRoleController extends Controller {
 			String key = rp.get("module_name");
 			/*select p.code, p.name,p.module_name ,r.permission_code from permission p left join  (select * from role_permission rp where rp.role_code =?) r on r.permission_code = p.code where p.module_name=?*/
 			
-			List<RolePermission> childOrders = RolePermission.dao.find("select distinct p.id, p.code, p.name,p.module_name ,r.permission_code from permission p left join (select rp.* from user_role  ur left join role_permission  rp on rp.role_code = ur.role_code where ur.user_name =?)r on r.permission_code = p.code where p.module_name=? order by p.id",username,key);
+			List<RolePermission> childOrders = RolePermission.dao.find("select distinct p.id, p.code, p.name,p.module_name ,r.permission_code from permission p left join (select rp.* from user_role  ur left join role_permission  rp on rp.role_code = ur.role_code where ur.user_name =? and  rp.office_id =  " + parentID + ")r on r.permission_code = p.code where p.module_name=? order by p.id",username,key);
 			Record r = new Record();
 			r.set("module_name", key);
 			r.set("childrens", childOrders);
+			r.set("is_authorize", rp.get("is_authorize"));
 			orders.add(r);
 			
 		}
@@ -259,6 +267,13 @@ public class UserRoleController extends Controller {
 		orderMap.put("aaData", orders);
 
 		renderJson(orderMap);
+	}
+
+	private Office getCurrentUserOffice() {
+		String userName = currentUser.getPrincipal().toString();
+		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+		return parentOffice;
 	}
 	
 }
