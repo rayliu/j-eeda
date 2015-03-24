@@ -3,68 +3,63 @@
 	<div id="page-wrapper">
 		<div class="row">
              <div class="col-lg-12">
-              	<h1 class="page-header">
-              		<h1 class="page-header">司机信息</h1>
-				</h1>
+              	<h3 class="page-header">司机信息</h3>
                  <div class="panel panel-default">
-                   <div class="panel-heading">
-                 		司机信息
-            		</div>
             		<div class="panel-body">
             			<div class="row-fluid">
-            				<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/spdriverinfo/saveSpDriver" method="post">
-						<input id="driverId" name="driverId" type="hidden" value="${lu.id!''}">
-					<div class="col-lg-6">
+	            			<form lass="form-horizontal" id='leadsForm' name="leadsForm" action="/spdriverinfo/saveSpDriver" method="post">
+							<input id="driverId" name="driverId" type="hidden" value="${lu.id!''}">
+						    <div class="col-lg-6">
 							 <div class="form-group ">
-			                 <label class="control-label">司机</label>
-			                 <input id="driver" name="driver" type="text" class="form-control" value="${lu2.contact_person!''}">
-			             </div>
-			             <div class="form-group ">
-			                 <label class="control-label">司机电话</label>
-			                 <input type="text" class="form-control" id="phone" name="phone" value="${lu2.phone!''}">
-			             </div>
-			             
-			           </div>
-			           <div class="col-lg-6">
-			             <div class="form-group ">
-			                 <label class="control-label">驾照类别</label>
-			                 <select class="form-control" id="license" name="license" >
-                                  <option>---选择类别---</option>
-                                  <option value="A1">A1</option>
-                                  <option value="A2">A2</option>
-                                  <option value="A3">A3</option>
-                                  <option value="B1">B1</option>
-                                  <option value="B2">B2</option>
-                                  <option value="C1">C1</option>
-                                  <option value="C2">C2</option>
-                                  <option value="C3">C3</option>
-                                  <option value="C4">C4</option>
-                                  <option value="D">D</option>
-                                  <option value="E">E</option>
-                                  <option value="F">F</option>
-                                  <option value="M">M</option>
-                                  <option value="N">N</option>
-                                  <option value="P">P</option>
-                              </select>
-			             </div>
-			             <div class="form-group ">
-			                 <label class="control-label">身份证</label>
-			                 <input type="text" class="form-control" id="identification" name="identification" value="${lu2.identification!''}">
-			             </div>
-			            </div>
-			           
-			            
-			            </div>
-			            <div class="col-lg-7">
-			             	<button type="submit" class="btn btn-default">保存</button>
-				            <a class="btn btn-default" href="/spdriverinfo/spdriverinfoIndex">返回</a>
-				        </div>
-			         </form>
+				                 <label class="control-label">司机</label>
+				                 <input id="driver" name="driver" type="text" class="form-control" value="${lu2.contact_person!''}">
+				             </div>
+				             <div class="form-group ">
+				                 <label class="control-label">司机电话</label>
+				                 <input type="text" class="form-control" id="phone" name="phone" value="${lu2.phone!''}">
+				             </div>
+				             
+				           </div>
+				           <div class="col-lg-6">
+				             <div class="form-group ">
+				                 <label class="control-label">驾照类别</label>
+				                 <select class="form-control" id="license" name="license" >
+	                                  <option>---选择类别---</option>
+	                                  <option value="A1">A1</option>
+	                                  <option value="A2">A2</option>
+	                                  <option value="A3">A3</option>
+	                                  <option value="B1">B1</option>
+	                                  <option value="B2">B2</option>
+	                                  <option value="C1">C1</option>
+	                                  <option value="C2">C2</option>
+	                                  <option value="C3">C3</option>
+	                                  <option value="C4">C4</option>
+	                                  <option value="D">D</option>
+	                                  <option value="E">E</option>
+	                                  <option value="F">F</option>
+	                                  <option value="M">M</option>
+	                                  <option value="N">N</option>
+	                                  <option value="P">P</option>
+	                              </select>
+				             </div>
+				             <div class="form-group ">
+				                 <label class="control-label">身份证</label>
+				                 <input type="text" class="form-control" id="identification" name="identification" value="${lu2.identification!''}">
+				             </div>
+				            </div>
+				           
+				            
+				            
+				            <div class="col-lg-7">
+				             	<button type="submit" class="btn btn-sm btn-outline btn-primary">保存</button>
+					            <a class="btn btn-sm btn-outline btn-primary" href="/spdriverinfo/spdriverinfoIndex">返回</a>
+					        </div>
+				         </form>
+			         </div>
             			</div>
             		</div>
 				</div>
 			</div>
-		</div>
 	</div>
 <%}%>
 <!-- 引入校验的js 文件及其 中文 文件-->
@@ -82,20 +77,18 @@
     $('#menu_carmanage').addClass('active').find('ul').addClass('in');
         $('#leadsForm').validate({
             rules: {
-            	username: {
-                required: true,
-                stringCheck:true,
-                minlength: 5
+            	driver: {
+                	required: true
 				},
-              password:{//form 中 name为必填
-                required: true,
-                minlength: 5
-              },
-              confirm_password: { 
-            	  required: true, 
-            	  minlength: 5, 
-            	  equalTo: "#password" 
-            	  } 
+				phone:{//form 中 name为必填
+               		required: true
+                },
+                license:{//form 中 name为必填
+               		required: true
+                },
+                identification: { 
+            	  required: true
+            	} 
              },
             highlight: function(element) {
                 $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
