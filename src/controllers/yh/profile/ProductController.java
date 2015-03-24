@@ -334,13 +334,13 @@ public class ProductController extends Controller {
     	}
     	
         List<Party> parties = Party.dao
-                .find("select p.id party_id, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id left join office o on p.office_id = o.id  where party_type = ? and cat.parent_id is null and (o.id = ? or o.belong_office = ? or o.belong_office is null)",
-                        Party.PARTY_TYPE_CUSTOMER,parentOffice.get("id"),parentID);
+                .find("select p.id party_id, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id left join office o on p.office_id = o.id  where party_type = ? and cat.parent_id is null and (o.id = ? or o.belong_office = ? )",
+                        Party.PARTY_TYPE_CUSTOMER,parentID,parentID);
         createRootForParty(parties);
 
         List<Party> rootParties = Party.dao
-                .find("select p.id pid, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id left join office o on p.office_id = o.id where party_type = ? and cat.parent_id is null and (o.id = ? or o.belong_office = ? or o.belong_office is null) ",
-                        Party.PARTY_TYPE_CUSTOMER,parentOffice.get("id"),parentID);
+                .find("select p.id pid, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id left join office o on p.office_id = o.id where party_type = ? and cat.parent_id is null and (o.id = ? or o.belong_office = ? ) ",
+                        Party.PARTY_TYPE_CUSTOMER,parentID,parentID);
         renderJson(rootParties);
     }
 
