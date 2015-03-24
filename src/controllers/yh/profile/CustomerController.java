@@ -27,6 +27,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.PermissionConstant;
 
@@ -182,6 +183,7 @@ public class CustomerController extends Controller {
         redirect("/customer");
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_C_CREATE, PermissionConstant.PERMSSION_C_UPDATE}, logical=Logical.OR)
+    @Before(Tx.class)
     public void save() {
 
         String id = getPara("party_id");
@@ -228,7 +230,7 @@ public class CustomerController extends Controller {
             	parentID = parentOffice.getLong("id");
             }
             //判断当前是否是系统管理员，是的话将当前的客户默认给
-            List<UserRole> urList = UserRole.dao.find("select * from user_role ur left join user_login ul on ur.user_name = ul.user_name where role_code = 'admin' and ul.office_id = ?",parentID);
+            List<UserRole> urList = UserRole.dao.find("select * from user_role ur left join user_login ul on ur.user_name = ul.user_name where role_code = 'admin' and (ul.office_id = ? or ul.office_id = ",parentID,parentOffice.get("id"));
             if(urList.size()>0){
             	for (UserRole userRole : urList) {
                 	UserCustomer uc = new UserCustomer();
