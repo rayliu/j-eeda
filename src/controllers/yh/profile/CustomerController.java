@@ -230,7 +230,7 @@ public class CustomerController extends Controller {
             	parentID = parentOffice.getLong("id");
             }
             //判断当前是否是系统管理员，是的话将当前的客户默认给
-            List<UserRole> urList = UserRole.dao.find("select * from user_role ur left join user_login ul on ur.user_name = ul.user_name where role_code = 'admin' and (ul.office_id = ? or ul.office_id = ",parentID,parentOffice.get("id"));
+            List<UserRole> urList = UserRole.dao.find("select * from user_role ur left join user_login ul on ur.user_name = ul.user_name left join office o on o.id = ul.office_id  where role_code = 'admin' and (o.id = ? or o.belong_office = ?)",parentID,parentID);
             if(urList.size()>0){
             	for (UserRole userRole : urList) {
                 	UserCustomer uc = new UserCustomer();
