@@ -66,7 +66,7 @@ public class ServiceProviderController extends Controller {
             if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
                 sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
             }
-            String sqlTotal = "select count(1) total from party where party_type='SERVICE_PROVIDER' and office_id = " + parentID;
+            String sqlTotal = "select count(1) total from party p left join office o on p.office_id = o.id where p.party_type='SERVICE_PROVIDER' and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
             Record rec = Db.findFirst(sqlTotal); 
             logger.debug("total records:" + rec.getLong("total"));
 
@@ -75,7 +75,8 @@ public class ServiceProviderController extends Controller {
                     + "left join location l on l.code=c.location "
                     + "left join location  l1 on l.pcode =l1.code "
                     + "left join location l2 on l1.pcode = l2.code "
-                    + "where p.party_type='SERVICE_PROVIDER' and p.office_id = " + parentID + " order by p.create_date desc " + sLimit;
+                    + "left join office o on o.id = p.office_id "
+                    + "where p.party_type='SERVICE_PROVIDER' and (o.id = " + parentID + " or o.belong_office = " + parentID + ")  order by p.create_date desc " + sLimit;
             List<Record> customers = Db.find(sql);
             
             Map customerListMap = new HashMap();
@@ -96,6 +97,7 @@ public class ServiceProviderController extends Controller {
                     + "left join location l on l.code=c.location "
                     + "left join location  l1 on l.pcode =l1.code "
                     + "left join location l2 on l1.pcode = l2.code "
+                    + "left join office o on o.id = p.office_id "
                     + "where p.party_type='SERVICE_PROVIDER' "
                     + "and ifnull(c.company_name,'') like '%"
                     + company_name
@@ -105,7 +107,7 @@ public class ServiceProviderController extends Controller {
                     + receipt
                     + "%' and ifnull(c.address,'') like '%"
                     + address
-                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%' and p.office_id = " + parentID ;
+                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%' and (o.id = " + parentID + " or o.belong_office = " + parentID + ")" ;
             Record rec = Db.findFirst(sqlTotal);
             logger.debug("total records:" + rec.getLong("total"));
 
@@ -114,6 +116,7 @@ public class ServiceProviderController extends Controller {
                     + "left join location l on l.code=c.location "
                     + "left join location  l1 on l.pcode =l1.code "
                     + "left join location l2 on l1.pcode = l2.code "
+                    + "left join office o on o.id = p.office_id "
                     + "where p.party_type='SERVICE_PROVIDER' "
                     + "and ifnull(c.company_name,'') like '%"
                     + company_name
@@ -123,7 +126,7 @@ public class ServiceProviderController extends Controller {
                     + receipt
                     + "%' and ifnull(c.address,'') like '%"
                     + address
-                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%' and p.office_id = " + parentID + " order by p.create_date desc " + sLimit;
+                    + "%' and ifnull(c.abbr,'') like '%" + abbr + "%' and (o.id = " + parentID + " or o.belong_office = " + parentID + ") order by p.create_date desc " + sLimit;
             List<Record> customers = Db.find(sql);
 
             Map customerListMap = new HashMap();
@@ -206,10 +209,10 @@ public class ServiceProviderController extends Controller {
             setContact(contact);
             contact.update();
         } else {
-        	Long parentID = parentOffice.get("belong_office");
+        	/*Long parentID = parentOffice.get("belong_office");
         	if(parentID == null || "".equals(parentID)){
         		parentID = parentOffice.getLong("id");
-        	}
+        	}*/
             contact = new Contact();
             setContact(contact);
             contact.save();
@@ -222,7 +225,7 @@ public class ServiceProviderController extends Controller {
             party.set("remark", getPara("remark"));
             party.set("payment", getPara("payment"));
             party.set("charge_type", getPara("chargeType"));
-            party.set("office_id", parentID);
+            party.set("office_id", parentOffice.get("id"));
             party.save();
 
         }
