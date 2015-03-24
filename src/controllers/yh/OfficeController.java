@@ -23,6 +23,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
@@ -72,6 +73,7 @@ public class OfficeController extends Controller {
 
     // 添加分公司
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_O_CREATE, PermissionConstant.PERMSSION_O_UPDATE}, logical=Logical.OR)
+    @Before(Tx.class)
     public void saveOffice() {
         /*
          * if (!isAuthenticated()) return;
@@ -80,7 +82,12 @@ public class OfficeController extends Controller {
         if (id != "") {
             UserLogin user = UserLogin.dao.findById(id);
         }
-        Record office = new Record();
+        Record office;
+        if(id != null && id !=""){
+        	office = Db.findById("office", id);
+        }else{
+        	office = new Record();
+        }
         office.set("office_code", getPara("office_code"));
         office.set("office_name", getPara("office_name"));
         office.set("office_person", getPara("office_person"));
@@ -113,7 +120,11 @@ public class OfficeController extends Controller {
             
             Db.save("office", office);
             //自动将新的公司给是管理员的用户
-            List<UserRole> urList = UserRole.dao.find("select * from user_role where role_code = 'admin'");
+            Long parentID = parentOffice.get("belong_office");
+            if(parentID == null || "".equals(parentID)){
+            	parentID = parentOffice.getLong("id");
+            }
+            List<UserRole> urList = UserRole.dao.find("select * from user_role ur left join user_login ul on ur.user_name = ul.user_name left join office o on o.id = ul.office_id  where role_code = 'admin' and (o.id = ? or o.belong_office = ?)",parentID,parentID);
             if(urList.size()>0){
             	for (UserRole userRole : urList) {
                 	UserOffice uo = new UserOffice();
