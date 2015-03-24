@@ -27,6 +27,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.PermissionConstant;
 
@@ -99,7 +100,7 @@ public class ProductController extends Controller {
         product.update();
         renderJson("{\"success\":true}");
     }
-
+    @Before(Tx.class)
     public void save() {
         Product product = null;
         String id = getPara("id");
@@ -219,6 +220,7 @@ public class ProductController extends Controller {
     }
 
     // 保存类别
+    @Before(Tx.class)
     public void saveCategory() {
         String categoryId = getPara("categoryId");
         Category category = Category.dao.findById(categoryId);
@@ -240,6 +242,7 @@ public class ProductController extends Controller {
 
     // 新增类别
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_CREATE})
+    @Before(Tx.class)
     public void addCategory() {
         String parentId = getPara("categoryId");
         Category category = null;
@@ -267,6 +270,7 @@ public class ProductController extends Controller {
 
     // 删除类别
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_DELETE})
+    @Before(Tx.class)
     public void deleteCategory() {
     	boolean flag = true;
         String cid = getPara("categoryId");
@@ -289,6 +293,7 @@ public class ProductController extends Controller {
 
     // 删除子类别
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_DELETE})
+    @Before(Tx.class)
     private void removeChildern(String cid) {
         List<Category> categories = Category.dao.find("select * from category where parent_id = ?", cid);
         if (categories.size() > 0) {
@@ -329,13 +334,13 @@ public class ProductController extends Controller {
     	}
     	
         List<Party> parties = Party.dao
-                .find("select p.id party_id, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null and p.office_id = ?",
-                        Party.PARTY_TYPE_CUSTOMER,parentID);
+                .find("select p.id party_id, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id left join office o on p.office_id = o.id  where party_type = ? and cat.parent_id is null and (o.id = ? or o.id = ?)",
+                        Party.PARTY_TYPE_CUSTOMER,parentOffice.get("id"),parentID);
         createRootForParty(parties);
 
         List<Party> rootParties = Party.dao
-                .find("select p.id pid, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id where party_type = ? and cat.parent_id is null and p.office_id =?",
-                        Party.PARTY_TYPE_CUSTOMER,parentID);
+                .find("select p.id pid, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id left join office o on p.office_id = o.id where party_type = ? and cat.parent_id is null and (o.id = ? or o.id = ?) ",
+                        Party.PARTY_TYPE_CUSTOMER,parentOffice.get("id"),parentID);
         renderJson(rootParties);
     }
 
