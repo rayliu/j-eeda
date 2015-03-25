@@ -2,6 +2,7 @@ package controllers.yh.delivery;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -37,9 +38,13 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
+import controllers.yh.order.TransferOrderExeclHandeln;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
+import controllers.yh.util.ReaderXLS;
+import controllers.yh.util.ReaderXlSX;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -1141,11 +1146,9 @@ public class DeliveryController extends Controller {
 				if (!idlist3.equals("")) {
 					for (int i = 0; i < idlist.length; i++) {
 						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-						deliveryOrderItem.set("delivery_id",
-								deliveryOrder.get("id")).set("transfer_order_id",
-								idlist[i]);
-						deliveryOrderItem
-								.set("transfer_item_detail_id", idlist2[i]);
+						deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
+						.set("transfer_order_id",idlist[i]);
+						deliveryOrderItem.set("transfer_item_detail_id", idlist2[i]);
 						deliveryOrderItem.set("transfer_no", idlist4[i]);
 						deliveryOrderItem.set("amount", 1);
 						deliveryOrderItem.save();
@@ -1581,6 +1584,48 @@ public class DeliveryController extends Controller {
         Map.put("aaData", transferOrderItems);
         renderJson(Map); 
     }
+    
+    // 导入配送单
+ 	public void importDeliveryOrder() {
+ 		UploadFile uploadFile = getFile();
+ 		File file = uploadFile.getFile();
+ 		String fileName = file.getName();
+ 		logger.debug("文件名:" + file.getName() +",路径："+file.getPath());
+ 		Map<String,String> resultMap = new HashMap<String,String>();
+  		try {
+  			String[] title = null;
+  			List<Map<String,String>> content = new ArrayList<Map<String,String>>();
+  			if(fileName.endsWith(".xls")){
+  				title = ReaderXLS.getXlsTitle(file);
+  				content = ReaderXLS.getXlsContent(file);
+  			}else if(fileName.endsWith(".xlsx")){
+  				title = ReaderXlSX.getXlsTitle(file);
+  				content = ReaderXlSX.getXlsContent(file);
+  			}else{
+  				resultMap.put("result", "false");
+ 				resultMap.put("cause", "导入失败，请选择正确的execl文件");
+  			}
+  			if(title != null && content.size() > 0){
+ 				DeliveryOrderExeclHandeln handeln = new DeliveryOrderExeclHandeln();
+ 				if(handeln.checkoutExeclTitle(title,"deliveryOrder")){
+ 					//resultMap = handeln.importDeliveryOrder(content);
+ 					resultMap.put("result","true");
+ 					resultMap.put("cause", "验证成功");
+ 				}else{
+ 					resultMap.put("result", "false");
+ 					resultMap.put("cause", "导入失败，execl标题列与系统默认execl标题列不一致");
+ 				}
+  			}
+ 		} catch (Exception e) {
+ 			e.printStackTrace();
+ 			resultMap.put("result", "false");
+ 			resultMap.put("cause", "导入失败，请选择正确的execl文件<br/>（建议使用Microsoft Office Execl软件操作数据）");
+ 			renderJson(resultMap);
+ 		}
+  		logger.debug("result:" + resultMap.get("result") +",cause:"+resultMap.get("cause"));
+  		
+ 		renderJson(resultMap);
+ 	}
     
 
 }

@@ -127,7 +127,7 @@ public class ReaderXlSX{
             case XSSFCell.CELL_TYPE_NUMERIC:
             case XSSFCell.CELL_TYPE_FORMULA: {
                 // 判断当前的cell是否为Date
-                if ("计划日期".equals(cellHead) || "预计到货日期".equals(cellHead)) {
+                if (cellHead.indexOf("日期") >= 0 || cellHead.indexOf("时间") >= 0) {
                     // 如果是Date类型则，转化为Data格式
                     
                     //方法1：这样子的data格式是带时分秒的：2011-10-12 0:00:00
@@ -137,9 +137,7 @@ public class ReaderXlSX{
                     Date date = cell.getDateCellValue();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     cellvalue = sdf.format(date);
-                }
-                // 如果是纯数字
-                else {
+                } else {// 如果是纯数字
                     // 取得当前Cell的数值,返回：3.000008976E8
                     //cellvalue = String.valueOf(cell.getNumericCellValue());
                 	cellvalue = String.format("%.0f", cell.getNumericCellValue());
@@ -197,19 +195,17 @@ public class ReaderXlSX{
     }
     public static void main(String[] args) {
         try {
-        	
             // 对读取Excel表格标题测试
-            InputStream is = new FileInputStream("d:\\广电运通.xlsx");
+            InputStream is = new FileInputStream("d:\\配送模板4.xlsx");
             ReaderXlSX excelReader = new ReaderXlSX();
             String[] title = excelReader.readExcelTitle(is);
             System.out.println("获得Excel表格的标题:");
             for (String s : title) {
                 System.out.print(s + " ");
             }
-            
 
             // 对读取Excel表格内容测试
-            /*InputStream is2 = new FileInputStream("d:\\广电运通.xlsx");
+            InputStream is2 = new FileInputStream("d:\\配送模板4.xlsx");
             //Map<Integer, String> map = excelReader.readExcelContent(is2);
             List<Map<String,String>> content = excelReader.readExcelContent(is2);
             System.out.println();
@@ -219,8 +215,7 @@ public class ReaderXlSX{
             	for (int i = 0; i <= map2.size()-1; i++) {
                     System.out.print(title[i]+":"+map2.get(title[i])+"  ");
                 }
-			}*/
-				
+			}
         } catch (FileNotFoundException e) {
             System.out.println("未找到指定路径的文件!");
             e.printStackTrace();

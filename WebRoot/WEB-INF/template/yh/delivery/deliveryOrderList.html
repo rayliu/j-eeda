@@ -9,6 +9,12 @@
                     	<% if(shiro.hasPermission("DeliveryOder.create")){%>
                         	<a class="btn btn-primary" href="/delivery/add">新增配送单</a>
                     	<%}%>
+                    	<input id="fileUploadBtn" type="button" class="btn btn-primary" value="导入配送单" size="30" />
+                        <form id="toFileUploadForm" method="post" action="/delivery/intoDeliveryOrder" enctype="multipart/form-data">
+						     <input type="file" id="toFileUpload" name="files[]" 
+						     style="position:absolute; filter:alpha(opacity=0); opacity:0; width:30px; " size="1" 
+						     data-url="/delivery/importDeliveryOrder" multiple>
+						</form>
                     </h1>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -105,6 +111,20 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="panel-heading">
+                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" data-backdrop="static">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body" align="center">
+                                        	<center id="centerBody"></center>
+                                        </div>
+                                        <div class="modal-footer" id="footer" aria-hidden="true">
+								        	<button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">关闭</button>
+								      	</div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -117,6 +137,9 @@
 
 <%}%>
  <!-- Page-Level Plugin Scripts - Tables -->
+ <script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.ui.widget.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.iframe-transport.js"></script> 
+<script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.fileupload.js"></script>
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/bootstrap.min.js"></script>

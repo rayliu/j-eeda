@@ -299,6 +299,12 @@ public class DataInitUtil {
             //单据附件表，记录上传文件信息
             stmt.execute("create table if not exists order_attachment_file(id bigint auto_increment primary key,order_id bigint ,order_type varchar(50),file_path  varchar(255));");
             		
+            //跟车人员表
+            stmt.execute("create table if not exists driver_assistant(id bigint auto_increment primary key,name varchar(50),identity_number varchar(100),date_of_entry date,academic_qualifications varchar(50),phone varchar(50),daily_wage double,beging_stamp date,end_stamp date,office_id bigint,is_stop tinyint(4));");
+            
+            //调车单跟车人员从表
+            stmt.execute("create table if not exists pickup_driver_assistant(id bigint auto_increment primary key,pickup_id bigint,driver_assistant_id bigint,name varchar(50),phone varchar(50));");
+            
             stmt.close();
             // conn.commit();
             conn.close();
@@ -710,10 +716,15 @@ public class DataInitUtil {
             stmt.execute("insert into depart_order_fin_item(depart_order_id, pickup_order_id, fin_item_id, amount) values(3, 5, 3, 100);");*/
            
             //execl标题表
-            String titles = "客户名称(简称) 运营方式 到达方式 供应商名称(简称) 计划日期 运输单号 货品型号 发货数量 货品属性 单品序列号 单品件数 收货单位 单品收货地址 单品收货人 单品收货人联系电话 单品销售单号 业务经理 服务站名称 责任人 服务站电话 网点 中转仓 始发城市 到达城市 预计到货日期";
-            String[] title = titles.split(" ");
-            for (int i = 0; i < title.length; i++) {
-            	stmt.executeUpdate("insert into execl_title(execl_type, execl_title) values('transferOrder','"+title[i]+"');");
+            String transferOrderTitles = "客户名称(简称) 运营方式 到达方式 供应商名称(简称) 计划日期 运输单号 货品型号 发货数量 货品属性 单品序列号 单品件数 收货单位 单品收货地址 单品收货人 单品收货人联系电话 单品销售单号 业务经理 服务站名称 责任人 服务站电话 网点 中转仓 始发城市 到达城市 预计到货日期";
+            String[] transferOrderTitle = transferOrderTitles.split(" ");
+            for (int i = 0; i < transferOrderTitle.length; i++) {
+            	stmt.executeUpdate("insert into execl_title(execl_type, execl_title) values('transferOrder','"+transferOrderTitle[i]+"');");
+			}
+            String deliveryOrderTitles = "配送单号 客户名称(简称) 收货单位 货品型号 货品数量 单品序列号 供应商名称(简称) 配送RDC 始发地城市 目的地城市 客户配送单号 收货地址 联系人 联系电话 预约送货时间 向客户预约时间 业务要求配送时间 需求确认";
+            String[] deliveryOrderTitle = deliveryOrderTitles.split(" ");
+            for (int i = 0; i < deliveryOrderTitle.length; i++) {
+            	stmt.executeUpdate("insert into execl_title(execl_type, execl_title) values('deliveryOrder','"+deliveryOrderTitle[i]+"');");
 			}
             
            /* 基础数据——用户网点用户客户*/
