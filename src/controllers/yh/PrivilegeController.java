@@ -23,6 +23,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.CompareStrList;
 import controllers.yh.util.PermissionConstant;
@@ -136,6 +137,7 @@ public class PrivilegeController extends Controller {
 		renderJson(orders);
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_CREATE})
+	@Before(Tx.class)
 	public void save(){
 		String rolename = getPara("name");
 		String permissions = getPara("permissions");
@@ -156,6 +158,7 @@ public class PrivilegeController extends Controller {
 		renderJson();
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_UPDATE})
+	@Before(Tx.class)
 	public void update(){
 		String rolename = getPara("name");
 		String permissions = getPara("permissions");
@@ -172,7 +175,7 @@ public class PrivilegeController extends Controller {
 		
 		
 		Role role = Role.dao.findFirst("select * from role where name=? and office_id = ?",rolename,parentID);
-		List<RolePermission> rp = RolePermission.dao.find("select * from role_permission where role_code =?",role.get("code"));
+		List<RolePermission> rp = RolePermission.dao.find("select * from role_permission where role_code =? and office_id = ?",role.get("code"),parentID);
 		
 		 List<Object> ids = new ArrayList<Object>();
 		 for (RolePermission r : rp) {
@@ -194,6 +197,7 @@ public class PrivilegeController extends Controller {
 			RolePermission r = new RolePermission();
 			r.set("role_code", role.get("code"));
 			r.set("permission_code", object);
+			r.set("office_id", parentID);
 			r.save();
 			
         }

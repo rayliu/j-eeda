@@ -90,6 +90,9 @@ $(document).ready(function() {
         		$("input[name='permissionCheck']").each(function(){
                 	$(this).prop('checked',false);	
                 });
+        		$("input[name='checkmodel']").each(function(){
+                	$(this).prop('checked',false);	
+                });
         		permission.splice(0,permission.length);
     		},'json');
         }else{

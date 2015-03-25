@@ -41,7 +41,12 @@ $(document).ready(function() {
 							}
 							
 						}else{
-							return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" name="checkmodel" >本模块全选</div>';
+							if(obj.aData.IS_AUTHORIZE !=null && obj.aData.IS_AUTHORIZE !=0){
+								return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" name="checkmodel" >本模块全选</div>';
+							}else{
+								return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" disabled="true" name="checkmodel" >本模块全选</div>';
+							}
+							
 						}
 					}else{
 						if(parentCheck==obj.aData.CHILDRENS.length){
@@ -52,6 +57,7 @@ $(document).ready(function() {
 							}
 						}else{
 							return obj.aData.MODULE_NAME+'<br/>'+'<br/><div><input type="checkbox" class="model_checkAll" style="cursor: default;" disabled="true" name="checkmodel" >本模块全选</div>';
+							
 						}
 					}
 					
@@ -67,7 +73,12 @@ $(document).ready(function() {
 						
 						if(is_disabled<0){
 							if(obj.aData.CHILDRENS[i].PERMISSION_CODE==null){
-								str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
+								if(obj.aData.IS_AUTHORIZE !=null && obj.aData.IS_AUTHORIZE !=0){
+									str +='<div class="col-md-6"><input type="checkbox" class="unChecked"  name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
+								}else{
+									str +='<div class="col-md-6"><input type="checkbox" class="unChecked" disabled="true"  name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
+								}
+								
 				       		}else{
 				       			if(obj.aData.IS_AUTHORIZE !=null && obj.aData.IS_AUTHORIZE !=0){
 				       				str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" checked="true" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
@@ -78,9 +89,11 @@ $(document).ready(function() {
 				       		}  
 						}else{
 							if(obj.aData.CHILDRENS[i].PERMISSION_CODE==null){
-								str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" disabled="true" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
-								
+								if(obj.aData.IS_AUTHORIZE !=null && obj.aData.IS_AUTHORIZE !=0){
+									str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" disabled="true" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
+								}
 				       		}else{
+				       			
 				       			if(obj.aData.IS_AUTHORIZE !=null && obj.aData.IS_AUTHORIZE !=0){
 				       				str +='<div class="col-md-6"><input type="checkbox" class="unChecked" style="cursor: default;" disabled="true" checked="true" name="permissionCheck" value="'+obj.aData.CHILDRENS[i].CODE+'">　'+obj.aData.CHILDRENS[i].NAME+'</div>';
 								}else{
@@ -115,7 +128,8 @@ $(document).ready(function() {
         	$.get('/privilege/update?name='+rolename+'&permissions='+permissions, function(data){
         		//保存成功返回到当前用户的权限页面
         		$.scojs_message('更新成功', $.scojs_message.TYPE_OK);
-        		$("#saveBtn").attr("disabled",true);
+        		/*$("#saveBtn").attr("disabled",true);*/
+        		permission.splice(0,permission.length);
     		},'json');
         	 
 	       
