@@ -56,7 +56,7 @@ $(document).ready(function() {
 		 	var id = $(this).attr('code2');
 		 $.post('/account/delectAcountItem/'+id,{accountId:accountId},function(data){
 	     //保存成功后，刷新列表
-	     console.log(data);
+	     //console.log(data);
 	     if(data.success){
 	    	 dataTable.fnDraw();
 	     }else{
@@ -76,6 +76,8 @@ $(document).ready(function() {
 	//添加账户
 	$('#save').click(function(){
 		if($("#accountFrom").valid() == false){
+			
+			//$.scojs_message('保存失败，请完善信息', $.scojs_message.TYPE_ERROR);
 			return false;
 		}
 		 $.post('/account/save', $("#accountFrom").serialize(), function(data){
@@ -88,7 +90,7 @@ $(document).ready(function() {
 
 	         	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	         }else{
-	        	 $.scojs_message('保存失败', $.scojs_message.TYPE_OK);
+	        	 $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 	         }
 	         
 	     },'json');
@@ -114,6 +116,42 @@ $(document).ready(function() {
 		         
 		     },'json');
 	});
-	 
+	$('#accountFrom').validate({
+        rules: {
+       	 bank_name: {
+            required: true
+          },
+          bank_person: {
+            required: true
+          },
+          account_no:{
+            required: true
+          },
+          type:{
+        	  required: true
+          }
+        },
+        messages:{
+        	bank_name: {
+                required: "账户名称不能为空"
+              },
+              bank_person: {
+                required: "开户人姓名不能为空"
+              },
+              account_no:{
+                required: "银行账户号码不能为空"
+              },
+              type:{
+            	  required: "账户类型不能为空"
+              }
+        },
+        highlight: function(element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        success: function(element) {
+            element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+
 
 });

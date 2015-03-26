@@ -22,6 +22,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
@@ -56,6 +57,7 @@ public class AccountController extends Controller {
 
     // 添加金融账户
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_CREATE, PermissionConstant.PERMSSION_A_UPDATE}, logical=Logical.OR)
+    @Before(Tx.class)
     public void save() {
     	Long parentID = parentOffice.get("belong_office");
     	if(parentID == null || "".equals(parentID)){
@@ -152,7 +154,7 @@ public class AccountController extends Controller {
     public void accountItem() {
 
         String id = getPara("accountId");
-        System.out.println(id);
+        //System.out.println(id);
         if (id.equals("")) {
             Map orderMap = new HashMap();
             orderMap.put("sEcho", 0);
