@@ -288,7 +288,9 @@
                  	var chargeCheckOrderList = shiro.hasPermission("ChargeCheckOrder.list");
                  	var chargePreInvoiceOrder = shiro.hasPermission("ChargePreInvoiceOrder.list");
                  	var ChargeInvoiceOrderPermission = shiro.hasPermission("ChargeInvoiceOrder.list");
-                 	if(chargeItemPermission || chargeCheckOrderList || chargePreInvoiceOrder || ChargeInvoiceOrderPermission){
+                 	var title=SYS_CONFIG.system_title!'';
+                 	
+                 	if(title == '源鸿物流'){
                  %>
                     <li id="menu_charge">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 应收管理<span class="fa arrow"></span></a>
@@ -326,7 +328,9 @@
                 	var costConfirmListPermission = shiro.hasPermission("CostItemConfirm.affirm");
                 	var costCheckListPermission = shiro.hasPermission("CostCheckOrder.list");
                 	var costPreInvoiceListPermission = shiro.hasPermission("CostPreInvoiceOrder.list");
-               		if(costConfirmListPermission || costCheckListPermission || costPreInvoiceListPermission){
+                	
+                	
+               		if(title == '源鸿物流'){
                 %>
                     <li id="menu_cost">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 应付管理<span class="fa arrow"></span></a>
@@ -362,8 +366,7 @@
                		var costConfirmPermission = shiro.hasPermission("costAcceptOrder_list");
                		var reimbureementPermission = shiro.hasPermission("costReimbureement_list");
                		var chunarijiPermission = shiro.hasPermission("PaymentCheckOrder.list");
-               		if(payListPermission || costListPermission || chargePermission || costConfirmPermission
-               			|| reimbureementPermission || chunarijiPermission) {
+               		if(title == '源鸿物流') {
                		
                	%>
                     <li id="menu_finance">
