@@ -64,10 +64,13 @@
 	                                </div>
 	                                <div class="col-lg-4">	                                    
 	                                    <div class="form-group">
+	                                    	<%
+						                    	var title=SYS_CONFIG.system_title!'';
+						                    %>
 	                                        <label class="search-label">提货方式</label>
 	                                         <select id="take_filter" class="form-control search-control status_filter">
                                                 <option value=""></option>
-                                                <option value="own">源鸿自提</option>
+                                                <option value="own"><% if(title =='源鸿物流'){%>源鸿自提<%}else{%>公司自提<%}%></option>
                                                 <option value="routeSP">干线供应商自提 </option>
                                                 <option value="pickupSP">外包供应商提货</option>                                                                                              
                                             </select>
