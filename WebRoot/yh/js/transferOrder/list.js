@@ -24,7 +24,7 @@ $(document).ready(function() {
             {"mDataProp":"ORDER_NO", "sWidth":"70px",
             	"fnRender": function(obj) {
             			if(TransferOrder.isUpdate){
-            				return "<a href='/transferOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            				return "<a href='/transferOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             			}else{
             				return obj.aData.ORDER_NO;
             			}
