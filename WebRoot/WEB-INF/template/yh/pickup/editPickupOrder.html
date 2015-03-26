@@ -66,12 +66,14 @@
 					                    <input id="driverAssistantPhones" name="driverAssistantPhones" type="hidden" value="">
 					                    <!-- <input id="cargoNumbers" name="cargoNumbers" type="hidden" value="${cargoNumbers!''}"> -->                                 	
                                         
-                                        	
+                                        	<%
+						                    	var title=SYS_CONFIG.system_title!'';
+						                    %>
 	                                       	<div id="pickupModes" class="form-group">
 	                                            <label><h3>提货方式</h3></label>
 	                                           	<input id="pickupModeRadio" type="hidden" value="${pickupOrder.pickup_mode!''}"/>
 	                                            <label class="radio-inline">
-	                                                <input type="radio" name="pickupMode" id="pickupMode1" value="own" checked="">源鸿自提
+	                                                <input type="radio" name="pickupMode" id="pickupMode1" value="own" checked=""><% if(title =='源鸿物流'){%>源鸿自提<%}else{%>公司自提<%}%>
 	                                            </label>
 	                                            <label class="radio-inline">
 	                                                <input type="radio" name="pickupMode" id="pickupMode2" value="routeSP">干线供应商自提
