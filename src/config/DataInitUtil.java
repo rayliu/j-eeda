@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import test.data.CustomizeFieldDataInit;
 import models.Category;
 import models.Office;
 import models.Party;
@@ -734,7 +735,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into user_customer(user_name,customer_id) select 'demo', id from party where party_type = 'CUSTOMER';");
             
             //cutomized field init
-            //CustomizeFieldDataInit.initCustomizeField(stmt);
+            CustomizeFieldDataInit.initCustomizeField(stmt);
             
             stmt.close();
             // conn.commit();
