@@ -312,7 +312,7 @@ public class ServiceProviderController extends Controller {
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
-					.find("select *,p.id as pid, p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"
+					.find("select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where o.id = p.office_id and p.contact_id = c.id and p.party_type = '"
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER
 							+ "' and (company_name like '%"
 							+ input
@@ -330,11 +330,11 @@ public class ServiceProviderController extends Controller {
 							+ input
 							+ "%' or postal_code like '%"
 							+ input
-							+ "%')  and (p.is_stop is null or p.is_stop = 0) and p.office_id = ? limit 0,10",parentID);
+							+ "%')  and (p.is_stop is null or p.is_stop = 0) and (o.id = ? or o.belong_office=?) limit 0,10",parentID,parentID);
 		} else {
 			locationList = Db
-					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "'  and (p.is_stop is null or p.is_stop = 0) and p.office_id = ?",parentID);
+					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where o.id = p.office_id and p.contact_id = c.id and p.party_type = '"
+							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "'  and (p.is_stop is null or p.is_stop = 0) and (o.id = ? or o.belong_office =?)",parentID,parentID);
 		}
 		renderJson(locationList);
 	}
