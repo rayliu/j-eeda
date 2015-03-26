@@ -75,6 +75,9 @@ $(document).ready(function() {
 	});
 	//添加账户
 	$('#save').click(function(){
+		if($("#accountFrom").valid() == false){
+			return false;
+		}
 		 $.post('/account/save', $("#accountFrom").serialize(), function(data){
 	         if(data.ID > 0){
 	             //alert("添加合同成功！");
@@ -85,7 +88,7 @@ $(document).ready(function() {
 
 	         	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	         }else{
-	             alert('数据保存失败。');
+	        	 $.scojs_message('保存失败', $.scojs_message.TYPE_OK);
 	         }
 	         
 	     },'json');
@@ -111,7 +114,6 @@ $(document).ready(function() {
 		         
 		     },'json');
 	});
-
-
+	 
 
 });
