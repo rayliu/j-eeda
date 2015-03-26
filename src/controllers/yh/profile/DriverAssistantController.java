@@ -66,13 +66,15 @@ public class DriverAssistantController extends Controller {
             .set("phone", getPara("phone"))
             .set("academic_qualifications", getPara("academic_qualifications"))
             .set("date_of_entry", getPara("date_of_entry"))
-            .set("daily_wage", getPara("daily_wage") == "" ? 0 : getPara("daily_wage"))
-            .set("office_id", getPara("officeSelect"));
+            .set("daily_wage", getPara("daily_wage") == "" ? 0 : getPara("daily_wage"));
             if(getParaToDate("beging_stamp") != null){
             	driverAssistant.set("beging_stamp", getPara("beging_stamp")); 
 			}
             if(getParaToDate("end_stamp") != null){
             	driverAssistant.set("end_stamp", getPara("end_stamp")); 
+            }
+            if(getPara("officeSelect") != null && !"".equals(getPara("officeSelect"))){
+            	driverAssistant.set("office_id", getPara("officeSelect"));
             }
             driverAssistant.update();
         } else {
@@ -83,13 +85,15 @@ public class DriverAssistantController extends Controller {
             .set("phone", getPara("phone"))
             .set("academic_qualifications", getPara("academic_qualifications"))
             .set("date_of_entry", getPara("date_of_entry"))
-            .set("daily_wage", getPara("daily_wage") == "" ? 0 : getPara("daily_wage"))
-            .set("office_id", getPara("officeSelect"));
+            .set("daily_wage", getPara("daily_wage") == "" ? 0 : getPara("daily_wage"));
             if(getParaToDate("beging_stamp") != null){
             	driverAssistant.set("beging_stamp", getPara("beging_stamp")); 
 			}
             if(getParaToDate("end_stamp") != null){
             	driverAssistant.set("end_stamp", getPara("end_stamp")); 
+            }
+            if(getPara("officeSelect") != null && !"".equals(getPara("officeSelect"))){
+            	driverAssistant.set("office_id", getPara("officeSelect"));
             }
             driverAssistant.save();
         }

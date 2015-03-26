@@ -39,7 +39,6 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     	int num = 0;
     	List<Record> titleList = Db.find("select execl_title from execl_title where execl_type = '"+ execlType +"';");
     	if(titleList != null){
-    		System.out.println();
     		for (Record record : titleList) {
 				if(record.get("execl_title").equals(title[num])){
 					num++;
@@ -94,17 +93,21 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		}
 		return importResult;
 	}
+	
     /**
-     * 检验数据
-     * 	1.必填列
-     * 	2.execl数据与系统数据需一致的列
-     * 	3.execl内容有格式要求列
+     * 功能：
+     * 	1.检验数据：
+     * 		a.必填列
+     * 		b.execl数据与系统数据需一致的列
+     * 		c.execl数据有格式要求的列
+     *	2.同一execl文件多次导入问题:同一个客户和运输单号
      * @param content
      * @return 
      */
 	private Map<String,String> validatingData(List<Map<String,String>> content){
     	Map<String, String> importResult = new HashMap<String, String>();
 		int causeRow = 0;
+		int verifyDuplicateRow = 0;
     	String title = "";
 		String because = "数据不能为空";
 		SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -114,6 +117,40 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     		if("".equals(content.get(j).get("客户订单号").trim())){
     			title = "客户订单号";
     			break;
+    		}else if("".equals(content.get(j).get("运营方式"))){
+    			title = "运营方式";
+    			break;
+    		}else if("".equals(content.get(j).get("货品型号"))){
+    			title = "货品型号";
+    			break;
+    		}else if("".equals(content.get(j).get("货品属性"))){
+    			title = "货品属性";
+    			break;
+    		}else if("".equals(content.get(j).get("客户名称(简称)"))){
+    			title = "客户名称(简称)";
+    			break;
+    		}else if("".equals(content.get(j).get("始发城市"))){
+    			title = "始发城市";
+    			break;
+    		}else if("".equals(content.get(j).get("到达城市"))){
+    			title = "到达城市";
+    			break;
+    		}else if("".equals(content.get(j).get("网点"))){
+    			title = "网点";
+    			break;
+    		}
+    		
+    		String arrivalMode = content.get(j).get("到达方式");
+    		if("".equals(arrivalMode)){
+    			title = "到达方式";
+    			break;
+    		}else{
+    			if("入中转仓".equals(arrivalMode)){
+    				if("".equals(content.get(j).get("中转仓"))){
+    					title = "中转仓";
+    	    			break;
+    				}
+    			}
     		}
     		
     		try {
@@ -142,141 +179,81 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 				break;
 			}
     		
-    		if("".equals(content.get(j).get("运营方式"))){
-    			title = "运营方式";
-    			break;
-    		}
-    		String arrivalMode = content.get(j).get("到达方式");
-    		if("".equals(arrivalMode)){
-    			title = "到达方式";
-    			break;
-    		}else{
-    			if("入中转仓".equals(arrivalMode)){
-    				if("".equals(content.get(j).get("中转仓"))){
-    					title = "中转仓";
-    	    			break;
-    				}
-    			}
-    		}
-    		//货品型号
-    		if("".equals(content.get(j).get("货品型号"))){
-    			title = "货品型号";
-    			break;
-    		}
     		because = "数据有误";
     		//客户名称
-    		Record customer = null;
-    		if(!"".equals(content.get(j).get("客户名称(简称)"))){
-    			customer = Db.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称(简称)") + "';");
-    			if(customer == null){
-    				title = "客户名称(简称)";
-    				break;
-    			}
-    		}else{
-    			title = "客户名称";
-    			because = "数据不能为空";
-    			break;
-    		}
+    		Party customer = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称(简称)") + "';");
+			if(customer == null){
+				title = "客户名称(简称)";
+				break;
+			}
 			//始发城市
-    		Record location1 = null;
-    		if(!"".equals(content.get(j).get("始发城市"))){
-    			location1 = Db.findFirst("select code from location where name = '" +content.get(j).get("始发城市") +"';");
-    			if(location1 == null){
-    				title = "始发城市";
-    				break;
-    			}
-    		}else{
-    			title = "始发城市";
-    			because = "数据不能为空";
+			Location location1 = Location.dao.findFirst("select code from location where name = '" +content.get(j).get("始发城市") +"';");
+			if(location1 == null){
+				title = "始发城市";
 				break;
-    		}
-			//目的地城市
-    		Record location2 = null;
-    		if(!"".equals(content.get(j).get("到达城市"))){
-    			location2 = Db.findFirst("select code from location where name = '" +content.get(j).get("到达城市") +"';");
-    			if(location2 == null){
-    				title = "到达城市";
-    				break;
-    			}
-    		}else{
-    			title = "到达城市";
-				because = "数据不能为空";
+			}
+			//到达城市
+			Location location2 = Location.dao.findFirst("select code from location where name = '" +content.get(j).get("到达城市") +"';");
+			if(location2 == null){
+				title = "到达城市";
 				break;
-    		}
+			}
 			
     		//网点
-    		Record office = null;
-    		if(!"".equals(content.get(j).get("网点"))){
-    			office = Db.findFirst("select id from office where office_name = '" + content.get(j).get("网点") + "';");
-    			if(office == null){
-    				title = "网点";
-    				break;
-    			}
-    		}else{
-    			title = "网点";
-    			because = "数据不能为空";
-    			break;
+			Office office = Office.dao.findFirst("select id from office where office_name = '" + content.get(j).get("网点") + "';");
+			if(office == null){
+				title = "网点";
+				break;
     		}
+    		
 			//供应商名称
-    		Record provider = null;
+			Party provider = null;
     		if(!"".equals(content.get(j).get("供应商名称(简称)"))){
-    			provider = Db.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称(简称)") + "';");
+    			provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称(简称)") + "';");
     			if(provider == null){
     				title = "供应商名称(简称)";
     				break;
     			}
     		}
-    		//仓库
-    		Record warehouse = null;
+    		//中转仓
+    		Warehouse warehouse = null;
     		if(!"".equals(content.get(j).get("中转仓"))){
-    			warehouse = Db.findFirst("select id from warehouse where warehouse_name = '" + content.get(j).get("中转仓") + "';");
+    			warehouse = Warehouse.dao.findFirst("select id from warehouse where warehouse_name = '" + content.get(j).get("中转仓") + "';");
     			if(warehouse == null){
     				title = "中转仓";
     				break;
     			}
     		}
-    	}
-    	if("".equals(title)){
-    		importResult.put("result","true");
-			importResult.put("cause", "验证数据成功");
-    	}else{ 
-    		importResult.put("result","false");
-    		if("客户订单号".equals(title)){
-    			importResult.put("cause", "验证数据至第" + (causeRow-1) + "行,因第" + causeRow + "行【" + title + "】列,请为同一张运输单的客户订单号做上标识（如：运输单001，运输单002等）！");
-        	}else{
-        		importResult.put("cause", "验证数据至第" + (causeRow-1) + "行,因第" + causeRow + "行【" + title + "】列" + because);
-        	}
-    	}
-    	return importResult;
-    }
-    /**
-     * 验证是否重复导入同一execl文件:同一个客户和运输单号
-     * @param content
-     * @return false:不是同一文件 true:重复导入
-     */
-	private Map<String, String> verifyDuplicate(List<Map<String,String>> content){
-    	Map<String, String> importResult = new HashMap<String, String>();
-    	int causeRow = 0;
-		for (int j = 0; j < content.size(); j++) {
-			String sql = "select p.id from transfer_order tor left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
+    		
+    		//验证同一execl文件多次导入问题:同一个客户和运输单号
+    		String sql = "select p.id from transfer_order tor left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
 					+ " where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' "
 					+ " and c.abbr ='" + content.get(j).get("客户名称(简称)") + "'"
 					+ " and tor.customer_order_no = '" + content.get(j).get("客户订单号").trim() + "' "
 					+ " and tor.planning_time = '" + content.get(j).get("计划日期") + "' and tor.arrival_time ='" + content.get(j).get("预计到货日期") + "';";
 			Record tansferOrder = Db.findFirst(sql);
 			if(tansferOrder != null){
-				++causeRow;
+				++verifyDuplicateRow;
 			}
-		}
-    	if(causeRow == content.size()){
-    		importResult.put("result","true");
-			importResult.put("cause", "不能导入重复的execl文件！");
-    	}else{
+    		
+    	}
+    	if(verifyDuplicateRow == content.size()){
     		importResult.put("result","false");
-    		importResult.put("cause", "可进行导入的execl文件！");
+			importResult.put("cause", "不能多次导入同一execl文件！");
+    	}else if(!"".equals(title)){
+    		importResult.put("result","false");
+    		if("客户订单号".equals(title)){
+    			importResult.put("cause", "验证数据至第" + (causeRow-1) + "行,因第" + causeRow + "行【" + title + "】列,请为同一张运输单的客户订单号做上标识（如：运输单001，运输单002等）！");
+        	}else{
+        		importResult.put("cause", "验证数据至第" + (causeRow-1) + "行,因第" + causeRow + "行【" + title + "】列" + because);
+        	}
+    	}else{
+    		importResult.put("result","true");
+			importResult.put("cause", "验证数据成功");
     	}
     	return importResult;
     }
+	
     /**
      * 保存运输单
      * @param content
@@ -516,78 +493,75 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     	if("true".equals(importResult.get("result"))){
 			importResult = validatingData(content);
 			if("true".equals(importResult.get("result"))){
-				importResult = verifyDuplicate(content);
-				if("false".equals(importResult.get("result"))){
-					int resultNum = 0;
-			    	int causeRow = 0;
-					try {
-						for (int j = 0; j < content.size(); j++) {
-							causeRow = j+2;
-							System.out.println("导入至第【"+causeRow+"】行");
-							//客户名称
-			        		Party customer = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称(简称)") + "';");
-			        		//货品型号
-			        		Product product = Product.dao.findFirst("select p.* from product p left join category c on c.id = p.category_id where c.customer_id = '" + customer.get("pid") + "' and item_no =  '"+content.get(j).get("货品型号")+"';");
-			    			//仓库
-			        		Warehouse warehouse = Warehouse.dao.findFirst("select id from warehouse where warehouse_name = '" + content.get(j).get("中转仓") + "';");
-			    			//始发城市
-			        		Location location1 = Location.dao.findFirst("select code from location where name = '" +content.get(j).get("始发城市") +"';");
-			    			//目的地城市
-			        		Location location2 = Location.dao.findFirst("select code from location where name = '" +content.get(j).get("到达城市") +"';");
-			    			//供应商名称
-			        		Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称(简称)") + "';");
-			    			//网点
-			        		Office office = Office.dao.findFirst("select id from office where office_name = '" + content.get(j).get("网点") + "';");
-			        		//客户订单号
-			        		String customerOrderNo = content.get(j).get("客户订单号").trim();
-			        		//发货数量
-			        		double itemNumber = 0;
-			    			if(!"".equals(content.get(j).get("发货数量"))){
-			    				itemNumber = Double.parseDouble(content.get(j).get("发货数量"));
-			    			}
-			    			String sql = "select * from transfer_order where customer_id = '" + customer.get("pid") + "' and customer_order_no = '" + customerOrderNo + "'"
-			    					+ " and planning_time = '" + content.get(j).get("计划日期") + "' and arrival_time ='" + content.get(j).get("预计到货日期") + "';";
-			        		TransferOrder order = TransferOrder.dao.findFirst(sql);
-			    			if(order != null){
-			    				TransferOrderItem tansferOrderItem= TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = '" + order.get("id") +"' and item_no = '" + product.get("item_no") + "';");
-			    				if(tansferOrderItem != null){
-			    					//运输单有单品时叠加计算货品数量，没单品时直接读取文件，此时“发货数量”列是货品总数，不用修改
-			    					TransferOrderItem item = updateTransferOrderItem(content.get(j),itemNumber,order,tansferOrderItem,product);
-			    				}else{
-			    					//创建保存货品明细
-				    				TransferOrderItem item = updateTransferOrderItem(content.get(j),itemNumber,order,new TransferOrderItem(),product);
-			    				}
-			    				//创建保存单品货品明细
-			    				if("cargoNatureDetailYes".equals(order.get("cargo_nature_detail"))){
-		    						//创建单品货品明细
-		    						saveTransferOrderItemDetail(content.get(j),order,tansferOrderItem,product);
-		    					} 
-			    			}else{
-			    				//生成运输单数量
-			    				++resultNum;
-			    				//创建保存运输单
-			    				TransferOrder transferOrder = saveTransferOrder(content.get(j), warehouse, location1, location2, customer, provider, office);
-			    				//保存运输里程碑
-			    				saveTransferOrderMilestone(transferOrder);
-			    				//创建保存货品明细
-			    				TransferOrderItem item = updateTransferOrderItem(content.get(j),itemNumber,transferOrder,new TransferOrderItem(),product);
-								//创建保存单品货品明细
-								if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
-									//创建单品货品明细
-									saveTransferOrderItemDetail(content.get(j),transferOrder,item,product);
-								}
+				int resultNum = 0;
+		    	int causeRow = 0;
+				try {
+					for (int j = 0; j < content.size(); j++) {
+						causeRow = j+2;
+						System.out.println("导入至第【"+causeRow+"】行");
+						//客户名称
+		        		Party customer = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称(简称)") + "';");
+		        		//货品型号
+		        		Product product = Product.dao.findFirst("select p.* from product p left join category c on c.id = p.category_id where c.customer_id = '" + customer.get("pid") + "' and item_no =  '"+content.get(j).get("货品型号")+"';");
+		    			//仓库
+		        		Warehouse warehouse = Warehouse.dao.findFirst("select id from warehouse where warehouse_name = '" + content.get(j).get("中转仓") + "';");
+		    			//始发城市
+		        		Location location1 = Location.dao.findFirst("select code from location where name = '" +content.get(j).get("始发城市") +"';");
+		    			//目的地城市
+		        		Location location2 = Location.dao.findFirst("select code from location where name = '" +content.get(j).get("到达城市") +"';");
+		    			//供应商名称
+		        		Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称(简称)") + "';");
+		    			//网点
+		        		Office office = Office.dao.findFirst("select id from office where office_name = '" + content.get(j).get("网点") + "';");
+		        		//客户订单号
+		        		String customerOrderNo = content.get(j).get("客户订单号").trim();
+		        		//发货数量
+		        		double itemNumber = 0;
+		    			if(!"".equals(content.get(j).get("发货数量"))){
+		    				itemNumber = Double.parseDouble(content.get(j).get("发货数量"));
+		    			}
+		    			String sql = "select * from transfer_order where customer_id = '" + customer.get("pid") + "' and customer_order_no = '" + customerOrderNo + "'"
+		    					+ " and planning_time = '" + content.get(j).get("计划日期") + "' and arrival_time ='" + content.get(j).get("预计到货日期") + "';";
+		        		TransferOrder order = TransferOrder.dao.findFirst(sql);
+		    			if(order != null){
+		    				TransferOrderItem tansferOrderItem= TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = '" + order.get("id") +"' and item_no = '" + product.get("item_no") + "';");
+		    				if(tansferOrderItem != null){
+		    					//运输单有单品时叠加计算货品数量，没单品时直接读取文件，此时“发货数量”列是货品总数，不用修改
+		    					TransferOrderItem item = updateTransferOrderItem(content.get(j),itemNumber,order,tansferOrderItem,product);
+		    				}else{
+		    					//创建保存货品明细
+			    				TransferOrderItem item = updateTransferOrderItem(content.get(j),itemNumber,order,new TransferOrderItem(),product);
+		    				}
+		    				//创建保存单品货品明细
+		    				if("cargoNatureDetailYes".equals(order.get("cargo_nature_detail"))){
+	    						//创建单品货品明细
+	    						saveTransferOrderItemDetail(content.get(j),order,tansferOrderItem,product);
+	    					} 
+		    			}else{
+		    				//生成运输单数量
+		    				++resultNum;
+		    				//创建保存运输单
+		    				TransferOrder transferOrder = saveTransferOrder(content.get(j), warehouse, location1, location2, customer, provider, office);
+		    				//保存运输里程碑
+		    				saveTransferOrderMilestone(transferOrder);
+		    				//创建保存货品明细
+		    				TransferOrderItem item = updateTransferOrderItem(content.get(j),itemNumber,transferOrder,new TransferOrderItem(),product);
+							//创建保存单品货品明细
+							if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){
+								//创建单品货品明细
+								saveTransferOrderItemDetail(content.get(j),transferOrder,item,product);
 							}
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						System.out.println("未知错误！");
-						importResult.put("result","true");
-						importResult.put("cause", "未知错误，已成功导入至第" + (causeRow-1) + "行！");
-						return importResult;
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println("未知错误！");
 					importResult.put("result","true");
-		        	importResult.put("cause", "成功导入" + resultNum + "张运输单");
+					importResult.put("cause", "未知错误，已成功导入至第" + (causeRow-1) + "行！");
+					return importResult;
 				}
+				importResult.put("result","true");
+	        	importResult.put("cause", "成功导入" + resultNum + "张运输单");
 			}
     	}
     	return importResult;  

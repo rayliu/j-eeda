@@ -1608,9 +1608,7 @@ public class DeliveryController extends Controller {
   			if(title != null && content.size() > 0){
  				DeliveryOrderExeclHandeln handeln = new DeliveryOrderExeclHandeln();
  				if(handeln.checkoutExeclTitle(title,"deliveryOrder")){
- 					//resultMap = handeln.importDeliveryOrder(content);
- 					resultMap.put("result","true");
- 					resultMap.put("cause", "验证成功");
+ 					resultMap = handeln.importDeliveryOrder(content);
  				}else{
  					resultMap.put("result", "false");
  					resultMap.put("cause", "导入失败，execl标题列与系统默认execl标题列不一致");
