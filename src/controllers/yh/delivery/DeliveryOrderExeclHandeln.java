@@ -108,7 +108,6 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 	private Map<String,String> validatingData(List<Map<String,String>> content){
     	Map<String, String> importResult = new HashMap<String, String>();
 		int causeRow = 0;
-		int verifyDuplicateRow = 0;
     	String title = "";
 		String because = "数据不能为空";
 		SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");

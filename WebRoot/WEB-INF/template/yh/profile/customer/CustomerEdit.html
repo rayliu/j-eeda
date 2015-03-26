@@ -151,7 +151,7 @@
                                         <fieldset>
                                             <div class="form-group">
                                                 <label>保险费率</label>
-                                                <input class="form-control" id="insurance_rates" name="insurance_rates" type="text" value="${party.insurance_rates!''}">
+                                                <input class="form-control" id="insurance_rates" name="insurance_rates" type="text">
                                             </div>                                     
                                         </fieldset>
                                     </div>
@@ -216,6 +216,11 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
     	
     	var payment = '${party.payment!}';
     	$("#payment").val(payment);
+    	
+    	var rate = '${party.insurance_rates!''}';
+    	var num = new Number(rate); 
+    	$("#insurance_rates").val(num);
+    	
     	var cname = $("#company_name").val();
     	var sname = $("#abbr").val();
         $('#customerForm').validate({
