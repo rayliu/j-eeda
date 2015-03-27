@@ -529,10 +529,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				TransferOrderItem tansferOrderItem= TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = '" + order.get("id") +"' and item_no = '" + product.get("item_no") + "';");
 		    				if(tansferOrderItem != null){
 		    					//运输单有单品时叠加计算货品数量，没单品时直接读取文件，此时“发货数量”列是货品总数，不用修改
-		    					TransferOrderItem item = updateTransferOrderItem(content.get(j),itemNumber,order,tansferOrderItem,product);
+		    					updateTransferOrderItem(content.get(j),itemNumber,order,tansferOrderItem,product);
 		    				}else{
 		    					//创建保存货品明细
-			    				TransferOrderItem item = updateTransferOrderItem(content.get(j),itemNumber,order,new TransferOrderItem(),product);
+			    				updateTransferOrderItem(content.get(j),itemNumber,order,new TransferOrderItem(),product);
 		    				}
 		    				//创建保存单品货品明细
 		    				if("cargoNatureDetailYes".equals(order.get("cargo_nature_detail"))){

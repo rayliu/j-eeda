@@ -41,6 +41,14 @@ $(document).ready(function() {
             }                         
         ]      
     });	
+	
+	
+	$("#dowmload").on('click', function(e){
+    	if(confirm("确认下载吗？")){
+    		window.location.href="/delivery/downloadDeliveryOrderTemplate";
+    	}
+    });
+	
 	    
 	$("#eeda-table3").on('click', '.cancelbutton', function(e){
 		e.preventDefault();

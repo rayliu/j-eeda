@@ -4,6 +4,10 @@ package controllers.yh.order;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -29,6 +33,7 @@ import models.yh.profile.Contact;
 import models.yh.profile.CustomizeField;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.util.IOUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -38,13 +43,13 @@ import org.apache.shiro.util.StringUtils;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.ReaderXLS;
 import controllers.yh.util.ReaderXlSX;
@@ -1374,4 +1379,14 @@ public class TransferOrderController extends Controller {
 		renderJson("{\"success\":true}");
     }
 	
+    /**
+     * 文件下载
+     */
+    public void downloadTransferOrderTemplate(){
+    	File file = new File(PathKit.getWebRootPath()+"/download/运输单导入模板.xls");
+    	renderFile(file);
+    }
+    
+    
+    
 }

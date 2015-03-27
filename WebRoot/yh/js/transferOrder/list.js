@@ -115,6 +115,13 @@ $(document).ready(function() {
         ]  
     });	
     
+    $("#dowmload").on('click', function(e){
+    	if(confirm("确认下载吗？")){
+    		window.location.href="/transferOrder/downloadTransferOrderTemplate";
+    	}
+    });
+    
+    
     $("#eeda-table").on('click', '.cancelbutton', function(e){
 		  e.preventDefault();
        //异步向后台提交数据

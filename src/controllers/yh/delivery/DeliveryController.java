@@ -35,6 +35,7 @@ import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.PathKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -1624,6 +1625,11 @@ public class DeliveryController extends Controller {
   		
  		renderJson(resultMap);
  	}
-    
+ 	
+    //下载配送单导入模板
+	public void downloadDeliveryOrderTemplate(){
+		File file = new File(PathKit.getWebRootPath()+"/download/配送单导入模板.xlsx");
+		renderFile(file);
+	}
 
 }

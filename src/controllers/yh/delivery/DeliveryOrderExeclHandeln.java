@@ -272,7 +272,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 			//String orderNo = OrderNoGenerator.getNextOrderNo("PS");
 			String orderNo = content.get("配送单号");
 			
-			deliveryOrder.set("order_no", orderNo)
+			deliveryOrder.set("order_no", "PS-"+orderNo)
 			.set("customer_id", order.get("customer_id"))
 			.set("from_warehouse_id", order.get("warehouse_id"))
 			.set("cargo_nature", order.get("cargo_nature"))
