@@ -1,26 +1,25 @@
 <%layout("/yh/layout.html"){%>
 
         
- <div id="wrapper">
+ <div id="page-wrapper">
 
-        <div id="page-wrapper">
-           		
-              <div class="col-lg-12">
-                  <h3 class="page-header">收费条目定义</h3>
-              </div>
+        <div id="row">
+           		<div class="col-lg-12">
+	                <h3 class="btn-header"></h3>
                 
-               
-                <!-- /.col-lg-12 -->
-            <% if(shiro.hasPermission("Toll.create")){%>
-	            <div class="panel-heading">
-	            	<a  class="btn btn-outline btn-primary" href="/toll/Edit">添加条目</a>
-	            </div>
-            <%}%>
+                </div>
+                
+            
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-12">
+                 	<% if(shiro.hasPermission("Toll.create")){%>
+					            <div class="btn-header">
+					            	<a  class="btn btn-outline btn-primary" href="/toll/Edit">添加条目</a>
+					            </div>
+				      <%}%>
                     <div class="panel panel-default">
-                        
+                       
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="table-responsive">

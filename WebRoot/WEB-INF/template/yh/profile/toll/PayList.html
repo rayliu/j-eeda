@@ -1,24 +1,26 @@
 <%layout("/yh/layout.html"){%>
 
         
- <div id="wrapper">
+ <div id="page-wrapper">
 
-        <div id="page-wrapper">
+        <div id="row">
            
                 <div class="col-lg-12">
-                    <h3 class="page-header">付款条目定义</h3>
+                    <h3 class="btn-header"></h3>
                 </div>
                 
                
                 <!-- /.col-lg-12 -->
-            <% if(shiro.hasPermission("Pay.create")){%>
-	            <div class="panel-heading">
-	            	<a  class="btn btn-outline btn-primary" href="/pay/Edit">添加条目</a>
-	            </div>
-            <%}%>
+            
             <!-- /.row -->
+            
             <div class="row">
                 <div class="col-lg-12">
+                	<% if(shiro.hasPermission("Pay.create")){%>
+			            <div class="btn-header">
+			            	<a  class="btn btn-outline btn-primary" href="/pay/Edit">添加条目</a>
+			            </div>
+	            		<%}%>
                     <div class="panel panel-default">
                         
                         <!-- /.panel-heading -->
