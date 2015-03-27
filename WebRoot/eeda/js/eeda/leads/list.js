@@ -231,7 +231,7 @@ $(document).ready(function() {
                 "sWidth": "8%",
                 "bVisible": isAdminPmInt, 
                 "fnRender": function(obj) {                    
-                    return "<a class='btn btn-info' href='/editLeads/"+obj.aData.ID+"'>"+
+                    return "<a class='btn btn-outline btn-primary' href='/editLeads/"+obj.aData.ID+"'>"+
                                 "<i class='icon-edit icon-white'></i>"+
                                 "编辑"+
                             "</a>"+

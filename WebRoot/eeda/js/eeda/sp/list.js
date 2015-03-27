@@ -32,7 +32,7 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "sWidth": "95px",
                 "fnRender": function(obj) {                    
-                    return  "<a class='btn btn-info send-mail' href='#' id='"+obj.aData.ID+"'>"+
+                    return  "<a class='btn btn-primary send-mail' href='#' id='"+obj.aData.ID+"'>"+
                                 "<i class='icon-edit icon-white'></i>"+
                                 "发邮件"+
                             "</a>";
@@ -47,7 +47,7 @@ $(document).ready(function() {
                     return  "<a href='/sp/edit/"+obj.aData.ID+"' id='"+obj.aData.ID+"'>"+
                                 obj.aData.PROVIDER_NAME+                                
                             "</a> <br>"+
-                            "<a href='http://www.baidu.com/#wd="+obj.aData.PROVIDER_NAME+"' class='btn btn-info' target='_blank' >查找</a>";
+                            "<a href='http://www.baidu.com/#wd="+obj.aData.PROVIDER_NAME+"' class='btn btn-primary' target='_blank' >查找</a>";
                 }
             },
             {"mDataProp":"CONTACT",

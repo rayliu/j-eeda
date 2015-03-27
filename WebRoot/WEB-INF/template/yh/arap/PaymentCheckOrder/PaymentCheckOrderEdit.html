@@ -218,8 +218,8 @@
                                 <div class=".tooltip-demo">
                                     <hr/>
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
-                                    <button id="saveChargeCheckOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                  
-                                    <button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">审核</button>
+                                    <button id="saveChargeCheckOrderBtn" type="button" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                  
+                                    <button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-outline btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">审核</button>
                                     
                                 </div>
                                 <p>保存：新建时只能保存（其他按钮都灰掉不能点）, 保存后单据状态变为“新建”</p>
@@ -315,9 +315,9 @@
 				var item = data[i].ITEM_NO;
 				if(item == null){
 					item = "";
-					transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+					transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-outline btn-primary'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 				}else{
-					transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+					transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-outline btn-primary'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 				}
 			}
 		},'json');
@@ -333,7 +333,7 @@
 				var amount = $("#amount").val();  
 				var unit = $("#unit").val();   
 				var remark = $("#remark").val();  
-				transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item_no+"</td><td>"+amount+"</td><td>"+unit+"</td><td>"+remark+"</td><td><button id='detailEdit("+data.ID+"|"+data.ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data.ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data.ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+				transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item_no+"</td><td>"+amount+"</td><td>"+unit+"</td><td>"+remark+"</td><td><button id='detailEdit("+data.ID+"|"+data.ORDER_ID+"' type='submit' class='btn btn-outline btn-primary'>单品编辑</button><button id='itemEdit("+data.ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='deleteItem("+data.ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 				// 关闭模态框
 				$('#myModal').modal('hide');
 			}
@@ -355,9 +355,9 @@
 						var item = data[i].ITEM_NO;
 						if(item == null){
 							item = "";
-							transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+							transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-outline btn-primary'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 						}else{
-							transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+							transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-outline btn-primary'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 						}
 					}
 				},'json');
@@ -396,13 +396,13 @@
 					for(var i=0,j=0;i<data.transferOrderItemDetails.length,j<data.contacts.length;i++,j++){
 			  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td>"+data.contacts[j].CONTACT_PERSON+"<br/>"+data.contacts[j].PHONE+"<br/>"+data.contacts[j].ADDRESS+"<br/></td>"
 			                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 		  	    	}
 				}else{
 					for(var i=0;i<data.transferOrderItemDetails.length;i++){
 			  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td></td>"
 			                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 		  	    	}
 				}
 			},'json');
@@ -427,9 +427,9 @@
 					var item = data[i].ITEM_NO;
 					if(item == null){
 						item = "";
-						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-outline btn-primary'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 					}else{
-						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-outline btn-primary'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 					}
 				}
 			},'json');
@@ -449,9 +449,9 @@
 					var item = data[i].ITEM_NO;
 					if(item == null){
 						item = "";
-						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+item+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-outline btn-primary'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 					}else{
-						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-default'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-default'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+						transferOrderItemTbody.append("<tr><td><a class='btn' href='#'>查看序列号</a></td><td>"+data[i].ITEM_NO+"</td><td>"+data[i].AMOUNT+"</td><td>"+data[i].UNIT+"</td><td>"+data[i].REMARK+"</td><td><button id='detailEdit("+data[i].ID+"|"+data[i].ORDER_ID+"' type='submit' class='btn btn-outline btn-primary'>单品编辑</button><button id='itemEdit("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='deleteItem("+data[i].ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 					}
 				}
 			},'json');
@@ -512,7 +512,7 @@
 				var address = $("#detail_address").val();   
 				transferOrderItemDetailTbody.append("<tr><td>"+serial_no+"</td><td>"+detail_item_name+"</td><td>"+detail_volume+"</td><td>"+detail_weight+"</td><td>"+contact_person+"<br/>"+phone+"<br/>"+address+"<br/></td>"
 	                       + "<td>"+detail_remark+"</td><td>"+detail_is_damage+"</td><td>"+detail_estimate_damage_amount+"<br/>"+detail_damage_revenue+"<br/>"+detail_damage_payment+"<br/>"+detail_damage_remark+"</td>"
-	                       + "<td><button id='itemDetailEdit("+transferOrderItemDetail.ID+"|"+transferOrderItemDetail.ITEM_ID+"["+transferOrderItemDetail.ORDER_ID+"-"+transferOrderItemDetail.NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+transferOrderItemDetail.ID+"|"+transferOrderItemDetail.ITEM_ID+"["+transferOrderItemDetail.ORDER_ID+"-"+transferOrderItemDetail.NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+	                       + "<td><button id='itemDetailEdit("+transferOrderItemDetail.ID+"|"+transferOrderItemDetail.ITEM_ID+"["+transferOrderItemDetail.ORDER_ID+"-"+transferOrderItemDetail.NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='itemDetailDelete("+transferOrderItemDetail.ID+"|"+transferOrderItemDetail.ITEM_ID+"["+transferOrderItemDetail.ORDER_ID+"-"+transferOrderItemDetail.NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 				$("#detailModal").modal('hide');
 			}			
 		});
@@ -567,13 +567,13 @@
 					for(var i=0,j=0;i<data.transferOrderItemDetails.length,j<data.contacts.length;i++,j++){
 			  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td>"+data.contacts[j].CONTACT_PERSON+"<br/>"+data.contacts[j].PHONE+"<br/>"+data.contacts[j].ADDRESS+"<br/></td>"
 			                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 		  	    	}
 				}else{
 					for(var i=0;i<data.transferOrderItemDetails.length;i++){
 			  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td></td>"
 			                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+			                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 		  	    	}
 				}
 			},'json'); 
@@ -594,13 +594,13 @@
 						for(var i=0,j=0;i<data.transferOrderItemDetails.length,j<data.contacts.length;i++,j++){
 				  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td>"+data.contacts[j].CONTACT_PERSON+"<br/>"+data.contacts[j].PHONE+"<br/>"+data.contacts[j].ADDRESS+"<br/></td>"
 				                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-				                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+				                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 			  	    	}
 					}else{
 						for(var i=0;i<data.transferOrderItemDetails.length;i++){
 				  	    	transferOrderItemDetailTbody.append("<tr><td>"+data.transferOrderItemDetails[i].SERIAL_NO+"</td><td>"+data.transferOrderItemDetails[i].ITEM_NAME+"</td><td>"+data.transferOrderItemDetails[i].VOLUME+"</td><td>"+data.transferOrderItemDetails[i].WEIGHT+"</td><td></td>"
 				                       + "<td>"+data.transferOrderItemDetails[i].REMARK+"</td><td>"+data.transferOrderItemDetails[i].IS_DAMAGE+"</td><td>"+data.transferOrderItemDetails[i].ESTIMATE_DAMAGE_AMOUNT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REVENUE+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_PAYMENT+"<br/>"+data.transferOrderItemDetails[i].DAMAGE_REMARK+"</td>"
-				                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-default'>删除</button></td></tr>");
+				                       + "<td><button id='itemDetailEdit("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>编辑</button><button id='itemDetailDelete("+data.transferOrderItemDetails[i].ID+"|"+data.transferOrderItemDetails[i].ITEM_ID+"["+data.transferOrderItemDetails[i].ORDER_ID+"-"+data.transferOrderItemDetails[i].NOTIFY_PARTY_ID+"' type='submit' class='btn btn-outline btn-primary'>删除</button></td></tr>");
 			  	    	}
 					}
 				},'json');

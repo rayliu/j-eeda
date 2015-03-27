@@ -11,9 +11,9 @@
                     	<% 
                     		if(shiro.hasPermission("TransferOrder.create")){
                     	%>
-                        	<a class="btn btn-primary" href="/transferOrder/add">新增运输单</a>
+                        	<a class="btn btn-outline btn-primary" href="/transferOrder/add">新增运输单</a>
                         <%}%>
-                        <input id="fileUploadBtn" type="button" class="btn btn-primary" value="导入运输单" size="30" />
+                        <input id="fileUploadBtn" type="button" class="btn btn-outline btn-primary" value="导入运输单" size="30" />
                         
                         <sub><a id="dowmload" href="javascript:void(0)"  target='_blank'>下载导入模板</a></sub>
                         <form id="toFileUploadForm" method="post" action="/transferOrder/intoTransferOrder" enctype="multipart/form-data">
@@ -185,7 +185,7 @@
                                         	<center id="centerBody"></center>
                                         </div>
                                         <div class="modal-footer" id="footer" aria-hidden="true">
-								        	<button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">关闭</button>
+								        	<button type="button" class="btn btn-outline btn-primary" data-dismiss="modal" id="cancel">关闭</button>
 								      	</div>
                                     </div>
                                   </div>

@@ -7,9 +7,9 @@
                 <div class="col-lg-12">
                     <h1 class="page-header">运输单   
                     	<!-- <% if(shiro.hasPermission("TransferOrder.create")){%>
-                        	<a class="btn btn-primary" href="/transferOrder/add">新增运输单</a>
+                        	<a class="btn btn-outline btn-primary" href="/transferOrder/add">新增运输单</a>
                         <%}%> -->
-                        <a class="btn btn-default" href="/transferOrder">返回</a>
+                        <a class="btn btn-outline btn-primary" href="/transferOrder">返回</a>
                     </h1>
                     
                     <input id="order_id" type="hidden" name="order_id" value="${transferOrder.id!''}"/>
@@ -386,7 +386,7 @@
                                     <div class="panel-body">             
                                         <div class="table-responsive">
                                         <% if(shiro.hasPermission("TransferOrder.update")){%>
-				                            <button class="btn btn-primary" id="editTransferOrderItem">
+				                            <button class="btn btn-outline btn-primary" id="editTransferOrderItem">
 											  新增货品
 											</button>
 										<%}%>
@@ -413,10 +413,10 @@
                                         </table>
                                             <div id="transferOrderItemDateil" style="display: none;">
 	                                            <h3 class="page-header">单品列表</h3>
-	                                            <!--button class="btn btn-primary" data-toggle="modal" data-target="#detailModal">
+	                                            <!--button class="btn btn-outline btn-primary" data-toggle="modal" data-target="#detailModal">
 												  新增货品明细
 												</button-->
-												<button id="findAllDetailBtn" type="button" class="btn btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查看所有单品</button>
+												<button id="findAllDetailBtn" type="button" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查看所有单品</button>
 	                                            <table class="table table-striped table-bordered table-hover" id="detailTable" style="width: 2600px;">
 	                                                <thead>
 	                                                    <tr>	                                                        
@@ -520,8 +520,8 @@
 												
 										      </div>
 										      <div class="modal-footer">
-										        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-										        <button id="transferOrderItemFormBtn" type="button" class="btn btn-primary">保存</button>
+										        <button type="button" class="btn btn-outline btn-primary" data-dismiss="modal">取消</button>
+										        <button id="transferOrderItemFormBtn" type="button" class="btn btn-outline btn-primary">保存</button>
 										      </div>
 											</form>
 									    </div><!-- /.modal-content -->
@@ -590,8 +590,8 @@
                                                 </div>
 										      </div>
 										      <div class="modal-footer">
-										        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-										        <button id="transferOrderItemDetailFormBtn" type="button" class="btn btn-primary">保存</button>
+										        <button type="button" class="btn btn-outline btn-primary" data-dismiss="modal">取消</button>
+										        <button id="transferOrderItemDetailFormBtn" type="button" class="btn btn-outline btn-primary">保存</button>
 										      </div>
 											</form>
 									    </div><!-- /.modal-content -->
@@ -622,8 +622,8 @@
 												</div>
 										      </div>
 										      <div class="modal-footer">
-										        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-										        <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-primary">保存</button>
+										        <button type="button" class="btn btn-outline btn-primary" data-dismiss="modal">取消</button>
+										        <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-outline btn-primary">保存</button>
 										      </div>
 											</form>
 									    </div><!-- /.modal-content -->
@@ -632,7 +632,7 @@
                                 <div class="tab-pane fade" id="milestone">
                                 	<div class="panel-body">
                                 		<% if(false){%>
-			                            <button class="btn btn-primary" data-toggle="modal" data-target="#transferOrderMilestone">
+			                            <button class="btn btn-outline btn-primary" data-toggle="modal" data-target="#transferOrderMilestone">
 										  新里程碑
 										</button>
 										<%}%>
@@ -660,7 +660,7 @@
                                       <h2>应收</h2>
                                         <div class="panel-body">
                                             <div id='addRevenueDiv' style="display:none;">
-									 	        <button class="btn btn-primary" id="addrow2">添加应收</button>
+									 	        <button class="btn btn-outline btn-primary" id="addrow2">添加应收</button>
                                                 <input type="checkbox" name="no_contract_revenue" id="revenueCheckBox"
                                                 <% if(transferOrder.no_contract_revenue!false){ %>checked<%}%>
                                                 >不需要从合同计算应收费用
@@ -705,7 +705,7 @@
                                     <h2>应付</h2>
                                     <div class="panel-body">
                                         <div id='addCostDiv' style="display:none;">
-									        <button class="btn btn-primary" id="addrow"> 添加应付</button>
+									        <button class="btn btn-outline btn-primary" id="addrow"> 添加应付</button>
                                             <input type="checkbox" name="no_contract_cost" id="costCheckBox"
                                             <% if(transferOrder.no_contract_cost!false){ %>checked<%}%>
                                             >不需要从合同计算应付费用
@@ -763,7 +763,7 @@
                                                     </label>
 	                                            </div>
 	                                            <br/>
-	                                            <button id="btnOK" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">确认</button> 
+	                                            <button id="btnOK" type="button" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">确认</button> 
 									      	</div>
 									      	
 								      	</div>
@@ -773,12 +773,12 @@
                                 <div class=".tooltip-demo">
                                     <hr/>
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
-                                    <button id="saveTransferOrderBtn" type="button" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
-                                     <button id="printBtn" type="button" class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-sm">打印</button>
-                                    <!-- <button id="receiptBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button>                                   
-                                    <button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-default " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
-                                    <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
-                                    <button id="receiptBtn" type="button" disabled="true" class="btn btn-default" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button> -->
+                                    <button id="saveTransferOrderBtn" type="button" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
+                                     <button id="printBtn" type="button" class="btn btn-outline btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">打印</button>
+                                    <!-- <button id="receiptBtn" type="button" disabled="true" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button>                                   
+                                    <button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-outline btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
+                                    <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
+                                    <button id="receiptBtn" type="button" disabled="true" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button> -->
                                 </div>
                                 <!-- <p>保存：新建时只能保存（其他按钮都灰掉不能点）, 保存后单据状态变为“新建”</p>
                                 <p>发车确认：新建后可以点击，点击后生成单据状态 “已发车”，之后生成应付条目（付费给供应商）</p>
