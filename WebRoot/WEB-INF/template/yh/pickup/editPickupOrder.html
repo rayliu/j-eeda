@@ -16,6 +16,9 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
+            <%
+             	var title=SYS_CONFIG.system_title!'';
+             %>
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-12">
@@ -66,9 +69,7 @@
 					                    <input id="driverAssistantPhones" name="driverAssistantPhones" type="hidden" value="">
 					                    <!-- <input id="cargoNumbers" name="cargoNumbers" type="hidden" value="${cargoNumbers!''}"> -->                                 	
                                         
-                                        	<%
-						                    	var title=SYS_CONFIG.system_title!'';
-						                    %>
+                                        	
 	                                       	<div id="pickupModes" class="form-group">
 	                                            <label><h3>提货方式</h3></label>
 	                                           	<input id="pickupModeRadio" type="hidden" value="${pickupOrder.pickup_mode!''}"/>

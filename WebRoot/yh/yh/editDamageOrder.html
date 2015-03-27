@@ -347,8 +347,12 @@
                                         <label class="radio-inline">
                                                 <input type="radio" name="pickupMode" id="optionsRadiosInline1" value="option1" checked="">供应商自提
                                             </label>
+                                            
+                                            <%
+												var title=SYS_CONFIG.system_title!'';
+											%>
                                             <label class="radio-inline">
-                                                <input type="radio" name="pickupMode" id="optionsRadiosInline2" value="option2">源鸿自提
+                                                <input type="radio" name="pickupMode" id="optionsRadiosInline2" value="option2"><%if(title =="源鸿物流"){%>源鸿自提<%}else{%>公司自提<%}%>
                                             </label>
                                     </div>
                                         

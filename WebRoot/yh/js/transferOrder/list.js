@@ -99,7 +99,13 @@ $(document).ready(function() {
             		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
             			return "外包供应商提货";
             		}else if(obj.aData.PICKUP_MODE == "own"){
-            			return "源鸿自提";
+            			if(TransferOrder.title=="源鸿物流"){
+            				return "源鸿自提";
+            			}else{
+            				return "公司自提";
+            			}
+            			
+            			
             		}else{
             			return "";
             		}}},

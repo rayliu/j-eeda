@@ -217,9 +217,11 @@
 <script>
 	<%
 		var transferOrderUpdate = shiro.hasPermission("TransferOrder.update");
+		var title=SYS_CONFIG.system_title!'';
 	%>
 	var TransferOrder = {};
 	TransferOrder.isUpdate = ${transferOrderUpdate};
+	TransferOrder.title = ${title};
 </script>
 
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>

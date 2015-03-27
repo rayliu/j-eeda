@@ -308,7 +308,12 @@
  	}
  	
  	if($("#pickupMode").val() == 'own'){
- 		$("#pickupModeSpan").text('源鸿自提');
+ 		if(title =="源鸿物流"){
+ 			$("#pickupModeSpan").text('源鸿自提');
+ 		}else{
+ 			$("#pickupModeSpan").text('公司自提');
+ 		}
+ 		
  	}else if($("#pickupMode").val() == 'routeSP'){
  		$("#pickupModeSpan").text('干线供应商自提'); 		
  	}else if($("#pickupMode").val() == 'pickupSP'){
