@@ -37,6 +37,7 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": "ORDER_NO","sClass": "order_no"},
             { "mDataProp": "PICKUP_NO","sClass": "pickup_no"},
+            { "mDataProp": "PLANNING_TIME","sClass": "planning_time"},
             { "mDataProp": "CNAME", "sWidth": "100px","sClass": "cname"},
             { "mDataProp":"OPERATION_TYPE","sClass": "operation_type"}, 
             { "mDataProp":"CARGO_NATURE","sClass": "cargo_nature"},
@@ -83,7 +84,8 @@ $(document).ready(function() {
             },
             { "mDataProp": "ORDER_NO","sClass": "order_no"},
             { "mDataProp": "PICKUP_NO","sClass": "pickup_no"},
-            { "mDataProp": "PLANNING_TIME"},
+            { "mDataProp": "PLANNING_TIME","sClass": "planning_time"},
+            { "mDataProp": "ROUTE_TO","sClass": "route_to"},
             { "mDataProp": "CNAME", "sWidth": "100px","sClass": "cname"},
             { "mDataProp":"OPERATION_TYPE",
             	"sClass": "operation_type",
@@ -136,10 +138,6 @@ $(document).ready(function() {
             { 
             	"mDataProp": "ROUTE_FROM",
                 "sClass": "route_from"
-            },
-            { 
-            	"mDataProp": "ROUTE_TO",
-                "sClass": "route_to"
             },
             {"mDataProp":"CHARGE_TYPE2",
             	"sClass": "chargeType2",
@@ -277,8 +275,8 @@ $(document).ready(function() {
 					}
 				}
     		}
-    		ckeckedTransferOrderList.append("<tr value='"+value+"' pickupid='"+pickupid+"'><td>"+order_no+"</td><td>"+pickup_no+"</td><td>"+cname+"</td><td>"+operation_type+"</td><td>"+cargo_nature
-    				+"</td><td>"+doaddress+"</td><td>"+arrival_model+"</td><td>"+pickup_mode+"</td><td>"+spname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+charge_type+"</td><td>"+office_name+"</td></tr>");
+    		ckeckedTransferOrderList.append("<tr value='"+value+"' pickupid='"+pickupid+"'><td>"+order_no+"</td><td>"+pickup_no+"</td><td>"+cname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+operation_type+"</td><td>"+cargo_nature
+    				+"</td><td>"+doaddress+"</td><td>"+arrival_model+"</td><td>"+pickup_mode+"</td><td>"+spname+"</td><td>"+charge_type+"</td><td>"+office_name+"</td></tr>");
     	}else{
     		if(transferOrderIds.length != 0){
     			transferOrderIds.splice(transferOrderIds.indexOf(value), 1); 
