@@ -15,7 +15,7 @@
                 <div class="col-lg-12">
                  	<% if(shiro.hasPermission("Toll.create")){%>
 					            <div class="btn-header">
-					            	<a  class="btn btn-outline btn-primary" href="/toll/Edit">添加条目</a>
+					            	<a  class="btn  btn-primary" href="/toll/Edit">添加条目</a>
 					            </div>
 				      <%}%>
                     <div class="panel panel-default">
@@ -98,19 +98,19 @@
    	        	 "fnRender": function(obj) { 
    	        		 var str = "<nobr>";
    	        		 if(Toll.isUpdate){
-   	        			 str += "<a class='btn btn-outline btn-primary btn-sm' href='/toll/Edit/"+obj.aData.ID+"'>"+
+   	        			 str += "<a class='btn  btn-primary btn-sm' href='/toll/Edit/"+obj.aData.ID+"'>"+
 			                    "<i class='fa fa-edit fa-fw'></i> "+
 			                    "编辑"+
 				                " </a> ";
    	        		 }
    	        		 if(Toll.isDel){
    	        			if(obj.aData.IS_STOP != true ){
-   		   	        		str += "<a class='btn btn-danger btn-outline btn-sm' href='/toll/delete/"+obj.aData.ID+"'>"+
+   		   	        		str += "<a class='btn btn-danger  btn-sm' href='/toll/delete/"+obj.aData.ID+"'>"+
    					                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
    					                    "停用"+
    					                "</a>";
    		   	        	 }else{
-   		   	        		str += "<a class='btn btn-success btn-outline btn-sm' href='/toll/delete/"+obj.aData.ID+"'>"+
+   		   	        		str += "<a class='btn btn-success  btn-sm' href='/toll/delete/"+obj.aData.ID+"'>"+
    					                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
    					                    "启用"+
    					                "</a>";

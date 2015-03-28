@@ -20,20 +20,20 @@ $(document).ready(function() {
 	                "sWidth": "15%",
 	                "fnRender": function(obj) { 
 	                	if(obj.aData.IS_STOP != true){
-	                		 return "<nobr><a class='btn btn-outline btn-primary btn-sm editbutton' href='/driverAssistant/edit/"+obj.aData.ID+"'>"+
+	                		 return "<nobr><a class='btn  btn-primary btn-sm editbutton' href='/driverAssistant/edit/"+obj.aData.ID+"'>"+
 			                             "<i class='fa fa-edit'> </i> "+
 			                             "编辑"+
 				                         "</a>"+
-			                         "<a class='btn btn-outline btn-sm btn-danger delete' code='"+obj.aData.ID+"'>"+
+			                         "<a class='btn  btn-sm btn-danger delete' code='"+obj.aData.ID+"'>"+
 			                             "<i class='fa fa-trash-o fa-fw'></i>"+ 
 			                             "停用"+
 			                         "</a></nobr>";
 	                	}else{
-	                		return "<nobr><a class='btn btn-outline btn-primary btn-sm editbutton' href='/driverAssistant/edit/"+obj.aData.ID+"'>"+
+	                		return "<nobr><a class='btn  btn-primary btn-sm editbutton' href='/driverAssistant/edit/"+obj.aData.ID+"'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
 			                         "</a>"+
-			                         "<a class='btn btn-success btn-outlinebtn-sm delete' code='"+obj.aData.ID+"'>"+
+			                         "<a class='btn btn-success btn-sm delete' code='"+obj.aData.ID+"'>"+
 			                             "<i class='fa fa-trash-o fa-fw'></i>"+ 
 			                             "启用"+
 			                         "</a></nobr>";

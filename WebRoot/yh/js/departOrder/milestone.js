@@ -97,7 +97,7 @@ $(document).ready(function() {
                   	if(obj.aData.STATUS=='已收货'){
                   		return "已收货";
                   	}else{
-                  		return "<a class='btn btn-outline btn-primary confirmReceipt' code='"+obj.aData.ID+"'>"+
+                  		return "<a class='btn  btn-primary confirmReceipt' code='"+obj.aData.ID+"'>"+
                   		"收货确认"+
                   		"</a>";
                   	}

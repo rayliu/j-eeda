@@ -87,7 +87,7 @@
                              </form>
 
                             <h3><label >应付</label></h3>
-                            <!--button class="btn btn-outline btn-primary" id="addrow2">添加应收</button-->
+                            <!--button class="btn  btn-primary" id="addrow2">添加应收</button-->
                             <input type="hidden" id="receivableTotal" value="${receivableTotal!''}">
                             <!-- <div class="panel-body"> -->
                                 <div class="table-responsive">
@@ -178,13 +178,13 @@
                             
                                 <div class="form-group"><hr/>
                         			<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
-                                	<button id="createBtn" type="button" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip" 
+                                	<button id="createBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip" 
                                     <% if(order.STATUS!'' == "audit"){%>disabled='disabled'<%}%>
                                     >保存</button> 
-                                	<button id="accomplishBtn" type="button" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip" 
+                                	<button id="accomplishBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip" 
                                      <% if(order.STATUS!'' == "audit"){%>disabled='disabled'<%}%>
                                     >审核</button> 
-                                    <a class="btn btn-outline btn-primary" href="/carreimbursement">返回</a>
+                                    <a class="btn  btn-primary" href="/carreimbursement">返回</a>
                                 </div>
                         </div>
                         <!-- /.panel-body -->

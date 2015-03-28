@@ -24,9 +24,9 @@ $(document).ready(function() {
 			    	console.log(obj.aData.ARRIVAL_MODE);
 			    	if(obj.aData.DEPART_STATUS != '已入库' && obj.aData.DEPART_STATUS != '已收货'){
 			    		if(obj.aData.ARRIVAL_MODE == '货品直送'){
-				    		return "<a class='btn btn-outline btn-primary confirmReceipt' departOrderId='"+obj.aData.ID+"' code='"+obj.aData.ORDER_ID+"'>"+"收货确认"+"</a>";
+				    		return "<a class='btn  btn-primary confirmReceipt' departOrderId='"+obj.aData.ID+"' code='"+obj.aData.ORDER_ID+"'>"+"收货确认"+"</a>";
 				    	}else{
-				    		return "<a class='btn btn-outline btn-primary confirmInWarehouse' code='"+obj.aData.ID+"'>"+"入库确认"+"</a>";
+				    		return "<a class='btn  btn-primary confirmInWarehouse' code='"+obj.aData.ID+"'>"+"入库确认"+"</a>";
 				    	}
 			    	}else{
 			    		return obj.aData.DEPART_STATUS;

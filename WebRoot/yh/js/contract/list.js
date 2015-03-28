@@ -79,12 +79,12 @@ $(document).ready(function() {
                 	var str ="<nobr>";
                 	
                 	if(isUpdate){
-                		str +=  "<a class='btn btn-outline  btn-primary btn-sm' title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+
+                		str +=  "<a class='btn   btn-primary btn-sm' title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+
 		                            "<i class='fa fa-edit fa-fw'></i>编辑"+
 		                        "</a> ";
                 	}
                 	if(isDel){
-                		str += "<a class='btn btn-outline  btn-danger btn-sm' title='删除' href='"+urlSource3+""+obj.aData.CID+"'>"+
+                		str += "<a class='btn   btn-danger btn-sm' title='删除' href='"+urlSource3+""+obj.aData.CID+"'>"+
 	                        "<i class='fa fa-trash-o fa-fw'></i>删除"+ 
 	                        "</a>";
                 	}

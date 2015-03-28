@@ -405,8 +405,8 @@
 											</div>
 	                       			  	</div>    
 	                       			  	<div class="modal-footer">
-									        <button type="button" class="btn btn-outline btn-primary" data-dismiss="modal">取消</button>
-									        <button id="transferOrderMilestoneFormBtn" type="button" class="btn btn-outline btn-primary">保存</button>
+									        <button type="button" class="btn  btn-primary" data-dismiss="modal">取消</button>
+									        <button id="transferOrderMilestoneFormBtn" type="button" class="btn  btn-primary">保存</button>
 									    </div>
 										</form>
 								    </div><!-- /.modal-content -->
@@ -415,7 +415,7 @@
                               <div id="milestone" class="tab-pane fade">
                                 <div class="panel-body">
                                         <div class="table-responsive">                                        
-       			                             <button id="edit_status"  data-target="#transferOrderMilestone" data-toggle="modal" class="btn btn-outline btn-primary" >
+       			                             <button id="edit_status"  data-target="#transferOrderMilestone" data-toggle="modal" class="btn  btn-primary" >
        										  	新里程碑
        										 </button>
        										 <div class="form-group "></div>
@@ -438,7 +438,7 @@
 
                                 <div class="tab-pane fade" id="arap">
                                     <div class="panel-body">
-										<button class="btn btn-outline btn-primary" id="addrow"> 添加应付</button>
+										<button class="btn  btn-primary" id="addrow"> 添加应付</button>
                                         
                                         <div class="table-responsive">
                                            <br>
@@ -493,8 +493,8 @@
 		                        		<form id="detailCheckBoxForm" method="post" action="/departOrder/createDepartOrder">
 		                        			<input type="hidden" name="localArr" value="${localArr!''}">
 			                       			<div class="panel-footer">
-			                          			<button id="cancelBtn" type="button" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">否</button>
-			                          			<button id="continueCreateBtn" type="button" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">是</button>
+			                          			<button id="cancelBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">否</button>
+			                          			<button id="continueCreateBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">是</button>
 			                        		</div>                        		
 		                        		</form>
 	                   				</div> 
@@ -505,14 +505,14 @@
 	                        <hr/>
 	                          <a style="display:none" id ="style"><i class='fa fa-check'></i></a>  
 	                          <% if(shiro.hasPermission("DepartOrder.create") || shiro.hasPermission("DepartOrder.update")){%>                          
-		             		        <button id="saveDepartOrderBtn" type="button" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
+		             		        <button id="saveDepartOrderBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
 		             		  <%}%>
 		             		  <% if(shiro.hasPermission("DepartOrder.completed")){%>
-                            		<button id="departureConfirmationBtn" type="button" disabled="true" class="btn btn-outline btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
+                            		<button id="departureConfirmationBtn" type="button" disabled="true" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
                               <%}%>
-                            <!-- <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
-                            <button id="receiptBtn" type="button" disabled="true" class="btn btn-outline btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button> -->
-        		             		<a class="btn btn-outline btn-primary" href="/departOrder">返回</a>
+                            <!-- <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
+                            <button id="receiptBtn" type="button" disabled="true" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button> -->
+        		             		<a class="btn  btn-primary" href="/departOrder">返回</a>
                         </div>
                     	<div class="form-group">
                     </div>

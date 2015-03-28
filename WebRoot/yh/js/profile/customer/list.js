@@ -47,13 +47,13 @@ $(document).ready(function() {
                 "fnRender": function(obj) {  
                 	var str="<nobr>";
                 	if(Customer.updatePermission){
-            			str +="<a class='btn btn-outline btn-primary btn-sm' href='/customer/edit/"+obj.aData.PID+"'>"+
+            			str +="<a class='btn  btn-primary btn-sm' href='/customer/edit/"+obj.aData.PID+"'>"+
 	                            "<i class='fa fa-edit fa-fw'></i>"+
 	                            "编辑"+"</a> ";
             		}
                 	if(obj.aData.IS_STOP != true){
                 		if(Customer.delPermission){
-                			str += "<a class='btn btn-danger btn-outline btn-sm' href='/customer/delete/"+obj.aData.PID+"'>"+
+                			str += "<a class='btn btn-danger  btn-sm' href='/customer/delete/"+obj.aData.PID+"'>"+
 		                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
 		                         "停用"+
 		                         "</a>";

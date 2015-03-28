@@ -6,7 +6,7 @@
       <div class="col-lg-12">
             <h1 class="btn-header">
             	<% if(shiro.hasPermission("ProviderDriver.create")){%>
-					<a class="btn btn-outline btn-primary" href="/driverinfo/addSpDriver">
+					<a class="btn  btn-primary" href="/driverinfo/addSpDriver">
 					<span class="hidden-tablet">添加司机</span></a>
 				<%}%>
 			</h1>
@@ -83,20 +83,20 @@ $(document).ready(function() {
 	                "sWidth": "15%",
 	                "fnRender": function(obj) { 
 	                	if(obj.aData.IS_STOP != true){
-	                		return "<nobr><% if(shiro.hasPermission('ProviderDriver.update')){%><a class='btn btn-outline btn-primary btn-sm editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"'>"+
+	                		return "<nobr><% if(shiro.hasPermission('ProviderDriver.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
 			                        "</a> <%}%>"+
-			                        "<% if(shiro.hasPermission('ProviderDriver.delete')){%><a class='btn btn-danger btn-outline btn-sm editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
+			                        "<% if(shiro.hasPermission('ProviderDriver.delete')){%><a class='btn btn-danger  btn-sm editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
 			                            "<i class='fa fa-edit'> </i> "+
 			                            "停用"+
 			                        "</a><%}%></nobr>";
 	                	}else{
-	                		return "<nobr><% if(shiro.hasPermission('ProviderDriver.update')){%><a class='btn btn-outline btn-primary btn-sm editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"'>"+
+	                		return "<nobr><% if(shiro.hasPermission('ProviderDriver.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"'>"+
 			                            "<i class='fa fa-edit'> </i> "+
 			                            "编辑"+
 				                        "</a> <%}%>"+
-			                        "<% if(shiro.hasPermission('ProviderDriver.delete')){%><a class='btn btn-success btn-outline btn-sm editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
+			                        "<% if(shiro.hasPermission('ProviderDriver.delete')){%><a class='btn btn-success  btn-sm editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
 			                            "<i class='fa fa-edit'> </i> "+
 			                            "启用"+
 			                        "</a><%}%></nobr>";

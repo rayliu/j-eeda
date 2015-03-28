@@ -30,13 +30,13 @@ $(document).ready(function() {
 								var str="";
 											
 								if(role_update_permission){
-									str += "<nobr><a class='btn btn-outline btn-primary btn-sm' href='/role/ClickRole?id="+obj.aData.ID+"'>"
+									str += "<nobr><a class='btn  btn-primary btn-sm' href='/role/ClickRole?id="+obj.aData.ID+"'>"
 										+ "<i class='fa fa-edit fa-fw'></i> "
 										+ "编辑"
 										+ "</a> ";
 								}
 								if(role_del_permission){
-									str += "<a class='btn btn-outline btn-sm btn-danger' href='/role/deleteRole/"+obj.aData.ID+"'>"
+									str += "<a class='btn  btn-sm btn-danger' href='/role/deleteRole/"+obj.aData.ID+"'>"
 										+ "<i class='fa fa-trash-o fa-fw'></i> "
 										+ "删除"
 										+ "</a>";

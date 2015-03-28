@@ -66,7 +66,7 @@ $(document).ready(function() {
                 	if(obj.aData.STATUS=="已签收"){
                 		return "已送达";
                 	}else{
-                		return "<a class='btn btn-outline btn-primary confirmDelivery' code='"+obj.aData.ID+"'>"+
+                		return "<a class='btn  btn-primary confirmDelivery' code='"+obj.aData.ID+"'>"+
                 		"到达确认"+
                 		"</a>";
                 	}

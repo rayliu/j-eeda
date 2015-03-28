@@ -45,18 +45,18 @@ $(document).ready(function() {
 	                "fnRender": function(obj) { 
 	                	var str = "<nobr>";
 	                	if(Account.isUpdate){
-	                		str += "<a class='btn btn-outline btn-outline btn-primary btn-sm' href='/account/edit/"+obj.aData.ID+"'><i class='fa fa-edit fa-fw'></i>"+
+	                		str += "<a class='btn   btn-primary btn-sm' href='/account/edit/"+obj.aData.ID+"'><i class='fa fa-edit fa-fw'></i>"+
 		                            "编辑"+
 			                        "</a> ";
 	                	}
 	                	if(Account.isDel){
 	                		if(obj.aData.IS_STOP != true){
-		                		str +="<a class='btn btn-danger btn-outline btn-sm' href='/account/del/"+obj.aData.ID+"'>"+
+		                		str +="<a class='btn btn-danger  btn-sm' href='/account/del/"+obj.aData.ID+"'>"+
 				                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
 				                            "停用"+
 				                        "</a>";
 		                	}else{
-		                		str += "<a class='btn btn-success btn-outline btn-sm' href='/account/del/"+obj.aData.ID+"'>"+
+		                		str += "<a class='btn btn-success  btn-sm' href='/account/del/"+obj.aData.ID+"'>"+
 				                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
 				                            "启用"+
 				                        "</a>";
