@@ -15,7 +15,7 @@ $('#menu_carmanage').addClass('active').find('ul').addClass('in');
 		"aoColumns": [
             {"mDataProp":"DEPART_NO",
             	"fnRender": function(obj) {
-            			return "<a href='/pickupOrder/carManageEdit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+            			return "<a href='/pickupOrder/carManageEdit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.DEPART_NO+"</a>";
             		}}, 
     		{"mDataProp":"STATUS"},
 		    {"mDataProp":"PICKUP_MODE",

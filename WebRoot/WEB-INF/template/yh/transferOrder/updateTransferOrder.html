@@ -5,12 +5,12 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="btn-header">运输单   
+                    <div class="btn-header" style="font-size:32px">运输单   
                     	<!-- <% if(shiro.hasPermission("TransferOrder.create")){%>
                         	<a class="btn  btn-primary" href="/transferOrder/add">新增运输单</a>
                         <%}%> -->
                         <a class="btn  btn-primary" href="/transferOrder">返回</a>
-                    </h1>
+                    </div>
                     
                     <input id="order_id" type="hidden" name="order_id" value="${transferOrder.id!''}"/>
                     <input id="item_id" type="hidden" name="item_id" />
@@ -412,7 +412,7 @@
                                             </tbody>
                                         </table>
                                             <div id="transferOrderItemDateil" style="display: none;">
-	                                            <h3 class="btn-header">单品列表</h3>
+	                                            <div class="btn-header">单品列表</div>
 	                                            <!--button class="btn  btn-primary" data-toggle="modal" data-target="#detailModal">
 												  新增货品明细
 												</button-->

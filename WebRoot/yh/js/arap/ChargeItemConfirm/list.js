@@ -22,7 +22,7 @@ $(document).ready(function() {
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
             		if(Return.isUpdate || Return.isComplete){
-            			return "<a href='/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            			return "<a href='/returnOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		}else{
             			return obj.aData.ORDER_NO;
             		}

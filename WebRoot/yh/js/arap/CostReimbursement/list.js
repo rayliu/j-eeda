@@ -15,7 +15,7 @@ $(document).ready(function() {
         "aoColumns": [ 
 			{"mDataProp":null,"sWidth":"120px",
 				"fnRender": function(obj) {
-					return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+					return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 				}
 			},
             {"mDataProp":"STATUS", "sWidth":"200px"},

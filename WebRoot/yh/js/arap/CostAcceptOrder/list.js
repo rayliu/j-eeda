@@ -30,7 +30,7 @@ $(document).ready(function() {
             }, 
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"INVOICE_NO", "sWidth":"20px"},
             {"mDataProp":"STATUS",

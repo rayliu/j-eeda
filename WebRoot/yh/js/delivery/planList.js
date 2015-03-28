@@ -16,7 +16,7 @@ $(document).ready(function() {
         "aoColumns": [   
 		    {"mDataProp":null, "sWidth":"100px",
             	"fnRender": function(obj) {
-            			return "<a href='/deliveryPlanOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            			return "<a href='/deliveryPlanOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		}},
             {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},
 		    {"mDataProp":"DELIVER_NO", "sWidth":"100px"},

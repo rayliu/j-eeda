@@ -32,7 +32,7 @@ $(document).ready(function() {
 				{ "mDataProp": "ORDER_NO",
 					"fnRender": function(obj) {
 						if(is_true){
-							return "<a href='"+source2+""+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+							return "<a href='"+source2+""+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 						}else{
 							return obj.aData.ORDER_NO;
 						}

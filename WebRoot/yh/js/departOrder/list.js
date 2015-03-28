@@ -19,7 +19,7 @@ var dataTable =$('#dataTables-example').dataTable({
                 "sWidth": "8%",                
                 "fnRender": function(obj) {  
                 	if(DepartOrder.isUpdate || DepartOrder.isComplete){
-                		return "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+                		return "<a href='/departOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.DEPART_NO+"</a>";
                 	}else{
                 		return obj.aData.DEPART_NO;
                 	}

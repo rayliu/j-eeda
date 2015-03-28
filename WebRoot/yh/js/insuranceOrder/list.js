@@ -16,7 +16,7 @@
 			    {"mDataProp":"ORDER_NO",
 	            	"fnRender": function(obj) {
 	            		if(Insurance.isUpdate){
-	            			return "<a href='/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+	            			return "<a href='/insuranceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 	            		}else{
 	            			return obj.aData.ORDER_NO;
 	            		}

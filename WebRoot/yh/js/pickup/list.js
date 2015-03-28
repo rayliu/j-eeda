@@ -17,7 +17,7 @@
 			    {"mDataProp":"DEPART_NO", "sWidth":"70px",
 	            	"fnRender": function(obj) {
 	            		if(Pickup.isUpdate || Pickup.isCompleted){
-	            			return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+	            			return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.DEPART_NO+"</a>";
 	            		}else{
 	            			return obj.aData.DEPART_NO;
 	            		}

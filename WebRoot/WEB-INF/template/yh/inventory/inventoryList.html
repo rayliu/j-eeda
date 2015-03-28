@@ -2,14 +2,14 @@
 <div id="page-wrapper">
 <div class="row">
       <div class="col-lg-12">
-            <h1 class="btn-header">
+            <div class="btn-header">
             	<% if(shiro.hasPermission("WarehouseOrder.inCreate")){%>
 					<div id="btn1" style="display:none"><a class="btn  btn-primary" href="/gateIn/gateIn_add">添加入库单</a></div>
 				<%}%>
 				<% if(shiro.hasPermission("WarehouseOrder.outCreate")){%>
 					<div id="btn2" style="display:none"><a class="btn  btn-primary" href="/gateIn/gateOut_add">添加出库单</a></div>
 				<%}%>
-			</h1>
+			</div>
 		<div class="panel panel-default">
 				<div class="panel-heading">
                  	<i class="fa fa-list fa-fw"></i>入库单

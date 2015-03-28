@@ -12,7 +12,7 @@ $(document).ready(function() {
 				{ "mDataProp": "BANK_NAME","sWidth": "12%",
 					"fnRender": function(obj) {  
 						if(Account.isUpdate){
-							return "<a href='/account/edit/"+obj.aData.ID+"'>"+
+							return "<a href='/account/edit/"+obj.aData.ID+"'target='_blank'>"+
 			                            obj.aData.BANK_NAME+
 			                        "</a>";
 						}else{

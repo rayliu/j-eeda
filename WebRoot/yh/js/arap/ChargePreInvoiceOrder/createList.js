@@ -23,7 +23,7 @@ $(document).ready(function() {
 	        {"mDataProp":"ORDER_NO", "sWidth":"100px",
 	        	"fnRender": function(obj) {
 	        		if(ChargeCheck.isUpdate || ChargeCheck.isAffirm){
-	        			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+	        			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 	        		}else{
 	        			return obj.aData.ORDER_NO;
 	        		}

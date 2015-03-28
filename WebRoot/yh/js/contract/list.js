@@ -47,7 +47,7 @@ $(document).ready(function() {
             {"mDataProp":"NAME",
               "fnRender": function(obj) { 
             	if(isUpdate){
-            		 return "<a title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+obj.aData.NAME+
+            		 return "<a title='编辑' href='"+urlSource2+""+obj.aData.CID+"'target='_blank'>"+obj.aData.NAME+
                      "</a>";
             	}else{
             		return obj.aData.NAME;

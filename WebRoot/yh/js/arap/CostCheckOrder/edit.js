@@ -165,7 +165,7 @@ $(document).ready(function() {
         "aoColumns": [   
             {"mDataProp":"MISC_ORDER_NO", "sWidth":"80px",
                 "fnRender": function(obj) {
-                    return "<a href='/costMiscOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.MISC_ORDER_NO+"</a>";
+                    return "<a href='/costMiscOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.MISC_ORDER_NO+"</a>";
                 }},
             {"mDataProp":"CNAME", "sWidth":"200px"},
             {"mDataProp":"NAME", "sWidth":"200px"},
@@ -216,7 +216,7 @@ $(document).ready(function() {
 	        }, 
             {"mDataProp":"ORDER_NO","sWidth": "80px",
             	"fnRender": function(obj) {
-        			return "<a href='/costMiscOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/costMiscOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"TYPE","sWidth": "100px",
             	"fnRender": function(obj) {

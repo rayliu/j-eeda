@@ -19,7 +19,7 @@ $(document).ready(function() {
             {"mDataProp":null,
             	"fnRender": function(obj) {
             		if(Delivery.isUpdate || Delivery.isComplete){
-            			return "<a href='/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            			return "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		}else{
             			return obj.aData.ORDER_NO;
             		}

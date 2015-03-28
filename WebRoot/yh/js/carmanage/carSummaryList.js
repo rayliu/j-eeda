@@ -38,7 +38,7 @@ $(document).ready(function() {
 			{"mDataProp":null,"sWidth":"120px",
 				"fnRender": function(obj) {
 					if(Pickup.isUpdate || Pickup.isCompleted){
-						return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.DEPART_NO+"</a>";
+						return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.DEPART_NO+"</a>";
 					}else{
 						return obj.aData.DEPART_NO;
 					}
@@ -93,7 +93,7 @@ $(document).ready(function() {
 	          {"mDataProp": null,
 				  "fnRender": function(obj) {
 					  if(CarSummary.isUpdate || CarSummary.isApproval){
-						  return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+						  return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 					  }else{
 						  return obj.aData.ORDER_NO;
 					  }

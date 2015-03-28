@@ -46,13 +46,13 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                 	var str = "";
                     if(obj.aData.ORDER_NO.indexOf("PS") > -1){
-                        str = "<a href='/delivery/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
                     }else if(obj.aData.ORDER_NO.indexOf("PC") > -1){
-                        str = "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
                     }else if(obj.aData.ORDER_NO.indexOf("FC") > -1){
-                        str = "<a href='/departOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/departOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
                     }else {
-                        str = "<a href='/insuranceOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+                        str = "<a href='/insuranceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
                     }
                     return str;
                 }
