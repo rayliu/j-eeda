@@ -84,12 +84,13 @@
                     </li-->
                     <%
                     	var title=SYS_CONFIG.system_title!'';
+                       //通过user_login_id查看当前用户的权限（区分公司）
                     %>
                     <li>
-                        <a href="/"><i class="fa fa-dashboard fa-fw"></i> 系统监控</a>
+                        <a href="/"><i class="fa fa-dashboard fa-fw"></i> 系统监控 ${user_login_id}</a>
                     </li>
                     <%  
-                        if(shiro.hasPermission("TransferOrder.list")){
+                        if(shiro.hasPermission("TransferOrder.list", user_login_id)){
                     %>
                         <li id="menu_transfer">
                             <a href="#"><i class="fa fa-file-text fa-fw"></i> 运输订单管理<span class="fa arrow"></span></a>
@@ -108,8 +109,8 @@
                         </li>
                     <%}%>
                     <%  
-                        var isPickupOrder = shiro.hasPermission("PickupOrder.list");
-                        var isDepartOrder = shiro.hasPermission("DepartOrder.list");
+                        var isPickupOrder = shiro.hasPermission("PickupOrder.list", user_login_id);
+                        var isDepartOrder = shiro.hasPermission("DepartOrder.list", user_login_id);
                         if(isPickupOrder||isDepartOrder){
                     %>
                         <li id="menu_assign">

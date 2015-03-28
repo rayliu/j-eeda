@@ -13,8 +13,6 @@ import com.jfinal.core.ActionInvocation;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 
-import controllers.yh.AppController;
-
 public class SetAttrLoginUserInterceptor implements Interceptor{
 	private Logger logger = Logger.getLogger(SetAttrLoginUserInterceptor.class);
 	@Override
@@ -27,6 +25,7 @@ public class SetAttrLoginUserInterceptor implements Interceptor{
 			}else{
 				ai.getController().setAttr("userId", currentUser.getPrincipal());
 			}
+			ai.getController().setAttr("user_login_id", currentUser.getPrincipal());
 			setSysTitle(ai.getController());
 		}
 		ai.invoke();
