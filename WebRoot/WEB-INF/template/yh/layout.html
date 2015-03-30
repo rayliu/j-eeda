@@ -87,7 +87,7 @@
                        //通过user_login_id查看当前用户的权限（区分公司）
                     %>
                     <li>
-                        <a href="/"><i class="fa fa-dashboard fa-fw"></i> 系统监控 ${user_login_id}</a>
+                        <a href="/"><i class="fa fa-dashboard fa-fw"></i> 系统监控 </a>
                     </li>
                     <%  
                         if(shiro.hasPermission("TransferOrder.list", user_login_id)){
