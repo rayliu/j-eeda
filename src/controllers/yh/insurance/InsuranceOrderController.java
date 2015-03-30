@@ -453,11 +453,12 @@ public class InsuranceOrderController extends Controller {
             				double prodoctInsuranceAmount = product.getDouble("insurance_amount");
             				insuranceFinItem.set("amount", prodoctInsuranceAmount);
     						if(party.get("insurance_rates") != null && !"".equals(party.get("insurance_rates"))){
-    							double insuranceRates = party.getDouble("insurance_rates");
+    							/*double insuranceRates = party.getDouble("insurance_rates");
     							double productAmount = transferOrderItem.getDouble("amount");
     							BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
     					    	double InsuranceInsuranceAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-    					    	insuranceFinItem.set("rate", insuranceRates).set("insurance_amount", InsuranceInsuranceAmount);
+    					    	insuranceFinItem.set("rate", insuranceRates).set("insurance_amount", InsuranceInsuranceAmount);*/
+    					    	insuranceFinItem.set("income_rate", party.getDouble("insurance_rates"));
         					}
     					}
     				}
