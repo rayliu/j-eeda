@@ -721,18 +721,18 @@
             if(data.success){
             	var pickupOrderId = $("#pickupOrderId").val();
             	var priceType = $("input[name='priceType']:checked").val();
-            	$.post('/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType}, function(){
-            		pickupOrderMilestone();	
-                	var pickupOrderId = $("#pickupOrderId").val();
-                	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable/"+pickupOrderId;
-            		paymenttable.fnDraw(); 
-            		            		
-            		routeTable.fnDraw(); 
-            	},'json');
-            	
-            	$("#finishBtn").attr('disabled', true);	
-            	$("#saveTransferOrderBtn").attr('disabled', true);	
-            	$("#finishBtnVal").val("已入货场");
+            	if(pickupOrderId != null && pickupOrderId != ""){
+            		$.post('/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType}, function(){
+                		pickupOrderMilestone();	
+                    	var pickupOrderId = $("#pickupOrderId").val();
+                    	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable/"+pickupOrderId;
+                		paymenttable.fnDraw(); 
+                		routeTable.fnDraw(); 
+                		$("#finishBtn").attr('disabled', true);	
+                    	$("#saveTransferOrderBtn").attr('disabled', true);	
+                    	$("#finishBtnVal").val("已入货场");
+                	},'json');
+            	}
             }else{
                 alert('操作失败');
             }

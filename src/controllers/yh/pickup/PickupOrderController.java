@@ -860,13 +860,15 @@ public class PickupOrderController extends Controller {
         for (PickupDriverAssistant pickupDriverAssistant : assistantList) {
         	PickupDriverAssistant.dao.deleteById(pickupDriverAssistant.get("id"));
 		}
-        for (int i = 0; i < driverAssistantNames.length; i++) {
-        	PickupDriverAssistant assistant = new PickupDriverAssistant();
-        	assistant.set("pickup_id",pickupOrder.get("id"))
-        	.set("driver_assistant_id",driverAssistantIds[i])
-        	.set("name",driverAssistantNames[i])
-        	.set("phone",driverAssistantPhones[i])
-        	.save();
+        for (int i = 0; i < driverAssistantIds.length; i++) {
+        	if(!"".equals(driverAssistantIds[i])){
+        		PickupDriverAssistant assistant = new PickupDriverAssistant();
+            	assistant.set("pickup_id",pickupOrder.get("id"))
+            	.set("driver_assistant_id",driverAssistantIds[i])
+            	.set("name",driverAssistantNames[i])
+            	.set("phone",driverAssistantPhones[i])
+            	.save();
+        	}
 		}
         renderJson(pickupOrder);
     }
