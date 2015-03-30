@@ -82,15 +82,14 @@
                         </div>
                         <!-- /input-group -->
                     </li-->
-                    <%
-                    	var title=SYS_CONFIG.system_title!'';
-                       //通过user_login_id查看当前用户的权限（区分公司）
-                    %>
+                    
+                    
                     <li>
                         <a href="/"><i class="fa fa-dashboard fa-fw"></i> 系统监控 </a>
                     </li>
+                    
                     <%  
-                        if(shiro.hasPermission("TransferOrder.list", user_login_id)){
+                        if(shiro.hasPermission("TransferOrder.list",user_login_id)){
                     %>
                         <li id="menu_transfer">
                             <a href="#"><i class="fa fa-file-text fa-fw"></i> 运输订单管理<span class="fa arrow"></span></a>
@@ -109,8 +108,8 @@
                         </li>
                     <%}%>
                     <%  
-                        var isPickupOrder = shiro.hasPermission("PickupOrder.list", user_login_id);
-                        var isDepartOrder = shiro.hasPermission("DepartOrder.list", user_login_id);
+                        var isPickupOrder = shiro.hasPermission("PickupOrder.list",user_login_id);
+                        var isDepartOrder = shiro.hasPermission("DepartOrder.list",user_login_id);
                         if(isPickupOrder||isDepartOrder){
                     %>
                         <li id="menu_assign">
@@ -131,9 +130,9 @@
                         </li>
                     <%}%>
                     <%
-                    	var carInfoPermission = shiro.hasPermission("CarInfo.list");
-                    	var driverInfoPermission = shiro.hasPermission("Driver.list");
-                    	var carSummaryPermission = shiro.hasPermission("CarSummary.list");
+                    	var carInfoPermission = shiro.hasPermission("CarInfo.list",user_login_id);
+                    	var driverInfoPermission = shiro.hasPermission("Driver.list",user_login_id);
+                    	var carSummaryPermission = shiro.hasPermission("CarSummary.list",user_login_id);
                     	if(carInfoPermission || driverInfoPermission || carSummaryPermission){
                     %>
 	                    <li id="menu_carmanage">
@@ -173,7 +172,7 @@
 	                        <!-- /.nav-second-level -->
 	                    </li>
                     <%}%>
-                    <% if(shiro.hasPermission("InsuranceOrder.list")){%>
+                    <% if(shiro.hasPermission("InsuranceOrder.list",user_login_id)){%>
 	                    <li id="menu_damage">
 	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 保险购买<span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level">
@@ -204,7 +203,7 @@
 	                        <!-- /.nav-second-level -->
 	                    </li>
 	                 <%}%>
-	                 <% if(shiro.hasPermission("Ontrip.list")){%>
+	                 <% if(shiro.hasPermission("Ontrip.list",user_login_id)){%>
 	                    <li id="menu_status">
 	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 运输在途管理<span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level">
@@ -222,8 +221,8 @@
 	                    </li>
                     <%}%>
                     <%
-                    	var deliveryListPermission = shiro.hasPermission("DeliveryOder.list");
-                    	var deliveryOnTripPermission = shiro.hasPermission("DeliveryOderMilestone.list");
+                    	var deliveryListPermission = shiro.hasPermission("DeliveryOder.list",user_login_id);
+                    	var deliveryOnTripPermission = shiro.hasPermission("DeliveryOderMilestone.list",user_login_id);
                     	if(deliveryListPermission || deliveryOnTripPermission){
                     %>
 	                    <li id="menu_deliver">
@@ -249,20 +248,20 @@
 	                    </li>
                  <%}%>
                   <%
-                  	var gateInPermission = shiro.hasPermission("WarehouseOrder.inList");
-                  	var gateOutPermission = shiro.hasPermission("WarehouseOrder.outList");
-                  	var InventoryListPermission = shiro.hasPermission("InventoryItem.list");
+                  	var gateInPermission = shiro.hasPermission("WarehouseOrder.inList",user_login_id);
+                  	var gateOutPermission = shiro.hasPermission("WarehouseOrder.outList",user_login_id);
+                  	var InventoryListPermission = shiro.hasPermission("InventoryItem.list",user_login_id);
                   	if(gateInPermission || gateOutPermission || InventoryListPermission){
                   %>
                     <li id="menu_warehouse">
                         <a href="#"><i class="fa fa-th-large fa-fw"></i> 仓储管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                        	<% if(title == '源鸿物流'){%>
+                        	<% if(false){%>
 	                            <li>
 	                                <a href="/gateIn">入库单</a>
 	                            </li>
                             <%}%>
-                            <% if(title == '源鸿物流'){%>
+                            <% if(false){%>
 	                            <li>
 	                                <a href="/gateOut/outIndex">出库单</a>
 	                            </li>
@@ -276,7 +275,7 @@
                         <!-- /.nav-second-level -->
                     </li>
                  <%}%>
-                 <% if(shiro.hasPermission("ReturnOrder.list")){%>
+                 <% if(shiro.hasPermission("ReturnOrder.list",user_login_id)){%>
                     <li id="menu_return">
                         <a href="#"><i class="fa fa-file-text fa-fw"></i> 回单管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
@@ -288,13 +287,13 @@
                     </li>
                  <%}%>
                  <%
-                 	var chargeItemPermission = shiro.hasPermission("ChargeItem.affirm");
-                 	var chargeCheckOrderList = shiro.hasPermission("ChargeCheckOrder.list");
-                 	var chargePreInvoiceOrder = shiro.hasPermission("ChargePreInvoiceOrder.list");
-                 	var ChargeInvoiceOrderPermission = shiro.hasPermission("ChargeInvoiceOrder.list");
+                 	var chargeItemPermission = shiro.hasPermission("ChargeItem.affirm",user_login_id);
+                 	var chargeCheckOrderList = shiro.hasPermission("ChargeCheckOrder.list",user_login_id);
+                 	var chargePreInvoiceOrder = shiro.hasPermission("ChargePreInvoiceOrder.list",user_login_id);
+                 	var ChargeInvoiceOrderPermission = shiro.hasPermission("ChargeInvoiceOrder.list",user_login_id);
                  	
                  	
-                 	if(title == '源鸿物流'){
+                 	if(chargeItemPermission || chargeCheckOrderList || chargePreInvoiceOrder ||ChargeInvoiceOrderPermission){
                  %>
                     <li id="menu_charge">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 应收管理<span class="fa arrow"></span></a>
@@ -329,12 +328,12 @@
                     </li>
                 <%}%>
                 <%
-                	var costConfirmListPermission = shiro.hasPermission("CostItemConfirm.affirm");
-                	var costCheckListPermission = shiro.hasPermission("CostCheckOrder.list");
-                	var costPreInvoiceListPermission = shiro.hasPermission("CostPreInvoiceOrder.list");
+                	var costConfirmListPermission = shiro.hasPermission("CostItemConfirm.affirm",user_login_id);
+                	var costCheckListPermission = shiro.hasPermission("CostCheckOrder.list",user_login_id);
+                	var costPreInvoiceListPermission = shiro.hasPermission("CostPreInvoiceOrder.list",user_login_id);
                 	
                 	
-               		if(title == '源鸿物流'){
+               		if(costConfirmListPermission || costCheckListPermission || costPreInvoiceListPermission){
                 %>
                     <li id="menu_cost">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 应付管理<span class="fa arrow"></span></a>
@@ -364,13 +363,14 @@
                     </li>
                	<%}%>
                	<%
-               		var payListPermission = shiro.hasPermission("ChargeItem.affirm");
-               		var costListPermission = shiro.hasPermission("CostItemConfirm.affirm");
-               		var chargePermission = shiro.hasPermission("chargeAcceptOrder_list");
-               		var costConfirmPermission = shiro.hasPermission("costAcceptOrder_list");
-               		var reimbureementPermission = shiro.hasPermission("costReimbureement_list");
-               		var chunarijiPermission = shiro.hasPermission("PaymentCheckOrder.list");
-               		if(title == '源鸿物流') {
+               		var payListPermission = shiro.hasPermission("ChargeItem.affirm",user_login_id);
+               		var costListPermission = shiro.hasPermission("CostItemConfirm.affirm",user_login_id);
+               		var chargePermission = shiro.hasPermission("chargeAcceptOrder_list",user_login_id);
+               		var costConfirmPermission = shiro.hasPermission("costAcceptOrder_list",user_login_id);
+               		var reimbureementPermission = shiro.hasPermission("costReimbureement_list",user_login_id);
+               		var chunarijiPermission = shiro.hasPermission("PaymentCheckOrder.list",user_login_id);
+               		if(payListPermission || costListPermission || chargePermission || costConfirmPermission
+               			|| reimbureementPermission || chunarijiPermission) {
                		
                	%>
                     <li id="menu_finance">
@@ -416,10 +416,10 @@
                         <!-- /.nav-second-level --> 
                     <%}%>
                     <%
-                    	var customerContractListPermission = shiro.hasPermission("ContractCustomer.list");
-                    	var providerContractListPermission = shiro.hasPermission("ContractProvider.list");
-                    	var deliveryContractListPermission = shiro.hasPermission("ContractDelivery.list");
-                   		if(title == '源鸿物流'){
+                    	var customerContractListPermission = shiro.hasPermission("ContractCustomer.list",user_login_id);
+                    	var providerContractListPermission = shiro.hasPermission("ContractProvider.list",user_login_id);
+                    	var deliveryContractListPermission = shiro.hasPermission("ContractDelivery.list",user_login_id);
+                   		if(customerContractListPermission || providerContractListPermission || deliveryContractListPermission){
                     %>
                     <li id="menu_contract">
                         <a href="#"><i class="fa fa-book fa-fw"></i> 合同管理<span class="fa arrow"></span></a>
@@ -484,21 +484,25 @@
                     </li>
                     <%}%>
                     <%
-                    	var userLoginListPermission = shiro.hasPermission("User.list");
-                    	var roleListPermission = shiro.hasPermission("Role.list");
-                    	var userRoleListPermission = shiro.hasPermission("UserRole.list");
-                    	var rolePrivilegeListPermission = shiro.hasPermission("RolePermission.list");
-                    	var customerPermission = shiro.hasPermission("Customer.list");
-                    	var spListPermission = shiro.hasPermission("Provider.list");
-                    	var spCarListPermission = shiro.hasPermission("ProviderCar.list");
-                    	var spDriverListPermission = shiro.hasPermission("ProviderDriver.list");
-                    	var officeListPermission = shiro.hasPermission("Office.list");
-                    	var productListPermission = shiro.hasPermission("Product.list");
-                    	var warehouseListPermission = shiro.hasPermission("Warehouse.list");
-                    	var tollpayListPermission = shiro.hasPermission("Toll.list");
-                    	var tollcostListPermission = shiro.hasPermission("Pay.list");
-                    	var accountListPermission = shiro.hasPermission("Account.list");
-                    	if(true){
+                    	var userLoginListPermission = shiro.hasPermission("User.list",user_login_id);
+                    	var roleListPermission = shiro.hasPermission("Role.list",user_login_id);
+                    	var userRoleListPermission = shiro.hasPermission("UserRole.list",user_login_id);
+                    	var rolePrivilegeListPermission = shiro.hasPermission("RolePermission.list",user_login_id);
+                    	var customerPermission = shiro.hasPermission("Customer.list",user_login_id);
+                    	var spListPermission = shiro.hasPermission("Provider.list",user_login_id);
+                    	var spCarListPermission = shiro.hasPermission("ProviderCar.list",user_login_id);
+                    	var spDriverListPermission = shiro.hasPermission("ProviderDriver.list",user_login_id);
+                    	var officeListPermission = shiro.hasPermission("Office.list",user_login_id);
+                    	var productListPermission = shiro.hasPermission("Product.list",user_login_id);
+                    	var warehouseListPermission = shiro.hasPermission("Warehouse.list",user_login_id);
+                    	var tollpayListPermission = shiro.hasPermission("Toll.list",user_login_id);
+                    	var tollcostListPermission = shiro.hasPermission("Pay.list",user_login_id);
+                    	var accountListPermission = shiro.hasPermission("Account.list",user_login_id);
+                    	
+                    	if(userLoginListPermission || roleListPermission || userRoleListPermission
+                    		|| rolePrivilegeListPermission || customerPermission || spListPermission || spCarListPermission
+                    		|| spDriverListPermission || officeListPermission || productListPermission || warehouseListPermission
+                    		|| tollpayListPermission || tollcostListPermission || accountListPermission){
                     %>
                     
 	                    <li id="menu_profile">
@@ -570,17 +574,17 @@
 	                            <li>
 	                                <a href="/orderStatus">里程碑</a>
 	                            </li> -->
-		                         <% if(title == '源鸿物流'){%>
+		                         <% if(tollpayListPermission){%>
 		                            <li>
 		                                <a  href="/toll?page=收费">收费条目定义</a>
 		                            </li>
 	                             <%}%>
-		                         <% if(title == '源鸿物流'){%>
+		                         <% if(tollcostListPermission){%>
 		                            <li>
 		                                <a  href="/pay?page=付款">付费条目定义</a>
 		                            </li>
 	                             <%}%>
-		                         <% if(title == '源鸿物流'){%>
+		                         <% if(accountListPermission){%>
 		                            <li>
 		                                <a  href="/account">金融账户</a>
 		                            </li>
