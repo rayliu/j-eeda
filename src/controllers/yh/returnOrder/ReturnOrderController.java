@@ -46,6 +46,7 @@ import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.PermissionConstant;
+import controllers.yh.util.getCustomFile;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -330,6 +331,10 @@ public class ReturnOrderController extends Controller {
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
+		
+		getCustomFile get = new getCustomFile();
+		Map<String, String> customizeField = get.getCustomizeFile(this);
+		setAttr("customizeField", customizeField);
 		render("/yh/returnOrder/returnOrder.html");
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_UPDATE})

@@ -42,8 +42,8 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
+import controllers.yh.util.getCustomFile;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -371,7 +371,10 @@ public class DepartOrderController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
     public void addForRouteSp() {
-    		render("/yh/departOrder/allTransferOrderListForRouteSp.html");
+    	getCustomFile get = new getCustomFile();
+    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	setAttr("customizeField", customizeField);
+    	render("/yh/departOrder/allTransferOrderListForRouteSp.html");
     }
 
     // 修改发车单页面
@@ -1651,7 +1654,10 @@ public class DepartOrderController extends Controller {
 
     // 在途运输单管理
     public void transferMilestoneIndex() {
-            render("/yh/departOrder/TransferOrderStatus.html");
+    	getCustomFile get = new getCustomFile();
+    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	setAttr("customizeField", customizeField);
+        render("/yh/departOrder/TransferOrderStatus.html");
     }
 
     public void ownTransferMilestone() {
@@ -1743,6 +1749,9 @@ public class DepartOrderController extends Controller {
 
     // 外包运输单更新
     public void transferonTrip() {
+	    	getCustomFile get = new getCustomFile();
+	    	Map<String, String> customizeField = get.getCustomizeFile(this);
+	    	setAttr("customizeField", customizeField);
             render("/yh/departOrder/transferOrderOnTripList.html");
     }
 

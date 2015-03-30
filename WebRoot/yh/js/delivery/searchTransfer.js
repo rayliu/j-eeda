@@ -83,7 +83,7 @@ $(document).ready(function() {
   		            		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
   		            			return "损坏货品";
   		            		}else if(obj.aData.CARGO_NATURE == "ATM"){
-  		            			return "ATM";
+  		            			return deliver_tran.ex_type;
   		            		}else{
   		            			return "";
   		            		}
@@ -193,7 +193,15 @@ $(document).ready(function() {
 						    }
 	            		},
 	            {"mDataProp":"STATUS"},        	
-	            {"mDataProp":"CARGO_NATURE","sClass": "cargo_nature"},
+	            {"mDataProp":"CARGO_NATURE","sClass": "cargo_nature",
+	            	"fnRender":function(obj){
+	            		if(obj.aData.CARGO_NATURE =="ATM"){
+	            			return deliver_tran.ex_cargo;
+	            		}else{
+	            			return obj.aData.CARGO_NATURE;
+	            		}
+	            		
+	            	}},
 	            {"mDataProp":"PICKUP_MODE",
 	            	"fnRender": function(obj) {
 	            		if(obj.aData.PICKUP_MODE == "routeSP"){
@@ -201,11 +209,7 @@ $(document).ready(function() {
 	            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
 	            			return "外包供应商提货";
 	            		}else{
-	            			if(title=="源鸿物流"){
-	            				return "源鸿自提";
-	            			}else{
-	            				return "公司自提";
-	            			}
+	            			return deliver_tran.ex_type;
 	            			
 	            		}}},
 	            {"mDataProp":"WAREHOUSE_NAME",

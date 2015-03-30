@@ -41,11 +41,11 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
-import controllers.yh.order.TransferOrderExeclHandeln;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.ReaderXLS;
 import controllers.yh.util.ReaderXlSX;
+import controllers.yh.util.getCustomFile;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -314,7 +314,10 @@ public class DeliveryController extends Controller {
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_CREATE})
 	public void add() {
 		setAttr("saveOK", false);
-			render("/yh/delivery/deliveryOrderSearchTransfer.html");
+		getCustomFile get = new getCustomFile();
+		Map<String, String> customizeField = get.getCustomizeFile(this);
+		setAttr("customizeField", customizeField);
+		render("/yh/delivery/deliveryOrderSearchTransfer.html");
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_UPDATE})
 	public void edit() {
@@ -384,22 +387,6 @@ public class DeliveryController extends Controller {
 			}
 			
 		}
-			
-		
-		
-		
-
-		/*
-		 * try { serIdList.get(0).get("transfer_order_id"); } catch (Exception
-		 * e) { System.out.println(e); }
-		 */
-		
-
-		// 客户信息
-		/*Party customerContact = Party.dao
-				.findFirst("select *,p.id as customerId from party p,contact c where p.id ='"
-						+ tOrder.get("customer_id")
-						+ "'and p.contact_id = c.id");*/
 		String sql = "select p.id as cid,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+tOrder.get("customer_id");
 		//Record customerContact = Db.findFirst(sql);
 		Party customerContact = Party.dao.findFirst(sql);
@@ -477,6 +464,11 @@ public class DeliveryController extends Controller {
 			paymentItemList = Db.find("select * from fin_item where type='应付'");
 			setAttr("paymentItemList", paymentItemList);
 		}
+		
+		getCustomFile get = new getCustomFile();
+		Map<String, String> customizeField = get.getCustomizeFile(this);
+		
+		setAttr("customizeField", customizeField);
 		render("/yh/delivery/deliveryOrderEdit.html");
 
 	}
@@ -495,56 +487,7 @@ public class DeliveryController extends Controller {
 	 * ); renderJson(contactjson); }
 	 */
 	public void creat2() {
-		/*String id = getPara("id");
-		String list = this.getPara("localArr");
-		System.out.println(list);
-
-		if (id != null) {
-			List<Contact> customers = Contact.dao
-					.find("select *,p.id as customerId from contact c,party p,transfer_order t where p.contact_id=c.id and t.customer_id = p.id and t.id ="
-							+ id + "");
-			Contact customer = customers.get(0);
-			setAttr("customer", customer);
-		}
-
-		TransferOrder tOrder = TransferOrder.dao.findById(id);
-		// setAttr("ser", ser);
-
-		TransferOrder notity = TransferOrder.dao
-				.findFirst("select c.*,p.id as pid,c.id as contactId from transfer_order t "
-						+ "left join party p on p.id =t.notify_party_id "
-						+ "left join contact c on p.contact_id =c.id "
-						+ "where t.id='" + id + "'");
-
-		// 仓库code
-		Warehouse warehouse = Warehouse.dao
-				.findById(tOrder.get("warehouse_id"));
-		String routeFrom = warehouse.get("location");
-		Location locationFrom = null;
-		if (routeFrom != null || !"".equals(routeFrom)) {
-			List<Location> provinces = Location.dao
-					.find("select * from location where pcode ='1'");
-			Location l = Location.dao
-					.findFirst("select * from location where code = (select pcode from location where code = '"
-							+ routeFrom + "')");
-			if (provinces.contains(l)) {
-				locationFrom = Location.dao
-						.findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-								+ routeFrom + "'");
-			} else {
-				locationFrom = Location.dao
-						.findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-								+ routeFrom + "'");
-			}
-			setAttr("locationFrom", locationFrom);
-		}
-		
-		setAttr("warehouse", warehouse);
-		setAttr("transferId", id);
-		setAttr("deliveryOrder", tOrder);
-		setAttr("localArr3", list);
-		setAttr("notifyParty", notity);*/
-		
+	
 		String customerId = getPara("customerId");
 		String warehouseId = getPara("warehouseId");
 		String transferOrderNo = getPara("transferOrderNo1");
@@ -554,10 +497,7 @@ public class DeliveryController extends Controller {
 		String cargoNature = getPara("cargoNature");
 		//客户
 		if (customerId != null) {
-			/*List<Contact> customers = Contact.dao
-					.find("select *,p.id as customerId from contact c,party p,transfer_order t where p.contact_id=c.id and t.customer_id = p.id and t.id ="
-							+ customerId + "");
-			Contact customer = customers.get(0);*/
+			
 			Party party = Party.dao
 					.findFirst("select p.id as cid,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = '"+ customerId + "'");
 			setAttr("customer", party);
@@ -786,7 +726,7 @@ public class DeliveryController extends Controller {
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join office o on o.id = t2 .office_id "
-					+ "where (t2.status='已入库' or t2.status ='部分已入库') and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE) and t1.delivery_id is null  and t1.depart_id is not null";
+					+ "where (t2.status='已入库' or t2.status ='部分已入库') and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=FALSE)  and t1.depart_id is not null";
 		
 		String sql="";
 		if (deliveryOrderNo == null && customerName == null
@@ -799,7 +739,7 @@ public class DeliveryController extends Controller {
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join contact c on p.contact_id = c.id "
 					+ "left join office o on o.id = t2 .office_id "
-					+ "where (t2.status='已入库' or t2.status ='部分已入库') and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) and t1.delivery_id is null and t1.depart_id is not null order by t1.id desc "
+					+ "where (t2.status='已入库' or t2.status ='部分已入库') and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) and t1.depart_id is not null order by t1.id desc "
 					+ sLimit;
 			
 		} else {
@@ -811,7 +751,7 @@ public class DeliveryController extends Controller {
 					+ "left join party p2 on t1.notify_party_id = p2.id "
 					+ "left join contact c2 on p2.contact_id = c2.id "
 					+ "left join office o on o.id = t2 .office_id "
-					+ "where (t2.status='已入库' or t2.status ='部分已入库') and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) and t1.delivery_id is null and t1.depart_id is not null ";
+					+ "where (t2.status='已入库' or t2.status ='部分已入库') and t2.cargo_nature='ATM' and (t1.is_delivered is null or t1.is_delivered=false) and t1.depart_id is not null ";
 			if(code!=""&&code!=null){
 				sqlTotal =sqlTotal+" and serial_no like '%"+code+"%'";
 				sql =sql +" and serial_no like '%"+code+"%'";
@@ -844,15 +784,21 @@ public class DeliveryController extends Controller {
 			sql = sql + sLimit;
 		
 		}
+		
+		
+		
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 		List<Record> transferOrders = Db.find(sql);
+		
 
 		transferOrderListMap.put("sEcho", pageIndex);
 		transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
 		transferOrderListMap.put("iTotalDisplayRecords",
 				rec.getLong("total"));
 		transferOrderListMap.put("aaData", transferOrders);
+		
+		
 		renderJson(transferOrderListMap);
 	}
 
@@ -898,9 +844,9 @@ public class DeliveryController extends Controller {
 		}
 		String sql = "";
 		if(input!=null&&input!=""){
-			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and c.abbr like '%"+input+"%'  and p.office_id = "+parentID;
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id left join office o on o.id = p.office_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and c.abbr like '%"+input+"%'  and (o.id = "+parentID + " or o.belong_office = "+parentID + ")";
 		}else{
-			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and  p.office_id = "+parentID;
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id left join office o on o.id = p.office_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and (o.id = "+parentID + " or o.belong_office = "+parentID + ")";
 		}
 		
 		locationList = Db.find(sql);

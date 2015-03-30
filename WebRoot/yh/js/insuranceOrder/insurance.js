@@ -58,7 +58,8 @@ $(document).ready(function() {
             		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
             			return "损坏货品";
             		}else if(obj.aData.CARGO_NATURE == "ATM"){
-            			return "ATM";
+            			//return "ATM";
+            			return InsuranceOrderSearcheTransfer.ex_cargo ;
             		}else{
             			return "";
             		}}},                                      

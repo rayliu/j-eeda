@@ -34,8 +34,8 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
+import controllers.yh.util.getCustomFile;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -49,7 +49,10 @@ public class InsuranceOrderController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_CREATE})
     public void add() {
-    		render("/yh/insuranceOrder/insuranceOrderSearchTransfer.html");
+    	getCustomFile get = new getCustomFile();
+    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	setAttr("customizeField", customizeField);
+    	render("/yh/insuranceOrder/insuranceOrderSearchTransfer.html");
     }
 
     public void create() {

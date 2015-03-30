@@ -34,9 +34,7 @@
                                 <li class=""><a href="#pickuparap" data-toggle="tab" id="pickupOrderPayment">应付</a>
                                 </li>
                             </ul>
-							<%
-		                    	var title=SYS_CONFIG.system_title!'';
-		                    %>
+							
                             <!-- Tab panes -->
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="basic">
@@ -62,9 +60,7 @@
                                         	
                                        	<div id="pickupModes" class="form-group">
                                             <label><div>提货方式</div></label>
-                                            <%if(title=="源鸿物流"){%>
-                                           		源鸿自提
-                                           	<%}else{%>公司自提<%}%>
+                                            ${customizeField.EX_TYPE!'公司自提'}
                                         </div> 
 	                                        
                                  		<div>车辆信息</div>                                         
@@ -466,9 +462,7 @@
         <!-- /#page-wrapper -->
 
 <%}%>
-<%
-	var title=SYS_CONFIG.system_title!'';
-%>
+
 
 <script src="/yh/css/ui/jquery-ui.js"></script>
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
@@ -478,6 +472,7 @@
 <!-- 引入校验的js 文件及其 中文 文件-->
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
+
 <script src="/yh/js/pickup/carManageEdit.js"></script>
 
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>

@@ -53,6 +53,7 @@ import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.ReaderXLS;
 import controllers.yh.util.ReaderXlSX;
+import controllers.yh.util.getCustomFile;
 
 
 @RequiresAuthentication
@@ -63,7 +64,10 @@ public class TransferOrderController extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 	
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST })
-	public void index() {		
+	public void index() {
+		getCustomFile get = new getCustomFile();
+		Map<String, String> customizeField = get.getCustomizeFile(this);
+		setAttr("customizeField", customizeField);
 		render("/yh/transferOrder/transferOrderList.html");
 	}
 
@@ -215,7 +219,7 @@ public class TransferOrderController extends Controller {
 
 			transferOrderListMap.put("aaData", transferOrders);
 		}
-
+		
 		renderJson(transferOrderListMap);
 	}
 
@@ -245,9 +249,17 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("office_id", null);
 		}*/
 		
+		
 		setAttr("transferOrder",transferOrder);
+		getCustomFile get = new getCustomFile();
+		Map<String, String> customizeField = get.getCustomizeFile(this);
+		
+		setAttr("customizeField", customizeField);
+		
 		render("/yh/transferOrder/updateTransferOrder.html");
 	}
+
+	
 
 	public void edit() {
 		long id = getParaToLong("id");
@@ -334,18 +346,9 @@ public class TransferOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		
-		List<CustomizeField> customizeFieldList = CustomizeField.dao
-				.find("select * from customize_field where office_id ="+LoginUserController.getLoginUser(this).getLong("office_id"));
-		Map<String, String> customizeField = new HashMap<String, String>();
-		for (int i = 0; i < customizeFieldList.size(); i++) {
-			CustomizeField field = customizeFieldList.get(i);
-			String fieldCode = field.getStr("field_code");
-			String fieldName = field.getStr("field_name");
-			String customizeName = field.getStr("customize_name");
-			if(StringUtils.hasText(customizeName))
-				fieldName = customizeName;
-			customizeField.put(fieldCode, fieldName);
-		}
+		getCustomFile get = new getCustomFile();
+		Map<String, String> customizeField = get.getCustomizeFile(this);
+		
 		
 		setAttr("customizeField", customizeField);
 		

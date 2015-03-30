@@ -40,7 +40,8 @@ $(document).ready(function() {
             		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
             			return "损坏货品";
             		}else if(obj.aData.CARGO_NATURE == "ATM"){
-            			return "ATM";
+            			return TransferOrder.ex_cargo;
+            			
             		}else{
             			return "";
             		}}}, 
@@ -99,11 +100,7 @@ $(document).ready(function() {
             		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
             			return "外包供应商提货";
             		}else if(obj.aData.PICKUP_MODE == "own"){
-            			if(TransferOrder.title=="源鸿物流"){
-            				return "源鸿自提";
-            			}else{
-            				return "公司自提";
-            			}
+            			return TransferOrder.ex_type ;
             			
             			
             		}else{

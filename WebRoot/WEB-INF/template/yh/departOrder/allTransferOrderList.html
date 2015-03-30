@@ -158,15 +158,17 @@
        
 
 <%}%>
-<%
-	var title=SYS_CONFIG.system_title!'';
-%>
 
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/bootstrap.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/departOrder/departOrder.js"></script>
+<script>
+	var allTransfer = {};
+	allTransfer.ex_cargo = "${customizeField.EX_CARGO!'贵重物品'}";
+	allTransfer.ex_type = "${customizeField.EX_TYPE!'公司自提'}";
+</script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 

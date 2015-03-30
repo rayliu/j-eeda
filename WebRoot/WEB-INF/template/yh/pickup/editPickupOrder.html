@@ -5,7 +5,6 @@
      <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">  
         <div id="page-wrapper">
             <div class="row">
-           
                 <div class="col-lg-12">
                     <div class="btn-header"></div>                  
                     <input type="hidden" id="pickupOrderId" value="${pickupOrder.id!''}">
@@ -16,9 +15,7 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-            <%
-             	var title=SYS_CONFIG.system_title!'';
-             %>
+            
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-12">
@@ -40,7 +37,7 @@
                                 <li class=""><a href="#pickuparap" data-toggle="tab" id="pickupOrderPayment" style="display: none;">应收应付</a>
                                 </li>
                             </ul>
-
+							<div class="btn-header"></div> 
                             <!-- Tab panes -->
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="basic">
@@ -74,7 +71,7 @@
 	                                            <label><div>提货方式</div></label>
 	                                           	<input id="pickupModeRadio" type="hidden" value="${pickupOrder.pickup_mode!''}"/>
 	                                            <label class="radio-inline">
-	                                                <input type="radio" name="pickupMode" id="pickupMode1" value="own" checked=""><% if(title =='源鸿物流'){%>源鸿自提<%}else{%>公司自提<%}%>
+	                                                <input type="radio" name="pickupMode" id="pickupMode1" value="own" checked="">${customizeField.EX_TYPE!'公司自提'}
 	                                            </label>
 	                                            <label class="radio-inline">
 	                                                <input type="radio" name="pickupMode" id="pickupMode2" value="routeSP">干线供应商自提
@@ -109,7 +106,7 @@
                                            </div>
                                         </div>    
                                           <div></div>
-                                 		<div>车辆信息</div>                                         
+                                 		<div style="font-size: 32px">车辆信息</div>                                         
                                         <div class="form-group">
                                             <label>车牌</label>
                                              <div class="form-group">											
@@ -197,7 +194,7 @@
                                         </div> 
                                   
 	                                   <div class="col-lg-6">
-	                                  		<div>拼车信息</div>                                           
+	                                  		<div style="font-size: 32px">拼车信息</div>                                           
                                             <div class="form-group">
 	                                                <label>拼车单号</label> <strong 	id="showOrderNo">${order_no!''} ${pickupOrder.depart_no!''}</strong>
                                             </div>
@@ -213,7 +210,7 @@
 	                                            <label>备注</label>
 	                                            <textarea class="form-control" rows="1" id="remark" name="remark">${pickupOrder.remark!''}</textarea>
 	                                        </div> 
-	                                        <div>跟车人员信息 <button id ="addAssistant" type="button" class="btn btn-outline btn-primary btn-sm">添加</button></div> 
+	                                        <div style="font-size: 32px">跟车人员信息 <button id ="addAssistant" type="button" class="btn btn-outline btn-primary btn-sm">添加</button></div> 
 	                                        <div class="form-group">
 					                          	<table class="table table-striped table-bordered table-hover" id="driverAssistantTable" >
 					                              <thead>
@@ -602,7 +599,10 @@
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
-
+<script>
+ 	var pickupOrder = {};
+ 	pickupOrder.ex_type = "${customizeField.EX_TYPE!'公司自提'}";
+</script>
 <script src="/yh/js/pickup/edit.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>

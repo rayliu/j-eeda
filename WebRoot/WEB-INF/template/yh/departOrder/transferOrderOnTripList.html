@@ -185,10 +185,7 @@
        
 
 <%}%>
-<%
-	var title=SYS_CONFIG.system_title!'';
-%>
- 
+
 <!-- Page-Level Plugin Scripts - Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
@@ -198,5 +195,10 @@
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 
+<script type="text/javascript">
+	var tranOntrip ={};
+	tranOntrip.ex_cargo = "${customizeField.EX_CARGO!'贵重物品'}";
+	tranOntrip.ex_type = "${customizeField.EX_TYPE!'公司自提'}";
+</script>
 <script src="/yh/js/departOrder/tronTripList.js"></script>
 

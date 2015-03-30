@@ -43,6 +43,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
+import controllers.yh.util.getCustomFile;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -51,12 +52,20 @@ public class PickupOrderController extends Controller {
     Subject currentUser = SecurityUtils.getSubject();
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_LIST})
     public void index() {
+    	
+    	getCustomFile get = new getCustomFile();
+    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	setAttr("customizeField", customizeField);
+
         render("/yh/pickup/pickupOrderList.html");
     }
 
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_CREATE})
     public void add() {
-            render("/yh/pickup/pickupOrderSearchTransfer.html");
+    	getCustomFile get = new getCustomFile();
+    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	setAttr("customizeField", customizeField);
+       render("/yh/pickup/pickupOrderSearchTransfer.html");
     }
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_CREATE})
     public void createPickupOrder() {
@@ -107,7 +116,10 @@ public class PickupOrderController extends Controller {
         List<Record> incomeItemList = Collections.EMPTY_LIST;
         incomeItemList = Db.find("select * from fin_item where type='应收'");
         setAttr("incomeItemList", incomeItemList);
-            render("/yh/pickup/editPickupOrder.html");
+        getCustomFile get = new getCustomFile();
+        Map<String, String> customizeField = get.getCustomizeFile(this);
+        setAttr("customizeField", customizeField);
+        render("/yh/pickup/editPickupOrder.html");
     }
 
     // 拼车单列表
@@ -1069,13 +1081,19 @@ public class PickupOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_UPDATE})
     public void edit() {
     	pickupOrderEdit();
-            render("/yh/pickup/editPickupOrder.html");
+    	getCustomFile get = new getCustomFile();
+    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	setAttr("customizeField", customizeField);
+        render("/yh/pickup/editPickupOrder.html");
     }
     
     // 修改拼车单页面
     public void carManageEdit() {
     	pickupOrderEdit();
-    		render("/yh/pickup/carManageEditPickupOrder.html");
+    	getCustomFile get = new getCustomFile();
+    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	setAttr("customizeField", customizeField);
+    	render("/yh/pickup/carManageEditPickupOrder.html");
     }
 
     // 保存拼车里程碑

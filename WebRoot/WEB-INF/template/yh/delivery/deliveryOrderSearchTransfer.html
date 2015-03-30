@@ -1,7 +1,7 @@
 <%layout("/yh/layout.html"){%>
 <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
 <div id="page-wrapper">
-            
+          
             <div class="row">
                 <div class="col-lg-12">
                     <div class="btn-header" style="font-size: 32px">
@@ -12,7 +12,7 @@
             </div>
             <div class="panel-body">
             	<label>货品属性：</label>
-            	<label><input id="atmRadio" type="radio" name="cargoType" value="ATM"  checked=""> ATM</label>&ensp;&ensp;   
+            	<label><input id="atmRadio" type="radio" name="cargoType" value="ATM"  checked=""> ${customizeField.EX_CARGO!'贵重物品'}</label>&ensp;&ensp;   
             	<label><input id="cargoRadio" type="radio" name="cargoType" value="cargo" > 普通货品(一站式)</label>
             </div>
             	
@@ -168,12 +168,20 @@
           
         </div>
 <%}%>
-<%
-	var title=SYS_CONFIG.system_title!'';
-%>
+
+
 
 <!-- Page-Level Plugin Scripts - Tables -->
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+<script>
+	<%
+		var title=SYS_CONFIG.system_title!'';
+	%>
+	var deliver_tran = {};
+	deliver_tran.title ="${title}";
+	deliver_tran.ex_cargo ="${customizeField.EX_CARGO!'贵重物品'}";
+	deliver_tran.ex_type = "${customizeField.EX_TYPE!'公司自提'}";
+</script>
 <script src="/yh/js/delivery/searchTransfer.js"></script>

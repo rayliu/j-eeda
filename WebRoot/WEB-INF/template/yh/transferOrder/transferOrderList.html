@@ -208,11 +208,12 @@
 <script>
 	<%
 		var transferOrderUpdate = shiro.hasPermission("TransferOrder.update");
-		var title=SYS_CONFIG.system_title!'';
+		
 	%>
 	var TransferOrder = {};
 	TransferOrder.isUpdate = ${transferOrderUpdate};
-	TransferOrder.title = ${title};
+	TransferOrder.ex_cargo = "${customizeField.EX_CARGO!'贵重物品'}";
+	TransferOrder.ex_type = "${customizeField.EX_TYPE!'公司自提'}";
 </script>
 
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>

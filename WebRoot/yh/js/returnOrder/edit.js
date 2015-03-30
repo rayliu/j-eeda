@@ -300,7 +300,7 @@
  	}
  	
  	if($("#cargoNature").val() == 'ATM'){
- 		$("#cargoNatureSpan").text('ATM');
+ 		$("#cargoNatureSpan").text(returnOrder.ex_cargo);
  	}else if($("#cargoNature").val() == 'cargo'){
  		$("#cargoNatureSpan").text('普通货品'); 		
  	}else{
@@ -308,11 +308,8 @@
  	}
  	
  	if($("#pickupMode").val() == 'own'){
- 		if(title =="源鸿物流"){
- 			$("#pickupModeSpan").text('源鸿自提');
- 		}else{
- 			$("#pickupModeSpan").text('公司自提');
- 		}
+ 		$("#pickupModeSpan").text(returnOrder.ex_type);
+ 		
  		
  	}else if($("#pickupMode").val() == 'routeSP'){
  		$("#pickupModeSpan").text('干线供应商自提'); 		

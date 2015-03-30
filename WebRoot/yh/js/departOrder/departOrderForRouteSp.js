@@ -42,7 +42,7 @@ $(document).ready(function() {
             		if(obj.aData.CARGO_NATURE == "cargo"){
             			return "普通货品";
             		}else if(obj.aData.CARGO_NATURE == "ATM"){
-            			return "ATM";
+            			return departOrderForRoute.ex_cargo;
             		}else{
             			return "";
             		}}},
@@ -64,14 +64,10 @@ $(document).ready(function() {
             		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
             			return "外包供应商提货";
             		}else if(obj.aData.PICKUP_MODE == "own"){
-            			if(title =="源鸿物流"){
-            				return "源鸿自提";
-            			}else{
-            				return "公司自提";
-            			}
             			
-            			
+            			return departOrderForRoute.ex_type;
             		}else{
+            			console.log(obj.aData.PICKUP_MODE);
             			return "";
             		}}},
             { 

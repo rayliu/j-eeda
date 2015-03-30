@@ -241,15 +241,17 @@
             </div>          
         </div>    
 <%}%>
-<%
-	var title=SYS_CONFIG.system_title!'';
-%>
+
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 
 <!-- <script src="/yh/js/bootstrap.min.js"></script> -->
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
-
+<script>
+	var pickupOrderSearcheTransfer = {};
+	pickupOrderSearcheTransfer.ex_type = "${customizeField.EX_TYPE!'公司自提'}";
+	
+</script>
 <script src="/yh/js/pickup/pickup.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 
