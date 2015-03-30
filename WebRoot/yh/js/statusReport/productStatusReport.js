@@ -1,128 +1,95 @@
 $(document).ready(function() {
     $('#menu_report').addClass('active').find('ul').addClass('in');
-    
+    $("#queryBtn").prop("disabled",true);
 	//datatable, 动态处理
     var statusTable = $('#eeda-table').dataTable({
-        "bFilter": false, //不需要默认的搜索框
-        "bSort": false, 
-        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",
-        "iDisplayLength": 10,
-        "bServerSide": true,
+    	"bFilter": false, //不需要默认的搜索框
+    	"bSort": false, // 不要排序
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+    	"iDisplayLength": 20,
+    	"bServerSide": false,
+    	"bLengthChange":false,
     	"oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
-        },
-        "sAjaxSource": "/statusReport/findTransferOrdertatus?order_no=''&customer_id=''"
-						+"&customer_order_no=''&item_no=''&serial_no=''",
+    		"sUrl": "/eeda/dataTables.ch.txt"
+    	},
         "aoColumns": [   
             {"mDataProp":"SERIAL_NO", "sWidth":"80px"},
             {"mDataProp":"ITEM_NO", "sWidth":"100px"},
             {"mDataProp":"CUSTOMER", "sWidth":"100px"},
-            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"80px"},
-            {"mDataProp":null, "sWidth":"180px",
+            {"mDataProp":"NOTIFY_PARTY_COMPANY", "sWidth":"100px"},
+            {"mDataProp":null, "sWidth":"80px",
             	"fnRender": function(obj) {  
-                		return obj.aData.TRANSFER_NO + "(" + obj.aData.TRANSFER_STATUS + ")";
+            		/*	
+            		 	新建运输
+						在货场
+						运输在途
+						在中转仓
+						新建配送
+						配送在途
+						客户签收（回单在途）
+						回单签收
+						已对账
+						已收款
+					*/
+            		var status = "新建运输";
+            		if(obj.aData.TRANSACTION_STATUS == "已签收"){
+            			status = "回单签收";
+            		}else if(obj.aData.TRANSACTION_STATUS == "新建"){
+            			status = "客户签收（回单在途）";
+            		}else if(obj.aData.DELIVERY_STATUS == "已发车"){
+            			status = "配送在途";
+            		}else if(obj.aData.DELIVERY_STATUS == "新建"){
+            			status = "新建配送";
+            		}else if(obj.aData.DEPART_STATUS == "已入库"){
+            			status = "在中转仓";
+            		}else if(obj.aData.DEPART_STATUS == "已发车"){
+            			status = "运输在途";
+            		}else if(obj.aData.PICK_STATUS == "已入货场"){
+            			status = "在货场";
+            		}else if(obj.aData.PICK_STATUS == "新建"){
+            			status = "新建运输";
+            		}
+            		return status;
                 }
             },       	
-            {"mDataProp":null, "sWidth":"150px",
-            	"fnRender": function(obj) {  
-            		if(obj.aData.PICK_NO != null )
-                		return obj.aData.PICK_NO + "(" + obj.aData.PICK_STATUS + ")";
-            		else
-            			return "";
-                }
-            }, 
-            {"mDataProp":null, "sWidth":"150px",
-            	"fnRender": function(obj) {  
-            		if(obj.aData.DEPART_NO != null )
-            			return obj.aData.DEPART_NO + "(" + obj.aData.DEPART_STATUS + ")";
-            		else
-            			return "";
-                }
-            }, 
-            {"mDataProp":null, "sWidth":"150px",
-            	"fnRender": function(obj) {  
-            		if(obj.aData.CARGO_NATURE == "cargo" && obj.aData.CARGO_NATURE_DETAIL == "cargoNatureDetailNo"){
-            			return obj.aData.DELIVERY_NO;
-            		}else{
-            			if(obj.aData.DELIVERY_NO != null )
-                			return obj.aData.DELIVERY_NO + "(" + obj.aData.DELIVERY_STATUS + ")";
-                		else
-                			return "";
-            		}
-                }
-            }, 
-            {"mDataProp":null, "sWidth":"150px",
-            	"fnRender": function(obj) {  
-            		if(obj.aData.RETURN_NO != null )
-            			return obj.aData.RETURN_NO + "(" + obj.aData.RETURN_STATUS + ")";
-            		else
-            			return "";
-                }
-            }
+            {"mDataProp":"PLANNING_TIME", "sWidth":"80px"},
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"80px"},
+            {"mDataProp":"TRANSFER_NO", "sWidth":"80px"},
+            {"mDataProp":"WAREHOUSE_NAME", "sWidth":"80px"},
+            {"mDataProp":"WAREHOUSE_STAMP", "sWidth":"120px"},
+            {"mDataProp":"DELIVERY_NO", "sWidth":"80px"},
+            {"mDataProp":"DELIVERY_STAMP", "sWidth":"80px"},
+            {"mDataProp":"RETURN_STAMP", "sWidth":"80px"}
+            
         ]  
     });	
     
-    var execResult = function(){
-    	var order_no=$("#order_no").val();
-    	var item_no=$("#item_no").val();
-    	var customer_id=$("#customer_id").val();
+    $("#serial_no,#beginTime,#endTime").on('keyup click', function () {
+    	var beginTime=$("#beginTime").val();
+    	var endTime=$("#endTime").val();
     	var serial_no = $("#serial_no").val();
-    	var customer_order_no = $("#customer_order_no").val();
-    	if(order_no != "" || customer_order_no != "" || serial_no != ""){
-	    	statusTable.fnSettings().sAjaxSource = "/statusReport/findTransferOrdertatus?order_no="+order_no +"&customer_id="+customer_id
-	    											+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&serial_no="+serial_no;
-	    	statusTable.fnDraw(); 
+    	if((beginTime != "" && endTime != "") || serial_no != ""){
+    		$("#queryBtn").prop("disabled",false);
+    	}else{
+    		$("#queryBtn").prop("disabled",true);
     	}
-    };
-    
-    $("#order_no,#item_no,#customer_id,#serial_no,#customer_order_no").on('keyup click', function () {
-    	execResult();
     });
     
-    /*// 获取所有运输单号
-	$('#order_no').on('keyup click', function(){
-		if($("#order_no").val() == "")
-	    	$("#hiddenOfficeId").val("");
-		$.get('/gateIn/searchAllOffice',{"officeName":$(this).val()}, function(data){
-			console.log(data);
-			var orderNoList =$("#orderNoList");
-			orderNoList.empty();
-			for(var i = 0; i < data.length; i++)
-			{
-				orderNoList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].ORDER_NO+"</a></li>");
-			}
-		},'json');
-		$("#orderNoList").css({ 
-	    	left:$(this).position().left+"px", 
-	    	top:$(this).position().top+32+"px" 
-	    }); 
-	    $('#orderNoList').show();
-	});
-	
-	// 选中运输单号
-	$('#orderNoList').on('mousedown', '.fromLocationItem', function(e){
-		var id =$(this).attr('code');
-		$('#officeSelect').val($(this).text());
-		$('#orderNoList').hide();
-		$("#hiddenOfficeId").val(id);
-		
-		var customerId = $("#hiddenCustomerId").val();
-		var warehouseId = $("#warehouseId").val();
-	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+id;
-		tab.fnDraw();
-	});
-	$('#order_no').on('blur', function(){
-		$("#orderNoList").hide();
-	});
-	$('#orderNoList').on('blur', function(){
-		$('#orderNoList').hide();
-	});
-
-	$('#orderNoList').on('mousedown', function(){
-		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
-	});*/
+    $("#queryBtn").on('click', function () {
+    	var beginTime=$("#beginTime").val();
+    	var endTime=$("#endTime").val();
+    	var serial_no = $("#serial_no").val();
+    	var order_no = $("#order_no").val();
+    	var customer_id = $("#customer_id").val();
+    	var customer_order_no = $("#customer_order_no").val();
+    	var item_no = $("#item_no").val();
+    	if((beginTime != "" && endTime != "") || serial_no != ""){
+    		statusTable.fnSettings().oFeatures.bServerSide = true;
+	    	statusTable.fnSettings().sAjaxSource = "/statusReport/findTransferOrdertatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
+	    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no;
+	    	statusTable.fnDraw(); 
+    	}
+    });
     
     //获取客户的list，选中信息在下方展示其他信息
 	$('#customerMessage').on('keyup click', function(){
@@ -154,7 +121,6 @@ $(document).ready(function() {
         	top:$(this).position().top+32+"px" 
         }); 
         $('#customerList').show();
-        execResult();
 	});
 
  	// 没选中客户，焦点离开，隐藏列表
@@ -173,16 +139,29 @@ $(document).ready(function() {
 	// 选中客户
 	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
 		var message = $(this).text();
-		var customerId = $(this).attr('partyId');
-		var warehouseId = $("#warehouseId").val();
-		var offeceId = $("#hiddenOfficeId").val();
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#customerMessage').focus();
 		$("#customer_id").val($(this).attr('partyId'));
 		$('#customerList').hide();
-		execResult();
     }); 
     
+	$('#datetimepicker').datetimepicker({  
+	    format: 'yyyy-MM-dd',  
+	    language: 'zh-CN'
+	}).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+	    $('#beginTime').trigger('keyup');
+	});		
+	
+	$('#datetimepicker2').datetimepicker({  
+	    format: 'yyyy-MM-dd',  
+	    language: 'zh-CN', 
+	    autoclose: true,
+	    pickerPosition: "bottom-left"
+	}).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+	    $('#endTime').trigger('keyup');
+	});
     
     
 });
