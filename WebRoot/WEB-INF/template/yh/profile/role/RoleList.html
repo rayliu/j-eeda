@@ -3,21 +3,26 @@
 <div id="wrapper">
 	<div id="roleList" style="display: true">
 		<div id="page-wrapper">
-
-			<div class="col-lg-12">
-				<div class="btn-header"></div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="btn-header">
+					<% if(shiro.hasPermission("Role.create")){%>
+							<a id = "createBtn" class="btn  btn-primary">
+							<span class="hidden-tablet">添加角色</span></a>
+					<%}%>
+					
+					
+					</div>
+					
+				</div>
 			</div>
 			<!-- /.col-lg-12 -->
 
-			<div class="panel-heading">
-				<% if(shiro.hasPermission("Role.create")){%>
-					<a id = "createBtn" class="btn  btn-primary">
-					<span class="hidden-tablet">添加角色</span></a>
-				<%}%>
-			</div>
+			
 			<!-- /.row -->
 			<div class="row">
 				<div class="col-lg-12">
+				
 					<div class="panel panel-default">
 						<div class="panel-heading">
                             <i class="fa fa-list fa-fw"></i>角色列表
