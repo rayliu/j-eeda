@@ -37,7 +37,7 @@ public class ResetPassWordController extends Controller{
         email.setSSLOnConnect(true);
         
         /*EedaConfig.mailUser*/
-        email.setFrom("EedaConfig.mailUser");//设置发信人
+        email.setFrom(EedaConfig.mailUser);//设置发信人
         email.setSubject("重置密码");
         
         
