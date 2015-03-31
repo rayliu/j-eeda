@@ -15,6 +15,9 @@ $(document).ready(function() {
           	warehouse_area:{
           	required: true,
           	number:true
+          },
+          officeSelect:{
+        	  required: true 
           }
         },
         highlight: function(element) {
