@@ -13,11 +13,8 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "bProcessing": true,
-        "bServerSide": true,
         "sAjaxSource": "/serviceProvider/list",
-        "aoColumns": [   
-            
+        "aoColumns": [ 
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":"ABBR"},
             {"mDataProp":"SP_TYPE",
