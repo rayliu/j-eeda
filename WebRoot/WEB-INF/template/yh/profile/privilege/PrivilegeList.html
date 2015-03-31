@@ -16,28 +16,20 @@
 						<form id="roleForm" action="/privilege/edit" method="post">
 	                         <div class="col-lg-6">
 	                             <div class="form-group">
+	                                 <nobr>
 	                                 <label >角色(必选)</label>
-	                                 	<select id="role_filter" name="rolename" class="form-control search-control role_filter " name="role_filter"></select>
-										<!-- <input type="text" style="cursor: default;" readonly="readonly"  class="form-control search-control sp_filter" name="rolename" id="role_filter" placeholder="请选择角色">
-			                             <ul id='roleList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 32%; left: 2%;">
-										</ul> -->
-	                              </div>                                        
+	                                 <select id="role_filter" name="rolename" class="form-control search-control role_filter " name="role_filter"></select>
+	                            	 
+	                             	 <% if(shiro.hasPermission("RolePermission.update")){%>
+							            <button type="submit" class="btn  btn-primary">编辑权限</button> 
+			                         <%}%>
+									 <% if(shiro.hasPermission("RolePermission.create")){%>
+									 	<a id="fenBtn" class="btn  btn-primary" href="/privilege/add">分配新角色权限</a>
+									 <%}%>
+									 </nobr>
+	                              </div>                                    
 	                         </div>
-	                         <% if(shiro.hasPermission("RolePermission.create")){%>
-		                         <div class="col-lg-3">
-		                             <div class="form-group">
-		                             
-						            	<a id="fenBtn" class="btn  btn-primary" href="/privilege/add">分配新角色权限</a>
-						             </div>
-						         </div>
-						     <%}%>
-						     <% if(shiro.hasPermission("RolePermission.update")){%>
-					         <div class="col-lg-3">
-					             <div class="form-group">
-					             	<button type="submit" class="btn  btn-primary">编辑权限</button> 
-					             </div>                                     
-	                         </div>
-	                         <%}%>
+	                        
                        </form>  
                     </div>
                     <div class="panel panel-default">                              
