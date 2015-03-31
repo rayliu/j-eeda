@@ -85,7 +85,7 @@ $(document).ready(function() {
     	var item_no = $("#item_no").val();
     	if((beginTime != "" && endTime != "") || serial_no != ""){
     		statusTable.fnSettings().oFeatures.bServerSide = true;
-	    	statusTable.fnSettings().sAjaxSource = "/statusReport/productStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
+	    	statusTable.fnSettings().sAjaxSource = "/statusReport/findTransferOrdertatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
 	    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no;
 	    	statusTable.fnDraw(); 
     	}
@@ -96,7 +96,6 @@ $(document).ready(function() {
 		if($('#customerMessage').val() == "")
 			$("#customer_id").val("");
 		$.get('/customerContract/search', {locationName:$('#customerMessage').val()}, function(data){
-			console.log(data);
 			var customerList =$("#customerList");
 			customerList.empty();
 			for(var i = 0; i < data.length; i++)
@@ -145,6 +144,68 @@ $(document).ready(function() {
 		$('#customerList').hide();
     }); 
     
+	
+	//获取供应商的list，选中信息在下方展示其他信息
+	$('#sp_name').on('keyup click', function(){
+		if($('#sp_name').val() == ""){
+			$("#customer_id").val("");
+		}
+		$.get('/serviceProvider/searchSp', {input:$('#sp_name').val()}, function(data){
+			console.log(data);
+			var spList =$("#spList");
+			spList.empty();
+			for(var i = 0; i < data.length; i++)
+			{
+				var abbr = data[i].ABBR;
+				if(abbr == null){
+					abbr = '';
+				}
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name = '';
+				}
+				var contact_person = data[i].CONTACT_PERSON;
+				if(contact_person == null){
+					contact_person = '';
+				}
+				var phone = data[i].PHONE;
+				if(phone == null){
+					phone = '';
+				}
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
+			}
+		},'json');
+
+		$("#spList").css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        }); 
+        $('#spList').show();
+	});
+    
+    // 没选中供应商，焦点离开，隐藏列表
+	$('#sp_name').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+
+	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
+	$('#spList').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+	
+	//没选中
+	$('#spList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
+
+	// 选中供应商
+	$('#spList').on('mousedown', '.fromLocationItem', function(e){
+		var message = $(this).text();
+		$('#sp_name').val(message.substring(0, message.indexOf(" ")));
+		$('#sp_id').val($(this).attr('partyId'));
+        $('#spList').hide();
+    });
+	
 	$('#datetimepicker').datetimepicker({  
 	    format: 'yyyy-MM-dd',  
 	    language: 'zh-CN'
@@ -163,6 +224,36 @@ $(document).ready(function() {
 	    $('#endTime').trigger('keyup');
 	});
     
+	
+	//select控制
+	$("#order_no_type").change(function(){
+		if($(this).val() == "transferOrder"){
+			$("#order_status_type").val("transferOrderStatus");
+			$("#transferOrder_status").show();
+			$("#delivery_status").val("").hide();
+		}else{
+			$("#order_status_type").val("deliveryStatus");
+			$("#transferOrder_status").val("").hide();
+			$("#delivery_status").show();
+		}
+	});
+	
+	//select控制
+	$("#order_status_type").change(function(){
+		if($(this).val() == "transferOrderStatus"){
+			$("#order_no_type").val("transferOrder");
+			$("#transferOrder_status").show();
+			$("#delivery_status").val("").hide();
+		}else{
+			$("#order_no_type").val("deliveryOrder");
+			$("#transferOrder_status").val("").hide();
+			$("#delivery_status").show();
+		}
+	});
+	
+	
+	
+	
     
 });
     

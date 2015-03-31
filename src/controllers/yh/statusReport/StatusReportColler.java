@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.TransferOrder;
+import models.DepartOrder;
+import models.Party;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -31,7 +32,15 @@ public class StatusReportColler extends Controller{
 		render("/yh/statusReport/productStatusReport.html");
 	}
 	
-	public void findTransferOrdertatus() {
+	public void productIndex() {		
+		render("/yh/statusReport/productStatusReport.html");
+	}
+	
+	public void orderIndex() {		
+		render("/yh/statusReport/orderStatusReport.html");
+	}
+	
+	public void productStatus() {
 		String order_no = getPara("order_no");
 		String customer_id = getPara("customer_id");
 		String customer_order_no = getPara("customer_order_no");
@@ -86,6 +95,7 @@ public class StatusReportColler extends Controller{
 				sql = sql + " and toid.serial_no = '" + serial_no + "'";
 			}
 			
+			//计划时间段
 			if(beginTime != null && !"".equals(beginTime) && endTime != null && !"".equals(endTime)){
 				totalSql = totalSql + " and tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
 				sql = sql + " and tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
@@ -146,6 +156,139 @@ public class StatusReportColler extends Controller{
         renderJson(locationList);
 	}
 	
+	public void orderStatusReport() {
+		String orderNoType = getPara("order_no_type");
+		String orderNo = getPara("order_no");
+		String orderStatusType = getPara("order_status_type");
+		String transferOrderStatus = getPara("transferOrder_status");
+		String deliveryStatus = getPara("delivery_status");
+		String setOutTime = getPara("setOutTime");
+		String customerId = getPara("customer_id");
+		String routeFrom = getPara("routeFrom");
+		String beginTime = getPara("beginTime");
+		String sp_id = getPara("sp_id");
+		String routeTo = getPara("routeTo");
+		String endTime = getPara("endTime");
+		String sLimit = "";
+		
+		Map orderMap = new HashMap();
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+		}
+		
+		if("transferOrder".equals(orderNoType) && "transferOrderStatus".equals(orderStatusType)){
+			// 获取总条数
+			String totalSql = "select count(0) total from transfer_order tor"
+					+ " left join depart_transfer tr on tr.order_id = tor.id "
+					+ " left join depart_order dor on dor.id = tr.depart_id"
+					+ " left join return_order ror on ror.transfer_order_id = tor.id"
+					+ " left join party p1 on p1.id = tor.customer_id"
+					+ " left join contact c1 on c1.id = p1.contact_id"
+					+ " left join party p2 on p2.id = tor.sp_id"
+					+ " left join contact c2 on c2.id = p2.contact_id"
+					+ " left join location l1 on tor.route_from = l1.code "
+					+ " left join location l2 on tor.route_to = l2.code"
+					+ " left join office o on o.id = tor.office_id"
+					+ " where dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
+					+ " and p1.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'"
+					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'"
+					+ " ";
+				
+			String sql = "select tor.order_no,'运输单' as order_category,dor.depart_no,tor.order_type,c1.abbr,o.office_name,tor.planning_time,dor.departure_time,"
+					+ " l1.name route_from,l2.name route_to,tor.status,tor.depart_assign_status,ror.transaction_status"
+					+ " from transfer_order tor"
+					+ " left join depart_transfer tr on tr.order_id = tor.id "
+					+ " left join depart_order dor on dor.id = tr.depart_id"
+					+ " left join return_order ror on ror.transfer_order_id = tor.id"
+					+ " left join party p1 on p1.id = tor.customer_id"
+					+ " left join contact c1 on c1.id = p1.contact_id"
+					+ " left join party p2 on p2.id = tor.sp_id"
+					+ " left join contact c2 on c2.id = p2.contact_id"
+					+ " left join location l1 on tor.route_from = l1.code "
+					+ " left join location l2 on tor.route_to = l2.code"
+					+ " left join office o on o.id = tor.office_id"
+					+ " where dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
+					+ " and p1.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'"
+					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'";
+			//有外发日期
+			if(!"".equals(setOutTime) && setOutTime != null){
+				totalSql = totalSql + " and dor.departure_time = '" + setOutTime + "'";
+				sql = sql + " and dor.departure_time = '" + setOutTime + "'";
+			}
+			
+			//计划时间段
+			if(beginTime != null && !"".equals(beginTime) && endTime != null && !"".equals(endTime)){
+				totalSql = totalSql + " and tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
+				sql = sql + " and tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
+			}
+			
+			//有运输单号时
+			if(!"".equals(orderNo) && orderNo != null){
+				totalSql = totalSql + " and tor.order_no = '" + orderNo + "'";
+				sql = sql + " and tor.order_no = '" + orderNo + "'";
+			}
+			
+			//始发地
+			if(!"".equals(routeFrom) && routeFrom != null){
+				totalSql = totalSql + " and l1.name = '" + routeFrom + "'";
+				sql = sql + " and l1.name = '" + routeFrom + "'";
+			}
+			
+			//目的地
+			if(!"".equals(routeTo) && routeTo != null){
+				totalSql = totalSql + " and l2.name = '" + routeTo + "'";
+				sql = sql + " and l2.name = '" + routeTo + "'";
+			}
+			
+			//有供应商
+			if(!"".equals(sp_id) && sp_id != null){
+				totalSql = totalSql + "and tor.sp_id = '" + sp_id + "'";
+				sql = sql + "and tor.sp_id = '" + sp_id + "'";
+			}
+			//有客户时
+			if(!"".equals(customerId) && customerId != null){
+				totalSql = totalSql + "and tor.customer_id = '" + customerId + "'";
+				sql = sql + "and tor.customer_id = '" + customerId + "'";
+			}
+			
+			//运输单状态
+			if(!"".equals(transferOrderStatus) && transferOrderStatus != null){
+				/*totalSql = totalSql + "and tor.customer_id = '" + customerId + "'";
+				sql = sql + "and tor.customer_id = '" + customerId + "'";*/
+				if("NEW".equals(transferOrderStatus)){
+					
+				}else if("PARTIAL".equals(transferOrderStatus)){
+					
+				}else if("ALL".equals(transferOrderStatus)){
+					
+				}else if("DELIVERY".equals(transferOrderStatus)){
+					
+				}else if("RETURN".equals(transferOrderStatus)){
+					
+				}
+			}
+			
+			// 获取总条数
+			Record rec = Db.findFirst(totalSql);
+			logger.debug("total records:" + rec.getLong("total"));
+			// 获取当前页的数据
+			List<Record> orders =Db.find(sql + sLimit);
+			orderMap.put("sEcho", pageIndex);
+			orderMap.put("iTotalRecords", rec.getLong("total"));
+			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+			orderMap.put("aaData", orders);
+		}else if("deliveryOrder".equals(orderNoType) && "deliveryStatus".equals(orderStatusType)){
+			
+			
+		}else{
+			orderMap.put("sEcho", 0);
+			orderMap.put("iTotalRecords", 0);
+			orderMap.put("iTotalDisplayRecords", 0);
+			orderMap.put("aaData", null);
+		}
+		renderJson(orderMap);
+	}
 	
 	
 }
