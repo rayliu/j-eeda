@@ -712,7 +712,9 @@
     	    	//阻止a 的默认响应行为，不需要跳转
     			e.preventDefault();	
     			//异步向后台提交数据
-    	        saveDepartOrderFunction();
+    			
+    			saveDepartOrderFunction();
+    	       
     	    }; 
     	    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
     	        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
@@ -819,44 +821,47 @@
     	    
     	    $("#departureConfirmationBtn").click(function(e){
     	    	//提交前，校验数据
-    	    	if($("#departure_time").val() == "" || $("#arrival_time").val() == ""){
+    	    	//发车之前保存发车单
+    	    	clickSaveDepartOrder(e);
+    	    	if($('#orderForm').valid() == false){
     	    		$.scojs_message('操作失败，请确认基本信息是否输入完整', $.scojs_message.TYPE_ERROR);
      		        return false;
-     	        }else{
-     	        	//发车之前保存发车单
-        	    	clickSaveDepartOrder(e);
      	        }
-    	    	var priceType = $("input[name='priceType']:checked").val();
-    	    	var departOrderId = $("#departOrderId").val();
-    	    	$.post('/transferOrderMilestone/departureConfirmation?departOrderId='+departOrderId, function(){
-    	    		paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
-    	    		paymenttable.fnDraw(); 
-    	    		$("#departOrderStatus").val('已发车');
-    	    		$("#departureConfirmationBtn").attr("disabled",true);
-        	    	$("#saveDepartOrderBtn").attr("disabled",true);
-    	    	});
-    	    	
-    	    	$("#saveDepartOrderBtn").attr("disabled", true);
-
-                //计算应付
-                $.post('/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
-                      //$("#warehousingConfirmBtn").attr("disabled",false);
-                      paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
-                      paymenttable.fnDraw(); 
-                      $("#departOrderStatus").val('已发车');
-                      $("#departureConfirmationBtn").attr("disabled",true);
-          	    	  $("#saveDepartOrderBtn").attr("disabled",true);
-                });
+     	        	/*//发车之前保存发车单
+        	    	clickSaveDepartOrder(e);*/
+     	        
+	    	    	var priceType = $("input[name='priceType']:checked").val();
+	    	    	var departOrderId = $("#departOrderId").val();
+	    	    	$.post('/transferOrderMilestone/departureConfirmation?departOrderId='+departOrderId, function(){
+	    	    		paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
+	    	    		paymenttable.fnDraw(); 
+	    	    		$("#departOrderStatus").val('已发车');
+	    	    		$("#departureConfirmationBtn").attr("disabled",true);
+	        	    	$("#saveDepartOrderBtn").attr("disabled",true);
+	    	    	});
+	    	    	
+	    	    	$("#saveDepartOrderBtn").attr("disabled", true);
+	
+	                //计算应付
+	                $.post('/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
+	                      //$("#warehousingConfirmBtn").attr("disabled",false);
+	                      paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
+	                      paymenttable.fnDraw(); 
+	                      $("#departOrderStatus").val('已发车');
+	                      $("#departureConfirmationBtn").attr("disabled",true);
+	          	    	  $("#saveDepartOrderBtn").attr("disabled",true);
+	                });
+     	        
     	    });
 
-    	    /*$("#warehousingConfirmBtn").click(function(e){
+    	    $("#warehousingConfirmBtn").click(function(e){
     	    	$(this).attr("disabled",true);
     	    	$.post('/departOrder/updatestate?order_state='+"已入库", $("#orderForm").serialize(), function(data){
     	    		if(data.amount>0){
     	    			alert("有"+data.amount+"个货品没入库,可以到产品中维护信息！");
     	    		}                    
     	    	});
-    	    });*/
+    	    });
     	    $("#receiptBtn").click(function(e){
     	    	$(this).attr("disabled",true);
     	    	$("#order_hd").attr("disabled",false);

@@ -153,74 +153,6 @@
                                         <input id="carInfoDriverPhone" value="${carinfo.phone!''}" type="hidden">
                                         <input class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
                                         </div> 
-                                        <!-- <div class="form-group">
-	                                        <div style=display:inline-block;width:49%>
-	                                            <label>车型</label>
-	                                         	<input type="hidden" value="${carinfo.cartype!''}" id="carTypeSelect">
-	                                            <select name="car_type" id="cartype" class="form-control">
-                                                           <option ></option>
-                                                           <option value="平板车">平板车</option>
-                                                           <option value="高栏车">高栏车</option>
-                                                           <option value="集装车">集装车</option>
-                                                           <option value="单桥车">单桥车</option>
-                                                           <option value="双桥车">双桥车</option>
-                                                           <option value="半挂车">半挂车</option>
-                                                           <option value="冷藏车">冷藏车</option>
-                                                           <option value="特种车">特种车</option>
-                                                           <option value="商品运输车">商品运输车</option>
-                                                           <option value="危险品车">危险品车</option>
-                                                           <option value="挂车">挂车</option>
-                                                           <option value="爬梯车">爬梯车</option>
-                                                           <option value="可拼车">可拼车</option>
-                                                           <option value="低栏车">低栏车</option>
-                                                           <option value="半挂一拖二">半挂一拖二</option>
-                                                           <option value="半挂一拖三">半挂一拖三</option>
-                                                           <option value="半挂二拖二">半挂二拖二</option>
-                                                           <option value="半挂二拖三">半挂二拖三</option>
-                                                           <option value="前四后四">前四后四</option>
-                                                           <option value="前四后六">前四后六</option>
-                                                           <option value="前四后八">前四后八</option>
-                                                           <option value="前四后十">前四后十</option>
-                                                           <option value="五轮车">五轮车</option>
-                                                           <option value="后八轮">后八轮</option>
-                                                           <option value="半封闭">半封闭</option>
-                                                           <option value="封闭车">封闭车</option>
-                                                           <option value="罐式车">罐式车</option>
-                                                           <option value="厢式车">厢式车</option>
-                                                           <option value="自卸车">自卸车</option>
-                                                           <option value="棉被车">棉被车</option>
-                                                           <option value="其他">其他</option>
-                                                    </select>
-                                                 </div>
-	                                       <div style=display:inline-block;width:50%>			                                                               
-	                                            <label>车辆长度</label>
-	                                         	<input type="hidden" value="${carinfo.length!''}" id="carSizeSelect">
-	                                            <select name="car_size" id="carsize" class="form-control">
-                                                    <option value="0"></option>
-                                                    <option value="21">21.0</option>
-                                                    <option value="18.5">18.5</option>
-                                                    <option value="18.0">18.0</option>
-                                                    <option value="17.8">17.8</option>
-                                                    <option value="17.5">17.5</option>
-                                                    <option value="17.0">17.0</option>
-                                                    <option value="16.0">16.0</option>
-                                                    <option value="15.0">15.0</option>
-                                                    <option value="14.5">14.5</option>
-                                                    <option value="13.5">13.5</option>
-                                                    <option value="13.0">13.0</option>
-                                                    <option value="12.5">12.5</option>
-                                                    <option value="9.6">9.6</option>
-                                                    <option value="8.6">8.6</option>
-                                                    <option value="8.0">8.0</option>
-                                                    <option value="7.6">7.6</option>
-                                                    <option value="7.2">7.2</option>
-                                                    <option value="6.8">6.8</option>
-                                                    <option value="6.5">6.5</option>
-                                                    <option value="5.3">5.3</option>
-                                                    <option value="4.3">4.3</option>                                                
-	                                            </select>
-	                                       </div>
-	                                       </div> -->
 	                                       <div id="carFollowInfomation" style="display:none">
 	                                         	<div class="form-group">
 		                                            <label>跟车人</label>
@@ -245,7 +177,7 @@
 	                                   		<div class="col-lg-10">
 		                                        <div class="form-group">                                                    
 		                                            <span id="datetimepicker" class="input-append date search-control "> 
-		                                                <label class="search-label">实际发车时间*</label> 
+		                                                <label class="search-label">实际发车时间<span style ="color:red">*</span></label> 
 		                                                <input id="departure_time" class="form-control search-control endTime_filter" type="text" name="departure_time" value="${departOrder.departure_time!''}">
 		                                                <span class="add-on">  
 		                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
@@ -258,7 +190,7 @@
 		                                    <div class="col-lg-10">
 		                                        <div class="form-group">                                                    
 		                                            <span id="datetimepicker2" class="input-append date search-control "> 
-		                                                <label class="search-label">预计到达时间*</label> 
+		                                                <label class="search-label">预计到达时间<span style ="color:red">*</span></label> 
 		                                                <input id="arrival_time" class="form-control search-control endTime_filter" type="text" name="arrival_time" value="${departOrder.arrival_time!''}">
 		                                                <span class="add-on">  
 		                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
