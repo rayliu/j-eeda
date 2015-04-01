@@ -276,7 +276,7 @@ public class CustomerController extends Controller {
  		if(parentID == null || "".equals(parentID)){
  			parentID = parentOffice.getLong("id");
  		}
- 		Contact contact = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where company_name =? and p.party_type='CUSTOMER' and p.office_id = ?",company_name,parentID);
+ 		Contact contact = Contact.dao.findFirst("select c.*,p.*,c.id as cid,p.id as pid from contact c left join party p on c.id = p.contact_id where c.company_name =? and p.party_type='CUSTOMER' and p.office_id = ?",company_name,parentID);
  		
  		if(contact == null){
  			checkObjectExist=true;
@@ -292,7 +292,7 @@ public class CustomerController extends Controller {
  		if(parentID == null || "".equals(parentID)){
  			parentID = parentOffice.getLong("id");
  		}
- 		Contact contact = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where abbr =? and p.party_type='CUSTOMER' and p.office_id = ?",abbr,parentID);
+ 		Contact contact = Contact.dao.findFirst("select c.*,p.*,c.id as cid,p.id as pid from contact c left join party p on c.id = p.contact_id where c.abbr =? and p.party_type='CUSTOMER' and p.office_id = ?",abbr,parentID);
  		if(contact == null){
  			checkObjectExist=true;
  		}else{
@@ -300,5 +300,5 @@ public class CustomerController extends Controller {
  		}
  		renderJson(checkObjectExist);
  	}
- 
+
 }

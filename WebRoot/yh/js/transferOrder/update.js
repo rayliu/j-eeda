@@ -44,7 +44,6 @@ $(document).ready(function() {
 	var transferOrderId = $("#order_id").val();
 	if(transferOrderId != '' && transferOrderId != null){
 		var customerChargeType = $("#customerChargeType").val();
-
 		$("input[name='chargeType']").each(function(){
 			if(chargeType == $(this).val()){
 				//零担
@@ -88,7 +87,9 @@ $(document).ready(function() {
     //from表单验证
 	var validate = $('#transferOrderUpdateForm').validate({
         rules: {
-        	customerMessage: {required: true},
+        	customerMessage: {
+        		required: true
+        	},
         	planning_time: {required: true},
         	arrival_time: {required: true},
         	officeSelect: {required:true}
@@ -108,15 +109,17 @@ $(document).ready(function() {
 	//获取客户的list，选中信息在下方展示其他信息
 	$('#customerMessage').on('keyup click', function(){
 		var inputStr = $('#customerMessage').val();
+		$("label[name = 'errorMessage']").empty().remove();
 		if(inputStr == ""){
 			var pageCustomerName = $("#pageCustomerName");
 			pageCustomerName.empty();
 			var pageCustomerAddress = $("#pageCustomerAddress");
 			pageCustomerAddress.empty();
 			$('#customer_id').val($(this).attr(''));
+			
 		}
+		
 		$.get('/transferOrder/searchPartCustomer', {input:inputStr}, function(data){
-			//console.log(data);
 			var customerList =$("#customerList");
 			customerList.empty();
 			for(var i = 0; i < data.length; i++)
@@ -141,10 +144,80 @@ $(document).ready(function() {
         	top:$(this).position().top+32+"px" 
         }); 
         $('#customerList').show();
+        
 	});
 
  	// 没选中客户，焦点离开，隐藏列表
 	$('#customerMessage').on('blur', function(){
+		var inputStr = $('#customerMessage').val();
+		$("label[name = 'errorMessage']").empty().remove();
+		if(inputStr == "" && inputStr == null){
+			var pageCustomerName = $("#pageCustomerName");
+			pageCustomerName.empty();
+			var pageCustomerAddress = $("#pageCustomerAddress");
+			pageCustomerAddress.empty();
+			$('#customer_id').val($(this).attr(''));
+		}else if($('#customer_id').val() == ""){
+			$.get('/transferOrder/searchPartCustomer', {input:inputStr}, function(data){
+				if(data.length == 0){
+					$('#customerMessage').after("<label  name ='errorMessage' for='customerMessage' class='error'>当前客户没有维护，请" +
+							"<a href='/customer/add'>维护客户</a></label>");
+				}
+				if(data.length ==1){
+					
+					$('#customerMessage').val(data[0].COMPANY_NAME);
+					$('#customer_id').val(data[0].PID);
+					$('#customerId').val(data[0].PID);
+					$('#hideLocationFrom').val(data[0].LOCATION);	
+					$('#locationForm').val(data[0].LOCATION);		
+					var pageCustomerName = $("#pageCustomerName");
+					pageCustomerName.empty();
+					var contact_person = data[0].CONTACT_PERSON;
+					if(contact_person == 'null'){
+						contact_person = '';
+					}
+					pageCustomerName.append(contact_person+'&nbsp;');
+					var phone = data[0].PHONE;
+					if(phone == 'null'){
+						phone = '';
+					}
+					pageCustomerName.append(phone); 
+					var pageCustomerAddress = $("#pageCustomerAddress");
+					pageCustomerAddress.empty();
+					var address = data[0].ADDRESS;
+					if(address == 'null'){
+						address = '';
+					}
+					pageCustomerAddress.append(address);
+					
+					var chargeType =data[0].CHARGE_TYPE;
+					//等于零担的时候
+			        if(chargeType==='perCargo'){
+			            $('#ltl_price_type').show();
+			            $("#carInfomation").hide();
+			            $("#car_type_div").hide();
+			        }else if(chargeType==='perCar'){
+			            $("#carInfomation").show();
+			            //显示车辆信息
+			            $(this).prop('checked', true);
+			            $("#car_type_div").show();
+			            $('#ltl_price_type').hide();
+			        }else{
+			            $('#ltl_price_type').hide();
+			            $("#car_type_div").hide();
+			            //计费方式为计件的时候
+			            if($('input[name="chargeType"]:checked').val()==='perUnit'){
+			            	$("#carInfomation").hide();
+			            }else{
+			            	$("#carInfomation").show();
+			            }
+			        }
+					
+					searchAllLocation();
+				}
+			},'json');
+		}
+		
  		$('#customerList').hide();
  	});
 
@@ -230,7 +303,6 @@ $(document).ready(function() {
     
 	// 选中客户
 	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
-		
 		var message = $(this).text();
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#customer_id').val($(this).attr('partyId'));
@@ -306,7 +378,7 @@ $(document).ready(function() {
 			$('#sp_id').val($(this).attr(''));
 		}
 		$.get('/serviceProvider/searchSp', {input:inputStr}, function(data){
-			console.log(data);
+			//console.log(data);
 			var spList =$("#spList");
 			spList.empty();
 			for(var i = 0; i < data.length; i++)
@@ -2532,7 +2604,7 @@ $(document).ready(function() {
 	    	}); 
 		}
 	});
-    
+   
     
     
     
