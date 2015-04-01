@@ -38,8 +38,7 @@
                                 </select>
                                 <select id="delivery_status" name="delivery_status" class="form-control search-control status_filter" style="display: none;">
                                     <option value=""></option>
-                                    <option value="NEW">新建配送单</option>
-                                    <option value="PARTIAL">部分在途</option>
+                                    <option value="NEW">新建配送</option>
                                     <option value="ALL">配送在途</option>
                                     <option value="DELIVERY">配送到达</option>
                                     <option value="RETURN">回单签收</option>
@@ -70,7 +69,7 @@
                              <div class="form-group">                                        
 	                             <div id="datetimepicker" class="input-append date "> 
 	                                 <label class="search-label">开始计划日期</label> 
-	                                 <input id="beginTime" name="beginTime" class="form-control search-control  beginTime_filter" type="text" placeholder="请选择开始时间段">
+	                                 <input id="beginTime" name="beginTime" class="form-control search-control  beginTime_filter" type="text" placeholder="请选择开始时间段，必填">
 	                                 <span class="add-on">  
 	                                     <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
 	                                 </span>  
@@ -92,7 +91,7 @@
                             <div class="form-group">                                                    
 	                             <span id="datetimepicker2" class="input-append date search-control "> 
 	                                 <label class="search-label">结束计划日期</label> 
-	                                 <input id="endTime" name="endTime" class="form-control search-control endTime_filter" type="text" placeholder="请选择结束时间段">
+	                                 <input id="endTime" name="endTime" class="form-control search-control endTime_filter" type="text" placeholder="请选择结束时间段，必填">
 	                                 <span class="add-on">  
 	                                     <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
 	                                 </span>  
@@ -112,7 +111,7 @@
                 </form>
             	<div class="table-responsive"> 
 	            	<div class="row-fluid">
-			 			<table class="table table-striped table-bordered table-hover" id="eeda-table" style="width: 1600px;">
+			 			<table class="table table-striped table-bordered table-hover" id="eeda-table" style="width: 1520px;">
 							<thead>
 								<tr>
 									<th>单据单号</th>

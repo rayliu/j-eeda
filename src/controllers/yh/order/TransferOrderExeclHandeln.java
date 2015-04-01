@@ -356,45 +356,44 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      * @param content
      * @return 
      */
-	@SuppressWarnings("unused")
 	private TransferOrderItem updateTransferOrderItem(Map<String,String> content,double itemNumber,TransferOrder tansferOrder,TransferOrderItem transferOrderItem,Product product){
-    	//体积相加
 		double size = 0;
-		if(product.get("size") != null && !"".equals(product.get("size"))){
-			size = product.getDouble("size")/1000;
-		}
 		double width = 0;
-		if(product.get("width") != null && !"".equals(product.get("width"))){
-			width = product.getDouble("width")/1000;
-		}
 		double height = 0;
-		if(product.get("height") != null && !"".equals(product.get("height"))){
-			height = product.getDouble("height")/1000;
-		}
 		double weight = 0;
-		if(product.get("weight") != null && !"".equals(product.get("weight"))){
-			weight = product.getDouble("weight");
-		}
-		//总体积
+		//总体积、总重量
 		double sumVolume = 0;
-		//总重量
 		double sumWeight = 0;
-		if("cargoNatureDetailYes".equals(tansferOrder.get("cargo_nature_detail"))){
-			sumVolume = size * width * height;
-			sumWeight = weight;
-		}else{
-			if(product.get("volume") != null && !"".equals(product.get("volume"))){
-				sumVolume = product.getDouble("volume") * itemNumber;
-			}else{
-				sumVolume = size * width * height * itemNumber;
+		if(product != null){
+			if(product.get("size") != null && !"".equals(product.get("size"))){
+				size = product.getDouble("size")/1000;
 			}
-			sumWeight = weight * itemNumber;
+			if(product.get("width") != null && !"".equals(product.get("width"))){
+				width = product.getDouble("width")/1000;
+			}
+			if(product.get("height") != null && !"".equals(product.get("height"))){
+				height = product.getDouble("height")/1000;
+			}
+			if(product.get("weight") != null && !"".equals(product.get("weight"))){
+				weight = product.getDouble("weight");
+			}
+			if("cargoNatureDetailYes".equals(tansferOrder.get("cargo_nature_detail"))){
+				sumVolume = size * width * height;
+				sumWeight = weight;
+			}else{
+				if(product.get("volume") != null && !"".equals(product.get("volume"))){
+					sumVolume = product.getDouble("volume") * itemNumber;
+				}else{
+					sumVolume = size * width * height * itemNumber;
+				}
+				sumWeight = weight * itemNumber;
+			}
+			//保留两位小数
+			BigDecimal volumeBig = new BigDecimal(sumVolume);
+			sumVolume = volumeBig.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+	    	BigDecimal weightBig = new BigDecimal(sumWeight);
+	    	sumWeight = weightBig.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 		}
-		//保留两位小数
-		BigDecimal volumeBig = new BigDecimal(sumVolume);
-		sumVolume = volumeBig.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-    	BigDecimal weightBig = new BigDecimal(sumWeight);
-    	sumWeight = weightBig.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 		
     	if(!"".equals(transferOrderItem.get("id")) && transferOrderItem.get("id") != null){
 			//有单品，货品数量叠加计数，重新计算总体积、总重量
@@ -425,7 +424,6 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     			.set("weight", product.get("weight"))
     			.set("product_id", product.get("id"));
     		}
-    		
     		transferOrderItem.set("order_id", tansferOrder.get("id")).set("volume", sumVolume).set("sum_weight", sumWeight).save();
     	}
 		return transferOrderItem;
@@ -526,7 +524,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    					+ " and planning_time = '" + content.get(j).get("计划日期") + "' and arrival_time ='" + content.get(j).get("预计到货日期") + "';";
 		        		TransferOrder order = TransferOrder.dao.findFirst(sql);
 		    			if(order != null){
-		    				TransferOrderItem tansferOrderItem= TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = '" + order.get("id") +"' and item_no = '" + product.get("item_no") + "';");
+		    				TransferOrderItem tansferOrderItem = null;
+		    				if(product != null){
+		    					tansferOrderItem = TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = '" + order.get("id") +"' and item_no = '" + product.get("item_no") + "';");
+		    				}
 		    				if(tansferOrderItem != null){
 		    					//运输单有单品时叠加计算货品数量，没单品时直接读取文件，此时“发货数量”列是货品总数，不用修改
 		    					updateTransferOrderItem(content.get(j),itemNumber,order,tansferOrderItem,product);

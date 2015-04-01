@@ -13,62 +13,44 @@ $(document).ready(function() {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
         "aoColumns": [   
-            {"mDataProp":"SERIAL_NO", "sWidth":"80px"},
-            {"mDataProp":"ITEM_NO", "sWidth":"100px"},
-            {"mDataProp":"CUSTOMER", "sWidth":"100px"},
-            {"mDataProp":"NOTIFY_PARTY_COMPANY", "sWidth":"100px"},
-            {"mDataProp":null, "sWidth":"80px",
-            	"fnRender": function(obj) {  
-            		/*	
-            		 	新建运输
-						在货场
-						运输在途
-						在中转仓
-						新建配送
-						配送在途
-						客户签收（回单在途）
-						回单签收
-						已对账
-						已收款
-					*/
-            		var status = "新建运输";
-            		if(obj.aData.TRANSACTION_STATUS == "已签收"){
-            			status = "回单签收";
-            		}else if(obj.aData.TRANSACTION_STATUS == "新建"){
-            			status = "客户签收（回单在途）";
-            		}else if(obj.aData.DELIVERY_STATUS == "已发车"){
-            			status = "配送在途";
-            		}else if(obj.aData.DELIVERY_STATUS == "新建"){
-            			status = "新建配送";
-            		}else if(obj.aData.DEPART_STATUS == "已入库"){
-            			status = "在中转仓";
-            		}else if(obj.aData.DEPART_STATUS == "已发车"){
-            			status = "运输在途";
-            		}else if(obj.aData.PICK_STATUS == "已入货场"){
-            			status = "在货场";
-            		}else if(obj.aData.PICK_STATUS == "新建"){
-            			status = "新建运输";
+            {"mDataProp":"ORDER_NO", "sWidth":"80px"},
+            {"mDataProp":"ORDER_CATEGORY", "sWidth":"60px"},
+            {"mDataProp":"DEPART_NO", "sWidth":"100px"},
+            {"mDataProp":"ORDER_TYPE", "sWidth":"60px",
+            	"fnRender": function(obj) {
+            		if(obj.aData.ORDER_TYPE == "salesOrder"){
+            			return "销售订单";
+            		}else if(obj.aData.ORDER_TYPE == "replenishmentOrder"){
+            			return "补货订单";
+            		}else if(obj.aData.ORDER_TYPE == "arrangementOrder"){
+            			return "调拨订单";
+            		}else if(obj.aData.ORDER_TYPE == "cargoReturnOrder"){
+            			return "退货订单";
+            		}else if(obj.aData.ORDER_TYPE == "damageReturnOrder"){
+            			return "质量退单";
+            		}else if(obj.aData.ORDER_TYPE == "gateOutTransferOrder"){
+            			return "出库运输单";
+            		}else if(obj.aData.ORDER_TYPE == "movesOrder"){
+            			return "移机单";
+            		}else{
+            			return "";
             		}
-            		return status;
-                }
-            },       	
+            	}
+        	},
+            {"mDataProp":"ABBR", "sWidth":"80px"},       	
+            {"mDataProp":"OFFICE_NAME", "sWidth":"80px"},
             {"mDataProp":"PLANNING_TIME", "sWidth":"80px"},
-            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"80px"},
-            {"mDataProp":"TRANSFER_NO", "sWidth":"80px"},
-            {"mDataProp":"WAREHOUSE_NAME", "sWidth":"80px"},
-            {"mDataProp":"WAREHOUSE_STAMP", "sWidth":"120px"},
-            {"mDataProp":"DELIVERY_NO", "sWidth":"80px"},
-            {"mDataProp":"DELIVERY_STAMP", "sWidth":"80px"},
-            {"mDataProp":"RETURN_STAMP", "sWidth":"80px"}
-            
+            {"mDataProp":"DEPARTURE_TIME", "sWidth":"80px"},
+            {"mDataProp":"ROUTE_FROM", "sWidth":"80px"},
+            {"mDataProp":"ROUTE_TO", "sWidth":"80px"},
+            {"mDataProp":"ORDER_STATUS", "sWidth":"80px"}
         ]  
     });	
     
-    $("#serial_no,#beginTime,#endTime").on('keyup click', function () {
+    $("#beginTime,#endTime").on('keyup click', function () {
     	var beginTime=$("#beginTime").val();
     	var endTime=$("#endTime").val();
-    	var serial_no = $("#serial_no").val();
-    	if((beginTime != "" && endTime != "") || serial_no != ""){
+    	if(beginTime != "" && endTime != ""){
     		$("#queryBtn").prop("disabled",false);
     	}else{
     		$("#queryBtn").prop("disabled",true);
@@ -76,17 +58,23 @@ $(document).ready(function() {
     });
     
     $("#queryBtn").on('click', function () {
-    	var beginTime=$("#beginTime").val();
-    	var endTime=$("#endTime").val();
-    	var serial_no = $("#serial_no").val();
-    	var order_no = $("#order_no").val();
+    	var order_no_type=$("#order_no_type").val();
+    	var order_no=$("#order_no").val();
+    	var order_status_type = $("#order_status_type").val();
+    	var transferOrder_status = $("#transferOrder_status").val();
+    	var delivery_status = $("#delivery_status").val();
+    	var setOutTime = $("#setOutTime").val();
     	var customer_id = $("#customer_id").val();
-    	var customer_order_no = $("#customer_order_no").val();
-    	var item_no = $("#item_no").val();
-    	if((beginTime != "" && endTime != "") || serial_no != ""){
-    		statusTable.fnSettings().oFeatures.bServerSide = true;
-	    	statusTable.fnSettings().sAjaxSource = "/statusReport/findTransferOrdertatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
-	    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no;
+    	var routeFrom = $("#routeFrom").val();
+    	var beginTime = $("#beginTime").val();
+    	var sp_id = $("#sp_id").val();
+    	var routeTo = $("#routeTo").val();
+    	var endTime = $("#endTime").val();
+    	if(beginTime != "" && endTime != ""){
+			statusTable.fnSettings().oFeatures.bServerSide = true;
+	    	statusTable.fnSettings().sAjaxSource = "/statusReport/orderStatusReport?beginTime="+beginTime+"&endTime="+endTime+"&setOutTime="+setOutTime
+	    		+"&order_no_type="+order_no_type+"&order_no="+order_no+"&order_status_type="+order_status_type+"&transferOrder_status="+transferOrder_status
+	    		+"&delivery_status="+delivery_status+"&customer_id="+customer_id+"&routeFrom="+routeFrom+"&sp_id="+sp_id+"&routeTo="+routeTo;
 	    	statusTable.fnDraw(); 
     	}
     });
@@ -148,7 +136,7 @@ $(document).ready(function() {
 	//获取供应商的list，选中信息在下方展示其他信息
 	$('#sp_name').on('keyup click', function(){
 		if($('#sp_name').val() == ""){
-			$("#customer_id").val("");
+			$("#sp_id").val("");
 		}
 		$.get('/serviceProvider/searchSp', {input:$('#sp_name').val()}, function(data){
 			console.log(data);
@@ -222,6 +210,16 @@ $(document).ready(function() {
 	}).on('changeDate', function(ev){
         $(".bootstrap-datetimepicker-widget").hide();
 	    $('#endTime').trigger('keyup');
+	});
+	
+	$('#datetimepicker3').datetimepicker({  
+	    format: 'yyyy-MM-dd',  
+	    language: 'zh-CN', 
+	    autoclose: true,
+	    pickerPosition: "bottom-left"
+	}).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+	    $('#setOutTime').trigger('keyup');
 	});
     
 	

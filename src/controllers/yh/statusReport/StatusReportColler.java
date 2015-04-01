@@ -182,6 +182,8 @@ public class StatusReportColler extends Controller{
 			String totalSql = "select count(0) total from transfer_order tor"
 					+ " left join depart_transfer tr on tr.order_id = tor.id "
 					+ " left join depart_order dor on dor.id = tr.depart_id"
+					+ " left join delivery_order_item doi on doi.transfer_order_id = tor.id"
+					+ " left join delivery_order deo on deo.id = doi.delivery_id"
 					+ " left join return_order ror on ror.transfer_order_id = tor.id"
 					+ " left join party p1 on p1.id = tor.customer_id"
 					+ " left join contact c1 on c1.id = p1.contact_id"
@@ -192,14 +194,18 @@ public class StatusReportColler extends Controller{
 					+ " left join office o on o.id = tor.office_id"
 					+ " where dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
 					+ " and p1.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'"
-					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'"
-					+ " ";
+					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'";
 				
-			String sql = "select tor.order_no,'运输单' as order_category,dor.depart_no,tor.order_type,c1.abbr,o.office_name,tor.planning_time,dor.departure_time,"
-					+ " l1.name route_from,l2.name route_to,tor.status,tor.depart_assign_status,ror.transaction_status"
+			String sql = "select tor.order_no,'运输单' as order_category,dor.depart_no,tor.order_type,c1.abbr,o.office_name,tor.planning_time,dor.departure_time,l1.name route_from,l2.name route_to,"
+					+ " (select case when ror.id is not null and ror.transaction_status != '新建' then '回单签收' "
+					+ " when tor.depart_assign_status = 'ALL' and (dor.status = '已入库' or dor.status = '已收货') then '到达签收' "
+					+ " when tor.depart_assign_status = 'ALL' and dor.status = '已发车' then '运输在途' "
+					+ " when tor.depart_assign_status = 'PARTIAL' and dor.status = '已发车' then '部分在途' else '新建运输' end) as order_status "
 					+ " from transfer_order tor"
 					+ " left join depart_transfer tr on tr.order_id = tor.id "
 					+ " left join depart_order dor on dor.id = tr.depart_id"
+					+ " left join delivery_order_item doi on doi.transfer_order_id = tor.id"
+					+ " left join delivery_order deo on deo.id = doi.delivery_id"
 					+ " left join return_order ror on ror.transfer_order_id = tor.id"
 					+ " left join party p1 on p1.id = tor.customer_id"
 					+ " left join contact c1 on c1.id = p1.contact_id"
@@ -254,33 +260,141 @@ public class StatusReportColler extends Controller{
 			
 			//运输单状态
 			if(!"".equals(transferOrderStatus) && transferOrderStatus != null){
-				/*totalSql = totalSql + "and tor.customer_id = '" + customerId + "'";
-				sql = sql + "and tor.customer_id = '" + customerId + "'";*/
 				if("NEW".equals(transferOrderStatus)){
-					
+					totalSql = totalSql + " and tor.status = '新建' ";
+					sql = sql + " and tor.status = '新建' ";
 				}else if("PARTIAL".equals(transferOrderStatus)){
-					
+					totalSql = totalSql + " and tor.depart_assign_status = 'PARTIAL' and dor.status = '已发车' ";
+					sql = sql + " and tor.depart_assign_status = 'PARTIAL' and dor.status = '已发车' ";
 				}else if("ALL".equals(transferOrderStatus)){
-					
+					totalSql = totalSql + " and tor.depart_assign_status = 'ALL' and dor.status = '已发车' ";
+					sql = sql + " and tor.depart_assign_status = 'ALL' and dor.status = '已发车' ";
 				}else if("DELIVERY".equals(transferOrderStatus)){
-					
+					totalSql = totalSql + " and (dor.status = '已入库' or dor.status = '已收货') ";
+					sql = sql + " and (dor.status = '已入库' or dor.status = '已收货') ";
 				}else if("RETURN".equals(transferOrderStatus)){
-					
+					totalSql = totalSql + " and ror.transaction_status != '新建' ";
+					sql = sql + " and ror.transaction_status != '新建' ";
 				}
 			}
 			
 			// 获取总条数
-			Record rec = Db.findFirst(totalSql);
-			logger.debug("total records:" + rec.getLong("total"));
+			//Record rec = Db.findFirst(totalSql + sLimit);
+			//logger.debug("total records:" + rec.getLong("total"));
 			// 获取当前页的数据
 			List<Record> orders =Db.find(sql + sLimit);
 			orderMap.put("sEcho", pageIndex);
-			orderMap.put("iTotalRecords", rec.getLong("total"));
-			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+			//orderMap.put("iTotalRecords", rec.getLong("total"));
+			//orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+			orderMap.put("iTotalRecords", orders.size());
+			orderMap.put("iTotalDisplayRecords", orders.size());
 			orderMap.put("aaData", orders);
 		}else if("deliveryOrder".equals(orderNoType) && "deliveryStatus".equals(orderStatusType)){
+			// 获取总条数
+			String totalSql = "select distinct count(0) total from delivery_order deo"
+					+ " left join delivery_order_item doi on doi.delivery_id = deo.id"
+					+ " left join delivery_order_milestone dom on dom.delivery_id = deo.id"
+					+ " left join transfer_order tor on tor.id = doi.transfer_order_id"
+					+ " left join return_order ror on ror.delivery_order_id = deo.id"
+					+ " left join party p1 on p1.id = deo.customer_id"
+					+ " left join contact c1 on c1.id = p1.contact_id"
+					+ " left join party p2 on p2.id = deo.sp_id"
+					+ " left join contact c2 on c2.id = p2.contact_id"
+					+ " left join location l1 on deo.route_from = l1.code "
+					+ " left join location l2 on deo.route_to = l2.code"
+					+ " left join office o on o.id = tor.office_id"
+					+ " where p1.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'"
+					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'";
+				
+			String sql = "select distinct deo.order_no,'配送单' as order_category,'' as depart_no,tor.order_type,c1.abbr,o.office_name,tor.planning_time,l1.name route_from,l2.name route_to,"
+					+ " (select create_stamp from delivery_order_milestone where delivery_id = deo.id and status = '已发车') as departure_time,"
+					+ " (select case when ror.id is not null and ror.transaction_status != '新建' then '回单签收' "
+					+ " when ror.id is not null and ror.transaction_status = '新建' then '配送到达'"
+					+ " when deo.status = '已发车' then '配送在途' "
+					+ " when deo.status = '新建' then '新建配送' end ) as order_status "
+					+ " from delivery_order deo"
+					+ " left join delivery_order_item doi on doi.delivery_id = deo.id"
+					+ " left join delivery_order_milestone dom on dom.delivery_id = deo.id"
+					+ " left join transfer_order tor on tor.id = doi.transfer_order_id"
+					+ " left join return_order ror on ror.delivery_order_id = deo.id"
+					+ " left join party p1 on p1.id = deo.customer_id"
+					+ " left join contact c1 on c1.id = p1.contact_id"
+					+ " left join party p2 on p2.id = deo.sp_id"
+					+ " left join contact c2 on c2.id = p2.contact_id"
+					+ " left join location l1 on deo.route_from = l1.code "
+					+ " left join location l2 on deo.route_to = l2.code"
+					+ " left join office o on o.id = tor.office_id"
+					+ " where p1.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'"
+					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'";
+			//有外发日期
+			if(!"".equals(setOutTime) && setOutTime != null){
+				totalSql = totalSql + " and and (dom.status != '新建' and to_days(dom.create_stamp) = to_days('" + setOutTime + "'))";
+				sql = sql + " and and (dom.status != '新建' and to_days(dom.create_stamp) = to_days('" + setOutTime + "'))";
+			}
 			
+			//计划时间段
+			if(beginTime != null && !"".equals(beginTime) && endTime != null && !"".equals(endTime)){
+				totalSql = totalSql + " and tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
+				sql = sql + " and tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
+			}
 			
+			//有配送单号时
+			if(!"".equals(orderNo) && orderNo != null){
+				totalSql = totalSql + " and deo.order_no = '" + orderNo + "'";
+				sql = sql + " and deo.order_no = '" + orderNo + "'";
+			}
+			
+			//始发地
+			if(!"".equals(routeFrom) && routeFrom != null){
+				totalSql = totalSql + " and l1.name = '" + routeFrom + "'";
+				sql = sql + " and l1.name = '" + routeFrom + "'";
+			}
+			
+			//目的地
+			if(!"".equals(routeTo) && routeTo != null){
+				totalSql = totalSql + " and l2.name = '" + routeTo + "'";
+				sql = sql + " and l2.name = '" + routeTo + "'";
+			}
+			
+			//有供应商
+			if(!"".equals(sp_id) && sp_id != null){
+				totalSql = totalSql + "and deo.sp_id = '" + sp_id + "'";
+				sql = sql + "and deo.sp_id = '" + sp_id + "'";
+			}
+			//有客户时
+			if(!"".equals(customerId) && customerId != null){
+				totalSql = totalSql + "and deo.customer_id = '" + customerId + "'";
+				sql = sql + "and deo.customer_id = '" + customerId + "'";
+			}
+			
+			//配送单状态
+			if(!"".equals(transferOrderStatus) && transferOrderStatus != null){
+				if("NEW".equals(transferOrderStatus)){
+					totalSql = totalSql + " and deo.status = '新建' ";
+					sql = sql + " and deo.status = '新建' ";
+				}else if("ALL".equals(transferOrderStatus)){
+					totalSql = totalSql + " and deo.status = '已发车' ";
+					sql = sql + " and deo.status = '已发车' ";
+				}else if("DELIVERY".equals(transferOrderStatus)){
+					totalSql = totalSql + " and deo.status != '已签收' ";
+					sql = sql + " and deo.status != '已签收' ";
+				}else if("RETURN".equals(transferOrderStatus)){
+					totalSql = totalSql + " and ror.transaction_status != '新建' ";
+					sql = sql + " and ror.transaction_status != '新建' ";
+				}
+			}
+			
+			// 获取总条数
+			//Record rec = Db.findFirst(totalSql + sLimit);
+			//logger.debug("total records:" + rec.getLong("total"));
+			// 获取当前页的数据
+			List<Record> orders =Db.find(sql + sLimit);
+			orderMap.put("sEcho", pageIndex);
+			//orderMap.put("iTotalRecords", rec.getLong("total"));
+			//orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+			orderMap.put("iTotalRecords", orders.size());
+			orderMap.put("iTotalDisplayRecords", orders.size());
+			orderMap.put("aaData", orders);
 		}else{
 			orderMap.put("sEcho", 0);
 			orderMap.put("iTotalRecords", 0);
