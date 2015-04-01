@@ -41,7 +41,7 @@ public class ResetPassWordController extends Controller{
         email.setSubject("重置密码");
         
         
-        int max=5;
+        int max=5000;
         int min=10;
         Random random = new Random();
 
@@ -85,7 +85,7 @@ public class ResetPassWordController extends Controller{
     public void resetUserPass(){
     	UserLogin user = UserLogin.dao.findFirst("select * from user_login where token=?", getPara("token"));
 		user.set("password", getPara("pass"));
-    	user.set("token", "");
+    	user.set("token", null);
     	user.update();
     	render("/yh/profile/resetPassWord/resetSuccess.html");
     	
