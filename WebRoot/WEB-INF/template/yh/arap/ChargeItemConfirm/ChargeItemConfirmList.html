@@ -1,5 +1,4 @@
 
-
 <%layout("/yh/layout.html"){%>
 <link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
@@ -85,7 +84,6 @@
                                 </div><!-- end of row-->
                                 <div class="row">
                                     <br/>
-                                    <div class="col-lg-6">
                                         <div class="form-group">                                                    
                                             <span id="datetimepicker2" class="input-append date search-control "> 
                                             	<% if(shiro.hasPermission("ChargeItem.affirm")){%>
@@ -93,9 +91,7 @@
                                             	<%}%>
                                             </span>
                                         </div>
-                                    </div>
-                                    <!-- end of col-lg-6-->
-                                </div><!-- end of row-->
+                                </div>
                             
                         </form>
                         <input type="hidden" value="" id="type">
