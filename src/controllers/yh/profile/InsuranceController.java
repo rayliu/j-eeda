@@ -9,6 +9,14 @@ import models.Office;
 import models.Party;
 import models.UserOffice;
 
+import java.util.Date;
+import java.util.List;
+
+import models.Party;
+import models.UserLogin;
+import models.UserOffice;
+import models.yh.profile.Contact;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
@@ -21,12 +29,17 @@ import com.jfinal.plugin.activerecord.Record;
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class InsuranceController extends Controller{
+
+	private Logger logger = Logger.getLogger(InsuranceController.class);	
 	Subject currentUser = SecurityUtils.getSubject();
-	private Logger logger = Logger.getLogger(InsuranceController.class);
 	
 	public void index() {	
 	    render("/yh/profile/insurance/insuranceList.html"); 
     }
+	
+	public void add(){
+		render("/yh/profile/insurance/insuranceEdit.html"); 
+	}
 	
 	public void list(){
 		String name = getPara("customerName");
@@ -84,4 +97,49 @@ public class InsuranceController extends Controller{
         party.update();
         redirect("/insurance");
 	}
+	
+    public void saveInsurance(){
+    	String insuranceId = getPara("insuranceId");
+    	String insuranceName = getPara("insuranceName");
+    	String companyName = getPara("company_name");
+    	String mobilePhone = getPara("mobilePhone");
+    	String abbr = getPara("abbr");
+    	String phone = getPara("phone");
+    	String address = getPara("address");
+    	String remark = getPara("remark");
+        Party party = null;
+        if (insuranceId == null || "".equals(insuranceId)) {
+        	String name = (String) currentUser.getPrincipal();
+    		List<UserLogin> users = UserLogin.dao
+    				.find("select * from user_login where user_name='" + name + "'");
+    		String userName = currentUser.getPrincipal().toString();
+    		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+    		Contact contact = new Contact();
+        	contact.set("company_name", insuranceName)
+			.set("contact_person", companyName)
+			.set("address", address)
+			.set("phone", phone)
+			.set("mobile", mobilePhone)
+        	.set("abbr", abbr).save();
+			party = new Party();
+			party.set("contact_id", contact.get("id"))
+			.set("party_type", "INSURANCE_PARTY")
+			.set("create_date", new Date())
+			.set("creator", users.get(0).get("id"))
+			.set("office_id", currentoffice.get("office_id"))
+			.set("remark", remark).save();
+        } else {
+        	party = Party.dao.findById(insuranceId);
+        	Contact contact = Contact.dao.findById(party.get("contact_id"));
+        	contact.set("company_name", insuranceName)
+			.set("contact_person", companyName)
+			.set("address", address)
+			.set("phone", phone)
+			.set("mobile", mobilePhone)
+        	.set("abbr", abbr).update();
+        	party.set("remark", remark).update();
+        }
+        renderJson(party); 
+    }
+	
 }
