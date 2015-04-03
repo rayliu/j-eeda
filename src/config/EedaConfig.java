@@ -250,6 +250,9 @@ public class EedaConfig extends JFinalConfig {
         me.add("/spdriverinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add("/spcarinfo", controllers.yh.profile.CarinfoController.class, contentPath);
         me.add("/deliveryMilestone", controllers.yh.delivery.DeliveryController.class, contentPath);
+        
+        //保险单
+        me.add("/insurance",controllers.yh.profile.InsuranceController.class);
         //配送调车单
         me.add("/deliveryPlanOrder", controllers.yh.delivery.DeliveryPlanOrderController.class, contentPath);
         
