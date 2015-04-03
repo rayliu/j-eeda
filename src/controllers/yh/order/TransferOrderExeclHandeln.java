@@ -259,94 +259,90 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      * @param content
      * @return 
      */
-	private TransferOrder saveTransferOrder(Map<String,String> content,Warehouse warehouse,Location location1,Location location2,Party customer,Party provider,Office office){
+	private TransferOrder saveTransferOrder(Map<String,String> content,Warehouse warehouse,Location location1,Location location2,Party customer,Party provider,Office office) throws Exception{
     	TransferOrder transferOrder = new TransferOrder();
-    	try{
-	    	String name = (String) currentUser.getPrincipal();
-			UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
-	    	SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");
-			String orderNo = OrderNoGenerator.getNextOrderNo("YS");
-			Date planningTime = dbDataFormat.parse(content.get("计划日期"));
-			Date arrivalTime = dbDataFormat.parse(content.get("预计到货日期"));
-			
-			transferOrder.set("order_no", orderNo)
-			.set("order_type", "salesOrder")//订单类型：默认为销售订单
-			.set("charge_type", "perUnit")//客户计费方式：默认计件
-			.set("charge_type2", "perUnit")//供应商计费方式：默认计件
-			.set("pickup_assign_status",TransferOrder.ASSIGN_STATUS_NEW)
-			.set("depart_assign_status",TransferOrder.ASSIGN_STATUS_NEW)
-			.set("status", "新建")
-			.set("create_by", user.get("id"))//创建人id
-			.set("create_stamp", new Date())//创建时间
-			.set("planning_time", planningTime)//计划时间
-			.set("arrival_time", arrivalTime)//预计到货时间
-			.set("customer_order_no", content.get("客户订单号").trim());//客户订单号
-			
-			//运营方式
-			if("外包".equals(content.get("运营方式"))){
-				transferOrder.set("operation_type", "out_source");
-			}else{
-				transferOrder.set("operation_type", "own");
-			}
-			//取货地址、收货单位
-			transferOrder.set("address", content.get("始发城市"))
-			.set("receiving_unit", content.get("收货单位"));
-			
-			//到达方式
-			if("入中转仓".equals(content.get("到达方式"))){
-				//入中转仓
-				transferOrder.set("arrival_mode", "gateIn")
-				.set("warehouse_id", warehouse.get("id"));
-			}else{
-				//货品直送
-				transferOrder.set("arrival_mode", "delivery");
-				// 保存联系人
-				Contact contact = new Contact();
-				contact.set("address", content.get("单品收货地址"));//收货地址
-				contact.set("contact_person", content.get("单品收货人"));//收货人
-				contact.set("phone", content.get("单品收货人联系电话"));//收货人电话
-				contact.save();
-				// 保存收货人
-				Party party = new Party();
-				party.set("contact_id", contact.getLong("id"));
-				party.set("create_date", new Date());
-				party.set("creator", currentUser.getPrincipal());
-				party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
-				party.save();
-				//收货人
-				transferOrder.set("notify_party_id", party.get("id"));
-			}
-			//始发城市
-			transferOrder.set("route_from",location1.get("code"));
-			//目的地城市
-			transferOrder.set("route_to",location2.get("code"));
-			//客户名称
-			transferOrder.set("customer_id",customer.get("pid"));
-			//供应商名称
-			if(provider != null){
-				transferOrder.set("sp_id", provider.get("pid"));
-			}
-			//网点
-			if(office != null){
-				transferOrder.set("office_id", office.get("id"));
-			}
-			//货品属性
-			if(content.get("货品属性").equals("ATM")){
-				transferOrder.set("cargo_nature","ATM");
+    	String name = (String) currentUser.getPrincipal();
+		UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
+    	SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String orderNo = OrderNoGenerator.getNextOrderNo("YS");
+		Date planningTime = dbDataFormat.parse(content.get("计划日期"));
+		Date arrivalTime = dbDataFormat.parse(content.get("预计到货日期"));
+		
+		transferOrder.set("order_no", orderNo)
+		.set("order_type", "salesOrder")//订单类型：默认为销售订单
+		.set("charge_type", "perUnit")//客户计费方式：默认计件
+		.set("charge_type2", "perUnit")//供应商计费方式：默认计件
+		.set("pickup_assign_status",TransferOrder.ASSIGN_STATUS_NEW)
+		.set("depart_assign_status",TransferOrder.ASSIGN_STATUS_NEW)
+		.set("status", "新建")
+		.set("create_by", user.get("id"))//创建人id
+		.set("create_stamp", new Date())//创建时间
+		.set("planning_time", planningTime)//计划时间
+		.set("arrival_time", arrivalTime)//预计到货时间
+		.set("customer_order_no", content.get("客户订单号").trim());//客户订单号
+		
+		//运营方式
+		if("外包".equals(content.get("运营方式"))){
+			transferOrder.set("operation_type", "out_source");
+		}else{
+			transferOrder.set("operation_type", "own");
+		}
+		//取货地址、收货单位
+		transferOrder.set("address", content.get("始发城市"))
+		.set("receiving_unit", content.get("收货单位"));
+		
+		//到达方式
+		if("入中转仓".equals(content.get("到达方式"))){
+			//入中转仓
+			transferOrder.set("arrival_mode", "gateIn")
+			.set("warehouse_id", warehouse.get("id"));
+		}else{
+			//货品直送
+			transferOrder.set("arrival_mode", "delivery");
+			// 保存联系人
+			Contact contact = new Contact();
+			contact.set("address", content.get("单品收货地址"));//收货地址
+			contact.set("contact_person", content.get("单品收货人"));//收货人
+			contact.set("phone", content.get("单品收货人联系电话"));//收货人电话
+			contact.save();
+			// 保存收货人
+			Party party = new Party();
+			party.set("contact_id", contact.getLong("id"));
+			party.set("create_date", new Date());
+			party.set("creator", currentUser.getPrincipal());
+			party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
+			party.save();
+			//收货人
+			transferOrder.set("notify_party_id", party.get("id"));
+		}
+		//始发城市
+		transferOrder.set("route_from",location1.get("code"));
+		//目的地城市
+		transferOrder.set("route_to",location2.get("code"));
+		//客户名称
+		transferOrder.set("customer_id",customer.get("pid"));
+		//供应商名称
+		if(provider != null){
+			transferOrder.set("sp_id", provider.get("pid"));
+		}
+		//网点
+		if(office != null){
+			transferOrder.set("office_id", office.get("id"));
+		}
+		//货品属性
+		if(content.get("货品属性").equals("ATM")){
+			transferOrder.set("cargo_nature","ATM");
+			transferOrder.set("cargo_nature_detail","cargoNatureDetailYes");
+		}else{
+			transferOrder.set("cargo_nature","cargo");
+			if(!"".equals(content.get("单品序列号")) || !"".equals(content.get("单品件数"))){
 				transferOrder.set("cargo_nature_detail","cargoNatureDetailYes");
 			}else{
-				transferOrder.set("cargo_nature","cargo");
-				if(!"".equals(content.get("单品序列号")) || !"".equals(content.get("单品件数"))){
-					transferOrder.set("cargo_nature_detail","cargoNatureDetailYes");
-				}else{
-					transferOrder.set("cargo_nature_detail","cargoNatureDetailNo");
-				}
+				transferOrder.set("cargo_nature_detail","cargoNatureDetailNo");
 			}
-			transferOrder.set("remark","这是导入的数据");
-			transferOrder.save();
-    	} catch (ParseException e) {
-			e.printStackTrace();
 		}
+		transferOrder.set("remark","这是导入的数据");
+		transferOrder.save();
     	return transferOrder;
     }
     /**
@@ -356,7 +352,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      * @param content
      * @return 
      */
-	private TransferOrderItem updateTransferOrderItem(Map<String,String> content,double itemNumber,TransferOrder tansferOrder,TransferOrderItem transferOrderItem,Product product){
+	private TransferOrderItem updateTransferOrderItem(Map<String,String> content,double itemNumber,TransferOrder tansferOrder,TransferOrderItem transferOrderItem,Product product) throws Exception{
 		double size = 0;
 		double width = 0;
 		double height = 0;
@@ -433,7 +429,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      * @param content
      * @return 
      */
-	private void saveTransferOrderItemDetail(Map<String,String> content,TransferOrder tansferOrder,TransferOrderItem tansferOrderItem,Product product){
+	private void saveTransferOrderItemDetail(Map<String,String> content,TransferOrder tansferOrder,TransferOrderItem tansferOrderItem,Product product) throws Exception{
     	TransferOrderItemDetail itemDatail = new TransferOrderItemDetail();
     	if(product != null){
     		itemDatail.set("order_id", tansferOrder.get("id"))
@@ -467,7 +463,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      * @param content
      * @return 
      */
-	private void saveTransferOrderMilestone(TransferOrder transferOrder){
+	private void saveTransferOrderMilestone(TransferOrder transferOrder) throws Exception{
     	String name = (String) currentUser.getPrincipal();
 		UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
     	TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();

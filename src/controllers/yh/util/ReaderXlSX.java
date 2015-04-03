@@ -30,7 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 @SuppressWarnings({"rawtypes","unused","deprecation"})
-public class ReaderXlSX{
+public class ReaderXlSX {
     private XSSFWorkbook wb;
     private XSSFSheet sheet;
     private XSSFRow row;
@@ -42,7 +42,7 @@ public class ReaderXlSX{
      * @param InputStream
      * @return String 表头内容的数组
      */
-    private String[] readExcelTitle(InputStream is) {
+    private String[] readExcelTitle(InputStream is) throws Exception{
         try {
             wb = new XSSFWorkbook(is);
         } catch (IOException e) {
@@ -67,7 +67,7 @@ public class ReaderXlSX{
      * @param InputStream
      * @return Map 包含单元格数据内容的Map对象
      */
-    private List<Map<String,String>> readExcelContent(InputStream is) {
+    private List<Map<String,String>> readExcelContent(InputStream is) throws Exception{
         //String str = "";
     	xlsxContent = new ArrayList<Map<String,String>>();
         try {
@@ -118,7 +118,7 @@ public class ReaderXlSX{
      * @param cell
      * @return
      */
-    private String getCellFormatValue(XSSFCell cell,String cellHead) {
+    private String getCellFormatValue(XSSFCell cell,String cellHead) throws Exception{
         String cellvalue = "";
         if (cell != null) {
             // 判断当前Cell的Type
@@ -193,7 +193,7 @@ public class ReaderXlSX{
     	return xlsData;
     	
     }
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         try {
             // 对读取Excel表格标题测试
             InputStream is = new FileInputStream("d:\\配送模板4.xlsx");
@@ -220,5 +220,5 @@ public class ReaderXlSX{
             System.out.println("未找到指定路径的文件!");
             e.printStackTrace();
         }
-    }
+    }*/
 }

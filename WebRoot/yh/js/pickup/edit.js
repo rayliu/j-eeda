@@ -1,7 +1,7 @@
 ﻿$(document).ready(function() {
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
 	 var pickupOrderId = $("#pickupOrderId").val();
-
+	 var parentId = "chargeCheckOrderbasic";
     //from表单验证
 	var validate = $('#pickupOrderForm').validate({
         rules: {
@@ -153,7 +153,7 @@
             		 if(obj.aData.CARGO_NATURE == "ATM"){
             			 return (obj.aData.ATMAMOUNT * obj.aData.VOLUME).toFixed(2);
             		 }else{
-            			 return obj.aData.CARGOVOLUME.toFixed(2);
+            			 return (obj.aData.CARGOVOLUME).toFixed(2);
             		 }
                  }
              },
@@ -162,7 +162,7 @@
             		 if(obj.aData.CARGO_NATURE == "ATM"){
             			 return (obj.aData.ATMAMOUNT * obj.aData.WEIGHT).toFixed(2);
             		 }else{
-            			 return obj.aData.CARGOWEIGHT.toFixed(2);
+            			 return (obj.aData.CARGOWEIGHT).toFixed(2);
             		 }
                  }
              },
@@ -461,7 +461,7 @@
         externalTable.fnSettings().sAjaxSource = "/pickupOrder/externTransferOrderList?pickupOrderId="+pickupOrderId;
         externalTable.fnDraw();
 	};
-	 var parentId = "chargeCheckOrderbasic";
+	 
 	// 列出所有的提货地点
 	$("#addressList").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
@@ -474,7 +474,7 @@
 		if("chargeCheckOrderbasic" == parentId){
 			clickSavePickupOrder(e);
 		}
-		handlePickkupOrderDetail();
+		//handlePickkupOrderDetail();
         parentId = e.target.getAttribute("id");
 	});
 	
@@ -632,6 +632,7 @@
  		datatable.fnSettings().oFeatures.bServerSide = true; 
  		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&pickupId="+pickupId;
  		datatable.fnDraw();
+ 		parentId = e.target.getAttribute("id");
 	});
 
 	//获取供应商的list，选中信息在下方展示其他信息
@@ -1078,10 +1079,6 @@
  		
 	});
 	$("#chargeCheckOrderbasic").click(function(e){
-		/*clickSavePickupOrder(e);
-		if("pickupOrderPayment" == parentId || "transferOrderMilestoneList" == parentId||"addressList" == parentId){
- 			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
- 		}*/
 		parentId = e.target.getAttribute("id");
 	});
 	$("#wentDutchBtn").click(function(){

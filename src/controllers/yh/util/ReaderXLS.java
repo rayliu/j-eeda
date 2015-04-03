@@ -32,7 +32,7 @@ public class ReaderXLS{
      * @param InputStream
      * @return String 表头内容的数组
      */
-    private String[] readExcelTitle(InputStream is) {
+    private String[] readExcelTitle(InputStream is) throws Exception{
         try {
             fs = new POIFSFileSystem(is);
             wb = new HSSFWorkbook(fs);
@@ -58,7 +58,7 @@ public class ReaderXLS{
      * @param InputStream
      * @return Map 包含单元格数据内容的Map对象
      */
-    private List<Map<String,String>> readExcelContent(InputStream is) {
+    private List<Map<String,String>> readExcelContent(InputStream is) throws Exception{
         //String str = "";
     	xlsContent = new ArrayList<Map<String,String>>();
         try {
@@ -118,7 +118,7 @@ public class ReaderXLS{
      * @param cell Excel单元格
      * @return String 单元格数据内容
      */
-	private String getStringCellValue(HSSFCell cell) {
+	private String getStringCellValue(HSSFCell cell) throws Exception{
         String strCell = "";
         switch (cell.getCellType()) {
         case HSSFCell.CELL_TYPE_STRING:
@@ -153,7 +153,7 @@ public class ReaderXLS{
      *            Excel单元格
      * @return String 单元格数据内容
      */
-	private String getDateCellValue(HSSFCell cell) {
+	private String getDateCellValue(HSSFCell cell) throws Exception{
         String result = "";
         try {
             int cellType = cell.getCellType();
@@ -179,7 +179,7 @@ public class ReaderXLS{
      * @param cell
      * @return
      */
-    private String getCellFormatValue(HSSFCell cell) {
+    private String getCellFormatValue(HSSFCell cell) throws Exception{
         String cellvalue = "";
         if (cell != null) {
             // 判断当前Cell的Type

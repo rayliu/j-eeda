@@ -11,7 +11,8 @@
                             <input id='pickupOrder_message' name='localArr' type="hidden">
                             <input id="detailIds" name="detailIds" type="hidden">
                             <input id="cargoIds" name="cargoIds" type="hidden">
-                            <!-- <input id="cargoNumbers" name="cargoNumbers" type="hidden"> -->
+                            <input id="cargoNumbers" name="cargoNumbers" type="hidden">
+                            <input id="cargoItemIds" name="cargoItemIds" type="hidden">
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <div class="controls">
@@ -23,7 +24,7 @@
                         </form> 
                     </div>
                     <h3>已选中的运输单</h3>
-                    <div class="row">
+                    <!-- <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
             					<h4>总重量(kg): <span id="sumWeight"></span></h4>
@@ -34,7 +35,7 @@
                     			<h4>总体积(m³): <span id="sumVolume"></span></h4>
                     		</div>
                     	</div>
-                    </div>
+                    </div> -->
 	                    <div class="table-responsive">
 	                        <table class="table table-striped table-bordered table-hover" id="eeda-table1" style="width: 2000px;">
 	                            <thead>
@@ -44,9 +45,9 @@
 	                                    <!-- <th>计划时间</th> -->
 	                                    <th>运营方式</th>                                         
 	                                    <th>始发城市</th>                                         
-	                                    <th>目的地城市</th>
+	                                    <th>目的城市</th>
 	                                    <th>订单类型</th>
-	                                    <th>货品</th>
+	                                    <th>货品属性</th>
 	                                    <th>重量(kg)</th>
 	                                    <th>体积(m³)</th>
 	                                    <th>实发数量</th>
@@ -108,7 +109,7 @@
                                     	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 28%; left: 33%;"></ul>
                                     </div>
                                     <div class="form-group">
-                                        <label class="search-label">目的地城市</label>
+                                        <label class="search-label">目的城市</label>
                                         <input type="text" class="form-control search-control routeTo_filter" id="routeTo_filter">
                                     </div>
                                     <div class="form-group">                                                    
@@ -141,7 +142,7 @@
                             </form>
                             <div class="table-responsive">
                             	<br/>
-                                <table class="table table-striped table-bordered table-hover" id="eeda-table" style="width: 1650px;">
+                                <table class="table table-striped table-bordered table-hover" id="eeda-table" style="width: 1750px;">
                                     <thead>
                                         <tr>
                                             <th></th>
@@ -150,9 +151,9 @@
                                             <th>客户</th> 
                                     		<th>运营方式</th>                                                                                                                           
                                             <th>始发城市</th>                                         
-                                            <th>目的地城市</th>
+                                            <th>目的城市</th>
                                             <th>订单类型</th>
-                                            <th>货品</th>
+                                            <th>货品属性</th>
                                             <th>重量(kg)</th>
                                             <th>体积(m³)</th>
                                             <th>可用数量</th>
