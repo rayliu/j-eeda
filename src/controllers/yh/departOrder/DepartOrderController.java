@@ -368,7 +368,10 @@ public class DepartOrderController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
     public void add() {
-            render("/yh/departOrder/allTransferOrderList.html");
+    	getCustomFile get = new getCustomFile();
+    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	setAttr("customizeField", customizeField);
+        render("/yh/departOrder/allTransferOrderList.html");
     }
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
     public void addForRouteSp() {
