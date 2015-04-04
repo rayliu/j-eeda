@@ -1,5 +1,9 @@
 ﻿
 $(document).ready(function() {
+	if(Transfer.orderNo){
+        document.title = Transfer.orderNo +' | '+document.title;
+    }
+
 	$('#menu_transfer').addClass('active').find('ul').addClass('in');
 
 	$("input[name='chargeType']").click(function(){

@@ -799,7 +799,9 @@
 		var transferOrderUpdate = shiro.hasPermission("TransferOrder.update");
 	%>
 	var Transfer={};
-	Transfer.isUpdate = ${transferOrderUpdate}
+	Transfer.isUpdate = ${transferOrderUpdate};
+    Transfer.orderNo = '${transferOrder.order_no!''}';
+
 </script>
 <script src="/yh/js/transferOrder/update.js"></script>
 

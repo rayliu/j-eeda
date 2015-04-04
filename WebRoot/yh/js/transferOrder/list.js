@@ -1,5 +1,8 @@
 
 $(document).ready(function() {
+
+    document.title = '运输单查询 | '+document.title;
+
     $('#menu_transfer').addClass('active').find('ul').addClass('in');
     
     var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
