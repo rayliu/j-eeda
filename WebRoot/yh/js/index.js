@@ -1,5 +1,6 @@
 $(document).ready(function() {
-	
+	document.title = '系统监控 | '+document.title;
+    
 	$('#transferOrderTypeTbody').dataTable({
 		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序

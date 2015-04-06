@@ -165,16 +165,22 @@
                 <div class="col-lg-4">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-bell fa-fw"></i> 预警通知
+                            <i class="fa fa-bell fa-fw"></i> 即将过期客户合同（60天内）
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="list-group">
-                                <a href="#" class="list-group-item">
-                                    <i class="fa fa-comment fa-fw"></i> 有4个新单据
-                                    <span class="pull-right text-muted small"><em>4 minutes ago</em>
-                                    </span>
-                                </a>
+                                <%
+                                    for(contract in contractList){
+                                %>
+                                    <a href="/customerContract/edit/${contract.id}" target="_blank" class="list-group-item">
+                                        <i class="fa fa-warning fa-fw"></i>${contract.name}
+                                        <span class="pull-right text-muted small"><em>过期日期：${contract.period_to, dateFormat="yyyy-MM-dd"}</em>
+                                        </span>
+                                    </a>                                    
+                                <%}%>
+                                
+                                <!--
                                 <a href="#" class="list-group-item">
                                     <i class="fa fa-twitter fa-fw"></i> 3 个发车
                                     <span class="pull-right text-muted small"><em>12 minutes ago</em>
@@ -214,7 +220,7 @@
                                     <i class="fa fa-cny fa-fw"></i> 4个单据过期7天未结算
                                     <span class="pull-right text-muted small"><em>Yesterday</em>
                                     </span>
-                                </a>
+                                </a-->
                             </div>
                             <!-- /.list-group -->
                             
