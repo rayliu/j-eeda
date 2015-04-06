@@ -3,19 +3,17 @@
 <div id="page-wrapper">
 	<div class="row">
       <div class="col-lg-12">
-       	<div class="btn-header" style="font-size:32px">单品状态查询报表</div>
+       	<div class="btn-header">
+                    		                      
+        </div>
 		<div class="panel panel-default">
 			<div class="panel-heading">
-                	<i class="fa fa-list fa-fw"></i>单品状态列表
+                	<i class="fa fa-list fa-fw"></i>运营日报表
            	</div>
            	<div class="panel-body">
        			<form id="statusForm" method="post" action="">
        		    	<div class="row">
-	                	<div class="col-lg-4">
-			             	 <div class="form-group">
-			             		<label class="search-label">单品序列号</label>
-			             		<input id="serial_no" name="serial_no" class="form-control search-control orderNo_filter" name="warehouseSelect" placeholder="请输入单品序列号"> 
-			                 </div>
+	                	<div class="col-lg-4">			             	 
 			                 <div class="form-group">                                        
 	                             <div id="datetimepicker" class="input-append date "> 
 	                                 <label class="search-label">开始计划时间</label> 
@@ -40,10 +38,12 @@
 			                 	<label class="search-label">运输单号</label>
 			                  	<input id="order_no" name="order_no" class="form-control search-control orderNo_filter" name="officeSelect">
 			                 </div>
-			           		 <div class="form-group">
+			           		 <div class="form-group has-feedback">
 			                 	<label class="search-label">客户名称 </label>
 			                 	<input id="customer_id" type="hidden" name="customer_id" />
-			                  	<input id="customerMessage" name="customer_name" class="form-control search-control orderNo_filter" name="customerMessage" placeholder="请选择客户">
+			                  	<input id="customerMessage" name="customer_name" class="form-control search-control orderNo_filter" name="customerMessage" placeholder="请选择客户" aria-describedby="searchCustomerIcon">
+			                  	<span class="glyphicon glyphicon-search form-control-feedback" style="top: 0px;right: 8%;" aria-hidden="true"></span>
+			                  	<span id="searchCustomerIcon" class="sr-only">(success)</span>
 			                  	<ul id='customerList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;">
 								</ul>   
 			                 </div>
@@ -64,7 +64,7 @@
 	                        <div class="form-group">
 	                            <div class="controls">
 	                              <button id="queryBtn" type="button" class="btn btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查询</button>
-	                              “单品序列号”或“计划时间”为必填
+	                              “计划时间”为必填
 	                            </div>
 	                        </div>
 	                    </div>    
@@ -111,4 +111,4 @@
 
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
-<script src="/yh/js/statusReport/productStatusReport.js"></script>
+<script src="/yh/js/statusReport/dailyReport.js"></script>

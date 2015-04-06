@@ -40,6 +40,11 @@ public class StatusReportColler extends Controller{
 		render("/yh/statusReport/orderStatusReport.html");
 	}
 	
+	//运营日报表
+	public void dailyReport() {		
+		render("/yh/statusReport/dailyReport.html");
+	}
+	
 	public void productStatus() {
 		String order_no = getPara("order_no");
 		String customer_id = getPara("customer_id");
