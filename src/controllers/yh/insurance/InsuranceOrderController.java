@@ -325,6 +325,7 @@ public class InsuranceOrderController extends Controller {
             Party costomerParty = Party.dao.findById(customerId);
             Contact customerContact = Contact.dao.findById(costomerParty.get("contact_id"));
             setAttr("customerContact", customerContact);
+            setAttr("hid_customer_id", customerId);
         }
 
         logger.debug("localArr" + list);
@@ -414,13 +415,18 @@ public class InsuranceOrderController extends Controller {
     	InsuranceOrder insuranceOrder = null;
     	String insuranceOrderId = getPara("insuranceId");
     	String officeSelect = getPara("officeSelect");
+    	String insuranceSelect = getPara("insuranceSelect");
     	if(insuranceOrderId != null && !"".equals(insuranceOrderId)){
     		insuranceOrder = InsuranceOrder.dao.findById(insuranceOrderId);
     		if(officeSelect != null && !"".equals(officeSelect)){
     			insuranceOrder.set("office_id", officeSelect);    			
     		}
+    		if(insuranceSelect != null && !"".equals(insuranceSelect)){
+    			insuranceOrder.set("insurance_id", insuranceSelect);    			
+    		}
     		insuranceOrder.set("remark", getPara("remark")).update();
     	}else{
+    		Party insurance = null;
     		insuranceOrder = new InsuranceOrder();
     		insuranceOrder.set("order_no", getPara("order_no"));
     		insuranceOrder.set("create_stamp", new Date());
@@ -428,7 +434,11 @@ public class InsuranceOrderController extends Controller {
     		insuranceOrder.set("create_by", getPara("create_by"));
     		insuranceOrder.set("remark", getPara("remark"));
     		if(officeSelect != null && !"".equals(officeSelect)){
-    			insuranceOrder.set("office_id", officeSelect);    			
+    			insuranceOrder.set("office_id", officeSelect);  
+    		}
+    		//保险公司
+    		if(insuranceSelect != null && !"".equals(insuranceSelect)){
+    			insuranceOrder.set("insurance_id", insuranceSelect);  
     		}
 			insuranceOrder.set("audit_status", "新建");
 			insuranceOrder.set("sign_status", "未回单");
@@ -442,6 +452,16 @@ public class InsuranceOrderController extends Controller {
     			transferOrder.set("insurance_id", insuranceOrder.get("id"));
     			transferOrder.set("status", "已投保");
     			transferOrder.update();
+    			
+    			//保险公司费率
+    			if(insuranceSelect != null && !"".equals(insuranceSelect)){
+    				insurance = Party.dao.findFirst("select pit.insurance_rate from party p "
+    					+ " left join contact c on c.id = p.contact_id "
+    					+ " left join party_insurance_item pit on pit.party_id = p.id"
+    					+ " where p.party_type = '"+ Party.PARTY_TYPE_INSURANCE_PARTY + "'"
+						+ " and pit.customer_id = '" + transferOrder.get("customer_id") + "'"
+						+ " and p.id = '" + insuranceSelect + "'");
+    			}
     			//保险单从表--按单据货品买保险
     			Party party = Party.dao.findById(transferOrder.get("customer_id"));
     			List<TransferOrderItem> itemList = TransferOrderItem.dao.find("select id,product_id,amount from transfer_order_item where order_id = ?",orderIds[i]);
@@ -453,12 +473,14 @@ public class InsuranceOrderController extends Controller {
             				double prodoctInsuranceAmount = product.getDouble("insurance_amount");
             				insuranceFinItem.set("amount", prodoctInsuranceAmount);
     						if(party.get("insurance_rates") != null && !"".equals(party.get("insurance_rates"))){
-    							/*double insuranceRates = party.getDouble("insurance_rates");
-    							double productAmount = transferOrderItem.getDouble("amount");
-    							BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
-    					    	double InsuranceInsuranceAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-    					    	insuranceFinItem.set("rate", insuranceRates).set("insurance_amount", InsuranceInsuranceAmount);*/
     					    	insuranceFinItem.set("income_rate", party.getDouble("insurance_rates"));
+    					    	if(insurance.get("insurance_rate") != null && !"".equals(insurance.get("insurance_rate"))){
+    					    		double insuranceRates = insurance.getDouble("insurance_rate");
+        							double productAmount = transferOrderItem.getDouble("amount");
+        							BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
+        					    	double InsuranceInsuranceAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        					    	insuranceFinItem.set("rate", insuranceRates).set("insurance_amount", InsuranceInsuranceAmount);
+        						}
         					}
     					}
     				}
@@ -498,6 +520,7 @@ public class InsuranceOrderController extends Controller {
             Party costomerParty = Party.dao.findById(customerId);
             Contact customerContact = Contact.dao.findById(costomerParty.get("contact_id"));
             setAttr("customerContact", customerContact);
+            setAttr("hid_customer_id", customerId);
         }
     		render("/yh/insuranceOrder/insuranceOrderEdit.html");
     }
@@ -580,4 +603,47 @@ public class InsuranceOrderController extends Controller {
 		}    
     	renderJson("{\"success\":true}");
     }
+    
+    //所有的保险公司
+    public void findAllInsurance(){
+    	List<Party> party = Party.dao.find("select p.id,c.company_name,c.abbr from party p left join contact c on c.id = p.contact_id where p.party_type = '"+ Party.PARTY_TYPE_INSURANCE_PARTY + "'");
+		renderJson(party);
+    }
+    
+    //从新计算保险费用
+    public void resetInsurance(){
+    	String insuranceOrderId = getPara("insuranceId");
+    	String insuranceSelect = getPara("insuranceSelect");
+    	String customerId = getPara("customer_id");
+    	//保险公司费率
+    	Party insurance = null;
+		if(insuranceSelect != null && !"".equals(insuranceSelect)){
+			insurance = Party.dao.findFirst("select pit.insurance_rate from party p "
+				+ " left join contact c on c.id = p.contact_id "
+				+ " left join party_insurance_item pit on pit.party_id = p.id"
+				+ " where p.party_type = '"+ Party.PARTY_TYPE_INSURANCE_PARTY + "'"
+				+ " and pit.customer_id = '" + customerId + "'"
+				+ " and p.id = '" + insuranceSelect + "'");
+		}
+		
+		//保险单从表--按单据货品买保险
+		List<InsuranceFinItem> itemList = InsuranceFinItem.dao.find("select * from insurance_fin_item where insurance_order_id = ?",insuranceOrderId);
+		for (InsuranceFinItem insuranceFinItem : itemList) {
+			TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(insuranceFinItem.get("transfer_order_item_id"));
+			if(transferOrderItem.get("amount") != null && !"".equals(transferOrderItem.get("amount"))){
+		    	if(insurance.get("insurance_rate") != null && !"".equals(insurance.get("insurance_rate"))){
+					if(insuranceFinItem.get("amount") != null && !"".equals(insuranceFinItem.get("amount"))){
+						double insuranceRates = insurance.getDouble("insurance_rate");//应付费率
+						double productAmount = transferOrderItem.getDouble("amount");//货品数量
+						double prodoctInsuranceAmount = insuranceFinItem.getDouble("amount");//货品保额
+						BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
+				    	double InsuranceInsuranceAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+				    	insuranceFinItem.set("rate", insuranceRates).set("insurance_amount", InsuranceInsuranceAmount).update();
+					}
+				}
+			}
+		}
+		renderJson("{\"success\":true}");
+    }
+    
 }

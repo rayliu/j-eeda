@@ -2139,7 +2139,7 @@ public class PickupOrderController extends Controller {
     	String orderId = getPara("order_id");
     	Record serialNoList = null;
     	if(orderId != ""){
-    		String sql = "select group_concat(cast(id as char) separator ',') ids,group_concat(cast(amount as char) separator ',') amounts,group_concat(cast(pickup_number as char) separator ',') pickup_numbers from transfer_order_item where order_id = '" + orderId + "';";
+    		String sql = "select group_concat(cast(id as char) separator ',') ids,group_concat(cast(amount as char) separator ',') amounts,group_concat(cast(ifnull(pickup_number,0) as char) separator ',') pickup_numbers from transfer_order_item where order_id = '" + orderId + "';";
     		serialNoList = Db.findFirst(sql);
     		logger.debug("serialNoList:" + serialNoList);
     	}

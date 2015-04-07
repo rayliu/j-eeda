@@ -69,7 +69,7 @@ public class InsuranceController extends Controller{
         }
         
         
-        Record rec = Db.findFirst(sqlTotal + condition + sLimit);
+        Record rec = Db.findFirst(sqlTotal + condition);
         logger.debug("total records:" + rec.getLong("total"));
         
         List<Record> insurances = Db.find(sql + condition + sLimit);

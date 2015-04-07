@@ -108,6 +108,7 @@
  			$("#insuranceOrderId").val(data.ID);
  			if(data.ID>0){
  				$("#insuranceId").val(data.ID);
+ 				$("#hideInsuranceId").val(data.INSURANCE_ID);
  				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  				if(clickTabId == "insuranceOrderItemList"){
  					findInsuranceItems();
@@ -122,7 +123,22 @@
  	
  	//点击“保存”按钮
   	$("#saveInsuranceOrderBtn").click(function(e){
-  		saveInsuranceOrder();
+ 		var insuranceId = $("#insuranceId").val();
+ 		if(insuranceId != "" && insuranceId != null){
+ 	  		var hidInseranceId = $("#hideInsuranceId").val();
+ 	 		var insuranceSelect = $("#insuranceSelect").val();
+ 	 		var customer_id = $("#hid_customer_id").val();
+ 			if(hidInseranceId != insuranceSelect){
+ 				if(confirm("已更换保险公司，是否重新计算保险费用？")){
+ 					$.post('/insuranceOrder/resetInsurance', {insuranceId:insuranceId,insuranceSelect:insuranceSelect,customer_id:customer_id}, function(data){
+ 			 			if(!data.SUCCESS){
+ 			 				$.scojs_message('自动计费失败', $.scojs_message.TYPE_ERROR);
+ 			 			}
+ 			 		},'json');
+ 				}
+ 			}
+ 		}
+		saveInsuranceOrder();
  	});
   	//tab 基本信息
   	$("#chargeCheckOrderbasic").click(function(e){
@@ -311,7 +327,7 @@
      	},'json');
  	});
 
-	// 获取所有城市
+	// 获取所有网点
 	$.post('/transferOrder/searchPartOffice',function(data){
 	 if(data.length > 0){
 		 var officeSelect = $("#officeSelect");
@@ -329,4 +345,24 @@
 		 }
 	 }
 	},'json');
+	
+	// 获取所有保险公司
+	$.post('/insuranceOrder/findAllInsurance',function(data){
+		if(data.length > 0){
+			var insuranceSelect = $("#insuranceSelect");
+			insuranceSelect.empty();
+			var hideInsuranceId = $("#hideInsuranceId").val();
+			insuranceSelect.append("<option ></option>");
+			for(var i=0; i<data.length; i++){
+				if(data[i].ID == hideInsuranceId){
+					insuranceSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].COMPANY_NAME+"</option>");
+				}else{
+					//if(data[i].IS_STOP != true){
+						insuranceSelect.append("<option value='"+data[i].ID+"'>"+data[i].COMPANY_NAME+"</option>");					 
+					//}
+				}
+			}
+		}
+	},'json');
+	
 });

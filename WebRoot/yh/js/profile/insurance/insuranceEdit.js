@@ -65,6 +65,8 @@ $(document).ready(function(){
         $.post('/insurance/saveInsurance', $("#insuranceForm").serialize(), function(order){
         	if(order.ID){
 	    		$("#insuranceId").val(order.ID);
+	    		$("#rateInsuranceId").val(order.ID);
+	    		$("#assRateBtn").prop("disabled",false);
 	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	    	}else{
 	    		$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
@@ -74,7 +76,12 @@ $(document).ready(function(){
     
     //保存保险单
     $('#assRateBtn').click(function(e){
-    	$("#rateFrom")[0].reset();   
+    	$("#customer_id").val("");
+    	$("#customer_name").val("");
+    	$("#insurance_rate").val("");
+    	$("#remark1").val("");
+    	$("#beginTime").val("");
+    	$("#endTime").val("");
     });
 	
 	//保险费率表单验证
@@ -114,7 +121,12 @@ $(document).ready(function(){
     
     //费率编辑
 	$("#dataTables-example").on('click', '.rateEdit', function(){
-		$("#rateFrom")[0].reset();   
+		$("#customer_id").val("");
+    	$("#customer_name").val("");
+    	$("#insurance_rate").val("");
+    	$("#remark1").val("");
+    	$("#beginTime").val("");
+    	$("#endTime").val("");  
 		var id = $(this).attr('code');
 		$.post('/insurance/rateEdit/'+id,null,function(data){
 			//保存成功后，刷新列表
