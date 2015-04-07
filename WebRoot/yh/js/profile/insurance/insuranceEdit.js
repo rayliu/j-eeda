@@ -17,7 +17,7 @@ $(document).ready(function(){
         }
     });
 	
-	//保存
+	//保存保险单
     $('#saveBtn').click(function(e){
     	//提交前，校验数据
         if(!$("#insuranceForm").valid()){
@@ -33,7 +33,20 @@ $(document).ready(function(){
     	});
     });
 	
-	
+    //保存费率
+    $('#saveBtn').click(function(e){
+    	var insuranceId = $("#insuranceId").val();
+    	if(insuranceId != ""){
+    		$.post('/insurance/saveInsurance', $("#rateFrom").serialize(), function(order){
+    	    	if(order.ID){
+    	    		$("#insuranceId").val(order.ID);
+    	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+    	    	}else{
+    	    		$.scojs_message('数据保存失败', $.scojs_message.TYPE_ERROR);
+    	    	}
+        	});
+    	}
+    });
 	
 	
 	
