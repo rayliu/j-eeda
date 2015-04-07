@@ -17,13 +17,9 @@ $(document).ready(function() {
 		urlSource3="/transferOrder/delete/";
 	}
 	//datatable, 动态处理
-<<<<<<< Updated upstream
     $('#eeda-table').dataTable({
     	"bFilter": false, //不需要默认的搜索框
-=======
-    var datatable = $('#eeda-table').dataTable({
-        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
->>>>>>> Stashed changes
+
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
