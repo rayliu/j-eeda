@@ -88,6 +88,7 @@ import models.yh.profile.Contact;
 import models.yh.profile.CustomizeField;
 import models.yh.profile.DriverAssistant;
 import models.yh.profile.OfficeCofig;
+import models.yh.profile.PartyInsuranceItem;
 import models.yh.profile.Route;
 import models.yh.returnOrder.ReturnOrderFinItem;
 
@@ -423,6 +424,8 @@ public class EedaConfig extends JFinalConfig {
         //跟车人员 
         arp.addMapping("driver_assistant", DriverAssistant.class);
         arp.addMapping("pickup_driver_assistant", PickupDriverAssistant.class);
+        //跟车人员 
+        arp.addMapping("party_insurance_item", PartyInsuranceItem.class);
         
     }
 

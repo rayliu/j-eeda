@@ -1,21 +1,18 @@
 package controllers.yh.profile;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import interceptor.SetAttrLoginUserInterceptor;
 import models.Office;
-import models.Party;
-import models.UserOffice;
-
-import java.util.Date;
-import java.util.List;
-
 import models.Party;
 import models.UserLogin;
 import models.UserOffice;
 import models.yh.profile.Contact;
+import models.yh.profile.PartyInsuranceItem;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -106,6 +103,7 @@ public class InsuranceController extends Controller{
     	String abbr = getPara("abbr");
     	String phone = getPara("phone");
     	String address = getPara("address");
+    	String post = getPara("post");
     	String remark = getPara("remark");
         Party party = null;
         if (insuranceId == null || "".equals(insuranceId)) {
@@ -120,6 +118,7 @@ public class InsuranceController extends Controller{
 			.set("address", address)
 			.set("phone", phone)
 			.set("mobile", mobilePhone)
+			.set("introduction", post)
         	.set("abbr", abbr).save();
 			party = new Party();
 			party.set("contact_id", contact.get("id"))
@@ -136,10 +135,98 @@ public class InsuranceController extends Controller{
 			.set("address", address)
 			.set("phone", phone)
 			.set("mobile", mobilePhone)
+			.set("introduction", post)
         	.set("abbr", abbr).update();
         	party.set("remark", remark).update();
         }
         renderJson(party); 
     }
-	
+    
+    public void edit(){
+    	String insuranceId = getPara();
+    	Party party = Party.dao.findById(insuranceId);
+    	Contact contact = Contact.dao.findById(party.get("contact_id"));
+    	setAttr("party", party);
+    	setAttr("contact", contact);
+    	render("/yh/profile/insurance/insuranceEdit.html"); 
+    }
+    
+    public void findAllInsuranceItem(){
+		String inseruanceId = getPara("insuranceId");
+		String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        
+        Map orderMap = new HashMap();
+        if(inseruanceId != null && !"".equals(inseruanceId)){
+        	 String sqlTotal = "select count(*) total from party_insurance_item where party_id = '" + inseruanceId + "'";
+             String sql = "select pit.id,c.abbr,pit.insurance_rate,pit.beginTime,pit.endTime,pit.remark,pit.is_stop from party_insurance_item pit "
+             		+ " left join party p on p.id = pit.customer_id"
+             		+ " left join contact c on c.id = p.contact_id"
+             		+ " where pit.party_id = '" + inseruanceId + "'";
+             Record rec = Db.findFirst(sqlTotal + sLimit);
+             List<Record> insurances = Db.find(sql + sLimit);
+             orderMap.put("sEcho", pageIndex);
+             orderMap.put("iTotalRecords", rec.getLong("total"));
+             orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+             orderMap.put("aaData", insurances);
+        }else{
+        	orderMap.put("sEcho", 0);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+        }
+        renderJson(orderMap);
+    }
+    
+    public void saveInsuranceItem(){
+    	String insuranceId = getPara("rateInsuranceId");
+    	String rateItemId = getPara("rateItemId");
+    	String customerId = getPara("customer_id");
+    	String insuranceRate = getPara("insurance_rate");
+    	String beginTime = getPara("beginTime");
+    	String endTime = getPara("endTime");
+    	String remark = getPara("remark1");
+    	PartyInsuranceItem partyInsuranceItem = null;
+        if (rateItemId == null || "".equals(rateItemId)) {
+        	partyInsuranceItem = new PartyInsuranceItem();
+        	partyInsuranceItem.set("party_id", insuranceId)
+			.set("customer_id", customerId)
+			.set("insurance_rate", insuranceRate)
+			.set("beginTime", beginTime)
+			.set("endTime", endTime)
+			.set("remark", remark).save();
+        } else {
+        	partyInsuranceItem = PartyInsuranceItem.dao.findById(rateItemId);
+        	partyInsuranceItem.set("customer_id", customerId)
+			.set("insurance_rate", insuranceRate)
+			.set("beginTime", beginTime)
+			.set("endTime", endTime)
+			.set("remark", remark).update();
+        }
+        renderJson(partyInsuranceItem); 
+    }
+    
+    public void rateEdit(){
+    	String rateItemId = getPara();
+    	Record partyInsuranceItem = Db.findFirst("select * from party_insurance_item where id = ?",rateItemId);
+    	Party party = Party.dao.findFirst("select c.company_name,c.abbr from party p left join contact c on c.id = p.contact_id where p.id = '"+ partyInsuranceItem.get("customer_id") + "'");
+    	partyInsuranceItem.set("company_name", party.get("company_name"));
+    	renderJson(partyInsuranceItem); 
+    }
+    
+    public void rateDel(){
+    	String rateItemId = getPara();
+    	PartyInsuranceItem partyInsuranceItem = PartyInsuranceItem.dao.findById(rateItemId);
+        Object obj = partyInsuranceItem.get("is_stop");
+        if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
+        	partyInsuranceItem.set("is_stop", true);
+        }else{
+        	partyInsuranceItem.set("is_stop", false);
+        }
+        partyInsuranceItem.update();
+        renderJson("{\"success\":true}");
+	}
 }

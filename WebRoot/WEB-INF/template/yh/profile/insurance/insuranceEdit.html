@@ -1,6 +1,5 @@
 <%layout("/yh/layout.html"){%>
 <link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
-<!-- <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet"> -->
 <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
  <div id="page-wrapper">
     <div class="row">
@@ -11,41 +10,43 @@
                         <div class="panel-body">
                             <div class="row">
                                 <form id="insuranceForm" name="insuranceForm" action="" method="post">                                
-                                    <input id="insuranceId" name="insuranceId" type="hidden" value="${insurance.id!''}">
+                                    <input id="insuranceId" name="insuranceId" type="hidden" value="${party.id!''}">
                                     <input id="locationCode" type="hidden" value="${c.location!''}">
                                     <div class="col-lg-6">
                                          <div class="form-group ">
 							                 <label class="control-label">公司名称(必填)</label>
-							                 <input id="insuranceName" name="insuranceName" type="text" class="form-control" value="${ul.office_code!''}">
+							                 <input id="insuranceName" name="insuranceName" type="text" class="form-control" value="${contact.company_name!''}">
 						             	 </div>
                                          <div class="form-group">
                                              <label class="control-label">联系人(必填)</label>
-                                             <input id="company_name" name="company_name" type="text" class="form-control" value="${c.company_name!''}">
+                                             <input id="company_name" name="company_name" type="text" class="form-control" value="${contact.contact_person!''}">
                                          </div>
                                          <div class="form-group">
                                              <label class="control-label">手机</label>
-                                             <input id="mobilePhone" name="mobilePhone" type="text" class="form-control" value="${c.company_name!''}">
-                                         </div>                                    
+                                             <input id="mobilePhone" name="mobilePhone" type="text" class="form-control" value="${contact.mobile!''}">
+                                         </div> 
+                                         <div class="form-group">
+                                             <label class="control-label">职务</label>
+                                             <input id="post" name="post" type="text" class="form-control" value="${contact.introduction!''}">
+                                         </div>                                   
                                     </div>
                                     <div class="col-lg-6">
                                          <div class="form-group">
                                              <label class="control-label">简称(必填)</label>
-                                             <input id="abbr" name="abbr" type="text" class="form-control" value="${c.company_name!''}">
+                                             <input id="abbr" name="abbr" type="text" class="form-control" value="${contact.abbr!''}">
                                          </div> 
                                          <div class="form-group">
                                              <label class="control-label">电话</label>
-                                             <input id="phone" name="phone" type="text" class="form-control" value="${c.company_name!''}">
+                                             <input id="phone" name="phone" type="text" class="form-control" value="${contact.phone!''}">
                                          </div>
                                          <div class="form-group">
                                              <label class="control-label">地址</label>
-                                             <input id="address" name="address" type="text" class="form-control" value="${c.company_name!''}">
-                                         </div>                                    
-                                    </div>
-                                    <div class="col-lg-8">
+                                             <input id="address" name="address" type="text" class="form-control" value="${contact.address!''}">
+                                         </div>    
                                          <div class="form-group">
-                                             <label class="search-label">备注</label>
-                                             <textarea class="form-control" id="remark" name="remark" rows="2">${ul.remark!''}</textarea>
-                                         </div>                                     
+                                             <label class="control-label">备注</label>
+                                             <input id="remark" name="remark" type="text" class="form-control" value="${party.remark!''}">
+                                         </div>                                 
                                     </div>
                                 </form>
                             </div>
@@ -61,8 +62,8 @@
 							<div class="tab-content">
 			            	 	<div class="tab-pane fade active in" id="basic">
                              	 	<div class="table-responsive">
-                             	 		<button id="edit_status"  data-target="#transferOrderMilestone" data-toggle="modal" class="btn  btn-primary" >
-								  		新里程碑
+                             	 		<button id="assRateBtn"  data-target="#insuranceRateItem" data-toggle="modal" class="btn  btn-primary" >
+								  		新客户费率
 								 		</button>
 								 		<div class="form-group"></div>
 	                           	 		<table class="table table-striped table-bordered table-hover" id="dataTables-example" style="width: 1208spx;">
@@ -85,54 +86,55 @@
 	                            	</div>
 			            	 	</div>
 			            	</div>
-                        	<div class="modal fade" id="transferOrderMilestone" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+                        	<div class="modal fade" id="insuranceRateItem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
                               	<div class="modal-dialog">
 								    <div class="modal-content">
-	                     				<form id="transferOrderMilestoneForm" action="">
 								      	<div class="modal-header">
 	   								        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	   								        <h4 class="modal-title" id="myModalLabel">新里程碑</h4>
+	   								        <h4 class="modal-title" id="myModalLabel">客户费率</h4>
 	   								    </div>
 	   								    <div class="modal-body">
-	   								    	<form role="form" id="rateFrom">
-	   								      	<input id="milestoneDepartId" type="hidden" name="milestoneDepartId" />
-	   								      	<div class="form-group ">
-		 										<label class="control-label" for="inputSuccess">客户名称</label> 
-		 										<input id="status" class="form-control" type="text" name="status">
-		   									</div>
-											<div class="form-group ">
-												<label class="control-label" for="inputSuccess">保险费率</label> 
-												<input id="location" class="form-control" type="text" name="location">
-											</div>
-											<div class="form-group">                                        
-	                                            <div id="datetimepicker" class="input-append date "> 
-	                                                <label class="control-label" for="inputSuccess">开始时间</label> <br/>
-	                                                <input id="beginTime_filter" class="form-control search-control beginTime_filter" type="text">
-	                                                <span class="add-on">  
-	                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-	                                                </span>  
-	                                            </div>
-                                        	</div>
-                                        	<div class="form-group">                                                    
-	                                            <span id="datetimepicker2" class="input-append date search-control "> 
-	                                                <label class="control-label" for="inputSuccess">结束时间</label>  <br/>
-	                                                <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
-	                                                <span class="add-on">  
-	                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-	                                                </span>  
-	                                            </span>
-	                                        </div>
-	                                        <div class="form-group ">
-												<label class="control-label" for="inputSuccess">备注</label> 
-												<input id="location" class="form-control" type="text" name="location">
-											</div>
+	   								    	<form id="rateFrom"  action="" method="post">
+		   								      	<input id="rateInsuranceId" type="hidden" name="rateInsuranceId" value="${party.id!''}"/>
+		   								      	<input id="rateItemId" type="hidden" name="rateItemId"/>
+		   								      	<div class="form-group ">
+			 										<label class="control-label">客户名称</label> 
+			 										<input id="customer_id" type="hidden" name="customer_id" />
+			 										<input id="customer_name" name="customer_name" class="form-control" name="customerMessage" placeholder="请选择客户">
+								                  	<ul id='customerList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;"></ul> 
+			   									</div>
+												<div class="form-group ">
+													<label class="control-label" for="inputSuccess">保险费率</label> 
+													<input id="insurance_rate" class="form-control" type="text" name="insurance_rate">
+												</div>
+												<div class="form-group ">
+													<label class="control-label" for="inputSuccess">备注</label> 
+													<input id="remark1" class="form-control" type="text" name="remark1">
+												</div>
+												<div class="form-group">                                        
+		                                            <div id="datetimepicker1" class="input-append date "> 
+		                                                <label class="control-label" for="inputSuccess">开始时间</label> <br/>
+		                                                <input id="beginTime" name="beginTime" class="form-control search-control beginTime_filter" type="text">
+		                                                <span class="add-on">  
+		                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+		                                                </span>  
+		                                            </div>
+	                                        	</div>
+	                                        	<div class="form-group">                                                    
+		                                            <span id="datetimepicker2" class="input-append date search-control "> 
+		                                                <label class="control-label" for="inputSuccess">结束时间</label>  <br/>
+		                                                <input id="endTime" name="endTime" class="form-control search-control endTime_filter" type="text">
+		                                                <span class="add-on">  
+		                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+		                                                </span>  
+		                                            </span>
+		                                        </div>
 											</form>
 	                       			  	</div>    
 	                       			  	<div class="modal-footer">
 									        <button type="button" class="btn  btn-primary" data-dismiss="modal">取消</button>
 									        <button id="saveRateBtn" type="button" class="btn  btn-primary">保存</button>
 									    </div>
-										</form>
 								    </div><!-- /.modal-content -->
 							    </div>
 							  </div><!-- /.modal -->
