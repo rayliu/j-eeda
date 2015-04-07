@@ -2577,8 +2577,10 @@ $(document).ready(function() {
     	//打印签收单
     	var customer = $("#customerMessage").val();
     	var order_no = $("#showOrderNo").text();
+    	var pdf_sign = $("input[name='pdfSign']:checked").val();
+    	var pdf_muban = signNO + "_" + pdf_sign;
     	if(customer=="江苏国光信息产业股份有限公司"){
-    		$.post('/report/printSign', {order_no:order_no,sign:signNO}, function(data){
+    		$.post('/report/printSign', {order_no:order_no,sign:pdf_muban}, function(data){
     			if(data.indexOf(",")>=0){
     				var file = data.substr(0,data.length-1);
         			var str = file.split(",");

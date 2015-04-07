@@ -17,6 +17,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 
 import org.apache.log4j.Logger;
+import org.jfree.util.Log;
 
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.DbKit;
@@ -44,11 +45,11 @@ public class ReportController extends Controller {
     		 outFileName +="供应商对账单_"+format.format(date)+".pdf";
     	 }else if(name.equals("payment.jasper")){
          	outFileName +="付款申请单_"+format.format(date)+".pdf";
-    	 }else if(name.equals("guoguang.jasper")){
+    	 }else if(name.equals("guoguang_one.jasper") || name.equals("guoguang_n.jasper")){
     		 outFileName +="国光标准单-" + serial_no + "-" +format.format(date)+".pdf";
-    	 }else if(name.equals("nonghang.jasper")){
+    	 }else if(name.equals("nonghang_one.jasper") || name.equals("nonghang_n.jasper")){
     		 outFileName +="农行-" + serial_no + "-" +format.format(date)+".pdf";
-    	 }else if(name.equals("china_post.jaspe")){
+    	 }else if(name.equals("china_post_one.jaspe") || name.equals("china_post_n.jaspe")){
     		 outFileName +="中国邮政-" + serial_no + "-" +format.format(date)+".pdf";
     	 }else{
     		 outFileName +="中国邮储-" + serial_no + "-" +format.format(date)+".pdf";
@@ -82,8 +83,8 @@ public class ReportController extends Controller {
    public void printSign(){
 	   String type = getPara("sign");
 	   String order_no = getPara("order_no");
-	   String muban = "";
-	   if(type.equals("signGuoguang")){
+	   String muban = type + ".jasper";
+	   /*if(type.equals("signGuoguang")){
 		   muban = "guoguang.jasper";
 	   }else if(type.equals("signNonghang")){
 		   muban = "nonghang.jasper";
@@ -91,22 +92,35 @@ public class ReportController extends Controller {
 		   muban = "china_post.jasper";
 	   }else{
 		   muban = "china_postal.jasper";
-	   }
+	   }*/
+	   boolean is_one = muban.contains("_one");
 	   TransferOrder to = TransferOrder.dao.findFirst("select id from transfer_order where order_no = ?",order_no);
 	   List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao.find("select id,serial_no from transfer_order_item_detail where order_id =?",to.get("id"));
+	   
 	   if(list.size()>0){
 		   StringBuffer buffer = new StringBuffer();
-		   for(int i=0;i<list.size();i++){
-			   String file = print(order_no,muban,list.get(i).get("id"),list.get(i).get("serial_no"));
-				try {
-					   Thread.sleep(200);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+		   
+			   for(int i=0;i<list.size();i++){
+				   if(is_one){
+					   String file = print(order_no,muban,list.get(i).get("id"),list.get(i).get("serial_no"));
+					   buffer.append(file.substring(7));
+					   buffer.append(",");
+					   break;
+				   }else{
+					   String file = print(order_no,muban,list.get(i).get("id"),list.get(i).get("serial_no"));
+						try {
+							   Thread.sleep(200);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						   
+					   buffer.append(file.substring(7));
+					   buffer.append(",");
+				   }
 				   
-			   buffer.append(file.substring(7));
-			   buffer.append(",");
-		   }
+			   }  
+		   
+		   
 		   renderText(buffer.toString());
 	   }else{
 		   String file = print(order_no,muban,"0","1");
