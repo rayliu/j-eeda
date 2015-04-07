@@ -575,7 +575,7 @@ $(document).ready(function() {
 	    	e.preventDefault();
 	    	// 切换到货品明细时,应先保存运输单
 	    	//提交前，校验数据
-	    	console.log($("#transferOrderUpdateForm").valid());
+	   
 	        if(!$("#transferOrderUpdateForm").valid()){
 	        	alert("请先保存运输单!");
 		       	return false; 
@@ -919,17 +919,32 @@ $(document).ready(function() {
 	                    input: request.term
 	                },
 	                success: function( data ) {
-	                	//console.log(data);
+	                	
 						var columnName = inputBox.parent().parent()[0].className;
-		        		
+						var itemNos =[];
+		        		$("input[name=item_no]").each(function(){
+		       				if($(this).val()!=null&&$(this).val()!=""){
+		       					itemNos.push($(this).val());
+		       				}
+		    	   		});
 	                    response($.map( data, function( data ) {
-	                        return {
-	                            label: '型号:'+data.ITEM_NO+' 名称:'+data.ITEM_NAME,
-	                            value: columnName=='item_name'?data.ITEM_NAME:data.ITEM_NO,
-	                            id: data.ID,
-	                            item_no: data.ITEM_NO,
-	                            item_name: data.ITEM_NAME
-	                        };
+	                    	var complete="";
+	                    	for(var i=0;i<itemNos.length;i++){
+	                    		if(data.ITEM_NO == itemNos[i]){
+	                    			complete = data.ITEM_NO;
+	                    		}
+	                    	}
+	                    	if(complete != data.ITEM_NO){
+	                    		return {
+	 	                            label: '型号:'+data.ITEM_NO+' 名称:'+data.ITEM_NAME,
+	 	                            value: columnName=='item_name'?data.ITEM_NAME:data.ITEM_NO,
+	 	                            id: data.ID,
+	 	                            item_no: data.ITEM_NO,
+	 	                            item_name: data.ITEM_NAME
+	 	                       }
+	                    	}
+	                    	
+	                			
 	                    }));
 	                }
 	            });

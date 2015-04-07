@@ -53,3 +53,4 @@ logs/eeda.2015-02-05.log
 WebRoot/.DS_Store
 WebRoot/WEB-INF/template/yh/arap/ChargeAdjustOrder/ChargeAdjustOrderEdit.html.orig
 *.orig
+*.jasper
