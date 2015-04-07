@@ -10,43 +10,47 @@ $(document).ready(function() {
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "",
+	        "sAjaxSource": "/insurance/list",
 			"aoColumns": [
-				{ "mDataProp":null},
-	            { "mDataProp":null},
-	            { "mDataProp":null},
-	            { "mDataProp":null},
-	            { "mDataProp":null},
-	            { "mDataProp":null },
-	            { "mDataProp":null },
-	            { "mDataProp":null}
+	            { "mDataProp":"COMPANY_NAME"},
+	            { "mDataProp":"CONTACT_PERSON"},
+	            { "mDataProp":"CONTACT_PHONE" },
+	            { "mDataProp":"ADDRESS" },
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "11%",
 	                "fnRender": function(obj) { 
 	                	if(obj.aData.IS_STOP != true){
-	                		return "<nobr><% if(shiro.hasPermission('Office.update')){%><a class='btn  btn-primary btn-sm' href='/office/edit/"+obj.aData.ID+"'>"+
+	                		return "<nobr><a class='btn  btn-primary btn-sm' href='/insurance/edit/"+ obj.aData.PID +"'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
-			                        "</a> <%}%>"+
-			                        "<% if(shiro.hasPermission('Office.delete')){%><a class='btn btn-danger  btn-sm ' href='/office/del/"+obj.aData.ID+"'>"+
+			                        "</a> "+
+			                        "<a class='btn btn-danger  btn-sm ' href='/insurance/del/"+ obj.aData.PID  +"'>"+
 			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
 			                            "停用"+
-			                        "</a><%}%></nobr>";
+			                        "</a></nobr>";
 	                	}else{
-	                		return "<nobr><% if(shiro.hasPermission('Office.update')){%><a class='btn  btn-primary btn-sm' href='/office/edit/"+obj.aData.ID+"'>"+
+	                		return "<nobr><a class='btn  btn-primary btn-sm' href='/insurance/edit/"+  obj.aData.PID +"'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
-			                        "</a> <%}%>"+
-			                        "<% if(shiro.hasPermission('Office.delete')){%><a class='btn btn-success  btn-sm' href='/office/del/"+obj.aData.ID+"'>"+
+			                        "</a> "+
+			                        "<a class='btn btn-success  btn-sm' href='/insurance/del/"+  obj.aData.PID +"'>"+
 			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
 			                            "启用"+
-			                        "</a><%}%></nobr>";
+			                        "</a>";
 	                	}
 	                    
 	                }
 	            }
 	            ]
 	} );
+	$("#name_filter,#person_filter,#address_filter").on('keyup click',function(){
+		var customer_name = $("#name_filter").val();
+		var person = $("#person_filter").val();
+		var address = $("#address_filter").val();
 		
+		datatable.fnSettings().sAjaxSource = "/insurance/list?customerName=" + customer_name 
+												+ "&person=" + person + "&address=" + address;
+		datatable.fnDraw(); 
+	});
 });
