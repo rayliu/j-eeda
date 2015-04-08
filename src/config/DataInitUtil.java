@@ -108,7 +108,7 @@ public class DataInitUtil {
                     + "fin_item_code varchar(20), amount double, status varchar(50), creator varchar(50), create_date timestamp, last_updator varchar(50), last_update_date timestamp, remark varchar(5120),transfer_order_id bigint,delivery_order_id bigint, contract_id bigint, fin_type varchar(20),create_name varchar(50));");
 
             // 保险单
-            stmt.executeUpdate("create table if not exists insurance_order(id bigint auto_increment primary key,order_no varchar(255),ref_no varchar(255),status varchar(255),audit_status varchar(255),sign_status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),office_id bigint,foreign key(office_id) references office(id));");
+            stmt.executeUpdate("create table if not exists insurance_order(id bigint auto_increment primary key,order_no varchar(255),ref_no varchar(255),status varchar(255),audit_status varchar(255),sign_status varchar(255),location varchar(255),create_by bigint,create_stamp timestamp,last_modified_by bigint,last_modified_stamp timestamp,remark varchar(5120),office_id bigint,foreign key(office_id) references office(id),insurance_id bigint);");
             
             // transfer_order 运输单  no_contract_revenue boolean在mysql中对应 tinyint
             stmt.executeUpdate("create table if not exists transfer_order(id bigint auto_increment primary key,order_no varchar(255),customer_order_no varchar(255),status varchar(255),pickup_assign_status varchar(255),depart_assign_status varchar(255),"
@@ -305,6 +305,9 @@ public class DataInitUtil {
             
             //调车单跟车人员从表
             stmt.execute("create table if not exists pickup_driver_assistant(id bigint auto_increment primary key,pickup_id bigint,driver_assistant_id bigint,name varchar(50),phone varchar(50));");
+            
+            //基础数据保险单从表
+            stmt.execute("create table if not exists party_insurance_item (id bigint auto_increment primary key,party_id bigint,customer_id bigint,insurance_rate double,remark varchar(255),beginTime date,endTime date,is_stop tinyint(4));");
             
             stmt.close();
             // conn.commit();

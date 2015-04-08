@@ -456,11 +456,14 @@ public class InsuranceOrderController extends Controller {
     			//保险公司费率
     			if(insuranceSelect != null && !"".equals(insuranceSelect)){
     				insurance = Party.dao.findFirst("select pit.insurance_rate from party p "
-    					+ " left join contact c on c.id = p.contact_id "
-    					+ " left join party_insurance_item pit on pit.party_id = p.id"
-    					+ " where p.party_type = '"+ Party.PARTY_TYPE_INSURANCE_PARTY + "'"
-						+ " and pit.customer_id = '" + transferOrder.get("customer_id") + "'"
-						+ " and p.id = '" + insuranceSelect + "'");
+    						+ " left join contact c on c.id = p.contact_id "
+    						+ " left join party_insurance_item pit on pit.party_id = p.id"
+    						+ " where (pit.is_stop != 1 or pit.is_stop is null)"
+    						+ " and current_date > pit.beginTime"
+    						+ " and current_date < pit.endTime"
+    						+ " and p.party_type = '"+ Party.PARTY_TYPE_INSURANCE_PARTY + "'"
+    						+ " and pit.customer_id = '" + transferOrder.get("customer_id") + "'"
+    						+ " and p.id = '" + insuranceSelect + "'");
     			}
     			//保险单从表--按单据货品买保险
     			Party party = Party.dao.findById(transferOrder.get("customer_id"));
@@ -621,7 +624,10 @@ public class InsuranceOrderController extends Controller {
 			insurance = Party.dao.findFirst("select pit.insurance_rate from party p "
 				+ " left join contact c on c.id = p.contact_id "
 				+ " left join party_insurance_item pit on pit.party_id = p.id"
-				+ " where p.party_type = '"+ Party.PARTY_TYPE_INSURANCE_PARTY + "'"
+				+ " where (pit.is_stop != 1 or pit.is_stop is null)"
+				+ " and current_date > pit.beginTime"
+				+ " and current_date < pit.endTime"
+				+ " and p.party_type = '"+ Party.PARTY_TYPE_INSURANCE_PARTY + "'"
 				+ " and pit.customer_id = '" + customerId + "'"
 				+ " and p.id = '" + insuranceSelect + "'");
 		}

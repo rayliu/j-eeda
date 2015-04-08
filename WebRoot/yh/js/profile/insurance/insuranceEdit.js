@@ -2,7 +2,6 @@
 $(document).ready(function(){
 	$('#menu_profile').addClass('active').find('ul').addClass('in');
 	
-	
 	var insuranceId = $("#insuranceId").val();
 	if(insuranceId == "" || insuranceId == null){
 		$("#assRateBtn").prop("disabled",true);
@@ -10,13 +9,13 @@ $(document).ready(function(){
 		$("#assRateBtn").prop("disabled",false);
 	}
 	
-	
 	var dataTable = $('#dataTables-example').dataTable({
 		"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "bFilter": false,
         "bProcessing": true,
         "bServerSide": true,
         "sAjaxSource": "/insurance/findAllInsuranceItem?insuranceId="+insuranceId,
