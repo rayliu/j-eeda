@@ -57,15 +57,15 @@ public class InsuranceController extends Controller{
         	parentID = parentOffice.getLong("id");
         }
         
-        String sqlTotal = "select count(*) as total from party p left join contact c on p.contact_id = c.id left join office o on o.id = p.office_id left join location l on c.location = l.code where (o.id =" + parentID + " or o.belong_office = " + parentID + ") and p.party_type = 'INSURANCE_PARTY' ";
+        String sqlTotal = "select count(*) as total from party p left join contact c on p.contact_id = c.id left join office o on o.id = p.office_id where (o.id =" + parentID + " or o.belong_office = " + parentID + ") and p.party_type = 'INSURANCE_PARTY' ";
         
-        String sql = "select c.id,p.id as pid,c.company_name,ifnull(c.mobile,c.phone) contact_phone,c.contact_person,l.name as address,p.is_stop  from party p  left join contact c on p.contact_id = c.id left join office o on o.id = p.office_id left join location l on c.location = l.code where (o.id =" + parentID + " or o.belong_office = " + parentID + ") and p.party_type = 'INSURANCE_PARTY' ";
+        String sql = "select c.id,p.id as pid,c.company_name,ifnull(c.mobile,c.phone) contact_phone,c.contact_person,c.address,p.is_stop  from party p  left join contact c on p.contact_id = c.id left join office o on o.id = p.office_id where (o.id =" + parentID + " or o.belong_office = " + parentID + ") and p.party_type = 'INSURANCE_PARTY' ";
         
         String condition = "";
         
         if(name !=null && !"".equals(name) || person !=null && !"".equals(person)
         		|| address !=null && !"".equals(address)){
-        	condition = " and c.company_name like '% " + name + " %' and c.contact_person like '% " + person + " % ' and l.name like '% " + address + " %'";
+        	condition = " and c.company_name like '%" + name + "%' and c.contact_person like '%" + person + "%' and c.address like '%" + address + "%'";
         }
         
         
