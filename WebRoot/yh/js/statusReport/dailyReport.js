@@ -14,62 +14,58 @@ $(document).ready(function() {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
         "aoColumns": [   
-            {"mDataProp":"SERIAL_NO", "sWidth":"80px", "sVisible":false},
-            {"mDataProp":"ITEM_NO", "sWidth":"100px"},
-            {"mDataProp":"CUSTOMER", "sWidth":"100px"},
-            {"mDataProp":"NOTIFY_PARTY_COMPANY", "sWidth":"100px"},
+            {"mDataProp":"ABBR", "sWidth":"100px", "sVisible":false},
+            {"mDataProp":"DELIVERYNO", "sWidth":"100px"},
+            {"mDataProp":"TRANSFERNO", "sWidth":"100px"},
+            {"mDataProp":"SERIAL_NO", "sWidth":"120px"},
+            {"mDataProp":"STATUS", "sWidth":"80px"},       	
+            {"mDataProp":"PLANNING_TIME", "sWidth":"150px"},
+            {"mDataProp":"ORDER_TYPE", "sWidth":"100px"},
+            {"mDataProp":"ROUTE_FROM", "sWidth":"80px"},
+            {"mDataProp":"ROUTE_TO", "sWidth":"80px"},
+            {"mDataProp":"WAREHOUSENUMBER", "sWidth":"100px"},
+            {"mDataProp":"PIECES", "sWidth":"60px"},
+            {"mDataProp":"WEIGHT", "sWidth":"60px"},
+            {"mDataProp":"VOLUME", "sWidth":"60px"},
+            {"mDataProp":"YUNZUOMAOLI", "sWidth":"100px"},
             {"mDataProp":null, "sWidth":"80px",
             	"fnRender": function(obj) {  
-            		/*	
-            		 	新建运输
-						在货场
-						运输在途
-						在中转仓
-						新建配送
-						配送在途
-						客户签收（回单在途）
-						回单签收
-						已对账
-						已收款
-					*/
-            		var status = "新建运输";
-            		if(obj.aData.TRANSACTION_STATUS == "已签收"){
-            			status = "回单签收";
-            		}else if(obj.aData.TRANSACTION_STATUS == "新建"){
-            			status = "客户签收（回单在途）";
-            		}else if(obj.aData.DELIVERY_STATUS == "已发车"){
-            			status = "配送在途";
-            		}else if(obj.aData.DELIVERY_STATUS == "新建"){
-            			status = "新建配送";
-            		}else if(obj.aData.DEPART_STATUS == "已入库"){
-            			status = "在中转仓";
-            		}else if(obj.aData.DEPART_STATUS == "已发车"){
-            			status = "运输在途";
-            		}else if(obj.aData.PICK_STATUS == "已入货场"){
-            			status = "在货场";
-            		}else if(obj.aData.PICK_STATUS == "新建"){
-            			status = "新建运输";
+            		if(obj.aData.ZONGSHOURU != 0 && obj.aData.ZONGSHOURU != ""){
+            			var maolilv = (obj.aData.ZONGSHOURU * 1) / (obj.aData.ZONGSHOURU * 1);
+            			return maolilv + "%";
+            		}else{
+            			return "";
             		}
-            		return status;
                 }
-            },       	
-            {"mDataProp":"PLANNING_TIME", "sWidth":"80px"},
-            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"80px"},
-            {"mDataProp":"TRANSFER_NO", "sWidth":"80px"},
-            {"mDataProp":"WAREHOUSE_NAME", "sWidth":"80px"},
-            {"mDataProp":"WAREHOUSE_STAMP", "sWidth":"120px"},
-            {"mDataProp":"DELIVERY_NO", "sWidth":"80px"},
-            {"mDataProp":"DELIVERY_STAMP", "sWidth":"80px"},
-            {"mDataProp":"RETURN_STAMP", "sWidth":"80px"}
+            },
+            {"mDataProp":"PAYTIHUO", "sWidth":"70px"},
+            {"mDataProp":"PAYGANXIAN", "sWidth":"70px"},
+            {"mDataProp":"PAYPEISONG", "sWidth":"70px"},
+            {"mDataProp":"PAYBAOXIAN", "sWidth":"70px"},
+            {"mDataProp":"PAYANZHUANG", "sWidth":"70px"},
+            {"mDataProp":"PAYTAIJIE", "sWidth":"70px"},
+            {"mDataProp":"PAYDENGDAI", "sWidth":"70px"},
+            {"mDataProp":"PAYZANCUN", "sWidth":"70px"},
+            {"mDataProp":null, "sWidth":"100px"},
+            {"mDataProp":null, "sWidth":"100px"},
+            {"mDataProp":"INCOMETIHUO", "sWidth":"70px"},
+            {"mDataProp":"INCOMEYUNSHU", "sWidth":"70px"},
+            {"mDataProp":"INCOMESONGHUO", "sWidth":"70px"},
+            {"mDataProp":"INCOMEBAOXIAN", "sWidth":"70px"},
+            {"mDataProp":"INCOMETAIJIE", "sWidth":"70px"},
+            {"mDataProp":"INCOMEANZHUANG", "sWidth":"70px"},
+            {"mDataProp":"INCOMEZANCUN", "sWidth":"70px"},
+            {"mDataProp":null, "sWidth":"100px"},
+            {"mDataProp":null, "sWidth":"100px"}
             
         ]  
     });	
     
-    $("#serial_no,#beginTime,#endTime").on('keyup click', function () {
+    $("#beginTime,#endTime").on('keyup click', function () {
     	var beginTime=$("#beginTime").val();
     	var endTime=$("#endTime").val();
     	var serial_no = $("#serial_no").val();
-    	if((beginTime != "" && endTime != "") || serial_no != ""){
+    	if((beginTime != "" && endTime != "")){
     		$("#queryBtn").prop("disabled",false);
     	}else{
     		$("#queryBtn").prop("disabled",true);
@@ -84,10 +80,11 @@ $(document).ready(function() {
     	var customer_id = $("#customer_id").val();
     	var customer_order_no = $("#customer_order_no").val();
     	var item_no = $("#item_no").val();
-    	if((beginTime != "" && endTime != "") || serial_no != ""){
+    	var cargoType = $("input[type='radio'][name='cargoType']").val();
+    	if((beginTime != "" && endTime != "")){
     		statusTable.fnSettings().oFeatures.bServerSide = true;
-	    	statusTable.fnSettings().sAjaxSource = "/statusReport/productStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
-	    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no;
+	    	statusTable.fnSettings().sAjaxSource = "/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
+	    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&cargoType="+cargoType;
 	    	statusTable.fnDraw(); 
     	}
     });
