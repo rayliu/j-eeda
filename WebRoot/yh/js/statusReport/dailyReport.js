@@ -18,7 +18,7 @@ $(document).ready(function() {
             {"mDataProp":"DELIVERYNO", "sWidth":"100px"},
             {"mDataProp":"TRANSFERNO", "sWidth":"100px"},
             {"mDataProp":"SERIAL_NO", "sWidth":"120px"},
-            {"mDataProp":"STATUS", "sWidth":"80px"},       	
+            {"mDataProp":"STATUS", "sWidth":"100px"},       	
             {"mDataProp":"PLANNING_TIME", "sWidth":"150px"},
             {"mDataProp":"ORDER_TYPE", "sWidth":"100px"},
             {"mDataProp":"ROUTE_FROM", "sWidth":"80px"},
@@ -47,7 +47,7 @@ $(document).ready(function() {
             {"mDataProp":"PAYDENGDAI", "sWidth":"70px"},
             {"mDataProp":"PAYZANCUN", "sWidth":"70px"},
             {"mDataProp":null, "sWidth":"100px"},
-            {"mDataProp":null, "sWidth":"100px"},
+            {"mDataProp":"PAYQITA", "sWidth":"100px"},
             {"mDataProp":"INCOMETIHUO", "sWidth":"70px"},
             {"mDataProp":"INCOMEYUNSHU", "sWidth":"70px"},
             {"mDataProp":"INCOMESONGHUO", "sWidth":"70px"},
@@ -56,7 +56,7 @@ $(document).ready(function() {
             {"mDataProp":"INCOMEANZHUANG", "sWidth":"70px"},
             {"mDataProp":"INCOMEZANCUN", "sWidth":"70px"},
             {"mDataProp":null, "sWidth":"100px"},
-            {"mDataProp":null, "sWidth":"100px"}
+            {"mDataProp":"INCOMEQITA", "sWidth":"100px"}
             
         ]  
     });	
