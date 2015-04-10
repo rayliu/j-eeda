@@ -24,8 +24,10 @@ import models.UserLogin;
 import models.Warehouse;
 import models.yh.profile.Contact;
 
+import com.jfinal.aop.Before;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.OrderNoGenerator;
 public class TransferOrderExeclHandeln extends TransferOrderController{
@@ -483,6 +485,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      * @param content
      * @return 导入结果
      */
+	@Before(Tx.class)
     public Map<String,String> importTransferOrder(List<Map<String,String>> content){
     	Map<String, String> importResult = new HashMap<String, String>();
     	importResult = validatingOrderNo(content);

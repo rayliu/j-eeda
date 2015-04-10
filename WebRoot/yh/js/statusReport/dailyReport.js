@@ -2,6 +2,7 @@ $(document).ready(function() {
     document.title = '运营日报表 | '+document.title;
     $('#menu_report').addClass('active').find('ul').addClass('in');
     $("#queryBtn").prop("disabled",true);
+    
 	//datatable, 动态处理
     var statusTable = $('#eeda-table').dataTable({
     	"bFilter": false, //不需要默认的搜索框
@@ -15,16 +16,16 @@ $(document).ready(function() {
     	},
         "aoColumns": [   
             {"mDataProp":"ABBR", "sWidth":"100px", "sVisible":false},
-            {"mDataProp":"DELIVERYNO", "sWidth":"100px"},
+            {"mDataProp":"DELIVERYNO", "sWidth":"100px","sClass": "delivery_no"},
             {"mDataProp":"TRANSFERNO", "sWidth":"100px"},
-            {"mDataProp":"SERIAL_NO", "sWidth":"120px"},
+            {"mDataProp":"SERIAL_NO", "sWidth":"120px","sClass": "serial_no"},
             {"mDataProp":"STATUS", "sWidth":"100px"},       	
             {"mDataProp":"PLANNING_TIME", "sWidth":"150px"},
             {"mDataProp":"ORDER_TYPE", "sWidth":"100px"},
             {"mDataProp":"ROUTE_FROM", "sWidth":"80px"},
             {"mDataProp":"ROUTE_TO", "sWidth":"80px"},
-            {"mDataProp":"WAREHOUSENUMBER", "sWidth":"100px"},
-            {"mDataProp":"PIECES", "sWidth":"60px"},
+            {"mDataProp":"WAREHOUSENUMBER", "sWidth":"100px","sClass": "warehouse_number"},
+            {"mDataProp":"PIECES", "sWidth":"60px","sClass": "pieces"},
             {"mDataProp":"WEIGHT", "sWidth":"60px"},
             {"mDataProp":"VOLUME", "sWidth":"60px"},
             {"mDataProp":"YUNZUOMAOLI", "sWidth":"100px"},
@@ -61,6 +62,14 @@ $(document).ready(function() {
         ]  
     });	
     
+    var cargoType = $("input[type='radio'][name='cargoType']").val();
+    if(cargoType == "ATM"){
+    	
+    }else{
+    	
+    }
+    
+    
     $("#beginTime,#endTime").on('keyup click', function () {
     	var beginTime=$("#beginTime").val();
     	var endTime=$("#endTime").val();
@@ -80,7 +89,7 @@ $(document).ready(function() {
     	var customer_id = $("#customer_id").val();
     	var customer_order_no = $("#customer_order_no").val();
     	var item_no = $("#item_no").val();
-    	var cargoType = $("input[type='radio'][name='cargoType']").val();
+    	var cargoType = $("input[type='radio'][name='cargoType']:checked").val();
     	if((beginTime != "" && endTime != "")){
     		statusTable.fnSettings().oFeatures.bServerSide = true;
 	    	statusTable.fnSettings().sAjaxSource = "/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no

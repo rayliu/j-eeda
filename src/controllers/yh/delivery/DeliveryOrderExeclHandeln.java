@@ -350,6 +350,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
      * @param content
      * @return 导入结果
      */
+	@Before(Tx.class)
 	public Map<String,String> importDeliveryOrder(List<Map<String,String>> content){
 		Map<String, String> importResult = new HashMap<String, String>();
 		importResult = validatingOrderNo(content);
