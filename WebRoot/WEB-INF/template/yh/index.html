@@ -7,6 +7,127 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
+            <%
+                var title = SYS_CONFIG.system_title!'易达物流';
+                var show = 'none';
+                if(title=='易达物流'){
+                    show = 'block';
+                }
+            %>
+            <div class="row" style='display:${show}'>
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="form-group">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> 系统单据： 
+                                <label class="radio-inline">
+                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline1" value="option1" checked="">过去1天
+                                </label>                               
+                                <label class="radio-inline">
+                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline2" value="option2" >过去7天
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline3" value="option3">过去30天
+                                </label>
+                                
+                            </div>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-file-text fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge">26</div>
+                                        <div>运输单</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="/transferOrder">
+                                <div class="panel-footer">
+                                    <span class="pull-left"></span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="panel panel-green">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-file-text fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge">12</div>
+                                        <div>提货单</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="/pickupOrder">
+                                <div class="panel-footer">
+                                    <span class="pull-left"></span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="panel panel-yellow">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-file-text fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge">124</div>
+                                        <div>发车单</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="/departOrder">
+                                <div class="panel-footer">
+                                    <span class="pull-left"></span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="panel panel-red">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-file-text fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge">13</div>
+                                        <div>配送单</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="/delivery">
+                                <div class="panel-footer">
+                                    <span class="pull-left"></span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                        </div>
+                    </div>
+                </div>  
+            </div>         
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-8">
@@ -17,21 +138,21 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="table-responsive">
-                                        <table class="table table-bordered table-hover table-striped" id="transferOrderTypeTbody">
-                                            <thead>
-                                                <tr>
-                                                    <th>单据号码</th>
-                                                    <th>干线</th>
-                                                    <th>状态</th>
-                                                    <th>更新时间</th>
-                                                    <th>运费金额</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <!-- /.table-responsive -->
+                                <table class="table table-bordered table-hover table-striped" id="transferOrderTypeTbody">
+                                    <thead>
+                                        <tr>
+                                            <th>单据号码</th>
+                                            <th>干线</th>
+                                            <th>状态</th>
+                                            <th>更新时间</th>
+                                            <th>运费金额</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.table-responsive -->
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -240,6 +361,21 @@
                     </div>
                     <!-- /.panel -->
                     
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bell fa-fw"></i> 每日小提示
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="list-group">
+                                    提货单中可以选择多个运输单进行多地点提货。
+                                    <span class="pull-right text-muted small"><em></em>
+                                    </span>
+                            </div>
+                            <!-- /.list-group -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
                 </div>
                 <!-- /.col-lg-4 -->
             </div>
