@@ -220,6 +220,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/spContract", controllers.yh.contract.ContractController.class, contentPath);
         me.add("/route", controllers.yh.RouteController.class, contentPath);
         me.add("/office", controllers.yh.OfficeController.class, contentPath);
+        me.add("/officeConfig", controllers.yh.profile.OfficeConfigController.class, contentPath);
         me.add("/product", controllers.yh.profile.ProductController.class, contentPath);
         me.add("/warehouse", controllers.yh.profile.WarehouseController.class, contentPath);
         me.add("/orderStatus", controllers.yh.profile.OrderStatusController.class, contentPath);
