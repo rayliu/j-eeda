@@ -33,26 +33,32 @@ $(document).ready(function() {
 	    	$("#warehouseId").val("");
 		var warehouseName = $(this).val();
 		var officeId = $("#hiddenOfficeId").val();
-		$.get('/gateIn/findWarehouseById',{"warehouseName":warehouseName,"officeId":officeId}, function(data){
-			console.log(data);
-			var warehouseList =$("#warehouseList");
-			warehouseList.empty();
-			for(var i = 0; i < data.length; i++)
-			{
-				warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</a></li>");
-			}
-		},'json');
+		var customerId = $("#hiddenCustomerId").val();
+		if(officeId != "" || customerId != ""){
+			$.get('/gateIn/findWarehouseById',{"warehouseName":warehouseName,"officeId":officeId}, function(data){
+				var warehouseList =$("#warehouseList");
+				warehouseList.empty();
+				if(data.length > 1){
+					warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='All'>所有仓库</a></li>");
+				}
+				for(var i = 0; i < data.length; i++)
+				{
+					warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</a></li>");
+				}
+			},'json');
+		}
+		
 		$("#warehouseList").css({ 
 	    	left:$(this).position().left+"px", 
 	    	top:$(this).position().top+32+"px" 
 	    }); 
 	    $('#warehouseList').show();
 	    
-	    var customerId = $("#hiddenCustomerId").val();
+	   /* var customerId = $("#hiddenCustomerId").val();
 		var warehouseId = $("#warehouseId").val();
 		var offeceId = $("#hiddenOfficeId").val();
 	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
-		tab.fnDraw();
+		tab.fnDraw();*/
 	});
 	$('#warehouseSelect').on('blur', function(){
 		$("#warehouseList").hide();
@@ -75,19 +81,25 @@ $(document).ready(function() {
 		/*tab.fnSettings().sAjaxSource ="/stock/stocklist/"+id;
 		tab.fnDraw();*/
 		
-		var customerId = $("#hiddenCustomerId").val();
+		/*var customerId = $("#hiddenCustomerId").val();
 		var offeceId = $("#hiddenOfficeId").val();
 		tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+id+"&offeceId="+offeceId;
-		tab.fnDraw();
+		tab.fnDraw();*/
 		
 	});
 	
 	// 获取所有网点
 	$('#officeSelect').on('keyup click', function(){
-		if($("#officeSelect").val() == "")
-	    	$("#hiddenOfficeId").val("");
+		if($("#officeSelect").val() == ""){
+			$("#hiddenOfficeId").val("");
+			if($("#hiddenCustomerId").val() == ""){
+				$("#warehouseList").empty();
+			};
+			
+		}
+	    	
 		$.get('/gateIn/searchAllOffice',{"officeName":$(this).val()}, function(data){
-			console.log(data);
+			
 			var officeList =$("#officeList");
 			officeList.empty();
 			for(var i = 0; i < data.length; i++)
@@ -109,10 +121,10 @@ $(document).ready(function() {
 		$('#officeList').hide();
 		$("#hiddenOfficeId").val(id);
 		
-		var customerId = $("#hiddenCustomerId").val();
+		/*var customerId = $("#hiddenCustomerId").val();
 		var warehouseId = $("#warehouseId").val();
 	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+id;
-		tab.fnDraw();
+		tab.fnDraw();*/
 	});
 	$('#officeSelect').on('blur', function(){
 		$("#officeList").hide();
@@ -127,10 +139,13 @@ $(document).ready(function() {
 	
 	//获取客户的list，选中信息在下方展示其他信息
 	$('#customerMessage').on('keyup click', function(){
-		if($('#customerMessage').val() == "")
+		if($('#customerMessage').val() == ""){
 			$("#hiddenCustomerId").val("");
+			if($("#hiddenOfficeId").val() == ""){
+				$("#warehouseList").empty();
+			}
+		}	
 		$.get('/customerContract/searcCustomer', {locationName:$('#customerMessage').val()}, function(data){
-			console.log(data);
 			var customerList =$("#customerList");
 			customerList.empty();
 			for(var i = 0; i < data.length; i++)
@@ -156,11 +171,11 @@ $(document).ready(function() {
         }); 
         $('#customerList').show();
         
-        var customerId = $("#hiddenCustomerId").val();
+       /* var customerId = $("#hiddenCustomerId").val();
 		var warehouseId = $("#warehouseId").val();
 		var offeceId = $("#hiddenOfficeId").val();
 	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
-		tab.fnDraw();
+		tab.fnDraw();*/
 	});
 
  	// 没选中客户，焦点离开，隐藏列表
@@ -179,15 +194,22 @@ $(document).ready(function() {
 	// 选中客户
 	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
 		var message = $(this).text();
-		var customerId = $(this).attr('partyId');
-		var warehouseId = $("#warehouseId").val();
-		var offeceId = $("#hiddenOfficeId").val();
+		
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$("#hiddenCustomerId").val($(this).attr('partyId'));
 		$('#customerList').hide();
-		
+		/*var customerId = $(this).attr('partyId');
+		var warehouseId = $("#warehouseId").val();
+		var offeceId = $("#hiddenOfficeId").val();
 		tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
-		tab.fnDraw();
+		tab.fnDraw();*/
     }); 
+	$("#queryBtn").click(function(){
+		 var customerId = $("#hiddenCustomerId").val();
+		 var warehouseId = $("#warehouseId").val();
+		 var offeceId = $("#hiddenOfficeId").val();
+	     tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
+		 tab.fnDraw();
+	});
 
 });
