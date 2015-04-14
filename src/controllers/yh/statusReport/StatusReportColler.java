@@ -412,11 +412,11 @@ public class StatusReportColler extends Controller{
 	}
 	
 	public void dailyReportStatus() {
-		String order_no = getPara("order_no");
-		String customer_id = getPara("customer_id");
-		String customer_order_no = getPara("customer_order_no");
-		String item_no = getPara("item_no");
-		String serial_no = getPara("serial_no");
+		String orderNo = getPara("order_no");
+		String customerId = getPara("customer_id");
+		String customerOrderNo = getPara("customer_order_no");
+		String itemNo = getPara("item_no");
+		String serialNo = getPara("serial_no");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
 		String cargoType = getPara("cargoType");
@@ -440,9 +440,9 @@ public class StatusReportColler extends Controller{
 						+ " left join contact c on c.id = p.contact_id"
 						+ " left join location l1 on tor.route_from = l1.code "
 						+ " left join location l2 on tor.route_to = l2.code"
-						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "'"
+						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
 						//+ " group by toid.id "
-						+ " order by tor.planning_time desc";
+						
 					
 				String sql = "select c.abbr,dor.order_no deliveryno,tor.order_no transferno,toid.serial_no,tor.planning_time,l1.name route_from,l2.name route_to,toid.pieces,round(toid.weight,2) weight,round(toid.volume,2) volume,"
 						+ " (select case when ((select transaction_status from return_order where transfer_order_id = toid.order_id) != '新建') or ((select transaction_status from return_order where delivery_Order_id = toid.delivery_id) != '新建')  then '回单签收' "
@@ -579,9 +579,24 @@ public class StatusReportColler extends Controller{
 						+ " left join contact c on c.id = p.contact_id"
 						+ " left join location l1 on tor.route_from = l1.code "
 						+ " left join location l2 on tor.route_to = l2.code"
-						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "'"
+						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
 						//+ " group by toid.id "
-						+ " order by tor.planning_time desc";
+						
+				
+				//有运输单号时
+				if(!"".equals(orderNo) && orderNo != null){
+					totalSql = totalSql + " and tor.order_no = '" + orderNo + "'";
+					sql = sql + " and tor.order_no = '" + orderNo + "'";
+				}
+				
+				//有客户时
+				if(!"".equals(customerId) && customerId != null){
+					totalSql = totalSql + "and tor.customer_id = '" + customerId + "'";
+					sql = sql + "and tor.customer_id = '" + customerId + "'";
+				}
+				
+				totalSql+= " order by tor.planning_time desc";
+				sql += " order by tor.planning_time desc";
 				
 				// 获取总条数
 				Record rec = Db.findFirst(totalSql);
@@ -699,7 +714,21 @@ public class StatusReportColler extends Controller{
 						+ " left join location l2 on tor.route_to = l2.code"
 						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "'"
 						+ " and tor.cargo_nature_detail = 'cargoNatureDetailNo'"
-						+ " and tor.cargo_nature = 'cargo' order by tor.planning_time desc";
+						+ " and tor.cargo_nature = 'cargo'";
+				
+				//有运输单号时
+				if(!"".equals(orderNo) && orderNo != null){
+					totalSql = totalSql + " and tor.order_no = '" + orderNo + "'";
+					sql = sql + " and tor.order_no = '" + orderNo + "'";
+				}
+				
+				//有客户时
+				if(!"".equals(customerId) && customerId != null){
+					totalSql = totalSql + "and tor.customer_id = '" + customerId + "'";
+					sql = sql + "and tor.customer_id = '" + customerId + "'";
+				}
+				
+				sql += " order by tor.planning_time desc";
 				
 				// 获取总条数
 				Record rec = Db.findFirst(totalSql);

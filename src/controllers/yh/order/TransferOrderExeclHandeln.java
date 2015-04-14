@@ -1,6 +1,7 @@
 package controllers.yh.order;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -480,6 +481,28 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		transferOrderMilestone.set("order_id", transferOrder.get("id"));
 		transferOrderMilestone.save();
     }
+	
+	/**
+     * 回滚数据（报错回滚）
+     * @param content
+     * @return 
+     */
+	private void rollbackInvocation(List<TransferOrder> orderList) throws Exception{
+		System.out.println("已生成运输单数量："+orderList.size()+",开始回滚数据......");
+		long delNumber = 0;
+		List<String> sqlList = new ArrayList<String>();
+		for (TransferOrder transferOrder : orderList) {
+			delNumber+=1;
+			long orderId = transferOrder.getLong("id");
+			sqlList.add("delete from transfer_order_milestone where order_id = '"+orderId+"'");
+			sqlList.add("delete from transfer_order_item_detail where order_id = '"+orderId+"'");
+			sqlList.add("delete from transfer_order_item where order_id = '"+orderId+"'");
+			sqlList.add("delete from transfer_order where id = '"+orderId+"'");
+		}
+		Db.batch(sqlList, sqlList.size());
+		System.out.println("共删除运输单数量："+delNumber+",结束回滚数据......");
+    }
+	
     /**
      * 导入数据
      * @param content
@@ -494,6 +517,8 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 			if("true".equals(importResult.get("result"))){
 				int resultNum = 0;
 		    	int causeRow = 0;
+		    	//回滚运输单信息
+		    	List<TransferOrder> orderList = new ArrayList<TransferOrder>();
 				try {
 					for (int j = 0; j < content.size(); j++) {
 						causeRow = j+2;
@@ -529,10 +554,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				}
 		    				if(tansferOrderItem != null){
 		    					//运输单有单品时叠加计算货品数量，没单品时直接读取文件，此时“发货数量”列是货品总数，不用修改
-		    					updateTransferOrderItem(content.get(j),itemNumber,order,tansferOrderItem,product);
+		    					tansferOrderItem = updateTransferOrderItem(content.get(j),itemNumber,order,tansferOrderItem,product);
 		    				}else{
 		    					//创建保存货品明细
-			    				updateTransferOrderItem(content.get(j),itemNumber,order,new TransferOrderItem(),product);
+		    					tansferOrderItem = updateTransferOrderItem(content.get(j),itemNumber,order,new TransferOrderItem(),product);
 		    				}
 		    				//创建保存单品货品明细
 		    				if("cargoNatureDetailYes".equals(order.get("cargo_nature_detail"))){
@@ -544,6 +569,8 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				++resultNum;
 		    				//创建保存运输单
 		    				TransferOrder transferOrder = saveTransferOrder(content.get(j), warehouse, location1, location2, customer, provider, office);
+		    				//已生成的运输单据保存到回滚list中
+		    				orderList.add(transferOrder);
 		    				//保存运输里程碑
 		    				saveTransferOrderMilestone(transferOrder);
 		    				//创建保存货品明细
@@ -556,10 +583,16 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 						}
 					}
 				} catch (Exception e) {
+					System.out.println("导入操作异常！");
 					e.printStackTrace();
-					System.out.println("未知错误！");
-					importResult.put("result","true");
-					importResult.put("cause", "未知错误，已成功导入至第" + (causeRow-1) + "行！");
+					try {
+						rollbackInvocation(orderList);
+					} catch (Exception e1) {
+						System.out.println("回滚操作异常！");
+						e1.printStackTrace();
+					}
+					importResult.put("result","false");
+					importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常！");
 					return importResult;
 				}
 				importResult.put("result","true");
