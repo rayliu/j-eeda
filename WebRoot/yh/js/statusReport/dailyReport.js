@@ -58,22 +58,12 @@ $(document).ready(function() {
             {"mDataProp":"INCOMEZANCUN", "sWidth":"70px"},
             {"mDataProp":null, "sWidth":"100px"},
             {"mDataProp":"INCOMEQITA", "sWidth":"100px"}
-            
-        ]  
+        ]
     });	
-    
-    var cargoType = $("input[type='radio'][name='cargoType']").val();
-    if(cargoType == "ATM"){
-    	
-    }else{
-    	
-    }
-    
     
     $("#beginTime,#endTime").on('keyup click', function () {
     	var beginTime=$("#beginTime").val();
     	var endTime=$("#endTime").val();
-    	var serial_no = $("#serial_no").val();
     	if((beginTime != "" && endTime != "")){
     		$("#queryBtn").prop("disabled",false);
     	}else{
@@ -95,6 +85,23 @@ $(document).ready(function() {
 	    	statusTable.fnSettings().sAjaxSource = "/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
 	    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&cargoType="+cargoType;
 	    	statusTable.fnDraw(); 
+	    	/*$.get("/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
+		    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&cargoType="+cargoType, null, function(data){
+	    		var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
+				transferOrderMilestoneTbody.empty();
+					
+				//transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+location+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
+				$.each( data.aaData, function(index, content){ 
+					console.log( "数组#" + index + " 数组 value: " + content ); 
+					var str = "<tr>";
+					$.each( content, function(index, value){ 
+						console.log( "item #" + name + " its value is: " + value ); 
+						str += "<td>"+value+"</td>";
+					});
+					transferOrderMilestoneTbody.append(str+"</tr>");
+				});  
+				//statusTable.fnDraw();
+	    	});*/
     	}
     });
     
@@ -173,3 +180,47 @@ $(document).ready(function() {
     
 });
     
+
+
+
+
+
+
+
+
+
+$(document).ready(function() {        
+	$('#example').dataTable({        
+		"ajax" : 'data.txt',        
+		"columns": [        
+            { "data": "name", "visible": false},        
+            { "data": "position" },       
+            { "data": "office" },       
+            { "data": "extn" },       
+            { "data": "start_date" },      
+            { "data": "salary" }    
+		                    
+        ], 
+        "columnDefs": [ 
+            // 将Salary列变为红色
+            { "targets": [5], 
+            	// 目标列位置，下标从0开始 
+            	"data": "salary", 
+            	// 数据列名 
+            	"render": function(data, type, full) { 
+            		// 返回自定义内容 
+            		return "" + data + ""; 
+        		} 
+            }]    
+	});
+});
+
+
+
+
+
+
+
+
+
+

@@ -15,7 +15,7 @@ import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.DepartOrder;
 import models.DepartTransferOrder;
-import models.Fin_item;
+import models.FinItem;
 import models.InsuranceFinItem;
 import models.InsuranceOrder;
 import models.Location;
@@ -1135,9 +1135,9 @@ public class ReturnOrderController extends Controller {
 	// 应收
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_ADD_REVENUE})
 	public void addNewRow() {
-		List<Fin_item> items = new ArrayList<Fin_item>();
+		List<FinItem> items = new ArrayList<FinItem>();
 		String returnOrderId = getPara();
-		Fin_item item = Fin_item.dao
+		FinItem item = FinItem.dao
 				.findFirst("select * from fin_item where type = '应收' order by id asc");
 		if (item != null) {
 			ReturnOrderFinItem dFinItem = new ReturnOrderFinItem();
@@ -1267,7 +1267,7 @@ public class ReturnOrderController extends Controller {
     	java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
 		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select id from return_order where delivery_order_id = ?",deliveryOrder.get("id"));
-		Fin_item fi =  Fin_item.dao.findFirst("select * from fin_item where name = '保险费' and type = '应收'");
+		FinItem fi =  FinItem.dao.findFirst("select * from fin_item where name = '保险费' and type = '应收'");
 		/*Record record = Db.findFirst("select sum(amount * income_rate) as total_amount,(select sum(amount) from delivery_order_item where delivery_id = dor.id) delivery_number from delivery_order dor "
 				+ " left join transfer_order_item_detail toid on  dor.id = toid.delivery_id "
 				+ " left join insurance_fin_item ifi on ifi.transfer_order_item_id = toid.item_id where dor.id = ?",deliveryOrder.get("id"));
@@ -1309,7 +1309,7 @@ public class ReturnOrderController extends Controller {
     public void addInsuranceFin(TransferOrder transferOrder,DepartOrder derpartOrder,ReturnOrder returnOrder){
     	List<TransferOrderItem> transferOrderItemList = TransferOrderItem.dao.find("select id,amount from transfer_order_item where order_id = " + transferOrder.get("id"));
     	//查询应收条目中的保险费
-    	Fin_item finItem = Fin_item.dao.findFirst("select id from fin_item where type = '应收' and `name` = '保险费';");
+    	FinItem finItem = FinItem.dao.findFirst("select id from fin_item where type = '应收' and `name` = '保险费';");
     	for (int i = 0; i < transferOrderItemList.size(); i++) {
     		List<InsuranceFinItem> InsuranceFinItemList = InsuranceFinItem.dao.find("select * from insurance_fin_item where transfer_order_item_id = " + transferOrderItemList.get(i).get("id"));
     		for (int j = 0; j < InsuranceFinItemList.size(); j++) {

@@ -11,7 +11,7 @@ import java.util.Map;
 
 import models.DeliveryOrderMilestone;
 import models.DepartOrderFinItem;
-import models.Fin_item;
+import models.FinItem;
 import models.UserLogin;
 import models.yh.arap.ReimbursementOrder;
 import models.yh.arap.ReimbursementOrderFinItem;
@@ -257,10 +257,10 @@ public class CostReimbursementOrder extends Controller {
     }
 	//新增应付
     public void addNewRow() {
-        List<Fin_item> items = new ArrayList<Fin_item>();
+        List<FinItem> items = new ArrayList<FinItem>();
         String orderId = getPara();
-        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '报销' order by id asc");
-        Fin_item attribution = Fin_item.dao.findFirst("select * from fin_item where type = '报销分类' order by id asc");
+        FinItem item = FinItem.dao.findFirst("select * from fin_item where type = '报销' order by id asc");
+        FinItem attribution = FinItem.dao.findFirst("select * from fin_item where type = '报销分类' order by id asc");
         if(item != null){
         	ReimbursementOrderFinItem dFinItem = new ReimbursementOrderFinItem();
 	        dFinItem.set("fin_item_id", item.get("id"))

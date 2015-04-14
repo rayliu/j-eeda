@@ -13,7 +13,7 @@ import java.util.Map;
 import models.DepartOrder;
 import models.DepartOrderFinItem;
 import models.DepartTransferOrder;
-import models.Fin_item;
+import models.FinItem;
 import models.InventoryItem;
 import models.Party;
 import models.PickupOrderFinItem;
@@ -1713,9 +1713,9 @@ public class PickupOrderController extends Controller {
     // 添加应付
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_ADD_COST})
     public void addNewRow() {
-    	List<Fin_item> items = new ArrayList<Fin_item>();
+    	List<FinItem> items = new ArrayList<FinItem>();
         String pickupOrderId = getPara();
-        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
+        FinItem item = FinItem.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
         if(item != null){
 	        PickupOrderFinItem finItem = new PickupOrderFinItem();
 	        finItem.set("status", "新建").set("pickup_order_id", pickupOrderId).set("fin_item_id", item.get("id"));
@@ -1727,9 +1727,9 @@ public class PickupOrderController extends Controller {
     
     // 添加应收
     public void addIncomeRow() {
-    	List<Fin_item> items = new ArrayList<Fin_item>();
+    	List<FinItem> items = new ArrayList<FinItem>();
     	String pickupOrderId = getPara();
-    	Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应收' order by id asc");
+    	FinItem item = FinItem.dao.findFirst("select * from fin_item where type = '应收' order by id asc");
     	if(item != null){
     		//DepartOrderFinItem dFinItem = new DepartOrderFinItem();
     		PickupOrderFinItem pFinItem = new PickupOrderFinItem();
@@ -1765,7 +1765,7 @@ public class PickupOrderController extends Controller {
         String finItemId = getPara("finItemId");
         DepartOrderFinItem dFinItem = DepartOrderFinItem.dao.findById(id);
 
-        Fin_item fItem = Fin_item.dao.findById(dFinItem.get("fin_item_id"));
+        FinItem fItem = FinItem.dao.findById(dFinItem.get("fin_item_id"));
 
         String amount = getPara("amount");
 
@@ -1885,7 +1885,7 @@ public class PickupOrderController extends Controller {
         rec = Db.findFirst(amountSql);
         Double amount = rec.getDouble("amount");
         Double avg = amount / customer;
-        Fin_item finItem = Fin_item.dao.findFirst("select * from fin_item where name = '分摊费用' and type = '应收'");
+        FinItem finItem = FinItem.dao.findFirst("select * from fin_item where name = '分摊费用' and type = '应收'");
         for(int i=0;i<customer;i++){
         	PickupOrderFinItem departOrderFinItem = new PickupOrderFinItem();
         	departOrderFinItem.set("pickup_order_id", pickupOrderId);
@@ -1899,7 +1899,7 @@ public class PickupOrderController extends Controller {
     
     // 付费条目
     public void searchAllPayItem(){
-    	List<Fin_item> items = Fin_item.dao.find("select * from fin_item where type = '应付'");
+    	List<FinItem> items = FinItem.dao.find("select * from fin_item where type = '应付'");
     	renderJson(items);
     }
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_ADD_COST})

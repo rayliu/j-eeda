@@ -18,7 +18,7 @@ import java.util.Map;
 
 import models.DepartOrder;
 import models.DepartTransferOrder;
-import models.Fin_item;
+import models.FinItem;
 import models.Location;
 import models.Office;
 import models.Party;
@@ -1179,9 +1179,9 @@ public class TransferOrderController extends Controller {
 	
     // 应收
     public void addNewRow2() {
-        List<Fin_item> items = new ArrayList<Fin_item>();
+        List<FinItem> items = new ArrayList<FinItem>();
         String orderId = getPara();
-        Fin_item item = Fin_item.dao
+        FinItem item = FinItem.dao
                 .findFirst("select * from fin_item where type = '应收' order by id asc");
         if (item != null) {
             TransferOrderFinItem dFinItem = new TransferOrderFinItem();
@@ -1193,9 +1193,9 @@ public class TransferOrderController extends Controller {
         renderJson(items);
     }
     public void addNewRow() {
-        List<Fin_item> items = new ArrayList<Fin_item>();
+        List<FinItem> items = new ArrayList<FinItem>();
         String orderId = getPara();
-        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
+        FinItem item = FinItem.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
         if (item != null) {
             TransferOrderFinItem dFinItem = new TransferOrderFinItem();
             dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
@@ -1212,7 +1212,7 @@ public class TransferOrderController extends Controller {
 		String finItemId = getPara("finItemId");
 		TransferOrderFinItem dFinItem = TransferOrderFinItem.dao.findById(id);
 
-		Fin_item fItem = Fin_item.dao.findById(dFinItem.get("fin_item_id"));
+		FinItem fItem = FinItem.dao.findById(dFinItem.get("fin_item_id"));
 
 		String amount = getPara("amount");
 
@@ -1233,7 +1233,7 @@ public class TransferOrderController extends Controller {
 		List<Record> list = Db.find("select * from fin_item");
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).get("name") == null) {
-				Fin_item.dao.deleteById(list.get(i).get("id"));
+				FinItem.dao.deleteById(list.get(i).get("id"));
 				List<Record> list2 = Db
 						.find("select * from transfer_order_fin_item where fin_item_id ='"
 								+ list.get(i).get("id") + "'");
@@ -1251,7 +1251,7 @@ public class TransferOrderController extends Controller {
 						+ dFinItem.get("order_id") + "'");
 		if (list2.size() > 0) {
 			for (int i = 0; i < list2.size(); i++) {
-				Fin_item fin_item = Fin_item.dao.findById(list2.get(i).get(
+				FinItem fin_item = FinItem.dao.findById(list2.get(i).get(
 						"fin_item_id"));
 				if (fin_item == null) {
 					TransferOrderFinItem.dao.deleteById(list2.get(i).get("id"));

@@ -30,7 +30,7 @@ import models.DepartOrder;
 import models.DepartOrderFinItem;
 import models.DepartPickupOrder;
 import models.DepartTransferOrder;
-import models.Fin_item;
+import models.FinItem;
 import models.InsuranceFinItem;
 import models.InsuranceOrder;
 import models.InventoryItem;
@@ -376,7 +376,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("warehouse_order_item", WarehouseOrderItem.class);
         arp.addMapping("inventory_item", InventoryItem.class);
         arp.addMapping("carinfo", Carinfo.class);
-        arp.addMapping("fin_item", Fin_item.class);
+        arp.addMapping("fin_item", FinItem.class);
         arp.addMapping("delivery_order_fin_item", DeliveryOrderFinItem.class);
         arp.addMapping("transfer_order_fin_item", TransferOrderFinItem.class);
         arp.addMapping("depart_order_fin_item", DepartOrderFinItem.class);//提货拼车单、发车单的应付表

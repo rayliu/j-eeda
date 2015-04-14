@@ -4,10 +4,12 @@ import interceptor.SetAttrLoginUserInterceptor;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
+import models.FinItem;
 import models.Party;
 
 import org.apache.log4j.Logger;
@@ -425,9 +427,11 @@ public class StatusReportColler extends Controller{
 		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
-		
+		//List<FinItem> payName = FinItem.dao.find("select name,code from fin_item where type = '应付';");
+		//List<FinItem> incomeName = FinItem.dao.find("select name,code from fin_item where type = '应收';");
 		if(beginTime != null && !"".equals(beginTime) && endTime != null && !"".equals(endTime)){
 			if("ATM".equals(cargoType)){
+				
 				// 获取总条数
 				String totalSql = "select count(0) total from transfer_order_item_detail toid"
 						+ " left join transfer_order tor on tor.id = toid.order_id"
@@ -448,6 +452,16 @@ public class StatusReportColler extends Controller{
 						+ " when (select status from depart_order where id = toid.pickup_id) != '新建' then '已入货场'when (select status from depart_order where id = toid.pickup_id) = '新建' then '新建提货' else '新建运输' end) as status,"
 						+ " (select case when tor.order_type = 'salesOrder' then '销售订单' when tor.order_type = 'cargoReturnOrder' then '退货订单' when tor.order_type = 'movesOrder' then '移机订单'  end ) as order_type,"
 						+ " (select datediff(ifnull((select create_stamp from delivery_order_milestone where delivery_id = toid.delivery_id and status = '已发车'),curdate()),(select create_stamp from transfer_order_milestone where depart_id = toid.depart_id and type = 'DEPARTORDERMILESTONE' and status = '已发车'))) as warehousenumber,"
+						
+				/*for (FinItem finItem : payName) {
+					sql += " ((select ifnull(sum(d.amount),0) / (select sum(amount) from transfer_order_item where order_id = toid.order_id) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.order_id and f.type = '应付' and f.name = '" + finItem.get("name") + "') + "
+							+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) end) from pickup_order_fin_item d "
+							+ " left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id = toid.pickup_id and f.type = '应付' and f.name = '" + finItem.get("name") + "') +"
+							+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) end) from depart_order_fin_item d "
+							+ " left join fin_item f on d.fin_item_id = f.id where d.depart_order_id = toid.depart_id and f.type = '应付' and f.name = '" + finItem.get("name") + "') +"
+							+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from  delivery_order_fin_item d "
+							+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.delivery_id  and f.type = '应付' and f.name = '" + finItem.get("name") + "')) as pay" + finItem.get("code") + ",";
+				}*/
 						//应付-成本
 						+ " ((select ifnull(sum(d.amount),0) / (select sum(amount) from transfer_order_item where order_id = toid.order_id) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.order_id and f.type = '应付' and f.name = '提货费') + "
 						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) end) from pickup_order_fin_item d "
@@ -520,6 +534,12 @@ public class StatusReportColler extends Controller{
 						+ " left join fin_item f on d.fin_item_id = f.id where d.depart_order_id = toid.depart_id and f.type = '应付' and f.name = '其他费用') +"
 						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from  delivery_order_fin_item d "
 						+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.delivery_id  and f.type = '应付' and f.name = '其他费用')) as payqita,"
+						
+				
+				/*for (FinItem finItem : incomeName) {
+					sql += " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from return_order_fin_item d "
+							+ " left join fin_item f on d.fin_item_id = f.id where d.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '" + finItem.get("name") + "') as income" + finItem.get("code") + ",";
+				}*/
 						//应收-收入
 						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from return_order_fin_item d "
 						+ " left join fin_item f on d.fin_item_id = f.id where d.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '提货费') as incometihuo,"
@@ -537,6 +557,7 @@ public class StatusReportColler extends Controller{
 						+ " left join fin_item f on d.fin_item_id = f.id where d.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '暂存费') as incomezancun,"
 						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from return_order_fin_item d "
 						+ " left join fin_item f on d.fin_item_id = f.id where d.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '其它费用') as incomeqita,"
+						
 						//运作毛利
 						+ " ((select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from return_order_fin_item d "
 						+ " left join fin_item f on d.fin_item_id = f.id where d.delivery_order_id = toid.delivery_id  and f.type = '应收') - "
@@ -567,9 +588,22 @@ public class StatusReportColler extends Controller{
 				logger.debug("total records:" + rec.getLong("total"));
 				// 获取当前页的数据
 				List<Record> orders =Db.find(sql + sLimit);
+				
+				
+				StringBuffer resultData = new StringBuffer();
+				resultData.append("[");
+				for (Record record : orders) {
+					resultData.append(record.toJson()+",");
+				}
+				resultData.delete(resultData.length()-1, resultData.length());
+				resultData.append("]");
+				System.out.println("data:"+resultData.toString());
+				
+				
 				orderMap.put("sEcho", pageIndex);
 				orderMap.put("iTotalRecords", rec.getLong("total"));
 				orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+				//orderMap.put("aaData", resultData.toString());
 				orderMap.put("aaData", orders);
 			}else{
 				
@@ -582,9 +616,19 @@ public class StatusReportColler extends Controller{
 						+ " and tor.cargo_nature_detail = 'cargoNatureDetailNo'"
 						+ " and tor.cargo_nature = 'cargo'";
 				
+				
+				
 				String sql = "select c.abbr,(select '') deliveryno,tor.order_no transferno,(select '') serial_no,tor.status,tor.planning_time,l1.name route_from,l2.name route_to,(select '') warehousenumber,(select '') pieces,"
 						+ " (select case when tor.order_type = 'salesOrder' then '销售订单' when tor.order_type = 'cargoReturnOrder' then '退货订单' when tor.order_type = 'movesOrder' then '移机订单'  end ) as order_type,"
 						+ " (select round(sum(ifnull(sum_weight,0)),2) from transfer_order_item where order_id = tor.id) weight,(select round(sum(ifnull(volume,0)),2) from transfer_order_item where order_id = tor.id) volume,"
+						
+						
+				/*for (FinItem finItem : payName) {
+					sql += " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付' and f.name = '" + finItem.get("name") + "') + "
+							+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付' and f.name = '" + finItem.get("name") + "') +"
+							+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付' and f.name = '" + finItem.get("name") + "') +"
+							+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付' and f.name = '" + finItem.get("name") + "')) as pay" + finItem.get("code") + ",";
+				}*/
 						//成本-应付
 						+ " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付' and f.name = '提货费') + "
 						+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付' and f.name = '提货费') +"
@@ -626,6 +670,10 @@ public class StatusReportColler extends Controller{
 						+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付' and f.name = '其他费用') +"
 						+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付' and f.name = '其他费用') +"
 						+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付' and f.name = '暂存费')) as payqita,"
+						
+				/*for (FinItem finItem : incomeName) {
+					sql += " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '" + finItem.get("name") + "') as income" + finItem.get("code") + ",";
+				}*/
 						//应收
 						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '提货费') as incometihuo,"
 						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '运输费') as incomeyunshu,"
@@ -635,6 +683,7 @@ public class StatusReportColler extends Controller{
 						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '安装费') as incomeanzhuang,"
 						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '暂存费') as incomezancun,"
 						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '其他费用') as incomeqita,"
+						
 						//运作毛利
 						+ " ((select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收') -"
 						+ " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付') + "
@@ -657,6 +706,7 @@ public class StatusReportColler extends Controller{
 				logger.debug("total records:" + rec.getLong("total"));
 				// 获取当前页的数据
 				List<Record> orders =Db.find(sql + sLimit);
+				
 				orderMap.put("sEcho", pageIndex);
 				orderMap.put("iTotalRecords", rec.getLong("total"));
 				orderMap.put("iTotalDisplayRecords", rec.getLong("total"));

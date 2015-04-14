@@ -11,7 +11,7 @@ import java.util.Map;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
-import models.Fin_item;
+import models.FinItem;
 import models.InventoryItem;
 import models.ReturnOrder;
 import models.TransferOrder;
@@ -626,9 +626,9 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_ADD_COST})
     public void addNewRow() {
-        List<Fin_item> items = new ArrayList<Fin_item>();
+        List<FinItem> items = new ArrayList<FinItem>();
         String orderId = getPara();
-        Fin_item item = Fin_item.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
+        FinItem item = FinItem.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
         if(item != null){
         	DeliveryOrderFinItem dFinItem = new DeliveryOrderFinItem();
 	        dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
@@ -662,7 +662,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         List<Record> list = Db.find("select * from fin_item");
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
-                Fin_item.dao.deleteById(list.get(i).get("id"));
+                FinItem.dao.deleteById(list.get(i).get("id"));
             }
         }
         renderText(returnValue);

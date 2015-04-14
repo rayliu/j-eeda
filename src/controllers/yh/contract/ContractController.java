@@ -11,7 +11,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import models.Fin_item;
+import models.FinItem;
 import models.Location;
 import models.Office;
 import models.UserOffice;
@@ -382,21 +382,21 @@ public class ContractController extends Controller {
         if (url.equals("/customerContract/add")) {
             setAttr("contractType", "CUSTOMER");
             setAttr("saveOK", false);
-            List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应收'");
+            List<FinItem> finItemList = FinItem.dao.find("select * from fin_item where type='应收'");
             setAttr("finItemList", finItemList);
                 render("/yh/contract/ContractEdit.html");
         }
         if (url.equals("/deliverySpContract/add")) {
             setAttr("contractType", "DELIVERY_SERVICE_PROVIDER");
             setAttr("saveOK", false);
-            List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
+            List<FinItem> finItemList = FinItem.dao.find("select * from fin_item where type='应付'");
             setAttr("finItemList", finItemList);
                 render("/yh/contract/ContractEdit.html");
         }
         if (url.equals("/spContract/add")) {
             setAttr("contractType", "SERVICE_PROVIDER");
             setAttr("saveOK", false);
-            List<Fin_item> finItemList = Fin_item.dao.find("select * from fin_item where type='应付'");
+            List<FinItem> finItemList = FinItem.dao.find("select * from fin_item where type='应付'");
             setAttr("finItemList", finItemList);
                 render("/yh/contract/ContractEdit.html");
         }
@@ -414,12 +414,12 @@ public class ContractController extends Controller {
             setAttr("c", contact);
             setAttr("ul", contract);
             String contract_type = contract.get("type");
-            List<Fin_item> finItemList = null;
+            List<FinItem> finItemList = null;
             String fin_type="应付";
             if("CUSTOMER".equals(contract_type)){
             	fin_type = "应收";
             }
-            finItemList = Fin_item.dao.find("select * from fin_item where type='" + fin_type + "'");
+            finItemList = FinItem.dao.find("select * from fin_item where type='" + fin_type + "'");
             setAttr("finItemList", finItemList);
         }
             render("/yh/contract/ContractEdit.html");

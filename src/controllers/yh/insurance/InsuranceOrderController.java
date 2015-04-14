@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
-import models.Fin_item;
+import models.FinItem;
 import models.InsuranceFinItem;
 import models.InsuranceOrder;
 import models.Party;
@@ -446,7 +446,7 @@ public class InsuranceOrderController extends Controller {
     		
     		String orderId = getPara("orderid");
     		String[] orderIds = orderId.split(",");
-    		Fin_item finItem = Fin_item.dao.findFirst("select id from fin_item where type = ? and name = ?", "应付", "保险费");
+    		FinItem finItem = FinItem.dao.findFirst("select id from fin_item where type = ? and name = ?", "应付", "保险费");
     		for(int i = 0; i < orderIds.length; i++){
     			TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
     			transferOrder.set("insurance_id", insuranceOrder.get("id"));
