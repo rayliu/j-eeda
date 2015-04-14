@@ -22,8 +22,8 @@ $(document).ready(function() {
 	            {"mDataProp":"LOCK_AMOUNT","sWidth":"40px"},
 	            {"mDataProp":"TOTAL_QUANTITY", "sWidth":"80px"},
 	            {"mDataProp":"UNIT", "sWidth":"30px"},
-	            {"mDataProp":"WAREHOUSE_NAME", "sWidth":"120px"},
-	            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"}
+	            {"mDataProp":"WAREHOUSE_NAME",'bVisible':false,"sWidth":"120px"},
+	            {"mDataProp":"OFFICE_NAME",'bVisible':false,"sWidth":"100px"}
 	           ]
 	} );
 	
@@ -35,7 +35,7 @@ $(document).ready(function() {
 		var officeId = $("#hiddenOfficeId").val();
 		var customerId = $("#hiddenCustomerId").val();
 		if(officeId != "" || customerId != ""){
-			$.get('/gateIn/findWarehouseById',{"warehouseName":warehouseName,"officeId":officeId}, function(data){
+			$.get('/gateIn/findWarehouseById',{"warehouseName":warehouseName,"officeId":officeId,"customerId":customerId}, function(data){
 				var warehouseList =$("#warehouseList");
 				warehouseList.empty();
 				if(data.length > 1){
@@ -53,12 +53,7 @@ $(document).ready(function() {
 	    	top:$(this).position().top+32+"px" 
 	    }); 
 	    $('#warehouseList').show();
-	    
-	   /* var customerId = $("#hiddenCustomerId").val();
-		var warehouseId = $("#warehouseId").val();
-		var offeceId = $("#hiddenOfficeId").val();
-	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
-		tab.fnDraw();*/
+
 	});
 	$('#warehouseSelect').on('blur', function(){
 		$("#warehouseList").hide();
@@ -78,13 +73,7 @@ $(document).ready(function() {
 		$('#warehouseSelect').val($(this).text());
 		$("#warehouseId").val(id);
 		$('#warehouseList').hide();
-		/*tab.fnSettings().sAjaxSource ="/stock/stocklist/"+id;
-		tab.fnDraw();*/
-		
-		/*var customerId = $("#hiddenCustomerId").val();
-		var offeceId = $("#hiddenOfficeId").val();
-		tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+id+"&offeceId="+offeceId;
-		tab.fnDraw();*/
+	
 		
 	});
 	
@@ -94,6 +83,8 @@ $(document).ready(function() {
 			$("#hiddenOfficeId").val("");
 			if($("#hiddenCustomerId").val() == ""){
 				$("#warehouseList").empty();
+				$("#warehouseId").val("");
+				$('#warehouseSelect').val("");
 			};
 			
 		}
@@ -102,6 +93,10 @@ $(document).ready(function() {
 			
 			var officeList =$("#officeList");
 			officeList.empty();
+			var customerId = $("#hiddenCustomerId").val();
+			if(customerId != null && customerId != "" && data.length>1){
+				officeList.append("<li><a tabindex='-1' class='fromLocationItem'  code='all'>所有网点</a></li>");
+			}
 			for(var i = 0; i < data.length; i++)
 			{
 				officeList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</a></li>");
@@ -121,10 +116,14 @@ $(document).ready(function() {
 		$('#officeList').hide();
 		$("#hiddenOfficeId").val(id);
 		
-		/*var customerId = $("#hiddenCustomerId").val();
-		var warehouseId = $("#warehouseId").val();
-	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+id;
-		tab.fnDraw();*/
+		
+		 var warehouseId = $("#warehouseId").val();
+		 
+		 if(warehouseId == ""){
+			 $("#warehouseSelect").val("所有仓库");
+			 $("#warehouseId").val("all");
+		 }
+		
 	});
 	$('#officeSelect').on('blur', function(){
 		$("#officeList").hide();
@@ -143,6 +142,12 @@ $(document).ready(function() {
 			$("#hiddenCustomerId").val("");
 			if($("#hiddenOfficeId").val() == ""){
 				$("#warehouseList").empty();
+				$("#warehouseId").val("");
+				$('#warehouseSelect').val("");
+				//清空产品型号
+				$("#itemList").empty();
+				$("#hiddenItemId").val("");
+				$('#ItemMessage').val("");
 			}
 		}	
 		$.get('/customerContract/searcCustomer', {locationName:$('#customerMessage').val()}, function(data){
@@ -170,12 +175,7 @@ $(document).ready(function() {
         	top:$(this).position().top+32+"px" 
         }); 
         $('#customerList').show();
-        
-       /* var customerId = $("#hiddenCustomerId").val();
-		var warehouseId = $("#warehouseId").val();
-		var offeceId = $("#hiddenOfficeId").val();
-	    tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
-		tab.fnDraw();*/
+
 	});
 
  	// 没选中客户，焦点离开，隐藏列表
@@ -198,18 +198,89 @@ $(document).ready(function() {
 		$('#customerMessage').val(message.substring(0, message.indexOf(" ")));
 		$("#hiddenCustomerId").val($(this).attr('partyId'));
 		$('#customerList').hide();
-		/*var customerId = $(this).attr('partyId');
-		var warehouseId = $("#warehouseId").val();
-		var offeceId = $("#hiddenOfficeId").val();
-		tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
-		tab.fnDraw();*/
+		
+		
+		 var warehouseId = $("#warehouseId").val();
+		 var officeId = $("#hiddenOfficeId").val();
+		 if(officeId == ""){
+			 $("#officeSelect").val("所有网点");
+			 $("#hiddenOfficeId").val("all");
+		 }
+		 if(warehouseId == ""){
+			 $("#warehouseSelect").val("所有仓库");
+			 $("#warehouseId").val("all");
+		 }
+		
+		
+
     }); 
 	$("#queryBtn").click(function(){
 		 var customerId = $("#hiddenCustomerId").val();
 		 var warehouseId = $("#warehouseId").val();
-		 var offeceId = $("#hiddenOfficeId").val();
-	     tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId+"&warehouseId="+warehouseId+"&offeceId="+offeceId;
+		 var officeId = $("#hiddenOfficeId").val();
+		 var itemId = $("#hiddenItemId").val();
+		 
+
+		 if(warehouseId == ""){
+			 tab.fnSetColumnVis( 8, false);
+		 }else{
+			 tab.fnSetColumnVis( 8, true);
+		 }
+		 if(officeId == ""){
+			 tab.fnSetColumnVis( 9, false);
+		 }else{
+			 tab.fnSetColumnVis( 9, true);
+		 }
+		 
+	     tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId
+	     					+"&warehouseId="+warehouseId+"&officeId="+officeId
+	     					+"&itemId="+itemId;
 		 tab.fnDraw();
+		
+	});
+	// 获取产品型号
+	$('#ItemMessage').on('keyup click', function(){
+		if($('#ItemMessage').val() == "" || $('#ItemMessage').val() == null){
+			$("#hiddenItemId").val("");
+		}
+		 var customerId = $("#hiddenCustomerId").val();
+		 var itemNo = $('#ItemMessage').val();
+		 if(customerId != null && customerId != ""){
+			 $.get('/gateIn/searchItem',{"customerId":customerId,"itemNo":itemNo}, function(data){
+					
+					var itemList =$("#itemList");
+					itemList.empty();
+					for(var i = 0; i < data.length; i++)
+					{
+						itemList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].ITEM_NO+"</a></li>");
+					}
+				},'json');
+		 }
+		
+		$("#itemList").css({ 
+	    	left:$(this).position().left+"px", 
+	    	top:$(this).position().top+32+"px" 
+	    }); 
+	    $('#itemList').show();
+	});
+	
+	// 
+	$('#itemList').on('mousedown', '.fromLocationItem', function(e){
+		var id =$(this).attr('code');
+		$('#ItemMessage').val($(this).text());
+		$('#itemList').hide();
+		$("#hiddenItemId").val(id);
+		
+	});
+	$('#ItemMessage').on('blur', function(){
+		$("#itemList").hide();
+	});
+	$('#itemList').on('blur', function(){
+		$('#itemList').hide();
+	});
+
+	$('#itemList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
 	});
 
 });

@@ -50,6 +50,7 @@ public class InventoryController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
     public void stockIndex(){
+    	/*setAttr("disabledValue","");*/
         render("/yh/inventory/stock.html");
     }
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTLIST})
@@ -122,8 +123,10 @@ public class InventoryController extends Controller {
     public void stocklist() {
         String customerId = getPara("customerId");
         String warehouseId = getPara("warehouseId");
-        String officeId = getPara("offeceId");
-        logger.debug("customerId:"+customerId+",warehouseId:"+warehouseId);
+        String officeId = getPara("officeId");
+        String itemId = getPara("itemId");
+        String itemName = getPara("itemName");
+        
         if ((customerId == null && warehouseId == null && officeId == null) || ( "".equals(customerId) && "".equals(warehouseId) && "".equals(officeId))) {
             Map orderMap = new HashMap();
             orderMap.put("sEcho", 0);
@@ -139,70 +142,100 @@ public class InventoryController extends Controller {
             sLimit = " limit " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         
-       /* String sql = "select sum(total_quantity) total_quantity, company_name, item_name, item_no, unit, warehouse_name, office_name  from ("
-        		+ "select i_t.total_quantity, c.company_name, p.item_name, p.item_no, p.unit,  "
-        		+ "(select warehouse_name from warehouse where id = i_t.warehouse_id) warehouse_name, "
-        		+ "(select office_name from office o left join warehouse w on o.id = w.office_id where w.id = i_t.warehouse_id) office_name "
-        		+ " from inventory_item i_t  left join product p on  p.id =i_t.product_id  left join party p2 on i_t.party_id =p2.id  "
-        		+ "left join contact c on p2.contact_id = c.id  left join warehouse w on w.id = i_t.warehouse_id "
-        		+ "left join office o on o.id = w.office_id  where 1=1 ";*/
-
-        String sql ="select sum(total_quantity) total_quantity, oid, wid, party_id,company_name, item_name, item_no, unit, warehouse_name, office_name,predict_amount,lock_amount,valid_amount"
-					+" from (select i_t.total_quantity,o.id as oid,w.id as wid,p2.id as party_id, c.company_name, p.item_name, p.item_no, p.unit,  "
+       
+       String warehouseCondition = ""; 
+       /*String officeCondition = "";*/
+       String customerCondition = "";
+       String warehousePredict = "";
+       String warehouseLocal = "";
+       String customerLocal = "";
+       if("all".equalsIgnoreCase(officeId)){
+    	   officeId = "";
+       }
+       if("all".equalsIgnoreCase(warehouseId)){
+   			warehouseId = "";
+   		}
+       if(warehouseId != null && !"".equals(warehouseId) || "all".equalsIgnoreCase(warehouseId)){
+    	   warehouseCondition = " and tor.warehouse_id = i_t.warehouse_id ";
+    	   warehousePredict = " and t_o.warehouse_id=i_t.warehouse_id ";
+    	   warehouseLocal = " and d_o.from_warehouse_id=i_t.warehouse_id";
+       }
+      
+       if((customerId != null) && !"".equals(customerId)){
+    	   customerCondition = " and tor.customer_id = i_t.party_id ";
+    	   customerLocal = "and d_o.customer_id = i_t.party_id";
+       }
+        
+        
+        String sql ="select sum(total_quantity) total_quantity, oid, wid, party_id,company_name, item_name, item_no, unit,pid, warehouse_name, office_name,predict_amount,lock_amount,valid_amount"
+					+" from (select i_t.total_quantity,o.id as oid,w.id as wid,p2.id as party_id, c.company_name, p.item_name, p.item_no, p.unit, p.id as pid, "
 					+" (select warehouse_name from warehouse where id = i_t.warehouse_id) warehouse_name, "
 					+" (select office_name from office o left join warehouse w on o.id = w.office_id where w.id = i_t.warehouse_id) office_name,"
 					+" (select count(1) from depart_order d_o left join transfer_order_item_detail toid on toid.depart_id = d_o.id"
 					+" left join transfer_order_item toi on toi.id = toid.item_id"
 					+" left join transfer_order t_o on toid.order_id = t_o.id where"
-					+" d_o.status='已发车' and t_o.warehouse_id=i_t.warehouse_id"
+					+" d_o.status='已发车' " + warehousePredict
 					+" and toi.product_id = i_t.product_id) predict_amount,"
 					+" (select count(1) from delivery_order_item doi"
 					+" left join delivery_order d_o on doi.delivery_id = d_o.id"
 					+" left join transfer_order_item_detail toid on doi.transfer_item_detail_id = toid.id" 
 					+" left join transfer_order_item toi on toi.id = toid.item_id"
-					+" where d_o.status='新建' and d_o.from_warehouse_id=i_t.warehouse_id"
-					+" and toi.product_id = i_t.product_id and d_o.customer_id = i_t.party_id) lock_amount,"
+					+" where d_o.status='新建' " + warehouseLocal
+					+" and toi.product_id = i_t.product_id " + customerLocal + ") lock_amount,"
 					+" (select count(toid.id) as valid_amount from transfer_order tor"
 					+" left join transfer_order_item_detail toid on toid.order_id = tor.id "
 					+" left join transfer_order_item toi on toi.id = toid.item_id "
-					+" where toi.product_id = i_t.product_id and tor.customer_id = i_t.party_id "
-					+" and toid.delivery_id is null and tor.warehouse_id = i_t.warehouse_id) valid_amount"
+					+" where toi.product_id = i_t.product_id " + customerCondition
+					+" and toid.delivery_id is null and toid.depart_id is not null  and toid.status ='已入库' " + warehouseCondition + ") valid_amount"
 					+" from inventory_item i_t " 
-					+" left join product p on  p.id =i_t.product_id  "
+					+" left join product p on  p.id =i_t.product_id "
 					+" left join party p2 on i_t.party_id =p2.id "
-					+" left join contact c on p2.contact_id = c.id  "
+					+" left join contact c on p2.contact_id = c.id "
 					+" left join warehouse w on w.id = i_t.warehouse_id "
 					+" left join office o on o.id = w.office_id"
 					+" union"
-					+" select 0 as total_quantity,o.id as oid,w.id as wid,p2.id as party_id, c.company_name, p.item_name, p.item_no, p.unit,  "
+					+" select 0 as total_quantity,o.id as oid,w.id as wid,p2.id as party_id, c.company_name, p.item_name, p.item_no, p.unit,p.id as pid,  "
 					+" (select warehouse_name from warehouse where id = i_t.warehouse_id) warehouse_name, "
 					+" (select office_name from office o left join warehouse w on o.id = w.office_id where w.id = i_t.warehouse_id) office_name,"
 					+" (select count(1) from depart_order d_o left join transfer_order_item_detail toid on toid.depart_id = d_o.id"
-					+"  left join transfer_order_item toi on toi.id = toid.item_id"
-					+" 	left join transfer_order t_o on toid.order_id = t_o.id where"
-					+" 	d_o.status='已发车' and t_o.warehouse_id=i_t.warehouse_id"
-					+"  and toi.product_id = p.id) predict_amount,"
-					+" 	0 lock_amount,0 valid_amount from inventory_item i_t "
-					+" 	left join transfer_order tor on tor.warehouse_id = i_t.warehouse_id "
-					+" 	left join transfer_order_item_detail toid on toid.order_id = tor.id"
-					+" 	left join transfer_order_item toi on toi.order_id = tor.id"
-					+" 	left join product p on p.id = toi.product_id "
-					+" 	left join party p2 on tor.customer_id =p2.id "
-					+" 	left join contact c on p2.contact_id = c.id  "
-					+" 	left join warehouse w on w.id = i_t.warehouse_id "
-					+" 	left join office o on o.id = w.office_id where  i_t.product_id != p.id ) as A where 1=1 ";
+					+" left join transfer_order_item toi on toi.id = toid.item_id"
+					+" left join transfer_order t_o on toid.order_id = t_o.id where"
+					+" d_o.status='已发车' " + warehouseCondition
+					+" and toi.product_id = p.id) predict_amount,"
+					+" 0 lock_amount,0 valid_amount from inventory_item i_t "
+					+" left join transfer_order tor on tor.warehouse_id = i_t.warehouse_id "
+					+" left join transfer_order_item_detail toid on toid.order_id = tor.id"
+					+" left join transfer_order_item toi on toi.order_id = tor.id"
+					+" left join product p on p.id = toi.product_id "
+					+" left join party p2 on tor.customer_id =p2.id "
+					+" left join contact c on p2.contact_id = c.id  "
+					+" left join warehouse w on w.id = i_t.warehouse_id "
+					+" left join office o on o.id = w.office_id where  i_t.product_id != p.id ) as A where 1=1 ";
+       
+        String groupSql = " group by item_name, item_no, unit";
+        String groupCondition = "";
+        
 	    if((customerId != null) && !"".equals(customerId)){
 	    	sql = sql + " and party_id =" + customerId ;
+	    	
+	    	groupCondition = groupCondition + ",company_name";
 	    }
         if(warehouseId != null && !"".equals(warehouseId)){
+        	
         	sql = sql + " and wid =" + warehouseId ;
+        	
+        	groupCondition = groupCondition + ",warehouse_name";
         }
         
         if((officeId != null) && !"".equals(officeId)){
         	sql = sql + " and oid =" + officeId ;
+        	groupCondition = groupCondition + ",office_name";
         }
         
-        String groupSql = "  group by company_name, item_name, item_no, unit, warehouse_name, office_name ";
+        if(itemId != null && !"".equals(itemId)){
+        	sql = sql + " and pid =" + itemId;
+        	/*groupCondition = groupCondition + ",pid";*/
+        }
         
         String sqlTotal = "select count(1) total from (" + sql + groupSql + ") as B";// 获取总条数
         
@@ -782,7 +815,9 @@ public class InventoryController extends Controller {
     	if(parentID == null || "".equals(parentID)){
     		parentID = parentOffice.getLong("id");
     	}
-    	
+    	if("所有网点".equalsIgnoreCase(officeName)){
+    		officeName = "";
+    	}
     	if(officeName != null && !"".equals(officeName)){
     		sql = "select * from office where office_name like '%"+officeName+"%'and (id = " + parentID + " or belong_office = " + parentID +")";
     	}else{
@@ -804,7 +839,7 @@ public class InventoryController extends Controller {
     }
     // 按网点查找仓库
     public void findWarehouseById() {
-    	
+    	//获取当前用户的总公司
     	String userName = currentUser.getPrincipal().toString();
     	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
     	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
@@ -812,15 +847,40 @@ public class InventoryController extends Controller {
     	if(parentID == null || "".equals(parentID)){
     		parentID = parentOffice.getLong("id");
     	}
+    	
+    	
     	String warehouseName = getPara("warehouseName");
     	String officeId = getPara("officeId");
+    	String customerId = getPara("customerId");
+    	/*判断当前的officeId 是否是ALL*/
+    	if("all".equalsIgnoreCase(officeId)){
+    		officeId = "";
+    	}
+    	/*判断当前文本是否是所有仓库*/
+    	if("所有仓库".equalsIgnoreCase(warehouseName)){
+    		warehouseName = "";
+    	}
     	String sql ="";
-    	if(officeId != null && !"".equals(officeId)){
+    	
+    	/*if(officeId != null && !"".equals(officeId)){
     		sql = "select * from warehouse where office_id = " + officeId;
-    	}else if(warehouseName != null && !"".equals(warehouseName)){
+    	}else if(customerId != null && !"".equals(customerId)){
+    		sql = "select distinct w.* from inventory_item ii left join warehouse w on ii.warehouse_id = w.id left join office o on o.id = w.office_id left join party p on p.id =ii.party_id where (o.id = " + parentID + " or o.belong_office = " + parentID +") and p.id = "+customerId;
+    	}
+    	
+    	*/
+    	
+    	/*else if(warehouseName != null && !"".equals(warehouseName)){
     		sql = "select w.* from warehouse w left join office o on o.id = w.office_id where w.warehouse_name like '%"+warehouseName+"%' and (o.id = " + parentID + " or o.belong_office = " + parentID +")";
+    	}*/
+    	if(officeId != null && !"".equals(officeId)){
+    		sql = "select w.* from warehouse w where w.office_id = " + officeId;
     	}else{
-    		sql = "select w.* from warehouse w left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID +")";
+    		sql = "select w.* from warehouse w left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID +") ";
+    	}
+    	
+    	if(warehouseName != null && !"".equals(warehouseName)){
+    		sql = sql + " and w.warehouse_name like '%"+warehouseName+"%'";
     	}
         List<Warehouse> warehouses = Warehouse.dao.find(sql);
         renderJson(warehouses);
@@ -834,8 +894,22 @@ public class InventoryController extends Controller {
     		Record record = Db.findFirst("select *,p.id as pid,c.id as cid from party p left join contact c on p.contact_id = c.id where p.id = ?",list.get(0).get("customer_id"));
     		setAttr("customer", record);
     	}
-    	
+    	/*setAttr("disabledValue","disabled");*/
     	render("/yh/inventory/stock.html");
+    	
+    }
+    public void searchItem(){
+    	String customerId = getPara("customerId");
+    	String itemNo = getPara("itemNo");
+    	String sql = "select p.* from category c left join product p on p.category_id = c.id where p.item_no is not null and customer_id = " + customerId;
+    	if(itemNo != null && !"".equals(itemNo)){
+    		sql = sql + " and p.item_no like '%" + itemNo + "%'"; 
+    	}
+    	
+    	
+    	List<Product> list = Product.dao.find(sql); 
+    	
+    	renderJson(list);
     	
     }
 }
