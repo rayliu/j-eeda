@@ -247,10 +247,10 @@ public class ChargeMiscOrderController extends Controller {
 					+ " left join fin_item fi on amcoi.fin_item_id = fi.id"
 					+ " where amco.id = "+ chargeMiscOrderId +" " + sLimit);
 
-		orderMap.put("sEcho", pageIndex);
+		/*orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
 		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-		orderMap.put("aaData", orders);
+		orderMap.put("aaData", orders);*/
 
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
