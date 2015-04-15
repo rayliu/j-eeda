@@ -182,7 +182,7 @@
     });
 	
 	// 获取所有公司
-    $.post('/carinfo/searchAllOffice',function(data){
+    $.post('/carinfo/searchOfficebyUser',function(data){
 		 if(data.length > 0){
 			 var officeSelect = $("#officeSelect");
 			 officeSelect.empty();
