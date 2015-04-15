@@ -46,93 +46,93 @@ $(document).ready(function() {
 	var dab2= $('#eeda-table2').dataTable({
 		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "iDisplayLength": 10,
-        "bAutoWidth":false,
-        "bServerSide": true,
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+    	"iDisplayLength": 10,
+    	"bServerSide": false,
+    	"bLengthChange":true,
     	"oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
-        },
+    		"sUrl": "/eeda/dataTables.ch.txt"
+    	},
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr('id', aData.TID);
 			return nRow;
 		},
         "sAjaxSource": "/delivery/searchTransfer",
         "aoColumns": [ 
-        			{ "mDataProp": null,
-					    "fnRender": function(obj) {
-					    	if(obj.aData.COMPLETE_AMOUNT == obj.aData.AMOUNT){
-					    		return "";
-					    	}else if((obj.aData.COMPLETE_AMOUNT + obj.aData.QUANTITY) == obj.aData.AMOUNT){
-					    		return "";
-					    	}else{
-					    		return '<input type="checkbox" class="checkedOrUnchecked" inventoryId='+obj.aData.INVERTORYID+' code3='+obj.aData.CUSTOMER_ID+' name="order_check_box" value="'+obj.aData.PRODUCTID+'">';
-					    	}
-					    }
-					},   
-					{"mDataProp":"TID","bVisible": false},
-  		            {"mDataProp":"ITEM_NO"},
-  		            {"mDataProp":"ITEM_NAME"},
-  		            {"mDataProp":"ORDER_NO", "sWidth":"100px"},
-  		            {"mDataProp":"STATUS","bVisible": false},
-  		            {"mDataProp":"CARGO_NATURE","bVisible": false,
-  		            	"sClass": "cargo_nature", "sWidth":"70px",
-  		            	"fnRender": function(obj) {
-  		            		if(obj.aData.CARGO_NATURE == "cargo"){
-  		            			return "普通货品";
-  		            		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
-  		            			return "损坏货品";
-  		            		}else if(obj.aData.CARGO_NATURE == "ATM"){
-  		            			return deliver_tran.ex_type;
-  		            		}else{
-  		            			return "";
-  		            		}
-  		            }}, 
-  		            {"mDataProp":"WAREHOUSE_NAME","sClass": "warehouse", "sWidth":"100px"},
-  		            {"mDataProp":"WID", "bVisible": false},
-  		            {"mDataProp":"ABBR","sClass": "cname", "sWidth":"120px"},
-  		            {"mDataProp":"PID", "bVisible": false},
-  		            {"mDataProp":"AMOUNT","sWidth":"30px"},
-  		            {"mDataProp":null,"sWidth":"80px",
-  		            	"fnRender": function(obj) {
-  		            		if(obj.aData.COMPLETE_AMOUNT != null && obj.aData.COMPLETE_AMOUNT != "")
-  		            			return obj.aData.COMPLETE_AMOUNT;
-  		            		else
-  		            			return "0";
-					    }
-  		            },
-  		            {"mDataProp":null,"sWidth":"90px",
-  		            	"fnRender": function(obj) {
-  		            		if(obj.aData.QUANTITY != null && obj.aData.QUANTITY != "")
-  		            			return obj.aData.QUANTITY;
-  		            		else
-  		            			return "0";
-					    }
-  		            },
-  		            {"mDataProp":null,"sWidth":"90px","sClass": "availableAmount",
-  		            	"fnRender": function(obj) {
-  		            		var amount = obj.aData.AMOUNT;
-  		            		var qunantity = obj.aData.QUANTITY;
-  		            		var complete = obj.aData.COMPLETE_AMOUNT;
-  		            		
-  		            		if(qunantity != null && complete != null){
-  		            			return amount - qunantity - complete;
-  		            		}else if(qunantity != null){
-  		            			return amount - qunantity;
-  		            		}else if(complete != null){
-  		            			return amount - complete;
-  		            		}else{
-  		            			return amount;
-  		            		}
-					    }
-  		            },
-  		            { 
-  		                "mDataProp": null, "sWidth":"70px",
-  		                "fnRender": function(obj) {                    
-  		                    return "<input type='text' size='7' class='selectAmount' name='amount'  toal="+obj.aData.TOTAL_QUANTITY +" available="+obj.aData.AVAILABLE_QUANTITY+" disabled value='0'>";
-  		                }
-  		            }
-  		        ]     
+			{ "mDataProp": null,
+			    "fnRender": function(obj) {
+			    	if(obj.aData.COMPLETE_AMOUNT == obj.aData.AMOUNT){
+			    		return "";
+			    	}else if((obj.aData.COMPLETE_AMOUNT + obj.aData.QUANTITY) == obj.aData.AMOUNT){
+			    		return "";
+			    	}else{
+			    		return '<input type="checkbox" class="checkedOrUnchecked" inventoryId='+obj.aData.INVERTORYID+' code3='+obj.aData.CUSTOMER_ID+' name="order_check_box" value="'+obj.aData.PRODUCTID+'">';
+			    	}
+			    }
+			},   
+			{"mDataProp":"TID","bVisible": false},
+            {"mDataProp":"ITEM_NO"},
+            {"mDataProp":"ITEM_NAME"},
+            {"mDataProp":"ORDER_NO", "sWidth":"100px"},
+            {"mDataProp":"STATUS","bVisible": false},
+            {"mDataProp":"CARGO_NATURE","bVisible": false,
+            	"sClass": "cargo_nature", "sWidth":"70px",
+            	"fnRender": function(obj) {
+            		if(obj.aData.CARGO_NATURE == "cargo"){
+            			return "普通货品";
+            		}else if(obj.aData.CARGO_NATURE == "damageCargo"){
+            			return "损坏货品";
+            		}else if(obj.aData.CARGO_NATURE == "ATM"){
+            			return deliver_tran.ex_type;
+            		}else{
+            			return "";
+            		}
+            }}, 
+            {"mDataProp":"WAREHOUSE_NAME","sClass": "warehouse", "sWidth":"100px"},
+            {"mDataProp":"WID", "bVisible": false},
+            {"mDataProp":"ABBR","sClass": "cname", "sWidth":"120px"},
+            {"mDataProp":"PID", "bVisible": false},
+            {"mDataProp":"AMOUNT","sWidth":"30px"},
+            {"mDataProp":null,"sWidth":"80px",
+            	"fnRender": function(obj) {
+            		if(obj.aData.COMPLETE_AMOUNT != null && obj.aData.COMPLETE_AMOUNT != "")
+            			return obj.aData.COMPLETE_AMOUNT;
+            		else
+            			return "0";
+			    }
+            },
+            {"mDataProp":null,"sWidth":"90px",
+            	"fnRender": function(obj) {
+            		if(obj.aData.QUANTITY != null && obj.aData.QUANTITY != "")
+            			return obj.aData.QUANTITY;
+            		else
+            			return "0";
+			    }
+            },
+            {"mDataProp":null,"sWidth":"90px","sClass": "availableAmount",
+            	"fnRender": function(obj) {
+            		var amount = obj.aData.AMOUNT;
+            		var qunantity = obj.aData.QUANTITY;
+            		var complete = obj.aData.COMPLETE_AMOUNT;
+            		
+            		if(qunantity != null && complete != null){
+            			return amount - qunantity - complete;
+            		}else if(qunantity != null){
+            			return amount - qunantity;
+            		}else if(complete != null){
+            			return amount - complete;
+            		}else{
+            			return amount;
+            		}
+			    }
+            },
+            { 
+                "mDataProp": null, "sWidth":"70px",
+                "fnRender": function(obj) {                    
+                    return "<input type='text' size='7' class='selectAmount' name='amount'  toal="+obj.aData.TOTAL_QUANTITY +" available="+obj.aData.AVAILABLE_QUANTITY+" disabled value='0'>";
+                }
+            }
+        ]     
     });	
 	
 	// 异步创建配送单
@@ -155,71 +155,67 @@ $(document).ready(function() {
 	
 	// deliveryOrderSearchTransfer ATM选择序列号
 	var dab= $('#eeda-table4').dataTable({
+        "bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
-		"bFilter": false, // 不需要默认的搜索框
-	        // "sDom":
-			// "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12
-			// center'p>>",
-	        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-	        // "sPaginationType": "bootstrap",
-	        "iDisplayLength": 10,
-	        "bServerSide": true,
-	    	"oLanguage": {
-	            "sUrl": "/eeda/dataTables.ch.txt"
-	        },
-	        "sAjaxSource": "/delivery/searchTransferByATM",
-	        "aoColumns": [
-				{ "mDataProp": null,
-				    "fnRender": function(obj) {
-				       return '<input type="checkbox" class="checkedOrUnchecked" code3='+obj.aData.CUSTOMER_ID+' name="order_check_box" value="'+obj.aData.ID+'">';
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+    	"iDisplayLength": 10,
+    	"bServerSide": false,
+    	"bLengthChange":true,
+    	"oLanguage": {
+    		"sUrl": "/eeda/dataTables.ch.txt"
+    	},
+        "sAjaxSource": "/delivery/searchTransferByATM",
+        "aoColumns": [
+			{ "mDataProp": null,
+			    "fnRender": function(obj) {
+			       return '<input type="checkbox" class="checkedOrUnchecked" code3='+obj.aData.CUSTOMER_ID+' name="order_check_box" value="'+obj.aData.ID+'">';
+			    }
+			},          
+            {"mDataProp":null,
+				"sWidth": "10%", 
+				"fnRender": function(obj) {
+						if(obj.aData.SERIAL_NO==null){
+							return "<a class='serId' style='color:#464D51;text-decoration:none;' code='"+obj.aData.TID+"'></a>";
+						}else{
+							 return  "<a class='serId' style='color:#464D51;text-decoration:none;' code='"+obj.aData.TID+"'>"+obj.aData.SERIAL_NO+ "</a>";
+						}
+				      
 				    }
-				},          
-	            {"mDataProp":null,
-					"sWidth": "10%", 
+            	},
+            {"mDataProp":"ITEM_NO"},
+            {"mDataProp":null,
+            		"sWidth": "10%", 
 					"fnRender": function(obj) {
-							if(obj.aData.SERIAL_NO==null){
-								return "<a class='serId' style='color:#464D51;text-decoration:none;' code='"+obj.aData.TID+"'></a>";
-							}else{
-								 return  "<a class='serId' style='color:#464D51;text-decoration:none;' code='"+obj.aData.TID+"'>"+obj.aData.SERIAL_NO+ "</a>";
-							}
-					      
+					       return  "<a class='transferNo' style='color:#464D51;text-decoration:none;' code2='"+obj.aData.ORDER_NO+"'>"+obj.aData.ORDER_NO+ "</a>";
 					    }
-	            	},
-	            {"mDataProp":"ITEM_NO"},
-	            {"mDataProp":null,
-	            		"sWidth": "10%", 
-						"fnRender": function(obj) {
-						       return  "<a class='transferNo' style='color:#464D51;text-decoration:none;' code2='"+obj.aData.ORDER_NO+"'>"+obj.aData.ORDER_NO+ "</a>";
-						    }
-	            		},
-	            {"mDataProp":"STATUS"},        	
-	            {"mDataProp":"CARGO_NATURE","sClass": "cargo_nature",
-	            	"fnRender":function(obj){
-	            		if(obj.aData.CARGO_NATURE =="ATM"){
-	            			return deliver_tran.ex_cargo;
-	            		}else{
-	            			return obj.aData.CARGO_NATURE;
-	            		}
-	            		
-	            	}},
-	            {"mDataProp":"PICKUP_MODE",
-	            	"fnRender": function(obj) {
-	            		if(obj.aData.PICKUP_MODE == "routeSP"){
-	            			return "干线供应商自提";
-	            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
-	            			return "外包供应商提货";
-	            		}else{
-	            			return deliver_tran.ex_type;
-	            			
-	            		}}},
-	            {"mDataProp":"WAREHOUSE_NAME",
-	            	"sClass": "warehouse"},
-	            {"mDataProp":"ABBR",
-	            	"sClass": "cname"},
-	            {"mDataProp":"COMPANY"}
-	        ]      
-	    });	
-	
+            		},
+            {"mDataProp":"STATUS"},        	
+            {"mDataProp":"CARGO_NATURE","sClass": "cargo_nature",
+            	"fnRender":function(obj){
+            		if(obj.aData.CARGO_NATURE =="ATM"){
+            			return deliver_tran.ex_cargo;
+            		}else{
+            			return obj.aData.CARGO_NATURE;
+            		}
+            		
+            	}},
+            {"mDataProp":"PICKUP_MODE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.PICKUP_MODE == "routeSP"){
+            			return "干线供应商自提";
+            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
+            			return "外包供应商提货";
+            		}else{
+            			return deliver_tran.ex_type;
+            			
+            		}}},
+            {"mDataProp":"WAREHOUSE_NAME",
+            	"sClass": "warehouse"},
+            {"mDataProp":"ABBR",
+            	"sClass": "cname"},
+            {"mDataProp":"COMPANY"}
+        ]      
+    });	
 
 
 	var cname = [];
@@ -376,9 +372,9 @@ $(document).ready(function() {
          var rdc = $('#hiddenRdc').val();
          //如果客户和仓库都有值，触发查询
          if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""&&rdc!=null&&rdc!=""){
-	            dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
-	        	+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
-	        	dab.fnDraw();
+        	 dab.fnSettings().oFeatures.bServerSide = true;
+             dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+        	 dab.fnDraw();
          }
          
      });
@@ -425,6 +421,7 @@ $(document).ready(function() {
 	      	var warehouse1 = $("#warehouse1").val();
 	      	var transferOrderNo = $("#transferOrderNo").val();
 	      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+	      		dab2.fnSettings().oFeatures.bServerSide = true;
 	      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 		      	dab2.fnDraw();
 	      	}/*else{
@@ -488,6 +485,7 @@ $(document).ready(function() {
       	var warehouse1 = $("#warehouse1").val();
       	var transferOrderNo = $("#transferOrderNo").val();
       	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+      		dab2.fnSettings().oFeatures.bServerSide = true;
       		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 	      	dab2.fnDraw();
       	}/*else{
@@ -539,8 +537,8 @@ $(document).ready(function() {
 		var rdc = $('#hiddenRdc').val();
 		//如果客户和仓库都有值，触发查询
 		if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""&&rdc!=null&&rdc!=""){
-			dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
-			+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+			dab.fnSettings().oFeatures.bServerSide = true;
+			dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
 			dab.fnDraw();
 		}
 	  
@@ -593,12 +591,12 @@ $(document).ready(function() {
         var deliveryOrderNo = $("#deliveryOrderNo2").val();
        //如果客户和仓库都有值，触发查询
         if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""){
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="
-    		+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+        	dab.fnSettings().oFeatures.bServerSide = true;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
     		dab.fnDraw();
         }else{
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"
-    		+"code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+        	dab.fnSettings().oFeatures.bServerSide = true;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo;
     		dab.fnDraw();
         }
 		           
@@ -609,6 +607,7 @@ $(document).ready(function() {
       	var warehouse1 = $("#warehouse1").val();
       	var transferOrderNo = $("#transferOrderNo").val();
       	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+      		dab2.fnSettings().oFeatures.bServerSide = true;
       		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 	      	dab2.fnDraw();
       	}
@@ -619,6 +618,7 @@ $(document).ready(function() {
       	var warehouse1 = $("#warehouse1").val();
       	var transferOrderNo = $("#transferOrderNo").val();
       	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+      		dab2.fnSettings().oFeatures.bServerSide = true;
       		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 	      	dab2.fnDraw();
       	}

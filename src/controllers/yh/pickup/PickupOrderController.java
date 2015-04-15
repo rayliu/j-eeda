@@ -318,16 +318,7 @@ public class PickupOrderController extends Controller {
                     + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmamount,"
                     + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmvolume,"
                     + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmweight,"
-                    + " tor.address,"
-                    + "tor.pickup_mode,"
-                    + "tor.arrival_mode,"
-                    + "tor.status,"
-                    + "c.abbr cname,"
-                    + " l1.name route_from,"
-                    + "l2.name route_to,"
-                    + "tor.create_stamp,"
-                    + "tor.pickup_assign_status, "
-                    + "o.office_name office_name"
+                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,o.office_name office_name"
                     + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " 
                     + " left join contact c on p.contact_id = c.id "
@@ -375,15 +366,13 @@ public class PickupOrderController extends Controller {
                     + orderType + "%' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
-            		+ " round((select sum(ifnull((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0))  * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
-                    + " round((select sum(ifnull((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0))  * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
+            		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
+                    + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
                     + " (select sum(tori.amount) - sum(ifnull(tori.pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmamount,"
                     + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmvolume,"
                     + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmweight,"
-                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
-                    + " l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status, "
-                    + " o.office_name office_name "
+                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,o.office_name office_name"
                     + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
                     + " left join location l1 on tor.route_from = l1.code " 
@@ -448,16 +437,14 @@ public class PickupOrderController extends Controller {
                     + orderType + "%' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
-            sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,tor.cargo_nature_detail,"
-            		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0))  * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
-                    + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0))  * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
+            sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
+            		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
+                    + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
                     + " (select sum(tori.amount) - sum(ifnull(tori.pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmamount,"
                     + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmvolume,"
                     + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmweight,"
-                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,"
-                    + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,"
-                    + " tor.create_stamp,tor.pickup_assign_status, o.office_name office_name  "
+                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,o.office_name office_name"
                     + " from transfer_order tor "
                     + " left join party p on tor.customer_id = p.id " 
                     + " left join contact c on p.contact_id = c.id "
@@ -488,6 +475,7 @@ public class PickupOrderController extends Controller {
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
                     + " order by tor.create_stamp desc" + sLimit;
 
+            
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));

@@ -258,49 +258,45 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
     }
 	
 	//设置配送单信息
-	private DeliveryOrder saveDeliveryOrder(Map<String, String> content,Party party, TransferOrder order) {
+	private DeliveryOrder saveDeliveryOrder(Map<String, String> content,Party party, TransferOrder order) throws Exception {
 		DeliveryOrder deliveryOrder = new DeliveryOrder();
-		try {
-			Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr = ?;",content.get("供应商名称(简称)"));
-			Location location1 = Location.dao.findFirst("select code from location where name = ?;",content.get("始发地城市"));
-			Location location2 = Location.dao.findFirst("select code from location where name = ?;",content.get("目的地城市"));
+		Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr = ?;",content.get("供应商名称(简称)"));
+		Location location1 = Location.dao.findFirst("select code from location where name = ?;",content.get("始发地城市"));
+		Location location2 = Location.dao.findFirst("select code from location where name = ?;",content.get("目的地城市"));
+		
+		SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date orderDeliveryStamp = dbDataFormat.parse(content.get("预约送货时间"));
+		Date clientOrderStamp = dbDataFormat.parse(content.get("向客户预约时间"));
+		Date businessStamp = dbDataFormat.parse(content.get("业务要求配送时间"));
+		//String orderNo = OrderNoGenerator.getNextOrderNo("PS");
+		String orderNo = content.get("配送单号");
+		
+		deliveryOrder.set("order_no", "PS-"+orderNo)
+		.set("customer_id", order.get("customer_id"))
+		.set("from_warehouse_id", order.get("warehouse_id"))
+		.set("cargo_nature", order.get("cargo_nature"))
+		.set("sp_id", provider.get("pid"))
+		.set("notify_party_id", party.get("id"))
+		.set("route_to", location2.get("code"))
+		.set("route_from", location1.get("code"))
+		.set("create_stamp", Calendar.getInstance().getTime())
+		.set("status", "新建")
+		.set("audit_status", "新建")
+		.set("sign_status", "未回单")
+		.set("pricetype", "perUnit")
+		.set("ltl_price_type", "perCBM")
+		.set("client_requirement", content.get("需求确认"))
+		.set("customer_delivery_no",content.get("客户配送单号"))
+		.set("business_stamp", businessStamp)
+		.set("client_order_stamp", clientOrderStamp)
+		.set("order_delivery_stamp", orderDeliveryStamp)
+		.save();
 			
-			SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");
-			Date orderDeliveryStamp = dbDataFormat.parse(content.get("预约送货时间"));
-			Date clientOrderStamp = dbDataFormat.parse(content.get("向客户预约时间"));
-			Date businessStamp = dbDataFormat.parse(content.get("业务要求配送时间"));
-			//String orderNo = OrderNoGenerator.getNextOrderNo("PS");
-			String orderNo = content.get("配送单号");
-			
-			deliveryOrder.set("order_no", "PS-"+orderNo)
-			.set("customer_id", order.get("customer_id"))
-			.set("from_warehouse_id", order.get("warehouse_id"))
-			.set("cargo_nature", order.get("cargo_nature"))
-			.set("sp_id", provider.get("pid"))
-			.set("notify_party_id", party.get("id"))
-			.set("route_to", location2.get("code"))
-			.set("route_from", location1.get("code"))
-			.set("create_stamp", Calendar.getInstance().getTime())
-			.set("status", "新建")
-			.set("audit_status", "新建")
-			.set("sign_status", "未回单")
-			.set("pricetype", "perUnit")
-			.set("ltl_price_type", "perCBM")
-			.set("client_requirement", content.get("需求确认"))
-			.set("customer_delivery_no",content.get("客户配送单号"))
-			.set("business_stamp", businessStamp)
-			.set("client_order_stamp", clientOrderStamp)
-			.set("order_delivery_stamp", orderDeliveryStamp)
-			.save();
-			
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
 		return deliveryOrder;
 	}
 	
 	// 保存运输里程碑
-	private void saveDeliveryOrderMilestone(DeliveryOrder deliveryOrder) {
+	private void saveDeliveryOrderMilestone(DeliveryOrder deliveryOrder) throws Exception {
 		DeliveryOrderMilestone deliveryOrderMilestone = new DeliveryOrderMilestone();
 		deliveryOrderMilestone.set("status", "新建")
 		.set("create_by", user.get("id"))
@@ -310,13 +306,13 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 	}
 	
 	//更新运输单信息
-	private void updateTransferOrder(TransferOrder order,TransferOrderItemDetail detail, DeliveryOrder deliveryOrder) {
+	private void updateTransferOrder(TransferOrder order,TransferOrderItemDetail detail, DeliveryOrder deliveryOrder) throws Exception {
 		order.set("status", "配送中").update();
 		detail.set("delivery_id",deliveryOrder.get("id")).set("is_delivered", true).update();
 	}
 	
 	//设置从表信息
-	private void saveDeliveryItem(TransferOrder order,TransferOrderItemDetail detail, DeliveryOrder deliveryOrder) {
+	private void saveDeliveryItem(TransferOrder order,TransferOrderItemDetail detail, DeliveryOrder deliveryOrder) throws Exception {
 		DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
 		deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
 		.set("transfer_order_id",order.get("id"))
@@ -327,7 +323,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 	}
 	
 	//设置收货人信息
-	private Party saveNotify(Map<String,String> content) {
+	private Party saveNotify(Map<String,String> content) throws Exception {
 		Party party = new Party();
 		Contact contact = new Contact();
 		
@@ -346,6 +342,35 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 	}
 	
 	/**
+     * 回滚数据（报错回滚）
+     * @param content
+     * @return 
+     */
+	private long rollbackInvocation(List<DeliveryOrder> orderList) throws Exception{
+		System.out.println("已生成配送单数量："+orderList.size()+",开始回滚数据......");
+		long delNumber = 0;
+		List<String> sqlList = new ArrayList<String>();
+		for (DeliveryOrder deliveryOrder : orderList) {
+			delNumber+=1;
+			long deliveryId = deliveryOrder.getLong("id");
+			long notifyPartyId = deliveryOrder.getLong("notify_party_id");
+			Party party = Party.dao.findById(notifyPartyId);
+			long contactId = party.getLong("contact_id");
+			sqlList.add("delete from contact where id = '" + contactId + "'");
+			sqlList.add("delete from party where id = '" + notifyPartyId + "'");
+			sqlList.add("update transfer_order_item_detail set delivery_id = null,is_delivered = false where delivery_id = '" + deliveryId + "'");
+			DeliveryOrderItem items = DeliveryOrderItem.dao.findFirst("select group_concat(distinct cast(transfer_order_id as char) separator ',') ids from delivery_order_item where delivery_id = '" + deliveryId + "'");
+			sqlList.add("update transfer_order set status = '已入库' where id in (" + items.get("ids") + ")");
+			sqlList.add("delete from delivery_order_milestone where delivery_id = '" + deliveryId + "'");
+			sqlList.add("delete from delivery_order_item where delivery_id = '" + deliveryId + "'");
+			sqlList.add("delete from delivery_order where id = '" + deliveryId + "'");
+		}
+		Db.batch(sqlList, sqlList.size());
+		System.out.println("共删除配送单数量："+delNumber+",结束回滚数据......");
+		return delNumber;
+    }
+	
+	/**
      * 导入数据
      * @param content
      * @return 导入结果
@@ -359,13 +384,14 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 			if("true".equals(importResult.get("result"))){
 				int resultNum = 0;
 		    	int causeRow = 0;
+		    	//回滚配送单信息
+		    	List<DeliveryOrder> orderList = new ArrayList<DeliveryOrder>();
 				try {
 					String deliverOrderNo = "";
 					String customer = "";
 					String companyName = "";
 					String destinationCity = "";
 					String warehouse = "";
-					
 					for (int j = 0; j < content.size(); j++) {
 						causeRow = j+2;
 						System.out.println("导入至第【"+causeRow+"】行");
@@ -376,7 +402,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 							if(deliverOrderNo.equals(content.get(j).get("配送单号")) && customer.equals(content.get(j).get("客户名称(简称)")) &&
 									companyName.equals(content.get(j).get("收货单位")) && destinationCity.equals(content.get(j).get("目的地城市")) &&
 									warehouse.equals(content.get(j).get("配送仓库"))){
-								DeliveryOrder deliveryOrder = DeliveryOrder.dao.findFirst("select * from delivery_order where order_no = ? ;",content.get(j).get("配送单号"));
+								DeliveryOrder deliveryOrder = DeliveryOrder.dao.findFirst("select * from delivery_order where order_no = ? and customer_delivery_no = ? ;","PS-"+content.get(j).get("配送单号"),content.get(j).get("客户配送单号"));
 								//设置从表信息
 								saveDeliveryItem(order, detail, deliveryOrder);
 								//更新运输单信息
@@ -393,6 +419,8 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 								Party party = saveNotify(content.get(j));
 								//设置配送单信息
 								DeliveryOrder deliveryOrder = saveDeliveryOrder(content.get(j), party, order);
+								//已生成的配送单据保存到回滚list中
+			    				orderList.add(deliveryOrder);
 								//设置从表信息
 								saveDeliveryItem(order, detail, deliveryOrder);
 								//设置里程碑信息
@@ -403,10 +431,20 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 						}
 					}
 				} catch (Exception e) {
+					long rollbackNumber = 0;
+					System.out.println("导入操作异常！");
 					e.printStackTrace();
-					System.out.println("未知错误！");
-					importResult.put("result","true");
-					importResult.put("cause", "未知错误，已成功导入至第" + (causeRow-1) + "行！");
+					try {
+						rollbackNumber = rollbackInvocation(orderList);
+					} catch (Exception e1) {
+						System.out.println("回滚操作异常！");
+						e1.printStackTrace();
+					}
+					importResult.put("result","false");
+					if(rollbackNumber == orderList.size())
+						importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常，<br/>导入数据已取消！");
+					else
+						importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常，<br/>回滚已导入数据出现异常，请联系管理员手动删除！");
 					return importResult;
 				}
 				importResult.put("result","true");

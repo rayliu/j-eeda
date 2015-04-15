@@ -1,7 +1,6 @@
 package controllers.yh.order;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -487,7 +486,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      * @param content
      * @return 
      */
-	private void rollbackInvocation(List<TransferOrder> orderList) throws Exception{
+	private long rollbackInvocation(List<TransferOrder> orderList) throws Exception{
 		System.out.println("已生成运输单数量："+orderList.size()+",开始回滚数据......");
 		long delNumber = 0;
 		List<String> sqlList = new ArrayList<String>();
@@ -501,6 +500,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		}
 		Db.batch(sqlList, sqlList.size());
 		System.out.println("共删除运输单数量："+delNumber+",结束回滚数据......");
+		return delNumber;
     }
 	
     /**
@@ -583,16 +583,20 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 						}
 					}
 				} catch (Exception e) {
+					long rollbackNumber = 0;
 					System.out.println("导入操作异常！");
 					e.printStackTrace();
 					try {
-						rollbackInvocation(orderList);
+						rollbackNumber = rollbackInvocation(orderList);
 					} catch (Exception e1) {
 						System.out.println("回滚操作异常！");
 						e1.printStackTrace();
 					}
 					importResult.put("result","false");
-					importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常！");
+					if(rollbackNumber == orderList.size())
+						importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常，<br/>导入数据已取消！");
+					else
+						importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常，<br/>回滚已导入数据出现异常，请联系管理员手动删除！");
 					return importResult;
 				}
 				importResult.put("result","true");
