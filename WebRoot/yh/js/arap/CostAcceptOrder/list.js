@@ -32,7 +32,7 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
         			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},
-            {"mDataProp":"INVOICE_NO", "sWidth":"20px"},
+            {"mDataProp":"INVOICE_NO", "sWidth":"80px"},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
