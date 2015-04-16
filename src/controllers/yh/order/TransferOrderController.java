@@ -1032,35 +1032,44 @@ public class TransferOrderController extends Controller {
 	public void searchAllDriver() {
 		String input = getPara("input");
 		String party_type =getPara("partyType");
+		
+		//获取当前用户的总公司
+		String userName = currentUser.getPrincipal().toString();
+		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
+		
+		
 		List<Record> locationList = Collections.EMPTY_LIST;
 		String sql= "";
 		if (input.trim().length() > 0) {
 			if(party_type!=null){
-				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id where c.contact_person like '%"
+				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where c.contact_person like '%"
 						+ input
 						+ "%' or c.phone like '%"
 						+ input
 						+ "%' and p.party_type = '"
 						+ party_type
-						+ "' and (p.is_stop is null or p.is_stop = 0) ";
+						+ "' and (p.is_stop is null or p.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
 				
 			}else{
-				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id where c.contact_person like '%"
+				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where c.contact_person like '%"
 						+ input
 						+ "%' or c.phone like '%"
 						+ input
-						+ "%' and p.party_type = 'SP_DRIVER' and (p.is_stop is null or p.is_stop = 0) ";
+						+ "%' and p.party_type = 'SP_DRIVER' and (p.is_stop is null or p.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
 			}
 			
 		} else {
-			/*locationList = Db
-					.find("select p.id pid,c.* from party p left join contact c on c.id = p.contact_id where p.party_type = '"
-						+ Party.PARTY_TYPE_DRIVER + "'");*/
+			
 			if(party_type!=null){
-				sql= "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id where p.party_type = '"
-						+ party_type + "'  and (p.is_stop is null or p.is_stop = 0)";
+				sql= "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where p.party_type = '"
+						+ party_type + "'  and (p.is_stop is null or p.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
 			}else{
-				sql= "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id where p.party_type = 'SP_DRIVER'  and (p.is_stop is null or p.is_stop = 0) ";
+				sql= "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where p.party_type = 'SP_DRIVER'  and (p.is_stop is null or p.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
 			}
 			
 		}
@@ -1068,29 +1077,41 @@ public class TransferOrderController extends Controller {
 		renderJson(locationList);
 	}
 
-	// 查出所有的carinfo
+	//TODO: 查出所有的carinfo
 	public void searchAllCarInfo() {
 		String type = getPara("type");
 		String input = getPara("input");
 		List<Record> locationList = Collections.EMPTY_LIST;
+		
+		
+		//获取当前用户的总公司
+		String userName = currentUser.getPrincipal().toString();
+		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
+		
+		
 		String sql="";
 		
 		if (input.trim().length() > 0) {
 			if(type!=null){
 				sql = "select * from ("
-						+ "select * from carinfo where type ='"+type+"') "
-						+ "where car_no like '%"+input+"%' or phone like '%"+input+"%'  and (is_stop is null or is_stop = 0)";
+						+ "select c.* from carinfo c left join office o on o.id = c.office_id  where c.type ='"+type+"' and (o.id = " + parentID + " or o.belong_office = " + parentID + ")) "
+						+ "where c.car_no like '%"+input+"%' or c.phone like '%"+input+"%'  and (c.is_stop is null or c.is_stop = 0)";
 						
 			}else{
-				sql="select * from carinfo where car_no like '%" + input + "%' or phone like '%"
-							+ input + "%' and type = 'SP'  and (is_stop is null or is_stop = 0) ";
+				sql="select c.* from carinfo c left join office o on c.office_id = o.id where c.car_no like '%" + input + "%' or c.phone like '%"
+							+ input + "%' and c.type = 'SP'  and (c.is_stop is null or c.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
 			}
 				
 		} else {
 			if(type!=null){
-				sql = "select * from carinfo where type = '" + type + "'  and (is_stop is null or is_stop = 0) ";
+				sql = "select c.* from carinfo  c left join office o on o.id = c.office_id where c.type = '" + type + "'  and (c.is_stop is null or c.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
 			}else{
-				sql ="select * from carinfo where type = 'SP'  and (is_stop is null or is_stop = 0) ";
+				sql ="select c.* from carinfo c left join office o on c.office_id = o.id  where c.type = 'SP'  and (c.is_stop is null or c.is_stop = 0)  and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
 			}
 			
 		}

@@ -15,6 +15,7 @@ import models.DepartOrderFinItem;
 import models.DepartTransferOrder;
 import models.FinItem;
 import models.InventoryItem;
+import models.Office;
 import models.Party;
 import models.PickupOrderFinItem;
 import models.TransferOrder;
@@ -23,6 +24,7 @@ import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.UserOffice;
 import models.yh.contract.Contract;
 import models.yh.pickup.PickupDriverAssistant;
 import models.yh.profile.Carinfo;
@@ -2164,14 +2166,25 @@ public class PickupOrderController extends Controller {
     	renderJson("{\"sumWeight\":"+sumWeight+",\"sumVolume\":"+sumVolume+"}");
     }
     
-    //查询所有跟车人员
+    //TODO:查询所有跟车人员
     public void findDriverAssistant() {
 		String input = getPara("input");
 		List<DriverAssistant> driverAssistantList = Collections.EMPTY_LIST;
+		
+		
+		String userName = currentUser.getPrincipal().toString();
+		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
+		
+		
 		if (input.trim().length() > 0) {
-			driverAssistantList = DriverAssistant.dao.find("select id,name,phone from driver_assistant where (is_stop is null or is_stop = 0) and name like '%" + input + "%'");
+			driverAssistantList = DriverAssistant.dao.find("select pda.id,pda.name,pda.phone from driver_assistant pda left join office o on pda.office_id = o.id where (pda.is_stop is null or pda.is_stop = 0) and pda.name like '%" + input + "%'  and (o.id = " + parentID + " or o.belong_office = " + parentID + ")");
 		} else {
-			driverAssistantList = DriverAssistant.dao.find("select id,name,phone from driver_assistant where (is_stop is null or is_stop = 0)");
+			driverAssistantList = DriverAssistant.dao.find("select pda.id,pda.name,pda.phone from driver_assistant pda left join office o on pda.office_id = o.id where (pda.is_stop is null or pda.is_stop = 0)  and (o.id = " + parentID + " or o.belong_office = " + parentID + ")");
 		}
 		renderJson(driverAssistantList);
 	}
@@ -2179,7 +2192,16 @@ public class PickupOrderController extends Controller {
     //查询调车单跟车人员
     public void findPickupDriverAssistant() {
     	String pickId = getPara("pickupId");
-    	List<PickupDriverAssistant> assistantList = PickupDriverAssistant.dao.find("select id,name,phone from pickup_driver_assistant where pickup_id = ?",pickId);
+    	
+    	String userName = currentUser.getPrincipal().toString();
+    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    	Long parentID = parentOffice.get("belong_office");
+    	if(parentID == null || "".equals(parentID)){
+    		parentID = parentOffice.getLong("id");
+    	}
+    	
+    	List<PickupDriverAssistant> assistantList = PickupDriverAssistant.dao.find("select pda.id,pda.name,pda.phone from pickup_driver_assistant pda left join office o on pda.office_id = o.id where pda.pickup_id = ?  and (o.id = " + parentID + " or o.belong_office = " + parentID + ")",pickId);
 		renderJson(assistantList);
 	}
     
