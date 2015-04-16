@@ -8,9 +8,9 @@ $(document).ready(function() {
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 20,
+    	"iDisplayLength": 10,
     	"bServerSide": false,
-    	"bLengthChange":false,
+    	"bLengthChange":true,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
@@ -32,8 +32,8 @@ $(document).ready(function() {
             {"mDataProp":null, "sWidth":"80px",
             	"fnRender": function(obj) {  
             		if(obj.aData.ZONGSHOURU != 0 && obj.aData.ZONGSHOURU != ""){
-            			var maolilv = (obj.aData.ZONGSHOURU * 1) / (obj.aData.ZONGSHOURU * 1);
-            			return maolilv + "%";
+            			var maolilv = ((obj.aData.YUNZUOMAOLI * 1) / (obj.aData.ZONGSHOURU * 1)).toFixed(2);
+            			return (maolilv * 100) + "%";
             		}else{
             			return "";
             		}
@@ -83,7 +83,7 @@ $(document).ready(function() {
     	if((beginTime != "" && endTime != "")){
     		statusTable.fnSettings().oFeatures.bServerSide = true;
 	    	statusTable.fnSettings().sAjaxSource = "/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
-	    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&cargoType="+cargoType+"&iDisplayStart=0";
+	    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&cargoType="+cargoType;
 	    	statusTable.fnDraw(); 
 	    	/*$.get("/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
 		    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&cargoType="+cargoType, null, function(data){
