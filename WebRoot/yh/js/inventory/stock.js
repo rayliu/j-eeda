@@ -221,12 +221,12 @@ $(document).ready(function() {
 		 var itemId = $("#hiddenItemId").val();
 		 
 
-		 if(warehouseId == ""){
+		 if(warehouseId == "" || warehouseId == "all"){
 			 tab.fnSetColumnVis( 8, false);
 		 }else{
 			 tab.fnSetColumnVis( 8, true);
 		 }
-		 if(officeId == ""){
+		 if(officeId == "" || officeId == "all"){
 			 tab.fnSetColumnVis( 9, false);
 		 }else{
 			 tab.fnSetColumnVis( 9, true);
