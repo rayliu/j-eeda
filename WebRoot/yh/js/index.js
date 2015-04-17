@@ -72,5 +72,7 @@ $(document).ready(function() {
             { "mDataProp": "AMOUNT"},
         ]
     });
-	
+	$("#btn,#clbtn").on('click',function(){
+		$("#exampleModal").css("display","none");
+	});
 });
