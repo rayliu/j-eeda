@@ -622,16 +622,9 @@
     	    $("#transferOrderMilestoneList").click(function(e){
     			e.preventDefault();
     			//提交前，校验数据
-    	        if(!$("#orderForm").valid()){
-    		       	return false;
-    	        }
-    	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
-    	    		clickSaveDepartOrder(e);
-    	    		if("chargeCheckOrderbasic" == parentId){
-        				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-        	    	}
+	    		if("chargeCheckOrderbasic" == parentId){
+	    			clickSaveDepartOrder(e);
     	    	}
-	
     			$.post('/departOrder/transferOrderMilestoneList',{departOrderId:$("#departOrderId").val()},function(data){
     				var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     				transferOrderMilestoneTbody.empty();
@@ -640,7 +633,6 @@
     					transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
     				}
     			},'json');
-    			
     			parentId = e.target.getAttribute("id");
     		});
     	    
@@ -656,7 +648,6 @@
     		});
     		
     	    var handlePickkupOrderDetail = function(){
-    	    	
     	    	//如果计费方式为计件或者零担，此时车牌号，司机，电话为空
     	    	if($('input[name="chargeType"]:checked').val()==='perCargo'||$('input[name="chargeType"]:checked').val()==='perUnit'){
     	    		$("#carNoMessage").val("");
@@ -674,10 +665,10 @@
     					$("#showDepartNo").text(data.DEPART_NO);
     					$("#milestoneDepartId").val(data.ID);
     				  	//$("#style").show();	
-
     		    	    $("#departureConfirmationBtn").attr("disabled", false);
+    		    	    $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
     				}else{
-    					alert('数据保存失败。');
+    					$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
     				}
     			},'json');
     	    };
@@ -712,7 +703,6 @@
     	    	//阻止a 的默认响应行为，不需要跳转
     			e.preventDefault();	
     			//异步向后台提交数据
-    			
     			saveDepartOrderFunction();
     	       
     	    }; 
@@ -729,38 +719,18 @@
     	    //编辑保存
     	    $("#saveDepartOrderBtn").click(function(e){
     	    	e.preventDefault();
-    			/*//提交前，校验数据
-    	        if(!$("#orderForm").valid()){
-    		       	return false;
-    	        }
-    	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
-    	    		$("#saveDepartOrderBtn").attr("disabled", true);
-				   	clickSaveDepartOrder(e);
-				   	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-	 
-    	    	} */
-    	    	var departOrderId = $("#departOrderId").val();
-    	    	if(departOrderId == "" || departOrderId == null){
-    	    		$("#saveDepartOrderBtn").attr("disabled", true);
-				   	clickSaveDepartOrder(e);
-				   	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-    	    	} 
+	    		$("#saveDepartOrderBtn").attr("disabled", true);
+			   	clickSaveDepartOrder(e);
     	    });
     	    
-    	    //点击应付的时候发生的事情   这里有保存的事件???
+    	    //tab-应付
     	    $("#arap1").click(function(e){
     			e.preventDefault();
-    			//提交前，校验数据
-    	        if(!$("#orderForm").valid()){
-    		       	return false;
-    	        }
-    	    	e.preventDefault();
-    	    	if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
-				   	clickSaveDepartOrder(e);
-				   	if("chargeCheckOrderbasic" == parentId){
-	    	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-	    	    	}
-    	    	} 
+			   	if("chargeCheckOrderbasic" == parentId){
+			   		clickSaveDepartOrder(e);
+    	    	}
+			   	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
+            	paymenttable.fnDraw(); 
     	    	parentId = e.target.getAttribute("id");
     	    });
     	    //动态提示
@@ -771,31 +741,14 @@
     	    // 点击货品信息
     	    $("#departOrderItemList").click(function(e){
     			e.preventDefault();
-    			/*//提交前，校验数据
-    	        if(!$("#orderForm").valid()){
-    		       	return false;
-    	        }*/
-    	    	/*if($("#departOrderStatus").val() == '' || $("#departOrderStatus").val() == '新建'){
-    	    		clickSaveDepartOrder(e);
-    	    		if("chargeCheckOrderbasic" == parentId){
-    	    			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-    	    		}
-    	    	} */
-    			
-    	    	parentId = e.target.getAttribute("id");
-    	    	
-    	    	var message=$("#message").val();
+    			var message=$("#message").val();
     	        var type=$("#type").val();
     	        var depart_id=$("#depart_id").val();
     	        var tr_item=$("#tr_itemid_list").val();
     	        var item_detail=$("#item_detail").val();
     	 	    var departOrderId = $("#departOrderId").val();
-    	 	    if(departOrderId != "" && departOrderId != null){
-	    	 	    datatable.fnSettings().oFeatures.bServerSide = true; 
-	    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+departOrderId;
-	    	 		datatable.fnDraw();
-    	 	    }else{
-    	 	    	// 保存单品
+    			if("chargeCheckOrderbasic" == parentId){
+    				// 保存单品
 	 	    		$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
         				$("#departOrderId").val(data.ID);
         				if(data.ID>0){
@@ -804,54 +757,54 @@
         					$("#saveDepartOrderBtn").prop('disabled',false);
         					$("#showDepartNo").text(data.DEPART_NO);
         					$("#milestoneDepartId").val(data.ID);
-        				  	//$("#style").show();	
         		    	    $("#departureConfirmationBtn").attr("disabled", false);
         		    	    $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
         				}else{
-        					alert('数据保存失败。');
+        					$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
         				}
-        				
         				datatable.fnSettings().oFeatures.bServerSide = true; 
     	    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+data.ID;
     	    	 		datatable.fnDraw();
-        				
         			},'json');
-    	 	    }
+	    		}else{
+	    			datatable.fnSettings().oFeatures.bServerSide = true; 
+	    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+departOrderId;
+	    	 		datatable.fnDraw();
+	    		}
+    			parentId = e.target.getAttribute("id");
     	    });
     	    
     	    $("#departureConfirmationBtn").click(function(e){
     	    	//提交前，校验数据
     	    	//发车之前保存发车单
-    	    	clickSaveDepartOrder(e);
-    	    	if($('#orderForm').valid() == false){
+                if(!$("#orderForm").valid()){
     	    		$.scojs_message('操作失败，请确认基本信息是否输入完整', $.scojs_message.TYPE_ERROR);
      		        return false;
-     	        }
-     	        	/*//发车之前保存发车单
-        	    	clickSaveDepartOrder(e);*/
-     	        
+     	        }else if($("#departure_time").val() == "" || $("#arrival_time").val() == ""){
+     	        	$.scojs_message('操作失败，请确认基本信息是否输入完整', $.scojs_message.TYPE_ERROR);
+     	        	var str = '<label for="departure_time" class="error">必选字段</label>';
+     	        	$("#departure_time").after(str);
+     	        	$("#arrival_time").after(str);
+     	        }else{
+	                $("#departureConfirmationBtn").attr("disabled",true);
 	    	    	var priceType = $("input[name='priceType']:checked").val();
 	    	    	var departOrderId = $("#departOrderId").val();
-	    	    	$.post('/transferOrderMilestone/departureConfirmation?departOrderId='+departOrderId, function(){
-	    	    		paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
-	    	    		paymenttable.fnDraw(); 
-	    	    		$("#departOrderStatus").val('已发车');
-	    	    		$("#departureConfirmationBtn").attr("disabled",true);
-	        	    	$("#saveDepartOrderBtn").attr("disabled",true);
-	    	    	});
-	    	    	
-	    	    	$("#saveDepartOrderBtn").attr("disabled", true);
-	
-	                //计算应付
-	                $.post('/departOrder/updatestate?order_state='+"已发车"+"&priceType="+priceType, $("#orderForm").serialize(), function(){
-	                      //$("#warehousingConfirmBtn").attr("disabled",false);
-	                      paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
-	                      paymenttable.fnDraw(); 
-	                      $("#departOrderStatus").val('已发车');
-	                      $("#departureConfirmationBtn").attr("disabled",true);
-	          	    	  $("#saveDepartOrderBtn").attr("disabled",true);
-	                });
-     	        
+	    	    	//发车之前保存发车单
+	    	    	$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
+	    	    		//发车确认
+	    	    		$.post('/transferOrderMilestone/departureConfirmation?departOrderId='+departOrderId, function(){
+	    	    			$("#departOrderStatus").val('已发车');
+    	                	$("#departureConfirmationBtn").attr("disabled",true);
+              	    	  	$("#saveDepartOrderBtn").attr("disabled",true);
+	            	    	//计算应付
+	    	                $.post('/departOrder/updatestate?order_state="已发车"&priceType='+priceType, $("#orderForm").serialize(), function(){
+	    	                	//$("#warehousingConfirmBtn").attr("disabled",false);
+	    	                	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
+	    	                	paymenttable.fnDraw(); 
+	    	                });
+	        	    	});
+	    			},'json');
+     	        }
     	    });
 
     	    $("#warehousingConfirmBtn").click(function(e){

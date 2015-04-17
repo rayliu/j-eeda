@@ -63,6 +63,10 @@ public class PermissionConstant {
 	public static final String PERMSSION_RO_UPDATE = "ReturnOrder.update";
 	public static final String PERMSSION_RO_ADD_REVENUE = "ReturnOder.add_revenue";
 	public static final String PERMSSION_RO_COMPLETED = "ReturnOrder.completed";
+	/*图片相关*/
+	public static final String PERMSSION_RO_IMGAUDIT = "ReturnOrder.imgaudit";//图片审核
+	
+	
 	
 	/*应收明细确认权限*/
 	/*public static final String PERMSSION_CI_LIST = "ChargeItem.list";*/

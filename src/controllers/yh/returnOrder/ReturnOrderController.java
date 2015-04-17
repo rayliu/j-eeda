@@ -30,6 +30,7 @@ import models.UserLogin;
 import models.yh.contract.Contract;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
+import models.yh.profile.DriverAssistant;
 import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.shiro.SecurityUtils;
@@ -1371,5 +1372,17 @@ public class ReturnOrderController extends Controller {
     	renderJson(orderAttachmentFileList);
     }
     
+    //审核图片
+    public void auditPictureById(){
+    	OrderAttachmentFile file = OrderAttachmentFile.dao.findById(getPara("picture_id"));
+		Object obj = file.get("audit");
+		if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
+			file.set("audit", true);
+		}else{
+			file.set("audit", false);
+		}
+		file.update();
+        renderJson(file);
+    }
     
 }

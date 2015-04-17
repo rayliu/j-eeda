@@ -269,10 +269,14 @@
 	                                    	</div>
 		                                    <div class="col-lg-12" style="clear:both;" id="showPictures">
 		                                    	<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
-		                                    		<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picturedel" picture_id="${orderAttachmentFile.ID!''}" >删除</a></p></div>
-   												<%		
-   													}
-   												%>
+		                                    		<div style="width:200px;height:210px;float:left;" >
+			                                    		<img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;">
+			                                    		<p>
+			                                    			<a class="picture_audit" picture_id="${orderAttachmentFile.ID!''}" ><%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true ){%> 已审核 <%}else{%> 审核 <%}%></a>
+			                                    			<a class="picture_del" picture_id="${orderAttachmentFile.ID!''}" > 删除 </a>
+			                                    		</p>
+		                                    		</div>
+   												<%}%>
 		                                    </div>
 										</div>
                                     </div>                              

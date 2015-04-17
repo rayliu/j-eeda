@@ -585,7 +585,7 @@
         		var showPictures = $("#showPictures");
         		showPictures.empty();
         		$.each(data.result.cause,function(name,value) {
-        			showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
+        			showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'" > 审核 </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
                 });
         	}else{
         		$.scojs_message('上传失败，'+data.result.cause, $.scojs_message.TYPE_ERROR);
@@ -600,7 +600,7 @@
      });
 	 
 	// 删除图片
-	$("#showPictures").on('click', '.picturedel', function(e){
+	$("#showPictures").on('click', '.picture_del', function(e){
 		if(confirm("确定删除吗？")){
 			var return_id = $("#returnId").val();
 			var picture_id = $(this).attr("picture_id");
@@ -608,8 +608,23 @@
 				var showPictures = $("#showPictures");
 	    		showPictures.empty();
 				$.each(data,function(name,value) {
-	    			showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
+	    			showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'"> 审核 </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
 	            });
+			},'json');
+		}
+	});	
+	
+	// 审核图片
+	$("#showPictures").on('click', '.picture_audit', function(e){
+		var auditVar = $(this);
+		if(confirm("确定审核通过吗？")){
+			var return_id = $("#returnId").val();
+			var picture_id = $(this).attr("picture_id");
+			$.post('/returnOrder/auditPictureById', {picture_id:picture_id,return_id:return_id}, function(data){
+				if(data.AUDIT == 1 || data.AUDIT == true)
+					auditVar.text("已审核");
+				else
+					auditVar.text("审核");
 			},'json');
 		}
 	});	
