@@ -1384,7 +1384,7 @@ public class DeliveryController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select d.order_no,"
+        String sql = "select d.id, d.order_no,"
         		+ " ifnull((select name from location where code = d.route_from ), '' ) route_from,"
         		+ " ifnull((select name from location where code = d.route_to ), '' ) route_to,"
         		+ " (select status from delivery_order_milestone where delivery_id = d.id order by id desc limit 0,1) status,"

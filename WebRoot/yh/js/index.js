@@ -13,7 +13,10 @@ $(document).ready(function() {
     	},
     	"sAjaxSource": "/transferOrder/findTransferOrderType",
         "aoColumns": [
-            { "mDataProp": "ORDER_NO"},
+            { "mDataProp": "ORDER_NO","sWidth":"100px",
+            	"fnRender":function(obj){
+            		return "<a href='/transferOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            	}},
             {"mDataProp":null, "sWidth":"150px",
             	"fnRender": function(obj) {
             		return obj.aData.ROUTE_FROM + " —— " + obj.aData.ROUTE_TO;
@@ -21,7 +24,7 @@ $(document).ready(function() {
             },
             { "mDataProp": "STATUS", "sWidth":"100px"},
             { "mDataProp": "CREATE_STAMP", "sWidth":"150px"},
-            { "mDataProp": null},
+            { "mDataProp": null,"sWidth":"100px"},
         ]
     });
 	
@@ -37,7 +40,7 @@ $(document).ready(function() {
     	},
     	"sAjaxSource": "/delivery/findDeliveryOrderType",
         "aoColumns": [
-            { "mDataProp": "ORDER_NO",
+            { "mDataProp": "ORDER_NO","sWidth":"100px",
             	"fnRender":function(obj){
             		return  "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             	}},
@@ -48,7 +51,7 @@ $(document).ready(function() {
             },
             { "mDataProp": "STATUS", "sWidth":"100px"},
             { "mDataProp": "CREATE_STAMP", "sWidth":"150px"},
-            { "mDataProp": null},
+            { "mDataProp": null,"sWidth":"100px"},
         ]
     });
 	
@@ -64,7 +67,7 @@ $(document).ready(function() {
     	},
     	"sAjaxSource": "/returnOrder/findReturnOrderType",
         "aoColumns": [
-            { "mDataProp": "ORDER_NO",
+            { "mDataProp": "ORDER_NO","sWidth":"100px",
             	"fnRender":function(obj){
             		return "<a href='/returnOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             	}},
@@ -75,7 +78,7 @@ $(document).ready(function() {
             },
             { "mDataProp": "TRANSACTION_STATUS", "sWidth":"100px"},
             { "mDataProp": "CREATE_DATE", "sWidth":"150px"},
-            { "mDataProp": "AMOUNT"},
+            { "mDataProp": "AMOUNT","sWidth":"100px"},
         ]
     });
 	$("#btn,#clbtn").on('click',function(){

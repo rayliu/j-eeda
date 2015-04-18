@@ -1389,7 +1389,7 @@ public class TransferOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select t.order_no,"
+        String sql = "select t.id, t.order_no,"
         		+ " ifnull((select name from location where code = t.route_from ), '' ) route_from,"
         		+ " ifnull((select name from location where code = t.route_to ), '' ) route_to,"
         		+ " (select status from transfer_order_milestone where order_id = t.id order by id desc limit 0,1) status,"
