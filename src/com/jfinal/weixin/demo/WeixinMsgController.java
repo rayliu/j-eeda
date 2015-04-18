@@ -34,7 +34,7 @@ import com.jfinal.weixin.sdk.msg.out.OutVoiceMsg;
  */
 public class WeixinMsgController extends MsgController {
 	//"\t发送 help 可获得帮助，发送 \"美女\" 可看美女，发送 news 可看新闻，发送 music 可听音乐，你还可以试试发送图片、语音、位置、收藏等信息，看会有什么 。公众号持续更新中，想要更多惊喜欢迎每天关注 ^_^";
-	private static final String helpStr = "\t发送 help 可获得帮助，发送 \"回单\" 可发送图片、语音、位置等信息。";
+	private static final String helpStr = "\t发送 help 可获得帮助，发送 \"配送回单\"，\"直送回单\" 可发送图片、语音、位置等信息。";
 	//当前绑定的URL
 	private static final String url="http://tms.eeda123.com/wx";
 	/**
@@ -79,6 +79,16 @@ public class WeixinMsgController extends MsgController {
 			render(outMsg);
 		}
 		else if ("回单".equalsIgnoreCase(msgContent)) {
+			OutTextMsg outMsg = new OutTextMsg(inTextMsg);
+			outMsg.setContent("\t文本消息已成功接收，内容为： " + inTextMsg.getContent() + "\n\n\n" + "<a href='"+url+"/ro_filing'>请点我跳转到回单签收页面</a>");
+			render(outMsg);
+		}
+		else if ("配送回单".equalsIgnoreCase(msgContent)) {
+			OutTextMsg outMsg = new OutTextMsg(inTextMsg);
+			outMsg.setContent("\t文本消息已成功接收，内容为： " + inTextMsg.getContent() + "\n\n\n" + "<a href='"+url+"/ro_filing'>请点我跳转到回单签收页面</a>");
+			render(outMsg);
+		}
+		else if ("直送回单".equalsIgnoreCase(msgContent)) {
 			OutTextMsg outMsg = new OutTextMsg(inTextMsg);
 			outMsg.setContent("\t文本消息已成功接收，内容为： " + inTextMsg.getContent() + "\n\n\n" + "<a href='"+url+"/ro_filing'>请点我跳转到回单签收页面</a>");
 			render(outMsg);

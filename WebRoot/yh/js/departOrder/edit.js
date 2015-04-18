@@ -618,11 +618,11 @@
     				}
     			},'json');
     	    
-    	    //发车单里程碑
+    	    //tab-发车单里程碑
     	    $("#transferOrderMilestoneList").click(function(e){
     			e.preventDefault();
     			//提交前，校验数据
-	    		if("chargeCheckOrderbasic" == parentId){
+	    		if("chargeCheckOrderbasic" == parentId && !$("#saveDepartOrderBtn").attr("disabled")){
 	    			clickSaveDepartOrder(e);
     	    	}
     			$.post('/departOrder/transferOrderMilestoneList',{departOrderId:$("#departOrderId").val()},function(data){
@@ -726,7 +726,7 @@
     	    //tab-应付
     	    $("#arap1").click(function(e){
     			e.preventDefault();
-			   	if("chargeCheckOrderbasic" == parentId){
+			   	if("chargeCheckOrderbasic" == parentId && !$("#saveDepartOrderBtn").attr("disabled")){
 			   		clickSaveDepartOrder(e);
     	    	}
 			   	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
@@ -748,24 +748,30 @@
     	        var item_detail=$("#item_detail").val();
     	 	    var departOrderId = $("#departOrderId").val();
     			if("chargeCheckOrderbasic" == parentId){
-    				// 保存单品
-	 	    		$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
-        				$("#departOrderId").val(data.ID);
-        				if(data.ID>0){
-        					$("#departOrderId").val(data.ID);
-        					$("#depart_id").val(data.ID);
-        					$("#saveDepartOrderBtn").prop('disabled',false);
-        					$("#showDepartNo").text(data.DEPART_NO);
-        					$("#milestoneDepartId").val(data.ID);
-        		    	    $("#departureConfirmationBtn").attr("disabled", false);
-        		    	    $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-        				}else{
-        					$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-        				}
-        				datatable.fnSettings().oFeatures.bServerSide = true; 
-    	    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+data.ID;
+    				if(!$("#saveDepartOrderBtn").attr("disabled")){
+	    				// 保存单品
+		 	    		$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
+	        				$("#departOrderId").val(data.ID);
+	        				if(data.ID>0){
+	        					$("#departOrderId").val(data.ID);
+	        					$("#depart_id").val(data.ID);
+	        					$("#saveDepartOrderBtn").prop('disabled',false);
+	        					$("#showDepartNo").text(data.DEPART_NO);
+	        					$("#milestoneDepartId").val(data.ID);
+	        		    	    $("#departureConfirmationBtn").attr("disabled", false);
+	        		    	    $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	        				}else{
+	        					$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+	        				}
+	        				datatable.fnSettings().oFeatures.bServerSide = true; 
+	    	    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+data.ID;
+	    	    	 		datatable.fnDraw();
+	        			},'json');
+    				}else{
+    					datatable.fnSettings().oFeatures.bServerSide = true; 
+    	    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+departOrderId;
     	    	 		datatable.fnDraw();
-        			},'json');
+    				}
 	    		}else{
 	    			datatable.fnSettings().oFeatures.bServerSide = true; 
 	    	 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&departOrderId="+departOrderId;
@@ -797,7 +803,7 @@
     	                	$("#departureConfirmationBtn").attr("disabled",true);
               	    	  	$("#saveDepartOrderBtn").attr("disabled",true);
 	            	    	//计算应付
-	    	                $.post('/departOrder/updatestate?order_state="已发车"&priceType='+priceType, $("#orderForm").serialize(), function(){
+	    	                $.post('/departOrder/updatestate?order_state=已发车&priceType='+priceType, $("#orderForm").serialize(), function(){
 	    	                	//$("#warehousingConfirmBtn").attr("disabled",false);
 	    	                	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
 	    	                	paymenttable.fnDraw(); 
