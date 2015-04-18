@@ -1241,7 +1241,7 @@ public class ReturnOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select ro.order_no,ro.transaction_status,ro.create_date,"
+        String sql = "select ro.id,ro.order_no,ro.transaction_status,ro.create_date,"
         		+ " ifnull((select name from location where code = dor.route_from ), '') route_from,"
         		+ " ifnull((select name from location where code = dor.route_to ), '') route_to,"
         		+ " (select sum(amount) from return_order_fin_item where return_order_id = ro.id ) amount"

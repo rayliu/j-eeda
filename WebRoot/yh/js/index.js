@@ -16,7 +16,7 @@ $(document).ready(function() {
             { "mDataProp": "ORDER_NO"},
             {"mDataProp":null, "sWidth":"150px",
             	"fnRender": function(obj) {
-            		return obj.aData.ROUTE_FROM + " —— " + obj.aData.ROUTE_TO
+            		return obj.aData.ROUTE_FROM + " —— " + obj.aData.ROUTE_TO;
             	}
             },
             { "mDataProp": "STATUS", "sWidth":"100px"},
@@ -37,10 +37,13 @@ $(document).ready(function() {
     	},
     	"sAjaxSource": "/delivery/findDeliveryOrderType",
         "aoColumns": [
-            { "mDataProp": "ORDER_NO"},
+            { "mDataProp": "ORDER_NO",
+            	"fnRender":function(obj){
+            		return  "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            	}},
             {"mDataProp":null, "sWidth":"150px",
             	"fnRender": function(obj) {
-            		return obj.aData.ROUTE_FROM + " —— " + obj.aData.ROUTE_TO
+            		return obj.aData.ROUTE_FROM + " —— " + obj.aData.ROUTE_TO;
             	}
             },
             { "mDataProp": "STATUS", "sWidth":"100px"},
@@ -61,7 +64,10 @@ $(document).ready(function() {
     	},
     	"sAjaxSource": "/returnOrder/findReturnOrderType",
         "aoColumns": [
-            { "mDataProp": "ORDER_NO"},
+            { "mDataProp": "ORDER_NO",
+            	"fnRender":function(obj){
+            		return "<a href='/returnOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            	}},
             {"mDataProp":null, "sWidth":"150px",
             	"fnRender": function(obj) {
             		return obj.aData.ROUTE_FROM + " —— " + obj.aData.ROUTE_TO
