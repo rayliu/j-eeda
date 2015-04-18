@@ -1337,6 +1337,7 @@ public class ReturnOrderController extends Controller {
     
     public void saveFile(){
     	String id = getPara("return_id");
+    	String permission = getPara("permission");
     	List<UploadFile> uploadFiles = getFiles("fileupload");
     	Map<String,Object> resultMap = new HashMap<String,Object>();
     	ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
@@ -1356,9 +1357,13 @@ public class ReturnOrderController extends Controller {
 			}
 		}
 		if(result){
+			List<OrderAttachmentFile> orderAttachmentFileList = null;
 			resultMap.put("result", "true");
-			List<OrderAttachmentFile> OrderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + id + "';");
-	    	resultMap.put("cause", OrderAttachmentFileList);
+			if(permission.equals("permissionYes"))
+				orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + id + "';");
+			else
+				orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + id + "' and audit = true;");
+	    	resultMap.put("cause", orderAttachmentFileList);
 		}else{
 			resultMap.put("result", "false");
 	    	resultMap.put("cause", "上传失败，请选择正确的图片文件");
@@ -1367,8 +1372,13 @@ public class ReturnOrderController extends Controller {
     }
     //删除图片
     public void delPictureById(){
+    	String permission = getPara("permission");
     	OrderAttachmentFile.dao.deleteById(getPara("picture_id"));
-    	List<OrderAttachmentFile> orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("return_id") + "';");
+    	List<OrderAttachmentFile> orderAttachmentFileList = null;
+		if(permission.equals("permissionYes"))
+			orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("return_id") + "';");
+		else
+			orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("return_id") + "' and audit = true;");
     	renderJson(orderAttachmentFileList);
     }
     

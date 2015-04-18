@@ -572,26 +572,34 @@
     $("#savefile").click(function(e){
     	$("#fileupload").click();
 	 });
-
 	 $('#fileupload').fileupload({
         dataType: 'json',
-        url: '/returnOrder/saveFile?return_id='+$("#returnId").val(),//上传地址
+        url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val(),//上传地址
         done: function (e, data) {
         	$('#myModal').modal('hide');
         	if(data.result.result == "true"){
         		//$("#centerBody").empty().append("<h4>上传成功！</h4>");
-        		$.scojs_message('上传成功', $.scojs_message.TYPE_OK);
+        		$.scojs_message('上传成功,审核通过后显示图像', $.scojs_message.TYPE_OK);
         		console.log("data.result.cause:"+data.result.cause);
         		var showPictures = $("#showPictures");
-        		showPictures.empty();
-        		$.each(data.result.cause,function(name,value) {
-        			showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'" > 审核 </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
-                });
+        		var permission = $("#permission").val();
+        		if(permission == "permissionYes"){
+        			showPictures.empty().append('<input type="hidden" id="permission" value="permissionYes">');
+        			$.each(data.result.cause,function(name,value) {
+        				var aText = "待审核";
+        				if(value.AUDIT == 1 || value.AUDIT == true)
+        					aText = "已审核";
+        				showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'" > ' + aText + ' </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
+                    });
+        		}else{
+        			showPictures.empty().append('<input type="hidden" id="permission" value="permissionNo">');
+        			$.each(data.result.cause,function(name,value) {
+        				showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"></div>');
+                    });
+        		}
         	}else{
         		$.scojs_message('上传失败，'+data.result.cause, $.scojs_message.TYPE_ERROR);
-        		//$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
         	}
-        	//$("#footer").show();
         },  
         progressall: function (e, data) {//设置上传进度事件的回调函数  
         	$('#myModal').modal('show');
@@ -604,12 +612,24 @@
 		if(confirm("确定删除吗？")){
 			var return_id = $("#returnId").val();
 			var picture_id = $(this).attr("picture_id");
-			$.post('/returnOrder/delPictureById', {picture_id:picture_id,return_id:return_id}, function(data){
-				var showPictures = $("#showPictures");
-	    		showPictures.empty();
-				$.each(data,function(name,value) {
-	    			showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'"> 审核 </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
-	            });
+			var permission = $("#permission").val();
+			$.post('/returnOrder/delPictureById', {picture_id:picture_id,return_id:return_id,permission:permission}, function(data){
+        		var showPictures = $("#showPictures");
+        		var permission = $("#permission").val();
+        		if(permission == "permissionYes"){
+        			showPictures.empty().append('<input type="hidden" id="permission" value="permissionYes">');
+                    $.each(data,function(name,value) {
+                    	var aText = "待审核";
+        				if(value.AUDIT == 1 || value.AUDIT == true)
+        					aText = "已审核";
+                        showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'"> ' + aText + ' </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
+                    });
+        		}else{
+        			showPictures.empty().append('<input type="hidden" id="permission" value="permissionNo">');
+        			$.each(data,function(name,value) {
+        				showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"></div>');
+                    });
+        		}
 			},'json');
 		}
 	});	
@@ -617,14 +637,19 @@
 	// 审核图片
 	$("#showPictures").on('click', '.picture_audit', function(e){
 		var auditVar = $(this);
-		if(confirm("确定审核通过吗？")){
+		var aText = auditVar.text();
+		if(aText == "待审核")
+			aText = "审核通过";
+		else
+			aText = "取消审核";
+		if(confirm("确定"+aText+"吗？")){
 			var return_id = $("#returnId").val();
 			var picture_id = $(this).attr("picture_id");
 			$.post('/returnOrder/auditPictureById', {picture_id:picture_id,return_id:return_id}, function(data){
 				if(data.AUDIT == 1 || data.AUDIT == true)
 					auditVar.text("已审核");
 				else
-					auditVar.text("审核");
+					auditVar.text("待审核");
 			},'json');
 		}
 	});	
