@@ -227,7 +227,7 @@ $(document).ready(function() {
     	var id = $(this).parent().parent()[0].id;
     	var fieldName=$(this).attr("name");
 		var value= $(this).val();
-		alert(fieldName +"========="+value);
+		
 		$.post('/product/updateProductById',{id:id,fieldName:fieldName,value:value},function(data){
 			productDataTable.fnDraw();	
 			
