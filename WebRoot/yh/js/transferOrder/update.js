@@ -652,6 +652,20 @@ $(document).ready(function() {
     	parentId = e.target.getAttribute("id");
    
     });
+    
+    $.post('/transferOrder/searchAllUnit',function(data){
+   	 if(data.length > 0){
+   		 var unitOptions = $("#unitOptions");
+   		 unitOptions.empty();
+   		 unitOptions.append("<option ></option>");
+   		 for(var i=0; i<data.length; i++){
+   			unitOptions.append("<option value='"+data[i].NAME+"'>"+data[i].NAME+"</option>");	
+   		 }
+   		
+   	 }
+    },'json');
+    
+    
 	var order_id = $("#order_id").val();
 	//datatable, 动态处理
     var itemDataTable = $('#itemTable').dataTable({
@@ -793,15 +807,7 @@ $(document).ready(function() {
             	"sWidth": "50px",
             	"sClass": "unit",
             	"fnRender": function(obj) {
-            		/*var inputBox = "";
-            		if(obj.aData.PROD_ID != null){
-            			inputBox = obj.aData.UNIT + '';
-            		}else{
-	            		if(obj.aData.UNIT==null)
-	            			obj.aData.UNIT='';
-	            		//inputBox = "<input type='text' name='unit' style='width:60px;' value='"+obj.aData.UNIT+"'>";
-	            		inputBox = "<select name='unit'><option></option><option>台</option><option>件</option><option>套</option></select>";
-            		}*/
+            		
             		if(obj.aData.PROD_ID !='' && obj.aData.PROD_ID != null){
             			if(obj.aData.UNIT != null)
             				inputBox = obj.aData.UNIT + '';

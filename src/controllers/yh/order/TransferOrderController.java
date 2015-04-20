@@ -1422,7 +1422,10 @@ public class TransferOrderController extends Controller {
     	File file = new File(PathKit.getWebRootPath()+"/download/运输单导入模板.xls");
     	renderFile(file);
     }
-    
+    public void searchAllUnit(){
+		List<Record> offices = Db.find("select * from unit");
+		renderJson(offices); 
+    }
     
     
 }
