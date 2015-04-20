@@ -1,14 +1,21 @@
 package controllers.yh.wx;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Office;
 import models.OrderAttachmentFile;
 import models.ReturnOrder;
+import models.TransferOrder;
+import models.TransferOrderItemDetail;
+import models.UserOffice;
 
 import com.jfinal.kit.PropKit;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import com.jfinal.weixin.demo.SignKit;
 import com.jfinal.weixin.sdk.api.ApiConfig;
@@ -60,15 +67,61 @@ public class WxController extends ApiController {
 	}
 	//回单上传附件页面
 	public void ro_filing() {
+		setAttr("type", "default");
 		setPageAttr("http://tms.eeda123.com/wx/ro_filing");
 		render("/yh/returnOrder/returnOrderFiling.html");
 	}
+	//回单上传附件页面 - 直送
+	public void directSend() {
+		setAttr("type", "directSend");
+		setPageAttr("http://tms.eeda123.com/wx/directSend");
+		render("/yh/returnOrder/returnOrderFiling.html");
+	}
+	//回单上传附件页面 - 配送
+	public void distribution() {
+		setAttr("type", "distribution");
+		setPageAttr("http://tms.eeda123.com/wx/distribution");
+		render("/yh/returnOrder/returnOrderFiling.html");
+	}
+	
 	//获取回单数据
 	public void getRo() {
-		String orderNo=getPara();
-		if(orderNo!=null)
-			orderNo=orderNo.toUpperCase();
-		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select * from return_order where order_no=?",orderNo);
+		String type = getPara("type");
+		String orderNo = getPara("orderNo");
+		String transferOrderNo = getPara("transferOrderNo");
+		String customerOrderNo = getPara("customerOrderNo");
+		String serialNo = getPara("serialNo");
+		String sqId = getPara("sqId");
+		ReturnOrder returnOrder = null;
+		if("default".equals(type)){
+			if(orderNo != null)
+				orderNo=orderNo.toUpperCase();
+			returnOrder = ReturnOrder.dao.findFirst("select * from return_order where order_no=?",orderNo);
+		}else if("directSend".equals(type)){
+			//直送，运输单号、客户订单号
+			TransferOrder order = null;
+			if(transferOrderNo != null && !"".equals(transferOrderNo) && customerOrderNo != null && !"".equals(customerOrderNo)){
+				transferOrderNo = transferOrderNo.toUpperCase();
+				order = TransferOrder.dao.findFirst("select id from transfer_order where order_no = ? and customer_order_no = ?",transferOrderNo,customerOrderNo);
+			}else if(transferOrderNo != null && !"".equals(transferOrderNo)){
+				transferOrderNo = transferOrderNo.toUpperCase();
+				order = TransferOrder.dao.findFirst("select id from transfer_order where order_no = ?",transferOrderNo);
+			}else if(customerOrderNo != null && !"".equals(customerOrderNo))
+				order = TransferOrder.dao.findFirst("select id from transfer_order where customer_order_no = ?",customerOrderNo);
+			if(order != null)
+				returnOrder = ReturnOrder.dao.findFirst("select * from return_order where transfer_order_id = ?",order.get("id"));
+		}else if("distribution".equals(type)){
+			//配送，序列号、供应商
+			List<TransferOrderItemDetail> detailList = new ArrayList<TransferOrderItemDetail>();
+			if(serialNo != null && !"".equals(serialNo) && sqId != null && !"".equals(sqId)){
+				detailList = TransferOrderItemDetail.dao.find("select toid.delivery_id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.serial_no = ? and tor.sp_id = ? and toid.delivery_id is not null",serialNo,sqId);
+			}else if(serialNo != null && !"".equals(serialNo)){
+				detailList = TransferOrderItemDetail.dao.find("select delivery_id from transfer_order_item_detail where serial_no = ? and delivery_id is not null",serialNo);
+			}
+			//序列号唯一
+			if(detailList.size() == 1)
+				returnOrder = ReturnOrder.dao.findFirst("select * from return_order where delivery_order_id = ?",detailList.get(0).get("delivery_id"));
+		}
 		if(returnOrder==null)
 			returnOrder = new ReturnOrder();
 		renderJson(returnOrder);
@@ -105,7 +158,25 @@ public class WxController extends ApiController {
     	renderJson(resultMap);
     }
 	
-	
+	public void searchPartSp() {
+		String input = getPara("input");
+		//String userName = currentUser.getPrincipal().toString();
+		//UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where is_main = ?",true);
+		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+		Long parentID = parentOffice.get("belong_office");
+		if(parentID == null || "".equals(parentID)){
+			parentID = parentOffice.getLong("id");
+		}
+		String sql = "";
+		if(input!=null&&input!=""){
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id left join office o on o.id = p.office_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and c.abbr like '%"+input+"%'  and (o.id = "+parentID + " or o.belong_office = "+parentID + ")";
+		}else{
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id left join office o on o.id = p.office_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and (o.id = "+parentID + " or o.belong_office = "+parentID + ")";
+		}
+		List<Record> locationList = Db.find(sql);
+		renderJson(locationList);
+	}
 	
 	
 }

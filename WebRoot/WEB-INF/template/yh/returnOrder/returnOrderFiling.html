@@ -2,17 +2,39 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>创诚易达物流系统-回单签收</title>
+  <title id="titleName">创诚易达物流系统-回单签收</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
   <link rel="stylesheet" href="/yh/css/plugins/wx/style.css">
+  
+  <link href="/yh/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/yh/css/sb-admin.css" rel="stylesheet">
 </head>
 <body ontouchstart="">
 <div class="wxapi_container">
     
     <div class="lbox_close wxapi_form">
-      
-        <h3 id="menu-image">请输入回单号码</h3>
-        <input type="text" class="form-control" id="orderNo" name='orderNO' value="" />
+    	<form id="returnFrom" method="post">
+	    	<input type="hidden" id="type" name="type" value="${type!''}">
+	      	<div id="defaultDiv" class="form-group">
+	        	<label class="control-label">请输入回单号码</label>
+	        	<input type="text" class="form-control" id="orderNo" name='orderNo' value="" />
+	        </div>
+	        <div id="directSendDiv" class="form-group">
+	        	<label class="control-label">请输入运输单号</label>
+	        	<input type="text" class="form-control" id="transferOrderNo" name='transferOrderNo' value="" />
+	        	<label class="control-label">请输入客户订单号</label>
+	        	<input type="text" class="form-control" id="customerOrderNo" name='customerOrderNo' value="" />
+	        </div>
+	        <div id="distributionDiv" class="form-group">
+	        	<label class="control-label">请输入货品序列号</label>
+	        	<input type="text" class="form-control" id="serialNo" name='serialNo' value="" />
+	        	<label class="control-label">请选择供应商</label>
+	        	<input id="sqId" name="sqId" type="hidden">
+	            <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage"/>
+	           	<ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;"></ul>
+	        </div>
+        </form>
+        <h3 id="menu-image1"></h3>
         <input type="hidden" class="form-control" id="returnId" name='returnId' value="" />
         <button class="btn btn_primary" id="searchNo">查询</button>
         <!--h3 id="menu-scan">或 微信扫一扫</h3>
@@ -60,13 +82,14 @@
   //     ]
   // });
 </script>
-
+<script src="/yh/css/ui/jquery-ui.js"></script>
 <script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.ui.widget.js"></script>
 <script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.iframe-transport.js"></script> 
 <script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.fileupload.js"></script>
 
 <!-- 某些型号android 不加Version,js文件会不刷新-->
-<script src="/yh/js/wx/ro_filing.js?version=${timestamp}"> </script>
+<!-- <script src="/yh/js/wx/ro_filing.js?version=${timestamp}"> </script> -->
+<script src="/yh/js/wx/ro_filing.js"></script>
 
 
 </html>
