@@ -58,10 +58,10 @@ public class ProductController extends Controller {
         String sqlTotal = "";
         if (categoryId == null || "".equals(categoryId)) {
             sqlTotal = "select count(1) total from product";
-            sql = "select *,(select name from category  where id = "+categoryId+") category_name from product "+sLimit;
+            sql = "select *,(select name from category  where id = "+categoryId+") category_name from product order by id desc"+sLimit;
         } else {
             sqlTotal = "select count(1) total from product where category_id = " + categoryId;
-            sql = "select *,(select name from category where id = "+categoryId+") category_name from product where category_id = " + categoryId + " "+sLimit;
+            sql = "select *,(select name from category where id = "+categoryId+") category_name from product where category_id = " + categoryId + " order by id desc "+sLimit;
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -368,7 +368,20 @@ public class ProductController extends Controller {
     }
 
     // 保存产品
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_CREATE, PermissionConstant.PERMSSION_PT_UPDATE}, logical=Logical.OR)
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_UPDATE})
+    public void updateProductById(){
+    	 String id = getPara("id");
+    	 String filedName = getPara("fieldName");
+    	 String value = getPara("value");
+    	 Product product = null;
+
+         if (id != null && !id.equals("")) {
+             product = Product.dao.findById(id);
+    		 product.set(filedName, value).update();
+    	 }
+         renderJson(product);
+    }
+    
     public void saveProductByField() {
         String returnValue = "";
         String id = getPara("id");
@@ -439,5 +452,9 @@ public class ProductController extends Controller {
     	map.put("name", name);
     	map.put("categories", categories);
     	renderJson(map);
+    }
+    public void searchAllUnit(){
+		List<Record> offices = Db.find("select * from unit");
+		renderJson(offices); 
     }
 }

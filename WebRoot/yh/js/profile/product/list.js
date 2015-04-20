@@ -32,7 +32,18 @@ $(document).ready(function() {
         }
         e.stopPropagation();
     });
-
+    //获取所有单位
+    $.post('/transferOrder/searchAllUnit',function(data){
+      	 if(data.length > 0){
+      		 var unitOptions = $("#unitOptions");
+      		 unitOptions.empty();
+      		 unitOptions.append("<option ></option>");
+      		 for(var i=0; i<data.length; i++){
+      			unitOptions.append("<option value='"+data[i].NAME+"'>"+data[i].NAME+"</option>");	
+      		 }
+      		
+      	 }
+       },'json');
 	//datatable, 动态处理
     productDataTable = $('#eeda-table').dataTable({
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -50,61 +61,143 @@ $(document).ready(function() {
 		},
         "aoColumns": [   
             {
-            	"mDataProp":"ITEM_NO",            	
-            	"sWidth": "80px",
-            	"sClass": "item_no"
+            	"mDataProp":"ITEM_NO",
+            	"sClass": "item_no",
+            	"fnRender":function(obj){
+            		var str = obj.aData.ITEM_NO ;
+            		if(str == null){
+            			str ="";
+            		}
+            		return "<input type='text' name='item_no' value='"+str+"'>";
+            	}
             },       	
             {
             	"mDataProp":"SERIAL_NO",
-            	"sWidth": "120px",
-            	"sClass": "serial_no"
+            	"sClass": "serial_no",
+            	"fnRender":function(obj){
+            		var str = obj.aData.SERIAL_NO ;
+            		if(str == null){
+            			str ="";
+            		}
+            			
+            		return "<input type='text' name='serial_no' style='width:80px;' value='"+ str +"'>";
+            	}
             },        	
             {
             	"mDataProp":"ITEM_NAME",
-            	"sWidth": "120px",
-            	"sClass": "item_name"
+            	"sClass": "item_name",
+            	"fnRender":function(obj){
+            		var str = obj.aData.ITEM_NAME ;
+            		if(str == null){
+            			str ="";
+            		}
+            		return "<input type='text' name='item_name' style='width:100px;' value='"+ str +"'>";
+            	}
             },
             {
-            	"mDataProp":"SIZE",            	
-            	"sWidth": "50px",
-            	"sClass": "size"
+            	"mDataProp":"SIZE", 
+            	"sClass": "size",
+            	"fnRender":function(obj){
+            		var str = obj.aData.SIZE ;
+            		if(str == null){
+            			str ="";
+            		}
+            		return "<input type='text' name='size' style='width:80px;' value='"+ str +"'>";
+            	}
         	},
             {
             	"mDataProp":"WIDTH",
-            	"sWidth": "50px",
-            	"sClass": "width"
+            	"sClass": "width",
+            	"fnRender":function(obj){
+            		var str = obj.aData.WIDTH ;
+            		if(str == null){
+            			str ="";
+            		}
+            		return "<input type='text' name='width' style='width:80px;' value='"+ str +"'>";
+            	}
             },
             {
-            	"mDataProp":"HEIGHT",            	
-            	"sWidth": "50px",
-            	"sClass": "height"
+            	"mDataProp":"HEIGHT", 
+            	"sClass": "height",
+            	"fnRender":function(obj){
+            		var str = obj.aData.HEIGHT ;
+            		if(str == null){
+            			str ="";
+            		}
+            		return "<input type='text' name='height' style='width:80px;' value='"+ str +"'>";
+            	}
         	},
         	{
-            	"mDataProp":"INSURANCE_AMOUNT",            	
-            	"sWidth": "50px",
-            	"sClass": "insurance_amount"
+            	"mDataProp":"INSURANCE_AMOUNT", 
+            	"sClass": "insurance_amount",
+            	"fnRender":function(obj){
+            		var str = obj.aData.INSURANCE_AMOUNT;
+            		if(str == null){
+            			str ="";
+            		}
+            		return "<input type='text' name='insurance_amount' style='width:80px;' value='"+ str +"'>";
+            	}
         	},
             {
             	"mDataProp":"CATEGORY_NAME",            	
-            	"sWidth": "50px",
-            	"sClass": "category"
+            	"sWidth": "100px",
+            	"sClass": "category",
+            	"fnRender":function(obj){
+            		var str =obj.aData.CATEGORY_NAME;
+            		if(str==null){
+            			str = '';
+            		}
+            		return "<input type='text' name='category' style='width:80px;' disabled = 'disabled' value='"+str+"'>";
+            	}
         	},
         	{
             	"mDataProp":"UNIT",
-            	"sWidth": "50px",
-            	"sClass": "unit"
+            	"sClass": "unit",
+            	"fnRender":function(obj){
+		        	var str="";
+		        	$("#unitOptions").children().each(function(){
+		        		if(obj.aData.UNIT == $(this).val()){
+		        			str+="<option value='"+$(this).val()+"' selected=''>"+$(this).text()+"</option>";			        			
+		        		}else{			        			
+		        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+		        		}
+		        	});
+		        	inputBox = "<select name='unit'>"+str+"</select>";
+			        
+        			return inputBox;
+            		
+            	}
             },
             {
             	"mDataProp":"VOLUME",
-            	"sWidth": "50px",
-            	"sClass": "volume"
+            	"sClass": "volume",
+            	"fnRender":function(obj){
+            		var str = obj.aData.VOLUME;
+            		if(str == null){
+            			str ="";
+            		}
+            		return "<input type='text' name='volume' style='width:80px;' value='"+ str +"'>";
+            	}
             }, 
             {
             	"mDataProp":"WEIGHT",
-            	"sWidth": "50px",
             	"sClass": "weight",
+            	"fnRender":function(obj){
+            		var str = obj.aData.WEIGHT ;
+            		if(str == null){
+            			str ="";
+            		}
+            		return "<input type='text' name='weight' style='width:80px;' value='"+ str +"'>";
+            	}
             },
-            {"mDataProp":"ITEM_DESC"},
+            {"mDataProp":"ITEM_DESC",
+            	"fnRender":function(obj){
+            		var str = obj.aData.ITEM_DESC;
+            		if(str == null){
+            			str ="";
+            		}
+            		return "<input type='text' name='item_desc' style='width:120px;' value='"+ str +"'>";
+            	}},
             { 
                 "mDataProp": null, 
                 "sWidth": "60px", 
@@ -128,7 +221,20 @@ $(document).ready(function() {
             }                         
         ],      
     });
-
+    
+    
+    $('#eeda-table').on('blur', 'input,select', function(){
+    	var id = $(this).parent().parent()[0].id;
+    	var fieldName=$(this).attr("name");
+		var value= $(this).val();
+		alert(fieldName +"========="+value);
+		$.post('/product/updateProductById',{id:id,fieldName:fieldName,value:value},function(data){
+			productDataTable.fnDraw();	
+			
+		},'json');
+	});
+   
+  
     // 计算体积
 	var sumVolume = function(currentEle){
 		$(currentEle).parent().children('.volume')[0].innerHTML = parseFloat($(currentEle).parent().children('.size')[0].innerHTML)/1000 * parseFloat($(currentEle).parent().children('.width')[0].innerHTML)/1000 * parseFloat($(currentEle).parent().children('.height')[0].innerHTML)/1000;
@@ -142,7 +248,7 @@ $(document).ready(function() {
 		productDataTable.fnDraw();
 	};
 	
-    productDataTable.makeEditable({
+    /*productDataTable.makeEditable({
     	sUpdateURL: '/product/saveProductByField',    	
     	oEditableSettings: {event: 'click'},
     	"aoColumns": [  			            
@@ -221,8 +327,8 @@ $(document).ready(function() {
             	name:"insurance_amount",
             	placeholder: "",
             	callback: function () {
-            		/*sumVolume(this);
-            		refreshProductTable();*/
+            		sumVolume(this);
+            		refreshProductTable();
             	} 
             },
             null,
@@ -262,7 +368,6 @@ $(document).ready(function() {
 	        source: function( request, response ) {
 	        },
         	select: function( event, ui ) {
-        		
         		//将选择的产品id先保存到数据库
         		var itemId = $(this).parent().parent().parent()[0].id;
         		var productId = ui.item.id;
@@ -273,7 +378,7 @@ $(document).ready(function() {
             },
         	minLength: 2
         });
-    });                                                                      
+    });               */                                                       
         
     var nodePlusClickHandler= function(e){
     	//e.preventDefault();
@@ -312,7 +417,6 @@ $(document).ready(function() {
     	var nodeElement = $(this);
     	$.get('/product/searchNodeCategory', {categoryId: categoryId, customerId: customerId}, function(data){
     		if(data.length > 0){
-	    		console.log(data);
 	    		addNode(data, nodeElement);
     		}
     	},'json');
