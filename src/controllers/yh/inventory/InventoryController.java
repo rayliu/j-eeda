@@ -166,81 +166,58 @@ public class InventoryController extends Controller {
     	   customerLocal = "and d_o.customer_id = i_t.party_id";
        }
         
-        
-        String sql ="select sum(total_quantity) total_quantity, oid, wid, party_id,company_name, item_name, item_no, unit,pid, warehouse_name, office_name,predict_amount,lock_amount,valid_amount"
-					+" from (select i_t.total_quantity,o.id as oid,w.id as wid,p2.id as party_id, c.company_name, p.item_name, p.item_no, p.unit, p.id as pid, "
-					+" (select warehouse_name from warehouse where id = i_t.warehouse_id) warehouse_name, "
-					+" (select office_name from office o left join warehouse w on o.id = w.office_id where w.id = i_t.warehouse_id) office_name,"
-					+" (select count(1) from depart_order d_o left join transfer_order_item_detail toid on toid.depart_id = d_o.id"
-					+" left join transfer_order_item toi on toi.id = toid.item_id"
-					+" left join transfer_order t_o on toid.order_id = t_o.id where"
-					+" d_o.status='已发车' " + warehousePredict
-					+" and toi.product_id = i_t.product_id) predict_amount,"
-					+" (select count(1) from delivery_order_item doi"
-					+" left join delivery_order d_o on doi.delivery_id = d_o.id"
-					+" left join transfer_order_item_detail toid on doi.transfer_item_detail_id = toid.id" 
-					+" left join transfer_order_item toi on toi.id = toid.item_id"
-					+" where d_o.status='新建' " + warehouseLocal
-					+" and toi.product_id = i_t.product_id " + customerLocal + ") lock_amount,"
-					+" (select count(toid.id) as valid_amount from transfer_order tor"
-					+" left join transfer_order_item_detail toid on toid.order_id = tor.id "
-					+" left join transfer_order_item toi on toi.id = toid.item_id "
-					+" where toi.product_id = i_t.product_id " + customerCondition
-					+" and toid.delivery_id is null and toid.depart_id is not null  and toid.status ='已入库' " + warehouseCondition + ") valid_amount"
-					+" from inventory_item i_t " 
-					+" left join product p on  p.id =i_t.product_id "
-					+" left join party p2 on i_t.party_id =p2.id "
-					+" left join contact c on p2.contact_id = c.id "
-					+" left join warehouse w on w.id = i_t.warehouse_id "
-					+" left join office o on o.id = w.office_id"
-					+" union"
-					+" select 0 as total_quantity,o.id as oid,w.id as wid,p2.id as party_id, c.company_name, p.item_name, p.item_no, p.unit,p.id as pid,  "
-					+" (select warehouse_name from warehouse where id = i_t.warehouse_id) warehouse_name, "
-					+" (select office_name from office o left join warehouse w on o.id = w.office_id where w.id = i_t.warehouse_id) office_name,"
-					+" (select count(1) from depart_order d_o left join transfer_order_item_detail toid on toid.depart_id = d_o.id"
-					+" left join transfer_order_item toi on toi.id = toid.item_id"
-					+" left join transfer_order t_o on toid.order_id = t_o.id where"
-					+" d_o.status='已发车' " + warehouseCondition
-					+" and toi.product_id = p.id) predict_amount,"
-					+" 0 lock_amount,0 valid_amount from inventory_item i_t "
-					+" left join transfer_order tor on tor.warehouse_id = i_t.warehouse_id "
-					+" left join transfer_order_item_detail toid on toid.order_id = tor.id"
-					+" left join transfer_order_item toi on toi.order_id = tor.id"
-					+" left join product p on p.id = toi.product_id "
-					+" left join party p2 on tor.customer_id =p2.id "
-					+" left join contact c on p2.contact_id = c.id  "
-					+" left join warehouse w on w.id = i_t.warehouse_id "
-					+" left join office o on o.id = w.office_id where  i_t.product_id != p.id ) as A where 1=1 ";
+       //获取当前用户的总公司
+       String userName = currentUser.getPrincipal().toString();
+       UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+       Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+       Long parentID = parentOffice.get("belong_office");
+       if(parentID == null || "".equals(parentID)){
+       	parentID = parentOffice.getLong("id");
+       }
        
-        String groupSql = " group by item_name, item_no, unit";
-        String groupCondition = "";
+       
+       String sql = " from inventory_item i_t "
+					+" left join product p on  i_t.product_id = p.id "
+					+" left join party p2 on i_t.party_id = p2.id  "
+					+" left join contact c on p2.contact_id = c.id "
+					+" left join warehouse w on  i_t.warehouse_id = w.id "
+					+" left join office o on w.office_id = o.id "
+					+" left join office p_o on p2.office_id = p_o.id "
+					+" where 1=1 and (o.id = " + parentID + " or o.belong_office = " + parentID + ") and (p_o.id = " + parentID + " or p_o.belong_office = " + parentID + ") ";
+				
+        String sqlCondition = " select sum(i_t.total_quantity) as total_quantity,o.id as oid,w.id as wid,p2.id as party_id, c.company_name, p.item_name, p.item_no, p.unit, p.id as pid, w.warehouse_name,o.office_name,"
+       			+ "(select count(1) from depart_order d_o left join transfer_order_item_detail toid on toid.depart_id = d_o.id left join transfer_order_item toi on toi.id = toid.item_id left join transfer_order t_o on toid.order_id = t_o.id where d_o.status='已发车'  and toi.product_id = i_t.product_id"  + warehousePredict + ") predict_amount, "
+    		   	+" (select count(1) from delivery_order_item doi  left join delivery_order d_o on doi.delivery_id = d_o.id  left join transfer_order_item_detail toid on doi.transfer_item_detail_id = toid.id left join transfer_order_item toi on toi.id = toid.item_id  where d_o.status='新建'" + warehouseLocal + " and toi.product_id = i_t.product_id and d_o.customer_id = i_t.party_id " + customerLocal + ") lock_amount,"
+				+" (select count(toid.id) as valid_amount from transfer_order tor left join transfer_order_item_detail toid on toid.order_id = tor.id  left join transfer_order_item toi on toi.id = toid.item_id  where toi.product_id = i_t.product_id  and tor.customer_id = i_t.party_id " + customerCondition + " and toid.delivery_id is null and toid.depart_id is not null  and toid.status ='已入库' " + warehouseCondition + ") valid_amount ";
+      
+        String groupCondition = " group by p.item_name, p.item_no, p.unit";
         
 	    if((customerId != null) && !"".equals(customerId)){
-	    	sql = sql + " and party_id =" + customerId ;
+	    	sql = sql + " and i_t.party_id =" + customerId ;
 	    	
-	    	groupCondition = groupCondition + ",company_name";
+	    	groupCondition = groupCondition + ",c.company_name";
 	    }
         if(warehouseId != null && !"".equals(warehouseId)){
         	
-        	sql = sql + " and wid =" + warehouseId ;
+        	sql = sql + " and i_t.warehouse_id =" + warehouseId ;
         	
-        	groupCondition = groupCondition + ",warehouse_name";
+        	groupCondition = groupCondition + ",w.warehouse_name";
         }
         
         if((officeId != null) && !"".equals(officeId)){
-        	sql = sql + " and oid =" + officeId ;
-        	groupCondition = groupCondition + ",office_name";
+        	sql = sql + " and w.office_id =" + officeId ;
+        	groupCondition = groupCondition + ",o.office_name";
         }
         
         if(itemId != null && !"".equals(itemId)){
-        	sql = sql + " and pid =" + itemId;
+        	sql = sql + " and i_t.product_id =" + itemId;
         	/*groupCondition = groupCondition + ",pid";*/
         }
         
-        String sqlTotal = "select count(1) total from (" + sql + groupSql + ") as B";// 获取总条数
+        String sqlTotal = "select count(1) total " + sql +  groupCondition;// 获取总条数
         
         
-        sql = sql + groupSql + sLimit;
+        sql = sqlCondition + sql + groupCondition + sLimit;
        
         Record rec = Db.findFirst(sqlTotal);
         // 获取当前页的数据
