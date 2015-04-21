@@ -173,7 +173,7 @@ $(document).ready(function() {
             		if(obj.aData.CARGO_NATURE == "cargo"){
             			return "普通货品";
             		}else if(obj.aData.CARGO_NATURE == "ATM"){
-            			return "ATM";
+            			return pickupOrderSearcheTransfer.ex_cargo;
             		}else{
             			return "";
             }}},
