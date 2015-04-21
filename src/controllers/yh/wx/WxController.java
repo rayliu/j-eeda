@@ -2,12 +2,14 @@ package controllers.yh.wx;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import models.Office;
 import models.OrderAttachmentFile;
+import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderItemDetail;
@@ -91,7 +93,7 @@ public class WxController extends ApiController {
 		String transferOrderNo = getPara("transferOrderNo");
 		String customerOrderNo = getPara("customerOrderNo");
 		String serialNo = getPara("serialNo");
-		String sqId = getPara("sqId");
+		String customerId = getPara("customerId");
 		ReturnOrder returnOrder = null;
 		if("default".equals(type)){
 			if(orderNo != null)
@@ -113,8 +115,8 @@ public class WxController extends ApiController {
 		}else if("distribution".equals(type)){
 			//配送，序列号、供应商
 			List<TransferOrderItemDetail> detailList = new ArrayList<TransferOrderItemDetail>();
-			if(serialNo != null && !"".equals(serialNo) && sqId != null && !"".equals(sqId)){
-				detailList = TransferOrderItemDetail.dao.find("select toid.delivery_id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.serial_no = ? and tor.sp_id = ? and toid.delivery_id is not null",serialNo,sqId);
+			if(serialNo != null && !"".equals(serialNo) && customerId != null && !"".equals(customerId)){
+				detailList = TransferOrderItemDetail.dao.find("select toid.delivery_id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.serial_no = ? and tor.customer_id = ? and toid.delivery_id is not null",serialNo,customerId);
 			}else if(serialNo != null && !"".equals(serialNo)){
 				detailList = TransferOrderItemDetail.dao.find("select delivery_id from transfer_order_item_detail where serial_no = ? and delivery_id is not null",serialNo);
 			}
@@ -158,24 +160,14 @@ public class WxController extends ApiController {
     	renderJson(resultMap);
     }
 	
-	public void searchPartSp() {
+	public void findAllCustomer() {
 		String input = getPara("input");
-		//String userName = currentUser.getPrincipal().toString();
-		//UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where is_main = ?",true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
-		String sql = "";
-		if(input!=null&&input!=""){
-			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id left join office o on o.id = p.office_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and c.abbr like '%"+input+"%'  and (o.id = "+parentID + " or o.belong_office = "+parentID + ")";
-		}else{
-			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id left join office o on o.id = p.office_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and (o.id = "+parentID + " or o.belong_office = "+parentID + ")";
-		}
-		List<Record> locationList = Db.find(sql);
-		renderJson(locationList);
+        List<Record> locationList = new ArrayList<Record>();
+        if (input.trim().length() > 0) 
+            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '" + Party.PARTY_TYPE_CUSTOMER + "' and c.company_name like '%"+input+"%'");
+        else 
+            locationList = Db.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '" + Party.PARTY_TYPE_CUSTOMER + "'");
+        renderJson(locationList);
 	}
 	
 	

@@ -2,16 +2,9 @@ $(document).ready(function() {
 	
 	var type = $("#type").val();
 	if(type == "directSend"){
-		$("#defaultDiv").hide();
-		$("#distributionDiv").hide();
 		$("#titleName").text("创诚易达物流系统-直送签收");
 	}else if(type == "distribution"){
-		$("#defaultDiv").hide();
-		$("#directSendDiv").hide();
 		$("#titleName").text("创诚易达物流系统-配送签收");
-	}else{
-		$("#directSendDiv").hide();
-		$("#distributionDiv").hide();
 	}
  
 	$("#searchNo").click(function(){  
@@ -41,54 +34,49 @@ $(document).ready(function() {
     });
 
     var initFileupload= function(){
-    $('#fileupload').fileupload({
-        dataType: 'json',
-        url: '/wx/saveFile?return_id='+$("#returnId").val(),//上传地址
-        done: function (e, data) {
-          if(data.result.result = "true"){
-        	$("#uploadBtn").text("上传图片");
-        	$('#uploadDesc').text('上传成功！').show();
-        	$("#uploadBtn").prop("disabled",false);
-            //alert("上传成功！");
-            console.log("data.result.cause:"+data.result.cause);
-            //console.log("data.result.cause:"+data.result.cause+",parseJSON:"+$.parseJSON(data.result.cause));
-            var files = $.parseJSON(data.result.cause);
-            var showPictures = $("#showPictures");
-            showPictures.empty();
-            $.each(data.result.cause,function(name,value) {
-            	showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
-            });
-          }else{
-            $("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
-          }
-        },  
-        progressall: function (e, data) {//设置上传进度事件的回调函数
-        	$("#uploadBtn").prop("disabled",true);
-        	$("#uploadBtn").text("上传中.....");
-          //$.scojs_message('上传中', $.scojs_message.TYPE_OK);
-          //$('#myModal').modal('show');
-          //$("#footer").hide();
-        } 
-     });
-   }
+	    $('#fileupload').fileupload({
+	        dataType: 'json',
+	        url: '/wx/saveFile?return_id='+$("#returnId").val(),//上传地址
+	        done: function (e, data) {
+	          if(data.result.result = "true"){
+	        	  $("#uploadBtn").text("上传图片");
+	        	  $('#uploadDesc').text('上传成功！').show();
+	        	  $("#uploadBtn").prop("disabled",false);
+	        	  //alert("上传成功！");
+	        	  console.log("data.result.cause:"+data.result.cause);
+	        	  //console.log("data.result.cause:"+data.result.cause+",parseJSON:"+$.parseJSON(data.result.cause));
+	        	  var files = $.parseJSON(data.result.cause);
+	        	  var showPictures = $("#showPictures");
+	        	  showPictures.empty();
+	        	  $.each(data.result.cause,function(name,value) {
+	        		  showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
+	        	  });
+	          }else{
+	            $("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
+	          }
+	        },  
+	        progressall: function (e, data) {//设置上传进度事件的回调函数
+	        	$("#uploadBtn").prop("disabled",true);
+	        	$("#uploadBtn").text("上传中.....");
+	          //$.scojs_message('上传中', $.scojs_message.TYPE_OK);
+	          //$('#myModal').modal('show');
+	          //$("#footer").hide();
+	        } 
+	     });
+    };
    
-    
-    
-    //供应商列表
-    $('#spMessage').on('keyup click', function(){
-		var inputStr = $('#spMessage').val();
+	
+	//获取客户的list，选中信息在下方展示其他信息
+	$('#customerMessage').on('keyup click', function(){
+		var inputStr = $('#customerMessage').val();
 		if(inputStr == ""){
-			$('#sqId').val("");
+			$('#customerId').val("");
 		}
-		$.get('/wx/searchPartSp', {input:inputStr}, function(data){			
-			var spList =$("#spList");
-			spList.empty();
+		$.get('/wx/findAllCustomer', {input:inputStr}, function(data){
+			var customerList =$("#customerList");
+			customerList.empty();
 			for(var i = 0; i < data.length; i++)
 			{
-				var abbr = data[i].ABBR;
-				if(abbr == null){
-					abbr = '';
-				}
 				var company_name = data[i].COMPANY_NAME;
 				if(company_name == null){
 					company_name = '';
@@ -101,36 +89,38 @@ $(document).ready(function() {
 				if(phone == null){
 					phone = '';
 				}
-				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' spid='"+data[i].PID+"' >"+company_name+"</a></li>");
+				customerList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"'>"+company_name+"</a></li>");
 			}
 		},'json');
-
-		$("#spList").css({ 
+		$("#customerList").css({ 
         	left:$(this).position().left+"px", 
         	top:$(this).position().top+32+"px" 
         }); 
-        $('#spList').show();
+        $('#customerList').show();
+        
 	});
 
-	// 没选中供应商，焦点离开，隐藏列表
-	$('#spMessage').on('blur', function(){
- 		$('#spList').hide();
+ 	// 没选中客户，焦点离开，隐藏列表
+	$('#customerMessage').on('blur', function(){
+ 		$('#customerList').hide();
+ 	});
+	
+	//当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+	$('#customerList').on('blur', function(){
+ 		$('#customerList').hide();
  	});
 
-	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
-	$('#spList').on('blur', function(){
- 		$('#spList').hide();
- 	});
-
-	$('#spList').on('mousedown', function(){
+	$('#customerList').on('mousedown', function(){
 		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
 	});
-	// 选中供应商
-	$('#spList').on('mousedown', '.fromLocationItem', function(e){
-		$('#spMessage').val($(this).text());
-		$('#sqId').val($(this).attr('spid'));
-        $('#spList').hide();
-    }); 
 
+	// 选中供应商
+	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
+		$('#customerMessage').val($(this).text());
+		$('#customerId').val($(this).attr('partyId'));
+        $('#customerList').hide();
+    }); 
+	
+	
 });
 
