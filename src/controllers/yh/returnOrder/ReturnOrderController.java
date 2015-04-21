@@ -534,7 +534,7 @@ public class ReturnOrderController extends Controller {
 				.findFirst("select * from contract where type='CUSTOMER' "
 						+ "and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="
 						+ customerId);
-		if (customerContract == null)
+		/*if (customerContract == null)
 			return;
 
 		if ("perUnit".equals(chargeType)) {
@@ -544,7 +544,7 @@ public class ReturnOrderController extends Controller {
         } else if ("perCargo".equals(chargeType)) {
         	//每次都新生成一个helper来处理计算，防止并发问题。
             ReturnOrderPaymentHelper.getInstance().genFinPerCargo(users, deliveryOrder, transferOrderItemDetailList, customerContract, chargeType, returnOrderId, transferOrder);
-        } 
+        }*/ 
 	}
 	
 	//计算普货合同费用

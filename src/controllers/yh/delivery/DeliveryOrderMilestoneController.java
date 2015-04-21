@@ -459,6 +459,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     	        ReturnOrderController roController= new ReturnOrderController();
     	        List<Record> transferOrderItemDetailList = Db.
     					find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
+
     	        roController.calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
     	        
             //}
