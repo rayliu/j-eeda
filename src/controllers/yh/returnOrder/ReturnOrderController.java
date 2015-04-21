@@ -534,17 +534,17 @@ public class ReturnOrderController extends Controller {
 				.findFirst("select * from contract where type='CUSTOMER' "
 						+ "and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="
 						+ customerId);
-		/*if (customerContract == null)
+		if (customerContract == null)
 			return;
 
 		if ("perUnit".equals(chargeType)) {
             genFinPerUnit(customerContract, chargeType, deliveryOrder, transferOrder, returnOrderId);
         } else if ("perCar".equals(chargeType)) {
-        	genFinPerCar(customerContract, chargeType, deliveryOrder, transferOrder, returnOrderId);
+        	//genFinPerCar(customerContract, chargeType, deliveryOrder, transferOrder, returnOrderId);
         } else if ("perCargo".equals(chargeType)) {
         	//每次都新生成一个helper来处理计算，防止并发问题。
-            ReturnOrderPaymentHelper.getInstance().genFinPerCargo(users, deliveryOrder, transferOrderItemDetailList, customerContract, chargeType, returnOrderId, transferOrder);
-        }*/ 
+           // ReturnOrderPaymentHelper.getInstance().genFinPerCargo(users, deliveryOrder, transferOrderItemDetailList, customerContract, chargeType, returnOrderId, transferOrder);
+        } 
 	}
 	
 	//计算普货合同费用
@@ -751,11 +751,11 @@ public class ReturnOrderController extends Controller {
 		if("perUnit".equals(chargeType)){//计件
 			calcRevenuePerUnit(returnOrderId, chargeType, transferOrderId, customerContract);
 		}else if ("perCar".equals(chargeType)){//整车
-			calcRevenuePerCar(customerContract, chargeType, transferOrder, returnOrderId);
+			//calcRevenuePerCar(customerContract, chargeType, transferOrder, returnOrderId);
 		}else if("perCargo".equals(chargeType)){//零担
 			List<Record> transferOrderItemList = Db.find("select toi.* from transfer_order_item toi left join transfer_order tor on tor.id = toi.order_id where tor.id = ?", transferOrder.get("id"));
 			//每次都新生成一个helper来处理计算，防止并发问题。
-            ReturnOrderPaymentHelperForDirect.getInstance().genFinPerCargo(users, transferOrder, transferOrderItemList, customerContract, chargeType, returnOrderId);
+           // ReturnOrderPaymentHelperForDirect.getInstance().genFinPerCargo(users, transferOrder, transferOrderItemList, customerContract, chargeType, returnOrderId);
 		}
 	}
 

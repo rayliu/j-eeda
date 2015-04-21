@@ -292,7 +292,7 @@ public class TransferOrderMilestoneController extends Controller {
             //直送时把保险单费用带到回单
             roController.addInsuranceFin(transferOrder, departOrder, returnOrder);
             //TODO:根据合同生成费用
-            //roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
+            roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
 		}
         
         //查询单品有没有经过调车？经过调车的就是部分收货？这什么逻辑？
