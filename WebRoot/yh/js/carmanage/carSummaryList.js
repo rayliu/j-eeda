@@ -199,6 +199,7 @@ $(document).ready(function() {
         if(pickupIds.length > 0){
         	$("#pickupIds").val(pickupIds);
             $('#createForm').submit();
+            
         }else{
         	alert("请选择要创建的调车单");
         }

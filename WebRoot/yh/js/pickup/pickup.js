@@ -292,14 +292,18 @@ $(document).ready(function() {
     				if(cargoNature == "ATM"){
     					return obj.aData.ATMAMOUNT;
     				}else{
+    					var number = 0;
     					if(obj.aData.PICKUP_NUMBER != null && obj.aData.PICKUP_NUMBER != ''){
     						var number = obj.aData.AMOUNT - obj.aData.PICKUP_NUMBER ;
     						amountsTest.push(number);
-    						return "<input type='text' name='amount' size='3' value='"+number+"' oldValue='"+number+"'>";
     					}else{
-    						amountsTest.push(obj.aData.AMOUNT);
-    						return "<input type='text' name='amount' size='3' value='"+obj.aData.AMOUNT+"' oldValue='"+obj.aData.AMOUNT+"'>";
+    						var number = obj.aData.AMOUNT * 1;
+    						amountsTest.push(number);
     					}
+    					if(number > 0)
+							return "<input type='text' name='amount' size='3' value='"+number+"' oldValue='"+number+"'>";
+						else
+							return 0;
     				}
     			}
     		},
@@ -377,7 +381,8 @@ $(document).ready(function() {
         	}
         });*/
         var cargoIds = [];
-        var cargoNumbers = [];
+        //var cargoNumbers = [];
+        var cargoNumbers = "";
         var cargoItemIds = [];
         $("#ckeckedTransferOrderList tr").each(function (){
         	var cargo_nature = $(this).find("td").eq(6).text();
@@ -385,7 +390,8 @@ $(document).ready(function() {
         		cargoIds.push($(this).attr("value"));
         		var itemNumverArray = $(this).attr("amount");
         		var itemArray = itemNumverArray.split(",");
-        		cargoNumbers.push(itemArray);
+        		//cargoNumbers.push(itemArray + "&");
+        		cargoNumbers += itemArray + "&";
         		var itemIdArray = $(this).attr("itemids");
         		var idArray = itemIdArray.split(",");
         		cargoItemIds.push(idArray);
@@ -1007,7 +1013,7 @@ $(document).ready(function() {
 			$(this).focus();
 			return false;
 		}else if(value*1 > oldValue*1){
-			$.scojs_message('【数量】不能大于配送数量,请重新输入', $.scojs_message.TYPE_ERROR);
+			$.scojs_message('【数量】不能大于可选数量,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val(oldValue);
 			$(this).focus();
 			return false;

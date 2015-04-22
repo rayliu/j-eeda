@@ -754,14 +754,17 @@ public class PickupOrderController extends Controller {
 	            	//运输单货品总数（sum）
 	            	double sumTransferOrderItemAmount = 0;
 	            	String[] cargoNumber = cargoNumbers[i].split(",");
+	            	//去除空字符串
+	            	
 	            	String findItemSql = "select * from transfer_order_item where order_id = " + cargoIds[i];
 					List<TransferOrderItem> itemlList = TransferOrderItem.dao.find(findItemSql);
 					for (int j = 0; j < itemlList.size(); j++) {
-						double pickupAmount = 0;
-						if(itemlList.get(j).get("pickup_number") != null && !"".equals(itemlList.get(j).get("pickup_number"))){
-							pickupAmount = itemlList.get(j).getDouble("pickup_number");
-						}
-						if(Double.parseDouble(cargoNumber[j]) != 0){
+						if(!"".equals(cargoNumber[j].trim()) && Double.parseDouble(cargoNumber[j]) != 0){
+							double pickupAmount = 0;
+							if(itemlList.get(j).get("pickup_number") != null && !"".equals(itemlList.get(j).get("pickup_number"))){
+								pickupAmount = itemlList.get(j).getDouble("pickup_number");
+							}
+							
 							itemlList.get(j).set("pickup_number",pickupAmount + Double.parseDouble(cargoNumber[j])).update();
 							//从表
 							DepartTransferOrder departTransferOrder = new DepartTransferOrder();
@@ -771,10 +774,11 @@ public class PickupOrderController extends Controller {
 				            departTransferOrder.set("order_item_id", itemlList.get(j).get("id"));
 				            departTransferOrder.set("transfer_order_no", transferOrderCargo.get("order_no"));
 				            departTransferOrder.save();
-						}
-						sumPickAmount+=(pickupAmount + Double.parseDouble(cargoNumber[j]));
-						if(itemlList.get(j).get("amount") != null && !"".equals(itemlList.get(j).get("amount"))){
-							sumTransferOrderItemAmount += itemlList.get(j).getDouble("amount");
+				            
+							sumPickAmount+=(pickupAmount + Double.parseDouble(cargoNumber[j]));
+							if(itemlList.get(j).get("amount") != null && !"".equals(itemlList.get(j).get("amount"))){
+								sumTransferOrderItemAmount += itemlList.get(j).getDouble("amount");
+							}
 						}
 					}
 					//运输单
@@ -2170,8 +2174,6 @@ public class PickupOrderController extends Controller {
     public void findDriverAssistant() {
 		String input = getPara("input");
 		List<DriverAssistant> driverAssistantList = Collections.EMPTY_LIST;
-		
-		
 		String userName = currentUser.getPrincipal().toString();
 		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
 		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
@@ -2179,8 +2181,6 @@ public class PickupOrderController extends Controller {
 		if(parentID == null || "".equals(parentID)){
 			parentID = parentOffice.getLong("id");
 		}
-		
-		
 		if (input.trim().length() > 0) {
 			driverAssistantList = DriverAssistant.dao.find("select pda.id,pda.name,pda.phone from driver_assistant pda left join office o on pda.office_id = o.id where (pda.is_stop is null or pda.is_stop = 0) and pda.name like '%" + input + "%'  and (o.id = " + parentID + " or o.belong_office = " + parentID + ")");
 		} else {
@@ -2192,16 +2192,9 @@ public class PickupOrderController extends Controller {
     //查询调车单跟车人员
     public void findPickupDriverAssistant() {
     	String pickId = getPara("pickupId");
-    	
-    	String userName = currentUser.getPrincipal().toString();
-    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-    	Long parentID = parentOffice.get("belong_office");
-    	if(parentID == null || "".equals(parentID)){
-    		parentID = parentOffice.getLong("id");
-    	}
-    	
-    	List<PickupDriverAssistant> assistantList = PickupDriverAssistant.dao.find("select pda.id,pda.name,pda.phone from pickup_driver_assistant pda left join office o on pda.office_id = o.id where pda.pickup_id = ?  and (o.id = " + parentID + " or o.belong_office = " + parentID + ")",pickId);
+    	List<PickupDriverAssistant> assistantList = new ArrayList<PickupDriverAssistant>();
+    	if(pickId != null && !"".equals(pickId))
+    			assistantList = PickupDriverAssistant.dao.find("select pda.id,pda.name,pda.phone from pickup_driver_assistant pda where pda.pickup_id = ?",pickId);
 		renderJson(assistantList);
 	}
     

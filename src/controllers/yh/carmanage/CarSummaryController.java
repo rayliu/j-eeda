@@ -93,10 +93,10 @@ public class CarSummaryController extends Controller {
 	        sql = "select dor.id,dor.depart_no,ifnull(u.c_name, u.user_name) user_name,dor.remark,"
 	        	+ " (select group_concat(dt.transfer_order_no separator '<br>') from depart_transfer dt where pickup_id = dor.id) as transfer_order_no,"
 	        	+ " dor. status,dor.car_no,dor.driver contact_person,dor.phone phone,dor.car_type cartype,dor.turnout_time,o.office_name office_name,"
-	        	+ " ifnull((select round(sum(ifnull(toi.volume, 0)),2) from transfer_order_item toi left join transfer_order t on t.id = toi.order_id "
-	        	+ " where t.cargo_nature = 'cargo' and toi.order_id in (select dt.order_id from depart_transfer dt where dt.pickup_id = dor.id)),0) cargovolume,"
-	        	+ " ifnull((select round( sum(ifnull(toi.sum_weight, 0)),2) from transfer_order_item toi left join transfer_order t on t.id = toi.order_id"
-	        	+ " where t.cargo_nature = 'cargo' and toi.order_id in (select dt.order_id from depart_transfer dt where dt.pickup_id = dor.id)),0) cargoweight,"
+	        	+ " (select round(sum(ifnull(toi.volume,0)*(dtf.amount/toi.amount)),2) from transfer_order_item toi left join depart_transfer dtf on dtf.order_item_id = toi.id "
+	        	+ " left join transfer_order t on t.id = toi.order_id	where dtf.pickup_id = dor.id and t.cargo_nature = 'cargo') cargovolume,"
+	        	+ " (select round(sum(ifnull(toi.sum_weight,0)*(dtf.amount/toi.amount)),2) from transfer_order_item toi left join depart_transfer dtf on dtf.order_item_id = toi.id "
+	        	+ " left join transfer_order t on t.id = toi.order_id where dtf.pickup_id = dor.id and t.cargo_nature = 'cargo') cargoweight,"
 	        	+ " round((select sum(ifnull(volume, 0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmvolume,"
 	        	+ " round((select sum(ifnull(weight, 0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmweight"
 	        	+ " from depart_order dor"
@@ -357,7 +357,6 @@ public class CarSummaryController extends Controller {
         String nextStartCarAmount = getPara("next_start_car_amount").equals("") ?"0":getPara("next_start_car_amount");
         String deductApportionAmount = getPara("deduct_apportion_amount").equals("") ?"0":getPara("deduct_apportion_amount");
         String actualPaymentAmount = getPara("actual_payment_amount").equals("") ?"0":getPara("actual_payment_amount");
-        boolean result;
         String orderNo = null;
         if(carSummaryId.equals("") || carSummaryId == null){ //新建时
         	CarSummaryOrder carSummaryOrder = new CarSummaryOrder();
@@ -390,7 +389,7 @@ public class CarSummaryController extends Controller {
     			carSummaryDetail.set("pickup_order_no", departOrder.get("depart_no"));
     			carSummaryDetail.save();
     			//记录运输单id
-    			List<Record> recList = Db.find("select * from depart_transfer where pickup_id = "+departOrder.get("id"));
+    			List<Record> recList = Db.find("select distinct order_id from depart_transfer where pickup_id = "+departOrder.get("id"));
     			for (Record record : recList) {
     				orderIds.add(record.getLong("order_id"));
 				}
@@ -474,12 +473,12 @@ public class CarSummaryController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select count(1) total from depart_order tor "
+        String sqlTotal = "select count(distinct tor.depart_no) total from depart_order tor "
          		+ " left join depart_transfer dt on dt.pickup_id = tor.id "
          		+ " where tor.id in("+pickupIds+");";
     	 
-        String sql = "select tor.*, tr.order_no ,c.abbr,tr.address address1,tor.address address2,"
-         		+ "( select warehouse_name from  warehouse where id = tr.warehouse_id  ) address3 "
+        String sql = "select distinct tor.depart_no,tor.create_stamp, tr.order_no ,c.abbr,tr.address transferaddress,tor.address pickupaddress,"
+         		+ "( select warehouse_name from  warehouse where id = tr.warehouse_id  ) warehousename "
          		+ " from depart_order tor "
          		+ " left join depart_transfer dt on dt.pickup_id = tor.id "
          		+ " left join transfer_order tr on tr.id = dt.order_id "
@@ -932,16 +931,20 @@ public class CarSummaryController extends Controller {
 	        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
 	            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 	        }
-	        String sqlTotal = "select count(0) total from depart_transfer dt where dt.pickup_id in(" + pickupIds+");";
+	        String sqlTotal = "select count(distinct order_id) total from depart_transfer dt where dt.pickup_id in(" + pickupIds+");";
 	        logger.debug("sql :" + sqlTotal);
 	        Record rec = Db.findFirst(sqlTotal);
 	        logger.debug("total records:" + rec.getLong("total"));
 	
-	        String sql = "select dt.*, tr.order_no,c.abbr,tr.car_summary_order_share_ratio,tr.remark,tr.cargo_nature,"
+	        String sql = "select distinct tr.id,tr.order_no,c.abbr,tr.car_summary_order_share_ratio,tr.remark,tr.cargo_nature,"
 	        		+ " (select count(0) total from transfer_order_item_detail where order_id = tr.id  and pickup_id in(" + pickupIds+")) atmamount,"
 	        		+ " round((select sum(ifnull(volume, 0)) from transfer_order_item_detail where pickup_id in(" + pickupIds+")), 2) atmvolume,"
 	        		+ " round((select sum(ifnull(weight, 0)) from transfer_order_item_detail where pickup_id in(" + pickupIds+")), 2) atmweight,"
-	        		+ " round(ifnull(sum(toi.amount), 0)) cargoamount,round(ifnull(sum(toi.volume), 0)) cargovolume,round(ifnull(sum(toi.sum_weight), 0)) cargoweight"
+	        		+ " (select SUM(amount) from depart_transfer where pickup_id = dt.pickup_id) cargoamount,"
+	        		+ " (select round(sum(ifnull(toi.volume,0)*(dtf.amount/toi.amount)),2) from transfer_order_item toi left join depart_transfer dtf on dtf.order_item_id = toi.id "
+	        		+ " left join transfer_order t on t.id = toi.order_id	where dtf.pickup_id = dt.pickup_id and t.cargo_nature = 'cargo') cargovolume,"
+	        		+ " (select round(sum(ifnull(toi.sum_weight,0)*(dtf.amount/toi.amount)),2) from transfer_order_item toi left join depart_transfer dtf on dtf.order_item_id = toi.id "
+	        		+ " left join transfer_order t on t.id = toi.order_id	where dtf.pickup_id = dt.pickup_id and t.cargo_nature = 'cargo') cargoweight"
 	        		+ " from depart_transfer dt"
 	        		+ " left join transfer_order tr on tr.id = dt.order_id"
 	        		+ " left join transfer_order_item toi on toi.order_id = tr.id"

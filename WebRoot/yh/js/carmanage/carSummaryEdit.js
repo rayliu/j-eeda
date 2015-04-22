@@ -208,19 +208,19 @@ $(document).ready(function() {
             { "mDataProp": "DEPART_NO"},
             { "mDataProp": "ORDER_NO"},      
             { "mDataProp": "ABBR"},
-            { "mDataProp": "ADDRESS1"},
+            { "mDataProp": "TRANSFERADDRESS"},
             { "mDataProp": "CREATE_STAMP"},
             { "mDataProp": null,
             	"fnRender": function(obj) {    
-            		if(obj.aData.ADDRESS2 != "" && obj.aData.ADDRESS2 != null )
-            			return obj.aData.ADDRESS2;
+            		if(obj.aData.PICKUPADDRESS != "" && obj.aData.PICKUPADDRESS != null )
+            			return obj.aData.PICKUPADDRESS;
             		else
             			return "";
             }},
             { "mDataProp": null,
             	"fnRender": function(obj) {    
-              		if(obj.aData.ADDRESS3 != "" && obj.aData.ADDRESS3 != null)
-              			return obj.aData.ADDRESS3;
+              		if(obj.aData.WAREHOUSENAME != "" && obj.aData.WAREHOUSENAME != null)
+              			return obj.aData.WAREHOUSENAME;
               		else
             			return "";
             }}
@@ -1180,17 +1180,17 @@ $(document).ready(function() {
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
-        "fnRowCallback": function(nRow, aData) {
-			$(nRow).attr('id', aData.ORDER_ID);
-			return nRow;
-		 },
+    	"fnRowCallback": function(nRow, aData) {
+ 			$(nRow).attr('id', aData.ID);
+ 			return nRow;
+ 		},
         "aoColumns": [
 			{ "mDataProp": null,"sWidth":"40px",
 				"fnRender": function(obj) {
 				return num++;
 				}
 			}, 
-            { "mDataProp": "TRANSFER_ORDER_NO"},
+            { "mDataProp": "ORDER_NO"},
             { "mDataProp": "ABBR"},
             { "mDataProp": null,
 				"fnRender": function(obj) {   
@@ -1282,6 +1282,8 @@ $(document).ready(function() {
 						$("#affirmBtn").prop("disabled",true);
 						$("#editProportionBtn").prop("disabled",false);
 						$('#transferOrderTbody input').prop("disabled",true);
+					}else{
+						$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 					}
 		    	},'json');
         	}
