@@ -1268,14 +1268,14 @@ public class DataInitUtil {
        int tmp = Math.abs(rand.nextInt());
        
        Office of = new Office();
-       of.set("office_code", tmp%(100000 - 1000 + 1) + 1000).set("office_name", "珠海分公司")
+       of.set("office_code", tmp%(100000 - 1000 + 1) + 1000).set("office_name", "珠海分公司"+tmp%(100000 - 1000 + 1) + 1000)
        .set("office_person", "李生").set("phone", "13175892125").set("address","珠海").set("email", "test@eeda123.com")
-       .set("type", "分公司").set("belong_office", office.get("id")).set("location", "310100").set("abbr", "珠海分公司").save();
+       .set("type", "分公司").set("belong_office", office.get("id")).set("location", "310100").set("abbr", "珠海分公司"+tmp%(100000 - 1000 + 1) + 1000).save();
 
        Office o = new Office();
-       o.set("office_code", tmp%(100000 - 1000 + 1) + 1000).set("office_name", "深圳分公司")
+       o.set("office_code", tmp%(100000 - 1000 + 1) + 1000).set("office_name", "深圳分公司"+tmp%(100000 - 1000 + 1) + 1000)
        .set("office_person", "李生").set("phone", "13175892125").set("address","深圳").set("email", "test@eeda123.com")
-       .set("type", "分公司").set("belong_office", office.get("id")).set("location", "310100").set("abbr", "深圳分公司").save();
+       .set("type", "分公司").set("belong_office", office.get("id")).set("location", "310100").set("abbr", "深圳分公司"+tmp%(100000 - 1000 + 1) + 1000).save();
        
        UserOffice uo = new UserOffice();
        uo.set("user_name", user.get("user_name")).set("office_id", of.get("id")).save();
@@ -1283,7 +1283,7 @@ public class DataInitUtil {
        uo1.set("user_name", user.get("user_name")).set("office_id", o.get("id")).save();
        
        Category c = new Category();
-       c.set("name", "珠海分公司").set("customer_id",p1.get("id")).save();
+       c.set("name", o.get("office_name")).set("customer_id",p1.get("id")).save();
        Category c1 = new Category();
        c1.set("name", "电脑").set("customer_id",p1.get("id")).set("parent_id", c.get("id")).save();
        
