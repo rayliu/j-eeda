@@ -5,7 +5,7 @@
              <div class="col-lg-12">
                  <div class="panel panel-default">
                    <div class="panel-heading"style="font-size: 32px">
-                 		分公司信息
+                 		公司信息
             		</div>
             		<div class="panel-body">
             			<div class="row-fluid">
@@ -81,8 +81,6 @@
 	                                        <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
 	                                    </div>
 	                                 </div>
-					              	 
-						            
 		                         </div>
 		                     </div>
 			         	</form>
@@ -93,7 +91,7 @@
 				
 				<div class="panel panel-default">
                    	<div class="panel-heading">
-                 		分公司仓库列表
+                 		公司仓库列表
             		</div>
             		<div class="panel-body">
             			<div class="row-fluid">                                       
@@ -133,6 +131,7 @@
 		var type = '${ul.type!''}';
 		var officeName = '${ul.office_name!''}';
 		if(type == "总公司"){
+			$('#type').attr("disabled",true);
 			$('#type').empty().append("<option>" + type + "</option>");	
 		}else{
 			$('#type').val(type);
