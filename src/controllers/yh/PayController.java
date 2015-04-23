@@ -6,9 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.Office;
+import models.ParentOfficeModel;
 import models.Toll;
-import models.UserOffice;
 import models.yh.profile.Carinfo;
 
 import org.apache.shiro.SecurityUtils;
@@ -23,15 +22,15 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class PayController extends Controller {
     private Logger logger = Logger.getLogger(PayController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    String userName = currentUser.getPrincipal().toString();
-    UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    ParentOffice po = new ParentOffice();
+    ParentOfficeModel pom = po.getOfficeId(this);
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PAY_LIST})
     public void index() {
@@ -65,10 +64,7 @@ public class PayController extends Controller {
                     + getPara("iDisplayLength");
         }
         
-        Long parentID = parentOffice.get("belong_office");
-        if(parentID == null || "".equals(parentID)){
-        	parentID = parentOffice.getLong("id");
-        }
+        Long parentID = pom.getParentOfficeId();
         // 获取总条数
         String totalWhere = "";
         String sql = "select count(1) total from fin_item  where type ='应付' and office_id = " +parentID;
@@ -130,10 +126,7 @@ public class PayController extends Controller {
         String code = getPara("code");
         String remark = getPara("remark");
         
-        Long parentID = parentOffice.get("belong_office");
-        if(parentID == null || "".equals(parentID)){
-        	parentID = parentOffice.getLong("id");
-        }
+        Long parentID = pom.getParentOfficeId();
         
         if (id == "") {
             Toll r = new Toll();

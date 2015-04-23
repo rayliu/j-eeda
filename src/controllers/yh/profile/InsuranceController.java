@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.Office;
+import models.ParentOfficeModel;
 import models.Party;
 import models.UserLogin;
 import models.UserOffice;
@@ -23,6 +23,8 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+
+import controllers.yh.util.ParentOffice;
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class InsuranceController extends Controller{
@@ -49,13 +51,9 @@ public class InsuranceController extends Controller{
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         
-        String userName = currentUser.getPrincipal().toString();
-        UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-        Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-        Long parentID = parentOffice.get("belong_office");
-        if(parentID == null || "".equals(parentID)){
-        	parentID = parentOffice.getLong("id");
-        }
+        ParentOffice po = new ParentOffice();
+        ParentOfficeModel pom = po.getOfficeId(this);
+        Long parentID = pom.getParentOfficeId();
         
         String sqlTotal = "select count(*) as total from party p left join contact c on p.contact_id = c.id left join office o on o.id = p.office_id where (o.id =" + parentID + " or o.belong_office = " + parentID + ") and p.party_type = 'INSURANCE_PARTY' ";
         

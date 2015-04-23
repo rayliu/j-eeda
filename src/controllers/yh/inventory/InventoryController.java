@@ -11,6 +11,7 @@ import java.util.Map;
 
 import models.InventoryItem;
 import models.Office;
+import models.ParentOfficeModel;
 import models.Party;
 import models.Product;
 import models.TransferOrder;
@@ -35,6 +36,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoGenerator;
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -167,13 +169,10 @@ public class InventoryController extends Controller {
        }
         
        //获取当前用户的总公司
-       String userName = currentUser.getPrincipal().toString();
-       UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-       Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-       Long parentID = parentOffice.get("belong_office");
-       if(parentID == null || "".equals(parentID)){
-       	parentID = parentOffice.getLong("id");
-       }
+       ParentOffice po = new ParentOffice();
+       ParentOfficeModel pom = po.getOfficeId(this);
+       
+       Long parentID = pom.getParentOfficeId();
        
        
        String sql = " from inventory_item i_t "

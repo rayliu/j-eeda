@@ -10,15 +10,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import models.Category;
-import models.Office;
+import models.ParentOfficeModel;
 import models.Party;
 import models.Product;
-import models.UserOffice;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
@@ -29,6 +27,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -37,9 +36,10 @@ public class ProductController extends Controller {
 
     private Logger logger = Logger.getLogger(ProductController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    String userName = currentUser.getPrincipal().toString();
-    UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    
+    ParentOffice po = new ParentOffice();
+    ParentOfficeModel pom = po.getOfficeId(this);
+    
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_LIST})
     public void index() {
         render("/yh/profile/product/productList.html");
@@ -328,10 +328,7 @@ public class ProductController extends Controller {
     
     // 查找客户
     public void searchAllCustomer() {
-    	Long parentID = parentOffice.get("belong_office");
-    	if(parentID == null || "".equals(parentID)){
-    		parentID = parentOffice.getLong("id");
-    	}
+    	Long parentID = pom.getParentOfficeId();
     	
         List<Party> parties = Party.dao
                 .find("select p.id party_id, c.*, cat.id cat_id from party p left join contact c on c.id = p.contact_id left join category cat on p.id = cat.customer_id left join office o on p.office_id = o.id  where party_type = ? and cat.parent_id is null and (o.id = ? or o.belong_office = ? )",

@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.Account;
-import models.Office;
-import models.UserOffice;
+import models.ParentOfficeModel;
 import models.yh.profile.AccountItem;
 
 import org.apache.shiro.SecurityUtils;
@@ -24,15 +23,15 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class AccountController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    String userName = currentUser.getPrincipal().toString();
-	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    ParentOffice po = new ParentOffice();
+    ParentOfficeModel pom = po.getOfficeId(this);
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_LIST})
     public void index() {
         render("/yh/profile/account/account.html");
@@ -59,10 +58,7 @@ public class AccountController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_CREATE, PermissionConstant.PERMSSION_A_UPDATE}, logical=Logical.OR)
     @Before(Tx.class)
     public void save() {
-    	Long parentID = parentOffice.get("belong_office");
-    	if(parentID == null || "".equals(parentID)){
-    		parentID = parentOffice.getLong("id");
-    	}
+    	Long parentID = pom.getParentOfficeId();
         /*
          * if (!isAuthenticated()) return;
          */
@@ -84,7 +80,7 @@ public class AccountController extends Controller {
             Db.update("fin_account", account);
         } else {
             logger.debug("insert....");
-            account.set("office_id", currentoffice.get("office_id"));
+            account.set("office_id", pom.getCurrentOfficeId());
             Db.save("fin_account", account);
         }
         renderJson(account);
@@ -127,13 +123,13 @@ public class AccountController extends Controller {
         String totalWhere = "";
         String sql = "";
         String querySql ="";
-        Long parentID = parentOffice.get("belong_office");
+        Long parentID = pom.getBelongOffice();
         if(parentID == null || "".equals(parentID)){
-        	sql = "select count(1) total from fin_account f left join office o on f.office_id = o.id where o.id = "+parentOffice.get("id") +" or o.belong_office = "+parentOffice.get("id") ;
-        	querySql= "select * from fin_account f left join office o on f.office_id = o.id where o.id = "+parentOffice.get("id") +" or o.belong_office = "+parentOffice.get("id") ;
+        	sql = "select count(1) total from fin_account f left join office o on f.office_id = o.id where o.id = "+ pom.getParentOfficeId() +" or o.belong_office = "+ pom.getParentOfficeId() ;
+        	querySql= "select * from fin_account f left join office o on f.office_id = o.id where o.id = "+ pom.getParentOfficeId() +" or o.belong_office = "+ pom.getParentOfficeId() ;
         }else{
-        	sql = "select count(1) total from fin_account where office_id = "+parentOffice.get("id");
-        	querySql= "select * from fin_account where office_id = "+parentOffice.get("id");
+        	sql = "select count(1) total from fin_account where office_id = "+ pom.getCurrentOfficeId();
+        	querySql= "select * from fin_account where office_id = "+ pom.getCurrentOfficeId();
         }
         
         

@@ -10,9 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import models.Location;
-import models.Office;
+import models.ParentOfficeModel;
 import models.Party;
-import models.UserOffice;
 import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
@@ -27,6 +26,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -36,9 +36,8 @@ public class ServiceProviderController extends Controller {
     private Logger logger = Logger.getLogger(ServiceProviderController.class);
     Subject currentUser = SecurityUtils.getSubject();
     
-    String userName = currentUser.getPrincipal().toString();
-    UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    ParentOffice po = new ParentOffice();
+    ParentOfficeModel pom = po.getOfficeId(this);
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_LIST})
     public void index() {
@@ -54,10 +53,7 @@ public class ServiceProviderController extends Controller {
         String location = getPara("LOCATION");
         
         
-        Long parentID = parentOffice.get("belong_office");
-        if(parentID == null || "".equals(parentID)){
-        	parentID = parentOffice.getLong("id");
-        }
+        Long parentID = pom.getParentOfficeId();
         
         if (company_name == null && contact_person == null && receipt == null && abbr == null && address == null
                 && location == null) {
@@ -225,7 +221,7 @@ public class ServiceProviderController extends Controller {
             party.set("remark", getPara("remark"));
             party.set("payment", getPara("payment"));
             party.set("charge_type", getPara("chargeType"));
-            party.set("office_id", parentOffice.get("id"));
+            party.set("office_id", pom.getCurrentOfficeId());
             party.save();
 
         }
@@ -305,10 +301,7 @@ public class ServiceProviderController extends Controller {
     	
 		String input = getPara("input");
 		
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		Long parentID = pom.getParentOfficeId();
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db

@@ -4,15 +4,9 @@ import interceptor.SetAttrLoginUserInterceptor;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import models.Location;
-import models.Office;
-import models.UserOffice;
+import models.ParentOfficeModel;
 import models.Warehouse;
-import models.yh.profile.Contact;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -23,10 +17,9 @@ import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
-import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -35,11 +28,9 @@ public class OfficeConfigController extends Controller{
     private Logger logger = Logger.getLogger(OfficeConfigController.class);
     Subject currentUser = SecurityUtils.getSubject();
     
-    String userName = currentUser.getPrincipal().toString();
-    UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-    Long parentID = parentOffice.get("belong_office");
     
+    ParentOffice po = new ParentOffice();
+    ParentOfficeModel pom = po.getOfficeId(this);
     
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_LIST})
 	public void index() {

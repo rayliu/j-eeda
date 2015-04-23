@@ -8,6 +8,7 @@ import java.util.Map;
 
 import models.Location;
 import models.Office;
+import models.ParentOfficeModel;
 import models.UserLogin;
 import models.UserOffice;
 import models.UserRole;
@@ -25,6 +26,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -186,14 +188,12 @@ public class OfficeController extends Controller {
                     + getPara("iDisplayLength");
         }
         
-        String userName = currentUser.getPrincipal().toString();
-        UserOffice user_office = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",user_office.get("office_id"));
-        Long parentID = parentOffice.get("belong_office");
-        Long parent_id = parentID;
-        if(parentID == null || "".equals(parentID)){
-        	parentID = parentOffice.getLong("id");
-        }
+        ParentOffice po = new ParentOffice();
+        ParentOfficeModel pom = po.getOfficeId(this);
+        
+        Long parentID = pom.getParentOfficeId();
+        Long parent_id = pom.getBelongOffice();
+        
         String sql ="";
         String list_sql= "";
 		// 获取总条数

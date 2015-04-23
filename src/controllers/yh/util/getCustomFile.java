@@ -1,6 +1,5 @@
 package controllers.yh.util;
 
-import interceptor.SetAttrLoginUserInterceptor;
 
 import java.util.HashMap;
 import java.util.List;

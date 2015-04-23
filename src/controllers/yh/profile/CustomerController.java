@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import models.Location;
-import models.Office;
+import models.ParentOfficeModel;
 import models.Party;
 import models.UserCustomer;
-import models.UserOffice;
 import models.UserRole;
 import models.yh.profile.Contact;
 
@@ -29,6 +28,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -37,9 +37,9 @@ public class CustomerController extends Controller {
 
     private Logger logger = Logger.getLogger(CustomerController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    String userName = currentUser.getPrincipal().toString();
-    UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+    
+    ParentOffice po = new ParentOffice();
+    ParentOfficeModel pom = po.getOfficeId(this);
     
     
     // in config route已经将路径默认设置为/yh
@@ -57,10 +57,7 @@ public class CustomerController extends Controller {
         String address = getPara("ADDRESS");
         String location = getPara("LOCATION");
         
-        Long parentID = parentOffice.get("belong_office");
-        if(parentID == null || "".equals(parentID)){
-        	parentID = parentOffice.getLong("id");
-        }
+        Long parentID = pom.getParentOfficeId();
         
         if (company_name == null && contact_person == null && receipt == null && abbr == null && address == null
                 && location == null) {
@@ -219,16 +216,13 @@ public class CustomerController extends Controller {
             party.set("receipt", getPara("receipt"));
             party.set("payment", getPara("payment"));
             party.set("charge_type", getPara("chargeType"));
-            party.set("office_id", currentoffice.get("office_id"));
+            party.set("office_id", pom.getCurrentOfficeId());
             if(getPara("insurance_rates") != ""){
             	party.set("insurance_rates", getPara("insurance_rates"));
             }
             party.save();
             
-            Long parentID = parentOffice.get("belong_office");
-            if(parentID == null || "".equals(parentID)){
-            	parentID = parentOffice.getLong("id");
-            }
+            Long parentID = pom.getParentOfficeId();
             //判断当前是否是系统管理员，是的话将当前的客户默认给
             List<UserRole> urList = UserRole.dao.find("select * from user_role ur left join user_login ul on ur.user_name = ul.user_name left join office o on o.id = ul.office_id  where role_code = 'admin' and (o.id = ? or o.belong_office = ?)",parentID,parentID);
             if(urList.size()>0){
@@ -272,10 +266,7 @@ public class CustomerController extends Controller {
     public void checkCustomerNameExist(){
  		String company_name= getPara("company_name");
  		boolean checkObjectExist;
- 		Long parentID = parentOffice.get("belong_office");
- 		if(parentID == null || "".equals(parentID)){
- 			parentID = parentOffice.getLong("id");
- 		}
+ 		Long parentID = pom.getParentOfficeId();
  		Contact contact = Contact.dao.findFirst("select c.*,p.*,c.id as cid,p.id as pid from contact c left join party p on c.id = p.contact_id where c.company_name =? and p.party_type='CUSTOMER' and p.office_id = ?",company_name,parentID);
  		
  		if(contact == null){
@@ -288,10 +279,7 @@ public class CustomerController extends Controller {
     public void checkCustomerAbbrExist(){
     	String abbr= getPara("abbr");
  		boolean checkObjectExist;
- 		Long parentID = parentOffice.get("belong_office");
- 		if(parentID == null || "".equals(parentID)){
- 			parentID = parentOffice.getLong("id");
- 		}
+ 		Long parentID = pom.getParentOfficeId();
  		Contact contact = Contact.dao.findFirst("select c.*,p.*,c.id as cid,p.id as pid from contact c left join party p on c.id = p.contact_id where c.abbr =? and p.party_type='CUSTOMER' and p.office_id = ?",abbr,parentID);
  		if(contact == null){
  			checkObjectExist=true;
