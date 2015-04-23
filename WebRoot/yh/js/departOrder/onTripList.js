@@ -52,26 +52,41 @@ $(document).ready(function() {
             {"mDataProp":null,
             	"sWidth": "80px",
             	"fnRender": function(obj) {
-            		
             			return obj.aData.TRIP_TYPE;
             	}},
             {"mDataProp":null,
             	"sWidth": "90px",
                 "fnRender": function(obj) {
+                	
                 	if(obj.aData.LOCATION!=null && obj.aData.LOCATION!=''){
                 		if(DepartOrder.isUpdate){
-                			return obj.aData.LOCATION+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                			if(obj.aData.DEPART_STATUS == '已入库' || obj.aData.DEPART_STATUS == '已收货'){
+                				return obj.aData.LOCATION;
+                			}else{
+                				return obj.aData.LOCATION+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                			}
+                			
                 		}else{
                 			return obj.aData.LOCATION;
                 		}
                 		
                 	}else{
-                    	if(obj.aData.DEPART_STATUS==null){
-                    		obj.aData.DEPART_STATUS="";
-                    	}
+                    	
                     	if(DepartOrder.isUpdate){
-                    		return obj.aData.DEPART_STATUS+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                    		if(obj.aData.DEPART_STATUS==null){
+                        		return "";
+                        	}else{
+                        		if(obj.aData.DEPART_STATUS == '已入库' || obj.aData.DEPART_STATUS == '已收货'){
+                    				return obj.aData.DEPART_STATUS;
+                    			}else{
+                    				return obj.aData.DEPART_STATUS+"<a id='edit_status' depart_id="+obj.aData.ID+" data-target='#transferOrderMilestone' data-toggle='modal'><i class='fa fa-pencil fa-fw'></i></a>";
+                    			}
+                        	}
+                    		
                     	}else{
+                    		if(obj.aData.DEPART_STATUS==null){
+                    			obj.aData.DEPART_STATUS='';
+                    		}
                     		return obj.aData.DEPART_STATUS;
                     	}
                     	
