@@ -3,6 +3,7 @@ package controllers.yh.delivery;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -1375,11 +1376,25 @@ public class DeliveryController extends Controller {
     public void findDeliveryOrderType(){
     	String sLimit = "";
         String pageIndex = getPara("sEcho");
+        String orderNo = getPara("pointInTime");
+		Date today = new Date();
+	    SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");  
+	    Calendar pastDay = Calendar.getInstance(); 
+	    if("pastOneDay".equals(orderNo))
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -1);
+	    else if("pastSevenDay".equals(orderNo))
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -7);
+	    else
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -30);
+	    String beginTime = df.format(pastDay.getTime());
+	    String endTime = df.format(today);
+	    
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         String sqlTotal = "select count(0) total from delivery_order d left join warehouse w on w.id = d.from_warehouse_id where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+				+ " and d.create_stamp between '" + beginTime + "' and '" + endTime + "'";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -1390,7 +1405,8 @@ public class DeliveryController extends Controller {
         		+ " (select status from delivery_order_milestone where delivery_id = d.id order by id desc limit 0,1) status,"
         		+ " (select create_stamp from delivery_order_milestone where delivery_id = d.id order by id desc limit 0,1) create_stamp"
         		+ " from delivery_order d left join warehouse w on w.id = d.from_warehouse_id  where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by d.id desc " + sLimit;
+				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+				+ " and d.create_stamp between '" + beginTime + "' and '" + endTime + "' order by d.id desc " + sLimit;
         List<Record> deliveryOrderItems = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);

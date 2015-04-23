@@ -21,15 +21,14 @@
                             <div class="form-group">
                             <i class="fa fa-bar-chart-o fa-fw"></i> 系统单据： 
                                 <label class="radio-inline">
-                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline1" value="option1" checked="">过去1天
+                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline1" value="pastOneDay" checked="">过去1天
                                 </label>                               
                                 <label class="radio-inline">
-                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline2" value="option2" >过去7天
+                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline2" value="pastSevenDay">过去7天
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline3" value="option3">过去30天
+                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline3" value="pastThirtyDay">过去30天
                                 </label>
-                                
                             </div>
                         </div>
                         <!-- /.panel-heading -->
@@ -43,7 +42,7 @@
                                         <i class="fa fa-file-text fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">26</div>
+                                        <div class="huge" id="transferOrderTotal">0</div>
                                         <div>运输单</div>
                                     </div>
                                 </div>
@@ -65,7 +64,7 @@
                                         <i class="fa fa-file-text fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">12</div>
+                                        <div class="huge" id="pickupTotal">0</div>
                                         <div>提货单</div>
                                     </div>
                                 </div>
@@ -87,7 +86,7 @@
                                         <i class="fa fa-file-text fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">124</div>
+                                        <div class="huge" id="departTotal">0</div>
                                         <div>发车单</div>
                                     </div>
                                 </div>
@@ -109,7 +108,7 @@
                                         <i class="fa fa-file-text fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">13</div>
+                                        <div class="huge" id="deliveryTotal">0</div>
                                         <div>配送单</div>
                                     </div>
                                 </div>

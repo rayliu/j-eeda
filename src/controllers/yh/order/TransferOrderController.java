@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -1380,11 +1381,25 @@ public class TransferOrderController extends Controller {
     public void findTransferOrderType(){
     	String sLimit = "";
         String pageIndex = getPara("sEcho");
+    	String orderNo = getPara("pointInTime");
+		Date today = new Date();
+	    SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");  
+	    Calendar pastDay = Calendar.getInstance(); 
+	    if("pastOneDay".equals(orderNo))
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -1);
+	    else if("pastSevenDay".equals(orderNo))
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -7);
+	    else
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -30);
+	    String beginTime = df.format(pastDay.getTime());
+	    String endTime = df.format(today);
+    	
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         String sqlTotal = "select count(0) total from transfer_order t where t.status != '取消' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
-				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+				+ " and create_stamp between '" + beginTime + "' and '" + endTime + "'";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -1395,7 +1410,8 @@ public class TransferOrderController extends Controller {
         		+ " (select status from transfer_order_milestone where order_id = t.id order by id desc limit 0,1) status,"
         		+ " (select create_stamp from transfer_order_milestone where order_id = t.id order by id desc limit 0,1) create_stamp"
         		+ " from transfer_order t where t.status != '取消' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
-				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') group by t.id order by t.create_stamp desc " + sLimit;
+				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+				+ " and create_stamp between '" + beginTime + "' and '" + endTime + "' group by t.id order by t.create_stamp desc " + sLimit;
         List<Record> transferOrderItems = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);

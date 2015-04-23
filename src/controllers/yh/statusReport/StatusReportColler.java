@@ -2,14 +2,15 @@ package controllers.yh.statusReport;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
-import models.FinItem;
 import models.Party;
 
 import org.apache.log4j.Logger;
@@ -717,6 +718,68 @@ public class StatusReportColler extends Controller{
 		}
 		renderJson(orderMap);
 	}
+	
+	
+	public void searchOrderCount(){
+		String orderNo = getPara("pointInTime");
+		Date today = new Date();
+	    SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");  
+	    Calendar pastDay = Calendar.getInstance(); 
+	    if("pastOneDay".equals(orderNo))
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -1);
+	    else if("pastSevenDay".equals(orderNo))
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -7);
+	    else
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -30);
+	    String beginTime = df.format(pastDay.getTime());
+	    String endTime = df.format(today);
+	    
+	    String transferOrderTotal = "select count(0) total from transfer_order t where t.status != '取消' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
+				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+				+ " and create_stamp between '" + beginTime + "' and '" + endTime + "'";
+		Record transferOrderCound = Db.findFirst(transferOrderTotal);
+		
+		String deliveryTotal = "select count(0) total from delivery_order d left join warehouse w on w.id = d.from_warehouse_id where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+				+ " and d.create_stamp between '" + beginTime + "' and '" + endTime + "'";
+		Record deliveryCound = Db.findFirst(deliveryTotal);
+		
+		String pickupTotal = "select count(distinct dor.id) total from depart_order dor "
+                + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
+                + " left join transfer_order t_o on t_o.id = dtf.order_id "
+                + " left join office o on o.id = t_o.office_id "
+                + " where dor.status!='取消' and combine_type = '"
+        		+ DepartOrder.COMBINE_TYPE_PICKUP + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+        		+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+        		+ " and dor.create_stamp between '" + beginTime + "' and '" + endTime + "'";
+		Record pickupCound = Db.findFirst(pickupTotal);
+		
+		String departTotal = "select count(distinct dor.id) total from depart_order dor "
+                + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
+                + " left join transfer_order t_o on t_o.id = dtf.order_id "
+                + " left join office o on o.id = t_o.office_id "
+                + " where dor.status!='取消' and combine_type = '"
+        		+ DepartOrder.COMBINE_TYPE_DEPART + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+        		+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+        		+ " and dor.create_stamp between '" + beginTime + "' and '" + endTime + "'";
+		Record departCound = Db.findFirst(departTotal);
+		
+		String returnTotal = "select count(0) total from return_order ro"
+        		+ " left join delivery_order dor on dor.id = ro.delivery_order_id "
+        		+ " left join transfer_order tor on tor.id = ro.transfer_order_id "
+				+ " left join warehouse w on dor.from_warehouse_id = w.id "
+				+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+				+ " and ifnull(dor.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+				+ " and ro.create_date between '" + beginTime + "' and '" + endTime + "'";
+		Record returnCound = Db.findFirst(returnTotal);
+		renderJson("{\"transferOrderTotal\":"+transferOrderCound.getLong("total")+",\"deliveryTotal\":"+deliveryCound.getLong("total")+",\"pickupTotal\":"+pickupCound.getLong("total")+",\"departTotal\":"+departCound.getLong("total")+"}");
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 }

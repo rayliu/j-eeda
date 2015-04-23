@@ -4,7 +4,9 @@ import interceptor.SetAttrLoginUserInterceptor;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1228,6 +1230,19 @@ public class ReturnOrderController extends Controller {
     public void findReturnOrderType(){
     	String sLimit = "";
         String pageIndex = getPara("sEcho");
+        String orderNo = getPara("pointInTime");
+		Date today = new Date();
+	    SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");  
+	    Calendar pastDay = Calendar.getInstance(); 
+	    if("pastOneDay".equals(orderNo))
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -1);
+	    else if("pastOneDay".equals(orderNo))
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -7);
+	    else
+	    	pastDay.add(Calendar.DAY_OF_WEEK, -30);
+	    String beginTime = df.format(pastDay.getTime());
+	    String endTime = df.format(today);
+        
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
@@ -1236,7 +1251,8 @@ public class ReturnOrderController extends Controller {
 		        		+ " left join transfer_order tor on tor.id = ro.transfer_order_id "
 						+ " left join warehouse w on dor.from_warehouse_id = w.id "
 						+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
-						+ " and ifnull(dor.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
+						+ " and ifnull(dor.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+						+ " and ro.create_date between '" + beginTime + "' and '" + endTime + "'";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -1251,7 +1267,7 @@ public class ReturnOrderController extends Controller {
 				+ " left join warehouse w on dor.from_warehouse_id = w.id "
 				+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 				+ " and ifnull(dor.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-        		+ " order by ro.id desc " + sLimit;
+        		+ " and ro.create_date between '" + beginTime + "' and '" + endTime + "' order by ro.id desc " + sLimit;
         List<Record> transferOrderItems = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
