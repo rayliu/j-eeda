@@ -201,18 +201,18 @@ public class CarSummaryController extends Controller {
         String sql = "";
 		if (driver == null && status == null && car_no == null
 				&& transferOrderNo == null && start_data == null ) {
-			sqlTotal = "select count(0) total from car_summary_order cso "
+			sqlTotal = "select count(distinct cso.id) total from car_summary_order cso "
 					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
 					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
 					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
 					+ " left join transfer_order tor on tor.id = dt.order_id where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+			sql = "select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
 					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
 					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
 					+ " (select group_concat(pickup_order_no separator '<br>' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
-					+ " (select group_concat( dt.transfer_order_no separator '<br>' ) from depart_transfer dt"
+					+ " (select group_concat(distinct dt.transfer_order_no separator '<br>' ) from depart_transfer dt"
 					+ " where dt.pickup_id in(select pickup_order_id from car_summary_detail where car_summary_id = cso.id )) as transfer_order_no,"
 					+ " (select turnout_time from depart_order where id = ( select min(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as turnout_time,"
 					+ " (select return_time from depart_order where id = ( select max(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as return_time,"
@@ -241,7 +241,7 @@ public class CarSummaryController extends Controller {
 	        
 		}else{
 			
-			sqlTotal = "select count(0) total from car_summary_order cso"
+			sqlTotal = "select count(distinct cso.id) total from car_summary_order cso"
 					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
 					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
 					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
@@ -252,12 +252,12 @@ public class CarSummaryController extends Controller {
 					+ " and ifnull(cso.order_no, '') like '%"+order_no+"%' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			
-			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+			sql = "select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
 					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
 					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
 					+ " (select group_concat(pickup_order_no separator '<br>' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
-					+ " (select group_concat( dt.transfer_order_no separator '<br>' ) from depart_transfer dt"
+					+ " (select group_concat(distinct dt.transfer_order_no separator '<br>' ) from depart_transfer dt"
 					+ " where dt.pickup_id in(select pickup_order_id from car_summary_detail where car_summary_id = cso.id )) as transfer_order_no,"
 					+ " (select turnout_time from depart_order where id = ( select min(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as turnout_time,"
 					+ " (select return_time from depart_order where id = ( select max(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as return_time,"
@@ -506,24 +506,34 @@ public class CarSummaryController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select count(0) total from depart_transfer dt left join transfer_order_item toi on toi.order_id = dt.pickup_id where dt.pickup_id  in(" + pickupIds + ")";
+        String sqlTotal = "select count(distinct toi.id) total from transfer_order_item toi"
+        		+ " left join depart_transfer dt on dt.order_id = toi.order_id"
+        		+ " left join depart_order dor on dor.id = dt.pickup_id"
+        		+ " left join transfer_order tor on tor.id = dt.order_id "
+        		+ " left join party p on p.id = tor.customer_id "
+        		+ " left join contact c on c.id = p.contact_id "
+        		+ " left join product pd on pd.id = toi.product_id "
+        		+ " where dt.pickup_id in(" + pickupIds + ")";
         
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select toi.id,dor.depart_no,tor.order_no,c.abbr customer,ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.item_no, pd.item_no) item_no,toi.remark,tor.cargo_nature,"
-        		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and pickup_id in (37)) atmamount,"
-        		+ " round(ifnull(pd.volume, 0), 2) atmvolume,round(ifnull(pd.weight, 0), 2) atmweight,ifnull(toi.amount, 0) cargoamount,ifnull(toi.volume, 0) cargovolume,ifnull(toi.sum_weight, 0) cargoweight "
-        		+ " from depart_transfer dt"
-        		+ " left join depart_order dor on dor.id = dt.pickup_id  "
-        		+ " left join transfer_order tor on tor.id = dt.order_id"
-        		+ " left join transfer_order_item toi on toi.order_id = dt.order_id"
-        		+ " left join party p on p.id = tor.customer_id"
-        		+ " left join contact c on c.id = p.contact_id"
-        		+ " left join product pd on pd.id = toi.product_id"
-        		+ " where dt.pickup_id  IN ("+pickupIds+")"
-        		+ " order by dt.pickup_id " + sLimit;
+        String sql = "select distinct toi.id,dor.depart_no,tor.order_no,c.abbr customer,ifnull(toi.item_no, pd.item_no) item_no,toi.item_name,toi.remark,tor.cargo_nature, "
+        		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and pickup_id = dt.pickup_id) atmamount,"
+        		+ " (select round(ifnull(pd.volume * count(0), 0), 2) from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and pickup_id = dt.pickup_id) atmvolume,"
+        		+ " (select round(ifnull(pd.weight * count(0), 0), 2) from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and pickup_id = dt.pickup_id) atmweight,"
+        		+ " (select ifnull(d.amount,0) from transfer_order_item t left join depart_transfer d on d.order_item_id = t.id where t.id = toi.id and d.pickup_id = dt.pickup_id) cargoamount,"
+        		+ " (select round(ifnull(pd.volume,0)*ifnull(d.amount,0),2) from transfer_order_item t left join depart_transfer d on d.order_item_id = t.id where t.id = toi.id and d.pickup_id = dt.pickup_id) cargovolume,"
+        		+ " (select round(ifnull(pd.weight,0)*ifnull(d.amount,0),2) from transfer_order_item t left join depart_transfer d on d.order_item_id = t.id where t.id = toi.id and d.pickup_id = dt.pickup_id) cargoweight"
+        		+ " from transfer_order_item toi"
+        		+ " left join depart_transfer dt on dt.order_id = toi.order_id"
+        		+ " left join depart_order dor on dor.id = dt.pickup_id"
+        		+ " left join transfer_order tor on tor.id = dt.order_id "
+        		+ " left join party p on p.id = tor.customer_id "
+        		+ " left join contact c on c.id = p.contact_id "
+        		+ " left join product pd on pd.id = toi.product_id "
+        		+ " where dt.pickup_id in(" + pickupIds + ")" + sLimit;
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);

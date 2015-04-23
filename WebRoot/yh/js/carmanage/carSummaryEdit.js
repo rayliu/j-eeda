@@ -257,29 +257,17 @@ $(document).ready(function() {
             { "mDataProp": "ITEM_NAME"},
             { "mDataProp": null,
 				"fnRender": function(obj) {   
-				if(obj.aData.CARGO_NATURE == "ATM"){
-						return obj.aData.ATMAMOUNT;
-					}else{
-						return obj.aData.CARGOAMOUNT;
-					}
+					return obj.aData.ATMAMOUNT + obj.aData.CARGOAMOUNT;
 				}
             },
             { "mDataProp": null,
 			"fnRender": function(obj) {   
-				if(obj.aData.CARGO_NATURE == "ATM"){
-						return obj.aData.ATMVOLUME;
-					}else{
-						return obj.aData.CARGOVOLUME;
-					}
+					return obj.aData.ATMVOLUME + obj.aData.CARGOVOLUME;
 				}
             },
             { "mDataProp": null,
 			"fnRender": function(obj) {   
-				if(obj.aData.CARGO_NATURE == "ATM"){
-						return obj.aData.ATMWEIGHT;
-					}else{
-						return obj.aData.CARGOWEIGHT;
-					}
+					return obj.aData.ATMWEIGHT + obj.aData.CARGOWEIGHT;
 				}
             },
             { "mDataProp": "REMARK"},

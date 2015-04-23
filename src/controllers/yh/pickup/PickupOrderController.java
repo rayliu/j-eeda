@@ -162,17 +162,11 @@ public class PickupOrderController extends Controller {
             		+ DepartOrder.COMBINE_TYPE_PICKUP + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
             		+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
-            sql = "select dor.*,"
-            		+ " ifnull(dor.driver,c.driver) contact_person,"
-            		+ " ifnull(dor.phone,c.phone) phone,"
-            		+ " ifnull(dor.car_type,c.cartype) cartype,"
-            		+ " c.status cstatus,"
-            		+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,"
-            		+ " o.office_name office_name,"
-            		+ " ifnull((select round(sum(ifnull(toi.volume,0)),2)  from transfer_order_item  toi  left join transfer_order t on t.id = toi.order_id"
-            		+ " where t.cargo_nature = 'cargo' and toi.order_id in (select dt.order_id from depart_transfer dt where dt.pickup_id = dor.id)),0) cargovolume,"
-            		+ " ifnull((select round(sum(ifnull(toi.sum_weight,0)),2)  from transfer_order_item  toi left join transfer_order t on t.id = toi.order_id"
-            		+ " where t.cargo_nature = 'cargo' and toi.order_id in (select dt.order_id from depart_transfer dt where dt.pickup_id = dor.id)),0) cargoweight,"
+            sql = "select dor.id,dor.depart_no,dor.status,dor.pickup_mode,dor.car_no,dor.driver contact_person,dor.phone, dor.turnout_time,dor.remark,"
+            		+ " ifnull(dor.driver,c.driver) contact_person,ifnull(dor.phone,c.phone) phone,ifnull(dor.car_type,c.cartype) cartype,c.status cstatus,"
+            		+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,o.office_name office_name,"
+            		+ " round((select sum(ifnull(p.volume,0)*ifnull(dt.amount,0)) from transfer_order_item toi left join depart_transfer dt on dt.order_item_id = toi.id left join product p on p.id = toi.product_id where dt.pickup_id = dor.id),2) cargovolume,"
+            		+ " round((select sum(ifnull(p.weight,0)*ifnull(dt.amount,0)) from transfer_order_item toi left join depart_transfer dt on dt.order_item_id = toi.id left join product p on p.id = toi.product_id where dt.pickup_id = dor.id),2) cargoweight,"
             		+ " round((select sum(ifnull(volume,0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmvolume,"
             		+ " round((select sum(ifnull(weight,0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmweight,"
             		+ " (select group_concat( distinct dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  "
@@ -217,20 +211,14 @@ public class PickupOrderController extends Controller {
                     + "%' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + "  and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
-            sql = "select dor.*,"
-            		+ " ifnull(dor.driver,c.driver) contact_person,"
-            		+ " ifnull(dor.phone,c.phone) phone,"
-            		+ " ifnull(dor.car_type,c.cartype) cartype,"
-            		+ " c.status cstatus,"
-            		+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,"
-            		+ " o.office_name office_name,"
-            		+ " ifnull((select round(sum(ifnull(toi.volume,0)),2)  from transfer_order_item  toi  left join transfer_order t on t.id = toi.order_id"
-            		+ " where t.cargo_nature = 'cargo' and toi.order_id in (select dt.order_id from depart_transfer dt where dt.pickup_id = dor.id)),0) cargovolume,"
-            		+ " ifnull((select round(sum(ifnull(toi.sum_weight,0)),2)  from transfer_order_item  toi left join transfer_order t on t.id = toi.order_id"
-            		+ " where t.cargo_nature = 'cargo' and toi.order_id in (select dt.order_id from depart_transfer dt where dt.pickup_id = dor.id)),0) cargoweight,"
+            sql = "select dor.id,dor.depart_no,dor.status,dor.pickup_mode,dor.car_no,dor.driver contact_person,dor.phone, dor.turnout_time,dor.remark,"
+            		+ " ifnull(dor.driver,c.driver) contact_person,ifnull(dor.phone,c.phone) phone,ifnull(dor.car_type,c.cartype) cartype,c.status cstatus,"
+            		+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,o.office_name office_name,"
+            		+ " round((select sum(ifnull(p.volume,0)*ifnull(dt.amount,0)) from transfer_order_item toi left join depart_transfer dt on dt.order_item_id = toi.id left join product p on p.id = toi.product_id where dt.pickup_id = dor.id),2) cargovolume,"
+            		+ " round((select sum(ifnull(p.weight,0)*ifnull(dt.amount,0)) from transfer_order_item toi left join depart_transfer dt on dt.order_item_id = toi.id left join product p on p.id = toi.product_id where dt.pickup_id = dor.id),2) cargoweight,"
             		+ " round((select sum(ifnull(volume,0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmvolume,"
             		+ " round((select sum(ifnull(weight,0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmweight,"
-            		+ " (select group_concat(dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  "
+            		+ " (select group_concat( distinct dt.transfer_order_no separator '\r\n')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no  "
             		+ " from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
                     + " left join party p on dor.driver_id = p.id "
@@ -545,9 +533,9 @@ public class PickupOrderController extends Controller {
 
     // 初始化货品数据
     public void getInitPickupOrderItems() {
-        String order_id = getPara("localArr");// 运输单id
-        String tr_item = getPara("tr_item");// 货品id
-        String item_detail = getPara("item_detail");// 单品id
+        String orderId = getPara("localArr");// 运输单id
+        String trItem = getPara("tr_item");// 货品id
+        String itemDetail = getPara("item_detail");// 单品id
         String pickId = getPara("pickupId");
         String departOrderId = getPara("departOrderId");
         
@@ -556,7 +544,7 @@ public class PickupOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select count(1) total from transfer_order_item tof" + " where tof.order_id in(" + order_id + ")";
+        String sqlTotal = "select count(1) total from transfer_order_item tof" + " where tof.order_id in(" + orderId + ")";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -576,7 +564,7 @@ public class PickupOrderController extends Controller {
                      + " left join party p on p.id = tor.customer_id"
                      + " left join contact c on c.id = p.contact_id"
                      + " left join product pd on pd.id = toi.product_id"
-                     + " where toi.order_id in(" + order_id + ")  order by c.id" + sLimit;
+                     + " where toi.order_id in(" + orderId + ")  order by c.id" + sLimit;
         }else{
         	 sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
              		+ " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,"
@@ -586,7 +574,7 @@ public class PickupOrderController extends Controller {
                      + " left join party p on p.id = tor.customer_id"
                      + " left join contact c on c.id = p.contact_id"
                      + " left join product pd on pd.id = toi.product_id"
-                     + " where toi.order_id in(" + order_id + ")  order by c.id" + sLimit;
+                     + " where toi.order_id in(" + orderId + ")  order by c.id" + sLimit;
         }
       
         List<Record> departOrderitem = Db.find(sql);

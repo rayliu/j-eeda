@@ -41,9 +41,9 @@
 			    {"mDataProp":"CONTACT_PERSON", "sWidth":"80px"},
 			    {"mDataProp":"PHONE", "sWidth":"80px"},
 			    {"mDataProp":"CARTYPE", "sWidth":"80px"},     
-			    {"mDataProp":"CREATE_STAMP", "sWidth":"100px",
+			    {"mDataProp":"TURNOUT_TIME", "sWidth":"100px",
 			    	"fnRender":function(obj){
-        				var create_stamp=obj.aData.CREATE_STAMP;
+        				var create_stamp=obj.aData.TURNOUT_TIME;
         				var str=create_stamp.substr(0,10);
         				return str;
         			}}, 
