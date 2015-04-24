@@ -74,13 +74,8 @@ public class ContractController extends Controller {
     	}
     	
     	//查询当前用户的父类公司的id
-    	String userName = currentUser.getPrincipal().toString();
-    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-    	Long parentID = parentOffice.get("belong_office");
-    	if(parentID == null || "".equals(parentID)){
-    		parentID = parentOffice.getLong("id");
-    	}
+    	 ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+    	Long parentID = pom.getParentOfficeId();
     	
         List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
@@ -101,11 +96,11 @@ public class ContractController extends Controller {
 							+ input
 							+ "%' or postal_code like '%"
 							+ input
-							+ "%') and (o.id = " + parentOffice.get("id") + " or  o.belong_office = " + parentID + ")");
+							+ "%') and (o.id = " + pom.getCurrentOfficeId() + " or  o.belong_office = " + parentID + ")");
 		} else {
 			locationList = Db
 					.find("select *,p.id as pid from party p,contact c,office o where p.office_id = o.id and p.contact_id = c.id and p.party_type = '"
-							+ type + "' and (o.id = " + parentOffice.get("id") + " or  o.belong_office = " + parentID + ")");
+							+ type + "' and (o.id = " + pom.getCurrentOfficeId() + " or  o.belong_office = " + parentID + ")");
 		}
 		renderJson(locationList);
     }
@@ -121,13 +116,8 @@ public class ContractController extends Controller {
         String periodTo_filter = getPara("periodTo_filter");
       
         //查询当前用户的父类公司的id
-    	String userName = currentUser.getPrincipal().toString();
-    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-    	Long parentID = parentOffice.get("belong_office");
-    	if(parentID == null || "".equals(parentID)){
-    		parentID = parentOffice.getLong("id");
-    	}
+        ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+    	Long parentID = pom.getParentOfficeId();
     	
         Map orderMap = new HashMap();
         if (contractName_filter == null && contactPerson_filter == null && periodFrom_filter == null && companyName_filter == null
@@ -139,7 +129,7 @@ public class ContractController extends Controller {
             }
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and o.id = p.office_id and (o.id = " + parentOffice.get("id") + " or  o.belong_office = " + parentID + ")";
+            String sql = "select count(1) total from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and o.id = p.office_id and (o.id = " + pom.getCurrentOfficeId() + " or  o.belong_office = " + parentID + ")";
             //System.out.println(sql);
             Record rec = Db.findFirst(sql + totalWhere);
             long total = rec.getLong("total");
@@ -147,7 +137,7 @@ public class ContractController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and o.id = p.office_id and (o.id = " + parentOffice.get("id") + " or  o.belong_office = " + parentID + ")"
+                    .find("select *,c.id as cid from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and o.id = p.office_id and (o.id = " + pom.getCurrentOfficeId() + " or  o.belong_office = " + parentID + ")"
                             + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
@@ -167,7 +157,7 @@ public class ContractController extends Controller {
             }
             // 获取总条数
             String totalWhere = "";
-            String sql = "select count(1) total from contract c,party p,contact c1,office o where o.id = p.office_id and c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and (o.id = " + parentOffice.get("id") + " or  o.belong_office = " + parentID + ")"
+            String sql = "select count(1) total from contract c,party p,contact c1,office o where o.id = p.office_id and c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and (o.id = " + pom.getCurrentOfficeId() + " or  o.belong_office = " + parentID + ")"
             		 + "and c.name like '%"
                      + contractName_filter
                      + "%' and ifnull(c1.contact_person,'') like '%"
@@ -187,7 +177,7 @@ public class ContractController extends Controller {
             logger.debug("total records:" + total);
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1,office o  where o.id = p.office_id and c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and (o.id = " + parentOffice.get("id") + " or  o.belong_office = " + parentID + ")"
+                    .find("select *,c.id as cid from contract c,party p,contact c1,office o  where o.id = p.office_id and c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and (o.id = " + pom.getCurrentOfficeId() + " or  o.belong_office = " + parentID + ")"
                             + "and c.name like '%"
                             + contractName_filter
                             + "%' and ifnull(c1.contact_person,'') like '%"

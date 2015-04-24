@@ -22,6 +22,7 @@ import models.DepartTransferOrder;
 import models.FinItem;
 import models.Location;
 import models.Office;
+import models.ParentOfficeModel;
 import models.Party;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
@@ -51,6 +52,7 @@ import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.OrderNoGenerator;
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.ReaderXLS;
 import controllers.yh.util.ReaderXlSX;
@@ -819,13 +821,8 @@ public class TransferOrderController extends Controller {
 	// 查找供应商
 	public void searchSp() {
 		
-		String userName = currentUser.getPrincipal().toString();
-		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		 ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
 		
 		String input = getPara("input");
 		List<Record> locationList = Collections.EMPTY_LIST;
@@ -849,7 +846,7 @@ public class TransferOrderController extends Controller {
 							+ input
 							+ "%' or postal_code like '%"
 							+ input
-							+ "%') and o.id = p.office_id and (o.id =? or o.belong_office =?) limit 0,10",parentID,parentOffice.get("id"));
+							+ "%') and o.id = p.office_id and (o.id =? or o.belong_office =?) limit 0,10",parentID,pom.getCurrentOfficeId());
 		} else {
 			locationList = Db
 					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where p.contact_id = c.id and p.party_type = '"
@@ -990,13 +987,8 @@ public class TransferOrderController extends Controller {
 		String officeId = getPara("officeId");
 		
 		
-		String userName = currentUser.getPrincipal().toString();
-		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
 		
 		
 		
@@ -1011,13 +1003,8 @@ public class TransferOrderController extends Controller {
 
 	// 查出所有的office
 	public void searchAllOffice() {
-		String userName = currentUser.getPrincipal().toString();
-		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
 		
 		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id = " + parentID +" or o.belong_office = " + parentID);
 		renderJson(offices); 
@@ -1035,13 +1022,8 @@ public class TransferOrderController extends Controller {
 		String party_type =getPara("partyType");
 		
 		//获取当前用户的总公司
-		String userName = currentUser.getPrincipal().toString();
-		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
 		
 		
 		List<Record> locationList = Collections.EMPTY_LIST;
@@ -1086,13 +1068,8 @@ public class TransferOrderController extends Controller {
 		
 		
 		//获取当前用户的总公司
-		String userName = currentUser.getPrincipal().toString();
-		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
 		
 		
 		String sql="";

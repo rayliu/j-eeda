@@ -18,6 +18,7 @@ import models.DepartTransferOrder;
 import models.InventoryItem;
 import models.Location;
 import models.Office;
+import models.ParentOfficeModel;
 import models.Party;
 import models.TransferOrder;
 import models.TransferOrderItemDetail;
@@ -43,6 +44,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.util.OrderNoGenerator;
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.ReaderXLS;
 import controllers.yh.util.ReaderXlSX;
@@ -807,13 +809,8 @@ public class DeliveryController extends Controller {
 	public void searchSp() {
 		String input = getPara("input");
 		
-		String userName = currentUser.getPrincipal().toString();
-		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
 		
 		List<Record> locationList = Collections.EMPTY_LIST;
 		String sql = "";
@@ -829,13 +826,8 @@ public class DeliveryController extends Controller {
 	public void searchPartSp() {
 		String input = getPara("input");
 		List<Record> locationList = Collections.EMPTY_LIST;
-		String userName = currentUser.getPrincipal().toString();
-		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		 ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
 		String sql = "";
 		if(input!=null&&input!=""){
 			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id left join office o on o.id = p.office_id where sp_type = 'delivery' and (p.is_stop is null or p.is_stop = 0) and c.abbr like '%"+input+"%'  and (o.id = "+parentID + " or o.belong_office = "+parentID + ")";
@@ -1419,13 +1411,8 @@ public class DeliveryController extends Controller {
     public void searchAllRDC() {
     	String inputStr = getPara("rdc");
     	String sql ="";
-    	String userName = currentUser.getPrincipal().toString();
-    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-    	Long parentID = parentOffice.get("belong_office");
-    	if(parentID == null || "".equals(parentID)){
-    		parentID = parentOffice.getLong("id");
-    	}
+    	 ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+    	Long parentID = pom.getParentOfficeId();
     	if(inputStr!=null){
     		sql = "select * from office where  office_name like '%"+inputStr+"%' and (id = " + parentID + " or belong_office = " + parentID +")";
     	}else{

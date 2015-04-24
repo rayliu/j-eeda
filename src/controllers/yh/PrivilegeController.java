@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.Office;
+import models.ParentOfficeModel;
 import models.Permission;
 import models.Role;
 import models.RolePermission;
@@ -26,6 +27,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.CompareStrList;
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -34,9 +36,7 @@ public class PrivilegeController extends Controller {
 	private Logger logger = Logger.getLogger(PrivilegeController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 	
-	String userName = currentUser.getPrincipal().toString();
-	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+	 ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 	
 	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_LIST})
@@ -47,13 +47,8 @@ public class PrivilegeController extends Controller {
 	//编辑和分配都是用这个list
 	public void list() {
 		//查询当前用户的父类公司的id
-		String userName = currentUser.getPrincipal().toString();
-		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
 		
 		String rolename = getPara("rolename");
 		String code = null;
@@ -97,10 +92,7 @@ public class PrivilegeController extends Controller {
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_LIST})
 	public void roleList() {
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		Long parentID = pom.getParentOfficeId();
 		
 		String sql_m = "select distinct r.name,r.code from role_permission  rp left join role r on r.code =rp.role_code  where (r.office_id = " + parentID + " and rp.office_id =  " + parentID + ") or rp.office_id is null group by r.name,r.code";
 
@@ -128,10 +120,7 @@ public class PrivilegeController extends Controller {
 	/*查找没有权限的角色*/
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RP_CREATE})
 	public void seachNewRole(){
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		Long parentID = pom.getParentOfficeId();
 		String sql_m = "select r.code,r.name from role r left join (select * from role_permission where office_id = " + parentID +" ) rp on r.code = rp.role_code where rp.role_code is null and r.office_id = " + parentID;
 		List<Record> orders = Db.find(sql_m);
 		renderJson(orders);
@@ -143,10 +132,7 @@ public class PrivilegeController extends Controller {
 		String permissions = getPara("permissions");
 		String[] ps = permissions.split(",");
 		//根据角色名称找到角色代码
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		Long parentID = pom.getParentOfficeId();
 		Role role = Role.dao.findFirst("select * from role where name=?",rolename);
 		for (String str : ps) {
 			RolePermission r = new RolePermission();
@@ -165,13 +151,8 @@ public class PrivilegeController extends Controller {
 		String[] ps = permissions.split(",");
 		//根据角色名称找到角色代码
 		//查询当前用户的父类公司的id
-		String userName = currentUser.getPrincipal().toString();
-		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
 		
 		
 		Role role = Role.dao.findFirst("select * from role where name=? and office_id = ?",rolename,parentID);

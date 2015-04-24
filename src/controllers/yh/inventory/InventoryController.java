@@ -291,13 +291,8 @@ public class InventoryController extends Controller {
 
     // 查找客户
     public void searchCustomer() {
-    	String userName = currentUser.getPrincipal().toString();
-    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-    	Long parentID = parentOffice.get("belong_office");
-    	if(parentID == null || "".equals(parentID)){
-    		parentID = parentOffice.getLong("id");
-    	}
+    	 ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+    	Long parentID = pom.getParentOfficeId();
         String input = getPara("input");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
@@ -567,13 +562,8 @@ public class InventoryController extends Controller {
     	String inputStr = getPara("warehouseName");
     	String sql ="";
     	
-    	String userName = currentUser.getPrincipal().toString();
-    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-    	Long parentID = parentOffice.get("belong_office");
-    	if(parentID == null || "".equals(parentID)){
-    		parentID = parentOffice.getLong("id");
-    	}
+    	 ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+    	Long parentID = pom.getParentOfficeId();
     	if(inputStr!=null){
     		sql = "select w.* from warehouse w left join office o on o.id = w.office_id where w.warehouse_name like '%"+inputStr+"%' and (o.id = " + parentID + " or o.belong_office = " + parentID +")";
     	}else{
@@ -783,13 +773,8 @@ public class InventoryController extends Controller {
     public void searchAllOffice() {
     	String officeName = getPara("officeName");
     	String sql ="";
-    	String userName = currentUser.getPrincipal().toString();
-    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-    	Long parentID = parentOffice.get("belong_office");
-    	if(parentID == null || "".equals(parentID)){
-    		parentID = parentOffice.getLong("id");
-    	}
+    	 ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+    	Long parentID = pom.getParentOfficeId();
     	if("所有网点".equalsIgnoreCase(officeName)){
     		officeName = "";
     	}
@@ -815,13 +800,9 @@ public class InventoryController extends Controller {
     // 按网点查找仓库
     public void findWarehouseById() {
     	//获取当前用户的总公司
-    	String userName = currentUser.getPrincipal().toString();
-    	UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-    	Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-    	Long parentID = parentOffice.get("belong_office");
-    	if(parentID == null || "".equals(parentID)){
-    		parentID = parentOffice.getLong("id");
-    	}
+    	
+    	 ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+    	Long parentID = pom.getParentOfficeId();
     	
     	
     	String warehouseName = getPara("warehouseName");

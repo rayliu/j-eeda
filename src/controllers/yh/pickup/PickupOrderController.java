@@ -16,6 +16,7 @@ import models.DepartTransferOrder;
 import models.FinItem;
 import models.InventoryItem;
 import models.Office;
+import models.ParentOfficeModel;
 import models.Party;
 import models.PickupOrderFinItem;
 import models.TransferOrder;
@@ -44,6 +45,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoGenerator;
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.getCustomFile;
 
@@ -2162,13 +2164,8 @@ public class PickupOrderController extends Controller {
     public void findDriverAssistant() {
 		String input = getPara("input");
 		List<DriverAssistant> driverAssistantList = Collections.EMPTY_LIST;
-		String userName = currentUser.getPrincipal().toString();
-		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
-		Long parentID = parentOffice.get("belong_office");
-		if(parentID == null || "".equals(parentID)){
-			parentID = parentOffice.getLong("id");
-		}
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
 		if (input.trim().length() > 0) {
 			driverAssistantList = DriverAssistant.dao.find("select pda.id,pda.name,pda.phone from driver_assistant pda left join office o on pda.office_id = o.id where (pda.is_stop is null or pda.is_stop = 0) and pda.name like '%" + input + "%'  and (o.id = " + parentID + " or o.belong_office = " + parentID + ")");
 		} else {
