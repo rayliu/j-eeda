@@ -539,7 +539,7 @@ public class DepartOrderController extends Controller {
                     + " and ifnull(tor.depart_assign_status, '') !='"+ TransferOrder.ASSIGN_STATUS_ALL + "' "
             		+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
-                    + " order by tor.create_stamp desc " + sLimit;
+                    + " order by tor.planning_time desc " + sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -565,7 +565,7 @@ public class DepartOrderController extends Controller {
 					+ " and c.abbr like '%" + customer + "%' "
 					+ " and l1.name like '%" + routeFrom + "%' "
 					+ " and l2.name like '%" + routeTo + "%' "
-					+ " and tor.create_stamp between '" + beginTime+ "' and '" + endTime + "'"
+					+ " and tor.planning_time between '" + beginTime+ "' and '" + endTime + "'"
 					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
 
@@ -601,10 +601,10 @@ public class DepartOrderController extends Controller {
 					+ " and c.abbr like '%" + customer + "%' "
 					+ " and l1.name like '%" + routeFrom + "%' "
 					+ " and l2.name like '%" + routeTo + "%' "
-					+ " and tor.create_stamp between '" + beginTime+ "' and '" + endTime + "'"
+					+ " and tor.planning_time between '" + beginTime+ "' and '" + endTime + "'"
 					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + " order by tor.create_stamp desc " + sLimit;
+                    + " order by tor.planning_time desc " + sLimit;
         }
         rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -671,7 +671,7 @@ public class DepartOrderController extends Controller {
 					+ " and ifnull(tor.depart_assign_status, '') = '" + TransferOrder.ASSIGN_STATUS_NEW + "' "
 					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
-    				+ " order by tor.create_stamp desc " + sLimit;
+    				+ " order by tor.planning_time desc " + sLimit;
     	} else {
     		if (beginTime == null || "".equals(beginTime)) {
     			beginTime = "1-1-1";
@@ -696,7 +696,7 @@ public class DepartOrderController extends Controller {
 					+ " and c.abbr like '%" + customer + "%' "
 					+ " and l1.name like '%" + routeFrom + "%' "
 					+ " and l2.name like '%" + routeTo + "%' "
-					+ " and tor.create_stamp between '" + beginTime + "' "
+					+ " and tor.planning_time between '" + beginTime + "' "
 					+ " and '" + endTime + "' ";
     		
     		sql = "select distinct tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
@@ -724,9 +724,9 @@ public class DepartOrderController extends Controller {
 					+ " and c.abbr like '%" + customer + "%' "
 					+ " and l1.name like '%" + routeFrom + "%' "
 					+ " and l2.name like '%" + routeTo + "%' "
-					+ " and tor.create_stamp between '" + beginTime + "' "
+					+ " and tor.planning_time between '" + beginTime + "' "
 					+ " and '" + endTime + "' "
-    				+ " order by tor.create_stamp desc " + sLimit;
+    				+ " order by tor.planning_time desc " + sLimit;
     	}
     	rec = Db.findFirst(sqlTotal);
     	logger.debug("total records:" + rec.getLong("total"));
