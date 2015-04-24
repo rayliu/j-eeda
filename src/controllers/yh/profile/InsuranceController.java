@@ -51,8 +51,7 @@ public class InsuranceController extends Controller{
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         
-        ParentOffice po = new ParentOffice();
-        ParentOfficeModel pom = po.getOfficeId(this);
+        ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
         Long parentID = pom.getParentOfficeId();
         
         String sqlTotal = "select count(*) as total from party p left join contact c on p.contact_id = c.id left join office o on o.id = p.office_id where (o.id =" + parentID + " or o.belong_office = " + parentID + ") and p.party_type = 'INSURANCE_PARTY' ";

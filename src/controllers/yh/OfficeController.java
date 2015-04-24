@@ -188,8 +188,7 @@ public class OfficeController extends Controller {
                     + getPara("iDisplayLength");
         }
         
-        ParentOffice po = new ParentOffice();
-        ParentOfficeModel pom = po.getOfficeId(this);
+        ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
         
         Long parentID = pom.getParentOfficeId();
         Long parent_id = pom.getBelongOffice();

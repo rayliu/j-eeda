@@ -37,8 +37,7 @@ public class ProductController extends Controller {
     private Logger logger = Logger.getLogger(ProductController.class);
     Subject currentUser = SecurityUtils.getSubject();
     
-    ParentOffice po = new ParentOffice();
-    ParentOfficeModel pom = po.getOfficeId(this);
+    ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_LIST})
     public void index() {

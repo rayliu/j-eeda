@@ -36,8 +36,7 @@ public class ServiceProviderController extends Controller {
     private Logger logger = Logger.getLogger(ServiceProviderController.class);
     Subject currentUser = SecurityUtils.getSubject();
     
-    ParentOffice po = new ParentOffice();
-    ParentOfficeModel pom = po.getOfficeId(this);
+    ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_LIST})
     public void index() {

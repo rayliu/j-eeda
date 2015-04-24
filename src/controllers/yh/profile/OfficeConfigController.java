@@ -29,8 +29,7 @@ public class OfficeConfigController extends Controller{
     Subject currentUser = SecurityUtils.getSubject();
     
     
-    ParentOffice po = new ParentOffice();
-    ParentOfficeModel pom = po.getOfficeId(this);
+    ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
     
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_LIST})
 	public void index() {

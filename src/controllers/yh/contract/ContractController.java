@@ -44,8 +44,8 @@ public class ContractController extends Controller {
     // in config route已经将路径默认设置为/yh
     // me.add("/yh", controllers.yh.AppController.class, "/yh");
     
-    ParentOffice po = new ParentOffice();
-    ParentOfficeModel pom = po.getOfficeId(this);
+    ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+    
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_LIST})
     public void index() {

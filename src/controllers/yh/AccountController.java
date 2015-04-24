@@ -30,8 +30,7 @@ import controllers.yh.util.PermissionConstant;
 public class AccountController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    ParentOffice po = new ParentOffice();
-    ParentOfficeModel pom = po.getOfficeId(this);
+    ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_A_LIST})
     public void index() {
         render("/yh/profile/account/account.html");

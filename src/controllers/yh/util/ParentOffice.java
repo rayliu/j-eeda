@@ -16,6 +16,13 @@ import com.jfinal.core.Controller;
 
 public class ParentOffice{
 	
+	private ParentOffice(){
+	}
+	
+	public static ParentOffice getInstance(){
+		return new ParentOffice();
+	}
+	
 	public ParentOfficeModel getOfficeId(Controller controller) {
 		Subject currentUser = SecurityUtils.getSubject();
 		String userName;

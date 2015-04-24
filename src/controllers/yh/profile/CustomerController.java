@@ -38,8 +38,7 @@ public class CustomerController extends Controller {
     private Logger logger = Logger.getLogger(CustomerController.class);
     Subject currentUser = SecurityUtils.getSubject();
     
-    ParentOffice po = new ParentOffice();
-    ParentOfficeModel pom = po.getOfficeId(this);
+    ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
     
     
     // in config route已经将路径默认设置为/yh

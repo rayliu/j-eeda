@@ -1,9 +1,9 @@
 package models;
 
 public class ParentOfficeModel {
-	Long currentOfficeId;
-	Long parentOfficeId;
-	Long belongOffice;
+	private Long currentOfficeId;
+	private Long parentOfficeId;
+	private Long belongOffice;
 	public Long getCurrentOfficeId() {
 		return currentOfficeId;
 	}

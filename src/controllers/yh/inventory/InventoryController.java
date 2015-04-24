@@ -169,8 +169,7 @@ public class InventoryController extends Controller {
        }
         
        //获取当前用户的总公司
-       ParentOffice po = new ParentOffice();
-       ParentOfficeModel pom = po.getOfficeId(this);
+       ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
        
        Long parentID = pom.getParentOfficeId();
        
