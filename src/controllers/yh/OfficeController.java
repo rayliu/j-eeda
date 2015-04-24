@@ -198,7 +198,7 @@ public class OfficeController extends Controller {
 		// 获取总条数
         String totalWhere = "";
         
-        if(parent_id == null || "".equals(parent_id)){
+        if(parent_id == null || "".equals(parent_id) || currentUser.hasRole("admin")){
         	
         	sql = "select count(1) total from office where belong_office = " + parentID + " or id = " + parentID;
         	list_sql= "select * from office"
@@ -208,7 +208,7 @@ public class OfficeController extends Controller {
         	 		+ "and address  like '%"+address+"%' and (belong_office = " + parentID + " or id = " + parentID +") order by id desc " + sLimit;
         }else{
         	
-        	sql = "select count(1) total from office where belong_office = " + parentID + "";
+        	sql = "select count(1) total from office where belong_office = " + parentID + " ";
         	list_sql= "select * from office"
         	 		+ " where office_name  like '%"+name+"%'  and "
         	 		+ "office_person like '%"+person+"%' "
@@ -221,7 +221,7 @@ public class OfficeController extends Controller {
        
         List<Record> orders = null;
         if(type==null&&name==null&&address==null&&person==null){
-        	if(parent_id == null || "".equals(parent_id)){
+        	if(parent_id == null || "".equals(parent_id) || currentUser.hasRole("admin")){
         		orders = Db.find("select o.*,lc.name dname from office o left join location lc on o.location = lc.code where (o.belong_office = " + parentID + " or o.id = " + parentID + ") order by o.id desc" + sLimit);
         	}else{
         		orders = Db.find("select o.*,lc.name dname from office o left join location lc on o.location = lc.code where o.belong_office = " + parentID + " order by o.id desc" + sLimit);
