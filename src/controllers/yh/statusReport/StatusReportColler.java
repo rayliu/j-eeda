@@ -12,6 +12,7 @@ import java.util.Map;
 
 import models.DepartOrder;
 import models.Party;
+import models.UserLogin;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -721,18 +722,22 @@ public class StatusReportColler extends Controller{
 	
 	
 	public void searchOrderCount(){
-		String orderNo = getPara("pointInTime");
+		String pointInTime = getPara("pointInTime");
 		Date today = new Date();
 	    SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");  
 	    Calendar pastDay = Calendar.getInstance(); 
-	    if("pastOneDay".equals(orderNo))
+	    if("pastOneDay".equals(pointInTime))
 	    	pastDay.add(Calendar.DAY_OF_WEEK, -1);
-	    else if("pastSevenDay".equals(orderNo))
+	    else if("pastSevenDay".equals(pointInTime))
 	    	pastDay.add(Calendar.DAY_OF_WEEK, -7);
 	    else
 	    	pastDay.add(Calendar.DAY_OF_WEEK, -30);
 	    String beginTime = df.format(pastDay.getTime());
 	    String endTime = df.format(today);
+	    
+	    String name = (String) currentUser.getPrincipal();
+		UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
+	    users.set("last_index", pointInTime).update();
 	    
 	    String transferOrderTotal = "select count(0) total from transfer_order t where t.status != '取消' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
 				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"

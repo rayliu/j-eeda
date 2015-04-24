@@ -2,605 +2,666 @@
 
         <div id="page-wrapper">
             <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="btn-header">系统监控</h1>
-                </div>
-                <!-- /.col-lg-12 -->
-            </div>
-            <%
-                var title = SYS_CONFIG.system_title!'易达物流';
-                var show = 'none';
-                if(title=='易达物流'){
-                    show = 'block';
-                }
-            %>
-            <div class="row" style='display:${show}'>
-                <div class="col-lg-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <div class="form-group">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> 系统单据： 
-                                <label class="radio-inline">
-                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline1" value="pastOneDay" checked="">过去1天
-                                </label>                               
-                                <label class="radio-inline">
-                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline2" value="pastSevenDay">过去7天
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline3" value="pastThirtyDay">过去30天
-                                </label>
-                            </div>
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="row">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-file-text fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge" id="transferOrderTotal">0</div>
-                                        <div>运输单</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="/transferOrder">
-                                <div class="panel-footer">
-                                    <span class="pull-left"></span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
+            	<div class="col-lg-12">
+            	<div class="btn-header"></div>
+            	<div class="panel panel-default">
+                    <div class="panel-heading">
+                    	<div class="form-group">
+                    		<big style="font-size:32px;">系统监控</big>&nbsp;&nbsp;默认设置： 
+	                       	<label class="radio-inline">
+		                       	<input type="radio" name="optionsRadiosInline" id="optionsRadiosInline1" value="pastOneDay" <% if(lastIndex=='pastOneDay'){%>checked=""<%}%>>过去1天
+		                   	</label>                               
+		                   	<label class="radio-inline">
+		                       	<input type="radio" name="optionsRadiosInline" id="optionsRadiosInline2" value="pastSevenDay" <% if(lastIndex=='pastSevenDay'){%>checked=""<%}%>>过去7天
+		                   	</label>
+		                   	<label class="radio-inline">
+		                       	<input type="radio" name="optionsRadiosInline" id="optionsRadiosInline3" value="pastThirtyDay" <% if(lastIndex=='pastThirtyDay'){%>checked=""<%}%>>过去30天
+		                   	</label>
+	                    </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-green">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-file-text fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge" id="pickupTotal">0</div>
-                                        <div>提货单</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="/pickupOrder">
-                                <div class="panel-footer">
-                                    <span class="pull-left"></span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-yellow">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-file-text fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge" id="departTotal">0</div>
-                                        <div>发车单</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="/departOrder">
-                                <div class="panel-footer">
-                                    <span class="pull-left"></span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-red">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-file-text fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge" id="deliveryTotal">0</div>
-                                        <div>配送单</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="/delivery">
-                                <div class="panel-footer">
-                                    <span class="pull-left"></span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                        </div>
-                    </div>
-                </div>  
-            </div>         
-            <!-- /.row -->
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> 运输单状态                            
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover table-striped" id="transferOrderTypeTbody">
-                                    <thead>
-                                        <tr>
-                                            <th>单据号码</th>
-                                            <th>干线</th>
-                                            <th>状态</th>
-                                            <th>更新时间</th>
-                                            <th>运费金额</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- /.table-responsive -->
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
-                    
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> 配送单状态                            
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="table-responsive">
-                                 <table class="table table-bordered table-hover table-striped" id="deliveryOrderTypeTbody">
-                                     <thead>
-                                         <tr>
-                                             <th>单据号码</th>
-                                             <th>配送路线</th>
-                                             <th>状态</th>
-                                             <th>更新时间</th>
-                                             <th>运费金额</th>
-                                         </tr>
-                                     </thead>
-                                     <tbody>
-                                     </tbody>
-                                 </table>
-                             </div>
-                             <!-- /.table-responsive -->
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
-                    
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> 回单状态                            
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="table-responsive">
-                                 <table class="table table-bordered table-hover table-striped" id="returnOrderTypeTbody">
-                                     <thead>
-                                         <tr>
-                                             <th>单据号码</th>
-                                             <th>收货公司名称</th>
-                                             <th>状态</th>
-                                             <th>更新时间</th>
-                                             <th>运费金额</th>
-                                         </tr>
-                                     </thead>
-                                     <tbody>
-                                     </tbody>
-                                 </table>
-                             </div>
-                             <!-- /.table-responsive -->
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
-                    
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> 在途流量
-                            <div class="pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                        Actions
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu pull-right" role="menu">
-                                        <li><a href="#">Action</a>
-                                        </li>
-                                        <li><a href="#">Another action</a>
-                                        </li>
-                                        <li><a href="#">Something else here</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li><a href="#">Separated link</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div id="morris-area-chart"></div>
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> 在途流量2
-                            <div class="pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                        Actions
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu pull-right" role="menu">
-                                        <li><a href="#">Action</a>
-                                        </li>
-                                        <li><a href="#">Another action</a>
-                                        </li>
-                                        <li><a href="#">Something else here</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li><a href="#">Separated link</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="row">
-                                
-                                <div class="col-lg-8">
-                                    <div id="morris-bar-chart"></div>
-                                </div>
-                                <!-- /.col-lg-8 (nested) -->
-                            </div>
-                            <!-- /.row -->
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
-                    
-                    <!-- /.panel -->
-                </div>
-                <!-- /.col-lg-8 -->
-                <div class="col-lg-4">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-bell fa-fw"></i> 即将过期客户合同（60天内）
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="list-group">
-                                <%
-                                    for(contract in contractList){
-                                %>
-                                    <a href="/customerContract/edit/${contract.id}" target="_blank" class="list-group-item">
-                                        <i class="fa fa-warning fa-fw"></i>${contract.name}
-                                        <span class="pull-right text-muted small"><em>过期日期：${contract.period_to, dateFormat="yyyy-MM-dd"}</em>
-                                        </span>
-                                    </a>                                    
-                                <%}%>
-                                
-                                <!--
-                                <a href="#" class="list-group-item">
-                                    <i class="fa fa-twitter fa-fw"></i> 3 个发车
-                                    <span class="pull-right text-muted small"><em>12 minutes ago</em>
-                                    </span>
-                                </a>
-                                <a href="#" class="list-group-item">
-                                    <i class="fa fa-envelope fa-fw"></i> 4个新建单据过期7天未处理
-                                    <span class="pull-right text-muted small"><em>27 minutes ago</em>
-                                    </span>
-                                </a>
-                                <a href="#" class="list-group-item">
-                                    <i class="fa fa-tasks fa-fw"></i> 2个单据在途7天
-                                    <span class="pull-right text-muted small"><em>43 minutes ago</em>
-                                    </span>
-                                </a>
-                                <a href="#" class="list-group-item">
-                                    <i class="fa fa-upload fa-fw"></i> 5个单据在途14天
-                                    <span class="pull-right text-muted small"><em>11:32 AM</em>
-                                    </span>
-                                </a>
-                                <a href="#" class="list-group-item">
-                                    <i class="fa fa-bolt fa-fw"></i> 1个单据在途出车祸
-                                    <span class="pull-right text-muted small"><em>11:13 AM</em>
-                                    </span>
-                                </a>
-                                <a href="#" class="list-group-item">
-                                    <i class="fa fa-warning fa-fw"></i> 3个单据货品损坏
-                                    <span class="pull-right text-muted small"><em>10:57 AM</em>
-                                    </span>
-                                </a>
-                                <a href="#" class="list-group-item">
-                                    <i class="fa fa-file-text-o fa-fw"></i> 3个回单寄送中
-                                    <span class="pull-right text-muted small"><em>9:49 AM</em>
-                                    </span>
-                                </a>
-                                <a href="#" class="list-group-item">
-                                    <i class="fa fa-cny fa-fw"></i> 4个单据过期7天未结算
-                                    <span class="pull-right text-muted small"><em>Yesterday</em>
-                                    </span>
-                                </a-->
-                            </div>
-                            <!-- /.list-group -->
-                            
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> 库存分析
-                        </div>
-                        <div class="panel-body">
-                            <div id="morris-donut-chart"></div>
-                            <a href="#" class="btn btn-default btn-block">去库存分析报表查看</a>
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
-                    
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-bell fa-fw"></i> 每日小提示
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="list-group">
-                                    提货单中可以选择多个运输单进行多地点提货。
-                                    <span class="pull-right text-muted small"><em></em>
-                                    </span>
-                            </div>
-                            <!-- /.list-group -->
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                </div>
-                <!-- /.col-lg-4 -->
-            </div>
-            <!-- /.row -->
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-clock-o fa-fw"></i> 干线运输业务
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <ul class="timeline">
-                                <li>
-                                    <div class="timeline-badge success"><i class="fa fa-comments"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">客户下单</h4>
-                                            
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>客户通过电话，QQ，邮件跟文员下单</p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="timeline-inverted">
-                                    <div class="timeline-badge warning"><i class="fa fa-file-o"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">新建运输单</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>接到客户运输通知后，文员在系统中录入运输单</p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="timeline-badge danger"><i class="fa fa-shopping-cart"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">提货</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="timeline-inverted">
-                                    <div class="timeline-badge danger"><i class="fa fa-truck"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">发车</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="timeline-badge info"><i class="fa fa-map-marker"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">在途状态更新</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="timeline-inverted">
-                                    <div class="timeline-badge success"><i class="fa fa-home"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">入中转仓</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="timeline-badge success"><i class="fa fa-thumbs-up"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">结束</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>运输流程结束，更新运输单状态</p>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                </div>
-                <%
-                 	var last_login = login_time!'';
-                	if(shiro.hasRole("admin") && last_login == ''){
-                %>
-                <div class="modal fade in" id="exampleModal"  style="display: block;">
-				  <div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <button type="button" id="clbtn" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-				        <h4 class="modal-title" id="exampleModalLabel">助手小提示：</h4>
-				      </div>
-				      <div class="modal-body">
-				          <div class="form-group">
-				         	 感谢您使用易达TMS，您正使用”管理员账户”登陆，可用系统默认数据进行测试。您也可以在“基础数据设置”添加供应商，网点，仓库，产品等数据。
-				           
-				          </div>
-				      </div>
-				      <div class="modal-footer">
-				        <button type="button"  id ="btn" class="btn btn-default" data-dismiss="modal">确定</button>
-				      </div>
-				    </div>
-				  </div>
-				</div>
-				<%}%>
-                
-                <div class="col-lg-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-clock-o fa-fw"></i> 落地配业务
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <ul class="timeline">
-                                <li>
-                                    <div class="timeline-badge success"><i class="fa fa-comments"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">客户下单</h4>
-                                            
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>客户通过电话，QQ，邮件跟文员下单</p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="timeline-inverted">
-                                    <div class="timeline-badge warning"><i class="fa fa-file-o"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">新建配送单</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="timeline-badge danger"><i class="fa fa-shopping-cart"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">仓库提货</h4>
-                                        </div>
-                                        
-                                    </div>
-                                </li>
-                                <li class="timeline-inverted">
-                                    <div class="timeline-badge danger"><i class="fa fa-truck"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">发车</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="timeline-badge info"><i class="fa fa-map-marker"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">在途状态更新</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="timeline-inverted">
-                                    <div class="timeline-badge success"><i class="fa fa-home"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">送达收货地</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="timeline-badge success"><i class="fa fa-thumbs-up"></i>
-                                    </div>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                            <h4 class="timeline-title">结束</h4>
-                                        </div>
-                                        <div class="timeline-body">
-                                            <p>配送流程结束，更新配送单状态</p>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-            <!-- /.row -->
+                    <div class="panel-body">
+                        <%
+			                var title = SYS_CONFIG.system_title!'易达物流';
+			                var show = 'none';
+			                if(title=='易达物流'){
+			                    show = 'block';
+			                }
+			            %>
+			            <!-- <div class="row" style='display:${show}'>
+			                <div class="col-lg-12">
+			                    <div class="panel panel-default">
+			                        <div class="panel-heading">
+			                            <div class="form-group">
+			                            <i class="fa fa-bar-chart-o fa-fw"></i> 系统单据
+			                            </div>
+			                        </div> -->
+			                        <!-- /.panel-heading -->
+			                        <!-- <div class="panel-body"> -->
+			                            <div class="row">
+						                    <div class="col-lg-3 col-md-6">
+						                        <div class="panel panel-primary">
+						                            <div class="panel-heading">
+						                                <div class="row">
+						                                    <div class="col-xs-3">
+						                                        <i class="fa fa-file-text fa-5x"></i>
+						                                    </div>
+						                                    <div class="col-xs-9 text-right">
+						                                        <div class="huge" id="transferOrderTotal">0</div>
+						                                        <div>运输单</div>
+						                                    </div>
+						                                </div>
+						                            </div>
+						                            <a href="/transferOrder">
+						                                <div class="panel-footer">
+						                                    <span class="pull-left"></span>
+						                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						                                    <div class="clearfix"></div>
+						                                </div>
+						                            </a>
+						                        </div>
+						                    </div>
+						                    <div class="col-lg-3 col-md-6">
+						                        <div class="panel panel-green">
+						                            <div class="panel-heading">
+						                                <div class="row">
+						                                    <div class="col-xs-3">
+						                                        <i class="fa fa-file-text fa-5x"></i>
+						                                    </div>
+						                                    <div class="col-xs-9 text-right">
+						                                        <div class="huge" id="pickupTotal">0</div>
+						                                        <div>提货单</div>
+						                                    </div>
+						                                </div>
+						                            </div>
+						                            <a href="/pickupOrder">
+						                                <div class="panel-footer">
+						                                    <span class="pull-left"></span>
+						                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						                                    <div class="clearfix"></div>
+						                                </div>
+						                            </a>
+						                        </div>
+						                    </div>
+						                    <div class="col-lg-3 col-md-6">
+						                        <div class="panel panel-yellow">
+						                            <div class="panel-heading">
+						                                <div class="row">
+						                                    <div class="col-xs-3">
+						                                        <i class="fa fa-file-text fa-5x"></i>
+						                                    </div>
+						                                    <div class="col-xs-9 text-right">
+						                                        <div class="huge" id="departTotal">0</div>
+						                                        <div>发车单</div>
+						                                    </div>
+						                                </div>
+						                            </div>
+						                            <a href="/departOrder">
+						                                <div class="panel-footer">
+						                                    <span class="pull-left"></span>
+						                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						                                    <div class="clearfix"></div>
+						                                </div>
+						                            </a>
+						                        </div>
+						                    </div>
+						                    <div class="col-lg-3 col-md-6">
+						                        <div class="panel panel-red">
+						                            <div class="panel-heading">
+						                                <div class="row">
+						                                    <div class="col-xs-3">
+						                                        <i class="fa fa-file-text fa-5x"></i>
+						                                    </div>
+						                                    <div class="col-xs-9 text-right">
+						                                        <div class="huge" id="deliveryTotal">0</div>
+						                                        <div>配送单</div>
+						                                    </div>
+						                                </div>
+						                            </div>
+						                            <a href="/delivery">
+						                                <div class="panel-footer">
+						                                    <span class="pull-left"></span>
+						                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						                                    <div class="clearfix"></div>
+						                                </div>
+						                            </a>
+						                        </div>
+						                    </div>
+						                </div>
+			                        <!-- </div>
+			                    </div>
+			                </div>  
+			            </div>      -->    
+			            <!-- /.row -->
+			            <div class="row">
+			                <div class="col-lg-8">
+			                    <div class="panel panel-default">
+			                        <div class="panel-heading">
+			                            <i class="fa fa-bar-chart-o fa-fw"></i> 运输单状态                            
+			                        </div>
+			                        <!-- /.panel-heading -->
+			                        <div class="panel-body">
+			                            <div class="table-responsive">
+			                                <table class="table table-bordered table-hover table-striped" id="transferOrderTypeTbody">
+			                                    <thead>
+			                                        <tr>
+			                                            <th>单据号码</th>
+			                                            <th>干线</th>
+			                                            <th>状态</th>
+			                                            <th>更新时间</th>
+			                                            <th>运费金额</th>
+			                                        </tr>
+			                                    </thead>
+			                                    <tbody>
+			                                    </tbody>
+			                                </table>
+			                            </div>
+			                            <!-- /.table-responsive -->
+			                        </div>
+			                        <!-- /.panel-body -->
+			                    </div>
+			                    <!-- /.panel -->
+			                    
+			                    <div class="panel panel-default">
+			                        <div class="panel-heading">
+			                            <i class="fa fa-bar-chart-o fa-fw"></i> 配送单状态                            
+			                        </div>
+			                        <!-- /.panel-heading -->
+			                        <div class="panel-body">
+			                            <div class="table-responsive">
+			                                 <table class="table table-bordered table-hover table-striped" id="deliveryOrderTypeTbody">
+			                                     <thead>
+			                                         <tr>
+			                                             <th>单据号码</th>
+			                                             <th>配送路线</th>
+			                                             <th>状态</th>
+			                                             <th>更新时间</th>
+			                                             <th>运费金额</th>
+			                                         </tr>
+			                                     </thead>
+			                                     <tbody>
+			                                     </tbody>
+			                                 </table>
+			                             </div>
+			                             <!-- /.table-responsive -->
+			                        </div>
+			                        <!-- /.panel-body -->
+			                    </div>
+			                    <!-- /.panel -->
+			                    
+			                    <div class="panel panel-default">
+			                        <div class="panel-heading">
+			                            <i class="fa fa-bar-chart-o fa-fw"></i> 回单状态                            
+			                        </div>
+			                        <!-- /.panel-heading -->
+			                        <div class="panel-body">
+			                            <div class="table-responsive">
+			                                 <table class="table table-bordered table-hover table-striped" id="returnOrderTypeTbody">
+			                                     <thead>
+			                                         <tr>
+			                                             <th>单据号码</th>
+			                                             <th>收货公司名称</th>
+			                                             <th>状态</th>
+			                                             <th>更新时间</th>
+			                                             <th>运费金额</th>
+			                                         </tr>
+			                                     </thead>
+			                                     <tbody>
+			                                     </tbody>
+			                                 </table>
+			                             </div>
+			                             <!-- /.table-responsive -->
+			                        </div>
+			                        <!-- /.panel-body -->
+			                    </div>
+			                    <!-- /.panel -->
+			                    
+			                    <div class="panel panel-default">
+			                        <div class="panel-heading">
+			                            <i class="fa fa-bar-chart-o fa-fw"></i> 在途流量
+			                            <div class="pull-right">
+			                                <div class="btn-group">
+			                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+			                                        Actions
+			                                        <span class="caret"></span>
+			                                    </button>
+			                                    <ul class="dropdown-menu pull-right" role="menu">
+			                                        <li><a href="#">Action</a>
+			                                        </li>
+			                                        <li><a href="#">Another action</a>
+			                                        </li>
+			                                        <li><a href="#">Something else here</a>
+			                                        </li>
+			                                        <li class="divider"></li>
+			                                        <li><a href="#">Separated link</a>
+			                                        </li>
+			                                    </ul>
+			                                </div>
+			                            </div>
+			                        </div>
+			                        <!-- /.panel-heading -->
+			                        <div class="panel-body">
+			                            <div id="morris-area-chart"></div>
+			                        </div>
+			                        <!-- /.panel-body -->
+			                    </div>
+			                    <!-- /.panel -->
+			                    <div class="panel panel-default">
+			                        <div class="panel-heading">
+			                            <i class="fa fa-bar-chart-o fa-fw"></i> 在途流量2
+			                            <div class="pull-right">
+			                                <div class="btn-group">
+			                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+			                                        Actions
+			                                        <span class="caret"></span>
+			                                    </button>
+			                                    <ul class="dropdown-menu pull-right" role="menu">
+			                                        <li><a href="#">Action</a>
+			                                        </li>
+			                                        <li><a href="#">Another action</a>
+			                                        </li>
+			                                        <li><a href="#">Something else here</a>
+			                                        </li>
+			                                        <li class="divider"></li>
+			                                        <li><a href="#">Separated link</a>
+			                                        </li>
+			                                    </ul>
+			                                </div>
+			                            </div>
+			                        </div>
+			                        <!-- /.panel-heading -->
+			                        <div class="panel-body">
+			                            <div class="row">
+			                                
+			                                <div class="col-lg-8">
+			                                    <div id="morris-bar-chart"></div>
+			                                </div>
+			                                <!-- /.col-lg-8 (nested) -->
+			                            </div>
+			                            <!-- /.row -->
+			                        </div>
+			                        <!-- /.panel-body -->
+			                    </div>
+			                    <!-- /.panel -->
+			                    
+			                    <!-- /.panel -->
+			                </div>
+			                <!-- /.col-lg-8 -->
+			                <div class="col-lg-4">
+			                    <div class="panel panel-default">
+			                        <div class="panel-heading">
+			                            <i class="fa fa-bell fa-fw"></i> 即将过期客户合同（60天内）
+			                        </div>
+			                        <!-- /.panel-heading -->
+			                        <div class="panel-body">
+			                            <div class="list-group">
+			                                <%
+			                                    for(contract in contractList){
+			                                %>
+			                                    <a href="/customerContract/edit/${contract.id}" target="_blank" class="list-group-item">
+			                                        <i class="fa fa-warning fa-fw"></i>${contract.name}
+			                                        <span class="pull-right text-muted small"><em>过期日期：${contract.period_to, dateFormat="yyyy-MM-dd"}</em>
+			                                        </span>
+			                                    </a>                                    
+			                                <%}%>
+			                                
+			                                <!--
+			                                <a href="#" class="list-group-item">
+			                                    <i class="fa fa-twitter fa-fw"></i> 3 个发车
+			                                    <span class="pull-right text-muted small"><em>12 minutes ago</em>
+			                                    </span>
+			                                </a>
+			                                <a href="#" class="list-group-item">
+			                                    <i class="fa fa-envelope fa-fw"></i> 4个新建单据过期7天未处理
+			                                    <span class="pull-right text-muted small"><em>27 minutes ago</em>
+			                                    </span>
+			                                </a>
+			                                <a href="#" class="list-group-item">
+			                                    <i class="fa fa-tasks fa-fw"></i> 2个单据在途7天
+			                                    <span class="pull-right text-muted small"><em>43 minutes ago</em>
+			                                    </span>
+			                                </a>
+			                                <a href="#" class="list-group-item">
+			                                    <i class="fa fa-upload fa-fw"></i> 5个单据在途14天
+			                                    <span class="pull-right text-muted small"><em>11:32 AM</em>
+			                                    </span>
+			                                </a>
+			                                <a href="#" class="list-group-item">
+			                                    <i class="fa fa-bolt fa-fw"></i> 1个单据在途出车祸
+			                                    <span class="pull-right text-muted small"><em>11:13 AM</em>
+			                                    </span>
+			                                </a>
+			                                <a href="#" class="list-group-item">
+			                                    <i class="fa fa-warning fa-fw"></i> 3个单据货品损坏
+			                                    <span class="pull-right text-muted small"><em>10:57 AM</em>
+			                                    </span>
+			                                </a>
+			                                <a href="#" class="list-group-item">
+			                                    <i class="fa fa-file-text-o fa-fw"></i> 3个回单寄送中
+			                                    <span class="pull-right text-muted small"><em>9:49 AM</em>
+			                                    </span>
+			                                </a>
+			                                <a href="#" class="list-group-item">
+			                                    <i class="fa fa-cny fa-fw"></i> 4个单据过期7天未结算
+			                                    <span class="pull-right text-muted small"><em>Yesterday</em>
+			                                    </span>
+			                                </a-->
+			                            </div>
+			                            <!-- /.list-group -->
+			                            
+			                        </div>
+			                        <!-- /.panel-body -->
+			                    </div>
+			                    <!-- /.panel -->
+			                    <div class="panel panel-default">
+			                        <div class="panel-heading">
+			                            <i class="fa fa-bar-chart-o fa-fw"></i> 库存分析
+			                        </div>
+			                        <div class="panel-body">
+			                            <div id="morris-donut-chart"></div>
+			                            <a href="#" class="btn btn-default btn-block">去库存分析报表查看</a>
+			                        </div>
+			                        <!-- /.panel-body -->
+			                    </div>
+			                    <!-- /.panel -->
+			                    
+			                    <div class="panel panel-default">
+			                        <div class="panel-heading">
+			                            <i class="fa fa-bell fa-fw"></i> 每日小提示
+			                        </div>
+			                        <!-- /.panel-heading -->
+			                        <div class="panel-body">
+			                            <div class="list-group">
+			                                    提货单中可以选择多个运输单进行多地点提货。
+			                                    <span class="pull-right text-muted small"><em></em>
+			                                    </span>
+			                            </div>
+			                            <!-- /.list-group -->
+			                        </div>
+			                        <!-- /.panel-body -->
+			                    </div>
+			                </div>
+			                <!-- /.col-lg-4 -->
+			            </div>
+			            <!-- /.row -->
+			            <div class="row">
+			                <div class="col-lg-6">
+			                    <div class="panel panel-default">
+			                        <div class="panel-heading">
+			                            <i class="fa fa-clock-o fa-fw"></i> 干线运输业务
+			                        </div>
+			                        <!-- /.panel-heading -->
+			                        <div class="panel-body">
+			                            <ul class="timeline">
+			                                <li>
+			                                    <div class="timeline-badge success"><i class="fa fa-comments"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">客户下单</h4>
+			                                            
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>客户通过电话，QQ，邮件跟文员下单</p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li class="timeline-inverted">
+			                                    <div class="timeline-badge warning"><i class="fa fa-file-o"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">新建运输单</h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>接到客户运输通知后，文员在系统中录入运输单</p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge danger"><i class="fa fa-shopping-cart"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">提货</h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p></p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li class="timeline-inverted">
+			                                    <div class="timeline-badge danger"><i class="fa fa-truck"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">发车</h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p></p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge info"><i class="fa fa-map-marker"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">在途状态更新</h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p></p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li class="timeline-inverted">
+			                                    <div class="timeline-badge success"><i class="fa fa-home"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">入中转仓</h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p></p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge success"><i class="fa fa-thumbs-up"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">结束</h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>运输流程结束，更新运输单状态</p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                            </ul>
+			                        </div>
+			                        <!-- /.panel-body -->
+			                    </div>
+			                </div>
+			                <%
+			                 	var last_login = login_time!'';
+			                	if(shiro.hasRole("admin") && last_login == ''){
+			                %>
+			                <div class="modal fade in" id="exampleModal"  style="display: block;">
+							  <div class="modal-dialog">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" id="clbtn" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							        <h4 class="modal-title" id="exampleModalLabel">助手小提示：</h4>
+							      </div>
+							      <div class="modal-body">
+							          <div class="form-group">
+							         	 感谢您使用易达TMS，您正使用”管理员账户”登陆，可用系统默认数据进行测试。您也可以在“基础数据设置”添加供应商，网点，仓库，产品等数据。
+							           
+							          </div>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button"  id ="btn" class="btn btn-default" data-dismiss="modal">确定</button>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+							<%}%>
+			                
+			                <div class="col-lg-6">
+			                    <div class="panel panel-default">
+			                        <div class="panel-heading">
+			                            <i class="fa fa-clock-o fa-fw"></i> 落地配业务
+			                        </div>
+			                        <!-- /.panel-heading -->
+			                        <div class="panel-body">
+			                            <ul class="timeline">
+			                                <li>
+			                                    <div class="timeline-badge success"><i class="fa fa-comments"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">客户下单</h4>
+			                                            
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>客户通过电话，QQ，邮件跟文员下单</p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li class="timeline-inverted">
+			                                    <div class="timeline-badge warning"><i class="fa fa-file-o"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">新建配送单</h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge danger"><i class="fa fa-shopping-cart"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">仓库提货</h4>
+			                                        </div>
+			                                        
+			                                    </div>
+			                                </li>
+			                                <li class="timeline-inverted">
+			                                    <div class="timeline-badge danger"><i class="fa fa-truck"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">发车</h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p></p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge info"><i class="fa fa-map-marker"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">在途状态更新</h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p></p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li class="timeline-inverted">
+			                                    <div class="timeline-badge success"><i class="fa fa-home"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">送达收货地</h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p></p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge success"><i class="fa fa-thumbs-up"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">结束</h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>配送流程结束，更新配送单状态</p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                            </ul>
+			                        </div>
+			                        
+			                    </div>
+			                </div>
+			            </div>
+			            <!-- /.row -->
+			                        
+			                        
+			                    </div>
+			                    <!-- /.panel-body -->
+			                </div>
+			            	</div>
+			            
+			            
+			                <!-- <div class="col-lg-12">
+			                	<div class="row">
+			                <div class="col-lg-12">
+			                	<div class="panel panel-default">
+			                		<div class="panel-heading">
+			                			<div class="form-group">
+			                            <i class="fa fa-bar-chart-o fa-fw"></i> 系统单据
+			                            </div>
+					                	<div class="btn-header">
+						                    <div style="font-size:32px;float:left;">系统监控 </div>
+						                    <div style="font-size:32px;float:left;">
+						               	    	<span style="position:absolute; bottom:4px;padding:0px;margin:0px;font-size:15px;">&nbsp;默认设置： 
+						                       	<label class="radio-inline">
+							                       	<input type="radio" name="optionsRadiosInline" id="optionsRadiosInline1" value="pastOneDay" <% if(lastIndex=='pastOneDay'){%>checked=""<%}%>>过去1天
+							                   	</label>                               
+							                   	<label class="radio-inline">
+							                       	<input type="radio" name="optionsRadiosInline" id="optionsRadiosInline2" value="pastSevenDay" <% if(lastIndex=='pastSevenDay'){%>checked=""<%}%>>过去7天
+							                   	</label>
+							                   	<label class="radio-inline">
+							                       	<input type="radio" name="optionsRadiosInline" id="optionsRadiosInline3" value="pastThirtyDay" <% if(lastIndex=='pastThirtyDay'){%>checked=""<%}%>>过去30天
+							                   	</label>
+							                   	</span>
+						                    </div>
+					                    </div>
+				                    </div>
+				                    <div class="panel-body">
+				                    	
+				                    	
+				                    </div>
+			                    </div>
+			                    </div>
+			                    </div>
+			                </div> -->
+			                <!-- /.col-lg-12 -->
+			            </div>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
         </div>
         <!-- /#page-wrapper -->
   		      
